@@ -100,6 +100,12 @@ class FontIcon(object):
     h = property(_get_h)
 
     def draw(self, orgX, orgY):
+        """Draws a font icon"""
+        
+        bs = c.newString('Book Cover', style=dict(font='Georgia', fontSize=pt(50), fill=Color(0)))
+        c.text(bs, (100, 100))   
+        return
+        
         if not self.show:
             return
 
@@ -136,17 +142,22 @@ class FontIcon(object):
                                     fontSize=h*2/3))
         tw, th = c.textSize(bs)
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
+        fill(0)
+        stroke(0)
+        print(type(bs.s))
+        text(bs.s, (w/2-tw/2, h/2-th/3.2))
+     
 
         if self.title:
-            print(self.title)
             bs = c.newString(self.title,
                              style=dict(font=self.labelFont.path,
                              textFill=Color(0),
                              rTracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
             tw, th = c.textSize(bs)
+            c.textFill=Color(0),
             c.text(bs, (pt(w/2-tw/2), pt(self.ih+th/2)))
-            text(self.title, (w/2-tw/2, self.ih+th/2))
+            text(bs.s, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
         
@@ -158,7 +169,7 @@ class FontIcon(object):
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
             c.text(bs, (w/2-tw/2, y))
-            text(self.name, (w/2-tw/2, y))
+            #text(self.name, (w/2-tw/2, y))
             
             y -= self.LABEL_RLEADING*labelSize
         if self.label:
@@ -169,7 +180,7 @@ class FontIcon(object):
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
             c.text(bs, (w/2-tw/2, y))
-            text(self.label, (w/2-tw/2, y))
+            #text(self.label, (w/2-tw/2, y))
         c.restoreGraphicState()
 
 class KeyFrame(object):
@@ -177,6 +188,7 @@ class KeyFrame(object):
     """
     
     def __init__(self, objects, positions, steps=None, drawBackground=None):
+        print('this is a new keyframe')
         self.objects = objects
         self.positions = positions
         self.steps = steps or 1
@@ -189,10 +201,37 @@ class KeyFrame(object):
     def draw(self):
         for n in range(self.steps):
             c.newPage(pt(W), pt(H))
+            
+            # Formattted string using append.
+            print(' * Testing with append')
+            bs = c.newString('')
+            # Contains a DrawBot FormattedString.
+            aa = bs.s
+            aa.append("123", font="Helvetica", fontSize=100, fill=(1, 0, 1))
+            print(aa._font)
+            print(aa._fontSize)
+            print(aa._fill)
+            c.text(bs, (pt(100), pt(100)))
+            
+            # Formatted string without append.
+            print(' * Testing without append')
+            bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=Color(0)))
+            print('style: %s' % bs.style)
+            aa = bs.s
+            print(aa._font)
+            print(aa._fontSize)
+            #c.setTextFillColor(aa, Color(0))
+            print(aa._fill) 
+            text(aa, (100, 200))
+
+            c.text(bs, (pt(100), pt(200)))
+
+            """
             self.drawBackground()
             if self.drawBackgroundHook is not None:
                 self.drawBackgroundHook(self, n)
-
+            """
+            
             for o in self.objects:
                 offsetX = 0
                 offsetY = 0
@@ -200,6 +239,7 @@ class KeyFrame(object):
                     tx, ty = self.positions[o.eId]
                     offsetX = (tx-o.x)*1.0*n/self.steps
                     offsetY = (ty-o.y)*1.0*n/self.steps
+
                 o.draw(offsetX, offsetY)
 
         # Set the new target positions.
@@ -300,7 +340,7 @@ def drawAnimation():
     #
     KeyFrame(fontIcons,
         {'Regular': (varFontIcon.x, varFontIcon.y)}, 10,
-        drawBackground=drawBackground1
+        #drawBackground=None
     ).draw()
     
     id2FontIcon['Regular'].show = False

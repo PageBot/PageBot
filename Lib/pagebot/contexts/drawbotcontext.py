@@ -561,6 +561,7 @@ class DrawBotContext(BaseContext):
         >>> context.textFill(fs, color('red'))
         """
         assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
+
         if c is inheritColor: # Keep color setting as it is.
             pass
         elif c is noColor:
@@ -568,11 +569,11 @@ class DrawBotContext(BaseContext):
         elif c.isCmyk:
             cmyk = list(c.cmyk)
             cmyk.append(c.a)
-            fs.cmykFill(cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
+            fs.cmykFill(*cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
         else:
             rgb = list(c.rgb)
             rgb.append(c.a) # FormattedString.stroke has slight API difference with DrawBot.stroke
-            fs.fill(rgb) # Convert to rgb, whatever the type of color
+            fs.fill(*rgb) # Convert to rgb, whatever the type of color
 
     textFill = setTextFillColor
 
