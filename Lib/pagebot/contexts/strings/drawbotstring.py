@@ -104,20 +104,23 @@ class DrawBotString(BabelString):
         >>> context = DrawBotContext()
         >>> context.isDrawBot
         True
-        """
-
-        """
-        TODO: Get this docTest to work.
         >>> bs = DrawBotString('ABC', context)
-        >>> bs
-        ABC
+        >>> bs, bs.s
+        (ABC, ABC)
+        >>> style = dict(font='Verdana', fontSize=pt(100))
+        >>> bs = DrawBotString('ABC', context, style=style)
+        >>> bs.size
+        (19.57pt, 13pt)
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
+        # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
         # otherwise create it.
+        self.s = s 
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
-        self.style = style or {}
+        if style is None:
+            style = {}
+        self.style = style
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterated to find width.
 
     def _get_s(self):
@@ -291,8 +294,8 @@ class DrawBotString(BabelString):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> #font = findFont('RobotoDelta-VF')
-        >>> font = findFont('Fit-Variable_1')
+        >>> font = findFont('RobotoDelta-VF')
+        >>> #font = findFont('Fit-Variable_1') # DJR-Fit needs to be installed.
         >>> style = dict(font=font, textFill=blackColor, textStroke=noColor)
 
         >>> 'wdth' in font.axes.keys() or 'XTRA' in font.axes.keys() # One of them is there
