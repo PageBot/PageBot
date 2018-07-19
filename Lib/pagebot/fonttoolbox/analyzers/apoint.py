@@ -17,8 +17,9 @@ import weakref
 from pagebot.toolbox.units import point3D
 
 class APoint(object):
-    """Analyzer Point, used if addition information (like its type) needs to be stored.
-    Otherwise just use the point2D() and point3D() which are simple tuples.
+    """Analyzer Point, used if addition information (like its type) needs to be
+    stored. Otherwise just use the point2D() and point3D() which are simple
+    tuples.
 
     >>> p = APoint((101, 303), True)
     >>> p.onCurve is False
@@ -34,7 +35,8 @@ class APoint(object):
         self.onCurve = bool(onCurve)
 
     def __getitem__(self, i):
-        u"""Allow APoint to x and y attributes to be indexed like a point2D tuple.
+        u"""Allow APoint to x and y attributes to be indexed like a point2D
+        tuple.
 
         >>> ap = APoint((100, 200))
         >>> ap, ap[0], ap[1]
@@ -43,7 +45,8 @@ class APoint(object):
         return self.p[i]
 
     def __setitem__(self, i, value):
-        u"""Allow APoint to x and y attributes to be indexed like a point2D or point3D tuple.
+        u"""Allow APoint to x and y attributes to be indexed like a point2D or
+        point3D tuple.
 
         >>> ap = APoint((100, 200))
         >>> ap[1] = 222
@@ -51,6 +54,7 @@ class APoint(object):
         (APoint(100,222,On), 100, 222)
         """
         self.p[i] = value
+
         # Update the changed point value in the glyph.
         glyph = self.glyph
         if glyph is not None and self.index is not None: # Glyph still alive? Then update x or y
@@ -174,7 +178,8 @@ class APoint(object):
         return self.p[0] / v, self.p[1] / v, self.p[2] / v
 
     def _get_x(self):
-        u"""APoint.x property. Using indexed addressing of self.p to trigger Glyph point update.
+        u"""APoint.x property. Using indexed addressing of self.p to trigger
+        Glyph point update.
 
         >>> ap = APoint((200, 500))
         >>> ap.x = 100
@@ -182,12 +187,15 @@ class APoint(object):
         (APoint(100,500,On), 100)
         """
         return self.p[0]
+
     def _set_x(self, x):
         self[0] = x # Indirect by index, triggers the update of the glyph point data.
+
     x = property(_get_x, _set_x)
 
     def _get_y(self):
-        u"""APoint.y property. Using indexed addressing of self.p to trigger Glyph point update.
+        u"""APoint.y property. Using indexed addressing of self.p to trigger
+        Glyph point update.
 
         >>> ap = APoint((200, 500))
         >>> ap.y = 100
@@ -200,8 +208,8 @@ class APoint(object):
     y = property(_get_y, _set_y)
 
     def _get_z(self):
-        u"""APoint.z property. Not really used by the analyzers, it is there for compatibility
-        reasons, as all positions in PageBot are 3D.
+        u"""APoint.z property. Not really used by the analyzers, it is there
+        for compatibility reasons, as all positions in PageBot are 3D.
 
         >>> ap = APoint((200, 500, 700))
         >>> ap.z = 100
@@ -231,10 +239,7 @@ class APoint(object):
             s += ',%s' % self.z
         return s + ',%s)' % ({True:'On', False:'Off'}[self.onCurve])
 
-
-
 if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

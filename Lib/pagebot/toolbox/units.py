@@ -53,9 +53,9 @@ BASELINE_GRID = U*2+3 # 2.5U = 15pt
 # P O I N T
 
 def point3D(p=None):
-    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't
-    change and answer the original. If it's a smaller or larger list/tuple,
-    then ex
+    u"""Answers `p` as a 3D point. If it already is a list of 3 elements, then
+    don't change and answer the original. If it's a smaller or larger
+    list/tuple, then extend it.
 
     >>> point3D() # Default 3D origin
     (0pt, 0pt, 0pt)
@@ -68,6 +68,7 @@ def point3D(p=None):
     """
     if not p: # None or zero.
         return pt(0, 0, 0) # Undefined 3D point as list.
+
     if isinstance(p, (list, tuple)):
         if len(p) > 3:
             p = p[:3]
@@ -76,6 +77,7 @@ def point3D(p=None):
         p = tuple(p)
     else:
         p = p, p, pt(0)
+
     return p
 
 def point2D(p=None):
@@ -433,7 +435,7 @@ class Unit(object):
     name = property(_get_name)
 
     def _get_rounded(self):
-        u"""Answer a new instance of self with rounded value. 
+        u"""Answer a new instance of self with rounded value.
         Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
@@ -806,7 +808,7 @@ class Unit(object):
         return None
 
     __itruediv__ = __rtruediv__
-    
+
     def __mul__(self, u):
         u"""Multiply self by u, creating a new Unit instance with the same type
         as self. Units can only be multiplied by numbers. Unit * Unit raises a
@@ -1823,7 +1825,7 @@ def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
     >>> uu = pt(0), 12, (pt(13), pt(14))
     >>> units(uu) # Create a recursive list of units
     (0pt, 12pt, (13pt, 14pt))
-    """          
+    """
     if isinstance(v, (list, tuple)):
         uu = []
         for vv in v:
@@ -1852,7 +1854,7 @@ def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
             u.base = base # Recursive force base to be unit instance
         if g is not None: # Optional gutter can be unit or number
             u.g = g # Recursive force gutter to be unit instance.
-    
+
     if u is None and default is not None:
         u = units(default, g=g, base=base, min=min, max=max)
     return u # If possible to create, answer u. Otherwise result is None
