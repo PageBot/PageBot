@@ -1465,7 +1465,7 @@ class Element(object):
         (12pt, 122pt)
         >>> child = Element(xy=perc('50%', '50%'), parent=e)
         >>> child.xy, ru(child.xy) # Position in middle of parent square
-        ((50%, 50%), (200pt, 200pt))
+        ((50%, 50%), (200, 200))
         """
         return self.x, self.y
     def _set_xy(self, p):
@@ -1495,7 +1495,7 @@ class Element(object):
         >>> child.xyz
         (112%, 22pt, 32pt)
         >>> child.xyz, ru(child.xyz) # Position in middle of parent cube
-        ((112%, 22pt, 32pt), (448pt, 22, 32))
+        ((112%, 22pt, 32pt), (448, 22, 32))
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
@@ -2491,12 +2491,12 @@ class Element(object):
         >>> e.w = e.h = e.d = 500
         >>> e.margin3D = '10%'
         >>> e.margin3D, ru(e.margin3D)
-        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt))
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
         >>> e.margin3D = perc(15)
         >>> e.margin3D
         (15%, 15%, 15%, 15%, 15%, 15%)
         >>> ru(e.margin3D)
-        (75pt, 75pt, 75pt, 75pt, 75pt, 75pt)
+        (75, 75, 75, 75, 75, 75)
         """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
@@ -2687,10 +2687,10 @@ class Element(object):
         >>> e.w = e.h = e.d = 500
         >>> e.padding = '10%'
         >>> e.padding, ru(e.padding)
-        ((10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt))
+        ((10%, 10%, 10%, 10%), (50, 50, 50, 50))
         >>> e.padding = perc(15)
         >>> e.padding, ru(e.padding)
-        ((15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt))
+        ((15%, 15%, 15%, 15%), (75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -2742,10 +2742,10 @@ class Element(object):
         >>> e.w = e.h = e.d = 500
         >>> e.padding3D = '10%'
         >>> e.padding3D, ru(e.padding3D)
-        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt))
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
         >>> e.padding3D = perc(15)
         >>> e.padding3D, ru(e.padding3D)
-        ((15%, 15%, 15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt, 75pt, 75pt))
+        ((15%, 15%, 15%, 15%, 15%, 15%), (75, 75, 75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
@@ -4677,6 +4677,26 @@ class Element(object):
         """
         self.w = self.parent.w - self.parent.pr - self.x
         return True
+
+    def scale2Right(self):
+        u"""Make the right side of self fit the right padding of the parent, without
+        moving the left position. The scale the height according to the original ratio.
+
+        >>> e1 = Element(x=100, y=20, w=100, h=50)
+        >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
+        >>> e1.x, e1.y, e1.w, e1.h # Default position and size
+        (100pt, 20pt, 100pt, 50pt)
+        >>> success = e1.scale2Right()
+        >>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
+        (100pt, 20pt, 190pt, 95pt)
+        >>>
+        """
+        orgW = self.w
+        if orgW:
+            self.w = self.parent.w - self.parent.pr - self.x
+            self.h = self.h * self.w.pt / orgW.pt     
+            return True 
+        return False # No original width, cannot calculate due to zero division.
 
     def fit2RightSide(self):
         """Make the right side of self fit the right side of the parent, without
