@@ -25,12 +25,15 @@ from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import Color
 
 c = getContext()
 
 W = H = 500
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
+print(type(f.ttFont))
 
 ULTRALIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Utrla Light Condensed')
 ULTRALIGHT = getVarFontInstance(f, dict(wght=1, wdth=0), styleName='Ultra Light')
@@ -106,27 +109,27 @@ class FontIcon(object):
         y = self.y + orgY
 
         path = c.newPath()
-        c.moveTo((0, 0))
-        c.lineTo((0, h))
-        c.lineTo((w-e, h))
-        c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
+        c.moveTo((pt(0), pt(0)))
+        c.lineTo((pt(0), pt(h)))
+        c.lineTo((pt(w-e), pt(h)))
+        c.lineTo((pt(w), pt(h-e)))
+        c.lineTo((pt(w), pt(0)))
+        c.lineTo((pt(0), pt(0)))
         c.closePath()
-        c.moveTo((w-e, h))
-        c.lineTo((w-e, h-e))
-        c.lineTo((w, h-e))
+        c.moveTo((pt(w-e), pt(h)))
+        c.lineTo((pt(w-e), pt(h-e)))
+        c.lineTo((pt(w), pt(h-e)))
 
         c.saveGraphicState()
-        c.fill(1)
-        c.stroke(0)
+        c.fill(Color(1))
+        c.stroke(Color(0))
         c.strokeWidth = self.line
-        c.moveTo((x, y))
+        c.moveTo((pt(x), pt(y)))
         c.drawPath(path)
         labelSize = e
         bs = c.newString(self.char,
                          style=dict(font=self.f.path,
-                                    textFill=0,
+                                    textFill=Color(0),
                                     fontSize=h*2/3))
         tw, th = c.textSize(bs)
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
@@ -134,7 +137,7 @@ class FontIcon(object):
         if self.title:
             bs = c.newString(self.title,
                              style=dict(font=self.labelFont.path,
-                             textFill=0,
+                             textFill=Color(0),
                              rTracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
             tw, th = c.textSize(bs)
@@ -144,7 +147,7 @@ class FontIcon(object):
         if self.name:
             bs = c.newString(self.name,
                              style=dict(font=self.labelFont.path,
-                                        textFill=0,
+                                        textFill=Color(0),
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
@@ -153,7 +156,7 @@ class FontIcon(object):
         if self.label:
             bs = c.newString(self.label,
                              style=dict(font=self.labelFont.path,
-                                        textFill=0,
+                                        textFill=Color(0),
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
@@ -168,12 +171,12 @@ class KeyFrame(object):
         self.drawBackgroundHook = drawBackground
 
     def drawBackground(self):
-        c.fill(1)
-        c.rect(0, 0, W, H)
+        c.fill(Color(1))
+        c.rect(pt(0), pt(0), pt(W), pt(H))
 
     def draw(self):
         for n in range(self.steps):
-            c.newPage(W, H)
+            c.newPage(pt(W), pt(H))
             self.drawBackground()
             if self.drawBackgroundHook is not None:
                 self.drawBackgroundHook(self, n)
@@ -239,7 +242,7 @@ def drawBackground1(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                textFill=(1, 0, 0)))
+                                textFill=Color(1, 0, 0)))
     c.textBox(bs, (50, H-60, 200, 50))
 
 def drawBackground2(keyFrame, frame):
@@ -249,7 +252,7 @@ def drawBackground2(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                textFill=(1, 0, 0)))
+                                textFill=Color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawBackground3(keyFrame, frame):
@@ -259,7 +262,7 @@ def drawBackground3(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                textFill=(1, 0, 0)))
+                                textFill=Color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawAnimation():

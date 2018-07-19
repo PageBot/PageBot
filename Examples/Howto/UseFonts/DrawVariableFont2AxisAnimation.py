@@ -22,6 +22,8 @@ from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import Color
 from pagebot.style import CENTER
 
 c = getContext()
@@ -101,26 +103,26 @@ class FontIcon(object):
         y = self.y + orgY
 
         c.newPath()
-        c.moveTo((0, 0))
-        c.lineTo((0, h))
-        c.lineTo((w-e, h))
-        c.lineTo((w, h-e))
-        c.lineTo((w, 0))
-        c.lineTo((0, 0))
+        c.moveTo((pt(0), pt(0)))
+        c.lineTo((pt(0), pt(h)))
+        c.lineTo((pt(w-e), pt(h)))
+        c.lineTo((pt(w), pt(h-e)))
+        c.lineTo((pt(w), pt(0)))
+        c.lineTo((pt(0), pt(0)))
         c.closePath()
-        c.moveTo((w-e, h))
-        c.lineTo((w-e, h-e))
-        c.lineTo((w, h-e))
+        c.moveTo((pt(w-e), pt(h)))
+        c.lineTo((pt(w-e), pt(h-e)))
+        c.lineTo((pt(w), pt(h-e)))
 
         c.save()
-        c.fill(1)
-        c.stroke(0, self.line)
-        c.translate(x, y)
+        c.fill(Color(1))
+        c.stroke(Color(0), pt(self.line))
+        c.translate(pt(x), pt(y))
         c.drawPath()
         labelSize = e
         bs = c.newString(self.c,
                                style=dict(font=self.f.path,
-                                          textFill=0,
+                                          textFill=Color(0),
                                           fontSize=h*2/3))
         tw, th = bs.textSize()
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
@@ -128,7 +130,7 @@ class FontIcon(object):
         if self.title:
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=Color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -138,7 +140,7 @@ class FontIcon(object):
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=Color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -147,7 +149,7 @@ class FontIcon(object):
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=0,
+                                              textFill=Color(0),
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -163,12 +165,12 @@ class KeyFrame(object):
             self.drawBacktround = drawBackground
 
     def drawBackground(self):
-        c.fill(1)
-        c.rect(0, 0, W, H)
+        c.fill(Color(1))
+        c.rect(pt(0), pt(0), pt(W), pt(H))
 
     def draw(self):
         for n in range(self.steps):
-            c.newPage(W, H)
+            c.newPage(pt(W), pt(H))
             self.drawBackground()
             for o in self.objects:
                 offsetX = 0

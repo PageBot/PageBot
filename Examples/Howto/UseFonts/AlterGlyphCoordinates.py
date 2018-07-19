@@ -52,7 +52,6 @@ print('Glyph name is %s, Index is %d' % (p.glyph.name, p.index))
 # by holding CMD-drag in selected d.
 d = -80
 p.x += d
-'''
 p.y += d
 p.onCurve = False
 
@@ -80,4 +79,3 @@ for p in g.points:
     context.oval(p.x*s-R/2, p.y*s-R/2, R, R)
 
 context.saveImage(EXPORT_PATH)
-'''
