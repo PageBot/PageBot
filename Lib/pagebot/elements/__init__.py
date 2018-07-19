@@ -32,6 +32,7 @@ from pagebot.elements.pboval import Oval
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.pbplacer import Placer # Place holder element, typically for Templates.
 
 # Path and mask elements
@@ -43,6 +44,7 @@ from pagebot.elements.pbtable import Table
 
 # Views
 from pagebot.elements.views import viewClasses
+from pagebot.elements.pbquire import Quire
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 

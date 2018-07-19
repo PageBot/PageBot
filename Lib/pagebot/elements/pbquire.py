@@ -36,8 +36,49 @@ class Quire(Element):
     "8o." These format names are derived from the number of leaves in a quire 
     produced by folding the sheet of paper.
     """
-    
+    def __init__(self, folds=None, startPage=None, **kwargs):
+        Element.__init__(self,  **kwargs)
+        if folds is None:
+            # Default is single page. E.g. (2, 1) would be a spread, etc.
+            # Types of Quire formats, how to compose pages
+            # QUIRE_SINGLE = (1, 1)
+            # QUIRE_SPREAD = (-2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
+            # QUIRE_2x2 = (2, 2) # is a Quire of 4 pages, e.g. to be cut as separate sheets
+            # QUIRE_8x4 = (8, 4) # is a Quire of 32 separate pages, e.g. to be cut as 32 business cards.
+            # QUIRE_LEPARELLO3 = (-3, 1) # is a leparello of 3 connected pages.
+            # QUIRE_LEPARELLO4 = (-4, 1) # is a leparello of 4 connected pages.
+            # QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2o, a Quire of 2 spreads
+            # QUIRE_QUARTO = (2, QUIRE_FOLIO) # 4o
+            # QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8o, folding into 16 pages
+            folds = QUIRE_SINGLE # 1, 1 
+        self.folds = folds
+        self.startPage = startPage or 1
 
+    def __len__(self): 
+        u"""Answer the amount of required pages, based on the self.folds compositions.
+
+        >>> from pagebot.constants import *
+        >>> q = Quire(QUIRE_LEPARELLO4)
+        >>> len(q)
+        4
+        >>> q = Quire(QUIRE_QUARTO)
+        >>> len(q)
+        8
+        >>> q = Quire(QUIRE_OCTAVO)
+        >>> len(q)
+        16
+        """
+        def size(folds):
+            if isinstance(folds, (list, tuple)):
+                assert len(folds) == 2
+                return abs(size(folds[0]) * size(folds[1])) # Calculate 
+            return folds
+
+        return size(self.folds)    
+
+
+
+    
 if __name__ == '__main__':
     import doctest
     import sys

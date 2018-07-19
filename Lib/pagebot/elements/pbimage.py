@@ -20,192 +20,122 @@ import os
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.element import Element
 from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN # In case no image is defined.
-from pagebot.toolbox.units import pointOffset, point2D, units
+from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt
 from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 from pagebot.toolbox.color import noColor
 
-class Image(Element):
-    u"""The Image element is a “normal” container, which contains one (or more)
-    PixelMap elements and zero (or more) caption or other elements. This way
-    the user can add mulitple PixelMaps, a title elements, etc.  The layout of
-    the Image elements is defined in the same way as any other layout.
-    Conditional rules can be applied (e.g. if the image element changes size),
-    or the child elements can be put on fixed positions.
 
-    >>> from pagebot.toolbox.units import pt
+class Image(Element):
+    u"""The Image contains the reference to the actual binary image data.
+    eId can be (unique) file path or eId.
+
+    >>> from pagebot.toolbox.units import mm, p, point3D
     >>> from pagebot import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-    >>> from pagebot.document import Document
-    >>> c = DrawBotContext()
-    >>> w, h = pt(300), pt(400)
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> doc.w, doc.h
-    (300pt, 400pt)
-    >>> page = doc[1]
-    >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=300)
-    >>> e.build(doc.getView(), pt(0, 0))
-    >>> e.xy # Position of the image container
-    (0pt, 20pt)
-    >>> (e.w, e.h), e.size # Identical result
-    ((300pt, 300pt), (300pt, 300pt))
-    >>> pixelMap = e.image
-    >>> pixelMap.path.endswith(imagePath)
-    True
-    >>> #TODO: pixelMap.size, pixelMap.imageSize # Strange difference between local run and Travis
-    >>> #((300, 300, 1), (398, 530))
-    >>> #((300, 300, 1), (3024, 4032))
-    >>> view = doc.getView()
-    >>> e.build(view, pt(0, 0))
-
-    >>> from pagebot.contexts.flatcontext import FlatContext
-    >>> from pagebot.document import Document
-    >>> c = FlatContext()
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> page = doc[1]
-    >>> e = Image(imagePath, parent=page, x=0, y=20, w=page.w, h=pt(300))
-    >>> pixelMap = e.image
-    >>> pixelMap.path.endswith(imageFilePath)
-    True
-    >>> #TODO: pixelMap.size, pixelMap.imageSize # Strange difference between locel run and Travis
-    >>> #((300, 300, 1), (398, 530))
-    >>> #((300, 300, 1), (3024, 4032))
-    >>> # Allow the context to create a new document and page canvas. Normally view does it.
-    >>> c.newPage(w, h)
-    >>> e.build(doc.getView(), pt(0, 0))
-    [PixelMap.build_flat] Not implemented yet
-    >>> e.xy
-    (0pt, 20pt)
+    >>> e = Image(imagePath, xy=pt(220, 330), w=512)
+    >>> e.xy # Position of the image
+    (220pt, 330pt)
+    >>> (e.w, e.h), e.size # Identical result, width is the lead.
+    ((512pt, 681.81pt), (512pt, 681.81pt))
+    >>> e.h = 800 # Width is proportionally calculated, height is the lead.
+    >>> e.size 
+    (600.75pt, 800pt)
+    >>> e.h *= 1.5
+    >>> e.size, e._w, e._h
+    ((901.13pt, 1200pt), None, 1200pt)
+    >>> e.size = mm(50), p(100) # Disproportional size setting
     >>> e.size
-    (300pt, 300pt)
+    (50mm, 100p)
+    >>> e.size = None, None # Force answering the original image size
+    >>> e.size
+    (398pt, 530pt)
     """
-    def __init__(self, path=None, style=None, pixelMap=None, name=None, title=None, caption=None, clipRect=None,
-            mask=None, imo=None, w=None, h=None, size=None, imageConditions=None, titleConditions=None,
-            captionConditions=None, conditions=None, **kwargs):
-        self.image = None # Aviod setting of self.omage.w and self.omage.h while not initialized.
-        Element.__init__(self, w=w, h=h, size=size, name=name, conditions=conditions, **kwargs)
-        assert path is None or pixelMap is None # One or the other or both None.
-
-        if title is not None: # Only make title element if defined content.
-            if titleConditions is None:
-                titleConditions = (Top2TopSide(), Fit2Width())
-            title = TextBox(title, style=style, conditions=titleConditions)
-        # If defined, title can be any type of element, but most likely a text box. Other wise None
-        self.title = title # Property to add to self.elements and set caption.parent to self.
-
-        if imageConditions is None:
-            imageConditions = (Float2TopSide(), Fit2Width())
-        if pixelMap is None:
-            # Path can be None or non-existing, making PixelMap show gray rectangle of missing image.
-            pixelMap = PixelMap(path, name='PixelMap', clipRect=clipRect, mask=mask, imo=imo, w=w, h=h,
-                conditions=imageConditions, **kwargs) # Default width is leading.
-        self.image = pixelMap # Property to add to self.elements and set pixelMap.parent to self.
-
-        if caption is not None: # Only make caption element if defined content
-            if captionConditions is None:
-                captionConditions = (Float2TopSide(), Fit2Width())
-            caption = TextBox(caption, style=style, conditions=captionConditions)
-        # Caption can be any type of element, but most likely a text box.
-        self.caption = caption # Property to add to self.elements and set caption.parent to self.
-
-        # Solve the optional conditions defined in title, pixelMap and caption.
-        self.solve()
-
-    def _get_image(self):
-        return self._image # Special element, as there normally is only one pixelMap. Use self.elements otherwise.
-    def _set_image(self, pixelMap):
-        self._image = pixelMap # Keep last pixel map as self.image attribute. Otherwise use self.elements.
-        if pixelMap is not None: # Can be None to clear.
-            self.appendElement(pixelMap) # Add to self.elements and set pixelMap.parent to self.
-    image = property(_get_image, _set_image)
-
-    def _get_title(self):
-        return self._title # Special element, as there normally is only one title. Use self.elements otherwise.
-    def _set_title(self, e):
-        self._title = e # Keep last title element as self.title attribute. Otherwise use self.elements.
-        if e is not None: # Can be None to clear.
-            self.appendElement(e) # Add to self.elements and set e.parent to self.
-    title = property(_get_title, _set_title)
-
-    def _get_caption(self):
-        return self._caption # Special element, as there normally is only one caption. Use self.elements otherwise.
-
-    def _set_caption(self, e):
-        self._caption = e # Keep last caption element as self.title attribute. Otherwise use self.elements.
-        if e is not None: # Can be None to clear.
-            self.appendElement(e) # Add to self.elements and set e.parent to self.
-
-    caption = property(_get_caption, _set_caption)
-
-    def _get_w(self):
-        if self._w is None: # Undefined elastic, get size from pixelmap
-            w = self.image.w
-        else:
-            w = self._w
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
-        return units(w, base=base, min=self.minW, max=self.maxW)
-    def _set_w(self, w):
-        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
-        #if w != self._w: # Only when changed
-        #    self.solve() # Rearrange the layout of the elements inside
-        #    #if self.image is not None:
-        #    #    self.image.w = w - self.pl - self.pr
-        #    _, _, _, self._h = self.paddedBox()
-    w = property(_get_w, _set_w)
-
-    def _get_h(self):
-        if self._h is None: # Undefined elastic, get size from pixelmap
-            h = self.image.h
-        else:
-            h = self._h
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
-        return units(h, base=base, min=self.minH, max=self.maxH)
-    def _set_h(self, h):
-        #if h != self._h: # Only when changed
-        self._h = units(h or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
-        #    self.solve() # Rearrange the layout of elements inside.
-        #    #if self.image is not None:
-        #    #    self.image.h = h - self.pb - self.pt
-        #    # Take over the width from whatever it became
-        #    _, _, self._w, _ = self.paddedBox()
-    h = property(_get_h, _set_h)
-
-    def _get_exists(self):
-        u"""Answer the boolean flag if the *self.image.path* image file really
-        exists."""
-        return os.path.exists(self.image.path)
-    exists = property(_get_exists)
-
-    def addFilter(self, filter):
-        u"""Add the filter to the self.imo image object. Create the image
-        object in case it doest not exist yet."""
-        if self.image is not None:
-            self.image.addFilter(filter)
-
-class PixelMap(Element):
-    u"""The PixelMap contains the reference to the actual binary image data.
-    eId can be (unique) file path or eId."""
-
     def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
+        # Initialize the self.im and self.ih sizes of the image file, defined by path.
+        # If the path does not exist, then self.im = self.ih = pt(0)
+        self.setPath(path) # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
+        self.initImageSize()
+
         # One of the two needs to be defined, the other can be None.
         # If both are set, then the image scales disproportional.
-        if size is not None:
+        if size is not None: # Disproportional scaling if both are not None
             self.size = size
-        else:
-            self.w = w
-            self.h = h
-        self.z = z # Make conditions work with captions inside the image frame element.
+        elif w is not None and h is not None: # Disproportional scaling
+            self.size = w, h
+        elif w is not None: # Separate settings, to keep proportions if only one it set.
+            self.w = w # Sets self._h to None to indicate that width is the lead.
+        elif h is not None:
+            self.h = h # Sets self._w to None to indicate that height is the lead.
+        self.z = z # Make conditions work with captions inside an image frame element.
 
         self.name = name
         self.mask = mask # Optional mask element.
-        self.clipRect = clipRect # Optional clip rectangle
+        self.clipRect = clipRect # Optional clip rectangle in local coordinate and size.
         self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
-        self.setPath(path) # If path is omitted, a gray/crossed rectangle will be drawn.
+
+    def _get_size(self):
+        u"""Get/Set the size of the image. If one of (self._w, self._h) values is None, 
+        then it is calculated by propertion. If both are None, the original size of the
+        image is returned. If both are not None, then that size is answered disproportionally.
+        """
+        return self.w, self.h
+    def _set_size(self, size):
+        self._w, self._h, self.d = point3D(size)
+    size = property(_get_size, _set_size)     
+
+    def _get_size3D(self):
+        return self.w, self.h, self.d
+    size3D = property(_get_size3D, _set_size)
+
+    def _get_w(self):
+        u"""Get the intended width and calculate the new scale, validating the
+        width to the image minimum width and the height to the image minimum height.
+        If not self._h is defined, then the proportion is recalculated, depending on 
+        the ratio of the image."""
+        u = None
+        if not self._w: # Width is undefined
+            if self._h and self.ih:
+                u = self._h.pt / self.ih.pt * self.iw  # Height is lead, calculate width.
+            else:
+                u = self.iw # Undefined and without parent, answer original image width.
+        else:
+            base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
+            u = units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
+        return u
+    def _set_w(self, w):
+        # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
+        if w:
+            w = units(w, min=self.minW, max=self.maxW) 
+        self._w = w
+        self._h = None
+    w = property(_get_w, _set_w)
+
+    def _get_h(self):
+        u = None
+        if not self._h: # Width is undefined
+            if self._w and self.iw:
+                u = self.ih * self._w.pt / self.iw.pt  # Width is lead, calculate height.
+            else:
+                u = self.ih # Undefined and without parent, answer original image width.
+        else:
+            base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
+            u = units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
+        return u
+    def _set_h(self, h):
+        # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
+        if h:
+            h = units(h, min=self.minH, max=self.maxH) 
+        self._w = None
+        self._h = h
+
+    h = property(_get_h, _set_h)
+
 
     def __repr__(self):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
@@ -232,7 +162,7 @@ class PixelMap(Element):
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
         else:
-            self.iw = self.ih = 0 # Undefined or non-existing, there is no image file.
+            self.iw = self.ih = pt(0) # Undefined or non-existing, there is no image file.
 
     def _get_imageSize(self):
         u"""Answer the Point2D image size in pixels."""
@@ -250,33 +180,6 @@ class PixelMap(Element):
         p = x, y
         return self.doc.context.imagePixelColor(self.path, p)
 
-    # Set the intended width and calculate the new scale, validating the
-    # width to the image minimum width and the height to the image minimum height.
-    # Also the proportion is calculated, depending on the ratio of """
-    def _get_w(self):
-        if not self._w: # Width is undefined
-            if self._h and self.ih:
-                return self.iw * self._h / self.ih  # Height is lead, calculate width.
-            return DEFAULT_WIDTH # Undefined and without parent, answer default width.
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
-        return units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
-    def _set_w(self, w):
-        # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
-        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
-    w = property(_get_w, _set_w)
-
-    def _get_h(self):
-        if not self._h: # Width is undefined
-            if self._w and self.iw:
-                return self.ih * self._w / self.iw  # Width is lead, calculate height.
-            return DEFAULT_HEIGHT # Undefined and without parent, answer default width.
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
-        return units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
-    def _set_h(self, h):
-        # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
-        self._h = units(h or DEFAULT_WIDTH, min=self.minH, max=self.maxH) 
-    h = property(_get_h, _set_h)
-
     def _getAlpha(self):
         u"""Use alpha channel of the fill color as opacity of the image."""
         sFill = self.css('fill', noColor)
@@ -287,10 +190,10 @@ class PixelMap(Element):
         return alpha
 
     def build_html(self, view, origin=None, drawElements=True):
-        print('[PixelMap.build_html] Not implemented yet')
+        print('[%s.build_html] Not implemented yet' % self.__class__.__name__)
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        print('[PixelMap.build_flat] Not implemented yet')
+        print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
         u"""Draw the image in the calculated scale. Since we need to use the
@@ -310,7 +213,7 @@ class PixelMap(Element):
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            print('Cannot display pixelMap %s' % self)
+            print('Cannot display image %s' % self)
             #self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
             context.save()
