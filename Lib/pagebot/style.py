@@ -291,6 +291,7 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
         textGradient = None,
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
+        zTextAligh = FRONT, # Alignment of text inside a 3d text box, one of (FRONT, MIDDLE, BACK)
 
         underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
         underlineThickness = None,

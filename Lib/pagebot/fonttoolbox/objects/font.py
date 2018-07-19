@@ -99,7 +99,7 @@ def findFont(fontPath, lazy=True):
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
-    print(fontPaths)
+    #print(fontPaths)
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath])
     return None
@@ -815,7 +815,7 @@ class Font(object):
         >>> g
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> g.points[6], g.width
-        (Pt(1288,1456,On), 1458)
+        (APoint(1288,1456,0pt,On), 1458)
         >>> instance = f.getInstance(location=dict(wght=500))
         >>> instance
         <Font RobotoDelta-VF-wght500>
@@ -823,7 +823,7 @@ class Font(object):
         >>> ig
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> ig.points[6], ig.width
-        (Pt(1307,1456,On), 1477)
+        (APoint(1307,1456,0pt,On), 1477)
         """
         if location is None:
             location = self.getDefaultVarLocation()
