@@ -14,4 +14,4 @@
 #
 #     Special elements to show Variable Font info-graphics
 #
-from variablecircle import VariableCircle
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
