@@ -10,11 +10,11 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-# 
+#
 #     wood_office.py
 #
 from pagebot.style import getRootStyle
-from basetheme import BaseTheme
+from pagebot.themes.basetheme import BaseTheme
 
 class WoodOffice(BaseTheme):
     u"""The WoodOffice theme is a generic “woody cool gray” theme, with settings that
@@ -31,5 +31,5 @@ class WoodOffice(BaseTheme):
         self[self.ROOT] = getRootStyle()
         for headName in self.HEADS:
             self[headName] = getRootStyle() # Make sure there is something there for now.
-        
-    
+
+

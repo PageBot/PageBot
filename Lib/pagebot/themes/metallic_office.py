@@ -11,11 +11,11 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-# 
+#
 #     metallic_office.py
 #
 from pagebot.style import getRootStyle
-from basetheme import BaseTheme
+from pagebot.themes.basetheme import BaseTheme
 
 class MetallicOffice(BaseTheme):
     u"""The MetallicOffset theme is a generic “cool gray” theme, with settings that

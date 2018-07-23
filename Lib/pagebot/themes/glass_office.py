@@ -10,11 +10,11 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-# 
+#
 #     glass_office.py
 #
 from pagebot.style import getRootStyle
-from basetheme import BaseTheme
+from pagebot.themes.basetheme import BaseTheme
 
 class GlassOffice(BaseTheme):
     u"""The GlassOffice theme is a generic “shiny cool gray” theme, with settings that
