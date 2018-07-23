@@ -16,9 +16,9 @@ from __future__ import division # Make integer division result in float.
 from pagebot.constants import INCH, MM
 from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, col, units
 
+# FIXME: visible example.
 def useUnits():
     """
-
     >>> mm(2), mm(2).r # Showing the unit as instance and as rendered value
     (2mm, 2)
     >>> px(5), px(5).r

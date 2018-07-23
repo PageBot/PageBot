@@ -12,6 +12,14 @@
 #
 #     UseThemes.py
 #
+#    needs scss
+#
+#        pip install scss
+#
+#    or
+#
+#        pip3 install scss
+
 from pagebot.themes import Themes
 
 theme = Themes['Metallic Office']

@@ -10,10 +10,10 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-# 
-from metallic_office import MetallicOffice
-from glass_office import GlassOffice
-from wood_office import WoodOffice
+#
+from pagebot.themes.metallic_office import MetallicOffice
+from pagebot.themes.glass_office import GlassOffice
+from pagebot.themes.wood_office import WoodOffice
 
 Themes = {}
 
