@@ -19,7 +19,6 @@ from pagebot.conditions import *
 from pagebot.typesetter import Typesetter
 from pagebot.toolbox.color import Color
 
-
 W = 400
 H = 480
 RectSize = 300
@@ -33,20 +32,19 @@ markdownPath = '../TOC.md'
 def makeDocument():
 
     doc = Document(originTop=False, w=W, h=H, autoPages=1)
-    print(doc.styles.keys())
+    #print(doc.styles.keys())
     doc.addStyle('h1', dict(textFill=Color(0)), force=True)
     doc.addStyle('h2', dict(textFill=Color(0)), force=True)
     doc.addStyle('p', dict(textFill=Color(0)), force=True)
 
+
     page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
-
+    
     # Make rect as page element centered with centered origin.
     conditions = [Fit()]
-
     g = Galley(parent=page, conditions=conditions, textFill=Color(0))
     ts = Typesetter(doc, g)
-    print(ts)
     ts.typesetFile(markdownPath)
 
     # Solve the layout conditions of the red rectangle.
@@ -61,8 +59,7 @@ def makeDocument():
     view.showPageFrame = True # Show frame of the page in blue
     #view.showPagePadding = True
     view.showPageCropMarks = True # Show crop marks
-
     return doc
-
+    
 d = makeDocument()
 d.export('_export/UseMarkdownText.pdf')

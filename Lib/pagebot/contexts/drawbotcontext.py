@@ -49,7 +49,6 @@ if useDrawBot and useAppKit:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-    #print('Using DrawBotContext with DrawBot.')
 else:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
@@ -62,7 +61,6 @@ else:
     # If DrawBot is not available on the platform, the noneDrawBotBuilder
     # instance is used to run DrawBot related docTests.
     drawBotBuilder = NoneDrawBotBuilder()
-    #print('Using DrawBotContext with a NoneDrawBotBuilder.')
 
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
@@ -169,6 +167,8 @@ class DrawBotContext(BaseContext):
         >>> #context.rect(0, 0, 100, 100)
         """
         assert isUnits(x, y, w, h), ('DrawBotContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
+        print('bla')
+        print(x.pt)
         self.b.rect(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
 
     def oval(self, x, y, w, h):

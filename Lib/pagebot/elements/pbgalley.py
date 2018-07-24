@@ -36,8 +36,11 @@ class Galley(Element):
 
     def __init__(self, **kwargs):
         Element.__init__(self,  **kwargs)
-        # Make sure that this is a formatted string. Otherwise create it with the current style.
-        # Note that in case there is potential clash in the double usage of fill and stroke.
+        # Make sure that this is a formatted string. Otherwise create it with
+        # the current style.
+
+        # Note that in case there is potential clash in the
+        # double usage of fill and stroke (?)
         self.lastTextBox = None
 
     def append(self, bs):
@@ -120,26 +123,25 @@ class Galley(Element):
         Composer decides to keep them in tact, instead of select, pick & choose
         elements, until the are all part of a page. In that case the w/h must
         have been set by the Composer to fit the containing page."""
-
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case
+        # view.showElementFrame == True
         view.drawElementFrame(self, p)
 
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
-        context.setFillColor(self.OLD_PAPER_COLOR) # Color of old paper: #F8ECC2
+        self.context.setFillColor(self.OLD_PAPER_COLOR)
         gw, gh = self.getSize()
-        b.rect(px, py, gw, gh)
+        self.context.rect(px, py, gw, gh)
+
         if drawElements:
             hook = 'build_' + self.context.b.PB_ID
-            # Don't call self.buildElements, as we want to track the vertical positions
+            # Don't call self.buildElements, we want to track the vertical
+            # positions.
             gy = 0
             for e in self.elements:
                 if not e.show:
@@ -147,11 +149,13 @@ class Galley(Element):
                 # @@@ Find space and do more composition
                 if hasattr(e, hook):
                     getattr(e, hook)(view, (px, py + gy))
-                else: # No implementation for this context, call default building method for this element.
+                else:
+                    # No implementation for this context, call default building
+                    # method for this element.
                     e.build(view, (px, py + gy))
                 gy += e.h
 
-        if self.drawAfter is not None: # Call if defined
+        if self.drawAfter is not None:
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
@@ -160,7 +164,6 @@ class Galley(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
 
