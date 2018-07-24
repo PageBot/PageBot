@@ -95,9 +95,9 @@ for axisTag in sequenceAxes:
         location = {axisTag: fontSize}
         # Overall style for the frame
         style = dict(rLeading=1.4, fontSize=fontSize*fontSizeFactor,
-            xTextAlign=RIGHT, textFill=Color(1), 
+            xTextAlign=RIGHT, textFill=color(1), 
             testStroke=None,
-            fill=Color(0), location=location)
+            fill=blackColor, location=location)
         
         af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
             w=page.pw, h=page.ph, context=c)

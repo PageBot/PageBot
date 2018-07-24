@@ -25,7 +25,7 @@ print(aa._fill)
             
 # Formatted string without append.
 print(' * Testing without append')
-bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), textFill=Color(1, 1, 0)))
+bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), textFill=color(1, 1, 0)))
 print('style: %s' % bs.style)
 aa = bs.s
 print(aa._font)

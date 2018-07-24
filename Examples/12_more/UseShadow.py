@@ -50,16 +50,16 @@ def makeDocument():
                   Middle2Middle())
     shadow = Shadow(offset=(ShadowOffset, -ShadowOffset),
                     blur=ShadowBlur,
-                    color=Color(0.2, 0.2, 0.2, 0.5))
+                    color=color(0.2, 0.2, 0.2, 0.5))
     textShadow = Shadow(offset=(ShadowTextOffset, -ShadowTextOffset),
                         blur=ShadowTextBlur,
-                        color=Color(0.2, 0.2, 0.2, 0.5))
+                        color=color(0.2, 0.2, 0.2, 0.5))
     fs = c.newString('This is text with a shadow',
                      style=dict(font='Verdana',
                                 fontSize=30,
-                                textFill=Color(0),
+                                textFill=blackColor,
                                 rLeading=1.2))
-    newTextBox(fs, fill=Color(0.8), parent=page,
+    newTextBox(fs, fill=color(0.8), parent=page,
                w=RectSize, h=RectSize, shadow=shadow, textShadow=textShadow,
                conditions=conditions, xAlign=CENTER, yAlign=MIDDLE)
     # Solve the layout conditions of the red rectangle.
