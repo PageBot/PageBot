@@ -17,6 +17,7 @@ from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.typesetter import Typesetter
+from pagebot.toolbox.color import Color
 
 
 W = 400
@@ -27,15 +28,15 @@ ShadowBlur = 10
 ShadowTextOffset = 0
 ShadowTextBlur = 10
 
-markdownPath = 'TOC.md'
+markdownPath = '../TOC.md'
 
 def makeDocument():
 
     doc = Document(originTop=False, w=W, h=H, autoPages=1)
     print(doc.styles.keys())
-    doc.addStyle('h1', dict(textFill=0), force=True)
-    doc.addStyle('h2', dict(textFill=0), force=True)
-    doc.addStyle('p', dict(textFill=0), force=True)
+    doc.addStyle('h1', dict(textFill=Color(0)), force=True)
+    doc.addStyle('h2', dict(textFill=Color(0)), force=True)
+    doc.addStyle('p', dict(textFill=Color(0)), force=True)
 
     page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
@@ -43,7 +44,7 @@ def makeDocument():
     # Make rect as page element centered with centered origin.
     conditions = [Fit()]
 
-    g = Galley(parent=page, conditions=conditions, textFill=0)
+    g = Galley(parent=page, conditions=conditions, textFill=Color(0))
     ts = Typesetter(doc, g)
     print(ts)
     ts.typesetFile(markdownPath)
@@ -65,4 +66,3 @@ def makeDocument():
 
 d = makeDocument()
 d.export('_export/UseMarkdownText.pdf')
-
