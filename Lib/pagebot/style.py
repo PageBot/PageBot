@@ -20,7 +20,7 @@
 #
 import copy
 from pagebot.constants import *
-from pagebot.toolbox.units import pt, em, isUnit
+from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U
 from pagebot.toolbox.color import color, noColor, blackColor, redColor
 
 def newStyle(**kwargs):
@@ -41,8 +41,8 @@ def makeStyle(style=None, **kwargs):
             style[name] = v  # Overwrite value by any arguments, if defined.
     return style
 
-def getRootStyle(u=U, w=W, h=H, **kwargs):
-    """Answer the main root style tha contains all default style attributes of
+def getRootStyle(u=None, w=None, h=None, **kwargs):
+    """Answers the main root style tha contains all default style attributes of
     PageBot. To be overwritten when needed by calling applications.
     CAPITALIZED attribute names are for reference only. Not used directly from
     styles. They can be copied on other style attributes. Note that if the
@@ -55,6 +55,9 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
     >>> rs['pt'] # Padding top: U*7
     42pt
     """
+    if u is None:
+        u = U
+
     # Some calculations to show dependencies.
     defaultLeading = DEFAULT_LEADING
     baselineGrid = BASELINE_GRID
@@ -346,14 +349,14 @@ def getRootStyle(u=U, w=W, h=H, **kwargs):
 
 
     )
+
     # Assume all the other arguments overwriting the default values of the root style,
     for name, value in kwargs.items():
         rs[name] = value
     return rs
 
-
 def css(name, e=None, styles=None, default=None):
-    """Answer the named style values. Search in optional style dict first,
+    """Answers the named style values. Search in optional style dict first,
     otherwise up the parent tree of styles in element e. Both e and style can
     be None. In that case None is answered. Note that this is a generic
     "Cascading style request", outside the realm of HTML/CSS."""
@@ -366,7 +369,6 @@ def css(name, e=None, styles=None, default=None):
     if e is not None:
         return e.css(name)
     return default
-
 
 if __name__ == '__main__':
     import doctest
