@@ -15,7 +15,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.style import ORIGIN
-from pagebot.toolbox.units import units, fr, perc, em, pointOffset
+from pagebot.toolbox.units import units, pointOffset
 from pagebot.toolbox.color import noColor
 
 class Line(Element):
@@ -75,14 +75,14 @@ class Line(Element):
         >>> view = doc.getView()
         >>> e.build(view, pt(0, 0))
 
-        >>> from pagebot.contexts.flatcontext import FlatContext 
+        >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
-        >>> c.newPage(w, h) 
+        >>> c.newPage(w, h)
         >>> e.build(doc.getView(), (0, 0))
         >>> e.xy
         (0pt, 20pt)
@@ -90,11 +90,11 @@ class Line(Element):
         (300pt, 3pt, 0pt)
         """
         context = self.context # Get current context and builder.
-               
+
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
- 
+
         context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
         context.newPath()
         context.moveTo((px, py))
@@ -102,7 +102,7 @@ class Line(Element):
         context.drawPath()
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -113,10 +113,10 @@ class Line(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-  
+
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
-     
+
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
