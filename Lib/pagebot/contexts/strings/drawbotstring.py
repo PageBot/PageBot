@@ -115,7 +115,7 @@ class DrawBotString(BabelString):
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
         # otherwise create it.
-        self.s = s 
+        self.s = s
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
         if style is None:
@@ -341,6 +341,7 @@ class DrawBotString(BabelString):
             axisTag = 'XTRA'
         minValue, defaultValue, maxValue = font.axes[axisTag]
         #print(0, minValue, defaultValue, maxValue )
+
         if h is not None: # Fitting in heigt, calculate/iterate for the fitting font size.
             bs = cls.newString(t, context, e=e, style=style, h=h, pixelFit=pixelFit)
             style['fontSize'] = bs.fittingFontSize
@@ -482,11 +483,8 @@ class DrawBotString(BabelString):
 
 
         if cFill is not inheritColor:
-            print('context fill: %s' % cFill)
             assert isinstance(cFill, Color), ('DrawBotString.newString] Fill color "%s" is not Color in style %s' % (cFill, style))
             context.setTextFillColor(fs, cFill)
-            print('fs fill: ')
-            print(fs._fill)
 
         # Color values for text stroke
         # Color: Stroke the text with this color instance
