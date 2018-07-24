@@ -19,13 +19,12 @@ import codecs
 from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
-from pagebot.toolbox.color import noColor, inheritColor
+from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString
 
 class HtmlBuilder(XmlBuilder):
-    """
-    The HtmlBuilder class implements the standard XHTML tag set with all attributes. No additional
-    whitespace is added. 
+    """The HtmlBuilder class implements the standard XHTML tag set with all
+    attributes. No additional whitespace is added.
 
     >>> from pagebot.toolbox.color import color
     >>> b = HtmlBuilder()
@@ -42,7 +41,7 @@ class HtmlBuilder(XmlBuilder):
     'body {background-color: #FFFF00;}'
     """
     PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
-    
+
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
     # but it can be redefined by the inheriting application class.
@@ -292,7 +291,7 @@ table {
 
     def __init__(self):
         self.resetHtml() # Initialize the HTML output stream.
-        self._cssOut = [] # Keep the collected CSS and JS from elements here. 
+        self._cssOut = [] # Keep the collected CSS and JS from elements here.
         self._jsOut = []
         self._copyPaths = []
         self._initialize()
@@ -362,7 +361,7 @@ table {
     def getJs(self):
         """Answer the flat string of JS."""
         return ''.join(self._jsOut)
-    
+
     def writeJs(self, path):
         """Write the collected set of css JS to path."""
         try:
@@ -460,7 +459,7 @@ table {
             elif style.get('rTracking') is not None:
                 attributes.append('letter-spacing: %sem;' % style['rTracking'])
             if style.get('fill') not in (noColor, None): # Must Color instance
-                attributes.append('background-color: %s;' % style['fill'].css) 
+                attributes.append('background-color: %s;' % style['fill'].css)
             if style.get('textFill') not in (noColor, None): # Must be Color instance
                 attributes.append('color: %s;' % style['textFill'].css)
             value = style.get('transition')
@@ -484,7 +483,7 @@ table {
         is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
         we don't want to support BabelString conversion. They should have been created of the right
         type in the context from the start."""
-        
+
         #if not isinstance(html, str): # It's something else, test on the kind of BabelString.
         #    assert isinstance(html, HtmlString)
         try:
@@ -707,7 +706,7 @@ table {
         """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
- 
+
         >>> b = HtmlBuilder()
         >>> b.compact = True
         >>> b.h2_('Hello world')
@@ -959,7 +958,7 @@ table {
 
     def section(self, **args):
         """
-        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers, 
+        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers,
         or any other sections of the document.
         """
         self.write_tag(u'section', True, args)
@@ -1274,7 +1273,7 @@ table {
         """
         Defines a table header cell in a table. The text within the th element usually renders in bold. If the rolspan
          or colspan are not defined or if their value is 1 then the output is ignored.
-        
+
         <www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/>
         self.th()
             ...
@@ -1598,12 +1597,13 @@ table {
 
     def form(self, cssClass=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
              onsubmit=None, onreset=None, target=None, style=None, cssId=None):
-        """
-        The form element creates a form for user input. A form can contain elements such as textfields, checkboxes and
-        radio-buttons. Forms are used to pass user data to a specified URL.
+        """The form element creates a form for user input. A form can contain
+        elements such as textfields, checkboxes and radio-buttons. Forms are
+        used to pass user data to a specified URL.
+
         <www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/>
 
-        If an upload tag is used in the form, then the enctype attribute should be set to 
+        If an upload tag is used in the form, then the enctype attribute should be set to
         enctype="multipart/form-data"
         self.form(action=e['path'])
             ...

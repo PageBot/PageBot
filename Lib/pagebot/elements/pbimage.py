@@ -17,11 +17,9 @@
 from __future__ import division # Make integer division result in float.
 
 import os
-from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.element import Element
-from pagebot.style import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN # In case no image is defined.
+from pagebot.style import ORIGIN # In case no image is defined.
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt
-from pagebot.conditions import Float2TopSide, Top2TopSide, Fit2Width
 from pagebot.toolbox.color import noColor
 
 
@@ -40,7 +38,7 @@ class Image(Element):
     >>> (e.w, e.h), e.size # Identical result, width is the lead.
     ((512pt, 681.81pt), (512pt, 681.81pt))
     >>> e.h = 800 # Width is proportionally calculated, height is the lead.
-    >>> e.size 
+    >>> e.size
     (600.75pt, 800pt)
     >>> e.h *= 1.5
     >>> e.size, e._w, e._h
@@ -80,14 +78,14 @@ class Image(Element):
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
 
     def _get_size(self):
-        u"""Get/Set the size of the image. If one of (self._w, self._h) values is None, 
+        u"""Get/Set the size of the image. If one of (self._w, self._h) values is None,
         then it is calculated by propertion. If both are None, the original size of the
         image is returned. If both are not None, then that size is answered disproportionally.
         """
         return self.w, self.h
     def _set_size(self, size):
         self._w, self._h, self.d = point3D(size)
-    size = property(_get_size, _set_size)     
+    size = property(_get_size, _set_size)
 
     def _get_size3D(self):
         return self.w, self.h, self.d
@@ -96,7 +94,7 @@ class Image(Element):
     def _get_w(self):
         u"""Get the intended width and calculate the new scale, validating the
         width to the image minimum width and the height to the image minimum height.
-        If not self._h is defined, then the proportion is recalculated, depending on 
+        If not self._h is defined, then the proportion is recalculated, depending on
         the ratio of the image."""
         u = None
         if not self._w: # Width is undefined
@@ -105,13 +103,13 @@ class Image(Element):
             else:
                 u = self.iw # Undefined and without parent, answer original image width.
         else:
-            base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
+            base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.
             u = units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
         return u
     def _set_w(self, w):
         # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
         if w:
-            w = units(w, min=self.minW, max=self.maxW) 
+            w = units(w, min=self.minW, max=self.maxW)
         self._w = w
         self._h = None
     w = property(_get_w, _set_w)
@@ -124,13 +122,13 @@ class Image(Element):
             else:
                 u = self.ih # Undefined and without parent, answer original image width.
         else:
-            base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
+            base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.
             u = units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
         return u
     def _set_h(self, h):
         # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
         if h:
-            h = units(h, min=self.minH, max=self.maxH) 
+            h = units(h, min=self.minH, max=self.maxH)
         self._w = None
         self._h = h
 

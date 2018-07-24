@@ -16,8 +16,8 @@
 #     xxyxyz.org/flat
 #
 #import imageio
-from pagebot.toolbox.units import pt, Pt, units, ru, isUnit, isUnits
-from pagebot.toolbox.color import Color, noColor, color, blackColor
+from pagebot.toolbox.units import pt, units, ru, isUnit, isUnits
+from pagebot.toolbox.color import Color, noColor, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
@@ -528,7 +528,6 @@ class FlatContext(BaseContext):
         self._path.curveTo(ru(bcp1, maker=pt), ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt))
 
     def closePath(self):
-        assert isUnits(p), ('FlatContext.closePath: Values %s must all be of type Unit' % p)
         assert self._path is not None
         self._path.closePath()
 

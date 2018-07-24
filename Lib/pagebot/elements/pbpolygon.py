@@ -17,7 +17,7 @@
 from pagebot.elements.element import Element
 from pagebot.style import XXXL
 from pagebot.toolbox.units import pointOffset
-
+from pagebot.toolbox.color import noColor
 
 class Polygon(Element):
     u"""The Polygon element is a simple implementation of the polygon DrawBot function.
@@ -64,9 +64,9 @@ class Polygon(Element):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
-       
+
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -91,7 +91,7 @@ class Polygon(Element):
 
         # Draw optional bouning box.
         self.drawFrame(origin, view)
- 
+
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -102,5 +102,5 @@ class Polygon(Element):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         # TODO: Needs a solution, SVG or pixels?
-        
+
 

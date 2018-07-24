@@ -19,11 +19,10 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import isUnit, units, Fr, Perc, Em, ru, pt, point3D, pointOffset
+from pagebot.toolbox.units import units, ru, pt, point3D, pointOffset
 from pagebot.toolbox.color import noColor, Color, blackColor
 
 from pagebot.conditions.score import Score
-from pagebot.toolbox.columncalc import x2cx, cx2x, y2cy, cy2y, z2cz, cz2z
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
@@ -4694,8 +4693,8 @@ class Element(object):
         orgW = self.w
         if orgW:
             self.w = self.parent.w - self.parent.pr - self.x
-            self.h = self.h * self.w.pt / orgW.pt     
-            return True 
+            self.h = self.h * self.w.pt / orgW.pt
+            return True
         return False # No original width, cannot calculate due to zero division.
 
     def fit2RightSide(self):

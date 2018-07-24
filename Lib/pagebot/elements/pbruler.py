@@ -18,11 +18,12 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import units
+from pagebot.constants import DEFAULT_HEIGHT
 
 class Ruler(Element):
 
     def _get_h(self):
-        u"""Poperty for the self.h height value 
+        u"""Poperty for the self.h height value
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.document import Document
@@ -38,7 +39,7 @@ class Ruler(Element):
         >>> e.h, e.style['h'], e.style['strokeWidth'] # Identical
         (3mm, 3mm, 3mm)
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.        
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('strokeWidth', 0), base=base, min=self.minH, max=self.maxH)
     def _set_h(self, h): # Overwrite style from here.
         self.style['h'] = self.style['strokeWidth'] = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
@@ -65,14 +66,14 @@ class Ruler(Element):
         >>> view = doc.getView()
         >>> e.build(view, (0, 0))
 
-        >>> from pagebot.contexts.flatcontext import FlatContext 
+        >>> from pagebot.contexts.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
-        >>> c.newPage(w, h) 
+        >>> c.newPage(w, h)
         >>> e.build(doc.getView(), pt(0, 0))
         >>> e.xy
         (0pt, 20pt)
@@ -82,14 +83,14 @@ class Ruler(Element):
         context = self.context # Get current context and builder.
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         sIndent = self.css('indent')
         sTailIndent = self.css('tailIndent')
         w = self.w - sIndent - sTailIndent
- 
+
          # Let the view draw frame info for debugging, in case view.showElementFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -106,7 +107,7 @@ class Ruler(Element):
 
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
-      
+
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
@@ -129,7 +130,7 @@ class Ruler(Element):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
- 
+
         self.build_css(view)
         context.setFillColor(None)
         context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
