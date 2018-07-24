@@ -57,7 +57,7 @@ def makeDocument():
     fs = c.newString('This is text with a shadow',
                      style=dict(font='Verdana',
                                 fontSize=30,
-                                textFill=0,
+                                textFill=Color(0),
                                 rLeading=1.2))
     newTextBox(fs, fill=Color(0.8), parent=page,
                w=RectSize, h=RectSize, shadow=shadow, textShadow=textShadow,
