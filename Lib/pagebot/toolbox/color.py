@@ -217,7 +217,7 @@ def rgb2Spot(rgb):
     >>> rgb = color(spot=300).rgb
     >>> color(rgb=rgb).spot
     300
-    >>> color(rgb=Color(spot=110).rgb).spot # Double direction conversion test.
+    >>> color(rgb=color(spot=110).rgb).spot # Double direction conversion test.
     110
     """
     foundSpot = None
@@ -254,7 +254,7 @@ def cmyk2Spot(cmyk):
     >>> cmyk = color(spot=300).cmyk
     >>> #Color(cmyk=cmyk).spot # TODO: answers 285. Roundings?
     300
-    >>> #Color(cmyk=Color(spot=110).cmyk).spot # Double direction conversion test.
+    >>> #Color(cmyk=color(spot=110).cmyk).spot # Double direction conversion test.
     110
     """
     return rgb2Spot(cls.cmyk2Rgb(spot), default=default)
@@ -609,7 +609,7 @@ class Color(object):
         Color(r=0.6, g=0.7, b=0.8, a=0.1)
         >>> color(c=0.1, m=0.2, y=0, k=0.4).rgba
         (0.54, 0.48, 0.6, 1)
-        >>> color(rgb=Color(spot=110).rgba).spot # Bi-directional test.
+        >>> color(rgb=color(spot=110).rgba).spot # Bi-directional test.
         110
         """
         r, g, b = self.rgb
@@ -738,7 +738,7 @@ class Color(object):
         'FFFFFF'
         >>> color(c=1, m=0, y=0.5, k=0.1).hex # Conversion of cmyk via rgb to hex code.
         '00E673'
-        >>> color(0).hex
+        >>> blackColor.hex
         '000000'
         """
         r, g, b = self.rgb # Make conversion, in case color base is not rgb
@@ -809,9 +809,9 @@ class Color(object):
     def lighter(self, v=0.5):
         """Answers the color lighter than self. This converts to internal rgb storage.
 
-        >>> color(0).lighter()
+        >>> blackColor.lighter()
         Color(r=0.5, g=0.5, b=0.5)
-        >>> color(0).lighter(0.8)
+        >>> blackColor.lighter(0.8)
         Color(r=0.8, g=0.8, b=0.8)
         >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lighter() # Color changes conver to RGB mode.
         Color(r=0.77, g=0.74, b=0.71)

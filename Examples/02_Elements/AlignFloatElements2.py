@@ -84,7 +84,7 @@ def makeDocument():
                   (Float2Right(), Middle2Middle())]
     for condition in conditions:
         newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
-                conditions=condition, fill=Color(1, 1, 0))
+                conditions=condition, fill=color(1, 1, 0))
         z += z
 
     sideConditions = [(Center2Center(), Float2TopSide()),
@@ -93,7 +93,7 @@ def makeDocument():
                       (Float2RightSide(), Middle2Middle())]
     for condition in sideConditions:
         newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
-                conditions=condition, fill=Color(0.5, 1, 0))
+                conditions=condition, fill=color(0.5, 1, 0))
         z += 1
 
     cornerConditions = [(Float2LeftSide(), Float2TopSide()),

@@ -55,8 +55,8 @@ class FontIcon(Element):
         >>> font = getFont(path)
         >>> iw, ih = w/4, h/4
         >>> x, y = w/8, h/8
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=color(0), strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=color(0),parent=page)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=page, stroke=blackColor, strokeWidth=3)
+        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=blackColor,parent=page)
         >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=color(0.5), earSize=0.3, earLeft=True, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=color(1), strokeWidth=3)
         >>> doc.export('_export/FontIconTest.pdf')
         """
@@ -72,10 +72,10 @@ class FontIcon(Element):
         self.label = label # Optiona second label line
         self.c = c # Character(s) in the icon.
         if cFill is None:
-            cFill = color(0)
+            cFill = blackColor
         self.cFill = cFill
         if cStroke is None:
-            cStroke = color(0)
+            cStroke = blackColor
         self.cStroke = cStroke
         self.cStrokeWidth = cStrokeWidth or pt(1)
         self.scale = s
@@ -174,7 +174,7 @@ class FontIcon(Element):
         if self.title:
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -184,7 +184,7 @@ class FontIcon(Element):
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -193,7 +193,7 @@ class FontIcon(Element):
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()

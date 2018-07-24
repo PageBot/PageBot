@@ -77,10 +77,10 @@ class BarChart(Rect):
         """
         d = dict(cssClass=cssClass, 
             border=self.css('border', 'black solid 1px'),
-            fill=Color(rgb=self.css('fill', 0xF0F0F0)).css,
-            barFill=Color(rgb=self.css('barFill', 0x2030A0)).css,
+            fill=color(rgb=self.css('fill', 0xF0F0F0)).css,
+            barFill=color(rgb=self.css('barFill', 0x2030A0)).css,
             textAlign=self.css('xTextAlign', RIGHT),
-            textFill=Color(rgb=self.css('textFill', 0xFF00FF)).css,
+            textFill=color(rgb=self.css('textFill', 0xFF00FF)).css,
             fontSize=self.css('fontSize', 10),
             padding='%s %s %s %s' % (px(self.pt), px(self.pr), px(self.pb), px(self.pl)),
             margin='%s %s %s %s' % (px(self.mt), px(self.mr), px(self.mb), px(self.ml)),

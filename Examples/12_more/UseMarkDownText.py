@@ -33,9 +33,9 @@ def makeDocument():
 
     doc = Document(originTop=False, w=W, h=H, autoPages=1)
     #print(doc.styles.keys())
-    doc.addStyle('h1', dict(textFill=Color(0)), force=True)
-    doc.addStyle('h2', dict(textFill=Color(0)), force=True)
-    doc.addStyle('p', dict(textFill=Color(0)), force=True)
+    doc.addStyle('h1', dict(textFill=blackColor), force=True)
+    doc.addStyle('h2', dict(textFill=blackColor), force=True)
+    doc.addStyle('p', dict(textFill=blackColor), force=True)
 
 
     page = doc[1] # Get the first/single page of the document.
@@ -43,7 +43,7 @@ def makeDocument():
     
     # Make rect as page element centered with centered origin.
     conditions = [Fit()]
-    g = Galley(parent=page, conditions=conditions, textFill=Color(0))
+    g = Galley(parent=page, conditions=conditions, textFill=blackColor)
     ts = Typesetter(doc, g)
     ts.typesetFile(markdownPath)
 

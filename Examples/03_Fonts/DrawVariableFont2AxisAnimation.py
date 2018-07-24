@@ -23,7 +23,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import color, blackColor
 from pagebot.style import CENTER
 
 c = getContext()
@@ -121,7 +121,7 @@ class FontIcon(object):
         labelSize = e
         bs = c.newString(self.c,
                                style=dict(font=self.f.path,
-                                          textFill=Color(0),
+                                          textFill=blackColor,
                                           fontSize=h*2/3))
         tw, th = bs.textSize()
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
@@ -129,7 +129,7 @@ class FontIcon(object):
         if self.title:
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=Color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -139,7 +139,7 @@ class FontIcon(object):
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=Color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
@@ -148,7 +148,7 @@ class FontIcon(object):
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
-                                              textFill=Color(0),
+                                              textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()

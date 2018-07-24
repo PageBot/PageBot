@@ -26,7 +26,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import color, blackColor
 
 c = getContext()
 W =H = 500
@@ -102,7 +102,7 @@ class FontIcon(object):
     def draw(self, orgX, orgY):
         """Draws a font icon"""
         
-        bs = c.newString('Book Cover', style=dict(font='Georgia', fontSize=pt(50), fill=Color(0)))
+        bs = c.newString('Book Cover', style=dict(font='Georgia', fontSize=pt(50), fill=blackColor))
         c.text(bs, (100, 100))   
         return
         
@@ -138,7 +138,7 @@ class FontIcon(object):
         labelSize = e
         bs = c.newString(self.char,
                          style=dict(font=self.f.path,
-                                    textFill=Color(0),
+                                    textFill=blackColor,
                                     fontSize=h*2/3))
         tw, th = c.textSize(bs)
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
@@ -151,11 +151,11 @@ class FontIcon(object):
         if self.title:
             bs = c.newString(self.title,
                              style=dict(font=self.labelFont.path,
-                             textFill=Color(0),
+                             textFill=blackColor,
                              rTracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
             tw, th = c.textSize(bs)
-            c.textFill=Color(0),
+            c.textFill=blackColor,
             c.text(bs, (pt(w/2-tw/2), pt(self.ih+th/2)))
             text(bs.s, (w/2-tw/2, self.ih+th/2))
 
@@ -164,7 +164,7 @@ class FontIcon(object):
         if self.name:
             bs = c.newString(self.name,
                              style=dict(font=self.labelFont.path,
-                                        textFill=Color(0),
+                                        textFill=blackColor,
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
@@ -175,7 +175,7 @@ class FontIcon(object):
         if self.label:
             bs = c.newString(self.label,
                              style=dict(font=self.labelFont.path,
-                                        textFill=Color(0),
+                                        textFill=blackColor,
                                         rTracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
@@ -215,7 +215,7 @@ class KeyFrame(object):
             
             # Formatted string without append.
             print(' * Testing without append')
-            bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=Color(0)))
+            bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=blackColor))
             print('style: %s' % bs.style)
             aa = bs.s
             print(aa._font)
@@ -299,7 +299,7 @@ def drawBackground1(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                fill=Color(1, 0, 0)))
+                                fill=color(1, 0, 0)))
     c.textBox(bs, (50, H-60, 200, 50))
 
 def drawBackground2(keyFrame, frame):
@@ -309,7 +309,7 @@ def drawBackground2(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                fill=Color(1, 0, 0)))
+                                fill=color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawBackground3(keyFrame, frame):
@@ -319,7 +319,7 @@ def drawBackground3(keyFrame, frame):
                      style=dict(font=LABEL_FONT.path,
                                 rLeading=1.2,
                                 fontSize=18,
-                                textFill=Color(1, 0, 0)))
+                                textFill=color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
 
 def drawAnimation():

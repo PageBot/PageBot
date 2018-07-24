@@ -100,8 +100,8 @@ for axisTag in sequenceAxes:
         # Variable Font location for this frame sample
         location = {axisTag: phisin*axisRange+minValue}
         # Overall style for the frame
-        style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, textFill=Color(1), 
-            fill=Color(0), location=location)
+        style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, textFill=color(1), 
+            fill=blackColor, location=location)
         
         af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, padding=20, style=style, 
             w=page.pw, h=page.ph, context=c)

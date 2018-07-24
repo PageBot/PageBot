@@ -283,7 +283,7 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (pn, d, title)
             if page.name:
                 s += ' | ' + page.name
-            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=color(0), fontSize=fontSize))
+            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=blackColor, fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
@@ -436,7 +436,7 @@ class PageView(BaseView):
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
                 context.setFillColor(noColor)
-                context.setStrokeColor(color(0), w=0.25)
+                context.setStrokeColor(blackColor, w=0.25)
                 S = self.css('viewInfoOriginMarkerSize', 4)
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
@@ -482,7 +482,7 @@ class PageView(BaseView):
         if self.showElementOrigin:
             # Draw origin of the element
             context.setFillColor(color(0.5, 0.5, 0.5, 0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            context.setStrokeColor(color(0), 0.25)
+            context.setStrokeColor(blackColor, 0.25)
             context.oval(px-S, py-S, 2*S, 2*S)
             context.line((px-S, py), (px+S, py))
             context.line((px, py-S), (px, py+S))
@@ -528,7 +528,7 @@ class PageView(BaseView):
                 context.rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
             context.setFillColor(noColor)
-            context.setStrokeColor(color(0), pt(0.5))
+            context.setStrokeColor(blackColor, pt(0.5))
             context.rect(px, py, self.w, self.h)
             context.newPath()
             context.moveTo((px, py))
@@ -598,7 +598,7 @@ class PageView(BaseView):
                         context.rect(ox+cx, oy+cy, cw, ch)
 
             gridStrokeColor = self.css('viewGridStroke', noColor)
-            gridStrokeWidth = self.css('viewGridStrokeWidth', color(0))
+            gridStrokeWidth = self.css('viewGridStrokeWidth', blackColor)
             if gridStrokeColor != noColor and gridStrokeWidth:
                 context.fill(noColor)
                 context.stroke(gridStrokeColor, gridStrokeWidth)
