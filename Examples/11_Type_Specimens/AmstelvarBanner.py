@@ -20,15 +20,14 @@ from pagebot.document import Document
 from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
+from pagebot.toolbox.color import Color
 
 class AnimatedBannerFrame(AnimationFrame):
 
      def drawAnimatedFrame(self, view, origin):
             """Draw the content of the element, responding to size, styles, font and content.
             Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
-            if the axis exists.
-
-            """
+            if the axis exists."""
             ox, oy, _ = origin
             c = self.context
             # Make the instance for the style holding the location
@@ -95,9 +94,10 @@ for axisTag in sequenceAxes:
         # Variable Font location for this frame sample
         location = {axisTag: fontSize}
         # Overall style for the frame
-        style = dict(rLeading=1.4, fontSize=fontSize*fontSizeFactor, xTextAlign=RIGHT, textFill=1, 
+        style = dict(rLeading=1.4, fontSize=fontSize*fontSizeFactor,
+            xTextAlign=RIGHT, textFill=Color(1), 
             testStroke=None,
-            fill=0, location=location)
+            fill=Color(0), location=location)
         
         af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
             w=page.pw, h=page.ph, context=c)

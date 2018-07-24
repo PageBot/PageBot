@@ -167,8 +167,6 @@ class DrawBotContext(BaseContext):
         >>> #context.rect(0, 0, 100, 100)
         """
         assert isUnits(x, y, w, h), ('DrawBotContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
-        print('bla')
-        print(x.pt)
         self.b.rect(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
 
     def oval(self, x, y, w, h):
