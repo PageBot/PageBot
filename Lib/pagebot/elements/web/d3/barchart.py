@@ -15,17 +15,17 @@
 #
 #     barchart.py
 #
-#     U N D E R  D E V E L O P M E N T 
+#     U N D E R  D E V E L O P M E N T
 #
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements import Rect
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, color
 from pagebot.style import RIGHT
 from pagebot.toolbox.units import px
 
 class BarChart(Rect):
-    u"""Draw a bar chart based on data.
+    """Draw a bar chart based on data.
 
     """
     def __init__(self, data=None, **kwargs):
@@ -35,7 +35,7 @@ class BarChart(Rect):
         self.data = data
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
+        """Build the HTML/CSS navigation, depending on the pages in the root document.
 
         >>> from random import shuffle
         >>> from pagebot.document import Document
@@ -75,7 +75,7 @@ class BarChart(Rect):
           color: %(textFill)s;
         }
         """
-        d = dict(cssClass=cssClass, 
+        d = dict(cssClass=cssClass,
             border=self.css('border', 'black solid 1px'),
             fill=color(rgb=self.css('fill', 0xF0F0F0)).css,
             barFill=color(rgb=self.css('barFill', 0x2030A0)).css,

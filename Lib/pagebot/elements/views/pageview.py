@@ -21,7 +21,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import color, noColor, grayColor
+from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
