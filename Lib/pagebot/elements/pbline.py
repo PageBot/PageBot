@@ -87,7 +87,7 @@ class Line(Element):
         >>> e.xy
         (0pt, 20pt)
         >>> e.size3D
-        (300pt, 3pt, 0pt)
+        (300pt, 3pt, 100pt)
         """
         context = self.context # Get current context and builder.
 

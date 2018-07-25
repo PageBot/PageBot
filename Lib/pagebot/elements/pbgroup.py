@@ -48,7 +48,7 @@ class Group(Rect):
     >>> e.xy, e.xyz
     ((0pt, 20pt), (0pt, 20pt, 0pt))
     >>> e.size, e.size3D
-    ((300pt, 100pt), (300pt, 100pt, 0pt))
+    ((300pt, 100pt), (300pt, 100pt, 100pt))
 
     """
 
