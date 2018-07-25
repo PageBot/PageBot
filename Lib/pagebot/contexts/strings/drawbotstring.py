@@ -29,7 +29,7 @@ from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
-from pagebot.toolbox.color import Color, color, noColor, inheritColor, blackColor
+from pagebot.toolbox.color import Color, noColor, inheritColor, blackColor
 from pagebot.toolbox.units import pt, isUnit
 
 def pixelBounds(fs):

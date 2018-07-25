@@ -28,7 +28,7 @@ from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import Pt
-from pagebot.toolbox.color import noColor, blackColor
+from pagebot.toolbox.color import noColor, blackColor, Color
 
 class InDesignContext(BaseContext):
     """A InDesignContext instance combines the specific functions of the InDesign JS-API
