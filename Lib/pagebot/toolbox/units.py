@@ -159,7 +159,7 @@ def ru(u, *args, **kwargs):
     >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt)
     (100, 121, (60, 72, 360))
     >>> ru(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (5.0, 121, (5, 6, 30.0))
+    (5, 121, (5, 6, 30))
     >>> ru(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
     (10, 20, (30, 40))
     """
@@ -940,8 +940,8 @@ def pt(v, *args, **kwargs):
         if v.endswith(Pt.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Pt(v, min=minV, max=maxV)
-        else: # Something else, recursively try again.
+                u = Pt(asIntOrFloat(v), min=minV, max=maxV)
+        else: # Something else, recursively try again, force to pt.
             u = pt(units(v), min=minV, max=maxV)
     return u
 

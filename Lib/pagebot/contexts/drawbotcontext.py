@@ -343,23 +343,23 @@ class DrawBotContext(BaseContext):
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
-            if not gradient.colors[0].isCmyk:
-                colors = [color.rgb for color in gradient.colors]
-                b.linearGradient(startPoint=start, endPoint=end,
-                    colors=colors, locations=gradient.locations)
-            else:
+            if gradient.colors[0].isCmyk:
                 colors = [color.cmyk for color in gradient.colors]
                 b.cmykLinearGradient(startPoint=start, endPoint=end,
                     colors=colors, locations=gradient.locations)
-        else: # Gradient must be radial.
-            if not gradient.colors[0].isCmyk:
+            else:
                 colors = [color.rgb for color in gradient.colors]
-                b.radialGradient(startPoint=start, endPoint=end,
+                b.linearGradient(startPoint=start, endPoint=end,
+                    colors=colors, locations=gradient.locations)
+        else: # Gradient must be radial.
+            if gradient.colors[0].isCmyk:
+                colors = [color.cmyk for color in gradient.colors]
+                b.cmykRadialGradient(startPoint=start, endPoint=end,
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
-                colors = [color.cmyk for color in gradient.colors]
-                b.cmykRadialGradient(startPoint=start, endPoint=end,
+                colors = [color.rgb for color in gradient.colors]
+                b.radialGradient(startPoint=start, endPoint=end,
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 

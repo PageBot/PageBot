@@ -257,7 +257,7 @@ def cmyk2Spot(cmyk):
     >>> #Color(cmyk=color(spot=110).cmyk).spot # Double direction conversion test.
     110
     """
-    return rgb2Spot(cmyk2Rgb(spot), default=default)
+    return rgb2Spot(cmyk2Rgb(cmyk))
 
 def name2Rgb(name):
     """Method to convert a name to rgb. Answer None if no rgb can be found.

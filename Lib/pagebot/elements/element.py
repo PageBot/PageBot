@@ -24,7 +24,8 @@ from pagebot.toolbox.color import noColor, Color, blackColor
 
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
-                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
+                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, 
+                           MIN_X, MIN_Y, MIN_Z, MIN_P, MAX_X, MAX_Y, MAX_Z, MAX_P,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
                            MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_FONT_SIZE,
                            DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
@@ -1363,7 +1364,7 @@ class Element(object):
         Some situations require the rendered value, by in case of CSS, the relative value
         should be maintained. Then the current parent total reference is not important.
 
-        >>> from pagebot.toolbox.units import fr
+        >>> from pagebot.toolbox.units import fr, isUnit
         >>> e = Element(x=100, w=400)
         >>> e.x, e.y, e.z
         (100pt, 0pt, 0pt)
@@ -1384,7 +1385,7 @@ class Element(object):
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('x'), base=base)
+        return units(self.style.get('x'), base=base, min=self.minX, max=self.maxX)
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
         self.style['x'] = units(x)
@@ -1408,7 +1409,7 @@ class Element(object):
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('y'), base=base)
+        return units(self.style.get('y'), base=base, min=self.minY, max=self.maxY)
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
@@ -1439,7 +1440,7 @@ class Element(object):
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('z'), base=base)
+        return units(self.style.get('z'), base=base, min=self.minZ, max=self.maxZ)
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
         self.style['z'] = units(z)
@@ -1592,9 +1593,9 @@ class Element(object):
     def _set_left(self, x):
         xAlign = self.xAlign
         if xAlign == CENTER:
-            self.x = x + self.w/2
+            self.x = units(x) + self.w/2
         elif xAlign == RIGHT:
-            self.x = x + self.w
+            self.x = units(x) + self.w
         else:
             self.x = x
     left = property(_get_left, _set_left)
@@ -1671,9 +1672,9 @@ class Element(object):
     def _set_right(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
-            self.x = x - self.w # Creates a unit, even wht x is a number.
+            self.x = units(x) - self.w # Creates a unit, even wht x is a number.
         elif xAlign == CENTER:
-            self.x = x - self.w/2 # Creates a unit, even wht x is a number.
+            self.x = units(x) - self.w/2 # Creates a unit, even wht x is a number.
         else:
             self.x = x # Automatic conversion to pt-units, in case x is a number.
     right = property(_get_right, _set_right)
@@ -1693,7 +1694,7 @@ class Element(object):
         """
         return self.right + self.mr
     def _set_mRight(self, x):
-        self.right = x + self.mr
+        self.right = units(x) + self.mr
     mRight = property(_get_mRight, _set_mRight)
 
     # Vertical
@@ -1723,12 +1724,12 @@ class Element(object):
         """Shift the element so self.top == y."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
-            self.y = y + self.h/2
+            self.y = units(y) + self.h/2
         elif yAlign == BOTTOM:
             if self.originTop:
-                self.y = y + self.h
+                self.y = units(y) + self.h
             else:
-                self.y = y - self.h
+                self.y = units(y) - self.h
         else:
             self.y = y
     top = property(_get_top, _set_top)
@@ -1739,9 +1740,9 @@ class Element(object):
         return self.top + self.mt
     def _set_mTop(self, y):
         if self.originTop:
-            self.top = y + self.mt
+            self.top = units(y) + self.mt
         else:
-            self.top = y - self.mt
+            self.top = units(y) - self.mt
     mTop = property(_get_mTop, _set_mTop)
 
     def _get_middle(self):
@@ -1771,14 +1772,14 @@ class Element(object):
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
-                self.y = y - self.h/2
+                self.y = units(y) - self.h/2
             else:
-                self.y = y + self.h/2
+                self.y = units(y) + self.h/2
         elif yAlign == BOTTOM:
             if self.originTop:
-                self.y = y + self.h/2
+                self.y = units(y) + self.h/2
             else:
-                self.y = y - self.h/2
+                self.y = units(y) - self.h/2
         else:
             self.y = y
     middle = property(_get_middle, _set_middle)
@@ -1808,9 +1809,9 @@ class Element(object):
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
-                self.y = y - self.h
+                self.y = units(y) - self.h
             else:
-                self.y = y + self.h
+                self.y = units(y) + self.h
         elif yAlign == MIDDLE:
             self.y = y - self.h/2
         else:
@@ -1823,9 +1824,9 @@ class Element(object):
         return self.bottom - self.mb
     def _set_mBottom(self, y):
         if self.originTop:
-            self.bottom = y - self.mb
+            self.bottom = units(y) - self.mb
         else:
-            self.bottom = y + self.mb
+            self.bottom = units(y) + self.mb
     mBottom = property(_get_mBottom, _set_mBottom)
 
     # Depth, running  in vertical z-axis dirction. Viewer is origin, posistive value is perpendicular to the screen.
@@ -1841,9 +1842,9 @@ class Element(object):
     def _set_front(self, z):
         zAlign = self.css('zAlign')
         if zAlign == MIDDLE:
-            self.z = z + self.d/2
+            self.z = units(z) + self.d/2
         elif zAlign == BACK:
-            self.z = z + self.d
+            self.z = units(z) + self.d
         else:
             self.z = z
     front = property(_get_front, _set_front)
@@ -1851,7 +1852,7 @@ class Element(object):
     def _get_mFront(self): # Front, including front margin
         return self.front + self.css('mzf')
     def _set_mFront(self, z):
-        self.front = z + self.css('mzf')
+        self.front = units(z) + self.css('mzf')
     mFront = property(_get_mFront, _set_mFront)
 
     def _get_back(self):
@@ -1864,9 +1865,9 @@ class Element(object):
     def _set_back(self, z):
         zAlign = self.css('zAlign')
         if zAlign == MIDDLE:
-            self.z = z - self.d/2
+            self.z = units(z) - self.d/2
         elif zAlign == FRONT:
-            self.z = z - self.d
+            self.z = units(z) - self.d
         else:
             self.z = z
     back = property(_get_back, _set_back)
@@ -1874,7 +1875,7 @@ class Element(object):
     def _get_mBack(self): # Front, including front margin
         return self.back - self.css('mzb')
     def _set_mBack(self, z):
-        self.back = z - self.css('mzb')
+        self.back = units(z) - self.css('mzb')
     mBack = property(_get_mBack, _set_mBack)
 
     # Borders
@@ -3122,12 +3123,14 @@ class Element(object):
         >>> e = Element(w=500, h=500)
         >>> e.padding = 10
         >>> e.paddedBox
-        (10pt, 10pt, 480pt, 480pt)
+        ((10pt, 10pt), (480pt, 480pt))
         >>> e.padding = '10%'
         >>> e.padding
         (10%, 10%, 10%, 10%)
-        >>> e.paddedBox, ru(e.paddedBox)
-        ((50pt, 50pt, 400pt, 400pt), (50, 50, 400, 400))
+        >>> e.paddedBox
+        ((50pt, 50pt), (400pt, 400pt))
+        >>> ru(e.paddedBox)
+        ((50, 50), (400, 400))
         """
         pl = self.pl
         pt = self.pt # pt is abbreviation from padding-top here, not points.
@@ -3136,7 +3139,7 @@ class Element(object):
             y = self.y - pt
         else:
             y = self.y + pb
-        return (self.x + pl, y, self.w - pl - self.pr, self.h - pt - pb)
+        return (self.x + pl, y), (self.w - pl - self.pr, self.h - pt - pb)
     paddedBox = property(_get_paddedBox)
 
     def _get_paddedBox3D(self):
@@ -3145,17 +3148,21 @@ class Element(object):
 
         >>> e = Element(w=500, h=500, d=500)
         >>> e.padding3D = 10
-        >>> e.paddedBox3D, ru(e.paddedBox3D)
-        ((10pt, 10pt, 10pt, 480pt, 480pt, 480pt), (10, 10, 10, 480, 480, 480))
+        >>> e.paddedBox3D
+        ((10pt, 10pt, 10pt), (480pt, 480pt, 480pt))
+        >>> ru(e.paddedBox3D)
+        ((10, 10, 10), (480, 480, 480))
         >>> e.padding3D = '10%'
         >>> e.padding3D
         (10%, 10%, 10%, 10%, 10%, 10%)
-        >>> e.paddedBox3D, ru(e.paddedBox3D)
-        ((50pt, 50pt, 50pt, 400pt, 400pt, 400pt), (50, 50, 50, 400, 400, 400))
+        >>> e.paddedBox3D
+        ((50pt, 50pt, 50pt), (400pt, 400pt, 400pt))
+        >>> ru(e.paddedBox3D)
+        ((50, 50, 50), (400, 400, 400))
         """
-        x, y, w, h = self.paddedBox
+        (x, y), (w, h) = self.paddedBox
         pzf = self.pzf
-        return x, y, self.z + pzf, w, h, self.d - pzf - self.pzb
+        return (x, y, self.z + pzf), (w, h, self.d - pzf - self.pzb)
     paddedBox3D = property(_get_paddedBox3D)
 
     # PDF naming: MediaBox is highlighted with a magenta rectangle, the BleedBox with a cyan
@@ -3179,10 +3186,11 @@ class Element(object):
         >>> e.block3D
         (10pt, 12pt, 14pt, 0, 0, 0)
         """
-        x1 = y1 = z1 = XXXL
-        x2 = y2 = z2 = -XXXL
+        x1, y1, z1 = self.maxP
+        x2, y2, z2 = self.minP
         if not self.elements:
-            return 0, 0, 0, 0, 0, 0
+            # No element, answer vacuum block (x, y, z), (w, h, d)
+            return pt(0, 0, 0), pt(0, 0, 0)
         for e in self.elements:
             x1 = min(x1, e.left)
             x2 = max(x2, e.right)
@@ -3195,7 +3203,7 @@ class Element(object):
             z1 = min(z1, e.front)
             z2 = max(z2, e.back)
 
-        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+        return (x1, y1, z1), (x2 - x1, y2 - y1, z2 - z1)
     block3D = property(_get_block3D)
 
     def _get_block(self):
@@ -3214,10 +3222,11 @@ class Element(object):
 
     def _get_marginBlock3D(self):
         """Answer the vacuum 3D bounding box around all child elements."""
-        x1 = y1 = z1 = XXXL
-        x2 = y2 = z2 = -XXXL
+        x1, y1, z1 = self.maxP
+        x2, y2, z2 = self.minP
         if not self.elements:
-            return 0, 0, 0, 0, 0, 0
+            # No element, answer vacuum block (x, y, z, w, h, d)
+            return pt(0, 0, 0), pt(0, 0, 0)
         for e in self.elements:
             x1 = min(x1, e.left - e.ml)
             x2 = max(x2, e.right + e.mr)
@@ -3230,22 +3239,23 @@ class Element(object):
             z1 = min(z1, e.front - e.zmf)
             z2 = max(z2, e.back - e.zmb)
 
-        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+        return (x1, y1, z1), (x2 - x1, y2 - y1, z2 - z1)
     marginBlock3D = property(_get_marginBlock3D)
 
     def _get_marginBlock(self):
         """Answer the vacuum bounding box around all child elements in 2D"""
-        x, y, _, w, h, _ = self._get_marginBlock3D()
-        return x, y, w, h
+        (x, y, _), (w, h, _) = self._get_marginBlock3D()
+        return (x, y), (w, h)
     marginBlock = property(_get_marginBlock)
 
     def _get_paddedBlock3D(self):
         """Answer the vacuum 3D bounding box around all child elements,
         subtracting their paddings. Sizes cannot become nextive."""
-        x1 = y1 = z1 = XXXL
-        x2 = y2 = z2 = -XXXL
+        x1, y1, z1 = self.maxP
+        x2, y2, z2 = self.minP
         if not self.elements:
-            return 0, 0, 0, 0, 0, 0
+            # No element, answer vacuum block (x, y, z), (w, h, d)
+            return pt(0, 0, 0), pt(0, 0, 0) 
         for e in self.elements:
             x1 = max(x1, e.left + e.pl)
             x2 = min(x2, e.right - e.pl)
@@ -3265,19 +3275,19 @@ class Element(object):
             y1 = y2 = (y1 + y2)/2 # Middle the y position
         if z2 < z1: # If overlap
             z1 = z2 = (z1 + z2)/2 # Middle the z position
-        return x1, y1, z1, x2 - x1, y2 - y1, z2 - z1
+        return (x1, y1, z1), (x2 - x1, y2 - y1, z2 - z1)
     paddedBlock3D = property(_get_paddedBlock3D)
 
     def _get_paddedBlock(self):
         """Answer the vacuum bounding box around all child elements in 2D"""
-        x, y, _, w, h, _ = self._get_paddedBlock3D()
-        return x, y, w, h
+        (x, y, _), (w, h, _) = self._get_paddedBlock3D()
+        return (x, y), (w, h)
     paddedBlock = property(_get_paddedBlock)
 
     def _get_originsBlock3D(self):
         """Answer (minX, minY, maxX, maxY, minZ, maxZ) for all element origins."""
-        minX = minY = XXXL
-        maxX = maxY = -XXXL
+        minX, minY, minZ = self.maxP
+        maxX, maxY, maxZ = self.minP
         for e in self.elements:
             minX = min(minX, e.x)
             maxX = max(maxX, e.x)
@@ -3285,15 +3295,69 @@ class Element(object):
             maxY = max(maxY, e.y)
             minZ = min(minZ, e.z)
             maxZ = max(maxZ, e.z)
-        return minX, minY, minZ, maxX, maxY, maxZ
+        return (minX, minY, minZ), (maxX, maxY, maxZ)
     originsBlock3D = property(_get_originsBlock3D)
 
     def _get_originsBlock(self):
         minX, minY, _, maxX, maxY, _ = self._get_originsBlock3D()
-        return minX, minY, maxX, maxY
+        return (minX, minY), (maxX, maxY)
     originsBlock = property(_get_originsBlock)
 
-    # Size limits
+    # Size and position limits
+
+    def _get_minX(self):
+        return units(self.css('minX', MIN_X))
+    def _set_minX(self, minX):
+        self.style['minX'] = u = units(minX) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minX "%s" must be an absolute unit.' % minX)
+    minX = property(_get_minX, _set_minX)
+
+    def _get_minY(self):
+        return units(self.css('minY', MIN_Y))
+    def _set_minY(self, minY):
+        self.style['minY'] = u = units(minY) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minY "%s" must be an absolute unit.' % minY)
+    minY = property(_get_minY, _set_minY)
+
+    def _get_minZ(self):
+        return units(self.css('minZ', MIN_Z))
+    def _set_minZ(self, minZ):
+        self.style['minZ'] = u = units(minZ) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.minZ "%s" must be an absolute unit.' % minZ)
+    minZ = property(_get_minZ, _set_minZ)
+
+    def _get_minP(self):
+        return self.minX, self.minY, self.minZ
+    def _set_minP(self, minP):
+        self.minX, self.minY, self.minZ = minP
+    minP = property(_get_minP, _set_minP)
+
+    def _get_maxX(self):
+        return units(self.css('maxX', MAX_X))
+    def _set_maxX(self, maxX):
+        self.style['maxX'] = u = units(maxX) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxX "%s" must be an absolute unit.' % maxX)
+    maxX = property(_get_maxX, _set_maxX)
+
+    def _get_maxY(self):
+        return units(self.css('maxY', MAX_Y))
+    def _set_maxY(self, maxY):
+        self.style['maxY'] = u = units(maxY) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxY "%s" must be an absolute unit.' % maxY)
+    maxY = property(_get_maxY, _set_maxY)
+
+    def _get_maxZ(self):
+        return units(self.css('maxZ', MAX_Z))
+    def _set_maxZ(self, maxZ):
+        self.style['maxZ'] = u = units(maxZ) # Set on local style, shielding parent self.css value.
+        assert u.isAbsolute, ('Element.maxZ "%s" must be an absolute unit.' % maxZ)
+    maxZ = property(_get_maxZ, _set_maxZ)
+
+    def _get_maxP(self):
+        return self.maxX, self.maxY, self.maxZ
+    def _set_maxP(self, maxP):
+        self.maxX, self.maxY, self.maxZ = maxP
+    maxP = property(_get_maxP, _set_maxP)
 
     def _get_minW(self): # Set/get the minimal height.
         """Answer the minW limit of self. In case it is relative unit,
