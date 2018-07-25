@@ -308,7 +308,7 @@ class BlurbWriter(object):
     def replacetag(self, level, text):
         level = level + 1
         if level > 100:
-            raise('recursion error? too many nested instructions! last tag: %' % self.lasttag)
+            raise('Blurbwriter.replacetag: Recursion error? too many nested instructions! last tag: %s' % self.lasttag)
         #pend = 0
         m = 1
         while m != None:
@@ -317,7 +317,7 @@ class BlurbWriter(object):
                 return 0, text
             tag = text[start:stop]
             if not tag:
-                raise 'Error in blurb code' # Better make it crash to show the error
+                raise 'Blurbwriter.replacetag: Error in blurb code' # Better make it crash to show the error
                 return 0, u'__empty tag__'
 
             # do the meta-recursive tag-tagging thing here

@@ -20,7 +20,7 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements import Rect
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import color
 from pagebot.style import RIGHT
 from pagebot.toolbox.units import px
 
