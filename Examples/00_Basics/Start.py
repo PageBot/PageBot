@@ -18,7 +18,7 @@
 
 from __future__ import division # Make integer division result in float.
 from random import random
-
+from pagebot.toolbox.color import color
 
 EXPORT_PATH = '_export/Start'
 

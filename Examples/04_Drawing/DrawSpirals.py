@@ -52,7 +52,6 @@ c.Variable(
         args=dict(minValue=0.1, value=0.5, maxValue=5))
   ], globals())
 
-
 def drawSpiral():
     mx = W/2+X
     my = H/2+Y

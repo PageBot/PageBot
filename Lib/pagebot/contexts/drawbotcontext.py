@@ -20,22 +20,27 @@ from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color, noColor, inheritColor
 from pagebot.toolbox.units import ru, isUnit, isUnits # Render units
 from pagebot.constants import *
+from sys import platform
 
-try:
-    # Test if drawBot is installed.
-    import drawBot
-    useDrawBot = True
-    # Uncheck to test noneDrawBotBuilder with DrawBot installed.
-    #import ForceErrorHere
-except (ImportError, AttributeError):
-    useDrawBot = False
+useDrawBot = False
+useAppKit = False
 
-try:
-    #from AppKit import NSFont
-    import AppKit
-    useAppKit = True
-except (ImportError, AttributeError):
-    useAppKit = False
+if platform == 'darwin':
+    try:
+        # Test if drawBot is installed.
+        import drawBot
+        useDrawBot = True
+        # Uncheck to test noneDrawBotBuilder with DrawBot installed.
+        #import ForceErrorHere
+    except (ImportError, AttributeError):
+        print('Cannot import drawBot library')
+
+    try:
+        #from AppKit import NSFont
+        import AppKit
+        useAppKit = True
+    except (ImportError, AttributeError):
+        print('Cannot import AppKit library')
 
 if useDrawBot and useAppKit:
     from CoreText import CTFontDescriptorCreateWithNameAndSize, \

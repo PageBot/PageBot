@@ -16,37 +16,43 @@
 import traceback
 DEFAULT_CONTEXT = None
 MAMP_PATH = None
+from sys import platform
+TESTFLATONMAC = False
 
 def getContext():
+    """Determines which context is used:
+     * DrawBotContext
+     * FlatContext
+     * IndesignContext
+
+    """
     global DEFAULT_CONTEXT, MAMP_PATH
 
     if DEFAULT_CONTEXT is None:
-        try:
-            # Remove comment to simulate testing on other contexts/platforms.
-            #import ForceImportError
-            import AppKit # Force exception on non-OSX platforms
-            from pagebot.contexts.drawbotcontext import DrawBotContext
-            DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
-            # MampView.build exports in MAMP folder that does not commit in Git.
-            MAMP_PATH = '/Applications/MAMP/htdocs/'
+        if platform == 'darwin' and not TESTFLATONMAC:
+            try:
+                # Remove comment to simulate testing on other contexts/platforms.
+                #import ForceImportError
+                import AppKit # Force exception on non-OSX platforms
+                from pagebot.contexts.drawbotcontext import DrawBotContext
+                DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
+                MAMP_PATH = '/Applications/MAMP/htdocs/'
+            except:
+                print(traceback.format_exc())
+                raise NotImplementedError('Error loading context.')
+        else:
+                # Remove comment to simulate testing on other contexts/platforms.
+                #import ForceOtherError
+                from pagebot.contexts.flatcontext import FlatContext
+                DEFAULT_CONTEXT = FlatContext()
+                MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
 
-        #except (ImportError, AttributeError, ModuleNotFoundError): # Python3
-        except (ImportError, AttributeError) as e:
-            print(traceback.format_exc())
-
-            # Remove comment to simulate testing on other contexts/platforms.
-            #import ForceOtherError
-            from pagebot.contexts.flatcontext import FlatContext
-            DEFAULT_CONTEXT = FlatContext()
-            # MampView.build exports in MAMP folder that does not commit in Git.
-            MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
-        except:
-            raise NotImplementedError('Cannot decide on the platform context.')
+        # TODO: Indesign context.
 
     return DEFAULT_CONTEXT
 
 def getMampPath():
-    # Make sure MAMP_PATH is initialized depending on current type of context.
+    """Make sure MAMP_PATH is initialized depending on the context."""
     if MAMP_PATH is None:
         getContext()
     return MAMP_PATH
