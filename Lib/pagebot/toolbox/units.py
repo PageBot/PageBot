@@ -162,6 +162,8 @@ def ru(u, *args, **kwargs):
     (5, 121, (5, 6, 30))
     >>> ru(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
     (10, 20, (30, 40))
+    >>> ru(pt(60), 121, maker=p)
+    5
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -1766,7 +1768,6 @@ def value2Maker(v):
         if v in UNIT_MAKERS:
             maker = UNIT_MAKERS[v]
         else:
-            unit = None
             value, unit = VALUE_UNIT.findall(v)[0]
 
             if not value:
