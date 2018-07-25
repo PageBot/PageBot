@@ -16,12 +16,16 @@
 #
 import re
 from copy import copy
-try:
-    import AppKit
+from sys import platform
+
+if platform == 'darwin':
+    from AppKit import NSLocationInRange
     import CoreText
     import Quartz
+
+try:
     from drawBot import BezierPath
-except (ImportError, AttributeError):
+except:
     BezierPath = None
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
@@ -958,10 +962,10 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
             height = ascent + descent
             lineRange = CoreText.CTLineGetStringRange(ctLine)
             miny = maxy = originY
-            if AppKit.NSLocationInRange(startLocation, lineRange):
+            if NSLocationInRange(startLocation, lineRange):
                 minx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
 
-            if AppKit.NSLocationInRange(endLocation, lineRange):
+            if NSLocationInRange(endLocation, lineRange):
                 maxx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
                 rectangles.append((ctLine, (minx, miny - descent, maxx - minx, height)))
 
