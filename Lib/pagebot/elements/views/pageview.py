@@ -21,7 +21,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import color, noColor, grayColor
+from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
@@ -544,8 +544,8 @@ class PageView(BaseView):
 
     def drawGrid(self, e, origin):
         """Draw grid of lines and/or rectangles if colors are set in the style.
-        Normally px and py will be 0, but it's possible to give them a fixed
-        offset.
+        Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
+        a fixed offset.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
