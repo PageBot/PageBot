@@ -27,11 +27,6 @@ from pagebot.fonttoolbox.variablefontbuilder import generateInstance
 
 SHOW_TIMER = False
 
-SHOW_GRID = True
-SHOW_GRID_COLUMNS = True
-SHOW_BASELINE_GRID = True
-SHOW_FLOW_CONNECTIONS = True
-
 if SHOW_GRID:
     BOX_COLOR = (0.8, 0.8, 0.8, 0.4)
 else:
@@ -59,10 +54,6 @@ rs = getRootStyle(
     listIndent = listIndent, # Indent for bullet lists
     listTabs = [(listIndent, LEFT)], # Match bullet+tab with left indent.
     # Display option during design and testing
-    showGrid = SHOW_GRID,
-    showGridColumns = SHOW_GRID_COLUMNS,
-    showBaselineGrid = SHOW_BASELINE_GRID,
-    showFlowConnections = SHOW_FLOW_CONNECTIONS,
     BOX_COLOR = BOX_COLOR,
     # Text measures
     leading = 14,

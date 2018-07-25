@@ -299,14 +299,14 @@ class InDesignContext(BaseContext):
     def setShadow(self, eShadow):
         """Set the InDesign graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
-            if eShadow.cmykColor is not None:
+            if eShadow.color.isCmyk:
                 self.b.shadow(eShadow.offset,
                               blur=eShadow.blur,
-                              color=eShadow.cmykColor)
+                              color=eShadow.color.cmyk)
             else:
                 self.b.shadow(eShadow.offset,
                               blur=eShadow.blur,
-                              color=eShadow.color)
+                              color=eShadow.color.rgb)
 
     def setGradient(self, gradient, origin, w, h):
         """Define the gradient call to match the size of element e., Gradient position
@@ -316,20 +316,20 @@ class InDesignContext(BaseContext):
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
-            if gradient.cmykColors is None:
-                b.linearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations)
-            else:
+            if gradient.colors[0].isCmyk:
                 b.cmykLinearGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations)
+                    colors=asCmyk(gradient.colors), locations=gradient.locations)
+            else:
+                b.linearGradient(startPoint=start, endPoint=end,
+                    colors=asRgb(gradient.colors), locations=gradient.locations)
         else: # Gradient must be radial.
-            if gradient.cmykColors is None:
-                b.radialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.colors, locations=gradient.locations,
+            if gradient.colors[0].isCmyk:
+                b.cmykRadialGradient(startPoint=start, endPoint=end,
+                    colors=asCmyk(gradient.colors), locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
-                b.cmykRadialGradient(startPoint=start, endPoint=end,
-                    colors=gradient.cmykColors, locations=gradient.locations,
+                b.radialGradient(startPoint=start, endPoint=end,
+                    colors=asRgb(gradient.colors), locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
     def lineDash(self, *lineDash):

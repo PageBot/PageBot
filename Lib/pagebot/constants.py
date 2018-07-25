@@ -233,6 +233,10 @@ DEFAULT_LEADING = DEFAULT_FONT_SIZE*1.4
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is there.
 
+GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
+GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
+GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
+
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
 FILETYPE_PDF = DEFAULT_FILETYPE = 'pdf'

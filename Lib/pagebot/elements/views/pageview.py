@@ -544,8 +544,8 @@ class PageView(BaseView):
 
     def drawGrid(self, e, origin):
         """Draw grid of lines and/or rectangles if colors are set in the style.
-        Normally px and py will be 0, but it's possible to give them a fixed
-        offset.
+        Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
+        a fixed offset.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -563,7 +563,7 @@ class PageView(BaseView):
         # Drawing the grid as squares.
         if not self.showGrid:
             return
-        #if not self.showGridColumns or not self.showGrid:
+        #if not self.showGrid:
         #    return
         context = self.context
 

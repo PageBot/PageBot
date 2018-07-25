@@ -148,26 +148,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         borderRight = None, # Border right
         borderBottom = None, # Border bottom
 
-        # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
-        # gutter on the right side of columns seems to be larger. This can be compensated for in the
-        # distance between images.
-        gw = gutter, # Main gutter width of page columns. Based on U.
-        gh = gutter, # Gutter height
-        gd = gutter, # Optional gutter depth, in z-direction
-
-        # Column width for column-point-to-point cp2p() and column-rect-to-point cr2p() calculations.
-        # Column width, based on multiples of gutter. If uneven, this allows the column to be interpreted
-        # as two smaller columns of [5 +1+ 5] or even [2+1+2 +1+ 2+1+2], e.g. for micro-layouts in tables.
-        # Column width for column2point and column2rect calculations.
-        # e.g. for micro-layouts in tables.
-        # 11*gutter is one of the best values, as the smallest micro-column is 2 instead  of scaling back to 1.
-        # Note that element.colW is calculating property. Different from element.css('cw'), which is the column size.
-        # e.cols, e.row and e.lanes properties get/set the number of columns/rows/lanes, adjusting the
-        # e.cw, e.ch and e.cd.
-        cw = gutter*77, # 77 columns width
-        ch = -u + baselineGrid*6, # Approximately square with cw + gutter: 77. Order matters in case u is Unit
-        cd = pt0, # Optional column "depth"
-
         # Grid definitions, used by static media as well as CSS display: grid; exports.
         # gridX, gridY and gridZ are optional lists of grid line positions, to allow the use of non-repeating grids.
         # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
@@ -185,9 +165,31 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
         gridY = None,
         gridZ = None, # Similar to gridX and gridY.
-        # Flags indicating on which side of the fold this element (e.g. page template) is used.
-        left = True,
-        right = True,
+
+        # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
+        # gutter on the right side of columns seems to be larger. This can be compensated for in the
+        # distance between images.
+        gw = gutter, # Main gutter width of page columns. Based on U.
+        gh = gutter, # Gutter height
+        gd = gutter, # Optional gutter depth, in z-direction
+
+        # The columns with, height and depth are used to fit a certain amount of colums with defined
+        # width on the page padded width (self.pw), using (self.gw, self.gh, self.gd) as gutters.
+        cw = None,
+        ch = None, # Approximately square with cw + gutter: 77. Order matters in case u is Unit
+        cd = None, # Optional column "depth"
+
+        # Flags indicating on which side of self.pw the columns start. The rest space will be posisioned
+        # on the other side.
+        columnAlignX = LEFT,
+        columnAlignY = TOP,
+
+        # If gridX and cd are undefined, then use the self.columnsX count and self.gw to fit that number
+        # of columns on page padded width (self.pw), where the column widths are calculated.
+        # If columnsX, etc. are defined, self.cw and self.gridX must be None. 
+        columnsX = 2,
+        columnsY = 1,
+        columnsZ = 1,
 
         # Minimum size
         minW = MIN_WIDTH, # Default minimal Unit width of elements. Should not get <= 0.
