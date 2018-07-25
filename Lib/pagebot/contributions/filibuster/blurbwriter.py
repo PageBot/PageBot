@@ -308,7 +308,7 @@ class BlurbWriter(object):
     def replacetag(self, level, text):
         level = level + 1
         if level > 100:
-            raise('recursion error? too many nested instructions! last tag: %' % self.lasttag)
+            raise('recursion error? too many nested instructions! last tag: %s' % self.lasttag)
         #pend = 0
         m = 1
         while m != None:
