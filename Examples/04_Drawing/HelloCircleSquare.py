@@ -6,10 +6,6 @@ from pagebot.toolbox.color import Color
 
 context = getContext()
 
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
-
 for p in range(10):
     context.newPage(pt(1000), pt(1000))
     for n in range(50):

@@ -17,6 +17,7 @@ from pagebot.document import Document
 from pagebot.contexts.platform import getContext
 from pagebot.elements import *
 from pagebot.contributions.filibuster.blurb import Blurb
+from pagebot.toolbox.color import color
 
 #from pagebot.contexts.flatcontext import FlatContext
 #context = FlatContext()
@@ -44,7 +45,7 @@ t = context.newString(text,
                            hyphenation=True,
                            hyphenationTail=3))
 
-newTextBox(t, x=100, y=600, w=w, h=400, parent=page, border=1, fill=(1, 0, 0))
+newTextBox(t, x=100, y=600, w=w, h=400, parent=page, border=1, fill=color(1, 0, 0))
 
 t = context.newString(text,
                 style=dict(fontSize=30,
@@ -52,7 +53,7 @@ t = context.newString(text,
                            hyphenation=False,
                            hyphenationTail=3))
 
-newTextBox(t, x=100, y=100, w=w, h=400, parent=page, border=1, fill=(1, 0, 0))
+newTextBox(t, x=100, y=100, w=w, h=400, parent=page, border=1, fill=color(1, 0, 0))
 
 doc.export('_export/AdvancedHyphenation.pdf')
 

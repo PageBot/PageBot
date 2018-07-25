@@ -16,15 +16,10 @@
 
 import sys
 import vanilla
-from pagebot.contexts.platform import getContext
-context = getContext()
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
-
 import AppKit
 from vanilla import FloatingWindow, Window, CheckBox, Button
-#from DrawBot.misc import DrawBotError
+from pagebot.contexts.platform import getContext
+context = getContext()
 
 class VariableController(object):
 

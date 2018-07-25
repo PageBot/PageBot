@@ -21,10 +21,6 @@ from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color
 
 context = getContext()
-
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
     
 MAX_I = 5
 

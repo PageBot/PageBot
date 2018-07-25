@@ -27,10 +27,6 @@ from pagebot.toolbox.units import pt
 from pagebot.contexts.platform import getContext
 context = getContext()
 
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
-
 if __name__ == '__main__':
 
 	# Define the path where to find the example image.
@@ -50,8 +46,7 @@ if __name__ == '__main__':
 	context.scale(newScale) # Make all drawing scale to 50%
 	context.image(path, (0, 0)) # Draw the scaled image at the bottom-left corner. It fills the whole page.
 	# Save the page as png file (and also do conversion from jpg to png this way).
-	# Save to _export folder, so the file will not upload into git. Otherwise anyone running this
-	# script will update the (same) image.
+	# Save to _export folder, so the file will not upload into git. Otherwise anyone running this script will update the (same) image.
 	if not os.path.exists('_export/'):
 	    os.makedirs('_export/')
 	# Note that resulting images may look sharper, by has 4.5x the size of the .jpg.
