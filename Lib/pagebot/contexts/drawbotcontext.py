@@ -17,37 +17,18 @@
 import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color, noColor, inheritColor
+from pagebot.toolbox.color import Color, noColor, inheritColor, color
 from pagebot.toolbox.units import ru, isUnit, isUnits # Render units
 from pagebot.constants import *
 from sys import platform
 
-useDrawBot = False
-useAppKit = False
-
 if platform == 'darwin':
-    try:
-        # Test if drawBot is installed.
-        import drawBot
-        useDrawBot = True
-        # Uncheck to test noneDrawBotBuilder with DrawBot installed.
-        #import ForceErrorHere
-    except (ImportError, AttributeError):
-        print('Cannot import drawBot library')
-
-    try:
-        #from AppKit import NSFont
-        import AppKit
-        useAppKit = True
-    except (ImportError, AttributeError):
-        print('Cannot import AppKit library')
-
-if useDrawBot and useAppKit:
     from CoreText import CTFontDescriptorCreateWithNameAndSize, \
         CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
         CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
         CTFrameGetLines, CTFrameGetLineOrigins
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
+    import drawBot
     from drawBot import Variable
 
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
