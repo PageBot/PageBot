@@ -110,7 +110,7 @@ class DrawBotString(BabelString):
         >>> style = dict(font='Verdana', fontSize=pt(100))
         >>> bs = DrawBotString('ABC', context, style=style)
         >>> bs.size
-        (19.57pt, 13pt)
+        (10pt, 10pt)
         """
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
