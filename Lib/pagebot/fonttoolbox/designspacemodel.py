@@ -1579,7 +1579,7 @@ class Model(object):
         for cIndex in range(len(mvCx)):
             interpolatedComponents.append((
                 self.vm.interpolateFromMasters(nLocation, mvCx[cIndex]),
-                selv.vm.interpolateFromMasters(nLocation, mvCy[cIndex])
+                self.vm.interpolateFromMasters(nLocation, mvCy[cIndex])
             ))
         for mIndex in range(len(mMt)):
             interpolatedMetrics.append(
