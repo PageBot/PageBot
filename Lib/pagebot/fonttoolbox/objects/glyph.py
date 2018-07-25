@@ -214,14 +214,13 @@ class Glyph(object):
         if self.dirty:
             self._initialize()
 
-    def _get_flattenedPath(self):
+    def getFlattenedPath(self, context):
         """Answer the flattened DrawBotContext NSBezier path."""
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
-    flattenedPath = property(_get_flattenedPath)
 
-    def _get_flattenedContours(self):
+    def getFlattenedContours(self, context):
         """Answer the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points.
 
@@ -229,7 +228,7 @@ class Glyph(object):
         if self._flattenedContours is None:
             contour = []
             self._flattenedContours = [contour]
-            flatPath = self.flattenedPath
+            flatPath = self.getFlattenedPath(context)
             if flatPath is not None: # In case self.path could not be created.
                 for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call.
                     p = flatPath.elementAtIndex_associatedPoints_(index)[1]
@@ -239,7 +238,6 @@ class Glyph(object):
                         contour = []
                         self._flattenedContours.append(contour)
         return self._flattenedContours # Can still be None.
-    flattenedContours = property(_get_flattenedContours)
 
     def getAxisDeltas(self):
         """Answer dictionary of axis-delta relations. Key is axis name, value
