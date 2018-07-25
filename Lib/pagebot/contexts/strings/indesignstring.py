@@ -8,13 +8,13 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, xxyxyz.org/flat
+#     Supporting Indesign, xxyxyz.org/indesign
 # -----------------------------------------------------------------------------
 #
-#     flatstring.py
+#     indesignstring.py
 #
-#     xxyxyz.org/flat
-#     xxyxyz.org/flat
+#     xxyxyz.org/indesign
+#     xxyxyz.org/indesign
 
 import os
 import re
@@ -23,25 +23,25 @@ from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
 from pagebot.toolbox.units import isUnit
 
-class FlatString(BabelString):
+class IndesignString(BabelString):
 
-    BABEL_STRING_TYPE = 'flat'
+    BABEL_STRING_TYPE = 'indesign'
 
-    """FlatString is a wrapper around the Flat string."""
+    """IndesignString is a wrapper around the Indesign string."""
     def __init__(self, s, context, style=None):
         """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
         Optionally store the (latest) style that was used to produce the formatted string.
 
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> context.isFlat
+        >>> from pagebot.contexts.indesigncontext import IndesignContext
+        >>> context = IndesignContext()
+        >>> context.isIndesign
         True
         >>> bs = context.newString('ABC')
         >>> #bs
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the Flat equivalent of the DrawBot FormattedString.
+        self.s = s # Store the Indesign equivalent of the DrawBot FormattedString.
         # In case defined, store current status here as property and set the current FormattedString
         # for future additions. Also the answered metrics will not be based on these values.
         if style is None:
@@ -49,22 +49,26 @@ class FlatString(BabelString):
         self.style = style
 
     def _get_s(self):
-        """Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce
+        """Answer the embedded Indesign equivalent of a OSX FormattedString by property, to enforce
         checking type of the string."""
         return self._s
+
     def _set_s(self, s):
         if isinstance(s, str):
-            s = s # TODO: Change to Flat equivalent of FormattedString.
+            s = s # TODO: Change to Indesign equivalent of FormattedString.
         self._s = s
+
     s = property(_get_s, _set_s)
 
     def _get_font(self):
         """Answer the current state of fontName."""
         return self.style.get('font')
+
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
         self.style['font'] = fontName
+
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
@@ -79,9 +83,9 @@ class FlatString(BabelString):
     def __len__(self):
         """Answer the number of characters in self.s
 
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> fs = FlatString('ABC', context)
+        >>> from pagebot.contexts.indesigncontext import IndesignContext
+        >>> context = IndesignContext()
+        >>> fs = IndesignString('ABC', context)
         >>> fs
         ABC
         >>> len(fs)
@@ -92,29 +96,29 @@ class FlatString(BabelString):
     def asText(self):
         """Answer as unicode string.
 
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> fs = FlatString('ABC', context)
+        >>> from pagebot.contexts.indesigncontext import IndesignContext
+        >>> context = IndesignContext()
+        >>> fs = IndesignString('ABC', context)
         >>> fs.s
         'ABC'
         >>> fs.asText()
         'ABC'
         """
-        return str(self.s) # TODO: To be changed to Flat string behavior.
+        return str(self.s) # TODO: To be changed to Indesign string behavior.
 
     def textSize(self, w=None, h=None):
         """Answer the (w, h) size for a given width, with the current text."""
         return 100, 20
-        # TODO: Make this work in Flat same as in DrawBot
+        # TODO: Make this work in Indesign same as in DrawBot
         #return self.b.textSize(s)
 
     def textOverflow(self, w, h, align=LEFT):
-        # TODO: Make this work in Flat same as in DrawBot
+        # TODO: Make this work in Indesign same as in DrawBot
         # TODO: Some stuff needs to get here.
         return ''
 
     def append(self, s):
-        """Append string or FlatString to self."""
+        """Append string or IndesignString to self."""
         # TODO: Make this to work.
         #try:
         #    self.s += s.s
@@ -136,16 +140,16 @@ class FlatString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a FlatString instance from valid attributes in *style*. Set all values after testing
+        """Answer a IndesignString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
+        >>> from pagebot.contexts.indesigncontext import IndesignContext
+        >>> context = IndesignContext()
+        >>> bs = IndesignString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> #bs.s.lines()
-        >>> 'flat.text.text' in str(bs)
+        >>> 'indesign.text.text' in str(bs)
         True
         """
         if style is None:
@@ -161,7 +165,7 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
-        # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
+        # Since Indesign does not do font GSUB feature compile, we'll make the transformed string here,
         # using Tal's https://github.com/typesupply/compositor
         # This needs to be installed, in case PageBot is running outside of DrawBot.
 
@@ -171,15 +175,15 @@ class FlatString(BabelString):
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
-        assert isUnit(fontSize), ('FlatString.newString: FontSize %s must be of type Unit' % fontSize)
+        assert isUnit(fontSize), ('IndesignString.newString: FontSize %s must be of type Unit' % fontSize)
         leading = style.get('leading', DEFAULT_LEADING)
-        assert isUnit(leading), ('FlatString.newString: Leading %s must be of type Unit' % leading)
-        flatFont = context.b.font.open(font)
-        strike = context.b.strike(flatFont)
+        assert isUnit(leading), ('IndesignString.newString: Leading %s must be of type Unit' % leading)
+        indesignFont = context.b.font.open(font)
+        strike = context.b.strike(indesignFont)
         strike.size(fontSize.pt, leading.pt, units='pt')
         #if w is not None:
         #    strike.width = w
-        return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.
+        return cls(strike.text(s), context=context, style=style) # Make real Indesign flavor BabelString here.
 
 
 if __name__ == '__main__':
