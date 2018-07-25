@@ -71,7 +71,7 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
     >>> drawCropMarks(c, pt(0,0), pt(100), pt(100), False, pt(20), 1)
     """
     x, y, _ = point3D(origin) # Ignore z-axus for now.
-    context.fill(None)
+    context.fill(noColor)
     context.stroke((1,1,1,1), cmyk=True, w=cmStrokeWidth)
     context.newPath()
     # Bottom left

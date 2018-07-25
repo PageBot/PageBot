@@ -159,9 +159,9 @@ def ru(u, *args, **kwargs):
     >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt)
     (100, 121, (60, 72, 360))
     >>> ru(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (5.0, 121, (5.0, 6.0, 30.0))
+    (5.0, 121, (5, 6, 30.0))
     >>> ru(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
-    (10.0, 20.0, (30.0, 40.0))
+    (10, 20, (30, 40))
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -193,7 +193,7 @@ def uv(u, *args, **kwargs):
     >>> units((pt(60), 121, (p(5), p(6), units('5"'))), maker=p) # units() creates then as P() instances.
     (5p, 121p, (5p, 6p, 30p))
     >>> uv(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (5.0, 121, (5.0, 6.0, 30.0))
+    (5.0, 121, (5, 6, 30.0))
     """
     if args:
         if not isinstance(u, (list, tuple)):
