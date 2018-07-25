@@ -175,6 +175,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # The columns with, height and depth are used to fit a certain amount of colums with defined
         # width on the page padded width (self.pw), using (self.gw, self.gh, self.gd) as gutters.
+        # If (cw, ch, cd) are defined, (gridX, gridY, gridZ) must be None or order to be used.
         cw = None,
         ch = None, # Approximately square with cw + gutter: 77. Order matters in case u is Unit
         cd = None, # Optional column "depth"
@@ -186,7 +187,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # If gridX and cd are undefined, then use the self.columnsX count and self.gw to fit that number
         # of columns on page padded width (self.pw), where the column widths are calculated.
-        # If columnsX, etc. are defined, self.cw and self.gridX must be None. 
+        # If columnsX, etc. are defined, self.cw and self.gridX must be None, in order to be used.
         columnsX = 2,
         columnsY = 1,
         columnsZ = 1,
