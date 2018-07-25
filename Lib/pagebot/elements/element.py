@@ -66,8 +66,7 @@ class Element(object):
         Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
-        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxW=822,
-                maxH=933, pl=11, pt=22, margin=(33,44,55,66))
+        >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, maxW=822, maxH=933, pl=11, pt=22, margin=(33,44,55,66))
         >>> e.name
         'TestElement'
         >>> e.description is None
