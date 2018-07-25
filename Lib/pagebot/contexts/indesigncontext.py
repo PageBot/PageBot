@@ -31,22 +31,6 @@ from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import noColor, blackColor, Color
 from pagebot.contexts.strings.indesignstring import IndesignString as stringClass
 
-def asCmyk(gradient.colors):
-    color = []
-
-    for c in gradient.colors:
-        colors.append(c.cmyk)
-
-    return colors
-
-def asRgb(gradient.colors):
-    color = []
-
-    for c in gradient.colors:
-        colors.append(c.rgb)
-
-    return colors
-
 class InDesignContext(BaseContext):
     """An InDesignContext instance combines the specific functions of the
     InDesign JS-API This way it way it hides e.g. the type of BabelString."""
