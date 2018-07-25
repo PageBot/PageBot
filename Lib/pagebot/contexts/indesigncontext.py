@@ -415,10 +415,15 @@ class InDesignContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyphPath(self, font, glyphName, x, y, fillColor=0, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyphPath(self, font, glyphName, x, y, fillColor=None, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
         """Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
+        if fillColor is None:
+            fillColor = blackColor
+        if strokeColor is None:
+            strokeColor = noColor
+
         s = fontSize/font.info.unitsPerEm
         glyph = font[glyphName]
         if xAlign == CENTER:
@@ -506,9 +511,11 @@ class InDesignContext(BaseContext):
     #   C O L O R
 
     def setTextFillColor(self, fs, c):
+        assert isinstance(c, Color)
         self._textFill = c
 
     def setTextStrokeColor(self, fs, c, w=None):
+        assert isinstance(c, Color)
         self._textStroke = c
         self.setStrokeWidth(w)
 
@@ -523,11 +530,10 @@ class InDesignContext(BaseContext):
         """Set the current stroke width."""
         self.b.strokeWidth(w)
 
-    def setStrokeColor(self, c, w=None, b=None):
+    def setStrokeColor(self, c, w=None):
         """Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
-
         self.strokeWidth(w)
 
     stroke = setStrokeColor # InDesign compatible API
@@ -560,7 +566,7 @@ class InDesignContext(BaseContext):
             w = iw
             h = ih
         # else both w and h are defined, scale disproportional
-        x, y, = p[0], p[1]
+        x, y = p[0], p[1]
         sx, sy = w/iw, h/ih
         self.save()
         self.scale(sx, sy)
