@@ -29,11 +29,27 @@ from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import noColor, blackColor, Color
+from pagebot.contexts.strings.indesignstring import IndesignString as stringClass
+
+def asCmyk(gradient.colors):
+    color = []
+
+    for c in gradient.colors:
+        colors.append(c.cmyk)
+
+    return colors
+
+def asRgb(gradient.colors):
+    color = []
+
+    for c in gradient.colors:
+        colors.append(c.rgb)
+
+    return colors
 
 class InDesignContext(BaseContext):
-    """A InDesignContext instance combines the specific functions of the InDesign JS-API
-    This way it way it hides e.g. the type of BabelString
-    """
+    """An InDesignContext instance combines the specific functions of the
+    InDesign JS-API This way it way it hides e.g. the type of BabelString."""
 
     # In case of specific builder addressing, callers can check here.
     isInDesign = True
@@ -72,7 +88,9 @@ class InDesignContext(BaseContext):
         self.save() # Save current set of values on gState stack.
 
     def getInDesignScriptPath(self):
-        u"""Answer the user local script path. For now this assumes one version of InDesign.
+        """Answer the user local script path. For now this assumes one version
+        of InDesign.
+
         TODO: Should be made more generic.
 
         >>> context = InDesignContext()
@@ -84,20 +102,22 @@ class InDesignContext(BaseContext):
     #   S C R E E N
 
     def screenSize(self):
-        """Answer the current screen size. Otherwise default is to do nothing."""
+        """Answer the current screen size. Otherwise default is to do
+        nothing."""
         return None
 
     #   D O C U M E N T
 
     def newDocument(self, w, h):
-        u"""Create a new document"""
+        """Creates a new document."""
         self.units = Pt.UNIT
         self.b.newDocument(w, h)
 
     def saveDocument(self, path, multiPage=None):
-        """Select other than standard InDesign export builders here.
-        Save the current image as path, rendering depending on the extension of the path file.
-        In case the path starts with "_export", then create it directories.
+        """Select other than standard InDesign export builders here. Save the
+        current image as path, rendering depending on the extension of the path
+        file. In case the path starts with "_export", then create it
+        directories.
 
         >>> from pagebot.constants import A4Rounded
         >>> H, W = A4Rounded # Initialize as landscape
@@ -147,7 +167,8 @@ class InDesignContext(BaseContext):
         self.b.rect(x, y, w, h)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        """Draw an oval in rectangle, where (x,y) is the bottom-left and size
+        (w,h).
 
         >>> context = InDesignContext()
         >>> context.oval(0, 0, 100, 100)
@@ -155,7 +176,8 @@ class InDesignContext(BaseContext):
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
-        """Circle draws an InDesign oval with (x,y) as middle point and radius r."""
+        """Circle draws an InDesign oval with (x,y) as middle point and radius
+        r."""
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):
@@ -191,8 +213,8 @@ class InDesignContext(BaseContext):
     path = property(_get_path)
 
     def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
-        """Draw the path, or equivalent in other contexts. Scaled image is drawn on (x, y),
-        in that order."""
+        """Draw the path, or equivalent in other contexts. Scaled image is
+        drawn on (x, y), in that order."""
         if path is None:
             path = self._path
         if path is not None:
@@ -287,17 +309,19 @@ class InDesignContext(BaseContext):
         self.b.scale(sx, sy)
 
     def translate(self, dx, dy):
-        """Translate the origin to this point."""
+        """Translates the origin to this point."""
         self.b.translate(dx, dy)
 
     def transform(self, t):
-        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
+        """Transforms canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
+        over vector (dx, dy)"""
         self.b.transform(t)
 
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
-        """Set the InDesign graphics state for shadow if all parameters are set."""
+        """Sets the InDesign graphics state for shadow if all parameters are
+        set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
                 self.b.shadow(eShadow.offset,
@@ -309,8 +333,9 @@ class InDesignContext(BaseContext):
                               color=eShadow.color.rgb)
 
     def setGradient(self, gradient, origin, w, h):
-        """Define the gradient call to match the size of element e., Gradient position
-        is from the origin of the page, so we need the current origin of e."""
+        """Defines the gradient call to match the size of element e., Gradient
+        position is from the origin of the page, so we need the current origin
+        of e."""
         b = self.b
         start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
@@ -500,7 +525,7 @@ class InDesignContext(BaseContext):
         self.setStrokeWidth(w)
 
     def setFillColor(self, c, b=None):
-        u"""Set the color for global or the color of the formatted string."""
+        """Set the color for global or the color of the formatted string."""
         assert isinstance(c, Color)
         self._fill = c
 
@@ -511,7 +536,7 @@ class InDesignContext(BaseContext):
         self.b.strokeWidth(w)
 
     def setStrokeColor(self, c, w=None, b=None):
-        u"""Set global stroke color or the color of the formatted string."""
+        """Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
         self._stroke = c
 
@@ -536,7 +561,8 @@ class InDesignContext(BaseContext):
         return self.b.imageSize(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        """Draw the image. If w or h is defined, then scale the image to fit."""
+        """Draw the image. If w or h is defined, then scale the image to
+        fit."""
         iw, ih = self.imageSize(path)
         if w and not h: # Scale proportional
             h = ih * w/iw # iw : ih = w : h
@@ -564,7 +590,6 @@ class InDesignContext(BaseContext):
 
         """
         #return self.b.ImageObject(path)
-
 
 if __name__ == '__main__':
     import doctest
