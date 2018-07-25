@@ -25,10 +25,10 @@ from pagebot.toolbox.color import noColor, Color, blackColor
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, 
-                           MIN_X, MIN_Y, MIN_Z, MIN_P, MAX_X, MAX_Y, MAX_Z, MAX_P,
+                           MIN_X, MIN_Y, MIN_Z, MAX_X, MAX_Y, MAX_Z, 
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
                            MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_FONT_SIZE,
-                           DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
+                           DEFAULT_HEIGHT, DEFAULT_DEPTH, 
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
