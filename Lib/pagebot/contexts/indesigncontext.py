@@ -21,8 +21,6 @@
 #     https://www.adobe.com/devnet/indesign/documentation.html
 #     https://wwwimages2.adobe.com/content/dam/acom/en/devnet/indesign/sdk/cs6/scripting/InDesign_ScriptingGuide_JS.pdf
 #
-import os
-
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
