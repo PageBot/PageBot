@@ -24,13 +24,8 @@
 import os
 import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import value2Bool
-from pagebot.toolbox.dating import now
-from pagebot.toolbox.units import Pt
-from pagebot.toolbox.color import Color, blackColor, noColor
 from pagebot.toolbox.transformer import object2SpacedString, asFormatted
 from pagebot.constants import A4Rounded
-from pagebot.toolbox.units import us # Render unit value
 
 class BezierPath(object):
     """Make BezierPath with the same API for DrawBotBuilder drawing.
