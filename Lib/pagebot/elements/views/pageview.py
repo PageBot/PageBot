@@ -563,7 +563,7 @@ class PageView(BaseView):
         # Drawing the grid as squares.
         if not self.showGrid:
             return
-        #if not self.showGridColumns or not self.showGrid:
+        #if not self.showGrid:
         #    return
         context = self.context
 

@@ -31,7 +31,7 @@ class Newspaper(Publication):
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
     exportPaths=None, **kwargs)
 
-    >>> from pagebot.constants import Broadsheet
+    >>> from pagebot.constants import Broadsheet, GRID_SQR
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Broadsheet
@@ -44,8 +44,7 @@ class Newspaper(Publication):
     >>> #view.showPagePadding = True
     >>> #view.showPageFrame = True
     >>> view.showPageNameInfo = True
-    >>> #view.showGrid = True
-    >>> #view.showGridColumns = True
+    >>> #view.showGrid = GRID_SQR
     >>> #view.showBaselineGrid = True
     >>> #view.showElementFrame = True
     >>> templateFront = np.getTemplate('Front')
