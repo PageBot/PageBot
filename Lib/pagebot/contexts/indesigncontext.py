@@ -342,19 +342,23 @@ class InDesignContext(BaseContext):
 
         if gradient.linear:
             if gradient.colors[0].isCmyk:
+                colors = [color.cmyk for color in gradient.colors]
                 b.cmykLinearGradient(startPoint=start, endPoint=end,
-                    colors=asCmyk(gradient.colors), locations=gradient.locations)
+                    colors=colors, locations=gradient.locations)
             else:
+                colors = [color.rgb for color in gradient.colors]
                 b.linearGradient(startPoint=start, endPoint=end,
-                    colors=asRgb(gradient.colors), locations=gradient.locations)
+                    colors=colors, locations=gradient.locations)
         else: # Gradient must be radial.
             if gradient.colors[0].isCmyk:
+                colors = [color.cmyk for color in gradient.colors]
                 b.cmykRadialGradient(startPoint=start, endPoint=end,
-                    colors=asCmyk(gradient.colors), locations=gradient.locations,
+                    colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
+                colors = [color.rgb for color in gradient.colors]
                 b.radialGradient(startPoint=start, endPoint=end,
-                    colors=asRgb(gradient.colors), locations=gradient.locations,
+                    colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
     def lineDash(self, *lineDash):

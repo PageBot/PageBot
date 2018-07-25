@@ -14,7 +14,7 @@
 #
 #     gradient.py
 #
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, blackColor, whiteColor
 
 class Gradient(object):
     """As linear gradient (startRadius or endRadius not set):
@@ -42,8 +42,7 @@ class Gradient(object):
         #assert color is None or isinstance(color, Color)
         self.start = start or (0.5, 0) # Default to start a center of bottom.
         self.end = end or (0.5, 1) # Default to end at center of top.
-        self.colors = colors or (Color(r=0,g=0, b=0), Color(r=1, g=1, b=1)) # Default to run between black and white.
-        self.cmykColors = None
+        self.colors = colors or (blackColor, whiteColor) # Default to run between black and white.
         self.locations = locations or [0,1]
         self.startRadius = startRadius
         self.endRadius = endRadius
@@ -61,11 +60,10 @@ class Gradient(object):
 class Shadow(object):
 
     def __init__(self, offset=None, blur=None, color=None):
-        assert (color is None or isinstance(color, Color))
+        assert isinstance(color, Color))
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
-        #self.cmykColor = cmykColor
 
 
 if __name__ == '__main__':
