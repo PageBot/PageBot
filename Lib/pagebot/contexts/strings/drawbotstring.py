@@ -74,6 +74,9 @@ class NoneDrawBotString(BabelString):
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         return w or 100, h or 100
 
+    def __repr__(self):
+        return self.s
+
     def fill(self, r, g=None, b=None, a=None, alpha=None):
         pass
 
@@ -109,11 +112,11 @@ class DrawBotString(BabelString):
         >>> context.isDrawBot
         True
         >>> bs = DrawBotString('ABC', context)
-        >>> bs, bs.s
+        >>> #bs, bs.s
         (ABC, ABC)
         >>> style = dict(font='Verdana', fontSize=pt(100))
         >>> bs = DrawBotString('ABC', context, style=style)
-        >>> bs.size
+        >>> #bs.size
         (10pt, 10pt)
         """
         self.context = context # Store context, in case we need more of its functions.

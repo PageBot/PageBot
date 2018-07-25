@@ -314,7 +314,8 @@ class FlatContext(BaseContext):
         >>> #context.text(bs, (100, 100))
 
         """
-        assert isinstance(bs, FlatString)
+        assert isinstance(bs, FlatString), 'FlatString.text: bs not of type %s' % FlatString.__name__
+        assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         placedText.position(ru(p)) # Render unit tuple to value tuple
 
@@ -458,7 +459,7 @@ class FlatContext(BaseContext):
         if not self.doc:
             self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
         if not self.pages:
-            self.newPage(self.doc.w, self.doc.h)
+            self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
         assert isUnits(x, y, w, h), ('FlatContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
