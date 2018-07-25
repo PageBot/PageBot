@@ -257,7 +257,7 @@ def cmyk2Spot(cmyk):
     >>> #Color(cmyk=color(spot=110).cmyk).spot # Double direction conversion test.
     110
     """
-    return rgb2Spot(cls.cmyk2Rgb(spot), default=default)
+    return rgb2Spot(cmyk2Rgb(spot), default=default)
 
 def name2Rgb(name):
     """Method to convert a name to rgb. Answer None if no rgb can be found.
@@ -697,7 +697,7 @@ class Color(object):
             return rgb2RalName(rgb)[0]
         cmyk = self.cmyk
         if not None in (cmyk):
-            return rgb2RalName(cmyk2rgb(cmyk))[0]
+            return rgb2RalName(cmyk2Rgb(cmyk))[0]
         return  # If all fails, answer black
     def _set_ral(self, ral):
         self._ral = ral # Keep ral color (number or name) as base

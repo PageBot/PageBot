@@ -15,7 +15,7 @@
 #     markers.py
 #
 from pagebot.toolbox.units import point3D
-from pagebot.toolbox.color import Color, color, noColor
+from pagebot.toolbox.color import color, noColor
 
 def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     """Draw registration mark as position x, y.
