@@ -24,7 +24,7 @@
 import os
 import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import value2Bool
+#from pagebot.toolbox.transformer import value2Bool
 #from pagebot.toolbox.dating import now
 #from pagebot.toolbox.units import Pt
 #from pagebot.toolbox.color import blackColor, noColor

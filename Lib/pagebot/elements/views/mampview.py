@@ -32,6 +32,10 @@ class MampView(SiteView):
     LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
     SITE_ROOT_PATH = getMampPath()
 
+    DEFAULT_HTML_FILE = 'index.html'
+    DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
+    DEFAULT_CSS_PATH = SITE_ROOT_PATH + 'css/style.css'
+
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
@@ -40,6 +44,7 @@ class MampView(SiteView):
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> article = Blurb().getBlurb('da_text') # Answer random text of design article
         >>> from pagebot.elements.web.simplesite import Banner
+        >>> from pagebot.toolbox.color import color
         >>> from pagebot.elements import newTextBox
         >>> from pagebot.document import Document
         >>> siteName = 'TestDoc'
@@ -49,7 +54,7 @@ class MampView(SiteView):
         >>> #view.verbose = True
         >>> #view.doExport = False # View flag to avoid exporting to files.
         >>> page = doc[1]
-        >>> banner = Banner(parent=page, cssId='Banner', fill=0.8,  margin=10, padding=10, font='Verdana')
+        >>> banner = Banner(parent=page, cssId='Banner', fill=color(0.8),  margin=10, padding=10, font='Verdana')
         >>> e = newTextBox(article, parent=banner, cssClass='bannerContent', textFill=(1, 0, 1))
         >>> page.elements[0].cssId
         'Banner'
