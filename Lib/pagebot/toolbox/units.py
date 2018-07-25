@@ -1759,12 +1759,13 @@ def value2Maker(v):
     elif v in MAKERS:
         maker = v
     elif isUnit(v):
-        maker = UNIT_MAKERS[V.UNIT]
+        maker = UNIT_MAKERS[v.UNIT]
     elif isinstance(v, str):
         v = v.lower()
         if v in UNIT_MAKERS:
             maker = UNIT_MAKERS[v]
         else:
+            unit = None
             value, unit = VALUE_UNIT.findall(v)[0]
             if not value:
                 unit, value = UNIT_VALUE.findall(v)[0]
