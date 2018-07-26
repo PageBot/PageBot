@@ -19,7 +19,6 @@ from copy import copy
 from sys import platform
 
 if platform == 'darwin':
-    from AppKit import NSLocationInRange
     import CoreText
     import Quartz
 
@@ -931,8 +930,7 @@ def getBaseLines(txt, box):
 
 '''
 def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
-    """
-    """
+    from AppKit import NSLocationInRange
     bc = BaseContext()
     path = CoreText.CGPathCreateMutable()
     CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
@@ -965,6 +963,7 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
             height = ascent + descent
             lineRange = CoreText.CTLineGetStringRange(ctLine)
             miny = maxy = originY
+
             if NSLocationInRange(startLocation, lineRange):
                 minx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
 
@@ -978,6 +977,7 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
 
     return rectangles
 '''
+
     #   F I N D
 
 def findPattern(textLines, pattern):
