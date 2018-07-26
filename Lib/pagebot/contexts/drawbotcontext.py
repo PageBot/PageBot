@@ -538,7 +538,7 @@ class DrawBotContext(BaseContext):
 
     def setTextFillColor(self, fs, c):
         u"""Set the fill color of the formatted string.
-
+        >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
@@ -563,7 +563,7 @@ class DrawBotContext(BaseContext):
 
     def setTextStrokeColor(self, fs, c, w=None):
         u"""Set the stroke color of the formatted string.
-
+        >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
         >>> fs = context.newString('Hello')
         >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
@@ -600,6 +600,7 @@ class DrawBotContext(BaseContext):
     def fill(self, c):
         u"""Set the color for global or the color of the formatted string.
 
+        >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -624,6 +625,7 @@ class DrawBotContext(BaseContext):
     def stroke(self, c, w=None):
         u"""Set the color for global or the color of the formatted string.
 
+        >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))

@@ -20,15 +20,15 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, ru, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor, Color, blackColor
+from pagebot.toolbox.color import noColor, Color, blackColor, color
 
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
-                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, 
-                           MIN_X, MIN_Y, MIN_Z, MAX_X, MAX_Y, MAX_Z, 
+                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS,
+                           MIN_X, MIN_Y, MIN_Z, MAX_X, MAX_Y, MAX_Z,
                            MIN_WIDTH, MAX_WIDTH, MIN_HEIGHT, MAX_HEIGHT,
                            MIN_DEPTH, MAX_DEPTH, DEFAULT_WIDTH, DEFAULT_FONT_SIZE,
-                           DEFAULT_HEIGHT, DEFAULT_DEPTH, 
+                           DEFAULT_HEIGHT, DEFAULT_DEPTH,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
@@ -38,7 +38,7 @@ from pagebot.toolbox.dating import seconds, years, Duration
 class Element(object):
     """The base element object."""
 
-    # Initialize the default Element behavior flags. These flags can be
+    # Initializes the default Element behavior flags. These flags can be
     # overwritten by inheriting classes, or dynamically in instances, e.g.
     # where the settings of TextBox.nextBox and TextBox.nextPage define if a
     # TextBox instance can operate as a flow.
@@ -3255,7 +3255,7 @@ class Element(object):
         x2, y2, z2 = self.minP
         if not self.elements:
             # No element, answer vacuum block (x, y, z), (w, h, d)
-            return pt(0, 0, 0), pt(0, 0, 0) 
+            return pt(0, 0, 0), pt(0, 0, 0)
         for e in self.elements:
             x1 = max(x1, e.left + e.pl)
             x2 = min(x2, e.right - e.pl)
@@ -3696,16 +3696,16 @@ class Element(object):
         return s
 
     def buildFrame(self, view, p):
-        """Draw fill of the rectangular element space.
-        The self.css('fill') defines the color of the element background.
-        Instead of the DrawBot stroke and strokeWidth attributes, use
-        borders or (borderTop, borderRight, borderBottom, borderLeft) attributes.
-        If one of the self.bleed is defined, then shift and resize background by that size.
+        """Draw fill of the rectangular element space. The self.css('fill')
+        defines the color of the element background. Instead of the DrawBot
+        stroke and strokeWidth attributes, use borders or (borderTop,
+        borderRight, borderBottom, borderLeft) attributes. If one of the
+        self.bleed is defined, then shift and resize background by that size.
         """
         c = view.context
         b = c.b # Get builder from context
-
         eShadow = self.shadow
+
         if eShadow:
             c.saveGraphicState()
             c.setShadow(eShadow)
@@ -3715,15 +3715,19 @@ class Element(object):
         eFill = self.css('fill', noColor)
         eStroke = self.css('stroke', noColor)
         eGradient = self.gradient
+
         if eStroke is not noColor or eFill is not noColor or eGradient:
             c.saveGraphicState()
+
             # Drawing element fill and/or frame
             if eGradient: # Gradient overwrites setting of fill.
                 # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
-                c.fill(eFill)
-            c.stroke(eStroke, self.css('strokeWidth', pt(1)))
+                c.fill(color(eFill))
+
+            c.stroke(color(eStroke), self.css('strokeWidth', pt(1)))
+
             if self.framePath is not None: # In case defined, use instead of bounding box.
                 c.drawPath(self.framePath)
             elif self.originTop:
@@ -3732,6 +3736,7 @@ class Element(object):
             else:
                 c.rect(p[0] - self.bleedLeft, p[1] - self.bleedBottom,
                     self.w + self.bleedLeft + self.bleedRight, self.h + self.bleedTop + self.bleedBottom)
+
             c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.
@@ -3747,6 +3752,7 @@ class Element(object):
             c.stroke(borderTop['stroke'], borderTop['strokeWidth'])
 
             oLeft = 0 # Extra offset on left, if there is a left border.
+
             if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
                 if borderLeft['line'] == ONLINE:
                     oLeft = borderLeft['strokeWidth']/2
@@ -3754,6 +3760,7 @@ class Element(object):
                     oLeft = borderLeft['strokeWidth']
 
             oRight = 0 # Extra offset on right, if there is a right border.
+
             if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
                 if borderRight['line'] == ONLINE:
                     oRight = borderRight['strokeWidth']/2
