@@ -29,9 +29,27 @@ from pagebot.toolbox.transformer import asFormatted
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+def getPoints(glyph):
+    # TODO: rewrite for TTF / OTF.
+    points = []
+    for contour in glyph:
+        for p in contour:
+            points.append(p)
+    return points
+
+def getComponents(glyph):
+    """Answers the list of components for this glyph."""
+    # TODO: rewrite for TTF / OTF.
+    if glyph is not None:
+        if hasattr(glyph, '_components'):
+            return glyph._components
+        elif hasattr(glyph, 'components'):
+            return glyph.components
+    return None
+
 #classmethod
 def isValidTag(tag):
-    u"""Answer the boolean flag, if tag is a valid tag string.
+    """Answers the boolean flag, if tag is a valid tag string.
 
     >>> isValidTag('wght')
     True
@@ -55,7 +73,7 @@ def isValidTag(tag):
 class Axis(object):
 
     def __init__(self, tag, name=None, minimum=None, default=None, maximum=None, mapping=None, labelNames=None):
-        u"""Axis class that contains variable font axis data.
+        """Axis class that contains variable font axis data.
 
         >>> Axis('XTRA').validate()
         []
@@ -101,7 +119,7 @@ class Axis(object):
         return '<%s %s min=%s def=%s max=%s>' % (self.__class__.__name__, self.tag, asFormatted(self.minimum), asFormatted(self.default), asFormatted(self.maximum))
 
     def _get_masterLocations(self):
-        u"""Answer the dictionary of required master locations for this axis.
+        """Answers the dictionary of required master locations for this axis.
 
         >>> Axis('wght', minimum=100, default=400, maximum=1000).masterLocations
         {'default': <Location wght=400>, 'minimum': <Location wght=100>, 'maximum': <Location wght=1000>}
@@ -159,10 +177,10 @@ class Axis(object):
         return report
 
 class BlendAxis(Axis):
-    def __init__(self, tag, masters=None, **kwargs):
-        u"""Blended Axis class that contains variable font axis data, blended from other axes.
-        Creates new masters
 
+    def __init__(self, tag, masters=None, **kwargs):
+        """Blended Axis class that contains variable font axis data, blended
+        from other axes. Creates new masters.
         >>> a1 = Axis('XOPQ', 'X-Opaque', 0, 500, 1000)
         >>> a2 = Axis('XTRA', 'X-Transparant', 0, 500, 1000)
         >>> fName = 'Demo'
@@ -192,9 +210,9 @@ class BlendAxis(Axis):
         pass # Ignore, value is calculated result.
     maximum = property(_get_maximum, _set_maximum)
 
-
 class FontInfo(object):
-    u"""Holds the design space info for master and instance. """
+    """Holds the design space info for master and instance. """
+
     def __init__(self, name=None, familyName=None, styleName=None, path=None, location=None, info=None):
         self.name = name or styleName
         self.familyName = familyName or 'Untitled'
@@ -220,13 +238,15 @@ class FontInfo(object):
         return s
 
 class Location(dict):
-    u"""Location object (instead of dictionaries use as location), so we can used them as key.
+    """Location object (instead of dictionaries use as location), so we can
+    used them as key.
 
     >>> Location(wght=100, wdth=200)
     <Location wdth=200 wght=100>
     """
+
     def _get_id(self):
-        u"""Answer a hashable id, that can be used to recreate the Locations instance.
+        """Answers a hashable id, that can be used to recreate the Locations instance.
 
         >>> loc = Location(wght=100, wdth=200)
         >>> loc.id
@@ -256,7 +276,7 @@ class Location(dict):
 
     @classmethod
     def fromId(cls, locId):
-        u"""Convert a locId (tuples) or location dictionary to a Location instance.
+        """Convert a locId (tuples) or location dictionary to a Location instance.
 
         >>> loc = Location.fromId(dict(wght=400, wdth=100))
         >>> loc
@@ -279,7 +299,7 @@ class Location(dict):
         return location
 
 class DesignSpace(object):
-    u"""DesignSpace file wrapper. It can read from a design space source (path),
+    """DesignSpace file wrapper. It can read from a design space source (path),
     it can be used to build one from scratch and save as subset-axes design spaces,
     and it can be used to dynamically build quiries and allows to alter content.
     Also there is a variety of checks and verification to test consistency.
@@ -403,7 +423,7 @@ class DesignSpace(object):
     path = property(_get_path, _set_path)
 
     def asTagLocation(self, nameLocation):
-        u"""Answer the location dictionary, where the keys are translated from name to tag, where necessary."""
+        """Answers the location dictionary, where the keys are translated from name to tag, where necessary."""
         tagLocation = {}
         for name, value in nameLocation.items():
             if name in self.axes:
@@ -415,7 +435,7 @@ class DesignSpace(object):
         return tagLocation
 
     def _get_familyName(self):
-        u"""Answer the family name as stored, and otherwise from the first master in the list.
+        """Answers the family name as stored, and otherwise from the first master in the list.
 
         >>> ds = DesignSpace()
         >>> ds.newMaster(familyName='MyFamily')
@@ -429,14 +449,14 @@ class DesignSpace(object):
                     return master.familyName
         return self._familyName
     def _set_familyName(self, familyName):
-        u"""Set overall family name, overwriting search in the masters."""
+        """Set overall family name, overwriting search in the masters."""
         self._familyName = familyName
     familyName = property(_get_familyName, _set_familyName)
 
     # Axes
 
     def newAxis(self, tag, name=None, minimum=None, default=None, maximum=None, mapping=None, labelNames=None):
-        u"""Create a new Axis instance and add to the list. As all behavior on the axis lists
+        """Create a new Axis instance and add to the list. As all behavior on the axis lists
         is dynamic properties, not further updates are needed. Make sure the axis tag is unique,
         otherwise replace by digits to make it unique.
 
@@ -457,7 +477,7 @@ class DesignSpace(object):
         return axis
 
     def appendAxes(self, axes):
-        u"""Add an Axis instance or a list of Axis instances. Verify the right class.
+        """Add an Axis instance or a list of Axis instances. Verify the right class.
         If replace is True, then first remove the axis if it exists.
         >>> ds = DesignSpace()
         >>> ds.appendAxis(ds.AXIS_CLASS('wdth'))
@@ -476,7 +496,7 @@ class DesignSpace(object):
     appendAxis = appendAxes
 
     def removeAxis(self, tag):
-        u"""Remove an existing axis from the design space.
+        """Remove an existing axis from the design space.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -504,7 +524,7 @@ class DesignSpace(object):
         return True # Success
 
     def _get_axisOrder(self):
-        u"""Answer the list of tags, in the order of self.axisList. Setting the order
+        """Answers the list of tags, in the order of self.axisList. Setting the order
         as list of tags with alter the order of self.axisList accordingly.
 
         >>> ds = DesignSpace()
@@ -526,7 +546,7 @@ class DesignSpace(object):
             axisOrder.append(axis.tag)
         return axisOrder
     def _set_axisOrder(self, tagList):
-        u"""Set the order of self.axisList. Assert that all tags exist and the list has the same length as self.axes."""
+        """Set the order of self.axisList. Assert that all tags exist and the list has the same length as self.axes."""
         assert len(tagList) == len(self.axisList)
         axisList = []
         for tag in tagList:
@@ -536,7 +556,7 @@ class DesignSpace(object):
     axisOrder = property(_get_axisOrder, _set_axisOrder)
 
     def _get_axesByName(self):
-        u"""Answer the dictionay of raw axes, with their name as key.
+        """Answers the dictionay of raw axes, with their name as key.
         Axis-by-tag is simple self.axes[tag]
 
         >>> ds = DesignSpace()
@@ -552,7 +572,7 @@ class DesignSpace(object):
     axesByName = property(_get_axesByName)
 
     def _get_tripleAxes(self):
-        u"""Answer dictionary of triple axis values, with their tag as key.
+        """Answers dictionary of triple axis values, with their tag as key.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght', minimum=20, default=100)
@@ -569,7 +589,7 @@ class DesignSpace(object):
     tripleAxes = property(_get_tripleAxes)
 
     def _get_axisTags(self):
-        u"""Answer the list of axis tags, keeping the original axis order.
+        """Answers the list of axis tags, keeping the original axis order.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -585,7 +605,7 @@ class DesignSpace(object):
     axisTags = property(_get_axisTags)
 
     def _get_axisNames(self):
-        u"""Answer the list of axis names, keeping the original axis order.
+        """Answers the list of axis names, keeping the original axis order.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght', name='Weight')
@@ -601,7 +621,7 @@ class DesignSpace(object):
 
 
     def renameAxis(self, tag, newTag=None, newName=None):
-        u"""Change the tag of the axis and update the it for all references using the old one.
+        """Change the tag of the axis and update the it for all references using the old one.
         Assert that the tag does not yet exist.
 
         >>> ds = DesignSpace()
@@ -639,7 +659,7 @@ class DesignSpace(object):
     # Masters
 
     def newMaster(self, familyName=None, styleName=None, name=None, path=None, location=None, info=None):
-        u"""Create a new master and add it to the design space. If the path is undefined, or not unique, then
+        """Create a new master and add it to the design space. If the path is undefined, or not unique, then
         add a counter to it that makes it unique.
 
         >>> ds = DesignSpace()
@@ -665,7 +685,7 @@ class DesignSpace(object):
         return master
 
     def _get_masterPaths(self):
-        u"""Answer the list of full master paths, while keeping the order of self.masterList.
+        """Answers the list of full master paths, while keeping the order of self.masterList.
         This allows a model to open the masters in the same order.
 
         >>> ds = DesignSpace()
@@ -681,7 +701,7 @@ class DesignSpace(object):
     masterPaths = property(_get_masterPaths)
 
     def appendMasters(self, masters):
-        u"""Append a master to the design space.
+        """Append a master to the design space.
 
         >>> ds = DesignSpace()
         >>> ds.appendMasters(ds.FONTINFO_CLASS('MyFamily', 'Regular', path='myFontFile-Regular.ufo'))
@@ -698,7 +718,7 @@ class DesignSpace(object):
             self.masterList.append(master)
 
     def getLocationMaster(self, location):
-        u"""Answer the master at location. Answer None, if there is not master.
+        """Answers the master at location. Answer None, if there is not master.
 
         >>> ds = DesignSpace()
         >>> a1 = ds.newAxis('wght')
@@ -715,7 +735,7 @@ class DesignSpace(object):
         return None
 
     def _get_danglingMasters(self):
-        u"""Answer the list of masters that either have no location set or a location that is not valid
+        """Answers the list of masters that either have no location set or a location that is not valid
         in the current design space set of axes.
 
         >>> ds = DesignSpace()
@@ -739,7 +759,7 @@ class DesignSpace(object):
     danglingMasters = property(_get_danglingMasters)
 
     def _get_defaultMasterList(self):
-        u"""Answer the list of master info, in the order of the self._masterList list,
+        """Answers the list of master info, in the order of the self._masterList list,
         except that it starts with the defaultMaster if it exists.
 
         >>> ds = DesignSpace()
@@ -763,7 +783,7 @@ class DesignSpace(object):
     defaultMasterList = property(_get_defaultMasterList)
 
     def _get_defaultMaster(self):
-        u"""Answer the master info for the default font, that has a location with
+        """Answers the master info for the default font, that has a location with
         values equal to all axes.
 
         >>> ds = DesignSpace()
@@ -790,7 +810,7 @@ class DesignSpace(object):
     defaultMaster = property(_get_defaultMaster)
 
     def getAxisMasters(self, tag):
-        u"""Answer the tuple with (minMasters, maxMasters) list, that contain with master info that are
+        """Answers the tuple with (minMasters, maxMasters) list, that contain with master info that are
         located on the axis defined by tag and are not the default.
 
         >>> ds = DesignSpace()
@@ -832,7 +852,7 @@ class DesignSpace(object):
         return minMasters, maxMasters
 
     def getAxisValueMasters(self, tag):
-        u"""Answer the tuple of (minValueMasters, maxValueMasters) dictionaries, with master axis values
+        """Answers the tuple of (minValueMasters, maxValueMasters) dictionaries, with master axis values
         as key and the masterInfo as value, including the default master.
 
         >>> ds = DesignSpace()
@@ -864,7 +884,7 @@ class DesignSpace(object):
     # Instances
 
     def _get_instancePaths(self):
-        u"""Answer the list of full instance paths, while keeping the order of self.instanceList.
+        """Answers the list of full instance paths, while keeping the order of self.instanceList.
         This allows a model to open the masters in the same order."""
         instancePaths = []
         for instance in self.instanceList:
@@ -882,7 +902,7 @@ class DesignSpace(object):
     # Locations
 
     def newLocation(self, **kwargs):
-        u"""Answer a new Location instance, based on the current default location.
+        """Answers a new Location instance, based on the current default location.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -904,8 +924,9 @@ class DesignSpace(object):
         return location
 
     def _get_locations(self):
-        u"""Answer the dictionary with axis locations and value a dict with paths->masters/instance
-        on that location. If there are "dangling" masters or instances, a location None is added.
+        """Answers the dictionary with axis locations and value a dict with
+        paths->masters/instance on that location. If there are "dangling"
+        masters or instances, a location None is added.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -945,7 +966,7 @@ class DesignSpace(object):
     locations = property(_get_locations)
 
     def _get_axisLocations(self):
-        u"""Answer the dictionary with locations as key and a dictionary (tag->axis) as value
+        """Answers the dictionary with locations as key and a dictionary (tag->axis) as value
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -968,7 +989,7 @@ class DesignSpace(object):
     axisLocations = property(_get_axisLocations)
 
     def _get_masterLocationList(self):
-        u"""Answer the list of locations for all masters, keeping the same order.
+        """Answers the list of locations for all masters, keeping the same order.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -986,10 +1007,11 @@ class DesignSpace(object):
     masterLocationList = property(_get_masterLocationList)
 
     def _get_normalizedLocations(self):
-        u"""Answer the list of locations from all masters, normalized to the normalized axes.
-        The list of masters includes all the ones known to the designspace, combining the
-        origin (all default values), axis masters (all defaults except for one) and space masters
-        (two or more location values are not default).
+        """Answers the list of locations from all masters, normalized to the
+        normalized axes. The list of masters includes all the ones known to
+        the designspace, combining the origin (all default values), axis
+        masters (all defaults except for one) and space masters (two or more
+        location values are not default).
 
         >>> ds = DesignSpace()
         >>> a1 = ds.newAxis('wght')
@@ -1016,9 +1038,9 @@ class DesignSpace(object):
     normalizedLocations = property(_get_normalizedLocations)
 
     def _get_defaultLocation(self):
-        u"""Answer the default location of the design space, collecting all default values
-        for all axis. This is a dynamic property, so any change to default values or
-        axes set, will alter the result.
+        """Answers the default location of the design space, collecting all
+        default values for all axis. This is a dynamic property, so any change
+        to default values or axes set, will alter the result.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght')
@@ -1037,7 +1059,7 @@ class DesignSpace(object):
     defaultLocation = property(_get_defaultLocation)
 
     def getAxisLocation(self, axis):
-        u"""Answer the complete location triplet (including all default values) for the
+        """Answers the complete location triplet (including all default values) for the
         given axis (min, default, max). If min or max equals default, then None is anwered
         for that location.
 
@@ -1067,7 +1089,7 @@ class DesignSpace(object):
     # Blending
 
     def blend(self, blendAxes, removePrimaries=True, verbose=False):
-        u"""The blending function creates a copy of self, with blended axes, conform the
+        """The blending function creates a copy of self, with blended axes, conform the
         specification in /blendAxes. The model will use the blended design space, to
         create blended masters from rendered outlines at the new locations.
         What happens:
@@ -1114,7 +1136,7 @@ class DesignSpace(object):
     # Validation
 
     def validate(self):
-        u"""Answer the boolean flag checking if all data is valid: testing.
+        """Answers the boolean flag checking if all data is valid: testing.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('ABCD', minimum=600)
@@ -1238,7 +1260,6 @@ class DesignSpace(object):
 
         return ''.join(xml)
 
-
 class Model(object):
     """
     See: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview
@@ -1265,7 +1286,7 @@ class Model(object):
     >>> pen.closePath()
     >>> gReg.leftMargin = gReg.rightMargin = 50
     >>> gReg.width
-    500
+    500.0
     >>> fReg.save(PATH % (FAMILY, fReg.info.styleName))
 
     >>> fBld = NewFont()
@@ -1281,7 +1302,7 @@ class Model(object):
     >>> pen.closePath()
     >>> gBld.leftMargin = gBld.rightMargin = 30
     >>> gBld.width
-    860
+    860.0
     >>> fBld.save(PATH % (FAMILY, fBld.info.styleName))
 
     >>> fLght = NewFont()
@@ -1297,7 +1318,7 @@ class Model(object):
     >>> pen.closePath()
     >>> gLght.leftMargin = gLght.rightMargin = 70
     >>> gLght.width
-    340
+    340.0
     >>> fLght.save(PATH % (FAMILY, fLght.info.styleName))
 
     >>> fCnd = NewFont()
@@ -1313,7 +1334,7 @@ class Model(object):
     >>> pen.closePath()
     >>> gCnd.leftMargin = gCnd.rightMargin = 20
     >>> gCnd.width
-    840
+    840.0
     >>> fCnd.save(PATH % (FAMILY, fCnd.info.styleName))
 
     >>> #result = os.system('open %s %s %s' % (fReg.path, fBld.path, fCnd.path) )
@@ -1405,7 +1426,7 @@ class Model(object):
     """
 
     def __init__(self, designSpace, masters, instances=None):
-        u"""Create a VariableFont interpolation model. DesignSpace """
+        """Create a VariableFont interpolation model. DesignSpace """
         assert masters, ValueError('%s No masters fonts defined. The dictionay shouls master the design space.' % self)
         self.ds = designSpace
         # Property self.masterList creates font list in order of the design space.
@@ -1434,9 +1455,8 @@ class Model(object):
     masters = property(_get_masters, _set_masters)
 
     def _get_defaultMaster(self):
-        u"""Answer the master font at default location. Answer None if it does not exist or cannot be found.
-
-        """
+        """Answers the master font at default location. Answer None if it does
+        not exist or cannot be found."""
         defaultMaster = None
         defaultMasterInfo = self.ds.defaultMaster
         if defaultMasterInfo is not None:
@@ -1445,7 +1465,7 @@ class Model(object):
     defaultMaster = property(_get_defaultMaster)
 
     def _get_masterList(self):
-        u"""Dictionary of real master Font instances, path is key. Always start with the default,
+        """Dictionary of real master Font instances, path is key. Always start with the default,
         then omit the default if it else where in the list.
         """
         defaultMaster = self.defaultMaster # Get the ufo master for the default location.
@@ -1462,7 +1482,7 @@ class Model(object):
     masterList = property(_get_masterList)
 
     def getAxisMasters(self, axis):
-        u"""Answer a tuple of two lists of all masters on the axis, on either
+        """Answers a tuple of two lists of all masters on the axis, on either
         size of the default master, and including the default master. If
         mininum == default or default == maximum, then that side if the axis
         only contains the default master."""
@@ -1479,7 +1499,7 @@ class Model(object):
         return minMasters, maxMasters
 
     def _get_instanceList(self):
-        u"""Dictionary of real master Font instance, path is key."""
+        """Dictionary of real master Font instance, path is key."""
         if self._instanceList is None:
             self._instanceList = []
             for instancePath in self.ds.instancePaths:
@@ -1488,7 +1508,7 @@ class Model(object):
     instanceList = property(_get_instanceList)
 
     def clear(self):
-        u"""Clear the cached master values for the last interpolated glyph.
+        """Clear the cached master values for the last interpolated glyph.
         This forces the values to be collected for the next glyph interpolation."""
         self._masterList = None
         self._instanceList = None
@@ -1498,7 +1518,7 @@ class Model(object):
     # Rendering
 
     def getScalars(self, location):
-        u"""Answer the list of scalars (multipliers 0..1) for each master in the
+        """Answers the list of scalars (multipliers 0..1) for each master in the
         given nLocation (normalized values -1..0..1): [1.0, 0.0, 0.8, 0.3] with
         respectively Regular, Light, Bold, Condensed as master ordering.
         """
@@ -1530,7 +1550,7 @@ class Model(object):
         return pointXDeltas, pointYDeltas, componentXDeltas, componentYDeltas, metricsDeltas
 
     def getMasterValues(self, glyphName):
-        u"""Answer the (mvx, mvy, mvCx, mvCy), for point and component
+        """Answers the (mvx, mvy, mvCx, mvCy), for point and component
         transformation, lists of corresponding master glyphs, in the same order
         as the self.masterList."""
         if self._masterValues is None:
@@ -1569,24 +1589,28 @@ class Model(object):
         return self._masterValues
 
     def interpolateValues(self, glyphName, location):
-        u"""Interpolate the glyph from masters and answer the list of (x,y) points tuples,
-        component transformation and metrics.
+        """Interpolate the glyph from masters and answer the list of (x,y)
+        points tuples, component transformation and metrics.
+
         The axis location in world values is normalized to (-1..0..1)."""
         nLocation = normalizeLocation(location, self.ds.tripleAxes)
         interpolatedPoints = []
         interpolatedComponents = []
         interpolatedMetrics = []
         mvx, mvy, mvCx, mvCy, mMt = self.getMasterValues(glyphName)
+
         for pIndex in range(len(mvx)):
             interpolatedPoints.append((
                 self.vm.interpolateFromMasters(nLocation, mvx[pIndex]),
                 self.vm.interpolateFromMasters(nLocation, mvy[pIndex])
             ))
+
         for cIndex in range(len(mvCx)):
             interpolatedComponents.append((
                 self.vm.interpolateFromMasters(nLocation, mvCx[cIndex]),
                 self.vm.interpolateFromMasters(nLocation, mvCy[cIndex])
             ))
+
         for mIndex in range(len(mMt)):
             interpolatedMetrics.append(
                 self.vm.interpolateFromMasters(nLocation, mMt[mIndex])
@@ -1594,12 +1618,13 @@ class Model(object):
         return interpolatedPoints, interpolatedComponents, interpolatedMetrics
 
     def interpolateGlyph(self, glyph, location):
-        u"""Interpolate the glyph from the masters. If glyph is not compatible with the
-        masters, then first copy one of the masters into glyphs.
+        """Interpolate the glyph from the masters. If glyph is not compatible
+        with the masters, then first copy one of the masters into glyphs.
         Location is normalized to (-1..0..1)."""
-        # If there are components, make sture to interpolatie them first, then interpolate the (dx,dy)
-        # Check if the referenced glyph exists. Otherwise copy it from one of the masters into
-        # the parent of glyph.
+
+        # If there are components, make sure to interpolate them first, then
+        # interpolate (dx, dy). Check if the referenced glyph exists.
+        # Otherwise copy it from one of the masters into the parent of glyph.
         mvx, mvy, mvCx, mvCy, mMt = self.getMasterValues(glyph.name)
         points = getPoints(glyph)
         components = getComponents(glyph)
@@ -1633,8 +1658,8 @@ class Model(object):
 
         glyph.width = self.vm.interpolateFromMasters(nLocation, mMt[0])
 
-# TODO: Convert from UFO to TTF/OTF workings
-#if __name__ == '__main__':
-#    import doctest
-#    import sys
-#    sys.exit(doctest.testmod()[0])
+if __name__ == '__main__':
+    # TODO: Convert from UFO to TTF/OTF workings
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
