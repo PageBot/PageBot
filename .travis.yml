@@ -19,17 +19,8 @@ script:
 - export PYLINT="pylint --disable=$WONT_FIX,$CATCHALL_MAY_FIX_LATER"
 - $PYLINT Lib/pagebot/
 - python Lib/pagebot/*.py
-- python Lib/pagebot/contexts/*.py
-- python Lib/pagebot/contexts/strings/*.py
-- python Lib/pagebot/contributions/filibuster/blurbwriter.py
-- python Lib/pagebot/elements/*.py
-- python Lib/pagebot/fonttoolbox/objects/*.py
-- python Lib/pagebot/fonttoolbox/*.py
-- python Lib/pagebot/fonttoolbox/unicodes/*.py
-- python Lib/pagebot/publications/simplesite/*.py
-- python Lib/pagebot/publications/newspaper/*.py
-- python Lib/pagebot/publications/*.py
-- python Lib/pagebot/toolbox/*.py
+- python Lib/pagebot/*/*.py
+- python Lib/pagebot/*/*/*.py
 
 addons:
     apt:
