@@ -33,7 +33,7 @@ from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, 
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.toolbox.dating import seconds, years, Duration
+from pagebot.toolbox.dating import now, days
 
 class Element(object):
     """The base element object."""
@@ -49,9 +49,9 @@ class Element(object):
     isView = False
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
-            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None, parent=None,
-            context=None, name=None, cssClass=None, cssId=None, title=None,
-            description=None, keyWords=None, language=None, style=None,
+            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None, timeMarks=None,
+            parent=None, context=None, name=None, cssClass=None, cssId=None, 
+            title=None, description=None, keyWords=None, language=None, style=None,
             conditions=None, framePath=None, elements=None, template=None,
             nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             isLeftPage=None, isRightPage=None, bleed=None, padding=None, pt=0,
@@ -169,13 +169,13 @@ class Element(object):
         self.framePath = framePath # Optiona frame path to draw instead of bounding box element rectangle.
 
         # Set timer of this element.
-        # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
-        self._tm0 = seconds(0)
-        self._tm1 = years(1) # Boundary timemarks, where self._tm0.t <= t <= self._tm1.t, with expanded styles.
-        # The default timeMarks between from DateTime.beginningOfTime to infinite.
-        self.timeMarks = [TimeMark(self._tm0, {}), TimeMark(self._tm1, {})] # Default TimeMarks from t == 0 until infinite of time.
-        if t is None:
-            t = self._tm0
+        # Default TimeMarks from t == now() until arbitrary one day from now().
+        t0 = now()
+        if timeMarks is None:
+            timeMarks = [TimeMark(t0, {}), TimeMark(t0 + days(1), {})] 
+        self.timeMarks = timeMarks 
+        if t is None: # Set the current time of this element.
+            t = t0
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
 
@@ -938,6 +938,22 @@ class Element(object):
             flattenedStyle[key] = self.css(key)
         return flattenedStyle
 
+    def getBlendedStyle(self, t=None):
+        u"""Answer the blended style for self, blended between the current time marks on
+        position t or self.t. If style values are not in the time marks, then their values
+
+        >>> e = Element(t=10)
+        >>> e.getBlendedStyle()
+
+        """
+        blendedStyle = {}
+        if t is None:
+            t = self.t
+        #for timeMark in self.timeMarks:
+        #    print(timeMark.t, t)
+        # TODO: write this method
+        return blendedStyle
+
     def _get_em(self):
         """Answer the current em value (for use in relative units), as value of
         self.css('fontSize', DEFAULT_FONT_SIZE).
@@ -1517,15 +1533,13 @@ class Element(object):
         the requested parameters.
 
         >>> e = Element()
-        >>> e.t
-        Duration(0m,0d,0s,0us)
-        >>> e.t = seconds(16)
-        >>> e.t
-        Duration(0m,0d,16s,0us)
+        >>> e.t - now()
+        True
         """
         return self._t
     def _set_t(self, t):
-        assert isinstance(t, Duration)
+        if t is None:
+            t = now()
         self._t = t
         # @@@ NOT YET
         #if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
