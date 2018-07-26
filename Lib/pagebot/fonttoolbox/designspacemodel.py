@@ -21,7 +21,6 @@ from __future__ import division
 import os
 from copy import copy, deepcopy
 from fontTools.varLib import designspace
-from fontTools.varLib.iup import iup_delta
 from fontTools.varLib.models import VariationModel, normalizeLocation
 #from tnbits.floqmodel.objects.glyph import getPoints, getComponents
 #from tnbits.toolbox.transformer import TX
@@ -57,7 +56,7 @@ def isValidTag(tag):
 class Axis(object):
 
     def __init__(self, tag, name=None, minimum=None, default=None, maximum=None, mapping=None, labelNames=None):
-        u"""Axis class that contains variable font axis data. 
+        u"""Axis class that contains variable font axis data.
 
         >>> Axis('XTRA').validate()
         []
@@ -148,12 +147,12 @@ class Axis(object):
                     if not isinstance(mapping, (tuple, list)):
                         report.append('%s Mapping has wrong type "%s"' % (self, str(self.mapping)))
                     elif len(mapping) != 2:
-                        report.append('%s Mapping wrong length "%s"%' % (self, str(mapping)))
+                        report.append('%s Mapping wrong length "%s"%s' % (self, str(mapping)))
                     elif not isinstance(mapping[0], number) or not isinstance(mapping[1], number):
                         report.append('%s Mapping is not a number "(%s, %s)"' % (self, mapping[0], mapping[1]))
                     else:
                         if not (self.minimum <= self.mapping[0] and self.mapping[0] <= self.maximum and
-                                -1 <= self.mapping[1] and self.mapping[1] <= 1):
+                                self.mapping[1] >= -1 and self.mapping[1] <= 1):
                             report.append('%s Mapping out of bounds "%s"' % (self, self.mapping))
         if self.labelNames is not None: # If labelNames defined, then check values
             for language, labelName in self.labelNames.items():
@@ -163,7 +162,7 @@ class Axis(object):
 class BlendAxis(Axis):
     def __init__(self, tag, masters=None, **kwargs):
         u"""Blended Axis class that contains variable font axis data, blended from other axes.
-        Creates new masters 
+        Creates new masters
 
         >>> a1 = Axis('XOPQ', 'X-Opaque', 0, 500, 1000)
         >>> a2 = Axis('XTRA', 'X-Transparant', 0, 500, 1000)
@@ -176,7 +175,7 @@ class BlendAxis(Axis):
         <BlendAxis wght min=100 def=500 max=900 masters=2>
         """
         # Init as normal axes. Then adjust values as min/max come from calculation.
-        Axis.__init__(self, tag, **kwargs) 
+        Axis.__init__(self, tag, **kwargs)
         self.masters = masters # List of masters+locations for this axis.
 
     def __repr__(self):
@@ -273,7 +272,7 @@ class Location(dict):
         elif isinstance(locId, dict):
             location = cls()
             for tag, value in locId.items():
-                location[tag] = value 
+                location[tag] = value
         elif isinstance(locId, (tuple, list)):
             location = cls()
             for tag, value in locId:
@@ -281,7 +280,7 @@ class Location(dict):
         return location
 
 class DesignSpace(object):
-    u"""DesignSpace file wrapper. It can read from a design space source (path), 
+    u"""DesignSpace file wrapper. It can read from a design space source (path),
     it can be used to build one from scratch and save as subset-axes design spaces,
     and it can be used to dynamically build quiries and allows to alter content.
     Also there is a variety of checks and verification to test consistency.
@@ -317,21 +316,21 @@ class DesignSpace(object):
     >>> master1 = FontInfo(info=dict(copy=True), name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName)
     >>> styleName = fName+'Bold'
     >>> loc = Location(wght=300, RNDS=0)
-    >>> master2 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName) 
+    >>> master2 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName)
     >>> styleName = fName+'Light'
     >>> loc = Location(wght=8, RNDS=0)
-    >>> master3 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName) 
+    >>> master3 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName)
     >>> styleName = fName+'Round'
     >>> loc = Location(wght=80, RNDS=1)
-    >>> master4 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName) 
-    
+    >>> master4 = FontInfo(name=styleName, familyName=fName, path=styleName+'.ufo', location=loc, styleName=styleName)
+
     >>> ds.appendMasters((master1, master2, master3)) # Set list of masters
-    >>> ds.appendMasters(master4) # Appending single master 
+    >>> ds.appendMasters(master4) # Appending single master
     >>> len(ds.masters)
     4
     >>> ds.masterList[0].path
     'TestFontOrg.ufo'
-    >>> ds 
+    >>> ds
     <DesignSpace TestFont axes:2 masters:4>
     >>> ds.familyName
     'TestFont'
@@ -393,13 +392,13 @@ class DesignSpace(object):
 
             for m in ds['sources']:
                 masterPath = self.getFontPath(m['filename'])
-                master = FontInfo(name=m['name'], familyName=m['familyname'], styleName=m['stylename'], 
+                master = FontInfo(name=m['name'], familyName=m['familyname'], styleName=m['stylename'],
                     path=masterPath, location=self.asTagLocation(m['location']))
                 self.appendMasters(master)
 
             for i in ds.get('instances', []):
                 instancePath = self.getFontPath(i['filename'])
-                instance = FontInfo(name=i['name'], familyName=i['familyname'], styleName=i['stylename'], 
+                instance = FontInfo(name=i['name'], familyName=i['familyname'], styleName=i['stylename'],
                     path=masterPath, location=self.asTagLocation(i['location']))
                 self.appendInstances(instance)
     path = property(_get_path, _set_path)
@@ -549,7 +548,7 @@ class DesignSpace(object):
         """
         axesByName = {}
         for axis in self.axisList:
-            axesByName[axis.name]= axis 
+            axesByName[axis.name]= axis
         return axesByName
     axesByName = property(_get_axesByName)
 
@@ -655,7 +654,7 @@ class DesignSpace(object):
         [<FontInfo MyFamily-Regular>, <FontInfo MyFamily-Bold>]
         """
         master = self.FONTINFO_CLASS(familyName=familyName, name=name, styleName=styleName, path=path, location=location, info=info)
-        if master.path is None or master.path in self.masters: 
+        if master.path is None or master.path in self.masters:
             path = master.path or ''
             # Path is not unique, create another one. Note that this is not a file path
             for n in range(10000):
@@ -701,7 +700,7 @@ class DesignSpace(object):
 
     def getLocationMaster(self, location):
         u"""Answer the master at location. Answer None, if there is not master.
-        
+
         >>> ds = DesignSpace()
         >>> a1 = ds.newAxis('wght')
         >>> a2 = ds.newAxis('wdth')
@@ -717,7 +716,7 @@ class DesignSpace(object):
         return None
 
     def _get_danglingMasters(self):
-        u"""Answer the list of masters that either have no location set or a location that is not valid 
+        u"""Answer the list of masters that either have no location set or a location that is not valid
         in the current design space set of axes.
 
         >>> ds = DesignSpace()
@@ -741,7 +740,7 @@ class DesignSpace(object):
     danglingMasters = property(_get_danglingMasters)
 
     def _get_defaultMasterList(self):
-        u"""Answer the list of master info, in the order of the self._masterList list, 
+        u"""Answer the list of master info, in the order of the self._masterList list,
         except that it starts with the defaultMaster if it exists.
 
         >>> ds = DesignSpace()
@@ -778,7 +777,7 @@ class DesignSpace(object):
         True
         """
         defaultMaster = None
-        for master in self.masterList: 
+        for master in self.masterList:
             location = master.location
             found = True
             for tag, value in location.items():
@@ -787,12 +786,12 @@ class DesignSpace(object):
                     break
             if found:
                 defaultMaster = master
-                break           
+                break
         return defaultMaster
     defaultMaster = property(_get_defaultMaster)
 
     def getAxisMasters(self, tag):
-        u"""Answer the tuple with (minMasters, maxMasters) list, that contain with master info that are 
+        u"""Answer the tuple with (minMasters, maxMasters) list, that contain with master info that are
         located on the axis defined by tag and are not the default.
 
         >>> ds = DesignSpace()
@@ -814,7 +813,7 @@ class DesignSpace(object):
         minMasters = []
         maxMasters = [defaultMaster]
         axis = self.axes[tag]
-        for master in self.masterList: 
+        for master in self.masterList:
             found = True
             # All other values should be default (except for the requested axis), in order to be selected.
             for locTag, locValue in master.location.items():
@@ -834,7 +833,7 @@ class DesignSpace(object):
         return minMasters, maxMasters
 
     def getAxisValueMasters(self, tag):
-        u"""Answer the tuple of (minValueMasters, maxValueMasters) dictionaries, with master axis values 
+        u"""Answer the tuple of (minValueMasters, maxValueMasters) dictionaries, with master axis values
         as key and the masterInfo as value, including the default master.
 
         >>> ds = DesignSpace()
@@ -906,7 +905,7 @@ class DesignSpace(object):
         return location
 
     def _get_locations(self):
-        u"""Answer the dictionary with axis locations and value a dict with paths->masters/instance 
+        u"""Answer the dictionary with axis locations and value a dict with paths->masters/instance
         on that location. If there are "dangling" masters or instances, a location None is added.
 
         >>> ds = DesignSpace()
@@ -1039,7 +1038,7 @@ class DesignSpace(object):
     defaultLocation = property(_get_defaultLocation)
 
     def getAxisLocation(self, axis):
-        u"""Answer the complete location triplet (including all default values) for the 
+        u"""Answer the complete location triplet (including all default values) for the
         given axis (min, default, max). If min or max equals default, then None is anwered
         for that location.
 
@@ -1069,7 +1068,7 @@ class DesignSpace(object):
     # Blending
 
     def blend(self, blendAxes, removePrimaries=True, verbose=False):
-        u"""The blending function creates a copy of self, with blended axes, conform the 
+        u"""The blending function creates a copy of self, with blended axes, conform the
         specification in /blendAxes. The model will use the blended design space, to
         create blended masters from rendered outlines at the new locations.
         What happens:
@@ -1088,7 +1087,7 @@ class DesignSpace(object):
         >>> m2 = FontInfo(familyName=fName, styleName='Condensed', location=Location(XOPQ=100, XTRA=600))
         >>> m3 = FontInfo(familyName=fName, styleName='Wide', location=Location(XOPQ=700, XTRA=100))
         >>> ba1 = BlendAxis('wght', name='Weight', masters={100: m0, 900: m1}) # Masters on their location
-        >>> ba2 = BlendAxis('wdth', name='Width', masters={100: m2, 900: m3}) 
+        >>> ba2 = BlendAxis('wdth', name='Width', masters={100: m2, 900: m3})
         >>> len(ds.blend([ba1, ba2])) # Make from list of BlendAxis instances. Return removed axes.
         2
         >>> ds.axisList # Blended axes are the only ones remaining
@@ -1122,12 +1121,12 @@ class DesignSpace(object):
         >>> a = ds.newAxis('ABCD', minimum=600)
         >>> ds.validate()
         ['<Axis ABCD min=600 def=500 max=1000> Minimum value overlaps default (600, 500, 1000)']
-        
+
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('ABCD', maximum=-100)
         >>> ds.validate()
         ['<Axis ABCD min=0 def=500 max=-100> Maximum value overlaps default (0, 500, -100)']
-        
+
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('ABCD', name='ThisName')
         >>> a = ds.newAxis('EFGH', name='ThisName')
@@ -1135,7 +1134,7 @@ class DesignSpace(object):
         ['<DesignSpace None axes:2> Duplicate axis names "ThisName"']
         """
         report = []
-        # Make axes validate if the are filled and valid 
+        # Make axes validate if the are filled and valid
         # Check on duplicate axes names
         axisNames = set()
         for axis in self.axisList:
@@ -1166,7 +1165,7 @@ class DesignSpace(object):
         f = open(path+'.csv', 'w')
         f.write(self._getCSV())
         f.close()
-    
+
     def _getCSV(self):
         csv = []
         line = [self.familyName]
@@ -1175,7 +1174,7 @@ class DesignSpace(object):
         lineDef = ['Default']
         lineMax = ['Maximum']
         # Axis tags columns and some more
-        for axis in self.axisList:  
+        for axis in self.axisList:
             line.append(axis.tag)
             lineName.append(axis.name)
             lineMin.append(asFormatted(axis.minimum))
@@ -1216,7 +1215,7 @@ class DesignSpace(object):
         for axis in self.axisList: # Keep original order
             xml.append("""\t\t<axis minimum="%s" default="%s" maximum="%s" name="%s" tag="%s"/>\n""" % (axis.minimum, axis.default, axis.maximum, axis.name, axis.tag))
         xml.append('\t</axes>\n')
-    
+
         xml.append('\t<sources>\n')
         nameId = 0
         processedMasterPaths = set()
@@ -1239,7 +1238,7 @@ class DesignSpace(object):
         xml.append("""\t</sources>\n</designspace>\n""")
 
         return ''.join(xml)
-           
+
 
 class Model(object):
     """
@@ -1319,7 +1318,7 @@ class Model(object):
     >>> fCnd.save(PATH % (FAMILY, fCnd.info.styleName))
 
     >>> #result = os.system('open %s %s %s' % (fReg.path, fBld.path, fCnd.path) )
-    
+
     >>> # We created the masters now build the design space from it.
     >>> ds = DesignSpace() # Start empty design space, not reading from a file.
     >>> # Construct axes as list, to maintain the defined order.
@@ -1337,7 +1336,7 @@ class Model(object):
     >>> iBld = FontInfo(name=fBld.info.styleName, familyName=fBld.info.familyName, path=fBld.path, location=loc, styleName=fBld.info.styleName)
     >>> loc = Location(wght=400, YTUC=0)
     >>> iCnd = FontInfo(name=fCnd.info.styleName, familyName=fCnd.info.familyName, path=fCnd.path, location=loc, styleName=fCnd.info.styleName)
-    
+
     >>> ds.appendMasters((iLght, iReg, iBld, iCnd)) # Set list of master info
     >>> ds.masterList # DesignSpace.masterLust gives list of FontInfo items, in defined order.
     [<FontInfo PageBotTest-Light>, <FontInfo PageBotTest-Regular>, <FontInfo PageBotTest-Bold>, <FontInfo PageBotTest-Condensed>]
@@ -1346,7 +1345,7 @@ class Model(object):
     >>> ds.save('/tmp/%s.designspace' % FAMILY)
     >>> masters = {fReg.path: fReg, fBld.path: fBld, fLght.path: fLght, fCnd.path: fCnd }
     >>> # Now we have a design space and master dictionary, we can create the model
-    >>> m = Model(ds, masters) 
+    >>> m = Model(ds, masters)
     >>> m
     <PageBot Model PageBotTest axes:2 masters:4>
     >>> [f.info.styleName for f in m.masterList] # Sorted as defined, with Regular as #1.
@@ -1388,7 +1387,7 @@ class Model(object):
     >>> fInt = NewFont()
     >>> gInt = fInt.newGlyph('I')
     >>> loc = dict(wght=0, YTUC=500)
-    >>> points, components, metrics = m.interpolateValues('I', loc) 
+    >>> points, components, metrics = m.interpolateValues('I', loc)
     >>> points
     [(50.0, 0.0), (50.0, 800.0), (450.0, 800.0), (450.0, 0.0)]
     >>> components
@@ -1421,7 +1420,7 @@ class Model(object):
         # Initialize cached property values.
         self.clear()
         # Set the self.paths (path->fontInfo) dictionary, so all fonts are enabled by default.
-        # Set the path->fontInfo dictionary of fonts from the design space that are disable. 
+        # Set the path->fontInfo dictionary of fonts from the design space that are disable.
         # This allows the caller to enable/disable fonts from interpolation.
         self.disabledMasterPaths = [] # Paths of masters not to be used in delta calculation.
 
@@ -1445,7 +1444,7 @@ class Model(object):
             defaultMaster = self.masters.get(defaultMasterInfo.path)
         return defaultMaster
     defaultMaster = property(_get_defaultMaster)
-       
+
     def _get_masterList(self):
         u"""Dictionary of real master Font instances, path is key. Always start with the default,
         then omit the default if it else where in the list.
@@ -1464,15 +1463,20 @@ class Model(object):
     masterList = property(_get_masterList)
 
     def getAxisMasters(self, axis):
-        u"""Answer a tuple of two lists of all masters on the axis, on either size of the default master,
-        and including the default master. If mininum == default or default == maximum, then that side
-        if the axis only contains the default master."""
+        u"""Answer a tuple of two lists of all masters on the axis, on either
+        size of the default master, and including the default master. If
+        mininum == default or default == maximum, then that side if the axis
+        only contains the default master."""
+        # FIXME: minMasters, maxMasters unused.
         minMasters = []
         maxMasters = []
+
         for axisSide in self.ds.getAxisMasters(axis.tag):
             for masterInfo in axisSide:
                 if masterInfo.path:
-                    masters.append(self.masters.get(masterInfo.path))
+                    # FIXME: masters doesn't exist.
+                    #masters.append(self.masters.get(masterInfo.path))
+                    pass
         return minMasters, maxMasters
 
     def _get_instanceList(self):
@@ -1495,7 +1499,7 @@ class Model(object):
     # Rendering
 
     def getScalars(self, location):
-        u"""Answer the list of scalars (multipliers 0..1) for each master in the 
+        u"""Answer the list of scalars (multipliers 0..1) for each master in the
         given nLocation (normalized values -1..0..1): [1.0, 0.0, 0.8, 0.3] with
         respectively Regular, Light, Bold, Condensed as master ordering.
         """
@@ -1512,23 +1516,24 @@ class Model(object):
         componentYDeltas = []
         metricsDeltas = []
         mvx, mvy, mvCx, mvCy, mt = self.getMasterValues(glyphName)
+
         for pIndex in range(len(mvx)):
             pointXDeltas.append(self.vm.getDeltas(mvx[pIndex]))
             pointYDeltas.append(self.vm.getDeltas(mvy[pIndex]))
 
         for cIndex in range(len(mvCx)):
-            componentXDeltas.append(self.vm.getDeltas(mvCX[cIndex]))
+            componentXDeltas.append(self.vm.getDeltas(mvCx[cIndex]))
             componentYDeltas.append(self.vm.getDeltas(mvCy[cIndex]))
 
         for mIndex in range(len(mt)):
             metricsDeltas.append(self.vm.getDeltas(mt[mIndex]))
 
         return pointXDeltas, pointYDeltas, componentXDeltas, componentYDeltas, metricsDeltas
-        
+
     def getMasterValues(self, glyphName):
-        u"""Answer the (mvx, mvy, mvCx, mvCy), for point and component transformation,
-        lists of corresponding master glyphs, in the same order as the self.masterList.
-        """
+        u"""Answer the (mvx, mvy, mvCx, mvCy), for point and component
+        transformation, lists of corresponding master glyphs, in the same order
+        as the self.masterList."""
         if self._masterValues is None:
             mvx = [] # X values of point transformations. Length is the amount of masters
             mvy = [] # Y values
@@ -1536,12 +1541,14 @@ class Model(object):
             mvCy = [] # Y values
             mMt = [[]] # Metrics values
             self._masterValues = mvx, mvy, mvCx, mvCy, mMt # Initialize result tuple
+
             for master in self.masterList:
                 if not glyphName in master:
                     continue
+
                 g = master[glyphName]
                 points = getPoints(g) # Collect the master points
-                
+
                 for pIndex, point in enumerate(points):
                     if len(mvx) <= pIndex:
                         mvx.append([])
@@ -1549,7 +1556,7 @@ class Model(object):
                     mvx[pIndex].append(point.x)
                     mvy[pIndex].append(point.y)
                 components = getComponents(g) # Collect the master components
-                
+
                 for cIndex, component in enumerate(components):
                     t = component.transformation
                     if len(mvCx) < cIndex:
@@ -1557,11 +1564,11 @@ class Model(object):
                         mvCy.append([])
                     mvCx[cIndex].append(t[-2])
                     mvCy[cIndex].append(t[-1])
-                
+
                 mMt[0].append(g.width) # Other interpolating metrics can be added later.
 
         return self._masterValues
-            
+
     def interpolateValues(self, glyphName, location):
         u"""Interpolate the glyph from masters and answer the list of (x,y) points tuples,
         component transformation and metrics.
@@ -1574,7 +1581,7 @@ class Model(object):
         for pIndex in range(len(mvx)):
             interpolatedPoints.append((
                 self.vm.interpolateFromMasters(nLocation, mvx[pIndex]),
-                self.vm.interpolateFromMasters(nLocation, mvy[pIndex]) 
+                self.vm.interpolateFromMasters(nLocation, mvy[pIndex])
             ))
         for cIndex in range(len(mvCx)):
             interpolatedComponents.append((
@@ -1606,7 +1613,7 @@ class Model(object):
         if len(points) != len(mvx): # Glyph may not exist, or not compatible.
             # Clear the glyph and copy from the first master in the list, so it always interpolates.
             glyph.clear()
-            masterGlyph = self.masterList[0][glyph.name] 
+            masterGlyph = self.masterList[0][glyph.name]
             masterGlyph.draw(glyph.getPen())
             points = getPoints(glyph) # Get new set of points
 
@@ -1616,13 +1623,13 @@ class Model(object):
         for pIndex in range(len(mvx)):
             p = points[pIndex]
             p.x = self.vm.interpolateFromMasters(nLocation, mvx[pIndex])
-            p.y = self.vm.interpolateFromMasters(nLocation, mvy[pIndex]) 
+            p.y = self.vm.interpolateFromMasters(nLocation, mvy[pIndex])
 
         for cIndex in range(len(mvCx)):
             c = components[cIndex]
             t = list(c.transformation)
             t[-2] = self.vm.interpolateFromMasters(nLocation, mvCx[cIndex])
-            t[-1] = self.vm.interpolateFromMasters(nLocation, mvCy[cIndex]) 
+            t[-1] = self.vm.interpolateFromMasters(nLocation, mvCy[cIndex])
             c.transformation = t
 
         glyph.width = self.vm.interpolateFromMasters(nLocation, mMt[0])
