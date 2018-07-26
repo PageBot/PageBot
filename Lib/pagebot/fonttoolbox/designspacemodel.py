@@ -22,9 +22,7 @@ import os
 from copy import copy, deepcopy
 from fontTools.varLib import designspace
 from fontTools.varLib.models import VariationModel, normalizeLocation
-#from tnbits.floqmodel.objects.glyph import getPoints, getComponents
 from pagebot.toolbox.transformer import asFormatted
-#from pagebot.fonttoolbox.objects.glyph import getPoints
 
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -140,14 +138,18 @@ class Axis(object):
     def validate(self, report=None):
         if report is None:
             report = []
+
         if not self.tag or len(self.tag) != 4:
             report.append('%s Undefined or illegal tag length' % self)
         elif not isValidTag(self.tag):
             report.append('%s Unregistered axes can only use 4 capitals "%s"' % (self, self.tag))
+
         if not self.name:
             report.append('%s Undefined or illegal name "%s"' % (self, self.name))
+
         number = (int, float)
         values = (self.minimum, self.default, self.maximum)
+
         if not (isinstance(self.minimum, number) and isinstance(self.default, number) and isinstance(self.maximum, number)):
             report.append('%s Value not number %s' % (self, str(values)))
         elif self.minimum == self.default == self.maximum:
@@ -156,6 +158,7 @@ class Axis(object):
             report.append('%s Minimum value overlaps default %s' % (self, str(values)))
         elif self.default > self.maximum:
             report.append('%s Maximum value overlaps default %s' % (self, str(values)))
+
         if self.mapping is not None: # If mapping defined, then check values
             if not isinstance(self.mapping, (tuple, list)):
                 report.append('%s Mapping has wrong type "%s"' % (self, str(self.mapping)))
@@ -164,16 +167,18 @@ class Axis(object):
                     if not isinstance(mapping, (tuple, list)):
                         report.append('%s Mapping has wrong type "%s"' % (self, str(self.mapping)))
                     elif len(mapping) != 2:
-                        report.append('%s Mapping wrong length "%s"%s' % (self, str(mapping)))
+                        report.append('%s Mapping wrong length "%s"' % (self, str(mapping)))
                     elif not isinstance(mapping[0], number) or not isinstance(mapping[1], number):
                         report.append('%s Mapping is not a number "(%s, %s)"' % (self, mapping[0], mapping[1]))
                     else:
                         if not (self.minimum <= self.mapping[0] and self.mapping[0] <= self.maximum and
                                 self.mapping[1] >= -1 and self.mapping[1] <= 1):
                             report.append('%s Mapping out of bounds "%s"' % (self, self.mapping))
+
         if self.labelNames is not None: # If labelNames defined, then check values
             for language, labelName in self.labelNames.items():
                 pass
+
         return report
 
 class BlendAxis(Axis):

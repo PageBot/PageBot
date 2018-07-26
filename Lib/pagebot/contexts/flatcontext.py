@@ -217,7 +217,7 @@ class FlatContext(BaseContext):
             self.newDocument(w, h)
 
         self.page = self.doc.addpage()
-        self.page.size(w.pt, h.pt, units=self.UNITS) # Default units render to pt-units
+        self.page.size(w, h, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
