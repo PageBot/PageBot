@@ -12,7 +12,6 @@ install:
 - pip install svgwrite
 - pip install markdown
 - pip install lxml
-  #- pip install pyobjc
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme
@@ -20,53 +19,17 @@ script:
 - export PYLINT="pylint --disable=$WONT_FIX,$CATCHALL_MAY_FIX_LATER"
 - $PYLINT Lib/pagebot/
 - python Lib/pagebot/*.py
-- python Lib/pagebot/conditions/*.py
-- python Lib/pagebot/contexts/basecontext.py
-- python Lib/pagebot/contexts/builders/htmlbuilder.py
-- python Lib/pagebot/contexts/builders/nonebuilder.py
-- python Lib/pagebot/contexts/drawbotcontext.py
-- python Lib/pagebot/contexts/flatcontext.py
-- python Lib/pagebot/contexts/htmlcontext.py
-- python Lib/pagebot/contexts/platform.py
-- python Lib/pagebot/contexts/strings/babelstring.py
-- python Lib/pagebot/contexts/strings/drawbotstring.py
-- python Lib/pagebot/contexts/strings/flatstring.py
-- python Lib/pagebot/contexts/strings/htmlstring.py
+- python Lib/pagebot/contexts/*.py
+- python Lib/pagebot/contexts/strings/*.py
 - python Lib/pagebot/contributions/filibuster/blurbwriter.py
-- python Lib/pagebot/elements/element.py
-- python Lib/pagebot/elements/paths/glyphpath.py
-- python Lib/pagebot/elements/pbgalley.py
-- python Lib/pagebot/elements/pbgroup.py
-- python Lib/pagebot/elements/pbimage.py
-- python Lib/pagebot/elements/pbline.py
-- python Lib/pagebot/elements/pboval.py
-- python Lib/pagebot/elements/pbpage.py
-- python Lib/pagebot/elements/pbplacer.py
-- python Lib/pagebot/elements/pbrect.py
-- python Lib/pagebot/elements/pbruler.py
-- python Lib/pagebot/elements/pbtextbox.py
-- python Lib/pagebot/elements/variablefonts/*.py
-- python Lib/pagebot/elements/views/pageview.py
-- python Lib/pagebot/elements/web/simplesite/site.py
-- python Lib/pagebot/fonttoolbox/objects/family.py
-- python Lib/pagebot/fonttoolbox/objects/font.py
-- python Lib/pagebot/fonttoolbox/objects/fontinfo.py
-- python Lib/pagebot/fonttoolbox/objects/glyph.py
-- python Lib/pagebot/fonttoolbox/objects/prevarfamily.py
-- python Lib/pagebot/fonttoolbox/otlTools.py
-- python Lib/pagebot/fonttoolbox/ttftools.py
-- python Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
-- python Lib/pagebot/publications/simplesite/simplesite.py
-- python Lib/pagebot/publications/newspaper/newspaper.py
-- python Lib/pagebot/publications/typespecimen.py
-- python Lib/pagebot/publications/website.py
-- python Lib/pagebot/toolbox/dating.py
-- python Lib/pagebot/toolbox/hyphenation.py
-- python Lib/pagebot/toolbox/markers.py
-- python Lib/pagebot/toolbox/mathematics.py
-- python Lib/pagebot/toolbox/transform3d.py
-- python Lib/pagebot/toolbox/transformer.py
-- python Lib/pagebot/toolbox/units.py
+- python Lib/pagebot/elements/*.py
+- python Lib/pagebot/fonttoolbox/objects/*.py
+- python Lib/pagebot/fonttoolbox/*.py
+- python Lib/pagebot/fonttoolbox/unicodes/*.py
+- python Lib/pagebot/publications/simplesite/*.py
+- python Lib/pagebot/publications/newspaper/*.py
+- python Lib/pagebot/publications/*.py
+- python Lib/pagebot/toolbox/*.py
 
 addons:
     apt:
