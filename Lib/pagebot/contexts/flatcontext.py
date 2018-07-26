@@ -301,10 +301,12 @@ class FlatContext(BaseContext):
         return self.newString(bullet, e=e, style=style)
 
     def text(self, bs, p):
-        """Place the babelstring instance at position p. The position can be any 2D or 3D points tuple.
-        Currently the z-axis is ignored. The FlatContext version of the BabelString is supposed to contain
-        Flat.text. Note that in the Flat model, the positions is an attribute of the string, so
-        strings cannot be reused to show on multiple positions.
+        """Place the babelstring instance at position p. The position can be
+        any 2D or 3D points tuple. Currently the z-axis is ignored. The
+        FlatContext version of the BabelString is supposed to contain
+        Flat.text. Note that in the Flat model, the positions is an attribute
+        of the string, so strings cannot be reused to show on multiple
+        positions.
 
         >>> context = FlatContext()
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
@@ -317,7 +319,8 @@ class FlatContext(BaseContext):
         assert isinstance(bs, FlatString), 'FlatString.text: bs not of type %s' % FlatString.__name__
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
-        placedText.position(ru(p)) # Render unit tuple to value tuple
+        x, y = p
+        placedText.position(ru(x), ru(y)) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted string.

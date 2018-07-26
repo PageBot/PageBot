@@ -20,12 +20,12 @@ from pagebot.toolbox.units import pointOffset
 from pagebot.style import ORIGIN
 
 class Page(Element):
-    u"""The Page container is typically the root of a tree of Element instances.
-    A Document contains a set of pages. 
-    Since pages an build into fixed media, such as PDF, PNG and animated GIF, as well
-    as HTML pages in a site, there is a mixture of meta data availalbe in a Page.
+    """The Page container is typically the root of a tree of Element instances.
+    A Document contains a set of pages.
 
-    """
+    Since pages an build into fixed media, such as PDF, PNG and animated GIF,
+    as well as HTML pages in a site, there is a mixture of meta data available
+    in a Page."""
 
     isPage = True
 
@@ -34,13 +34,13 @@ class Page(Element):
     INDEX_HTML = 'index.html'
     INDEX_HTML_URL = INDEX_HTML
 
-    def __init__(self, leftPage=None, rightPage=None, 
+    def __init__(self, leftPage=None, rightPage=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
         cssCode=None, cssPath=None, cssUrls=None, jsCode=None, jsPath=None, jsUrls=None,
         viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,
-        **kwargs):  
+        **kwargs):
 
-        u"""Add specific parameters for a page, besides the parameters for standard Elements.
+        """Add specific parameters for a page, besides the parameters for standard Elements.
 
         >>> page = Page()
         >>> page.w, page.h
@@ -58,13 +58,13 @@ class Page(Element):
 
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         self._isLeft = leftPage # Undefined if None, let self.doc decide instead
-        self._isRight = rightPage 
+        self._isRight = rightPage
 
         #   F I L E  S T U F F
 
         self.fileName = fileName or self.INDEX_HTML
 
-        #   H T M L  S T U F F 
+        #   H T M L  S T U F F
 
         # Site stuff
         self.viewPort = viewPort or self.VIEW_PORT
@@ -80,10 +80,10 @@ class Page(Element):
 
         self.headCode = headCode # Optional set to string that contains the page <head>...</head>, excluding the tags.
         self.headPath = headPath # Set to path, if head is available in a single file, excluding the tags.
-        
+
         self.cssCode = cssCode # Set to string, if CSS is available as single source. Exported as css file once.
         self.cssPath = cssPath # Set to path, if CSS is available in a single file to be included in the page.
-        self.cssUrls = cssUrls # Optional CSS, if different from what is defined by the view. 
+        self.cssUrls = cssUrls # Optional CSS, if different from what is defined by the view.
 
         self.bodyCode = bodyCode # Optional set to string that contains the page <body>...</body>, excluding the tags.
         self.bodyPath = bodyPath # Set to path, if body is available in a single file, excluding the tags.
@@ -95,10 +95,11 @@ class Page(Element):
         self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
 
     def __repr__(self):
-        u"""Page as string. Similar to general Element.__repr__, except showing the (pagenNumber, index)
-        as it is stored in the parent document. And not showing (self.x, self.y), as most pages will not
-        be part of another page (although it is allowed and there could be situations to do so, e.g.
-        if a page is used as illustration in another page.)
+        """Page as string. Similar to general Element.__repr__, except showing
+        the (pagenNumber, index) as it is stored in the parent document. And
+        not showing (self.x, self.y), as most pages will not be part of another
+        page (although it is allowed and there could be situations to do so,
+        e.g. if a page is used as illustration in another page.)
 
         >>> from pagebot.document import Document
         >>> from pagebot.constants import A4
@@ -130,9 +131,9 @@ class Page(Element):
         return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
 
     def _get_isLeft(self):
-        u"""Answer the boolean flag if this is a left page (even pagenumber), 
-        unless the self._isLeft is overwritter by a boolean flag, other than None.
-        Note that pages can be both left or right.
+        """Answer if this is a left page (even pagenumber), unless the
+        self._isLeft is overwritten by a boolean, other than None. Note
+        that pages can be both left or right.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -147,7 +148,7 @@ class Page(Element):
         False
         """
         if self._isLeft is not None:
-            return self._isLeft   
+            return self._isLeft
         if self.parent is not None:
             return self.parent.getPageNumber(self)[0] % 2 == 0
         return None
@@ -156,9 +157,9 @@ class Page(Element):
     isLeft = property(_get_isLeft, _set_isLeft)
 
     def _get_isRight(self):
-        u"""Answer the boolean flag if this is a right page, if that info is stored. 
-        Note that pages can be neither left or right.
-        Otherwise, the only one who can know that is the document.
+        """Answer if this is a right page, if that info is stored. Note that
+        pages can be neither left or right. Otherwise, the only one who can
+        know that is the document.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -173,7 +174,7 @@ class Page(Element):
         False
         """
         if self._isRight is not None: # Overwritted by external call.
-            return self._isRight   
+            return self._isRight
         if self.doc is not None:
             return self.parent.getPageNumber(self)[0] % 2 == 1
         return None
@@ -182,9 +183,9 @@ class Page(Element):
     isRight = property(_get_isRight, _set_isRight)
 
     def _get_pn(self):
-        u"""Answer the page number by which self is stored in the parent document.
-        This property is readonly. To move or remove pages, use Document.movePage()
-        or Document.removePage()
+        """Answer the page number by which self is stored in the parent
+        document. This property is readonly. To move or remove pages, use
+        Document.movePage() or Document.removePage()
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -202,7 +203,7 @@ class Page(Element):
     #   D R A W B O T  & F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw all elements of this page in DrawBot."""
+        """Draw all elements of this page in DrawBot."""
         p = pointOffset(self.origin, origin) # Ignoe z-axis for now.
         # If there are child elements, draw them over the text.
         if drawElements:
@@ -215,9 +216,9 @@ class Page(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation 
-        of self. If there are any child elements, then also included their code, using the
-        level recursive indent.
+        """Build the HTML/CSS code through WebBuilder (or equivalent) that is
+        the closest representation of self. If there are any child elements,
+        then also included their code, using the level recursive indent.
 
         Single page site, exporting to html source, with CSS inside.
         >>> import os
@@ -232,7 +233,7 @@ class Page(Element):
         """
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
-       
+
         if self.htmlPath is not None:
             b.importHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
@@ -253,12 +254,12 @@ class Page(Element):
                 b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.meta(charset=self.css('encoding'))
-                # Try to find the page name, in sequence order of importance. 
+                # Try to find the page name, in sequence order of importance.
                 b.title_(self.title or self.name)
-                
+
                 # Devices
                 if self.viewPort is not None: # Not supposed to be None. Check anyway
-                    b.meta(name='viewport', content=self.viewPort) 
+                    b.meta(name='viewport', content=self.viewPort)
 
                 # View and pages can both implements Javascript paths
                 for jsUrls in (view.jsUrls, self.jsUrls):
@@ -271,7 +272,7 @@ class Page(Element):
                     if webFontUrls is not None:
                         for webFontUrl in webFontUrls:
                             b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
-                
+
                 # View and pages can both implements CSS paths
                 for cssUrls in (view.cssUrls, self.cssUrls):
                     if cssUrls is not None:
@@ -287,7 +288,7 @@ class Page(Element):
                 if self.cssPath is not None:
                     # Include CSS content of file, if path is not None and the file exists.
                     b.style()
-                    b.importCss(self.cssPath) 
+                    b.importCss(self.cssPath)
                     b._style()
 
                 # Icons
@@ -295,7 +296,7 @@ class Page(Element):
                     b.link(rel='icon', href=self.favIconUrl, type='image/%s' % self.favIconUrl.split('.')[-1])
                 if self.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
                     b.link(rel='apple-touch-icon-precomposed', href=self.appleTouchIconUrl, type='image/%s' % self.appleTouchIconUrl.split('.')[-1])
-                
+
                 # Description and keywords
                 if self.description:
                     b.meta(name='description', content=self.description)
@@ -346,14 +347,17 @@ class Page(Element):
 class Template(Page):
 
     def _get_parent(self):
-        u"""Answer the parent of the element, if it exists, by weakref reference. Answer None of there
-        is not parent defined or if the parent not longer exists."""
+        """Answer the parent of the element, if it exists, by weakref
+        reference. Answer None of there is not parent defined or if the parent
+        not longer exists."""
         if self._parent is not None:
             return self._parent()
         return None
+
     def _set_parent(self, parent):
-        u"""Set the parent of the template. Don't call self.appendParent here, as we don't want the 
-        parent to add self to the page/element list. Just a simple reference, to connect to styles, etc."""
+        """Set the parent of the template. Don't call self.appendParent here,
+        as we don't want the parent to add self to the page/element list. Just
+        a simple reference, to connect to styles, etc."""
         if parent is not None:
             parent = weakref.ref(parent)
         self._parent = parent
@@ -361,7 +365,6 @@ class Template(Page):
 
     def draw(self, origin, view):
         raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')
-
 
 if __name__ == "__main__":
     import doctest

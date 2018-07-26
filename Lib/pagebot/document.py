@@ -53,7 +53,6 @@ class Document(object):
 
     """
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
-
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1,
@@ -67,18 +66,19 @@ class Document(object):
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
-
         self.name = name or title or 'Untitled'
         self.title = title or self.name
-
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
+
         if size3D is not None: # For convenience of the caller, also accept size3D and size tuples.
             w, h, d = size3D
         elif size is not None:
             w, h = size
+
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
         self.d = d or DEFAULT_DOC_DEPTH
+
         if padding is not None:
             self.padding = padding
 
@@ -91,11 +91,13 @@ class Document(object):
         # checking and building is done through this view. The defaultViewClass
         # is set either to an in stance of PageView.
         self.views = {} # Key is the viewId. Value is a view instance.
-        # Set the self.view to an instance of viewId or defaultViewClass.viewId and store in self.views.
-        # Add the optional context, if defined. Otherwise use the result of default getContext.
-        # A context is an instance of e.g. one of DrawBotContext, FlatContext or HtmlContext, which then
-        # hold the instance of a builder (respectively DrawBot, Flat and one of the HtmlBuilders, such
-        # as GitBuilder or MampBuilder)
+
+        # Set the self.view to an instance of viewId or defaultViewClass.viewId
+        # and store in self.views. Add the optional context, if defined.
+        # Otherwise use the result of default getContext. A context is an
+        # instance of e.g. one of DrawBotContext, FlatContext or HtmlContext,
+        # which then hold the instance of a builder (respectively DrawBot, Flat
+        # and one of the HtmlBuilders, such as GitBuilder or MampBuilder)
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
         # Template is name or instance default template.
