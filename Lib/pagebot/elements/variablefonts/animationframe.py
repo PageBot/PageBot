@@ -18,8 +18,9 @@ from __future__ import division # Make integer division result in float.
 
 from math import sin, cos, radians
 from pagebot.elements import Rect
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, pt
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.toolbox.color import color
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont
@@ -45,7 +46,7 @@ class AnimationFrame(Rect):
         >>> sample = 'Bitcount'
         >>> for pn in range(1, frames+1):
         ...     page = doc[pn]
-        ...     style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=0)
+        ...     style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=color(0))
         ...     gs = AnimationFrame('Claire', font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
         >>> doc.export('_export/%sAnimation.gif' % font.info.familyName)
 
@@ -100,7 +101,7 @@ class AnimationFrame(Rect):
         phisin = sin(radians(self.frameIndex/self.frames * 360))
         phicos = cos(radians(self.frameIndex/self.frames * 360))
 
-        style['textFill'] = 1-phicos*0.3+0.5
+        style['textFill'] = color(1-phicos*0.3+0.5)
         # TODO: Not the right instance-weight is shown in export.
         wdthRange = wdthMax - wdthMin
         wghtRange = wghtMax - wghtMin
@@ -114,9 +115,9 @@ class AnimationFrame(Rect):
         c.text(bs, (self.w/2 - tw/2, self.h/2))
         glyph = instance['ampersand']
         c.save()
-        c.stroke(0, 0.25)
+        c.stroke(color(0), pt(0.25))
         gray = phisin*0.3+0.5
-        c.fill((gray, gray, 1-gray, 0.6))
+        c.fill(color(gray, gray, 1-gray, 0.6))
         s = 0.4
         c.scale(s)
         c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
@@ -149,9 +150,9 @@ class AnimationFrame(Rect):
         glyph = instance['A']
         """
         c.save()
-        c.stroke((1, 0, 0), 0.25)
+        c.stroke(color(1, 0, 0), pt(0.25))
         gray = phisin*0.3+0.7
-        c.fill((gray, gray, gray, 0.8))
+        c.fill(color(gray, gray, gray, 0.8))
         s = 1
         c.scale(s)
         c.drawPath(glyph.path, ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
