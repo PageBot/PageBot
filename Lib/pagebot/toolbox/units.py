@@ -132,7 +132,7 @@ def point2S(p):
     '33.6pt 44.7pt'
     """
     x, y, z = point3D(p)
-    if z.r:
+    if z.rv:
         return '%s %s %s' % (x, y, z)
     return '%s %s' % (x, y)
 
@@ -146,7 +146,7 @@ def point2roundedS(p):
     '34 45'
     """
     x, y, z = point3D(p)
-    if z.r:
+    if z.rv:
         return '%d %d %d' % (x.rounded, y.rounded, z.rounded)
     return '%d %d' % (x.rounded, y.rounded)
 
@@ -182,22 +182,20 @@ def ru(u, *args, **kwargs):
             uu = uu.ru
         return uu
 
-def r(u, *args, **kwargs):
-    """Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
+def rv(u, *args, **kwargs):
+    """Render to uu.rv or (u1.rv, u2.rv, ...) if uu is a list or tuple.
     If maker is defined, then use that to render towards.
 
-    >>> r(pt(100), pt(120)) # Absolute inits, nothing changes.
+    >>> rv(pt(100), pt(120)) # Absolute inits, nothing changes.
     (100, 120)
-    >>> r(pt(100), 121, (p(5), p(6), units('5"')), maker=pt) # All cast to pt
+    >>> rv(pt(100), 121, (p(5), p(6), units('5"')), maker=pt) # All cast to pt
     (100, 121, (60, 72, 360))
-    >>> r(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    >>> rv(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
     (5, 121, (5, 6, 30))
-    >>> r(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
+    >>> rv(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
     (10, 20, (30, 40))
-    >>> r(pt(60), 121, maker=p)
+    >>> rv(pt(60), 121, maker=p)
     (5, 121)
-    >>> pt(60).p, p(121).p
-
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -207,45 +205,13 @@ def r(u, *args, **kwargs):
     if isinstance(u, (list, tuple)):
         ruu = []
         for uu in u:
-            uu = r(uu, **kwargs)
+            uu = rv(uu, **kwargs)
             ruu.append(uu)
         return tuple(ruu)
     else:
         uu = units(u, **kwargs)
         if uu is not None:
-            uu = uu.r
-        return uu
-
-def uv(u, *args, **kwargs):
-    """Answer the clipped value of `u`. Otherwise use `u`. Convert to *int* if
-    whole number.
-
-    >>> uv(3)
-    3
-    >>> uv(Pt(10))
-    10
-    >>> uv(Em(2, min=10, max=20))
-    10
-    >>> units((pt(60), 121, (p(5), p(6), units('5"'))), maker=p) # units() creates then as P() instances.
-    (5p, 121p, (5p, 6p, 30p))
-    >>> uv(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (5.0, 121, (5.0, 6.0, 30.0))
-    """
-    if args:
-        if not isinstance(u, (list, tuple)):
-            u = [u]
-        for arg in args:
-            u.append(arg)
-    if isinstance(u, (list, tuple)):
-        ruu = []
-        for uu in u:
-            uu = uv(uu, **kwargs)
-            ruu.append(uu)
-        return tuple(ruu)
-    else:
-        uu = units(u, **kwargs)
-        if uu is not None:
-            uu = uu.v
+            uu = uu.rv
         return uu
 
 def isUnits(u, *args):
@@ -371,8 +337,8 @@ class Unit(object):
         >>> u
         20%
         >>> u.base = pt(440)
-        >>> u, u.r # Respectively: instance to str, rendered to u.base as 20% of pt(440)
-        (20%, 88)
+        >>> u, u.ru, u.rv # Respectively: instance to str, rendered to u.base as 20% of pt(440)
+        (20%, 88pt, 88)
         >>> # 3 + px(3) # Gives error.
         >>> px(3) + 3
         6px
@@ -402,8 +368,8 @@ class Unit(object):
         >>> x.pt, y.pt, z.pt
         (200, 200, 250)
         >>> u = units('100mm', min=10, max=30)
-        >>> u._v, u.v, u.r, u # Respectively: Raw value, clipped to min/max, clipped and rendered (in case relative), clipped unit instance as str.
-        (100, 30, 30, 30mm)
+        >>> u._v, u.v, u.ru, u.rv, u # Respectively: Raw value, clipped to min/max, clipped and rendered (in case relative), clipped unit instance as str.
+        (100, 30, 30mm, 30, 30mm)
         >>> us(20) # Convert to unit string, default for number is pt
         '20pt'
         >>> us(pt(20)) # Value can be Unit instance
@@ -480,7 +446,7 @@ class Unit(object):
         (12.2pt, 12pt)
         """
         u = copy(self)
-        u._v = int(round(self.r))
+        u._v = int(round(self.rv))
         return u
     rounded = property(_get_rounded)
 
@@ -509,7 +475,7 @@ class Unit(object):
         >>> inch(1).pt
         72
         """
-        return asIntOrFloat(self.r * self.PT_FACTOR) # Factor to points
+        return asIntOrFloat(self.rv * self.PT_FACTOR) # Factor to points
     def _set_pt(self, v):
         self._v = v / self.PT_FACTOR
     pt = property(_get_pt, _set_pt)
@@ -558,12 +524,12 @@ class Unit(object):
 
         >>> u = Inch(2)
         >>> u.v = 3
-        >>> u, u.v, u.r
-        (3", 3, 3)
+        >>> u, u.v, u.ru, u.rv
+        (3", 3, 3", 3)
         """
         self._v = v
     v = property(_get_v, _set_v)
-    r = property(_get_v) # Render to value is read only
+    rv = property(_get_v) # Render to value is read only
 
     def _get_ru(self):
         u"""For absolute units the rendering toward units is just a copy of self.
@@ -631,10 +597,10 @@ class Unit(object):
         False
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare with rendered value
-            return self.r == u
+            return self.rv == u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r == u.r # Same class, compare rendered result may differe from base or min/max)
+                return self.rv == u.rv # Same class, compare rendered result may differe from base or min/max)
             return self.pt == u.pt # Incompatible unit types, compare via points
         return False
 
@@ -654,10 +620,10 @@ class Unit(object):
         True
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self.r != u
+            return self.rv != u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r != u.r
+                return self.rv != u.rv
             return self.pt != u.pt # Incompatible unit types, compare via points
         return True
 
@@ -679,10 +645,10 @@ class Unit(object):
         False
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self.r <= u
+            return self.rv <= u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r <= u.r
+                return self.rv <= u.rv
             return self.pt <= u.pt # Incompatible unit types, compare via points
         return False
 
@@ -704,10 +670,10 @@ class Unit(object):
         False
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self.r < u
+            return self.rv < u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r < u.r
+                return self.rv < u.rv
             return self.pt < u.pt # Incompatible unit types, compare via points
         return False
 
@@ -729,10 +695,10 @@ class Unit(object):
         False
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self.r >= u
+            return self.rv >= u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r >= u.r
+                return self.rv >= u.rv
             return self.pt >= u.pt # Incompatible unit types, compare via points
         return False
 
@@ -754,10 +720,10 @@ class Unit(object):
         False
         """
         if isinstance(u, (int, float)): # One is a scalar, just compare
-            return self.r > u
+            return self.rv > u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.r > u.r
+                return self.rv > u.rv
             return self.pt > u.pt # Incompatible unit types, compare via points
         return False
 
@@ -1273,7 +1239,7 @@ class RelativeUnit(Unit):
     isAbsolute = False # Cannot do arithmetic with absolute Unit instances.
     isRelative = True
 
-    def _get_r(self):
+    def _get_rv(self):
         """Answer the rendered clipped value of self, clipped to the self.min and self.max local values.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
@@ -1284,11 +1250,11 @@ class RelativeUnit(Unit):
         2
         >>> u.min = 10
         >>> u.max = 20
-        >>> u.v
-        10
+        >>> u.v, u.rv, u.ru
+        (10, 10, 2")
         """
-        return asIntOrFloat((self.base * self.v / self.BASE).r)
-    r = property(_get_r)
+        return asIntOrFloat((self.base * self.v / self.BASE).rv)
+    rv = property(_get_rv)
 
     def _get_ru(self):
         """Answer the rendered clipped value of self, by units type of self.base.
@@ -1300,8 +1266,8 @@ class RelativeUnit(Unit):
         >>> uBase
         24"
         >>> u = perc(20, base=uBase)
-        >>> u.ru, u.r
-        (4.80", 4.8)
+        >>> u, u.v, u.ru, u.rv
+        (20%, 20, 4.80", 4.8)
         """
         return self.base * self.v / self.BASE
     ru = property(_get_ru)
@@ -1316,7 +1282,7 @@ class RelativeUnit(Unit):
         >>> u.pt
         144
         """
-        return asIntOrFloat(pt(self.r).v) # Clip rendered value to min/max and cast to points
+        return asIntOrFloat(pt(self.ru).rv) # Clip rendered value to min/max and cast to points
     pt = property(_get_pt)
 
     def _get_mm(self):
@@ -1326,7 +1292,7 @@ class RelativeUnit(Unit):
         >>> u, u.mm, mm(u)
         (2fr, 5, 5mm)
         """
-        return asIntOrFloat(mm(self.r).v) # Clip rendered value to min/max and cast to mm
+        return asIntOrFloat(mm(self.ru).rv) # Clip rendered value to min/max and cast to mm
     mm = property(_get_mm)
 
     def _get_p(self):
@@ -1339,7 +1305,7 @@ class RelativeUnit(Unit):
         >>> u, u.p, p(u)
         (75%, 54, 54p)
         """
-        return asIntOrFloat(p(self.r).v) # Clip rendered value to min/max and factor to mm
+        return asIntOrFloat(p(self.ru).rv) # Clip rendered value to min/max and factor to mm
     p = property(_get_p)
 
     def _get_inch(self):
@@ -1352,26 +1318,26 @@ class RelativeUnit(Unit):
         >>> units('25%', base=inch(10)).inch
         2.5
         """
-        return asIntOrFloat(inch(self.r).v) # Clip rendered value to min/max and factor to mm
+        return asIntOrFloat(inch(self.ru).rv) # Clip rendered value to min/max and factor to mm
     inch = property(_get_inch)
 
     def _get_base(self):
         """Optional base value as reference for relative units. Save as Unit instance.
 
         >>> u = perc('10%', base=300)
-        >>> u, u.base, u.r
-        (10%, 300pt, 30)
+        >>> u, u.base, u.ru, u.rv, u.v
+        (10%, 300pt, 30pt, 30, 10)
         >>> u = units('20%', base=mm(200))
-        >>> u, u.base, u.ru, u.r # unit, base of %, rendered unit, rendered value
-        (20%, 200mm, 40mm, 40)
-        >>> u.pt, u.r, u.ru, u.v # Value in pt of 20% of 200pt
+        >>> u, u.base, u.ru, u.rv, u.v # unit, base of %, rendered unit, rendered value
+        (20%, 200mm, 40mm, 40, 20)
+        >>> u.pt, u.rv, u.ru, u.v # Value in pt of 20% of 200pt
         (113.385888, 40, 40mm, 20)
         >>> u = units('5em', base=dict(em=pt(12), perc=pt(50)))
         >>> u.pt # Rendered to base selection pt(12)
         60
         >>> u = units('25%', base='36p')
-        >>> u, u.base, u.v, u.r, u.ru, u.p, u.pt, u.inch
-        (25%, 36p, 25, 9, 9p, 9, 108, 9)
+        >>> u, u.base, u.v, u.rv, u.ru, u.p, u.pt, u.inch
+        (25%, 36p, 25, 9, 9p, 9, 108, 1.5)
         """
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
@@ -1395,8 +1361,8 @@ class RelativeUnit(Unit):
         >>> from pagebot.constants import A4
         >>> margin = 15
         >>> u = col(0.5, base=A4[0]-2*margin, g=mm(8))
-        >>> u, u.r
-        (0.5col, 86mm)
+        >>> u, u.ru, u.rv
+        (0.5col, 90mm, 86mm)
         """
         return self._g
     def _set_g(self, g):
@@ -1515,7 +1481,7 @@ class Fr(RelativeUnit):
     """
     UNIT = 'fr'
 
-    def _get_r(self):
+    def _get_rv(self):
         """Answer the rendered clipped value, clipped to the self.min and self.max local values.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
@@ -1530,7 +1496,7 @@ class Fr(RelativeUnit):
         10
         """
         return asIntOrFloat(self.base / self.v)
-    r = property(_get_r)
+    rv = property(_get_rv)
 
 #   Col
 
@@ -1579,12 +1545,12 @@ class Col(RelativeUnit):
     0.2col
     >>> u.base = 500 # With of the column
     >>> u.g = 8
-    >>> u, pt(u) # Answer col value as points, relative to base master value and gutter.
-    (0.5col, 246pt)
+    >>> u, pt(u) # TODO: CHECK ANSWER. Answer col value as points, relative to base master value and gutter.
+    (0.5col, 250pt)
     """
     UNIT = 'col'
 
-    def _get_r(self):
+    def _get_rv(self):
         """Answer the rendered clipped value, clipped to the self.min and self.max local values.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
@@ -1594,11 +1560,11 @@ class Col(RelativeUnit):
         >>> u = Col(1/2, base=mm(100), g=mm(4))
         >>> u.v
         0.5
-        >>> u.r # (100 + 4)/2 - 4
+        >>> u.rv # (100 + 4)/2 - 4
         48mm
         """
         return asIntOrFloat((self.base + self.g) * self.v - self.g) # Calculate the fraction of base, reduced by gutter
-    r = property(_get_r)
+    rv = property(_get_rv)
 
 #   Em
 
@@ -1663,7 +1629,7 @@ class Em(RelativeUnit):
         self.base can be a unit or a number.
 
         >>> u = units('10em', base=12)
-        >>> u, u.r # Answer the rendered value
+        >>> u, u.rv # Answer the rendered value
         (10em, 120)
         >>> u.base = 8 # Alter the base em.
         >>> u # Full representation
@@ -1672,9 +1638,11 @@ class Em(RelativeUnit):
         8pt
         >>> u.v # Clipped value of u._v
         10
-        >>> u.r # Render to Pt instance
+        >>> u.rv # Render to Pt value
         80
-        >>> u.pt # Render to points number
+        >>> u.ru # Render to Pt instance
+        80pt
+        >>> u.pt # Render to points numbe value
         80
         """
         return asIntOrFloat(pt(self.base * self.v).v) # Clip to min/max and factor to points
@@ -1688,11 +1656,11 @@ def perc(v, *args, **kwargs):
     """Convert value v to a Perc instance or list or Perc instances.
 
     >>> u = perc(20, base=pt(440))
-    >>> u, u.r, u.ru, u.v
-    (20%, 88, 88pt, 20)
+    >>> u, u.ru, u.rv, u.v
+    (20%, 88pt, 88, 20)
     >>> u = perc(12, base=200)
-    >>> u, u.base, u.v, u.r # Value and rendered value
-    (12%, 200pt, 12, 24)
+    >>> u, u.base, u.v, u.ru, u.rv # Value and rendered value
+    (12%, 200pt, 12, 24pt, 24)
     >>> perc('10%', '11%', '12%', '13%') # Convert series of arguments to a list of Perc instances.
     (10%, 11%, 12%, 13%)
     """
@@ -1738,19 +1706,19 @@ class Perc(RelativeUnit):
     >>> Perc(100) # Directly using the class constructor (no checking on validity of attributes done)
     100%
     >>> u = perc('100%')
-    >>> u, u.r # Default base is 100pt
-    (100%, 100)
-    >>> u/2, (u/2).v, (u/2).r # Render to base of 100pt
-    (50%, 50.0, 50)
+    >>> u, u.ru, u.rv # Default base is 100pt
+    (100%, 100pt, 100)
+    >>> u/2, (u/2).v, (u/2).rv, (u/2).ru # Render to base of 100pt
+    (50%, 50.0, 50, 50pt)
     >>> u/10*2
     20%
     >>> u+21
     121%
     >>> u-30+0.51
     70.51%
-    >>> units('66%', base=500).r # Render value towards base unit
+    >>> units('66%', base=500).rv # Render value towards base unit
     330
-    >>> r('66%', base=mm(500)) # Render value towards base unit
+    >>> rv('66%', base=mm(500)) # Render value towards base unit
     330
     >>> units('66%', base=500).ru # Render towards base unit
     330pt

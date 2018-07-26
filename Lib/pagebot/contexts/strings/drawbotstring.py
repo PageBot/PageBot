@@ -536,7 +536,7 @@ class DrawBotString(BabelString):
         uBaselineShift = css('baselineShift', e, style)
         if uBaselineShift is not None:
             assert isUnit(uBaselineShift), ('DrawBotString.newString: uBaselineShift %s must of type Unit' % uBaselineShift)
-            fs.baselineShift(uBaselineShift.r)
+            fs.baselineShift(uBaselineShift.pt)
 
         openTypeFeatures = css('openTypeFeatures', e, style)
         if openTypeFeatures is not None:
@@ -563,7 +563,7 @@ class DrawBotString(BabelString):
         uTailIndent = css('tailldIndent', e, style)
         if uTailIndent is not None:
             assert isUnit(uTailIndent), ('DrawBotString.newString: uTailIndent %s must of type Unit' % uTailIndent)
-            fs.tailIndent(uTailIndent.r)
+            fs.tailIndent(uTailIndent.pt)
 
         sLanguage = css('language', e, style)
         if sLanguage is not None:
