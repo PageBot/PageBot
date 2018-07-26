@@ -425,30 +425,30 @@ class PageView(BaseView):
                 # Tiny shadow
                 context.setFillColor(color(0.3, 0.3, 0.3, 0.5))
                 context.setStrokeColor(noColor)
-                b.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
+                context.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
-                context.setFillColor(self.css('viewInfoFill'))
-                context.setStrokeColor(color(0.3), w=0.25)
-                b.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                b.text(fs, (tpx+Pd, tpy+th))
+                context.fill(self.css('viewInfoFill'))
+                context.stroke(color(0.3), w=0.25)
+                context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
+                context.text(fs, (tpx+Pd, tpy+th))
 
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
-                context.setFillColor(noColor)
-                context.setStrokeColor(blackColor, w=0.25)
-                S = self.css('viewInfoOriginMarkerSize', 4)
+                context.fill(noColor)
+                context.stroke(blackColor, w=pt(0.25))
+                S = self.css('viewInfoOriginMarkerSize', pt(4))
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
                 # Horizontal measure
-                b.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
-                b.line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
-                b.line((x1, y1 - 2*S), (x2, y1 - 2*S))
+                context.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
+                context.line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
+                context.line((x1, y1 - 2*S), (x2, y1 - 2*S))
                 # Arrow heads
-                b.line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
-                b.line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
-                b.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
-                b.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
+                context.line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
+                context.line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
+                context.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
+                context.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
                 fs = context.newString(asFormatted(x2 - x1),
                                        style=dict(font=self.css('viewInfoFont'),
@@ -456,22 +456,22 @@ class PageView(BaseView):
                                                   leading=self.css('viewInfoLeading'),
                                                   textFill=color(0.1)))
                 tw, th = b.textSize(fs.s)
-                b.text(fs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
+                b.text(fs, rv((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
-                b.line((x2+0.5*S, y1), (x2+3.5*S, y1))
-                b.line((x2+0.5*S, y2), (x2+3.5*S, y2))
-                b.line((x2+2*S, y1), (x2+2*S, y2))
+                b.line(rv(x2+0.5*S, y1), rv(x2+3.5*S, y1))
+                b.line(rv(x2+0.5*S, y2), rv(x2+3.5*S, y2))
+                b.line(rv(x2+2*S, y1), rv(x2+2*S, y2))
                 # Arrow heads
-                b.line((x2+2*S, y2), (x2+2.5*S, y2-S))
-                b.line((x2+2*S, y2), (x2+1.5*S, y2-S))
-                b.line((x2+2*S, y1), (x2+2.5*S, y1+S))
-                b.line((x2+2*S, y1), (x2+1.5*S, y1+S))
+                b.line(rv(x2+2*S, y2), rv(x2+2.5*S, y2-S))
+                b.line(rv(x2+2*S, y2), rv(x2+1.5*S, y2-S))
+                b.line(rv(x2+2*S, y1), rv(x2+2.5*S, y1+S))
+                b.line(rv(x2+2*S, y1), rv(x2+1.5*S, y1+S))
 
                 bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
                 tw, th = context.textSize(bs)
-                b.text(fs, (x2+2*S-tw/2, (y2+y1)/2))
+                b.text(fs, rv(x2+2*S-tw/2, (y2+y1)/2))
 
             e._restoreScale(self)
 

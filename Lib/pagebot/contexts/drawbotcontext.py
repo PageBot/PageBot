@@ -18,7 +18,7 @@ import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color, noColor, inheritColor
-from pagebot.toolbox.units import ru, isUnit, isUnits # Render units
+from pagebot.toolbox.units import ru, rv, isUnit, isUnits # Render units
 from pagebot.constants import *
 from sys import platform
 
@@ -183,7 +183,7 @@ class DrawBotContext(BaseContext):
         >>> #context.line((100, 100), (200, 200))
         """
         assert isUnits(p1, p2), ('DrawBotContext.line: Values (%s, %s) must all be of type Unit' % (p1, p2))
-        self.b.line(ru(p1, maker=pt), ru(p2, maker=pt)) # Render tuple of units point
+        self.b.line(rv(p1, maker=pt), rv(p2, maker=pt)) # Render tuple of units point
 
     def newPath(self):
         """Make a new DrawBot Bezierpath() to draw in.
@@ -236,7 +236,7 @@ class DrawBotContext(BaseContext):
         if self._path is None:
             self.newPath()
         assert isUnits(p), ('DrawBotContext.moveTo: Values %s must all be of type Unit' % str(p))
-        self._path.moveTo(ru(p, maker=pt)) # Render units point tuple to tuple of values
+        self._path.moveTo(rv(p, maker=pt)) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
         """Line to point p. Create a new path if none is open.
@@ -257,7 +257,7 @@ class DrawBotContext(BaseContext):
         if self._path is None:
             self.newPath()
         assert isUnits(p), ('DrawBotContext.curveTo: Values %s must all be of type Unit' % str(p))
-        self._path.lineTo(ru(p, maker=pt)) # Render units point tuple to tuple of values
+        self._path.lineTo(rv(p, maker=pt)) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
@@ -281,7 +281,7 @@ class DrawBotContext(BaseContext):
         if self._path is None:
             self.newPath()
         assert isUnits(bcp1, bcp2, p), ('DrawBotContext.curveTo: Values (%s, %s, %s) must all be of type Unit' % (bcp1, bcp2, p))
-        self._path.curveTo(ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt)) # Render units tuples to value tuples
+        self._path.curveTo(rv(bcp1, maker=pt), rv(bcp2, maker=pt), rv(p, maker=pt)) # Render units tuples to value tuples
 
     def closePath(self):
         """Curve to point p. Create a new path if none is open.
@@ -474,7 +474,7 @@ class DrawBotContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
 
-        self.b.text(sOrBs, ru(p)) # Render point units to value tuple
+        self.b.text(sOrBs, rv(p, maker=pt)) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
         """Draw the sOrBs text string, can be a str or BabelString, including a
@@ -482,7 +482,7 @@ class DrawBotContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
 
-        self.b.textBox(sOrBs, ru(r)) # Render rectangle units to value tuple
+        self.b.textBox(sOrBs, rv(r, maker=pt)) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
         """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
