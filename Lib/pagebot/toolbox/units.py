@@ -196,6 +196,8 @@ def r(u, *args, **kwargs):
     (10, 20, (30, 40))
     >>> r(pt(60), 121, maker=p)
     (5, 121)
+    >>> pt(60).p, p(121).p
+
     """
     if args:
         if not isinstance(u, (list, tuple)):
