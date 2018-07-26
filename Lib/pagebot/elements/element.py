@@ -1433,7 +1433,7 @@ class Element(object):
         (100pt, 100pt, 400pt)
         >>> child = Element(z='40%', parent=e)
         >>> child.z, child.z.base, child.z.r # 40% of 400
-        (40%, 400pt, 160pt)
+        (40%, 400pt, 160)
         >>> e.d = 500
         >>> child.z, child.z.pt # 40% of 500 dynamic calculation. Should have value or pt as result?
         (40%, 200)
@@ -2073,9 +2073,9 @@ class Element(object):
         (22pt, 22pt, 22pt, 22pt)
         >>> e.bleed = mm(3)
         >>> e.style['bleedTop']
-        ####@@@
+        8.5pt
         >>> e.bleed
-        (22mm, 22mm, 22mm, 22mm)
+        (8.5pt, 8.5pt, 8.5pt, 8.5pt)
         >>>
         """
         return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
@@ -2117,7 +2117,7 @@ class Element(object):
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedBottom=20)
         >>> units(mm(5), 0)
-
+        14.17pt
         >>> e.bleedBottom
         20pt
         >>> e.bleed = 6
@@ -2823,7 +2823,7 @@ class Element(object):
         (0pt, 0pt, 0pt, 13pt)
         >>> e2.pl = '10%' # Relating Unit instance
         >>> e2.pl, e2.pl.pt
-        (10%, 66)
+        (10%, 10)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('pl', 0), base=base, min=0, max=self.maxW)
