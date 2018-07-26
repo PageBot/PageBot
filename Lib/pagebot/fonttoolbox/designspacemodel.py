@@ -23,7 +23,6 @@ from copy import copy, deepcopy
 from fontTools.varLib import designspace
 from fontTools.varLib.models import VariationModel, normalizeLocation
 #from tnbits.floqmodel.objects.glyph import getPoints, getComponents
-#from tnbits.toolbox.transformer import TX
 from pagebot.toolbox.transformer import asFormatted
 #from pagebot.fonttoolbox.objects.glyph import getPoints
 
