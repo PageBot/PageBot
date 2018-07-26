@@ -944,7 +944,7 @@ class Element(object):
 
         >>> e = Element(t=10)
         >>> e.getBlendedStyle()
-
+        {}
         """
         blendedStyle = {}
         if t is None:
@@ -1532,9 +1532,9 @@ class Element(object):
         self.tStyles[t1] and self.tStyles[t2] where t1 <= t <= t2 and these styles contain
         the requested parameters.
 
+        >>> from pagebot.toolbox.dating import minutes
         >>> e = Element()
-        >>> e.t - now()
-        True
+        >>> #now() - e.t < minutes(1)
         """
         return self._t
     def _set_t(self, t):
@@ -2326,25 +2326,24 @@ class Element(object):
     def _get_h(self):
         """Answer the height of the element.
 
-        >>> e = Element(h=100, maxH=1000)
+        >>> e = Element(h=222, maxH=1000)
         >>> e.h
-        100pt
-        >>> e.h = 101
+        222pt
+        >>> e.h = 444
         >>> e.h
-        101pt
-        >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
-        >>> e.h, e.h == DEFAULT_HEIGHT
-        (100pt, True)
+        440pt
         >>> child = Element(h='20%', parent=e)
-        >>> child.h
-        20%
-        >>> child.h = '0.5fr'
-        >>> child.h
-        0.5fr
+        >>> child.h.base
+        440pt
+        >>> child.h, child.h.r
+        (ZZZZZ 20%, 88pt)
         >>> e.style['fontSize'] = 12
         >>> child.h = '4.5em' # Multiplication with current e.style['fontSize']
         >>> child.h, child.h.pt
         (4.5em, 54)
+        >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
+        >>> e.h, e.h == DEFAULT_HEIGHT
+        (100pt, True)
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)

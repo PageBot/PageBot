@@ -151,19 +151,19 @@ def point2roundedS(p):
     return '%d %d' % (x.rounded, y.rounded)
 
 def ru(u, *args, **kwargs):
-    """Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
+    """Render to uu.ru or (u1.ru, u2.ru, ...) if uu is a list or tuple.
     If maker is defined, then use that to render towards.
 
-    >>> ru(pt(100), pt(120))
-    (100, 120)
-    >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt)
-    (100, 121, (60, 72, 360))
+    >>> ru(pt(100), pt(120)) # Absolute inits, nothing changes.
+    (100pt, 120pt)
+    >>> ru(pt(100), 121, (p(5), p(6), units('5"')), maker=pt) # All cast to pt
+    (100pt, 121pt, (60pt, 72pt, 360pt))
     >>> ru(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
-    (5.0, 121, (5.0, 6.0, 30.0))
+    (5p, 121p, (5p, 6p, 30p))
     >>> ru(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
-    (10.0, 20.0, (30.0, 40.0))
+    (10mm, 20mm, (30mm, 40mm))
     >>> ru(pt(60), 121, maker=p)
-    (5.0, 121)
+    (5p, 121p)
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -174,6 +174,38 @@ def ru(u, *args, **kwargs):
         ruu = []
         for uu in u:
             uu = ru(uu, **kwargs)
+            ruu.append(uu)
+        return tuple(ruu)
+    else:
+        uu = units(u, **kwargs)
+        if uu is not None:
+            uu = uu.ru
+        return uu
+
+def r(u, *args, **kwargs):
+    """Render to uu.r or (u1.r, u2.r, ...) if uu is a list or tuple.
+    If maker is defined, then use that to render towards.
+
+    >>> r(pt(100), pt(120)) # Absolute inits, nothing changes.
+    (100, 120)
+    >>> r(pt(100), 121, (p(5), p(6), units('5"')), maker=pt) # All cast to pt
+    (100, 121, (60, 72, 360))
+    >>> r(pt(60), 121, (p(5), p(6), units('5"')), maker=p) # Render units
+    (5, 121, (5, 6, 30))
+    >>> r(mm(10), mm(20), (mm(30), mm(40)), maker=mm) # Render units
+    (10, 20, (30, 40))
+    >>> r(pt(60), 121, maker=p)
+    (5, 121)
+    """
+    if args:
+        if not isinstance(u, (list, tuple)):
+            u = [u]
+        for arg in args:
+            u.append(arg)
+    if isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            uu = r(uu, **kwargs)
             ruu.append(uu)
         return tuple(ruu)
     else:
@@ -524,12 +556,22 @@ class Unit(object):
 
         >>> u = Inch(2)
         >>> u.v = 3
-        >>> u, u.v
-        (3", 3)
+        >>> u, u.v, u.r
+        (3", 3, 3)
         """
         self._v = v
     v = property(_get_v, _set_v)
-    r = property(_get_v) # Read only
+    r = property(_get_v) # Render to value is read only
+
+    def _get_ru(self):
+        u"""For absolute units the rendering toward units is just a copy of self.
+
+        >>> u = inch(3)
+        >>> u.ru, u == u.ru, u is u.ru
+        (3", True, False)
+        """
+        return copy(self)
+    ru = property(_get_ru)
 
     def __int__(self):
         """Answers self as rounded int, rendered and converted to points.
@@ -1232,8 +1274,8 @@ class RelativeUnit(Unit):
     def _get_r(self):
         """Answer the rendered clipped value of self, clipped to the self.min and self.max local values.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base.
-        self.base can be another unit or a dictionary of base values.
+        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
+        and then clipped. self.base can be another unit or a dictionary of base unit values.
 
         >>> u = Inch(2)
         >>> u.v
@@ -1243,8 +1285,24 @@ class RelativeUnit(Unit):
         >>> u.v
         10
         """
-        return asIntOrFloat(self.base * self.v / self.BASE)
+        return asIntOrFloat((self.base * self.v / self.BASE).r)
     r = property(_get_r)
+
+    def _get_ru(self):
+        """Answer the rendered clipped value of self, by units type of self.base.
+        For absolute units the result of u.v and u.r is identical.
+        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base.
+        self.base can be another unit or a dictionary of base values.
+
+        >>> uBase = Inch(24)
+        >>> uBase
+        24"
+        >>> u = perc(20, base=uBase)
+        >>> u.ru, u.r
+        (4.80", 4.8)
+        """
+        return self.base * self.v / self.BASE
+    ru = property(_get_ru)
 
     def _get_pt(self):
         """Answer the rendered value in pt.
@@ -1302,18 +1360,16 @@ class RelativeUnit(Unit):
         >>> u, u.base, u.r
         (10%, 300pt, 30)
         >>> u = units('20%', base=mm(200))
-        >>> u, u.base, u.r
-        (20%, 200mm, 40mm)
-        >>> u.base
-        200mm
-        >>> u.pt, u.r, u.v # Value in pt of 20% of 200pt
-        (113.385888, 40mm, 20)
+        >>> u, u.base, u.ru, u.r # unit, base of %, rendered unit, rendered value
+        (20%, 200mm, 40mm, 40)
+        >>> u.pt, u.r, u.ru, u.v # Value in pt of 20% of 200pt
+        (113.385888, 40, 40mm, 20)
         >>> u = units('5em', base=dict(em=pt(12), perc=pt(50)))
         >>> u.pt # Rendered to base selection pt(12)
         60
         >>> u = units('25%', base='36p')
-        >>> u, u.base, u.v, u.r, u.p, u.pt, u.inch
-        (25%, 36p, 25, 9p, 9, 108, 1.5)
+        >>> u, u.base, u.v, u.r, u.ru, u.p, u.pt, u.inch
+        (25%, 36p, 25, 9, 9p, 9, 108, 9)
         """
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
@@ -1629,6 +1685,9 @@ class Em(RelativeUnit):
 def perc(v, *args, **kwargs):
     """Convert value v to a Perc instance or list or Perc instances.
 
+    >>> u = perc(20, base=pt(440))
+    >>> u, u.r, u.ru, u.v
+    (20%, 88, 88pt, 20)
     >>> u = perc(12, base=200)
     >>> u, u.base, u.v, u.r # Value and rendered value
     (12%, 200pt, 12, 24)
@@ -1689,7 +1748,11 @@ class Perc(RelativeUnit):
     70.51%
     >>> units('66%', base=500).r # Render value towards base unit
     330
-    >>> units('66%', base=mm(500)).r # Render value towards base unit
+    >>> r('66%', base=mm(500)) # Render value towards base unit
+    330
+    >>> units('66%', base=500).ru # Render towards base unit
+    330pt
+    >>> ru('66%', base=mm(500)) # Render unit towards base unit
     330mm
     >>> Perc(1.2) + 1.2
     2.4%
