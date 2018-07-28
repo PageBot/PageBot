@@ -536,67 +536,6 @@ class DrawBotContext(BaseContext):
 
     #   C O L O R
 
-    def setTextFillColor(self, fs, c):
-        u"""Set the fill color of the formatted string.
-        >>> from pagebot.toolbox.color import color
-        >>> context = DrawBotContext()
-        >>> fs = context.newString('Hello')
-        >>> context.textFill(fs, color(0.5)) # Same as setTextFillColor
-        >>> context.textFill(fs, color('red'))
-        """
-        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
-
-        if c is inheritColor: # Keep color setting as it is.
-            pass
-        elif c is noColor:
-            fs.fill(None) # Set color to no-color
-        elif c.isCmyk:
-            cmyk = list(c.cmyk)
-            cmyk.append(c.a)
-            fs.cmykFill(*cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
-        else:
-            rgb = list(c.rgb)
-            rgb.append(c.a) # FormattedString.stroke has slight API difference with DrawBot.stroke
-            fs.fill(*rgb) # Convert to rgb, whatever the type of color
-
-    textFill = setTextFillColor
-
-    def setTextStrokeColor(self, fs, c, w=None):
-        u"""Set the stroke color of the formatted string.
-        >>> from pagebot.toolbox.color import color
-        >>> context = DrawBotContext()
-        >>> fs = context.newString('Hello')
-        >>> context.textStroke(fs, color(0.5)) # Same as setTextStrokeColor
-        >>> context.textStroke(fs, color('red'), w=pt(10))
-        """
-        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
-        if c is inheritColor: # Keep color setting as it is.
-            pass
-        elif c is noColor:
-            fs.fill(None) # Set color to no-color
-        elif c.isCmyk:
-            cmyk = list(c.cmyk)
-            cmyk.append(c.a)
-            fs.cmykStroke(cmyk) # FormattedString.cmykStroke has slight API difference with DrawBot.cmykStroke
-        else:
-            rgb = list(c.rgb)
-            rgb.append(c.a) # FormattedString.stroke has slight API difference with DrawBot.stroke
-            fs.stroke(rgb) # Convert to rgb, whatever the type of color
-
-    textStroke = setTextStrokeColor
-
-    def textStrokeWidth(self, fs, w):
-        u"""Set the stroke width of the formatted string.
-
-        >>> context = DrawBotContext()
-        >>> fs = context.newString('Hello')
-        >>> context.setTextStrokeWidth(fs, pt(10))
-        """
-        assert isUnit(w), ('DrawBotContext.textStrokeWidth: Strokewidth value %s should be of type Unit' % w)
-        fs.strokeWidth(w.pt)
-
-    setTextStrokeWidth = textStrokeWidth
-
     def fill(self, c):
         u"""Set the color for global or the color of the formatted string.
 

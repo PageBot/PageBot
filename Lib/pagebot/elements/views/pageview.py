@@ -25,7 +25,7 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN
+from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR
 from pagebot.toolbox.units import pt, rv, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
@@ -546,6 +546,7 @@ class PageView(BaseView):
         """Draw grid of lines and/or rectangles if colors are set in the style.
         Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
         a fixed offset.
+        If view flag self.showGrid is set, display the type of grid (GRID_COL, GRID_ROW, GRID_SQR)
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -557,14 +558,6 @@ class PageView(BaseView):
         >>> view.showGrid = True
         >>> view.drawGrid(e, (0, 0))
         """
-        return
-        # TODO: Make grid work from grid style
-        """
-        # Drawing the grid as squares.
-        if not self.showGrid:
-            return
-        #if not self.showGrid:
-        #    return
         context = self.context
 
         p = pointOffset(e.origin, origin)
@@ -572,6 +565,17 @@ class PageView(BaseView):
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         gridFillColor = e.css('viewGridFill', noColor)
+
+        # Drawing the grid as squares.
+        if self.showGrid == GRID_COL:
+            print('@#@#@#', self.gridX)
+        elif self.showGrid == GRID_ROW:
+            pass
+        else: # self.showGrid == GRID_SQR
+            pass
+
+
+        """
         gutterW = e.gw # Gutter width
         gutterH = e.gh # Gutter height
         columnWidth = e.cw # Column width

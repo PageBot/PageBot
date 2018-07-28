@@ -34,7 +34,7 @@ class Page(Element):
     INDEX_HTML = 'index.html'
     INDEX_HTML_URL = INDEX_HTML
 
-    def __init__(self, leftPage=None, rightPage=None,
+    def __init__(self, isLeft=None, isRight=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
         cssCode=None, cssPath=None, cssUrls=None, jsCode=None, jsPath=None, jsUrls=None,
         viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,
@@ -57,8 +57,9 @@ class Page(Element):
         Element.__init__(self, **kwargs)
 
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
-        self._isLeft = leftPage # Undefined if None, let self.doc decide instead
-        self._isRight = rightPage
+        # Overwrite flag for side of page. Otherwise test on document pagenumber.
+        self._isLeft = isLeft 
+        self._isRight = isRight
 
         #   F I L E  S T U F F
 

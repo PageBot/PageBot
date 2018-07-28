@@ -57,8 +57,8 @@ class BaseView(Element):
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
         self.showPagePadding = False
-        self.showPageFrame = False
-        self.showPageNameInfo = False
+        self.showPageFrame = False # Draw frame on page.size
+        self.showPageNameInfo = False # Show file/name/pagenumber ourside cropping area
         self.showPageMetaInfo = False
         # Element info showing
         self.showElementInfo = False

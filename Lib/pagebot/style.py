@@ -153,7 +153,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
         # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw or gh.
         # If this paramater is set, then the style values for column width "cw" and column gutter "gw" are ignored.
-        # If a width is None, it is assumed to fill the rest of the available space.
+        # If a width is None, it is assumed to fill the rest of the available space. If there are multiple widths
+        # defined as None, then the remaining width is equally devided from the element.parent.w
         # If the width is a float between 0..1 or a string with format "50%" then these are interpreted as percentages.
         # If there are multiple None widths, then their values are calculated from an equal division of available space.
         # It is up to the caller to make sure that the grid values fit the width of the current element.
