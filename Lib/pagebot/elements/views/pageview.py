@@ -25,7 +25,7 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR
+from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_COLROW, GRID_SQR
 from pagebot.toolbox.units import pt, rv, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
@@ -566,12 +566,14 @@ class PageView(BaseView):
 
         gridFillColor = e.css('viewGridFill', noColor)
 
+        columns = self.gridX
+        
         # Drawing the grid as squares.
-        if self.showGrid == GRID_COL:
+        if self.showGrid in (GRID_COLROW, GRID_COL):
             print('@#@#@#', self.gridX)
-        elif self.showGrid == GRID_ROW:
+        elif self.showGrid in (GRID_COLROW, GRID_ROW):
             pass
-        else: # self.showGrid == GRID_SQR
+        elif self.showGrid == GRID_SQR:
             pass
 
 

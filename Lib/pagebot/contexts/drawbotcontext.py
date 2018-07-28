@@ -18,7 +18,7 @@ import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import Color, noColor, inheritColor
-from pagebot.toolbox.units import ru, rv, isUnit, isUnits # Render units
+from pagebot.toolbox.units import rv, isUnit, isUnits # Render units
 from pagebot.constants import *
 from sys import platform
 

@@ -239,6 +239,7 @@ DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is th
 GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
 GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
 GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
+GRID_COLROW = 'GridColumsRows' # Show both rows and cols as lines on page width and height.
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 

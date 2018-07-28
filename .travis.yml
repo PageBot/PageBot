@@ -8,6 +8,7 @@ install:
 - pip install -e .
 - pip install flat
 - pip install fontTools
+- pip install fontParts
 - pip install pylint
 - pip install svgwrite
 - pip install markdown
