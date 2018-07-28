@@ -19,7 +19,7 @@ from __future__ import division
 import weakref
 import copy
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import units, ru, pt, point3D, pointOffset
+from pagebot.toolbox.units import units, ru, rv, pt, point3D, pointOffset
 from pagebot.toolbox.color import noColor, Color, blackColor, color
 
 from pagebot.conditions.score import Score
@@ -54,8 +54,8 @@ class Element(object):
             title=None, description=None, keyWords=None, language=None, style=None,
             conditions=None, framePath=None, elements=None, template=None,
             nextElement=None, prevElement=None, nextPage=None, prevPage=None,
-            isLeftPage=None, isRightPage=None, bleed=None, padding=None, pt=0,
-            pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
+            bleed=None, padding=None, 
+            pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
             ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
             borderBottom=None, borderLeft=None, shadow=None, gradient=None,
             drawBefore=None, drawAfter=None, **kwargs):
@@ -213,8 +213,6 @@ class Element(object):
         self.nextElement = nextElement # Name of the next flow element
         self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to,
         self.prevPage = prevPage # if a flow must run over page boundaries.
-        self._isLeftPage = isLeftPage # True/False/None. In case None, parent will be queried
-        self._isRightPage = isRightPage
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements)
@@ -732,19 +730,20 @@ class Element(object):
         point of the child element. Value is list of elements.
 
         >>> e1 = Element(name='Child1', x=20, y=30)
-        >>> e2 = Element(name='Child2', x=20, y=40)
-        >>> e = Element(name='Parent', elements=[e1, e2])
-        >>> e1.xyz, e2.xyz
-        ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt))
+        >>> e2 = Element(name='Child2', x=20, y=40, w=100)
+        >>> e3 = Element(name='Child3', x=20, y=40, w=200) # Same position, different size.
+        >>> e = Element(name='Parent', elements=[e1, e2, e3])
+        >>> e1.xyz, e2.xyz, e3.xyz
+        ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt), (20pt, 40pt, 0pt))
         >>> d = e.getPositions()
         >>> sorted(d.keys())
         [(20, 30, 0), (20, 40, 0)]
-        >>> d[(20, 30, 0)] == [e1], d[(20, 40, 0)] == [e2]
+        >>> d[(20, 30, 0)] == [e1], d[(20, 40, 0)] == [e2, e3]
         (True, True)
         """
         positions = {}
         for e in self.elements:
-            rxyz = ru(e.xyz) # Point needs to be tuple to be used a key.
+            rxyz = rv(e.xyz) # Point needs to be tuple to be used a key.
             if rxyz not in positions:
                 positions[rxyz] = []
             positions[rxyz].append(e)
@@ -1054,6 +1053,8 @@ class Element(object):
         >>> #str(bs.s)
         'ABC'
         """
+        if e is None:
+            e = self
         return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
     # Most common properties
@@ -1104,50 +1105,40 @@ class Element(object):
 
     # Orientation of elements (and pages)
 
-    def isLeftPage(self, e=None):
+    def _get_isLeft(self):
         """Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted.
 
         >>> from pagebot.document import Document
         >>> doc = Document()
         """
-        if self._isLeftPage is not None:
-            return self._isLeftPage
         if self.parent is not None:
-            return self.parent.isLeftPage(self)
+            return self.parent.isLeft
         return False
+    isLeft = property(_get_isLeft)
 
-    def isRightPage(self, e=None):
+    def _get_isRight(self):
         """Normal elements don't know the left/right orientation of the page that they are on.
         Pass the request on to the parent, until a page is reachted."""
-        if self._isRightPage is not None:
-            return self._isRightPage
         if self.parent is not None:
-            return self.parent.isRightPage(self)
+            return self.parent.isRight
         return False
+    isRight = property(_get_isRight)
 
     def _get_gridX(self):
         """Answer the grid, depending on the left/right orientation of self.
 
-        >>> e = Element(gridX=(10,20,30))
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(w=mm(210), gridX=((mm(60), mm(5)), (mm(80), None)))
+        >>> e.gridX # Two columns with gutter.
+        ((60mm, 5mm), (80mm, None))
+        >>> e.gridX = (mm(60), mm(5)), (mm(80), None)
         >>> e.gridX
-        (10, 20, 30)
-        >>> e.gridX = 40, 50, 60
-        >>> e.gridX
-        (40, 50, 60)
+        ((60mm, 5mm), (80mm, None))
         """
-        if self.isLeftPage():
-            return self.css('gridL') or self.css('gridX')
-        if self.isRightPage():
-            return self.css('gridR') or self.css('gridX')
         return self.css('gridX')
     def _set_gridX(self, gridX):
-        if self.isLeftPage():
-            self.style['gridL'] = gridX  # Save locally, blocking CSS parent scope for this param.
-        elif self.isRightPage():
-            self.style['gridR'] = gridX
-        else:
-            self.style['gridX'] = gridX
+        self.style['gridX'] = gridX  # Save locally, blocking CSS parent scope for this param.
     gridX = property(_get_gridX, _set_gridX)
 
     def _get_gridY(self):
@@ -1160,7 +1151,7 @@ class Element(object):
         >>> e.gridY
         (40, 50, 60)
         """
-        return self.css('gridY')
+        return self.css('gridY') 
     def _set_gridY(self, gridY):
         self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
     gridY = property(_get_gridY, _set_gridY)
@@ -1190,7 +1181,7 @@ class Element(object):
         """
         FIX Grids
         >>> column, gutter = 48, 8 # Preset padding
-        >>> e = Element(w=300, h=100, cw=column, gw=gutter, isLeftPage=True)
+        >>> e = Element(w=300, h=100, cw=column, gw=gutter, isLeft=True)
         >>> e.getGridColumns() # Equal devided column widths
         [(0, 48), (56, 48), (112, 48), (168, 48), (224, 48)]
         >>> e.getGridColumns() # Changed equal deviced columns
@@ -1253,7 +1244,7 @@ class Element(object):
         """
         FIXME: grid must not be derived from grid units.
         >>> column, gutter = 48, 8 # Preset padding
-        >>> e = Element(w=100, h=300, ch=column, gh=gutter, isLeftPage=True)
+        >>> e = Element(w=100, h=300, ch=column, gh=gutter, isLeft=True)
         >>> e.getGridRows() # Equal devided row heights
         [(0, 48), (56, 48), (112, 48), (168, 48), (224, 48)]
         >>> e.ch = 64 # Change row height
@@ -1448,8 +1439,8 @@ class Element(object):
         >>> e.size3D
         (100pt, 100pt, 400pt)
         >>> child = Element(z='40%', parent=e)
-        >>> child.z, child.z.base, child.z.r # 40% of 400
-        (40%, 400pt, 160)
+        >>> child.z, child.z.base, child.z.rv, child.z.ru # 40% of 400
+        (40%, 400pt, 160, 160pt)
         >>> e.d = 500
         >>> child.z, child.z.pt # 40% of 500 dynamic calculation. Should have value or pt as result?
         (40%, 200)
@@ -1465,7 +1456,7 @@ class Element(object):
     def _get_xy(self):
         """Answer the Point2D tuple.
 
-        >>> from pagebot.toolbox.units import perc
+        >>> from pagebot.toolbox.units import perc, ru, rv
         >>> e = Element(x=10, y=20, w=400, h=400)
         >>> e.xy
         (10pt, 20pt)
@@ -1479,8 +1470,8 @@ class Element(object):
         >>> e.xy
         (12pt, 122pt)
         >>> child = Element(xy=perc('50%', '50%'), parent=e)
-        >>> child.xy, ru(child.xy) # Position in middle of parent square
-        ((50%, 50%), (200, 200))
+        >>> child.xy, ru(child.xy), rv(child.xy) # Position in middle of parent square
+        ((50%, 50%), (200pt, 200pt), (200, 200))
         """
         return self.x, self.y
     def _set_xy(self, p):
@@ -1493,6 +1484,7 @@ class Element(object):
     def _get_xyz(self):
         """Answer the Point3D tuple.
 
+        >>> from pagebot.toolbox.units import ru, rv
         >>> e = Element(x=10, y=20, z=30, w=400, h=400, d=400)
         >>> e.xyz
         (10pt, 20pt, 30pt)
@@ -1509,8 +1501,8 @@ class Element(object):
         >>> child.x += 100
         >>> child.xyz
         (112%, 22pt, 32pt)
-        >>> child.xyz, ru(child.xyz) # Position in middle of parent cube
-        ((112%, 22pt, 32pt), (448, 22, 32))
+        >>> child.xyz, ru(child.xyz), rv(child.xyz) # Position in middle of parent cube
+        ((112%, 22pt, 32pt), (448pt, 22pt, 32pt), (448, 22, 32))
         """
         return self.x, self.y, self.z
     def _set_xyz(self, p):
@@ -2086,11 +2078,9 @@ class Element(object):
         >>> e.bleed
         (22pt, 22pt, 22pt, 22pt)
         >>> e.bleed = mm(3)
-        >>> e.style['bleedTop']
-        8.5pt
-        >>> e.bleed
-        (8.5pt, 8.5pt, 8.5pt, 8.5pt)
-        >>>
+        >>> e.style['bleedTop'] = pt(8.5) # Overwrite the top bleed from generic set.
+        >>> e.bleed 
+        (8.5pt, 3mm, 3mm, 3mm)
         """
         return self.bleedTop, self.bleedRight, self.bleedBottom, self.bleedLeft
     def _set_bleed(self, bleed):
@@ -2116,12 +2106,12 @@ class Element(object):
         >>> e.bleed = 6
         >>> e.bleedTop = mm(5)
         >>> e.bleed
-        (24pt, 6pt, 6pt, 6pt)
+        (5mm, 6pt, 6pt, 6pt)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedTop', 0), base=base, min=0)
     def _set_bleedTop(self, bleed):
-        self.style['bleedTop'] = units(bleed, 0)
+        self.style['bleedTop'] = units(bleed, default=0)
     bleedTop = property(_get_bleedTop, _set_bleedTop)
 
     def _get_bleedBottom(self):
@@ -2130,19 +2120,19 @@ class Element(object):
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedBottom=20)
-        >>> units(mm(5), 0)
-        14.17pt
         >>> e.bleedBottom
         20pt
         >>> e.bleed = 6
         >>> e.bleedBottom = mm(5)
+        >>> e.bleedBottom
+        5mm
         >>> e.bleed
-        (6pt, 6pt, 24pt, 6pt)
+        (6pt, 6pt, 5mm, 6pt)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedBottom', 0), base=base, min=0)
     def _set_bleedBottom(self, bleed):
-        self.style['bleedBottom'] = units(bleed, 0)
+        self.style['bleedBottom'] = units(bleed, default=0)
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
@@ -2156,12 +2146,12 @@ class Element(object):
         >>> e.bleed = 6
         >>> e.bleedLeft = mm(5)
         >>> e.bleed
-        (6pt, 6pt, 6pt, 24pt)
+        (6pt, 6pt, 6pt, 5mm)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedLeft', 0), base=base, min=0)
     def _set_bleedLeft(self, bleed):
-        self.style['bleedLeft'] = units(bleed, 0)
+        self.style['bleedLeft'] = units(bleed, default=0)
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
@@ -2175,12 +2165,12 @@ class Element(object):
         >>> e.bleed = 21
         >>> e.bleedRight = mm(5)
         >>> e.bleed
-        (21pt, 24pt, 21pt, 21pt)
+        (21pt, 5mm, 21pt, 21pt)
         """
         base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
         return units(self.css('bleedRight', 0), base=base, min=0)
     def _set_bleedRight(self, bleed):
-        self.style['bleedRight'] = units(bleed, 0)
+        self.style['bleedRight'] = units(bleed, default=0)
     bleedRight = property(_get_bleedRight, _set_bleedRight)
 
     def _get_bleedW(self):
@@ -2191,7 +2181,7 @@ class Element(object):
         >>> e.bleedW
         102p
         >>> e.w, e.bleedLeft, e.bleedRight
-        (100p, 12pt, 12pt)
+        (100p, 1p, 1p)
         """
         return self.w + self.bleedLeft + self.bleedRight
     bleedW = property(_get_bleedW)
@@ -2204,7 +2194,7 @@ class Element(object):
         >>> e.bleedH
         103p
         >>> e.h, e.bleedTop, e.bleedBottom
-        (100p, 18pt, 18pt)
+        (100p, 1p6, 1p6)
         """
         return self.h + self.bleedTop + self.bleedBottom
     bleedH = property(_get_bleedH)
@@ -2329,14 +2319,14 @@ class Element(object):
         >>> e = Element(h=222, maxH=1000)
         >>> e.h
         222pt
-        >>> e.h = 444
+        >>> e.h = 440
         >>> e.h
         440pt
         >>> child = Element(h='20%', parent=e)
         >>> child.h.base
         440pt
-        >>> child.h, child.h.r
-        (ZZZZZ 20%, 88pt)
+        >>> child.h, child.h.ru, child.h.rv
+        (20%, 88pt, 88)
         >>> e.style['fontSize'] = 12
         >>> child.h = '4.5em' # Multiplication with current e.style['fontSize']
         >>> child.h, child.h.pt
@@ -2422,7 +2412,7 @@ class Element(object):
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
-        >>> from pagebot.toolbox.units import mm, perc
+        >>> from pagebot.toolbox.units import mm, perc, rv
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
         (10pt, 20pt, 30pt, 40pt)
@@ -2444,8 +2434,8 @@ class Element(object):
         >>> e.mt, e.mr, e.mb, e.ml
         (11pt, 22pt, 33pt, 44pt)
         >>> e.margin = (11, 22, 33, 44, 55, 66)
-        >>> e.margin, ru(e.margin)
-        ((11pt, 22pt, 33pt, 44pt), (11, 22, 33, 44))
+        >>> e.margin, ru(e.margin), rv(e.margin)
+        ((11pt, 22pt, 33pt, 44pt), (11pt, 22pt, 33pt, 44pt), (11, 22, 33, 44))
         >>> e.w = e.h = e.d = 500
         >>> e.margin = '10%'
         >>> e.margin
@@ -2478,7 +2468,7 @@ class Element(object):
     def _get_margin3D(self):
         """Tuple of margin in CSS order + (front, back), direction of clock
 
-        >>> from pagebot.toolbox.units import perc
+        >>> from pagebot.toolbox.units import perc, rv
         >>> e = Element(margin=(10, 20, 30, 40))
         >>> e.mt, e.mr, e.mb, e.ml
         (10pt, 20pt, 30pt, 40pt)
@@ -2502,13 +2492,13 @@ class Element(object):
         (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.margin3D = '10%'
-        >>> e.margin3D, ru(e.margin3D)
-        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
+        >>> e.margin3D, ru(e.margin3D), rv(e.margin3D)
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt), (50, 50, 50, 50, 50, 50))
         >>> e.margin3D = perc(15)
         >>> e.margin3D
         (15%, 15%, 15%, 15%, 15%, 15%)
-        >>> ru(e.margin3D)
-        (75, 75, 75, 75, 75, 75)
+        >>> ru(e.margin3D), rv(e.margin3D)
+        ((75pt, 75pt, 75pt, 75pt, 75pt, 75pt), (75, 75, 75, 75, 75, 75))
         """
         return self.mt, self.mr, self.mb, self.ml, self.mzf, self.mzb
     margin3D = property(_get_margin3D, _set_margin)
@@ -2670,7 +2660,7 @@ class Element(object):
         Can be 123, [123], [123, 234], [123, 234, 345], [123, 234, 345, 456]
         or [123, 234, 345, 456, 567, 678]
 
-        >>> from pagebot.toolbox.units import perc
+        >>> from pagebot.toolbox.units import perc, rv
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
         (10pt, 20pt, 30pt, 40pt)
@@ -2698,11 +2688,11 @@ class Element(object):
         (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.padding = '10%'
-        >>> e.padding, ru(e.padding)
-        ((10%, 10%, 10%, 10%), (50, 50, 50, 50))
+        >>> e.padding, ru(e.padding), rv(e.padding)
+        ((10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt), (50, 50, 50, 50))
         >>> e.padding = perc(15)
-        >>> e.padding, ru(e.padding)
-        ((15%, 15%, 15%, 15%), (75, 75, 75, 75))
+        >>> e.padding, ru(e.padding), rv(e.padding)
+        ((15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt), (75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
@@ -2729,7 +2719,7 @@ class Element(object):
     def _get_padding3D(self):
         """Tuple of padding in CSS order + (front, back), direction of clock
 
-        >>> from pagebot.toolbox.units import perc
+        >>> from pagebot.toolbox.units import perc, ru, rv
         >>> e = Element(padding=(10, 20, 30, 40))
         >>> e.pt, e.pr, e.pb, e.pl
         (10pt, 20pt, 30pt, 40pt)
@@ -2753,11 +2743,11 @@ class Element(object):
         (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         >>> e.w = e.h = e.d = 500
         >>> e.padding3D = '10%'
-        >>> e.padding3D, ru(e.padding3D)
-        ((10%, 10%, 10%, 10%, 10%, 10%), (50, 50, 50, 50, 50, 50))
+        >>> e.padding3D, ru(e.padding3D), rv(e.padding3D)
+        ((10%, 10%, 10%, 10%, 10%, 10%), (50pt, 50pt, 50pt, 50pt, 50pt, 50pt), (50, 50, 50, 50, 50, 50))
         >>> e.padding3D = perc(15)
-        >>> e.padding3D, ru(e.padding3D)
-        ((15%, 15%, 15%, 15%, 15%, 15%), (75, 75, 75, 75, 75, 75))
+        >>> e.padding3D, ru(e.padding3D), rv(e.padding3D)
+        ((15%, 15%, 15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt, 75pt, 75pt), (75, 75, 75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
     padding3D = property(_get_padding3D, _set_padding)
@@ -3113,11 +3103,19 @@ class Element(object):
 
         >>> e = Element(w=500, h=500)
         >>> e.margin = 10
-        >>> e.marginBox, ru(e.marginBox)
-        ((-10pt, -10pt, 520pt, 520pt), (-10, -10, 520, 520))
+        >>> e.marginBox 
+        (-10pt, -10pt, 520pt, 520pt)
+        >>> ru(e.marginBox)
+        (-10pt, -10pt, 520pt, 520pt)
+        >>> rv(e.marginBox)
+        (-10, -10, 520, 520)
         >>> e.margin = '10%'
-        >>> e.marginBox, ru(e.marginBox)
-        ((-50pt, -50pt, 600pt, 600pt), (-50, -50, 600, 600))
+        >>> e.marginBox
+        (-50pt, -50pt, 600pt, 600pt)
+        >>> ru(e.marginBox)
+        (-50pt, -50pt, 600pt, 600pt)
+        >>> rv(e.marginBox)
+        (-50, -50, 600, 600)
         """
         mt = self.mt
         mb = self.mb
@@ -3143,6 +3141,8 @@ class Element(object):
         >>> e.paddedBox
         ((50pt, 50pt), (400pt, 400pt))
         >>> ru(e.paddedBox)
+        ((50pt, 50pt), (400pt, 400pt))
+        >>> rv(e.paddedBox)
         ((50, 50), (400, 400))
         """
         pl = self.pl
@@ -3164,6 +3164,8 @@ class Element(object):
         >>> e.paddedBox3D
         ((10pt, 10pt, 10pt), (480pt, 480pt, 480pt))
         >>> ru(e.paddedBox3D)
+        ((10pt, 10pt, 10pt), (480pt, 480pt, 480pt))
+        >>> rv(e.paddedBox3D)
         ((10, 10, 10), (480, 480, 480))
         >>> e.padding3D = '10%'
         >>> e.padding3D
@@ -3171,6 +3173,8 @@ class Element(object):
         >>> e.paddedBox3D
         ((50pt, 50pt, 50pt), (400pt, 400pt, 400pt))
         >>> ru(e.paddedBox3D)
+        ((50pt, 50pt, 50pt), (400pt, 400pt, 400pt))
+        >>> rv(e.paddedBox3D)
         ((50, 50, 50), (400, 400, 400))
         """
         (x, y), (w, h) = self.paddedBox
