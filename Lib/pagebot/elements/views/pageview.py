@@ -26,7 +26,7 @@ from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN
-from pagebot.toolbox.units import pt, rv, pointOffset, point3D, point2S
+from pagebot.toolbox.units import pt, rv, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -488,7 +488,7 @@ class PageView(BaseView):
             context.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
-            bs = context.newString(point2S(e.point3D), style=dict(font=self.css('viewInfoFont'),
+            bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
             w, h = context.textSize(bs)
             context.text(bs, (px - w/2, py + S*1.5))
@@ -705,8 +705,8 @@ class PageView(BaseView):
         if self.showPageRegistrationMarks:
             cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
-            x, y, _ = point3D(origin)
-            w, h = page.w, page.h
+            x, y = point2D(origin)
+            w, h = page.size
             self._drawPageRegistrationMark(page, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
             self._drawPageRegistrationMark(page, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
             self._drawPageRegistrationMark(page, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
@@ -728,8 +728,8 @@ class PageView(BaseView):
         if self.showPageCropMarks:
             context = self.context
 
-            x, y, _ = point3D(origin) # Ignore z-axus for now.
-            w, h = e.w, e.h
+            x, y = point2D(origin) # Ignore z-axus for now.
+            w, h = e.size
             folds = self.css('folds')
             cmDistance = self.css('viewCropMarkDistance') # From the side
             cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
