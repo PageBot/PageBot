@@ -3725,8 +3725,8 @@ class Element(object):
             c.rect(p[0], p[1], self.w, self.h)
             c.restoreGraphicState()
 
-        eFill = self.css('fill', noColor)
-        eStroke = self.css('stroke', noColor)
+        eFill = self.css('fill', default=noColor)
+        eStroke = self.css('stroke', default=noColor)
         eGradient = self.gradient
 
         if eStroke is not noColor or eFill is not noColor or eGradient:
@@ -3737,9 +3737,9 @@ class Element(object):
                 # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
-                c.fill(color(eFill))
+                c.fill(eFill)
 
-            c.stroke(color(eStroke), self.css('strokeWidth', pt(1)))
+            c.stroke(eStroke, self.css('strokeWidth', pt(1)))
 
             if self.framePath is not None: # In case defined, use instead of bounding box.
                 c.drawPath(self.framePath)

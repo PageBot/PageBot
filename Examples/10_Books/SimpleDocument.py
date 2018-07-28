@@ -54,9 +54,9 @@ page.padding = PAD, PAD, 2*PAD, PAD # Set the padding of the page, as we don't u
 # Create rectangles. Default position and size is (0, 0, 100, 100). The conditions define the layout.
 newRect(fill=color(1, 0, 0), parent=page, h=pt(62), conditions=(Left2Left(), Float2Top(),Fit2Right()))
 newRect(fill=color(1, 0, 1), parent=page, conditions=(Left2LeftSide(), Float2Top()))
-r = newRect(fill=color(0, 1, 1), parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), Fit2Right()))
+newRect(fill=color(0, 1, 1), parent=page, conditions=(Right2Right(), Float2Top(), Float2Left(), Fit2Right()))
 # Solve the conditions of the layout in defined order.
-print(r.style['fill'])
+
 doc.solve()
 # Export to PDF.
 doc.export('_export/SimpleDocument.pdf')

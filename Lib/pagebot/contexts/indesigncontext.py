@@ -118,10 +118,11 @@ class InDesignContext(BaseContext):
     def newPage(self, w, h):
         """Create a new InDesign page.
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = InDesignContext()
-        >>> context.newPage(100, 100)
+        >>> context.newPage(pt(100), pt(100))
         """
-        self.b.newPage(w, h)
+        self.b.newPage(w.pt, h.pt)
 
     def newDrawing(self):
         """Clear output canvas, start new export file.
@@ -143,8 +144,9 @@ class InDesignContext(BaseContext):
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = InDesignContext()
-        >>> context.rect(0, 0, 100, 100)
+        >>> context.rect(pt(10), pt(20), pt(110), pt(120))
         """
         self.b.rect(x, y, w, h)
 
@@ -152,6 +154,7 @@ class InDesignContext(BaseContext):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size
         (w,h).
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = InDesignContext()
         >>> context.oval(0, 0, 100, 100)
         """
@@ -429,8 +432,8 @@ class InDesignContext(BaseContext):
         elif xAlign == RIGHT:
             x -= glyph.width*s
         self.save()
-        self.setFillColor(fillColor)
-        self.setStrokeColor(strokeColor, strokeWidth)
+        self.fill(fillColor)
+        self.stroke(strokeColor, strokeWidth)
         self.transform((1, 0, 0, 1, x, y))
         self.scale(s)
         self.drawPath(glyph.path)
@@ -524,10 +527,6 @@ class InDesignContext(BaseContext):
 
     fill = setFillColor # InDesign compatible API
 
-    def strokeWidth(self, w):
-        """Set the current stroke width."""
-        self.b.strokeWidth(w)
-
     def setStrokeColor(self, c, w=None):
         """Set global stroke color or the color of the formatted string."""
         assert isinstance(c, Color)
@@ -538,6 +537,8 @@ class InDesignContext(BaseContext):
 
     def setStrokeWidth(self, w):
         self._strokeWidth = w
+
+    strokeWidth = setStrokeWidth
 
     def rotate(self, angle):
         """Rotate the canvas by angle."""
