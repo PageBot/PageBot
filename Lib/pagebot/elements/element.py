@@ -20,7 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor, Color, blackColor, color
+from pagebot.toolbox.color import noColor, Color, blackColor
 
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
