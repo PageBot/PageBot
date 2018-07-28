@@ -25,6 +25,7 @@ script:
 - python Lib/pagebot/contributions/filibuster/blurbwriter.py
 - python Lib/pagebot/elements/*.py
 - python Lib/pagebot/fonttoolbox/objects/*.py
+#- python Lib/pagebot/fonttoolbox/designspace/*.py
 - python Lib/pagebot/fonttoolbox/*.py
 - python Lib/pagebot/fonttoolbox/unicodes/*.py
 - python Lib/pagebot/publications/simplesite/*.py

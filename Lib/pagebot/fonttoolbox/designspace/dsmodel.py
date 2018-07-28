@@ -6,8 +6,7 @@
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
-#       from https://github.com/fonttools/fonttools/
-#                                   blob/master/Lib/fontTools/varLib/mutator.py
+#
 #     Licensed under MIT conditions
 #
 #     Supporting usage of DrawBot, www.drawbot.com
