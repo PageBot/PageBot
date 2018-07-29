@@ -25,7 +25,7 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_COLROW, GRID_SQR
+from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR
 from pagebot.toolbox.units import pt, rv, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
@@ -186,7 +186,7 @@ class PageView(BaseView):
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
         >>> page = doc[1]
         >>> view = doc.getView()
-        >>> view.showGrid = True
+        >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawPageMetaInfo(page, (0, 0))
         """
         self.drawPageFrame(page, origin)
@@ -281,7 +281,7 @@ class PageView(BaseView):
                 pn = 1
                 title = 'Untitled'
             s = 'Page %s | %s | %s' % (pn, d, title)
-            if page.name:
+            if page.name and page.name != 'default':
                 s += ' | ' + page.name
             bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=blackColor, fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
@@ -497,8 +497,8 @@ class PageView(BaseView):
         """When designing templates and pages, this will draw a filled
         rectangle on the element bounding box (if self.css('missingElementFill'
         is defined) and a cross, indicating that this element has missing
-        content (as in unused image frames). Only draw if self.css('showGrid')
-        is True.
+        content (as in unused image frames). Only draw if the list self.showGrid
+        contains proper types of grid names.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -555,7 +555,7 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showGrid = True
+        >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawGrid(e, (0, 0))
         """
         context = self.context
@@ -564,14 +564,15 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        gridStrokeColor = self.css('viewGridStroke', noColor)
-        gridStrokeWidth = self.css('viewGridStrokeWidth', blackColor)
-
-        # Drawing the grid as squares.
-        if self.showGrid in (GRID_COLROW, GRID_COL):
-            x = e.pl # Position on right padding of page/e
+        # Drawing the grid as horizontal lines.
+        if self.showGrid and GRID_COL in self.showGrid:
+            # Set color for vertical grid lines
             context.fill(noColor)
+            gridStrokeColor = self.css('viewGridStrokeY', noColor)
+            gridStrokeWidth = self.css('viewGridStrokeWidthY', blackColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
+
+            x = e.pl # Position on right padding of page/e
             gridX = e.gridX
             if gridX:
                 for cw in gridX:
@@ -582,7 +583,14 @@ class PageView(BaseView):
                         context.line((px+x+cw, py), (px+x+cw, py+e.h))
                     x += cw + gx
 
-        if self.showGrid in (GRID_COLROW, GRID_ROW):
+        # Drawing the grid as vertical lines.
+        if self.showGrid and GRID_ROW in self.showGrid:
+            # Set color for vertical grid lines
+            context.fill(noColor)
+            gridStrokeColor = self.css('viewGridStrokeX', noColor)
+            gridStrokeWidth = self.css('viewGridStrokeWidthX', blackColor)
+            context.stroke(gridStrokeColor, gridStrokeWidth)
+
             y = e.pb # Position on bottom padding of page/e
             context.fill(noColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
@@ -596,55 +604,10 @@ class PageView(BaseView):
                         context.line((px, py+y+ch), (px+e.w, py+y+ch))
                     y += ch + gy
 
-        if self.showGrid == GRID_SQR:
+        # Drawing the grid as rectangles.
+        if self.showGrid and GRID_SQR in self.showGrid:
             pass
 
-
-        """
-        gutterW = e.gw # Gutter width
-        gutterH = e.gh # Gutter height
-        columnWidth = e.cw # Column width
-        columnHeight = e.ch # Column height
-        pt, pr, pb, pl = e.padding # Padding top, right, bottom, left
-        pw = e.pw # Padding width, space between paddingLeft and paddingRight
-        ph = e.ph # Padding height, space between paddingTop and paddingBottom
-
-        w = e.w
-        h = e.h
-
-        if e.isRightPage():
-            ox = px + pr
-        else:
-            ox = px + pl
-        oy = py + pb
-
-        if self.showGrid:
-            if gridFillColor != noColor:
-                context.fill(gridFillColor)
-                context.stroke(noColor)
-                for cx, cw in e.getGridColumns():
-                    for cy, ch in e.getGridRows():
-                        context.rect(ox+cx, oy+cy, cw, ch)
-
-            gridStrokeColor = self.css('viewGridStroke', noColor)
-            gridStrokeWidth = self.css('viewGridStrokeWidth', blackColor)
-            if gridStrokeColor != noColor and gridStrokeWidth:
-                context.fill(noColor)
-                context.stroke(gridStrokeColor, gridStrokeWidth)
-                context.newPath()
-                for cx, cw in e.getGridColumns():
-                    context.moveTo((ox+cx, oy))
-                    context.lineTo((ox+cx, oy + ph))
-                    context.moveTo((ox+cx+cw, oy))
-                    context.lineTo((ox+cx+cw, oy + ph))
-                for cy, ch in e.getGridRows():
-                    context.moveTo((ox, oy+cy))
-                    context.lineTo((ox+pw, oy+cy))
-                    context.moveTo((ox, oy+cy + ch))
-                    context.lineTo((ox+pw, oy+cy + ch))
-                context.drawPath()
-                #text(fs+repr(index), (ox + M * 0.3, oy + M / 4))
-        """
 
     def drawBaselineGrid(self, e, origin):
         """Draw baseline grid if line color is set in the style.
