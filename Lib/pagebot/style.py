@@ -310,8 +310,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Grid stuff for showing
         viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for column/row squares.
-        viewGridStroke = color(r=0.3, g=0.3, b=0.6), # Stroke of grid lines in part of a template.
-        viewGridStrokeWidth = pt(0.5), # Line thickness of the grid.
+        viewGridStrokeX = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in horizontal direction.
+        viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
+        viewGridStrokeY = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in vertical direction.
+        viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
 
         # Page padding grid
         viewPagePaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPagePadding is True

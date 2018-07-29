@@ -67,7 +67,7 @@ class BaseView(Element):
         self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
         # Grid stuff
-        self.showGrid = None # If set, display the type of grid (GRID_COL, GRID_ROW, GRID_SQR)
+        self.showGrid = set() # If set, display the type of grid (GRID_COL, GRID_ROW, GRID_SQR)
         self.showBaselineGrid = False
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.
