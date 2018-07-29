@@ -1136,7 +1136,7 @@ class Element(object):
         >>> e.gridX
         ((60mm, 5mm), (80mm, None))
         """
-        return self.css('gridX')
+        return units(self.css('gridX'))
     def _set_gridX(self, gridX):
         self.style['gridX'] = gridX  # Save locally, blocking CSS parent scope for this param.
     gridX = property(_get_gridX, _set_gridX)
@@ -1146,12 +1146,12 @@ class Element(object):
 
         >>> e = Element(gridY=(10,20,30))
         >>> e.gridY
-        (10, 20, 30)
+        (10pt, 20pt, 30pt)
         >>> e.gridY = 40, 50, 60
         >>> e.gridY
-        (40, 50, 60)
+        (40pt, 50pt, 60pt)
         """
-        return self.css('gridY') 
+        return units(self.css('gridY')) 
     def _set_gridY(self, gridY):
         self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
     gridY = property(_get_gridY, _set_gridY)
@@ -1161,12 +1161,12 @@ class Element(object):
 
         >>> e = Element(gridZ=(10,20,30))
         >>> e.gridZ
-        (10, 20, 30)
+        (10pt, 20pt, 30pt)
         >>> e.gridZ = 40, 50, 60
         >>> e.gridZ
-        (40, 50, 60)
+        (40pt, 50pt, 60pt)
         """
-        return self.css('gridZ')
+        return units(self.css('gridZ'))
     def _set_gridZ(self, gridZ):
         self.style['gridZ'] = gridZ  # Save locally, blocking CSS parent scope for this param.
     gridZ = property(_get_gridZ, _set_gridZ)
