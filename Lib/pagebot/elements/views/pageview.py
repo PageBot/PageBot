@@ -564,16 +564,39 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        gridFillColor = e.css('viewGridFill', noColor)
+        gridStrokeColor = self.css('viewGridStroke', noColor)
+        gridStrokeWidth = self.css('viewGridStrokeWidth', blackColor)
 
-        columns = self.gridX
-        
         # Drawing the grid as squares.
         if self.showGrid in (GRID_COLROW, GRID_COL):
-            print('@#@#@#', self.gridX)
-        elif self.showGrid in (GRID_COLROW, GRID_ROW):
-            pass
-        elif self.showGrid == GRID_SQR:
+            x = e.pl # Position on right padding of page/e
+            context.fill(noColor)
+            context.stroke(gridStrokeColor, gridStrokeWidth)
+            gridX = e.gridX
+            if gridX:
+                for cw in gridX:
+                    if isinstance(cw, (tuple, list)):
+                        cw, gx = cw 
+                    context.line((px+x, py), (px+x, py+e.h))
+                    if gx:
+                        context.line((px+x+cw, py), (px+x+cw, py+e.h))
+                    x += cw + gx
+
+        if self.showGrid in (GRID_COLROW, GRID_ROW):
+            y = e.pb # Position on bottom padding of page/e
+            context.fill(noColor)
+            context.stroke(gridStrokeColor, gridStrokeWidth)
+            gridY = e.gridY
+            if gridY:
+                for ch in gridY:
+                    if isinstance(ch, (tuple, list)):
+                        ch, gy = ch 
+                    context.line((px, py+y), (px+e.w, py+y))
+                    if gy:
+                        context.line((px, py+y+ch), (px+e.w, py+y+ch))
+                    y += ch + gy
+
+        if self.showGrid == GRID_SQR:
             pass
 
 
