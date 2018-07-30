@@ -56,6 +56,7 @@ class BaseView(Element):
         # Document/page stuff
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
+        self.showPageOrigin = False # Show page origin crosshair marker
         self.showPagePadding = False
         self.showPageFrame = False # Draw frame on page.size
         self.showPageNameInfo = False # Show file/name/pagenumber ourside cropping area
@@ -63,7 +64,7 @@ class BaseView(Element):
         # Element info showing
         self.showElementInfo = False
         self.showElementFrame = False # Show the frame of elements that are not pages.
-        self.showElementOrigin = False
+        self.showElementOrigin = False # Show element origin crosshair marker
         self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
         # Grid stuff
