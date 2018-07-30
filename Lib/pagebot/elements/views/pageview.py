@@ -196,6 +196,8 @@ class PageView(BaseView):
         self.drawPageCropMarks(page, origin)
         self.drawGrid(page, origin)
         self.drawBaselineGrid(page, origin)
+        if self.showPageOrigin:
+            self.drawElementOrigin(page, origin)
 
     def drawPageFrame(self, page, origin):
         """Draw the page frame if the the flag is on and  if there ie padding
@@ -396,7 +398,8 @@ class PageView(BaseView):
 
     def drawElementMetaInfo(self, e, origin):
         self.drawElementInfo(e, origin)
-        self.drawElementOrigin(e, origin)
+        if self.showElementOrigin:
+            self.drawElementOrigin(e, origin)
 
     def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info. The css
@@ -478,18 +481,22 @@ class PageView(BaseView):
     def drawElementOrigin(self, e, origin):
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
-        S = self.css('viewInfoOriginMarkerSize', 4)
-        if self.showElementOrigin:
-            # Draw origin of the element
-            context.setFillColor(color(0.5, 0.5, 0.5, 0.1)) # Transparant fill, so we can see the marker on dark backgrounds.
-            context.setStrokeColor(blackColor, 0.25)
-            context.oval(px-S, py-S, 2*S, 2*S)
-            context.line((px-S, py), (px+S, py))
-            context.line((px, py-S), (px, py+S))
+        
+        S = e.css('viewInfoOriginMarkerSize', pt(4))
+        # Draw origin of the element
+        fill = e.css('viewInfoOriginMarkerFill', noColor)
+        stroke = e.css('viewInfoOriginMarkerStroke', blackColor)
+        width = e.css('viewInfoOriginMarkerStrokeWidth', pt(0.25))
+        context.fill(fill) # Transparant fill, so we can see the marker on dark backgrounds.
+        context.stroke(stroke, width)
+        context.oval(px-S, py-S, 2*S, 2*S)
+        context.line((px-S, py), (px+S, py))
+        context.line((px, py-S), (px, py+S))
 
         if self.showElementDimensions:
             bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
+                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), 
+                textFill=color(0.1)))
             w, h = context.textSize(bs)
             context.text(bs, (px - w/2, py + S*1.5))
 
@@ -568,8 +575,8 @@ class PageView(BaseView):
         if self.showGrid and GRID_COL in self.showGrid:
             # Set color for vertical grid lines
             context.fill(noColor)
-            gridStrokeColor = self.css('viewGridStrokeY', noColor)
-            gridStrokeWidth = self.css('viewGridStrokeWidthY', blackColor)
+            gridStrokeColor = e.css('viewGridStrokeY', noColor)
+            gridStrokeWidth = e.css('viewGridStrokeWidthY', blackColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             x = e.pl # Position on right padding of page/e
@@ -587,8 +594,8 @@ class PageView(BaseView):
         if self.showGrid and GRID_ROW in self.showGrid:
             # Set color for vertical grid lines
             context.fill(noColor)
-            gridStrokeColor = self.css('viewGridStrokeX', noColor)
-            gridStrokeWidth = self.css('viewGridStrokeWidthX', blackColor)
+            gridStrokeColor = e.css('viewGridStrokeX', noColor)
+            gridStrokeWidth = e.css('viewGridStrokeWidthX', blackColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             y = e.pb # Position on bottom padding of page/e
@@ -605,8 +612,8 @@ class PageView(BaseView):
         # Drawing the grid as rectangles.
         if self.showGrid and GRID_SQR in self.showGrid:
             # Set color for grid rectangles
-            context.fill(self.css('viewGridFill', noColor))
-            context.stroke(self.css('viewGridStroke', noColor))
+            context.fill(e.css('viewGridFill', noColor))
+            context.stroke(e.css('viewGridStroke', noColor))
 
             gridX = e.gridX
             gridY = e.gridY
