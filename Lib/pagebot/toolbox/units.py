@@ -741,8 +741,15 @@ class Unit(object):
         (3p, 2p1)
         >>> 10 + pt(10) # Thanks to implementation of __radd__ the reverse also works.
         20pt
+        >>> p(1) + pt(12) + '1p6'
+        3p6
+
         """
         u0 = copy(self) # Keep values of self
+        if isinstance(u, str):
+            u = units(u)
+            if u is None:
+                raise ValueError('Cannot add "%s" to "%s"' % (self, u))
         if isinstance(u, (int, float)): # One is a scalar, just add
             u0.v += u
         elif u0.__class__ == u.__class__:
@@ -1483,20 +1490,43 @@ class Fr(RelativeUnit):
 
     def _get_rv(self):
         """Answer the rendered clipped value, clipped to the self.min and self.max local values.
-        For absolute inits u.v and u.r are identical.
+        For absolute inits u.v and u.rv are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
 
-        >>> u = Fr(2)
-        >>> u.v
-        2
+        >>> u = Fr(2, base=mm(10))
+        >>> u.v, u.rv, u.ru, u.mm
+        (2, 5mm, 5mm, 5)
+        >>> u = Fr(4, base=100)
+        >>> u.v, u.rv, u.ru, u.pt
+        (4, 25, 25pt, 25)
         >>> u.min = 10
         >>> u.max = 20
-        >>> u.v
+        >>> u.rv # Clip to min/max
         10
         """
         return asIntOrFloat(self.base / self.v)
     rv = property(_get_rv)
+
+    def _get_ru(self):
+        """Answer the rendered clipped value, clipped to the self.min and self.max local values.
+        For absolute inits u and u.ru are identical.
+        For relative units u.rv answers the clipped value and u.ru answers the value rendered by self.base
+        self.base can be a unit or a number.
+
+        >>> u = Fr(2, base=mm(10))
+        >>> u.v, u.rv, u.ru, u.mm
+        (2, 5mm, 5mm, 5)
+        >>> u = Fr(4, base=100)
+        >>> u.v, u.rv, u.ru, u.pt
+        (4, 25, 25pt, 25)
+        >>> u.min = 10
+        >>> u.max = 20
+        >>> u.rv # Clip to min/max
+        10
+        """
+        return self.base / self.v
+    ru = property(_get_ru)
 
 #   Col
 

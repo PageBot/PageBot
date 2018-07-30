@@ -309,7 +309,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # as view may locally change these values.
 
         # Grid stuff for showing
-        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.1), # Fill color for column/row squares.
+        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), # Fill color for column/row squares.
         viewGridStrokeX = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in horizontal direction.
         viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
         viewGridStrokeY = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in vertical direction.

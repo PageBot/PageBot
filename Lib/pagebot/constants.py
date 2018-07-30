@@ -191,6 +191,10 @@ QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
+# If document.originTop == True (or page.originTop == True), 
+# origin is on top-left of the page. Y-positive direction is down.
+# If document.originTop == False (or page.originTop == False), 
+# origin is on bottom-left of the page. Y-positive direction is up.
 ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
