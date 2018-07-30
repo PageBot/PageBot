@@ -136,7 +136,7 @@ class PageView(BaseView):
             # is a difference, the elements should make the switch themselves.
             page.buildChildElements(self, origin)
 
-            self.drawPageMetaInfo(page, origin)
+            self.drawPageMetaInfo(page, origin, path) # Add path to show the file name in header.
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
@@ -175,7 +175,7 @@ class PageView(BaseView):
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
-    def drawPageMetaInfo(self, page, origin):
+    def drawPageMetaInfo(self, page, origin, path):
         """Draw the meta info of the page, depending on the settings of the
         flags.
 
@@ -191,7 +191,7 @@ class PageView(BaseView):
         """
         self.drawPageFrame(page, origin)
         self.drawPagePadding(page, origin)
-        self.drawPageNameInfo(page, origin)
+        self.drawPageNameInfo(page, origin, path)
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
         self.drawGrid(page, origin)
@@ -255,7 +255,7 @@ class PageView(BaseView):
                 context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
             page._restoreScale(self)
 
-    def drawPageNameInfo(self, page, origin):
+    def drawPageNameInfo(self, page, origin, path):
         """Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks.
 
@@ -263,11 +263,12 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> path = '_export/PageNameInfo.pdf'
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showPageNameInfo = True
-        >>> view.drawPageNameInfo(e, (0, 0))
+        >>> view.drawPageNameInfo(e, (0, 0), path)
         """
         if self.showPageNameInfo:
             context = self.context
@@ -285,6 +286,7 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (pn, d, title)
             if page.name and page.name != 'default':
                 s += ' | ' + page.name
+            s += ' | ' + path.split('/')[-1]
             bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=blackColor, fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
 
