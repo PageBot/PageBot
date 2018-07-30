@@ -592,8 +592,6 @@ class PageView(BaseView):
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             y = e.pb # Position on bottom padding of page/e
-            context.fill(noColor)
-            context.stroke(gridStrokeColor, gridStrokeWidth)
             gridY = e.gridY
             if gridY:
                 for ch in gridY:
@@ -606,13 +604,32 @@ class PageView(BaseView):
 
         # Drawing the grid as rectangles.
         if self.showGrid and GRID_SQR in self.showGrid:
-            pass
+            # Set color for grid rectangles
+            context.fill(self.css('viewGridFill', noColor))
+            context.stroke(self.css('viewGridStroke', noColor))
 
+            gridX = e.gridX
+            gridY = e.gridY
+            if gridX and gridY:
+                x = e.pl # Position on right padding of page/e
+                for cw in gridX:
+                    if isinstance(cw, (tuple, list)):
+                        cw, gx = cw 
+                    else:
+                        gx = 0
+                    y = e.pb # Position on bottom padding of page/e
+                    for ch in gridY:
+                        if isinstance(ch, (tuple, list)):
+                            ch, gy = ch 
+                        else:
+                            gy = 0
+                        context.rect(px+x, py+y, cw, ch)
+                        y += ch + gy
+                    x += cw + gx
 
     def drawBaselineGrid(self, e, origin):
-        """Draw baseline grid if line color is set in the style.
-        TODO: Make fixed values part of calculation or part of grid style.
-        Normally px and py will be 0, but it's possible to give them a fixed offset.
+        """Draw baseline grid if self.showBaselineGrid is True and there is a
+        baseline defined > 0.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -626,35 +643,34 @@ class PageView(BaseView):
         """
         if not self.showBaselineGrid:
             return
-        b = self.b
+
         context = self.context
-        p = pointOffset(self.origin, origin)
+
+        p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+
         M = pt(16)
         startY = e.css('baselineGridStart')
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
-        oy = e.h - startY#- py
+        oy = startY - py # Assumes origin at top for context drawing.
         line = 0
         # Format of line numbers.
-        # TODO: DrawBot align and fill don't work properly now.
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=noColor,
             textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.css('baselineGrid', )
-        while oy > e.pb or 0:
-            context.setFillColor(noColor)
-            context.setStrokeColor(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
-            context.newPath()
-            context.moveTo((px + e.pl, py + oy))
-            context.lineTo((px + e.w - e.pr, py + oy))
-            context.drawPath()
+        context.setFillColor(noColor)
+        context.setStrokeColor(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
+
+        while oy < e.h - e.pb:
+            context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             bs = context.newString(repr(line), e=self, style=style)
             context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
             context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
             line += 1 # Increment line index.
-            oy -= e.css('baselineGrid') # Next vertical line position of baseline grid.
+            oy += baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S
 
