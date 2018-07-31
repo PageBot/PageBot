@@ -21,9 +21,10 @@
 #     Absolute units
 #     Millimeters MM = 0.0393701 * INCH
 #     mm, Mm       Millimeters
+#     cm, Cm       Centimeters
 #     p, P         Picas 1/6"
 #     pt, Pt       Points 1/72"
-#     inch, Inch
+#     inch, Inch   Full inch
 #
 #     Relative units, using base and gutter as reference
 #     em, Em       Relative to e.fontSize as base
@@ -254,7 +255,7 @@ def isUnit(u):
     False
     """
     # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
-    return hasattr(u, '_v') and hasattr(u, 'base')
+    return hasattr(u, 'v') and hasattr(u, 'g') and hasattr(u, 'base')
 
 def uRound(u, *args):
     """Answer the list with rounded units (and all of the other items in the argument list)
@@ -368,8 +369,8 @@ class Unit(object):
         >>> x.pt, y.pt, z.pt
         (200, 200, 250)
         >>> u = units('100mm', min=10, max=30)
-        >>> u._v, u.v, u.ru, u.rv, u # Respectively: Raw value, clipped to min/max, clipped and rendered (in case relative), clipped unit instance as str.
-        (100, 30, 30mm, 30, 30mm)
+        >>> u.v, u.ru, u.rv, u # Respectively: Raw value, clipped to min/max, clipped and rendered (in case relative), clipped unit instance as str.
+        (100, 30mm, 30, 30mm)
         >>> us(20) # Convert to unit string, default for number is pt
         '20pt'
         >>> us(pt(20)) # Value can be Unit instance
@@ -391,7 +392,7 @@ class Unit(object):
 
     def __init__(self, v=0, base=None, g=0, min=None, max=None):
         assert isinstance(v, (int, float)) # Otherwise do a cast first as pt(otherUnit)
-        self._v = v
+        self.v = v
         # Base can be a unit value, ot a dictionary, where self.UNIT is the key.
         # This way units(...) can decide on the type of unit, where the base has multiple entries.
         if base is None:
@@ -438,15 +439,17 @@ class Unit(object):
 
     def _get_rounded(self):
         """Answer a new instance of self with rounded value.
-        Note that we are rounding the self.v here, not the rendered result.
+        Note that we are rounding the unclipped self.v here, not the rendered result.
 
         >>> u = pt(12.2)
+        >>> u, u.v, u.rv # Stored as float value
+        (12.2pt, 12.2, 12.2)
         >>> ru = u.rounded # Create new pt-unit
-        >>> u, ru # Did not change original u
-        (12.2pt, 12pt)
+        >>> u, ru, ru.v, ru.rv # Did not change original u
+        (12.2pt, 12pt, 12, 12)
         """
         u = copy(self)
-        u._v = int(round(self.rv))
+        u.v = int(round(self.v))
         return u
     rounded = property(_get_rounded)
 
@@ -468,8 +471,6 @@ class Unit(object):
         90
         >>> (10 + inch(1) + 8).pt # Using reversed __radd__, then rendered and cast to pt-unit.
         1368
-        >>> 2 * pt(4).p # Rendered and cast to picas
-        8
         >>> mm(1).pt
         2.8346472
         >>> inch(1).pt
@@ -477,7 +478,7 @@ class Unit(object):
         """
         return asIntOrFloat(self.rv * self.PT_FACTOR) # Factor to points
     def _set_pt(self, v):
-        self._v = v / self.PT_FACTOR
+        self.v = v / self.PT_FACTOR
     pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
@@ -497,14 +498,55 @@ class Unit(object):
     px = property(_get_px)
 
     def _get_inch(self):
-        return inch(self.pt).v
+        u"""Answer the clipped rendered value, translated to inch via pt.
+
+        >>> u = pt(72)
+        >>> u.pt, u.inch
+        (72, 1)
+        >>> int(round(cm(2.54).inch))
+        1
+        """
+        return asIntOrFloat(self.pt/Inch.PT_FACTOR)
     inch = property(_get_inch)
 
     def _get_p(self):
-        return p(self.pt).v
+        u"""Answer the clipped rendered value, translated to Pica via pt.
+
+        >>> 2 * pt(12).p # Rendered and cast to picas
+        2
+        >>> inch(5).p
+        30
+        """
+        return asIntOrFloat(self.pt/P.PT_FACTOR)
     p = property(_get_p)
 
-    def _get_v(self):
+    def _get_cm(self):
+        u"""Answer the clipped rendered value, translated to cm via pt.
+
+        >>> int(round(pt(595).cm)) # Rendered and cast to cm
+        21
+        >>> inch(5).cm == pt(5*72).cm
+        True
+        >>> mm(50).cm
+        5
+        """
+        return asIntOrFloat(self.pt/Cm.PT_FACTOR)
+    cm = property(_get_cm)
+
+    def _get_mm(self):
+        u"""Answer the clipped rendered value, translated to mm via pt.
+
+        >>> int(round(4 * pt(12).mm)) # Rendered and cast to picas
+        17
+        >>> int(round(inch(5).mm))
+        127
+        >>> cm(5).mm
+        50
+        """
+        return asIntOrFloat(self.pt/Mm.PT_FACTOR)
+    mm = property(_get_mm)
+
+    def _get_rv(self):
         """Answers the raw unit value, clipped to the self.min and self.max
         local values. For absolute inits u.v and u.r are identical. For
         relative units u.v answers the clipped value and u.r answers the value
@@ -513,23 +555,22 @@ class Unit(object):
         >>> u = Inch(2)
         >>> u.v
         2
-        >>> u.min = 10
-        >>> u.max = 20
-        >>> u.v
-        10
+        >>> u.min = inch(10)
+        >>> u.max = inch(20)
+        >>> u.v, u.rv
+        (2, 10)
         """
-        return min(self.max, max(self.min, self._v))
-    def _set_v(self, v):
-        """Set the raw unit value.
+        return asIntOrFloat(min(self.max, max(self.min, self.v)))
+    def _set_rv(self, v):
+        """Set the raw unit value, same as self.v = v
 
         >>> u = Inch(2)
         >>> u.v = 3
         >>> u, u.v, u.ru, u.rv
         (3", 3, 3", 3)
         """
-        self._v = v
-    v = property(_get_v, _set_v)
-    rv = property(_get_v) # Render to value is read only
+        self.v = v
+    rv = property(_get_rv, _set_rv) 
 
     def _get_ru(self):
         u"""For absolute units the rendering toward units is just a copy of self.
@@ -547,7 +588,7 @@ class Unit(object):
         >>> int(pt(20.2))
         20
         """
-        return int(round(self.pt))
+        return asIntOrFloat(round(self.pt))
 
     def __float__(self):
         """Answers self as float, rendered and converted to points.
@@ -864,7 +905,7 @@ class Unit(object):
         -30pt
         """
         u = copy(self) # Keep values of self
-        u.v = -self._v
+        u.v = -self.v
         return u
 
 #   Mm
@@ -936,6 +977,77 @@ class Mm(Unit):
         """
         return asIntOrFloat(self.v)
     mm = property(_get_mm)
+
+#   Cm
+
+def cm(v, *args, **kwargs):
+    u = None
+    minV = kwargs.get('min')
+    maxV = kwargs.get('max')
+    if args: # If there are more arguments, bind them together in a list.
+        v = [v]+list(args)
+    if isinstance(v, (tuple, list)):
+        u = []
+        for uv in v:
+            u.append(cm(uv, min=minV, max=maxV))
+        u = tuple(u)
+    elif isinstance(v, (int, float)):
+        u = Cm(v, min=minV, max=maxV)
+    elif isUnit(v):
+        u = Cm(min=minV, max=maxV) # New Cm and convert via pt
+        u.pt = v.pt
+    elif isinstance(v, str):
+        v = v.strip().lower()
+        if v.endswith(Cm.UNIT):
+            v = asNumberOrNone(v[:-2])
+            if v is not None:
+                u = Cm(v, min=minV, max=maxV)
+        else: # Something else, try again.
+            u = cm(units(v), min=minV, max=maxV)
+    return u
+
+class Cm(Unit):
+    """Answer the mm instance.
+
+    >>> u = Cm(210)
+    >>> u
+    210cm
+    >>> u = cm('29.7cm') # A4
+    >>> u
+    29.7cm
+    >>> u/2
+    14.85cm
+    >>> u-10
+    19.7cm
+    >>> u+10
+    39.7cm
+    >>> u.v # Raw value of the Unit instance
+    29.7
+    >>> isinstance(u.v, (int, float))
+    True
+    >>> pt(u).rounded # Rounded A4 --> pts
+    842pt
+    >>> cm(10, 11, 12) # Multiple arguments create a list of tuple mm
+    (10cm, 11cm, 12cm)
+    >>> cm((10, 11, 12, 13)) # Arguments can be submitted as list or tuple
+    (10cm, 11cm, 12cm, 13cm)
+    >>> cm(pt(50), p(6), '3"') # Arguments can be a list of other units types.
+    (1.76cm, 2.54cm, 7.62cm)
+    """
+    PT_FACTOR = MM*10 # mm <---> points
+    UNIT = 'cm'
+
+    def _get_cm(self):
+        """No transformation or casting, just answer the self.v value.
+
+        >>> cm(5).cm
+        5
+        >>> 10 * cm(5).cm
+        50
+        """
+        return asIntOrFloat(self.v)
+    cm = property(_get_cm)
+
 
 #   Pt
 
@@ -1196,8 +1308,8 @@ class Inch(Unit):
     def __repr__(self):
         v = asIntOrFloat(self.v)
         if isinstance(v, int):
-            return '%d%s' % (self._v, self.UNITC)
-        return '%0.2f%s' % (self._v, self.UNITC)
+            return '%d%s' % (v, self.UNITC)
+        return '%0.2f%s' % (v, self.UNITC)
 
 class Formula(Unit):
     """Unit class that contains a sequence of other units and rules how to apply them.
@@ -1255,8 +1367,8 @@ class RelativeUnit(Unit):
         >>> u = Inch(2)
         >>> u.v
         2
-        >>> u.min = 10
-        >>> u.max = 20
+        >>> u.min = inch(10)
+        >>> u.max = inch(20)
         >>> u.v, u.rv, u.ru
         (10, 10, 2")
         """
@@ -1360,9 +1472,10 @@ class RelativeUnit(Unit):
     def _get_g(self):
         """Optional gutter value as reference for relative units. Save as Unit instance.
 
-        >>> u = col(0.25, base=mm(200), g=mm(8))
-        >>> u.base
-        200mm
+        >>> u = col(0.25, base=mm(200), g=mm(6))
+        >>> u.base, u.g # Show unit base and gutter
+        (200mm, 6mm)
+        >>> u.g = mm(8) # Set gutter
         >>> u.mm # (200 + 8)/4 - 8 --> 44 + 8 + 44 + 8 + 44 + 8 + 44 = 200
         44
         >>> from pagebot.constants import A4
@@ -1505,11 +1618,11 @@ class Fr(RelativeUnit):
         >>> u.rv # Clip to min/max
         10
         """
-        return asIntOrFloat(self.base / self.v)
+        return asIntOrFloat(min(self.max, max(self.min, self.base / self.v)))
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered clipped value, clipped to the self.min and self.max local values.
+        """Answer the rendered clipped unit, clipped to the self.min and self.max local values.
         For absolute inits u and u.ru are identical.
         For relative units u.rv answers the clipped value and u.ru answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1520,12 +1633,12 @@ class Fr(RelativeUnit):
         >>> u = Fr(4, base=100)
         >>> u.v, u.rv, u.ru, u.pt
         (4, 25, 25pt, 25)
-        >>> u.min = 10
-        >>> u.max = 20
-        >>> u.rv # Clip to min/max
-        10
+        >>> u.min = 50
+        >>> u.max = 80
+        >>> u.v, u.rv, u.ru, u.pt # Raw value and rendered value, clipped to min/max
+        (4, 50)
         """
-        return self.base / self.v
+        return min(self.max, max(self.min, self.base / self.v))
     ru = property(_get_ru)
 
 #   Col
@@ -1560,6 +1673,12 @@ class Col(RelativeUnit):
     """Fraction of a width, including gutter calculation. Reverse of Fr.
     Gutter is default Col.GUTTER
 
+    >>> u = col(1/4, base=mm(200), g=mm(6)) # Width of 1/4 width column.
+    >>> u.base, u.g # Show unit base and gutter
+    (200mm, 6mm)
+    >>> u.g = mm(8) # Set gutter
+    >>> u.mm # (200 + 8)/4 - 8 --> 44 + 8 + 44 + 8 + 44 + 8 + 44 = 200
+    44
     >>> units('0.25col')
     0.25col
     >>> col(1/2)
@@ -1581,17 +1700,15 @@ class Col(RelativeUnit):
     UNIT = 'col'
 
     def _get_rv(self):
-        """Answer the rendered clipped value, clipped to the self.min and self.max local values.
+        """Answer the rendered clipped value, clipping to the self.min and self.max local values.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
         self.g can be a unit or a number
 
         >>> u = Col(1/2, base=mm(100), g=mm(4))
-        >>> u.v
-        0.5
-        >>> u.rv # (100 + 4)/2 - 4
-        48mm
+        >>> u.v, u.rv # (100 + 4)/2 - 4
+        (0.5, 48mm)
         """
         return asIntOrFloat((self.base + self.g) * self.v - self.g) # Calculate the fraction of base, reduced by gutter
     rv = property(_get_rv)
@@ -1666,7 +1783,7 @@ class Em(RelativeUnit):
         10em
         >>> u.base # Defined base for the em (often set in pt units)
         8pt
-        >>> u.v # Clipped value of u._v
+        >>> u.v # Raw stored value
         10
         >>> u.rv # Render to Pt value
         80
@@ -1677,7 +1794,7 @@ class Em(RelativeUnit):
         """
         return asIntOrFloat(pt(self.base * self.v).v) # Clip to min/max and factor to points
     def _set_pt(self, v):
-        self._v = v / self.base
+        self.v = v / self.base
     pt = property(_get_pt, _set_pt)
 
 #   Perc
@@ -1778,7 +1895,7 @@ class Perc(RelativeUnit):
         """
         return asIntOrFloat(self.base.pt * self.v / self.BASE) # Clip to min/max and factor to points
     def _set_pt(self, v):
-        self._v = v / self.base.pt * self.BASE
+        self.v = v / self.base.pt * self.BASE
     pt = property(_get_pt)
 
 UNIT_MAKERS = dict(px=px, pt=pt, mm=mm, inch=inch, p=p, pica=pica, em=em, fr=fr, col=col, perc=perc)
