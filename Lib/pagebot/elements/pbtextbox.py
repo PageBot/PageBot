@@ -14,7 +14,7 @@
 #
 #     textbox.py
 #
-from pagebot.style import (LEFT, RIGHT, CENTER, MIN_WIDTH, MIDDLE,
+from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, ru
@@ -39,13 +39,12 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
-        self.minW = max(minW or pt(0), MIN_WIDTH, self.TEXT_MIN_WIDTH)
         self._textLines = self._baseLines = None # Force initiaize upon first usage.
         if size is not None:
             self.size = size
         else:
             self.size = w or DEFAULT_WIDTH, h
-        self.bs = self.newString(bs) # Source can be any type: BabelString instance or plain unicode string.
+        self.bs = self.newString(bs, style=self.style) # Source can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
@@ -62,9 +61,9 @@ class TextBox(Element):
         (150pt, True)
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.css('w'), base=base, min=self.minW, max=self.maxW)
+        return units(self.css('w'), base=base)
     def _set_w(self, w):
-        self.style['w'] = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW)
+        self.style['w'] = units(w or DEFAULT_WIDTH)
         self._textLines = None # Force reset if being called
     w = property(_get_w, _set_w)
 
@@ -96,12 +95,12 @@ class TextBox(Element):
             h = self.getTextSize(w=self.w)[1]
         else:
             base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-            h = units(self.css('h', 0), base=base, min=self.minH, max=self.maxH)
+            h = units(self.css('h', 0), base=base)
         return h
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
         if h is not None: # If None, then self.h is elastic defined by content
-            h = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
+            h = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
         self.style['h'] = h
     h = property(_get_h, _set_h)
 
@@ -121,10 +120,12 @@ class TextBox(Element):
     def __repr__(self):
         """Answer the representation string of the element.
 
-        >>> e = TextBox('ABC')
-        >>> e.eId in str(e) # TextBox:236DE32AAC108A45490 (0, 0)ABC'
+        >>> from pagebot.toolbox.color import blackColor, noColor
+        >>> style = dict(textFill=blackColor, textStroke=noColor)
+        >>> e = TextBox('ABC', style=style)
+        >>> e.eId in str(e) # TextBox:236DE32AAC108A45490 (0, 0) ABC'
         True
-        >>> e = TextBox('ABC', x=100, y=100, w=200)
+        >>> e = TextBox('ABC', x=100, y=100, w=200, style=style)
         >>> e.eId in str(e)
         True
         """
@@ -150,7 +151,9 @@ class TextBox(Element):
         """Answer a full copy of self, where the "unique" fields are set to default.
         Also perform a deep copy on all child elements.
 
-        >>> e = TextBox('Hello world', name='Child', w=100)
+        >>> from pagebot.toolbox.color import blackColor, noColor
+        >>> style = dict(textFill=blackColor, textStroke=noColor)
+        >>> e = TextBox('Hello world', name='Child', w=100, style=style)
         >>> copyE = e.copy() # Copy the element attribute, including the string of self.
         >>> #copyE.bs # TODO: Needs development and testing
         Hello world

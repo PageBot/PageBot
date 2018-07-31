@@ -193,14 +193,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         columnsY = 1,
         columnsZ = 1,
 
-        # Minimum size
-        minW = MIN_WIDTH, # Default minimal Unit width of elements. Should not get <= 0.
-        minH = MIN_HEIGHT, # Default minimal Unit height of elements. Should not get <= 0.
-        minD = MIN_DEPTH, # Default minimal Unit depth of elements. Should not get <= 0.
-        maxW = MAX_WIDTH, # No maximum limits, pt(sys.maxsize)
-        maxH = MAX_HEIGHT,
-        maxD = MAX_DEPTH,
-
         # Overall content scaling.
         scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
         scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()

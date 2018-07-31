@@ -23,15 +23,15 @@ class Line(Element):
     def _get_w(self):
         u"""Answer the width of the Line element.
 
-        >>> e = Line(w=100, maxW=1000)
+        >>> e = Line(w=100)
         >>> e.w
         100pt
-        >>> e = Line(w=0, maxW=1000)
+        >>> e = Line(w=0)
         >>> e.w
         0pt
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.css('w', 0), base=base, min=0, max=self.maxW)
+        return units(self.css('w', 0), base=base)
     def _set_w(self, w):
         self.style['w'] = units(w) # Overwrite element local style from here, parent css becomes inaccessable.
     w = property(_get_w, _set_w)
@@ -39,15 +39,15 @@ class Line(Element):
     def _get_h(self):
         u"""Answer the height of the Line element.
 
-        >>> e = Line(h=100, maxH=1000)
+        >>> e = Line(h=100)
         >>> e.h
         100pt
-        >>> e = Line(h=0, maxH=1000)
+        >>> e = Line(h=0)
         >>> e.h
         0pt
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.css('h', 0), base=base, min=0, max=self.maxH)
+        return units(self.css('h', 0), base=base)
     def _set_h(self, h):
         self.style['h'] = units(h) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)

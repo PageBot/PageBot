@@ -199,15 +199,10 @@ ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
-MIN_P = MIN_X, MIN_Y, MIN_Z = pt(-XXXL, -XXXL, -XXXL)
-MAX_P = MAX_X, MAX_Y, MAX_Z = pt(XXXL, XXXL, XXXL)
-# Sizes
-MIN_WIDTH, MIN_HEIGHT, MIN_DEPTH = pt(1), pt(1), pt(0)
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000), pt(1000), pt(100)
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100), pt(100), pt(100)
-MAX_WIDTH = MAX_HEIGHT = MAX_DEPTH = pt(XXXL)
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
