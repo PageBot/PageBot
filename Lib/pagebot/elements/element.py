@@ -1599,9 +1599,9 @@ class Element(object):
     def _set_left(self, x):
         xAlign = self.xAlign
         if xAlign == CENTER:
-            self.x = units(x) + self.w/2
+            self.x = x + self.w/2
         elif xAlign == RIGHT:
-            self.x = units(x) + self.w
+            self.x = x + self.w
         else:
             self.x = x
     left = property(_get_left, _set_left)
@@ -1649,25 +1649,31 @@ class Element(object):
         """Answer the position of the right side of the element, in relation to self.x
         and depending on horiontal alignment.
 
-        >>> e = Element(x=50, w=248, xAlign=LEFT)
+        >>> e = Element(x=50, w=240, xAlign=LEFT)
         >>> e.right
-        298pt
+        290pt
         >>> e.x += 50 # Move x by 50, e.right moves by 50 too
         >>> e.right
-        348pt
+        340pt
         >>> e.xAlign = CENTER
         >>> e.right
-        224pt
+        220pt
         >>> e.xAlign = RIGHT
         >>> e.right
         100pt
-        >>> e.right = 500 # Numbers get converted to default pt units
-        >>> e.x # Right align, so e.x is on 500pt too.
-        500pt
+        >>> # Move by right side, setting the value.
         >>> e.xAlign = LEFT
-        >>> e.right = 500
-        >>> e.x # Left aligh, so e.x is now on 500pt - 248pt = 252pt
-        252pt
+        >>> e.right = 500 # Numbers get converted to default pt units
+        >>> e.x, e.left, e.center, e.right, e.w # Right align, so e.x is on 500pt too.
+        (500pt, 260pt, 380pt, 500pt)
+        >>> e.xAlign = CENTER
+        >>> e.right = 500 # Run again after alignment changed, it's not a status, it calculates e.x
+        >>> e.x, e.left, e.center, e.right # Centered, so e.x is now on 500pt - 240pt/2 = 380pt
+        
+        >>> e.xAlign = RIGHT
+        >>> e.right = 500 # Run again after alignment changed, it's not a status, it calculates e.x
+        >>> e.x, e.left, e.center, e.right # Left align, so e.x is now on 500pt - 240pt = 260pt
+
         """
         xAlign = self.xAlign
         if xAlign == LEFT:
@@ -1678,9 +1684,10 @@ class Element(object):
     def _set_right(self, x):
         xAlign = self.xAlign
         if xAlign == LEFT:
-            self.x = units(x) - self.w # Creates a unit, even wht x is a number.
+            self.x = x - self.w # Creates a unit, even when x is a number.
+            print('@#@#@##@', x - self.w, self.w - x, x, self.w)
         elif xAlign == CENTER:
-            self.x = units(x) - self.w/2 # Creates a unit, even wht x is a number.
+            self.x = x - self.w/2 # Creates a unit, even when x is a number.
         else:
             self.x = x # Automatic conversion to pt-units, in case x is a number.
     right = property(_get_right, _set_right)
@@ -1700,7 +1707,7 @@ class Element(object):
         """
         return self.right + self.mr
     def _set_mRight(self, x):
-        self.right = units(x) + self.mr
+        self.right = x + self.mr
     mRight = property(_get_mRight, _set_mRight)
 
     # Vertical
@@ -4303,7 +4310,7 @@ class Element(object):
             return abs(self.right - gridColumns[col][0]) <= tolerance
         return False # row is not in range of gridColumns
 
-    def isFitOnColspan(self, col, colSpan, tolerance):
+    def isFitOnColSpan(self, col, colSpan, tolerance):
         gridColumns = self.getGridColumns()
         indices = range(len(gridColumns))
         if col in indices and col + colSpan in indices:
@@ -4326,7 +4333,7 @@ class Element(object):
             return abs(self.bottom - gridRows[row][0]) <= tolerance
         return False # row is not in range of gridColumns
 
-    def isFitOnRowspan(self, row, rowSpan, tolerance):
+    def isFitOnRowSpan(self, row, rowSpan, tolerance):
         gridRows = self.getGridRows()
         indices = range(len(gridRows))
         if row in indices and row + rowSpan in indices:
@@ -4509,10 +4516,26 @@ class Element(object):
         return True
 
     def left2Left(self):
+        u"""Move left of self to padding left position of parent.
+
+        >>> e1 = Element(w=500, pl=50)
+        >>> e2 = Element(w=120, parent=e1)
+        >>> success = e2.left2Left()
+        >>> e2.x
+        50pt
+        """
         self.left = self.parent.pl # Padding left
         return True
 
     def left2Right(self):
+        u"""Move left of self to padding left position of parent.
+
+        >>> e1 = Element(w=500, pr=50)
+        >>> e2 = Element(w=120, parent=e1)
+        >>> success = e2.left2Right()
+        >>> e2.x
+        450pt
+        """
         self.left = self.parent.w - self.parent.pr
         return True
 
@@ -4612,19 +4635,27 @@ class Element(object):
     def right2CenterSides(self):
         """Position the right side to the center sides of the parent.
 
-        >>> e = Element(w=500)
-        >>> child = Element(x=0, w=100, align=LEFT, parent=e)
-        >>> #child.x, child.left, child.right
-        (0, 0)
-        >>> #child.right2CenterSides()
-        True
-        >>> #child.x, child.right
+        >>> e = Element(w=480)
+        >>> child = Element(w=100, parent=e)
+        >>> child.x, child.left, child.right # Show default position
+        (0pt, 0pt, 0pt)
+        >>> success = child.right2CenterSides()
+        >>> child.x, child.left, child.right, child.w
 
         """
+        print(self.parent.w)
         self.right = self.parent.w/2
         return True
 
     def right2Left(self):
+        u"""Move right of self to padding left position of parent.
+
+        >>> e1 = Element(w=500, pl=50)
+        >>> e2 = Element(w=120, parent=e1)
+        >>> success = e2.right2Left()
+        >>> e2.box
+        (50pt, 0pt, 120pt, 100pt)
+        """
         self.right = self.parent.pl # Padding left
         return True
 

@@ -72,8 +72,8 @@ class Polygon(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        context.setFillColor(self.css('fill'))
-        context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
+        context.fill(self.css('fill'))
+        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         b.newPath()
         for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:

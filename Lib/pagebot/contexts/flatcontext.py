@@ -603,7 +603,7 @@ class FlatContext(BaseContext):
                 self._fill = b.rgb(iround(red), iround(green), iround(blue))
                 success = True
         if not success:
-            raise ValueError('FlatContext.setFillColor: Error in color format "%s"' % repr(c))
+            raise ValueError('FlatContext.fill: Error in color format "%s"' % repr(c))
         '''
 
     setFillColor = fill # DrawBot compatible API
@@ -660,7 +660,7 @@ class FlatContext(BaseContext):
                     self._stroke = b.rgb(iround(red), iround(green), iround(blue))
                     success = True
             if not success:
-                raise ValueError('FlatContext.setStrokeColor: Error in color format "%s"' % c)
+                raise ValueError('Flatcontext.stroke: Error in color format "%s"' % c)
         '''
         if w is not None:
             self._strokeWidth = w.pt

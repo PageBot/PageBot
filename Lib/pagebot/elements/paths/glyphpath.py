@@ -91,8 +91,8 @@ class GlyphPath(Path):
             self.pathFilter(self, self.glyph.path, view)
         elif self.css('fill') is not noColor or self.css('stroke') is not noColor:
             # Not path filter defined, draw by regular stroke/fill.
-            context.setFillColor(self.css('fill'))
-            context.setStrokeColor(self.css('stroke', noColor), (self.css('strokeWidth') or 20))
+            context.fill(self.css('fill'))
+            context.stroke(self.css('stroke', noColor), (self.css('strokeWidth') or 20))
             context.strokeWidth(20)
             context.drawPath(self.glyph.path)
         context.restore()

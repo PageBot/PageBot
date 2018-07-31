@@ -29,9 +29,9 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
         c = e.css('flowConnectionStroke2', noColor)
     else:
         c = e.css('flowConnectionStroke1', noColor)
-    context.setStrokeColor(c, e.css('flowConnectionStrokeWidth'))
+    context.stroke(c, e.css('flowConnectionStrokeWidth'))
     if startMarker:
-        context.setFillColor(e.css('flowMarkerFill', noColor))
+        context.fill(e.css('flowMarkerFill', noColor))
         context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
     xm = (xt + xs)/2
     ym = (yt + ys)/2
@@ -49,15 +49,15 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
     ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
     b.newPath()
-    context.setFillColor(None)
+    context.fill(None)
     b.moveTo((xs, ys))
     b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
     b.drawPath()
 
     #  Draw the arrow head.
     b.newPath()
-    context.setFillColor(c)
-    context.setStrokeColor(None)
+    context.fill(c)
+    context.stroke(None)
     b.moveTo((xt, yt))
     b.lineTo((ax1, ay1))
     b.lineTo((ax2, ay2))
