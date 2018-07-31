@@ -144,9 +144,9 @@ class ImageCaption(Element):
         else:
             w = self._w
         base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
-        return units(w, base=base, min=self.minW, max=self.maxW)
+        return units(w, base=base)
     def _set_w(self, w):
-        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
+        self._w = units(w or DEFAULT_WIDTH) 
         #if w != self._w: # Only when changed
         #    self.solve() # Rearrange the layout of the elements inside
         #    #if self.image is not None:
@@ -160,10 +160,10 @@ class ImageCaption(Element):
         else:
             h = self._h
         base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
-        return units(h, base=base, min=self.minH, max=self.maxH)
+        return units(h, base=base)
     def _set_h(self, h):
         #if h != self._h: # Only when changed
-        self._h = units(h or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
+        self._h = units(h or DEFAULT_WIDTH) 
         #    self.solve() # Rearrange the layout of elements inside.
         #    #if self.image is not None:
         #    #    self.image.h = h - self.pb - self.pt
@@ -187,8 +187,8 @@ class Image(Element):
     u"""The Image contains the reference to the actual binary image data.
     eId can be (unique) file path or eId."""
 
-    def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
-        imo=None, **kwargs):
+    def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, 
+        clipPath=None, mask=None, imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
         # One of the two needs to be defined, the other can be None.
@@ -264,11 +264,11 @@ class Image(Element):
                 u = DEFAULT_WIDTH # Undefined and without parent, answer default width.
         else:
             base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.        
-            u = units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
+            u = units(self._w, base=base) # Width is lead and defined as not 0 or None.
         return u
     def _set_w(self, w):
         # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
-        self._w = units(w or DEFAULT_WIDTH, min=self.minW, max=self.maxW) 
+        self._w = units(w or DEFAULT_WIDTH) 
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -280,11 +280,11 @@ class Image(Element):
                 u = DEFAULT_HEIGHT # Undefined and without parent, answer default width.
         else:
             base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.        
-            u = units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
+            u = units(self._h, base=base) # Height is lead and defined as not 0 or None.
         return u
     def _set_h(self, h):
         # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
-        self._h = units(h or DEFAULT_WIDTH, min=self.minH, max=self.maxH) 
+        self._h = units(h or DEFAULT_WIDTH) 
     h = property(_get_h, _set_h)
 
     def _getAlpha(self):

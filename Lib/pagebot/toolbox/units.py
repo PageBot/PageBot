@@ -40,9 +40,6 @@ import sys
 from copy import copy
 from pagebot.toolbox.transformer import asNumberOrNone, asFormatted, asIntOrFloat
 
-# max/max values for element sizes. Makes sure that elements dimensions never get 0
-XXXL = sys.maxsize
-
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 
@@ -365,12 +362,9 @@ class Unit(object):
         >>> x, (y, z) = pt(100, (150, 300)) # Creating nested list of pt as batch
         >>> x.pt, y.pt, z.pt
         (100, 150, 300)
-        >>> x, (y, z) = pt(100, (150, 300), min=200, max=250) # Creating nested list of pt as batch with generic min/max
-        >>> x.pt, y.pt, z.pt
-        (200, 200, 250)
-        >>> u = units('100mm', min=10, max=30)
-        >>> #FIX u.v, u.ru, u.rv, u # Respectively: Raw value, clipped to min/max, clipped and rendered (in case relative), clipped unit instance as str.
-        (100, 30mm, 30, 30mm)
+        >>> u = units('100mm')
+        >>> u.v, u.ru # Respectively: Raw value, rendered (in case relative)
+        (100, 100mm)
         >>> us(20) # Convert to unit string, default for number is pt
         '20pt'
         >>> us(pt(20)) # Value can be Unit instance
@@ -390,7 +384,7 @@ class Unit(object):
     isRelative = False
     isEm = False
 
-    def __init__(self, v=0, base=None, g=0, min=None, max=None):
+    def __init__(self, v=0, base=None, g=0):
         assert isinstance(v, (int, float)) # Otherwise do a cast first as pt(otherUnit)
         self.v = v
         # Base can be a unit value, ot a dictionary, where self.UNIT is the key.
@@ -399,32 +393,6 @@ class Unit(object):
             base = self.BASE
         self.base = base # Default base value for reference by relative units.
         self.g = g # Default gutter for reference by relative units. Ignored by absolute units.
-        self.min = min # Used when rendered towards pt or clipped.
-        self.max = max
-
-    def _get_min(self):
-        return self._min
-    def _set_min(self, min):
-        if isinstance(min, str):
-            min = units(min)
-        if isUnit(min):
-            min = min.pt
-        if min is None:
-            min = -XXXL
-        self._min = min
-    min = property(_get_min, _set_min)
-
-    def _get_max(self):
-        return self._max
-    def _set_max(self, max):
-        if isinstance(max, str):
-            max = units(max)
-        if isUnit(max):
-            max = max.pt
-        if max is None:
-            max = XXXL
-        self._max = max
-    max = property(_get_max, _set_max)
 
     def _get_name(self):
         """Answer the unit name.
@@ -454,7 +422,7 @@ class Unit(object):
     rounded = property(_get_rounded)
 
     def __repr__(self):
-        v = asIntOrFloat(self.v) # Clip to min/max.
+        v = asIntOrFloat(self.v)
         if isinstance(v, int):
             return '%d%s' % (v, self.name.lower())
         return '%s%s' % (asFormatted(v), self.name.lower())
@@ -547,27 +515,20 @@ class Unit(object):
     mm = property(_get_mm)
 
     def _get_rv(self):
-        """Answers the raw unit value, clipped to the self.min and self.max
-        local values. For absolute inits u.v and u.r are identical. For
-        relative units u.v answers the clipped value and u.r answers the value
-        rendered by u.base.
+        """Answers the rendered unit value for absolute values.
 
         >>> u = Inch(2)
-        >>> u.v
+        >>> u.rv
         2
-        >>> u.min = inch(10)
-        >>> u.max = inch(20)
-        >>> #FIX u, u.v, u.rv
-        (2, 10)
         """
-        return asIntOrFloat(min(self.max, max(self.min, self.v)))
+        return asIntOrFloat(self.v)
     def _set_rv(self, v):
-        """Set the raw unit value, same as self.v = v
+        """Set the raw unit value, same as self.v = v for absolute values.
 
         >>> u = Inch(2)
-        >>> u.v = 3
-        >>> u, u.v, u.ru, u.rv
-        (3", 3, 3", 3)
+        >>> u.rv = 3
+        >>> u.v
+        3
         """
         self.v = v
     rv = property(_get_rv, _set_rv) 
@@ -641,7 +602,7 @@ class Unit(object):
             return self.rv == u
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.rv == u.rv # Same class, compare rendered result may differe from base or min/max)
+                return self.rv == u.rv # Same class, compare rendered result may differe from base)
             return self.pt == u.pt # Incompatible unit types, compare via points
         return False
 
@@ -912,28 +873,26 @@ class Unit(object):
 
 def mm(v, *args, **kwargs):
     u = None
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(mm(uv, min=minV, max=maxV))
+            u.append(mm(uv))
         u = tuple(u)
     elif isinstance(v, (int, float)):
-        u = Mm(v, min=minV, max=maxV)
+        u = Mm(v)
     elif isUnit(v):
-        u = Mm(min=minV, max=maxV) # New Mm and convert via pt
+        u = Mm() # New Mm and convert via pt
         u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Mm.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Mm(v, min=minV, max=maxV)
+                u = Mm(v)
         else: # Something else, try again.
-            u = mm(units(v), min=minV, max=maxV)
+            u = mm(units(v))
     return u
 
 class Mm(Unit):
@@ -968,43 +927,40 @@ class Mm(Unit):
     UNIT = 'mm'
 
     def _get_mm(self):
-        """No transformation or casting, just answer the self.rv value,
-        which does clipping on min/max
+        """Just answer the self.rv value.
 
         >>> mm(5).mm
         5
         >>> 10 * mm(5).mm
         50
         """
-        return asIntOrFloat(self.rv)
+        return self.rv
     mm = property(_get_mm)
 
 #   Cm
 
 def cm(v, *args, **kwargs):
     u = None
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(cm(uv, min=minV, max=maxV))
+            u.append(cm(uv))
         u = tuple(u)
     elif isinstance(v, (int, float)):
-        u = Cm(v, min=minV, max=maxV)
+        u = Cm(v)
     elif isUnit(v):
-        u = Cm(min=minV, max=maxV) # New Cm and convert via pt
+        u = Cm() # New Cm and convert via pt
         u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Cm.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Cm(v, min=minV, max=maxV)
+                u = Cm(v)
         else: # Something else, try again.
-            u = cm(units(v), min=minV, max=maxV)
+            u = cm(units(v))
     return u
 
 class Cm(Unit):
@@ -1039,43 +995,39 @@ class Cm(Unit):
     UNIT = 'cm'
 
     def _get_cm(self):
-        """No transformation or casting, just answer the self.rv value, which
-        does clipping on min/max.
+        """Just answer the self.rv value.
 
         >>> cm(5).cm
         5
         >>> 10 * cm(5).cm
         50
         """
-        return asIntOrFloat(self.rv)
+        return self.rv
     cm = property(_get_cm)
-
 
 #   Pt
 
 def pt(v, *args, **kwargs):
     u = None
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(pt(uv, min=minV, max=maxV))
+            u.append(pt(uv))
         u = tuple(u)
     elif isinstance(v, (int, float)): # Simple value as input, use class
-        u = Pt(v, min=minV, max=maxV)
+        u = Pt(v)
     elif isUnit(v): # It's already a Unit instance, convert via points.
-        u = Pt(v.pt, min=minV, max=maxV)
+        u = Pt(v.pt)
     elif isinstance(v, str): # Value is a string, interpret from unit extension.
         v = v.strip().lower()
         if v.endswith(Pt.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Pt(asIntOrFloat(v), min=minV, max=maxV)
+                u = Pt(asIntOrFloat(v))
         else: # Something else, recursively try again, force to pt.
-            u = pt(units(v), min=minV, max=maxV)
+            u = pt(units(v))
     return u
 
 class Pt(Unit):
@@ -1115,13 +1067,12 @@ class Pt(Unit):
     UNIT = 'pt'
 
     def _get_pt(self):
-        """No transformation or casting. Just answer the self.rv, which 
-        does clipping for min/max
+        """Just answer the self.rv.
 
         >>> pt(12).pt
         12
         """
-        return asIntOrFloat(self.rv)
+        return self.rv
     def _set_pt(self, v):
         self.v = v
     pt = property(_get_pt, _set_pt)
@@ -1168,19 +1119,17 @@ def p(v, *args, **kwargs):
     (10p, 12p, 13p, (20p, 21p))
     """
     u = None
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(p(uv, min=minV, max=maxV))
+            u.append(p(uv))
         u = tuple(u)
     elif isinstance(v, (int, float)):
-        u = P(v, min=minV, max=maxV)
+        u = P(v)
     elif isUnit(v):
-        u = P(min=minV, max=maxV) # Make new Pica and convert via pt
+        u = P() # Make new Pica and convert via pt
         u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower().replace('pica', P.UNIT)
@@ -1190,19 +1139,19 @@ def p(v, *args, **kwargs):
                 v0 = asNumberOrNone(vv[0][0] or '0')
                 v1 = asNumberOrNone(vv[0][1][1:] or '0')
                 if v0 is not None and v1 is not None:
-                    u = P(min=minV, max=maxV)
+                    u = P()
                     u.pt = v0*P.PT_FACTOR+v1
             else:
-                u = p(units(v, min=minV, max=maxV))
+                u = p(units(v))
         else: # Something else, recursively try again.
-            u = p(units(v), min=minV, max=maxV)
+            u = p(units(v))
     return u
 
 class P(Unit):
     """P (pica) class.
 
     >>> u = P(2)
-    >>> u.v, u.rv # Same value, no clipping defined for min/max
+    >>> u.v, u.rv # Same value for absolute values
     (2, 2)
     >>> u = p(1)
     >>> u, u+2, u+pt(2), u+pt(100), u*5, u/2
@@ -1238,8 +1187,6 @@ pica = p
 
 def inch(v, *args, **kwargs):
     u = None
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
@@ -1248,22 +1195,22 @@ def inch(v, *args, **kwargs):
             u.append(inch(uv))
         u = tuple(u)
     elif isinstance(v, (int, float)):
-        return Inch(v, min=minV, max=maxV)
+        return Inch(v)
     elif isUnit(v):
-        u = Inch(min=minV, max=maxV) # New Inch and convert via pt
+        u = Inch() # New Inch and convert via pt
         u.pt = v.pt
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Inch.UNITC): # "-character
             v = asNumberOrNone(v[:-1])
             if v is not None:
-                u = Inch(v, min=minV, max=maxV)
+                u = Inch(v)
         elif v.endswith(Inch.UNIT):
             v = asNumberOrNone(v[:-4])
             if v is not None:
-                u = Inch(v, min=minV, max=maxV)
+                u = Inch(v)
         else: # Something else, recursively try again.
-            u = inch(units(v), min=minV, max=maxV)
+            u = inch(units(v))
     return u
 
 class Inch(Unit):
@@ -1298,14 +1245,14 @@ class Inch(Unit):
     UNITC = '"'
 
     def _get_inch(self):
-        """No transforming or casting, just answer the self.v.
+        """No transforming or casting, just answer the self.rv.
 
         >>> inch(6).inch
         6
         >>> inch(7.0).inch
         7
         """
-        return asIntOrFloat(self.v)
+        return self.rv
     inch = property(_get_inch)
 
     def __repr__(self):
@@ -1329,8 +1276,8 @@ class Formula(Unit):
     PT_FACTOR = 1 # Formulas behave as points by default, but that can be changed.
     UNIT = 'f'
 
-    def __init__(self, v=0, base=None, g=0, min=None, f=None, max=None, units=None):
-        Unit.__init__(self, v=v, base=base, g=g, min=min, max=max)
+    def __init__(self, v=0, base=None, g=0, f=None, units=None):
+        Unit.__init__(self, v=v, base=base, g=g)
         self.f = f
         if units is None:
             units = {}
@@ -1362,18 +1309,14 @@ class RelativeUnit(Unit):
     isRelative = True
 
     def _get_rv(self):
-        """Answer the rendered clipped value of self, clipped to the self.min and self.max local values.
+        """Answer the rendered clipped value of self.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
         and then clipped. self.base can be another unit or a dictionary of base unit values.
 
         >>> u = Inch(2)
-        >>> u.v
-        2
-        >>> u.min = inch(10)
-        >>> u.max = inch(20)
-        >>> #FIX u.v, u.rv, u.ru
-        (10, 10, 2")
+        >>> u.v, u.rv
+        (2, 2)
         """
         return asIntOrFloat((self.base * self.v / self.BASE).rv)
     rv = property(_get_rv)
@@ -1404,7 +1347,7 @@ class RelativeUnit(Unit):
         >>> u.pt
         144
         """
-        return asIntOrFloat(pt(self.ru).rv) # Clip rendered value to min/max and cast to points
+        return asIntOrFloat(pt(self.ru).rv) # Render value and cast to points
     pt = property(_get_pt)
 
     def _get_mm(self):
@@ -1414,7 +1357,7 @@ class RelativeUnit(Unit):
         >>> u, u.mm, mm(u)
         (2fr, 5, 5mm)
         """
-        return asIntOrFloat(mm(self.ru).rv) # Clip rendered value to min/max and cast to mm
+        return asIntOrFloat(mm(self.ru).rv) # Rendered value and cast to mm
     mm = property(_get_mm)
 
     def _get_p(self):
@@ -1427,7 +1370,7 @@ class RelativeUnit(Unit):
         >>> u, u.p, p(u)
         (75%, 54, 54p)
         """
-        return asIntOrFloat(p(self.ru).rv) # Clip rendered value to min/max and factor to mm
+        return asIntOrFloat(p(self.ru).rv) # Rendered value and factor to mm
     p = property(_get_p)
 
     def _get_inch(self):
@@ -1440,7 +1383,7 @@ class RelativeUnit(Unit):
         >>> units('25%', base=inch(10)).inch
         2.5
         """
-        return asIntOrFloat(inch(self.ru).rv) # Clip rendered value to min/max and factor to mm
+        return asIntOrFloat(inch(self.ru).rv) # Rendered value and factor to mm
     inch = property(_get_inch)
 
     def _get_base(self):
@@ -1500,25 +1443,23 @@ def px(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', Px.BASE)
     g = kwargs.get('g', 0) # Not used by Px
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(px(uv, base=base, g=g, min=minV, max=maxV))
+            u.append(px(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
-        u = Px(v, base=base, g=g, min=minV, max=maxV)
+        u = Px(v, base=base, g=g)
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Px.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Px(v, base=base, g=g, min=minV, max=maxV)
+                u = Px(v, base=base, g=g)
         else: # Something else, recursively try again
-            u = units(v, base=base, g=g, min=minV, max=maxV)
+            u = units(v, base=base, g=g)
             assert isinstance(u, Px) # Only makes sense for relative if the same.
     return u
 
@@ -1550,7 +1491,7 @@ class Px(RelativeUnit):
         >>> px(23).px
         23
         """
-        return asIntOrFloat(self.v)
+        return self.rv
     px = property(_get_px)
 
 #   Fr
@@ -1559,25 +1500,23 @@ def fr(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', Fr.BASE)
     g = kwargs.get('g', 0) # Not used by Fr
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(fr(uv, base=base, g=g, min=minV, max=maxV))
+            u.append(fr(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
-        u = Fr(v, base=base, g=g, min=minV, max=maxV)
+        u = Fr(v, base=base, g=g)
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Fr.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Fr(v, base=base, g=g, min=minV, max=maxV)
+                u = Fr(v, base=base, g=g)
         else: # Something else, recursively try again
-            u = units(v, base=base, g=g, min=minV, max=maxV)
+            u = units(v, base=base, g=g)
             assert isinstance(u, Fr) # Only makes sense for relative if the same.
     return u
 
@@ -1605,7 +1544,7 @@ class Fr(RelativeUnit):
     UNIT = 'fr'
 
     def _get_rv(self):
-        """Answer the rendered clipped value, clipped to the self.min and self.max local values.
+        """Answer the rendered clipped value.
         For absolute inits u.v and u.rv are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1616,16 +1555,12 @@ class Fr(RelativeUnit):
         >>> u = Fr(4, base=100)
         >>> u.v, u.rv, u.ru, u.pt
         (4, 25, 25pt, 25)
-        >>> u.min = 10
-        >>> u.max = 20
-        >>> #FIX u.rv # Clip to min/max
-        10
         """
-        return asIntOrFloat(min(self.max, max(self.min, self.base / self.v)))
+        return asIntOrFloat(self.base / self.v)
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered clipped unit, clipped to the self.min and self.max local values.
+        """Answer the rendered clipped unit.
         For absolute inits u and u.ru are identical.
         For relative units u.rv answers the clipped value and u.ru answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1636,12 +1571,8 @@ class Fr(RelativeUnit):
         >>> u = Fr(4, base=100)
         >>> u.v, u.rv, u.ru, u.pt
         (4, 25, 25pt, 25)
-        >>> u.min = 50
-        >>> u.max = 80
-        >>> #FIX u.v, u.rv, u.ru, u.pt # Raw value and rendered value, clipped to min/max
-        (4, 50)
         """
-        return min(self.max, max(self.min, self.base / self.v))
+        return self.base / self.v
     ru = property(_get_ru)
 
 #   Col
@@ -1650,25 +1581,23 @@ def col(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', Col.BASE)
     g = kwargs.get('g', Col.GUTTER)
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(col(uv, base=base, g=g, min=minV, max=maxV))
+            u.append(col(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
-        u = Col(v, base=base, g=g, min=minV, max=maxV)
+        u = Col(v, base=base, g=g)
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Col.UNIT):
             v = asNumberOrNone(v[:-3])
             if v is not None:
-                u = Col(v, base=base, g=g, min=minV, max=maxV)
+                u = Col(v, base=base, g=g)
         else: # Something else, recursively try again
-            u = units(v, base=base, g=g, min=minV, max=maxV)
+            u = units(v, base=base, g=g)
             assert isinstance(u, Col) # Only makes sense for relative if the same.
     return u
 
@@ -1703,7 +1632,7 @@ class Col(RelativeUnit):
     UNIT = 'col'
 
     def _get_rv(self):
-        """Answer the rendered clipped value, clipping to the self.min and self.max local values.
+        """Answer the rendered clipped value.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1722,25 +1651,23 @@ def em(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', EM_FONT_SIZE)
     g = kwargs.get('g', 0) # Default not used by Em
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v: # Recursively append
-            u.append(em(uv, base=base, g=g, min=minV, max=maxV))
+            u.append(em(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
-        u = Em(v, base=base, g=g, min=minV, max=maxV)
+        u = Em(v, base=base, g=g)
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Em.UNIT):
             v = asNumberOrNone(v[:-2])
             if v is not None:
-                u = Em(v, base=base, g=g, min=minV, max=maxV)
+                u = Em(v, base=base, g=g)
         else: # Something else, recursively try again
-            u = units(v, base=base, g=g, min=minV, max=maxV)
+            u = units(v, base=base, g=g)
             assert isinstance(u, Em) # Only makes sense for relative if the same.
     return u
 
@@ -1795,7 +1722,7 @@ class Em(RelativeUnit):
         >>> u.pt # Render to points numbe value
         80
         """
-        return asIntOrFloat(pt(self.base * self.v).v) # Clip to min/max and factor to points
+        return asIntOrFloat(pt(self.base * self.v).v) # Render and factor to points
     def _set_pt(self, v):
         self.v = v / self.base
     pt = property(_get_pt, _set_pt)
@@ -1809,16 +1736,12 @@ def perc(v, *args, **kwargs):
     >>> u, u.ru, u.rv, u.v
     (20%, 88pt, 88, 20)
     >>> u = perc(12, base=240)
-    >>> #FIX u, u.base, u.v, u.ru, u.rv # Value and rendered value
-    (12%, 240pt, 12, 20pt, 20)
     >>> perc('10%', '11%', '12%', '13%') # Convert series of arguments to a list of Perc instances.
     (10%, 11%, 12%, 13%)
     """
     u = None
     base = kwargs.get('base')
     g = kwargs.get('g', 0) # Default not used by Perc
-    minV = kwargs.get('min')
-    maxV = kwargs.get('max')
     if args: # If there are more arguments, bind them together in a list.
         if not isinstance(v, (tuple, list)):
             v = [v]
@@ -1827,22 +1750,22 @@ def perc(v, *args, **kwargs):
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
-            u.append(perc(uv, base=base, g=g, min=minV, max=maxV))
+            u.append(perc(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
-        u = Perc(v, base=base, g=g, min=minV, max=maxV)
+        u = Perc(v, base=base, g=g)
     elif isinstance(v, str):
         v = v.strip().lower()
         if v.endswith(Perc.UNITC): # %-character
             v = asNumberOrNone(v[:-1])
             if v is not None:
-                u = Perc(v, base=base, g=g, min=minV, max=maxV)
+                u = Perc(v, base=base, g=g)
         elif v.endswith(Perc.UNIT):
             v = asNumberOrNone(v[:-4])
             if v is not None:
-                u = Perc(v, base=base, g=g, min=minV, max=maxV)
+                u = Perc(v, base=base, g=g)
         else: # Something else, recursively try again
-            u = units(v, base=base, g=g, min=minV, max=maxV)
+            u = units(v, base=base, g=g)
             assert isinstance(u, Perc) # Only makes sense for relative if the same.
     return u
 
@@ -1882,7 +1805,7 @@ class Perc(RelativeUnit):
     UNITC = '%'
 
     def __repr__(self):
-        v = asIntOrFloat(self.v) # Clip to min/max
+        v = asIntOrFloat(self.v) 
         if isinstance(v, int):
             return u'%d%%' % v
         return u'%s%%' % asFormatted(v)
@@ -1896,7 +1819,7 @@ class Perc(RelativeUnit):
         >>> u.pt # Render to point int value
         12
         """
-        return asIntOrFloat(self.base.pt * self.v / self.BASE) # Clip to min/max and factor to points
+        return asIntOrFloat(self.base.pt * self.v / self.BASE) # Render and factor to points
     def _set_pt(self, v):
         self.v = v / self.base.pt * self.BASE
     pt = property(_get_pt)
@@ -1968,7 +1891,7 @@ def value2Maker(v):
                 maker = UNIT_MAKERS[unit]
     return maker
 
-def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
+def units(v, maker=None, g=None, base=None, default=None):
     """If value is a string, then try to guess what type of units value is and
     answer the right instance. Answer None if not valid transformation could be
     done.
@@ -2019,7 +1942,7 @@ def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
     if isinstance(v, (list, tuple)):
         uu = []
         for vv in v:
-            uu.append(units(vv, maker=maker, g=g, base=base, min=min, max=max))
+            uu.append(units(vv, maker=maker, g=g, base=base))
         return tuple(uu)
 
     u = default
@@ -2029,14 +1952,14 @@ def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
     if isUnit(v):
         u = copy(v) # Make sure to copy, avoiding overwriting local values of units.
         if maker is not None:
-            u = makerF(u, g=g, base=base, min=min, max=max)
+            u = makerF(u, g=g, base=base)
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
             makerF = value2Maker(v)
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
-            u = makerF(v, g=g, base=base, min=min, max=max)
+            u = makerF(v, g=g, base=base)
 
     # In case we got a valid unit, then try to set the paremeters if not None.
     if u is not None:
@@ -2046,7 +1969,7 @@ def units(v, maker=None, g=None, base=None, min=None, max=None, default=None):
             u.g = g # Recursive force gutter to be unit instance.
 
     if u is None and default is not None:
-        u = units(default, g=g, base=base, min=min, max=max)
+        u = units(default, g=g, base=base)
     return u # If possible to create, answer u. Otherwise result is None
 
 if __name__ == '__main__':

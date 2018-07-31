@@ -104,12 +104,12 @@ class Image(Element):
                 u = self.iw # Undefined and without parent, answer original image width.
         else:
             base = dict(base=self.parentW, em=self.em) # In case relative units, use the right kind of base.
-            u = units(self._w, base=base, min=self.minW, max=self.maxW) # Width is lead and defined as not 0 or None.
+            u = units(self._w, base=base) # Width is lead and defined as not 0 or None.
         return u
     def _set_w(self, w):
         # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
         if w:
-            w = units(w, min=self.minW, max=self.maxW)
+            w = units(w)
         self._w = w
         self._h = None
     w = property(_get_w, _set_w)
@@ -123,12 +123,12 @@ class Image(Element):
                 u = self.ih # Undefined and without parent, answer original image width.
         else:
             base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.
-            u = units(self._h, base=base, min=self.minH, max=self.maxH) # Height is lead and defined as not 0 or None.
+            u = units(self._h, base=base) # Height is lead and defined as not 0 or None.
         return u
     def _set_h(self, h):
         # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
         if h:
-            h = units(h, min=self.minH, max=self.maxH)
+            h = units(h)
         self._w = None
         self._h = h
 

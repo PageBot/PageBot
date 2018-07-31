@@ -45,14 +45,11 @@ class Page(Element):
         >>> page = Page()
         >>> page.w, page.h
         (100pt, 100pt)
-        >>> page.maxW, page.maxH = 500, 600 # Get auto-converted to pt-units
-        >>> page.maxW, page.maxH
-        (500pt, 600pt)
         >>> page.size = 1111, 2222
-        >>> page.w, page.h # Clipped by page.maxW
-        (500pt, 600pt)
+        >>> page.size
+        (1111pt, 2222pt)
         >>> page
-        <Page Unplaced (500pt, 600pt)>
+        <Page Unplaced (1111pt, 2222pt)>
         """
         Element.__init__(self, **kwargs)
 

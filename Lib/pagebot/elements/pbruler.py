@@ -40,9 +40,9 @@ class Ruler(Element):
         (3mm, 3mm, 3mm)
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.css('strokeWidth', 0), base=base, min=self.minH, max=self.maxH)
+        return units(self.css('strokeWidth', 0), base=base)
     def _set_h(self, h): # Overwrite style from here.
-        self.style['h'] = self.style['strokeWidth'] = units(h or DEFAULT_HEIGHT, min=self.minH, max=self.maxH) # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['h'] = self.style['strokeWidth'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     #   D R A W B O T / F L A T  S U P P O R T

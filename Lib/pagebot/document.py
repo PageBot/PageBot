@@ -654,7 +654,7 @@ class Document(object):
         """
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pt'), base=base, min=0, max=h)
+        return units(self.rootStyle.get('pt'), base=base)
     def _set_pt(self, pt):
         self.rootStyle['pt'] = units(pt)
     pt = property(_get_pt, _set_pt)
@@ -676,7 +676,7 @@ class Document(object):
         """
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pb'), base=base, min=0, max=h)
+        return units(self.rootStyle.get('pb'), base=base)
     def _set_pb(self, pb):
         self.rootStyle['pb'] = units(pb)
     pb = property(_get_pb, _set_pb)
@@ -698,7 +698,7 @@ class Document(object):
         """
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pl'), base=base, min=0, max=w)
+        return units(self.rootStyle.get('pl'), base=base)
     def _set_pl(self, pl):
         self.rootStyle['pl'] = units(pl)
     pl = property(_get_pl, _set_pl)
@@ -720,7 +720,7 @@ class Document(object):
         """
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pr', 0), base=base, min=0, max=w)
+        return units(self.rootStyle.get('pr', 0), base=base)
     def _set_pr(self, pr):
         self.rootStyle['pr'] = units(pr)
     pr = property(_get_pr, _set_pr)
@@ -742,7 +742,7 @@ class Document(object):
         """
         d = self.d
         base = dict(base=d, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pzf', 0), base=base, min=0, max=d)
+        return units(self.rootStyle.get('pzf', 0), base=base)
     def _set_pzf(self, pzf):
         self.rootStyle['pzf'] = units(pzf)
     pzf = property(_get_pzf, _set_pzf)
@@ -764,7 +764,7 @@ class Document(object):
         """
         d = self.d
         base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
-        return units(self.rootStyle.get('pzb', 0), base=base, min=0, max=d)
+        return units(self.rootStyle.get('pzb', 0), base=base)
     def _set_pzb(self, pzb):
         self.rootStyle['pzb'] = units(pzb)
     pzb = property(_get_pzb, _set_pzb)
@@ -1004,14 +1004,10 @@ class Document(object):
         then only evaluate the selected pages.
         Clip the found values against the document min/max proportions.
 
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, maxH=950, maxD=955)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 900pt, 1pt, 950pt, 0pt, 955pt)
+        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
         >>> doc.getMaxPageSizes()
         (500pt, 500pt, 100pt)
         >>> page = doc[1]
-        >>> page.minW, page.maxW, page.minH, page.maxH, page.minD, page.maxD # Inheriting from doc parent
-        (1pt, 900pt, 1pt, 950pt, 0pt, 955pt)
         >>> page.size
         (500pt, 500pt)
         >>> page.w = 2345
@@ -1021,105 +1017,15 @@ class Document(object):
         >>> doc.getMaxPageSizes() # Clipped to max size
         (900pt, 950pt, 100pt)
         """
-        w, h, d = minW, minH, minD = self.minW, self.minH, self.minD
-        maxW, maxH, maxD = self.maxW, self.maxH, self.maxD
+        w = h = d = 0
         for pn, pnPages in self.pages.items():
             if not pageSelection is None and not pn in pageSelection:
                 continue
             for page in pnPages:
-                w = min(maxW, max(page.w, w, minW))
-                h = min(maxH, max(page.h, h, minH))
-                d = min(maxD, max(page.d, d, minD))
+                w = max(page.w, w)
+                h = max(page.h, h)
+                d = max(page.d, d)
         return w, h, d
-
-    def _get_minW(self): # Set/get the minimal height.
-        """Answer the minW limit of self. Min/Max values cannot be relative
-        units.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=900, minW=121, maxH=800, maxD=700)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (121pt, 900pt, 1pt, 800pt, 0pt, 700pt)
-
-        """
-        return units(self.css('minW'))
-    def _set_minW(self, minW):
-        self.rootStyle['minW'] = u = units(minW) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.minW "%s" must be an absolute unit.' % minW)
-    minW = property(_get_minW, _set_minW)
-
-    def _get_minH(self): # Set/get the minimal height.
-        """Answer the minH limit of self. Min/Max values cannot be relative units.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, minH=232, maxW=900, maxH=800, maxD=700)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 900pt, 232pt, 800pt, 0pt, 700pt)
-        """
-        return units(self.css('minH'))
-    def _set_minH(self, minH):
-        self.rootStyle['minH'] = u = units(minH) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.minH "%s" must be an absolute unit.' % minH)
-    minH = property(_get_minH, _set_minH)
-
-    def _get_minD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        """Answer the minD limit of self. In case it is relative unit,
-        then use parent as reference.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, minD=343, maxW=900, maxH=800, maxD=700)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 900pt, 1pt, 800pt, 343pt, 700pt)
-
-        """
-        return units(self.css('minD'))
-    def _set_minD(self, minD):
-        self.rootStyle['minD'] = u = units(minD) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.minD "%s" must be an absolute unit.' % minD)
-    minD = property(_get_minD, _set_minD)
-
-    def _get_maxW(self): # Set/get the maximal width.
-        """Answer the maxW limit for child elements. Min/Max values cannot be
-        relative units.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
-
-        """
-        return units(self.css('maxW', MAX_WIDTH))
-    def _set_maxW(self, maxW):
-        self.rootStyle['maxW'] = u = units(maxW) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.maxW "%s" must be an absolute unit.' % maxW)
-    maxW = property(_get_maxW, _set_maxW)
-
-    def _get_maxH(self): # Set/get the maximal height.
-        """Answer the maxH limit for child elements. Default is MAX_HEIGHT.
-        Min/max values must be absolute units.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
-
-        """
-        return units(self.css('maxH', MAX_HEIGHT))
-    def _set_maxH(self, maxH):
-        self.rootStyle['maxH'] = u = units(maxH) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.maxH "%s" must be an absolute unit.' % maxH)
-    maxH = property(_get_maxH, _set_maxH)
-
-    def _get_maxD(self): # Set/get the minimal depth, in case the element has 3D dimensions.
-        """Answer the maxD limit for child elements. Min/Max values cannot be
-        relative units.
-
-        >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10, maxW=901, maxH=802, maxD=703)
-        >>> doc.minW, doc.maxW, doc.minH, doc.maxH, doc.minD, doc.maxD
-        (1pt, 901pt, 1pt, 802pt, 0pt, 703pt)
-
-        """
-        return units(self.css('maxD', MIN_HEIGHT))
-    def _set_maxD(self, maxD):
-        self.rootStyle['maxD'] = u = units(maxD) # Set on local style, shielding parent self.css value.
-        assert u.isAbsolute, ('Element.maxD "%s" must be an absolute unit.' % maxD)
-    maxD = property(_get_maxD, _set_maxD)
-
 
     #   C O N D I T I O N S
 
