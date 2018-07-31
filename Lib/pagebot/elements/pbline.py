@@ -95,7 +95,7 @@ class Line(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        context.setStrokeColor(self.css('stroke', noColor), self.css('strokeWidth'))
+        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         context.newPath()
         context.moveTo((px, py))
         context.lineTo((px + self.w, py + self.h))

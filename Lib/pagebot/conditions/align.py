@@ -870,7 +870,6 @@ class Origin2BottomSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2BottomSide(), e, score)
 
-
 if __name__ == '__main__':
     import doctest
     import sys

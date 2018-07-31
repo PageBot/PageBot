@@ -350,7 +350,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewInfoTextFill = color(r=0.1, g=0.1, b=0.1), # Color of text in element info box.
         
         # Origin marker, show for view.show
-        viewInfoOriginMarkerSize = pt(4), # Radius of the info origin crosshair marker.
+        viewInfoOriginMarkerSize = pt(5), # Radius of the info origin crosshair marker.
         viewInfoOriginMarkerFill = color(0.5, 0.5, 0.5, 0.1), # Color of info origin crosshair marker.
         viewInfoOriginMarkerStroke = blackColor, # Color of info origin crosshair marker.
         viewInfoOriginMarkerStrokeWidth = pt(0.25),

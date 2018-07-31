@@ -124,7 +124,7 @@ class PageView(BaseView):
 
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
-                context.setFillColor(fillColor)
+                context.fill(fillColor)
                 context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
@@ -182,21 +182,22 @@ class PageView(BaseView):
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
         >>> from pagebot.document import Document
+        >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
         >>> page = doc[1]
         >>> view = doc.getView()
         >>> view.showGrid = [GRID_COL, GRID_ROW]
-        >>> view.drawPageMetaInfo(page, (0, 0))
+        >>> view.drawPageMetaInfo(page, (0, 0), path)
         """
         self.drawPageFrame(page, origin)
         self.drawPagePadding(page, origin)
-        self.drawPageNameInfo(page, origin, path)
+        self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
         self.drawGrid(page, origin)
         self.drawBaselineGrid(page, origin)
-        if self.showPageOrigin:
+        if self.showPageOrigin: # Test here, as same function is used for drawing origin on elements.
             self.drawElementOrigin(page, origin)
 
     def drawPageFrame(self, page, origin):
@@ -219,8 +220,8 @@ class PageView(BaseView):
                 self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
                 self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
             context = self.context
-            context.setFillColor(noColor)
-            context.setStrokeColor(color(0, 0, 1), pt(0.5))
+            context.fill(noColor)
+            context.stroke(color(0, 0, 1), pt(0.5))
             context.rect(origin[0], origin[1], page.w, page.h)
             #page.drawFrame(origin, self)
 
@@ -245,11 +246,11 @@ class PageView(BaseView):
             p = page._applyScale(self, p)
             px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
 
-            context.setFillColor(noColor)
-            context.setStrokeColor(self.css('viewPagePaddingStroke', color(0.2, 0.2, 1)),
+            context.fill(noColor)
+            context.stroke(self.css('viewPagePaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPagePaddingStrokeWidth', 0.5))
             if page.originTop:
-                pass
+                context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
                 #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
                 context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
@@ -392,7 +393,7 @@ class PageView(BaseView):
             y = origin[1]
             mt, mr, mb, ml = e.margin
             context = self.context
-            context.setFillColor(color(random(), random(), random(), 0.3))
+            context.fill(color(random(), random(), random(), 0.3))
             context.rect(x-ml, y, max(2,ml), e.h)
             context.rect(x+e.w, y, max(1,mr), e.h)
             context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
@@ -428,8 +429,8 @@ class PageView(BaseView):
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
-                context.setFillColor(color(0.3, 0.3, 0.3, 0.5))
-                context.setStrokeColor(noColor)
+                context.fill(color(0.3, 0.3, 0.3, 0.5))
+                context.stroke(noColor)
                 context.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
                 context.fill(self.css('viewInfoFill'))
@@ -442,7 +443,7 @@ class PageView(BaseView):
                 # Draw width and height measures
                 context.fill(noColor)
                 context.stroke(blackColor, w=pt(0.25))
-                S = self.css('viewInfoOriginMarkerSize', pt(4))
+                S = self.css('viewInfoOriginMarkerSize', pt(5))
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
                 # Horizontal measure
@@ -484,7 +485,7 @@ class PageView(BaseView):
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
         
-        S = e.css('viewInfoOriginMarkerSize', pt(4))
+        S = e.css('viewInfoOriginMarkerSize', pt(5))
         # Draw origin of the element
         fill = e.css('viewInfoOriginMarkerFill', noColor)
         stroke = e.css('viewInfoOriginMarkerStroke', blackColor)
@@ -532,12 +533,12 @@ class PageView(BaseView):
 
             sMissingElementFill = self.css('viewMissingElementFill', noColor)
             if sMissingElementFill is not noColor:
-                context.setFillColor(sMissingElementFill)
-                context.setStrokeColor(noColor)
+                context.fill(sMissingElementFill)
+                context.stroke(noColor)
                 context.rect(px, py, self.w, self.h)
             # Draw crossed rectangle.
-            context.setFillColor(noColor)
-            context.setStrokeColor(blackColor, pt(0.5))
+            context.fill(noColor)
+            context.stroke(blackColor, pt(0.5))
             context.rect(px, py, self.w, self.h)
             context.newPath()
             context.moveTo((px, py))
@@ -670,8 +671,8 @@ class PageView(BaseView):
             fontSize=M/2, stroke=noColor,
             textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.css('baselineGrid', )
-        context.setFillColor(noColor)
-        context.setStrokeColor(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
+        context.fill(noColor)
+        context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
 
         while oy < e.h - e.pb:
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
@@ -752,8 +753,8 @@ class PageView(BaseView):
             cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
-            context.setFillColor(noColor)
-            context.setStrokeColor(color(cmyk=1), w=cmStrokeWidth)
+            context.fill(noColor)
+            context.stroke(color(cmyk=1), w=cmStrokeWidth)
             # Bottom left
             context.line((x - cmDistance, y), (x - cmSize, y))
             context.line((x, y - cmDistance), (x, y - cmSize))

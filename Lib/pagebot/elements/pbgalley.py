@@ -134,7 +134,7 @@ class Galley(Element):
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
-        self.context.setFillColor(self.OLD_PAPER_COLOR)
+        self.context.fill(self.OLD_PAPER_COLOR)
         gw, gh = self.getSize()
         self.context.rect(px, py, gw, gh)
 
