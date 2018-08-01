@@ -1,6 +1,9 @@
 
 
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import em
+from pagebot.toolbox.color import blackColor
+
 
 context = getContext()
 
@@ -9,7 +12,7 @@ H = 400
 
 HEAD_LINE = """When fonts started a new world"""
 
-newPage(W, H)
+context.newPage(W, H)
 
 
 w = 500
@@ -19,7 +22,7 @@ y = 20
 def textBounds(s, x, y, w):
     bs = context.newString(s, w=w,
                            style=dict(font='Georgia', 
-                                      rTracking=0.15,
+                                      tracking=em(0.15),
                                       textFill=blackColor))
 
     tw, th = context.textSize(bs)

@@ -74,7 +74,6 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
         fs = c.newString(s, style=dict(font=font.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
-                                       rTracking=rTracking,
                                        textFill=blackColor))
     return dict(condensendFont=condFont,
                 condensedFs=condensedFs,

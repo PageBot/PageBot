@@ -220,6 +220,10 @@ def upt(u, *args, **kwargs):
     (50, 100, 120, (10, 20))
     >>> upt(None)
     0
+    >>> upt(em(1.4), base=30) # Render to a fontSize
+    42
+    >>> upt(('20%', '30%', '40%'), base=300) # Render to a percentage base
+    (60, 90, 120)
     """
     if args:
         if not isinstance(u, (list, tuple)):
@@ -244,7 +248,7 @@ def upt(u, *args, **kwargs):
 
     uu = units(u, **kwargs)
     if uu is not None:
-        uu = uu.rv
+        uu = uu.pt
     return uu
 
 def isUnits(u, *args):

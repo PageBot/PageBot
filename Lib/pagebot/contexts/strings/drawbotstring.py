@@ -170,6 +170,10 @@ class DrawBotString(BabelString):
         """Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
         # TODO: Add in case w is defined.
+        if w is not None:
+            w = upt(w)
+        if h is not None:
+            h = upt(h)
         return self.context.textSize(self, w=w, h=h)
 
     def bounds(self):
@@ -256,30 +260,31 @@ class DrawBotString(BabelString):
         return reCompiled.findall(u'%s' % self.s)
 
     def textOverflow(self, w, h, align=LEFT):
-        return self.context.textOverflow(self, (0, 0, w.pt, h.pt), align)
+        wpt, hpt = upt(w, h)
+        return self.context.textOverflow(self, (0, 0, wpt, hpt), align)
 
     @classmethod
     def _newFitWidthString(cls, fs, context, fontSize, w, pixelFit):
-        assert isUnit(fontSize) and isUnit(w)
         if pixelFit:
             tx, _, tw, _ = pixelBounds(fs)
         else:
             tx, tw = 0, context.b.textSize(fs)[0]
-        dx = (tw-tx).r # Render the units, to compare for zero division
-        if dx:
-            return w * fontSize.r / dx
+        fspt, wpt, txpt, twpt = upt(fontSize, w, tx, tw)
+        dxpt = twpt - txpt # Render the units, to compare for zero division
+        if dxpt:
+            return wpt * fspt / dxpt
         return None # Zero division, cannot calculate
 
     @classmethod
     def _newFitHeightString(cls, fs, context, fontSize, h, pixelFit):
-        assert isUnit(fontSize) and isUnit(h)
         if pixelFit:
             _, ty, _, th = pixelBounds(fs)
         else:
             ty, th = 0, context.b.textSize(fs)[1]
-        dy = (th-ty).r # Render the units, to compare for zero division
-        if dy:
-            return h * fontSize.r / dy
+        fspt, hpt, typt, thpt = upt(fontSize, w, ty, th)
+        dypt = thpt - typt # Render the units, to compare for zero division
+        if dypt:
+            return hpt * fspt / dypt
         return None # Zero division, cannot calculate
 
     FITTING_TOLERANCE = 3
@@ -324,9 +329,6 @@ class DrawBotString(BabelString):
         >>> #s.bounds()
 
         """
-        assert w is None or isUnit(w)
-        assert h is None or isUnit(h)
-
         style = copy(style)
         location = copy(css('', e, style, default={})) # In case the used already supplied a VF location, use it.
         font = css('font', e, style)
@@ -372,7 +374,7 @@ class DrawBotString(BabelString):
                 #print(2, axisValue, minValue, defaultValue, maxValue)
                 loc = copy(location)
                 loc[axisTag] = axisValue
-                loc['opsz'] = style['fontSize'].r
+                loc['opsz'] = upt(style['fontSize'])
                 #print(3, loc, font.axes.keys())
                 style['font'] = getInstance(font, loc)
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
@@ -391,7 +393,7 @@ class DrawBotString(BabelString):
                     axisValue = int(round(axisValue))
                 loc = copy(location)
                 loc[axisTag] = axisValue
-                loc['opsz'] = style['fontSize'].r
+                loc['opsz'] = upt(style['fontSize'])
                 style['font'] = getInstance(font, loc)
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
                 tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
@@ -446,32 +448,13 @@ class DrawBotString(BabelString):
         b = context.b
         b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
 
+        # Font selection
+
         sFont = css('font', e, style)
         if sFont is not None:
             if hasattr(sFont, 'path'): # If the Font instance was supplied, then use it's path.
                 sFont = sFont.path
             fsStyle['font'] = sFont
-
-        uLeading = css('leading', e, style)
-        if uLeading is not None:
-            assert isUnit(uLeading), ('DrawBotString.newString: uLeading %s must of type Unit' % uLeading)
-            fsStyle['lineHeight'] = uLeading.pt
-        
-        # If there is a target (pixel) width or height defined, ignore the
-        # requested fontSize and try the width or height first for fontSize =
-        # 100. The resulting width or height is then used as base value to
-        # calculate the needed point size.
-        # Forced fontSize, then this overwrites the style['fontSize'] if it is
-        # there.  TODO: add calculation of rFontSize (relative float based on
-        # root-fontSize) here too.
-        if w is not None or h is not None:
-            uFontSize = pt(100)
-        else:
-            # May be scaled to fit w or h if target is defined.
-            uFontSize = pt(css('fontSize', e, style, default=DEFAULT_FONT_SIZE))    
-        if uFontSize is not None:
-            assert isUnit(uFontSize), ('DrawBotString.newString: uFontSize %s must of type Unit' % uFontSize)
-            fsStyle['fontSize'] = uFontSize.pt  # For some reason fontSize must be set after leading.
 
         sFallbackFont = css('fallbackFont', e, style)
         if isinstance(sFallbackFont, Font):
@@ -480,12 +463,35 @@ class DrawBotString(BabelString):
             sFallbackFont = DEFAULT_FALLBACK_FONT_PATH
         fsStyle['fallbackFont'] = sFallbackFont
 
+        # If there is a target (pixel) width or height defined, ignore the
+        # requested fontSize and try the width or height first for fontSize =
+        # 100. The resulting width or height is then used as base value to
+        # calculate the needed point size.
+        # Forced fontSize, then this overwrites the style['fontSize'] if it is
+        # there.  TODO: add calculation of rFontSize (relative float based on
+        # root-fontSize) here too.
+        if w is not None or h is not None:
+            uFontSize = pt(100) # Start with large font size to scale for fitting.
+        else:
+            # May be scaled to fit w or h if target is defined.
+            uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)    
+        if uFontSize is not None:
+            fsStyle['fontSize'] = fontSizePt = upt(uFontSize) # Remember as base for relative units
+        else:
+            fontSizePt = DEFAULT_FONT_SIZE
+
+        uLeading = css('leading', e, style)
+        if uLeading is not None:
+            fsStyle['lineHeight'] = upt(uLeading, base=fontSizePt) # Base for em or perc
+        
         # Color values for text fill
         # Color: Fill the text with this color instance
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
         cFill = css('textFill', e, style, default=blackColor) # Default is blackColor, not noColor
         if cFill is not inheritColor:
+            if isinstance(cFill, (tuple, list, int, float)):
+                cFill = color(cFill)
             assert isinstance(cFill, Color), ('DrawBotString.newString: Fill color "%s" is not Color in style %s' % (cFill, style))
             if cFill is noColor:
                 fsStyle['fill'] = None
@@ -502,8 +508,10 @@ class DrawBotString(BabelString):
         strokeWidth = css('textStrokeWidth', e, style)
         if strokeWidth is not None:
             assert isUnit(strokeWidth), ('DrawBotString.newString: strokeWidth %s must of type Unit' % strokeWidth)
-            fsStyle['strokeWidth'] = strokeWidth.pt
+            fsStyle['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
         if cStroke is not inheritColor:
+            if isinstance(cFill, (tuple, list, int, float)):
+                cFill = color(cFill)
             assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsStyle['stroke'] = None
@@ -522,23 +530,19 @@ class DrawBotString(BabelString):
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         if uParagraphTopSpacing is not None:
-            assert isUnit(uParagraphTopSpacing), ('DrawBotString.newString: uParagraphTopSpacing %s must of type Unit' % uParagraphTopSpacing)
-            fsStyle['paragraphTopSpacing'] = uParagraphTopSpacing.pt
+            fsStyle['paragraphTopSpacing'] = upt(uParagraphTopSpacing, base=fontSizePt) # Base for em or perc
 
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
         if uParagraphBottomSpacing:
-            assert isUnit(uParagraphBottomSpacing), ('DrawBotString.newString: uParagraphBottomSpacing %s must of type Unit' % uParagraphBottomSpacing)
-            fsStyle['paragraphBottomSpacing'] = uParagraphBottomSpacing.pt
+            fsStyle['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) # Base for em or perc
 
         uTracking = css('tracking', e, style)
         if uTracking is not None:
-            assert isUnit(uTracking), ('DrawBotString.newString: uTracking %s must of type Unit' % uTracking)
-            fsStyle['tracking'] = uTracking.pt
+            fsStyle['tracking'] = upt(uTracking, base=fontSizePt) # Base for em or perc
 
         uBaselineShift = css('baselineShift', e, style)
         if uBaselineShift is not None:
-            assert isUnit(uBaselineShift), ('DrawBotString.newString: uBaselineShift %s must of type Unit' % uBaselineShift)
-            fsStyle['baselineShift'] = uBaselineShift.pt
+            fsStyle['baselineShift'] = upt(uBaselineShift, base=fontSizePt) # Base for em or perc
 
         openTypeFeatures = css('openTypeFeatures', e, style)
         if openTypeFeatures is not None:
@@ -554,18 +558,15 @@ class DrawBotString(BabelString):
         # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
-            assert isUnit(uFirstLineIndent), ('DrawBotString.newString: uFirstLineIndent %s must of type Unit' % uFirstLineIndent)
-            fsStyle['firstLineIndent'] = uFirstLineIndent.pt
+            fsStyle['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
 
         uIndent = css('indent', e, style)
         if uIndent is not None:
-            assert isUnit(uIndent), ('DrawBotString.newString: uIndent %s must of type Unit' % uIndent)
-            fsStyle['indent'] = uIndent.pt
+            fsStyle['indent'] = upt(uIndent, base=fontSizePt) # Base for em or perc
 
         uTailIndent = css('tailldIndent', e, style)
         if uTailIndent is not None:
-            assert isUnit(uTailIndent), ('DrawBotString.newString: uTailIndent %s must of type Unit' % uTailIndent)
-            fsStyle['tailIndent'] = uTailIndent.pt
+            fsStyle['tailIndent'] = upt(uTailIndent, base=fontSizePt) # Base for em or perc
 
         sLanguage = css('language', e, style)
         if sLanguage is not None:
