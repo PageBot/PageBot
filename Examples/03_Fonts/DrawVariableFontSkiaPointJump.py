@@ -129,7 +129,7 @@ class FontIcon(object):
                 fs = context.newString(self.title,
                                        style=dict(font=self.labelFont.path,
                                                   textFill=blackColor,
-                                                  rTracking=self.LABEL_RTRACKING,
+                                                  tracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, self.ih+th/2))
@@ -139,7 +139,7 @@ class FontIcon(object):
                 fs = context.newString(self.name,
                                        style=dict(font=self.labelFont.path,
                                                   textFill=blackColor,
-                                                  rTracking=self.LABEL_RTRACKING,
+                                                  tracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
@@ -148,7 +148,7 @@ class FontIcon(object):
                 fs = context.newString(self.label,
                                        style=dict(font=self.labelFont.path,
                                                   textFill=blackColor,
-                                                  rTracking=self.LABEL_RTRACKING,
+                                                  tracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
@@ -327,7 +327,7 @@ def drawAnimation():
                                                   wdthLoc, wghtLoc),
                                style=dict(font=f.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=12))
         text(fs, (200, 480))
 
@@ -340,21 +340,21 @@ def drawAnimation():
         fill(0)
         drawGlyphPath(locFont, 'Q', lx-tw/2+20, ly+20, s=0.05, fillColor=0)
         """
-        fs = context.newString('Q',
+        bs = context.newString('Q',
                                style=dict(font=locFont.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=80))
-        tw, th = textSize(fs)
-        text(fs, (lx-tw/2, ly+20))
+        tw, th = context.textSize(bs)
+        context.text(bs, (lx-tw/2, ly+20))
 
-        fs = context.newString('#PageBot',
+        bs = context.newString('#PageBot',
                                style=dict(font=f.path,
                                           textFill=0.5,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=10))
-        tw, th = textSize(fs)
-        text(fs, (W-tw-10, 10))
+        tw, th = context.textSize(fs)
+        context.text(bs, (W-tw-10, 10))
 
     saveImage('_export/SkiaPointJump.gif')
 

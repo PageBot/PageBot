@@ -165,7 +165,7 @@ class FontIcon(object):
             bs = c.newString(self.name,
                              style=dict(font=self.labelFont.path,
                                         textFill=blackColor,
-                                        rTracking=self.LABEL_RTRACKING,
+                                        tracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
             c.text(bs, (w/2-tw/2, y))
@@ -176,7 +176,7 @@ class FontIcon(object):
             bs = c.newString(self.label,
                              style=dict(font=self.labelFont.path,
                                         textFill=blackColor,
-                                        rTracking=self.LABEL_RTRACKING,
+                                        tracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
             tw, th = c.textSize(bs)
             c.text(bs, (w/2-tw/2, y))
