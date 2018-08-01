@@ -22,7 +22,7 @@ y = 20
 def textBounds(s, x, y, w):
     bs = context.newString(s, w=w,
                            style=dict(font='Georgia', 
-                                      tracking=em(0.15),
+                                      tracking=em(0.02),
                                       textFill=blackColor))
 
     tw, th = context.textSize(bs)
@@ -30,6 +30,9 @@ def textBounds(s, x, y, w):
 
     context.text(bs, (x-bx, y-by))
 
+    # Red rectangle shows context.textSize bounding box.
+    # Green rectangle shows pixel bounds.
+    # TODO: context.textSize should draw lower fitting ascender and descender. Not start on baseline.
     context.fill(None)
     context.stroke((1, 0, 0), 0.5)
     context.rect(x, y, bw, bh)
@@ -37,7 +40,7 @@ def textBounds(s, x, y, w):
     context.rect(x, y, tw, th)
 
     return bs
-y = 200
+y = 100
 bs = textBounds(HEAD_LINE, x, y, w)
 #print('%s %s %s' % (bs, bs.fittingFontSize, bs.bounds()))
 y += 50

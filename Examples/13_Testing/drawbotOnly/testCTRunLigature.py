@@ -25,6 +25,7 @@ import Quartz
 
 from fontTools.ttLib import TTFont
 
+context.newPage(1000, 500)
 
 #fontPath = u"Proforma-Bold"
 fontPath = u"Upgrade-Bold" # See gallery
@@ -37,8 +38,9 @@ fontPath = u"Upgrade-Bold" # See gallery
 #fontToolsFont = TTFont(fontPath)
 #glyphOrder = fontToolsFont.getGlyphOrder()
 
-def ctRunThing(fs, (x, y)):
-    w, h = context.textSize(fs)
+def ctRunThing(fs, xy):
+    x, y = xy
+    w, h = textSize(fs)
     box = 0, 0, w, h
     attrString = fs.getNSObject()
     setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
@@ -48,14 +50,13 @@ def ctRunThing(fs, (x, y)):
     ctLines = CoreText.CTFrameGetLines(ctBox)
     ctRuns = CoreText.CTLineGetGlyphRuns(ctLines[0])
 
-
     # loop over all runs
     for run in ctRuns:
         # get all positions
         pos = CoreText.CTRunGetPositions(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
         # get all glyphs
         glyphs = CoreText.CTRunGetGlyphs(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
-        print(pos)
+        #print(pos)
 
         # enumerate over all pos
         for i, (gx, gy) in enumerate(pos):
@@ -76,15 +77,13 @@ def ctRunThing(fs, (x, y)):
             #tx, _ = textSize(glyphName)
 
             #text(glyphName, (x+gx+centerShift-tx*.5, y+gy-20))
-
-
-"""
+            
 fs1 = context.newString('Ligature fifl', style=dict(font=fontPath, fontSize=100, openTypeFeatures=dict(liga=False)))
-context.text(fs1, (100, 300))
-ctRunThing(fs1, (100, 300))
+text(fs1.s, (100, 300)) # Using direct DrawBot text( ) here.
+ctRunThing(fs1.s, (100, 300)) # Draw lines at the glyph positions
 
 fs2 = FormattedString('Ligature fifl', font=fontPath, fontSize=100, openTypeFeatures=dict(liga=True))
-text(fs2, (100, 100))
-ctRunThing(fs2.s, (100, 100))
+text(fs2, (100, 100)) # Using direct DrawBot text( ) here.
+ctRunThing(fs2, (100, 100)) # Draw lines at the glyph positions
+ 
 saveImage('_gallery/testCTRunLigature.pdf')
-"""

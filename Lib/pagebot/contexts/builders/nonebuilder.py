@@ -150,6 +150,9 @@ class NoneBuilder(object):
     def text(self, s, p):
         pass
 
+    def textBox(self, s, r):
+        pass
+        
     def saveImage(self, path, multipage=True):
         pass
 

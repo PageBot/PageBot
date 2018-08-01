@@ -11,7 +11,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     testAddAttrivutesToFormattedStrings.py
+#     testAddAttributesToFormattedStrings.py
 #
 import sys
 from pagebot.contexts.platform import getContext

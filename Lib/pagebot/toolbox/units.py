@@ -16,7 +16,7 @@
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
-#     units, Units # Basic contextual converter and interpretor
+#     units # Basic contextual converter and interpretor
 #
 #     Absolute units
 #     Millimeters MM = 0.0393701 * INCH
@@ -32,7 +32,7 @@
 #     fr, Fr       Fraction columns for CSS-grid, without gutter
 #     col, Col     Same as fr, using gutter. Works vertical as rows as well.
 #     px, Px       Equal to points (for now)
-
+#
 from __future__ import division # Make integer division result in float.
 
 import re
