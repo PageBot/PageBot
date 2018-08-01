@@ -25,7 +25,7 @@ from pagebot.toolbox.color import noColor, Color, blackColor
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
-                           DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH,
+                           DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, 
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE)
 from pagebot.toolbox.transformer import asFormatted, uniqueID

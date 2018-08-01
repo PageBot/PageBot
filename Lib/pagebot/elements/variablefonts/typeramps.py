@@ -18,7 +18,7 @@
 #
 from pagebot.elements import Element
 from pagebot.toolbox.units import pointOffset, pt
-from pagebot.toolbox.color import blackColor
+from pagebot.toolbox.color import blackColor, noColor
 
 class FontIcon(Element):
     u"""Showing the specified font(sub variable font) in the form of an icon

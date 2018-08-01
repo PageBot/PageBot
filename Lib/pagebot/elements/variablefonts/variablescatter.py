@@ -20,6 +20,7 @@ from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.color import blackColor
 
 
 class VariableScatter(Element):
