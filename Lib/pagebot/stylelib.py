@@ -29,7 +29,7 @@ default = {
         fontSize=px(12),
         leading=em(1.4),
         color=0,
-        fill=0xFFFFFF,
+        fill=blackColorxFFFFFF,
     ),
     'pre, code': dict(
         display='none',

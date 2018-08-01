@@ -352,7 +352,7 @@ class TextBox(object):
             context.text(context.newString('0', style=dict(align='left',
                                                font='Verdana',
                                                fontSize=8,
-                                               fill=(0, 0, 1))),
+                                               fill=color(0, 0, 1))),
                    (self.x + self.w + 3, self.y + self.h - fontSize/4))
 
         prevY = 0
@@ -364,14 +364,14 @@ class TextBox(object):
                 context.text(context.newString('index', style=dict(align='right',
                                                        font='Verdana',
                                                        fontSize=fontSize,
-                                                       fill=(0, 0, 1))),
+                                                       fill=color(0, 0, 1))),
                        (self.x-8, self.y + self.h - y - fontSize/3))
             if showY:
                 context.text(context.newString('%d' % round(y),
                                    style=dict(align='left',
                                               font='Verdana',
                                               fontSize=fontSize,
-                                              fill=(0, 0, 1))),
+                                              fill=color(0, 0, 1))),
                        (self.x + self.w + 3, self.y + self.h - y - fontSize/4))
             if showLeading:
                 leading = round(abs(y - prevY))
@@ -379,7 +379,7 @@ class TextBox(object):
                                    style=dict(align='left',
                                               font='Verdana',
                                               fontSize=fontSize,
-                                              fill=(1, 0, 0))),
+                                              fill=color(1, 0, 0))),
                        (self.x + self.w + 3, self.y + self.h - prevY - leading/2 - fontSize/4))
             prevY = y
 

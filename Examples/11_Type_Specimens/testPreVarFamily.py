@@ -126,7 +126,7 @@ for axisTag in font.axes.keys():
         phicos = cos(radians(self.frameIndex/self.frames * 360))
         
         location = {phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
-        style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=0)
+        style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=blackColor)
         af = AnimatedBannerFrame(font, frames, pn, parent=page, padding=20, style=style, 
             sampleText=sample, w=page.pw, h=page.ph, context=c)
         pn += 1

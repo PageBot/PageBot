@@ -17,7 +17,7 @@ bs = c.newString('')
 
 # Contains a DrawBot FormattedString.
 aa = bs.s
-aa.append("123", font="Helvetica", fontSize=100, fill=(1, 0, 1))
+aa.append("123", font="Helvetica", fontSize=100, fill=color(1, 0, 1))
 print(aa._font)
 print(aa._fontSize)
 print(aa._fill)

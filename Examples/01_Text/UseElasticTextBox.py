@@ -93,13 +93,13 @@ def makeDocument():
         name='ElasticTextBox1',
         parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, maxW=W-2*PagePadding,
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=0.9, stroke=None,
+        leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=blackColor.9, stroke=noColor,
     )
     e2 = newTextBox(s,
         name='ElasticTextBox2',
         parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', maxW=W-2*PagePadding,
         conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5,
-        fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=None,
+        fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=noColor,
     )
 
     score = page.solve()

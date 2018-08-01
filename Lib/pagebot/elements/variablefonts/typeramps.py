@@ -38,7 +38,7 @@ class FontIcon(Element):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
+    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=noColor,
             earSize=None, earLeft=True, earFill=None, cFill=None, cStroke=None, cStrokeWidth=None,
             labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
         u"""

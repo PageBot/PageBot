@@ -22,6 +22,8 @@ from pagebot.style import LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color, blackColor, whiteColor, noColor
+from pagebot.toolbox.units import pt
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 DoTextFlow = True
@@ -69,21 +71,22 @@ def makeDocument():
         name='ElasticTextBox1',
         nextElement='ElasticTextBox2', # Overflow goes here.
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
-        maxW=W-2*PagePadding, minW=100, mb=20, mr=10,       # Conditions make the element move to top-left of the page.
+        mb=20, mr=10, # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.
         conditions=[Left2Left(), Float2Top(), Overflow2Next()],
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions.
         yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=0, strokeWidth=0.5, fill=0.9, stroke=None,
+        leading=pt(5), fontSize=pt(9), textFill=blackColor, strokeWidth=pt(0.5), 
+        fill=color(0.9), stroke=noColor,
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name
         nextElement='ElasticTextBox3', nextPage='Page 2',
         parent=page0, padding=4, x=100, w=BoxWidth, h=200,
-        maxW=W-2*PagePadding, minW=100,
-        conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  fill=1, stroke=None,
+        conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  
+        fill=whiteColor, stroke=noColor,
     )
     # Get next page, to show flow running over page breaks.
     page1 = doc[1]
@@ -93,9 +96,8 @@ def makeDocument():
     e3 = newTextBox('', # Empty box, will get the overflow from e2, if there is any.
         name='ElasticTextBox3', # Flow reference by element.name
         parent=page1, padding=4, w=BoxWidth,
-        maxW=W-2*PagePadding, minW=100,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom()],
-        yAlign=TOP,  fill=1, stroke=None)
+        yAlign=TOP,  fill=whiteColor, stroke=noColor)
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:

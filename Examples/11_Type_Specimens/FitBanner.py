@@ -62,7 +62,7 @@ for sequenceIndex in range(sequences):
     
     for axisFrameIndex in range(axisFrames):
         page = doc[frameIndex] # Get the current frame-page
-        newRect(x=0, y=0, w=page.w, h=page.h, fill=0, parent=page)
+        newRect(x=0, y=0, w=page.w, h=page.h, fill=blackColor, parent=page)
         
         page.padding = M
         
@@ -90,7 +90,7 @@ for sequenceIndex in range(sequences):
             hh = ph
             
         style = dict(rLeading=1.4, font=font, xTextAlign=RIGHT, textFill=1, 
-            fill=0, roundVariableFitLocation=False)
+            fill=blackColor, roundVariableFitLocation=False)
 
         af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
             x=x+M, y=y+M, w=ww, h=hh, context=c)

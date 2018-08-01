@@ -88,10 +88,10 @@ class VariableCube(Element):
 
                 c.drawGlyphPath(self.font.ttFont, self.glyphNames[0], ppx, ppy, self.location, s=glyphPathScale, fillColor=(0, 0, 0))
 
-                fs = c.newString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=0)
+                fs = c.newString('%s %d\n%s %d' % (axisX, indexX * RANGE / sizeX, axisY, indexY * RANGE / sizeY), fontSize=6, fill=blackColor)
                 w, h = fs.size()
                 c.text(fs, ppx - stepX/4, ppy - 16) # Bit of hack, we need the width of the glyph here.
-        fs = c.newString('Other axes: %s' % self.location, fontSize=6, fill=0)
+        fs = c.newString('Other axes: %s' % self.location, fontSize=6, fill=blackColor)
         w, h = fs.size()
         c.text(fs, px, py - 16)
 

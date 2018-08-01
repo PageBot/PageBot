@@ -56,7 +56,7 @@ class Placer(Element):
     """
     DEFAULT_FILL = color(0.8, 0.8, 0.8)
 
-    def __init__(self, fill=None, **kwargs):  
+    def __init__(self, fill=noColor, **kwargs):  
         if fill is None:
             fill = self.DEFAULT_FILL
         Element.__init__(self, fill=fill, **kwargs)

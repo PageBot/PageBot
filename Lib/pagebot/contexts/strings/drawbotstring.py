@@ -247,7 +247,7 @@ class DrawBotString(BabelString):
 
         """
         marker = self.MARKER_PATTERN % (markerId, arg or '')
-        fs = self.context.b.FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
+        fs = self.context.b.FormattedString(marker, fill=noColor, stroke=noColor, fontSize=0.0000000000001)
         self.append(fs)
 
     def findMarkers(self, reCompiled=None):

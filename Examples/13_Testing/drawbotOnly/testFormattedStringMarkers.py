@@ -31,7 +31,7 @@ def getMarker(markerId, args=None):
     alter the flow of the FormattedString in an box) and the markerId and amount/length
     of args should be kept as small as possible."""
     marker = '==%s--%s==' % (markerId, args or '')
-    return b.FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
+    return b.FormattedString(marker, fill=noColor, stroke=noColor, fontSize=0.0000000000001)
 
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
 

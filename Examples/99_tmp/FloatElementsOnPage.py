@@ -95,10 +95,10 @@ def makeDocument():
     print(PageSize, pageArea, SQ)
 
     # Make new container for adding elements inside with alignment.
-    newRect(z=10, w=pageArea, h=pageArea, fill=(0.8, 0.8, 0.8, 0.4),
+    newRect(z=10, w=pageArea, h=pageArea, fill=color(0.8, 0.8, 0.8, 0.4),
             parent=page, margin=0, padding=0, yAlign=MIDDLE,
             maxW=pageArea, maxH=pageArea,
-            xAlign=CENTER, stroke=None, conditions=(Center2Center(),
+            xAlign=CENTER, stroke=noColor, conditions=(Center2Center(),
                                                     Middle2Middle()))
 
     fontSize = RedHeight/3
@@ -110,7 +110,7 @@ def makeDocument():
                                           leading=fontSize,
                                           font='LucidaGrande'))
     newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect',
-               parent=page, fill=(1, 0.1, 0.1),
+               parent=page, fill=color(1, 0.1, 0.1),
                yAlign=TOP, maxW=pageArea, maxH=pageArea,
                padding=4, conditions=(Center2Center(),
                                       Top2Top()))
@@ -129,17 +129,17 @@ def makeDocument():
                                            leading=12,
                                            textFill=0))
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page,
-               padding=4, fill=0.7,
+               padding=4, fill=blackColor.7,
                maxW=pageArea, maxH=pageArea, conditions=(Left2Left(),
                                                          Float2Top()))
 
     newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
-             parent=page, fill=0.7, padding=8,
+             parent=page, fill=blackColor.7, padding=8,
              maxW=pageArea, maxH=pageArea, conditions=(Right2Right(),
                                                        Float2Top()))
 
     newRect(z=0, w=BlueWidth, h=20,
-            parent=page, fill=0.2, conditions=(Fit2Width(),
+            parent=page, fill=blackColor.2, conditions=(Fit2Width(),
                                                Float2Top()))
 
     score = page.solve()

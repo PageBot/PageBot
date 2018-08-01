@@ -23,6 +23,8 @@ from pagebot.style import TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color
+from pagebot.toolbox.units import pt
 # Document is the main instance holding all information about the
 # document together (pages, styles, etc.)
 
@@ -83,20 +85,20 @@ def makeDocument():
                                #Shrink2BlockBottom()
                                ),
                    yAlign=BOTTOM,
-                   fill=(0, 1, 0, 0.3),
-                   stroke=(1, 0, 0))
+                   fill=color(0, 1, 0, 0.3),
+                   stroke=color(1, 0, 0))
     # Give parent on creation, to have the css chain working.
 
     # Caption falls through the yr2 (with differnt z) and lands on yr1 by Float2BottomSide()
     fs = doc.context.newString('Captions float below the image',
                                style=dict(font='Verdana',
                                           fontSize=20,
-                                          textFill=1))
+                                          textFill=color(1)))
     cap = newTextBox(fs, name='Caption', parent=img, z=0,
         conditions=[ Fit2Width(), Float2Top()],
         padding=4, font='Verdana',
-        yAlign=TOP, fontSize=9, textFill=1, strokeWidth=0.5,
-        fill=(0, 0, 1, 0.3), stroke=(0, 0, 1),
+        yAlign=TOP, fontSize=9, textFill=color(1), strokeWidth=pt(0.5),
+        fill=color(0, 0, 1, 0.3), stroke=color(0, 0, 1),
     )
     score = page.solve()
     if score.fails:

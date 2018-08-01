@@ -141,7 +141,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # None will show no border. Single value > 0 shows black line of that thickness.
         # Other options need to be store in dictionary value.
         # Borders hold dictionaries of format
-        # border = dict(strokeWidth=3, line=lineType, stroke=(1, 0, 0, 0,5), dash=(4,4))
+        # border = dict(strokeWidth=3, line=lineType, stroke=color(1, 0, 0, 0,5), dash=(4,4))
         # where lineType is one of (INLINE, ONLINE, OUTLINE)
         borderTop = None, # Border top.
         borderLeft = None, # Border left

@@ -49,7 +49,7 @@ def makeDocument():
     # Position square in the center of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
     newTextBox(page.name, w=30, h=30, parent=page, pl=3, pt=3,
-               conditions=conditions, fill=0.7)
+               conditions=conditions, fill=blackColor.7)
 
     page.solve()
 

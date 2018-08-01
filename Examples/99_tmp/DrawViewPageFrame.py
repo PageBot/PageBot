@@ -46,7 +46,7 @@ def makeDocument():
     bs = doc.context.newString(s, style=dict(fontSize=30,
                                              textFill=(1, 0, 0),
                                              xTextAlign=CENTER))
-    nt = newTextBox(bs, x=100, y=100, conditions=conditions, parent=page, fill=(1, 1, 0))
+    nt = newTextBox(bs, x=100, y=100, conditions=conditions, parent=page, fill=color(1, 1, 0))
     print(bs.s)
     #print(nt.x, nt.y, nt.w, nt.h)
     score = page.solve()

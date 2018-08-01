@@ -57,7 +57,7 @@ def makeDocument():
     rs['rLeading'] = 1.4
     rs['textFill'] = 1
 
-    #textBoxStyle = doc.addStyle('textbox', dict(fill=(0, 0, 0, 0.7),
+    #textBoxStyle = doc.addStyle('textbox', dict(fill=color(0, 0, 0, 0.7),
     #                                            padding=40))
     pStyle = doc.addStyle('p', dict(textFill=0))
     h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0, 0, 1)))
@@ -103,7 +103,7 @@ def makeDocument():
                     # Has no effect on the position conditions.
                     yAlign=BOTTOM, xAlign=LEFT,
                     leading=5, fontSize=9, textFill=0,
-                    strokeWidth=0.5, fill=0.9, stroke=None)
+                    strokeWidth=0.5, fill=blackColor.9, stroke=noColor)
     print(e1.style)
 
     newTextBox(s, # Empty box, will get the overflow
@@ -112,7 +112,7 @@ def makeDocument():
                parent=page0, padding=4, x=100, h=200,
                maxW=W-2*PagePadding, minW=100,
                conditions=[Left2Left(), Fit2Width(), Float2Top()],
-               yAlign=TOP, fill=1, stroke=None)
+               yAlign=TOP, fill=whiteColor, stroke=noColor)
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:

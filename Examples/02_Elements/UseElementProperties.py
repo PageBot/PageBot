@@ -28,11 +28,6 @@ e.w = 400
 e.h = 500
 print('New position and size:', (e.x, e.y, e.w, e.h))
 print('Uniek element Id (eId) for this element:', e.eId)
-# Set minimal and maximal boundary values
-e.setMinSize(10) # Set all 3 min values
-e.setMaxSize(W, W+100, W+200) # Set max values separate
-print('Minimal size', e.minW, e.minH, e.minD, e.getMinSize())
-print('Maximal size', e.maxW, e.maxH, e.maxD, e.getMaxSize())
 
 # Get the element info string, as used in meta info boxes
 print('-'*20)

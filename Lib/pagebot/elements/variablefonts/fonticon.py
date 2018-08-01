@@ -37,7 +37,7 @@ class FontIcon(Element):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=None,
+    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=noColor,
             earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
             labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
         u"""    
@@ -54,14 +54,14 @@ class FontIcon(Element):
         >>> font = getFont(path)
         >>> iw, ih = w/4, h/4
         >>> x, y = w/8, h/8
-        >>> bg = newRect(x=0,y=0, h=h/2, fill=None, parent=page)
+        >>> bg = newRect(x=0,y=0, h=h/2, fill=noColor, parent=page)
         >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", earSize=0.3, earLeft=True, parent=bg, stroke=0, strokeWidth=3)
-        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> bg = newRect(x=0, y=h/2, w=w/2, h=h/2, fill=None,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name=font.info.familyName, c="A", cFill=1, earSize=0.2, earLeft=False, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
-        >>> bg = newRect(x=w/2, y=h/2, w=w/2, h=h/2, fill=0,parent=page)
-        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
+        >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=blackColor,parent=page)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
+        >>> bg = newRect(x=0, y=h/2, w=w/2, h=h/2, fill=noColor,parent=page)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name=font.info.familyName, c="A", cFill=1, earSize=0.2, earLeft=False, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
+        >>> bg = newRect(x=w/2, y=h/2, w=w/2, h=h/2, fill=blackColor,parent=page)
+        >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=0.5, earSize=0.3, earLeft=True, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=1, strokeWidth=3)
         >>> doc.export('_export/FontIconTest.pdf')
         """
 

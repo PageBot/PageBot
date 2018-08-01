@@ -26,7 +26,7 @@ def run():
     fsr = context.newString(s, style=dict(font='Generic-Regular', fontSize=FontSize))
     fsb = context.newString(s, style=dict(font='Generic-Regular_Bold', fontSize=FontSize))
     fsbRed = context.newString(s, style=dict(font='Generic-Regular_Bold',
-                                       fill=(1, 0, 0),
+                                       fill=color(1, 0, 0),
                                        fontSize=FontSize))
     context.textBox(fsr, (100, 600, 820, 350))
     context.textBox(fsb, (100, 300, 820, 350))

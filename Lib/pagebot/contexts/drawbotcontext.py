@@ -429,7 +429,7 @@ class DrawBotContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyphPath(self, font, glyphName, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyphPath(self, font, glyphName, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
