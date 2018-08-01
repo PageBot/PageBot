@@ -80,7 +80,7 @@ def makeDocument():
                # Has no effect on the position conditions.
                yAlign=BOTTOM, xAlign=LEFT,
                leading=5, fontSize=9, textFill=0,
-               strokeWidth=0.5, fill=blackColor.9, stroke=noColor)
+               strokeWidth=0.5, fill=color(9, stroke=noColor)
     newTextBox('', # Empty box, will get the
                    # overflow from e1, if there is any.
                name='CSSTextBox2', # Flow reference by element.name

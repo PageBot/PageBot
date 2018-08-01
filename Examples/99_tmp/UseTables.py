@@ -52,7 +52,7 @@ def makeDocument():
     page0.padding = PagePadding
 
     t = newTable(cols=6, rows=62, borders=0.5, parent=page0,
-                 fill=blackColor.85, conditions=[Fit(), Overflow2Next()],
+                 fill=color(85, conditions=[Fit(), Overflow2Next()],
                  nextElement='nextTable', nextPage='Page 2')
 
     page1 = doc.getPage(1)
@@ -60,7 +60,7 @@ def makeDocument():
     page1.padding = PagePadding
 
     t = newTable(cols=0, rows=0, borders=0.5, parent=page1,
-                 name='nextTable', fill=blackColor.85, conditions=[Fit()])
+                 name='nextTable', fill=color(85, conditions=[Fit()])
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:

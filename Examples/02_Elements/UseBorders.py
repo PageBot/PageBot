@@ -24,7 +24,7 @@ from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, MM,\
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
 from pagebot.document import Document
-from pagebot.toolbox.color import Color, noColor
+from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.units import pt
 
 ViewPadding = 64

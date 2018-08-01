@@ -129,17 +129,17 @@ def makeDocument():
                                            leading=12,
                                            textFill=0))
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page,
-               padding=4, fill=blackColor.7,
+               padding=4, fill=color(7,
                maxW=pageArea, maxH=pageArea, conditions=(Left2Left(),
                                                          Float2Top()))
 
     newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
-             parent=page, fill=blackColor.7, padding=8,
+             parent=page, fill=color(7, padding=8,
              maxW=pageArea, maxH=pageArea, conditions=(Right2Right(),
                                                        Float2Top()))
 
     newRect(z=0, w=BlueWidth, h=20,
-            parent=page, fill=blackColor.2, conditions=(Fit2Width(),
+            parent=page, fill=color(2, conditions=(Fit2Width(),
                                                Float2Top()))
 
     score = page.solve()

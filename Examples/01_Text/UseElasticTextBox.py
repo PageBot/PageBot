@@ -20,6 +20,7 @@ from pagebot.style import A4, LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color
 
 DoTextFlow = False
 BoxWidth = 500

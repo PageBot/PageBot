@@ -27,6 +27,8 @@ from pagebot.contexts.platform import getContext
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color
+
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 context = getContext()

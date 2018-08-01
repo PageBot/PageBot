@@ -27,7 +27,7 @@ from pagebot.document import Document
 from pagebot.elements import newRect
 # Import all layout condition classes
 from pagebot.conditions import *
-from pagebot.toolbox.color import Color, darkGrayColor, redColor, blueColor
+from pagebot.toolbox.color import color, darkGrayColor, redColor, blueColor
 
 DO_SOLVE = True # Solving the page layout
 

@@ -15,7 +15,8 @@
 import sys
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.color import blackColor, noColor
+from pagebot.toolbox.color import blackColor, noColor, color
+
 context = getContext()
 
 if not context.isDrawBot:

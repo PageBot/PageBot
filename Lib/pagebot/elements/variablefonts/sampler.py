@@ -34,7 +34,7 @@ class Sampler(TextBox):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(fill=blackColor.95, rLeading=1.4, fontSize=48, xTextAlign=RIGHT)
+        >>> style = dict(fill=color(95, rLeading=1.4, fontSize=48, xTextAlign=RIGHT)
         >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')

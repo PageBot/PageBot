@@ -26,6 +26,7 @@ import sys
 from __future__ import print_function
 from pagebot.contexts.platform import getContext
 from pagebot.elements import newTextBox
+from pagebot.toolbox.color import color
 
 try:
     import CoreText
