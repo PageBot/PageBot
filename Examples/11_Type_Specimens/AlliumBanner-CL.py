@@ -20,6 +20,7 @@ from pagebot.document import Document
 from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
+from pagebot.toolbox.units import em
 
 class AnimatedBannerFrame(AnimationFrame):
 
@@ -49,7 +50,8 @@ c = DrawBotContext()
 W, H = 2040, 1020 # Type Network banners
 
 # Claire: for now, add your Fit-Variable_1.ttf to your /Library/Fonts and it can be found.
-#Gimlet_Italics-VF.ttf#Gimlet_Romans-VF.ttf
+#Gimlet_Italics-VF.ttf
+#Gimlet_Romans-VF.ttf
 font = findFont('AlliumMediumVARGX_hyphen')
 print(font)
 # Fit axes to select from: here we are showing the optical size.
@@ -81,7 +83,7 @@ for axisTag in sequenceAxes:
         # Variable Font location for this frame sample
         location = {axisTag: phisin*axisRange+minValue}
         # Overall style for the frame
-        style = dict(rLeading=1.4, fontSize=300, textFill=(0, 0, 0), 
+        style = dict(leading=em(1.4), fontSize=300, textFill=(0, 0, 0), 
             fill=.8, location=location)
             
         print (style)

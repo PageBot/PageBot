@@ -21,6 +21,7 @@ from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
 from pagebot.elements import *
+from pagebot.toolbox.units import em
 
 class AnimatedBannerFrame(AnimationFrame):
 
@@ -136,10 +137,10 @@ for frameIndex in range(frameCnt):
                 location[axisTag] = phicos*r0+minValue
             
     # Overall style for the frame
-    style = dict(rLeading=1.4, fontSize=500, xTextAlign=RIGHT, textFill=1, 
+    style = dict(leading=em(1.4), fontSize=500, xTextAlign=RIGHT, textFill=whiteColor, 
         fill=blackColor, location=location)
     
     AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
         w=page.w, h=page.h, context=c)
-    #newTextBox('%s %s %s %s' % (da1,da2,frameIndex,location), style=dict(font='Verdana', fontSize=50, textFill=1), x=10, y=10, w=page.w, parent=page)
+    #newTextBox('%s %s %s %s' % (da1,da2,frameIndex,location), style=dict(font='Verdana', fontSize=50, textFill=whiteColor), x=10, y=10, w=page.w, parent=page)
 doc.export('_export/%s_%s.gif' % (font.info.familyName, sample))

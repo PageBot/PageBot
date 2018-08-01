@@ -20,7 +20,7 @@ def textBounds(s, x, y, w):
     bs = context.newString(s, w=w,
                            style=dict(font='Georgia', 
                                       rTracking=0.15,
-                                      textFill=0))
+                                      textFill=blackColor))
 
     tw, th = context.textSize(bs)
     bx, by, bw, bh = bs.bounds()

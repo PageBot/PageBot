@@ -94,7 +94,7 @@ class VariableCircle(Element):
             bs = context.newString(axisName,
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
-                                              textFill=0))
+                                              textFill=blackColor))
             tw, th = context.textSize(bs)
             context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
@@ -118,7 +118,7 @@ class VariableCircle(Element):
         # Draw name of the font
         bs = context.newString(self.font.info.familyName,
                                 style=dict(font=self.style['labelFont'],
-                                fontSize=self.style['axisNameFontSize'], textFill=0))
+                                fontSize=self.style['axisNameFontSize'], textFill=blackColor))
         context.text(bs, (px-fontSize/2, py+self.h+fontSize/2))
 
         # Draw spokes

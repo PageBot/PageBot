@@ -34,6 +34,7 @@ from pagebot.document import Document
 # Import element layout conditions.
 from pagebot.conditions import *
 from pagebot.elements import newRect, newTextBox
+from pagebot.toolbox.units import em
    
 # For clarity, most of the MakeABookCover.py example document is setup
 # as a sequential excecution of Python functions. For complex documents
@@ -129,7 +130,7 @@ def makeDocument():
     # They will be repositioned by solving the colorConditions.
     titleS = context.newString('')
     for word in title.split(' '):
-        titleS += context.newString(' '+word, style=dict(font=fontRegular.path, fontSize=50, w=page.pw, rLeading=1.2, xTextAlign=CENTER, textFill=1))
+        titleS += context.newString(' '+word, style=dict(font=fontRegular.path, fontSize=50, w=page.pw, rLeading=1.2, xTextAlign=CENTER, textFill=whiteColor))
     #title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
     #title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(titleS, parent=page, name='Title',

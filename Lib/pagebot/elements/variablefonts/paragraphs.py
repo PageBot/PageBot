@@ -18,7 +18,7 @@ from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, em
 
 class Paragraphs(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
@@ -46,7 +46,7 @@ class Paragraphs(BaseFontShow):
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = Paragraphs(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, leading=em(1.4))
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')

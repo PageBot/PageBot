@@ -180,7 +180,7 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
                 label = ''
             else:
                 label = '#%d\n' % fIndex
-            bs = c.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=0))
+            bs = c.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=blackColor))
             tw, th = c.textSize(bs)
             c.text(bs, (weightLoc-tw/2, widthLoc-24))
 

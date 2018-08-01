@@ -89,13 +89,13 @@ def fitVariableWidth(varFont, s, w, fontSize,
                                                fontSize=fontSize,
                                                tracking=tracking,
                                                rTracking=rTracking,
-                                               textFill=0))
+                                               textFill=blackColor))
     wideFs = context.newString(s,
                                style=dict(font=wideFont.path,
                                           fontSize=fontSize,
                                           tracking=tracking,
                                           rTracking=rTracking,
-                                          textFill=0))
+                                          textFill=blackColor))
     # Calculate the widths of the strings.
     # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
     # first line back to it's uncondensed value, to make the first wrapped line fit the width.
@@ -125,7 +125,7 @@ def fitVariableWidth(varFont, s, w, fontSize,
                                           fontSize=fontSize,
                                           tracking=tracking,
                                           rTracking=rTracking,
-                                          textFill=0))
+                                          textFill=blackColor))
     # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
     return dict(condensendFont=condensedFont,
                 condensedFs=condensedFs,

@@ -21,6 +21,7 @@ from pagebot.elements import Rect
 from pagebot.toolbox.units import pointOffset, pt
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import color
+from pagebot.toolbox.units import em
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont
@@ -46,7 +47,7 @@ class AnimationFrame(Rect):
         >>> sample = 'Bitcount'
         >>> for pn in range(1, frames+1):
         ...     page = doc[pn]
-        ...     style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, fill=color(0))
+        ...     style = dict(leading=em(1.4), fontSize=400, xTextAlign=RIGHT, fill=color(0))
         ...     gs = AnimationFrame('Claire', font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
         >>> doc.export('_export/%sAnimation.gif' % font.info.familyName)
 

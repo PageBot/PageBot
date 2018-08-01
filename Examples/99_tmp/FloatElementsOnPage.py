@@ -103,7 +103,7 @@ def makeDocument():
 
     fontSize = RedHeight/3
     fs = doc.context.newString('Headline in red box.',
-                               style=dict(textFill=1,
+                               style=dict(textFill=whiteColor,
                                           fontSize=fontSize,
                                           maxW=pageArea,
                                           maxH=pageArea,
@@ -122,12 +122,12 @@ def makeDocument():
                                style=dict(font='LucidaGrande-Bold',
                                           fontSize=12,
                                           leading=14,
-                                          textFill=0))
+                                          textFill=blackColor))
     fs += doc.context.newString(scriptGlobals.blurbText,
                                 style=dict(font='LucidaGrande',
                                            fontSize=10,
                                            leading=12,
-                                           textFill=0))
+                                           textFill=blackColor))
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page,
                padding=4, fill=color(7,
                maxW=pageArea, maxH=pageArea, conditions=(Left2Left(),

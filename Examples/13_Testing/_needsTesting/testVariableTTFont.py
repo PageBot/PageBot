@@ -43,15 +43,15 @@ W, H = A4
 doc = Document(w=W, h=H, autoPages=1)
 page = doc[1]
 
-bs = context.newString('Q', style=dict(fontSize=250, font=NORMAL.path, textFill=0))
+bs = context.newString('Q', style=dict(fontSize=250, font=NORMAL.path, textFill=blackColor))
 newText(bs, x=350, y=400, parent=page)
-bs = context.newString('Q', style=dict(fontSize=250, font=LIGHT.path, textFill=0))
+bs = context.newString('Q', style=dict(fontSize=250, font=LIGHT.path, textFill=blackColor))
 newText(bs, x=50, y=400, parent=page)
-bs = context.newString('Q', style=dict(fontSize=250, font=BOLD.path, textFill=0))
+bs = context.newString('Q', style=dict(fontSize=250, font=BOLD.path, textFill=blackColor))
 newText(bs, x=650, y=400, parent=page)
-bs = context.newString('Q', style=dict(fontSize=250, font=COND.path, textFill=0))
+bs = context.newString('Q', style=dict(fontSize=250, font=COND.path, textFill=blackColor))
 newText(bs, x=350, y=700, parent=page)
-bs = context.newString('Q', style=dict(fontSize=250, font=WIDE.path, textFill=0))
+bs = context.newString('Q', style=dict(fontSize=250, font=WIDE.path, textFill=blackColor))
 newText(bs, x=350, y=100, parent=page)
 
 doc.export('_export/TestVariableTTFont.pdf')

@@ -79,7 +79,7 @@ def makeDocument():
                # Just to show where it is.
                # Has no effect on the position conditions.
                yAlign=BOTTOM, xAlign=LEFT,
-               leading=5, fontSize=9, textFill=0,
+               leading=5, fontSize=9, textFill=blackColor,
                strokeWidth=0.5, fill=color(9, stroke=noColor)
     newTextBox('', # Empty box, will get the
                    # overflow from e1, if there is any.
