@@ -101,7 +101,7 @@ def makeDocument():
             conditions=[Center2Center(), Middle2Middle()],
             fill=C1.darker(0.5), # Default parameter:
                                   # 50% between background color and white
-            stroke=None,
+            stroke=noColor,
             w=colorRect1.w-M-BLEED, h=colorRect1.h-M-BLEED,
             xAlign=CENTER, yAlign=MIDDLE)
 
@@ -109,7 +109,7 @@ def makeDocument():
             conditions=[Center2Center(), Middle2Middle()],
             fill=C1.darker(0.3), # Default parameter:
                                   # 50% between background color and white
-            stroke=None,
+            stroke=noColor,
             w=colorRect1.w-2*M, h=colorRect1.h-2*M,
             xAlign=CENTER, yAlign=MIDDLE)
 

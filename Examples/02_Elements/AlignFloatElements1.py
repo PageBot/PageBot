@@ -62,14 +62,14 @@ def makeDocument(context):
 
     # Make new container for adding elements inside with alignment.
     # cnt = newRect(w=W-2*SQ, h=H-2*SQ,
-    #               fill=(0.8, 0.8, 0.8, 0.4),
+    #               fill=color(0.8, 0.8, 0.8, 0.4),
     #               parent=page, margin=SQ, yAlign=BOTTOM,
-    #               xAlign=CENTER, stroke=None,
+    #               xAlign=CENTER, stroke=noColor,
     #               conditions=(Center2Center(), Middle2Middle()))
 
     # Add rectangles to the page,
     # using alignment conditions to position rules.
-    newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+    newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
             conditions=(Center2Center(), Middle2Middle()), fill=redColor)
 
     conditions = [(Center2Center(), Top2Top()),
@@ -77,7 +77,7 @@ def makeDocument(context):
                   (Left2Left(), Middle2Middle()),
                   (Right2Right(), Middle2Middle())]
     for condition in conditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(1, 1, 0))
 
     sideConditions = [(Center2Center(), Top2TopSide()),
@@ -85,7 +85,7 @@ def makeDocument(context):
                       (Left2LeftSide(), Middle2Middle()),
                       (Right2RightSide(), Middle2Middle())]
     for condition in sideConditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(0.5, 1, 0))
 
     cornerConditions = [(Left2LeftSide(), Top2TopSide()),
@@ -93,7 +93,7 @@ def makeDocument(context):
                         (Left2LeftSide(), Bottom2BottomSide()),
                         (Right2RightSide(), Bottom2BottomSide())]
     for condition in cornerConditions:
-        newRect(w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=blueColor)
     # Solve the layout placement conditions on the page by moving the
     # elements that are not on the right positions (which is all of them,

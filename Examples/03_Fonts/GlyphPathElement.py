@@ -26,6 +26,8 @@ from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color, noColor, blackColor
+from pagebot.toolbox.units import pt
 
 context = getContext()
 
@@ -36,17 +38,17 @@ PageSize = 500
 EXPORT_PATH = '_export/GlyphPathElement.pdf'
 
 def pathFilter(e, path, view):
-    r = 24
+    r = pt(24)
     for x in range(0, int(e.w)*4, 30):
         for y in range(0, int(e.h)*2, 30):
             # Use the glyph to query for color at this position.
             if e.glyph is not None:
                 if e.glyph.onBlack((x, y)):
-                    context.fill((random(), random(), random())) # Color as one tuple, in context API
-                    context.oval(x-r/2, y-r/2, r, r)
+                    context.fill(color(random(), random(), random())) # Color as one tuple, in context API
+                    context.oval(pt(x-r/2), pt(y-r/2), r, r)
                 else:
-                    context.fill((0, 1, 0)) # Color as one tuple, in context API
-                    context.rect(x-r/4, y-r/4, r/2, r/2)
+                    context.fill(color(0, 1, 0)) # Color as one tuple, in context API
+                    context.rect(pt(x-r/4), pt(y-r/4), r/2, r/2)
 
 #W = H = 120 # Get the standard a4 width and height in points.
 W = H = PageSize
@@ -71,8 +73,8 @@ view.showElementDimensions = False
 page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
 page.name = 'This is a demo page for floating child elements'
 
-e1 = GlyphPath(font[glyphName], stroke=None, h=600,
-    fill=None, pathFilter=pathFilter,
+e1 = GlyphPath(font[glyphName], stroke=noColor, h=600,
+    fill=noColor, pathFilter=pathFilter,
     parent=page, font='Verdana',
     conditions=[Left2Left(), Float2Top()])
 

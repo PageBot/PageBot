@@ -1010,12 +1010,12 @@ class Document(object):
         >>> page = doc[1]
         >>> page.size
         (500pt, 500pt)
-        >>> page.w = 2345
-        >>> page, page.w
-        (<Page:default 1 (900pt, 500pt)>, 900pt)
-        >>> doc[4].h = 1111
+        >>> page.w = 1400
+        >>> page
+        <Page:default 1 (1400pt, 500pt)>
+        >>> doc[4].h = 850
         >>> doc.getMaxPageSizes() # Clipped to max size
-        (900pt, 950pt, 100pt)
+        (1400pt, 850pt, 100pt)
         """
         w = h = d = 0
         for pn, pnPages in self.pages.items():

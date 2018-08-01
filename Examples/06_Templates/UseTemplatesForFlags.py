@@ -51,7 +51,7 @@ def makeTemplate(w, h, french=False):
     fsLeft = context.newString('Template box left', style=dict(textFill=1))
     fsRight = context.newString('Template box right', style=dict(textFill=1))
 
-    newTextBox(fsLeft, w=w/3, fill=(1, 0, 0), padding=10,
+    newTextBox(fsLeft, w=w/3, fill=color(1, 0, 0), padding=10,
         parent=template, conditions=[Left2Left(), Top2Top(), Fit2Height()])
 
     newTextBox(fsRight, w=w/3, fill=rightColor, padding=10,

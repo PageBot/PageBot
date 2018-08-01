@@ -67,12 +67,12 @@ def makeDocument():
         newRect(z=z, w=SQ, h=SQ, parent=page, conditions=condition, fill=darkGrayColor)
         z += 1
     # Make new container for adding elements inside with alignment.
-    #cnt = newRect(z=z, w=W-2*SQ, h=H-2*SQ, fill=(0.8, 0.8, 0.8, 0.4),
+    #cnt = newRect(z=z, w=W-2*SQ, h=H-2*SQ, fill=color(0.8, 0.8, 0.8, 0.4),
     #              parent=page, margin=SQ, yAlign=BOTTOM,
-    #              xAlign=CENTER, stroke=None,
+    #              xAlign=CENTER, stroke=noColor,
     #              conditions=(Center2Center(), Middle2Middle()))
     z += 1
-    newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+    newRect(z=z, w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
             conditions=(Center2Center(), Middle2Middle()), fill=redColor)
     z += 1
 
@@ -83,7 +83,7 @@ def makeDocument():
                   (Float2Left(), Middle2Middle()),
                   (Float2Right(), Middle2Middle())]
     for condition in conditions:
-        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(1, 1, 0))
         z += z
 
@@ -92,7 +92,7 @@ def makeDocument():
                       (Float2LeftSide(), Middle2Middle()),
                       (Float2RightSide(), Middle2Middle())]
     for condition in sideConditions:
-        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(0.5, 1, 0))
         z += 1
 
@@ -101,7 +101,7 @@ def makeDocument():
                         (Float2LeftSide(), Float2BottomSide()),
                         (Float2RightSide(), Float2BottomSide())]
     for condition in cornerConditions:
-        newRect(z=z, w=SQ, h=SQ, stroke=None, parent=page, xAlign=CENTER,
+        newRect(z=z, w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=blueColor)
         z += 1
 

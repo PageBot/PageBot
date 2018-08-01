@@ -33,7 +33,7 @@ class GlyphSet(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=0.95, rLeading=1.4, fontSize=24)
+        >>> style = dict(gh=16, fill=blackColor.95, rLeading=1.4, fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')

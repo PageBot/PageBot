@@ -50,15 +50,6 @@ class Galley(Element):
         else:
             self.lastTextBox.append(bs)
 
-    def getMinSize(self):
-        """Accumulation of the maximum minSize of all enclosed elements."""
-        minW = minH = 0 # Let's see if we need bigger than this.
-        for e in self.elements:
-            eMinW, eMinH = e.getMinSize()
-            minW = max(minW, eMinW)
-            minH += eMinH
-        return minW, minH
-
     def appendElement(self, e):
         """Add element to the list of child elements. Note that elements can be
         added multiple times.  If the element is alread placed in another

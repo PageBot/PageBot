@@ -19,7 +19,7 @@ class PBFormattedString(FormattedString):
                 if not name in kwargs:
                     kwargs[name] = value
       
-fs = context.PBFormattedString('aaa', style=dict(fill=(1,0,0), font='Verdana', fontSize=62))  
+fs = context.PBFormattedString('aaa', style=dict(fill=color(1,0,0), font='Verdana', fontSize=62))  
 print(fs)
 
 context.text(fs, (100, 100))

@@ -136,21 +136,21 @@ def makeDocument(rs):
     doc.newStyle(name='chapter', font=BOOK)    
     doc.newStyle(name='title', fontSize=3*sFontSize, font=BOLD)
     doc.newStyle(name='subtitle', fontSize=2*sFontSize, font=BOOK_ITALIC)
-    doc.newStyle(name='author', fontSize=2*sFontSize, font=BOOK, fill=(1, 0, 0))
-    doc.newStyle(name='h1', fontSize=3*sFontSize, font=SEMIBOLD, fill=(1, 0, 0),
+    doc.newStyle(name='author', fontSize=2*sFontSize, font=BOOK, fill=color(1, 0, 0))
+    doc.newStyle(name='h1', fontSize=3*sFontSize, font=SEMIBOLD, fill=color(1, 0, 0),
         leading=2*sFontSize, tracking=H1_TRACK, postfix='\n')
-    doc.newStyle(name='h2', fontSize=2*sFontSize, font=SEMIBOLD, fill=(0, 0.5, 1),
+    doc.newStyle(name='h2', fontSize=2*sFontSize, font=SEMIBOLD, fill=color(0, 0.5, 1),
         leading=1*sFontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
-    doc.newStyle(name='h3', fontSize=2*sFontSize, font=MEDIUM, fill=0, 
+    doc.newStyle(name='h3', fontSize=2*sFontSize, font=MEDIUM, fill=blackColor, 
         leading=1*sFontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=0.1, prefix='', postfix='\n',
+    doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=blackColor.1, prefix='', postfix='\n',
         rTracking=P_TRACK, sLeading=14, rLeading=0, xTextAlign=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
-    doc.newStyle(name='hr', stroke=(1, 0, 0), strokeWidth=4)
+    doc.newStyle(name='hr', stroke=color(1, 0, 0), strokeWidth=4)
     doc.newStyle(name='br', postfix='\n') # Simplest way to make <br/> be newline
     doc.newStyle(name='img', leading=sLeading, fontSize=sFontSize, font=BOOK,)
     
@@ -163,9 +163,9 @@ def makeDocument(rs):
         tabs=[(listIndent, LEFT)], indent=sListIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul',)
-    doc.newStyle(name='literatureref', fill=0.5, rBaselineShift=0.2, fontSize=0.8*sFontSize)
-    doc.newStyle(name='footnote', fill=(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=0.2, 
+    doc.newStyle(name='literatureref', fill=blackColor.5, rBaselineShift=0.2, fontSize=0.8*sFontSize)
+    doc.newStyle(name='footnote', fill=color(1, 0, 0), fontSize=0.8*U, font=BOOK)
+    doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=blackColor.2, 
         leading=0.8*sLeading, fontSize=0.8*sFontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
     

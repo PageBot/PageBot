@@ -71,8 +71,8 @@ def makeDocument():
                    parent=page,
                    w=C-G, h=cellHeight, # Size of the element.
                    padding=5, # Padding inside text box for all 4 sides equal.
-                   fill=(0.4, 0.6, 1), # Rectangle fill color
-                   stroke=(1, 0, 0), # Rectangle stroke color
+                   fill=color(0.4, 0.6, 1), # Rectangle fill color
+                   stroke=color(1, 0, 0), # Rectangle stroke color
                    strokeWidth=10,
                    # Below style values that apply to the content
                    font='Verdana',

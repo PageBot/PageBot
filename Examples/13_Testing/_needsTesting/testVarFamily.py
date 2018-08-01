@@ -227,26 +227,26 @@ def drawFamilyOverview(path):
         if 0 < y < 11:
             line((0, 1000/10*y), (1000, 1000/10*y))
         if y > 0:
-            bs = context.newString(`y`, fontSize=12, fill=(1, 0, 0))
-            bs += context.newString(' %s' % (y*100), fontSize=12, fill=(0, 0.5, 0))
+            bs = context.newString(`y`, fontSize=12, fill=color(1, 0, 0))
+            bs += context.newString(' %s' % (y*100), fontSize=12, fill=color(0, 0.5, 0))
             tw, th = context.textSize(fs)
         else:
-            bs = context.newString(`y`, fontSize=12, fill=0)
+            bs = context.newString(`y`, fontSize=12, fill=blackColor)
             tw, th = context.textSize(bs)
         text(fs, (-10-tw, 1000/10*y-th/2))
 
     # Draw axis labels
-    bs = context.newString('OS/2 weight class ', fontSize=12, fill=(1, 0, 0))
-    bs += context.newString('&', fontSize=12, fill=0)
-    bs += context.newString(' XTRA Axis (H-stem width)', fontSize=12, fill=(0, 0.5, 0))
+    bs = context.newString('OS/2 weight class ', fontSize=12, fill=color(1, 0, 0))
+    bs += context.newString('&', fontSize=12, fill=blackColor)
+    bs += context.newString(' XTRA Axis (H-stem width)', fontSize=12, fill=color(0, 0.5, 0))
     tw, th = context.textSize(bs)
     context.text(bs, (0, -50-th/2))
 
     context.save()
     context.rotate(90)
-    bs = context.newString('OS/2 width class ', fontSize=12, fill=(1, 0, 0))
-    bs += context.newString('&', fontSize=12, fill=0)
-    bs += context.newString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=(0, 0.5, 0))
+    bs = context.newString('OS/2 width class ', fontSize=12, fill=color(1, 0, 0))
+    bs += context.newString('&', fontSize=12, fill=blackColor)
+    bs += context.newString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=color(0, 0.5, 0))
     tw, th = context.textSize(fs)
     context.text(fs, (0, 60))
     context.restore()

@@ -44,7 +44,7 @@ text(f, (96, 172))
 
 #print(attr)
 
-ff = b.FormattedString('AAAA', font='Verdana', fontSize=100, fill=(0, 0.5, 0))
+ff = b.FormattedString('AAAA', font='Verdana', fontSize=100, fill=color(0, 0.5, 0))
 b.text(ff, (96, 440))
 attr = ff.getNSObject()
 attr.addAttribute_value_range_("io.pageBot.class", 'CLASS_NAME', (0, len(ff)))

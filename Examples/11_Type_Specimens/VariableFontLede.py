@@ -137,7 +137,7 @@ for frameIndex in range(frameCnt):
             
     # Overall style for the frame
     style = dict(rLeading=1.4, fontSize=500, xTextAlign=RIGHT, textFill=1, 
-        fill=0, location=location)
+        fill=blackColor, location=location)
     
     AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
         w=page.w, h=page.h, context=c)

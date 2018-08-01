@@ -34,9 +34,9 @@ def run():
     aa = bs.s
 
     print(type(aa))
-    aa.append("123", font="Helvetica", fontSize=100, fill=(1, 0, 0))
+    aa.append("123", font="Helvetica", fontSize=100, fill=color(1, 0, 0))
     aa.fontSize(80)
-    aa.append("Book Cover", font="Georgia", fill=(0, 1, 0))
+    aa.append("Book Cover", font="Georgia", fill=color(0, 1, 0))
     print(aa)
     print('Text size: (%f, %f)' % textSize(aa))
 

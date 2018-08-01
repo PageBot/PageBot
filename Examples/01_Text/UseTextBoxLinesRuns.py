@@ -19,11 +19,13 @@ from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.style import LEFT, BOTTOM
-from pagebot.fonttoolbox.objects.font import getFontByName
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.color import color, noColor, blackColor
+from pagebot.toolbox.units import pt
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 DoTextFlow = False
@@ -57,21 +59,20 @@ def makeDocument():
     page0.name = 'Page 1'
     page0.padding = PagePadding
 
-    s = c.newString('', style=dict(font='Verdana', fontSize=10, textFill=0))
+    s = c.newString('', style=dict(font='Verdana', fontSize=pt(10), textFill=blackColor))
     for n in range(10):
         s += c.newString(('(Line %d) '
                           'Volume of text defines the box height.') % (n+1),
-                         style=dict(fontSize=10+n*2, textFill=0))
-        s += c.newString('Volume', style=dict(textFill=(1, 0, 0),
+                         style=dict(fontSize=10+n*2, textFill=blackColor))
+        s += c.newString('Volume', style=dict(textFill=color(1, 0, 0),
                                               font='Verdana',
-                                              fontSize=10+n*2))
+                                              fontSize=pt(10+n*2)))
         s += c.newString(' of text defines the box height. \n',
-                         style=dict(textFill=0,
+                         style=dict(textFill=blackColor,
                                     font='Verdana',
-                                    fontSize=10+n*2))
-    e1 = newTextBox(s, parent=page0, padding=4, x=100,
-                    w=BoxWidth, font='Verdana', h=None,
-                    maxW=W-2*PagePadding, minW=100, mb=20, mr=10,
+                                    fontSize=pt(10+n*2)))
+    e1 = newTextBox(s, parent=page0, padding=pt(4), x=pt(100),
+                    w=BoxWidth, font='Verdana', h=None, mb=20, mr=10,
                     #Conditions make the element move to top-left of the page.
                     # And the condition that there should be no overflow,
                     # otherwise the text box will try to solve it.
@@ -81,35 +82,33 @@ def makeDocument():
                     #Position of the origin of the element. Just to show
                     # where it is. Has no effect on the position conditions.
                     yAlign=BOTTOM, xAlign=LEFT,
-                    leading=5, fontSize=9, textFill=0,
-                    strokeWidth=0.5, fill=0.9, stroke=None)
+                    leading=pt(5), fontSize=pt(9), textFill=color(0),
+                    strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor)
     """
     for line in e1.textLines:
         print(line, line.x, line.y)
     for foundPattern in e1.findPattern('Line 5'):
         print(foundPattern.x, foundPattern.y, foundPattern.line, foundPattern.line.runs)
     """
-    font = getFontByName(e1.textLines[0].runs[1].displayName)
+    font = findFont('Verdana')#findFont('Roboto')#getFontByName(e1.textLines[0].runs[1].displayName)
     char = 'hyphen'
     g = font[char]
     print(g.pointContexts[0].p.x)
     c.save()
     c.scale(0.3)
     path = font[char].path
-    c.fill(1, 0, 0)
+    c.fill(color(1, 0, 0))
     c.drawPath(path)
-    ga = GlyphAnalyzer(font, char)
+    ga = GlyphAnalyzer(g)
     for x, vertical in ga.verticals.items():
-        c.stroke(0)
-        c.strokeWidth(1)
-        c.fill(None)
-        c.line((x, 0), (x, 3000))
+        c.stroke(blackColor, pt(1))
+        c.fill(noColor)
+        c.line(pt(x, 0), pt(x, 3000))
     print(ga.horizontals    )
     for y, horizontal in ga.horizontals.items():
-        c.stroke(0)
-        c.strokeWidth(1)
-        c.fill(None)
-        c.line((0, y), (2000, y))
+        c.stroke(blackColor, pt(1))
+        c.fill(noColor)
+        c.line(pt(0, y), pt(2000, y))
     c.restore()
     """
     for contour in ga.glyph.pointContexts:

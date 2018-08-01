@@ -322,7 +322,7 @@ class PageView(BaseView):
                     self.drawArrow(e, px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-e.h, 1)
 
     def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None,
-            fill=None, stroke=None, strokeWidth=None):
+            fill=noColor, stroke=noColor, strokeWidth=None):
         """Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         if fms is None:

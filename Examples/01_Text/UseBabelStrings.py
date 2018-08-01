@@ -21,8 +21,8 @@ from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
 
 for contextId, context in (
-        #('DrawBot', DrawBotContext()), 
-        ('Flat', FlatContext()),
+        ('DrawBot', DrawBotContext()), 
+        #('Flat', FlatContext()),
     ):
     W = H = 1000
     M = 100

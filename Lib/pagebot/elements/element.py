@@ -1779,14 +1779,14 @@ class Element(object):
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
-                self.y = units(y) - self.h/2
+                self.y = y - self.h/2
             else:
-                self.y = units(y) + self.h/2
+                self.y = y + self.h/2
         elif yAlign == BOTTOM:
             if self.originTop:
-                self.y = units(y) + self.h/2
+                self.y = y + self.h/2
             else:
-                self.y = units(y) - self.h/2
+                self.y = y - self.h/2
         else:
             self.y = y
     middle = property(_get_middle, _set_middle)
@@ -1836,7 +1836,7 @@ class Element(object):
             self.bottom = units(y) + self.mb
     mBottom = property(_get_mBottom, _set_mBottom)
 
-    # Depth, running  in vertical z-axis dirction. Viewer is origin, posistive value is perpendicular to the screen.
+    # Depth, running  in vertical z-axis dirction. Viewer is origin, positive value is perpendicular into the screen.
     # Besides future usage in real 3D rendering, the z-axis is used to compare conditional status in element layers.
 
     def _get_front(self):
@@ -3925,23 +3925,36 @@ class Element(object):
     def isOriginOnTopSide(self, tolerance=0):
         """Answer the boolean test if the origin of self is on the top side of self.parent.
 
-        >>> e1 = Element(w=200, h=200, x=0, y=500, originOnTop=False)
-        >>> e2 = Element(w=500, h=500, elements=[e1])
-        >>> #FIX e1.isOriginOnTopSide()
-        True
-        >>> e1.y = 400
-        >>> #FIX e1.isOriginOnTopSide()
+        >>> e1 = Element(w=200, h=400)
+        >>> e2 = Element(w=50, h=50, parent=e1)
+        >>> e1.isOriginOnTopSide()
         False
-        >>>
+        >>> e2.isOriginOnTopSide()
+        False
+        >>> e2.y = e1.top
+        >>> e2.isOriginOnTopSide(), e2.y, e1.top 
+        (True, 500pt, 500pt)      
         """
-        if self.originTop:
-            return abs(self.y) <= tolerance
-        return abs(self.parent.h - self.y) <= tolerance
+        if self.parent is None:
+            return False
+        return abs(self.parent.top - self.y) <= tolerance
 
     def isOriginOnMiddle(self, tolerance=0):
-        if self.originTop:
-            return abs(self.parent.mt + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
-        return abs(self.parent.mb + (self.parent.h - self.parent.pb - self.parent.pt)/2 - self.y) <= tolerance
+        """Answer the boolean test if the origin of self is on the top side of self.parent.
+
+        >>> e1 = Element(w=200, h=400)
+        >>> e2 = Element(w=50, h=50, parent=e1)
+        >>> e1.isOriginOnMiddle()
+        False
+        >>> e2.isOriginOnMiddle()
+        False
+        >>> e2.y = e1.middle
+        >>> e2.isOriginOnMiddle(), e2.y, e1.middle 
+        (True, 500pt, 500pt)
+        """
+        if self.parent is None:
+            return False
+        return abs(self.parent.middle - self.y) <= tolerance
 
     def isOriginOnMiddleSides(self, tolerance=0):
         if self.originTop:

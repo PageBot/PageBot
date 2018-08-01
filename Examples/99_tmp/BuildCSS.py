@@ -69,8 +69,7 @@ def makeDocument():
     newTextBox(s,
                name='CSSTextBox1',
                parent=page0, padding=4, x=100, font='Verdana', h=h1,
-               maxW=W-2*PagePadding,
-               minW=100, mb=20, mr=10, # Conditions make the
+               mb=20, mr=10, # Conditions make the
                                        # element move to
                                        # top-left of the page.
                # And the condition that there should be no overflow,
@@ -81,14 +80,13 @@ def makeDocument():
                # Has no effect on the position conditions.
                yAlign=BOTTOM, xAlign=LEFT,
                leading=5, fontSize=9, textFill=0,
-               strokeWidth=0.5, fill=0.9, stroke=None)
+               strokeWidth=0.5, fill=blackColor.9, stroke=noColor)
     newTextBox('', # Empty box, will get the
                    # overflow from e1, if there is any.
                name='CSSTextBox2', # Flow reference by element.name
                parent=page0, padding=4, x=100, h=200,
-               maxW=W-2*PagePadding, minW=100,
                conditions=[Left2Left(), Fit2Width(), Float2Top()],
-               yAlign=TOP, fill=1, stroke=None)
+               yAlign=TOP, fill=whiteColor, stroke=noColor)
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:

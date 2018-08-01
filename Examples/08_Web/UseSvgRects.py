@@ -37,7 +37,7 @@ row = 30
 gutter = 8
 for x in range(0, 600, column):
     for y in range(0, 800, row):
-        newRect(x=x, y=y, w=column-gutter, h=row-gutter, fill=(random(), random(), random()), parent=page)
+        newRect(x=x, y=y, w=column-gutter, h=row-gutter, fill=color(random(), random(), random()), parent=page)
 
 doc.export(EXPORT_PATH)
 os.system('open %s' % EXPORT_PATH)

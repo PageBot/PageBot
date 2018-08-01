@@ -80,7 +80,7 @@ def makeDocument():
                            conditions=(Center2Center(), Bottom2Bottom()))
          
     # Blue square in different z=layer. No interaction with Floating on other z-layers.
-    blueSquare = newRect(fill=(0, 1, 1), z=10, w=50, h=50,
+    blueSquare = newRect(fill=color(0, 1, 1), z=10, w=50, h=50,
                          parent=redContainer, xAlign=CENTER,
                          conditions=(Top2Top(), Center2Center()))
 
@@ -92,7 +92,7 @@ def makeDocument():
                                           textFill=0))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
     newTextBox(fs, name='Caption', parent=redContainer, z=8,
-               fill=(0, 1, 0), strokeWidth=0.5, stroke=(1, 1, 0),
+               fill=color(0, 1, 0), strokeWidth=0.5, stroke=color(1, 1, 0),
                conditions=[Fit2Width(), Float2BottomSide()], padding=3)
     score = page.solve()
     if score.fails:

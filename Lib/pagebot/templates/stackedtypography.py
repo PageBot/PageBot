@@ -29,5 +29,5 @@ class StackedTypography(Template):
             newRect(parent=self, 
                 x=random()*(self.w-S), 
                 y=random()*(self.h-S), w=S, h=S, 
-                fill=(random(), random(), random(), 0.5))
+                fill=color(random(), random(), random(), 0.5))
 

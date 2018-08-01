@@ -74,7 +74,7 @@ for path in paths:
             line((x, ga.minY), (x, ga.maxY))
             stroke(None)
             fill(0.5)
-            fs = FormattedString('%d' % round(x - prevX), fontSize=20, fill=0.5)
+            fs = FormattedString('%d' % round(x - prevX), fontSize=20, fill=blackColor.5)
             tw, th = textSize(fs)
             text(fs, (prevX + (x-prevX)/2 - tw/2, -th/2-50))
             prevX = x
