@@ -24,11 +24,11 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 from pagebot.toolbox.color import blackColor
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, em
 
 context = getContext()
 
-W = H = 500
+W = H = pt(500)
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
@@ -49,12 +49,12 @@ BOLD_ITALIC = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Bold Ital
 LABEL_FONT = BOOK
 
 class FontIcon(object):
-    W = 30
-    H = 40
-    L = 2
-    E = 8
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
+    W = pt(30)
+    H = pt(40)
+    L = pt(2)
+    E = pt(8)
+    LABEL_RTRACKING = em(0.02)
+    LABEL_RLEADING = em(1.3)
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None,
             labelFont=None, titleFont=None, x=0, y=0, show=True):
@@ -133,7 +133,7 @@ class FontIcon(object):
             bs = context.newString(self.title,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
             context.text(bs, (w/2-tw/2, self.ih+th/2))
@@ -143,7 +143,7 @@ class FontIcon(object):
             bs = context.newString(self.name,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
             context.text(bs, (w/2-tw/2, y))
@@ -153,7 +153,7 @@ class FontIcon(object):
             bs = context.newString(self.label,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize()
             context.text(bs, (w/2-tw/2, y))

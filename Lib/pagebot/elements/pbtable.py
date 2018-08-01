@@ -77,7 +77,7 @@ class Table(Element):
                 colName = None
             self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
                 xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
-                borders=self.borders, fill=color(4, conditions=cellConditions)
+                borders=self.borders, fill=color(0.4), conditions=cellConditions)
 
         bs = self.newString('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
         for rowIndex in range(rows):

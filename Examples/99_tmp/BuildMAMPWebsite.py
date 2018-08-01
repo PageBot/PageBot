@@ -103,14 +103,13 @@ def makeDocument():
                     # Has no effect on the position conditions.
                     yAlign=BOTTOM, xAlign=LEFT,
                     leading=5, fontSize=9, textFill=0,
-                    strokeWidth=0.5, fill=color(9, stroke=noColor)
+                    strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor)
     print(e1.style)
 
     newTextBox(s, # Empty box, will get the overflow
                   # from e1, if there is any.
                name='CSSTextBox2', # Flow reference by element.name
                parent=page0, padding=4, x=100, h=200,
-               maxW=W-2*PagePadding, minW=100,
                conditions=[Left2Left(), Fit2Width(), Float2Top()],
                yAlign=TOP, fill=whiteColor, stroke=noColor)
 

@@ -17,12 +17,13 @@
 import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
-from pagebot.toolbox.color import Color, noColor, inheritColor
-from pagebot.toolbox.units import rv, isUnit, isUnits # Render units
+from pagebot.toolbox.color import color, Color, noColor, inheritColor
+from pagebot.toolbox.units import pt, upt, point2D # Render units to points
 from pagebot.constants import *
 from sys import platform
 
-if platform == 'darwin':
+try:
+#if platform == 'darwin':
     from CoreText import CTFontDescriptorCreateWithNameAndSize, \
         CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
         CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
@@ -35,7 +36,7 @@ if platform == 'darwin':
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-else:
+except AttributeError:
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
@@ -119,11 +120,10 @@ class DrawBotContext(BaseContext):
         >>> from pagebot.toolbox.units import px
         >>> context = DrawBotContext()
         >>> context.newPage(pt(100), pt(100))
-        >>> context = DrawBotContext()
-        >>> context.newPage(px(100), px(100))
+        >>> context.newPage(100, 100)
         """
-        assert isUnits(w, h), ('DrawBotContext.newPage: Values (%s, %s) must all be of type Unit' % (w, h))
-        self.b.newPage(w.pt, h.pt)
+        wpt, hpt = upt(w, h)
+        self.b.newPage(wpt, hpt)
 
     def newDrawing(self):
         """Clear output canvas, start new export file.
@@ -150,10 +150,10 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
-        >>> #context.rect(0, 0, 100, 100)
+        >>> context.rect(0, 0, 100, 100)
         """
-        assert isUnits(x, y, w, h), ('DrawBotContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
-        self.b.rect(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        self.b.rect(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size
@@ -161,29 +161,30 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
-        >>> #context.oval(0, 0, 100, 100)
+        >>> context.oval(0, 0, 100, 100)
         """
-        assert isUnits(x, y, w, h), ('DrawBotContext.oval: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
-        self.b.oval(x.pt, y.pt, w.pt, h.pt) # Render units to points for DrawBot.
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def circle(self, x, y, r):
         u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r.
         >>> context = DrawBotContext()
         >>> context.circle(pt(100), pt(200), pt(50))
-        >>> #context.circle(100, 200, 50)
+        >>> context.circle(100, 200, 50)
         """
-        assert isUnits(x, y, r), ('DrawBotContext.circle: Values (%s, %s, %s) must all be of type Unit' % (x, y, r))
-        self.b.oval((x-r).pt, (y-r).pt, (r*2).pt, (r*2).pt) # Render the unit values
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
 
         >>> context = DrawBotContext()
         >>> context.line(pt(100, 100), pt(200, 200))
-        >>> #context.line((100, 100), (200, 200))
+        >>> context.line((100, 100), (200, 200))
         """
-        assert isUnits(p1, p2), ('DrawBotContext.line: Values (%s, %s) must all be of type Unit' % (p1, p2))
-        self.b.line(rv(p1, maker=pt), rv(p2, maker=pt)) # Render tuple of units point
+        p1pt  = point2D(upt(p1))
+        p2pt  = point2D(upt(p2))
+        self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def newPath(self):
         """Make a new DrawBot Bezierpath() to draw in.
@@ -218,10 +219,11 @@ class DrawBotContext(BaseContext):
             if sy is None:
                 sy = sx
             if p is None:
-                p = pt(0, 0)
-            assert isUnits(p), ('DrawBotContext.drawPath: Values %s must all be of type Unit' % str(p))
+                xpt = ypt = 0
+            else:
+                xpt, ypt = point2D(upt(p))
             self.scale(sx, sy)
-            self.b.translate(p[0].pt/sx, p[1].pt/sy)
+            self.b.translate(xpt/sx, ypt/sy)
             self.b.drawPath(path)
             self.restore()
 
@@ -232,11 +234,12 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
+        >>> path.moveTo((100, 100))
         """
         if self._path is None:
             self.newPath()
-        assert isUnits(p), ('DrawBotContext.moveTo: Values %s must all be of type Unit' % str(p))
-        self._path.moveTo(rv(p, maker=pt)) # Render units point tuple to tuple of values
+        ppt = point2D(upt(p))
+        self._path.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
         """Line to point p. Create a new path if none is open.
@@ -256,8 +259,8 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        assert isUnits(p), ('DrawBotContext.curveTo: Values %s must all be of type Unit' % str(p))
-        self._path.lineTo(rv(p, maker=pt)) # Render units point tuple to tuple of values
+        ppt = point2D(upt(p))
+        self._path.lineTo(ppt) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
@@ -280,8 +283,10 @@ class DrawBotContext(BaseContext):
         """
         if self._path is None:
             self.newPath()
-        assert isUnits(bcp1, bcp2, p), ('DrawBotContext.curveTo: Values (%s, %s, %s) must all be of type Unit' % (bcp1, bcp2, p))
-        self._path.curveTo(rv(bcp1, maker=pt), rv(bcp2, maker=pt), rv(p, maker=pt)) # Render units tuples to value tuples
+        b1pt = point2D(upt(bcp1))
+        b2pt = point2D(upt(bcp2))
+        ppt = point2D(upt(p))
+        self._path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def closePath(self):
         """Curve to point p. Create a new path if none is open.
@@ -314,8 +319,8 @@ class DrawBotContext(BaseContext):
 
     def translate(self, dx, dy):
         """Translate the origin to this point."""
-        assert isUnits(dx, dy), ('DrawBotContext.translate: Values (%s, %s) must all be of type Unit' % (dx, dy))
-        self.b.translate(dx.pt, dy.pt)
+        dxpt, dypt = point3D(upt(dx, dy))
+        self.b.translate(dxpt, dypt)
 
     def transform(self, t):
         """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
@@ -456,14 +461,14 @@ class DrawBotContext(BaseContext):
         >>> context = DrawBotContext()
         >>> context.fontSize(pt(12))
         """
-        assert isUnit(fontSize)
-        self.b.fontSize(fontSize.r) # Render fontSize unit to value
+        fspt = upt(fontSize)
+        self.b.fontSize(fspt) # Render fontSize unit to value
 
     def font(self, font, fontSize=None):
         self.b.font(font)
         if fontSize is not None:
-            assert isUnit(fontSize)
-            self.b.fontSize(fontSize.r) # Render fontSize unit to value
+            fspt = upt(fontSize)
+            self.b.fontSize(fspt) # Render fontSize unit to value
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
@@ -473,34 +478,37 @@ class DrawBotContext(BaseContext):
         DrawBot FormattedString at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-
-        self.b.text(sOrBs, rv(p, maker=pt)) # Render point units to value tuple
+        ppt = point3D(upt(p)) 
+        self.b.text(sOrBs, ppt) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
         """Draw the sOrBs text string, can be a str or BabelString, including a
         DrawBot FormattedString in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-
-        self.b.textBox(sOrBs, rv(r, maker=pt)) # Render rectangle units to value tuple
+        rpt = upt(r) 
+        self.b.textBox(sOrBs, rpt) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
         """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
         there is no text defined.  Answer the height of the string if the width
         w is given."""
         if w is not None:
-            return self.b.textSize(bs.s, width=w)
+            wpt = upt(w)
+            return self.b.textSize(bs.s, width=wpt)
         if h is not None:
-            return self.b.textSize(bs.s, height=h)
+            hpt = upt(h)
+            return self.b.textSize(bs.s, height=hpt)
         return self.b.textSize(bs.s)
 
     def textOverflow(self, bs, bounds, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
-        return stringClass(self.b.textOverflow(bs.s, bounds, align), self)
+        boundspt = upt(bounds)
+        return stringClass(self.b.textOverflow(bs.s, boundspt, align), self)
 
     def textBoxBaseLines(self, txt, box):
-        x, y, w, h = box
+        xpt, ypt, wpt, hpt = upt(box)
         attrString = txt.getNSObject()
         setter = CTFramesetterCreateWithAttributedString(attrString)
         path = CGPathCreateMutable()
@@ -508,7 +516,7 @@ class DrawBotContext(BaseContext):
         box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
         ctLines = CTFrameGetLines(box)
         origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return [(x + o.x, y + o.y) for o in origins]
+        return [(xpt + o.x, ypt + o.y) for o in origins]
 
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
@@ -545,8 +553,10 @@ class DrawBotContext(BaseContext):
         >>> context.fill(color('red'))
         >>> context.fill(inheritColor)
         >>> context.fill(noColor)
-        >>> #context.fill(123)
+        >>> context.fill(0.5)
         """
+        if isinstance(c, (tuple, list, int, float)):
+            c = color(c)
         assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.
             pass
@@ -570,8 +580,10 @@ class DrawBotContext(BaseContext):
         >>> context.stroke(color('red'))
         >>> context.stroke(inheritColor)
         >>> context.stroke(noColor)
-        >>> #context.stroke(123)
+        >>> context.stroke(0.5)
         """
+        if isinstance(c, (tuple, list, int, float)):
+            c = color(c)
         assert isinstance(c, Color), ('DrawBotContext.stroke: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.
             pass
@@ -596,8 +608,8 @@ class DrawBotContext(BaseContext):
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))
         """
-        assert isUnit(w), ('DrawBotContext.strokeWidth: Strokewidth value %s should be of type Unit' % w)
-        self.b.strokeWidth(w.pt)
+        wpt = upt(w)
+        self.b.strokeWidth(wpt)
 
     setStrokeWidth = strokeWidth
 
@@ -608,7 +620,8 @@ class DrawBotContext(BaseContext):
     #   I M A G E
 
     def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
+        ppt = point2D(upt(p))
+        return self.b.imagePixelColor(path, ppt)
 
     def imageSize(self, path):
         u"""Answer the (w, h) image size of the image file at path."""
@@ -619,20 +632,22 @@ class DrawBotContext(BaseContext):
         iw, ih = self.imageSize(path)
 
         if w and not h: # Scale proportional
-            h = ih * w/iw # iw : ih = w : h
+            wpt = upt(w)
+            hpt = ih * wpt/iw # iw : ih = w : h
         elif not w and h:
-            w = iw * h/ih
+            hpt = upt(h)
+            wpt = iw * hpt/ih
         elif not w and not h:
-            w = iw
-            h = ih
+            wpt = iw
+            hpt = ih
 
         # else both w and h are defined, scale disproportional
-        x, y, = p[0], p[1]
-        sx, sy = w/iw, h/ih
+        xpt, ypt, = point2D(upt(p))
+        sx, sy = wpt/iw, hpt/ih
         self.save()
         self.scale(sx, sy)
-        #self.b.image(path, ((x*sx).r, (y*sy).r), alpha=alpha, pageNumber=pageNumber)
-        self.b.image(path, ((x*sx), (y*sy)), alpha=alpha, pageNumber=pageNumber)
+        #self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
+        self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
     def getImageObject(self, path):

@@ -42,7 +42,7 @@ class Cube(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(fill=color(95, rLeading=1.4, fontSize=28)
+        >>> style = dict(fill=color(0.95), leading=em(1.4), fontSize=28)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')

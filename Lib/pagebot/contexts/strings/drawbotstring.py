@@ -18,13 +18,12 @@ import re
 from copy import copy
 from sys import platform
 
-if platform == 'darwin':
+try:
+#if platform == 'darwin':
     import CoreText
     import Quartz
-
-try:
     from drawBot import BezierPath
-except:
+except AttributeError:
     BezierPath = None
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this

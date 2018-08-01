@@ -200,17 +200,52 @@ def rv(u, *args, **kwargs):
             u = [u]
         for arg in args:
             u.append(arg)
+
     if isinstance(u, (list, tuple)):
         ruu = []
         for uu in u:
             uu = rv(uu, **kwargs)
             ruu.append(uu)
         return tuple(ruu)
-    else:
-        uu = units(u, **kwargs)
-        if uu is not None:
-            uu = uu.rv
-        return uu
+
+    uu = units(u, **kwargs)
+    if uu is not None:
+        uu = uu.rv
+    return uu
+
+def upt(u, *args, **kwargs):
+    """Render to pt value(s). If values are a number, then answer it unchanged.
+
+    >>> upt(50, pt(100), pt(120), (10, pt(20)))
+    (50, 100, 120, (10, 20))
+    >>> upt(None)
+    0
+    """
+    if args:
+        if not isinstance(u, (list, tuple)):
+            u = [u]
+        else:
+            u = list(u)
+        for arg in args:
+            u.append(arg)
+    
+    if isinstance(u, (list, tuple)):
+        ruu = []
+        for uu in u:
+            uu = upt(uu, **kwargs)
+            ruu.append(uu)
+        return tuple(ruu)
+    
+    if u is None:
+        return 0
+
+    if isinstance(u, (int, float)):
+        return u
+
+    uu = units(u, **kwargs)
+    if uu is not None:
+        uu = uu.rv
+    return uu
 
 def isUnits(u, *args):
     """Answer the boolean flag is u (and all of the other items in the argument list)
