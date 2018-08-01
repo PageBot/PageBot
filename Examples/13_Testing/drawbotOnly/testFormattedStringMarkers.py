@@ -16,6 +16,7 @@
 import re
 import sys
 from pagebot.contexts.platform import getContext
+context = getContext()
 if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
@@ -31,14 +32,14 @@ def getMarker(markerId, args=None):
     alter the flow of the FormattedString in an box) and the markerId and amount/length
     of args should be kept as small as possible."""
     marker = '==%s--%s==' % (markerId, args or '')
-    return b.FormattedString(marker, fill=noColor, stroke=noColor, fontSize=0.0000000000001)
+    return b.FormattedString(marker, fill=None, stroke=None, fontSize=0.0000000000001)
 
 FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_]*)\-\-([^=]*)\=\=')
 
 def findMarkers(fs):
     """Answer a dictionary of markers with their arguments that exist in a given FormattedString."""
     markers = {}
-    for markerId, args in FIND_FS_MARKERS.findall(`fs`):
+    for markerId, args in FIND_FS_MARKERS.findall(str(fs)):
         if not markerId in markers:
             markers[markerId] = []
         markers[markerId].append(args)

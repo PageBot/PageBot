@@ -15,7 +15,7 @@
 # Test BabelString in both DrawBotContext and FlatContext
 
 from pagebot.contexts.drawbotcontext import DrawBotContext
-from pagebot.contexts.flatcontext import FlatContext
+#from pagebot.contexts.flatcontext import FlatContext
 from pagebot.fonttoolbox.objects.font import findFont
 
 W, H = 800, 220
@@ -26,7 +26,7 @@ bold = findFont('Roboto-Bold')
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    (FlatContext(), '_export/testFlatString.pdf'),
+    #(FlatContext(), '_export/testFlatString.pdf'),
 )
 
 for context, path in testContexts:
@@ -42,12 +42,12 @@ for context, path in testContexts:
     print(bs)
     # Reusing the same style with adjustments
     style['font'] = bold.path
-    style['textFill'] = 0.5, 0, 1
+    style['textFill'] = 0.5, 0, 1 # Auto-converts to Color instance
     bs += context.newString(' and more', style=style)
     print(bs)
     # Draw grid, matching the position of the text.
-    context.fill(None)
-    context.stroke(0.7)
+    context.fill(None) # Auto-converts to noColor
+    context.stroke(0.7) # Auto-converts to pt( )
     context.line((M, 0), (M, H))
     context.line((0, M), (W, M))
     # Usage in DrawBot by addressing the embedded FS for drawing.

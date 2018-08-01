@@ -319,7 +319,7 @@ class DrawBotContext(BaseContext):
 
     def translate(self, dx, dy):
         """Translate the origin to this point."""
-        dxpt, dypt = point3D(upt(dx, dy))
+        dxpt, dypt = point2D(upt(dx, dy))
         self.b.translate(dxpt, dypt)
 
     def transform(self, t):
@@ -478,16 +478,21 @@ class DrawBotContext(BaseContext):
         DrawBot FormattedString at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        ppt = point3D(upt(p)) 
+        ppt = point2D(upt(p)) 
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
         """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString in rectangle r."""
+        DrawBot FormattedString in rectangle r.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> context = DrawBotContext()
+        >>> context.textBox('ABC', (10, 10, 200, 200))
+        """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        rpt = upt(r) 
-        self.b.textBox(sOrBs, rpt) # Render rectangle units to value tuple
+        xpt, ypt, wpt, hpt = upt(r) 
+        self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
     def textSize(self, bs, w=None, h=None):
         """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
@@ -555,7 +560,9 @@ class DrawBotContext(BaseContext):
         >>> context.fill(noColor)
         >>> context.fill(0.5)
         """
-        if isinstance(c, (tuple, list, int, float)):
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
         assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.
@@ -582,7 +589,9 @@ class DrawBotContext(BaseContext):
         >>> context.stroke(noColor)
         >>> context.stroke(0.5)
         """
-        if isinstance(c, (tuple, list, int, float)):
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
         assert isinstance(c, Color), ('DrawBotContext.stroke: %s should be of type Color' % c)
         if c is inheritColor: # Keep color setting as it is.

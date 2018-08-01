@@ -145,16 +145,17 @@ p.lineTo((202, 212))
 p.lineTo((14, 216))
 p.closePath()
 
-for i in b, p:
-    print(context.textBox(t, i))
-    context.fill(None)
-    context.stroke(0)
-    try:
-        context.rect(*i)
-    except:
-        context.drawPath(i)
-    
-    context.translate(0, b[2]+30)
+context.textBox(t, b)
+context.fill(None)
+context.stroke(0)
+context.rect(*b)
+context.translate(0, b[2]+30)
+
+context.fill(None)
+context.stroke((1, 0, 0))
+#context.rect(*p)
+context.drawPath(p)
+
 
 #r = context.hyphenateAttributedString(BaseContext(), t.getNSObject(), box=p)
 #g = context.FormattedString()

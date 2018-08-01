@@ -15,6 +15,8 @@
 #
 
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.color import noColor, color
+from pagebot.toolbox.units import pt
 
 context = getContext()
 
@@ -33,22 +35,28 @@ TEXTS = {
     (3, 2): 'Abc',
 }
 
-EXPORT_PATH = '_export/testFormattedStringBounds.pdf'
-D = 2
-W = H = 1000
-newPage(W, H)
-x = y = 60
+EXPORT_PATH = '_export/testStringPixelBounds.pdf'
+D = 8 # Size of origin marker
+W = H = pt(1000) # Size of export page.
+context.newPage(W, H) # Make new DrawBot page.
+x = y = pt(60) # Start of (x,y) matrix
 
 for ix in range(3):
     for iy in range(4):
-        bs = context.newString(TEXTS[(iy, ix)], style=dict(font='Georgia', fontSize=100))
+        # Formatted string
+        word = TEXTS[(iy, ix)]
+        bs = context.newString(word, style=dict(font='Georgia', fontSize=100))
         #Same as bx, by, bw, bh = pixelBounds(bs.s)
         bx, by, bw, bh = bs.bounds()
-        xx, yy = x+ix*W/3, y+iy*H/4
+        xx, yy = x+ix*W/3, y+iy*H/4 # Calculate position in page layout.
         context.text(bs, (xx, yy))
-        context.stroke((1, 0, 0), 0.5)
-        context.fill(None)
-        rect(xx+bx, yy+by, bw, bh)
-        rect(xx-D, yy-D, 2*D, 2*D)
+        context.stroke(color(1, 0, 0), 0.5)
+        context.fill(noColor) # Equivalent to DrawBot.fill(None)
+        context.rect(xx+bx, yy+by, bw, bh)
+        context.stroke(color(0, 0.5, 0.5), 0.5)
+        context.fill(noColor) # Equivalent to DrawBot.fill(None)
+        context.oval(xx-D, yy-D, 2*D, 2*D)
+        context.line((xx-D, yy), (xx+D, yy))
+        context.line((xx, yy-D), (xx, yy+D))
 
-saveImage(EXPORT_PATH)
+context.saveImage(EXPORT_PATH)

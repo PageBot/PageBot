@@ -96,7 +96,7 @@ class TextLine(object):
             if index == 0:
                 s.append(part)
             elif len(part) >= 4:
-                s.append(unichr(int(part[0:4], 16)))
+                s.append(chr(int(part[0:4], 16)))
                 s.append(part[4:])
         self.string = ''.join(s)
 

@@ -32,8 +32,8 @@ from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
-from pagebot.toolbox.color import Color, noColor, inheritColor, blackColor
-from pagebot.toolbox.units import pt, isUnit
+from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
+from pagebot.toolbox.units import pt, upt, isUnit, point2D
 
 def pixelBounds(fs):
     """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).

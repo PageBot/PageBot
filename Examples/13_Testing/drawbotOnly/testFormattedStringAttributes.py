@@ -23,37 +23,42 @@ if not context.isDrawBot:
 # TODO: Make this example work in Flat too.
 
 b = context.b # Builder is DrawBot
-f = context.newString('')
+style = dict(fontSize=100, textFill=(1, 0, 0))
+bs = context.newString("Hello", style=style) # Start with a normal DrawBotString instance.
 
-f.fill(1, 0, 0)
-f.fontSize(100)
-f += "hello"
-
-attr = f.getNSObject()
-
+# Getting the attributes from the FormattedString, inside the DrawBotString
+attr = bs.s.getNSObject()
+# Add some information to a range of text parts.
 attr.addAttribute_value_range_("com.petr.pageBot.myAttribute", "this is my data", (0, 5))
 
-f += " "
-f += "world"
+# Extend the DrawBotString
+bs += " "
+bs += "world"
 
-attr = f.getNSObject()
+# Get the deep attributes from the Formatted String, inside the DrawBotString
+attr = bs.s.getNSObject()
+# Add some information to a range of text parts.
 attr.addAttribute_value_range_("com.petr.pageBot.myOtherAttibute", ["a", "list", "object"], (5, 5))
 
-text(f, (96, 172))
+x, y = 90, 800
+context.text(bs, (x, y))
 
+# Do the same on FormattedString level
+
+fs = b.FormattedString('AAAA', font='Verdana', fontSize=100, fill=(0, 0.5, 0))
+y -= 300
+b.text(fs, (x, y))
+attr = fs.getNSObject()
+# Add infor to the attributes of the string parts.
+attr.addAttribute_value_range_("io.pageBot.class", 'CLASS_NAME', (0, len(fs)))
+attr.addAttribute_value_range_("io.pageBot.tag", 'TAG_NAME', (0, len(fs)))
 
 #print(attr)
 
-ff = b.FormattedString('AAAA', font='Verdana', fontSize=100, fill=color(0, 0.5, 0))
-b.text(ff, (96, 440))
-attr = ff.getNSObject()
-attr.addAttribute_value_range_("io.pageBot.class", 'CLASS_NAME', (0, len(ff)))
-attr.addAttribute_value_range_("io.pageBot.tag", 'TAG_NAME', (0, len(ff)))
-
-#print(attr)
-
-fff = ff + f
+fff = fs + bs.s
 attr = fff.getNSObject()
 
+y -= 300
+b.text(fff, (x, y))
 print(attr)
 
