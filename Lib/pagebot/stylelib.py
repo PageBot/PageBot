@@ -17,6 +17,7 @@
 #     Library of predefined named styles.
 #
 from pagebot.toolbox.units import *
+from pagebot.toolbox.color import whiteColor, blackColor
 
 MARGIN = (0, 0, px(10), 0)
 
@@ -29,18 +30,18 @@ default = {
         fontSize=px(12),
         leading=em(1.4),
         color=0,
-        fill=blackColorxFFFFFF,
+        fill=whiteColor,
     ),
     'pre, code': dict(
         display='none',
     ),
     'a': dict(
-        color=0x828487,
+        color=color('#828487'),
         textDecoration='none',
         transition='all 0.3s ease-in-out',
     ),
     'a:hover': dict(
-        color=0,
+        color=blackColor,
     ),
     'p': dict(
         margin=MARGIN,
