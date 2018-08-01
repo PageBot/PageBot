@@ -37,6 +37,25 @@ class BaseFontShow(Element):
             style['xTextAlign'] = alignment
         return style
 
+    def getLocation(self, vf=None, wght=None, wdth=None, opsz=None):
+        u"""Answer the instance of self, corresponding to the normalized location.
+        (-1, 0, 1) values for axes [wght] and [wdth].
+        The optical size [opsz] is supposed to contain the font size, so it is not normalized.
+        If [opsz] is not defined, then set it to default, if the axis exist.
+        """
+        if vf is None or not self.vf.axes:
+            return {}
+
+        # Get real axis values.
+        wght = self.getAxisValue('wght', wght)        
+        wdth = self.getAxisValue('wdth', wdth)        
+
+        if not opsz and 'opsz' in vf.axes:
+            opsz = vf.axes['opsz'][1] # Use default value
+
+        # Make location dictionary
+        return dict(wght=wght, wdth=wdth, opsz=opsz)
+
     def buildStackedLine(self, s, origin, x, y, w, h=None, fontSize=None,
             wght=None, wdth=None, useOpsz=True):
         """Draws a textbox to self that fits the string s for the instance
