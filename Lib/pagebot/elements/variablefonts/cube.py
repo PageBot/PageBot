@@ -20,6 +20,7 @@ from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
 from pagebot.toolbox.units import pointOffset
 from pagebot.fonttoolbox.objects.font import getInstance
+from pagebot.toolbox.units import em
 
 class Cube(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
@@ -47,7 +48,7 @@ class Cube(BaseFontShow):
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = Cube(font1, parent=page, conditions=conditions, padding=50, steps=4, style=style, label="An", context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=24, rLeading=1.4)
+        >>> style = dict(stroke=0, strokeWidth=0.25, fontSize=24, leading=em(1.4))
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> gs = Cube(font2, parent=page, conditions=conditions, style=style, steps=3, padding=40, context=c)

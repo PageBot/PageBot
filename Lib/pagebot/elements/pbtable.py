@@ -70,7 +70,7 @@ class Table(Element):
  
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
-            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
+            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=whiteColor, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:
@@ -79,7 +79,7 @@ class Table(Element):
                 xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
                 borders=self.borders, fill=color(0.4), conditions=cellConditions)
 
-        bs = self.newString('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
+        bs = self.newString('abc', style=dict(font='Verdana', textFill=blackColor, fontSize=10))
         for rowIndex in range(rows):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):

@@ -119,7 +119,7 @@ class FontIcon(object):
         drawPath(path)
         fs = context.newString(self.c,
                                style=dict(font=self.f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           fontSize=h*2/3))
         tw, th = textSize(fs)
         text(fs, (w/2-tw/2, h/2-th/3.2))
@@ -128,7 +128,7 @@ class FontIcon(object):
             if self.title:
                 fs = context.newString(self.title,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=0,
+                                                  textFill=blackColor,
                                                   rTracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
@@ -138,7 +138,7 @@ class FontIcon(object):
             if self.name:
                 fs = context.newString(self.name,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=0,
+                                                  textFill=blackColor,
                                                   rTracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
@@ -147,7 +147,7 @@ class FontIcon(object):
             if self.label:
                 fs = context.newString(self.label,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=0,
+                                                  textFill=blackColor,
                                                   rTracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
@@ -258,7 +258,7 @@ def drawAnimation():
 
         fs = context.newString('Weight %0.1f' % wghtMin,
                                style=dict(font=f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=12))
         tw, th = textSize(fs)
@@ -266,7 +266,7 @@ def drawAnimation():
 
         fs = context.newString('Width %0.1f' % wdthMin,
                                style=dict(font=f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=12))
         tw, th = textSize(fs)
@@ -274,14 +274,14 @@ def drawAnimation():
 
         fs = context.newString('Width %0.1f' % wdthMax,
                                style=dict(font=f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=12))
         text(fs, ((xr+xt)/2+20, (yr+yt)/2))
 
         fs = context.newString('Weight %0.1f' % wghtMax,
                                style=dict(font=f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=12))
         text(fs, ((xb+xr)/2+20, (yb+yr)/2))
@@ -326,7 +326,7 @@ def drawAnimation():
                                 ' wght %0.2f') % (angle, locRadX, locRadY,
                                                   wdthLoc, wghtLoc),
                                style=dict(font=f.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=12))
         text(fs, (200, 480))
@@ -342,7 +342,7 @@ def drawAnimation():
         """
         fs = context.newString('Q',
                                style=dict(font=locFont.path,
-                                          textFill=0,
+                                          textFill=blackColor,
                                           rTracking=0.02,
                                           fontSize=80))
         tw, th = textSize(fs)

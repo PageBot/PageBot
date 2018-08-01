@@ -16,6 +16,7 @@
 #
 from pagebot.elements import TextBox
 from pagebot.constants import RIGHT
+from pagebot.toolbox.units import em
 
 class Title(TextBox): 
     u"""Showing the specified (variable) font with its name as headline 
@@ -56,7 +57,7 @@ class Title(TextBox):
         if fontNameStyle is None:
             fontNameStyle = dict(font=f.path, rLeading=1.9)
         if designerStyle is None:
-            designerStyle = dict(font=f.path, fontsize=self.NAME_SIZE, rLeading=1.4, xTextAlign=RIGHT)
+            designerStyle = dict(font=f.path, fontsize=self.NAME_SIZE, leading=em(1.4), xTextAlign=RIGHT)
 
         self.f = f # Font instance
         foundryName = foundryName or f.info.designer or 'Unknown foundry'

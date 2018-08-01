@@ -18,7 +18,7 @@ from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import JUSTIFIED, LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, em
 
 class Stacked(BaseFontShow):
     u"""Showing the specified (variable) font as full page with a matrix
@@ -44,13 +44,13 @@ class Stacked(BaseFontShow):
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
-        >>> style = dict(gh=16, fill=color(95, rLeading=1.4)
+        >>> style = dict(gh=16, fill=color(95, leading=em(1.4))
         >>> gs = Stacked(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
         >>> #font2 = findFont('Escrow-Bold')
-        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4)
+        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, leading=em(1.4))
         >>> gs = Stacked(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
         >>> score = doc.solve()
         >>> doc.export('_export/%sStacked.pdf' % font1.info.familyName)

@@ -58,8 +58,8 @@ def makeDocument():
 
     bs = c.newString('')
     for n in range(10):
-        bs += c.newString('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=0))
-        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=0))
+        bs += c.newString('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=blackColor))
+        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=blackColor))
 
     if DoTextFlow:
         h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.

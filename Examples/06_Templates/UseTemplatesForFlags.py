@@ -50,8 +50,8 @@ def makeTemplate(w, h, french=False):
     else:
         rightColor = 0, 0.5, 0 # r, g, b Make Italian flag.
     # Make 2 formatted strings with white text,
-    fsLeft = context.newString('Template box left', style=dict(textFill=1))
-    fsRight = context.newString('Template box right', style=dict(textFill=1))
+    fsLeft = context.newString('Template box left', style=dict(textFill=whiteColor))
+    fsRight = context.newString('Template box right', style=dict(textFill=whiteColor))
 
     newTextBox(fsLeft, w=w/3, fill=color(1, 0, 0), padding=10,
         parent=template, conditions=[Left2Left(), Top2Top(), Fit2Height()])

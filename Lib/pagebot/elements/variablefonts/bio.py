@@ -15,6 +15,7 @@
 #     bio.py
 #
 from pagebot.elements import TextBox
+from pagebot.toolbox.units import em
 
 class Bio(TextBox):
     u"""Showing the specified (variable) font with its name as headline
@@ -53,7 +54,7 @@ class Bio(TextBox):
         if fontNameStyle is None:
             fontNameStyle = dict(font=f.path, rLeading=1.9)
         if bodyStyle is None:
-            bodyStyle = dict(font=f.path, fontSize=self.BODY_SIZE, rLeading=1.4)
+            bodyStyle = dict(font=f.path, fontSize=self.BODY_SIZE, leading=em(1.4))
 
         self.f = f # Font instance
         foundryName = foundryName or f.info.designer or 'Unknown foundry'

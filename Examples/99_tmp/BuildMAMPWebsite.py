@@ -59,7 +59,7 @@ def makeDocument():
 
     #textBoxStyle = doc.addStyle('textbox', dict(fill=color(0, 0, 0, 0.7),
     #                                            padding=40))
-    pStyle = doc.addStyle('p', dict(textFill=0))
+    pStyle = doc.addStyle('p', dict(textFill=blackColor))
     h1Style = doc.addStyle('h1', dict(fontSize=24, textFill=(0, 0, 1)))
     #h2Style = doc.addStyle('h2', dict(fontSize=18, textFill=(0, 1, 0)))
 
@@ -102,7 +102,7 @@ def makeDocument():
                     # Just to show where it is.
                     # Has no effect on the position conditions.
                     yAlign=BOTTOM, xAlign=LEFT,
-                    leading=5, fontSize=9, textFill=0,
+                    leading=5, fontSize=9, textFill=blackColor,
                     strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor)
     print(e1.style)
 

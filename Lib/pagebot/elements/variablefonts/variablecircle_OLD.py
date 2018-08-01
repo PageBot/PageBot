@@ -92,7 +92,7 @@ class VariableCircle(Element):
             fs = context.newString(axisName,
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
-                                              textFill=0))
+                                              textFill=blackColor))
             tw, th = context.textSize(fs)
             context.text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm

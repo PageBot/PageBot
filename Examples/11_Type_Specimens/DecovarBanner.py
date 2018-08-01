@@ -21,6 +21,7 @@ from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
 from pagebot.toolbox.color import Color
+from pagebot.toolbox.units import em
 
 class AnimatedBannerFrame(AnimationFrame):
 
@@ -100,7 +101,7 @@ for axisTag in sequenceAxes:
         # Variable Font location for this frame sample
         location = {axisTag: phisin*axisRange+minValue}
         # Overall style for the frame
-        style = dict(rLeading=1.4, fontSize=400, xTextAlign=RIGHT, textFill=color(1), 
+        style = dict(leading=em(1.4), fontSize=400, xTextAlign=RIGHT, textFill=color(1), 
             fill=blackColor, location=location)
         
         af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, padding=20, style=style, 

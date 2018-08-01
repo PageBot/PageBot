@@ -20,6 +20,7 @@ from pagebot.elements.variablefonts.animationframe import AnimationFrame
 from pagebot.document import Document
 from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
+from pagebot.toolbox.units import em
 
 class AnimatedBannerFrame(AnimationFrame):
 
@@ -106,7 +107,7 @@ for sequenceIndex in range(sequences):
                 ww3 = pw - x3
                 hh3 = hh2
             
-        style = dict(rLeading=1.4, font=font, xTextAlign=RIGHT, textFill=1, 
+        style = dict(leading=em(1.4), font=font, xTextAlign=RIGHT, textFill=whiteColor, 
             fill=blackColor, roundVariableFitLocation=False)
 
         AnimatedBannerFrame(sample1, font, frameCnt, frameIndex, parent=page, style=style, 

@@ -89,7 +89,7 @@ def makeDocument():
                                style=dict(font='Verdana',
                                           fontSize=7,
                                           xTextAlign=CENTER,
-                                          textFill=0))
+                                          textFill=blackColor))
     # Text falls through the yr2 (with differnt z) and lands on yellowSquare by Float2BottomSide()    
     newTextBox(fs, name='Caption', parent=redContainer, z=8,
                fill=color(0, 1, 0), strokeWidth=0.5, stroke=color(1, 1, 0),

@@ -58,14 +58,14 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                                             fontSize=fontSize,
                                             tracking=tracking,
                                             rTracking=rTracking,
-                                            textFill=0))
+                                            textFill=blackColor))
     condWidth, _ = context.textSize(condensedFs)
     wideFont = getVarFontInstance(varFont, wideLocation)
     wideFs = context.newString(s, style=dict(font=wideFont.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
-                                       textFill=0))
+                                       textFill=blackColor))
     wideWidth, _ = context.textSize(wideFs)
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condWidth:
@@ -86,7 +86,7 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        rTracking=rTracking,
-                                       textFill=0))
+                                       textFill=blackColor))
     return dict(condensedFont=condFont,
                 condensedFs=condensedFs,
                 condensedWidth=condWidth,
