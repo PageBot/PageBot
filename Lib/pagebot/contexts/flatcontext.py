@@ -16,7 +16,7 @@
 #     xxyxyz.org/flat
 #
 #import imageio
-from pagebot.toolbox.units import pt, units, ru, isUnit, isUnits
+from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.color import Color, noColor, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
@@ -123,11 +123,14 @@ class FlatContext(BaseContext):
         >>> context.newDocument(pt(100), pt(100))
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
+        >>> context.newDocument(100, 100)
+        >>> int(context.doc.width), int(context.doc.height)
+        (100, 100)
         """
         if size is not None:
             w, h = size
-        assert isUnits(w, h), ('FlatContext.newDocument: Size values (%s %s) to be of type Unit' % (w, h))
-        self.doc = self.b.document(w.pt, h.pt, units=self.UNITS)
+        wpt, hpt = upt(w, h)
+        self.doc = self.b.document(wpt, hpt, units=self.UNITS)
         #self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
@@ -135,16 +138,17 @@ class FlatContext(BaseContext):
 
         >>> import os
         >>> from pagebot import getRootPath
-        >>> from pagebot.toolbox.color import Color
+        >>> from pagebot.toolbox.color import blackColor
         >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
-        """
-
-
-        """>>> w = h = pt(100)
+        >>> w = h = pt(100)
         >>> x = y = pt(0)
         >>> c = blackColor
+        """
+        
+        """
+        FIX
         >>> context.fileType = FILETYPE_JPG
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
@@ -212,12 +216,13 @@ class FlatContext(BaseContext):
         if size is not None:
             w, h = size
         assert None not in (w, h)
+        wpt, hpt = upt(w, h)
 
         if self.doc is None:
-            self.newDocument(w, h)
+            self.newDocument(wpt, hpt)
 
         self.page = self.doc.addpage()
-        self.page.size(w, h, units=self.UNITS) # Default units render to pt-units
+        self.page.size(wpt, hpt, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -420,19 +425,19 @@ class FlatContext(BaseContext):
         """
         img = self.b.image.open(path)
         # Answer units of the same time as the document.w was defined.
-        return units(img.width, maker=pt), units(img.height, maker=pt)
+        return pt(img.width), pt(img.height)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""
         if w is None or h is None:
             w, h = self.imageSize(path)
 
-        x, y, = p[0], p[1]
+        xpt, ypt = point3D(upt(p))
         self.save()
         img = self.b.image(path)
-        img.resize(width=w.r, height=h.r)
+        img.resize(width=w.pt, height=h.pt)
         placed = self.page.place(img)
-        placed.position(x.r, y.r)
+        placed.position(xpt, ypt)
         self.restore()
 
     #   D R A W I N G
@@ -465,37 +470,38 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        assert isUnits(x, y, w, h), ('FlatContext.rect: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(x.pt, y.pt, w.pt, h.pt))
+            self.page.place(shape.rectangle(xpt, ypt, wpt, hpt))
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and
         (w,h) is the size.  This default DrawBot behavior, different from
         default Flat, where the (x,y) is the middle if the oval. Compensate for
         the difference."""
-        assert isUnits(x, y, w, h), ('FlatContext.oval: Values (%s, %s, %s, %s) must all be of type Unit' % (x, y, w, h))
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse((x-w/2).pt, (y-h/2).pt, w.pt, h.pt))
+            self.page.place(shape.ellipse(xpt-wpt/2, ypt-hpt/2, wpt, hpt))
 
     def circle(self, x, y, r):
         """Draw an circle in square, with radius r and (x,y) as middle."""
-        assert isUnits(x, y, r), ('FlatContext.circle: Values (%s, %s, %s) must all be of type Unit' % (x, y, r))
+        xpt, ypt, rpt = upt(x, y, r)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.circle(x.pt, y.pt, r.pt))
+            self.page.place(shape.circle(xpt, ypt, rpt))
 
     def line(self, p0, p1):
-        assert isUnits(p0, p1), ('FlatContext.line: Values (%s, %s) must all be of type Unit' % (p0, p1))
+        x0pt, y0pt = point2D(upt(p0))
+        x1pt, y1pt = point2D(upt(p1))
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.line(p0[0].pt, p0[1].pt, p1[0].pt, p1[1].pt))
+            self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
 
     def newPath(self):
         """Create a new path list, o collect the path commands."""
@@ -504,32 +510,37 @@ class FlatContext(BaseContext):
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         if p is None:
-            p = pt(0, 0)
-        assert isUnits(p), ('FlatContext.drawPath: Values %s must all be of type Unit' % p)
+            xpt = ypt = 0
+        else:
+            xpt, ypt = point2D(upt(p))
+        # TODO: xpt, ypt?
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.path(self._path.commands))
 
     def moveTo(self, p):
-        assert isUnits(p), ('FlatContext.moveTo: Values %s must all be of type Unit' % p)
+        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.moveTo(ru(p, maker=pt))
+        self._path.moveTo(ppt)
 
     def lineTo(self, p):
-        assert isUnits(p), ('FlatContext.lineTo: Values %s must all be of type Unit' % p)
+        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.lineTo(ru(p, maker=pt))
+        self._path.lineTo(ppt)
 
     def quadTo(self, bcp, p):
-        assert isUnits(p), ('FlatContext.quadTo: Values %s must all be of type Unit' % p)
+        bpt = point2D(upt(bcp))
+        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.quadTo(ru(bcp, maker=pt), ru(p, maker=pt))
+        self._path.quadTo(bpt, ppt)
 
     def curveTo(self, bcp1, bcp2, p):
-        assert isUnits(p), ('FlatContext.curveTo: Values %s must all be of type Unit' % p)
+        b1pt = point2D(upt(bcp1))
+        b2pt = point2D(upt(bcp2))
+        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.curveTo(ru(bcp1, maker=pt), ru(bcp1, maker=pt), ru(bcp2, maker=pt), ru(p, maker=pt))
+        self._path.curveTo(b1pt, b2pt, ppt)
 
     def closePath(self):
         assert self._path is not None
@@ -546,7 +557,7 @@ class FlatContext(BaseContext):
         pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):
-        assert isUnits(w, h), ('FlatContext.setGradient: Values %s must all be of type Unit' % str((w, h)))
+        wpt, hpt = upt(w, h)
         pass # Not implemented?
 
     def lineDash(self, *lineDash):
@@ -559,10 +570,13 @@ class FlatContext(BaseContext):
 
     setTextFillColor = textFill
 
-    #def setFillColor(self, c, builder=None):
     def fill(self, c):
         u"""Set the color for global or the color of the formatted string.
-        See: http://xxyxyz.org/flat, color.py."""
+        See: http://xxyxyz.org/flat, color.py.
+
+        """
+        if isInstance(c, (tuple, list, int, float)):
+            c = color(c)
         assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
 
@@ -615,10 +629,14 @@ class FlatContext(BaseContext):
 
     setTextStrokeColor = textStroke
 
-    def stroke(self, c, w=None, b=None):
-        u"""Set global stroke color or the color of the formatted string."""
+    def stroke(self, c, w=None):
+        u"""Set global stroke color or the color of the formatted string.
+
+        """
+        if isInstance(c, (tuple, list, int, float)):
+            c = color(c)
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
-        assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
+        wpt = upt(w)
         self._stroke = c
 
         '''
@@ -662,20 +680,18 @@ class FlatContext(BaseContext):
             if not success:
                 raise ValueError('Flatcontext.stroke: Error in color format "%s"' % c)
         '''
-        if w is not None:
-            self._strokeWidth = w.pt
+        self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
 
     def strokeWidth(self, w):
-        assert w is None or isUnit(w), ('FlatContext.strokeWidth: Value %s must of type Unit' % w)
-        if w is not None:
-            self._strokeWidth = w.pt
+        self._strokeWidth = upt(w)
 
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""
-        self._ox += dx
-        self._oy += dy
+        dxpt, dypt = point3D(upt(dx, dy))
+        self._ox += dxpt
+        self._oy += dypt
 
     def rotate(self, angle):
         """Rotate by angle."""

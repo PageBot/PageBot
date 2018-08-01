@@ -134,12 +134,12 @@ def makeDocument():
                                                          Float2Top()))
 
     newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
-             parent=page, fill=color(7, padding=8,
+             parent=page, fill=color(0.7), padding=8,
              maxW=pageArea, maxH=pageArea, conditions=(Right2Right(),
                                                        Float2Top()))
 
     newRect(z=0, w=BlueWidth, h=20,
-            parent=page, fill=color(2, conditions=(Fit2Width(),
+            parent=page, fill=color(0.2), conditions=(Fit2Width(),
                                                Float2Top()))
 
     score = page.solve()

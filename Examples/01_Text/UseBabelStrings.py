@@ -19,13 +19,15 @@
 #
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contect.toolbox.units import pt, em
+from pagebot.context.toolbox.color import color
 
 for contextId, context in (
         ('DrawBot', DrawBotContext()), 
         #('Flat', FlatContext()),
     ):
-    W = H = 1000
-    M = 100
+    W = H = pt(1000)
+    M = pt(100)
 
     EXPORT_PATH = '_export/UseBabelStrings-%s.pdf' % contextId
     # Create a page and set y on top margin.
@@ -34,10 +36,11 @@ for contextId, context in (
     # Create formatted string, with default settings of font, fontSize and textFill color
     bs = context.newString('This is a formatted BabelString')
     print(bs.__class__.__name__)
-    context.text(bs, (100, y))
+    context.text(bs, pt(100, y))
     # Add string with formatting style dict
-    bs += context.newString('\nAdd an other string with format', style=dict(textFill=(1, 0, 0), fontSize=20, rLeading=1.4))
+    bs += context.newString('\nAdd an other string with format', 
+        style=dict(textFill=color(1, 0, 0), fontSize=pt(20), leading=em(1.4)))
     print(bs)
     y -= 50
-    context.text(bs, (100, y))
+    context.text(bs, pt(100, y))
     context.saveImage(EXPORT_PATH)

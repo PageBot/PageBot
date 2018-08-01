@@ -146,7 +146,7 @@ def makeDocument(rs):
         postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=color(1, prefix='', postfix='\n',
+    doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=color(0.1), prefix='', postfix='\n',
         rTracking=P_TRACK, sLeading=14, rLeading=0, xTextAlign=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
@@ -165,7 +165,7 @@ def makeDocument(rs):
     doc.newStyle(name='ul',)
     doc.newStyle(name='literatureref', fill=color(5, rBaselineShift=0.2, fontSize=0.8*sFontSize)
     doc.newStyle(name='footnote', fill=color(1, 0, 0), fontSize=0.8*U, font=BOOK)
-    doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=color(2, 
+    doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=color(0.2), 
         leading=0.8*sLeading, fontSize=0.8*sFontSize, font=BOOK_ITALIC, 
         indent=U/2, tailIndent=-U/2, hyphenation=True)
     

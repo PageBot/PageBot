@@ -25,11 +25,11 @@ from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color, blackColor
 
 c = getContext()
-W =H = 500
+W =H = pt(500)
 
 # Get PageBot Font instances of Variable font.
 f = findFont('Amstelvar-Roman-VF') 
@@ -56,12 +56,12 @@ class FontIcon(object):
     """
     """
     
-    W = 30
-    H = 40
-    L = 2
-    E = 8
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
+    W = pt(30)
+    H = pt(40)
+    L = pt(2)
+    E = pt(8)
+    LABEL_RTRACKING = em(0.02)
+    LABEL_RLEADING = em(1.3)
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, char='F', s=1, line=None,
             labelFont=None, titleFont=None, x=0, y=0, show=True):
@@ -128,8 +128,8 @@ class FontIcon(object):
         c.moveTo((pt(w-e), pt(h)))
         c.lineTo((pt(w-e), pt(h-e)))
         c.lineTo((pt(w), pt(h-e)))
-        c.fill(Color(1))
-        c.stroke(Color(0))
+        c.fill(whiteColor)
+        c.stroke(blackColor)
         c.strokeWidth = self.line
         c.moveTo((pt(x), pt(y)))
         c.drawPath(path)
@@ -220,7 +220,7 @@ class KeyFrame(object):
             aa = bs.s
             print(aa._font)
             print(aa._fontSize)
-            #c.setTextFillColor(aa, Color(0))
+            #c.setTextFillColor(aa, blackColor)
             print(aa._fill) 
             text(aa, (100, 200))
 

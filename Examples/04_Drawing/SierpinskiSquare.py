@@ -50,7 +50,7 @@ if __name__ == '__main__':
     for frame in range(numFrames):
         context.newPage(pt(canvasSize), pt(canvasSize))
         context.frameDuration(1/20)
-        col = Color(1)
+        col = whiteColor
         context.fill(col)
         context.rect(pt(0), pt(0), pt(canvasSize), pt(canvasSize))
         w = canvasSize * factor ** frame

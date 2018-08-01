@@ -33,12 +33,12 @@ class GlyphSet(BaseFontShow):
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=color(95, rLeading=1.4, fontSize=24)
+        >>> style = dict(gh=16, fill=color(0.95), leading=em(1.4), fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = GlyphSet(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, gh=8, rLeading=1.4, fontSize=18) # Smaller fontSize and grid.
+        >>> style = dict(stroke=blackColor, strokeWidth=0.25, gh=8, leading=em(1.4), fontSize=18) # Smaller fontSize and grid.
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
