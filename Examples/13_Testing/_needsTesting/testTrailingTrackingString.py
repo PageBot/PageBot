@@ -5,6 +5,7 @@
 # needs to be subtracted.
 
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import em
 
 context = getContext()
 
@@ -18,18 +19,18 @@ context.strokeWeight=0.5
 context.stroke((0, 0, 0.4))
 context.line((w/2, 0), (w/2, h))
 
-TRACKING = 1
+TRACKING = em(0.05)
 FONT_SIZE = 14
 TRACKED_SPACE = FONT_SIZE * TRACKING
 
 # New Babel string, probably DrawBot FormattedString flavor.
 bs = context.newString('TRACKEDSTRING', style=dict(font='Verdana',
-    fontSize=FONT_SIZE, rTracking=TRACKING))
+    fontSize=FONT_SIZE, tracking=TRACKING))
 # Call DrawBot textSize to determine the size of the string
 # including the tracking
-tw, th = bs.size()
+tw, th = bs.size
 
-context.text(bs, (w/2 - tw/2, 70))
+context.text(bs, (w/2 - tw/2, 60))
 context.stroke((1,0,0))
 context.rect(w/2-tw/2, 60, tw, th)
 
@@ -39,4 +40,4 @@ tw -= TRACKED_SPACE
 
 context.text(bs, (w/2 - tw/2, 20))
 context.stroke((1,0,0))
-context.rect(w/2-tw/2, 10, tw, th)
+context.rect(w/2-tw/2, 20, tw, th)

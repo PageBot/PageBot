@@ -20,7 +20,6 @@ from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
 from pagebot.toolbox.units import pointOffset
 from pagebot.fonttoolbox.objects.font import getInstance
-from pagebot.toolbox.units import em
 
 class Cube(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
@@ -40,6 +39,8 @@ class Cube(BaseFontShow):
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import em
+        >>> from pagebot.toolbox.color import color
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
@@ -131,7 +132,7 @@ class Cube(BaseFontShow):
                 # Calculate the location
                 location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
                 instance = getInstance(self.f, location)
-                print(instance.location)
+                #print(instance.location)
                 style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                 bs = c.newString(self.label, style=style)
                 tw, th = bs.textSize()

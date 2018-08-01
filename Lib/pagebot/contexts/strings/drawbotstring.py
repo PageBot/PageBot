@@ -16,7 +16,7 @@
 #
 import re
 from copy import copy
-from sys import platform
+#from sys import platform
 
 try:
 #if platform == 'darwin':
@@ -33,7 +33,7 @@ from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
 from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
-from pagebot.toolbox.units import pt, upt, isUnit, point2D
+from pagebot.toolbox.units import pt, upt, isUnit
 
 def pixelBounds(fs):
     """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -281,7 +281,7 @@ class DrawBotString(BabelString):
             _, ty, _, th = pixelBounds(fs)
         else:
             ty, th = 0, context.b.textSize(fs)[1]
-        fspt, hpt, typt, thpt = upt(fontSize, w, ty, th)
+        fspt, hpt, typt, thpt = upt(fontSize, h, ty, th)
         dypt = thpt - typt # Render the units, to compare for zero division
         if dypt:
             return hpt * fspt / dypt

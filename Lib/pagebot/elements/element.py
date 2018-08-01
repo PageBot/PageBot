@@ -3231,8 +3231,8 @@ class Element(object):
 
     def _get_marginBlock3D(self):
         """Answer the vacuum 3D bounding box around all child elements."""
-        x1, y1, z1 = XXXL
-        x2, y2, z2 = -XXXL
+        x1 = y1 = z1 = XXXL
+        x2 = y2 = z2 = -XXXL
         if not self.elements:
             # No element, answer vacuum block (x, y, z, w, h, d)
             return pt(0, 0, 0), pt(0, 0, 0)

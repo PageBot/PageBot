@@ -16,7 +16,6 @@
 #
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.toolbox.units import em
 
 class GlyphDimensions(BaseFontShow):
     u"""Showing the specified (variable) font large glyphs with a variety
@@ -32,10 +31,11 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
-        >>> style = dict(gh=16, fill=color(95, leading=em(1.4), fontSize=24)
+        >>> style = dict(gh=16, fill=0.95, leading=em(1.4), fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF', lazy=False)
@@ -60,7 +60,7 @@ class GlyphDimensions(BaseFontShow):
         >>> font = findFont('RobotoDelta-VF')
         >>> location = dict(SHPE=360, wght=500)
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=1, context=c)
-        >>> style = dict(gh=16, fill=color(0.95), leading=em(1.4), fontSize=24)
+        >>> style = dict(gh=16, fill=0.95, leading=em(1.4), fontSize=24)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> instance = font.getInstance(location=location)

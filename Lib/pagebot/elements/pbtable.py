@@ -19,6 +19,7 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
+from pagebot.toolbox.color import whiteColor, blackColor, color
 
 class Row(Element):
     def __init__(self, **kwargs):
