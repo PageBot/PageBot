@@ -16,8 +16,8 @@
 #     xxyxyz.org/flat
 #
 #import imageio
-from pagebot.toolbox.units import pt, upt
-from pagebot.toolbox.color import Color, noColor, blackColor
+from pagebot.toolbox.units import pt, upt, point2D
+from pagebot.toolbox.color import color, Color, noColor, blackColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
@@ -432,7 +432,7 @@ class FlatContext(BaseContext):
         if w is None or h is None:
             w, h = self.imageSize(path)
 
-        xpt, ypt = point3D(upt(p))
+        xpt, ypt = point2D(upt(p))
         self.save()
         img = self.b.image(path)
         img.resize(width=w.pt, height=h.pt)
@@ -575,7 +575,7 @@ class FlatContext(BaseContext):
         See: http://xxyxyz.org/flat, color.py.
 
         """
-        if isInstance(c, (tuple, list, int, float)):
+        if isinstance(c, (tuple, list, int, float)):
             c = color(c)
         assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
@@ -624,7 +624,6 @@ class FlatContext(BaseContext):
 
     def textStroke(self, c, w=None):
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
-        assert w is None or isUnit(w), ('FlatContext.stroke: Value %s must of type Unit' % w)
         self.stroke(c, w)
 
     setTextStrokeColor = textStroke
@@ -636,7 +635,6 @@ class FlatContext(BaseContext):
         if isInstance(c, (tuple, list, int, float)):
             c = color(c)
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
-        wpt = upt(w)
         self._stroke = c
 
         '''

@@ -18,7 +18,7 @@ from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.toolbox.units import pointOffset, em
+from pagebot.toolbox.units import pointOffset
 
 class Paragraphs(BaseFontShow): 
     u"""Showing the specified (variable) font as full page with a matrix
@@ -38,6 +38,8 @@ class Paragraphs(BaseFontShow):
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.color import color
+        >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)

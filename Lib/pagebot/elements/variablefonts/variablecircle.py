@@ -26,6 +26,7 @@ from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.color import blackColor
 
 context = getContext()
 
