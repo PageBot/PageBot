@@ -20,6 +20,7 @@
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
+from pagebot.toolbox.color import color
 
 W, H = 200, 250
 

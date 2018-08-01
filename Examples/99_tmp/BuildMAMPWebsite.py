@@ -103,7 +103,7 @@ def makeDocument():
                     # Has no effect on the position conditions.
                     yAlign=BOTTOM, xAlign=LEFT,
                     leading=5, fontSize=9, textFill=0,
-                    strokeWidth=0.5, fill=blackColor.9, stroke=noColor)
+                    strokeWidth=0.5, fill=color(9, stroke=noColor)
     print(e1.style)
 
     newTextBox(s, # Empty box, will get the overflow

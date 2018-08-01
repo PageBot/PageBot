@@ -15,6 +15,7 @@
 #     TestKanjiFormattedString.py
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import color
 
 context = getContext()
 

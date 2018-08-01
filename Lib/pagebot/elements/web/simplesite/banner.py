@@ -34,7 +34,7 @@ class Banner(Group):
         >>> page = doc[1]
         >>> page.title = 'Banner Test'
         >>> page.name = 'index'
-        >>> banner = Banner(parent=page, cssId='ThisBannerId', w=500, h=100, fill=blackColor.2)
+        >>> banner = Banner(parent=page, cssId='ThisBannerId', w=500, h=100, fill=color(2)
         >>> tb = newTextBox('This is a banner.', parent=banner)
         >>> doc.export('_export/BannerTest.pdf')
         """

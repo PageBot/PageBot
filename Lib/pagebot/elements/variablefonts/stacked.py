@@ -44,7 +44,7 @@ class Stacked(BaseFontShow):
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
-        >>> style = dict(gh=16, fill=blackColor.95, rLeading=1.4)
+        >>> style = dict(gh=16, fill=color(95, rLeading=1.4)
         >>> gs = Stacked(font1, parent=page, conditions=conditions, padding=40, style=style, context=c)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
