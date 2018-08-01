@@ -15,6 +15,7 @@
 #
 from random import random
 from pagebot.elements import *
+from pagebot.toolbox.color import color
 
 class StackedTypography(Template):
     

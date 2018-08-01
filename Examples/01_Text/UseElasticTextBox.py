@@ -78,9 +78,9 @@ def makeDocument():
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
     if BoxWidth < 200:
-        tColor = (1, 0, 0)
+        tColor = color(1, 0, 0)
     else:
-        tColor = (0, 0, 1)
+        tColor = color(0, 0, 1)
 
     s = ''
     for n in range(10):
@@ -93,7 +93,7 @@ def makeDocument():
         name='ElasticTextBox1',
         parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, maxW=W-2*PagePadding,
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=tColor, strokeWidth=0.5, fill=blackColor.9, stroke=noColor,
+        leading=5, fontSize=9, textFill=tColor, strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor,
     )
     e2 = newTextBox(s,
         name='ElasticTextBox2',
