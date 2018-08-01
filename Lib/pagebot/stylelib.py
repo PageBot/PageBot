@@ -17,7 +17,7 @@
 #     Library of predefined named styles.
 #
 from pagebot.toolbox.units import *
-from pagebot.toolbox.color import whiteColor, blackColor
+from pagebot.toolbox.color import whiteColor, blackColor, color
 
 MARGIN = (0, 0, px(10), 0)
 

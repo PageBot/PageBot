@@ -220,9 +220,9 @@ def makeDocument():
         tracking=H3_TRACK, postfix='\n')
     
     # Spaced paragraphs.
-    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=blackColor.1, prefix='',
-                 postfix='\n', rTracking=P_TRACK, leading=14,
-                 rLeading=0, align=LEFT, hyphenation=True)
+    doc.newStyle(name='p', fontSize=fontSize, font=BOOK, fill=color(0.1), prefix='',
+                 postfix='\n', tracking=P_TRACK, leading=14,
+                 align=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=color(1, 0, 0), strokeWidth=4)
@@ -239,11 +239,11 @@ def makeDocument():
         tabs=[(listIndent, LEFT)], indent=listIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul')
-    doc.newStyle(name='literatureref', fill=blackColor.5, rBaselineShift=0.2,
+    doc.newStyle(name='literatureref', fill=color(0.5), rBaselineShift=0.2,
                  fontSize=0.8*fontSize)
     doc.newStyle(name='footnote', fill=color(1, 0, 0), fontSize=0.8*U, font=BOOK)
     doc.newStyle(name='caption', tracking=P_TRACK, language=language,
-                 fill=blackColor.2, leading=leading*0.8, fontSize=0.8*fontSize,
+                 fill=color(0.2), leading=leading*0.8, fontSize=0.8*fontSize,
                  font=BOOK_ITALIC, indent=U/2, tailIndent=-U/2,
                  hyphenation=True)
 
