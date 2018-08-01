@@ -324,8 +324,8 @@ class FlatContext(BaseContext):
         assert isinstance(bs, FlatString), 'FlatString.text: bs not of type %s' % FlatString.__name__
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
-        x, y = p
-        placedText.position(ru(x), ru(y)) # Render unit tuple to value tuple
+        xpt, ypt = point2D(upt(p))
+        placedText.position(xpt, ypt # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted string.
@@ -348,7 +348,7 @@ class FlatContext(BaseContext):
 
         self._font = getFontPathOfFont(font) # Convert name or path to font path.
         if fontSize is not None:
-            self._fontSize = fontSize
+            self._fontSize = utp(fontSize)
 
     def fontSize(self, fontSize):
         """Set the current fontSize, in case it is not defined in a formatted string
