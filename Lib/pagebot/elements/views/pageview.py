@@ -130,6 +130,10 @@ class PageView(BaseView):
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
 
+            # If there is any page meta info defined to be drawn on the background
+            # suchs as the grid, then draw that first.
+            self.drawPageMetaInfoBackground(page, origin)
+
             # Use the (docW, docH) as offset, in case cropmarks need to be
             # displayed. Recursively call all elements in the tree to build
             # themselves. Note that is independent from the context. If there
@@ -175,8 +179,25 @@ class PageView(BaseView):
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
+    def drawPageMetaInfoBackground(self, page, origin):
+        """Draw the background meta info of the page, depending on the settings of the
+        flags.
+
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
+        >>> from pagebot.document import Document
+        >>> w, h = 300, 400
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> page = doc[1]
+        >>> view = doc.getView()
+        >>> view.showGridBackground = [GRID_COL, GRID_ROW]
+        >>> view.drawPageMetaInfoBackground(page, (0, 0))
+        """
+        if self.showGridBackground: # Showing grid on foreground?
+            self.drawGrid(page, origin, self.showGridBackground)
+
     def drawPageMetaInfo(self, page, origin, path):
-        """Draw the meta info of the page, depending on the settings of the
+        """Draw the foreground meta info of the page, depending on the settings of the
         flags.
 
         >>> from pagebot.contexts.platform import getContext
@@ -195,7 +216,8 @@ class PageView(BaseView):
         self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
-        self.drawGrid(page, origin)
+        if self.showGrid: # Showing grid on foreground?
+            self.drawGrid(page, origin, self.showGrid)
         self.drawBaselineGrid(page, origin)
         if self.showPageOrigin: # Test here, as same function is used for drawing origin on elements.
             self.drawElementOrigin(page, origin)
@@ -552,7 +574,7 @@ class PageView(BaseView):
 
     #    G R I D
 
-    def drawGrid(self, e, origin):
+    def drawGrid(self, e, origin, showGrid):
         """Draw grid of lines and/or rectangles if colors are set in the style.
         Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
         a fixed offset.
@@ -566,7 +588,9 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showGrid = [GRID_COL, GRID_ROW]
-        >>> view.drawGrid(e, (0, 0))
+        >>> view.drawGrid(e, (0, 0), view.showGrid)
+        >>> view.showGridBackground = [GRID_COL]
+        >>> view.drawGrid(e, (0, 0), view.showGridBackground)
         """
         context = self.context
 
@@ -575,7 +599,7 @@ class PageView(BaseView):
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         # Drawing the grid as horizontal lines.
-        if self.showGrid and GRID_COL in self.showGrid:
+        if GRID_COL in showGrid:
             # Set color for vertical grid lines
             context.fill(noColor)
             gridStrokeColor = e.css('viewGridStrokeY', noColor)
@@ -594,7 +618,7 @@ class PageView(BaseView):
                     x += cw + gx
 
         # Drawing the grid as vertical lines.
-        if self.showGrid and GRID_ROW in self.showGrid:
+        if GRID_ROW in showGrid:
             # Set color for vertical grid lines
             context.fill(noColor)
             gridStrokeColor = e.css('viewGridStrokeX', noColor)
@@ -613,7 +637,7 @@ class PageView(BaseView):
                     y += ch + gy
 
         # Drawing the grid as rectangles.
-        if self.showGrid and GRID_SQR in self.showGrid:
+        if GRID_SQR in showGrid:
             # Set color for grid rectangles
             context.fill(e.css('viewGridFill', noColor))
             context.stroke(e.css('viewGridStroke', noColor))
