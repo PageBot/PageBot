@@ -18,9 +18,9 @@
 #     For FlexContext, equivalent text-formatted structures are implemented.
 #
 from pagebot.contexts.drawbotcontext import DrawBotContext
-from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contect.toolbox.units import pt, em
-from pagebot.context.toolbox.color import color
+# FIX from pagebot.contexts.flatcontext import FlatContext
+from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.color import color
 
 for contextId, context in (
         ('DrawBot', DrawBotContext()), 
