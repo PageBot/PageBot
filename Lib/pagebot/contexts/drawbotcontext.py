@@ -506,25 +506,19 @@ class DrawBotContext(BaseContext):
             return self.b.textSize(bs.s, height=hpt)
         return self.b.textSize(bs.s)
 
-    def textOverflow(self, bs, bounds, align=LEFT):
+    def textLines(self, ):
+        u"""Answer the dictionary with (x, y) positions for all text lines in the current flow
+        inse."""
+        return self.b.textLines(bs.s, self.pw, self.ph)
+
+    def textOverflow(self, bs, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
-        boundspt = upt(bounds)
+        wpt, hpt = upt(w, h)
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
         self.b.hyphenation(bool(bs.hyphenation))
-        return stringClass(self.b.textOverflow(bs.s, boundspt, align), self)
-
-    def textBoxBaseLines(self, txt, box):
-        xpt, ypt, wpt, hpt = upt(box)
-        attrString = txt.getNSObject()
-        setter = CTFramesetterCreateWithAttributedString(attrString)
-        path = CGPathCreateMutable()
-        CGPathAddRect(path, None, CGRectMake(*box))
-        box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CTFrameGetLines(box)
-        origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-        return [(xpt + o.x, ypt + o.y) for o in origins]
+        return stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.

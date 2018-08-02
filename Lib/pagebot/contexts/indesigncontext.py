@@ -482,10 +482,11 @@ class InDesignContext(BaseContext):
             return self.b.textSize(bs.s, height=h)
         return self.b.textSize(bs.s)
 
-    def textOverflow(self, bs, bounds, align=LEFT):
+    def textOverflow(self, bs, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new InDesignString in the current context."""
-        return stringClass(self.b.textOverflow(bs.s, bounds, align), self)
+        wpt, hpt = upt(w, h)
+        return stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.

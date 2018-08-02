@@ -33,9 +33,11 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1)
-subHeadStyle = dict(font=bold, fontSize=24, leading=em(1.4), textFill=0.1, paragraphTopSpacing=em(0.5))
-style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15)
+headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1, hyphenation=True,
+    paragraphBottomSpacing=em(0.5))
+subHeadStyle = dict(font=bold, fontSize=24, leading=em(1.4), textFill=0.1, 
+    paragraphBottomSpacing=em(0.2), paragraphTopSpacing=em(0.8))
+style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation=False)
 footNoteRefStyle = dict(font=font, fontSize=18, baselineShift=em(0.2), textFill=0.2)
 footNoteStyle = dict(font=font, fontSize=20, leading=em(1.4), textFill=0.6, paragraphTopSpacing=em(1))
 
@@ -43,21 +45,28 @@ footNoteStyle = dict(font=font, fontSize=20, leading=em(1.4), textFill=0.6, para
 t = context.newString('Headline\n', style=headStyle) # Start with headline
 t += context.newString(text * 3, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text
-t += context.newString('1', style=footNoteRefStyle) # Body text
+t += context.newString('12', style=footNoteRefStyle) # Body text
 t += context.newString('\n', style=style) # Footnote referece
 t += context.newString('Subhead\n', style=subHeadStyle) # Subhead
 t += context.newString(text * 2 + '\n', style=style) # Body text
-t += context.newString('1 '+text, style=footNoteStyle) # Footnote on new line
+t += context.newString('12 '+text, style=footNoteStyle) # Footnote on new line
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, context=context)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
+view.showTextBoxBaselines = False
 # Get the page
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
-newTextBox(t, parent=page, conditions=[Fit()])
+c1 = newTextBox(t, parent=page, conditions=[Fit()])
+#print(c.baselines)
+#print(c1.baselines)
+for tl in c1.textLines:
+    help(tl)
+    break
+
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

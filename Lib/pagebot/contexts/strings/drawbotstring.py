@@ -178,6 +178,13 @@ class DrawBotString(BabelString):
             h = upt(h)
         return self.context.textSize(self, w=w, h=h)
 
+    def getBaselines(self, w, h):
+        u"""Answer the list of vertical baseline position for the self.s FormattedString
+        and for the given width and height.
+        """
+        wpt, hpt = upt(w, h)
+        return getBaselines(self.s, (0, 0, wpt, hpt))
+
     def bounds(self):
         """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
         Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
@@ -265,8 +272,12 @@ class DrawBotString(BabelString):
         return reCompiled.findall(u'%s' % self.s)
 
     def textOverflow(self, w, h, align=LEFT):
+        u"""Answer text string that overflows on (w, h) text flow."""
+        return self.context.textOverflow(self, w, h, align)
+
+    def textLines(self, w, h, align=LEFT):
         wpt, hpt = upt(w, h)
-        return self.context.textOverflow(self, (0, 0, wpt, hpt), align)
+        return getTextLines(self.s, (0, 0, wpt, hpt))
 
     @classmethod
     def _newFitWidthString(cls, fs, context, fontSize, w, pixelFit):
@@ -851,9 +862,9 @@ class TextRun(object):
 
 
 class TextLine(object):
-    def __init__(self, ctLine, p, lineIndex):
+    def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine
-        self.x, self.y = p # Relative position from top of TextBox
+        self.x, self.y = x, y # Relative unit position from top of TextBox
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
 
@@ -874,9 +885,9 @@ class TextLine(object):
     def __getitem__(self, index):
         return self.runs[index]
 
-    def getIndexForPosition(self, xy):
-        x, y = xy
-        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
+    def getIndexForPosition(self, x, y):
+        xpt, ypt = upt(x, y)
+        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(xpt, ypt))[0]
 
     def getOffsetForStringIndex(self, i):
         """Answer the z position that is closest to glyph string index i. If i is out of bounds,
@@ -899,8 +910,8 @@ class TextLine(object):
 
     def _get_imageBounds(self):
         """Property that answers the bounding box (actual black shape) of the text line."""
-        (x, y), (w, h) = CoreText.CTLineGetImageBounds(self._ctLine, None)
-        return x, y, w, h
+        (xpt, ypt), (wpt, hpt) = CoreText.CTLineGetImageBounds(self._ctLine, None)
+        return pt(xpt, ypt, wpt, hpt)
     imageBounds = property(_get_imageBounds)
 
     def _get_bounds(self):
@@ -926,17 +937,31 @@ class TextLine(object):
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
 
-def getBaseLines(txt, box):
+def getTextLines(txt, box):
     """Answer a list of (x,y) positions of all line starts in the box. This function may become part
     of standard DrawBot in the near future."""
     x, y, w, h = box
     attrString = txt.getNSObject()
     setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
     path = Quartz.CGPathCreateMutable()
-    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(*box))
+    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(x, y, w, h))
     box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
     ctLines = CoreText.CTFrameGetLines(box)
+    return ctLines
+
+def getBaselines(txt, box):
+    """Answer a list of (x,y) positions of all line starts in the box. This function may become part
+    of standard DrawBot in the near future."""
+    x, y, w, h = box
+    attrString = txt.getNSObject()
+    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+    path = Quartz.CGPathCreateMutable()
+    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(x, y, w, h))
+    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+    ctLines = CoreText.CTFrameGetLines(box)
+    #print(ctLines)
     origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+    #print(origins)
     return [(x + o.x, y + o.y) for o in origins]
 
 '''

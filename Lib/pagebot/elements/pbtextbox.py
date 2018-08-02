@@ -39,7 +39,7 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
-        self._textLines = self._baseLines = None # Force initiaize upon first usage.
+        self._textLines = self._baselines = None # Force initiaize upon first usage.
         if size is not None:
             self.size = size
         else:
@@ -64,7 +64,8 @@ class TextBox(Element):
         return units(self.css('w'), base=base)
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
-        self._textLines = None # Force reset if being called
+        # Note choice for difference in camelCase
+        self._textLines = self._baselines = None # Force reset if being called
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -104,10 +105,9 @@ class TextBox(Element):
         self.style['h'] = h
     h = property(_get_h, _set_h)
 
-
     def _get_textLines(self):
         if self._textLines is None:
-            return []
+            self._textLines = self.bs.textLines(self.pw, self.ph)
         return self._textLines
     textLines = property(_get_textLines)
 
@@ -245,13 +245,18 @@ class TextBox(Element):
             h = self.ph # Padded height
         return self.bs.textOverflow(w, h, LEFT)
 
-    def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
-        """Answer the list vertical baseline positions, relative to y (default is 0)
+    def getBaselinePositions(self, w=None, h=None):
+        """Answer the list of relative vertical baseline positions,
         for the given width and height. If omitted use (self.w, self.h)"""
-        baselines = []
-        for _, baselineY in self.bs.baseLines(0, y, w or self.w, h or self.h):
-            baselines.append(baselineY)
-        return baselines
+        if self._baselines is None:
+            self._baselines = []
+            for _, baselineY in self.bs.getBaselines(w or self.w, h or self.h):
+                self._baselines.append(baselineY)
+        return self._baselines
+
+    def _get_baselines(self):
+        return self.getBaselinePositions()
+    baselines = property(_get_baselines)
 
     def _findStyle(self, run):
         """Answer the name and style that desctibes this run best. If there is a doc
@@ -260,7 +265,7 @@ class TextBox(Element):
         print(run.attrs)
         return('ZZZ', run.style)
 
-    def getStyledLines(self):
+    def _get_styledLines(self):
         """Answer the list with (styleName, style, textRun) tuples, reversed
         engeneered from the FormattedString `self.bs`. This list can be used to
         query the style parameters used in the textBox, or to create CSS styles
@@ -276,6 +281,7 @@ class TextBox(Element):
                     styledLines[-1][-1] += run.string
                 prevStyle = style
         return styledLines
+    styledLines = property(_get_styledLines)
 
     #   F L O W
 
@@ -423,7 +429,7 @@ class TextBox(Element):
 
         c.stroke((0, 0, 1), 0.5)
         prevY = 0
-        for textLine in []: #self.textLines: TODO: not implemented yet.
+        for textLine in self.textLines: 
             y = textLine.y
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))

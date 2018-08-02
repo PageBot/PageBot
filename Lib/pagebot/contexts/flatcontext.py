@@ -405,10 +405,11 @@ class FlatContext(BaseContext):
         else:
             return (w, w/len(bs))
 
-    def textOverflow(self, bs, bounds, align=LEFT):
+    def textOverflow(self, bs, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h) as new FlatString
         in the current context."""
-        return FlatString(self.b.textOverflow(bs.s, bounds, align), self)
+        wpt, hpt = upt(w, h)
+        return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError()
