@@ -277,7 +277,10 @@ class DrawBotString(BabelString):
 
     def textLines(self, w, h, align=LEFT):
         wpt, hpt = upt(w, h)
-        return getTextLines(self.s, (0, 0, wpt, hpt))
+        textLines = []
+        for lIndex, ctLine in enumerate(getTextLines(self.s, (0, 0, wpt, hpt))):
+            textLines.append(TextLine(ctLine, 0, 0, lIndex))
+        return textLines
 
     @classmethod
     def _newFitWidthString(cls, fs, context, fontSize, w, pixelFit):
@@ -866,14 +869,13 @@ class TextLine(object):
         self._ctLine = ctLine
         self.x, self.y = x, y # Relative unit position from top of TextBox
         self.lineIndex = lineIndex # Vertical line index in TextBox.
-        self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)
 
         self.string = ''
-        self.runs = []
+        self.textRuns = []
         #print(ctLine)
         for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
-            self.runs.append(textRun)
+            self.textRuns.append(textRun)
             self.string += textRun.string
 
     def __repr__(self):
@@ -914,10 +916,34 @@ class TextLine(object):
         return pt(xpt, ypt, wpt, hpt)
     imageBounds = property(_get_imageBounds)
 
+    def _getBounds(self):
+        return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
+
     def _get_bounds(self):
         """Property that returns the EM bounding box of the line."""
-        return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
+        return self._getBounds()
     bounds = property(_get_bounds)
+
+    def _get_size(self):
+        _, _, wpt, hpt = self._getBounds()
+        return pt(wpt, hpt)
+    size = property(_get_size)
+
+    def _get_w(self):
+        _, _, wpt, _ = self._getBounds()
+        return pt(wpt)
+
+    def _get_y(self):
+        _, _, _, hpt = self._getBounds()
+        return pt(hpt)
+
+    def _get_x(self):
+        xpt, _, _, _ = self._getBounds()
+        return pt(xpt)
+
+    def _get_y(self):
+        _, ypt, _, _ = self._getBounds()
+        return pt(ypt)
 
     def _get_trailingWhiteSpace(self):
         return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
