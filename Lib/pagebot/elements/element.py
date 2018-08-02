@@ -3479,10 +3479,9 @@ class Element(object):
         """Answer a single string with metrics info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
         that want to show additional information."""
-        s = '%s\nPosition: %s, %s, %s\nSize: %s, %s\nColumn point: %s, %s\nColumn size: %s, %s' % \
+        s = '%s\nPosition: %s, %s, %s\nSize: %s, %s' % \
             (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z),
-             asFormatted(self.w), asFormatted(self.h),
-             asFormatted(self.cx), asFormatted(self.cy), asFormatted(self.cw), asFormatted(self.ch),
+             asFormatted(self.w), asFormatted(self.h)
             )
         if self.xAlign or self.yAlign:
             s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
