@@ -67,8 +67,9 @@ class BaseView(Element):
         self.showElementOrigin = False # Show element origin crosshair marker
         self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
-        # Grid stuff
-        self.showGrid = set() # If set, display the type of grid (GRID_COL, GRID_ROW, GRID_SQR)
+        # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
+        self.showGrid = set() # If set, display the type of grid  on foreground
+        self.showGridBackground = set() # If set, display the type of grid on background
         self.showBaselineGrid = False
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.

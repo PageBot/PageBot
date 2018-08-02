@@ -236,7 +236,7 @@ class TextBox(Element):
         """Figure out what the overflow of the text is, with the given (w, h) or styled
         (self.w, self.h) of this text box. If h is None and self.h is None then by
         definintion overflow will allways be empty, as the box is elastic."""
-        if self.h is None and h is None: # In case height is undefined, box will aways fit the content.
+        if self.h is None and h is None: # In case height is undefined, box will always fit the content.
             return ''
         # Otherwise test if there is overflow of text in the given element size.
         if w is None:

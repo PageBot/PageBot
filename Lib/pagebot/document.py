@@ -22,7 +22,7 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.toolbox.transformer import obj2StyleId
-from pagebot.toolbox.units import pt, units
+from pagebot.toolbox.units import pt, units, isUnit
 
 class Document(object):
     """A Document is just another kind of container.
@@ -590,7 +590,7 @@ class Document(object):
         return self.pt, self.pr, self.pb, self.pl
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
-        if isinstance(padding, (int, float)):
+        if isUnit(padding) or isinstance(padding, (int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
             padding = (padding[0], padding[0], padding[0], padding[0], padding[0], padding[0])
