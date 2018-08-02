@@ -23,13 +23,13 @@ from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.toolbox.color import color, blackColor, whiteColor, noColor
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, em
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 
 DoTextFlow = True
-BoxWidth = 500
 PagePadding = 30
 PageSize = 500
+BoxWidth = PageSize - 2*PagePadding
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseTextFlows.png'
@@ -44,7 +44,7 @@ def makeDocument():
 
     view = doc.getView()
     print(view.viewId, doc.views)
-    view.padding = 30 # Aboid showing of crop marks, etc.
+    view.padding = 30 # Avoid showing of crop marks, etc. when value = 0
     view.showPageCropMarks = True
     view.showPageRegistrationMarks = True
     view.showPageFrame = True
@@ -78,8 +78,11 @@ def makeDocument():
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions.
         yAlign=BOTTOM, xAlign=LEFT,
-        leading=pt(5), fontSize=pt(9), textFill=blackColor, strokeWidth=pt(0.5), 
-        fill=color(0.9), stroke=noColor,
+        leading=em(1.4), fontSize=pt(9), 
+        textFill=blackColor, 
+        fill=0.9, # Renders to color
+        stroke=noColor,
+        strokeWidth=pt(0.5)
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name
@@ -97,7 +100,8 @@ def makeDocument():
         name='ElasticTextBox3', # Flow reference by element.name
         parent=page1, padding=4, w=BoxWidth,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom()],
-        yAlign=TOP,  fill=whiteColor, stroke=noColor)
+        yAlign=TOP,  
+        fill=whiteColor, stroke=noColor)
 
     score = doc.solve() # Try to solve all pages.
     if score.fails:

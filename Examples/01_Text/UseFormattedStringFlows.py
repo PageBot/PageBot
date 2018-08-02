@@ -22,7 +22,7 @@ from pagebot.style import LEFT, BOTTOM, TOP
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, blackColor, noColor, whiteColor
 
 DoTextFlow = True
 BoxWidth = 500
@@ -59,7 +59,8 @@ def makeDocument():
     bs = c.newString('')
     for n in range(10):
         bs += c.newString('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=blackColor))
-        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n', style=dict(font='Verdana', fontSize=9, leading=10, textFill=blackColor))
+        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n', 
+            style=dict(font='Verdana', fontSize=9, leading=10, textFill=blackColor))
 
     if DoTextFlow:
         h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
@@ -83,7 +84,6 @@ def makeDocument():
         name='ElasticTextBox2', # Flow reference by element.name
         nextElement='ElasticTextBox3', nextPage='Page 2',
         parent=page0, padding=4, x=100, w=BoxWidth, h=200,
-        maxW=W-2*PagePadding, minW=100,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  fill=whiteColor, stroke=noColor,
     )
     # Get next page, to show flow running over page breaks.
