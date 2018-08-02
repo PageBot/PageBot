@@ -375,20 +375,20 @@ class FlatContext(BaseContext):
         there is no text defined.  Answer the height of the string if the width
         w is given.
 
-        >>> w = h = pt(500)
-        >>> x = y = pt(0)
+        >>> w = h = 500 # Default to pt-units
+        >>> x = y = 0
         >>> context = FlatContext()
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
         >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
+        >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()
         False
         >>> bs = context.newString('ABC ' * 100000, style=style)
         >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
+        >>> t = t.frame(x, y, w, h)
         >>> t.overflow()
         True
         >>> lines = t.lines()

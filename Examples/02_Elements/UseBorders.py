@@ -19,7 +19,7 @@ from drawBot.misc import DrawBotError
 
 import pagebot # Import to know the path of non-Python resources.
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, MM,\
+from pagebot.style import getRootStyle, A4, CENTER,TOP, BOTTOM, \
     INLINE, OUTLINE, ONLINE
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.elements import *
@@ -85,7 +85,7 @@ def makeDocument():
             p = padX + ix * (SQUARE + GUTTER), my + iy * (SQUARE + GUTTER) # Make 2-dimensional point tuple.
             # Create Rect object and place it in the page on position p
             # Initialize the borders dicts on lineWidth == 0
-            e = newRect(p, w=SQUARE, h=SQUARE, parent=page, 
+            e = newRect(xy=p, w=SQUARE, h=SQUARE, parent=page, 
                 fill=color1, stroke=noColor, borders=1) # border=1 also works, identical.
             lineType = {-1:ONLINE, 0:INLINE, 1:ONLINE, 2:OUTLINE}[LineType]
             e.borderLeft['strokeWidth'] = pt((ix+1)*4)
