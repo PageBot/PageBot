@@ -325,7 +325,7 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         xpt, ypt = point2D(upt(p))
-        placedText.position(xpt, ypt # Render unit tuple to value tuple
+        placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted string.
@@ -338,33 +338,37 @@ class FlatContext(BaseContext):
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', pt(12)) # Font does not exists, font path is set to DEFAULT_FONT_PATH
+        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to DEFAULT_FONT_PATH
         >>> context._font == DEFAULT_FONT_PATH
         True
-        >>> context._fontSize
-        12pt
+        >>> context._fontSize # Renders to pt-unit
+        12
         """
         from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 
         self._font = getFontPathOfFont(font) # Convert name or path to font path.
         if fontSize is not None:
-            self._fontSize = utp(fontSize)
+            self._fontSize = upt(fontSize)
 
     def fontSize(self, fontSize):
         """Set the current fontSize, in case it is not defined in a formatted string
 
-        >>> fontSize = pt(12)
+        >>> from pagebot.toolbox.units import p
         >>> context = FlatContext()
-        >>> context.fontSize(fontSize)
-        >>> context._fontSize
-        12pt
+        >>> context.fontSize(p(1)) # Set a unit
+        >>> context._fontSize # Defaults to pt-unit
+        12
+        >>> context.fontSize(14) # Set a number
+        >>> context._fontSize # Defaults to pt-unit
+        14
         """
-        self._fontSize = fontSize
+        self._fontSize = upt(fontSize)
 
-    def textBox(self, bs, rect):
-        x, y, w, h = rect
+    def textBox(self, bs, r):
+        u"""Not usigin width and height here?"""
+        xpt, ypt, _, _ = upt(r)
         placedText = self.page.place(bs.s)
-        placedText.position(x.r, y.r)
+        placedText.position(xpt, ypt)
 
     def textSize(self, bs, w=None, h=None):
         """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
@@ -376,7 +380,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
-        >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
+        >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x.pt, y.pt, w.pt, h.pt)
