@@ -33,7 +33,7 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1, hyphenation=True,
+headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1, hyphenation=False,
     paragraphBottomSpacing=em(0.5))
 subHeadStyle = dict(font=bold, fontSize=24, leading=em(1.4), textFill=0.1, 
     paragraphBottomSpacing=em(0.2), paragraphTopSpacing=em(0.8))
@@ -63,10 +63,10 @@ page = doc[1]
 c1 = newTextBox(t, parent=page, conditions=[Fit()])
 #print(c.baselines)
 #print(c1.baselines)
+print(len(c1.textLines))
 for tl in c1.textLines:
-    help(tl)
-    break
-
+    print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
+    print(tl.textRuns)
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.
