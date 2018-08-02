@@ -20,13 +20,15 @@
 #    Implements a demo version of TextLine and TextRun.
 #    This code has been built into BabelString DrawBotString.
 #
+from __future__ import print_function
+
 import re
 import sys
 
-from __future__ import print_function
 from pagebot.contexts.platform import getContext
 from pagebot.elements import newTextBox
 from pagebot.toolbox.color import color
+from pagebot.document import Document
 
 try:
     import CoreText
@@ -66,7 +68,7 @@ class TextRun(object):
         self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
         self.string = u''
         # Hack for now to find the string in repr-string if self._ctLine.
-        for index, part in enumerate(`ctRun`.split('"')[1].split('\\u')):
+        for index, part in enumerate(str(ctRun).split('"')[1].split('\\u')):
             if index == 0:
                 self.string += part
             elif len(part) >= 4:
@@ -235,7 +237,8 @@ class TextLine(object):
     def __len__(self):
         return self.glyphCount
 
-    def getIndexForPosition(self, (x, y)):
+    def getIndexForPosition(self, xy):
+        x, y = xy
         return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(x, y))[0]
 
     def getOffsetForStringIndex(self, i):
@@ -445,12 +448,15 @@ fittingWord = context.newString('ABC\n',
                                      lineHeight=fittingSize))
 fs += fittingWord
 
-context.newPage(W+G*2, H + G*2)
-myTextBox = newTextBox(fs, x=G, y=G, w=W, h=H)
-myTextBox.draw()
-myTextBox._drawFrame()
-myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
+doc = Document(w=W+G*2, h=H + G*2, autoPages=1)
+view = doc.view
 
+page = doc[1]
+myTextBox = newTextBox(fs, x=G, y=G, w=W, h=H, parent=page)
+#myTextBox._drawBaselines(showIndex=True, showY=True, showLeading=True)
+
+"""
+FIX
 for pattern in myTextBox.findPattern('Find'):
     #print(pattern)
     px = pattern.x
@@ -470,3 +476,4 @@ for yy in range(-3,10):
     context.line((myTextBox.x, y), (myTextBox.x + myTextBox.w, y))
 
 context.saveImage('_export/testTextLineTextRun.pdf')
+"""

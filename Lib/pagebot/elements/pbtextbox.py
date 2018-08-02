@@ -17,7 +17,7 @@
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset, pt, units, uRound, ru
+from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
 
 class TextBox(Element):
@@ -439,14 +439,13 @@ class TextBox(Element):
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draw the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
-        fs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=pt(8)))
-        tw, th = b.textSize(fs.s)
-        if self.originTop:
-            pass
-        else:
-            b.text(fs.s, ru(px + self.w - 3 - tw, py + th/2))
+        bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=10))
+        tw, _ = bs.size
+        # FIX: Should work work self.bottom
+        #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
+        b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
 
-    #   C O N D I T I O N S
+    #   C O N D I T I O N
 
     # Text conditions
 
