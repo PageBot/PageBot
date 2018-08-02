@@ -510,6 +510,9 @@ class DrawBotContext(BaseContext):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
         boundspt = upt(bounds)
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        self.b.hyphenation(bool(bs.hyphenation))
         return stringClass(self.b.textOverflow(bs.s, boundspt, align), self)
 
     def textBoxBaseLines(self, txt, box):

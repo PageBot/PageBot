@@ -287,12 +287,13 @@ class TextBox(Element):
         NOTE: There is currently not a test if text actually went into the next
         element. It's just checking if there is a name defined, not if it
         exists or is already filled by another flow."""
-        return self.nextElement is None and self.getOverflow() != ''
+        return self.nextElement is None and self.getOverflow()
 
     def overflow2Next(self):
         """Try to fix if there is overflow."""
         result = True
         overflow = self.getOverflow()
+
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
             result = False
             # Find the page of self
@@ -351,6 +352,9 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        context.b.hyphenation(bool(self.bs.hyphenation))
         context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset,
             self.pw, self.ph))
 
