@@ -20,7 +20,7 @@ import weakref
 import copy
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor, Color, blackColor
+from pagebot.toolbox.color import noColor, color, Color, blackColor
 
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
@@ -255,10 +255,22 @@ class Element(object):
         return len(self.elements)
 
     def checkStyleArgs(self, d):
-        if 'fill' in d:
-            assert isinstance(d['fill'], Color), 'fill should be of type Color'
-        if 'stroke' in d:
-            assert isinstance(d['stroke'], Color), 'stroke should be of type Color'
+        u"""Fix style values where necessary.
+
+        >>> e = Element()
+        >>> style = dict(fill=(1, 0, 0), stroke=0.5)
+        >>> e.checkStyleArgs(style)
+        >>> style['fill']
+        Color(r=1, g=0, b=0)
+        >>> style['stroke']
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        fill = d.get('fill')
+        if fill is not None and not isinstance(fill, Color):
+            d['fill'] = color(fill)
+        stroke = d.get('stroke')
+        if stroke is not None and not isinstance(stroke, Color):
+            d['stroke'] = color(stroke)
 
     #   T E M P L A T E
 
@@ -3478,22 +3490,25 @@ class Element(object):
     def getMetricsString(self, view=None):
         """Answer a single string with metrics info about the element. Default is to show the posiiton
         and size (in points and columns). This method can be redefined by inheriting elements
-        that want to show additional information."""
+        that want to show additional information.
+        """
         s = '%s\nPosition: %s, %s, %s\nSize: %s, %s' % \
-            (self.__class__.__name__ + ' ' + (self.name or ''), asFormatted(self.x), asFormatted(self.y), asFormatted(self.z),
-             asFormatted(self.w), asFormatted(self.h)
+            (self.__class__.__name__ + ' ' + (self.name or ''), 
+                asFormatted(self.x), asFormatted(self.y), asFormatted(self.z),
+                asFormatted(self.w), asFormatted(self.h)
             )
         if self.xAlign or self.yAlign:
             s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
         if self.conditions:
-            if view is None:
+            if view is None and self.doc is not None:
                 view = self.doc.view
-            score = self.evaluate(view)
-            s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
-            if score.fails:
-                s += ' Fails: %d' % len(score.fails)
-                for eFail in score.fails:
-                    s += '\n%s %s' % eFail
+            if view is not None:
+                score = self.evaluate(view)
+                s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
+                if score.fails:
+                    s += ' Fails: %d' % len(score.fails)
+                    for eFail in score.fails:
+                        s += '\n%s %s' % eFail
         return s
 
     def buildFrame(self, view, p):

@@ -18,9 +18,11 @@
 #
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, color
 
 context = getContext()
+
+W = H = 500
 
 def run():
 	w, h = pt(1000, 400) # Make a list of Unit pt instance and unpack the.

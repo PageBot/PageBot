@@ -42,21 +42,21 @@ labelStyle = dict(font=varFont.path, fontSize=8, textFill=(1, 0, 0))
 
 style = dict(font=varFont.path, fontSize=10)
 bs = context.newString(s, style=style, w=W-2*PADDING)
-newText(bs, (20, 180, W-2*PADDING, H), parent=page)
+newText(bs, x=20, y=180, w=W-2*PADDING, h=H, parent=page)
 labelS = context.newString('Original var-font %0.2fpt' % (bs.fontSize), style=labelStyle)
-newText(labelS, (20, 220), parent=page)
+newText(labelS, x=20, y=220, parent=page)
 
 style = dict(font=wideFont.path, fontSize=10)
 bs = context.newString(s, style=style, w=W-2*PADDING)
-newText(bs, (20, 100, W-2*PADDING, H), parent=page)
+newText(bs, x=20, y=100, w=W-2*PADDING, h=H, parent=page)
 labelS = context.newString('Wide %0.2fpt %s' % (bs.fontSize, wideFont.info.location), style=labelStyle)
-newText(labelS, (20, 130), parent=page)
+newText(labelS, x=20, y=130, parent=page)
 
 style = dict(font=boldFont.path, fontSize=10)
 bs = context.newString(s, style=style, w=W-2*PADDING)
-newText(bs, (20, -30, W-2*PADDING, H), parent=page)
+newText(bs, x=20, y=-30, w=W-2*PADDING, h=H, parent=page)
 labelS = context.newString('Bold %0.2fpt %s' % (bs.fontSize, boldFont.info.location), style=labelStyle)
-newText(labelS, (20, 10), parent=page)
+newText(labelS, x=20, y=10, parent=page)
 
 doc.export(EXPORT_PATH)
 
