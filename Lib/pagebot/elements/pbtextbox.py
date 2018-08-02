@@ -240,9 +240,9 @@ class TextBox(Element):
             return ''
         # Otherwise test if there is overflow of text in the given element size.
         if w is None:
-            w = self.w-self.pr-self.pl
+            w = self.pw # Padded width
         if h is None:
-            h = self.h-self.pt-self.pb
+            h = self.ph # Padded height
         return self.bs.textOverflow(w, h, LEFT)
 
     def NOTNOW_getBaselinePositions(self, y=0, w=None, h=None):
@@ -352,7 +352,7 @@ class TextBox(Element):
             context.setShadow(textShadow)
 
         context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset,
-            self.w-self.pl-self.pr, self.h-self.pb-self.pt))
+            self.pw, self.ph))
 
         if textShadow:
             context.restoreGraphicState()
@@ -361,10 +361,12 @@ class TextBox(Element):
             # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, p)
 
+        # TODO: Make this work for FlatContext too
         # Draw markers on TextLine and TextRun positions.
         self._drawBaselines_drawBot(view, px, py)
 
         if view.showTextOverflowMarker and self.isOverflow():
+            # TODO: Make this work for FlatContext too
             self._drawOverflowMarker_drawBot(view, px, py)
 
         if self.drawAfter is not None: # Call if defined

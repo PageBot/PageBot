@@ -41,7 +41,7 @@ font = findFont('Roboto-Regular')
 
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3)
 # Make long text to force box overflow
-t = context.newString(text * 7, style=style)
+t = context.newString(text * 3 + str(list(range(100))), style=style)
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context)
 # Get the default page view of the document and set viewing parameters
@@ -55,13 +55,13 @@ page = doc[1]
 # to fit the padding of the page and the condition that checks on text overflow.
 c1 = newTextBox(t, w=CW, name='c1', parent=page, nextElement='c2',
     conditions=[Left2Left(), Top2Top(), Fit2Height(), Overflow2Next()])
-print(c1.getOverflow())
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.
 c2 = newTextBox(w=CW, name='c2', parent=page, 
     conditions=[Right2Right(), Top2Top(), Fit2Height()])
 # Solve the page/element conditions
 doc.solve()
+print(c1.getOverflow())
 
 # Export the document to this PDF file.
 doc.export('_export/SingleColumn.pdf')
