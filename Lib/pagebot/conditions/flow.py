@@ -20,7 +20,7 @@
 from __future__ import division
 from pagebot.conditions.condition import Condition
 
-# Margins
+# Text overflow
 
 class Overflow2Next(Condition):
 	u"""If there is overflow in the element, then try to solve it.
@@ -40,7 +40,7 @@ class Overflow2Next(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.overflow2Next(), e, score)
 
-class EqualizeFlow22Height(Condition):
+class EqualizeFlow2Height(Condition):
 	u"""Test if all elements in the flow have the same height and/or same amount of text lines."""
 	# TODO
 

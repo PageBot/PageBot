@@ -62,6 +62,7 @@ class NoneDrawBotString(BabelString):
         self.fontSize = DEFAULT_FONT_SIZE
         self.font = DEFAULT_FONT_PATH
         self.style = style
+        self.hyphenation = False
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
@@ -128,6 +129,7 @@ class DrawBotString(BabelString):
             style = {}
         self.style = style
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterated to find width.
+        self.hyphenation = False
 
     def _get_s(self):
         """Answer the embedded FormattedString by property, to enforce checking
@@ -182,6 +184,9 @@ class DrawBotString(BabelString):
         @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        self.context.hyphenation(bool(self.style['hyphenation']))
         return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
@@ -443,10 +448,14 @@ class DrawBotString(BabelString):
         elif isinstance(t, str):
             t = str(t)
 
-        fsStyle = {}
+        fsAttrs = {}
 
         b = context.b
-        b.hyphenation(css('hyphenation', e, style)) # TODO: Should be text attribute, not global
+
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        hyphenation = bool(css('hyphenation', e, style))
+        b.hyphenation(hyphenation)
 
         # Font selection
 
@@ -454,14 +463,14 @@ class DrawBotString(BabelString):
         if sFont is not None:
             if hasattr(sFont, 'path'): # If the Font instance was supplied, then use it's path.
                 sFont = sFont.path
-            fsStyle['font'] = sFont
+            fsAttrs['font'] = sFont
 
         sFallbackFont = css('fallbackFont', e, style)
         if isinstance(sFallbackFont, Font):
             sFallbackFont = sFallbackFont.path
         elif sFallbackFont is None:
             sFallbackFont = DEFAULT_FALLBACK_FONT_PATH
-        fsStyle['fallbackFont'] = sFallbackFont
+        fsAttrs['fallbackFont'] = sFallbackFont
 
         # If there is a target (pixel) width or height defined, ignore the
         # requested fontSize and try the width or height first for fontSize =
@@ -476,13 +485,13 @@ class DrawBotString(BabelString):
             # May be scaled to fit w or h if target is defined.
             uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)    
         if uFontSize is not None:
-            fsStyle['fontSize'] = fontSizePt = upt(uFontSize) # Remember as base for relative units
+            fsAttrs['fontSize'] = fontSizePt = upt(uFontSize) # Remember as base for relative units
         else:
             fontSizePt = DEFAULT_FONT_SIZE
 
         uLeading = css('leading', e, style)
         if uLeading is not None:
-            fsStyle['lineHeight'] = upt(uLeading, base=fontSizePt) # Base for em or perc
+            fsAttrs['lineHeight'] = upt(uLeading, base=fontSizePt) # Base for em or perc
         
         # Color values for text fill
         # Color: Fill the text with this color instance
@@ -494,11 +503,11 @@ class DrawBotString(BabelString):
                 cFill = color(cFill)
             assert isinstance(cFill, Color), ('DrawBotString.newString: Fill color "%s" is not Color in style %s' % (cFill, style))
             if cFill is noColor:
-                fsStyle['fill'] = None
+                fsAttrs['fill'] = None
             elif cFill.isCmyk:
-                fsStyle['cmykFill'] = cFill.cmyk
+                fsAttrs['cmykFill'] = cFill.cmyk
             else:
-                fsStyle['fill'] = cFill.rgb
+                fsAttrs['fill'] = cFill.rgb
 
         # Color values for text stroke
         # Color: Stroke the text with this color instance
@@ -514,43 +523,47 @@ class DrawBotString(BabelString):
                 cFill = color(cFill)
             assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
             if cStroke is noColor: # None is value to disable stroke drawing
-                fsStyle['stroke'] = None
+                fsAttrs['stroke'] = None
             elif cFill.isCmyk:
-                fsStyle['cmykFill'] = cFill.cmyk
+                fsAttrs['cmykFill'] = cFill.cmyk
             else:
-                fsStyle['fill'] = cFill.rgb
+                fsAttrs['fill'] = cFill.rgb
         
         sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sAlign is not None: # yTextAlign must be solved by parent container element.
-            fsStyle['align'] = sAlign
+            fsAttrs['align'] = sAlign
 
         sUnderline = css('underline', e, style)
         if sUnderline in ('single', None): # Only these values work in FormattedString
-            fsStyle['underline'] = sUnderline
+            fsAttrs['underline'] = sUnderline
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
         if uParagraphTopSpacing is not None:
-            fsStyle['paragraphTopSpacing'] = upt(uParagraphTopSpacing, base=fontSizePt) # Base for em or perc
+            fsAttrs['paragraphTopSpacing'] = upt(uParagraphTopSpacing, base=fontSizePt) # Base for em or perc
 
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
         if uParagraphBottomSpacing:
-            fsStyle['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) # Base for em or perc
+            fsAttrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) # Base for em or perc
 
         uTracking = css('tracking', e, style)
         if uTracking is not None:
-            fsStyle['tracking'] = upt(uTracking, base=fontSizePt) # Base for em or perc
+            fsAttrs['tracking'] = upt(uTracking, base=fontSizePt) # Base for em or perc
 
         uBaselineShift = css('baselineShift', e, style)
         if uBaselineShift is not None:
-            fsStyle['baselineShift'] = upt(uBaselineShift, base=fontSizePt) # Base for em or perc
+            fsAttrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt) # Base for em or perc
 
         openTypeFeatures = css('openTypeFeatures', e, style)
         if openTypeFeatures is not None:
-            fsStyle['openTypeFeatures'] = openTypeFeatures
+            fsAttrs['openTypeFeatures'] = openTypeFeatures
 
         tabs = css('tabs', e, style)
         if tabs is not None:
-            fsStyle['tabs'] = tabs
+            fsAttrs['tabs'] = tabs
+
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        # FIX IN DRAWBOT fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
@@ -558,19 +571,19 @@ class DrawBotString(BabelString):
         # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
-            fsStyle['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
+            fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
 
         uIndent = css('indent', e, style)
         if uIndent is not None:
-            fsStyle['indent'] = upt(uIndent, base=fontSizePt) # Base for em or perc
+            fsAttrs['indent'] = upt(uIndent, base=fontSizePt) # Base for em or perc
 
         uTailIndent = css('tailldIndent', e, style)
         if uTailIndent is not None:
-            fsStyle['tailIndent'] = upt(uTailIndent, base=fontSizePt) # Base for em or perc
+            fsAttrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) # Base for em or perc
 
         sLanguage = css('language', e, style)
         if sLanguage is not None:
-            fsStyle['language'] = sLanguage
+            fsAttrs['language'] = sLanguage
 
         if css('uppercase', e, style):
             t = t.upper()
@@ -579,7 +592,7 @@ class DrawBotString(BabelString):
         elif css('capitalized', e, style):
             t = t.capitalize()
 
-        newT = b.FormattedString(t, **fsStyle) # Format plain string t onto new formatted fs.
+        newT = b.FormattedString(t, **fsAttrs) # Format plain string t onto new formatted fs.
 
         isFitting = True
         if w is not None:
@@ -588,18 +601,18 @@ class DrawBotString(BabelString):
             # instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space
             # to the right of the string.
-            fsStyle = copy(fsStyle)
+            fsAttrs = copy(fsAttrs)
             fittingFontSize = cls._newFitWidthString(newT, context, uFontSize, w, pixelFit)
             if fittingFontSize is not None: # Chedked on zero division
                 fsStyle['fontSize'] = fittingFontSize
-                newS = cls.newString(t, context, style=fsStyle)
+                newS = cls.newString(t, context, style=fsAttrs)
                 # Test the width we got by linear interpolation. Scale back if still too large.
                 # Iterate until it really fits.
                 while newS.textSize()[0] > w and fsStyle['fontSize']:
-                    fsStyle['fontSize'] -= 0.1 # Incremental decrease the size until it fits
-                    newS = cls.newString(t, context, style=fsStyle)
+                    fsAttrs['fontSize'] -= 0.1 # Incremental decrease the size until it fits
+                    newS = cls.newString(t, context, style=fsAttrs)
             else:
-                newS = cls(newT, context, fsStyle) # Cannot fit, answer untouched.
+                newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         elif h is not None:
             # There is a target height defined, calculate again with the
@@ -607,25 +620,26 @@ class DrawBotString(BabelString):
             # instead of the context.textSide(newt) here, because it is much
             # more consistent for tracked text. context.textSize will add space
             # to the right of the string.
-            fsStyle = copy(fsStyle)
+            fsAttrs = copy(fsAttrs)
             fittingFontSize = cls._newFitHeightString(newT, context, uFontSize, h, pixelFit)
             if fittingFontSize is not None:
-                fsStyle['fontSize'] = fittingFontSize
-                newS = cls.newString(t, context, style=fsStyle)
+                fsAttrs['fontSize'] = fittingFontSize
+                newS = cls.newString(t, context, style=fsAttrs)
                 didFit = True
             else:
-                newS = cls(newT, context, fsStyle) # Cannot fit, answer untouched.
+                newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         else:
-            newS = cls(newT, context, fsStyle)
+            newS = cls(newT, context, fsAttrs)
             fittingStyle = {}
 
         # Store any adjust fitting parameters in the string, in case the caller
         # wants to know.
-        newS.fittingFontSize = fsStyle.get('fontSize')
-        newS.fittingFont = fsStyle.get('font') # In case we are sampling with a Variable Font.
-        newS.fittingLocation = fsStyle.get('location')
+        newS.fittingFontSize = fsAttrs.get('fontSize')
+        newS.fittingFont = fsAttrs.get('font') # In case we are sampling with a Variable Font.
+        newS.fittingLocation = fsAttrs.get('location')
         newS.isFitting = isFitting
+        newS.hyphenation = hyphenation
 
         return newS
 
