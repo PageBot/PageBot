@@ -30,9 +30,14 @@ try:
     drawBotBuilder = drawBot
 except (AttributeError, ImportError):
     NSFont = None
+    CGPathAddRect = CGPathCreateMutable = CGRectMake = None
+    CTFramesetterCreateWithAttributedString = None
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
+    CTFrameGetLines = None
+    CTFrameGetLineOrigins = None
     kCTFontURLAttribute = None
+    CTFramesetterCreateFrame = None
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
@@ -305,12 +310,12 @@ class DrawBotString(BabelString):
         textLines = []
 
         attrString = self.s.getNSObject()
-        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-        path = Quartz.CGPathCreateMutable()
-        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(0, 0, wpt, hpt))
-        ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CoreText.CTFrameGetLines(ctBox)
-        origins = CoreText.CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
+        setter = CTFramesetterCreateWithAttributedString(attrString)
+        path = CGPathCreateMutable()
+        CGPathAddRect(path, None, CGRectMake(0, 0, wpt, hpt))
+        ctBox = CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CTFrameGetLines(ctBox)
+        origins = CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
 
         for lIndex, ctLine in enumerate(ctLines):
             origin = origins[lIndex]
