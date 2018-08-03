@@ -1913,21 +1913,21 @@ def value2Maker(v):
         if v in UNIT_MAKERS:
             maker = UNIT_MAKERS[v]
         else:
-            value, unit = VALUE_UNIT.findall(v)[0]
+            value, unitType = VALUE_UNIT.findall(v)[0]
 
             if not value:
-                unit, value = UNIT_VALUE.findall(v)[0]
+                unitType, value = UNIT_VALUE.findall(v)[0]
 
             if value:
-                if not unit:
-                    unit = Pt.UNIT
-                elif unit == Inch.UNITC: # '"'
-                    unit = Inch.UNIT
-                elif unit == Perc.UNITC: # '%'
-                    unit = Perc.UNIT
+                if not unitType:
+                    unitType = Pt.UNIT
+                elif unitType == Inch.UNITC: # '"'
+                    unitType = Inch.UNIT
+                elif unitType == Perc.UNITC: # '%'
+                    unitType = Perc.UNIT
 
-            if unit in UNIT_MAKERS:
-                maker = UNIT_MAKERS[unit]
+            if unitType in UNIT_MAKERS:
+                maker = UNIT_MAKERS[unitType]
     return maker
 
 def units(v, maker=None, g=None, base=None, default=None):
