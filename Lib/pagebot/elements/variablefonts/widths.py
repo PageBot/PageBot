@@ -18,7 +18,7 @@
 #
 from pagebot.elements import Element
 from pagebot.toolbox.units import pointOffset, em, upt
-from pagebot.toolbox.color import noColor, blackColor, whiteColor, color
+from pagebot.toolbox.color import noColor, blackColor, color
 
 class FontIcon(Element): 
     u"""Showing the specified font(sub variable font) in the form of an icon 
@@ -47,6 +47,7 @@ class FontIcon(Element):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.elements import newRect
         >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.color import whiteColor
         >>> c = DrawBotContext()
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)

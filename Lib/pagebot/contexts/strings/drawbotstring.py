@@ -174,11 +174,11 @@ class DrawBotString(BabelString):
         b = self.context.b
         if w is not None:
             wpt = upt(w)
-            return b.textSize(bs.s, width=wpt)
+            return b.textSize(self.s, width=wpt)
         if h is not None:
             hpt = upt(h)
-            return b.textSize(bs.s, height=hpt)
-        return b.textSize(bs.s)
+            return b.textSize(self.s, height=hpt)
+        return b.textSize(self.s)
 
     def textOverflow(self, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
@@ -187,7 +187,7 @@ class DrawBotString(BabelString):
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
         self.b.hyphenation(bool(self.hyphenation))
-        oveflow = stringClass(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
+        overflow = self.__class__(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
         self.b.hyphenation(False)
         return overflow
 
@@ -553,7 +553,7 @@ class DrawBotString(BabelString):
         strokeWidth = css('textStrokeWidth', e, style)
         if strokeWidth is not None:
             assert isUnit(strokeWidth), ('DrawBotString.newString: strokeWidth %s must of type Unit' % strokeWidth)
-            fsStyle['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
+            fsAttrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
         if cStroke is not inheritColor:
             if isinstance(cStroke, (tuple, list, int, float)):
                 cStroke = color(cStroke)
@@ -642,11 +642,11 @@ class DrawBotString(BabelString):
             fsAttrs = copy(fsAttrs)
             fittingFontSize = cls._newFitWidthString(newT, context, uFontSize, w, pixelFit)
             if fittingFontSize is not None: # Chedked on zero division
-                fsStyle['fontSize'] = fittingFontSize
+                fsAttrs['fontSize'] = fittingFontSize
                 newS = cls.newString(t, context, style=fsAttrs)
                 # Test the width we got by linear interpolation. Scale back if still too large.
                 # Iterate until it really fits.
-                while newS.size[0] > w and fsStyle['fontSize']:
+                while newS.size[0] > w and fsAttrs['fontSize']:
                     fsAttrs['fontSize'] -= 0.1 # Incremental decrease the size until it fits
                     newS = cls.newString(t, context, style=fsAttrs)
             else:

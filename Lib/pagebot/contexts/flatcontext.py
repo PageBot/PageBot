@@ -637,7 +637,7 @@ class FlatContext(BaseContext):
         u"""Set global stroke color or the color of the formatted string.
 
         """
-        if isInstance(c, (tuple, list, int, float)):
+        if isinstance(c, (tuple, list, int, float)):
             c = color(c)
         assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
         self._stroke = c
@@ -692,7 +692,7 @@ class FlatContext(BaseContext):
 
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""
-        dxpt, dypt = point3D(upt(dx, dy))
+        dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dxpt
         self._oy += dypt
 
