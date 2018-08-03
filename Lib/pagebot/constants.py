@@ -31,7 +31,7 @@ A1 = mm(594),   mm(841)
 A2 = mm(420),   mm(594)
 A3 = mm(297),   mm(420)
 A4 = mm(210),   mm(297)
-A4Rounded = mm(210).rounded.pt, mm(297).rounded.pt # Rounded to points 595 * 842 to fit exact columns measures
+A4Rounded = pt(A4[0].rounded, A4[1].rounded) # Rounded to points pt(595, 842) to fit exact columns measures
 A5 = mm(148),   mm(210)
 A6 = mm(105),   mm(148)
 A7 = mm(74),    mm(105)
@@ -63,19 +63,19 @@ C8 = mm(57),    mm(81)
 C9 = mm(40),    mm(57)
 C10 = mm(28),   mm(40)
 # American Sizes as non-rounded values
-HalfLetter = inch(8.5), inch(5.5)
-Letter = inch(8.5), inch(11)
-Legal = inch(8.5), inch(14)
-JuniorLegal = inch(5), inch(8)
-Tabloid = inch(11), inch(17)
+HalfLetter = inch(8.5, 5.5)
+Letter = inch(8.5, 11)
+Legal = inch(8.5, 14)
+JuniorLegal = inch(5, 8)
+Tabloid = inch(11, 17)
 # Other rounded definintions compatible to DrawBot
 #Screen = getContext().screenSize() # Current screen size. TODO: fix this
-Ledger = pt(1224), pt(792)
-Statement = pt(396), pt(612)
-Executive = pt(540), pt(720)
-Folio = pt(612), pt(936)
-Quarto = pt(610), pt(780)
-Size10x14 = pt(720), pt(1008)
+Ledger = pt(1224, 792)
+Statement = pt(396, 612)
+Executive = pt(540, 720)
+Folio = pt(612, 936)
+Quarto = pt(610, 780)
+Size10x14 = pt(720, 1008)
 
 # Hybrid sizes
 # International generic fit for stationary
@@ -85,98 +85,98 @@ A4Oversized = A4[0]+inch(1), A4[1]+inch(1)
 A3Oversized = A3[0]+inch(1), A3[1]+inch(1)
 
 # International Postcard Size
-IntPostcardMax = mm(235), mm(120)
-IntPostcardMin = mm(140), mm(90)
-AnsichtCard = A6[1].rounded.pt, A6[0].rounded.pt # Landscape Rounded A6
+IntPostcardMax = mm(235, 120)
+IntPostcardMin = mm(140, 90)
+AnsichtCard = pt(A6[1].rounded, A6[0].rounded) # Landscape Rounded A6
 
 # US Postal Postcard Size
-USPostcardMax = inch(6), inch(4.25)
-USPostcardMin = inch(5), inch(3.5)
+USPostcardMax = inch(6, 4.25)
+USPostcardMin = inch(5, 3.5)
 
 # Business card, https://nl.wikipedia.org/wiki/Visitekaartje
 ISO216 = A8
-BusinessCard = ISOCreditCard = mm(85.60), mm(53.98)
+BusinessCard = ISOCreditCard = mm(85.60, 53.98)
 # USA, Canada
-BusinessCardUS = inch(3.5), inch(2)
+BusinessCardUS = inch(3.5, 2)
 # Germany, France, Italy, Spain, UK, Netherlands, Portugal, Iceland IS
-BusinessCardEurope = mm(85), mm(55)
+BusinessCardEurope = mm(85, 55)
 # Poland PL, Czech Republic CZ, Slovakia SK, Hungary HU, Croatia HR, Bosnia and Herzegovina BA,
 # Serbia, Montenegro, Albania AL, Macedonia MK, Bulgaria BG, Romania RO, Moldova MD, Ukraine UA,
 # Belarus BY, Lithuania LT, Latvia LV, Estonia EE, Finland FI, Georgia GE, Armenia AM, Azerbaijan AZ,
 # Sri Lanka LK, South Korea KR, South Africa ZA, Namibia NA, Israel IL,
 # Mexico MX, Brazil BR, Argentina AR, Venezuela VE, Russia RU, Kazakhstan KZ, Uzbekistan UZ
-BusinessCardEastEurope = BusinessCardWorld = mm(90), mm(50)
+BusinessCardEastEurope = BusinessCardWorld = mm(90, 50)
 # Iran IR
-BusinessCardIran = mm(85), mm(48)
+BusinessCardIran = mm(85, 48)
 # Australia, New Zealand, India IN, Taiwan TW, Vietnam VN, Thailand TH, Cambodia KH, Laos LA,
 # Myanmar (Burma) MM, Bangladesh BD, Bhutan BT, Nepal NP, Colombia CO,
 # Norway NO, Sweden SE, Denmark DK, Greece GR
-BusinessCardAustralia = mm(90), mm(55)
+BusinessCardAustralia = mm(90, 55)
 # Turkey TR
-BusinessCardTurkey = mm(85), mm(50)
+BusinessCardTurkey = mm(85, 50)
 # Egypt EG
 BusinessCardTurkey = mm(87), mm(57)
 # China CN, Hong Kong HK, Singapore SG, Mongolia MN, Malaysia MY
-BusinessCardChina = mm(90), mm(54)
-BusinessCardJapan = mm(91), mm(55)
+BusinessCardChina = mm(90, 54)
+BusinessCardJapan = mm(91, 55)
 
 # Popular Online Business Card Printers
 # Vistaprint
-BusinessCardVistaprint = mm(87), mm(49)
+BusinessCardVistaprint = mm(87, 49)
 # Moo Cards
-BusinessCardMoo = mm(84), mm(55)
-BusinessCardMooMini = mm(70), mm(28)
+BusinessCardMoo = mm(84, 55)
+BusinessCardMooMini = mm(70, 28)
 # Zazzle Cards
-BusinessCardZazzle = inch(3.5), inch(2)
-BusinessCardZazzleChubby = inch(3.5), inch(2.5)
-BusinessCardZazzleSkinny = inch(3.5), inch(1)
+BusinessCardZazzle = inch(3.5, 2)
+BusinessCardZazzleChubby = inch(3.5, 2.5)
+BusinessCardZazzleSkinny = inch(3.5, 1)
 
 # Newspapers
-Tabloid = inch(11), inch(16.9)
-Broadsheet = inch(23.5), inch(29.5)
-Berliner = inch(12.4), inch(18.5)
+Tabloid = inch(11, 16.9)
+Broadsheet = inch(23.5, 29.5)
+Berliner = inch(12.4, 18.5)
 
 # Standard view port sizes.
 # http://mediag.com/news/popular-screen-resolutions-designing-for-all/
 
 # Apple
-iPhoneeX = pt(375), pt(812) # Pixelsize: 1125 x 2436
-iPhone8Plus = pt(414), pt(736) # 1080 x 1920
-iPhone8 = pt(375), pt(667) # 750 x 1334
-iPhone7Plus = pt(414), pt(736) # 1080 x 1920
-iPhone7 = pt(375), pt(667) # 750 x 1334
-iPhone6Plus = iPhone6SPlus = pt(414), pt(736) # 1080 x 1920
-iPhone6 = pt(375), pt(667) # 750 x 1334
-iPHone5 = pt(320), pt(568) # 640 x 1136
-iPodTouch = pt(320), pt(568) # 640 x 1136
-iPadPro = pt(1024), pt(1366) # 2048 x 2732
-iPadThirdGeneration = iPadFourthGeneration = pt(768), pt(1024) # 1536 x 2048
-iPadAir1 = iPadAir2 = pt(768), pt(1024) # 1536 x 2048
-iPadMini = pt(768), pt(1024) #  768 x 1024
-iPadMini2 = iPadMini3 = pt(768), pt(1024) # 1536 x 2048
+iPhoneeX = pt(375, 812) # Pixelsize: 1125 x 2436
+iPhone8Plus = pt(414, 736) # 1080 x 1920
+iPhone8 = pt(375, 667) # 750 x 1334
+iPhone7Plus = pt(414, 736) # 1080 x 1920
+iPhone7 = pt(375, 667) # 750 x 1334
+iPhone6Plus = iPhone6SPlus = pt(414, 736) # 1080 x 1920
+iPhone6 = pt(375, 667) # 750 x 1334
+iPHone5 = pt(320, 568) # 640 x 1136
+iPodTouch = pt(320, 568) # 640 x 1136
+iPadPro = pt(1024, 1366) # 2048 x 2732
+iPadThirdGeneration = iPadFourthGeneration = pt(768, 1024) # 1536 x 2048
+iPadAir1 = iPadAir2 = pt(768, 1024) # 1536 x 2048
+iPadMini = pt(768, 1024) #  768 x 1024
+iPadMini2 = iPadMini3 = pt(768, 1024) # 1536 x 2048
 
 # Android
-Nexus6P = pt(411), pt(731) # 1440 x 2560
-Nexus5X = pt(411), pt(731) # 1080 x 1920
-GooglePixel = pt(411), pt(731) # 1080 x 1920
-GooglePixelXL = pt(411), pt(731) # 1440 x 2560
-GooglePixel2 = pt(411), pt(731) # 1080 x 1920
-GooglePixel2XL = pt(411), pt(731) # 1440 x 2560
-SamsungGalaxyNote5 = pt(480), pt(853) # 1440 x 2560
-LGG5 = pt(480), pt(853) # 1440 x 2560
-OnePlus3 = pt(480), pt(853) # 1080 x 1920
-SamsungGalaxyS9 = pt(360), pt(740) # 1440 x 2960
-SamsungGalaxyS9Plus = pt(360), pt(740) # 1440 x 2960
-SamsungGalaxyS8 = pt(360), pt(740) # 1440 x 2960
-SamsungGalaxyS8Plus = pt(360), pt(740) # 1440 x 2960
-SamsungGalaxyS7 = pt(360), pt(640) # 1440 x 2560
-SamsungGalaxyS7Edge = pt(360), pt(640) # 1440 x 2560
-Nexus7 = pt(600), pt(960) # 1200 x 1920
-Nexus9 = pt(768), pt(1024) # 1536 x 2048
-SamsungGalaxyTab10 = pt(800), pt(1280) # 800 x 1280
-ChromebookPixel = pt(1280), pt(850) # 2560 x 1700
+Nexus6P = pt(411, 731) # 1440 x 2560
+Nexus5X = pt(411, 731) # 1080 x 1920
+GooglePixel = pt(411, 731) # 1080 x 1920
+GooglePixelXL = pt(411, 731) # 1440 x 2560
+GooglePixel2 = pt(411, 731) # 1080 x 1920
+GooglePixel2XL = pt(411, 731) # 1440 x 2560
+SamsungGalaxyNote5 = pt(480, 853) # 1440 x 2560
+LGG5 = pt(480, 853) # 1440 x 2560
+OnePlus3 = pt(480, 853) # 1080 x 1920
+SamsungGalaxyS9 = pt(360, 740) # 1440 x 2960
+SamsungGalaxyS9Plus = pt(360, 740) # 1440 x 2960
+SamsungGalaxyS8 = pt(360, 740) # 1440 x 2960
+SamsungGalaxyS8Plus = pt(360, 740) # 1440 x 2960
+SamsungGalaxyS7 = pt(360, 640) # 1440 x 2560
+SamsungGalaxyS7Edge = pt(360, 640) # 1440 x 2560
+Nexus7 = pt(600, 960) # 1200 x 1920
+Nexus9 = pt(768, 1024) # 1536 x 2048
+SamsungGalaxyTab10 = pt(800, 1280) # 800 x 1280
+ChromebookPixel = pt(1280, 850) # 2560 x 1700
 
-# Types of Quire formats, how to compose pages
+# Types of Quire formats, how to compose pages from folding sheets.
 # Page numbers < 0 indicate to be connected. For > 9
 QUIRE_SINGLE = (1,) # Single page
 QUIRE_SPREAD = (-2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
@@ -195,14 +195,14 @@ QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 # origin is on top-left of the page. Y-positive direction is down.
 # If document.originTop == False (or page.originTop == False), 
 # origin is on bottom-left of the page. Y-positive direction is up.
-ORIGIN = (pt(0), pt(0), pt(0)) # Default origin if location is omitted.
+ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
 # For document, using imaginary depth for layers and shadow
-DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000), pt(1000), pt(100)
+DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
 # For elements, using imaginary depth for layers and shadow
-DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100), pt(100), pt(100)
+DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 

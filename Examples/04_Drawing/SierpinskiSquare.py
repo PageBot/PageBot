@@ -24,7 +24,7 @@ context = getContext()
     
 MAX_I = 5
 
-def drawSierpinskiSquare(px, py, w, maxW, i):
+def drawSierpinskiSquare(px, py, w, size, i):
     if i >= MAX_I:
         return
 
@@ -39,8 +39,8 @@ def drawSierpinskiSquare(px, py, w, maxW, i):
                 col = Color(max(0, 0.75 - w/100))
                 context.fill(col)
                 context.rect(pt(px+w), pt(py+w), pt(w), pt(w))
-            elif px <= maxW and py <= maxW:
-                drawSierpinskiSquare(px+x*w, py+y*w, w/3, maxW, i)
+            elif px <= size and py <= size:
+                drawSierpinskiSquare(px+x*w, py+y*w, w/3, size, i)
 
 if __name__ == '__main__':
     canvasSize = 500

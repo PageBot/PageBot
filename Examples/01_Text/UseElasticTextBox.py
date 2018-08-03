@@ -92,13 +92,13 @@ def makeDocument():
         h1 = None
     e1 = newTextBox(s,
         name='ElasticTextBox1',
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, maxW=W-2*PagePadding,
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, 
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
         leading=5, fontSize=9, textFill=tColor, strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor,
     )
     e2 = newTextBox(s,
         name='ElasticTextBox2',
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', maxW=W-2*PagePadding,
+        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',
         conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5,
         fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=noColor,
     )
