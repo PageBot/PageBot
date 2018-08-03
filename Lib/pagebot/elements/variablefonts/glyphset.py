@@ -99,7 +99,7 @@ class GlyphSet(BaseFontShow):
             if u <= 32: # Skip any control characters and space
                 continue
             bs = c.newString(chr(u), style=dict(font=self.f.path, fontSize=fontSize))
-            tw, th = bs.textSize()
+            tw, th = bs.size
             c.text(bs, (ox+x+self.pl-tw/2, oy+y))
             x += cw
             if x >= self.pw:

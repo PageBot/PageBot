@@ -41,14 +41,15 @@ class AnimatedBannerFrame(AnimationFrame):
             #print(self.frameIndex, style['font'])
             #style['fontSize'] = self.h/3
             bs = c.newString(self.sampleText, style=style, w=self.pw)
-            tw, th = bs.textSize()
+            tw, th = bs.size
             c.text(bs, (self.w/2 - tw/2, self.h/2-th/2))
      
 c = DrawBotContext()
 W, H = 2040, 1020 # Type Network banners
 
 # Claire: for now, add your Fit-Variable_1.ttf to your /Library/Fonts and it can be found.
-#Gimlet_Italics-VF.ttf#Gimlet_Romans-VF.ttf
+#Gimlet_Italics-VF.ttf
+#Gimlet_Romans-VF.ttf
 font = findFont('Gimlet_Italics-VF')
 # Fit axes to select from: here we are showing the optical size.
 # Define tag list for axes to be part of the animation as sequence

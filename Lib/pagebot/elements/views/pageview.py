@@ -445,7 +445,7 @@ class PageView(BaseView):
                 # Draw box with element info.
                 bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
                 tpy = py + e.h - th - Pd
@@ -478,28 +478,28 @@ class PageView(BaseView):
                 context.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
                 context.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
 
-                fs = context.newString(asFormatted(x2 - x1),
+                bs = context.newString(asFormatted(x2 - x1),
                                        style=dict(font=self.css('viewInfoFont'),
                                                   fontSize=self.css('viewInfoFontSize'),
                                                   leading=self.css('viewInfoLeading'),
                                                   textFill=color(0.1)))
-                tw, th = b.textSize(fs.s)
-                b.text(fs, rv((x2 + x1)/2 - tw/2, y1-1.5*S))
+                tw, th = bs.size
+                context.text(bs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
-                b.line(rv(x2+0.5*S, y1), rv(x2+3.5*S, y1))
-                b.line(rv(x2+0.5*S, y2), rv(x2+3.5*S, y2))
-                b.line(rv(x2+2*S, y1), rv(x2+2*S, y2))
+                context.line((x2+0.5*S, y1), (x2+3.5*S, y1))
+                context.line((x2+0.5*S, y2), (x2+3.5*S, y2))
+                context.line((x2+2*S, y1), (x2+2*S, y2))
                 # Arrow heads
-                b.line(rv(x2+2*S, y2), rv(x2+2.5*S, y2-S))
-                b.line(rv(x2+2*S, y2), rv(x2+1.5*S, y2-S))
-                b.line(rv(x2+2*S, y1), rv(x2+2.5*S, y1+S))
-                b.line(rv(x2+2*S, y1), rv(x2+1.5*S, y1+S))
+                context.line((x2+2*S, y2), (x2+2.5*S, y2-S))
+                context.line((x2+2*S, y2), (x2+1.5*S, y2-S))
+                context.line((x2+2*S, y1), (x2+2.5*S, y1+S))
+                context.line((x2+2*S, y1), (x2+1.5*S, y1+S))
 
                 bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
-                tw, th = context.textSize(bs)
-                b.text(fs, rv(x2+2*S-tw/2, (y2+y1)/2))
+                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                tw, th = bs.size
+                context.text(bs, (x2+2*S-tw/2, (y2+y1)/2))
 
             e._restoreScale(self)
 
@@ -522,7 +522,7 @@ class PageView(BaseView):
             bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), 
                 textFill=color(0.1)))
-            w, h = context.textSize(bs)
+            w, h = bs.size
             context.text(bs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):

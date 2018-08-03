@@ -32,8 +32,7 @@ context = getContext()
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
-                     wideLocation, fixedSize=False,
-                     tracking=None, rTracking=None):
+                     wideLocation, fixedSize=False, tracking=None):
     """
       Answer the font instance that makes string s width on the given width
       *w* for the given *fontSize*. The *condensedLocation* dictionary defines
@@ -54,26 +53,25 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
       setting of the font.
     """
     condFont = getVarFontInstance(varFont, condensedLocation)
-    condensedFs = context.newString(s, style=dict(font=condFont.path,
+    condensedString = context.newString(s, style=dict(font=condFont.path,
                                             fontSize=fontSize,
                                             tracking=tracking,
-                                            rTracking=rTracking,
                                             textFill=blackColor))
-    condWidth, _ = context.textSize(condensedFs)
+    condWidth, _ = context.textSize(condensedString)
     wideFont = getVarFontInstance(varFont, wideLocation)
-    wideFs = context.newString(s, style=dict(font=wideFont.path,
+    wideString = context.newString(s, style=dict(font=wideFont.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        textFill=blackColor))
-    wideWidth, _ = context.textSize(wideFs)
+    wideWidth, _ = context.textSize(wideString)
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condWidth:
         font = condFont
-        fs = condensedFs
+        bs = condensedString
         location = condensedLocation
     elif w > wideWidth:
         font = wideFont
-        fs = wideFs
+        bs = wideString
         location = wideLocation
     else:
         # Now interpolation the fitting location
@@ -81,20 +79,21 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(1+wideWidth-condWidth)
         font = getVarFontInstance(varFont, location)
-        fs = context.newString(s, style=dict(font=font.path,
+        bs = context.newString(s, style=dict(font=font.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        textFill=blackColor))
     return dict(condensedFont=condFont,
-                condensedFs=condensedFs,
+                condensedString=condensedString,
                 condensedWidth=condWidth,
                 condensedLocation=condensedLocation,
                 wideFont=wideFont,
-                wideFs=wideFs,
+                wideString=wideString,
                 wideWidth=wideWidth,
                 wideLocation=wideLocation,
-                font=font, fs=fs,
-                width=context.textSize(fs)[0],
+                font=font, 
+                bs=bs,
+                width=bs.size[0],
                 location=location)
 
 HEADLINE_SIZE = 36
@@ -143,17 +142,17 @@ def draw(w):
     context.rect(0, 0, W, H)
 
     # Draw calculated fitting instance and the two boundary instances.
-    context.text(d['condensedFs'], (PADDING, y+LEADING))
-    context.text(d['fs'], (PADDING, y+2*LEADING))
-    context.text(d['wideFs'], (PADDING, y+3*LEADING))
+    context.text(d['condensedString'], (PADDING, y+LEADING))
+    context.text(d['bs'], (PADDING, y+2*LEADING))
+    context.text(d['wideString'], (PADDING, y+3*LEADING))
 
     # Draw the instance choice of 3
     if w < fixedWidth:
-        context.text(d['condensedFs'], (PADDING, y))
+        context.text(d['condensedString'], (PADDING, y))
     elif w < maxWidth:
-        context.text(dFixed['fs'], (PADDING, y))
+        context.text(dFixed['bs'], (PADDING, y))
     else:
-        context.text(d['wideFs'], (PADDING, y))
+        context.text(d['wideString'], (PADDING, y))
 
     context.fill(0.5)
     context.fontSize(12)

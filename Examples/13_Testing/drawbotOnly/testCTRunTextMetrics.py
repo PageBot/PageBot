@@ -51,22 +51,18 @@ def ctRunThing(fs, x, y):
     Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(0, 0, w, h))
     ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
     ctLines = CoreText.CTFrameGetLines(ctBox)
-
-    fill(None)
-    stroke(1, 0, 0)
-    S = 8
-    rect(x-S, y-S, 2*S, 2*S) 
     
     for ctLine in ctLines:
+        #print('---', ctLine)
         ctRuns = CoreText.CTLineGetGlyphRuns(ctLine)
 
         # loop over all runs
-        for run in ctRuns:
+        for ctRun in ctRuns:
             # get all positions
-            pos = CoreText.CTRunGetPositions(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
+            pos = CoreText.CTRunGetPositions(ctRun, (0, CoreText.CTRunGetGlyphCount(ctRun)), None)
             # get all glyphs
-            glyphs = CoreText.CTRunGetGlyphs(run, (0, CoreText.CTRunGetGlyphCount(run)), None)
-            print(y, ly, pos)
+            glyphs = CoreText.CTRunGetGlyphs(ctRun, (0, CoreText.CTRunGetGlyphCount(ctRun)), None)
+            #print(y, ly, pos)
 
             # enumerate over all pos
             for i, (gx, gy) in enumerate(pos):
@@ -85,14 +81,28 @@ def ctRunThing(fs, x, y):
                     centerShift = w - gx
                 centerShift *= .5
                 #tx, _ = textSize(glyphName)
-        ly -= 110
+                leadingMax = CoreText.CTRunGetAttributes(ctRun)['NSParagraphStyle'].maximumLineHeight()
+                leadingMin = CoreText.CTRunGetAttributes(ctRun)['NSParagraphStyle'].minimumLineHeight()
+                print(leadingMax, leadingMin)
+
+        fill(None)
+        stroke(1, 0, 0)
+        S = 8
+        rect(x-S, ly-S, 2*S, 2*S) 
+
+        ly -= leadingMax
                 #text(glyphName, (x+gx+centerShift-tx*.5, y+gy-20))
       
-fs1 = context.newString('Ligature fifl\nand another line.', style=dict(font=fontPath1, leading=em(1.1), fontSize=100, openTypeFeatures=dict(liga=False)))
+style1 = dict(font=fontPath1, leading=em(1.1), fontSize=100, openTypeFeatures=dict(liga=False))
+style1a = dict(font=fontPath1, leading=em(1.1), baselineShift=em(0.2), textColor=(1, 0, 0), fontSize=70, openTypeFeatures=dict(liga=False))
+fs1 = context.newString('Ligature fifl', style=style1)
+fs1 += context.newString(' 123', style=style1a)
+fs1 += context.newString('\nand another line.', style=style1)
 text(fs1.s, (100, 450)) # Using direct DrawBot text( ) here.
 ctRunThing(fs1.s, 100, 450) # Draw lines at the glyph positions
 
-fs2 = context.newString('Ligature fifl\nand another line.', style=dict(font=fontPath2, leading=em(1.1), fontSize=100, openTypeFeatures=dict(liga=True)))
+fs2 = context.newString('Ligature fifl\nand another line.', 
+    style=dict(font=fontPath2, leading=em(1.1), fontSize=100, openTypeFeatures=dict(liga=True)))
 text(fs2.s, (100, 200)) # Using direct DrawBot text( ) here.
 ctRunThing(fs2.s, 100, 200) # Draw lines at the glyph positions
  

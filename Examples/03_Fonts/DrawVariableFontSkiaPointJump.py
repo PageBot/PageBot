@@ -345,7 +345,7 @@ def drawAnimation():
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=80))
-        tw, th = context.textSize(bs)
+        tw, th = bs.size
         context.text(bs, (lx-tw/2, ly+20))
 
         bs = context.newString('#PageBot',
@@ -353,7 +353,7 @@ def drawAnimation():
                                           textFill=0.5,
                                           tracking=em(0.02),
                                           fontSize=10))
-        tw, th = context.textSize(fs)
+        tw, th = bs.size
         context.text(bs, (W-tw-10, 10))
 
     saveImage('_export/SkiaPointJump.gif')

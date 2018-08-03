@@ -20,12 +20,13 @@ if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
-W = H = 1000
+W, H = 1000, 500
+newPage(W, H)
 b = context.b # Builder is DrawBot
 
 # Using global typographic settings in DrawBot by calling separate functions
 txt = "Hellog World"
-x, y = W/100, H/10
+x, y = W/100, H/4
 
 # set a font
 b.font("Verdana")

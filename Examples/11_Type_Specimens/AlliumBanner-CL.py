@@ -37,13 +37,13 @@ class AnimatedBannerFrame(AnimationFrame):
             instance = self.f.getInstance(style['location'])
             style['font'] = instance
             bs = c.newString(self.sampleText, style=style)
-            tw, th = bs.textSize()
+            tw, th = bs.size
             c.text(bs, (self.w/2 - tw/2, self.h/2-th/8)) # /8 vert
             
             style['fontSize'] = style['location']['opsz'] * 4
             style['font'] = instance
             bs = c.newString('%s %dpt' % (self.sampleText, style['fontSize']), style=style)
-            tw, th = bs.textSize()
+            tw, th = bs.size
             c.text(bs, (self.w/2 - tw/2, self.h/4-th/8)) 
      
 c = DrawBotContext()

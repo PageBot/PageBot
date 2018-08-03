@@ -35,7 +35,7 @@ def run():
 	context.text(bs, (x, y))
 
 	# calculate the size of the text
-	textWidth, textHeight = context.textSize(bs)
+	textWidth, textHeight = bs.size
 
 	# set a red stroke color
 	strokeColor = color(1, 0, 0) # Color instance can translate into any other color type.

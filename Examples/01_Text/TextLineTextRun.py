@@ -427,7 +427,7 @@ fs += context.newString('This an example of TextLines and TextRuns. ',
 fittingWord = context.newString('Word\n', style=dict(font='Georgia',
                                                align='left',
                                                fontSize=500))
-w, _ = context.textSize(fittingWord)
+w, _ = fittingWord.size
 fittingSize = W/w*500
 fittingWord = context.newString('Word\n', style=dict(font='Georgia',
                                                align='left',
@@ -439,7 +439,7 @@ fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',
                                      align='left',
                                      fontSize=500))
-w, _ = context.textSize(fittingWord)
+w, _ = fittingWord.size
 fittingSize = W/w*500
 fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',

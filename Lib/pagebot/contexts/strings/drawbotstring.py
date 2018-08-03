@@ -171,12 +171,25 @@ class DrawBotString(BabelString):
     def textSize(self, w=None, h=None):
         """Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
         to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
-        # TODO: Add in case w is defined.
+        b = self.context.b
         if w is not None:
-            w = upt(w)
+            wpt = upt(w)
+            return b.textSize(bs.s, width=wpt)
         if h is not None:
-            h = upt(h)
-        return self.context.textSize(self, w=w, h=h)
+            hpt = upt(h)
+            return b.textSize(bs.s, height=hpt)
+        return b.textSize(bs.s)
+
+    def textOverflow(self, w, h, align=LEFT):
+        """Answer the overflowing of from the box (0, 0, w, h)
+        as new DrawBotString in the current context."""
+        wpt, hpt = upt(w, h)
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        self.b.hyphenation(bool(self.hyphenation))
+        oveflow = stringClass(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
+        self.b.hyphenation(False)
+        return overflow
 
     def getBaselines(self, w, h):
         u"""Answer the list of vertical baseline position for the self.s FormattedString
@@ -629,7 +642,7 @@ class DrawBotString(BabelString):
                 newS = cls.newString(t, context, style=fsAttrs)
                 # Test the width we got by linear interpolation. Scale back if still too large.
                 # Iterate until it really fits.
-                while newS.textSize()[0] > w and fsStyle['fontSize']:
+                while newS.size[0] > w and fsStyle['fontSize']:
                     fsAttrs['fontSize'] -= 0.1 # Incremental decrease the size until it fits
                     newS = cls.newString(t, context, style=fsAttrs)
             else:

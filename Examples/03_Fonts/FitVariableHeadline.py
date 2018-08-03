@@ -47,23 +47,23 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
     does not exist in the font, then use the default setting of the font."""
     c = getContext()
     condFont = getVarFontInstance(varFont, condensedLocation)
-    condensedFs = c.newString(s, style=dict(font=condFont.path,
+    condensedString = c.newString(s, style=dict(font=condFont.path,
         fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=blackColor))
-    condWidth, _ = c.textSize(condensedFs)
+    condWidth, _ = condensedString.size
     wideFont = getVarFontInstance(varFont, wideLocation)
-    wideFs = c.newString(s, style=dict(font=wideFont.path, fontSize=fontSize,
+    wideString = c.newString(s, style=dict(font=wideFont.path, fontSize=fontSize,
         tracking=tracking, rTracking=rTracking, textFill=blackColor))
-    wideWidth, _ = c.textSize(wideFs)
+    wideWidth, _ = wideString.size
 
     # Check if the requested with is inside the boundaries of the font width
     # axis.
     if w < condWidth:
         font = condFont
-        fs = condensedFs
+        bs = condensedString
         location = condensedLocation
     elif w > wideWidth:
         font = wideFont
-        fs = wideFs
+        bs = wideString
         location = wideLocation
     else:
         # Now interpolation the fitting location
@@ -71,21 +71,21 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
         location = copy.copy(condensedLocation)
         location['wdth'] += widthRange*(w-condWidth)/(wideWidth-condWidth)
         font = getVarFontInstance(varFont, location)
-        fs = c.newString(s, style=dict(font=font.path,
+        bs = c.newString(s, style=dict(font=font.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        textFill=blackColor))
     return dict(condensendFont=condFont,
-                condensedFs=condensedFs,
+                condensedString=condensedString,
                 condWidth=condWidth,
                 condensedLocation=condensedLocation,
                 wideFont=wideFont,
-                wideFs=wideFs,
+                wideString=wideString,
                 wideWidth=wideWidth,
                 wideLocation=wideLocation,
                 font=font,
-                fs=fs,
-                width=c.textSize(fs)[0],
+                bs=bs,
+                width=bs.size[0],
                 location=location)
 
 HEADLINE_SIZE = 36
@@ -126,9 +126,9 @@ def draw(w):
     c.newPage(W, H)
     c.fill(1)
     c.rect(0, 0, W, H)
-    c.text(d['condensedFs'], (PADDING, 50))
-    c.text(d['fs'], (PADDING, 100))
-    c.text(d['wideFs'], (PADDING, 150))
+    c.text(d['condensedString'], (PADDING, 50))
+    c.text(d['bs'], (PADDING, 100))
+    c.text(d['wideString'], (PADDING, 150))
     c.fill(None)
     c.stroke(0)
     c.line((PADDING, PADDING), (PADDING, H-PADDING))

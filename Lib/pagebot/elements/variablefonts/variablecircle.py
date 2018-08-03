@@ -96,7 +96,7 @@ class VariableCircle(Element):
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
                                               textFill=blackColor))
-            tw, th = context.textSize(bs)
+            tw, th = bs.size
             context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
@@ -162,7 +162,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=axisNameFontSize,
                                             fill=self.style.get('axisNameColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
@@ -177,7 +177,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -193,7 +193,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -208,7 +208,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 minM = 0.2

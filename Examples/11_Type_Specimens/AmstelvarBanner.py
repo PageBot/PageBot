@@ -38,7 +38,7 @@ class AnimatedBannerFrame(AnimationFrame):
 
             # Draw the growing text on the right in the real font size enlarged by fontSizeFactor
             bs = c.newString(self.sampleText, style=style)
-            tw1, th1 = bs.textSize()
+            tw1, th1 = bs.size
             x1, y1 = self.w*2/3, self.h/2-th1/4
             c.text(bs, (x1, y1))
                   
@@ -55,7 +55,7 @@ class AnimatedBannerFrame(AnimationFrame):
             # Large "Opt" on the left
             style['fontSize'] = self.f.axes['opsz'][2]*magnifySizeFactor
             bs = c.newString(self.sampleText[:3], style=style)
-            tw2, th2 = bs.textSize()
+            tw2, th2 = bs.size
             x2, y2 = self.w/2-tw2, self.h/2-th2/5
             c.text(bs, (x2, y2)) # Make tekst right aligned
      
