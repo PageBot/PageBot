@@ -505,12 +505,7 @@ class DrawBotContext(BaseContext):
             hpt = upt(h)
             return self.b.textSize(bs.s, height=hpt)
         return self.b.textSize(bs.s)
-
-    def textLines(self, ):
-        u"""Answer the dictionary with (x, y) positions for all text lines in the current flow
-        inse."""
-        return self.b.textLines(bs.s, self.pw, self.ph)
-
+        
     def textOverflow(self, bs, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
@@ -518,7 +513,8 @@ class DrawBotContext(BaseContext):
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
         self.b.hyphenation(bool(bs.hyphenation))
-        return stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
+        oveflow = stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
+        self.b.hyphenation(False)
 
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
@@ -527,15 +523,6 @@ class DrawBotContext(BaseContext):
         >>> context.openTypeFeatures(dict(smcp=True, zero=True))
         """
         self.b.openTypeFeatures(**features)
-
-    def hyphenation(self, onOff=True):
-        """Set the hyphenation on/off flag.
-
-        >>> context = DrawBotContext()
-        >>> context.hyphenation(True)
-        >>> context.hyphenation(False)
-        """
-        self.b.hyphenation(onOff)
 
     #   A N I M A T I O N
 

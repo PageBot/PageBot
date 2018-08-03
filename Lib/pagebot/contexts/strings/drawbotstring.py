@@ -271,15 +271,22 @@ class DrawBotString(BabelString):
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
 
-    def textOverflow(self, w, h, align=LEFT):
-        u"""Answer text string that overflows on (w, h) text flow."""
-        return self.context.textOverflow(self, w, h, align)
-
     def textLines(self, w, h, align=LEFT):
         wpt, hpt = upt(w, h)
         textLines = []
-        for lIndex, ctLine in enumerate(getTextLines(self.s, (0, 0, wpt, hpt))):
-            textLines.append(TextLine(ctLine, 0, 0, lIndex))
+
+        attrString = self.s.getNSObject()
+        setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
+        path = Quartz.CGPathCreateMutable()
+        Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(0, 0, wpt, hpt))
+        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CoreText.CTFrameGetLines(box)
+        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+
+        for lIndex, ctLine in enumerate(ctLines):
+            origin = origins[lIndex]
+            textLine = TextLine(ctLine, origin.x, origin.y, lIndex)
+            textLines.append(textLine)
         return textLines
 
     @classmethod
@@ -867,7 +874,7 @@ class TextRun(object):
 class TextLine(object):
     def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine
-        self.x, self.y = x, y # Relative unit position from top of TextBox
+        self.x, self.y = pt(x, y) # Relative unit position from top of TextBox
         self.lineIndex = lineIndex # Vertical line index in TextBox.
 
         self.string = ''
