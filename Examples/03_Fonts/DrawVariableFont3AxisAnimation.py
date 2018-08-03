@@ -126,7 +126,7 @@ class FontIcon(object):
                                style=dict(font=self.f.path,
                                           textFill=blackColor,
                                           fontSize=h*2/3))
-        tw, th = bs.textSize()
+        tw, th = bs.size
         context.text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if self.title:
@@ -135,7 +135,7 @@ class FontIcon(object):
                                               textFill=blackColor,
                                               tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.textSize()
+            tw, th = bs.size
             context.text(bs, (w/2-tw/2, self.ih+th/2))
 
         y = -self.LABEL_RLEADING*labelSize
@@ -145,7 +145,7 @@ class FontIcon(object):
                                               textFill=blackColor,
                                               tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.textSize()
+            tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
             y -= self.LABEL_RLEADING*labelSize
             
@@ -155,7 +155,7 @@ class FontIcon(object):
                                               textFill=blackColor,
                                               tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.textSize()
+            tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
         restore()
         

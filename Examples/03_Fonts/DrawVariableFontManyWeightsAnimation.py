@@ -140,7 +140,7 @@ class FontIcon(object):
                          style=dict(font=self.f.path,
                                     textFill=blackColor,
                                     fontSize=h*2/3))
-        tw, th = c.textSize(bs)
+        tw, th = bs.size
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
         fill(0)
         stroke(0)
@@ -154,7 +154,7 @@ class FontIcon(object):
                              textFill=blackColor,
                              rTracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
-            tw, th = c.textSize(bs)
+            tw, th = bs.size
             c.textFill=blackColor,
             c.text(bs, (pt(w/2-tw/2), pt(self.ih+th/2)))
             text(bs.s, (w/2-tw/2, self.ih+th/2))
@@ -167,7 +167,7 @@ class FontIcon(object):
                                         textFill=blackColor,
                                         tracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
-            tw, th = c.textSize(bs)
+            tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))
             #text(self.name, (w/2-tw/2, y))
             
@@ -178,7 +178,7 @@ class FontIcon(object):
                                         textFill=blackColor,
                                         tracking=self.LABEL_RTRACKING,
                                         fontSize=labelSize))
-            tw, th = c.textSize(bs)
+            tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))
             #text(self.label, (w/2-tw/2, y))
         c.restoreGraphicState()

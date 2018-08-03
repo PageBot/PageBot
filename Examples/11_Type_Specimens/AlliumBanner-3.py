@@ -37,7 +37,7 @@ class AnimatedBannerFrame(AnimationFrame):
             instance = self.f.getInstance(style['location'])
             style['font'] = instance
             bs = c.newString(self.sampleText, style=style)
-            tw, th = bs.textSize()
+            tw, th = bs.size
             c.text(bs, (self.w/2 - tw/2, self.h/2-th/4.5)) # /8 vert
             
      
@@ -45,7 +45,8 @@ c = DrawBotContext()
 W, H = 1360, 400 # Type Network banners
 
 # Claire: for now, add your Fit-Variable_1.ttf to your /Library/Fonts and it can be found.
-#Gimlet_Italics-VF.ttf#Gimlet_Romans-VF.ttf
+#Gimlet_Italics-VF.ttf
+#Gimlet_Romans-VF.ttf
 font = findFont('AlliumMediumVARGX_hyphen')
 print(font)
 # Fit axes to select from: here we are showing the optical size.

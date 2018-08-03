@@ -78,7 +78,7 @@ class Waterfall(TextBox):
         while fontSize >= 12:
             # Still fitting? Otherwise stop the loop
             # TODO: Measure both lines (label + samleText) for fitting.
-            tw, th = bs.textSize()
+            tw, th = bs.size
             if th > self.ph:
                 break
             # Make the optional label

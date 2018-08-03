@@ -494,28 +494,6 @@ class DrawBotContext(BaseContext):
         xpt, ypt, wpt, hpt = upt(r) 
         self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
-    def textSize(self, bs, w=None, h=None):
-        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
-        there is no text defined.  Answer the height of the string if the width
-        w is given."""
-        if w is not None:
-            wpt = upt(w)
-            return self.b.textSize(bs.s, width=wpt)
-        if h is not None:
-            hpt = upt(h)
-            return self.b.textSize(bs.s, height=hpt)
-        return self.b.textSize(bs.s)
-        
-    def textOverflow(self, bs, w, h, align=LEFT):
-        """Answer the overflowing of from the box (0, 0, w, h)
-        as new DrawBotString in the current context."""
-        wpt, hpt = upt(w, h)
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
-        # not as FormattedString attribute.
-        self.b.hyphenation(bool(bs.hyphenation))
-        oveflow = stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
-        self.b.hyphenation(False)
-
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
 

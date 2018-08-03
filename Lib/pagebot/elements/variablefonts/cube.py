@@ -135,7 +135,7 @@ class Cube(BaseFontShow):
                 #print(instance.location)
                 style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                 bs = c.newString(self.label, style=style)
-                tw, th = bs.textSize()
+                tw, th = bs.size
                 c.text(bs, (x-tw/2, y))
 
                 if xzStep > 0: 
@@ -145,7 +145,7 @@ class Cube(BaseFontShow):
                     instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)
-                    tw, th = bs.textSize()
+                    tw, th = bs.size
                     c.text(bs, (x-tw/2, y))
 
         # Draw top part of the cube
@@ -158,7 +158,7 @@ class Cube(BaseFontShow):
                     instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
                     bs = c.newString(self.label, style=style)
-                    tw, th = bs.textSize()
+                    tw, th = bs.size
                     c.text(bs, (x-tw/2, y))
 
 

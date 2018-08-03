@@ -156,9 +156,9 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
         else:
             label = '#%d ' % fIndex
         label += '%s\n(%s)\n%d' % (pathLabel.replace('.ttf', '').replace('_','\n').replace('-','\n'), f.info.styleName, f.info.weightClass)
-        fs = FormattedString(label, fontSize=10, align='center')
-        tw, th = textSize(fs)
-        text(fs, (x-tw/2, y-14))
+        bs = context.newString(label, style=dict(fontSize=10, align='center'))
+        tw, th = bs.size
+        c.text(bs, (x-tw/2, y-14))
         restore()
         y -= leading + th-22
 
@@ -181,7 +181,7 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             else:
                 label = '#%d\n' % fIndex
             bs = c.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=blackColor))
-            tw, th = c.textSize(bs)
+            tw, th = bs.size
             c.text(bs, (weightLoc-tw/2, widthLoc-24))
 
             if varFamily.originFont is f:
@@ -220,7 +220,7 @@ def drawFamilyOverview(path):
         if 0 < x < 1000:
             context.line((x, 0), (x, 1000))
         bs = context.newString(`x`, fontSize=12)
-        tw, th = context.textSize(bs)
+        tw, th = bs.size
         context.text(bs, (x-tw/2, -20))
 
     for y in range(11):
@@ -229,17 +229,17 @@ def drawFamilyOverview(path):
         if y > 0:
             bs = context.newString(`y`, fontSize=12, fill=color(1, 0, 0))
             bs += context.newString(' %s' % (y*100), fontSize=12, fill=color(0, 0.5, 0))
-            tw, th = context.textSize(fs)
+            tw, th = bs.size
         else:
             bs = context.newString(`y`, fontSize=12, fill=blackColor)
-            tw, th = context.textSize(bs)
+            tw, th = bs.size
         text(fs, (-10-tw, 1000/10*y-th/2))
 
     # Draw axis labels
     bs = context.newString('OS/2 weight class ', fontSize=12, fill=color(1, 0, 0))
     bs += context.newString('&', fontSize=12, fill=blackColor)
     bs += context.newString(' XTRA Axis (H-stem width)', fontSize=12, fill=color(0, 0.5, 0))
-    tw, th = context.textSize(bs)
+    tw, th = bs.size
     context.text(bs, (0, -50-th/2))
 
     context.save()
@@ -247,7 +247,7 @@ def drawFamilyOverview(path):
     bs = context.newString('OS/2 width class ', fontSize=12, fill=color(1, 0, 0))
     bs += context.newString('&', fontSize=12, fill=blackColor)
     bs += context.newString(' XOPQ Axis + stem (H.width - H.stem - H.lsb - H.rsb)', fontSize=12, fill=color(0, 0.5, 0))
-    tw, th = context.textSize(fs)
+    tw, th = bs.size
     context.text(fs, (0, 60))
     context.restore()
 

@@ -25,7 +25,7 @@ def textBounds(s, x, y, w):
                                       tracking=em(0.02),
                                       textFill=blackColor))
 
-    tw, th = context.textSize(bs)
+    tw, th = bs.size
     bx, by, bw, bh = bs.bounds()
 
     context.text(bs, (x-bx, y-by))

@@ -112,7 +112,7 @@ class AnimationFrame(Rect):
         #print(self.frameIndex, style['font'])
         #style['fontSize'] = self.h/3
         bs = c.newString(self.sampleText, style=style)
-        tw, th = bs.textSize()
+        tw, th = bs.size
         c.text(bs, (self.w/2 - tw/2, self.h/2))
         glyph = instance['ampersand']
         c.save()

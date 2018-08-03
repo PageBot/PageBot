@@ -230,7 +230,7 @@ class TextBox(Element):
             bs = self.bs
         if w is None:
             w = self.w
-        return bs.textSize(units(w).pt)
+        return bs.textSize(w)
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w, h) or styled
@@ -342,7 +342,7 @@ class TextBox(Element):
             self.drawBefore(self, view, p)
 
         # Draw the text with horizontal and vertical alignment
-        tw, th = self.bs.textSize()
+        tw, th = self.bs.size
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
             yOffset = (self.h - self.pb - self.pt - th)/2
@@ -431,8 +431,8 @@ class TextBox(Element):
 
         if view.showTextBoxY:
             bs = self.newString('0', style=indexStyle)
-            _, th = c.textSize(bs)
-            c.text(bs.s, (px + self.w + 3,  py + self.h - th/4))
+            _, th = bs.size
+            c.text(bs, (px + self.w + 3,  py + self.h - th/4))
 
         c.stroke((0, 0, 1), 0.5)
         prevY = 0
@@ -441,18 +441,18 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
-                fs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                tw, th = c.textSize(fs) # Calculate right alignment
-                c.text(fs.s, (px-3-tw, py + y - th/4))
+                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                tw, th = bs.size # Calculate right alignment
+                c.text(bs, (px-3-tw, py + y - th/4))
             if view.showTextBoxY:
-                fs = self.newString('%d' % round(y), style=yStyle)
-                _, th = c.textSize(fs)
-                c.text(fs.s, (px + self.w + 3, py + y - th/4))
+                bs = self.newString('%d' % round(y), style=yStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/4))
             if view.showTextBoxLeading:
                 leading = round(abs(y - prevY))
-                fs = self.newString('%d' % leading, style=leadingStyle)
-                _, th = c.textSize(fs)
-                c.text(fs.s, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                bs = self.newString('%d' % leading, style=leadingStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/4))
             prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):

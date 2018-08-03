@@ -473,21 +473,6 @@ class InDesignContext(BaseContext):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         self.b.textBox(sOrBs, r)
 
-    def textSize(self, bs, w=None, h=None):
-        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if there is no text defined.
-        Answer the height of the string if the width w is given."""
-        if w is not None:
-            return self.b.textSize(bs.s, width=w)
-        if h is not None:
-            return self.b.textSize(bs.s, height=h)
-        return self.b.textSize(bs.s)
-
-    def textOverflow(self, bs, w, h, align=LEFT):
-        """Answer the overflowing of from the box (0, 0, w, h)
-        as new InDesignString in the current context."""
-        wpt, hpt = upt(w, h)
-        return stringClass(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
-
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
 

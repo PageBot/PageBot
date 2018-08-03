@@ -90,12 +90,12 @@ class VariableCircle(Element):
         variableFont = getVarFontInstance(self.font, location)
         # Show axis name below circle marker?
         if self.showAxisNames and axisName is not None:
-            fs = context.newString(axisName,
+            bs = context.newString(axisName,
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
                                               textFill=blackColor))
-            tw, th = context.textSize(fs)
-            context.text(fs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
+            tw, th = bs.size
+            context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
