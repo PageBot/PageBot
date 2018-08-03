@@ -535,6 +535,8 @@ class DrawBotString(BabelString):
         if cFill is not inheritColor:
             if isinstance(cFill, (tuple, list, int, float)):
                 cFill = color(cFill)
+            elif cFill is None:
+                cFill = noColor
             assert isinstance(cFill, Color), ('DrawBotString.newString: Fill color "%s" is not Color in style %s' % (cFill, style))
             if cFill is noColor:
                 fsAttrs['fill'] = None
@@ -553,8 +555,10 @@ class DrawBotString(BabelString):
             assert isUnit(strokeWidth), ('DrawBotString.newString: strokeWidth %s must of type Unit' % strokeWidth)
             fsStyle['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
         if cStroke is not inheritColor:
-            if isinstance(cFill, (tuple, list, int, float)):
-                cFill = color(cFill)
+            if isinstance(cStroke, (tuple, list, int, float)):
+                cStroke = color(cStroke)
+            elif cStroke is None:
+                cStroke = noColor
             assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsAttrs['stroke'] = None

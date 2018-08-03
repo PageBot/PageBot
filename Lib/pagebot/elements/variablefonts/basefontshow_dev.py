@@ -29,15 +29,15 @@ class BaseFontShow(Element):
     """
     DEFAULT_LABEL_SIZE = 7
 
-    def getTextStyle(self, vf, fontSize=None, alignment=None, rLeading=None):
+    def getTextStyle(self, vf, fontSize=None, alignment=None, leading=None):
         u"""Answer a copy of self.style with modified parameters (if defined)"""
         # Make a copy of the entire cascading style from self perspective
         style = self.getFlattenedStyle() 
         style['font'] = vf.path
         if fontSize is not None:
             style['fontSize'] = fontSize
-        if rLeading is not None:
-            style['rLeading'] = rLeading
+        if leading is not None:
+            style['leading'] = leading
         if alignment is not None:
             style['xTextAlign'] = alignment
         return style
@@ -122,7 +122,7 @@ class BaseFontShow(Element):
         if labelSize is not None and label is None:
             label = '%s %s/%s\n\n' % (vf.info.familyName, 
                 asFormatted(fontSize), 
-                asFormatted(self.css('leading', 0)+self.css('rLeading', 1)*fontSize, format='%0.1f'))
+                asFormatted(self.css('leading', 0), format='%0.1f'))
         bs = c.newString(label or '', style=style) # Create BabelString/FormattedString if content.
  
         if s1: # In case s1 lead is defined, then use that for the bold version of self.f

@@ -25,11 +25,11 @@ from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
-from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.units import pt, em, upt
 from pagebot.toolbox.color import color, blackColor
 
 c = getContext()
-W =H = pt(500)
+W = H = pt(500)
 
 # Get PageBot Font instances of Variable font.
 f = findFont('Amstelvar-Roman-VF') 
@@ -152,14 +152,14 @@ class FontIcon(object):
             bs = c.newString(self.title,
                              style=dict(font=self.labelFont.path,
                              textFill=blackColor,
-                             rTracking=self.LABEL_RTRACKING,
+                             tracking=self.LABEL_RTRACKING,
                              fontSize=labelSize))
             tw, th = bs.size
             c.textFill=blackColor,
-            c.text(bs, (pt(w/2-tw/2), pt(self.ih+th/2)))
+            c.text(bs, ((w/2-tw/2), pt(self.ih+th/2)))
             text(bs.s, (w/2-tw/2, self.ih+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
+        y -= upt(self.LABEL_RLEADING, base=labelSize)
         
         if self.name:
             bs = c.newString(self.name,
@@ -171,7 +171,7 @@ class FontIcon(object):
             c.text(bs, (w/2-tw/2, y))
             #text(self.name, (w/2-tw/2, y))
             
-            y -= self.LABEL_RLEADING*labelSize
+            y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.label:
             bs = c.newString(self.label,
                              style=dict(font=self.labelFont.path,
@@ -207,7 +207,7 @@ class KeyFrame(object):
             bs = c.newString('')
             # Contains a DrawBot FormattedString.
             aa = bs.s
-            aa.append("123", font="Helvetica", fontSize=100, fill=color(1, 0, 1))
+            aa.append("123", font="Helvetica", fontSize=100, fill=(1, 0, 1))
             print(aa._font)
             print(aa._fontSize)
             print(aa._fill)
@@ -215,16 +215,16 @@ class KeyFrame(object):
             
             # Formatted string without append.
             print(' * Testing without append')
-            bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=blackColor))
+            bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=0))
             print('style: %s' % bs.style)
             aa = bs.s
             print(aa._font)
             print(aa._fontSize)
             #c.setTextFillColor(aa, blackColor)
             print(aa._fill) 
-            text(aa, (100, 200))
+            c.b.text(aa, (100, 200))
 
-            c.text(bs, (pt(100), pt(200)))
+            c.text(bs, (100, 200))
 
             """
             self.drawBackground()
@@ -297,7 +297,7 @@ def positionFontIcons():
 def drawBackground1(keyFrame, frame):
     bs = c.newString('8 weight fonts\nTotal 400k',
                      style=dict(font=LABEL_FONT.path,
-                                rLeading=1.2,
+                                leading=em(1.2),
                                 fontSize=18,
                                 fill=color(1, 0, 0)))
     c.textBox(bs, (50, H-60, 200, 50))
@@ -307,7 +307,7 @@ def drawBackground2(keyFrame, frame):
     varFontIcon = id2FontIcon['VarFont']
     bs = c.newString('1 axis\nTotal 100k',
                      style=dict(font=LABEL_FONT.path,
-                                rLeading=1.2,
+                                leading=em(1.2),
                                 fontSize=18,
                                 fill=color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))
@@ -317,7 +317,7 @@ def drawBackground3(keyFrame, frame):
     varFontIcon = id2FontIcon['VarFont']
     bs = c.newString('%d weights\nTotal 100k' % ((2**15)+1),
                      style=dict(font=LABEL_FONT.path,
-                                rLeading=1.2,
+                                leading=em(1.2),
                                 fontSize=18,
                                 textFill=color(1, 0, 0)))
     c.textBox(bs, (varFontIcon.x, H-60, 200, 50))

@@ -67,7 +67,7 @@ class BabelString(object):
 
     def _get_size(self):
         u"""Answer the size tuple (w, h) of the string."""
-        return pt(self.context.textSize(self))
+        return pt(self.context.b.textSize(self.s))
     size = property(_get_size)
 
 if __name__ == '__main__':

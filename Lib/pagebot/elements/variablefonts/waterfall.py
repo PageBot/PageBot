@@ -31,6 +31,7 @@ class Waterfall(TextBox):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
@@ -43,7 +44,7 @@ class Waterfall(TextBox):
         >>> page.pw, page.w, 500
 
         >>> gs = Waterfall(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, location=loc, useOpsz=useOpsz, context=c)
-        >>> style = dict(stroke=0, strokeWidth=0.25, rLeading=1.3, fontSize=48, xTextAlign=RIGHT)
+        >>> style = dict(stroke=0, strokeWidth=0.25, leading=em(1.3), fontSize=48, xTextAlign=RIGHT)
         >>> page = doc[2]
         >>> font2 = findFont('RobotoDelta-VF')
         >>> #font2 = findFont('Upgrade-Regular')
@@ -65,7 +66,7 @@ class Waterfall(TextBox):
         labelStyle = self.style.copy()
         labelStyle['font'] = self.getInstance(f, dict(opsz=labelSize)).path
         labelStyle['fontSize'] = labelSize
-        labelStyle['rLeading'] = 1
+        labelStyle['leading'] = em(1)
 
         w = self.pw # Initial with to fit top sample
         location['opsz'] = None

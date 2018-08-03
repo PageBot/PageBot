@@ -133,7 +133,7 @@ def makeDocument():
         titleS += context.newString(' '+word, style=dict(font=fontRegular.path, fontSize=50, 
             w=page.pw, leading=em(1.2), xTextAlign=CENTER, textFill=whiteColor))
     #title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
-    #title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, rTracking=0.025, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    #title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, tracking=em(0.025), xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(titleS, parent=page, name='Title',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)

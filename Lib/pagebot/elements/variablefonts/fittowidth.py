@@ -17,7 +17,7 @@
 #     Draw the icon with optional information of the included font.
 #
 from pagebot.elements import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, em, upt
 from pagebot.toolbox.color import noColor, blackColor
 
 class FontIcon(Element): 
@@ -35,8 +35,8 @@ class FontIcon(Element):
     (120, 160, 1)
 
     """
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.3
+    LABEL_RTRACKING = em(0.02)
+    LABEL_RLEADING = em(1.3)
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=noColor,
             earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
@@ -171,26 +171,26 @@ class FontIcon(Element):
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, self.h+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
+        y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
+            y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))

@@ -58,7 +58,7 @@ def makeDocument():
                      style=dict(font='Verdana',
                                 fontSize=30,
                                 textFill=blackColor,
-                                rLeading=1.2))
+                                leading=em(1.2)))
     newTextBox(fs, fill=color(0.8), parent=page,
                w=RectSize, h=RectSize, shadow=shadow, textShadow=textShadow,
                conditions=conditions, xAlign=CENTER, yAlign=MIDDLE)

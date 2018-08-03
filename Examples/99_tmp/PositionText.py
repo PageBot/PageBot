@@ -77,7 +77,7 @@ def makeDocument():
                    # Below style values that apply to the content
                    font='Verdana',
                    fontSize=fontSize,
-                   leading=0, rLeading=1, # Absolute and relative leading.
+                   leading=em(1), # Absolute and relative leading.
                    xAlign=LEFT, yAlign=BOTTOM, # Set origin of element to left-bottom
                    textFill=(0, 0, 1)) # Color of the text.
     # Return the generated document to the caller.

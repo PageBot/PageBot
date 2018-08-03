@@ -53,9 +53,9 @@ class Title(TextBox):
 
         c = self.context
         if foundryStyle is None:
-            foundryStyle = dict(font=f.path, fontsize=self.BODY_SIZE, rLeading=0.6)
+            foundryStyle = dict(font=f.path, fontsize=self.BODY_SIZE, leading=em(0.6))
         if fontNameStyle is None:
-            fontNameStyle = dict(font=f.path, rLeading=1.9)
+            fontNameStyle = dict(font=f.path, leading=em(1.9))
         if designerStyle is None:
             designerStyle = dict(font=f.path, fontsize=self.NAME_SIZE, leading=em(1.4), xTextAlign=RIGHT)
 
