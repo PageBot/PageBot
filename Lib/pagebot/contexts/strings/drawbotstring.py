@@ -23,7 +23,13 @@ try:
     from CoreText import CTFontDescriptorCreateWithNameAndSize, \
         CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
         CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
-        CTFrameGetLines, CTFrameGetLineOrigins
+        CTFrameGetLines, CTFrameGetLineOrigins, CTRunGetGlyphCount, \
+        CTRunGetStringRange, CTRunGetStringIndicesPtr, CTRunGetAdvances, \
+        CTRunGetStatus, CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes, \
+        CFRange, CTRunGetTextMatrix, CTLineGetGlyphRuns, CGPoint, \
+        CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex, \
+        CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds, \
+        CTLineGetTrailingWhitespaceWidth
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
 
@@ -35,9 +41,24 @@ except (AttributeError, ImportError):
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
     CTFrameGetLines = None
+    CTRunGetStringRange = None
     CTFrameGetLineOrigins = None
     kCTFontURLAttribute = None
     CTFramesetterCreateFrame = None
+    CTRunGetGlyphCount = None
+    CTRunGetStringIndicesPtr = None
+    CTRunGetAdvances = None
+    CTRunGetStatus = None
+    CTRunGetPositions = None
+    CTRunGetGlyphs = None
+    CTRunGetAttributes = None
+    CFRange = CGPoint = None
+    CTRunGetTextMatrix = None
+    CTLineGetGlyphRuns = None
+    CTLineGetImageBounds = None
+    CTLineGetStringIndexForPosition = None
+    CTLineGetTrailingWhitespaceWidth = None
+    CTLineGetTypographicBounds = None
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
@@ -721,16 +742,16 @@ class TextRun(object):
         self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
         self._style = None # Property cash for constructed style from run parameters.
-        self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
+        self.glyphCount = gc = CTRunGetGlyphCount(ctRun)
         # Reverse the style from
-        attrs = CoreText.CTRunGetAttributes(ctRun)
+        attrs = CTRunGetAttributes(ctRun)
         self.nsFont = attrs['NSFont']
         #self.fontDescriptor = f.fontDescriptor()
         self.fill = attrs['NSColor']
         self.nsParagraphStyle = attrs['NSParagraphStyle']
         self.attrs = attrs # Save, in case the caller want to query run parameters.
 
-        self.iStart, self.iEnd = CoreText.CTRunGetStringRange(ctRun)
+        self.iStart, self.iEnd = CTRunGetStringRange(ctRun)
         self.string = u''
         # Hack for now to find the string in repr-string if self._ctLine.
         # TODO: Make a better conversion here, not relying on the format of the repr-string.
@@ -741,23 +762,23 @@ class TextRun(object):
                 self.string += chr(int(part[0:4], 16))
                 self.string += part[4:]
 
-        #print(gc, len(CoreText.CTRunGetStringIndicesPtr(ctRun)), CoreText.CTRunGetStringIndicesPtr(ctRun), ctRun)
+        #print(gc, len(CTRunGetStringIndicesPtr(ctRun)), CTRunGetStringIndicesPtr(ctRun), ctRun)
         try:
-            self.stringIndices = CoreText.CTRunGetStringIndicesPtr(ctRun)[0:gc]
+            self.stringIndices = CTRunGetStringIndicesPtr(ctRun)[0:gc]
         except TypeError:
             self.stringIndices = [0]
-        #CoreText.CTRunGetStringIndices(ctRun._ctRun, CoreText.CFRange(0, 5), None)[4]
-        self.advances = CoreText.CTRunGetAdvances(ctRun, CoreText.CFRange(0, 5), None)
-        #self.positions = CoreText.CTRunGetPositionsPtr(ctRun)[0:gc]
-        #CoreText.CTRunGetPositions(ctRun, CoreText.CFRange(0, 5), None)[4]
-        #self.glyphFontIndices = CoreText.CTRunGetGlyphsPtr(ctRun)[0:gc]
-        #print(CoreText.CTRunGetGlyphs(ctRun, CoreText.CFRange(0, 5), None)[0:5])
-        self.status = CoreText.CTRunGetStatus(ctRun)
+        #CTRunGetStringIndices(ctRun._ctRun, CFRange(0, 5), None)[4]
+        self.advances = CTRunGetAdvances(ctRun, CFRange(0, 5), None)
+        #self.positions = CTRunGetPositionsPtr(ctRun)[0:gc]
+        #CTRunGetPositions(ctRun, CFRange(0, 5), None)[4]
+        #self.glyphFontIndices = CTRunGetGlyphsPtr(ctRun)[0:gc]
+        #print(CTRunGetGlyphs(ctRun, CFRange(0, 5), None)[0:5])
+        self.status = CTRunGetStatus(ctRun)
 
         # get all positions
-        self.positions = CoreText.CTRunGetPositions(ctRun, (0, gc), None)
+        self.positions = CTRunGetPositions(ctRun, (0, gc), None)
         # get all glyphs
-        self.glyphs = CoreText.CTRunGetGlyphs(ctRun, (0, gc), None)
+        self.glyphs = CTRunGetGlyphs(ctRun, (0, gc), None)
 
     def __len__(self):
         return self.glyphCount
@@ -865,7 +886,7 @@ class TextRun(object):
     #   Paragraph attributes
 
     def _get_matrix(self):
-        return CoreText.CTRunGetTextMatrix(self._ctRun)
+        return CTRunGetTextMatrix(self._ctRun)
     matrix = property(_get_matrix)
 
     def _get_alignment(self):
@@ -918,7 +939,7 @@ class TextLine(object):
         self.string = ''
         self.textRuns = []
         #print(ctLine)
-        for runIndex, ctRun in enumerate(CoreText.CTLineGetGlyphRuns(ctLine)):
+        for runIndex, ctRun in enumerate(CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.textRuns.append(textRun)
             self.string += textRun.string
@@ -934,15 +955,15 @@ class TextLine(object):
 
     def getIndexForPosition(self, x, y):
         xpt, ypt = upt(x, y)
-        return CoreText.CTLineGetStringIndexForPosition(self._ctLine, CoreText.CGPoint(xpt, ypt))[0]
+        return CTLineGetStringIndexForPosition(self._ctLine, CGPoint(xpt, ypt))[0]
 
     def getOffsetForStringIndex(self, i):
         """Answer the z position that is closest to glyph string index i. If i is out of bounds,
         then answer the closest x position (left and right side of the string)."""
-        return CoreText.CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
+        return CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
 
     def _get_stringIndex(self):
-        return CoreText.CTLineGetStringRange(self._ctLine).location
+        return CTLineGetStringRange(self._ctLine).location
     stringIndex = property(_get_stringIndex)
 
     def getGlyphIndex2Run(self, glyphIndex):
@@ -952,17 +973,17 @@ class TextLine(object):
         return None
 
     #def _get_alignment(self):
-    #    return CoreText.CTTextAlignment(self._ctLine)
+    #    return CTTextAlignment(self._ctLine)
     #alignment = property(_get_alignment)
 
     def _get_imageBounds(self):
         """Property that answers the bounding box (actual black shape) of the text line."""
-        (xpt, ypt), (wpt, hpt) = CoreText.CTLineGetImageBounds(self._ctLine, None)
+        (xpt, ypt), (wpt, hpt) = CTLineGetImageBounds(self._ctLine, None)
         return pt(xpt, ypt, wpt, hpt)
     imageBounds = property(_get_imageBounds)
 
     def _getBounds(self):
-        return CoreText.CTLineGetTypographicBounds(self._ctLine, None, None, None)
+        return CTLineGetTypographicBounds(self._ctLine, None, None, None)
 
     def _get_bounds(self):
         """Property that returns the EM bounding box of the line."""
@@ -991,7 +1012,7 @@ class TextLine(object):
         return pt(ypt)
 
     def _get_trailingWhiteSpace(self):
-        return CoreText.CTLineGetTrailingWhitespaceWidth(self._ctLine)
+        return CTLineGetTrailingWhitespaceWidth(self._ctLine)
     trailingWhiteSpace = property(_get_trailingWhiteSpace)
 
     def findPattern(self, pattern):
@@ -1052,30 +1073,30 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     for found in searchRE.finditer(txt):
         locations.append((found.start(), found.end()))
 
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+    setter = CTFramesetterCreateWithAttributedString(attrString)
+    box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
 
-    ctLines = CoreText.CTFrameGetLines(box)
-    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+    ctLines = CTFrameGetLines(box)
+    origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
 
     rectangles = []
     for startLocation, endLocation in locations:
         minx = miny = maxx = maxy = None
         for i, (originX, originY) in enumerate(origins):
             ctLine = ctLines[i]
-            bounds = CoreText.CTLineGetImageBounds(ctLine, None)
+            bounds = CTLineGetImageBounds(ctLine, None)
             if bounds.size.width == 0:
                 continue
-            _, ascent, descent, leading = CoreText.CTLineGetTypographicBounds(ctLine, None, None, None)
+            _, ascent, descent, leading = CTLineGetTypographicBounds(ctLine, None, None, None)
             height = ascent + descent
-            lineRange = CoreText.CTLineGetStringRange(ctLine)
+            lineRange = CTLineGetStringRange(ctLine)
             miny = maxy = originY
 
             if NSLocationInRange(startLocation, lineRange):
-                minx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
+                minx, _ = CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
 
             if NSLocationInRange(endLocation, lineRange):
-                maxx, _ = CoreText.CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
+                maxx, _ = CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
                 rectangles.append((ctLine, (minx, miny - descent, maxx - minx, height)))
 
             if minx and maxx is None:
