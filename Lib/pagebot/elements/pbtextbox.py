@@ -243,7 +243,7 @@ class TextBox(Element):
             w = self.pw # Padded width
         if h is None:
             h = self.ph # Padded height
-        return self.bs.textOverflow(w, h, LEFT)
+        return self.context.textOverflow(self.bs, w, h, LEFT)
 
     def getBaselinePositions(self, w=None, h=None):
         """Answer the list of relative vertical baseline positions,
@@ -382,6 +382,13 @@ class TextBox(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
+        for tl in self.textLines:
+            print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
+            print(tl.textRuns)
+            y, x, w, h = tl.bounds
+            context.fill((1, 0, 0))
+            context.rect(px+x, py+y, 5, 5)
+   
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 

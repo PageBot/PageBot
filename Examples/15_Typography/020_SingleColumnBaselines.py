@@ -63,10 +63,7 @@ page = doc[1]
 c1 = newTextBox(t, parent=page, conditions=[Fit()])
 #print(c.baselines)
 #print(c1.baselines)
-print(len(c1.textLines))
-for tl in c1.textLines:
-    print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
-    print(tl.textRuns)
+  
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

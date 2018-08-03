@@ -31,7 +31,7 @@ from pagebot.toolbox.units import pt
 DoTextFlow = False
 PagePadding = 32
 W = H = 500
-BoxWidth = W
+BoxWidth = W - 2 * PagePadding
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/useTextBoxLinesRuns.png'
