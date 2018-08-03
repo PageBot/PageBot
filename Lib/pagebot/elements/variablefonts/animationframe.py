@@ -21,7 +21,6 @@ from pagebot.elements import Rect
 from pagebot.toolbox.units import pointOffset, pt
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import color
-from pagebot.toolbox.units import em
 
 class AnimationFrame(Rect):
     u"""Showing one frame of an animation, supporting different states of a VariableFont
@@ -37,6 +36,7 @@ class AnimationFrame(Rect):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
         >>> w, h = 2040, 1020 # Type Network banners
         >>> duration = 3 # Seconds
