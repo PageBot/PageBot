@@ -20,11 +20,20 @@ from copy import copy
 
 try:
 #if platform == 'darwin':
-    import CoreText
-    import Quartz
-    from drawBot import BezierPath
-except AttributeError:
-    BezierPath = None
+    from CoreText import CTFontDescriptorCreateWithNameAndSize, \
+        CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
+        CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
+        CTFrameGetLines, CTFrameGetLineOrigins
+    from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
+    import drawBot
+
+    drawBotBuilder = drawBot
+except (AttributeError, ImportError):
+    NSFont = None
+    CTFontDescriptorCreateWithNameAndSize = None
+    CTFontDescriptorCopyAttribute = None
+    kCTFontURLAttribute = None
+    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
@@ -63,6 +72,7 @@ class NoneDrawBotString(BabelString):
         self.font = DEFAULT_FONT_PATH
         self.style = style
         self.hyphenation = False
+        self.size = pt(0, 0)
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
@@ -96,6 +106,9 @@ class NoneDrawBotString(BabelString):
         pass
 
     strokeWidth = setStrokeWidth
+
+    def textLines(self, w=None, h=None):
+        return []
 
 class DrawBotString(BabelString):
 
@@ -179,24 +192,6 @@ class DrawBotString(BabelString):
             hpt = upt(h)
             return b.textSize(self.s, height=hpt)
         return b.textSize(self.s)
-
-    def textOverflow(self, w, h, align=LEFT):
-        """Answer the overflowing of from the box (0, 0, w, h)
-        as new DrawBotString in the current context."""
-        wpt, hpt = upt(w, h)
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
-        # not as FormattedString attribute.
-        self.b.hyphenation(bool(self.hyphenation))
-        overflow = self.__class__(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
-        self.b.hyphenation(False)
-        return overflow
-
-    def getBaselines(self, w, h):
-        u"""Answer the list of vertical baseline position for the self.s FormattedString
-        and for the given width and height.
-        """
-        wpt, hpt = upt(w, h)
-        return getBaselines(self.s, (0, 0, wpt, hpt))
 
     def bounds(self):
         """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
@@ -284,7 +279,28 @@ class DrawBotString(BabelString):
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
 
+    def textOverflow(self, w, h, align=LEFT):
+        """Answer the overflowing of from the box (0, 0, w, h)
+        as new DrawBotString in the current context."""
+        wpt, hpt = upt(w, h)
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # not as FormattedString attribute.
+        self.b.hyphenation(bool(self.hyphenation))
+        overflow = self.__class__(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
+        self.b.hyphenation(False)
+        return overflow
+        
+    def getBaselines(self, w, h):
+        u"""Answer the list of vertical baseline position for the self.s FormattedString
+        and for the given width and height.
+        """
+        wpt, hpt = upt(w, h)
+        return getBaselines(self.s, (0, 0, wpt, hpt))
+
     def textLines(self, w, h, align=LEFT):
+        u"""Answer the dictionary of TextLine instances. Key is y position of the line.
+
+        """
         wpt, hpt = upt(w, h)
         textLines = []
 
@@ -292,9 +308,9 @@ class DrawBotString(BabelString):
         setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
         path = Quartz.CGPathCreateMutable()
         Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(0, 0, wpt, hpt))
-        box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-        ctLines = CoreText.CTFrameGetLines(box)
-        origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
+        ctBox = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
+        ctLines = CoreText.CTFrameGetLines(ctBox)
+        origins = CoreText.CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
 
         for lIndex, ctLine in enumerate(ctLines):
             origin = origins[lIndex]
@@ -987,6 +1003,7 @@ class TextLine(object):
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
 
+'''
 def getTextLines(txt, box):
     """Answer a list of (x,y) positions of all line starts in the box. This function may become part
     of standard DrawBot in the near future."""
@@ -1014,7 +1031,6 @@ def getBaselines(txt, box):
     #print(origins)
     return [(x + o.x, y + o.y) for o in origins]
 
-'''
 def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     from AppKit import NSLocationInRange
     bc = BaseContext()
