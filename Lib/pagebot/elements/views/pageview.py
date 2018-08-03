@@ -26,7 +26,7 @@ from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
 from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR
-from pagebot.toolbox.units import pt, rv, pointOffset, point2D
+from pagebot.toolbox.units import pt, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -458,7 +458,7 @@ class PageView(BaseView):
                 context.fill(self.css('viewInfoFill'))
                 context.stroke(color(0.3), w=0.25)
                 context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                context.text(fs, (tpx+Pd, tpy+th))
+                context.text(bs, (tpx+Pd, tpy+th))
 
             if self.showElementDimensions:
                 # TODO: Make separate arrow functio and better positions

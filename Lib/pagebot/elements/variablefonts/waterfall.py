@@ -17,6 +17,7 @@
 from pagebot.elements import TextBox
 from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.units import em
 
 class Waterfall(TextBox):
     u"""Showing the specified (variable) font as waterfall.
@@ -31,7 +32,7 @@ class Waterfall(TextBox):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
-        >>> from pagebot.toolbox.units import em
+        >>> from pagebot.toolbox.color import color        
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
@@ -42,7 +43,7 @@ class Waterfall(TextBox):
         >>> loc = dict(wght=1)
         >>> useOpsz = False
         >>> page.pw, page.w, 500
-
+        (6.28", 8.50", 500)
         >>> gs = Waterfall(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, location=loc, useOpsz=useOpsz, context=c)
         >>> style = dict(stroke=0, strokeWidth=0.25, leading=em(1.3), fontSize=48, xTextAlign=RIGHT)
         >>> page = doc[2]

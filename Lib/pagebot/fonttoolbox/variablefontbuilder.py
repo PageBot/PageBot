@@ -32,6 +32,7 @@ from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import getFont
+from pagebot.toolbox.color import blackColor
 
 context = getContext()
 

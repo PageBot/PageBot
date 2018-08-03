@@ -24,10 +24,10 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.constants import LEFT, CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
+from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import noColor, blackColor, Color
-from pagebot.contexts.strings.indesignstring import IndesignString as stringClass
+from pagebot.contexts.strings.indesignstring import IndesignString
 
 class InDesignContext(BaseContext):
     """An InDesignContext instance combines the specific functions of the
@@ -37,7 +37,7 @@ class InDesignContext(BaseContext):
     isInDesign = True
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = BabelString
+    STRING_CLASS = IndesignString
     EXPORT_TYPES = ('jsx',)
 
     def __init__(self):
