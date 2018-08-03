@@ -24,11 +24,11 @@ from sys import platform
 
 try:
 #if platform == 'darwin':
-    from CoreText import CTFontDescriptorCreateWithNameAndSize, \
-        CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
-        CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
-        CTFrameGetLines, CTFrameGetLineOrigins
-    from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
+    #from CoreText import CTFontDescriptorCreateWithNameAndSize, \
+    #    CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
+    #    CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
+    #    CTFrameGetLines, CTFrameGetLineOrigins
+    #from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
     from drawBot import Variable
 
@@ -36,7 +36,7 @@ try:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-except AttributeError:
+except (AttributeError, ImportError):
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None

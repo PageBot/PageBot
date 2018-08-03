@@ -122,7 +122,7 @@ class InDesignContext(BaseContext):
         >>> context = InDesignContext()
         >>> context.newPage(pt(100), pt(100))
         """
-        self.b.newPage(w.pt, h.pt)
+        self.b.newPage(w, h)
 
     def newDrawing(self):
         """Clear output canvas, start new export file.

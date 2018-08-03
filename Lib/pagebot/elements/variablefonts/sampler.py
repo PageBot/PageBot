@@ -17,7 +17,6 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot.elements import TextBox
-from pagebot.toolbox.units import em
 
 class Sampler(TextBox):
     u"""Showing the specified (variable) font as full page with a samples of glyphs.
@@ -32,6 +31,8 @@ class Sampler(TextBox):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import em
+        >>> from pagebot.toolbox.color import color
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
