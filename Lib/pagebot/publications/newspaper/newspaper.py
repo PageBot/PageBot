@@ -16,7 +16,7 @@
 from pagebot.publications.publication import Publication
 from pagebot.publications.newspaper.title import Title
 from pagebot.publications.newspaper.article import Article
-from pagebot.constants import CENTER, MAX_HEIGHT
+from pagebot.constants import CENTER
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
@@ -287,7 +287,6 @@ class Newspaper(Publication):
             conditions=[Left2Left(), Float2Top()])
 
         newRect(mb=gutter, parent=article, h=200,
-            maxH=MAX_HEIGHT, # TODO: Why need to set this, as r.maxH is 100 here.
             fill=color(0.8), stroke=color(0), strokeWidth=pt(0.5),
             conditions=[Left2Left(), Float2Top(), Fit2Width()])
 

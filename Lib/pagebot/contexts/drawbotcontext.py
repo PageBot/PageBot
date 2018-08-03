@@ -16,11 +16,11 @@
 #
 import os
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import LEFT, CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D # Render units to points
 from pagebot.constants import *
-from sys import platform
+#from sys import platform
 
 try:
 #if platform == 'darwin':

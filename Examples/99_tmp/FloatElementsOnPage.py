@@ -97,7 +97,6 @@ def makeDocument():
     # Make new container for adding elements inside with alignment.
     newRect(z=10, w=pageArea, h=pageArea, fill=color(0.8, 0.8, 0.8, 0.4),
             parent=page, margin=0, padding=0, yAlign=MIDDLE,
-            maxW=pageArea, maxH=pageArea,
             xAlign=CENTER, stroke=noColor, conditions=(Center2Center(),
                                                     Middle2Middle()))
 
@@ -105,14 +104,11 @@ def makeDocument():
     fs = doc.context.newString('Headline in red box.',
                                style=dict(textFill=whiteColor,
                                           fontSize=fontSize,
-                                          maxW=pageArea,
-                                          maxH=pageArea,
                                           leading=fontSize,
                                           font='LucidaGrande'))
     newTextBox(fs, z=0, w=RedWidth, h=RedHeight, name='RedRect',
                parent=page, fill=color(1, 0.1, 0.1),
-               yAlign=TOP, maxW=pageArea, maxH=pageArea,
-               padding=4, conditions=(Center2Center(),
+               yAlign=TOP, padding=4, conditions=(Center2Center(),
                                       Top2Top()))
 
     if not hasattr(scriptGlobals, 'blurbText'):
@@ -129,17 +125,15 @@ def makeDocument():
                                            leading=12,
                                            textFill=blackColor))
     newTextBox(fs, z=0, w=YellowWidth, h=YellowHeight, parent=page,
-               padding=4, fill=color(7,
-               maxW=pageArea, maxH=pageArea, conditions=(Left2Left(),
+               padding=4, fill=0.7, conditions=(Left2Left(),
                                                          Float2Top()))
 
     newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
-             parent=page, fill=color(0.7), padding=8,
-             maxW=pageArea, maxH=pageArea, conditions=(Right2Right(),
+             parent=page, fill=0.7, padding=8, conditions=(Right2Right(),
                                                        Float2Top()))
 
     newRect(z=0, w=BlueWidth, h=20,
-            parent=page, fill=color(0.2), conditions=(Fit2Width(),
+            parent=page, fill=0.2, conditions=(Fit2Width(),
                                                Float2Top()))
 
     score = page.solve()

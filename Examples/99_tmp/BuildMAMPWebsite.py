@@ -90,8 +90,7 @@ def makeDocument():
     e1 = newTextBox(s,
                     name='CSSTextBox1',
                     parent=page0, padding=4, x=100, font='Verdana', h=h1,
-                    maxW=W-2*PagePadding,
-                    minW=100, mb=20, mr=10, # Conditions make the element
+                    mb=20, mr=10, # Conditions make the element
                                             # move to top-left of the page.
                     gridX=((fr(3), px(8)), (fr(2), px(8))),
                     # And the condition that there should be no overflow,

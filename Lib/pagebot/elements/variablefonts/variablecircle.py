@@ -58,18 +58,6 @@ class VariableCircle(Element):
         self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
         self.showAxisNames = showAxisNames
 
-    def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.css('w'), self.minW)) # From self.style, don't inherit.
-    def _set_w(self, w):
-        self.style['w'] = w or self.minW # Overwrite element local style from here, parent css becomes inaccessable.
-    w = property(_get_w, _set_w)
-
-    def _get_h(self): # Height
-        return min(self.maxH, max(self.minH, self.css('h'), self.minH)) # From self.style, don't inherit.
-    def _set_h(self, h):
-        self.style['h'] = h or self.minH # Overwrite element local style from here, parent css becomes inaccessable.
-    h = property(_get_h, _set_h)
-
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
