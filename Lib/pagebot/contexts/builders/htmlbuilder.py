@@ -456,8 +456,6 @@ table {
                 attributes.append('font-weight: %s;' % style['fontWeight'])
             if style.get('tracking') is not None:
                 attributes.append('letter-spacing: %s;' % style['tracking'])
-            elif style.get('rTracking') is not None:
-                attributes.append('letter-spacing: %sem;' % style['rTracking'])
             if style.get('fill') not in (noColor, None): # Must Color instance
                 attributes.append('background-color: %s;' % style['fill'].css)
             if style.get('textFill') not in (noColor, None): # Must be Color instance

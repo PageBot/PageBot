@@ -57,7 +57,6 @@ rs = getRootStyle(
     BOX_COLOR = BOX_COLOR,
     # Text measures
     leading = 14,
-    rLeading = 0,
     fontSize = 9
 )
     # LANGUAGE-SWITCH Language settings
@@ -200,7 +199,6 @@ def makeDocument():
     # multiple time to create the tag styles.
     fontSize = rs['fontSize']
     leading = rs['leading']
-    rLeading = rs['rLeading']
     listIndent = rs['listIndent']
     language = rs['language']
     
@@ -214,9 +212,9 @@ def makeDocument():
     doc.newStyle(name='h1', fontSize=fontSize, font=SEMIBOLD, fill=color(1, 0, 0),
         leading=2*fontSize, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=fontSize, font=SEMIBOLD, fill=color(0, 0.5, 1),
-        leading=1*fontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+        leading=1*fontSize, tracking=H2_TRACK, postfix='\n')
     doc.newStyle(name='h3', fontSize=fontSize, font=MEDIUM, fill=blackColor, 
-        leading=1*fontSize, rLeading=0, rNeedsBelow=2*rLeading,
+        leading=1*fontSize, needsBelow=2*leading,
         tracking=H3_TRACK, postfix='\n')
     
     # Spaced paragraphs.

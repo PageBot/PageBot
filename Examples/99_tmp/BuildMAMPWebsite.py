@@ -54,7 +54,6 @@ def makeDocument():
     rs['fill'] = (1, 1, 0) # Yellow background for debugging
     rs['font'] = 'Verdana'
     rs['fontSize'] = 14
-    rs['rLeading'] = 1.4
     rs['textFill'] = 1
 
     #textBoxStyle = doc.addStyle('textbox', dict(fill=color(0, 0, 0, 0.7),

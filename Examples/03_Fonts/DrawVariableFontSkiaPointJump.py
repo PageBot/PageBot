@@ -25,6 +25,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 #from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
+from pagebot.toolbox.units import em
 
 context = getContext()
 W = H = 500
@@ -49,8 +50,8 @@ class FontIcon(object):
     H = 40
     L = 2
     E = 8
-    LABEL_RTRACKING = 0.02
-    LABEL_RLEADING = 1.1
+    LABEL_RTRACKING = em(0.02)
+    LABEL_RLEADING = em(1.1)
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, line=None,
             labelSize=10, labelFont=None, titleFont=None, x=0, y=0, show=True):
@@ -134,7 +135,7 @@ class FontIcon(object):
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, self.ih+th/2))
 
-            y = -self.LABEL_RLEADING*self.labelSize
+            y -= uptself.LABEL_RLEADING, base=self.labelSize)
             if self.name:
                 fs = context.newString(self.name,
                                        style=dict(font=self.labelFont.path,
@@ -143,7 +144,7 @@ class FontIcon(object):
                                                   fontSize=self.labelSize))
                 tw, th = textSize(fs)
                 text(fs, (w/2-tw/2, y))
-                y -= self.LABEL_RLEADING*self.labelSize
+                y -= upt(self.LABEL_RLEADING, base=self.labelSize)
             if self.label:
                 fs = context.newString(self.label,
                                        style=dict(font=self.labelFont.path,
@@ -259,7 +260,7 @@ def drawAnimation():
         fs = context.newString('Weight %0.1f' % wghtMin,
                                style=dict(font=f.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=12))
         tw, th = textSize(fs)
         text(fs, ((xl+xt)/2-tw-20, (yl+yt)/2))
@@ -267,7 +268,7 @@ def drawAnimation():
         fs = context.newString('Width %0.1f' % wdthMin,
                                style=dict(font=f.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=12))
         tw, th = textSize(fs)
         text(fs, ((xl+xb)/2-tw-20, (yl+yb)/2))
@@ -275,14 +276,14 @@ def drawAnimation():
         fs = context.newString('Width %0.1f' % wdthMax,
                                style=dict(font=f.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=12))
         text(fs, ((xr+xt)/2+20, (yr+yt)/2))
 
         fs = context.newString('Weight %0.1f' % wghtMax,
                                style=dict(font=f.path,
                                           textFill=blackColor,
-                                          rTracking=0.02,
+                                          tracking=em(0.02),
                                           fontSize=12))
         text(fs, ((xb+xr)/2+20, (yb+yr)/2))
 

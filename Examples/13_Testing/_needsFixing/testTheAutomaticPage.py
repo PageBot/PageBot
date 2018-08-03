@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
 #     www.pagebot.io
@@ -22,6 +23,7 @@ from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
+from pagebot.toolbox.units import em
 
 SHOW_TIMER = False
 
@@ -56,7 +58,6 @@ RS = getRootStyle(
     BOX_COLOR = BOX_COLOR,
     # Text measures
     leading = 14,
-    rLeading = 0,
     fontSize = 9
 )
 RS['language'] = 'nl-be' # Make Dutch hyphenation.
@@ -66,9 +67,9 @@ EXPORT_PATH = 'export/TestPaginaOpmaak.pdf'
 MAIN_FLOW = 'main' # ELement id of the text box on pages the hold the main text flow.
 
 # Tracking presets
-H1_TRACK = H2_TRACK = 0.015 # 1/1000 of fontSize, multiplier factor.
-H3_TRACK = 0.030 # Tracking as relative factor to font size.
-P_TRACK = 0.030
+H1_TRACK = H2_TRACK = em(0.015) # 1/1000 of fontSize, multiplier factor.
+H3_TRACK = em(0.030) # Tracking as relative factor to font size.
+P_TRACK = em(0.030)
 
 VARS = True
 
@@ -126,7 +127,6 @@ def makeDocument(rs):
     # Cache some values from the root style that we need multiple time to create the tag styles.
     sFontSize = rs['fontSize']
     sLeading = rs['leading']
-    rLeading = rs['rLeading']
     sListIndent = rs['listIndent']
     sLanguage = rs['language']
     
@@ -140,14 +140,14 @@ def makeDocument(rs):
     doc.newStyle(name='h1', fontSize=3*sFontSize, font=SEMIBOLD, fill=color(1, 0, 0),
         leading=2*sFontSize, tracking=H1_TRACK, postfix='\n')
     doc.newStyle(name='h2', fontSize=2*sFontSize, font=SEMIBOLD, fill=color(0, 0.5, 1),
-        leading=1*sFontSize, rLeading=0, tracking=H2_TRACK, postfix='\n')
+        leading=1*sFontSize, tracking=H2_TRACK, postfix='\n')
     doc.newStyle(name='h3', fontSize=2*sFontSize, font=MEDIUM, fill=blackColor, 
-        leading=1*sFontSize, rLeading=0, rNeedsBelow=2*rLeading, tracking=H3_TRACK,
+        leading=1*sFontSize, rNeedsBelow=2*leading, tracking=H3_TRACK,
         postfix='\n')
     
     # Spaced paragraphs.
     doc.newStyle(name='p', fontSize=sFontSize, font=BOOK, fill=color(0.1), prefix='', postfix='\n',
-        rTracking=P_TRACK, sLeading=14, rLeading=0, xTextAlign=LEFT, hyphenation=True)
+        tracking=P_TRACK, sLeading=14, xTextAlign=LEFT, hyphenation=True)
     doc.newStyle(name='b', font=SEMIBOLD)
     doc.newStyle(name='em', font=BOOK_ITALIC)
     doc.newStyle(name='hr', stroke=color(1, 0, 0), strokeWidth=4)
@@ -155,7 +155,7 @@ def makeDocument(rs):
     doc.newStyle(name='img', leading=sLeading, fontSize=sFontSize, font=BOOK,)
     
     # Footnote reference index.
-    doc.newStyle(name='sup', font=MEDIUM, rBaselineShift=0.6,
+    doc.newStyle(name='sup', font=MEDIUM, baselineShift=em(0.6),
         fontSize=0.65*sFontSize)
     doc.newStyle(name='li', fontSize=sFontSize, font=BOOK, 
         tracking=P_TRACK, leading=sLeading, hyphenation=True, 
@@ -163,7 +163,7 @@ def makeDocument(rs):
         tabs=[(listIndent, LEFT)], indent=sListIndent, 
         firstLineIndent=1, postfix='\n')
     doc.newStyle(name='ul',)
-    doc.newStyle(name='literatureref', fill=color(5, rBaselineShift=0.2, fontSize=0.8*sFontSize)
+    doc.newStyle(name='literatureref', fill=0.5, baselineShift=em(0.2), fontSize=0.8*sFontSize)
     doc.newStyle(name='footnote', fill=color(1, 0, 0), fontSize=0.8*U, font=BOOK)
     doc.newStyle(name='caption', tracking=P_TRACK, language=sLanguage, fill=color(0.2), 
         leading=0.8*sLeading, fontSize=0.8*sFontSize, font=BOOK_ITALIC, 

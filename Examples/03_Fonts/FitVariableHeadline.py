@@ -30,7 +30,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
-         wideLocation, fixedSize=False, tracking=None, rTracking=None):
+         wideLocation, fixedSize=False, tracking=None):
     """Answer the font instance that makes string s width on the given width
     *w* for the given *fontSize*. The *condensedLocation* dictionary defines
     the most condensed font instance (optionally including the opsz) and the
@@ -48,11 +48,11 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
     c = getContext()
     condFont = getVarFontInstance(varFont, condensedLocation)
     condensedString = c.newString(s, style=dict(font=condFont.path,
-        fontSize=fontSize, tracking=tracking, rTracking=rTracking, textFill=blackColor))
+        fontSize=fontSize, tracking=tracking, textFill=blackColor))
     condWidth, _ = condensedString.size
     wideFont = getVarFontInstance(varFont, wideLocation)
     wideString = c.newString(s, style=dict(font=wideFont.path, fontSize=fontSize,
-        tracking=tracking, rTracking=rTracking, textFill=blackColor))
+        tracking=tracking, textFill=blackColor))
     wideWidth, _ = wideString.size
 
     # Check if the requested with is inside the boundaries of the font width
