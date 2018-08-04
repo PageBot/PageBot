@@ -212,7 +212,7 @@ class DrawBotString(BabelString):
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> style = dict(font='Verdana', fontSize=pt(85))
+        >>> style = dict(font='Verdana', fontSize=pt(85), leading=em(1.4))
         >>> bs = context.newString('Example Text', style=style)
         >>> bs.fontSize
         85pt
@@ -222,6 +222,8 @@ class DrawBotString(BabelString):
         >>> bs.fontSize = mm(5) # Set at unit.
         >>> bs.fontSize
         5mm
+        >>> #bs.leading
+        1.4em
         """
         return units(self.style.get('fontSize'))
     def _set_fontSize(self, fontSize):
@@ -364,12 +366,13 @@ class DrawBotString(BabelString):
     def textOverflow(self, w, h, align=LEFT):
         """Answer the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
+        b = self.context.b
         wpt, hpt = upt(w, h)
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
-        self.b.hyphenation(bool(self.hyphenation))
-        overflow = self.__class__(self.b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
-        self.b.hyphenation(False)
+        b.hyphenation(bool(self.hyphenation))
+        overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
+        b.hyphenation(False)
         return overflow
         
     def getBaselines(self, w, h):
@@ -407,13 +410,12 @@ class DrawBotString(BabelString):
         CGPathAddRect(path, None, CGRectMake(0, 0, wpt, hpt))
         ctBox = CTFramesetterCreateFrame(setter, (0, 0), path, None)
         ctLines = CTFrameGetLines(ctBox)
-        #origins = CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
-        y = 0
+        origins = CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
 
         for lIndex, ctLine in enumerate(ctLines):
-            textLine = TextLine(ctLine, y, lIndex)
-            textLines[y] = textLine
-            y += textLine.maximumLineHeight
+            origin = origins[lIndex]
+            textLine = TextLine(ctLine, pt(origin.x), pt(origin.y), lIndex)
+            textLines[origin.y] = textLine
         return textLines
 
     @classmethod
@@ -1021,8 +1023,9 @@ class TextRun(object):
 
 
 class TextLine(object):
-    def __init__(self, ctLine, y, lineIndex):
+    def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine
+        self.x = x
         self.y = y
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.string = ''
