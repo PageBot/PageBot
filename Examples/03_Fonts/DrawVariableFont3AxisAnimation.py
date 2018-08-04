@@ -24,7 +24,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.style import CENTER
 from pagebot.toolbox.color import blackColor
-from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.units import pt, em, upt
 
 context = getContext()
 
@@ -102,24 +102,24 @@ class FontIcon(object):
         x = self.x + orgX
         y = self.y + orgY
 
-        path = newPath()
-        moveTo((0, 0))
-        lineTo((0, h))
-        lineTo((w-e, h))
-        lineTo((w, h-e))
-        lineTo((w, 0))
-        lineTo((0, 0))
-        closePath()
-        moveTo((w-e, h))
-        lineTo((w-e, h-e))
-        lineTo((w, h-e))
+        context.newPath()
+        context.moveTo((0, 0))
+        context.lineTo((0, h))
+        context.lineTo((w-e, h))
+        context.lineTo((w, h-e))
+        context.lineTo((w, 0))
+        context.lineTo((0, 0))
+        context.closePath()
+        context.moveTo((w-e, h))
+        context.lineTo((w-e, h-e))
+        context.lineTo((w, h-e))
 
-        save()
-        fill(1)
-        stroke(0)
-        strokeWidth(self.line)
-        translate(x, y)
-        drawPath(path)
+        context.save()
+        context.fill(1)
+        context.stroke(0)
+        context.strokeWidth(self.line)
+        context.translate(x, y)
+        context.drawPath()
 
         labelSize = e
         bs = context.newString(self.c,
@@ -138,7 +138,7 @@ class FontIcon(object):
             tw, th = bs.size
             context.text(bs, (w/2-tw/2, self.ih+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
+        y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.name:
             bs = context.newString(self.name,
                                    style=dict(font=self.labelFont.path,
@@ -147,7 +147,7 @@ class FontIcon(object):
                                               fontSize=labelSize))
             tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
+            y -= upt(self.LABEL_RLEADING, base=labelSize)
             
         if self.label:
             bs = context.newString(self.label,
@@ -157,7 +157,7 @@ class FontIcon(object):
                                               fontSize=labelSize))
             tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
-        restore()
+        context.restore()
         
 class KeyFrame(object):
     def __init__(self, objects, positions, steps=None, drawBackground=None):
@@ -168,12 +168,12 @@ class KeyFrame(object):
             self.drawBacktround = drawBackground
 
     def drawBackground(self):
-        fill(1)
-        rect(0, 0, W, H)
+        context.fill(1)
+        context.rect(0, 0, W, H)
 
     def draw(self):
         for n in range(self.steps):
-            newPage(W, H)
+            context.newPage(W, H)
             self.drawBackground()
             for o in self.objects:
                 offsetX = 0

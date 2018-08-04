@@ -135,7 +135,7 @@ class FontIcon(object):
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, self.ih+th/2))
 
-        y = -self.LABEL_RLEADING*labelSize
+        y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.name:
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
@@ -144,7 +144,7 @@ class FontIcon(object):
                                               fontSize=labelSize))
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))
-            y -= self.LABEL_RLEADING*labelSize
+            y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.label:
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
