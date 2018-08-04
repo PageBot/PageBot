@@ -34,7 +34,7 @@ class TextBox(Element):
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
         be ts (tagged str) if output is mainly through build and HTML/CSS.
-        Since both strings cannot be conversted lossless one into the other, it
+        Since both strings cannot be converted lossless one into the other, it
         is safer to keep them both if they are available."""
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
@@ -107,7 +107,7 @@ class TextBox(Element):
 
     def _get_textLines(self):
         if self._textLines is None:
-            self._textLines = self.bs.textLines(self.pw, self.ph)
+            self._textLines = self.bs.getTextLines(self.pw, self.ph)
         return self._textLines
     textLines = property(_get_textLines)
 
@@ -243,7 +243,7 @@ class TextBox(Element):
             w = self.pw # Padded width
         if h is None:
             h = self.ph # Padded height
-        return self.context.textOverflow(self.bs, w, h, LEFT)
+        return self.bs.textOverflow(w, h, LEFT)
 
     def getBaselinePositions(self, w=None, h=None):
         """Answer the list of relative vertical baseline positions,
@@ -382,13 +382,16 @@ class TextBox(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        for tl in self.textLines:
-            print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
-            print(tl.textRuns)
-            y, x, w, h = tl.bounds
-            context.fill((1, 0, 0))
-            context.rect(px+x, py+y, 5, 5)
-   
+        for y, tl in sorted(self.textLines.items()):
+            #print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
+            #print(tl.textRuns)
+            #y, x, w, h = tl.bounds
+            from random import random
+            context.stroke((1, 0, 0))
+            context.fill(None)
+            yy = py+y
+            context.line((px-30, yy), (px+30, yy))
+            
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
