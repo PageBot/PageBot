@@ -63,7 +63,7 @@ except (AttributeError, ImportError):
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
+from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING, DEFAULT_FONT_PATH
 from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
@@ -134,7 +134,7 @@ class NoneDrawBotString(BabelString):
     strokeWidth = setStrokeWidth
 
     def getTextLines(self, w, h, align=LEFT):
-        return []
+        return {}
 
 class DrawBotString(BabelString):
 
@@ -151,18 +151,18 @@ class DrawBotString(BabelString):
         >>> context.isDrawBot
         True
         >>> style = dict(font='Verdana', fontSize=pt(80))
-        >>> bs = context.newString('ABC', style=style)
+        >>> bs = context.newString('Example Text', style=style)
         >>> bs.size
-        (165.39pt, 117pt)
+        (538.59pt, 112pt)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
         ('Verdana', 80pt, 45.0, 0.56em, 0.74em, 1.01em, -0.21em)
         >>> '/Verdana'in bs.fontPath
         True
-        >>> style = dict(font='Verdana', fontSize=pt(100))
-        >>> bs = context.newString('ABC', style=style)
+        >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
+        >>> bs = context.newString('Example Text', style=style)
         >>> lines = bs.getTextLines(w=100)
-        >>> lines
-        [<TextLine #0 Runs:1>, <TextLine #1 Runs:1>, <TextLine #2 Runs:1>]
+        >>> len(lines)
+        9
         >>> line = lines[0]
         >>> line.xHeight, line.capHeight # Max metrics of all runs in line as Em
         (0.56em, 0.74em)
@@ -207,7 +207,22 @@ class DrawBotString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize."""
+        """Answer the current state of the fontSize.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> style = dict(font='Verdana', fontSize=pt(85))
+        >>> bs = context.newString('Example Text', style=style)
+        >>> bs.fontSize
+        85pt
+        >>> bs.fontSize = 96 # Auto-convert to points
+        >>> bs.fontSize
+        96pt
+        >>> bs.fontSize = mm(5) # Set at unit.
+        >>> bs.fontSize
+        5mm
+        """
         return units(self.style.get('fontSize'))
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
@@ -216,11 +231,30 @@ class DrawBotString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def asText(self):
-        return u'%s' % self.s #  Convert to text
+        """Answer the text string. 
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> bs = context.newString('Example Text')
+        >>> bs.asText()
+        'Example Text'
+        """
+        return str(self.s) #  Convert to text
 
     def textSize(self, w=None, h=None):
         """Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
-        to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
+        to top-emsize (including ascender+ and descender+) and the string width (including margins).
+
+        >>> from pagebot.toolbox.units import mm, uRound
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> style = dict(font='Verdana', fontSize=pt(12))
+        >>> bs = context.newString('Example Text ' * 20, style=style)
+        >>> len(bs.getTextLines(w=100))
+        20
+        >>> uRound(bs.textSize(w=300))
+        [251pt, 118pt]
+        """
         b = self.context.b
         if w is not None:
             wpt = upt(w)
@@ -348,12 +382,24 @@ class DrawBotString(BabelString):
     def getTextLines(self, w, h=None, align=LEFT):
         u"""Answer the dictionary of TextLine instances. Key is y position of the line.
 
+        >>> from pagebot.toolbox.units import mm, uRound
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> style = dict(font='Verdana', fontSize=pt(12))
+        >>> bs = context.newString('Example Text ' * 10, style=style)
+        >>> lines = bs.getTextLines(w=200)
+        >>> len(lines)
+        5
+        >>> line = lines[0]
+        >>> line.maximumLineHeight
+        1.4em
+        >>> 
         """
         assert w
         if not h:
             h = XXXL
         wpt, hpt = upt(w, h)
-        textLines = []
+        textLines = {}
 
         attrString = self.s.getNSObject()
         setter = CTFramesetterCreateWithAttributedString(attrString)
@@ -361,12 +407,13 @@ class DrawBotString(BabelString):
         CGPathAddRect(path, None, CGRectMake(0, 0, wpt, hpt))
         ctBox = CTFramesetterCreateFrame(setter, (0, 0), path, None)
         ctLines = CTFrameGetLines(ctBox)
-        origins = CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
+        #origins = CTFrameGetLineOrigins(ctBox, (0, len(ctLines)), None)
+        y = 0
 
         for lIndex, ctLine in enumerate(ctLines):
-            origin = origins[lIndex]
-            textLine = TextLine(ctLine, origin.x, origin.y, lIndex)
-            textLines.append(textLine)
+            textLine = TextLine(ctLine, y, lIndex)
+            textLines[y] = textLine
+            y += textLine.maximumLineHeight
         return textLines
 
     @classmethod
@@ -406,7 +453,7 @@ class DrawBotString(BabelString):
         instance for the rectangle fit. In case the fontSize is set and the
         width w is set, then just use the [wdth] or [XTRA] to make a horizontal
         fit, keeping the size. If the axes run to extreme, the string is return
-        without changing width. In case the a font path was supplied, then try
+        without changing width. In case a font path was supplied, then try
         to get a Font instance for that path, as we need to test it for
         existing axes as Variable Font.
 
@@ -591,8 +638,7 @@ class DrawBotString(BabelString):
             fontSizePt = DEFAULT_FONT_SIZE
 
         uLeading = css('leading', e, style)
-        if uLeading is not None:
-            fsAttrs['lineHeight'] = upt(uLeading, base=fontSizePt) # Base for em or perc
+        fsAttrs['lineHeight'] = upt(uLeading or DEFAULT_LEADING, base=fontSizePt) # Base for em or perc
         
         # Color values for text fill
         # Color: Fill the text with this color instance
@@ -869,11 +915,13 @@ class TextRun(object):
     #   based on the current setting in the FormattedString
 
     def _get_ascender(self):
-        return pt(self.nsFont.ascender())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.ascender()/fontSize, base=fontSize)
     ascender = property(_get_ascender)
 
     def _get_descender(self):
-        return pt(self.nsFont.descender())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.descender()/fontSize, base=fontSize)
     descender = property(_get_descender)
 
     def _get_capHeight(self):
@@ -907,11 +955,13 @@ class TextRun(object):
     textTransform = property(_get_textTransform)
 
     def _get_underlinePosition(self):
-        return pt(self.nsFont.underlinePosition())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.underlinePosition()/fontSize, base=fontSize)
     underlinePosition = property(_get_underlinePosition)
 
     def _get_underlineThickness(self):
-        return pt(self.nsFont.underlineThickness())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.underlineThickness()/fontSize, base=fontSize)
     underlineThickness = property(_get_underlineThickness)
 
     #   Paragraph attributes
@@ -925,23 +975,28 @@ class TextRun(object):
     alignment = property(_get_alignment)
 
     def _get_lineSpacing(self):
-        return pt(self.nsParagraphStyle.lineSpacing())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.lineSpacing()/fontSize, base=fontSize)
     lineSpacing = property(_get_lineSpacing)
 
     def _get_paragraphSpacing(self):
-        return pt(self.nsParagraphStyle.paragraphSpacing())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.paragraphSpacing()/fontSize, base=fontSize)
     paragraphSpacing = property(_get_paragraphSpacing)
 
     def _get_paragraphSpacingBefore(self):
-        return pt(self.nsParagraphStyle.paragraphSpacingBefore())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.paragraphSpacingBefore()/fontSize, base=fontSize)
     paragraphSpacingBefore = property(_get_paragraphSpacingBefore)
 
     def _get_headIndent(self):
-        return pt(self.nsParagraphStyle.headIndent())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.headIndent()/fontSize, base=fontSize)
     headIndent = property(_get_headIndent)
 
     def _get_tailIndent(self):
-        return pt(self.nsParagraphStyle.tailIndent())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.tailIndent()/fontSize, base=fontSize)
     tailIndent = property(_get_tailIndent)
 
     def _get_firstLineHeadIndent(self):
@@ -950,26 +1005,26 @@ class TextRun(object):
     firstLineHeadIndent = property(_get_firstLineHeadIndent)
 
     def _get_lineHeightMultiple(self):
-        return self.nsParagraphStyle.lineHeightMultiple()
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.lineHeightMultiple()/fontSize, base=fontSize)
     lineHeightMultiple = property(_get_lineHeightMultiple)
 
     def _get_maximumLineHeight(self):
-        return pt(self.nsParagraphStyle.maximumLineHeight())
-    maximumLineHeight = property(_get_maximumLineHeight)
-
-    leading = maximumLineHeight
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.maximumLineHeight()/fontSize, base=fontSize)
+    maximumLineHeight = leading = property(_get_maximumLineHeight)
 
     def _get_minimumLineHeight(self):
-        return pt(self.nsParagraphStyle.minimumLineHeight())
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.minimumLineHeight()/fontSize, base=fontSize)
     minimumLineHeight = property(_get_minimumLineHeight)
 
 
 class TextLine(object):
-    def __init__(self, ctLine, x, y, lineIndex):
+    def __init__(self, ctLine, y, lineIndex):
         self._ctLine = ctLine
-        self.x, self.y = pt(x, y) # Relative unit position from top of TextBox
+        self.y = y
         self.lineIndex = lineIndex # Vertical line index in TextBox.
-
         self.string = ''
         self.textRuns = []
         #print(ctLine)
@@ -1004,6 +1059,15 @@ class TextLine(object):
             capHeight = max(capHeight, textRun.capHeight)
         return capHeight
     fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
+
+    def _get_maximumLineHeight(self):
+        """Returns the max font cap height of all text runs as Em, based on the current font 
+        and fontSize."""
+        maximumLineHeight = 0
+        for textRun in self.textRuns:
+            maximumLineHeight = max(maximumLineHeight, textRun.maximumLineHeight)
+        return maximumLineHeight
+    maximumLineHeight = property(_get_maximumLineHeight) # Compatibility with DrawBot API
 
     def getIndexForPosition(self, x, y):
         xpt, ypt = upt(x, y)
