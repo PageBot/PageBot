@@ -19,7 +19,7 @@
 from __future__ import division # Make integer division result in float.
 
 from pagebot import getResourcesPath
-from pagebot.toolbox.units import pt, mm, inch, EM_FONT_SIZE
+from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # All measure are defined in Unit instances, to make conversion easier.
@@ -231,7 +231,7 @@ YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
 ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
-DEFAULT_LEADING = DEFAULT_FONT_SIZE*1.4
+DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is there.
 
