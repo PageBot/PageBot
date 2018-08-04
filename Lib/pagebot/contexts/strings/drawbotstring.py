@@ -64,14 +64,14 @@ except (AttributeError, ImportError):
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
-from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH
+from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
 from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
-from pagebot.toolbox.units import pt, upt, isUnit
+from pagebot.toolbox.units import pt, upt, isUnit, units, em
 
 def pixelBounds(fs):
-    """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
+    """Answer the pixel-bounds rectangle of the text.
     Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
     @bh is the amount of pixels above the baseline.
     For the total height of the pixel-map, calculate @ph - @py.
@@ -98,7 +98,7 @@ class NoneDrawBotString(BabelString):
         self.font = DEFAULT_FONT_PATH
         self.style = style
         self.hyphenation = False
-        self.size = pt(0, 0)
+        self.size = pt(0, 0) # Property in DrawBotString
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
@@ -133,7 +133,7 @@ class NoneDrawBotString(BabelString):
 
     strokeWidth = setStrokeWidth
 
-    def textLines(self, w=None, h=None):
+    def getTextLines(self, w, h, align=LEFT):
         return []
 
 class DrawBotString(BabelString):
@@ -150,13 +150,25 @@ class DrawBotString(BabelString):
         >>> context = DrawBotContext()
         >>> context.isDrawBot
         True
-        >>> bs = DrawBotString('ABC', context)
-        >>> #bs, bs.s
-        (ABC, ABC)
+        >>> style = dict(font='Verdana', fontSize=pt(80))
+        >>> bs = context.newString('ABC', style=style)
+        >>> bs.size
+        (165.39pt, 117pt)
+        >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
+        ('Verdana', 80pt, 45.0, 0.56em, 0.74em, 1.01em, -0.21em)
+        >>> '/Verdana'in bs.fontPath
+        True
         >>> style = dict(font='Verdana', fontSize=pt(100))
-        >>> bs = DrawBotString('ABC', context, style=style)
-        >>> #bs.size
-        (10pt, 10pt)
+        >>> bs = context.newString('ABC', style=style)
+        >>> lines = bs.getTextLines(w=100)
+        >>> lines
+        [<TextLine #0 Runs:1>, <TextLine #1 Runs:1>, <TextLine #2 Runs:1>]
+        >>> line = lines[0]
+        >>> line.xHeight, line.capHeight # Max metrics of all runs in line as Em
+        (0.56em, 0.74em)
+        >>> run = line.textRuns[0]
+        >>> run.xHeight, run.capHeight
+        (0.56em, 0.74em)
         """
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
@@ -196,11 +208,10 @@ class DrawBotString(BabelString):
 
     def _get_fontSize(self):
         """Answer the current state of the fontSize."""
-        return self.style.get('fontSize')
+        return units(self.style.get('fontSize'))
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
-            assert isUnit(fontSize)
-            self.context.fontSize(fontSize)
+            self.context.fontSize(upt(fontSize))
         self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
@@ -235,44 +246,55 @@ class DrawBotString(BabelString):
         Characters is a string containing one or more characters."""
         return self.s.fontContainsCharacters(characters)
 
-    def fontFilePath(self):
+    def _get_fontFilePath(self):
         """Return the path to the file of the current font."""
         return self.s.fontFilePath()
+    fontPath = property(_get_fontFilePath)
 
     def listFontGlyphNames(self):
         """Return a list of glyph names supported by the current font."""
         return self.s.listFontGlyphNames()
 
-    def ascender(self):
-        """Returns the current font ascender, based on the current font and fontSize."""
-        return self.s.fontAscender()
-    fontAscender = ascender # Compatibility with DrawBot API
+    def _get_ascender(self):
+        """Returns the current font ascender as relative Em, based on the 
+        current font and fontSize."""
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontAscender()/fontSize, base=fontSize)
+    fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
-    def descender(self):
-        """Returns the current font descender, based on the current font and fontSize."""
-        return self.s.fontDescender()
-    fontDescender = descender # Compatibility with DrawBot API
+    def _get_descender(self):
+        """Returns the current font descender as Em, based on the current font 
+        and fontSize."""
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontDescender()/fontSize, base=fontSize)
+    fontDescender = descender = property(_get_descender) # Compatibility with DrawBot API
 
-    def xHeight(self):
-        """Returns the current font x-height, based on the current font and fontSize."""
-        return self.s.fontXHeight()
-    fontXHeight = xHeight # Compatibility with DrawBot API
+    def _get_xHeight(self):
+        """Returns the current font x-height as Em, based on the current font
+        and fontSize."""
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontXHeight()/fontSize, base=fontSize)
+    fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
 
-    def capHeight(self):
-        """Returns the current font cap height, based on the current font and fontSize."""
-        return self.s.fontCapHeight()
-    fontCapHeight = capHeight # Compatibility with DrawBot API
+    def _get_capHeight(self):
+        """Returns the current font cap height as Em, based on the current font 
+        and fontSize."""
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontCapHeight()/fontSize, base=fontSize)
+    fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
 
-    def leading(self):
+    def _get_leading(self):
         """Returns the current font leading, based on the current font and fontSize."""
-        return self.s.fontLeading()
-    fontLeading = leading # Compatibility with DrawBot API
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontLeading()/fontSize, base=fontSize)
+    fontLeading = leading = property(_get_leading) # Compatibility with DrawBot API
 
-    def lineHeight(self):
+    def _get_lineHeight(self):
         """Returns the current line height, based on the current font and fontSize.
         If a lineHeight is set, this value will be returned."""
-        return self.s.fontLineHeight()
-    fontLineHeight = lineHeight # Compatibility with DrawBot API
+        fontSize = upt(self.fontSize)
+        return em(self.s.fontLineHeight()/fontSize, base=fontSize)
+    fontLineHeight = lineHeight = property(_get_lineHeight) # Compatibility with DrawBot API
 
     def appendGlyph(self, *glyphNames):
         """Append a glyph by his glyph name using the current font. Multiple glyph names are possible."""
@@ -323,10 +345,13 @@ class DrawBotString(BabelString):
         wpt, hpt = upt(w, h)
         return getBaselines(self.s, (0, 0, wpt, hpt))
 
-    def textLines(self, w, h, align=LEFT):
+    def getTextLines(self, w, h=None, align=LEFT):
         u"""Answer the dictionary of TextLine instances. Key is y position of the line.
 
         """
+        assert w
+        if not h:
+            h = XXXL
         wpt, hpt = upt(w, h)
         textLines = []
 
@@ -516,7 +541,7 @@ class DrawBotString(BabelString):
         51
         >>> bs = context.newString('ABC', style=dict(font=font, w=pt(100)) # Use the font instance instead of path.
         >>> int(round(bs.fontSize))
-        51
+        0.56em
         """
         # Get the drawBotBuilder, no need to check, we already must be in context here.
         if t is None:
@@ -738,6 +763,10 @@ class FoundPattern(object):
         return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y)
 
 class TextRun(object):
+    u"""The ctRun object contains the chunk of text that combines a single style.
+
+
+    """
     def __init__(self, ctRun, runIndex):
         self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
@@ -798,8 +827,8 @@ class TextRun(object):
                 pl=self.headIndent,
                 pr=self.tailIndent,
                 fontSize=self.fontSize,
-                font=self.displayName,
-                leading=self.leading + self.fontSize, # ??
+                font=self.fontPath,
+                leading=self.leading
             )
         return self._style
     style = property(_get_style)
@@ -840,19 +869,21 @@ class TextRun(object):
     #   based on the current setting in the FormattedString
 
     def _get_ascender(self):
-        return self.nsFont.ascender()
+        return pt(self.nsFont.ascender())
     ascender = property(_get_ascender)
 
     def _get_descender(self):
-        return self.nsFont.descender()
+        return pt(self.nsFont.descender())
     descender = property(_get_descender)
 
     def _get_capHeight(self):
-        return self.nsFont.capHeight()
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.capHeight()/fontSize, base=fontSize)
     capHeight = property(_get_capHeight)
 
     def _get_xHeight(self):
-        return self.nsFont.xHeight()
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsFont.xHeight()/fontSize, base=fontSize)
     xHeight = property(_get_xHeight)
 
     def _get_italicAngle(self):
@@ -860,12 +891,12 @@ class TextRun(object):
     italicAngle = property(_get_italicAngle)
 
     def _get_fontSize(self):
-        return self.nsFont.pointSize()
+        return pt(self.nsFont.pointSize())
     fontSize = property(_get_fontSize)
 
-    def _get_leading(self):
-        return self.nsFont.leading()
-    leading = property(_get_leading)
+    #def _get_leading(self):
+    #    return self.nsFont.leading()
+    #leading = property(_get_leading)
 
     def _get_fontMatrix(self):
         return self.nsFont.matrix()
@@ -876,11 +907,11 @@ class TextRun(object):
     textTransform = property(_get_textTransform)
 
     def _get_underlinePosition(self):
-        return self.nsFont.underlinePosition()
+        return pt(self.nsFont.underlinePosition())
     underlinePosition = property(_get_underlinePosition)
 
     def _get_underlineThickness(self):
-        return self.nsFont.underlineThickness()
+        return pt(self.nsFont.underlineThickness())
     underlineThickness = property(_get_underlineThickness)
 
     #   Paragraph attributes
@@ -894,27 +925,28 @@ class TextRun(object):
     alignment = property(_get_alignment)
 
     def _get_lineSpacing(self):
-        return self.nsParagraphStyle.lineSpacing()
+        return pt(self.nsParagraphStyle.lineSpacing())
     lineSpacing = property(_get_lineSpacing)
 
     def _get_paragraphSpacing(self):
-        return self.nsParagraphStyle.paragraphSpacing()
+        return pt(self.nsParagraphStyle.paragraphSpacing())
     paragraphSpacing = property(_get_paragraphSpacing)
 
     def _get_paragraphSpacingBefore(self):
-        return self.nsParagraphStyle.paragraphSpacingBefore()
+        return pt(self.nsParagraphStyle.paragraphSpacingBefore())
     paragraphSpacingBefore = property(_get_paragraphSpacingBefore)
 
     def _get_headIndent(self):
-        return self.nsParagraphStyle.headIndent()
+        return pt(self.nsParagraphStyle.headIndent())
     headIndent = property(_get_headIndent)
 
     def _get_tailIndent(self):
-        return self.nsParagraphStyle.tailIndent()
+        return pt(self.nsParagraphStyle.tailIndent())
     tailIndent = property(_get_tailIndent)
 
     def _get_firstLineHeadIndent(self):
-        return self.nsParagraphStyle.firstLineHeadIndent()
+        fontSize = self.nsFont.pointSize()
+        return em(self.nsParagraphStyle.firstLineHeadIndent()/fontSize, base=fontSize)
     firstLineHeadIndent = property(_get_firstLineHeadIndent)
 
     def _get_lineHeightMultiple(self):
@@ -922,11 +954,13 @@ class TextRun(object):
     lineHeightMultiple = property(_get_lineHeightMultiple)
 
     def _get_maximumLineHeight(self):
-        return self.nsParagraphStyle.maximumLineHeight()
+        return pt(self.nsParagraphStyle.maximumLineHeight())
     maximumLineHeight = property(_get_maximumLineHeight)
 
+    leading = maximumLineHeight
+
     def _get_minimumLineHeight(self):
-        return self.nsParagraphStyle.minimumLineHeight()
+        return pt(self.nsParagraphStyle.minimumLineHeight())
     minimumLineHeight = property(_get_minimumLineHeight)
 
 
@@ -945,13 +979,31 @@ class TextLine(object):
             self.string += textRun.string
 
     def __repr__(self):
-        return '[TextLine #%d Glyphs:%d Runs:%d]' % (self.lineIndex, self.glyphCount, len(self.runs))
+        return '<%s #%d Runs:%d>' % (self.__class__.__name__, self.lineIndex, len(self.textRuns))
 
     def __len__(self):
         return self.glyphCount
 
     def __getitem__(self, index):
         return self.runs[index]
+
+    def _get_xHeight(self):
+        """Returns the max x-height of all text runs as Em, based on the current font
+        and fontSize."""
+        xHeight = 0
+        for textRun in self.textRuns:
+            xHeight = max(xHeight, textRun.xHeight)
+        return xHeight
+    fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
+
+    def _get_capHeight(self):
+        """Returns the max font cap height of all text runs as Em, based on the current font 
+        and fontSize."""
+        capHeight = 0
+        for textRun in self.textRuns:
+            capHeight = max(capHeight, textRun.capHeight)
+        return capHeight
+    fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
 
     def getIndexForPosition(self, x, y):
         xpt, ypt = upt(x, y)

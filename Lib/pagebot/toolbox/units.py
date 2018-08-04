@@ -858,16 +858,19 @@ class Unit(object):
 
     __truediv__ = __div__
 
-    def __rtruediv__(self, u):
-        """Dividing non-unit by unit is not supported.
+    def __rdiv__(self, u):
+        """Dividing non-unit creates a copy of self with value u/self.v
 
-        >>> (2 / pt(20)) is None
-        True
+        >>> 200 / pt(20)
+        10pt
+        >>> 185.0 / pt(20)
+        9.25pt
         """
-        #raise ValueError('Cannot divide non-unit "%s" by unit "%s"' % (u, self))
-        return None
+        u0 = copy(self)
+        u0.v = u / self.v
+        return u0
 
-    __itruediv__ = __rtruediv__
+    __itruediv__ = __rtruediv__ = __rdiv__
 
     def __mul__(self, u):
         """Multiply self by u, creating a new Unit instance with the same type
