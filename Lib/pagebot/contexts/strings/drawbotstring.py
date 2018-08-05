@@ -100,6 +100,10 @@ class NoneDrawBotString(BabelString):
         self.hyphenation = False
         self.size = pt(0, 0) # Property in DrawBotString
 
+        self.fittingFont = None # In case we are sampling with a Variable Font.
+        self.fittingLocation = None
+        self.isFitting = False
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
             fontSize=None, font=None, tagName=None):
@@ -179,7 +183,13 @@ class DrawBotString(BabelString):
         if style is None:
             style = {}
         self.style = style
-        self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterated to find width.
+        
+        # Filled in case w or h are defined, end depending if the font is a variable font.
+        self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterates to find width.
+        self.fittingFont = None # In case we are sampling with a Variable Font.
+        self.fittingLocation = None
+        self.isFitting = False
+
         self.hyphenation = False
 
     def _get_s(self):
@@ -295,7 +305,7 @@ class DrawBotString(BabelString):
         """Returns the current font ascender as relative Em, based on the 
         current font and fontSize."""
         fontSize = upt(self.fontSize)
-        return em(self.s.fontAscender()/fontSize, base=fontSize) + self.descender
+        return em(self.s.fontAscender()/fontSize, base=fontSize)
     fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
     def _get_descender(self):
@@ -1043,7 +1053,7 @@ class TextLine(object):
         return self.glyphCount
 
     def __getitem__(self, index):
-        return self.runs[index]
+        return self.textRuns[index]
 
     def _get_ascender(self):
         """Returns the max ascender of all text runs as Em, based on the current font
