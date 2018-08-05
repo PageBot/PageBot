@@ -63,14 +63,15 @@ c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()])
 doc.solve()
 # Get the position of the first baseline of the text.
 firstLine = c1.textLines[0]
-print(sorted(c1.baselines))
-print(firstLine, firstLine.y)
-print(firstLine[0].fontMatrix)
-newLine(x=0, y=c1.h-firstLine.y, w=page.pl, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=0, y=c1.h-firstLine.y-firstLine.xHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=0, y=c1.h-firstLine.y-firstLine.capHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=0, y=c1.h-firstLine.y-firstLine.ascender, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=0, y=c1.h-firstLine.y-firstLine.descender, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+#print(sorted(c1.baselines))
+#print(firstLine, firstLine.y)
+#print(firstLine[0].fontMatrix)
+#newLine(x=0, y=c1.h-firstLine.y, w=page.pl, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=c1.x, y=c1.h-firstLine.y-firstLine.xHeight, w=c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=c1.x, y=c1.h-firstLine.y-firstLine.capHeight, w=c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+# FIX: Something with the ascender position? Or is it showing the max-value for all glyphs?
+newLine(x=c1.x, y=c1.h-firstLine.y-firstLine.ascender, w=c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=c1.x, y=c1.h-firstLine.y-firstLine.descender, w=c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
 # Export the document to this PDF file.
 doc.export('_export/SingleColumnBaselines.pdf')
 

@@ -233,12 +233,15 @@ ZALIGNS = set((None, FRONT, MIDDLE, BACK))
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
-DEFAULT_FALLBACK_FONT_PATH = DEFAULT_FONT_PATH # We know for sure this one is there.
+DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
 
 # Types of grid set can be used in the view.showGrid set.
 GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
 GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
 GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
+
+GRID_LINE = 'GridLine' # Show baseline grid as lines
+GRID_INDEX = 'GridIndex' # Show baseline grid index numbers (only if GRID_LINE is set too)
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 

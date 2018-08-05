@@ -485,6 +485,8 @@ class TextBox(Element):
         self.bottom = self.parent.pb # - self.textLines[-1].y
         return True
 
+    def firstBaseline2Baseline(self):
+        self.firstBaseline = self.parent.baselines[0]
     def floatBaseline2Top(self):
         # ...
         return True

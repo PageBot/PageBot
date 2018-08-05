@@ -25,7 +25,7 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR
+from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, GRID_LINE, GRID_INDEX
 from pagebot.toolbox.units import pt, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
@@ -675,7 +675,7 @@ class PageView(BaseView):
         >>> view.showBaselineGrid = True
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
-        if not self.showBaselineGrid:
+        if not self.showBaselineGrid or not GRID_LINE in self.showBaselineGrid:
             return
 
         context = self.context
@@ -689,7 +689,6 @@ class PageView(BaseView):
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
         oy = startY - py # Assumes origin at top for context drawing.
-        line = 0
         # Format of line numbers.
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=noColor,
@@ -698,12 +697,15 @@ class PageView(BaseView):
         context.fill(noColor)
         context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
 
+        line = 0 # Line index
+
         while oy < e.h - e.pb:
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
-            bs = context.newString(repr(line), e=self, style=style)
-            context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
-            context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
-            line += 1 # Increment line index.
+            if GRID_INDEX in self.showBaselineGrid:
+                bs = context.newString(repr(line), e=self, style=style)
+                context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
+                context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+                line += 1 # Increment line index.
             oy += baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S
