@@ -295,7 +295,7 @@ class DrawBotString(BabelString):
         """Returns the current font ascender as relative Em, based on the 
         current font and fontSize."""
         fontSize = upt(self.fontSize)
-        return em(self.s.fontAscender()/fontSize, base=fontSize)
+        return em(self.s.fontAscender()/fontSize, base=fontSize) + self.descender
     fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
     def _get_descender(self):
@@ -371,7 +371,7 @@ class DrawBotString(BabelString):
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
         b.hyphenation(bool(self.hyphenation))
-        overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self)
+        overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self.context)
         b.hyphenation(False)
         return overflow
         
@@ -402,7 +402,7 @@ class DrawBotString(BabelString):
         if not h:
             h = XXXL
         wpt, hpt = upt(w, h)
-        textLines = {}
+        textLines = []
 
         attrString = self.s.getNSObject()
         setter = CTFramesetterCreateWithAttributedString(attrString)
@@ -415,7 +415,7 @@ class DrawBotString(BabelString):
         for lIndex, ctLine in enumerate(ctLines):
             origin = origins[lIndex]
             textLine = TextLine(ctLine, pt(origin.x), pt(origin.y), lIndex)
-            textLines[origin.y] = textLine
+            textLines.append(textLine)
         return textLines
 
     @classmethod
@@ -1044,6 +1044,24 @@ class TextLine(object):
 
     def __getitem__(self, index):
         return self.runs[index]
+
+    def _get_ascender(self):
+        """Returns the max ascender of all text runs as Em, based on the current font
+        and fontSize."""
+        ascender = 0
+        for textRun in self.textRuns:
+            ascender = max(ascender, textRun.ascender)
+        return ascender
+    fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
+
+    def _get_descender(self):
+        """Returns the max descender of all text runs as Em, based on the current font
+        and fontSize."""
+        descender = 0
+        for textRun in self.textRuns:
+            descender = min(descender, textRun.descender)
+        return descender
+    fontDescender = descender = property(_get_descender) # Compatibility with DrawBot API
 
     def _get_xHeight(self):
         """Returns the max x-height of all text runs as Em, based on the current font

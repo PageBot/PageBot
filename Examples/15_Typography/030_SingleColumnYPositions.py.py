@@ -10,10 +10,11 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     020_SingleColumnBaselines.py
+#     030_SingleColumnYPositions.py
 #
-#     Draw a single columns with various typographic styles inside and show their
-#     vertical positions. This allows for alignment on parts of the headline.
+#     Draw a single columns with various typographic styles inside and show the
+#     baselines, using the view.showTextBoxBaselines = True display option.
+#     The text column includes a footnote reference with baseline shift.
 #
 #from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.platform import getContext
@@ -38,23 +39,13 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1, hyphenation=False,
-    paragraphBottomSpacing=em(0.5))
-subHeadStyle = dict(font=bold, fontSize=24, leading=em(1.4), textFill=0.1, 
-    paragraphBottomSpacing=em(0.2), paragraphTopSpacing=em(0.8))
+headStyle = dict(font=bold, fontSize=100, leading=em(1.4), textFill=0.1, hyphenation=False,
+    paragraphBottomSpacing=em(0.2))
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation=False)
-footNoteRefStyle = dict(font=font, fontSize=18, baselineShift=em(0.2), textFill=0.2)
-footNoteStyle = dict(font=font, fontSize=20, leading=em(1.4), textFill=0.6, paragraphTopSpacing=em(1))
 
 # Make BabelString from multiple cascadeing styles
-t = context.newString('Headline\n', style=headStyle) # Start with headline
-t += context.newString(text * 3, style=style) # Body text
-t += context.newString('Reference for a footnote.', style=style) # Body text
-t += context.newString('12', style=footNoteRefStyle) # Body text
-t += context.newString('\n', style=style) # Footnote referece
-t += context.newString('Subhead\n', style=subHeadStyle) # Subhead
-t += context.newString(text * 2 + '\n', style=style) # Body text
-t += context.newString('12 '+text, style=footNoteStyle) # Footnote on new line
+t = context.newString('Headline hkpx\n', style=headStyle) # Start with headline
+t += context.newString(text * 5, style=style) # Body text
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, context=context)
 # Get the default page view of the document and set viewing parameters
@@ -68,11 +59,17 @@ page = doc[1]
 # Red frame to show position and dimensions of the text box element.
 # Default behavior of the textbox is to align the text at "top of the em-square".
 c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()])
-#print(c.baselines)
-#print(c1.baselines)
-  
-# Solve the page/element conditions
+# Solve the page/element conditions, so the text box as it's position and size.
 doc.solve()
+# Get the position of the first baseline of the text.
+firstLine = c1.textLines[0]
+print(sorted(c1.baselines))
+print(firstLine, firstLine.y)
+newLine(x=0, y=c1.h-firstLine.y, w=page.pl, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=0, y=c1.h-firstLine.y-firstLine.xHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=0, y=c1.h-firstLine.y-firstLine.capHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=0, y=c1.h-firstLine.y-firstLine.ascender, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=0, y=c1.h-firstLine.y-firstLine.descender, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
 # Export the document to this PDF file.
 doc.export('_export/SingleColumnBaselines.pdf')
 

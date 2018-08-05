@@ -107,9 +107,20 @@ class TextBox(Element):
 
     def _get_textLines(self):
         if self._textLines is None:
-            self._textLines = self.bs.getTextLines(self.pw, self.ph)
+            self._textLines = []
+            self._baseLines = {}
+            for textLine in self.bs.getTextLines(self.pw, self.ph):
+                textLine.y = textLine.y-self.top # Make postion relative to text box self.
+                self._textLines.append(textLine)
+                self._baseLines[upt(textLine.y)] = textLine
         return self._textLines
     textLines = property(_get_textLines)
+
+    def _get_baselines(self):
+        if self._baseLines is None:
+            self.textLines() # Initialize both self._textLines and self._baseLines
+        return self._baseLines
+    baselines = property(_get_baselines)
 
     def __getitem__(self, lineIndex):
         return self.textLines[lineIndex]
@@ -229,8 +240,8 @@ class TextBox(Element):
         if bs is None:
             bs = self.bs
         if w is None:
-            w = self.w
-        return bs.textSize(w)
+            return self.bs.size
+        return bs.textSize(w=self.w)
 
     def getOverflow(self, w=None, h=None):
         """Figure out what the overflow of the text is, with the given (w, h) or styled
@@ -244,19 +255,6 @@ class TextBox(Element):
         if h is None:
             h = self.ph # Padded height
         return self.bs.textOverflow(w, h, LEFT)
-
-    def getBaselinePositions(self, w=None, h=None):
-        """Answer the list of relative vertical baseline positions,
-        for the given width and height. If omitted use (self.w, self.h)"""
-        if self._baselines is None:
-            self._baselines = []
-            for _, baselineY in self.bs.getBaselines(w or self.w, h or self.h):
-                self._baselines.append(baselineY)
-        return self._baselines
-
-    def _get_baselines(self):
-        return self.getBaselinePositions()
-    baselines = property(_get_baselines)
 
     def _findStyle(self, run):
         """Answer the name and style that desctibes this run best. If there is a doc
@@ -381,17 +379,7 @@ class TextBox(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-
-        for y, tl in sorted(self.textLines.items()):
-            #print(tl.bounds, tl.imageBounds, tl.trailingWhiteSpace)
-            #print(tl.textRuns)
-            #y, x, w, h = tl.bounds
-            from random import random
-            context.stroke((1, 0, 0))
-            context.fill(None)
-            yy = py+y
-            context.line((px-30, yy), (px+30, yy))
-            
+         
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -440,7 +428,7 @@ class TextBox(Element):
         c.stroke((0, 0, 1), 0.5)
         prevY = 0
         for textLine in self.textLines: 
-            y = textLine.y
+            y = textLine.y + self.top
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
