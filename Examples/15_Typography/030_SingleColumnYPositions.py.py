@@ -30,7 +30,7 @@ from pagebot.conditions import * # Import all conditions for convenience.
 context = getContext()
 
 W = H = pt(1000) # Document size optionally defined as units
-PADDING = pt(120) # Page padding on all sides
+PADDING = pt(80) # Page padding on all sides
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
@@ -39,12 +39,12 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=100, leading=em(1.4), textFill=0.1, hyphenation=False,
+headStyle = dict(font=bold, fontSize=125, leading=em(1.4), textFill=0.1, hyphenation=False,
     paragraphBottomSpacing=em(0.2))
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation=False)
 
 # Make BabelString from multiple cascadeing styles
-t = context.newString('Headline hkpx\n', style=headStyle) # Start with headline
+t = context.newString('Å Head hkpx\n', style=headStyle) # Start with headline
 t += context.newString(text * 5, style=style) # Body text
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, context=context)
@@ -65,6 +65,7 @@ doc.solve()
 firstLine = c1.textLines[0]
 print(sorted(c1.baselines))
 print(firstLine, firstLine.y)
+print(firstLine[0].fontMatrix)
 newLine(x=0, y=c1.h-firstLine.y, w=page.pl, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
 newLine(x=0, y=c1.h-firstLine.y-firstLine.xHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
 newLine(x=0, y=c1.h-firstLine.y-firstLine.capHeight, w=page.pl+c1.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
