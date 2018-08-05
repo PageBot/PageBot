@@ -10,6 +10,12 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
+#     010_DoubleColumnOverflow.py
+#
+#     Draw a two columns with a single text, showing overflow from one column
+#     into the other. Use some view.showGridBackground options to show the grid.
+#     Use view.showTextBoxBaselines = True to show the baselines of the text.
+
 #from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.platform import getContext
 
@@ -48,6 +54,7 @@ doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=cont
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
 view.showGridBackground = [GRID_COL, GRID_ROW, GRID_SQR] # Set types of grid lines to show
+view.showTextBoxBaselines = True # Show baseline grid of the column lines.
 
 # Get the page
 page = doc[1]
