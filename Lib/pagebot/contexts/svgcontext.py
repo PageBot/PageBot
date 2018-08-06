@@ -23,8 +23,9 @@ from pagebot.contexts.builders.svgbuilder import svgBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.constants import *
+from pagebot.toolbox.units import upt
 from pagebot.toolbox.dating import seconds
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import noColor, color
 
 class SvgContext(BaseContext):
     """An SvgContext uses svgwrite to export as SVG drawing."""
@@ -113,8 +114,8 @@ class SvgContext(BaseContext):
         >>> #r = os.system('open %s' % path)
         """
         rect = self._drawing.rect(insert=((self._ox+x).pt, (self._oy+y).pt), size=(w.pt, h.pt), 
-                           stroke_width=self._strokeWidth.pt,
-                           stroke=self._stroke, fill=self._fill)
+                           stroke_width=upt(self._strokeWidth),
+                           stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(rect)
 
     def oval(self, x, y, w, h):
@@ -131,9 +132,9 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        oval = self._drawing.ellipse(center=((self._ox+x+w/2).pt, (self._oy+y+h/2).pt), r=((w/2).pt, (h/2).pt), 
-                                             stroke_width=self._strokeWidth,
-                                             stroke=self._stroke, fill=self._fill)
+        oval = self._drawing.ellipse(center=upt((self._ox+x+w/2), (self._oy+y+h/2)), r=upt((w/2), (h/2)), 
+                                             stroke_width=upt(self._strokeWidth),
+                                             stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(oval)
 
     def circle(self, x, y, r):
@@ -150,9 +151,9 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        circle = self._drawing.circle(center=((self._ox+x+r).pt, (self._oy+y+r).pt), r=r.pt, 
-                                      stroke_width=self._strokeWidth, 
-                                      stroke=self._stroke, fill=self._fill)
+        circle = self._drawing.circle(center=upt((self._ox+x+r), (self._oy+y+r)), r=upt(r), 
+                                      stroke_width=upt(self._strokeWidth), 
+                                      stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(circle)
 
     def line(self, p1, p2):
@@ -167,29 +168,31 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        line = self._drawing.line(((self._ox+p1[0]).r, (self._oy+p1[1]).pt), ((self._ox+p2[0]).pt, (self._oy+p2[1]).pt), 
-                                  stroke_width=self._strokeWidth, 
-                                  stroke=self._stroke)
+        line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])), upt((self._ox+p2[0]), (self._oy+p2[1])), 
+                                  stroke_width=upt(self._strokeWidth), 
+                                  stroke=color(self._stroke).css)
         self._drawing.add(line)
 
-    def setFillColor(self, c):
+    def fill(self, c):
+        c = color(c)
         if c is noColor:
             self._fill = 'none'
         else:
             r, g, b = c.rgb
             self._fill = self.b.rgb(100*r, 100*g, 100*b, '%')
 
-    fill = setFillColor
+    setFillColor = fill
 
-    def setStrokeColor(self, c, strokeWidth=None):
+    def stroke(self, c, strokeWidth=None):
+        c = color(c)
         if c is noColor:
             self._fill = 'none'
         else:
             r, g, b = c.rgb
             self._fill = self.b.rgb(100*r, 100*g, 100*b, '%')
-        self._strokeWidth = (strokeWidth or pt(1)).v
+        self._strokeWidth = upt(strokeWidth or pt(1))
 
-    stroke = setStrokeColor
+    setStrokeColor = stroke
 
     def saveGraphicState(self):
         """Save the current graphic state.
@@ -257,8 +260,8 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.fontSize(pt(100))
         >>> context.font('Verdana-Bold') # TODO: Match with font path.
-        >>> context.fill(color(r=1, g=0, b=0.5))
-        >>> context.text('ABCDEF', (pt(100), pt(200)))
+        >>> context.fill(r=1, g=0, b=0.5))
+        >>> context.text('ABCDEF', pt(100, 200))
         >>> context.fill(color(r=1, g=0, b=1))
         >>> context.stroke(color(r=0.5, g=0, b=0.5), pt(5))
         >>> context.text('ABCDEF', (pt(100), pt(300)))
@@ -268,9 +271,9 @@ class SvgContext(BaseContext):
         """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        t = self._drawing.text(sOrBs, insert=(p[0].pt, p[1].pt), 
-                               stroke=self._stroke, stroke_width=self._strokeWidth,
-                               fill=self._fill, font_size=self._fontSize, font_family=self._font)
+        t = self._drawing.text(sOrBs, insert=upt(p[0], p[1]), 
+                               stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
+                               fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
     def textBox(self, sOrBs, r):
@@ -279,9 +282,9 @@ class SvgContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         x, y, w, h = r
-        t = self._drawing.text(sOrBs, insert=(x.pt, y.pt),
-                               stroke=self._stroke, stroke_width=self._strokeWidth,
-                               fill=self._fill, font_size=self._fontSize.pt, font_family=self._font)
+        t = self._drawing.text(sOrBs, insert=upt(x, y),
+                               stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
+                               fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
     def translate(self, dx, dy):
@@ -299,7 +302,7 @@ class SvgContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        """Set the frame duretion for animated gifs to a number of seconds per frame."""
+        """Set the frame duration for animated gifs to a number of seconds per frame."""
         self._frameDuration = secondsPerFrame
 
 if __name__ == '__main__':

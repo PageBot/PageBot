@@ -23,18 +23,18 @@ from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
 from pagebot.toolbox.units import isUnit
 
-class IndesignString(BabelString):
+class InDesignString(BabelString):
 
     BABEL_STRING_TYPE = 'indesign'
 
-    """IndesignString is a wrapper around the Indesign string."""
+    """InDesignString is a wrapper around the Indesign string."""
     def __init__(self, s, context, style=None):
         """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
         Optionally store the (latest) style that was used to produce the formatted string.
 
-        >>> from pagebot.contexts.indesigncontext import IndesignContext
-        >>> context = IndesignContext()
-        >>> context.isIndesign
+        >>> from pagebot.contexts.indesigncontext import InDesignContext
+        >>> context = InDesignContext()
+        >>> context.isInDesign
         True
         >>> bs = context.newString('ABC')
         >>> #bs
@@ -85,7 +85,7 @@ class IndesignString(BabelString):
 
         >>> from pagebot.contexts.indesigncontext import IndesignContext
         >>> context = IndesignContext()
-        >>> fs = IndesignString('ABC', context)
+        >>> fs = InDesignString('ABC', context)
         >>> fs
         ABC
         >>> len(fs)
@@ -98,7 +98,7 @@ class IndesignString(BabelString):
 
         >>> from pagebot.contexts.indesigncontext import IndesignContext
         >>> context = IndesignContext()
-        >>> fs = IndesignString('ABC', context)
+        >>> fs = InDesignString('ABC', context)
         >>> fs.s
         'ABC'
         >>> fs.asText()
@@ -118,7 +118,7 @@ class IndesignString(BabelString):
         return ''
 
     def append(self, s):
-        """Append string or IndesignString to self."""
+        """Append string or InDesignString to self."""
         # TODO: Make this to work.
         #try:
         #    self.s += s.s
@@ -140,14 +140,14 @@ class IndesignString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a IndesignString instance from valid attributes in *style*. Set all values after testing
+        """Answer a InDesignString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts.indesigncontext import IndesignContext
         >>> context = IndesignContext()
-        >>> bs = IndesignString.newString('AAA', context, style=dict(fontSize=pt(30)))
+        >>> bs = InDesignString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> #bs.s.lines()
         >>> 'indesign.text.text' in str(bs)
         True
@@ -175,10 +175,10 @@ class IndesignString(BabelString):
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
-        assert isUnit(fontSize), ('IndesignString.newString: FontSize %s must be of type Unit' % fontSize)
+        assert isUnit(fontSize), ('%s.newString: FontSize %s must be of type Unit' % (self.__class__.__name__, fontSize))
         leading = style.get('leading', DEFAULT_LEADING)
-        assert isUnit(leading), ('IndesignString.newString: Leading %s must be of type Unit' % leading)
-        indesignFont = context.b.font.open(font)
+        assert isUnit(leading), ('%s.newString: Leading %s must be of type Unit' % (self.__class__.__name__, leading))
+        inDesignFont = context.b.font.open(font)
         strike = context.b.strike(indesignFont)
         strike.size(fontSize.pt, leading.pt, units='pt')
         #if w is not None:
