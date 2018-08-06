@@ -17,7 +17,7 @@
 #     Draw the icon with optional information of the included font.
 #
 from pagebot.elements import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, upt
 from pagebot.toolbox.color import noColor, blackColor
 
 class FontIcon(Element): 
@@ -32,8 +32,7 @@ class FontIcon(Element):
     >>> fi.title
     'Roboto Regular'
     >>> fi.size
-    (120, 160, 1)
-
+    (120pt, 160pt)
     """
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
@@ -45,6 +44,7 @@ class FontIcon(Element):
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.toolbox.color import color, whiteColor
         >>> from pagebot.elements import newRect
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()

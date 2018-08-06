@@ -17,7 +17,7 @@
 #     Draw the icon with optional information of the included font.
 #
 from pagebot.elements import Element
-from pagebot.toolbox.units import pointOffset, pt
+from pagebot.toolbox.units import pointOffset, pt, upt
 from pagebot.toolbox.color import blackColor, noColor
 
 class FontIcon(Element):
@@ -47,7 +47,7 @@ class FontIcon(Element):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.elements import newRect
         >>> from pagebot.document import Document
-        >>> from pagebot toolbox.color import color
+        >>> from pagebot.toolbox.color import color
         >>> c = DrawBotContext()
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)

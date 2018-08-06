@@ -23,7 +23,7 @@ from pagebot.contexts.builders.svgbuilder import svgBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
 from pagebot.constants import *
-from pagebot.toolbox.units import upt
+from pagebot.toolbox.units import upt, point2D
 from pagebot.toolbox.dating import seconds
 from pagebot.toolbox.color import noColor, color
 
@@ -271,7 +271,7 @@ class SvgContext(BaseContext):
         """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        t = self._drawing.text(sOrBs, insert=upt(p[0], p[1]), 
+        t = self._drawing.text(sOrBs, insert=point2D(upt(p)), 
                                stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
                                fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
@@ -282,7 +282,7 @@ class SvgContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         x, y, w, h = r
-        t = self._drawing.text(sOrBs, insert=upt(x, y),
+        t = self._drawing.text(sOrBs, insert=point2D(upt(x, y)),
                                stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
                                fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)

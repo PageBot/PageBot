@@ -22,6 +22,7 @@ import re
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
 from pagebot.toolbox.units import isUnit
+from pagebot.fonttoolbox.objects.font import findFont
 
 class InDesignString(BabelString):
 
@@ -83,8 +84,8 @@ class InDesignString(BabelString):
     def __len__(self):
         """Answer the number of characters in self.s
 
-        >>> from pagebot.contexts.indesigncontext import IndesignContext
-        >>> context = IndesignContext()
+        >>> from pagebot.contexts.indesigncontext import InDesignContext
+        >>> context = InDesignContext()
         >>> fs = InDesignString('ABC', context)
         >>> fs
         ABC
@@ -96,8 +97,8 @@ class InDesignString(BabelString):
     def asText(self):
         """Answer as unicode string.
 
-        >>> from pagebot.contexts.indesigncontext import IndesignContext
-        >>> context = IndesignContext()
+        >>> from pagebot.contexts.indesigncontext import InDesignContext
+        >>> context = InDesignContext()
         >>> fs = InDesignString('ABC', context)
         >>> fs.s
         'ABC'
@@ -145,11 +146,11 @@ class InDesignString(BabelString):
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.indesigncontext import IndesignContext
-        >>> context = IndesignContext()
+        >>> from pagebot.contexts.indesigncontext import InDesignContext
+        >>> context = InDesignContext()
         >>> bs = InDesignString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> #bs.s.lines()
-        >>> 'indesign.text.text' in str(bs)
+        >>> #'indesign.text.text' in str(bs)
         True
         """
         if style is None:
@@ -175,15 +176,17 @@ class InDesignString(BabelString):
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
-        assert isUnit(fontSize), ('%s.newString: FontSize %s must be of type Unit' % (self.__class__.__name__, fontSize))
+        assert isUnit(fontSize), ('%s.newString: FontSize %s must be of type Unit' % (cls.__name__, fontSize))
         leading = style.get('leading', DEFAULT_LEADING)
-        assert isUnit(leading), ('%s.newString: Leading %s must be of type Unit' % (self.__class__.__name__, leading))
-        inDesignFont = context.b.font.open(font)
-        strike = context.b.strike(indesignFont)
-        strike.size(fontSize.pt, leading.pt, units='pt')
+        assert isUnit(leading), ('%s.newString: Leading %s must be of type Unit' % (cls.__name__, leading))
+        inDesignFont = findFont(font)
+        #strike = context.b.strike(indesignFont)
+        #strike.size(fontSize.pt, leading.pt, units='pt')
         #if w is not None:
         #    strike.width = w
-        return cls(strike.text(s), context=context, style=style) # Make real Indesign flavor BabelString here.
+        #s = strike.text(s)
+        s = ''
+        return cls(s, context=context, style=style) # Make real Indesign flavor BabelString here.
 
 
 if __name__ == '__main__':

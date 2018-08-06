@@ -900,7 +900,7 @@ class Element(object):
         >>> e.css('fontSize') # Find local style value
         24pt
         >>> e.css('leading') # Find value in root style. Default is absolute unit. Can be changed to em.
-        16.8pt
+        1.4em
         >>> e = Element(fontSize=pt(24), leading=em(1.4))
         >>> e.css('leading'), round(e.css('leading').pt) # Show unit and rendered compared to
         (1.4em, 17.0)
@@ -938,7 +938,7 @@ class Element(object):
         >>> e = Element(fill=color(0.1, 0.2, 0.3), parent=page)
         >>> style = e.getFlattenedStyle()
         >>> style['fill'], style['fontSize'], style['leading'], style['xAlign']
-        (Color(r=0.1, g=0.2, b=0.3), 12pt, 16.8pt, 'left')
+        (Color(r=0.1, g=0.2, b=0.3), 12pt, 1.4em, 'left')
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
         for key in getRootStyle().keys():
