@@ -672,7 +672,7 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showBaselineGrid = True
+        >>> view.showBaselineGrid = [GRID_LINE] 
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
         if not self.showBaselineGrid or not GRID_LINE in self.showBaselineGrid:
@@ -688,7 +688,10 @@ class PageView(BaseView):
         startY = e.css('baselineGridStart')
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
-        oy = startY - py # Assumes origin at top for context drawing.
+        oy = startY # Assumes origin at top for context drawing.
+
+        line = 0 # Line index
+
         # Format of line numbers.
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=noColor,
@@ -697,7 +700,6 @@ class PageView(BaseView):
         context.fill(noColor)
         context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
 
-        line = 0 # Line index
 
         while oy < e.h - e.pb:
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))

@@ -130,7 +130,7 @@ class PageBotDoc(Publication):
                 self.clearPyc(filePath)
             elif fileName.endswith('.pyc'):
                 os.remove(filePath)
-                print(' * Removed %s' % filePath
+                print(' * Removed %s' % filePath)
                 continue
 
     def testDocs(self, path=None, node=None, logFile=None):

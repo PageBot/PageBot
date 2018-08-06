@@ -487,6 +487,7 @@ class TextBox(Element):
 
     def firstBaseline2Baseline(self):
         self.firstBaseline = self.parent.baselines[0]
+        
     def floatBaseline2Top(self):
         # ...
         return True
