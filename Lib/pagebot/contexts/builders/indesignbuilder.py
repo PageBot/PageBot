@@ -98,6 +98,8 @@ class InDesignBuilder(BaseBuilder):
 
     def __init__(self):
         self.openDocument = True # Set to False if document creation should run in background.
+        self.font = None
+        self.fontSize = None
         self.title = None
         self._jsOut = []
         self._initialize()

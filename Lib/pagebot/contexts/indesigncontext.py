@@ -26,7 +26,7 @@ from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import Pt
 from pagebot.toolbox.color import noColor, blackColor, Color
-from pagebot.contexts.strings.indesignstring import IndesignString
+from pagebot.contexts.strings.indesignstring import InDesignString
 
 class InDesignContext(BaseContext):
     """An InDesignContext instance combines the specific functions of the
@@ -36,7 +36,7 @@ class InDesignContext(BaseContext):
     isInDesign = True
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = IndesignString
+    STRING_CLASS = InDesignString
     EXPORT_TYPES = ('jsx',)
 
     def __init__(self):

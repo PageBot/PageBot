@@ -459,48 +459,64 @@ class TextBox(Element):
 
     # Text conditions
 
-    def isBaselineOnTop(self, tolerance):
+    def isBaselineOnTop(self, tolerance, index=None, style=None):
         """Answer the boolean if the top baseline is located at self.parent.pt."""
         return abs(self.top - (self.parent.h - self.parent.pt - self.textLines[0].y + self.h)) <= tolerance
 
-    def isBaselineOnBottom(self, tolerance):
+    def isBaselineOnBottom(self, tolerance, index=None, style=None):
         """Answer the boolean if the bottom baseline is located at self.parent.pb."""
         return abs(self.bottom - self.parent.pb) <= tolerance
 
-    def isAscenderOnTop(self, tolerance):
+    def isAscenderOnTop(self, tolerance, index=None, style=None):
         return True
 
-    def isCapHeightOnTop(self, tolerance):
+    def isCapHeightOnTop(self, tolerance, index=None, style=None):
         return True
 
-    def isXHeightOnTop(self, tolerance):
+    def isXHeightOnTop(self, tolerance, index=None, style=None):
         return True
 
-
-    def baseline2Top(self):
+    # Textbox moving vertical based on metrics positions and baseline grid
+    
+    def baseline2Top(self, index=None, style=None):
         self.top = self.parent.h - self.parent.pt - self.textLines[0].y + self.h
         return True
 
-    def baseline2Bottom(self):
+    def baseline2Bottom(self, index=None, style=None):
         self.bottom = self.parent.pb # - self.textLines[-1].y
         return True
 
-    def firstBaseline2Baseline(self):
-        self.firstBaseline = self.parent.baselines[0]
-        
-    def floatBaseline2Top(self):
+    def baselineUp2Baseline(self, index=None, style=None):
+        self.topBaseline = self.parent.baselines[index]
+
+    def baselineDown2Baseline(self, index=None, style=None):
+        self.firstBaseline = self.parent.baselines[index]
+
+    def baselineUp2TopBaseline(self, index=None, style=None):
+        self.topBaseline = self.parent.baselines[index]
+
+    def baselineDown2TopBaseline(self, index=None, style=None):
+        self.firstBaseline = self.parent.baselines[index]
+
+    def baselineUp2BottomBaseline(self, index=None, style=None):
+        self.topBaseline = self.parent.baselines[index]
+
+    def baselineDown2BottomBaseline(self, index=None, style=None):
+        self.firstBaseline = self.parent.baselines[index]
+
+    def floatBaseline2Top(self, index=None, style=None):
         # ...
         return True
 
-    def floatAscender2Top(self):
+    def floatAscender2Top(self, index=None, style=None):
         # ...
         return True
 
-    def floatCapHeight2Top(self):
+    def floatCapHeight2Top(self, index=None, style=None):
         # ...
         return True
 
-    def floatXHeight2Top(self):
+    def floatXHeight2Top(self, index=None, style=None):
         # ...
         return True
 
