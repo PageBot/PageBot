@@ -60,7 +60,7 @@ except (AttributeError, ImportError):
     CTLineGetStringIndexForPosition = None
     CTLineGetTrailingWhitespaceWidth = None
     CTLineGetTypographicBounds = None
-    #from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
+    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
@@ -79,7 +79,7 @@ def pixelBounds(fs):
     For the total width of the pixel-map, calculate @pw - @px."""
     if not fs:
         return pt(0, 0, 0, 0)
-    p = BezierPath()
+    p = drawBotBuilder.BezierPath()
     p.text(fs, (0, 0))
     # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
     # the total (width, height) then always needs to be calculated by the caller.
@@ -386,12 +386,25 @@ class DrawBotString(BabelString):
         b.hyphenation(False)
         return overflow
         
-    def getBaselines(self, w, h):
-        u"""Answer the list of vertical baseline position for the self.s FormattedString
-        and for the given width and height.
+    def getBaselines(self, w, h=None):
+        u"""Answer the dictionary of vertical baseline positions for the self.s FormattedString
+        and for the given width and height. Value is the TextLine instance at that position.
+
         """
-        wpt, hpt = upt(w, h)
-        return getBaselines(self.s, (0, 0, wpt, hpt))
+        """
+        FIX
+        >>> from pagebot.toolbox.units import mm, uRound
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> style = dict(font='Verdana', fontSize=pt(12))
+        >>> bs = context.newString('Example Text ' * 10, style=style)
+        >>> baselines = bs.getBaselines(w=200)
+        >>> baselines
+        """
+        baselines = {}
+        for textLine in self.getTextLines(w, h):
+            baselines[textLine.y] = textLine
+        return baselines
 
     def getTextLines(self, w, h=None, align=LEFT):
         u"""Answer the dictionary of TextLine instances. Key is y position of the line.
