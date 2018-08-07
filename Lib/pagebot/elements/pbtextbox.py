@@ -108,18 +108,19 @@ class TextBox(Element):
     def _get_textLines(self):
         if self._textLines is None:
             self._textLines = []
-            self._baseLines = {}
+            self._baselines = {}
             for textLine in self.bs.getTextLines(self.pw, self.ph):
-                textLine.y = textLine.y-self.top # Make postion relative to text box self.
+                print('---', textLine.y, self.h - textLine.y)
+                textLine.y = self.h - textLine.y # Make postion relative to text box self.
                 self._textLines.append(textLine)
-                self._baseLines[upt(textLine.y)] = textLine
+                self._baselines[upt(textLine.y)] = textLine
         return self._textLines
     textLines = property(_get_textLines)
 
     def _get_baselines(self):
-        if self._baseLines is None:
-            self.textLines() # Initialize both self._textLines and self._baseLines
-        return self._baseLines
+        if self._baselines is None:
+            self.textLines # Initialize both self._textLines and self._baselines
+        return self._baselines
     baselines = property(_get_baselines)
 
     def __getitem__(self, lineIndex):
@@ -459,6 +460,15 @@ class TextBox(Element):
 
     # Text conditions
 
+    def isBaselineOnGrid(self, tolerance, index=None, style=None):
+
+        print('AAA', self.baselines)
+        return True
+
+    def baseline2Grid(self, index=None, style=None):
+        print('VVV', self.baselines)
+        return True
+    '''
     def isBaselineOnTop(self, tolerance, index=None, style=None):
         """Answer the boolean if the top baseline is located at self.parent.pt."""
         return abs(self.top - (self.parent.h - self.parent.pt - self.textLines[0].y + self.h)) <= tolerance
@@ -507,7 +517,7 @@ class TextBox(Element):
     def floatXHeight2Top(self, index=None, style=None):
         # ...
         return True
-
+    '''
 if __name__ == '__main__':
     import doctest
     import sys
