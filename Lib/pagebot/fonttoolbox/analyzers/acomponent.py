@@ -13,7 +13,7 @@
 #
 #     acomponent.py
 #
-from pagebot.toolbox.transformer import asFormatted
+from pagebot.toolbox.units import asFormatted
 
 class AComponent(object):
     def __init__(self, ttComponent):

@@ -24,7 +24,8 @@
 import os
 import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import object2SpacedString, asFormatted
+from pagebot.toolbox.transformer import object2SpacedString
+from pagebot.toolbox.units import asFormatted
 from pagebot.constants import A4Rounded
 
 class BezierPath(object):

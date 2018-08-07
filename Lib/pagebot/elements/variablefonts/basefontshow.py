@@ -16,7 +16,7 @@
 #
 from pagebot.elements import Element
 from pagebot.constants import LEFT
-from pagebot.toolbox.transformer import asFormatted
+from pagebot.toolbox.units import asFormatted
 
 class BaseFontShow(Element):
     """Abstract base class for elements that show aspects, values,
