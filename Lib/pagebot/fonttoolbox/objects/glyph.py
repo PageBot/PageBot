@@ -77,8 +77,6 @@ class Glyph(object):
     AXIS_DELTAS_CLASS = AxisDeltas
 
     def __init__(self, font, name):
-        from pagebot.contexts.platform import getContext
-        self.context = getContext()
 
         self.name = name
         self.font = font # Stored as weakref
@@ -139,7 +137,7 @@ class Glyph(object):
         maxX = maxY = -sys.maxsize
 
         if coordinates or components:
-            self._path = self.context.newPath()
+            self._path = self.font.context.newPath()
 
         for component in components:
             componentName = component.baseGlyph
