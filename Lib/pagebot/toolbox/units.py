@@ -1539,6 +1539,12 @@ class Px(RelativeUnit):
 #   Fr
 
 def fr(v, *args, **kwargs):
+    """Fractional units, used in CSS-grid.
+
+    >>> u = fr(3, base=300)
+    >>> u, u.rv, upt(u)
+    (3fr, 100, 100)
+    """
     u = None
     base = kwargs.get('base', Fr.BASE)
     g = kwargs.get('g', 0) # Not used by Fr
@@ -1563,7 +1569,7 @@ def fr(v, *args, **kwargs):
     return u
 
 class Fr(RelativeUnit):
-    """fractional units, used in CSS-grid.
+    """Fractional units, used in CSS-grid.
     https://gridbyexample.com/video/series-the-fr-unit/
 
     >>> units('5fr')

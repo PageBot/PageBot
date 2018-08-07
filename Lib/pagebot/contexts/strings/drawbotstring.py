@@ -20,9 +20,7 @@ from copy import copy
 
 try:
 #if platform == 'darwin':
-    from CoreText import CTFontDescriptorCreateWithNameAndSize, \
-        CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
-        CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
+    from CoreText import CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
         CTFrameGetLines, CTFrameGetLineOrigins, CTRunGetGlyphCount, \
         CTRunGetStringRange, CTRunGetStringIndicesPtr, CTRunGetAdvances, \
         CTRunGetStatus, CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes, \
@@ -30,6 +28,9 @@ try:
         CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex, \
         CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds, \
         CTLineGetTrailingWhitespaceWidth
+        #CTFontDescriptorCopyAttribute, 
+        #kCTFontURLAttribute, \
+        #CTFontDescriptorCreateWithNameAndSize, \
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
 
@@ -38,12 +39,12 @@ except (AttributeError, ImportError):
     NSFont = None
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
     CTFramesetterCreateWithAttributedString = None
-    CTFontDescriptorCreateWithNameAndSize = None
-    CTFontDescriptorCopyAttribute = None
     CTFrameGetLines = None
     CTRunGetStringRange = None
     CTFrameGetLineOrigins = None
-    kCTFontURLAttribute = None
+    #CTFontDescriptorCopyAttribute = None
+    #CTFontDescriptorCreateWithNameAndSize = None
+    #kCTFontURLAttribute = None
     CTFramesetterCreateFrame = None
     CTRunGetGlyphCount = None
     CTRunGetStringIndicesPtr = None
@@ -59,7 +60,7 @@ except (AttributeError, ImportError):
     CTLineGetStringIndexForPosition = None
     CTLineGetTrailingWhitespaceWidth = None
     CTLineGetTypographicBounds = None
-    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
+    #from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
