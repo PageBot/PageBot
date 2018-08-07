@@ -31,7 +31,50 @@ class Overflow2Next(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.overflow2Next(), e, score)
 
+# Columns
 
 class EqualizeFlow2Height(Condition):
 	u"""Test if all elements in the flow the same height and/or same amount text lines."""
 	# TODO
+
+# Baseline alignmenets
+
+class Baseline2Grid(Condition):
+	def test(self, e):
+		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+
+	def solve(self, e, score):
+		return e.baseline2Grid(index=self.index, style=self.style)
+
+class BaselineUp2Grid(Condition):
+	def test(self, e):
+		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+
+	def solve(self, e, score):
+		return e.baselineUp2Grid(index=self.index, style=self.style)
+
+class BaselineDown2Grid(Condition):
+	def test(self, e):
+		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+
+	def solve(self, e, score):
+		return e.baselineDown2Grid(index=self.index, style=self.style)
+
+class Baseline2Top(Condition):
+	def test(self, e):
+		return e.isBaselineOnTop(self.tolerance, index=self.index, style=self.style)
+
+	def solve(self, e, score):
+		return e.baseline2Top(index=self.index, style=self.style)
+
+class Baseline2Bottom(Condition):
+	def test(self, e):
+		return e.isBaselineOnBottom(self.tolerance, index=self.index, style=self.style)
+
+	def solve(self, e, score):
+		return e.baseline2Bottom(index=self.index, style=self.style)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

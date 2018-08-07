@@ -685,7 +685,7 @@ class PageView(BaseView):
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         M = pt(16)
-        startY = e.css('baselineGridStart')
+        startY = e.baselineGridStart
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
         oy = e.h - startY # Assumes origin at bottom for context drawing.
@@ -696,7 +696,7 @@ class PageView(BaseView):
         style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
             fontSize=M/2, stroke=noColor,
             textFill=e.css('viewGridStroke', grayColor))
-        baselineGrid = e.css('baselineGrid', )
+        baselineGrid = e.baselineGrid
         context.fill(noColor)
         context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
 

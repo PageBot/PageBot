@@ -486,22 +486,10 @@ class TextBox(Element):
         self.bottom = self.parent.pb # - self.textLines[-1].y
         return True
 
-    def baselineUp2Baseline(self, index=None, style=None):
+    def baselineUp2Grid(self, index=None, style=None):
         self.topBaseline = self.parent.baselines[index]
 
-    def baselineDown2Baseline(self, index=None, style=None):
-        self.firstBaseline = self.parent.baselines[index]
-
-    def baselineUp2TopBaseline(self, index=None, style=None):
-        self.topBaseline = self.parent.baselines[index]
-
-    def baselineDown2TopBaseline(self, index=None, style=None):
-        self.firstBaseline = self.parent.baselines[index]
-
-    def baselineUp2BottomBaseline(self, index=None, style=None):
-        self.topBaseline = self.parent.baselines[index]
-
-    def baselineDown2BottomBaseline(self, index=None, style=None):
+    def baselineDown2Grid(self, index=None, style=None):
         self.firstBaseline = self.parent.baselines[index]
 
     def floatBaseline2Top(self, index=None, style=None):
