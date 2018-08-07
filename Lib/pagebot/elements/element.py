@@ -18,9 +18,6 @@ from __future__ import division
 
 import weakref
 import copy
-from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset
-from pagebot.toolbox.color import noColor, color, Color, blackColor
 
 from pagebot.conditions.score import Score
 from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
@@ -28,7 +25,11 @@ from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, 
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, 
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE)
-from pagebot.toolbox.transformer import asFormatted, uniqueID
+
+from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted
+from pagebot.toolbox.color import noColor, color, Color, blackColor
+from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now, days
 

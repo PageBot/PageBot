@@ -22,7 +22,7 @@ import weakref
 # TODO: Import needs to be done inside DrawBotContext
 #from AppKit import NSBezierPath
 
-from pagebot.toolbox.transformer import asInt
+from pagebot.toolbox.units import asInt
 from pagebot.fonttoolbox.analyzers.apointcontextlist import Vertical, Horizontal
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, Counter, VerticalCounter
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext

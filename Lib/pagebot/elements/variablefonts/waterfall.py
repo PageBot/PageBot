@@ -15,9 +15,8 @@
 #     waterfall.py
 #
 from pagebot.elements import TextBox
-from pagebot.toolbox.transformer import asFormatted
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.toolbox.units import em
+from pagebot.toolbox.units import em, asFormatted
 
 class Waterfall(TextBox):
     u"""Showing the specified (variable) font as waterfall.

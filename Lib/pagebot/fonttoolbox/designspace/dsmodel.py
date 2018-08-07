@@ -21,7 +21,7 @@ import os
 from copy import copy, deepcopy
 from fontTools.varLib import designspace
 from fontTools.varLib.models import VariationModel, normalizeLocation
-from pagebot.toolbox.transformer import asFormatted
+from pagebot.toolbox.units import asFormatted
 
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
