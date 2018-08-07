@@ -49,7 +49,7 @@ class Element(object):
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None, timeMarks=None,
             parent=None, context=None, name=None, cssClass=None, cssId=None, 
             title=None, description=None, keyWords=None, language=None, style=None,
-            conditions=None, framePath=None, elements=None, template=None,
+            conditions=None, solve=False, framePath=None, elements=None, template=None,
             nextElement=None, prevElement=None, nextPage=None, prevPage=None,
             bleed=None, padding=None, 
             pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
@@ -199,6 +199,7 @@ class Element(object):
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
         self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
+        
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description
@@ -214,6 +215,9 @@ class Element(object):
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
         self.isFlow = not None in (prevElement, nextElement, nextPage)
+        # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
+        if solve:
+            self.solve()
 
     def __repr__(self):
         """Object as string.
@@ -4508,7 +4512,8 @@ class Element(object):
     # Floating parent padding
 
     def float2Top(self):
-        """Float the element upward, until top hits the parent top padding.
+        """Float the element upward, until top hits the parent top padding or "hooks"
+        into another element at the same z-layer position.
         Include margin to decide if it fits."""
         if self.originTop:
             self.mTop = min(self.getFloatTopSide(), self.parent.pt)

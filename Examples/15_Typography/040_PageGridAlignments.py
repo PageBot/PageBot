@@ -51,7 +51,8 @@ style = dict(font=font, fontSize=125, leading=em(1.4), textFill=0.1, hyphenation
 # Make BabelString from multiple cascading styles
 t = context.newString('Hkpx', style=style) # Start with headline
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context)
+# FIX: Float conditions only seem to work for originTop=False
+doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
@@ -62,15 +63,48 @@ view.showGridBackground = [GRID_COL, GRID_ROW, GRID_SQR] # Set types of grid lin
 # Get the page
 page = doc[1]
 page.style['baselineGridStart'] = page.pt
-page.style['baselineGrid'] = pt(24)
+page.style['baselineGrid'] = pt(36)
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
 # Red frame to show position and dimensions of the text box element.
 # Default behavior of the textbox is to align the text at "top of the em-square".
-c00 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Left2Left(), Top2Top()])
-c01 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right(), Top2Top()])
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx1', style=style) # Start with headline
+c00 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), solve=True, conditions=[Left2Left(), Top2Top()])
+firstLine = c00.textLines[0]
+newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.xHeight, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.capHeight, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+# FIX: Something with the ascender position? Or is it showing the max-value for all glyphs?
+newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.ascender, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.descender, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
+# Make BabelString from multiple cascading styles
 
-c10 = newTextBox(t, parent=page, w=CW, stroke=(0, 0, 0.5), conditions=[Left2Left(), Float2Top()])
+t = context.newString('Hkpx2', style=style) # Start with headline
+c01 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), solve=False, conditions=[Right2Right(), Top2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx3', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Left2Left(), Float2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx4', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Right2Right(), Float2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx5', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Left2Left(), Float2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx6', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Right2Right(), Float2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx7', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Left2Left(), Float2Top()])
+
+# Make BabelString from multiple cascading styles
+t = context.newString('Hkpx8', style=style) # Start with headline
+c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Right2Right(), Float2Top()])
 """
 c11 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right(), Float2Top()])
 c20 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Left2Left(), Float2Top()])
@@ -81,16 +115,10 @@ c31 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right
 # Solve the page/element conditions, so the text box as it's position and size.
 doc.solve()
 # Get the position of the first baseline of the text.
-firstLine = c00.textLines[0]
 #print(sorted(c1.baselines))
 #print(firstLine, firstLine.y)
 #print(firstLine[0].fontMatrix)
 #newLine(x=0, y=c1.h-firstLine.y, w=page.pl, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.xHeight, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.capHeight, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-# FIX: Something with the ascender position? Or is it showing the max-value for all glyphs?
-newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.ascender, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
-newLine(x=c00.x, y=c00.h-firstLine.y-firstLine.descender, w=c00.w, h=0, stroke=(1, 0, 0), strokeWidth=1, parent=page)
 # Export the document to this PDF file.
 doc.export('_export/PageGridAlignments.pdf')
 
