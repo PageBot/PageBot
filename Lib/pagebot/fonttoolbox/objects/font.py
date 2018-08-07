@@ -376,16 +376,26 @@ class Font(object):
     def __init__(self, path=None, ttFont=None, name=None, opticalSize=None,
             location=None, styleName=None, lazy=True):
         """Initialize the TTFont, for which Font is a wrapper.
+        self.name is supported, in case the caller wants to use a different
 
-        self.name is supported, in case the caller wants to use a different"""
-        assert path is not None or ttFont is not None
-        if ttFont is None and path is not None:
+        >>> f = Font()
+        >>> f
+        <Font Untitled>
+        """
+        from pagebot.contexts.platform import getContext
+        # FIX: Cannot get current context because of circular import?
+        self.context = getContext()
+
+        if path is None and ttFont is None:
+            self.ttFont = TTFont()
+            self.path = '%d' % id(ttFont) # In case no path, use unique id instead.
+        elif ttFont is None and path is not None:
             self.ttFont = TTFont(path, lazy=lazy)
             self.path = path # File path of the existing font file.
         elif path is None:
             self.ttFont = ttFont
             self.path = '%d' % id(ttFont) # In case no path, use unique id instead.
-        else: # There is a path for this font, save it there.
+        else: # ttFont is not None: There is ttFont data
             self.ttFont = ttFont
             self.path = path
         # Store location, incase this was a created VF instance
