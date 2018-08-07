@@ -37,37 +37,46 @@ class EqualizeFlow2Height(Condition):
 	u"""Test if all elements in the flow the same height and/or same amount text lines."""
 	# TODO
 
+class BaselineCondition(Condition):
+    def __init__(self, value=1, tolerance=1, error=-10, verbose=False, index=None, style=None):
+        self.value = value # Value to answer if the condition is valid
+        self.tolerance = tolerance
+        self.error = error
+        self.verbose = verbose
+        self.index = index
+        self.style = style
+
 # Baseline alignmenets
 
-class Baseline2Grid(Condition):
+class Baseline2Grid(BaselineCondition):
 	def test(self, e):
 		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
 
 	def solve(self, e, score):
 		return e.baseline2Grid(index=self.index, style=self.style)
 
-class BaselineUp2Grid(Condition):
+class BaselineUp2Grid(BaselineCondition):
 	def test(self, e):
 		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
 
 	def solve(self, e, score):
 		return e.baselineUp2Grid(index=self.index, style=self.style)
 
-class BaselineDown2Grid(Condition):
+class BaselineDown2Grid(BaselineCondition):
 	def test(self, e):
 		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
 
 	def solve(self, e, score):
 		return e.baselineDown2Grid(index=self.index, style=self.style)
 
-class Baseline2Top(Condition):
+class Baseline2Top(BaselineCondition):
 	def test(self, e):
 		return e.isBaselineOnTop(self.tolerance, index=self.index, style=self.style)
 
 	def solve(self, e, score):
 		return e.baseline2Top(index=self.index, style=self.style)
 
-class Baseline2Bottom(Condition):
+class Baseline2Bottom(BaselineCondition):
 	def test(self, e):
 		return e.isBaselineOnBottom(self.tolerance, index=self.index, style=self.style)
 

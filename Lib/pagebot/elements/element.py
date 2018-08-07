@@ -869,7 +869,7 @@ class Element(object):
 
     # Text conditions, always True for non-text elements.
 
-    def isBaselineOnTop(self, tolerance):
+    def isBaselineOnGrid(self, tolerance):
         return True
 
     def isBaselineOnBottom(self, tolerance):
