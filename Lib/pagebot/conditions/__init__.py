@@ -17,3 +17,4 @@ from pagebot.conditions.align import *
 from pagebot.conditions.floating import *
 from pagebot.conditions.flow import *
 from pagebot.conditions.columns import *
+from pagebot.conditions.text import *
