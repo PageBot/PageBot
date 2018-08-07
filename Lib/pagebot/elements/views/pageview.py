@@ -688,7 +688,7 @@ class PageView(BaseView):
         startY = e.css('baselineGridStart')
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
-        oy = startY # Assumes origin at top for context drawing.
+        oy = e.h - startY # Assumes origin at bottom for context drawing.
 
         line = 0 # Line index
 
@@ -701,14 +701,14 @@ class PageView(BaseView):
         context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
 
 
-        while oy < e.h - e.pb:
+        while oy > e.pb:
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             if GRID_INDEX in self.showBaselineGrid:
                 bs = context.newString(repr(line), e=self, style=style)
                 context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
                 context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
                 line += 1 # Increment line index.
-            oy += baselineGrid # Next vertical line position of baseline grid.
+            oy -= baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S
 

@@ -238,7 +238,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Vertical spacing for absolute and fontsize-related measures
         baselineGrid = baselineGrid,
-        baselineGridStart = u*7, # Optional baselineGridStart if different from top padding.
+        baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
         leading = defaultLeading, # Relative factor to current fontSize.
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0

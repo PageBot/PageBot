@@ -62,8 +62,8 @@ view.showGridBackground = [GRID_COL, GRID_ROW, GRID_SQR] # Set types of grid lin
 
 # Get the page
 page = doc[1]
-page.style['baselineGridStart'] = page.pt
-page.style['baselineGrid'] = pt(36)
+#page.style['baselineGridStart'] = None is default, starts grid on page.pt
+page.style['baselineGrid'] = pt(36) 
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
 # Red frame to show position and dimensions of the text box element.
@@ -105,13 +105,7 @@ c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions
 # Make BabelString from multiple cascading styles
 t = context.newString('Hkpx8', style=style) # Start with headline
 c10 = newTextBox(t, parent=page, w=CW, fill=(1, 1, 0.5), solve=False, conditions=[Right2Right(), Float2Top()])
-"""
-c11 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right(), Float2Top()])
-c20 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Left2Left(), Float2Top()])
-c21 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right(), Float2Top()])
-c30 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Left2Left(), Float2Top()])
-c31 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0), conditions=[Right2Right(), Float2Top()])
-"""
+
 # Solve the page/element conditions, so the text box as it's position and size.
 doc.solve()
 # Get the position of the first baseline of the text.
