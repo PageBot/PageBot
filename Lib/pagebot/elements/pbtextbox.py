@@ -110,7 +110,7 @@ class TextBox(Element):
             self._textLines = []
             self._baselines = {}
             for textLine in self.bs.getTextLines(self.pw, self.ph):
-                print('---', textLine.y, self.h - textLine.y)
+                #print('---', textLine.y, self.h - textLine.y)
                 textLine.y = self.h - textLine.y # Make postion relative to text box self.
                 self._textLines.append(textLine)
                 self._baselines[upt(textLine.y)] = textLine
@@ -122,6 +122,16 @@ class TextBox(Element):
             self.textLines # Initialize both self._textLines and self._baselines
         return self._baselines
     baselines = property(_get_baselines)
+
+    def getRounded2Grid(self, y, roundDown=False):
+        u"""Answer the value y rounded to the page baseline grid, based on the current position self.
+        """
+        start = self.baselineGridStart or self.pt
+        baseline = self.baselineGrid
+        y = round((y - start)/baseline) * baseline + start
+        if roundDown:
+            y -= self.baselineGrid
+        return y
 
     def __getitem__(self, lineIndex):
         return self.textLines[lineIndex]
@@ -461,63 +471,60 @@ class TextBox(Element):
     # Text conditions
 
     def isBaselineOnGrid(self, tolerance, index=None, style=None):
+        line = self.textLines[index or 0]
+        return abs(self.getRounded2Grid(line.y) - line.y) <= tolerance or \
+            abs(self.getRounded2Grid(line.y, roundDown=True) - line.y) <= tolerance
 
-        print('AAA', self.baselines)
-        return True
-
-    def baseline2Grid(self, index=None, style=None):
-        print('VVV', self.baselines)
-        return True
-    '''
     def isBaselineOnTop(self, tolerance, index=None, style=None):
-        """Answer the boolean if the top baseline is located at self.parent.pt."""
-        return abs(self.top - (self.parent.h - self.parent.pt - self.textLines[0].y + self.h)) <= tolerance
+        line = self.textLines[index or 0]
+        return abs(self.top - line.y) <= tolerance
 
     def isBaselineOnBottom(self, tolerance, index=None, style=None):
-        """Answer the boolean if the bottom baseline is located at self.parent.pb."""
-        return abs(self.bottom - self.parent.pb) <= tolerance
+        line = self.textLines[index or 0]
+        return abs(self.bottom - line.y) <= tolerance
 
-    def isAscenderOnTop(self, tolerance, index=None, style=None):
-        return True
-
-    def isCapHeightOnTop(self, tolerance, index=None, style=None):
-        return True
-
-    def isXHeightOnTop(self, tolerance, index=None, style=None):
-        return True
-
-    # Textbox moving vertical based on metrics positions and baseline grid
+    # Text conditional movers
     
-    def baseline2Top(self, index=None, style=None):
-        self.top = self.parent.h - self.parent.pt - self.textLines[0].y + self.h
-        return True
-
-    def baseline2Bottom(self, index=None, style=None):
-        self.bottom = self.parent.pb # - self.textLines[-1].y
-        return True
-
+    def baseline2Grid(self, index=None, style=None):
+        u"""Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        so the baseline of self.textLines[index] matches the parent grid.
+        """
+        line = self.textLines[index or 0]
+        y1 = abs(self.getRounded2Grid(line.y) - line.y)
+        y2 = abs(self.getRounded2Grid(line.y, roundDown=True) - line.y)
+        if y1 < y2:
+            self.y -= y1
+        else:
+            self.y += y2
+    
     def baselineUp2Grid(self, index=None, style=None):
-        self.topBaseline = self.parent.baselines[index]
+        u"""Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        so the baseline of self.textLines[index] matches the parent grid.
+        """
+        line = self.textLines[index or 0]
+        self.y += line.y - self.getRounded2Grid(line.y)
 
     def baselineDown2Grid(self, index=None, style=None):
-        self.firstBaseline = self.parent.baselines[index]
+        u"""Move the text box up (increasing line.y value, rounding down) in vertical direction, 
+        so the baseline of self.textLines[index] matches the parent grid.
+        """
+        line = self.textLines[index or 0]
+        self.y += line.y - self.getRounded2Grid(line.y, roundDown=True)
 
-    def floatBaseline2Top(self, index=None, style=None):
-        # ...
-        return True
+    def baseline2Top(self, index=None, style=None):
+        u"""Move the vertical position of the indexed line to match self.top.
+        """
+        line = self.textLines[index or 0]
+        print('TOP', self.y, self.top, line.y)
+        self.top -= line.y
 
-    def floatAscender2Top(self, index=None, style=None):
-        # ...
-        return True
+    def baseline2Bottom(self, index=None, style=None):
+        u"""Move the vertical position of the indexed line to match self.bottom.
+        """
+        line = self.textLines[index or 0]
+        self.bottom -= line.y
 
-    def floatCapHeight2Top(self, index=None, style=None):
-        # ...
-        return True
 
-    def floatXHeight2Top(self, index=None, style=None):
-        # ...
-        return True
-    '''
 if __name__ == '__main__':
     import doctest
     import sys
