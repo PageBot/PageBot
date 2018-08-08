@@ -26,12 +26,12 @@ from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 #
 # ISO A Sizes
 #
-A0 = mm(841),   mm(1189) # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
+A0 = mm(841),   mm(1189) # Millimeters real Mm unit instance.
 A1 = mm(594),   mm(841)
 A2 = mm(420),   mm(594)
 A3 = mm(297),   mm(420)
 A4 = mm(210),   mm(297)
-A4Rounded = pt(A4[0].rounded, A4[1].rounded) # Rounded to points pt(595, 842) to fit exact columns measures
+A4Rounded = pt(A4[0].rounded, A4[1].rounded) # Rounded to points pt(595, 842) to fit exact column measures
 A5 = mm(148),   mm(210)
 A6 = mm(105),   mm(148)
 A7 = mm(74),    mm(105)
@@ -68,7 +68,7 @@ Letter = inch(8.5, 11)
 Legal = inch(8.5, 14)
 JuniorLegal = inch(5, 8)
 Tabloid = inch(11, 17)
-# Other rounded definintions compatible to DrawBot
+# Other rounded definintions compatible to DrawBot predefines
 #Screen = getContext().screenSize() # Current screen size. TODO: fix this
 Ledger = pt(1224, 792)
 Statement = pt(396, 612)
