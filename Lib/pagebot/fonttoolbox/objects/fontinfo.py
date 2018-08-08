@@ -41,8 +41,14 @@ class FontInfo(object):
 
     """Read-only access to font information, such as names, character set and supported
     OpenType features.
-    """
 
+    >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
+    >>> from pagebot.fonttoolbox.objects.font import getFont
+    >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+    >>> font = getFont(path)
+    >>> font.info.copyright
+    u'Copyright 2011 Google Inc. All Rights Reserved.'
+    """
     def __init__(self, ttFont):
         self.ttFont = ttFont
         self._styleName = None 
@@ -110,6 +116,10 @@ class FontInfo(object):
     def _set_styleName(self, styleName):
         self._styleName = styleName
     styleName = property(_get_styleName, _set_styleName)
+
+    @cached_property
+    def copyright(self):
+        return self.ttFont['name'].getDebugName(0)
 
     @cached_property
     def psName(self):

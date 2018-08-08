@@ -269,7 +269,6 @@ class Image(Element):
                     b.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha())
                 b.image(self.imo, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             else:
-                # Store page element Id in this image, in case we want to make an image index later.
                 b.image(self.path, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
             context.restore()

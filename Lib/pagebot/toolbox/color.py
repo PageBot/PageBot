@@ -51,6 +51,37 @@ def value01(v):
         return 1
     return v
 
+def asRgb(c, *args):
+    u"""Answer the color as rgb tuple. If c is a list or tuple, then answer the
+    rgb tuples in the same structure.
+
+    >>> asRgb(color(1, 0, 0))
+    (1, 0, 0)
+    >>> asRgb(color(1, 0, 0), color(0, 1, 0))
+    ((1, 0, 0), (0, 1, 0))
+    >>> asRgb(color(1, 0, 0), (color(0, 1, 0), color(0, 0, 1))) # Nested tuples.
+    ((1, 0, 0), ((0, 1, 0), (0, 0, 1)))
+    >>> asRgb(1, 0, 0) # Rightly interpreted as list of colors, not as rgb values for one color
+    ((1, 1, 1), (0, 0, 0), (0, 0, 0))
+    """
+    if args:
+        if not isinstance(c, (list, tuple)):
+            c = [c]
+        c = list(c)
+        for arg in args:
+            c.append(arg)
+    if isinstance(c, (list, tuple)):
+        rcc = []
+        for cc in c:
+            cc = asRgb(cc)
+            rcc.append(cc)
+        return tuple(rcc)
+    if not isinstance(c, Color):
+        c = color(c)
+    if c is not None:
+        return c.rgb
+    return None
+
 def int2Rgb(v):
     """Convert an integer (basically the value of the hex string) into (r, g,
     b)
