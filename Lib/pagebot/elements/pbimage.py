@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 import os
 from pagebot.elements.element import Element
 from pagebot.style import ORIGIN # In case no image is defined.
-from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt
+from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
 
 
@@ -32,7 +32,12 @@ class Image(Element):
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-    >>> e = Image(imagePath, xy=pt(220, 330), w=512)
+    >>> from pagebot.constants import A4
+    >>> from pagebot.document import Document
+    >>> from pagebot.conditions import *
+    >>> doc = Document(size=A4, originTop=False, padding=30)
+    >>> page = doc[1]
+    >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
     >>> e.xy # Position of the image
     (220pt, 330pt)
     >>> (e.w, e.h), e.size # Identical result, width is the lead.
@@ -46,9 +51,15 @@ class Image(Element):
     >>> e.size = mm(50), p(100) # Disproportional size setting
     >>> e.size
     (50mm, 100p)
-    >>> e.size = None, None # Force answering the original image size
-    >>> e.size
+    >>> e.size = None # Force answering the original image size
+    >>> e.size # Initialize from file 
     (398pt, 530pt)
+    >>> page.w = mm(150)
+    >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt
+    >>> doc.solve()
+    Score: 2 Fails: 0
+    >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc
+    ((30pt, 99.44mm), (128.83mm, 486.32pt))
     """
     def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, **kwargs):
@@ -84,6 +95,8 @@ class Image(Element):
         """
         return self.w, self.h
     def _set_size(self, size):
+        if size is None: # Reset to original size by single None value.
+            size = None, None, None
         self._w, self._h, self.d = point3D(size)
     size = property(_get_size, _set_size)
 
@@ -98,8 +111,9 @@ class Image(Element):
         the ratio of the image."""
         u = None
         if not self._w: # Width is undefined
-            if self._h and self.ih:
-                u = self._h.pt / self.ih.pt * self.iw  # Height is lead, calculate width.
+            ihpt = upt(self.ih)
+            if self._h and ihpt:
+                u = self.iw * upt(self._h / ihpt)  # Height is lead, calculate width.
             else:
                 u = self.iw # Undefined and without parent, answer original image width.
         else:
@@ -117,8 +131,9 @@ class Image(Element):
     def _get_h(self):
         u = None
         if not self._h: # Width is undefined
-            if self._w and self.iw:
-                u = self.ih * self._w.pt / self.iw.pt  # Width is lead, calculate height.
+            iwpt = upt(self.iw)
+            if self._w and iwpt:
+                u = self.ih * upt(self._w / iwpt)  # Width is lead, calculate height.
             else:
                 u = self.ih # Undefined and without parent, answer original image width.
         else:
@@ -212,7 +227,12 @@ class Image(Element):
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
             print('Cannot display image %s' % self)
-            #self._drawMissingElementRect(page, px, py, self.w, self.h)
+            # Draw missing element as cross
+            xpt, ypt, wpt, hpt = upt(self.x, self.y, self.w, self.h)
+            b.stroke(0.5)
+            b.strokeWidth(0.5)
+            b.fill(None)
+            b.rect(xpt, ypt, wpt, hpt)
         else:
             context.save()
             sx = self.w / self.iw
@@ -247,10 +267,10 @@ class Image(Element):
             if self.imo is not None:
                 with self.imo:
                     b.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha())
-                b.image(self.imo, (px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
+                b.image(self.imo, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             else:
                 # Store page element Id in this image, in case we want to make an image index later.
-                b.image(self.path, (px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
+                b.image(self.path, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
             context.restore()
 
