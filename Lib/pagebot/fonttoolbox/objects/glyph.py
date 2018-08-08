@@ -21,6 +21,7 @@ import weakref
 
 # Use default drawing context for generating the glyphs path.
 # This is independent from the current main context, e.g. HtmlContext.
+from pagebot.constants import XXXL
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.units import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
@@ -95,6 +96,7 @@ class Glyph(object):
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
+        self._box = None
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -133,11 +135,12 @@ class Glyph(object):
         currentOnCurve = None
         p0 = None
 
-        minX = minY = sys.maxsize # Store bounding box as we process the coordinate.
-        maxX = maxY = -sys.maxsize
-
         if coordinates or components:
             self._path = self.font.context.newPath()
+            minX = minY = XXXL # Store bounding box as we process the coordinate.
+            maxX = maxY = -XXXL
+        else:
+            minX = minY = maxX = maxY = 0
 
         for component in components:
             componentName = component.baseGlyph
@@ -146,7 +149,11 @@ class Glyph(object):
                 componentPath.transform((1, 0, 0, 1, component.x, component.y))
                 self._path.appendPath(componentPath)
                 componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
-
+                cMinX, cMinY, cMaxX, cMaxY = self.font[componentName].boundingBox
+                minX = min(cMinX+component.x, minX)
+                minY = min(cMinY+component.y, minY)
+                maxX = max(cMaxX+component.x, maxX)
+                maxY = max(cMaxY+component.y, maxY)
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
@@ -516,8 +523,10 @@ class Glyph(object):
     analyzer = property(_get_analyzer) # Read only for now.
 
     def _get_box(self):
-
-        self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
+        u"""Answer the bounding box as defined by self.ttGlyph boundaries.
+        """
+        if self._box is None:
+            self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
         return self._box
     box = property(_get_box) # Read only for now.
 

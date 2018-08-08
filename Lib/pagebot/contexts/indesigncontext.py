@@ -345,8 +345,9 @@ class InDesignContext(BaseContext):
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
-    def lineDash(self, *lineDash):
-        self.b.lineDash(*lineDash)
+    def lineDash(self, lineDash):
+        pass
+        #self.b.lineDash(lineDash)
 
     def miterLimit(self, value):
         self.b.miterLimit(value)

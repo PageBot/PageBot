@@ -16,7 +16,7 @@
 #
 import os
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
+from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION, INLINE, OUTLINE, ONLINE
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D # Render units to points
 from pagebot.constants import *
@@ -380,19 +380,20 @@ class DrawBotContext(BaseContext):
 
     def lineCap(self, value):
         """Possible values are butt, square and round."""
+        assert value in ('butt', 'square', 'round')
         self.b.lineCap(value)
 
     #   C A N V A S
 
-    def saveGraphicState(self):
+    def save(self):
         self.b.save()
 
-    save = saveGraphicState # Compatible with DrawBot API
+    saveGraphicState = save # Compatible with DrawBot API
 
-    def restoreGraphicState(self):
+    def restore(self):
         self.b.restore()
 
-    restore = restoreGraphicState # Compatible with DrawBot API
+    restoreGraphicState = restore # Compatible with DrawBot API
 
     #   F O N T S
 
