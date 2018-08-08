@@ -15,6 +15,8 @@
 #     Draw a words on different positions of vertical alignment, based on the
 #     typographic metrics and the postion of baselines.
 #
+#     TODO: Make the baseline alignments work.
+#
 from copy import copy
 #from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.platform import getContext
