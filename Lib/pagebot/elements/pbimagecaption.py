@@ -321,7 +321,7 @@ class Image(Element):
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
             print('Cannot display image %s' % self)
-            #self._drawMissingElementRect(page, px, py, self.w, self.h)
+            self._drawMissingElementRect(page, px, py, self.w, self.h)
         else:
             context.save()
             sx = self.w / self.iw
