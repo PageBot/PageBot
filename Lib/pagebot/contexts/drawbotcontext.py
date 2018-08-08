@@ -494,6 +494,11 @@ class DrawBotContext(BaseContext):
         xpt, ypt, wpt, hpt = upt(r) 
         self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
+    def hyphenation(self, onOff):
+        u"""DrawBot needs an overall hyphenation flag set on/off, as it is not part of the FormattedText
+        style attributes."""
+        self.b.hyphenation(onOff)
+
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
 

@@ -10,6 +10,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
+#     Draw animation of banner, cycling through some axes and ranges.
+#     Draw the origin of the design space at the back as reference.
+#
 from __future__ import division
 
 from random import random
@@ -22,6 +25,7 @@ from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.toolbox.units import em
+from pagebot.toolbox.color import whiteColor, blackColor
 
 class AnimatedBannerFrame(AnimationFrame):
 

@@ -285,7 +285,7 @@ class DrawBotString(BabelString):
         For the total width of the pixel-map, calculate @pw - @px."""
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
-        self.context.hyphenation(bool(self.style['hyphenation']))
+        self.context.hyphenation(bool(self.style.get('hyphenation', False)))
         return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
@@ -381,11 +381,11 @@ class DrawBotString(BabelString):
         wpt, hpt = upt(w, h)
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
-        b.hyphenation(bool(self.hyphenation))
+        self.context.hyphenation(bool(self.hyphenation))
         overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self.context)
-        b.hyphenation(False)
+        self.context.hyphenation(False)
         return overflow
-        
+      
     def getBaselines(self, w, h=None):
         u"""Answer the dictionary of vertical baseline positions for the self.s FormattedString
         and for the given width and height. Value is the TextLine instance at that position.

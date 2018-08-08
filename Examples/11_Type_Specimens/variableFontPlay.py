@@ -11,9 +11,13 @@
 # ---------------------------------------------------------
 #
 #     testPreVarFamily.py
+#
+#     Test script to show working and position of child elements in a layout.
+#
 from pagebot.elements import Element, newRect
 from pagebot.conditions import *
 from pagebot.style import HalfLetter
+from pagebot.toolbox.color import blackColor, color
 
 W, H = HalfLetter
 
@@ -36,7 +40,7 @@ view.showPageMetaInfo = True
 page = document[1]
 page.padding = 30
 vfp = VariableFontPlay(fill=blackColor, parent=page, padding=20, conditions=[Top2Top(), Left2Left(), Fit()])
-for n in range(5):
+for n in range(4):
     newRect(parent=vfp, w=30, h=40, margin=10, fill=color(1,0,0), stroke=0,  conditions=[Right2Right(), Bottom2Bottom(), Float2Left(), Float2Top()])
 document.solve()
 

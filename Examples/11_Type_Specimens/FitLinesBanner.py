@@ -21,6 +21,7 @@ from pagebot.document import Document
 from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.toolbox.units import em
+from pagebot.toolbox.color import blackColor, whiteColor
 
 class AnimatedBannerFrame(AnimationFrame):
 

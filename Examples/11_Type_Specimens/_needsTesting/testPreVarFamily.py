@@ -34,20 +34,20 @@ class AnimatedBannerFrame(AnimationFrame):
             phicos = cos(radians(self.frameIndex/self.frames * 360))
 
             for tag, (axisMin, axisDefault, axisMax) in self.f.axes.items():
-            wdthRange = wdthMax - wdthMin
-            wghtRange = wghtMax - wghtMin
-            location = dict(wdth=phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
-            instance = self.f.getInstance(location)#instance.path
-            style['font'] = instance.path
-            #print(self.frameIndex, style['font'])
-            #style['fontSize'] = self.h/3
-            bs = c.newString(self.sampleText, style=style)
-            tw, th = bs.size
-            c.text(bs, (self.w/2 - tw/2, self.h/2))
+                wdthRange = wdthMax - wdthMin
+                wghtRange = wghtMax - wghtMin
+                location = dict(wdth=phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
+                instance = self.f.getInstance(location)#instance.path
+                style['font'] = instance.path
+                #print(self.frameIndex, style['font'])
+                #style['fontSize'] = self.h/3
+                bs = c.newString(self.sampleText, style=style)
+                tw, th = bs.size
+                c.text(bs, (self.w/2 - tw/2, self.h/2))
                             
                 wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
 
-            """
+                """
             #location = getScaledLocation(self.f, dict(wght=self.frameIndex/self.frames))
             #instance = getInstance(self.f, location)
             phisin = sin(radians(self.frameIndex/self.frames * 360))
