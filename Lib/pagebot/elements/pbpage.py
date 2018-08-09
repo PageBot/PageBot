@@ -231,6 +231,7 @@ class Page(Element):
         """
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
+        b.resetHtml()
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
