@@ -260,7 +260,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Language and hyphenation
         language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
-        encoding  = 'UTF-8',
+        encoding  = 'utf-8',
         hyphenation = True,
         # Strip pre/post white space from e.text and e.tail and substitute by respectively prefix and postfix
         # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.

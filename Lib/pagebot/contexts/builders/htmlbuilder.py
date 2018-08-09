@@ -520,8 +520,8 @@ table {
         write to the single CSS file for the entire site."""
         self._htmlOut = []
 
-    def docType(self, s):
-        self.write('<!DOCTYPE %s>\n' % s)
+    def docType(self, s=None):
+        self.write('<!DOCTYPE %s>\n' % (s or 'html'))
 
     def html(self, xmlns=None, **args):
         """

@@ -22,6 +22,7 @@ import shutil
 
 from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
+from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.style import ORIGIN
 
 class SiteView(HtmlView):
@@ -55,12 +56,7 @@ class SiteView(HtmlView):
         self.cssUrls = cssUrls or [self.CSS_PATH]
 
         # Default JS Urls to include
-        self.jsUrls = jsUrls or dict(
-            jquery='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-            #jquery='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-            mediaqueries='http://code.google.com/p/css3-mediaqueries-js',
-            d3='https://d3js.org/d3.v5.min.js',
-        )
+        self.jsUrls = jsUrls or (URL_JQUERY, URL_MEDIA)
 
     def copyResources(self, path):
         u"""If self.resourcePaths are defined, then copy them into the destiation path.
@@ -75,7 +71,8 @@ class SiteView(HtmlView):
                 if self.verbose:
                     print('[%s.build] Copy %s --> %s' % (self.__class__.__name__, resourcePath, dstPath))
                 if os.path.exists(dstPath):
-                    assert not dstPath.startswith('/') # Safety check, only run on relative paths
+                    # Safety check, only run on relative paths
+                    assert not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
                     shutil.rmtree(dstPath)
                 # TODO: Fails in Travis.
                 shutil.copytree(resourcePath, dstPath)
@@ -110,26 +107,13 @@ class SiteView(HtmlView):
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
 
-        b = self.b # Get builder from self.doc.context of this view.
         # SOLVE THIS LATER
         #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
         for pn, pages in doc.pages.items():
             for page in pages:
-                b.resetHtml()
-                if page.htmlCode:
-                    b.addHtml(page.htmlCode)
-                else:
-                    # Building for HTML, try the hook. Otherwise call by main page.build.
-                    hook = 'build_' + b.PB_ID # E.g. page.build_html()
-                    getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
-
-                fileName = page.name
-                if not fileName:
-                    fileName = self.DEFAULT_HTML_FILE
-                if not fileName.lower().endswith('.html'):
-                    fileName += '.html'
-                if self.doExport: # View flag to avoid writing, in case of testing.
-                    b.writeHtml(path + fileName)
+                # Building for HTML, try the hook. Otherwise call by main page.build.
+                hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
+                getattr(page, hook)(self, path) # Typically calling page.build_html
         # Write all collected CSS into one file
         #b.writeCss(self.DEFAULT_CSS_PATH)
 

@@ -76,17 +76,17 @@ class Page(Element):
         self.htmlCode = htmlCode # Set to string in case the full HTML is defined in a single file.
         self.htmlPath = htmlPath # Set to string in case the full HTML is defined in a single file.
 
-        self.headCode = headCode # Optional set to string that contains the page <head>...</head>, excluding the tags.
-        self.headPath = headPath # Set to path, if head is available in a single file, excluding the tags.
+        self.headCode = headCode # Optional set to string that contains the page <head>...</head>, including the tags.
+        self.headPath = headPath # Set to path, if head is available in a single file, including the tags.
 
         self.cssCode = cssCode # Set to string, if CSS is available as single source. Exported as css file once.
         self.cssPath = cssPath # Set to path, if CSS is available in a single file to be included in the page.
         self.cssUrls = cssUrls # Optional CSS, if different from what is defined by the view.
 
-        self.bodyCode = bodyCode # Optional set to string that contains the page <body>...</body>, excluding the tags.
-        self.bodyPath = bodyPath # Set to path, if body is available in a single file, excluding the tags.
+        self.bodyCode = bodyCode # Optional set to string that contains the page <body>...</body>, including the tags.
+        self.bodyPath = bodyPath # Set to path, if body is available in a single file, including the tags.
 
-        self.jsCode = jsCode # Set to path, if JS is available in a single file, excluding the tags.
+        self.jsCode = jsCode # Set to path, if JS is available in a single file, including the tags.
         self.jsPath = jsPath # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
         self.jsUrls = jsUrls # Optional Javascript Urls, if different from what is defined by the view.
 
@@ -213,7 +213,7 @@ class Page(Element):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, path):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent.
@@ -232,7 +232,9 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
 
-        if self.htmlPath is not None:
+        if self.htmlCode: # In case the full HTML is here, then just output it.
+            b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
+        elif self.htmlPath:
             b.importHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.docType('html')
@@ -240,29 +242,32 @@ class Page(Element):
             #
             #   H E A D
             #
-            # Build the page head. There are 3 option (all not including the <head>...</head>)
+            # Build the page head. There are 3 option (all including the <head>...</head>)
             # 1 As html string (info.headHtml is defined as not None)
             # 2 As path a html file, containing the string between <head>...</head>.
             # 3 Constructed from info contect, page attributes and styles.
             #
-            b.head()
             if self.headCode is not None:
                 b.addHtml(self.headCode)
             elif self.headPath is not None:
                 b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
-                b.meta(charset=self.css('encoding'))
+                b.head()
+                b.meta(charset=self.css('encoding')) # Default utf-8
                 # Try to find the page name, in sequence order of importance.
                 b.title_(self.title or self.name)
 
+                b.meta(httpequiv='X-UA-Compatible', content='IE=edge,chrome=1')
+
                 # Devices
                 if self.viewPort is not None: # Not supposed to be None. Check anyway
+                    b.comment('Mobile viewport')
                     b.meta(name='viewport', content=self.viewPort)
 
                 # View and pages can both implements Javascript paths
                 for jsUrls in (view.jsUrls, self.jsUrls):
                     if jsUrls is not None:
-                        for jsUrl in jsUrls.values():
+                        for jsUrl in jsUrls:
                             b.script(type="text/javascript", src=jsUrl)
 
                 # View and pages can both implements Webfonts urls
@@ -277,7 +282,7 @@ class Page(Element):
                         for cssUrl in cssUrls:
                             b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
 
-                # In case CSS needs to copied into the page.
+                # Use one of both of these options in case CSS needs to copied into the page.
                 if self.cssCode is not None:
                     # Add the code directly into the page if it is not None
                     b.style()
@@ -300,7 +305,7 @@ class Page(Element):
                     b.meta(name='description', content=self.description)
                 if self.keyWords:
                     b.meta(name='keywords', content=self.keyWords)
-            b._head()
+                b._head()
             #
             #   B O D Y
             #
@@ -309,38 +314,47 @@ class Page(Element):
             # 2 As path a html file, containing the string between <body>...</body>, excluding the tags
             # 3 Constructed from view parameter context, page attributes and styles.
             #
-            b.body()
             if self.bodyCode is not None:
                 b.addHtml(self.bodyCode)
             elif self.bodyPath is not None:
                 b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
+                b.body()
                 b.div(cssClass=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
                 if drawElements:
                     for e in self.elements:
                         e.build_html(view, origin)
                 b._div()
-            #
-            #   J A V A S C R I P T
-            #
-            # Build the LS body. There are 3 option (all not including the <body>...</body>)
-            # 1 As html string (info.headHtmlCode is defined as not None)
-            # 2 As path a html file, containing the string between <head>...</head>.
-            # 3 Constructed from info contect, page attributes and styles.
-            #
-            if self.jsCode is not None:
-                b.addHtml(self.jsCode)
-            if self.jsPath is not None:
-                b.importHtml(self.jsPath) # Add JS content of file, if path is not None and the file exists.
-            if b.hasJs():
-                b.script()
-                b.addHtml('\n'.join(b.getJs()))
-                b._script()
-            #else no default JS. To be added by the calling application.
+                #
+                #   J A V A S C R I P T
+                #
+                # Build the LS body. There are 3 option (all not including the <body>...</body>)
+                # 1 As html string (info.headHtmlCode is defined as not None)
+                # 2 As path a html file, containing the string between <head>...</head>.
+                # 3 Constructed from info contect, page attributes and styles.
+                #
+                if self.jsCode is not None:
+                    b.addHtml(self.jsCode)
+                if self.jsPath is not None:
+                    b.importHtml(self.jsPath) # Add JS content of file, if path is not None and the file exists.
+                if b.hasJs():
+                    b.script()
+                    b.addHtml('\n'.join(b.getJs()))
+                    b._script()
+                #else no default JS. To be added by the calling application.
 
-            # Close the document
-            b._body()
+                # Close the document
+                b._body()
             b._html()
+
+        fileName = self.name
+        if not fileName:
+            fileName = self.DEFAULT_HTML_FILE
+        if not fileName.lower().endswith('.html'):
+            fileName += '.html'
+        if view.doExport: # View flag to avoid writing, in case of testing.
+            b.writeHtml(path + fileName)
+
 
 class Template(Page):
 
