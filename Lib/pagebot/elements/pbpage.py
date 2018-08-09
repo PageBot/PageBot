@@ -264,7 +264,7 @@ class Page(Element):
                     b.comment('Mobile viewport')
                     b.meta(name='viewport', content=self.viewPort)
 
-                # View and pages can both implements Javascript paths
+                # View and pages can both implements Javascript paths, if adding to the header.
                 for jsUrls in (view.jsUrls, self.jsUrls):
                     if jsUrls is not None:
                         for jsUrl in jsUrls:
@@ -320,18 +320,15 @@ class Page(Element):
                 b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.body()
-                b.div(cssClass=self.cssClass) # Class is standard 'page' if self.cssClass is undefined as None.
-                if drawElements:
-                    for e in self.elements:
-                        e.build_html(view, origin)
-                b._div()
+                for e in self.elements:
+                    e.build_html(view, path)
                 #
                 #   J A V A S C R I P T
                 #
                 # Build the LS body. There are 3 option (all not including the <body>...</body>)
                 # 1 As html string (info.headHtmlCode is defined as not None)
                 # 2 As path a html file, containing the string between <head>...</head>.
-                # 3 Constructed from info contect, page attributes and styles.
+                # 3 Constructed from info context, page attributes and styles.
                 #
                 if self.jsCode is not None:
                     b.addHtml(self.jsCode)
@@ -343,10 +340,11 @@ class Page(Element):
                     b._script()
                 #else no default JS. To be added by the calling application.
 
-                # Close the document
+                # Close the page body
                 b._body()
             b._html()
 
+        # Construct the file name for this page and save the file.
         fileName = self.name
         if not fileName:
             fileName = self.DEFAULT_HTML_FILE
