@@ -46,7 +46,7 @@ class D3GraphSite(Publication):
     >>> page.w, page.h = doc.w, doc.h = A4
     >>> view = doc.newView('Page')
     >>> # TODO: Needs solving for FlatContext
-    >>> #doc.export('_export/D3GraphSite.pdf')
+    >>> doc.export('_export/D3GraphSite.pdf')
     """
 
     def initialize(self, **kwargs):
