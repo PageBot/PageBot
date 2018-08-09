@@ -45,17 +45,25 @@ class Navigation(Element):
         b = self.context.b
         b.comment('Main navigation')
         b.nav(cssId='topnav', role='navigation')
-        b.div(cssClass='menu-toggle')
-        b.addHtml('Menu')
-        b._div()
         for e in self.elements:
             e.build_html(view, path)
         b._nav()
         
+class TopMenu(Element):        
+    def build_html(self, view, path):
+        b = self.context.b        
+        b.div(cssClass='menu-toggle')
+        b.addHtml('Menu')
+        b._div()
+        b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._ul()
+        
 class Menu(Element):        
     def build_html(self, view, path):
         b = self.context.b        
-        b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
+        b.ul()
         for e in self.elements:
             e.build_html(view, path)
         b._ul()
@@ -83,9 +91,9 @@ class MenuItem(Element):
             b.a(href=self.href)
             b.addHtml(self.label)
             b._a()
-        b._li()
         for e in self.elements:
             e.build_html(view, path)
+        b._li()
         
 class Logo(Element):
     def build_html(self, view, path):
@@ -93,19 +101,18 @@ class Logo(Element):
         b.div(cssId="logo")
         b.a(href="index.html")
         b.h1()
-        b.addHtml('PageBot:'+self.name)
+        b.addHtml('PageBot')
         b._h1()
         b._a()
         b._div() 
-        
-class Section(Element):
-    def build_html(self, view, path):
-        HTML = """    
 
-    <!-- hero area (with the slider) -->
-    <section id="hero" class="clearfix">    
-      <div class="wrapper">
-        <div class="row">
+class Hero(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.section(cssId='hero', cssClass='clearFix')
+        b.div(cssClass='wrapper')
+        b.div(cssClass='row')
+        b.addHtml("""
           <div class="grid_4">
             <h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>
         </div>
@@ -129,49 +136,63 @@ class Section(Element):
                     </ul>
                   </div><!-- FlexSlider -->
                 </div><!-- end grid div -->
-           </div><!-- end .row div -->
-        </div><!-- end .wrapper div -->
-    </section><!-- end hero area -->
-
-
-    <!-- main content area -->      
-  <div id="main" class="wrapper clearfix">  
-  
-  <!-- content area -->    
-     <section id="content" class="wide-content">
-      
-        <h1>This is an interesting header</h1>
-        <h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum...</h2>
+        """)
+        b._div() # end .row 
+        b._div() # end .wrapper 
+        b._section()
+                               
+class Content(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.div(cssId='main', cssClass='wrapper clearfix')
+        b.section(cssId='content', cssClass='wide-content')
+        # Content here, should come from markdown file.
+        b.h1()
+        b.addHtml('This is an interesting header')
+        b._h1()
+        b.h2()
+        b.addHtml("""Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum...""")
+        b._h2()
+        b.p()
+        b.a(href='index.html', cssClass='buttonlink')
+        b.addHtml('Use Pagebot')
+        b._a()
+        b._p()
+        b._section() # end content area -->
+        b._div() # end div #main .wrapper 
         
-          <p><a href="#" class="buttonlink">Use Pagebot</a> </p>
+class ColoredSection(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.section(cssId='features', cssClass='blueelement vertical-padding')
+        b.div(cssClass='wrapper clearfix')
+        # Content here from markdown file
+        b.h1()
+        b.addHtml("""Some things in rows of 3 columns""")
+        b._h1()
+        b.div(cssClass='row vertical-padding')
         
-        
-
-    </section><!-- #end content area -->
-</div><!-- #end div #main .wrapper -->
-
-
-<!-- colored section -->
-<section id="features"  class="blueelement vertical-padding">
-    <div class="wrapper clearfix">
-    
-    <h1>Some things in rows of 3 columns</h1>
-    
-    <div class="row vertical-padding">      
-        <div class="grid_4">            
+        b.div(cssClass='grid_4')
+        b.addHtml(""" 
           <h2>Something</h2>
             <img src="images/pagebot_cafe_working.jpg" />
         <h4>This is a subhead</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> 
+        """)
+        b._div() # grid_4
         
-        <div class="grid_4">            
+        b.div(cssClass='grid_4')
+        b.addHtml("""            
         <h2>Something else</h2>
             <img src="images/pagebot_cafe_working.jpg" />
                     <h4>This is a subhead</h4>
 
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p></div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        """)
+        b._div() # grid_4
         
-        <div class="grid_4">            
+        b.div(cssClass='grid_4')
+        b.addHtml("""            
         <h2>Something else</h2>
             <img src="images/pagebot_cafe_working.jpg" />
                     <h4>This is a subhead</h4>
@@ -179,30 +200,22 @@ class Section(Element):
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p></div>
           <p><a href="#" class="buttonlinkdiap">Use Pagebot</a> </p>
     
-    
-     </div>
+      """)
+        b._div() # grid_4
+        b._div() # row vertical padding
+        b._div() # .wrapper
+        b._section()
+  
+class Footer(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.footer()
+        b.div(cssId='colophon', cssClass='wrapper clearfix')
+        b.addHtml("""Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff.""")
+        b._div()
+        b._footer()
         
-  
-    </div><!-- #end div .wrapper -->
-</section><!-- #end colored section -->
-
-      
-      
-      
-  
-
-
-<!-- footer area -->    
-<footer>
-    <div id="colophon" class="wrapper clearfix">
-        footer stuff
-    </div>
-    
-
-</footer><!-- #end footer area --> 
-
-
-<!-- jQuery -->
+        """<!-- jQuery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
 
@@ -211,10 +224,9 @@ class Section(Element):
 <!-- fire ups - read this file!  -->   
 <script src="js/main.js"></script>
 
+"""        
 
-        """
-        self.context.b.addHtml(HTML)
-        
+
 class Site(Publication):
     u"""Build a website, similar to the original template by Kirsten Langmuur.
 
@@ -247,40 +259,40 @@ for pn, (name, title) in enumerate(SITE):
     logo = Logo(parent=banner, name=name)
     navigation = Navigation(parent=header)
     # TODO: Build this automatic from the content of the pages table.
-    menu = Menu(parent=navigation)
+    menu = TopMenu(parent=navigation)
     menuItem1 = MenuItem(parent=menu, href='index.html', label='Home', current=currentPage=='index.html')
     menuItem2 = MenuItem(parent=menu, href='content.html', label='Internal page demo', current=currentPage=='content.html')
     menuItem3 = MenuItem(parent=menu, href='page3.html', label='menu item 3', current=currentPage=='page3.html')
     menuItem4 = MenuItem(parent=menu, href='page4.html', label='menu item 4', current=currentPage=='page4.html')
     menuItem5 = MenuItem(parent=menu, href='page5.html', label='menu item 5', current=currentPage=='page5.html')
     
-    #menu4 = Menu(parent=menuItem4)
-    #menuItem41 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.1', current=False)
-    #menuItem42 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.2', current=False)
+    menu3 = Menu(parent=menuItem3)
+    menuItem31 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.1', current=False)
+    menuItem32 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.2 with longer link name', current=False)
+    menuItem33 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.3', current=False)
+    menuItem34 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.4', current=False)
+    menuItem35 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.5', current=False)
+    menuItem36 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.6', current=False)
+
+    menu33 = Menu(parent=menuItem33)
+    menuItem331 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.1', current=False)
+    menuItem332 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.2 with longer link name', current=False)
+    menuItem333 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.3', current=False)
     
-    '''
-
-    menu2 = Menu(parent=menu1)
-    menuItem21 = MenuItem(parent=menu2, href='#', label='menu item 21', current=False)
-    menuItem22 = MenuItem(parent=menu2, href='#', label='menu item 22', current=False)
-
-    menu23 = Menu(parent=menu2)
-    menuItem231 = MenuItem(parent=menu23, href='#', label='menu item 231', current=False)
-    menuItem232 = MenuItem(parent=menu23, href='#', label='menu item 232 with longer link name', current=False)
-    menuItem233 = MenuItem(parent=menu23, href='#', label='menu item 233', current=False)
-    menuItem234 = MenuItem(parent=menu23, href='#', label='menu item 234', current=False)
-    menuItem235 = MenuItem(parent=menu23, href='#', label='menu item 235', current=False)
-
-    menuItem24 = MenuItem(parent=menu23, href='#', label='menu item 24', current=False)
-    menuItem25 = MenuItem(parent=menu23, href='#', label='menu item 25', current=False)
-
-    menu3 = Menu(parent=menu2)
-    menuItem31 = MenuItem(parent=menu3, href='#', label='menu item 31', current=False)
-    menuItem32 = MenuItem(parent=menu3, href='#', label='menu item 32', current=False)
-    '''
-
-    section = Section(parent=page)
-
+    menu4 = Menu(parent=menuItem4)
+    menuItem41 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.1', current=False)
+    menuItem42 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.2', current=False)
+    
+    menu5 = Menu(parent=menuItem5)
+    menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
+    menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
+    
+    hero = Hero(parent=page)
+    
+    content = Content(parent=page)
+    section = ColoredSection(parent=page)
+    footer = Footer(parent=page)
+    
 site.export(EXPORT_PATH)
 
 os.system('open "%s/index.html"' % EXPORT_PATH)
