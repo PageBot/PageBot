@@ -80,15 +80,8 @@ class MampView(SiteView):
             if not path.endswith('/'):
                 path += '/'
 
-        # Copy resources to output
-        for resourcePath in self.resourcePaths:
-            dstPath = path
-            if os.path.isdir(resourcePath):
-                dstPath += resourcePath.split('/')[-1] + '/'
-            if self.verbose:
-                print('[MampView.build] Copy %s --> %s' % (resourcePath, dstPath))
-            # TODO: Fails in Travis.
-            shutil.copytree(resourcePath, dstPath)
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
 
         b = self.b # Get builder from self.doc.context of this view.
         

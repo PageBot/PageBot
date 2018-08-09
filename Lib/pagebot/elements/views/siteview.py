@@ -18,6 +18,7 @@
 #     the generated site can be copied by GitView to their own paths.
 #
 import os
+import shutil
 
 from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
@@ -61,6 +62,23 @@ class SiteView(HtmlView):
             d3='https://d3js.org/d3.v5.min.js',
         )
 
+    def copyResources(self, path):
+        u"""If self.resourcePaths are defined, then copy them into the destiation path.
+        If the resources already exist, then delete them before copy.
+        """
+        # Copy resources to output
+        if self.resourcePaths:
+            for resourcePath in self.resourcePaths:
+                dstPath = path
+                if os.path.isdir(resourcePath):
+                    dstPath += resourcePath.split('/')[-1] + '/'
+                if self.verbose:
+                    print('[%s.build] Copy %s --> %s' % (self.__class__.__name__, resourcePath, dstPath))
+                if os.path.exists(dstPath):
+                    assert not dstPath.startswith('/') # Safety check, only run on relative paths
+                    shutil.rmtree(dstPath)
+                # TODO: Fails in Travis.
+                shutil.copytree(resourcePath, dstPath)
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         """
@@ -70,7 +88,7 @@ class SiteView(HtmlView):
         >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, padding=(30, 40, 50, 60))
         >>> view = doc.view
         >>> view
-        <SiteView:Site (0, 0)>
+        <SiteView:Site (0pt, 0pt, 300pt, 400pt)>
         >>> page = doc[1]
         >>> page.name = 'index' # Home page is index.
         >>> page.cssClass ='MyGeneratedPage'
@@ -89,15 +107,21 @@ class SiteView(HtmlView):
         if not os.path.exists(path):
             os.makedirs(path)
 
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
+
         b = self.b # Get builder from self.doc.context of this view.
         # SOLVE THIS LATER
         #self.build_css(self) # Make doc build the main/overall CSS, based on all page styles.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
-                # Building for HTML, try the hook. Otherwise call by main page.build.
-                hook = 'build_' + b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
+                if page.htmlCode:
+                    b.addHtml(page.htmlCode)
+                else:
+                    # Building for HTML, try the hook. Otherwise call by main page.build.
+                    hook = 'build_' + b.PB_ID # E.g. page.build_html()
+                    getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
 
                 fileName = page.name
                 if not fileName:

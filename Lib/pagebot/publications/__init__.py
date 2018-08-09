@@ -27,9 +27,3 @@
 #     fm = FashionMagazine('myDataMarkDown.md')
 #     fm.export('MySpeciment.pdf')
 #
-from book import Book
-from website import Website
-from poster import Poster
-from brochure.brochure import Brochure
-from newspaper.newspaper import Newspaper
-
