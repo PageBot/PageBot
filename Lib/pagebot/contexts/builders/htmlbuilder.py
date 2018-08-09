@@ -232,7 +232,7 @@ class HtmlBuilder(XmlBuilder):
         'type'])
 
     # A_ATTRIBUTES_DEFAULTS = {'alt': '='}
-    NAV_ATTRIBUTES = set(['accesskey'])
+    NAV_ATTRIBUTES = set(['accesskey', 'role'])
 
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 

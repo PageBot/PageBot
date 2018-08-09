@@ -19,77 +19,84 @@ from __future__ import division # Make integer division result in float.
 import os
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
+from pagebot.elements import *
 
 EXPORT_PATH = '_export/SimpleSite'
 
-HEAD_CODE = """
+class Header(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.header(cssClass='wrapper clearfix')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._header()
 
+class Banner(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.comment('Banner')
+        b.div(cssId='banner')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._div()
 
-<!-- Mobile viewport -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<link rel="shortcut icon" href="images/favicon.ico"  type="image/x-icon">
-
-<!-- CSS-->
-
-<!-- end CSS-->
-    
-<!-- JS-->
-<script src="js/libs/modernizr-2.6.2.min.js"></script>
-<!-- end JS-->
-</head>
-"""
-
-BODY_CODE = """
-<body id="home">
-
-<!-- header area -->
-    <header class="wrapper clearfix">
-               
-      <div id="banner">        
-        <div id="logo"><a href="index.html"><h1>PageBot</h1></a></div> 
-      </div>
+class Navigation(Element):            
+    def build_html(self, view, path):
+        b = self.context.b
+        b.comment('Main navigation')
+        b.nav(cssId='topnav', role='navigation')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._nav()
         
-      <!-- main navigation -->
-      <nav id="topnav" role="navigation">
-      <div class="menu-toggle">Menu</div>  
-        <ul class="srt-menu" id="menu-main-navigation">
-          <li class="current"><a href="index.html">Home</a></li>
-          <li><a href="content.html">Internal page demo</a></li>
-                <li><a href="#">menu item 3</a>
-                    <ul>
-                        <li>
-                            <a href="#">menu item 3.1</a>
-                        </li>
-                        <li class="current">
-                            <a href="#">menu item 3.2</a>
-                            <ul>
-                                <li><a href="#">menu item 3.2.1</a></li>
-                                <li><a href="#">menu item 3.2.2 with longer link name</a></li>
-                                <li><a href="#">menu item 3.2.3</a></li>
-                                <li><a href="#">menu item 3.2.4</a></li>
-                                <li><a href="#">menu item 3.2.5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">menu item 3.3</a></li>
-                        <li><a href="#">menu item 3.4</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">menu item 4</a>
-                    <ul>
-                        <li><a href="#">menu item 4.1</a></li>
-                        <li><a href="#">menu item 4.2</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">menu item 5</a>
-                </li>   
-            </ul>     
-        </nav><!-- end main navigation -->
-  
-    </header><!-- end header -->
- 
+class Menu(Element):        
+    def build_html(self, view, path):
+        b = self.context.b
+        b.div(cssClass='menu-toggle')
+        b.addHtml('Menu')
+        b._div()
+        
+        b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._ul()
+        
+class MenuItem(Element):
+    def __init__(self, href=None, label=None, current=False, **kwargs):
+        Element.__init__(self, **kwargs)
+        self.current = current
+        self.href = href
+        self.label = label
+        
+    def build_html(self, view, path):
+        u"""
+        <li>
+            <a href="index.html">Home</a>
+        </li>
+        """
+        b = self.context.b
+        if self.current:
+            cssClass = 'current'
+        else:
+            cssClass = None
+        b.li(cssClass=cssClass)
+        if self.href and self.label:
+            b.a(href=self.href)
+            b.addHtml(self.label)
+            b._a()
+        b._li()
+        
+class Logo(Element):
+    def build_html(self, view, path):
+        b = self.context.b
+        b.div(cssId="logo")
+        b.addHtml('<a href="index.html"><h1>PageBot</h1></a>')
+        b._div() 
+        
+class Section(Element):
+    def build_html(self, view, path):
+        HTML = """    
+
     <!-- hero area (with the slider) -->
     <section id="hero" class="clearfix">    
       <div class="wrapper">
@@ -199,30 +206,64 @@ BODY_CODE = """
 <!-- fire ups - read this file!  -->   
 <script src="js/main.js"></script>
 
- 
 
-</body>
         """
-
+        self.context.b.addHtml(HTML)
+        
 class Site(Publication):
     u"""Build a website, similar to the original template by Kirsten Langmuur.
 
     """
 
-site = Site(viewId='Site')
+site = Site(viewId='Site', autoPages=2)
 view = site.view
 view.resourcePaths = ('resources/css','resources/fonts','resources/images','resources/js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 
-page = site[1]
-page.name = 'index'
-page.title = 'PageBotResponsive Template'
-page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
-page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
-page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
-page.headCode = None#HEAD_CODE
-page.bodyCode = BODY_CODE
+pageNames = [
+    ('index', 'PageBot Responsive Home'),
+    ('content', 'PageBot Responsive Content')
+]
+for pn in range(1, 3):
+    page = site[pn]
+    page.name, page.title = pageNames[pn-1]
+    page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
+    page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
+    page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
+    # Add neste content elements for this page.
+    header = Header(parent=page)
+    banner = Banner(parent=header)
+    logo = Logo(parent=banner)
+    navigation = Navigation(parent=header)
+    menu = Menu(parent=navigation)
+    menuItem11 = MenuItem(parent=menu, href='index.html', label='Home', current=True)
+    menuItem12 = MenuItem(parent=menu, href='content.html', label='Internal page demo', current=False)
+    menuItem13 = MenuItem(parent=menu, href='index.html', label='menu item 3', current=False)
+    menuItem14 = MenuItem(parent=menu, href='index.html', label='menu item 4', current=False)
+    menuItem15 = MenuItem(parent=menu, href='index.html', label='menu item 5', current=False)
+    '''
+
+    menu2 = Menu(parent=menu1)
+    menuItem21 = MenuItem(parent=menu2, href='#', label='menu item 21', current=False)
+    menuItem22 = MenuItem(parent=menu2, href='#', label='menu item 22', current=False)
+
+    menu23 = Menu(parent=menu2)
+    menuItem231 = MenuItem(parent=menu23, href='#', label='menu item 231', current=False)
+    menuItem232 = MenuItem(parent=menu23, href='#', label='menu item 232 with longer link name', current=False)
+    menuItem233 = MenuItem(parent=menu23, href='#', label='menu item 233', current=False)
+    menuItem234 = MenuItem(parent=menu23, href='#', label='menu item 234', current=False)
+    menuItem235 = MenuItem(parent=menu23, href='#', label='menu item 235', current=False)
+
+    menuItem24 = MenuItem(parent=menu23, href='#', label='menu item 24', current=False)
+    menuItem25 = MenuItem(parent=menu23, href='#', label='menu item 25', current=False)
+
+    menu3 = Menu(parent=menu2)
+    menuItem31 = MenuItem(parent=menu3, href='#', label='menu item 31', current=False)
+    menuItem32 = MenuItem(parent=menu3, href='#', label='menu item 32', current=False)
+    '''
+
+    section = Section(parent=page)
 
 site.export(EXPORT_PATH)
 
