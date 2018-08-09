@@ -45,17 +45,16 @@ class Navigation(Element):
         b = self.context.b
         b.comment('Main navigation')
         b.nav(cssId='topnav', role='navigation')
+        b.div(cssClass='menu-toggle')
+        b.addHtml('Menu')
+        b._div()
         for e in self.elements:
             e.build_html(view, path)
         b._nav()
         
 class Menu(Element):        
     def build_html(self, view, path):
-        b = self.context.b
-        b.div(cssClass='menu-toggle')
-        b.addHtml('Menu')
-        b._div()
-        
+        b = self.context.b        
         b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
         for e in self.elements:
             e.build_html(view, path)
@@ -76,21 +75,27 @@ class MenuItem(Element):
         """
         b = self.context.b
         if self.current:
-            cssClass = 'current'
+            isCurrent = 'current'
         else:
-            cssClass = None
-        b.li(cssClass=cssClass)
+            isCurrent = None
+        b.li(cssClass=isCurrent)
         if self.href and self.label:
             b.a(href=self.href)
             b.addHtml(self.label)
             b._a()
         b._li()
+        for e in self.elements:
+            e.build_html(view, path)
         
 class Logo(Element):
     def build_html(self, view, path):
         b = self.context.b
         b.div(cssId="logo")
-        b.addHtml('<a href="index.html"><h1>PageBot</h1></a>')
+        b.a(href="index.html")
+        b.h1()
+        b.addHtml('PageBot:'+self.name)
+        b._h1()
+        b._a()
         b._div() 
         
 class Section(Element):
@@ -215,33 +220,44 @@ class Site(Publication):
 
     """
 
-site = Site(viewId='Site', autoPages=2)
+SITE = [
+    ('index', 'PageBot Responsive Home'),
+    ('content', 'PageBot Responsive Content'),
+    ('page3', 'PageBot Responsive Page 3'),
+    ('page4', 'PageBot Responsive Page 4'),
+    ('page5', 'PageBot Responsive Page 5'),
+]
+
+site = Site(viewId='Site', autoPages=len(SITE))
 view = site.view
 view.resourcePaths = ('resources/css','resources/fonts','resources/images','resources/js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 
-pageNames = [
-    ('index', 'PageBot Responsive Home'),
-    ('content', 'PageBot Responsive Content')
-]
-for pn in range(1, 3):
-    page = site[pn]
-    page.name, page.title = pageNames[pn-1]
+for pn, (name, title) in enumerate(SITE):
+    page = site[pn+1]
+    page.name, page.title = name, title
     page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
     page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
     page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
+    currentPage = name + '.html'
     # Add neste content elements for this page.
     header = Header(parent=page)
     banner = Banner(parent=header)
-    logo = Logo(parent=banner)
+    logo = Logo(parent=banner, name=name)
     navigation = Navigation(parent=header)
+    # TODO: Build this automatic from the content of the pages table.
     menu = Menu(parent=navigation)
-    menuItem11 = MenuItem(parent=menu, href='index.html', label='Home', current=True)
-    menuItem12 = MenuItem(parent=menu, href='content.html', label='Internal page demo', current=False)
-    menuItem13 = MenuItem(parent=menu, href='index.html', label='menu item 3', current=False)
-    menuItem14 = MenuItem(parent=menu, href='index.html', label='menu item 4', current=False)
-    menuItem15 = MenuItem(parent=menu, href='index.html', label='menu item 5', current=False)
+    menuItem1 = MenuItem(parent=menu, href='index.html', label='Home', current=currentPage=='index.html')
+    menuItem2 = MenuItem(parent=menu, href='content.html', label='Internal page demo', current=currentPage=='content.html')
+    menuItem3 = MenuItem(parent=menu, href='page3.html', label='menu item 3', current=currentPage=='page3.html')
+    menuItem4 = MenuItem(parent=menu, href='page4.html', label='menu item 4', current=currentPage=='page4.html')
+    menuItem5 = MenuItem(parent=menu, href='page5.html', label='menu item 5', current=currentPage=='page5.html')
+    
+    #menu4 = Menu(parent=menuItem4)
+    #menuItem41 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.1', current=False)
+    #menuItem42 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.2', current=False)
+    
     '''
 
     menu2 = Menu(parent=menu1)
