@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.pbgroup import Group
 
 class Site(Group):
-    u"""Build a page, similar to the original template.
+    u"""Build a page, similar to the original template by Kirsten Langmuur.
 
     """
     def build_html(self, view, origin=None, drawElements=True):
