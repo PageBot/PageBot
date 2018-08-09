@@ -11,12 +11,12 @@
 # -----------------------------------------------------------------------------
 #
 #     Build a type specimen similar as, and tribute to, the good old 
-#     Fontographer 4.5 KeyMap page.
+#     Fontographer 3.5 KeyMap page.
 #
 #     TODO
 #     Make number of GlyphSquares on a page (8x8) dependent on page size.
 #     Make font size options (also needs resonsive layout)
-#     Optional other laytour, use of color and adaption to foundry identity.
+#     Optional other layout, use of color and adaption to foundry identity.
 #     Optional placement of foundry logo instead of the "Key map" 
 #     Extending functions for showing additional information per glyph, such
 #     as Variable axis location in design space, changed from latest git,
@@ -52,9 +52,8 @@ MAX_PAGES = None # For debugging, set to the amount of pages to export
 SHADOW = pt(2) # Thicknes of "shadow" lines in header.
 
 # Substitute the name or file name of the font to show.
-#f = findFont('Roboto-Regular')
-f = findFont('Upgrade-Bold')
-print(f.path)
+f = findFont('Roboto-Regular')
+#f = findFont('Upgrade-UltraBlack')
 labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
 # Make the styles for the strings on the page.
 labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)

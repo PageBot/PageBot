@@ -71,7 +71,7 @@ class Page(Element):
 
         self.url = url or self.INDEX_HTML_URL # Used for links to home or current page url
 
-        # Optional resources to be included
+        # Optional resources that can be included for web output (HtmlContext)
         # Define string or file paths where to read content, instead of constructing by the builder.
         self.htmlCode = htmlCode # Set to string in case the full HTML is defined in a single file.
         self.htmlPath = htmlPath # Set to string in case the full HTML is defined in a single file.
