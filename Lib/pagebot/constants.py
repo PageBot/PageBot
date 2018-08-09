@@ -208,6 +208,11 @@ W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
 DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 
+# Standard external urls for Javascript import and others.
+URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
+URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
+URL_D3 = 'https://d3js.org/d3.v5.min.js'
+
 FIT = 'fit' # Special fontsize that makes text fitting on element width.
 
 ONLINE = 'online' # Positions of borders
