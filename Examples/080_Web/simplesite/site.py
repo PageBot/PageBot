@@ -16,27 +16,12 @@
 #
 from __future__ import division # Make integer division result in float.
 
-from pagebot.elements.pbgroup import Group
+import os
+from pagebot.publications.publication import Publication
 
-class Site(Group):
-    u"""Build a page, similar to the original template by Kirsten Langmuur.
+EXPORT_PATH = '_export/SimpleSite'
 
-    """
-    def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the HTML/CSS navigation, depending on the pages in the root document.
-
-        >>> from pagebot.document import Document
-        >>> doc = Document(name='Simple Site', viewId='Site') # Define the view and context for export as site
-        >>> doc.context
-        <HtmlContext>
-        >>> page = doc[1]
-        >>> doc.export('_export/SimpleSite')
-        """
-        print('sadsadas')
-        b = self.context.b
-        b.addHtml(self.HTML)
-
-    HTML = """
+HTML = """
     <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -235,7 +220,20 @@ class Site(Group):
 </html>
         """
 
-if __name__ == '__main__':
-    import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])
+class Site(Publication):
+    u"""Build a website, similar to the original template by Kirsten Langmuur.
+
+    """
+
+site = Site(viewId='Site')
+view = site.view
+view.resourcePaths = ['resources/css','resources/fonts','resources/images','resources/js']
+print(view)
+
+page = site[1]
+page.name = 'index'
+page.htmlCode = HTML
+
+site.export(EXPORT_PATH)
+
+os.system('open "%s/index.html"' % EXPORT_PATH)

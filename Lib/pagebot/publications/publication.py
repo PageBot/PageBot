@@ -17,7 +17,7 @@ from pagebot.document import Document
       
 class Publication(Document):
     u"""Subclass of Document, implementing templates for generic publications.
-    See also other – more specific – implementations, such as Poster, Brochure and Manaziner.
+    See also other – more specific – implementations, such as Poster, Brochure and Magazines.
 
     Originally Publication was an abstract class, holding multiple documents. But since the split 
     between the Document container class and View classes for representations, there is no need
