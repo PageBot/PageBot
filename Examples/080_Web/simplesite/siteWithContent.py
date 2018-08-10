@@ -19,9 +19,10 @@ from __future__ import division # Make integer division result in float.
 import os
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
-from pagebot.typesetter import TypeSetter
+from pagebot.typesetter import Typesetter
 from pagebot.elements import *
 
+MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
 DO_FILE = True
 DO_GIT = False
@@ -300,7 +301,7 @@ for pn, (name, title) in enumerate(SITE):
 # Create a Typesetter for this document, then create pages and fill content. 
 # As no Galley instance is supplied to the Typesetter, it will create one,
 # or put the current page/box variables to where the MarkDown file indicates.
-t = Typesetter(doc, tryExcept=False, verbose=False)
+t = Typesetter(site, tryExcept=False, verbose=False)
 # Parse the markdown content and execute the embedded Python code blocks.
 # The blocks, global defined feedback variables and text content are in the 
 # typesetter t.galley.
@@ -309,25 +310,25 @@ t = Typesetter(doc, tryExcept=False, verbose=False)
 t.typesetFile(MD_PATH)
 
 if DO_FILE:
-    doc.export(EXPORT_PATH)
+    site.export(EXPORT_PATH)
     os.system('open "%s/index.html"' % EXPORT_PATH)
 
 elif DO_MAMP:
     # Internal CSS file may be switched of for development.
-    view = t.doc.setView('Mamp')
+    view = site.newView('Mamp')
 
     if not os.path.exists(view.MAMP_PATH):
         print('The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL)
         os.system(u'open %s' % view.MAMP_SHOP_URL)
     else:
-        t.doc.build(path=NAME)
+        site.build(path=EXPORT_PATH)
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
         os.system(u'open "%s"' % view.getUrl(NAME))
 
 elif DO_GIT:
     # Make sure outside always has the right generated CSS
-    view = t.doc.setView('Git')
-    t.doc.build(path=NAME)
+    view = site.newView('Git')
+    site.build(path=EXPORT_PATH)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')
     os.system(u'open "%s"' % view.getUrl(DOMAIN))
