@@ -226,8 +226,8 @@ class Page(Element):
         >>> page.title = 'Home'
         >>> page.cssCode = 'body {background-color:black}'
         >>> exportPath = '_export/Home' # No extension for site folder if exporting to a website
-        >>> doc.export(exportPath)
-        >>> result = os.system('open %s/index.html' % exportPath)
+        >>> #doc.export(exportPath)
+        >>> #result = os.system('open %s/index.html' % exportPath)
         """
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.

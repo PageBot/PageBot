@@ -1,8 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<document><h1>SimpleSite template</h1>
-<h2>Created by</h2>
-<ul>
-<li>Kirsten Langmuur</li>
-<li>kirsten@kirstenlangmuur.com</li>
-<li>http://www.kirstenlangmuur.com</li>
-</ul></document>
+<document><pre><code class="Python">cid = 'Simple Site'
+
+doc.lib['footer'] = &quot;Footer of the page. Footer of the page. Footer of the page. Footer of the page. Footer of the page. Footer of the page.&quot;
+
+doc.title = doc.name = 'Design&amp;nbsp;Design&amp;nbsp;Space'
+page = doc[1]
+box = page.deepFind('Logo')[0]
+</code></pre>
+
+<h1>PageBot+1</h1>
+<pre><code class="Python">box = page.deepFind('Introduction')[0]
+</code></pre>
+
+<h2>What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<pre><code class="Python">box = page.deepFind('HeroImages')[0]
+</code></pre>
+
+<p><img alt="pagebot_imac.png" src="resources/images/pagebot_imac.png" /></p>
+<pre><code class="Python">box = page.deepFind('Content')[0]
+</code></pre>
+
+<h1>Repeat to improve</h1>
+<p>What makes a design process <em>fundamentally</em> different from a production process, is that repetition improves the result. Starting with quick sketches, ignoring most details, next steps take more time. It’s not a linear process, it’s an iterative process, which means repeating the previous step in more detail.</p>
+<pre><code class="Python">box = page.deepFind('ColoredSectionHeader')[0]
+</code></pre>
+
+<h1>Some things in rows of 3 columns</h1>
+<pre><code class="Python">box = page.deepFind('ColoredSection0')[0]
+</code></pre>
+
+<h2>Something</h2>
+<p><img alt="pagebot_macbookpro.jpg" src="resources/images/pagebot_macbookpro.jpg" /></p>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<pre><code class="Python">box = page.deepFind('ColoredSection1')[0]
+</code></pre>
+
+<h2>Something else</h2>
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="resources/images/pagebot_smartphone_with_hand.jpg" /></p>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<pre><code class="Python">box = page.deepFind('ColoredSection2')[0]
+</code></pre>
+
+<h2>Something more</h2>
+<p><img alt="pagebot_tablet.jpg" src="resources/images/pagebot_tablet.jpg" /></p>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<pre><code class="Python">box = page.deepFind('Footer')[0].append(doc.lib['footer'])
+</code></pre>
+
+<pre><code class="Python"># -----------------------------------------------------------
+page = doc[2]
+box = page.deepFind('Logo')[0]
+</code></pre>
+
+<h1>PageBot+2</h1>
+<pre><code class="Python">box = page.deepFind('HeroImages')[0]
+</code></pre>
+
+<p><img alt="pagebot_imac.png" src="resources/images/pagebot_imac.png" /></p>
+<pre><code class="Python">box = page.deepFind('Introduction')[0]
+</code></pre>
+
+<h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<pre><code class="Python">box = page.deepFind('Footer')[0].append(doc.lib['footer'])
+</code></pre>
+
+<pre><code class="Python">page = doc[3]
+box = page.deepFind('Logo')[0]
+</code></pre>
+
+<h1>PageBot+3</h1>
+<pre><code class="Python">box = page.deepFind('HeroImages')[0]
+</code></pre>
+
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="resources/images/pagebot_smartphone_with_hand.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('Introduction')[0]
+</code></pre>
+
+<h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<pre><code class="Python">box = page.deepFind('Footer')[0].append(doc.lib['footer'])
+</code></pre>
+
+<pre><code class="Python">page = doc[4]
+box = page.deepFind('Logo')[0]
+</code></pre>
+
+<h1>PageBot+4</h1>
+<pre><code class="Python">box = page.deepFind('HeroImages')[0]
+</code></pre>
+
+<p><img alt="pagebot_smartphone_illustration.jpg" src="resources/images/pagebot_smartphone_illustration.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('Introduction')[0]
+</code></pre>
+
+<h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<pre><code class="Python">box = page.deepFind('Footer')[0].append(doc.lib['footer'])
+</code></pre>
+
+<pre><code class="Python">page = doc[5]
+box = page.deepFind('Logo')[0]
+</code></pre>
+
+<h1>PageBot+5</h1>
+<pre><code class="Python">box = page.deepFind('HeroImages')[0]
+</code></pre>
+
+<p><img alt="pagebot_screenshot.png" src="resources/images/pagebot_screenshot.png" /></p>
+<pre><code class="Python">box = page.deepFind('Introduction')[0]
+</code></pre>
+
+<h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<pre><code class="Python">box = page.deepFind('Footer')[0].append(doc.lib['footer'])
+</code></pre></document>

@@ -504,7 +504,7 @@ class Element(object):
         for e in self.elements:
             if pattern is not None and pattern in e.name: # Simple pattern match
                 result.append(e)
-            elif name is not None and name == e.name:
+            elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
             e.deepFind(name, pattern, result)
         return result
@@ -531,7 +531,7 @@ class Element(object):
         for e in self.elements:
             if pattern is not None and pattern in e.name: # Simple pattern match
                 result.append(e)
-            elif name is not None and name == e.name:
+            elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
         return result
 
