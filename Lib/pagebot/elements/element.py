@@ -193,14 +193,16 @@ class Element(object):
         # Element tree
         self._parent = None # Preset, so it exists for checking when appending parent.
         if parent is not None:
-            # Add and set weakref to parent element or None, if it is the root. Caller must add self to its elements separately.
+            # Add and set weakref to parent element or None, if it is the root. Caller must add self 
+            # to its elements separately.
             self.parent = parent # Set references in both directions. Remove any previous parent links
 
         # Conditional placement stuff
         if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
             conditions = [conditions]
-        self.conditions = conditions # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
-        
+        # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
+        self.conditions = conditions 
+
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description

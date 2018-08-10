@@ -19,15 +19,15 @@ import copy
 import codecs
 import xml.etree.ElementTree as ET
 
-try:
-    import markdown
-    from markdown.extensions.nl2br import Nl2BrExtension
-    from markdown.extensions.fenced_code import FencedCodeExtension
-    from pagebot.contributions.markdown.literature import LiteratureExtension
-    from pagebot.contributions.markdown.footnotes import FootnoteExtension
-except ImportError:
-    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
-    sys.exit()
+#try:
+import markdown
+from markdown.extensions.nl2br import Nl2BrExtension
+from markdown.extensions.fenced_code import FencedCodeExtension
+from pagebot.contributions.markdown.literature import LiteratureExtension
+from pagebot.contributions.markdown.footnotes import FootnoteExtension
+#except ImportError:
+#    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+#    sys.exit()
 
 from pagebot.contexts.platform import getContext
 #from pagebot import getMarker
