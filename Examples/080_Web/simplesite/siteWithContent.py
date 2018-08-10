@@ -101,29 +101,43 @@ class MenuItem(Element):
         b._li()
         
 class Logo(Element):
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        newTextBox('', parent=self, cssId='Logo')
+    
+    def build(self, view, path):
+        pass
+        
     def build_html(self, view, path):
         b = self.context.b
         b.div(cssId="logo")
         b.a(href="index.html")
-        b.h1()
-        b.addHtml('PageBot')
-        b._h1()
+        for e in self.elements:
+            e.build_html(view, path)
         b._a()
         b._div() 
 
 class Hero(Element):
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        #t = """<h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>"""
+        newTextBox('', parent=self, cssId='Introduction')
+        newTextBox('', parent=self, cssId='HeroImages')
+
     def build_html(self, view, path):
         b = self.context.b
         b.section(cssId='hero', cssClass='clearFix')
         b.div(cssClass='wrapper')
         b.div(cssClass='row')
-        b.addHtml("""
-          <div class="grid_4">
-            <h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>
-        </div>
-       
-        <div class="grid_8">
-                <!-- responsive FlexSlider image slideshow -->
+        b.div(cssClass='grid_4')
+        self.elements[0].build_html(view, path)
+        b._div()
+        
+        b.div(cssClass="grid_8")
+        self.elements[1].build_html(view, path)        
+        b._div()
+        '''
+            <!-- responsive FlexSlider image slideshow -->
               <div class="flexslider">
                     <ul class="slides">
                         <li>
@@ -141,23 +155,31 @@ class Hero(Element):
                     </ul>
                   </div><!-- FlexSlider -->
                 </div><!-- end grid div -->
-        """)
+        '''
         b._div() # end .row 
         b._div() # end .wrapper 
         b._section()
                                
 class Content(Element):
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        newTextBox('', parent=self, cssId='Content')
+
     def build_html(self, view, path):
         b = self.context.b
         b.div(cssId='main', cssClass='wrapper clearfix')
-        b.section(cssId='content', cssClass='wide-content')
+        b.section(cssId='content', cssClass='wide-content' )
         # Content here, should come from markdown file.
+        for e in self.elements:
+            e.build_html(view, path)
+        '''
         b.h1()
         b.addHtml('This is an interesting header')
         b._h1()
         b.h2()
         b.addHtml("""Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum...""")
         b._h2()
+        '''
         b.p()
         b.a(href='index.html', cssClass='buttonlink')
         b.addHtml('Use Pagebot')
@@ -167,56 +189,39 @@ class Content(Element):
         b._div() # end div #main .wrapper 
         
 class ColoredSection(Element):
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        newTextBox('', parent=self, cssId='ColoredSectionHeader')
+        newTextBox('', parent=self, cssId='ColoredSection0')
+        newTextBox('', parent=self, cssId='ColoredSection1')
+        newTextBox('', parent=self, cssId='ColoredSection2')
+
     def build_html(self, view, path):
         b = self.context.b
         b.section(cssId='features', cssClass='blueelement vertical-padding')
         b.div(cssClass='wrapper clearfix')
-        # Content here from markdown file
-        b.h1()
-        b.addHtml("""Some things in rows of 3 columns""")
-        b._h1()
+        self.deepFind('ColoredSectionHeader')[0].build_html(view, path) 
         b.div(cssClass='row vertical-padding')
         
-        b.div(cssClass='grid_4')
-        b.addHtml(""" 
-          <h2>Something</h2>
-            <img src="images/pagebot_cafe_working.jpg" />
-        <h4>This is a subhead</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> 
-        """)
-        b._div() # grid_4
+        for n in range(0, 3):
+            b.div(cssClass='grid_4')
+            self.deepFind('ColoredSection%d' % n)[0].build_html(view, path) 
+            b._div() # grid_4
         
-        b.div(cssClass='grid_4')
-        b.addHtml("""            
-        <h2>Something else</h2>
-            <img src="images/pagebot_cafe_working.jpg" />
-                    <h4>This is a subhead</h4>
-
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        """)
-        b._div() # grid_4
-        
-        b.div(cssClass='grid_4')
-        b.addHtml("""            
-        <h2>Something else</h2>
-            <img src="images/pagebot_cafe_working.jpg" />
-                    <h4>This is a subhead</h4>
-
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p></div>
-          <p><a href="#" class="buttonlinkdiap">Use Pagebot</a> </p>
-    
-      """)
-        b._div() # grid_4
         b._div() # row vertical padding
         b._div() # .wrapper
         b._section()
   
 class Footer(Element):
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        newTextBox('', parent=self, cssId='Footer')
+
     def build_html(self, view, path):
         b = self.context.b
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        b.addHtml("""Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff. Footer stuff.""")
+        self.deepFind('Footer')[0].build_html(view, path) 
         b._div()
         b._footer()
         
@@ -245,14 +250,14 @@ SITE = [
     ('page5', 'PageBot Responsive Page 5'),
 ]
 
-site = Site(viewId='Site', autoPages=len(SITE))
-view = site.view
+doc = Site(viewId='Site', autoPages=len(SITE))
+view = doc.view
 view.resourcePaths = ('resources/css','resources/fonts','resources/images','resources/js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 
 for pn, (name, title) in enumerate(SITE):
-    page = site[pn+1]
+    page = doc[pn+1]
     page.name, page.title = name, title
     page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
     page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
@@ -294,14 +299,14 @@ for pn, (name, title) in enumerate(SITE):
     
     hero = Hero(parent=page)
     
-    content = Content(parent=page)
+    content = Content(parent=page, fill='red')
     section = ColoredSection(parent=page)
     footer = Footer(parent=page)
     
 # Create a Typesetter for this document, then create pages and fill content. 
 # As no Galley instance is supplied to the Typesetter, it will create one,
 # or put the current page/box variables to where the MarkDown file indicates.
-t = Typesetter(site, tryExcept=False, verbose=False)
+t = Typesetter(doc, tryExcept=False, verbose=False)
 # Parse the markdown content and execute the embedded Python code blocks.
 # The blocks, global defined feedback variables and text content are in the 
 # typesetter t.galley.
@@ -310,24 +315,24 @@ t = Typesetter(site, tryExcept=False, verbose=False)
 t.typesetFile(MD_PATH)
 
 if DO_FILE:
-    site.export(EXPORT_PATH)
+    doc.export(EXPORT_PATH)
     os.system('open "%s/index.html"' % EXPORT_PATH)
 
 elif DO_MAMP:
     # Internal CSS file may be switched of for development.
-    view = site.newView('Mamp')
+    view = doc.newView('Mamp')
 
     if not os.path.exists(view.MAMP_PATH):
         print('The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL)
         os.system(u'open %s' % view.MAMP_SHOP_URL)
     else:
-        site.build(path=EXPORT_PATH)
+        doc.build(path=EXPORT_PATH)
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
         os.system(u'open "%s"' % view.getUrl(NAME))
 
 elif DO_GIT:
     # Make sure outside always has the right generated CSS
-    view = site.newView('Git')
+    view = doc.newView('Git')
     site.build(path=EXPORT_PATH)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')

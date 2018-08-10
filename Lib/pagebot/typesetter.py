@@ -298,14 +298,14 @@ class Typesetter(object):
         A new Image element is created with a PixelMap element and TextBox caption
         element inside. The Image will use style based conditions to define the layout
         interaction between pixelMap and caption."""
-        src = node.attrib.get('src')
+        #src = node.attrib.get('src')
         #self.pushStyleTag(node.tag)
-        imageContainer = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
-        self.galley.appendElement(imageContainer)
-        captionString = node.get('title')
-        if captionString: # If there is no caption, we can add the Image element directly to the main galley.
-            caption = self.TEXTBOX_CLASS(captionString)
-            imageContainer.appendElement(caption)
+        #image = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
+        #self.galley.append(image)
+        #captionString = node.get('title')
+        #if captionString: # If there is no caption, we can add the Image element directly to the main galley.
+        #    caption = self.TEXTBOX_CLASS(captionString)
+        #    imageContainer.appendElement(caption)
         # Typeset the empty block of the img, which creates the HTML tag.
         self.htmlNode_(node)
 
@@ -401,14 +401,15 @@ class Typesetter(object):
         if execute and node.text:
             if not self.tryExcept:
                 if self.verbose:
+                     print(u'Globals: %s' % result)
                      print(u'Typesetter: %s' % node.text)
-                exec(node.text) in result # Exectute code block, where result goes dict.
+                exec(node.text, result) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the returned results.
             else:
                 error = None
                 try:
-                    exec(node.text) in result # Exectute code block, where result goes dict.
+                    exec(node.text, result) in result # Exectute code block, where result goes dict.
                     codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                     del result['__builtins__'] # We don't need this set of globals in the results.
                 except TypeError:
@@ -558,8 +559,8 @@ class Typesetter(object):
         # Fills self.codeBlocks dictionary from node codeblocks.
         # Side effect is to update self.doc, self.page and self.box
         cid, codeResult = self.runCodeBlock(node)
-        #if codeResult is not None:
-        #    return
+        if codeResult is not None:
+            return
 
         if self.writeTags:
             # Open the node in HTML export for this node

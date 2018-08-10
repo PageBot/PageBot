@@ -15,6 +15,7 @@
 #
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
+from pagebot.toolbox.units import upt
 
 class HtmlString(BabelString):
 
@@ -67,6 +68,29 @@ class HtmlString(BabelString):
         """How to decide if there is HTML text overflow? Useful to do?"""
         # TODO: Some stuff needs to get here.
         return ''
+
+    def getTextLines(self, w, h=None, align=LEFT):
+        u"""Answer the dictionary of TextLine instances. Key is y position of the line.
+
+        >>> from pagebot.toolbox.units import mm, uRound
+        >>> from pagebot.contexts.drawbotcontext import HtmlContext
+        >>> context = DrawBotContext()
+        >>> style = dict(font='Verdana', fontSize=pt(12))
+        >>> bs = context.newString('Example Text ' * 10, style=style)
+        >>> lines = bs.getTextLines(w=200)
+        >>> len(lines)
+        5
+        >>> line = lines[0]
+        >>> line.maximumLineHeight
+        1.4em
+        >>> 
+        """
+        assert w
+        if not h:
+            h = XXXL
+        wpt, hpt = upt(w, h)
+        textLines = []
+        return textLines
 
     def append(self, sOrBs):
         if not isinstance(sOrBs, str):
