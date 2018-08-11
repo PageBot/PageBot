@@ -119,45 +119,38 @@ class Logo(Element):
         b._a()
         b._div() 
 
+class SlideShow(Element):
+    def newSlide(self):
+        return newTextBox('', parent=self)
+
+    def build_html(self, view, path):
+        b = self.context.b
+        for i, e in enumerate(self.elements):
+            b.div(cssClass=self.cssId + ' fade')
+            e.build_html(view, path)
+            b._div()
+            
 class Hero(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
         #t = """<h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>"""
         newTextBox('', parent=self, cssId='Introduction')
-        newTextBox('', parent=self, cssId='HeroImages')
+        SlideShow(parent=self, cssId='HeroSlides')
 
     def build_html(self, view, path):
         b = self.context.b
         b.section(cssId='hero', cssClass='clearFix')
         b.div(cssClass='wrapper')
         b.div(cssClass='row')
+        
         b.div(cssClass='grid_4')
-        self.elements[0].build_html(view, path)
+        self.deepFind('Introduction').build_html(view, path)
         b._div()
         
         b.div(cssClass="grid_8")
-        self.elements[1].build_html(view, path)        
+        self.deepFind('HeroSlides').build_html(view, path)        
         b._div()
-        '''
-            <!-- responsive FlexSlider image slideshow -->
-              <div class="flexslider">
-                    <ul class="slides">
-                        <li>
-                            <img src="images/pagebot_smartphones.jpg" />
-                            
-                        </li>
-                        <li>
-                           <img src="images/pagebot_macbookpro.jpg" />                          
-                        </li>
-                    
-                        <li>
-                            <img src="images/pagebot_smartphone_with_hand.jpg" />
-                        
-                        </li>
-                    </ul>
-                  </div><!-- FlexSlider -->
-                </div><!-- end grid div -->
-        '''
+
         b._div() # end .row 
         b._div() # end .wrapper 
         b._section()
@@ -194,12 +187,12 @@ class ColoredSection(Element):
         b = self.context.b
         b.section(cssId='features', cssClass='blueelement vertical-padding')
         b.div(cssClass='wrapper clearfix')
-        self.deepFind('ColoredSectionHeader')[0].build_html(view, path) 
+        self.deepFind('ColoredSectionHeader').build_html(view, path) 
         b.div(cssClass='row vertical-padding')
         
         for n in range(0, 3):
             b.div(cssClass='grid_4')
-            self.deepFind('ColoredSection%d' % n)[0].build_html(view, path) 
+            self.deepFind('ColoredSection%d' % n).build_html(view, path) 
             b._div() # grid_4
         
         b._div() # row vertical padding
@@ -215,7 +208,7 @@ class Footer(Element):
         b = self.context.b
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        self.deepFind('Footer')[0].build_html(view, path) 
+        self.deepFind('Footer').build_html(view, path) 
         b._div()
         b._footer()
         

@@ -14,9 +14,19 @@ box = page.deepFind('Introduction')
 ## What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
 ~~~Python
-box = page.deepFind('HeroSlides')
+box = page.deepFind('HeroSlides').newSlide()
 ~~~
-![pagebot_imac.png](images/pagebot_imac.png)
+![pagebot_smartphones.jpg](images/pagebot_smartphones.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
 
 ~~~Python
 box = page.deepFind('Content')
@@ -67,9 +77,19 @@ box = page.deepFind('Logo')[0]
 # PageBot+2
 
 ~~~Python
-box = page.deepFind('HeroSlides')
+box = page.deepFind('HeroSlides').newSlide()
 ~~~
-![pagebot_imac.png](images/pagebot_imac.png)
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')
@@ -87,9 +107,19 @@ box = page.deepFind('Logo')
 # PageBot+3
 
 ~~~Python
-box = page.deepFind('HeroSlides')
+box = page.deepFind('HeroSlides').newSlide()
 ~~~
 ![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')
@@ -107,9 +137,19 @@ box = page.deepFind('Logo')
 # PageBot+4
 
 ~~~Python
-box = page.deepFind('HeroSlides')
+box = page.deepFind('HeroSlides').newSlide()
 ~~~
-![pagebot_smartphone_illustration.jpg](images/pagebot_smartphone_illustration.jpg)
+![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')
@@ -127,9 +167,19 @@ box = page.deepFind('Logo')
 # PageBot+5
 
 ~~~Python
-box = page.deepFind('HeroSlides')
+box = page.deepFind('HeroSlides').newSlide()
 ~~~
 ![pagebot_screenshot.png](images/pagebot_screenshot.png)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
+
+~~~Python
+box = page.deepFind('HeroSlides').newSlide()
+~~~
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')
