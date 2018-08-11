@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     site.py
+#     siteHeadBodyCode.py
 #
 from __future__ import division # Make integer division result in float.
 

@@ -232,6 +232,7 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
         b.resetHtml()
+        b.resetCss()
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
@@ -284,15 +285,25 @@ class Page(Element):
                             b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
 
                 # Use one of both of these options in case CSS needs to copied into the page.
-                if self.cssCode is not None:
-                    # Add the code directly into the page if it is not None
+                for cssCode in (view.cssCode, self.cssCode):
+                    if cssCode is not None:
+                        # Add the code directly into the page if it is not None
+                        b.style()
+                        b.addHtml(cssCode)
+                        b._style()
+
+                for cssPath in (view.cssPath, self.cssPath):
+                    if self.cssPath is not None:
+                        # Include CSS content of file, if path is not None and the file exists.
+                        b.style()
+                        b.importHtml(cssPath)
+                        b._style()
+
+                # If there is accumulated CSS in the builder (collected by the recursive e.build_css(),
+                # then this is the time to add it to the page.
+                if 0 and b._cssOut:
                     b.style()
-                    b.addCss(self.cssCode)
-                    b._style()
-                if self.cssPath is not None:
-                    # Include CSS content of file, if path is not None and the file exists.
-                    b.style()
-                    b.importCss(self.cssPath)
+                    b.addHtml('\n'.join(b._cssOut))
                     b._style()
 
                 # Icons
