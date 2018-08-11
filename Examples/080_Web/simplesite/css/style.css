@@ -28,7 +28,11 @@ a:hover{ text-decoration:none;}
 /* Box sizing. More info here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
 *{	box-sizing:border-box;
 	-moz-box-sizing:border-box;}
-  
+
+/* Initial slides not showing*/
+.HeroSlides {
+    display: none;
+}  
 /* structure */   
 .wrapper{
 	width: 92%; 
