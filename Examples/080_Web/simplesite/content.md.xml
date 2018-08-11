@@ -57,7 +57,7 @@ box = page.deepFind('Logo')
 
 <pre><code class="Python"># -----------------------------------------------------------
 page = doc[2]
-box = page.deepFind('Logo')[0]
+box = page.deepFind('Logo')
 </code></pre>
 
 <h1>PageBot+2</h1>
