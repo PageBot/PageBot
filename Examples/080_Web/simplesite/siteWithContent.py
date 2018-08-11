@@ -252,7 +252,7 @@ SITE = [
 
 doc = Site(viewId='Site', autoPages=len(SITE))
 view = doc.view
-view.resourcePaths = ('resources/css','resources/fonts','resources/images','resources/js')
+view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 

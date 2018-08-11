@@ -16,7 +16,7 @@ box = page.deepFind('Introduction')[0]
 ~~~Python
 box = page.deepFind('HeroImages')[0]
 ~~~
-![pagebot_imac.png](resources/images/pagebot_imac.png)
+![pagebot_imac.png](images/pagebot_imac.png)
 
 ~~~Python
 box = page.deepFind('Content')[0]
@@ -35,7 +35,7 @@ box = page.deepFind('ColoredSectionHeader')[0]
 box = page.deepFind('ColoredSection0')[0]
 ~~~
 ## Something
-![pagebot_macbookpro.jpg](resources/images/pagebot_macbookpro.jpg)
+![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
@@ -43,7 +43,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 box = page.deepFind('ColoredSection1')[0]
 ~~~
 ## Something else
-![pagebot_smartphone_with_hand.jpg](resources/images/pagebot_smartphone_with_hand.jpg)
+![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
@@ -51,7 +51,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 box = page.deepFind('ColoredSection2')[0]
 ~~~
 ## Something more
-![pagebot_tablet.jpg](resources/images/pagebot_tablet.jpg)
+![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
@@ -69,7 +69,7 @@ box = page.deepFind('Logo')[0]
 ~~~Python
 box = page.deepFind('HeroImages')[0]
 ~~~
-![pagebot_imac.png](resources/images/pagebot_imac.png)
+![pagebot_imac.png](images/pagebot_imac.png)
 
 ~~~Python
 box = page.deepFind('Introduction')[0]
@@ -89,7 +89,7 @@ box = page.deepFind('Logo')[0]
 ~~~Python
 box = page.deepFind('HeroImages')[0]
 ~~~
-![pagebot_smartphone_with_hand.jpg](resources/images/pagebot_smartphone_with_hand.jpg)
+![pagebot_smartphone_with_hand.jpg](images/pagebot_smartphone_with_hand.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')[0]
@@ -109,7 +109,7 @@ box = page.deepFind('Logo')[0]
 ~~~Python
 box = page.deepFind('HeroImages')[0]
 ~~~
-![pagebot_smartphone_illustration.jpg](resources/images/pagebot_smartphone_illustration.jpg)
+![pagebot_smartphone_illustration.jpg](images/pagebot_smartphone_illustration.jpg)
 
 ~~~Python
 box = page.deepFind('Introduction')[0]
@@ -129,7 +129,7 @@ box = page.deepFind('Logo')[0]
 ~~~Python
 box = page.deepFind('HeroImages')[0]
 ~~~
-![pagebot_screenshot.png](resources/images/pagebot_screenshot.png)
+![pagebot_screenshot.png](images/pagebot_screenshot.png)
 
 ~~~Python
 box = page.deepFind('Introduction')[0]
