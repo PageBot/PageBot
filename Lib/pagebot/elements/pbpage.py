@@ -319,7 +319,7 @@ class Page(Element):
             #
             # Build the page body. There are 3 option (all excluding the <body>...</body>)
             # 1 As html string (self.bodyCode is defined as not None)
-            # 2 As path a html file, containing the string between <body>...</body>, excluding the tags
+            # 2 As path to a html file, containing the string between <body>...</body>, including the tags
             # 3 Constructed from view parameter context, page attributes and styles.
             #
             if self.bodyCode is not None:
@@ -329,14 +329,13 @@ class Page(Element):
             else:
                 b.body()
                 for e in self.elements:
-                    print('fsdfdfsd', e)
                     e.build_html(view, path)
                 #
                 #   J A V A S C R I P T
                 #
-                # Build the JS body. There are 3 option (all not including the <body>...</body>)
-                # 1 As html string (view.jsCode and/or self.jsCode are defined as not None)
-                # 2 As path a html file, containing the string between <head>...</head>.
+                # Build the JS body. There are 3 option (all not including the <script>...</script>)
+                # 1 As html/javascript string (view.jsCode and/or self.jsCode are defined as not None)
+                # 2 As path a html file, containing the string between <script>...</script>, including the tags.
                 # 3 Constructed from info context, page attributes and styles.
                 #
                 for jsCode in (view.jsCode, self.jsCode):
