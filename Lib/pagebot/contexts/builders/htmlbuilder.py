@@ -21,6 +21,7 @@ from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString
+from pagebot.toolbox.units import upt
 
 class HtmlBuilder(XmlBuilder):
     """The HtmlBuilder class implements the standard XHTML tag set with all
@@ -430,22 +431,22 @@ table {
         attributes = []
         if e:
             style = e.style
-            if e.ml:
-                attributes.append('margin-left: %spt;' % e.ml)
-            if e.mt:
-                attributes.append('margin-top: %spt;' % e.mt)
-            if e.mb:
-                attributes.append('margin-bottom: %spt;' % e.mb)
-            if e.mr:
-                attributes.append('margin-right: %spt;' % e.mr)
-            if e.pl:
-                attributes.append('padding-left: %spt;' % e.pl)
-            if e.pt:
-                attributes.append('padding-top: %spt;' % e.pt)
-            if e.pb:
-                attributes.append('padding-bottom: %spt;' % e.pb)
-            if e.pr:
-                attributes.append('padding-right: %spt;' % e.pr)
+            if upt(e.ml):
+                attributes.append('margin-left: %s;' % e.ml)
+            if upt(e.mt):
+                attributes.append('margin-top: %s;' % e.mt)
+            if upt(e.mb):
+                attributes.append('margin-bottom: %s;' % e.mb)
+            if upt(e.mr):
+                attributes.append('margin-right: %s;' % e.mr)
+            if upt(e.pl):
+                attributes.append('padding-left: %s;' % e.pl)
+            if upt(e.pt):
+                attributes.append('padding-top: %s;' % e.pt)
+            if upt(e.pb):
+                attributes.append('padding-bottom: %s;' % e.pb)
+            if upt(e.pr):
+                attributes.append('padding-right: %s;' % e.pr)
             if style.get('font') is not None:
                 attributes.append('font-family: %s;' % style['font'])
             if style.get('fontSize') is not None:

@@ -3743,25 +3743,33 @@ class Element(object):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_css(self, view, origin=None):
+    def build_css(self, view, ids=None):
         """Build the css for this element. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""
+        ids = ids or ''
         b = view.context.b # Get the build of the current context.
         if self.cssId: # If the #id is defined, then use that as CSS reference.
-            b.css('#'+self.cssId, e=self)
+            cssId = '#'+self.cssId
+            ids += cssId + ' '
+            b.css(cssId, e=self)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
-            b.css('.'+self.cssClass, e=self)
+            cssClass = '.'+self.cssClass
+            b.css(cssClass, e=self)
+            ids += cssClass + ' '
         #else:
-        #    b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+        #   b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+        for e in self.elements:
+            if not e.show:
+                continue
+            e.build_css(view, ids)
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, path, drawElements=True):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.
         If there are any child elements, then also included their code, using the
         level recursive indent.
         For HTML builder the origin is ignored, as all position is relative.
         """
-        self.build_css(view)
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
         if self.htmlPath is not None:
             b.importHtml(self.htmlPath) # Add HTML content from file, if path is not None and the file exists.
@@ -3772,7 +3780,7 @@ class Element(object):
                 self.drawBefore(self, view)
 
             if drawElements: # Build child elements, dispatch if they implemented generic or context specific build method.
-                self.buildChildElements(view, origin)
+                self.buildChildElements(view, path)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view)
