@@ -117,12 +117,15 @@ class Logo(Element):
         b._a()
         b._div() 
 
+class SlideShow(TextBox):
+    pass
+        
 class Hero(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
-        #t = """<h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>"""
         newTextBox('', parent=self, cssId='Introduction')
-        newTextBox('', parent=self, cssId='HeroImages')
+        newTextBox('', parent=self, cssId='HeroSlides')
+        #SlideShow('', parent=self, cssId='HeroSlides')
 
     def build_html(self, view, path):
         b = self.context.b
@@ -130,32 +133,12 @@ class Hero(Element):
         b.div(cssClass='wrapper')
         b.div(cssClass='row')
         b.div(cssClass='grid_4')
-        self.elements[0].build_html(view, path)
+        self.deepFind('Introduction').build_html(view, path)
         b._div()
         
         b.div(cssClass="grid_8")
-        self.elements[1].build_html(view, path)        
+        self.deepFind('HeroSlides').build_html(view, path)        
         b._div()
-        '''
-            <!-- responsive FlexSlider image slideshow -->
-              <div class="flexslider">
-                    <ul class="slides">
-                        <li>
-                            <img src="images/pagebot_smartphones.jpg" />
-                            
-                        </li>
-                        <li>
-                           <img src="images/pagebot_macbookpro.jpg" />                          
-                        </li>
-                    
-                        <li>
-                            <img src="images/pagebot_smartphone_with_hand.jpg" />
-                        
-                        </li>
-                    </ul>
-                  </div><!-- FlexSlider -->
-                </div><!-- end grid div -->
-        '''
         b._div() # end .row 
         b._div() # end .wrapper 
         b._section()
@@ -172,14 +155,6 @@ class Content(Element):
         # Content here, should come from markdown file.
         for e in self.elements:
             e.build_html(view, path)
-        '''
-        b.h1()
-        b.addHtml('This is an interesting header')
-        b._h1()
-        b.h2()
-        b.addHtml("""Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum...""")
-        b._h2()
-        '''
         b.p()
         b.a(href='index.html', cssClass='buttonlink')
         b.addHtml('Use Pagebot')
@@ -200,12 +175,12 @@ class ColoredSection(Element):
         b = self.context.b
         b.section(cssId='features', cssClass='blueelement vertical-padding')
         b.div(cssClass='wrapper clearfix')
-        self.deepFind('ColoredSectionHeader')[0].build_html(view, path) 
+        self.deepFind('ColoredSectionHeader').build_html(view, path) 
         b.div(cssClass='row vertical-padding')
         
         for n in range(0, 3):
             b.div(cssClass='grid_4')
-            self.deepFind('ColoredSection%d' % n)[0].build_html(view, path) 
+            self.deepFind('ColoredSection%d' % n).build_html(view, path) 
             b._div() # grid_4
         
         b._div() # row vertical padding
@@ -221,20 +196,9 @@ class Footer(Element):
         b = self.context.b
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        self.deepFind('Footer')[0].build_html(view, path) 
+        self.deepFind('Footer').build_html(view, path) 
         b._div()
         b._footer()
-        
-        """<!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
-
-<script defer src="js/flexslider/jquery.flexslider-min.js"></script>
-
-<!-- fire ups - read this file!  -->   
-<script src="js/main.js"></script>
-
-"""        
 
 
 class Site(Publication):
@@ -252,9 +216,9 @@ SITE = [
 
 doc = Site(viewId='Site', autoPages=len(SITE))
 view = doc.view
-view.resourcePaths = ('css','fonts','images','js')
-view.jsUrls = (URL_JQUERY, URL_MEDIA)
+view.resourcePaths = ('css','fonts','images','js') # Copy these folders to output.
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
+view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
 
 for pn, (name, title) in enumerate(SITE):
     page = doc[pn+1]
@@ -306,7 +270,7 @@ for pn, (name, title) in enumerate(SITE):
 # Create a Typesetter for this document, then create pages and fill content. 
 # As no Galley instance is supplied to the Typesetter, it will create one,
 # or put the current page/box variables to where the MarkDown file indicates.
-t = Typesetter(doc, tryExcept=False, verbose=False)
+t = Typesetter(doc, tryExcept=True, verbose=False)
 # Parse the markdown content and execute the embedded Python code blocks.
 # The blocks, global defined feedback variables and text content are in the 
 # typesetter t.galley.

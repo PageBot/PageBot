@@ -134,8 +134,11 @@ class TextBox(Element):
         return y
 
     def __getitem__(self, lineIndex):
-        return self.textLines[lineIndex]
-
+        textLines = self.textLines
+        if lineIndex in range(len(textLines)):
+            return self.textLines[lineIndex]
+        return None
+        
     def __len__(self):
         return len(self.textLines)
 

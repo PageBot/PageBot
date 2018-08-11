@@ -34,8 +34,8 @@ class SiteView(HtmlView):
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
     CSS_PATH = 'style.css'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPath=None, cssUrls=None, jsUrls=None, webFontUrls=None,
-        **kwargs):
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
+            jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, **kwargs):
         u"""Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
@@ -52,11 +52,13 @@ class SiteView(HtmlView):
 
         # Default CSS urls to inclide 
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
-        self.cssPath = cssPath or self.CSS_PATH
-        self.cssUrls = cssUrls or [self.CSS_PATH]
+        self.cssUrls = cssUrls or [self.CSS_PATH] # Added as links in the page <head>
+        self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
-        self.jsUrls = jsUrls or (URL_JQUERY, URL_MEDIA)
+        self.jsCode = jsCode # Optional JS code to be added to all pages at end of <body>.
+        self.jsUrls = jsUrls or (URL_JQUERY, URL_MEDIA) # Added as <script src="..."> at end of <body>
+        self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
     def copyResources(self, path):
         u"""If self.resourcePaths are defined, then copy them into the destiation path.

@@ -36,7 +36,7 @@ class Page(Element):
 
     def __init__(self, isLeft=None, isRight=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
-        cssCode=None, cssPath=None, cssUrls=None, jsCode=None, jsPath=None, jsUrls=None,
+        cssCode=None, cssPaths=None, cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
         viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,
         **kwargs):
 
@@ -80,15 +80,15 @@ class Page(Element):
         self.headPath = headPath # Set to path, if head is available in a single file, including the tags.
 
         self.cssCode = cssCode # Set to string, if CSS is available as single source. Exported as css file once.
-        self.cssPath = cssPath # Set to path, if CSS is available in a single file to be included in the page.
+        self.cssPaths = cssPaths # Set to path, if CSS is available in a single file to be included in the page.
         self.cssUrls = cssUrls # Optional CSS, if different from what is defined by the view.
 
         self.bodyCode = bodyCode # Optional set to string that contains the page <body>...</body>, including the tags.
         self.bodyPath = bodyPath # Set to path, if body is available in a single file, including the tags.
 
         self.jsCode = jsCode # Set to path, if JS is available in a single file, including the tags.
-        self.jsPath = jsPath # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
-        self.jsUrls = jsUrls # Optional Javascript Urls, if different from what is defined by the view.
+        self.jsPaths = jsPaths # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
+        self.jsUrls = jsUrls # Optional Javascript Urls in <head>, if different from what is defined by the view.
 
         self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
 
@@ -266,12 +266,6 @@ class Page(Element):
                     b.comment('Mobile viewport')
                     b.meta(name='viewport', content=self.viewPort)
 
-                # View and pages can both implements Javascript paths, if adding to the header.
-                for jsUrls in (view.jsUrls, self.jsUrls):
-                    if jsUrls is not None:
-                        for jsUrl in jsUrls:
-                            b.script(type="text/javascript", src=jsUrl)
-
                 # View and pages can both implements Webfonts urls
                 for webFontUrls in (view.webFontUrls, self.webFontUrls):
                     if webFontUrls is not None:
@@ -284,7 +278,7 @@ class Page(Element):
                         for cssUrl in cssUrls:
                             b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
 
-                # Use one of both of these options in case CSS needs to copied into the page.
+                # Use one of both of these options in case CSS needs to be copied into the page.
                 for cssCode in (view.cssCode, self.cssCode):
                     if cssCode is not None:
                         # Add the code directly into the page if it is not None
@@ -292,11 +286,13 @@ class Page(Element):
                         b.addHtml(cssCode)
                         b._style()
 
-                for cssPath in (view.cssPath, self.cssPath):
-                    if self.cssPath is not None:
-                        # Include CSS content of file, if path is not None and the file exists.
+                # Use one or both of these options in case CSS is needs to be copied from files into the page.
+                for cssPaths in (view.cssPaths, self.cssPaths):
+                    if self.cssPaths:
                         b.style()
-                        b.importHtml(cssPath)
+                        for cssPath in cssPaths:
+                            # Include CSS content of file, if path is not None and the file exists.
+                            b.importHtml(cssPath)
                         b._style()
 
                 # If there is accumulated CSS in the builder (collected by the recursive e.build_css(),
@@ -337,21 +333,32 @@ class Page(Element):
                 #
                 #   J A V A S C R I P T
                 #
-                # Build the LS body. There are 3 option (all not including the <body>...</body>)
-                # 1 As html string (info.headHtmlCode is defined as not None)
+                # Build the JS body. There are 3 option (all not including the <body>...</body>)
+                # 1 As html string (view.jsCode and/or self.jsCode are defined as not None)
                 # 2 As path a html file, containing the string between <head>...</head>.
                 # 3 Constructed from info context, page attributes and styles.
                 #
-                if self.jsCode is not None:
-                    b.addHtml(self.jsCode)
-                if self.jsPath is not None:
-                    b.importHtml(self.jsPath) # Add JS content of file, if path is not None and the file exists.
+                for jsCode in (view.jsCode, self.jsCode):
+                    if jsCode is not None:
+                        b.script(type="text/javascript")
+                        b.addHtml(self.jsCode)
+                        b._script()
+                for jsUrls in (view.jsUrls, self.jsUrls):
+                    if jsUrls is not None:
+                        for jsUrl in jsUrls:
+                            b.script(type="text/javascript", src=jsUrl)
+                for jsPaths in (view.jsPaths, self.jsPaths):
+                    if jsPaths:
+                        for jsPath in jsPaths:
+                            b.script(type="text/javascript")
+                            b.addHtml(jsPath)
+                            b._script()
+
                 if b.hasJs():
                     b.script()
                     b.addHtml('\n'.join(b.getJs()))
                     b._script()
                 #else no default JS. To be added by the calling application.
-
                 # Close the page body
                 b._body()
             b._html()
