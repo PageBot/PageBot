@@ -221,8 +221,7 @@ class Site(Publication):
 
 site = Site(viewId='Site')
 view = site.view
-view.resourcePaths = ['resources/css','resources/fonts','resources/images','resources/js']
-print(view)
+view.resourcePaths = ('css','fonts','images','js')
 
 page = site[1]
 page.name = 'index'
