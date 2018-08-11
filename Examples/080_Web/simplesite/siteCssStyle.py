@@ -26,9 +26,9 @@ from pagebot.toolbox.units import em
 
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
-DO_FILE = True
-DO_GIT = False
-DO_MAMP = False
+DO_FILE = False
+DO_MAMP = True
+DO_GIT = True
 
 class Header(Element):
     def build_html(self, view, path):
@@ -246,8 +246,6 @@ view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
-#view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css')
-#view.cssCode = CSS
 
 for pn, (name, title) in enumerate(SITE):
     page = doc[pn+1]
@@ -310,26 +308,32 @@ t.typesetFile(MD_PATH)
 if DO_FILE:
     doc.export(EXPORT_PATH)
     os.system('open "%s/index.html"' % EXPORT_PATH)
-
+    
 elif DO_MAMP:
-    # Internal CSS file may be switched of for development.
-    view = doc.newView('Mamp')
+    # Internal CSS file may be switched off for development.
+    mampView = doc.newView('Mamp')
+    mampView.resourcePaths = view.resourcePaths
+    mampView.jsUrls = view.jsUrls
+    mampView.cssUrls = view.cssUrls
 
-    if not os.path.exists(view.MAMP_PATH):
+    MAMP_PATH = '/Applications/MAMP/htdocs/SimpleSite' 
+    doc.export(path=MAMP_PATH)
+
+    if not os.path.exists(MAMP_PATH):
         print('The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL)
         os.system(u'open %s' % view.MAMP_SHOP_URL)
     else:
-        doc.build(path=EXPORT_PATH)
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
-        os.system(u'open "%s"' % view.getUrl(NAME))
+        os.system(u'open "%s"' % mampView.getUrl('SimpleSite'))
 
 elif DO_GIT:
     # Make sure outside always has the right generated CSS
     view = doc.newView('Git')
-    site.build(path=EXPORT_PATH)
+    doc.build(path=EXPORT_PATH)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')
     os.system(u'open "%s"' % view.getUrl(DOMAIN))
-else:
-    print('Select DO_MAMP or DO_GIT')
+
+else: # No output view defined
+    print('Set DO_FILE or DO_MAMP or DO_GIT as True')
 print('Done') 

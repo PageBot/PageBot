@@ -92,9 +92,9 @@ class MampView(SiteView):
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()
-                # Building for HTML, try the hook. Otherwise call by main page.build.
+                # Building for HTML, assume that the hook exists.
                 hook = 'build_' + b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_html
+                getattr(page, hook)(self, path) # Typically calling page.build_html
 
                 fileName = (page.fileName or page.title or page.name).replace(' ','_')
                 if not fileName.lower().endswith('.html'):
@@ -105,10 +105,10 @@ class MampView(SiteView):
                     b.writeHtml(path + fileName)
         
         # Write all collected CSS into one file at destination
-        if b.hasCss():
-            if not os.path.exists(path):
-                os.makedirs(path)
-            b.writeCss(path + self.cssPath)
+        #if b.hasCss():
+        #    if not os.path.exists(path):
+        #        os.makedirs(path)
+        #    b.writeCss(path + self.cssPath)
 
     def getUrl(self, name):
         u"""Answer the local URL for Mamp Pro to find the copied website."""

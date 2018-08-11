@@ -72,7 +72,7 @@ box = page.deepFind('Footer').append(doc.lib['footer'])
 ~~~Python
 # -----------------------------------------------------------
 page = doc[2]
-box = page.deepFind('Logo')[0]
+box = page.deepFind('Logo')
 ~~~
 # PageBot+2
 
