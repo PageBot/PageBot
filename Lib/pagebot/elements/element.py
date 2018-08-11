@@ -482,21 +482,25 @@ class Element(object):
                 return found
         return None
 
-    def deepFind(self, name=None, pattern=None, result=None):
+    def deepFindAll(self, name=None, pattern=None, result=None):
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,
-        otherwise an error is raised.
+        otherwise an error is raised. Return the collected list of matching child
+        elements. Answer an empty list if no elements can be found.
 
         >>> e1 = Element(name='DeeperChild')
         >>> e2 = Element(name='DeeperChild', elements=[e1])
         >>> e3 = Element(name='Child', elements=[e2])
         >>> e = Element(name='Parent', elements=[e3])
-        >>> elements = e.deepFind(name='DeeperChild') # Get all child elements matching name
+        >>> elements = e.deepFindAll(name='DeeperChild') # Get all child elements matching name
         >>> len(elements)
         2
-        >>> elements = e.deepFind(pattern='Child') # Get all child elements matching pattern
+        >>> elements = e.deepFindAll(pattern='Child') # Get all child elements matching pattern
         >>> len(elements)
         3
+        >>> elements = e.deepFindAll(pattern='XYZ') # Answer empty list if no element can be found
+        >>> len(elements)
+        0
         """
         assert name or pattern
         if result is None:
@@ -506,25 +510,28 @@ class Element(object):
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
-            e.deepFind(name, pattern, result)
+            e.deepFindAll(name, pattern, result)
         return result
 
-    def find(self, name=None, pattern=None, result=None):
+    def findAll(self, name=None, pattern=None, result=None):
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
-        elements.
+        elements. Answer an empty list if no elements can be found.
 
         >>> e1 = Element(name='OtherChild')
         >>> e2 = Element(name='OtherChild')
         >>> e3 = Element(name='Child')
         >>> e = Element(name='Parent', elements=[e1, e2, e3])
-        >>> elements = e.find(name='OtherChild') # Get all child element matching name
+        >>> elements = e.findAll(name='OtherChild') # Get all child element matching name
         >>> len(elements)
         2
-        >>> elements = e.find(pattern='Child') # Get all child element matching name
+        >>> elements = e.findAll(pattern='Child') # Get all child element matching name
         >>> len(elements)
         3
+        >>> elements = e.findAll(pattern='XYZ') # Answer empty list if no element can be found
+        >>> len(elements)
+        0
         """
         assert name or pattern
         result = []
@@ -534,6 +541,69 @@ class Element(object):
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
         return result
+
+    def deepFind(self, name=None, pattern=None, result=None):
+        """Perform a dynamic recursive deep find for all elements with the name.
+        Don't include self. Either *name* or *pattern* should be defined,
+        otherwise an error is raised. Return the first matching child
+        element. Answer None if no elements can be found.
+
+        >>> e = Element(name='Parent')
+        >>> e1 = Element(name='Child', parent=e)
+        >>> e2 = Element(name='DeeperChild', parent=e1) 
+        >>> e3 = Element(name='DeeperChild', parent=e2)
+        >>> e4 = Element(name='DeepestChild', parent=e3)
+        >>> element = e.deepFind(name='DeeperChild') # Get all child elements matching name
+        >>> element is e2
+        True
+        >>> element = e.deepFind(pattern='Child') # Get first child elements matching pattern
+        >>> element is e1
+        True
+        >>> element = e.deepFind(pattern='Deepest') # Get first child elements matching pattern
+        >>> element is e4
+        True
+        >>> element = e.deepFind(pattern='XYZ') # Answer None if element does not exist
+        >>> element is None
+        True
+        """
+        assert name or pattern
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                return e
+            if name is not None and name in (e.cssId, e.name):
+                return e
+            found = e.deepFind(name, pattern, result)
+            if found is not None:
+                return found
+        return None
+
+    def find(self, name=None, pattern=None, result=None):
+        u"""Perform a dynamic find for the named element(s) in self.elements.
+        Don't include self. Either name or pattern should be defined, otherwise
+        an error is raised. Return the first element that fist the criteria.
+        Answer None if no element can be found.
+
+        >>> e = Element(name='Parent')
+        >>> e1 = Element(name='OtherChild', parent=e)
+        >>> e2 = Element(name='OtherChild', parent=e)
+        >>> e3 = Element(name='LastChild', parent=e)
+        >>> element = e.find(name='OtherChild') # Get first child element matching name
+        >>> element is e1
+        True
+        >>> element = e.find(pattern='LastChild') # Get first child element matching name
+        >>> element is e3
+        True
+        >>> element = e.find(pattern='XYZ') # Get first child element matching name
+        >>> element is None
+        True
+        """
+        assert name or pattern
+        for e in self.elements:
+            if pattern is not None and pattern in e.name: # Simple pattern match
+                return e
+            if name is not None and name in (e.cssId, e.name):
+                return e
+        return None
 
     def clearElements(self):
         """Properly initializes self._elements and self._eIds. Any existing
