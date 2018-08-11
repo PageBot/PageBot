@@ -16,6 +16,7 @@
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT
 from pagebot.toolbox.units import upt
+from pagebot.toolbox.constants import XXXL
 
 class HtmlString(BabelString):
 
