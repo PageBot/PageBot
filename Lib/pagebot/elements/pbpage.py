@@ -73,8 +73,7 @@ class Page(Element):
 
         # Optional resources that can be included for web output (HtmlContext)
         # Define string or file paths where to read content, instead of constructing by the builder.
-        self.htmlCode = htmlCode # Set to string in case the full HTML is defined in a single file.
-        self.htmlPath = htmlPath # Set to string in case the full HTML is defined in a single file.
+        # See also self.htmlCode and self.htmlPath as defined for all Element classes.
 
         self.headCode = headCode # Optional set to string that contains the page <head>...</head>, including the tags.
         self.headPath = headPath # Set to path, if head is available in a single file, including the tags.
@@ -236,8 +235,9 @@ class Page(Element):
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
-        elif self.htmlPath:
-            b.importHtml(self.htmlPath) # Add HTML content of file, if path is not None and the file exists.
+        elif self.htmlPaths is not None:
+            for htmlPath in self.htmlPaths:
+                b.importHtml(htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
             b.docType('html')
             b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
@@ -329,6 +329,7 @@ class Page(Element):
             else:
                 b.body()
                 for e in self.elements:
+                    print('fsdfdfsd', e)
                     e.build_html(view, path)
                 #
                 #   J A V A S C R I P T

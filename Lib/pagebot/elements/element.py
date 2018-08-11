@@ -56,7 +56,8 @@ class Element(object):
             pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
             ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
             borderBottom=None, borderLeft=None, shadow=None, gradient=None,
-            drawBefore=None, drawAfter=None, **kwargs):
+            drawBefore=None, drawAfter=None, 
+            htmlCode=None, htmlPaths=None, **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
@@ -184,6 +185,11 @@ class Element(object):
         # Class and #Id attributes for HtmlContext usage.
         self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
         self.cssId = cssId # Optional id name. Ignored if None.
+
+        # Optional resources that can be included for web output (HtmlContext)
+        # Define string or file paths where to read content, instead of constructing by the builder.
+        self.htmlCode = htmlCode # Set to string in case element has HTML as source.
+        self.htmlPaths = htmlPaths # List or paths, in case full element HTML is defined in files.
 
         # Generic naming and title.
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
@@ -333,24 +339,23 @@ class Element(object):
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
-    #   Every element is potentioally a container of other elements.
+    #   Every element is potentially a container of other elements, beside its own specific behavi.
 
     def __getitem__(self, eIdOrName):
         """Answer the element with eIdOrName. Answer None if the element does not exist.
         Elements behave as a semi-dictionary for child elements.
         For retrieval by index, use e.elements[index]
 
-        >>> e = Element(name='TestElement', xy=(100, 200), size=pt(100, 120)) # E.g. set a tuples of units
-        >>> childE1 = Element(name='E1', xy=pt(0, 0), size=pt(21, 22))
-        >>> i = e.appendElement(childE1)
-        >>> e['E1'] is childE1
+        >>> e = Element(name='TestElement') 
+        >>> e1 = Element(name='E1', parent=e)
+        >>> e['E1'] is e1
         True
         """
         return self.get(eIdOrName)
 
     def __setitem__(self, eId, e):
         if not e in self.elements:
-            self.elements.append(e)
+            self.appendElement(e)
         self._eIds[eId] = e
 
     def _get_eId(self):
@@ -702,15 +707,15 @@ class Element(object):
         and the position are lost. The position `e` is supposed to be filled
         already in local position.
 
-        >>> e1 = Element(name='Child1')
-        >>> e2 = Element(name='Child2')
-        >>> e3 = Element(name='Child3')
-        >>> e = Element(name='Parent', elements=[e1, e2])
-        >>> i = e.appendElement(e3)
-        >>> e.elements[-1] is e3, i
-        (True, 2)
+        >>> e = Element(name='Parent')
+        >>> e1 = Element(name='Child1', parent=e)
+        >>> e2 = Element(name='Child2', parent=e)
+        >>> e3 = Element(name='Child3', parent=e)
+        >>> e.elements[-1] is e3
+        True
         >>> i = e.appendElement(e1) # Append elements that is already child of e
-        >>> e.elements[0] is e2, e.elements[1] is e3, e.elements[2] is e1 # Now e1 is at end of list
+        >>> # Now e1 is at end of list
+        >>> e.elements[0] is e2, e.elements[-1] is e1, e.elements[1] is e3 
         (True, True, True)
         """
         eParent = e.parent
@@ -726,12 +731,13 @@ class Element(object):
         """If the element is placed in self, then remove it. Don't touch the
         position.
 
-        >>> e1 = Element(name='Child1')
-        >>> e2 = Element(name='Child2')
-        >>> e3 = Element(name='Child3')
-        >>> e = Element(name='Parent', elements=[e1, e2, e3])
-        >>> removedE = e.removeElement(e2)
-        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None
+        >>> e = Element(name='Parent')
+        >>> e1 = Element(name='Child1', parent=e)
+        >>> e2 = Element(name='Child2', parent=e)
+        >>> e3 = Element(name='Child3', parent=e)
+        >>> e.removeElement(e2)
+        <Element:Child2 (0pt, 0pt, 100pt, 100pt)>
+        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None # e2 has no parent now.
         (True, True, True)
         """
         assert e.parent is self
@@ -3841,8 +3847,11 @@ class Element(object):
         For HTML builder the origin is ignored, as all position is relative.
         """
         b = view.context.b # Use the current context builder to write the HTML/CSS code.
-        if self.htmlPath is not None:
-            b.importHtml(self.htmlPath) # Add HTML content from file, if path is not None and the file exists.
+        if self.htmlCode is not None:
+            b.addHtml(self.htmlCode) # Add chunk of defined HTML to output.
+        elif self.htmlPaths is not None:
+            for htmlPath in self.htmlPaths:
+                b.importHtml(htmlPath) # Add HTML content from file, if path is not None and the file exists.
         else:
             b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
 

@@ -13,10 +13,18 @@ box = page.deepFind('Logo')
 </code></pre>
 
 <h2>What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
-<pre><code class="Python">box = page.deepFind('HeroSlides')
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
-<p><img alt="pagebot_imac.png" src="images/pagebot_imac.png" /></p>
+<p><img alt="pagebot_smartphones.jpg" src="images/pagebot_smartphones.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
 <pre><code class="Python">box = page.deepFind('Content')
 </code></pre>
 
@@ -53,10 +61,18 @@ box = page.deepFind('Logo')[0]
 </code></pre>
 
 <h1>PageBot+2</h1>
-<pre><code class="Python">box = page.deepFind('HeroSlides')
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
-<p><img alt="pagebot_imac.png" src="images/pagebot_imac.png" /></p>
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
@@ -69,10 +85,18 @@ box = page.deepFind('Logo')
 </code></pre>
 
 <h1>PageBot+3</h1>
-<pre><code class="Python">box = page.deepFind('HeroSlides')
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
@@ -85,10 +109,18 @@ box = page.deepFind('Logo')
 </code></pre>
 
 <h1>PageBot+4</h1>
-<pre><code class="Python">box = page.deepFind('HeroSlides')
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
-<p><img alt="pagebot_smartphone_illustration.jpg" src="images/pagebot_smartphone_illustration.jpg" /></p>
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
@@ -101,10 +133,18 @@ box = page.deepFind('Logo')
 </code></pre>
 
 <h1>PageBot+5</h1>
-<pre><code class="Python">box = page.deepFind('HeroSlides')
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_screenshot.png" src="images/pagebot_screenshot.png" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
+<pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
+</code></pre>
+
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
