@@ -1,0 +1,16 @@
+body {
+  background: #FF0000;
+  color: #706670;
+  font-family: "Upgrade-Regular", sans-serif;
+  font-size: 1.1em;
+  line-height: 1.4em;
+  font-weight: normal; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  font-family: "Upgrade-Regular", sans-serif;
+  line-height: 1.5em;
+  margin: 0.45em 0;
+  padding: 0; }
+
+/*# sourceMappingURL=style.sass.css.map */

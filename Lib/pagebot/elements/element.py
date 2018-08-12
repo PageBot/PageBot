@@ -3819,16 +3819,13 @@ class Element(object):
 
     #   H T M L  /  S A S S  S U P P O R T
 
-    def build_sass(self, view, sass=None):
+    def build_sass(self, view):
         """Build the sass variables for this element."""
-        if sass is None:
-            sass = {}
         b = self.context.b
-        b.build_sass(self, view, sass)
+        b.build_sass(self, view)
         for e in self.elements:
             if e.show:
-                e.build_sass(view, sass)
-        return sass
+                e.build_sass(view)
 
     def build_html(self, view, path, drawElements=True):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.

@@ -34,7 +34,9 @@ class MampView(SiteView):
 
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    DEFAULT_CSS_PATH = SITE_ROOT_PATH + 'css/style.css'
+    CSS_PATH = SITE_ROOT_PATH + 'css/style.css'
+    SASS_PATH = SITE_ROOT_PATH + 'css/style.sass'
+    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.sass'
 
     #   B U I L D  H T M L  /  C S S
 
@@ -75,6 +77,11 @@ class MampView(SiteView):
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
+
+        # Write all collected SASS vatiables into one file
+        b.writeSass(self.VARIABLES_PATH)
+        # Compile SASS to CSS
+        b.compileSass(self.SASS_PATH, self.CSS_PATH)
 
 
     def getUrl(self, name):

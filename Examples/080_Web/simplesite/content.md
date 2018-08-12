@@ -7,8 +7,8 @@ doc.title = doc.name = 'Design&nbsp;Design&nbsp;Space'
 page = doc[1]
 box = page.deepFind('Logo')
 ~~~
-# PageBot:1AA
-dsidsauodsaiudsaiudsa
+# PageBot:1
+
 ~~~Python
 box = page.deepFind('Introduction')
 ~~~

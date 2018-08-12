@@ -16,12 +16,12 @@
 #
 import os
 import codecs
-from pagebot.toolbox.transformer import value2Bool
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
-from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString, value2Bool
 from pagebot.toolbox.units import upt
+from pagebot.fonttoolbox.objects.font import Font
 
 class HtmlBuilder(XmlBuilder):
     """The HtmlBuilder class implements the standard XHTML tag set with all
@@ -293,6 +293,7 @@ table {
     def __init__(self):
         self.resetHtml() # Initialize the HTML output stream.
         self._cssOut = [] # Keep the collected CSS and JS from elements here.
+        self._sassVariables = {}
         self._jsOut = []
         self._copyPaths = []
         self._initialize()
@@ -370,9 +371,9 @@ table {
             f.write(self.getJs())
             f.close()
         except IOError:
-            print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
+            print('[%s.writeJs] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
-    #   C S S
+    #   C S S 
 
     def addCss(self, css):
         """Add the css chunk to self.css, the ordered list of css for output.
@@ -425,17 +426,24 @@ table {
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
-        if sass is None:
-            sass = {}
-        sassId = 'hr'
-        if self.cssId:
-            sassId += self.cssId
-        elif self.cssClass:
-            sassId += self.cssClass
-        sass[sassId] = dict(stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'))
+    #   S A S S
 
+    def writeSass(self, path):
+        """Write the collect set of SASS variables to path."""
+        try:
+            f = codecs.open(path, 'w', 'utf-8')
+            for sassId, value in sorted(self._sassVariables.items()):
+                f.write('$%s: %s\n' % (sassId, value))
+            f.close()
+        except IOError:
+            print('[HtmlBuilder.writeSass] Cannot write SASS file "%s"' % path)
 
-    def build_sass(self, e, view, sass):
+    def compileSass(self, sassPath, cssPath):
+        print('COMPILE', sassPath, cssPath)
+        os.system('sass "%s" "%s"' % (sassPath, cssPath))
+
+    def build_sass(self, e, view):
+        sass = self._sassVariables
         if e.cssId: # If the #id is defined, then use that as CSS reference.
             sassId = e.cssId
         elif e.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
@@ -459,7 +467,8 @@ table {
         if upt(e.pr):
             sass[sassId+'-padding-right'] = e.pr
         if e.css('font') is not None:
-            sass[sassId+'-font-family'] = e.css('font')
+            font = Font(e.css('font'))
+            sass[sassId+'-font-family'] = font.info.fullName
         if e.css('fontSize') is not None:
             sass[sassId+'-font-size'] = e.css('fontSize')
         if e.css('fontStyle') is not None:
@@ -473,7 +482,7 @@ table {
         if e.css('textFill') not in (noColor, None): # Must be Color instance
             sass[sassId+'-color'] = e.css('textFill').css
 
-    def css(self, sass, selector=None, e=None, message=None):
+    def build_css(self, sass, selector=None, e=None, message=None):
         """Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
@@ -522,6 +531,12 @@ table {
             css += '/* %s */' % message
         css += '\n'
         self.addCss(css)
+
+        # Write all collected SASS vatiables into one file
+        b.writeSass(self.DEFAULT_SASS_PATH)
+        # Compile SASS to CSS
+        b.compileSass(self.DEFAULT_CSS_PATH)
+
 
     #   H T M L
 
