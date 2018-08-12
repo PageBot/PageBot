@@ -18,15 +18,15 @@ import copy
 import codecs
 import xml.etree.ElementTree as ET
 
-#try:
-import markdown
-from markdown.extensions.nl2br import Nl2BrExtension
-from markdown.extensions.fenced_code import FencedCodeExtension
-from pagebot.contributions.markdown.literature import LiteratureExtension
-from pagebot.contributions.markdown.footnotes import FootnoteExtension
-#except ImportError:
-#    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
-#    sys.exit()
+try:
+    import markdown
+    from markdown.extensions.nl2br import Nl2BrExtension
+    from markdown.extensions.fenced_code import FencedCodeExtension
+    from pagebot.contributions.markdown.literature import LiteratureExtension
+    from pagebot.contributions.markdown.footnotes import FootnoteExtension
+except ImportError:
+    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    sys.exit()
 
 from pagebot.contexts.platform import getContext
 #from pagebot import getMarker
@@ -41,21 +41,6 @@ class Typesetter(object):
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
 
-    TAG_MATCHING = {
-        'document': [],
-        'h1' : ('document',),
-        'h2' : ('document', 'h1', 'li'),
-        'h3' : ('document', 'h1', 'h2', 'li'),
-        'h4' : ('document', 'h1', 'h2', 'h3', 'li'),
-        'h5' : ('document', 'h1', 'h2', 'h3', 'h4', 'li'),
-        'h6' : ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'li'),
-        'p': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'),
-        'strong': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
-        'em': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
-        'img': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
-        'li': ('ul', 'ol'),
-        'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
-    }
     def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False, writeTags=True):
         u"""
@@ -472,7 +457,6 @@ class Typesetter(object):
 
     def getMatchingStyleNames(self, tag):
         u"""Answer the list of matching style, with decreasing relevance."""
-        #parents = self.TAG_MATCHING.get(tag)
         revHistory = self.tagHistory[:]
         revHistory.reverse()
         matches = []
@@ -561,7 +545,8 @@ class Typesetter(object):
         if codeResult is not None:
             return
 
-        if self.writeTags:
+        # Ignore <pre> tag output, as it is part of a ~~~Pyhton code block
+        if self.writeTags and node.tag != 'pre':
             # Open the node in HTML export for this node
             self.htmlNode(node)
             # Add this tag to the tag-history line
@@ -607,29 +592,15 @@ class Typesetter(object):
                 bs = self.context.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
 
-        if self.writeTags:
-            # Close the HTML tag of this node.
+        # Ignore </pre> tag output, as it is part of a ~~~Pyhton code block
+        if self.writeTags and node.tag != 'pre':
+            # Close the HTML tag of this node. 
             self._htmlNode(node)
 
         # Now restore the graphic state at the end of the element content processing to the
         # style of the parent in order to process the tail text. Back to the style of the parent,
         # which was in nodeStyle.
         self.popStyle()
-
-        """
-        # If there is a postfix for the current state, then add that to the output.
-        postfix = style.get('postfix')
-        if not postfix and e is not None: # Do we have a style tree?
-            postfix = self._strip('', postfix= or e.css('postfix'))
-
-        # XML-nodes are organized as: node - node.text - node.children - node.tail
-        # If there is no text or if the node does not have tail text, these are None.
-        # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
-        nodeTail = self._strip(node.tail, postfix=postfix)
-        if nodeTail: # Something of a tail left after stripping?
-            bs = self.galley.context.(nodeTail, e=e, style=nodeStyle)
-            self.galley.append(bs) # Add to the current flow textBox
-        """
 
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
@@ -668,44 +639,6 @@ class Typesetter(object):
         # Answer the root element of the etree (Note this class also is called "Element", another kind
         # of node than the PageBot Element.
         return root
-
-
-    def DEPRECATED_makeXMLFile(self, fileName):
-        u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
-        extended in the future e.g. to support Word documents or other text resources.
-        If the document is already an XML document, then ignore."""
-        xml = None # Check is something changed.
-        fileExtension = fileName.split('.')[-1].lower()
-        if fileExtension == 'xml':
-            pass # Ignore, it's already XML
-        elif fileExtension == 'md':
-            # If we have MarkDown content, convert to XML (XHTML)
-            f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
-            f.close()
-            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = u'<?xml version="1.0" encoding="UTF-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
-            xml = xml.replace('&nbsp;', ' ')
-        if xml is not None:
-            fileName = fileName + '.xml'
-            f = codecs.open(fileName, mode="w", encoding="utf-8")
-            f.write(xml)
-            f.close()
-        return fileName # Return altered fileName if converted. Otherwise return original fileName
-
-    def DEPRECATED_typesetFilibuster(self, e, blurbNames=None):
-        u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
-        instances is not given, then create a default Filibuster article."""
-        if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
-            blurbNames = (('h3', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))
-        blurbArticle = []
-        from pagebot.contributions.filibuster.blurb import Blurb
-        blurb = Blurb()
-        for tag, blurbName in blurbNames:
-            blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
-        xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
-        root = ET.parseString(xml) # Get the root element of the parsed XML tree.
-        self.typesetNode(root, e)
 
 if __name__ == '__main__':
     import doctest
