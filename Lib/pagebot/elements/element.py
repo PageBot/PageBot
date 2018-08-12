@@ -3817,28 +3817,25 @@ class Element(object):
             else: # No implementation for this context, call default building method for this element.
                 e.build(view, origin)
 
-    #   H T M L  /  C S S  S U P P O R T
+    #   H T M L  /  S A S S  S U P P O R T
 
-    def build_css(self, view, ids=None):
-        """Build the css for this element. Default behavior is to import the content of the file
-        if there is a path reference, otherwise build the CSS from the available values and parameters
-        in self.style and self.css()."""
+    def build_sass(self, view, sass=None):
+        """Build the sass variables for this element."""
+        if sass is None:
+            sass = {}
         ids = ids or ''
         b = view.context.b # Get the build of the current context.
         if self.cssId: # If the #id is defined, then use that as CSS reference.
-            cssId = '#'+self.cssId
-            ids += cssId + ' '
-            b.css(cssId, e=self)
+            b.sass(sass, self.cssId, e=self)
         elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
-            cssClass = '.'+self.cssClass
-            b.css(cssClass, e=self)
-            ids += cssClass + ' '
+            b.sass(sass, self.cssClass, e=self)
         #else:
         #   b.css(message='No CSS for element %s\n' % self.__class__.__name__)
         for e in self.elements:
             if not e.show:
                 continue
-            e.build_css(view, ids)
+            e.build_sass(view, sass)
+        return sass
 
     def build_html(self, view, path, drawElements=True):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is the closest representation of self.

@@ -36,7 +36,6 @@ class GitView(SiteView):
             sitePath += '/'
             
         b = self.b # Get builder from self.doc.context of this view.
-        #doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()

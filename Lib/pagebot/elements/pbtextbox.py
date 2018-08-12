@@ -138,7 +138,7 @@ class TextBox(Element):
         if lineIndex in range(len(textLines)):
             return self.textLines[lineIndex]
         return None
-        
+
     def __len__(self):
         return len(self.textLines)
 
@@ -397,15 +397,32 @@ class TextBox(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
+    def build_sass(self, view, sass=None):
+        u"""Build the recursive sass variables dictionary, to be converted into SASS import file."""
+        if sass is None:
+            sass = {}
+        sassId = 'table'
+        if self.cssId:
+            sassId += self.cssId
+        elif self.cssClass:
+            sassId += self.cssClass
+        sass[sassId] = dict(fill=self.css('fill'), 
+            stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'),
+            textFill=self.css('textFill'), textStroke=self.css('textStroke'), textStrokeWidth=self.css('textStrokeWidth'),
+            w=self.w, h=self.h
+        )
+        for e in self.elements:
+            e.build_sass(view, sass)
+        return sass
+
     def build_html(self, view, origin=None, showElements=True):
-        """Build the HTML/CSS code through WebBuilder (or equivalent) that is
+        """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent."""
 
         context = view.context # Get current context.
         b = context.b
 
-        self.build_css(view)
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
         b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.

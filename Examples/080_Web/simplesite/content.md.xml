@@ -8,7 +8,8 @@ page = doc[1]
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot+1</h1>
+<h1>PageBot:1AA</h1>
+<p>dsidsauodsaiudsaiudsa</p>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
@@ -60,7 +61,7 @@ page = doc[2]
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot+2</h1>
+<h1>PageBot:2</h1>
 <pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
@@ -84,7 +85,7 @@ box = page.deepFind('Logo')
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot+3</h1>
+<h1>PageBot:3</h1>
 <pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
@@ -108,7 +109,7 @@ box = page.deepFind('Logo')
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot+4</h1>
+<h1>PageBot:4</h1>
 <pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
@@ -132,7 +133,7 @@ box = page.deepFind('Logo')
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot+5</h1>
+<h1>PageBot:5</h1>
 <pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 
