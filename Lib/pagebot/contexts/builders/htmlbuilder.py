@@ -425,7 +425,55 @@ table {
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
-    def css(self, selector=None, e=None, message=None):
+        if sass is None:
+            sass = {}
+        sassId = 'hr'
+        if self.cssId:
+            sassId += self.cssId
+        elif self.cssClass:
+            sassId += self.cssClass
+        sass[sassId] = dict(stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'))
+
+
+    def build_sass(self, e, view, sass):
+        if e.cssId: # If the #id is defined, then use that as CSS reference.
+            sassId = e.cssId
+        elif e.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
+            sassId = e.__class__.__name__ + '-' + e.cssClass.replace(' ','_')
+        else:
+            sassId = e.__class__.__name__
+        if upt(e.ml):
+            sass[sassId+'-margin-left'] = e.ml
+        if upt(e.mt):
+            sass[sassId+'-margin-top'] = e.mt
+        if upt(e.mb):
+            sass[sassId+'-margin-bottom'] = e.mb
+        if upt(e.mr):
+            sass[sassId+'-margin-right'] = e.mr
+        if upt(e.pl):
+            sass[sassId+'-padding-left'] = e.ml
+        if upt(e.pt):
+            sass[sassId+'-padding-top'] = e.pt
+        if upt(e.pb):
+            sass[sassId+'-padding-bottom'] = e.pb
+        if upt(e.pr):
+            sass[sassId+'-padding-right'] = e.pr
+        if e.css('font') is not None:
+            sass[sassId+'-font-family'] = e.css('font')
+        if e.css('fontSize') is not None:
+            sass[sassId+'-font-size'] = e.css('fontSize')
+        if e.css('fontStyle') is not None:
+            sass[sassId+'-font-style'] = e.css('fontStyle')
+        if e.css('fontWeight') is not None:
+            sass[sassId+'-font-weight'] = e.css('fontWeight')
+        if e.css('tracking') is not None:
+            sass[sassId+'-letter-spacing'] = e.css('tracking')
+        if e.css('fill') not in (noColor, None): # Must Color instance
+            sass[sassId+'-background-color'] = e.css('fill').css
+        if e.css('textFill') not in (noColor, None): # Must be Color instance
+            sass[sassId+'-color'] = e.css('textFill').css
+
+    def css(self, sass, selector=None, e=None, message=None):
         """Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
