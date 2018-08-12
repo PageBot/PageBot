@@ -56,24 +56,6 @@ class MobileNavigation(TextBox):
 
 class Navigation(TextBox):
 
-    def build_sass(self, view, sass=None):
-        u"""Build the recursive sass variables dictionary, to be converted into SASS import file."""
-        if sass is None:
-            sass = {}
-        sassId = 'nav'
-        if self.cssId:
-            sassId += '-'+self.cssId
-        elif self.cssClass:
-            sassId += '_'+self.cssClass
-        sass[sassId] = dict(fill=self.css('fill'), 
-            stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'),
-            textFill=self.css('textFill'), textStroke=self.css('textStroke'), textStrokeWidth=self.css('textStrokeWidth'),
-            w=self.w, h=self.h
-        )
-        for e in self.elements:
-            e.build_sass(view, sass)
-        return sass
-
     def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         b.div(cssClass='container top')

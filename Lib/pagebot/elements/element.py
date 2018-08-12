@@ -3823,18 +3823,11 @@ class Element(object):
         """Build the sass variables for this element."""
         if sass is None:
             sass = {}
-        ids = ids or ''
-        b = view.context.b # Get the build of the current context.
-        if self.cssId: # If the #id is defined, then use that as CSS reference.
-            b.sass(sass, self.cssId, e=self)
-        elif self.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
-            b.sass(sass, self.cssClass, e=self)
-        #else:
-        #   b.css(message='No CSS for element %s\n' % self.__class__.__name__)
+        b = self.context.b
+        b.build_sass(self, view, sass)
         for e in self.elements:
-            if not e.show:
-                continue
-            e.build_sass(view, sass)
+            if e.show:
+                e.build_sass(view, sass)
         return sass
 
     def build_html(self, view, path, drawElements=True):
