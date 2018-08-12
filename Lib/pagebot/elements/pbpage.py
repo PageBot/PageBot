@@ -370,7 +370,6 @@ class Page(Element):
         if not fileName.lower().endswith('.html'):
             fileName += '.html'
         if view.doExport: # View flag to avoid writing, in case of testing.
-            print('#####', path, fileName)
             b.writeHtml(path + fileName)
 
 
