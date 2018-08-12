@@ -262,7 +262,9 @@ SITE = [
 style = dict(
     fill=color(1, 0, 0),
     margin=em(0),
-    padding=em(0),
+    padding=em(3),
+    fontSize=em(1.1),
+    leading=em(1.32),
 )
 doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
@@ -276,10 +278,12 @@ for pn, (name, title) in enumerate(SITE):
     page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
     page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
     page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
+    page.style = style
+        
     currentPage = name + '.html'
     # Add neste content elements for this page.
     header = Header(parent=page)
-    banner = Banner(parent=header)
+    banner = Banner(parent=header, fill=color(0, 0.5, 1))
     logo = Logo(parent=banner, name=name)
     navigation = Navigation(parent=header)
     # TODO: Build this automatic from the content of the pages table.
@@ -311,7 +315,7 @@ for pn, (name, title) in enumerate(SITE):
     menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
     menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
     
-    hero = Hero(parent=page)
+    hero = Hero(parent=page, fontSize=em(1.1), fill=color(0, 1, 0))
     
     content = Content(parent=page, fill='red')
     section = ColoredSection(parent=page)

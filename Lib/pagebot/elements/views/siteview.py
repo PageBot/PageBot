@@ -31,7 +31,9 @@ class SiteView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
-    CSS_PATH = 'style.css'
+    CSS_PATH = 'css/style.css'
+    SASS_PATH = 'css/style.sass'
+    SASS_VARIABLES_PATH = 'css/variables.sass'
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
             jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, **kwargs):
@@ -42,7 +44,7 @@ class SiteView(HtmlView):
         self.siteRootPath = self.SITE_ROOT_PATH
 
         if resourcePaths is None:
-            rp = getRootPath() + '/elements/web/simplesite/resources/'
+            rp = getRootPath() + '/elements/web/simplesite/'
             resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
         self.resourcePaths = resourcePaths
      
@@ -97,6 +99,7 @@ class SiteView(HtmlView):
         True
         """
         doc = self.doc 
+        b = self.context.b
 
         if path is None:
             path = self.SITE_PATH
@@ -113,8 +116,11 @@ class SiteView(HtmlView):
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
-        # Write all collected CSS into one file
-        #b.writeCss(self.DEFAULT_CSS_PATH)
+        
+        # Write all collected SASS vatiables into one file
+        b.writeSass(self.SASS_VARIABLES_PATH)
+        # Compile SASS to CSS
+        b.compileSass(self.SASS_PATH, self.CSS_PATH)
 
     def getUrl(self, name):
         u"""Answer the local URL for Mamp Pro to find the copied website."""

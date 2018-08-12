@@ -8,8 +8,7 @@ page = doc[1]
 box = page.deepFind('Logo')
 </code></pre>
 
-<h1>PageBot:1AA</h1>
-<p>dsidsauodsaiudsaiudsa</p>
+<h1>PageBot:1</h1>
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
