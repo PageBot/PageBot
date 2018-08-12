@@ -25,7 +25,7 @@ class HtmlString(BabelString):
     """HtmlString is a wrapper around an HTML tagged string."""
     def __init__(self, s, context, style=None):
         self.context = context # Store the context, in case we need it.
-        self.s = s # Enclose the Flat string
+        self.s = s # Enclose the HTML string
         if style is None:
             style = {}
         self.style = style

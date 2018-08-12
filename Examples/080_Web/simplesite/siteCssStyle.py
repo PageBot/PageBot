@@ -26,46 +26,54 @@ from pagebot.toolbox.units import em
 
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
-DO_FILE = False
-DO_MAMP = True
-DO_GIT = True
+DO_FILE = True
+DO_MAMP = False
+DO_GIT = False
 
 class Header(Element):
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.header(cssClass='wrapper clearfix')
         for e in self.elements:
             e.build_html(view, path)
         b._header()
+        b.comment('End '+self.__class__.__name__)
 
 class Banner(Element):
     def build_html(self, view, path):
         b = self.context.b
-        b.comment('Banner')
+        b.comment('Start '+self.__class__.__name__)
         b.div(cssId='banner')
         for e in self.elements:
             e.build_html(view, path)
         b._div()
+        b.comment('End #banner')
+        b.comment('End '+self.__class__.__name__)
 
 class Navigation(Element):            
     def build_html(self, view, path):
         b = self.context.b
-        b.comment('Main navigation')
+        b.comment('Start '+self.__class__.__name__)
         b.nav(cssId='topnav', role='navigation')
         for e in self.elements:
             e.build_html(view, path)
         b._nav()
+        b.comment('End '+self.__class__.__name__)
         
 class TopMenu(Element):        
     def build_html(self, view, path):
         b = self.context.b        
+        b.comment('Start '+self.__class__.__name__)
         b.div(cssClass='menu-toggle')
         b.addHtml('Menu')
         b._div()
+        b.comment('.menu-toggle')
         b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
         for e in self.elements:
             e.build_html(view, path)
         b._ul()
+        b.comment('End '+self.__class__.__name__)
         
 class Menu(Element):        
     def build_html(self, view, path):
@@ -112,12 +120,15 @@ class Logo(Element):
         
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.div(cssId="logo")
         b.a(href="index.html")
         for e in self.elements:
             e.build_html(view, path)
         b._a()
         b._div() 
+        b.comment('End #logo')
+        b.comment('End '+self.__class__.__name__)
 
 class SlideShow(Element):
     def newSlide(self):
@@ -125,10 +136,13 @@ class SlideShow(Element):
 
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         for i, e in enumerate(self.elements):
             b.div(cssClass=self.cssId + ' fade')
             e.build_html(view, path)
             b._div()
+        b.comment('End .'+self.cssId + ' .fade')
+        b.comment('End '+self.__class__.__name__)
             
 class Hero(Element):
     def __init__(self, **kwargs):
@@ -139,6 +153,7 @@ class Hero(Element):
 
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.section(cssId='hero', cssClass='clearFix')
         b.div(cssClass='wrapper')
         b.div(cssClass='row')
@@ -146,14 +161,19 @@ class Hero(Element):
         b.div(cssClass='grid_4')
         self.deepFind('Introduction').build_html(view, path)
         b._div()
+        b.comment('End .grid_4')
         
         b.div(cssClass="grid_8")
         self.deepFind('HeroSlides').build_html(view, path)        
         b._div()
+        b.comment('End .grid_8')
 
         b._div() # end .row 
+        b.comment('End .row')
         b._div() # end .wrapper 
         b._section()
+        b.comment('End .wrapper')
+        b.comment('End '+self.__class__.__name__)
                                
 class Content(Element):
     def __init__(self, **kwargs):
@@ -162,6 +182,7 @@ class Content(Element):
 
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.div(cssId='main', cssClass='wrapper clearfix')
         b.section(cssId='content', cssClass='wide-content' )
         # Content here, should come from markdown file.
@@ -174,6 +195,8 @@ class Content(Element):
         b._p()
         b._section() # end content area -->
         b._div() # end div #main .wrapper 
+        b.comment('End #main .wrapper .clearfix')
+        b.comment('End '+self.__class__.__name__)
         
 class ColoredSection(Element):
     def __init__(self, **kwargs):
@@ -185,6 +208,7 @@ class ColoredSection(Element):
 
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.section(cssId='features', cssClass='blueelement vertical-padding')
         b.div(cssClass='wrapper clearfix')
         self.deepFind('ColoredSectionHeader').build_html(view, path) 
@@ -196,8 +220,11 @@ class ColoredSection(Element):
             b._div() # grid_4
         
         b._div() # row vertical padding
+        b.comment('End .row .vertical-padding')
         b._div() # .wrapper
+        b.comment('End .wrapper')
         b._section()
+        b.comment('End '+self.__class__.__name__)
   
 class Footer(Element):
     def __init__(self, **kwargs):
@@ -206,23 +233,15 @@ class Footer(Element):
 
     def build_html(self, view, path):
         b = self.context.b
+        b.comment('Start '+self.__class__.__name__)
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
         self.deepFind('Footer').build_html(view, path) 
         b._div()
+        b.comment('End #colophon .wrapper .clearfix')
         b._footer()
+        b.comment('End '+self.__class__.__name__)
         
-        """<!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/libs/jquery-1.9.0.min.js">\x3C/script>')</script>
-
-<script defer src="js/flexslider/jquery.flexslider-min.js"></script>
-
-<!-- fire ups - read this file!  -->   
-<script src="js/main.js"></script>
-
-"""        
-
 
 class Site(Publication):
     u"""Build a website, similar to the original template by Kirsten Langmuur.
@@ -244,7 +263,7 @@ style = dict(
 doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
-view.jsUrls = (URL_JQUERY, URL_MEDIA)
+view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 
 for pn, (name, title) in enumerate(SITE):
