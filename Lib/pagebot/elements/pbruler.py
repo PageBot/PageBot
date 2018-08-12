@@ -108,7 +108,20 @@ class Ruler(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin)
 
-    #   H T M L  /  C S S  S U P P O R T
+    #   H T M L  /  S A S S  S U P P O R T
+
+    def build_sass(self, view, sass=None):
+        if sass is None:
+            sass = {}
+        sassId = 'hr'
+        if self.cssId:
+            sassId += self.cssId
+        elif self.cssClass:
+            sassId += self.cssClass
+        sass[sassId] = dict(stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'))
+        for e in self.elements:
+            e.build_sass(view, sass)
+        return sass
 
     def build_html(self, view, origin=None, drawElements=True):
         u"""Build the Ruler in the current context
@@ -131,7 +144,6 @@ class Ruler(Element):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
 
-        self.build_css(view)
         context.fill(None)
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         #b.line((px + sIndent, py), (px + w, py))

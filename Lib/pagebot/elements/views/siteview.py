@@ -108,9 +108,6 @@ class SiteView(HtmlView):
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
 
-        #for pn, pages in sorted(doc.pages.items()):
-        #    pages[0].build_css(self) # Make doc build the main/overall CSS, based on all page styles.
-
         for pn, pages in doc.pages.items():
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.

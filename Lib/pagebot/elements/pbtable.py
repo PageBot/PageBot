@@ -170,9 +170,22 @@ class Table(Element):
      
     #   H T M L  /  C S S  S U P P O R T
 
+    def build_sass(self, view, sass=None):
+        if sass is None:
+            sass = {}
+        sassId = 'table'
+        if self.cssId:
+            sassId += self.cssId
+        elif self.cssClass:
+            sassId += self.cssClass
+        sass[sassId] = dict(fill=self.css('fill'), 
+            stroke=self.css('stroke'), strokeWidth=self.css('strokeWidth'))
+        for e in self.elements:
+            e.build_sass(view, sass)
+        return sass
+
     def build_html(self, view, origin=None, drawElements=True):
 
-        self.build_css(view)
         p = pointOffset(self.origin, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

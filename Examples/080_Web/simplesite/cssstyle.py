@@ -97,9 +97,6 @@ header{
 #page-header h1{
 	margin:0;
 }
-.flexslider{
-	display:block;
-}
 #content,
 aside,
 .vertical-padding{  
@@ -335,14 +332,6 @@ header{
 	margin-left:10%%;
 	margin-right:10%%;
 }
-
-.flexslider{
-	display:block;
-/*demo 1 slider theme*/	
-margin: 0; 
-}
-.flex-control-nav {bottom: 5px;}
-
 
 aside { 
 	float:right;

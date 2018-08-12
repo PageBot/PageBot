@@ -7,7 +7,8 @@ doc.title = doc.name = 'Design&nbsp;Design&nbsp;Space'
 page = doc[1]
 box = page.deepFind('Logo')
 ~~~
-# PageBot+1
+# PageBot:1AA
+dsidsauodsaiudsaiudsa
 ~~~Python
 box = page.deepFind('Introduction')
 ~~~
@@ -74,7 +75,7 @@ box = page.deepFind('Footer').append(doc.lib['footer'])
 page = doc[2]
 box = page.deepFind('Logo')
 ~~~
-# PageBot+2
+# PageBot:2
 
 ~~~Python
 box = page.deepFind('HeroSlides').newSlide()
@@ -104,7 +105,7 @@ box = page.deepFind('Footer').append(doc.lib['footer'])
 page = doc[3]
 box = page.deepFind('Logo')
 ~~~
-# PageBot+3
+# PageBot:3
 
 ~~~Python
 box = page.deepFind('HeroSlides').newSlide()
@@ -134,7 +135,7 @@ box = page.deepFind('Footer').append(doc.lib['footer'])
 page = doc[4]
 box = page.deepFind('Logo')
 ~~~
-# PageBot+4
+# PageBot:4
 
 ~~~Python
 box = page.deepFind('HeroSlides').newSlide()
@@ -164,7 +165,7 @@ box = page.deepFind('Footer').append(doc.lib['footer'])
 page = doc[5]
 box = page.deepFind('Logo')
 ~~~
-# PageBot+5
+# PageBot:5
 
 ~~~Python
 box = page.deepFind('HeroSlides').newSlide()

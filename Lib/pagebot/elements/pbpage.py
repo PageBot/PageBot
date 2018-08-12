@@ -231,8 +231,10 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
         b.resetHtml()
-        b.resetCss()
 
+        sass = self.build_sass(view)
+        print('SASS', sass)
+        
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
         elif self.htmlPaths is not None:
@@ -294,13 +296,6 @@ class Page(Element):
                             # Include CSS content of file, if path is not None and the file exists.
                             b.importHtml(cssPath)
                         b._style()
-
-                # If there is accumulated CSS in the builder (collected by the recursive e.build_css(),
-                # then this is the time to add it to the page.
-                if 0 and b._cssOut:
-                    b.style()
-                    b.addHtml('\n'.join(b._cssOut))
-                    b._style()
 
                 # Icons
                 if self.favIconUrl: # Add the icon link and let the type follow the image extension.

@@ -33,12 +33,11 @@ a:hover{ text-decoration:none;}
 https://www.w3schools.com/howto/howto_js_slideshow.asp
 JS code in main.js
 */
-/* Initial slides not showing */
 .slide {
-    display: none;
+    display: none; /* Initial slides not showing */
 }
 .firstSlide { 
-	display: block;} 
+	display: block;}  /* First slide is showing */
 .fade {
   -webkit-animation-name: fade;
   -webkit-animation-duration: 1.5s;
@@ -49,7 +48,6 @@ JS code in main.js
   from {opacity: .4} 
   to {opacity: 1}
 }
-
 @keyframes fade {
   from {opacity: .4} 
   to {opacity: 1}
