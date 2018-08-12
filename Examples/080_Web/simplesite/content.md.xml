@@ -39,19 +39,19 @@ box = page.deepFind('Logo')
 
 <h2>Something</h2>
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<p><em>DesignDesign.Space</em> is an online coaching environment to develop your design skills. Query your questions and improve your sketching. Acquire new techniques and research your way of presentating. In short, a space where you can design your design process. </p>
 <pre><code class="Python">box = page.deepFind('ColoredSection1')
 </code></pre>
 
 <h2>Something else</h2>
 <p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<p>By definition designers are bad planners. It seems to be fundamental to design. Too optimistic in the beginning – “There is still plenty of time”, a design is never finished – “The next one will always be better”. </p>
 <pre><code class="Python">box = page.deepFind('ColoredSection2')
 </code></pre>
 
 <h2>Something more</h2>
 <p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<p>The core idea behind designing the design process, is that it doesn’t make a difference for how long you do it. A project of 1 hour, basically goes through the same stages (research – design – presentation) as a project of 1 year. </p>
 <pre><code class="Python">box = page.deepFind('Footer').append(doc.lib['footer'])
 </code></pre>
 

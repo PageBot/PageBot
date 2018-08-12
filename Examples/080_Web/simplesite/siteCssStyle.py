@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     siteAutoCss.py
+#     siteAutoStyle.py
 #
 from __future__ import division # Make integer division result in float.
 
@@ -26,9 +26,9 @@ from pagebot.toolbox.units import em
 
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
-DO_FILE = True
-DO_MAMP = False
-DO_GIT = False
+
+DO_FILE, DO_MAMP, DO_GIT = 'File', 'Mamp', 'Git' # Selectors for view type for output
+EXPORT_TYPE = DO_FILE
 
 class Header(Element):
     def build_html(self, view, path):
@@ -138,16 +138,18 @@ class SlideShow(Element):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         for i, e in enumerate(self.elements):
-            b.div(cssClass=self.cssId + ' fade')
+            cssClass = 'slide fade'
+            if i == 0:
+                cssClass += ' firstSlide'
+            b.div(cssClass=cssClass)
             e.build_html(view, path)
             b._div()
-        b.comment('End .'+self.cssId + ' .fade')
+            b.comment('End .slides .fade')
         b.comment('End '+self.__class__.__name__)
             
 class Hero(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
-        #t = """<h1>PageBotTemplate is a responsive template that allows web designers to build responsive websites faster.</h1>"""
         newTextBox('', parent=self, cssId='Introduction')
         SlideShow(parent=self, cssId='HeroSlides')
 
@@ -324,11 +326,11 @@ t = Typesetter(doc, tryExcept=False, verbose=False)
 # In this case it directly writes into the boxes on the Website template pages.
 t.typesetFile(MD_PATH)
 
-if DO_FILE:
+if EXPORT_TYPE == DO_FILE:
     doc.export(EXPORT_PATH)
     os.system('open "%s/index.html"' % EXPORT_PATH)
     
-elif DO_MAMP:
+elif EXPORT_TYPE == DO_MAMP:
     # Internal CSS file may be switched off for development.
     mampView = doc.newView('Mamp')
     mampView.resourcePaths = view.resourcePaths
@@ -345,7 +347,7 @@ elif DO_MAMP:
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
         os.system(u'open "%s"' % mampView.getUrl('SimpleSite'))
 
-elif DO_GIT:
+elif EXPORTTYPE == DO_GIT:
     # Make sure outside always has the right generated CSS
     view = doc.newView('Git')
     doc.build(path=EXPORT_PATH)
@@ -354,5 +356,5 @@ elif DO_GIT:
     os.system(u'open "%s"' % view.getUrl(DOMAIN))
 
 else: # No output view defined
-    print('Set DO_FILE or DO_MAMP or DO_GIT as True')
+    print('Set EXPORTTYPE to DO_FILE or DO_MAMP or DO_GIT')
 print('Done') 

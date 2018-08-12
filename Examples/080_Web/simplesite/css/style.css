@@ -29,10 +29,33 @@ a:hover{ text-decoration:none;}
 *{	box-sizing:border-box;
 	-moz-box-sizing:border-box;}
 
-/* Initial slides not showing*/
-.HeroSlides {
+/* Fading animation 
+https://www.w3schools.com/howto/howto_js_slideshow.asp
+JS code in main.js
+*/
+/* Initial slides not showing */
+.slide {
     display: none;
-}  
+}
+.firstSlide { 
+	display: block;} 
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+@-webkit-keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+
 /* structure */   
 .wrapper{
 	width: 92%; 
@@ -294,14 +317,6 @@ header{
 	margin-left:10%;
 	margin-right:10%;
 }
-
-.flexslider{
-	display:block;
-/*demo 1 slider theme*/	
-margin: 0; 
-}
-.flex-control-nav {bottom: 5px;}
-
 
 aside { 
 	float:right;
