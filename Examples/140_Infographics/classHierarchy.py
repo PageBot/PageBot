@@ -17,13 +17,17 @@ import sys, inspect
 import pagebot.contexts.drawbotcontext
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
-from pagebot.toolbox.color import Color, blackColor
+from pagebot.toolbox.color import Color, blackColor, blueColor
 
 context = getContext()
 
+X0 = 100
+Y0 = 100
+WIDTH = 1500
 HBOX = 30
 WBOX = 180
 GAP = 20
+HGAP = 100
 P = 5
 TEXTSIZE = pt(20)
 
@@ -31,9 +35,9 @@ drawnclasses = {}
 positions = []
 
 def drawClassHierarchy(obj):
-    x = 100
-    y = 100
     previous = None
+    y = Y0
+    x = X0
     
     for c in list(obj.__mro__)[::-1]:
         current = c.__name__
@@ -42,16 +46,25 @@ def drawClassHierarchy(obj):
         if previous is not None:
             drawConnection(current, previous)
         previous = current
-        y += 100
+        y += HGAP
 
 def drawConnection(current, previous):
-    
+    # TODO: as Bézier curves.
     pos0 = drawnclasses[current]
     p0x, p0y = pos0
     pos1 = drawnclasses[previous]
     p1x, p1y = pos1
-    context.stroke(blackColor)
-    context.line((p0x + WBOX / 2, p0y), (p1x + WBOX / 2, p1y + HBOX))
+    context.stroke(blueColor)
+    
+    if p0y > p1y:
+        p1y += HBOX
+    elif p0y < p1y:
+        p0y += HBOX
+    else:
+        p0y += HBOX
+        p1y += HBOX
+        
+    context.line((p0x + WBOX / 2, p0y), (p1x + WBOX / 2, p1y))
 
 def drawClass(name, x, y):
     if name in drawnclasses:
@@ -61,7 +74,11 @@ def drawClass(name, x, y):
     
     while pos in positions:
         px, py = pos
-        pos = (px + GAP + WBOX, py)
+        newx = px + GAP + WBOX
+        if newx >= WIDTH - WBOX - GAP:
+            newx = X0
+            py += HGAP# / 2
+        pos = (newx, py)
         
     context.fill(blackColor)
     context.fontSize(TEXTSIZE)
@@ -77,11 +94,13 @@ def drawClass(name, x, y):
     context.text(name, (pt(textx), pt(texty)))
     drawnclasses[name] = pos
     positions.append(pos)
-    
-context.newPage(pt(1000), pt(1000))
-#size('A1')
+
+#size('A1')    
+context.newPage(pt(WIDTH), pt(1000))
+
     
 classes = inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext'])
+classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.font']))
 
 for name, obj in classes:
     if inspect.isclass(obj):
