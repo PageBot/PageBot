@@ -34,13 +34,11 @@ def drawClassHierarchy(obj):
     x = 100
     y = 100
     for c in list(obj.__mro__)[::-1]:
-        drawClass(c, x, y)
+        key = c.__name__
+        drawClass(key, x, y)
         y += 100
-    print('...')
 
-def drawClass(c, x, y):
-    key = c.__name__
-
+def drawClass(key, x, y):
     if key in drawnclasses:
         return
         
