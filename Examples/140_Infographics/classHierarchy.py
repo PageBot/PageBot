@@ -33,13 +33,28 @@ positions = []
 def drawClassHierarchy(obj):
     x = 100
     y = 100
+    previous = None
+    
     for c in list(obj.__mro__)[::-1]:
-        key = c.__name__
-        drawClass(key, x, y)
+        current = c.__name__
+        drawClass(current, x, y)
+        
+        if previous is not None:
+            drawConnection(current, previous)
+        previous = current
         y += 100
 
-def drawClass(key, x, y):
-    if key in drawnclasses:
+def drawConnection(current, previous):
+    
+    pos0 = drawnclasses[current]
+    p0x, p0y = pos0
+    pos1 = drawnclasses[previous]
+    p1x, p1y = pos1
+    context.stroke(blackColor)
+    context.line((p0x + WBOX / 2, p0y), (p1x + WBOX / 2, p1y + HBOX))
+
+def drawClass(name, x, y):
+    if name in drawnclasses:
         return
         
     pos = (x, y)
@@ -54,12 +69,13 @@ def drawClass(key, x, y):
     boxx, boxy = pos
     textx = boxx + P
     texty = boxy + P
+    context.stroke(None)
     color = Color(0.6, 1, 0.6)
     context.fill(color)
     context.rect(pt(boxx), pt(boxy), pt (WBOX), pt(HBOX))
     context.fill(blackColor)
-    context.text(key, (pt(textx), pt(texty)))
-    drawnclasses[key] = pos
+    context.text(name, (pt(textx), pt(texty)))
+    drawnclasses[name] = pos
     positions.append(pos)
     
 context.newPage(pt(1000), pt(1000))
