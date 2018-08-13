@@ -22,7 +22,13 @@ from pagebot.toolbox.color import Color, blackColor
 context = getContext()
 
 HBOX = 30
-WBOX = 160
+WBOX = 180
+GAP = 20
+P = 5
+TEXTSIZE = pt(20)
+
+drawnclasses = {}
+positions = []
 
 def drawClassHierarchy(obj):
     x = 100
@@ -33,12 +39,30 @@ def drawClassHierarchy(obj):
     print('...')
 
 def drawClass(c, x, y):
+    key = c.__name__
+
+    if key in drawnclasses:
+        return
+        
+    pos = (x, y)
+    
+    while pos in positions:
+        px, py = pos
+        pos = (px + GAP + WBOX, py)
+        
+    context.fill(blackColor)
+    context.fontSize(TEXTSIZE)
+
+    boxx, boxy = pos
+    textx = boxx + P
+    texty = boxy + P
     color = Color(0.6, 1, 0.6)
     context.fill(color)
-    context.rect(pt(x), pt(y), pt (WBOX), pt(HBOX))
+    context.rect(pt(boxx), pt(boxy), pt (WBOX), pt(HBOX))
     context.fill(blackColor)
-    context.fontSize(pt(20))
-    context.text(c.__name__, (x+5, y+5))
+    context.text(key, (pt(textx), pt(texty)))
+    drawnclasses[key] = pos
+    positions.append(pos)
     
 context.newPage(pt(1000), pt(1000))
 #size('A1')
