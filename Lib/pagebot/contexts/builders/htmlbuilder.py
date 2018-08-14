@@ -16,6 +16,8 @@
 #
 import os
 import codecs
+#import sass
+
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
@@ -431,6 +433,7 @@ table {
     def writeSass(self, path):
         """Write the collect set of SASS variables to path."""
         try:
+            print('Writing "%s"' % path)
             f = codecs.open(path, 'w', 'utf-8')
             for sassId, value in sorted(self._sassVariables.items()):
                 f.write('$%s: %s\n' % (sassId, value))
@@ -439,8 +442,8 @@ table {
             print('[HtmlBuilder.writeSass] Cannot write SASS file "%s"' % path)
 
     def compileSass(self, sassPath, cssPath):
-        print('COMPILE', sassPath, cssPath)
-        os.system('sass "%s" "%s"' % (sassPath, cssPath))
+        pass
+        #sass.compile(sassPath, cssPath, output_style='compressed')
 
     def build_sass(self, e, view):
         sass = self._sassVariables

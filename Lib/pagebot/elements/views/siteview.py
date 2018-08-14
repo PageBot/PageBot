@@ -31,7 +31,7 @@ class SiteView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
-    CSS_PATH = 'css/style.css'
+    SASS_CSS_PATH = 'css/style.sass.css'
     SASS_PATH = 'css/style.sass'
     SASS_VARIABLES_PATH = 'css/variables.sass'
 
@@ -53,7 +53,7 @@ class SiteView(HtmlView):
 
         # Default CSS urls to inclide 
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
-        self.cssUrls = cssUrls or [self.CSS_PATH] # Added as links in the page <head>
+        self.cssUrls = cssUrls or [self.SASS_CSS_PATH] # Added as links in the page <head>
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
@@ -108,9 +108,6 @@ class SiteView(HtmlView):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        # If resources defined, copy them to the export folder.
-        self.copyResources(path)
-
         for pn, pages in doc.pages.items():
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
@@ -120,7 +117,10 @@ class SiteView(HtmlView):
         # Write all collected SASS vatiables into one file
         b.writeSass(self.SASS_VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.CSS_PATH)
+        b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
 
     def getUrl(self, name):
         u"""Answer the local URL for Mamp Pro to find the copied website."""
