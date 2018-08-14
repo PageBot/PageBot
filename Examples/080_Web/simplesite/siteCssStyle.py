@@ -21,7 +21,7 @@ from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.typesetter import Typesetter
 from pagebot.elements import *
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, whiteColor
 from pagebot.toolbox.units import em
 
 MD_PATH = 'content.md'
@@ -260,7 +260,7 @@ SITE = [
     ('page5', 'PageBot Responsive Page 5'),
 ]
 style = dict(
-    fill=color(1, 0, 0),
+    fill=whiteColor,
     margin=em(0),
     padding=em(3),
     fontSize=em(1.1),
@@ -270,7 +270,8 @@ doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
-view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
+#view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.sass.css')
+view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
 
 for pn, (name, title) in enumerate(SITE):
     page = doc[pn+1]
@@ -315,9 +316,9 @@ for pn, (name, title) in enumerate(SITE):
     menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
     menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
     
-    hero = Hero(parent=page, fontSize=em(1.1), fill=color(0, 1, 0))
+    hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
     
-    content = Content(parent=page, fill='red')
+    content = Content(parent=page, fill=whiteColor)
     section = ColoredSection(parent=page)
     footer = Footer(parent=page)
     
