@@ -479,7 +479,7 @@ class DrawBotContext(BaseContext):
         DrawBot FormattedString at position p."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        ppt = point2D(upt(p)) 
+        ppt = point2D(upt(p))
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
     def textBox(self, sOrBs, r):
@@ -492,7 +492,7 @@ class DrawBotContext(BaseContext):
         """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        xpt, ypt, wpt, hpt = upt(r) 
+        xpt, ypt, wpt, hpt = upt(r)
         self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
     def hyphenation(self, onOff):
