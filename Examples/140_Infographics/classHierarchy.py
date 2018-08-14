@@ -12,3 +12,174 @@
 #
 #     classHierarchy.py
 #
+
+import sys, inspect
+import pagebot.contexts.drawbotcontext
+from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import *
+from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
+
+context = getContext()
+
+X0 = 100
+Y0 = 100
+WIDTH = 1190
+HEIGHT = 842
+HBOX = 50
+WBOX = 180
+GAP = 20
+HGAP = 100
+P = 15
+TEXTSIZE = pt(14)
+
+def drawClassHierarchy(obj):
+    previous = None
+    y = Y0
+    x = X0
+    
+    for c in list(obj.__mro__)[::-1]:
+        current = c.__name__
+        if current == 'object':
+            continue
+        drawClass(current, x, y)
+        
+        if previous is not None:
+            drawConnection(current, previous)
+        previous = current
+        y += HGAP
+
+def drawConnection(current, previous):
+    #  TODO: as Bézier curves.
+    if sorted([current, previous]) in connections:
+        return
+        
+    #sprint('Connecting %s to %s' % (current, previous))
+        
+    pos0 = drawnclasses[current]
+    p0x, p0y = pos0
+    pos1 = drawnclasses[previous]
+    p1x, p1y = pos1
+    context.stroke(blueColor)
+    
+    # Determines box entry / exit points.
+    if p0y > p1y:
+        #print('%s > %s' % (current, previous))
+        p0x += WBOX / 2
+        p1x += WBOX / 2
+        p1y += HBOX
+    elif p0y < p1y:
+        # Never happens?
+        p0x + WBOX / 2
+        p1x + WBOX / 2
+        p0y += HBOX
+    elif p0y == p1y:
+        p0y += HBOX / 2
+        p1y += HBOX / 2
+        if p1x > p0x:
+            p0x += WBOX
+        elif p1x < p0x:
+            p1x += WBOX
+    
+    # TODO: draw only once for any location.
+    context.circle(p0x, p0y, 3)
+    context.circle(p1x, p1y, 3)
+    # Straight line.    
+    #context.line((p0x, p0y), (p1x, p1y))
+
+    # Curve.
+
+    path = context.newPath()
+    context.moveTo((p0x, p0y))
+
+    cp0x = p0x - 5
+    cp0y = p0y - (p0y - p1y) / 3
+    context.stroke(greenColor)
+    #context.fill(None)
+    #context.circle(cp0x, cp0y, 3)
+
+    cp1x = p1x + 5
+    cp1y = p1y + (p0y - p1y) / 3
+    context.stroke(greenColor)
+    #context.fill(None)
+    #context.circle(cp1x, cp1y, 3)
+    context.fill(None)
+    context.stroke(blueColor)
+    context.curveTo((cp0x, cp0y), (cp1x, cp1y), (p1x, p1y))
+    drawPath(path)
+    
+    #cp1x = p1x
+    #path.moveTo((p0x, p0y))
+    connections.append(sorted([current, previous]))
+    #print(connections)
+
+def drawClass(name, x, y):
+    if name in drawnclasses:
+        return
+        
+    pos = (x, y)
+    
+    while pos in positions:
+        px, py = pos
+        newx = px + GAP + WBOX
+        if newx >= WIDTH - WBOX - GAP:
+            newx = X0
+            py += HGAP# / 2
+        pos = (newx, py)
+        
+    context.fill(blackColor)
+    context.fontSize(TEXTSIZE)
+
+    boxx, boxy = pos
+    textx = boxx + P
+    texty = boxy + P
+    context.stroke(None)
+    color = Color(0.6, 1, 0.6)
+    context.fill(color)
+    context.rect(pt(boxx), pt(boxy), pt (WBOX), pt(HBOX))
+    context.fill(blackColor)
+    context.text(name, (pt(textx), pt(texty)))
+    drawnclasses[name] = pos
+    positions.append(pos)
+
+def drawClasses(classes):
+    for name, obj in classes:
+        if inspect.isclass(obj):
+            drawClassHierarchy(obj)
+
+#size('A1')
+
+context.newPage(pt(WIDTH), pt(HEIGHT))
+connections = []
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
+#classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.flatcontext']))
+drawClasses(classes)
+
+context.newPage(pt(WIDTH), pt(HEIGHT))
+connections = []
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.font']))
+drawClasses(classes)
+
+context.newPage(pt(WIDTH), pt(HEIGHT))
+connections = []
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.toolbox.units']))
+drawClasses(classes)
+
+from pagebot.document import *
+
+context.newPage(pt(WIDTH), pt(HEIGHT))
+connections = []
+drawnclasses = {}
+positions = []
+classes = []
+classes.extend(inspect.getmembers(sys.modules['pagebot.document']))
+print(classes)
+drawClasses(classes)
