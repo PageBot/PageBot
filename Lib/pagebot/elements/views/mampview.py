@@ -34,9 +34,9 @@ class MampView(SiteView):
 
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    CSS_PATH = SITE_ROOT_PATH + 'css/style.css'
-    SASS_PATH = SITE_ROOT_PATH + 'css/style.sass'
-    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.sass'
+    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
+    SASS_PATH = SITE_ROOT_PATH + 'css/style.scss'
+    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
 
     #   B U I L D  H T M L  /  C S S
 
@@ -69,9 +69,6 @@ class MampView(SiteView):
             if not path.endswith('/'):
                 path += '/'
 
-        # If resources defined, copy them to the export folder.
-        self.copyResources(path)
-
         for pn, pages in self.doc.pages.items():
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
@@ -81,7 +78,10 @@ class MampView(SiteView):
         # Write all collected SASS vatiables into one file
         b.writeSass(self.VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.CSS_PATH)
+        b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
 
 
     def getUrl(self, name):

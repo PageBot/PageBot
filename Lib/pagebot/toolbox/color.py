@@ -456,7 +456,7 @@ class Color(object):
             hexOrName = rgb.lower()
             if hexOrName in CSS_COLOR_NAMES: # Not hex, but a name instead. We're tolerant: convert anyway.
                 self._name = hexOrName
-            else: # Otherwise try to conver hex value.
+            else: # Otherwise try to convert hex value.
                 rgbHex = hexOrName.replace('#','').replace(' ','')
                 self.r, self.g, self.b = int2Rgb(int(rgbHex, 16)) # Always convert.
 
@@ -788,8 +788,19 @@ class Color(object):
         '#00E673'
         >>> color((0, 0, 0)).css
         '#000000'
+        >>> color((0, 0, 0, 0.5)).css
+        'rgba(0.00, 0.00, 0.00, 0.50'
+        >>> color('red', a=0.1).css # Transparant rgb name color as CSS notation
+        'rgba(1.00, 0.00, 0.00, 0.10'
+        >>> color(spot=300, a=0.1).css # Transparant spot color as CSS notation
+        'rgba(0.00, 0.45, 0.78, 0.10'
+        >>> color(cmyk=(0.1, 0.2, 0.3, 0.4), a=0.1).css # Transparant CMYK color as CSS notation
+        'rgba(0.54, 0.48, 0.42, 0.10'
         """
-        return ('#%s' % self.hex).upper()
+        if self.a == 1:
+            return ('#%s' % self.hex).upper() # No opacity, answer as hex color.
+        r, g, b, = self.rgb
+        return 'rgba(%0.2f, %0.2f, %0.2f, %0.2f' % (r, g, b, self.a)
     css = property(_get_css)
 
     def moreRed(self, v=0.5):
@@ -801,7 +812,7 @@ class Color(object):
         Color(r=0.19, g=0.2, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreRed(0.8).r
         '0.82'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreRed() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreRed() # Color changes convert to RGB mode.
         Color(r=0.77, g=0.48, b=0.42)
         """
         r, g, b = self.rgb
@@ -816,7 +827,7 @@ class Color(object):
         Color(r=0.1, g=0.28, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreGreen(0.8).g
         '0.84'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreGreen() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreGreen() # Color changes convert to RGB mode.
         Color(r=0.54, g=0.74, b=0.42)
         """
         r, g, b = self.rgb
@@ -831,7 +842,7 @@ class Color(object):
         Color(r=0.1, g=0.2, b=0.37)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreBlue(0.8).b
         '0.86'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreBlue() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreBlue() # Color changes convert to RGB mode.
         Color(r=0.54, g=0.48, b=0.71)
         """
         r, g, b = self.rgb
@@ -844,7 +855,7 @@ class Color(object):
         Color(r=0.5, g=0.5, b=0.5)
         >>> blackColor.lighter(0.8)
         Color(r=0.8, g=0.8, b=0.8)
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lighter() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lighter() # Color changes convert to RGB mode.
         Color(r=0.77, g=0.74, b=0.71)
         """
         rgb = self.moreRed(v).r, self.moreGreen(v).g, self.moreBlue(v).b
@@ -859,7 +870,7 @@ class Color(object):
         Color(r=0.03, g=0.2, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessRed(0.8).r
         '0.08'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessRed() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessRed() # Color changes convert to RGB mode.
         Color(r=0.27, g=0.48, b=0.42)
         """
         r, g, b = self.rgb
@@ -874,7 +885,7 @@ class Color(object):
         Color(r=0.1, g=0.06, b=0.3)
         >>> '%0.2f' %Color(0.1, 0.2, 0.3, 0.4).lessGreen(0.8).g
         '0.16'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessGreen() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessGreen() # Color changes convert to RGB mode.
         Color(r=0.54, g=0.24, b=0.42)
         """
         r, g, b = self.rgb
@@ -889,7 +900,7 @@ class Color(object):
         Color(r=0.1, g=0.2, b=0.09)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessBlue(0.8).b
         '0.24'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessBlue() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessBlue() # Color changes convert to RGB mode.
         Color(r=0.54, g=0.48, b=0.21)
         """
         r, g, b = self.rgb
@@ -902,7 +913,7 @@ class Color(object):
         Color(r=0.5, g=0.5, b=0.5)
         >>> color('black').darker() # Black does not go any darker
         Color(r=0, g=0, b=0)
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).darker() # Color changes conver to RGB mode.
+        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).darker() # Color changes convert to RGB mode.
         Color(r=0.27, g=0.24, b=0.21)
         """
         c = copy(self)
