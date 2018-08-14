@@ -60,7 +60,7 @@ class Gradient(object):
 class Shadow(object):
 
     def __init__(self, offset=None, blur=None, color=None):
-        assert isinstance(color, Color))
+        assert isinstance(color, Color)
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
