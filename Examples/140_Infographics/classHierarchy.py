@@ -32,9 +32,6 @@ HGAP = 100
 P = 15
 TEXTSIZE = pt(14)
 
-drawnclasses = {}
-positions = []
-
 def drawClassHierarchy(obj):
     previous = None
     y = Y0
@@ -112,11 +109,11 @@ def drawClasses(classes):
         if inspect.isclass(obj):
             drawClassHierarchy(obj)
 
-#size('A1')    
+#size('A1')
 context.newPage(pt(WIDTH), pt(HEIGHT))
-
+drawnclasses = {}
+positions = []
 classes = []    
-#classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
 classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.font']))
 drawClasses(classes)
 
@@ -125,6 +122,18 @@ drawnclasses = {}
 positions = []
 classes = []    
 classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
+drawClasses(classes)
 
+context.newPage(pt(WIDTH), pt(HEIGHT))
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.toolbox.units']))
+drawClasses(classes)
 
+context.newPage(pt(WIDTH), pt(HEIGHT))
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.glyph']))
 drawClasses(classes)
