@@ -23,13 +23,14 @@ context = getContext()
 
 X0 = 100
 Y0 = 100
-WIDTH = 1500
-HBOX = 30
+WIDTH = 1190
+HEIGHT = 842
+HBOX = 50
 WBOX = 180
 GAP = 20
 HGAP = 100
-P = 5
-TEXTSIZE = pt(20)
+P = 15
+TEXTSIZE = pt(14)
 
 drawnclasses = {}
 positions = []
@@ -57,14 +58,25 @@ def drawConnection(current, previous):
     context.stroke(blueColor)
     
     if p0y > p1y:
+        print('%s > %s' % (current, previous))
+
+        p0x += WBOX / 2
+        p1x += WBOX / 2
         p1y += HBOX
     elif p0y < p1y:
+
+        p0x + WBOX / 2
+        p1x + WBOX / 2
         p0y += HBOX
-    else:
-        p0y += HBOX
-        p1y += HBOX
+    elif p0y == p1y:
+        p0y += HBOX / 2
+        p1y += HBOX / 2
+        if p1x > p0x:
+            p0x += WBOX
+        elif p1x < p0x:
+            p1x += WBOX
         
-    context.line((p0x + WBOX / 2, p0y), (p1x + WBOX / 2, p1y))
+    context.line((p0x, p0y), (p1x, p1y))
 
 def drawClass(name, x, y):
     if name in drawnclasses:
@@ -95,13 +107,24 @@ def drawClass(name, x, y):
     drawnclasses[name] = pos
     positions.append(pos)
 
+def drawClasses(classes):
+    for name, obj in classes:
+        if inspect.isclass(obj):
+            drawClassHierarchy(obj)
+
 #size('A1')    
-context.newPage(pt(WIDTH), pt(1000))
+context.newPage(pt(WIDTH), pt(HEIGHT))
 
-    
-classes = inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext'])
+classes = []    
+#classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
 classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.font']))
+drawClasses(classes)
 
-for name, obj in classes:
-    if inspect.isclass(obj):
-        drawClassHierarchy(obj)
+context.newPage(pt(WIDTH), pt(HEIGHT))
+drawnclasses = {}
+positions = []
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
+
+
+drawClasses(classes)
