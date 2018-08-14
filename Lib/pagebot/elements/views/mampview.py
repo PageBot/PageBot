@@ -19,16 +19,14 @@ import shutil
 
 from pagebot.contexts.platform import getMampPath
 from pagebot.elements.views.siteview import SiteView
-from pagebot.style import ORIGIN
-
 
 class MampView(SiteView):
-    
+
     viewId = 'Mamp'
 
     # If the MAMP server application not installed, a browser is opened on the MAMP website to download it.
     # There is a free demo version can be installed.
-    MAMP_SHOP_URL = 'https://www.mamp.info/en/' 
+    MAMP_SHOP_URL = 'https://www.mamp.info/en/'
     LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
     SITE_ROOT_PATH = getMampPath()
 
@@ -79,9 +77,9 @@ class MampView(SiteView):
                 getattr(page, hook)(self, path) # Typically calling page.build_html
 
         # Write all collected SASS vatiables into one file
-        b.writeSass(self.VARIABLES_PATH)
+        self.context.b.writeSass(self.VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.CSS_PATH)
+        self.context.b.compileSass(self.SASS_PATH, self.CSS_PATH)
 
 
     def getUrl(self, name):

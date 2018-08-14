@@ -26,6 +26,7 @@ try:
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    import sys
     sys.exit()
 
 from pagebot.contexts.platform import getContext
@@ -594,7 +595,7 @@ class Typesetter(object):
 
         # Ignore </pre> tag output, as it is part of a ~~~Pyhton code block
         if self.writeTags and node.tag != 'pre':
-            # Close the HTML tag of this node. 
+            # Close the HTML tag of this node.
             self._htmlNode(node)
 
         # Now restore the graphic state at the end of the element content processing to the

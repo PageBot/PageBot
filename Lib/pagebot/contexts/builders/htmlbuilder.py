@@ -373,7 +373,7 @@ table {
         except IOError:
             print('[%s.writeJs] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
-    #   C S S 
+    #   C S S
 
     def addCss(self, css):
         """Add the css chunk to self.css, the ordered list of css for output.
@@ -532,6 +532,7 @@ table {
         css += '\n'
         self.addCss(css)
 
+        b = HtmlBuilder()
         # Write all collected SASS vatiables into one file
         b.writeSass(self.DEFAULT_SASS_PATH)
         # Compile SASS to CSS
