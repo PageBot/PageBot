@@ -13,6 +13,8 @@
 #     classHierarchy.py
 #
 #     TODO: make OO
+#     TODO: graphics elements
+#     TODO: element alignments
 
 import sys, inspect
 from pagebot.contexts.platform import getContext
