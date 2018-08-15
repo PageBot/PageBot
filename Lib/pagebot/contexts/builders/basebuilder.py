@@ -3,18 +3,19 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     basebuilder.py
 #
 class BaseBuilder(object):
-    u"""The BaseBuilder is the abstract builder class, for all builders that need
-    to import and write files in a directory, or draw on their builders, besides the binary 
-    export formats that are already supported by e.g. DrawBot."""
+    """The BaseBuilder is the abstract builder class, for all builders that
+    need to import and write files in a directory, or draw on their builders,
+    besides the binary export formats that are already supported by e.g.
+    DrawBot."""
     pass

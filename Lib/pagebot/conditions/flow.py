@@ -3,12 +3,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     flow.py
@@ -20,13 +20,13 @@
 from __future__ import division
 from pagebot.conditions.condition import Condition
 
-# Margins
+# Text overflow
 
 class Overflow2Next(Condition):
 	u"""If there is overflow in the element, then try to solve it.
 
 	>>> from pagebot.elements import newTextBox, Element
-	>>> e1 = newTextBox('ABC ' * 4, w=200, h=200, )
+	>>> e1 = newTextBox('ABC ' * 4, w=200, h=200 )
 	>>> e2 = Element(x=10, y=10, w=200, h=200, name='Root', elements=[e1])
 	>>> e1.parent.name
 	'Root'
@@ -40,7 +40,7 @@ class Overflow2Next(Condition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.overflow2Next(), e, score)
 
-class EqualizeFlow22Height(Condition):
+class EqualizeFlow2Height(Condition):
 	u"""Test if all elements in the flow have the same height and/or same amount of text lines."""
 	# TODO
 

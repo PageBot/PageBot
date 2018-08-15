@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #	  variablecircle.py
@@ -23,9 +23,10 @@ from __future__ import division
 from math import pi, sin, cos
 
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.color import blackColor
 
 context = getContext()
 
@@ -57,18 +58,6 @@ class VariableCircle(Element):
         self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
         self.showAxisNames = showAxisNames
 
-    def _get_w(self): # Width
-        return min(self.maxW, max(self.minW, self.css('w'), self.minW)) # From self.style, don't inherit.
-    def _set_w(self, w):
-        self.style['w'] = w or self.minW # Overwrite element local style from here, parent css becomes inaccessable.
-    w = property(_get_w, _set_w)
-
-    def _get_h(self): # Height
-        return min(self.maxH, max(self.minH, self.css('h'), self.minH)) # From self.style, don't inherit.
-    def _set_h(self, h):
-        self.style['h'] = h or self.minH # Overwrite element local style from here, parent css becomes inaccessable.
-    h = property(_get_h, _set_h)
-
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
@@ -94,8 +83,8 @@ class VariableCircle(Element):
             bs = context.newString(axisName,
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
-                                              textFill=0))
-            tw, th = context.textSize(bs)
+                                              textFill=blackColor))
+            tw, th = bs.size
             context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
@@ -118,7 +107,7 @@ class VariableCircle(Element):
         # Draw name of the font
         bs = context.newString(self.font.info.familyName,
                                 style=dict(font=self.style['labelFont'],
-                                fontSize=self.style['axisNameFontSize'], textFill=0))
+                                fontSize=self.style['axisNameFontSize'], textFill=blackColor))
         context.text(bs, (px-fontSize/2, py+self.h+fontSize/2))
 
         # Draw spokes
@@ -161,7 +150,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=axisNameFontSize,
                                             fill=self.style.get('axisNameColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
@@ -176,7 +165,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -192,7 +181,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -207,7 +196,7 @@ class VariableCircle(Element):
                                  style=dict(font=self.style.get('labelFont', 'Verdana'),
                                             fontSize=valueFontSize,
                                             fill=self.style.get('axisValueColor', 0)))
-                tw, th = context.textSize(bs)
+                tw, th = bs.size
                 context.fill((0.7, 0.7, 0.7, 0.6))
                 context.stroke(None)
                 minM = 0.2
@@ -218,9 +207,12 @@ class VariableCircle(Element):
 
     def build(self, view, origin, drawElements=True):
         u"""Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     variableglyphs.py
@@ -23,7 +23,7 @@ from copy import copy
 from pagebot.elements import Element
 from pagebot.style import makeStyle
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 
 context = getContext()
 
@@ -51,9 +51,12 @@ class VariableGlyphs(Element):
 
         c = self.context
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

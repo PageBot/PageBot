@@ -3,12 +3,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     align.py
@@ -25,8 +25,8 @@ class SolveBlock(Condition):
 	def solve(self, e, score):
 		for child in e.elements:
 			child.solve(score)
-			
-#	F I T T I N G  P A G E  P A D D I N G 
+
+#	F I T T I N G  P A G E  P A D D I N G
 
 #   By fitting conditions, elements grow to match the size of parents.
 
@@ -38,11 +38,11 @@ class Fit(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(12, 12, 276, 276)
+	(12pt, 12pt, 276pt, 276pt)
 	"""
 
 	def _getConditions(self):
@@ -54,7 +54,7 @@ class Fit(Condition):
 		get smaller than their minimum size, if the start position is wrong."""
 		self.evaluateAll(e, self._getConditions(), score)
 
-	def solve(self, e, score):	
+	def solve(self, e, score):
 		self.solveAll(e, self._getConditions(), score)
 
 class Fit2Sides(Condition):
@@ -65,11 +65,11 @@ class Fit2Sides(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0, 0, 300, 300)
+	(0pt, 0pt, 300pt, 350pt)
 	"""
 	def _getConditions(self):
 		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
@@ -77,7 +77,7 @@ class Fit2Sides(Condition):
 	def evaluate(self, e, score):
 		self.evaluateAll(e, self._getConditions(), score)
 
-	def solve(self, e, score):	
+	def solve(self, e, score):
 		self.solveAll(e, self._getConditions(), score)
 
 # There are no "FitOrigin" condition, as these may result is extremely large scalings.
@@ -90,17 +90,17 @@ class Fit2Left(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-	(12, 20, 58, 50)
+	(12pt, 20pt, 58pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2Left(), e, score)
 
 class Fit2Right(Condition):
@@ -111,17 +111,17 @@ class Fit2Right(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent on padding
-	(20, 20, 268, 50)
+	(20pt, 20pt, 268pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2Right(), e, score)
 
 class Fit2Width(Condition):
@@ -132,19 +132,41 @@ class Fit2Width(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0, 20, 300, 50)
+	(0pt, 20pt, 300pt, 50pt)
 	"""
 	def test(self, e):
 		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Left() and e.fit2Right(), e, score)
-		
+
+class Scale2Width(Condition):
+	u"""Grow the element to left and right side, until it fits the parent element.
+	The scale vertical to the original ratio.
+
+	>>> from pagebot.elements import Element
+	>>> conditions = [Scale2Width()]
+	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
+	>>> e2 = Element(w=300, h=400, elements=[e1])
+	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
+	(20pt, 20pt, 50pt, 50pt)
+	>>> e1.solve() # Solve position and size from conditions.
+	Score: 1 Fails: 0
+	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
+	(0pt, 20pt, 300pt, 300pt)
+	"""
+	def test(self, e):
+		return e.isLeftOnLeft(self.tolerance) and e.isRightOnRight(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2Left() and e.scale2Right(), e, score)
+
 class Fit2Height(Condition):
 	u"""Grow the element to top and bottom side, until it fits the parent element.
 
@@ -153,19 +175,19 @@ class Fit2Height(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 0, 50, 400)
+	(20pt, 0pt, 50pt, 400pt)
 	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance) and e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Top() and e.fit2Bottom(), e, score)
-		
+
 class Fit2Top(Condition):
 	u"""Grow the element to top side, until it fits the parent element.
 
@@ -174,17 +196,17 @@ class Fit2Top(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 20, 50, 400)
+	(20pt, 20pt, 50pt, 430pt)
 	"""
 	def test(self, e):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2Top(), e, score)
 
 class Fit2Bottom(Condition):
@@ -195,17 +217,17 @@ class Fit2Bottom(Condition):
 	>>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
 	>>> e2 = Element(w=300, h=400, elements=[e1])
 	>>> e1.x, e1.y, e1.w, e1.h # Default position and size
-	(20, 20, 50, 50)
+	(20pt, 20pt, 50pt, 50pt)
 	>>> e1.solve() # Solve position and size from conditions.
 	Score: 1 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(20, 0, 50, 20)
+	(20pt, 0pt, 50pt, 20pt)
 	"""
 	def test(self, e):
 		return e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2Bottom(), e, score)
 
 #	F I T T I N G  S I D E S
@@ -217,15 +239,15 @@ class Fit2WidthSides(Condition): # Note the plural in the name!
 		return e.isLeftOnLeftSide(self.tolerance) and e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2LeftSide() and e.fit2RightSide(), e, score)
-		
+
 class Fit2LeftSide(Condition):
 	def test(self, e):
 		return e.isLeftOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2LeftSide(), e, score)
 
 class Fit2RightSide(Condition):
@@ -233,7 +255,7 @@ class Fit2RightSide(Condition):
 		return e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2RightSide(), e, score)
 
 class Fit2HeightSides(Condition):
@@ -241,15 +263,15 @@ class Fit2HeightSides(Condition):
 		return e.isTopOnTopSide(self.tolerance) and e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2TopSide() and e.fit2BottomSide(), e, score)
-		
+
 class Fit2TopSide(Condition):
 	def test(self, e):
 		return e.isTopOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2TopSide(), e, score)
 
 class Fit2BottomSide(Condition):
@@ -257,10 +279,10 @@ class Fit2BottomSide(Condition):
 		return e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2BottomSide(), e, score)
 
-#	S H R I N K 
+#	S H R I N K
 
 #   By shrinking conditions, elements get smaller to match the size of their children.
 #   Not only literally ”shrinking”, if self is smaller than the space occupied by
@@ -279,7 +301,7 @@ class Shrink(Condition):
 		get smaller than their minimum size, if the start position is wrong."""
 		self.evaluateAll(e, self._getConditions(), score)
 
-	def solve(self, e, score):	
+	def solve(self, e, score):
 		self.solveAll(e, self._getConditions(), score)
 
 class Shrink2BlockSides(Condition):
@@ -292,7 +314,7 @@ class Shrink2BlockSides(Condition):
 	def evaluate(self, e, score):
 		self.evaluateAll(e, self._getConditions(), score)
 
-	def solve(self, e, score):	
+	def solve(self, e, score):
 		self.solveAll(e, self._getConditions(), score)
 
 # There are no "ShrinkOrigin" condition, as these may result is extremely large scalings.
@@ -302,7 +324,7 @@ class Shrink2BlockLeft(Condition):
 		return e.isShrunkOnBlockLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockLeft(), e, score)
 
 class Shrink2BlockRight(Condition):
@@ -310,16 +332,16 @@ class Shrink2BlockRight(Condition):
 		return e.isShrunkOnBlockRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockRight(), e, score)
 
-		
+
 class Shrink2BlockTop(Condition):
 	def test(self, e):
 		return e.isShrunkOnBlockTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockTop(), e, score)
 
 class Shrink2BlockBottom(Condition):
@@ -327,7 +349,7 @@ class Shrink2BlockBottom(Condition):
 		return e.isShrunkOnBlockBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockBottom(), e, score)
 
 #	S H R I N K I N G  S I D E S
@@ -340,15 +362,15 @@ class Shrink2BlockWidthSides(Condition): # Note the plural in the name.
 		return e.isShrunkOnBlockLeftSide(self.tolerance) and e.isShrunkOnBlockRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockLeftSide() and e.shrink2BlockRightSide(), e, score)
-		
+
 class Shrink2BlockLeftSide(Condition):
 	def test(self, e):
 		return e.isShrunkOnBlockLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockLeftSide(), e, score)
 
 class Shrink2BlockRightSide(Condition):
@@ -356,7 +378,7 @@ class Shrink2BlockRightSide(Condition):
 		return e.isShrunkOnBlockRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.strink2BlockRightSide(), e, score)
 
 class Shrink2BlockHeightSide(Condition):
@@ -364,15 +386,15 @@ class Shrink2BlockHeightSide(Condition):
 		return e.isShrunkOnBlockTopSide(self.tolerance) and e.isShrunkOnBlockBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockTopSide() and e.shrink2BlockBottomSide(), e, score)
-		
+
 class Shrink2BlockTopSide(Condition):
 	def test(self, e):
 		return e.isShrunkOnBlockTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockTopSide(), e, score)
 
 class Shrink2BlockBottomSide(Condition):
@@ -380,7 +402,7 @@ class Shrink2BlockBottomSide(Condition):
 		return e.isShrunkOnBlockBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.shrink2BlockBottomSide(), e, score)
 
 #	B L O C K  F I T T I N G
@@ -392,7 +414,7 @@ class FitBlock2Width(Condition):
 		return e.isBlockFittingWidth(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fitBlock2Width(), e, score)
 
 class FitBlock2WidthSides(Condition):
@@ -400,7 +422,7 @@ class FitBlock2WidthSides(Condition):
 		return e.isBlockFittingWidthSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fitBlock2WidthSides(), e, score)
 
 class FitBlock2Height(Condition):
@@ -408,7 +430,7 @@ class FitBlock2Height(Condition):
 		return e.isBlockFittingHeight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fitBlock2Height(), e, score)
 
 class FitBlock2HeightSides(Condition):
@@ -416,7 +438,7 @@ class FitBlock2HeightSides(Condition):
 		return e.isBlockFittingHeightSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fitBlock2HeightSides(), e, score)
 
 #	C E N T E R  H O R I Z O N T A L
@@ -429,7 +451,7 @@ class Center2Center(Condition):
 		return e.isCenterOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2Center(), e, score)
 
 class Left2Center(Condition):
@@ -438,7 +460,7 @@ class Left2Center(Condition):
 		return e.isLeftOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Center(), e, score)
 
 class Right2Center(Condition):
@@ -447,7 +469,7 @@ class Right2Center(Condition):
 		return e.isRightOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2Center(), e, score)
 
 class Origin2Center(Condition):
@@ -456,7 +478,7 @@ class Origin2Center(Condition):
 		return e.isOriginOnCenter(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Center(), e, score)
 
 #	Center Horizontal Sides
@@ -467,7 +489,7 @@ class Center2CenterSides(Condition):
 		return e.isCenterOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2CenterSides(), e, score)
 
 class Left2CenterSides(Condition):
@@ -476,7 +498,7 @@ class Left2CenterSides(Condition):
 		return e.isLeftOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2CenterSides(), e, score)
 
 class Right2CenterSides(Condition):
@@ -485,7 +507,7 @@ class Right2CenterSides(Condition):
 		return e.isRightOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2CenterSides(), e, score)
 
 class Origin2CenterSides(Condition):
@@ -494,7 +516,7 @@ class Origin2CenterSides(Condition):
 		return e.isOriginOnCenterSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2CenterSides(), e, score)
 
 #   L E F T / R I G H T
@@ -505,7 +527,7 @@ class Center2Left(Condition):
 		return e.isCenterOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2Left(), e, score)
 
 class Left2Left(Condition):
@@ -514,7 +536,7 @@ class Left2Left(Condition):
 		return e.isLeftOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Left(), e, score)
 
 class Right2Left(Condition):
@@ -523,7 +545,7 @@ class Right2Left(Condition):
 		return e.isRightOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2Left(), e, score)
 
 class Origin2Left(Condition):
@@ -532,7 +554,7 @@ class Origin2Left(Condition):
 		return e.isOriginOnLeft(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Left(), e, score)
 
 class Center2LeftSide(Condition):
@@ -541,7 +563,7 @@ class Center2LeftSide(Condition):
 		return e.isCenterOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2LeftSide(), e, score)
 
 class Left2LeftSide(Condition):
@@ -550,7 +572,7 @@ class Left2LeftSide(Condition):
 		return e.isLeftOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2LeftSide(), e, score)
 
 # Missing on purpose: Right2LeftSide(Condition). Element is not visible.
@@ -561,7 +583,7 @@ class Origin2LeftSide(Condition):
 		return e.isOriginOnLeftSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2LeftSide(), e, score)
 
 class Center2Right(Condition):
@@ -570,7 +592,7 @@ class Center2Right(Condition):
 		return e.isCenterOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2Right(), e, score)
 
 class Left2Right(Condition):
@@ -579,8 +601,17 @@ class Left2Right(Condition):
 		return e.isLeftOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Right(), e, score)
+
+class Left2RightSide(Condition):
+	u"""Align left of e bounding box on parent right side."""
+	def test(self, e):
+		return e.isLeftOnRightSide(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2RightSide(), e, score)
 
 class Right2Right(Condition):
 	u"""Align right of e bounding box to parent right margin."""
@@ -588,7 +619,7 @@ class Right2Right(Condition):
 		return e.isRightOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2Right(), e, score)
 
 class Origin2Right(Condition):
@@ -597,7 +628,7 @@ class Origin2Right(Condition):
 		return e.isOriginOnRight(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Right(), e, score)
 
 #	Left Horizontal Sides
@@ -608,7 +639,7 @@ class Center2RightSide(Condition):
 		return e.isCenterOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.center2RightSide(), e, score)
 
 # Missing on purpose: Left2RightSide(Condition). Element is not visible.
@@ -619,7 +650,7 @@ class Right2RightSide(Condition):
 		return e.isRightOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2RightSide(), e, score)
 
 class Origin2RightSide(Condition):
@@ -628,7 +659,7 @@ class Origin2RightSide(Condition):
 		return e.isOriginOnRightSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2RightSide(), e, score)
 
 #	V E R T I C A L S
@@ -641,7 +672,7 @@ class Middle2Middle(Condition):
 		return e.isMiddleOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2Middle(), e, score)
 
 class Middle2MiddleSides(Condition):
@@ -650,7 +681,7 @@ class Middle2MiddleSides(Condition):
 		return e.isMiddleOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2MiddleSides(), e, score)
 
 class Top2Middle(Condition):
@@ -659,7 +690,7 @@ class Top2Middle(Condition):
 		return e.isTopOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Middle(), e, score)
 
 class Top2MiddleSides(Condition):
@@ -668,7 +699,7 @@ class Top2MiddleSides(Condition):
 		return e.isTopOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2MiddleSides(), e, score)
 
 class Bottom2Middle(Condition):
@@ -677,7 +708,7 @@ class Bottom2Middle(Condition):
 		return e.isBottomOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2Middle(), e, score)
 
 class Bottom2MiddleSides(Condition):
@@ -686,7 +717,7 @@ class Bottom2MiddleSides(Condition):
 		return e.isBottomOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2MiddleSides(), e, score)
 
 class Origin2Middle(Condition):
@@ -695,7 +726,7 @@ class Origin2Middle(Condition):
 		return e.isOriginOnMiddle(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Middle(), e, score)
 
 class Origin2MiddleSides(Condition):
@@ -704,7 +735,7 @@ class Origin2MiddleSides(Condition):
 		return e.isOriginOnMiddleSides(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2MiddleSides(), e, score)
 
 class Origin2Top(Condition):
@@ -713,7 +744,7 @@ class Origin2Top(Condition):
 		return e.isOriginOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Top(), e, score)
 
 class Middle2Top(Condition):
@@ -722,7 +753,7 @@ class Middle2Top(Condition):
 		return e.isMiddleOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2Top(), e, score)
 
 class Middle2TopSide(Condition):
@@ -731,7 +762,7 @@ class Middle2TopSide(Condition):
 		return e.isMiddleOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2TopSide(), e, score)
 
 class Top2TopSide(Condition):
@@ -740,7 +771,7 @@ class Top2TopSide(Condition):
 		return e.isTopOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2TopSide(), e, score)
 
 class Top2Top(Condition):
@@ -749,7 +780,7 @@ class Top2Top(Condition):
 		return e.isTopOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Top(), e, score)
 
 class Bottom2Top(Condition):
@@ -758,7 +789,7 @@ class Bottom2Top(Condition):
 		return e.isBottomOnTop(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2Top(), e, score)
 
 # Missing on purpose: Bottom2TopSide(Condition). Element is not visible.
@@ -769,7 +800,7 @@ class Origin2TopSide(Condition):
 		return e.isOriginOnTopSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2TopSide(), e, score)
 
 class Middle2Bottom(Condition):
@@ -778,7 +809,7 @@ class Middle2Bottom(Condition):
 		return e.isMiddleOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2Bottom(), e, score)
 
 class Top2Bottom(Condition):
@@ -787,7 +818,7 @@ class Top2Bottom(Condition):
 		return e.isTopOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Bottom(), e, score)
 
 class Bottom2Bottom(Condition):
@@ -796,7 +827,7 @@ class Bottom2Bottom(Condition):
 		return e.isBottomOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2Bottom(), e, score)
 
 class Origin2Bottom(Condition):
@@ -805,7 +836,7 @@ class Origin2Bottom(Condition):
 		return e.isOriginOnBottom(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2Bottom(), e, score)
 
 #	Left Horizontal Sides
@@ -816,7 +847,7 @@ class Middle2BottomSide(Condition):
 		return e.isMiddleOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.middle2BottomSide(), e, score)
 
 # Missing on purpose: TopBottomSide(Condition). Element is not visible.
@@ -827,7 +858,7 @@ class Bottom2BottomSide(Condition):
 		return e.isBottomOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2BottomSide(), e, score)
 
 class Origin2BottomSide(Condition):
@@ -836,9 +867,8 @@ class Origin2BottomSide(Condition):
 		return e.isOriginOnBottomSide(self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.origin2BottomSide(), e, score)
-
 
 if __name__ == '__main__':
     import doctest

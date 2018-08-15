@@ -1,14 +1,14 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     stylelib.py
@@ -17,6 +17,7 @@
 #     Library of predefined named styles.
 #
 from pagebot.toolbox.units import *
+from pagebot.toolbox.color import whiteColor, blackColor, color
 
 MARGIN = (0, 0, px(10), 0)
 
@@ -29,18 +30,18 @@ default = {
         fontSize=px(12),
         leading=em(1.4),
         color=0,
-        fill=0xFFFFFF,
+        fill=whiteColor,
     ),
     'pre, code': dict(
         display='none',
     ),
     'a': dict(
-        color=0x828487,
+        color=color('#828487'),
         textDecoration='none',
         transition='all 0.3s ease-in-out',
     ),
     'a:hover': dict(
-        color=0,
+        color=blackColor,
     ),
     'p': dict(
         margin=MARGIN,

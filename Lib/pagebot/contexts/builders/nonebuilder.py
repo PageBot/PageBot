@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     nonebuilder.py
@@ -18,11 +18,16 @@ import os
 from pagebot.toolbox.transformer import path2Name
 
 class NoneBezierPath(object):
-    u"""Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing texting."""
+    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing
+    texting."""
+
     def moveTo(self, p):
         pass
 
     lineTo = moveTo
+
+    def quadTo(self, pcp, p):
+        pass
 
     def curveTo(self, bcp1, bcp2, p):
         pass
@@ -30,15 +35,20 @@ class NoneBezierPath(object):
     def closePath(self):
         pass
 
+    def appendPath(self, path):
+        pass
+
 class NoneImageObject(object):
-    u"""Nabe NoneImageObject with the same API got NonDrawBotBuilder."""
+    """Make NoneImageObject with the same API got NonDrawBotBuilder."""
     def __init__(self, path):
         self.path = path
 
 class NoneBuilder(object):
-    """Make NoneBuilder with the same API for docTesting, in case the platform does not support DrawBot.
-    More methods to be added here, if DrawBotContext docTests fail in non-DrawBot platforms.
-    Eventually should be a matching set of methods, compare to DrawBot itself."""
+    """Make NoneBuilder with a general builder API for docTesting. Used for
+    example when the platform does not support DrawBot. Methods need to be
+    added here when DrawBotContext docTests fail with non-DrawBot platforms.
+
+    NOTE: when completed this set of methods should match with DrawBot itself."""
 
     def __init__(self):
         self._installedFonts = []
@@ -49,9 +59,12 @@ class NoneBuilder(object):
     def frameDuration(self, v):
         pass
 
-    restore = save = newPath = drawPath = newDrawing # Nethods without attributes
+    restore = save = drawPath = newDrawing # Methods without attributes
 
     BezierPath = NoneBezierPath
+
+    def newPath(self):
+        return NoneBezierPath()
 
     def scale(self, sx, sy):
         pass
@@ -87,15 +100,15 @@ class NoneBuilder(object):
     def line(self, p1, p2):
         pass
 
-    def fill(self, *c):
+    def fill(self, r, g=None, b=None, a=None, alpha=None): # Covering API inconsistencies in DrawBot
         pass
 
-    setFillColor = cmykFill = fill
+    setFillColor = setStrokeColor = stroke = fill
 
-    def stroke(self, *c):
+    def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None): # Covering API inconsistencies in DrawBot
         pass
 
-    setStrokeColor = cmykStroke = stroke
+    cmykStroke = cmykFill
 
     def strokeWidth(self, w):
         pass
@@ -119,7 +132,8 @@ class NoneBuilder(object):
         pass
 
     def imageSize(self, path):
-        u"""Answer the image size of our test image
+        """Answer the image size of our test image
+
         rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
         """
         return 3024, 4032
@@ -136,6 +150,9 @@ class NoneBuilder(object):
     def text(self, s, p):
         pass
 
+    def textBox(self, s, r):
+        pass
+        
     def saveImage(self, path, multipage=True):
         pass
 
@@ -146,8 +163,8 @@ class NoneBuilder(object):
         return None
 
     def fontName2FontPath(self, fontName):
-        u"""We cannot tell the relation of the font name and the font path for DrawBot without OSX
-        Unless it is a path."""
+        """We cannot tell the relation of the font name and the font path for
+        DrawBot without OS X unless it is a path."""
         if os.path.exists(fontName):
             return fontName
         return None
@@ -155,13 +172,12 @@ class NoneBuilder(object):
     def ImageObject(self, path):
         return NoneImageObject(path)
 
-
 class NoneDrawBotBuilder(NoneBuilder):
-    
+
     PB_ID = 'drawBot'
 
 class NoneSvgBuilder(NoneBuilder):
-    
+
     PB_ID = 'svg'
 
 class NoneFlatBuilder(NoneBuilder):
@@ -170,7 +186,6 @@ class NoneFlatBuilder(NoneBuilder):
 
     def document(self, w, h, units):
         pass
-
 
 if __name__ == '__main__':
     import doctest

@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #	  variablecube2.py
@@ -19,7 +19,8 @@ from __future__ import division
 from copy import copy
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.color import blackColor
 
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
@@ -55,7 +56,7 @@ class VariableCube(Element):
     def draw(self, view, origin):
         c = self.doc.context
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -98,14 +99,14 @@ class VariableCube(Element):
                                                        axisY,
                                                        indexY * RANGE / sizeY),
                                      fontSize=6,
-                                     fill=0)
+                                     fill=blackColor)
                 w, h = bs.size()
 
                 c.text(bs, ppx - stepX/4, ppy - 16)
                 # Bit of hack, we need the width of the glyph here.
 
         bs = c.newString('Other axes: %s' % self.location,
-                             fontSize=6, fill=0)
+                             fontSize=6, fill=blackColor)
         w, h = bs.size()
         c.text(bs, px, py - 16)
 

@@ -167,7 +167,7 @@ content = {
             'Nashville',
             'Detroit',
             'Kansas City'
-            ],
+            ],           
     'abbr_cities_USmajor':[
             'New York', 'NYC',
             'Boston',

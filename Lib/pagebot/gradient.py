@@ -4,42 +4,45 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     gradient.py
 #
+from pagebot.toolbox.color import Color, blackColor, whiteColor
 
 class Gradient(object):
-    u"""
-    As linear gradient (startRadius or endRadius not set):
-    startPoint as (x, y)
-    endPoint as (x, y)
-    colors as a list of colors, described similary as fill
-    locations of each color as a list of floats. (optionally)
-    Setting a gradient will ignore the fill.
+    """As linear gradient (startRadius or endRadius not set):
 
-    As radial gradiens (startRadius and endRadius are set):
     startPoint as (x, y)
     endPoint as (x, y)
-    colors as a list of colors, described similary as fill
+
+    colors as a list of Colors instances, described similary as fill locations
+    of each Color as a list of floats. (optionally) Setting a gradient will
+    ignore the fill.
+
+    As radial gradient (startRadius and endRadius are set):
+
+    startPoint as (x, y)
+    endPoint as (x, y)
+
+    colors as a list of Colors instances, described similary as fill
     locations of each color as a list of floats. (optionally)
     startRadius radius around the startPoint in degrees (optionally)
     endRadius radius around the endPoint in degrees (optionally)
     Setting a gradient will ignore the fill.
     """
-    def __init__(self, start=None, end=None, colors=None, cmykColors=None, locations=None,
-        startRadius=None, endRadius=None):
-        # TODO: Add assert test of locations has same length as colors.
+    def __init__(self, start=None, end=None, colors=None, locations=None,
+            startRadius=None, endRadius=None):
+        #assert color is None or isinstance(color, Color)
         self.start = start or (0.5, 0) # Default to start a center of bottom.
         self.end = end or (0.5, 1) # Default to end at center of top.
-        self.colors = colors or ((0,0,0), (1,1,1)) # Default to run between black and white.
-        self.cmykColors = None
+        self.colors = colors or (blackColor, whiteColor) # Default to run between black and white.
         self.locations = locations or [0,1]
         self.startRadius = startRadius
         self.endRadius = endRadius
@@ -55,11 +58,12 @@ class Gradient(object):
     radial = property(_get_radial)
 
 class Shadow(object):
-    def __init__(self, offset=None, blur=None, color=None, cmykColor=None):
+
+    def __init__(self, offset=None, blur=None, color=None):
+        assert isinstance(color, Color)
         self.offset = offset or (5, -5)
         self.blur = blur
         self.color = color
-        self.cmykColor = cmykColor
 
 
 if __name__ == '__main__':

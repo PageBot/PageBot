@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     view.py
@@ -23,7 +23,7 @@ from pagebot.toolbox.transformer import *
 class BaseView(Element):
     u"""A View is just another kind of container, kept by document to make a certain presentation 
     of the enclosed page/element tree. Views support services, such as answering the size of a formatted
-    string (of possible), how much overflow there is for a certain box, etc. The view is also the only
+    string (if possible), how much overflow there is for a certain box, etc. The view is also the only
     place where the current context should be stored."""
     viewId = 'View'
 
@@ -49,26 +49,28 @@ class BaseView(Element):
         self._isDrawn = False # Automatic call self.drawPages if build is called without drawing.
 
     def _initializeControls(self):
+        u"""Initialize show flags for the view."""
         # Paging
         self.showSpread = False # If True, show even pages on left of fold, odd on the right.
         self.showSpreadMiddleAsGap = 0 # If showing as spread, this is the gap between them.
         # Document/page stuff
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
+        self.showPageOrigin = False # Show page origin crosshair marker
         self.showPagePadding = False
-        self.showPageFrame = False
-        self.showPageNameInfo = False
+        self.showPageFrame = False # Draw frame on page.size
+        self.showPageNameInfo = False # Show file/name/pagenumber ourside cropping area
         self.showPageMetaInfo = False
         # Element info showing
         self.showElementInfo = False
-        self.showElementFrame = False
-        self.showElementOrigin = False
+        self.showElementFrame = False # Show the frame of elements that are not pages.
+        self.showElementOrigin = False # Show element origin crosshair marker
         self.showElementDimensions = False # TODO: Does not work if there is view padding.
         self.showMissingElementRect = True
-        # Grid stuff
-        self.showGrid = False
-        self.showGridColumns = False
-        self.showBaselineGrid = False
+        # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
+        self.showGrid = set() # If set, display the type of grid  on foreground
+        self.showGridBackground = set() # If set, display the type of grid on background
+        self.showBaselineGrid = set() # If set, display options defined the type od grid to show.
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.
         self.showTextBoxY = False # Show the realtic y-position value if text lines on right side.
@@ -86,7 +88,7 @@ class BaseView(Element):
         self.cssVerbose = True # Adds information comments with original values to CSS export.
         # Exporting 
         self.doExport = True # Flag to turn off any export, e.g. in case of testing with docTest
-    
+
     def _getContext(self):
         u"""Answer the best/default context for this type of view."""
         return getContext() # Default is DrawBotContext or FlatContext instance.

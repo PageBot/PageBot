@@ -4,19 +4,21 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     from https://github.com/fonttools/fonttools/
 #                                 blob/master/Lib/fontTools/varLib/mutator.py
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     variablefontbuilder.py
 #
+#     D E P R E C A T E D
+
 from __future__ import division
 import copy
 import os
@@ -30,23 +32,24 @@ from fontTools.varLib.mutator import iup_delta
 
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import getFont
+from pagebot.toolbox.color import blackColor
 
 context = getContext()
 
 DEBUG = False
 
 def getMasterPath():
-    u"""Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
     Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    u"""Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    """Answer the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
 def getVariableAxisFonts(varFont, axisName,
                          normalize=True, cached=False, lazy=True):
-    u"""Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
+    """Answer the two instance fonts located at minValue and maxValue of the axis. If varFont is not
     a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
     if axisName in varFont.axes:
         minValue, _, maxValue = varFont.axes[axisName]
@@ -61,8 +64,8 @@ def getVariableAxisFonts(varFont, axisName,
 
 def fitVariableWidth(varFont, s, w, fontSize,
                      condensedLocation, wideLocation, fixedSize=True,
-                     tracking=None, rTracking=None, cached=True, lazy=True):
-    u"""Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
+                     tracking=None, cached=True, lazy=True):
+    """Answer the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
     and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
     The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
@@ -82,32 +85,30 @@ def fitVariableWidth(varFont, s, w, fontSize,
     condensedFont = getVarFontInstance(varFont, condensedLocation, cached=cached, lazy=lazy)
     wideFont = getVarFontInstance(varFont, wideLocation, cached=cached, lazy=lazy)
     # Calculate the widths of the string using these two instances.
-    condensedFs = context.newString(s,
+    condensedString = context.newString(s,
                                     style=dict(font=condensedFont.path,
                                                fontSize=fontSize,
                                                tracking=tracking,
-                                               rTracking=rTracking,
-                                               textFill=0))
-    wideFs = context.newString(s,
+                                               textFill=blackColor))
+    wideString = context.newString(s,
                                style=dict(font=wideFont.path,
                                           fontSize=fontSize,
                                           tracking=tracking,
-                                          rTracking=rTracking,
-                                          textFill=0))
+                                          textFill=blackColor))
     # Calculate the widths of the strings.
     # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
     # first line back to it's uncondensed value, to make the first wrapped line fit the width.
-    condensedWidth, _ = context.textSize(condensedFs)
-    wideWidth, _ = context.textSize(wideFs)
+    condensedWidth, _ = context.textSize(condensedString)
+    wideWidth, _ = context.textSize(wideString)
 
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condensedWidth: # Requested width is smaller than was was possible using the extreme value of [wdth] axis.
         font = condensedFont
-        fs = condensedFs
+        bs = condensedString
         location = condensedLocation
     elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.
         font = wideFont
-        fs = wideFs
+        bs = wideString
         location = wideLocation
     else: # Inside the selected [wdth] range, now interpolation the fitting location.
         # TODO: Check if the width of the new string is within tolerance of the request width.
@@ -118,28 +119,27 @@ def fitVariableWidth(varFont, s, w, fontSize,
         assert wideWidth != condensedWidth # Avoid division by zero.
         location['wdth'] += widthRange*(w-condensedWidth)/(wideWidth-condensedWidth)
         font = getVarFontInstance(varFont, location, cached=cached, lazy=lazy)
-        fs = context.newString(s,
+        bs = context.newString(s,
                                style=dict(font=font.path,
                                           fontSize=fontSize,
                                           tracking=tracking,
-                                          rTracking=rTracking,
-                                          textFill=0))
+                                          textFill=blackColor))
     # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
     return dict(condensendFont=condensedFont,
-                condensedFs=condensedFs,
+                condensedString=condensedString,
                 condensedWidth=condensedWidth,
                 condensedLocation=condensedLocation,
                 wideFont=wideFont,
-                wideFs=wideFs,
+                wideString=wideString,
                 wideWidth=wideWidth,
                 wideLocation=wideLocation,
                 font=font,
-                s=fs,
-                width=context.textSize(fs)[0],
+                bs=bs,
+                width=bs.size[0],
                 location=location)
 
 def getConstrainedLocation(font, location):
-    u"""Answer the location with applied min/max values for each axis. Don't change the values
+    """Answer the location with applied min/max values for each axis. Don't change the values
     if they are positioned between their min/max values. Don't change values for axes that are
     not defined in the font."""
     constrainedLocation = {}
@@ -151,7 +151,7 @@ def getConstrainedLocation(font, location):
     return constrainedLocation
 
 def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
-    u"""The getVarFontInstance refers to the file of the source variable font.
+    """The getVarFontInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
     Set normalize to False if the values in location already are matching the axis min/max of the font.
@@ -173,12 +173,20 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cac
     instance.info.varStyleName = styleName
     return instance
 
-def generateInstance(variableFontPath, location, targetDirectory, normalize=True, cached=True, lazy=True):
-    u"""
+
+def generateInstance(variableFontPath, location, targetDirectory,
+        normalize=True, cached=True, lazy=True):
+    """
+    D E P R E C A T E D
+
+    Use pagebot.fonttoolbox.objects.font.instantiateVariableFont instead
+    (calling fontTools)
+
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
         varfilename -- a variable font file path
-        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
+        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth":
+        -0.5}
     """
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
@@ -188,6 +196,7 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
         v = min(v, 1000)
         v = max(v, 0)
         instanceName += "-%s%s" % (k, v)
+
     targetFileName = '.'.join(variableFontPath.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
 
     if not targetDirectory.endswith('/'):
@@ -277,5 +286,4 @@ def generateInstance(variableFontPath, location, targetDirectory, normalize=True
 
     # Answer the font name path.
     return outFile
-
 

@@ -4,18 +4,18 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-# 
+#
 #     metallic_office.py
 #
 from pagebot.style import getRootStyle
-from basetheme import BaseTheme
+from pagebot.themes.basetheme import BaseTheme
 
 class MetallicOffice(BaseTheme):
     u"""The MetallicOffset theme is a generic “cool gray” theme, with settings that

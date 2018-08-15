@@ -4,43 +4,47 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     htmlbuilder.py
 #
 import os
 import codecs
-from pagebot.toolbox.transformer import value2Bool
+#import sass
+
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
-from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, color2Hex, object2SpacedString
+from pagebot.toolbox.color import noColor
+from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString, value2Bool
+from pagebot.toolbox.units import upt
+from pagebot.fonttoolbox.objects.font import Font
 
 class HtmlBuilder(XmlBuilder):
-    """
-    The HtmlBuilder class implements the standard XHTML tag set with all attributes. No additional
-    whitespace is added. 
+    """The HtmlBuilder class implements the standard XHTML tag set with all
+    attributes. No additional whitespace is added.
 
+    >>> from pagebot.toolbox.color import color
     >>> b = HtmlBuilder()
     >>> b.compact = True
     >>> b.html()
     >>> b.body()
     >>> b.addHtml('Hello world')
-    >>> b.addCss('body{background-color: #AAA;}')
+    >>> b.addCss('body {background-color: %s;}' % color('yellow').css)
     >>> b._body()
     >>> b._html()
     >>> b.getHtml()
     u'<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
     >>> ''.join(b._cssOut)
-    'body{background-color: #AAA;}'
+    'body {background-color: #FFFF00;}'
     """
     PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
-    
+
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
     # but it can be redefined by the inheriting application class.
@@ -231,7 +235,7 @@ class HtmlBuilder(XmlBuilder):
         'type'])
 
     # A_ATTRIBUTES_DEFAULTS = {'alt': '='}
-    NAV_ATTRIBUTES = set(['accesskey'])
+    NAV_ATTRIBUTES = set(['accesskey', 'role'])
 
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 
@@ -290,13 +294,14 @@ table {
 
     def __init__(self):
         self.resetHtml() # Initialize the HTML output stream.
-        self._cssOut = [] # Keep the collected CSS and JS from elements here. 
+        self._cssOut = [] # Keep the collected CSS and JS from elements here.
+        self._sassVariables = {}
         self._jsOut = []
         self._copyPaths = []
         self._initialize()
 
     def get_attribute_exceptions(self, key, value):
-        u"""
+        """
         The get_attribute_exceptions method writes the attribute and checks on naming differences between
         the element attributes and HTML attributes.
         """
@@ -341,8 +346,11 @@ table {
     def addJs(self, js):
         self._jsOut.append(js)
 
+    def hasJs(self):
+        return len(self._jsOut)
+
     def importJs(self, path):
-        u"""Import a chunk of UTF-8 CSS code from the path."""
+        """Import a chunk of UTF-8 CSS code from the path."""
         if os.path.exists(path):
             f = codecs.open(path, 'r', 'utf-8')
             self.addJs(f.read())
@@ -351,26 +359,40 @@ table {
             self.comment('Cannot find JS file "%s"' % path)
 
     def copyPath(self, path):
-        u"""Collect path of files to copy to the output website."""
+        """Collect path of files to copy to the output website."""
         self._copyPaths.append(path)
 
+    def getJs(self):
+        """Answer the flat string of JS."""
+        return ''.join(self._jsOut)
+
     def writeJs(self, path):
-        u"""Write the collected set of css JS to path."""
+        """Write the collected set of css JS to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(''.join(self._jsOut))
+            f.write(self.getJs())
             f.close()
         except IOError:
-            print('[HtmlBuilder.writeCss] Cannot write JS file "%s"' % path)
+            print('[%s.writeJs] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
     #   C S S
 
     def addCss(self, css):
-        u"""Add the css chunk to self.css, the ordered list of css for output."""
-        self._cssOut.append(css)
+        """Add the css chunk to self.css, the ordered list of css for output.
+        Don't write if empty or None."""
+        if css:
+            self._cssOut.append(css)
+
+    def getCss(self):
+        """Answer the joined content of sel._cssOut."""
+        return ''.join(self._cssOut)
+
+    def hasCss(self):
+        """Answer the boolean flag if there is any cumulated CSS in self._cssOut."""
+        return len(self._cssOut)
 
     def importCss(self, path):
-        u"""Import a chunk of UTF-8 CSS code from the path."""
+        """Import a chunk of UTF-8 CSS code from the path."""
         if os.path.exists(path):
             f = codecs.open(path, 'r', 'utf-8')
             self.addCss(f.read())
@@ -379,16 +401,16 @@ table {
             self.comment('Cannot find CSS file "%s"' % path)
 
     def writeCss(self, path):
-        u"""Write the collected set of css chunks to path."""
+        """Write the collected set of css chunks to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(''.join(self._cssOut))
+            f.write(self.getCss())
             f.close()
         except IOError:
             print('[HtmlBuilder.writeCss] Cannot write CSS file "%s"' % path)
 
     def headerCss(self, name):
-        u"""Add the CSS code to the header of the output page.
+        """Add the CSS code to the header of the output page.
 
         >>> b = HtmlBuilder()
         >>> b.headerCss('NameOfCss')
@@ -398,19 +420,93 @@ table {
         self.addCss(self.SECTION_CSS % ('CSS of "%s"\n\n\tGenerated by PageBot\n\tCreated %s' % (name, now())))
 
     def resetCss(self):
-        u"""Export the CSS to reset specific default behavior of browsers."""
+        """Export the CSS to reset specific default behavior of browsers."""
         self.addCss(self.RESET_CSS)
 
     def sectionCss(self, title):
-        u"""Add named section marker in CSS output.
+        """Add named section marker in CSS output.
         TODO: Make optional if compact CSS is needed."""
         self.addCss(self.SECTION_CSS % title)
 
-    def css(self, selector=None, style=None, message=None):
-        u"""Build the CSS output from the defined selector and style."""
+    #   S A S S
+
+    def writeSass(self, path):
+        """Write the collect set of SASS variables to path."""
+        try:
+            print('Writing "%s"' % path)
+            f = codecs.open(path, 'w', 'utf-8')
+            for sassId, value in sorted(self._sassVariables.items()):
+                f.write('$%s: %s\n' % (sassId, value))
+            f.close()
+        except IOError:
+            print('[HtmlBuilder.writeSass] Cannot write SASS file "%s"' % path)
+
+    def compileSass(self, sassPath, cssPath):
+        pass
+        #sass.compile(sassPath, cssPath, output_style='compressed')
+
+    def build_sass(self, e, view):
+        sass = self._sassVariables
+        if e.cssId: # If the #id is defined, then use that as CSS reference.
+            sassId = e.cssId
+        elif e.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
+            sassId = e.__class__.__name__ + '-' + e.cssClass.replace(' ','_')
+        else:
+            sassId = e.__class__.__name__
+        if upt(e.ml):
+            sass[sassId+'-margin-left'] = e.ml
+        if upt(e.mt):
+            sass[sassId+'-margin-top'] = e.mt
+        if upt(e.mb):
+            sass[sassId+'-margin-bottom'] = e.mb
+        if upt(e.mr):
+            sass[sassId+'-margin-right'] = e.mr
+        if upt(e.pl):
+            sass[sassId+'-padding-left'] = e.ml
+        if upt(e.pt):
+            sass[sassId+'-padding-top'] = e.pt
+        if upt(e.pb):
+            sass[sassId+'-padding-bottom'] = e.pb
+        if upt(e.pr):
+            sass[sassId+'-padding-right'] = e.pr
+        if e.css('font') is not None:
+            font = Font(e.css('font'))
+            sass[sassId+'-font-family'] = font.info.fullName
+        if e.css('fontSize') is not None:
+            sass[sassId+'-font-size'] = e.css('fontSize')
+        if e.css('fontStyle') is not None:
+            sass[sassId+'-font-style'] = e.css('fontStyle')
+        if e.css('fontWeight') is not None:
+            sass[sassId+'-font-weight'] = e.css('fontWeight')
+        if e.css('tracking') is not None:
+            sass[sassId+'-letter-spacing'] = e.css('tracking')
+        if e.css('fill') not in (noColor, None): # Must Color instance
+            sass[sassId+'-background-color'] = e.css('fill').css
+        if e.css('textFill') not in (noColor, None): # Must be Color instance
+            sass[sassId+'-color'] = e.css('textFill').css
+
+    def build_css(self, sass, selector=None, e=None, message=None):
+        """Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
-        if style:
+        if e:
+            style = e.style
+            if upt(e.ml):
+                attributes.append('margin-left: %s;' % e.ml)
+            if upt(e.mt):
+                attributes.append('margin-top: %s;' % e.mt)
+            if upt(e.mb):
+                attributes.append('margin-bottom: %s;' % e.mb)
+            if upt(e.mr):
+                attributes.append('margin-right: %s;' % e.mr)
+            if upt(e.pl):
+                attributes.append('padding-left: %s;' % e.pl)
+            if upt(e.pt):
+                attributes.append('padding-top: %s;' % e.pt)
+            if upt(e.pb):
+                attributes.append('padding-bottom: %s;' % e.pb)
+            if upt(e.pr):
+                attributes.append('padding-right: %s;' % e.pr)
             if style.get('font') is not None:
                 attributes.append('font-family: %s;' % style['font'])
             if style.get('fontSize') is not None:
@@ -421,10 +517,10 @@ table {
                 attributes.append('font-weight: %s;' % style['fontWeight'])
             if style.get('tracking') is not None:
                 attributes.append('letter-spacing: %s;' % style['tracking'])
-            if style.get('fill') is not None:
-                attributes.append('background-color: %s;' % color2Hex(style['fill']))
-            if style.get('color') is not None:
-                attributes.append('color: %s;' % color2Hex(style['textFill']))
+            if style.get('fill') not in (noColor, None): # Must Color instance
+                attributes.append('background-color: %s;' % style['fill'].css)
+            if style.get('textFill') not in (noColor, None): # Must be Color instance
+                attributes.append('color: %s;' % style['textFill'].css)
             value = style.get('transition')
             if value is not None:
                 attributes.append('transition=%s;' % value)
@@ -439,14 +535,21 @@ table {
         css += '\n'
         self.addCss(css)
 
+        b = HtmlBuilder()
+        # Write all collected SASS vatiables into one file
+        b.writeSass(self.DEFAULT_SASS_PATH)
+        # Compile SASS to CSS
+        b.compileSass(self.DEFAULT_CSS_PATH)
+
+
     #   H T M L
 
     def addHtml(self, html):
-        u"""Add the html chunk to self.html, the ordered list of html for output. Test if the html
+        """Add the html chunk to self.html, the ordered list of html for output. Test if the html
         is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
         we don't want to support BabelString conversion. They should have been created of the right
         type in the context from the start."""
-        
+
         #if not isinstance(html, str): # It's something else, test on the kind of BabelString.
         #    assert isinstance(html, HtmlString)
         try:
@@ -458,7 +561,7 @@ table {
     write = addHtml
 
     def importHtml(self, path):
-        u"""Import a chunk of UTF-8 HTML code from the path."""
+        """Import a chunk of UTF-8 HTML code from the path."""
         if os.path.exists(path):
             f = codecs.open(path, 'r', 'utf-8')
             self.addHtml(f.read())
@@ -467,7 +570,7 @@ table {
             self.comment('Cannot find HTML file "%s"' % path)
 
     def writeHtml(self, path):
-        u"""Write the collected set of html chunks to path."""
+        """Write the collected set of html chunks to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
             f.write(self.getHtml())
@@ -476,17 +579,17 @@ table {
             print('Cannot write HTML file "%s"' % path)
 
     def getHtml(self):
-        u"""Answer the cumulated html as single string."""
+        """Answer the cumulated html as single string."""
         return ''.join(self._htmlOut)
 
     def resetHtml(self):
-        u"""Reset the output stream, as should be done after each page export.
+        """Reset the output stream, as should be done after each page export.
         It is likely not to reset the CSS, because we want to collect all and
         write to the single CSS file for the entire site."""
         self._htmlOut = []
 
-    def docType(self, s):
-        self.write('<!DOCTYPE %s>\n' % s)
+    def docType(self, s=None):
+        self.write('<!DOCTYPE %s>\n' % (s or 'html'))
 
     def html(self, xmlns=None, **args):
         """
@@ -514,7 +617,7 @@ table {
         self._closeTag(u'html')
 
     def head(self, **args):
-        u"""
+        """
         The head element can contain information about the document.¬†The browser does not display the
         "head information" to the user. The following tags can be in the head section: base,
         link, meta, script, style and title.
@@ -551,23 +654,27 @@ table {
         >>> b._title()
         >>> b._head()
         >>> b._html()
-        >>> b.getHtml()
-        u'<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Title of the page</title></head></html>'
+        >>> b.getHtml().startswith('<html')
+        True
         """
         self.tabs()
         self.tabIn()
-        self.write(u'<title>')
-        # Push as last, so we can see the current tag on the stack
-        self._pushTag(u'title')
+        self.write_tag(u'link', True, {})
 
     def _title(self):
         self._closeTag(u'title')
 
     def title_(self, s):
-        u"""Write the stripped string s as <title>...</title> tag."""
-        self.title()
-        self.write(s.strip())
-        self._title()
+        """Write the stripped string s as <title>...</title> tag.
+
+        >>> b = HtmlBuilder()
+        >>> b.title_('This is a title')
+        >>> b.getHtml().strip()
+        u'<title>This is a title</title>'
+        """
+        self.tabs()
+        self.tabIn()
+        self.write(u'<title>%s</title>' % s.strip())
 
     def link(self, **args):
         """
@@ -596,13 +703,12 @@ table {
         """
         self.write_tag(u'body', True, args)
 
-
     def _body(self):
         self._closeTag(u'body')
 
 
     def h1(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -625,7 +731,7 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h1_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
@@ -640,7 +746,7 @@ table {
         self._h1()
 
     def h2(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -663,10 +769,10 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h2_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
- 
+
         >>> b = HtmlBuilder()
         >>> b.compact = True
         >>> b.h2_('Hello world')
@@ -678,7 +784,7 @@ table {
         self._h2()
 
     def h3(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -701,7 +807,7 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h3_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
@@ -716,7 +822,7 @@ table {
         self._h3()
 
     def h4(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -735,12 +841,12 @@ table {
         self.write_tag_noWhitespace(u'h4', True, args)
 
     def _h4(self):
-        u"""Closing tag of h4."""
+        """Closing tag of h4."""
         self._closeTag_noWhitespace(u'h4')
         self.newLine() # Optional newline is self.compact is False.
 
     def h4_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
@@ -755,7 +861,7 @@ table {
         self._h4()
 
     def h5(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
          <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -777,7 +883,7 @@ table {
         self._closeTag_noWhitespace(u'h5')
 
     def h5_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
@@ -792,7 +898,7 @@ table {
         self._h5()
 
     def h6(self, **args):
-        u"""
+        """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
@@ -814,7 +920,7 @@ table {
         self._closeTag_noWhitespace(u'h6')
 
     def h6_(self, s, **args):
-        u"""
+        """
         The h1_ to h6_ tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
@@ -829,7 +935,7 @@ table {
         self._h6()
 
     def figure(self, **args):
-        u"""
+        """
         The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
@@ -849,7 +955,7 @@ table {
         self._closeTag(u'figure')
 
     def figcaption(self, **args):
-        u"""
+        """
         The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
         You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
         You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
@@ -871,7 +977,7 @@ table {
         self._closeTag(u'figcaption')
 
     def hgroup(self, **args):
-        u"""
+        """
         The hgroup method (HTML5) defines the heading of a section or a document.
         The hgroup element is used to group headers, <tag>h1</tag> to <tag>h6</tag>, where the largest
         is the main heading of the section, and the others are sub-headings.
@@ -890,7 +996,7 @@ table {
         self._closeTag(u'hgroup')
 
     def article(self, **args):
-        u"""
+        """
         The article method (HTML5) defines external content.
         The external content could be a news-article from an external provider, or a text from a web log
         (blog), or a text from a forum, or any other content from an external source.
@@ -901,7 +1007,7 @@ table {
         self._closeTag(u'article')
 
     def header(self, **args):
-        u"""The header method (HTML5) defines an introduction to the document.
+        """The header method (HTML5) defines an introduction to the document.
         """
         self.write_tag(u'header', True, args)
 
@@ -909,7 +1015,7 @@ table {
         self._closeTag(u'header')
 
     def footer(self, **args):
-        u"""The footer method (HTML5) defines a footer to the document.
+        """The footer method (HTML5) defines a footer to the document.
         """
         self.write_tag(u'footer', True, args)
 
@@ -917,8 +1023,8 @@ table {
         self._closeTag(u'footer')
 
     def section(self, **args):
-        u"""
-        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers, 
+        """
+        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers,
         or any other sections of the document.
         """
         self.write_tag(u'section', True, args)
@@ -937,7 +1043,7 @@ table {
         self._closeTag_noWhitespace(u'pre')
 
     def blockquote(self, **args):
-        u"""
+        """
         The blockquote tag is the standard XHTML tag.
         """
         self.write_tag(u'blockquote', True, args)
@@ -946,7 +1052,7 @@ table {
         self._closeTag(u'blockquote')
 
     def cite(self, **args):
-        u"""
+        """
         The cite tag is the standard XHTML tag.
         """
         self.write_tag(u'cite', True, args)
@@ -973,7 +1079,7 @@ table {
         self._closeTag_noWhitespace(u'p')
 
     def tt(self, **args):
-        u"""
+        """
         The tt method is showing the old teletype font.
         """
         self.write_tag_noWhitespace(u'tt', True, args)
@@ -982,7 +1088,7 @@ table {
         self._closeTag_noWhitespace(u'tt')
 
     def code(self, **args):
-        u"""
+        """
         The code method is the standard XHTML tag, for showing computer code in fixed width font.
         """
         self.write_tag_noWhitespace(u'code', True, args)
@@ -1148,7 +1254,7 @@ table {
         self.write('&nbsp;'*count)
 
     def table(self, **args):
-        u"""
+        """
         The table tag defines a table.¬†Inside a table tag you can put table headers,
         table rows, table cells, and other tables.
         <www href="http://www.w3schools.com/tags/tag_table.asp" target="external"/>
@@ -1170,7 +1276,7 @@ table {
 
 
     def thead(self, **args):
-        u"""
+        """
         Defines the text header of a table.
         """
         self.write_tag_noWhitespace(u'thead', True, args)
@@ -1181,7 +1287,7 @@ table {
 
 
     def tfoot(self, **args):
-        u"""
+        """
         Defines the text footer of a table.
         """
         self.write_tag(u'tfoot', True, args)
@@ -1192,7 +1298,7 @@ table {
 
 
     def tbody(self, **args):
-        u"""
+        """
         Defines the text body of a table.
         """
         self.write_tag(u'tbody', True, args)
@@ -1202,7 +1308,7 @@ table {
         self._closeTag(u'tbody')
 
     def tr(self, **args):
-        u"""
+        """
         Defines a row in a table.
         <www href="http://www.w3schools.com/tags/tag_tr.asp" target="external"/>
         self.tr()
@@ -1233,7 +1339,7 @@ table {
         """
         Defines a table header cell in a table. The text within the th element usually renders in bold. If the rolspan
          or colspan are not defined or if their value is 1 then the output is ignored.
-        
+
         <www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/>
         self.th()
             ...
@@ -1557,12 +1663,13 @@ table {
 
     def form(self, cssClass=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
              onsubmit=None, onreset=None, target=None, style=None, cssId=None):
-        u"""
-        The form element creates a form for user input. A form can contain elements such as textfields, checkboxes and
-        radio-buttons. Forms are used to pass user data to a specified URL.
+        """The form element creates a form for user input. A form can contain
+        elements such as textfields, checkboxes and radio-buttons. Forms are
+        used to pass user data to a specified URL.
+
         <www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/>
 
-        If an upload tag is used in the form, then the enctype attribute should be set to 
+        If an upload tag is used in the form, then the enctype attribute should be set to
         enctype="multipart/form-data"
         self.form(action=e['path'])
             ...
@@ -1702,7 +1809,7 @@ table {
         self.write_tag(u'meta', False, args)
 
     def object(self, **args):
-        u"""The object defines an embedded object. Use this element to add
+        """The object defines an embedded object. Use this element to add
         multimedia to your XHTML page. This element allows you to specify the data and
         parameters for objects inserted into HTML documents, and the code that can be used to
         display/manipulate that data."""
@@ -1724,7 +1831,7 @@ table {
         self._closeTag_noWhitespace(u'big')
 
     def param(self, **args):
-        u"""The param element allows you to specify the run-time settings for an object inserted
+        """The param element allows you to specify the run-time settings for an object inserted
         into XHTML documents."""
         self.write_tag(u'param', False, args)
 

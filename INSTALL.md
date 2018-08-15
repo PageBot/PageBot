@@ -57,6 +57,7 @@ Also, when running PageBot outside of DrawBot context (e.g. using Flat), these l
 * https://github.com/xxyxyz/flat
 * https://github.com/typesupply/compositor
 * https://github.com/imageio/imageio
+* https://sass.github.io/libsass-python
 
 https://github.com/GoogleCloudPlatform/google-cloud-python
 
@@ -64,5 +65,6 @@ https://github.com/GoogleCloudPlatform/google-cloud-python
 
 sudo pip install svgwrite
 sudo pip install imageio
+sudo pip install libsass
 
 
