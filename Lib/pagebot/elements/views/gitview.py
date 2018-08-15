@@ -4,20 +4,20 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     gitview.py
 #
-from pagebot.elements.views.htmlview import HtmlView
+from pagebot.elements.views.siteview import SiteView
 from pagebot.style import ORIGIN
 
-class GitView(HtmlView):
+class GitView(SiteView):
     viewId = 'Git'
     
     GIT_PATH = 'docs/'
@@ -36,7 +36,6 @@ class GitView(HtmlView):
             sitePath += '/'
             
         b = self.b # Get builder from self.doc.context of this view.
-        #doc.build_css(self) # Make doc build the main/overall CSS.
         for pn, pages in doc.pages.items():
             for page in pages:
                 b.resetHtml()

@@ -4,21 +4,21 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     drawPart.py
 #
-from pagebot.style import NO_COLOR
+from pagebot.toolbox.color import noColor
 from math import sin, cos, atan2, radians, degrees
 
 def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
-    u"""Draw curved arrow marker between the two points.
+    """Draw curved arrow marker between the two points.
     TODO: Add drawing of real arrow-heads, rotated in the right direction."""
     context = view.context # Get current context
     b = context.b
@@ -26,12 +26,12 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     fms = e.css('flowMarkerSize')
     fmf = e.css('flowCurvatureFactor')
     if onText == 1:
-        c = e.css('flowConnectionStroke2', NO_COLOR)
+        c = e.css('flowConnectionStroke2', noColor)
     else:
-        c = e.css('flowConnectionStroke1', NO_COLOR)
-    context.setStrokeColor(c, e.css('flowConnectionStrokeWidth'))
+        c = e.css('flowConnectionStroke1', noColor)
+    context.stroke(c, e.css('flowConnectionStrokeWidth'))
     if startMarker:
-        context.setFillColor(e.css('flowMarkerFill', NO_COLOR))
+        context.fill(e.css('flowMarkerFill', noColor))
         context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
     xm = (xt + xs)/2
     ym = (yt + ys)/2
@@ -49,15 +49,15 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
     ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
     b.newPath()
-    context.setFillColor(None)
+    context.fill(None)
     b.moveTo((xs, ys))
     b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
     b.drawPath()
 
     #  Draw the arrow head.
     b.newPath()
-    context.setFillColor(c)
-    context.setStrokeColor(None)
+    context.fill(c)
+    context.stroke(None)
     b.moveTo((xt, yt))
     b.lineTo((ax1, ay1))
     b.lineTo((ax2, ay2))

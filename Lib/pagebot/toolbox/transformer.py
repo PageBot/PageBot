@@ -1,280 +1,34 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     transformer.py
 #
 #     Implements a range of common transforms.
 #
+from __future__ import division # Make integer division result in float.
+
 import json, re
 from time import time
 import datetime
 from random import randint
-from pagebot.constants import STYLE_REPLACEMENTS
+from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
-# P O I N T
-
-def point3D(p=None):
-    u"""Answer p as 3D point. If it already is a list of 3 elements, then don't change
-    and answer the original.
-
-    >>> point3D() # Default 3D origin
-    [0, 0, 0]
-    >>> point3D((20, -40)) # Add z = 0
-    [20, -40, 0]
-    >>> point3D(30) # One value defaults to x == y
-    [30, 30, 0]
-    >>> point3D((2,3,4,5)) # Trim tuple to 3 coordinates.
-    [2, 3, 4]
-    """
-    if not p: # None or zero.
-        return [0, 0, 0] # Undefined 3D point as list.
-    if isinstance(p, (list, tuple)):
-        if len(p) > 3:
-            p = p[:3]
-        p = list(p)
-    else:
-        p = [p, p]
-    while len(p) < 3:
-        p.append(0) # Value undefined, add origin as z value.
-    return p
-
-def point2D(p=None):
-    u"""Answer the 2D point from a 2D or 3D point.
-
-    >>> point2D() # Default 2D origin
-    [0, 0]
-    >>> point2D((20, -40))
-    [20, -40]
-    >>> point2D(20)
-    [20, 20]
-    >>> point2D((2,3,4,5,6))
-    [2, 3]
-    """
-    return point3D(p)[:2]
-
-def pointOffset(point, offset):
-    u"""Answer new 3D point, shifted by offset.
-
-    >>> pointOffset((20, 30, 10), 12)
-    (32, 42, 22)
-    >>> pointOffset((20, 30, 40), (2,3,4))
-    (22, 33, 44)
-    >>> pointOffset((12, 13), 100)
-    (112, 113, 100)
-    >>> point2D(pointOffset((12, 13), 100))
-    [112, 113]
-    >>> pointOffset((10, 20, 30), None) # None is interpreted as offset == 0
-    (10, 20, 30)
-    """
-    if not offset:
-        offset = 0
-    if isinstance(offset, (int, float)):
-        offset = (offset, offset, offset)
-    if not len(point) == 3:
-        point = point3D(point)
-    if not len(offset) == 3:
-        offset = point3D(offset)
-    return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
-
-def point2S(p):
-    u"""Answer the point as string of rounded integers. Ignore z value if it is 0.
-
-    >>> point2S((22.4, 33.5, 44.6))
-    '22 34 45'
-    >>> point2S((33.6, 44.7))
-    '34 45'
-    """
-    x, y, z = point3D(p)
-    if z:
-        return '%d %d %d' % (round(x), round(y), round(z))
-    return '%d %d' % (round(x), round(y))
-
-# C O L O R
-
-def moreRed(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white.
-
-    >>> moreRed((0.1, 0.2, 0.3))
-    [0.55, 0.2, 0.3]
-    >>> moreRed((0.1, 0.2, 0.3), 100)
-    [1, 0.2, 0.3]
-    >>> '%0.2f' % moreRed((0.1, 0.2, 0.3, 0.4), 0.8)[0]
-    '0.82'
-    """
-    moreRedC = [min(1, c[0] + (1 - c[0])*v), c[1], c[2]]
-    if len(c) == 4:
-        moreRedC.append(c[3])
-    return moreRedC
-
-def moreGreen(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
-
-    >>> moreGreen((0.1, 0, 0.3))
-    [0.1, 0.5, 0.3]
-    >>> moreGreen((0.1, 0.2, 0.3), 100)
-    [0.1, 1, 0.3]
-    >>> '%0.2f' % moreGreen((0.1, 0.2, 0.3, 0.4), 0.8)[1]
-    '0.84'
-    """
-    moreGreenC = [c[0], min(1, c[1] + (1 - c[1])*v), c[2]]
-    if len(c) == 4:
-        moreGreenC.append(c[3])
-    return moreGreenC
-
-def moreBlue(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white.
-
-    >>> moreBlue((0.1, 0, 0))
-    [0.1, 0, 0.5]
-    >>> moreBlue((0.1, 0.2, 0.3), 100)
-    [0.1, 0.2, 1]
-    >>> '%0.2f' % moreBlue((0.1, 0.2, 0.3, 0.4), 0.8)[2]
-    '0.86'
-    """
-    moreBlueC = [c[0], c[1], min(1, c[2] + (1 - c[2])*v)]
-    if len(c) == 4:
-        moreBlueC.append(c[3])
-    return moreBlueC
-
-def lighter(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
-
-    >>> lighter((0, 0, 0))
-    (0.5, 0.5, 0.5)
-
-    """
-    return moreRed(c, v)[0], moreGreen(c, v)[1], moreBlue(c, v)[2]
-
-def lessRed(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
-
-    >>> lessRed((1, 1, 1))
-    [0.5, 1, 1]
-    >>> lessRed((0.1, 0.2, 0.3), 0.3)
-    [0.03, 0.2, 0.3]
-    >>> '%0.2f' % lessRed((0.1, 0.2, 0.3, 0.4), 0.8)[0]
-    '0.08'
-    """
-    lessRedC = [max(0, c[0]*v), c[1], c[2]]
-    if len(c) == 4:
-        lessRedC.append(c[3])
-    return lessRedC
-
-def lessGreen(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
-
-    >>> lessGreen((1, 1, 1))
-    [1, 0.5, 1]
-    >>> lessGreen((0.1, 0.2, 0.3), 0.3)
-    [0.1, 0.06, 0.3]
-    >>> '%0.2f' % lessGreen((0.1, 0.2, 0.3, 0.4), 0.8)[1]
-    '0.16'
-    """
-    lessGreenC = [c[0], c[1]*v, c[2]]
-    if len(c) == 4:
-        lessGreenC.append(c[3])
-    return lessGreenC
-
-def lessBlue(c, v=0.5):
-    u"""Answer a lighter color of c. v = 0 gives same color, v = 1 gives white
-
-    >>> lessBlue((1, 1, 1))
-    [1, 1, 0.5]
-    >>> lessBlue((0.1, 0.2, 0.3), 0.3)
-    [0.1, 0.2, 0.09]
-    >>> '%0.2f' % lessBlue((0.1, 0.2, 0.3, 0.4), 0.8)[2]
-    '0.24'
-    """
-    lessBlueC = [c[0], c[1], c[2]*v]
-    if len(c) == 4:
-        lessBlueC.append(c[3])
-    return lessBlueC
-
-def darker(c, v=0.5):
-    u"""Answer a darker color of c. v = 0 gives black, v = 1 gives same color
-
-    >>> darker((1, 1, 1))
-    (0.5, 0.5, 0.5)
-    """
-    return lessRed(c, v)[0], lessGreen(c, v)[1], lessBlue(c, v)[2]
-
-def int2Color(c):
-    u"""Answer the color typle, represented by the integer, e.g. 0xFFEE99.
-
-    >>> int2Color(0x00FF00)
-    (0.0, 1.0, 0.0)
-    """
-    return ((c >> 16) & 255)/255.0, ((c >> 8) & 255)/255.0, (c & 255)/255.0
-
-def s2Color(s):
-    u"""Answer the color typle, represented by the hex-string, e.g. #FFEE99.
-    The "#" is optional, and will be ignored in the conversion.
-
-    >>> s2Color('00FF00')
-    (0.0, 1.0, 0.0)
-    """
-    s = s.replace('#','').replace(' ','')
-    try:
-        c = int(s, 16)
-        return int2Color(c)
-    except ValueError:
-        return None
-
-def color2Hex(c, default=None):
-    u"""Answer the CSS hex color string from the color (r, g, b, o) or (r, g, b) tuple.
-    This format is CSS compatible.
-
-    >>> color2Hex((0.2, 0.3, 0.4))
-    '#334d66'
-    >>> color2Hex((1, 1, 1))
-    '#ffffff'
-    >>> color2Hex((0, 0, 0))
-    '#000000'
-    >>> color2Hex(None) is None
-    True
-    """
-    if c is None:
-        return default
-    if isinstance(c, (int, float)):
-        if c > 1:
-            return '#%06x' % c
-        c = (c, c, c)
-    if len(c) == 4: # Includes opacity
-        r, g, b, _ = c
-    else: # Must be just r, g, b
-        r, g, b = c
-    return '#%02x%02x%02x' % (int(round(r*255)), int(round(g*255)), int(round(b*255)))
-
-def color2HexOpacity(c):
-    u"""Answer the tuple ((r, g, b), opacity) with CSS hex color and value for opacity from the color
-    (r, g, b, o) or (r, g, b) tuple. This format is CSS compatible.
-
-    >>> color2HexOpacity((0.2, 0.3, 0.4))
-    ('#334d66', 1)
-    >>> color2HexOpacity((0.2, 0.3, 0.4, 0.1))
-    ('#334d66', 0.1)
-    """
-    if isinstance(c, (int, float)):
-        c = (c, c, c)
-    if len(c) == 4: # Includes opacity
-        return color2Hex(c), c[-1] # 0..1
-    return color2Hex(c), 1
-
 def value2Tuple4(v):
-    u"""Answer a tuple of 4 values. Can be used for colors and rectangles.
+    """Answer a tuple of 4 values. Can be used for colors and rectangles.
 
     >>> value2Tuple4(123)
     (123, 123, 123, 123)
@@ -293,66 +47,8 @@ def value2Tuple4(v):
         return v
     raise ValueError
 
-# N U M B E R S
-
-def asNumber(v):
-    """Answer v converted to a float or int. Answer 0 if the conversion raised an error.
-
-    >>> asNumber(1234)
-    1234
-    >>> asNumber(1234.2)
-    1234.2
-    >>> asNumber('1234.2')
-    1234.2
-    >>> asNumber('1234.2a')
-    0
-    >>> asNumber('1234')
-    1234
-    >>> asNumber('1234a')
-    0
-    """
-    return asNumberOrNone(v) or 0
-
-def asNumberOrNone(v):
-    u"""
-
-    >>> asNumberOrNone('1234.5')
-    1234.5
-    >>> asNumberOrNone('1234.0')
-    1234
-    >>> asNumberOrNone('1234')
-    1234
-    >>> asNumberOrNone('1234ab') is None
-    True
-
-    """
-    try:
-        iValue = asIntOrNone(v)
-        fValue = asFloatOrNone(v)
-        if iValue == fValue:
-            return iValue
-        return fValue
-    except (ValueError, TypeError):
-        pass
-    return None
-
-def asFloatOrNone(value):
-    u"""Answer a float if it can be converted. Answer None otherwise.
-
-    >>> asFloatOrNone(123)
-    123.0
-    >>> asFloatOrNone('123')
-    123.0
-    >>> asFloatOrNone('123a') is None
-    True
-    """
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        return None
-
 def asId(v, default=0):
-    u"""
+    """
     The *asId* method transforms the *value* attribute either to an instance of @
     int@ or to @None@, so it can be used as *id* field in a @Record@
     instance. If the value cannot be converted, then the optional *default* (default value is @0
@@ -370,75 +66,6 @@ def asId(v, default=0):
         return v
     except (ValueError, TypeError):
         return default
-
-def asIntOrNone(v):
-    u"""Answer v converted to int. Answer None if the conversion raised an error.
-
-    >>> asIntOrNone(1234)
-    1234
-    >>> asIntOrNone('1234')
-    1234
-    >>> asIntOrNone('1234.2')
-    1234
-    >>> asIntOrNone('1234a') is None
-    True
-    """
-    return asIntOrDefault(v)
-
-def asIntOrDefault(v, default=None):
-    u"""Answer v converted to int. Answer None if the conversion raised an error.
-
-    >>> asIntOrNone(1234)
-    1234
-    >>> asIntOrNone('1234')
-    1234
-    >>> asIntOrNone('1234.2')
-    1234
-    >>> asIntOrNone('1234a') is None
-    True
-    """
-    try:
-        return int(round(float(v)))
-    except (ValueError, TypeError):
-        return default
-
-def asInt(value, default=None):
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return default or 0
-
-def isInt(value):
-    return asIntOrNone(value) is not None
-
-def asIntOrValue(value):
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return value
-
-def asRoundedInt(value, default=None):
-    value = asIntOrNone(value)
-    if value is None:
-        value = default
-    try:
-        return int(round(value))
-    except (ValueError, TypeError):
-        return int(round(default or 0))
-
-def asFloat(value, default=None):
-    value = asFloatOrNone(value)
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        return default
-
-def asFormatted(value, default=None):
-    if value is None:
-        return default
-    if int(round(value)) == value: # Same as rounded whole number
-        return '%d' % value
-    return '%0.2f' % value # Otherwise show as float with 2 digits.
 
 def asBool(value, default=None):
     if value is None:
@@ -460,7 +87,7 @@ def asSet(value):
     return value
 
 def interpolate(a, b, v, doRound=False):
-    u"""Answer the interpolated value of factor v between a and b. If doRound is True (default is False), then
+    """Answer the interpolated value of factor v between a and b. If doRound is True (default is False), then
     round the result before answering it."""
     i = a + (b-a) * v
     if doRound:
@@ -479,7 +106,7 @@ def stringList2StrippedList(strings):
     return l
 
 def filterValue2Int(s):
-    u"""Filter all numeric characters from the string and answer the resulting integer.
+    """Filter all numeric characters from the string and answer the resulting integer.
     Answer 0 if no digits are found. If s is already a number, then answer it as rounded int."""
     if isinstance(s, (int, float)):
         return int(round(s))
@@ -513,7 +140,7 @@ def none2Empty(value):
     return value
 
 def asDict(value, isRoot=True):
-    u"""Answer the value as dict as root. If the value itself is not a dict,
+    """Answer the value as dict as root. If the value itself is not a dict,
     answer it as dict(value=value). For lower levels than root, answer
     the plain value if is it a string or a number. Basic classed don't get
     translated when not called as root.
@@ -554,13 +181,13 @@ def value2Fixed(value):
     return value
 
 def float2Fixed(value):
-    u"""
+    """
     The float2Fixed method translates a float into a 1/64 pixel unit-value.
     """
     return int(round(value * 64))
 
 def fixed2Float(value):
-    u"""
+    """
     The fixed2Float method translates a fixed 1/64 pixel-unit value to float.
     """
     return float(value) / 64
@@ -585,7 +212,7 @@ def shrink(s):
     return (s or '').strip().replace(' ', '').replace('\t', '')
 
 def removeWhiteSpace(s):
-    u"""Vacuum s by removing all white space."""
+    """Vacuum s by removing all white space."""
     for c in WHITESPACE:
         s = s.replace(c, '')
     return s
@@ -608,7 +235,7 @@ def list2CommaString(l):
     return list2String(l, ',')
 
 def value2IdCommaString(value):
-    u"""Transform a list with numbers into a comma separated string. This can be used to convert a list of record ids
+    """Transform a list with numbers into a comma separated string. This can be used to convert a list of record ids
     into a SQL compatible list of ids, without integers showing up as @1234L@."""
     t = []
     if not isinstance(value, (set, list, tuple)):
@@ -619,7 +246,7 @@ def value2IdCommaString(value):
     return ', '.join(t)
 
 def idCommaString2IdSet(s):
-    u"""Transform a string with comma separated items into a set of id integers."""
+    """Transform a string with comma separated items into a set of id integers."""
     t = set()
     if s is not None:
         for value in s.split(','):
@@ -660,7 +287,7 @@ def words2WordsKey(words):
 #    S T Y L E
 
 def obj2StyleId(s):
-    u"""Make sure s is styleId format, other recursively transform into string with space separators.
+    """Make sure s is styleId format, other recursively transform into string with space separators.
     Parts can be CSS-like #id and .class identifiers.
     Note that this may change in the future if more compatibility with CSS is necessary."""
     styleId = []
@@ -686,7 +313,7 @@ def module2Path(module):
     return '/'.join((module.__file__).split('/')[:-1])
 
 def path2ParentPath(path):
-    u"""
+    """
     >>> path2ParentPath('/xxx/yyy/zzz/')
     '/xxx/yyy/zzz'
     >>> path2ParentPath('/xxx/yyy/zzz')
@@ -697,11 +324,11 @@ def path2ParentPath(path):
     return '/'.join(path.split('/')[:-1])
 
 def path2ScriptId(path):
-    u"""Answer the scriptId, derived from the __file__ of the main source."""
+    """Answer the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]
 
 def path2FormatPath(path, format=None):
-    u"""Answers the path where the extension is changed to format If format is
+    """Answers the path where the extension is changed to format If format is
     None, then the extension is removed."""
     if path is not None:
         path = '.'.join(path.split('.')[:-1])
@@ -711,7 +338,7 @@ def path2FormatPath(path, format=None):
     return None
 
 def path2Name(path):
-    u"""Answers the file name part of the path.
+    """Answers the file name part of the path.
 
     >>> path2Name('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed.ufo'
@@ -723,7 +350,7 @@ def path2Name(path):
     return path.split('/')[-1]
 
 def path2Extension(path):
-    u"""Answer the file extension of path.
+    """Answer the file extension of path.
 
     >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'ufo'
@@ -733,7 +360,7 @@ def path2Extension(path):
     return path.split('.')[-1].lower()
 
 def path2FontName(path, extensions=None):
-    u"""
+    """
     Take that file part of the path, and get the chunk until the first
     period to remove the extension, version numbers, etc.
     If the extension is not in extensions (default id ('ttf', 'otf'))
@@ -759,7 +386,7 @@ def path2FontName(path, extensions=None):
 familyNameParts = re.compile('([A-Za-z]*)')
 
 def path2FamilyName(path):
-    u"""Answer the first A-Za-z part of the file name.
+    """Answer the first A-Za-z part of the file name.
 
     >>> path2FamilyName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency'
@@ -773,7 +400,7 @@ path2GlyphIdName = path2FontName
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
 def path2StyleNameParts(pathOrName, extensions=None):
-    u"""Answer the fileName or name as set of unique parts that can be checked
+    """Answer the fileName or name as set of unique parts that can be checked
     for as style e.g. by the abbreviated style names in style.py.
     The parts a split on Cap(+Cap)(+lc) patterns.
     Note that the family name is also included, as often there is no difference
@@ -786,6 +413,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
     ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
+    from pagebot.constants import STYLE_REPLACEMENTS
     fontName = path2FontName(pathOrName, extensions)
     if fontName is None:
         return []
@@ -800,7 +428,7 @@ def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
 
 def path2FontId(path):
-    u"""
+    """
     Answers the font ID for the font associated with this path. If the path does not exist, or if the font name
     is invalid, then answer None.
     """
@@ -828,7 +456,7 @@ def font2Name(font):
     return name
 
 def font2FileName(font):
-    u"""Answer the font file name. In case of a new unsaved font,
+    """Answer the font file name. In case of a new unsaved font,
     answer *"Untitled"*."""
     return (font.path or 'Untitled').split('/')[-1]
 
@@ -843,12 +471,12 @@ def font2Path(font):
     return font.path
 
 def font2ID(font):
-    u"""Answer the unique record/adapter ID of the font/style. This can be the unique database record id
+    """Answer the unique record/adapter ID of the font/style. This can be the unique database record id
     or the unique file path. For now we just answer the file path."""
     return font2Path(font)
 
 def font2FamilyID(font):
-    u"""Answer the unique record/adapter ID of the family of *font*. This can be the unique database
+    """Answer the unique record/adapter ID of the family of *font*. This can be the unique database
     record id of the font parent or the unique directory path of the font. For now we just answer the
     the location of the family plist file.
     Special situation is if the font is not saved yet. In that case it does not have a path."""
@@ -864,7 +492,7 @@ def font2StyleName(font):
     return fontName2StyleName(font2Name(font))
 
 def fontName2FamilyName(name):
-    u"""For now take the chunk up till "-" in the filename and ignore the family name as set in the font.info
+    """For now take the chunk up till "-" in the filename and ignore the family name as set in the font.info
     Also make sure that the extension is removed, if the font has no "-" it isn't name. Relay-Medium_Italic.ufo
     becomes Relay. ThisFont.ufo becomes ThisFont.
     """
@@ -891,7 +519,7 @@ def family2UfoQueryName(font):
 #    G E N E R A T O R
 
 def uniqueID(obj=None):
-    u"""Answer unique Id as hex string, based on time and id(obj) if defined.
+    """Answer unique Id as hex string, based on time and id(obj) if defined.
 
     >>> id = int('0x' + uniqueID(), base=16)
     >>> isinstance(id, int)
@@ -905,7 +533,7 @@ def uniqueID(obj=None):
 #   T I M E
 
 def seconds2Date(seconds, year=1904):
-    u"""Answer TTF seconds converted to a datetime instance.
+    """Answer TTF seconds converted to a datetime instance.
 
     >>> seconds2Date(20, year=2018)
     datetime.datetime(2018, 1, 1, 0, 0, 20)
@@ -915,7 +543,7 @@ def seconds2Date(seconds, year=1904):
     return datetime.datetime(year, 1, 1, 0, 0, 0) + datetime.timedelta(seconds=seconds)
 
 def date2Seconds(dt):
-    u"""Answer the datetime converted to TTF seconds.
+    """Answer the datetime converted to TTF seconds.
 
     >>> dt = seconds2Date(20, year=2018)
     >>> date2Seconds(dt)
@@ -951,7 +579,7 @@ def list2Json(d):
 #    R O M A N  N U M E R A L S
 
 def arabic2RomanNumerals(arabic):
-    u"""Return the roman numeral representing n. Should work for n in (1, 4999).
+    """Return the roman numeral representing n. Should work for n in (1, 4999).
     Borrowed from Nick Montfort.
 
     >>> arabic2RomanNumerals(5)
@@ -984,7 +612,7 @@ def arabic2RomanNumerals(arabic):
 #    U N I C O D E
 
 def dec2hex(n, uni=1):
-    u"""Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
+    """Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
 
     >>> dec2hex(12)
     '000C'
@@ -1002,7 +630,7 @@ def dec2hex(n, uni=1):
     return hex
 
 def hex2dec(s):
-    u""" Convert hex string to decimal number. Answer None if conversion raises an error.
+    """ Convert hex string to decimal number. Answer None if conversion raises an error.
 
     >>> hex2dec('0064')
     100
@@ -1020,7 +648,7 @@ def hex2dec(s):
     return None
 
 def hex2char(hex):
-    u"""Answer the unicode char that matcher the hex value. Answer None if conversion fails.
+    """Answer the unicode char that matcher the hex value. Answer None if conversion fails.
 
     >>> hex(ord('A'))
     '0x41'
@@ -1057,7 +685,7 @@ def formatBinaryForTTX(b, length=32, segments=8):
     s = str(b)[2:]
     prefix = '0' * (length - len(s))
     s = prefix + s
-    sWithSpaces = "".join(s[i:i + segments] + " " for i in xrange(0, len(s), segments))
+    sWithSpaces = "".join(s[i:i + segments] + " " for i in range(0, len(s), segments))
     return string.strip(sWithSpaces)
 
 # ----------------------------------------------------------------------------------------------------------
@@ -1095,7 +723,7 @@ def isUniqueDict(d):
         return False
 
 def reverseDict(d):
-    u"""Reverse key-values of d.
+    """Reverse key-values of d.
 
     >>> d = dict(a=1, b=2, c=3)
     >>> reverseDict(d)
@@ -1121,7 +749,7 @@ def reverseDict(d):
     return newDict
 
 def bash(cmd, cwd=None):
-    u"""
+    """
     Runs a command in the bash shell.
     """
     import subprocess
@@ -1136,7 +764,7 @@ def bash(cmd, cwd=None):
 # XML  transformers.
 
 def dataAttribute2Html5Attribute(key):
-    u"""The @dataAttribute2Html5Attribute@ method converts an *key*
+    """The @dataAttribute2Html5Attribute@ method converts an *key*
     attribute that starts with @'data_'@ to the HTML5 attribute that starts
     with @'data-'@. Otherwise the *key* attribute is answered unchanged.
     """
@@ -1145,7 +773,7 @@ def dataAttribute2Html5Attribute(key):
     return key
 
 def pyAttrName2XmlAttrName(key):
-    u"""
+    """
     The @pyAttrName2XmlAttrName@ converts the Python XML attribute name @key@ to an
     appropriate XML attribute identifier.
     If the *key* is 'cssClass' then it is translated into 'class'.
@@ -1160,7 +788,7 @@ def pyAttrName2XmlAttrName(key):
     return key
 
 def xmlAttrName2PyAttrName(key):
-    u"""The @xmlAttrName2PyAttrName@ method converts the XML attribute name
+    """The @xmlAttrName2PyAttrName@ method converts the XML attribute name
     *key* to an appropriate Python attribute identifier.
     If the *key* is @'class'@ then it is translated into 'class_'. If a
     namespace is defined (to be recognized on {...}, then replace that by
@@ -1178,7 +806,7 @@ def xmlAttrName2PyAttrName(key):
     return key
 
 def xmlValue2PyValue(value, conversions):
-    u"""The @xmlValue2PyValue@ method converts the XML string attribute to
+    """The @xmlValue2PyValue@ method converts the XML string attribute to
     the appropriate Python object type, if the class is defined in the list
     *conversions*. If the *value* is not a string, it must have been
     converted before (e.g. by self.EXPR), the answer it untouched."""
@@ -1225,7 +853,7 @@ def stripTags(xml):
     return REMOVETAGS.sub('', xml)
 
 def addHtmlBreaks(s, isXhtml=True):
-    u"""Replace all returns by <br/> or <br>."""
+    """Replace all returns by <br/> or <br>."""
     tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
     return s.replace('\n',tag)
 
@@ -1270,7 +898,7 @@ def tableField2JoinedField(table, field):
     return '%s_%s' % (table, field)
 
 def value2TagName(value):
-    u"""
+    """
     The @value2TagName@ class method converts the *value* object into a value XML tag name.
     """
     tagname = []
@@ -1288,7 +916,7 @@ def value2TagName(value):
     return ''.join(tagname)
 
 def object2SpacedString(o):
-    u"""Answer the object as string.
+    """Answer the object as string.
 
     >>> object2SpacedString(2)
     '2'
@@ -1300,7 +928,7 @@ def object2SpacedString(o):
     return str(o)
 
 def flatten2Class(*args):
-    u"""
+    """
 
     The flatten2Class method answers the class string, made from space separated class names. If
     cssClass is a tuple or list, then merge the content. Check recursively in
@@ -1326,7 +954,7 @@ def flatten2Class(*args):
 
 
 def value2Bool(v):
-    u"""
+    """
 
     The value2Bool method answers the interpreted value of v as boolean. The following
     values (independent of case) interpret as False: ['', '0', 'f', 'F', 'none', 'false'].

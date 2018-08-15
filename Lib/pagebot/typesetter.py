@@ -4,17 +4,16 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     typesetter.py
 #
-import sys
 import copy
 import codecs
 import xml.etree.ElementTree as ET
@@ -27,6 +26,7 @@ try:
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    import sys
     sys.exit()
 
 from pagebot.contexts.platform import getContext
@@ -42,28 +42,12 @@ class Typesetter(object):
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
 
-    TAG_MATCHING = {
-        'document': [],
-        'h1' : ('document',),
-        'h2' : ('document', 'h1', 'li'),
-        'h3' : ('document', 'h1', 'h2', 'li'),
-        'h4' : ('document', 'h1', 'h2', 'h3', 'li'),
-        'h5' : ('document', 'h1', 'h2', 'h3', 'h4', 'li'),
-        'h6' : ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'li'),
-        'p': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'),
-        'strong': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
-        'em': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
-        'img': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'strong'),
-        'li': ('ul', 'ol'),
-        'ul': ('document', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'em'),
-    }
     def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False, writeTags=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
-        >>> from pagebot.contexts.platform import getContext
         >>> from pagebot import getResourcesPath
         >>> from pagebot.document import Document
         >>> from pagebot.elements.element import Element
@@ -81,15 +65,15 @@ class Typesetter(object):
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
         # Keep track of current page, as may have been defined in code blocks.
-        self.page = None 
-        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element. 
-        # In that case image elements are added as child, loosing contact with their position in the text. 
+        self.page = None
+        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element.
+        # In that case image elements are added as child, loosing contact with their position in the text.
         # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
         # If galley is None, then create an empty Galley instance, without parent.
         # Note that the single Galley will use the pagebot.contexts.Context as reference.
-        # Also note that self.box and self.galley refer to the same object. self.box is used 
+        # Also note that self.box and self.galley refer to the same object. self.box is used
         # in MarkDown files as reference where text should go.
-        
+
         # Find the context, in case no doc has be defined yet.
         if context is None and doc is not None:
             context = doc.context
@@ -99,9 +83,9 @@ class Typesetter(object):
 
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
-        self.galley = galley 
+        self.galley = galley
         # Stack of graphic state as cascading styles. Last is template for the next.
-        self.gState = [] 
+        self.gState = []
         self.tagHistory = []
         # Code block results if any ~~~Python blocks defined in the Markdown file.
         self.globalDocName = globalDocName or 'doc' # Name of global doc to find in code blocks, to be stored in self.doc
@@ -130,7 +114,7 @@ class Typesetter(object):
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_h2(self, node, e):
@@ -139,7 +123,7 @@ class Typesetter(object):
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_h3(self, node, e):
@@ -148,7 +132,7 @@ class Typesetter(object):
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_h4(self, node, e):
@@ -157,7 +141,7 @@ class Typesetter(object):
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
         #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_em(self, node, e):
@@ -193,7 +177,7 @@ class Typesetter(object):
     def node_br(self, node, e):
         u"""Add newline instance to the Galley."""
         # For now, just ignore, as <br/> already get a break in MarkDown, as part of the exclosing tag.
-        # TODO: now <br/> makes the same vertical spacing as <p> 
+        # TODO: now <br/> makes the same vertical spacing as <p>
         """
         if self.peekStyle() is None and e is not None:
             # Root of stack is empty style, to force searching on the e.parent line.
@@ -205,7 +189,7 @@ class Typesetter(object):
         """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_sup(self, node, e):
@@ -224,12 +208,12 @@ class Typesetter(object):
                 # on which page it ended up.
                 #self.galley.append(getMarker('footnote', index))
 
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_literatureref(self, node, e):
         u"""Collect literature references."""
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         # Check if this is a literature reference
         nodeId = node.attrib.get('id')
         if nodeId.startswith('litref:'): # It is a literature reference.
@@ -243,7 +227,7 @@ class Typesetter(object):
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
                 #self.galley.append(getMarker('literature', index))
 
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_div(self, node, e):
@@ -290,7 +274,7 @@ class Typesetter(object):
         bulletString = context.newBulletString(bullet) # Get styled string with bullet.
         if bulletString is not None: # HtmlContext does not want a bullet character.
             self.galley.append(bulletString) # Append the bullet as defined in the style.
-        # Typeset the block of the tag. 
+        # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
@@ -299,16 +283,16 @@ class Typesetter(object):
         A new Image element is created with a PixelMap element and TextBox caption
         element inside. The Image will use style based conditions to define the layout
         interaction between pixelMap and caption."""
-        src = node.attrib.get('src')
+        #src = node.attrib.get('src')
         #self.pushStyleTag(node.tag)
-        imageContainer = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
-        self.galley.appendElement(imageContainer)
-        captionString = node.get('title')
-        if captionString: # If there is no caption, we can add the Image element directly to the main galley.
-            caption = self.TEXTBOX_CLASS(captionString)
-            imageContainer.appendElement(caption)
+        #image = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
+        #self.galley.append(image)
+        #captionString = node.get('title')
+        #if captionString: # If there is no caption, we can add the Image element directly to the main galley.
+        #    caption = self.TEXTBOX_CLASS(captionString)
+        #    imageContainer.appendElement(caption)
         # Typeset the empty block of the img, which creates the HTML tag.
-        self.htmlNode_(node) 
+        self.htmlNode_(node)
 
         """
         else:
@@ -375,13 +359,13 @@ class Typesetter(object):
 
     def runCodeBlock(self, node, execute=True):
         u"""Answer a set of compiled methods, as found in the <code class="Python">...</code>,
-        made by Markdown with 
+        made by Markdown with
         ~~~Python
         cid = 'NameOfBlock'
         doc = Document(w=300, h=500)
         ~~~
-        block code. In this case the MacDown and MarkDown extension libraries 
-        convert this codeblock to 
+        block code. In this case the MacDown and MarkDown extension libraries
+        convert this codeblock to
         <pre><code class="Python">
         cid = 'NameOfBlock'
         doc = Document(w=300, h=500)
@@ -402,14 +386,15 @@ class Typesetter(object):
         if execute and node.text:
             if not self.tryExcept:
                 if self.verbose:
+                     print(u'Globals: %s' % result)
                      print(u'Typesetter: %s' % node.text)
-                exec(node.text) in result # Exectute code block, where result goes dict.
+                exec(node.text, result) in result # Exectute code block, where result goes dict.
                 codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                 del result['__builtins__'] # We don't need this set of globals in the returned results.
             else:
                 error = None
                 try:
-                    exec(node.text) in result # Exectute code block, where result goes dict.
+                    exec(node.text, result) in result # Exectute code block, where result goes dict.
                     codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
                     del result['__builtins__'] # We don't need this set of globals in the results.
                 except TypeError:
@@ -424,7 +409,7 @@ class Typesetter(object):
                 if self.verbose and error is not None:
                     print(u'### %s ### %s' % (error, node.text))
 
-        # doc, page or box may have changed, store them back into the typesetter, 
+        # doc, page or box may have changed, store them back into the typesetter,
         # so they are available for the execution of a next code block.
         self.doc = result.get(self.globalDocName)
         self.page = result.get(self.globalPageName)
@@ -451,7 +436,7 @@ class Typesetter(object):
 
     def getImageRefs(self, e):
         u"""Answer the image reference dictionary from the e.lib (derived from the root document)
-        if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary. 
+        if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary.
         Answer None if e.lib does not exist."""
         lib = e.lib
         if lib is not None:
@@ -473,7 +458,6 @@ class Typesetter(object):
 
     def getMatchingStyleNames(self, tag):
         u"""Answer the list of matching style, with decreasing relevance."""
-        #parents = self.TAG_MATCHING.get(tag)
         revHistory = self.tagHistory[:]
         revHistory.reverse()
         matches = []
@@ -500,7 +484,7 @@ class Typesetter(object):
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
             self.pushStyle(self.getNamedStyle('root')) # Happens if calling directly, without check on e
         mergedStyle = copy.copy(self.peekStyle())
-        # Find the best matching style for tag on order of relevance, 
+        # Find the best matching style for tag on order of relevance,
         # considering the possible HTML tag parents and the history.
         for styleName in self.getMatchingStyleNames(tag):
             nodeStyle = self.getNamedStyle(styleName)
@@ -511,11 +495,11 @@ class Typesetter(object):
         return mergedStyle
 
     def append(self, bs):
-        u"""Append the string (or BabelString instance) to the current box, 
+        u"""Append the string (or BabelString instance) to the current box,
         if it is defined and it has a context. Otherwise add to the existing galley."""
         # Add the tail formatted string to the textBox or galley. Equivalent to self.box.
         if self.galley is not None:
-            self.galley.append(bs)  
+            self.galley.append(bs)
         elif self.verbose:
             print('### Typesetter.append: Cannot append "%s"' % bs)
 
@@ -544,7 +528,7 @@ class Typesetter(object):
 
     def typesetString(self, sOrBs, e=None, style=None):
         u"""If s is a formatted string, then it is placed untouched. If it is a plain string, then
-        use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters. 
+        use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
         bs = self.galley.newString(sOrBs, e=e, style=style)
@@ -553,23 +537,24 @@ class Typesetter(object):
 
     def typesetNode(self, node, e=None):
         u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
-        If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then 
+        If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
         # Fills self.codeBlocks dictionary from node codeblocks.
         # Side effect is to update self.doc, self.page and self.box
-        cid, codeResult = self.runCodeBlock(node) 
-        #if codeResult is not None:
-        #    return
+        cid, codeResult = self.runCodeBlock(node)
+        if codeResult is not None:
+            return
 
-        if self.writeTags:
+        # Ignore <pre> tag output, as it is part of a ~~~Pyhton code block
+        if self.writeTags and node.tag != 'pre':
             # Open the node in HTML export for this node
             self.htmlNode(node)
             # Add this tag to the tag-history line
             self.addHistory(node.tag)
 
         # If e is undefined, then we make sure that the stack contains the doc.rootStyle on top.
-        # If e is defined then root queries for style should follow the e.parent path. 
+        # If e is defined then root queries for style should follow the e.parent path.
         if self.peekStyle() is None and e is not None:
             # Root of stack is empty style, to force searching on the e.parent line.
             self.pushStyle({}) # Define top level for styles.
@@ -579,7 +564,7 @@ class Typesetter(object):
         # XML-nodes are organized as: node - node.text - node.children - node.tail
         # If there is no text or if the node does not have tail text, these are None.
         # Still we want to be able to add the prefix to the node.text, so then the text is changed to an empty string.
-        
+
         nodeText = self._strip(node.text)
         if nodeText: # Not None and still has content after stripping?
             # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
@@ -608,29 +593,15 @@ class Typesetter(object):
                 bs = self.context.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
 
-        if self.writeTags:
+        # Ignore </pre> tag output, as it is part of a ~~~Pyhton code block
+        if self.writeTags and node.tag != 'pre':
             # Close the HTML tag of this node.
             self._htmlNode(node)
-        
+
         # Now restore the graphic state at the end of the element content processing to the
-        # style of the parent in order to process the tail text. Back to the style of the parent, 
+        # style of the parent in order to process the tail text. Back to the style of the parent,
         # which was in nodeStyle.
-        self.popStyle()  
-
-        """
-        # If there is a postfix for the current state, then add that to the output.
-        postfix = style.get('postfix')
-        if not postfix and e is not None: # Do we have a style tree?
-            postfix = self._strip('', postfix= or e.css('postfix'))
-
-        # XML-nodes are organized as: node - node.text - node.children - node.tail
-        # If there is no text or if the node does not have tail text, these are None.
-        # Still we want to be able to add the postfix to the tail, so then the tail is changed to empty string.
-        nodeTail = self._strip(node.tail, postfix=postfix)
-        if nodeTail: # Something of a tail left after stripping?
-            bs = self.galley.context.(nodeTail, e=e, style=nodeStyle)
-            self.galley.append(bs) # Add to the current flow textBox
-        """
+        self.popStyle()
 
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
@@ -660,57 +631,16 @@ class Typesetter(object):
             filteredNodes = root.findall(xPath)
             if filteredNodes:
                 # How to handle if there is multiple result nodes?
-                self.typesetNode(filteredNodes[0], e) 
+                self.typesetNode(filteredNodes[0], e)
         else:
             # Collect all flowing text in one formatted string, while simulating the page/flow, because
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(root, e)
-        # Answer the root element of the etree (Note this class also is called "Element", another kind 
+        # Answer the root element of the etree (Note this class also is called "Element", another kind
         # of node than the PageBot Element.
         return root
-
-
-    def DEPRECATED_makeXMLFile(self, fileName):
-        u"""If fileName is pointing to a non-XML file, then try to convert. This needs to be
-        extended in the future e.g. to support Word documents or other text resources.
-        If the document is already an XML document, then ignore."""
-        xml = None # Check is something changed.
-        fileExtension = fileName.split('.')[-1].lower()
-        if fileExtension == 'xml':
-            pass # Ignore, it's already XML
-        elif fileExtension == 'md':
-            # If we have MarkDown content, convert to XML (XHTML)
-            f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
-            f.close()
-            mdExtensions = [FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = u'<?xml version="1.0" encoding="UTF-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
-            xml = xml.replace('&nbsp;', ' ')
-        if xml is not None:
-            fileName = fileName + '.xml'
-            f = codecs.open(fileName, mode="w", encoding="utf-8")
-            f.write(xml)
-            f.close()
-        return fileName # Return altered fileName if converted. Otherwise return original fileName
-
-    def DEPRECATED_typesetFilibuster(self, e, blurbNames=None):
-        u"""The typesetFilibuster answers the parsed typeset nodes from a Filibuster blurb. If the blurb
-        instances is not given, then create a default Filibuster article."""
-        if blurbNames is None: # Nothing supplied: at least create some standard content as article to parse.
-            blurbNames = (('h3', 'article_ankeiler'), ('h1', 'article_summary'), ('p', 'article'))
-        blurbArticle = []
-        from pagebot.contributions.filibuster.blurb import Blurb
-        blurb = Blurb()
-        for tag, blurbName in blurbNames:
-            blurbArticle.append('<%s>%s</%s>\n' % (tag, blurb.getBlurb(blurbName), tag))
-        xml = u'<document>%s</document>' % '\n'.join(blurbArticle)
-        root = ET.parseString(xml) # Get the root element of the parsed XML tree.
-        self.typesetNode(root, e)
-
-
 
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-

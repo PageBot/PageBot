@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     inspectfont.py
@@ -41,8 +41,14 @@ class FontInfo(object):
 
     """Read-only access to font information, such as names, character set and supported
     OpenType features.
-    """
 
+    >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
+    >>> from pagebot.fonttoolbox.objects.font import getFont
+    >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+    >>> font = getFont(path)
+    >>> font.info.copyright
+    u'Copyright 2011 Google Inc. All Rights Reserved.'
+    """
     def __init__(self, ttFont):
         self.ttFont = ttFont
         self._styleName = None 
@@ -81,7 +87,7 @@ class FontInfo(object):
     familyName = property(_get_familyName)
 
     def _get_styleName(self):
-        u"""Answer the style name of the font. 
+        """Answer the style name of the font. 
         Family name should be this, but often wrong: return self._getNameTableEntry(1)
         We take the first spaced part as family name, and fill the rest here under style.
         So we add rest of family.
@@ -110,6 +116,10 @@ class FontInfo(object):
     def _set_styleName(self, styleName):
         self._styleName = styleName
     styleName = property(_get_styleName, _set_styleName)
+
+    @cached_property
+    def copyright(self):
+        return self.ttFont['name'].getDebugName(0)
 
     @cached_property
     def psName(self):
@@ -248,7 +258,7 @@ class FontInfo(object):
         return self._getOTLFeatures("GSUB")
 
     def _get_metrics(self):
-        u"""Small collection of font metrics info data as dictionary."""     
+        """Small collection of font metrics info data as dictionary."""     
         # @@@ TODO Review this!   
         return dict(typoDescender=self.typoDescender(),
                     typoAscender=self.typoAscender(),

@@ -3,18 +3,19 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     stackedtypography.py
 #
 from random import random
 from pagebot.elements import *
+from pagebot.toolbox.color import color
 
 class StackedTypography(Template):
     
@@ -29,5 +30,5 @@ class StackedTypography(Template):
             newRect(parent=self, 
                 x=random()*(self.w-S), 
                 y=random()*(self.h-S), w=S, h=S, 
-                fill=(random(), random(), random(), 0.5))
+                fill=color(random(), random(), random(), 0.5))
 

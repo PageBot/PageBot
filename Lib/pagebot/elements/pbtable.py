@@ -4,21 +4,22 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     pbtable.py
 #
 from pagebot.style import CENTER, ORIGIN, MIDDLE
 from pagebot.elements.element import Element
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox
+from pagebot.toolbox.color import whiteColor, blackColor, color
 
 class Row(Element):
     def __init__(self, **kwargs):
@@ -70,16 +71,16 @@ class Table(Element):
  
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
-            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=1, fontSize=10))
+            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=whiteColor, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:
                 colName = None
             self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
                 xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
-                borders=self.borders, fill=0.4, conditions=cellConditions)
+                borders=self.borders, fill=color(0.4), conditions=cellConditions)
 
-        bs = self.newString('abc', style=dict(font='Verdana', textFill=0, fontSize=10))
+        bs = self.newString('abc', style=dict(font='Verdana', textFill=blackColor, fontSize=10))
         for rowIndex in range(rows):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):
@@ -146,11 +147,14 @@ class Table(Element):
 
     def build(self, view, origin=ORIGIN, drawElements=True):
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.drawFrame(view, p) # Draw optional frame or borders.
+
+        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -164,12 +168,11 @@ class Table(Element):
         self._restoreScale(view)
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
      
-    #   H T M L  /  C S S  S U P P O R T
+    #   H T M L  /  S A S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
 
-        self.build_css(view)
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(p)    
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 

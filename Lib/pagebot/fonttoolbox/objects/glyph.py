@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     glyph.py
@@ -21,19 +21,18 @@ import weakref
 
 # Use default drawing context for generating the glyphs path.
 # This is independent from the current main context, e.g. HtmlContext.
-from pagebot.contexts.platform import getContext
+from pagebot.constants import XXXL
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
-from pagebot.toolbox.transformer import point2D
+from pagebot.toolbox.units import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
-
-context = getContext()
+from pagebot.fonttoolbox.analyzers.acomponent import AComponent
 
 C = 0.5
 F = 2.0 / 3.0
 
 class AxisDeltas(object):
-    u"""Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
+    """Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
     def __init__(self, name):
         self.name = name
         self.deltas = {}
@@ -49,49 +48,37 @@ class AxisDeltas(object):
         return self.deltas[key]
 
 class Glyph(object):
-    u"""The Glyph class wraps the glyph structure of a TrueType Font and
+    """The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> f = findFont('Amstelvar-Roman-VF') # Keep font alive to glyph.font weakref
+    >>> f = findFont('RobotoDelta-VF') # Keep font alive to glyph.font weakref
     >>> g = f['a']
     >>> g.name
     'a'
+    """
 
     """
-    """
-    TODO: Get more docTests to work.
+    TODO: Separate path creation from Glyph._initialize
     >>> len(g.points)
-    40
+    46
     >>> g.points[-1].onCurve
     False
     >>> contours = g.contours
     >>> len(contours)
     2
-    TODO: Solve this for Flat.
-    >>> path = g.path
-    >>> print(path)
-    <BezierPath>
-    >>> nspath = path.getNSBezierPath()
-    >>> bounds = nspath.bounds()
-    >>> print(bounds)
-    <NSRect origin=<NSPoint x=38.0 y=-15.0> size=<NSSize width=948.0 height=1037.0>>
-    >>> len(bounds)
-    2
-    >>> len(bounds[0])
-    2
-    >>> len(bounds[1])
-    2
-    >>> print(bounds[0])
-    <NSPoint x=38.0 y=-15.0>
-    >>> bounds[0][0]
-    38.0
-    """
+    >>> g = f['agrave']
+    >>> g.components
+    [Cmp(a, 0, 0), Cmp(grave, 51, 0)]
+    >>> g.getComponentNames()
+    ['a', 'grave']
 
+    """
     GLYPHANALYZER_CLASS = GlyphAnalyzer
     AXIS_DELTAS_CLASS = AxisDeltas
 
     def __init__(self, font, name):
+
         self.name = name
         self.font = font # Stored as weakref
         self.dirty = True # Mark that we need initialization or something changed in the points.
@@ -109,6 +96,7 @@ class Glyph(object):
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
+        self._box = None
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -120,19 +108,26 @@ class Glyph(object):
         return '<PageBot Glyph %s Pts:%d/Cnt:%d/Cmp:%d>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
+    def __getitem__(self, contourIndex):
+        if self._contours is None:
+            self._initialize()
+        return self._contours[contourIndex]
+
     def _initialize(self):
-        u"""Initializes the cached data, such as self.points, self.contour,
-        self.components and self.path, as side effect of drawing the path image."""
+        """Initializes the cached data, such as self.points, self.contour,
+        self.components and self.path, as side effect of drawing the path image.
+
+        TODO: Separate path creation from initialize, so we no longer need self.context here.
+        """
 
         self._points = []
         self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
         self._contours = []
-        self._components = []
         self._segments = []
         self._boundingBox = None
+        components = self.components
 
         coordinates = self.coordinates # Get list from the font.
-        components = self._components # No property call to avoid infinite recursion.
         flags = self.flags
         endPtsOfContours = set(self.endPtsOfContours)
         openContour = False
@@ -140,11 +135,25 @@ class Glyph(object):
         currentOnCurve = None
         p0 = None
 
-        minX = minY = sys.maxsize # Store bounding box as we process the coordinate.
-        maxX = maxY = -sys.maxsize
-
         if coordinates or components:
-            self._path = path = context.newPath()
+            self._path = self.font.context.newPath()
+            minX = minY = XXXL # Store bounding box as we process the coordinate.
+            maxX = maxY = -XXXL
+        else:
+            minX = minY = maxX = maxY = 0
+
+        for component in components:
+            componentName = component.baseGlyph
+            if componentName in self.font.keys():
+                componentPath = self.font[componentName].path
+                componentPath.transform((1, 0, 0, 1, component.x, component.y))
+                self._path.appendPath(componentPath)
+                componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
+                cMinX, cMinY, cMaxX, cMaxY = self.font[componentName].boundingBox
+                minX = min(cMinX+component.x, minX)
+                minY = min(cMinY+component.y, minY)
+                maxX = max(cMaxX+component.x, maxX)
+                maxY = max(cMaxY+component.y, maxY)
 
         for index, (x, y) in enumerate(coordinates):
             minX = min(x, minX)
@@ -157,7 +166,8 @@ class Glyph(object):
             self._points.append(p)
 
             if not openContour:
-                path.moveTo((x, y))
+                assert self._path is not None
+                self._path.moveTo((x, y))
                 p0 = p
                 currentOnCurve = p
                 openContour = []
@@ -180,15 +190,15 @@ class Glyph(object):
                     if not p.onCurve:
                         openSegment.append(p0)
 
-                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
 
-                path.closePath()
+                self._path.closePath()
                 openContour = None
                 openSegment = None
 
             elif p.onCurve:
                 # Inside contour.
-                currentOnCurve = self._drawSegment(currentOnCurve, openSegment, path)
+                currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
                 openSegment = None
 
         # Add 4 spacing points, as default in TTF. No index, as they cannot be written back.
@@ -203,28 +213,27 @@ class Glyph(object):
         self.dirty = False # All cleaned up.
 
     def update(self):
-        u"""Update the font if it became dirty by changing cooridinates.
+        """Update the font if it became dirty by changing cooridinates.
         Otherwise ignore.  Note that in case the caller cache points, contours,
         components, etc. these are no longer valid."""
         if self.dirty:
             self._initialize()
 
-    def _get_flattenedPath(self):
-        u"""Answer the flattened DrawBotContext NSBezier path."""
+    def getFlattenedPath(self, context):
+        """Answer the flattened DrawBotContext NSBezier path."""
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
-    flattenedPath = property(_get_flattenedPath)
 
-    def _get_flattenedContours(self):
-        u"""Answer the flattened NSBezier path As contour list [contour,
+    def getFlattenedContours(self, context):
+        """Answer the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points.
 
         TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
         if self._flattenedContours is None:
             contour = []
             self._flattenedContours = [contour]
-            flatPath = self.flattenedPath
+            flatPath = self.getFlattenedPath(context)
             if flatPath is not None: # In case self.path could not be created.
                 for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call.
                     p = flatPath.elementAtIndex_associatedPoints_(index)[1]
@@ -234,10 +243,9 @@ class Glyph(object):
                         contour = []
                         self._flattenedContours.append(contour)
         return self._flattenedContours # Can still be None.
-    flattenedContours = property(_get_flattenedContours)
 
     def getAxisDeltas(self):
-        u"""Answer dictionary of axis-delta relations. Key is axis name, value
+        """Answer dictionary of axis-delta relations. Key is axis name, value
         is an *AxisDeltas* instance.  The instance containse (minValue,
         defaultValue, maxValue) keys, holding the sets of deltas for the glyph
         points."""
@@ -256,7 +264,7 @@ class Glyph(object):
         return self._axisDeltas
 
     def _drawSegment(self, cp, segment, path):
-        u"""Draws the Segment instance into the path. It may contain multiple
+        """Draws the Segment instance into the path. It may contain multiple
         quadratics. Split into cubics and lines."""
 
         if len(segment) == 1:
@@ -291,7 +299,7 @@ class Glyph(object):
         return cp
 
     def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y, path):
-        u"""Converts a quatratic control point into a cubic.
+        """Converts a quatratic control point into a cubic.
 
         p0 = onCurve0
         p1 = offCurve
@@ -323,7 +331,7 @@ class Glyph(object):
         except KeyError:
             return None # Glyph is undefined in hmtx table.
     def _set_width(self, width):
-        u"""TODO: Does not seem to work. How about saving the font?"""
+        """TODO: Does not seem to work. How about saving the font?"""
         hmtx = list(self.font.ttFont['hmtx'][self.name]) # Keep vertical value
         hmtx[0] = width
         self.font.ttFont['hmtx'][self.name] = hmtx
@@ -338,7 +346,7 @@ class Glyph(object):
     rightMargin = property(_get_rightMargin)
 
     def isClockwise(self, contour):
-        u"""Answer Contour direction. Simple and fast.
+        """Answer Contour direction. Simple and fast.
 
         http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
         """
@@ -351,7 +359,7 @@ class Glyph(object):
     # Direct TTFont coordinates compatibility
 
     def _get_coordinates(self):
-        u"""Answers the ttFont.coordinates, if it exists, as GlyphCoordinates
+        """Answers the ttFont.coordinates, if it exists, as GlyphCoordinates
         instance. Otherwise answer None. Note that this is the “raw” list of
         (x, y) positions, without information on contour index or if the point
         is on/off curve. This information is stored in ttFont.endPtsOfContours
@@ -388,7 +396,7 @@ class Glyph(object):
         return len(self.contours)
 
     def _get_points(self):
-        u"""Answer the list of APoint instances, representing the outline of
+        """Answer the list of APoint instances, representing the outline of
         the glyph, not including the standard 4 spacing points at the end of
         the list in TTF style.  Read only for now. Although APoints are
         constructed from the self.ttFont coordinates, they keep a weakref to
@@ -400,7 +408,7 @@ class Glyph(object):
     points = property(_get_points)
 
     def _get_points4(self):
-        u"""Answer the list of APoints instances, representing the outline of
+        """Answer the list of APoints instances, representing the outline of
         the glyph, including the standard 4 spacing points at the end of the
         list in TTF style.  Read only for now. Although APoints are constructed
         from the self.ttFont coordinates, they keep a weakref to the glyph and
@@ -448,12 +456,24 @@ class Glyph(object):
 
     def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None or self.dirty:
-            self._initialize()
+            self._components = []
+            self.ttGlyph.expand(self.font.ttFont['glyf'])
+            # Initialize the AComponent wrappers
+            if hasattr(self.ttGlyph, 'components'):
+                for ttComponent in self.ttGlyph.components:
+                    self._components.append(AComponent(ttComponent))
+
         return self._components
     components = property(_get_components)
 
+    def getComponentNames(self):
+        componentNames = []
+        for component in self.components:
+            componentNames.append(component.baseGlyph)
+        return componentNames
+
     def _get_variables(self):
-        u"""Answer the axis-deltas for this glyph. Answer an None if there are
+        """Answer the axis-deltas for this glyph. Answer an None if there are
         no deltas for this glyph or if the parent is not a Var-font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -479,10 +499,8 @@ class Glyph(object):
     variables = property(_get_variables)
 
     def _get_path(self):
-        u"""Answer the drawn path of the glyph. For the DrawBotContext this is
+        """Answer the drawn path of the glyph. For the DrawBotContext this is
         a OSX-BezierPath the can be drawn on the DrawBot convas.
-
-        TODO: Get this to work for Flat
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
@@ -490,11 +508,7 @@ class Glyph(object):
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
-        """
-
-        """
-        TODO: Get more docTests to work
-        >>> str(glyph.path) in ('<BezierPath>',)
+        >>> glyph.path is not None
         True
         """
         if self._path is None or self.dirty:
@@ -509,13 +523,15 @@ class Glyph(object):
     analyzer = property(_get_analyzer) # Read only for now.
 
     def _get_box(self):
-
-        self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
+        u"""Answer the bounding box as defined by self.ttGlyph boundaries.
+        """
+        if self._box is None:
+            self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
         return self._box
     box = property(_get_box) # Read only for now.
 
     def onBlack(self, p):
-        u"""Answers the boolean flag if the single point (x, y) is on black.
+        """Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext."""
         p = point2D(p)
         return self.path._path.containsPoint_(p)

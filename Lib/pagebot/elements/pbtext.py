@@ -3,12 +3,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     pbtext.py
@@ -18,17 +18,18 @@
 #     in the string)
 #
 from pagebot.elements.pbtextbox import TextBox
+from pagebot.toolbox.units import pt
 
 class Text(TextBox):
 
     def _get_w(self):
-        return self.getTextSize()[0]
+        return pt(self.getTextSize()[0])
     def _set_w(self, w):
         pass # Ignore
     w = property(_get_w, _set_w)
    
     def _get_h(self):
-        return self.getTextSize()[1]
+        return pt(self.getTextSize()[1])
     def _set_h(self, h):
         pass # Ignore
     h = property(_get_h, _set_h)

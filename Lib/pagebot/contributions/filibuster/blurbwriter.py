@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import re
 import random
-from titlecase import titlecase
+from pagebot.contributions.filibuster.titlecase import titlecase
 
 choice = random.choice
 
@@ -91,10 +91,14 @@ class BlurbWriter(object):
         self.pstatement = re.compile(p, re.IGNORECASE)
         self.allkeys = self.keys()
 
-        self.importcontent(content)
+        # Switch between Py2 with unicode() and Py3 that is already unicode.
+        try:
+            self.importcontentPy2(content)
+        except:
+            self.importcontent(content)
 
-    def importcontent(self, contentdict):
-        # make all strings unicode here?
+    def importcontentPy2(self, contentdict):
+        '''make all strings unicode here?'''
         for k, v in contentdict.items():
             bb = []
             for name in v:
@@ -103,27 +107,39 @@ class BlurbWriter(object):
                 except UnicodeDecodeError:
                     print("UnicodeDecodeError importcontent", name)
             self.data[unicode(k)] = [unicode(name) for name in v]
-        #self.data.update(contentdict)
 
-        dk = self.data.keys()
+        dk = list(self.data.keys())
+        dk.sort()
+        self.keywords = dk
+
+    def importcontent(self, contentdict):
+        for k, v in contentdict.items():
+            bb = []
+
+            for name in v:
+                bb.append(name)
+
+            self.data[k] = [name for name in v]
+
+        dk = list(self.data.keys())
         dk.sort()
         self.keywords = dk
 
     def keyindex(self, key):
         if key in self.allkeys:
-            return self.allkeys.index(key)
+            return list(self.allkeys).index(key)
         else:
             return -1
 
     def keys(self):
-        k = self.data.keys()
-        k.sort()
+        k = list(self.data.keys())
+        #return k.sort()
         return self.data.keys()
 
     def has_key(self, key):
-        if self._cache.has_key(key):
+        if key in self._cache:
             return 1
-        if self.data.has_key(key):
+        if key in self.data:
             return 1
         return 0
 
@@ -146,9 +162,9 @@ class BlurbWriter(object):
         return self[key]
 
     def __getitem__(self, key):
-        if self._cache.has_key(key):
+        if key in self._cache:
             return self._cache[key]
-        if self.data.has_key(key):
+        if key in self.data:
             return self.data[key]
         return u'__' + key + u'__'
 
@@ -160,14 +176,14 @@ class BlurbWriter(object):
     def softdefine(self, key, value):
         if DEBUG:
             print('soft define', key, value)
-        if not self._cache.has_key(key):
+        if not key in self._cache:
             self._cache[key] = [value]
 
     def clearcache(self, key=None):
         if not key:
             self._cache = {}
         else:
-            if self._cache.has_key(key):
+            if key in self._cache:
                 del self._cache[key]
 
     def parsetag(self, tag):
@@ -292,7 +308,7 @@ class BlurbWriter(object):
     def replacetag(self, level, text):
         level = level + 1
         if level > 100:
-            raise 'recursion error? too many nested instructions!', self.lasttag
+            raise('Blurbwriter.replacetag: Recursion error? too many nested instructions! last tag: %s' % self.lasttag)
         #pend = 0
         m = 1
         while m != None:
@@ -301,7 +317,7 @@ class BlurbWriter(object):
                 return 0, text
             tag = text[start:stop]
             if not tag:
-                raise 'Error in blurb code' # Better make it crash to show the error
+                raise 'Blurbwriter.replacetag: Error in blurb code' # Better make it crash to show the error
                 return 0, u'__empty tag__'
 
             # do the meta-recursive tag-tagging thing here
@@ -392,7 +408,7 @@ class BlurbWriter(object):
                 for fc in formatcmds:
                     if DEBUG:
                         print('writerformatting before:', fc, c)
-                    if not self.formatdict.has_key(fc):
+                    if not fc in self.formatdict:
                         continue
                     c = self.formatfunc(c, self.formatdict[fc])
                     if DEBUG:

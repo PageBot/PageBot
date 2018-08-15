@@ -4,20 +4,20 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.style import XXXL, NO_COLOR
-from pagebot.toolbox.transformer import pointOffset
-
+from pagebot.style import XXXL
+from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.color import noColor
 
 class Polygon(Element):
     u"""The Polygon element is a simple implementation of the polygon DrawBot function.
@@ -64,16 +64,16 @@ class Polygon(Element):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
-       
-        p = pointOffset(self.oPoint, origin)
-        p = self._applyScale(p)    
+
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        context.setFillColor(self.css('fill'))
-        context.setStrokeColor(self.css('stroke', NO_COLOR), self.css('strokeWidth'))
+        context.fill(self.css('fill'))
+        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         b.newPath()
         for index, (ppx, ppy) in enumerate(self.points):
             if index == 0:
@@ -91,7 +91,7 @@ class Polygon(Element):
 
         # Draw optional bouning box.
         self.drawFrame(origin, view)
- 
+
         self._restoreScale()
         view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -102,5 +102,5 @@ class Polygon(Element):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         # TODO: Needs a solution, SVG or pixels?
-        
+
 

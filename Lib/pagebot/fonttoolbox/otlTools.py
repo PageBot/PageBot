@@ -3,12 +3,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #   otlTools.py
@@ -245,7 +245,7 @@ def mergeFeatures(table1, table2):
 
     # Remove the dead features
     if featuresToDelete:
-        indicesBefore = range(len(table1.FeatureList.FeatureRecord))
+        indicesBefore = list(range(len(table1.FeatureList.FeatureRecord)))
         for feaIndex in sorted(featuresToDelete, reverse=True):
             del table1.FeatureList.FeatureRecord[feaIndex]
             del indicesBefore[feaIndex]
@@ -1174,7 +1174,7 @@ def _calcClassDefDeletionAndRemap(before, after):
     if not before:
         return [], {}
     delete = sorted(before - after, reverse=True)
-    rng = range(max(before) + 1)
+    rng = list(range(max(before) + 1))
     for i in delete:
         del rng[i]
     if not rng:
@@ -1297,7 +1297,7 @@ def _pruneLookups(table, deadLookups):
     the lookup indices used in features and in other lookups.
     """
     lookupsToDelete = []
-    indicesBefore = range(len(table.LookupList.Lookup))
+    indicesBefore = list(range(len(table.LookupList.Lookup)))
     for lookupIndex, lookup in enumerate(table.LookupList.Lookup):
         subTablesToDelete = []
         for subTableIndex, subTable in enumerate(lookup.SubTable):
@@ -1334,7 +1334,7 @@ def _remapLookupsAndPruneFeatures(table, lookupRemap):
     the scripts.
     """
     featuresToDelete = []
-    indicesBefore = range(len(table.FeatureList.FeatureRecord))
+    indicesBefore = list(range(len(table.FeatureList.FeatureRecord)))
     for featureIndex, feature in enumerate(table.FeatureList.FeatureRecord):
         feature.Feature.LookupListIndex = [
             lookupRemap[lli] for lli in feature.Feature.LookupListIndex

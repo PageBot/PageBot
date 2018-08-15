@@ -1,14 +1,14 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     d3graphsite.py
@@ -18,7 +18,7 @@
 #
 from pagebot.elements import *
 from pagebot.elements.web.simplesite import Navigation, Featured, WideContent, Hero, \
-    Footer, simpleTheme, simpleCss
+    Footer, simpleTheme, simpleCssCode
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
@@ -46,7 +46,7 @@ class D3GraphSite(Publication):
     >>> page.w, page.h = doc.w, doc.h = A4
     >>> view = doc.newView('Page')
     >>> # TODO: Needs solving for FlatContext
-    >>> #doc.export('_export/D3GraphSite.pdf')
+    >>> doc.export('_export/D3GraphSite.pdf')
     """
 
     def initialize(self, **kwargs):
@@ -93,10 +93,10 @@ class D3GraphSite(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.headHtml = headHtml % dict(title=self.title, description='', keywords='')
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.jsCode = jsCode
-        t.info.cssCode = simpleCss % simpleTheme
+        t.headHtml = headHtml % dict(title=self.title, description='', keywords='')
+        t.favIconUrl = 'images/favicon.gif'
+        t.jsCode = jsCode
+        t.cssCode = simpleCssCode % simpleTheme
         # Add page template elements.
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')

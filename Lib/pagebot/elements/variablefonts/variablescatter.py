@@ -4,12 +4,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #	  variablescatter.py
@@ -19,7 +19,8 @@ from __future__ import division
 from random import random, choice
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot.toolbox.transformer import pointOffset
+from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.color import blackColor
 
 
 class VariableScatter(Element):
@@ -71,7 +72,7 @@ class VariableScatter(Element):
     def draw(self, view, origin):
         c = self.doc.context
 
-        p = pointOffset(self.oPoint, origin)
+        p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
@@ -103,12 +104,12 @@ class VariableScatter(Element):
                               fillColor=fillColor)
                 if self.recipeAxes:
                     recipe = self.location2Recipe(location)
-                    bs = c.newString(recipe, fontSize=4, fill=0)
+                    bs = c.newString(recipe, fontSize=4, fill=blackColor)
                     w, h = bs.size()
                     c.text(bs, ppx - stepX/4, ppy - 24) # Bit of hack, we need the width of the glyph here.
                     if len(self.recipeAxes) > 3:
                         recipe = self.location2Recipe(location, 3, 6)
-                        bs = c.newString(recipe, fontSize=4, fill=0)
+                        bs = c.newString(recipe, fontSize=4, fill=blackColor)
                         w, h = bs.size()
                         c.text(bs, point=(ppx - stepX/4 + 30, ppy - 24)) # Bit of hack, we need the width of the glyph here.
 

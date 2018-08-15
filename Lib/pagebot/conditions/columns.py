@@ -3,12 +3,12 @@
 #
 #     P A G E B O T
 #
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     columns.py
@@ -52,15 +52,15 @@ class Right2Col(ColCondition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.right2Col(self.col), e, score)
 
-class Fit2Colspan(ColCondition):
+class Fit2ColSpan(ColCondition):
 	u"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
-		return e.isLefOnCol(self.col, self.tolerance) and e.isFitOnColspan(self.col, self.colSpan, self.tolerance)
+		return e.isLeftOnCol(self.col, self.tolerance) and e.isFitOnColSpan(self.col, self.colSpan, self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.left2Col(self.col), e, score)
-			self.addScore(e.fit2Colspan(self.col, self.colSpan), e, score)
+			self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
 	u"""Fit the left of the element on the column index #, as defined in self.col."""
@@ -80,13 +80,13 @@ class Bottom2Row(RowCondition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.bottom2Row(self.row), e, score)
 
-class Fit2Rowspan(RowCondition):
+class Fit2RowSpan(RowCondition):
 	u"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
-		return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowspan(self.row, self.rowSpan, self.tolerance)
+		return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowSpan(self.row, self.rowSpan, self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.top2Row(self.row), e, score)
-			self.addScore(e.fit2Rowspan(self.row, self.rowSpan), e, score)
+			self.addScore(e.fit2RowSpan(self.row, self.rowSpan), e, score)
 

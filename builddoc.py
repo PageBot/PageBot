@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
@@ -8,7 +8,7 @@
 #     Licensed under MIT conditions
 #
 #     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting usage of Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     builddoc.py
@@ -130,7 +130,7 @@ class PageBotDoc(Publication):
                 self.clearPyc(filePath)
             elif fileName.endswith('.pyc'):
                 os.remove(filePath)
-                print(' * Removed %s' % filePath
+                print(' * Removed %s' % filePath)
                 continue
 
     def testDocs(self, path=None, node=None, logFile=None):

@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
@@ -7,7 +7,7 @@
 #     Licensed under MIT conditions
 #
 #     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting usage of Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     setup.py

@@ -1,14 +1,14 @@
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens & Font Bureau
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
 #
-#     Supporting usage of DrawBot, www.drawbot.com
-#     Supporting usage of Flat, https://github.com/xxyxyz/flat
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
 #     website.py
@@ -17,7 +17,7 @@
 #     This will hold the Python generator version of Kirsten Langmuur's SimpleSite template.
 #     These classes will be replaced by usage of the BaseWebSite class, once that is funtional
 #     and stable. Currently the elements below are not generic enough an bound to a fixed CSS.
-#     The designdesign.space site it using them to generate the code. 
+#     The designdesign.space site it using them to generate the code.
 #
 from pagebot.contexts.htmlcontext import HtmlContext
 from pagebot.conditions import *
@@ -58,7 +58,6 @@ class Navigation(TextBox):
 
     def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
-        self.build_css(view)
         b.div(cssClass='container top')
         b.div(cssClass='row')
         b.div(cssClass='fivecol')
@@ -89,7 +88,8 @@ class Navigation(TextBox):
 class Introduction(TextBox):
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build a page wide in intoduction box for large type, if there is any content."""
+        """Build a page wide in intoduction box for large type, if there is any
+        content."""
         if not self.bs.s:
             return
         b = self.context.b
@@ -105,16 +105,16 @@ class Introduction(TextBox):
         b._div() # .container .introduction
 
 class Featured(Rect):
-    u"""The Featured elements is a container of an image on the left and side column on the right.
-    On mobile the side text appears below the images."""
+    """The Featured elements is a container of an image on the left and side
+    column on the right. On mobile the side text appears below the images."""
     def __init__(self, **kwargs):
         Rect.__init__(self, **kwargs)
-        u"""Initialize the generic featured item, adding and image text box and side text box."""
+        """Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the featured topic, image on the left and side column on the right."""
+        """Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
         if not image.bs.s or not side.bs.s: # No HTML in any of the BabelStrings?
@@ -136,12 +136,12 @@ class Main(Rect):
 
     def __init__(self, **kwargs):
         Rect.__init__(self,  **kwargs)
-        u"""Initialize the generic featured item, adding and image text box and side text box."""
+        """Initialize the generic featured item, adding and image text box and side text box."""
         TextBox('', parent=self, name='Content') # Note that child elements should not have the same name as parent to find them.
         TextBox('', parent=self, name='Side')
 
     def append(self, bs):
-        u"""Add FormattedString to main content."""
+        """Add FormattedString to main content."""
         self['Content'].append(bs)
 
     def build_html(self, view, origin=None, drawElements=True):
@@ -164,11 +164,11 @@ class Main(Rect):
         b._div() # .container .mainContnet
 
 class Section(Rect):
-    u"""Implements a stack of rows, each holding 2 text boxes. Content should be filled
-    in even amount. Uneven rows and empty rows will be omitted from the output.
-    The self['Title'] container runs over the entire width of both columns. If there
-    is no title defined, it will be ignored. If there is not content at all, then the
-    container <div> is not created."""
+    """Implements a stack of rows, each holding 2 text boxes. Content should be
+    filled in even amount. Uneven rows and empty rows will be omitted from the
+    output. The self['Title'] container runs over the entire width of both
+    columns. If there is no title defined, it will be ignored. If there is not
+    content at all, then the container <div> is not created."""
     def __init__(self, rows=5, **kwargs):
         Rect.__init__(self,  **kwargs)
         self._sectionRows = rows
@@ -247,7 +247,7 @@ class JS(TextBox):
     def build_html(self, view, origin=None, drawElements=True):
         b = self.context.b
         b.script(type="text/javascript")
-        b.addHtml(u"""
+        b.addHtml("""
     jQuery(document).ready(function($){
       /* prepend menu icon */
       $('#nav-wrap').prepend('<div id="menu-icon"><img src="images/menu_icon.png"/></div>');
@@ -260,28 +260,28 @@ class JS(TextBox):
     });""")
         b._script()
 
-
 class Website(Publication):
-    u"""Build a default website with several template options.
-    Layout and content options defined by external parameters.
-    Subclassed from Document with the following optional attributes:
+    """Build a default website with several template options. Layout and
+    content options defined by external parameters. Subclassed from Document
+    with the following optional attributes:
+
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
     w=None, h=None, exportPaths=None, context=None, **kwargs)
 
     >>> website = Website(name='Home Site', pl=30, pr=30, autoPages=5)
     >>> website
-    [Document-Website "Home Site"]
+    <Document-Website "Home Site" Pages=5 Templates=2 Views=1>
     >>> len(website.pages)
     5
     >>> t = website.templates['default']
     >>> t.size
-    (1000, 1000, 1)
+    (1000pt, 1000pt)
     >>> page = website.pages[1][0]
     >>> page.template.name
     'default'
     >>> website.padding
-    (49, 30, 42, 30)
+    (42pt, 30pt, 36pt, 30pt)
     >>> page.elements # No elements on these pages.
     []
     >>> mn = MobileNavigation(parent=page, name='My Mobile Page Navigation')
@@ -291,7 +291,7 @@ class Website(Publication):
     DEFAULT_CONTEXT = HtmlContext()
 
     def initialize(self, **kwargs):
-        u"""Initialize the generic website templates. """
+        """Initialize the generic website templates."""
 
         padding = self.padding
         w, h = self.w, self.h
@@ -303,11 +303,12 @@ class Website(Publication):
         t = Template(w=w, h=h, name='home', padding=padding, gridX=gridX, gridY=gridY)
         self.addTemplate(t.name, t)
         # Set template <head> building parameters. # Page element definition in pbpage.py
-        t.info.favIconUrl = 'images/favicon.gif'
-        t.info.mediaQueriesUrl = None
+        view = self.view
+        view.favIconUrl = 'images/favicon.gif'
+        view.mediaQueriesUrl = None
         # Add page elements.
         MobileNavigation(parent=t, name='MobileNavigation')
-        Introduction(parent=t, name='Introduction')        
+        Introduction(parent=t, name='Introduction')
         Navigation(parent=t, name='Navigation')
         Featured(parent=t, name='Featured')
         Main(parent=t, name='Main')
@@ -315,7 +316,6 @@ class Website(Publication):
         Main(parent=t, name='OtherMain')
         Footer(parent=t, name='Footer')
         JS(parent=t, name='JS')
-
 
 if __name__ == '__main__':
     import doctest

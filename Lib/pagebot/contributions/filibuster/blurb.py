@@ -4,7 +4,7 @@
 #
 from __future__ import print_function
 import re
-import blurbwriter
+import pagebot.contributions.filibuster.blurbwriter as blurbwriter
 
 class Blurb(object):
     """
@@ -15,7 +15,7 @@ class Blurb(object):
 
     b = Blurb()
     print(b.getBlurb('article'))
-    
+
     """
     def __init__(self, content=None):
         if content is None:
@@ -25,18 +25,25 @@ class Blurb(object):
 
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
-    def getBlurb(self, type, cnt=None, noTags=True):
+    def getBlurb(self, type, cnt=None, charCnt=None, noTags=True, newLines=False):
         u"""The getBlurb method answers a random generated blurb of type.
         The full list of available types get be obtained by calling self.getContentType().
-
-
         """
-        if cnt is not None:
-            content = ' '.join(self.writer.write(type).split(' ')[:cnt])
-        else:
-            content = self.writer.write(type)
-        if noTags:
+        content = self.writer.write(type)
+        if noTags: # Remove the HTML tags.
+            if newLines: # If newlines, then replace the <p> by return, before removing all tags.
+                content = content.replace('<p>','').replace('</p>','\n')
             content = ''.join(self.reNoTags.findall(content))
+
+        if cnt is not None: # If word count defined, slice by wordspace.
+            content = ' '.join(content.split(' ')[:cnt])
+
+        if charCnt is not None and len(content) > charCnt:
+            # Shorten the string to the requested amount of glyphs.
+            content = self.writer.write(type)[:charCnt].strip()
+            while content and not content[-1].lower() in 'abcdefghijklmnopqrstuvwxyz':
+                content = content[:-1]
+
         return content
 
     def getBlurbTypes(self):
