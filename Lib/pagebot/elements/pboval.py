@@ -58,18 +58,18 @@ class Oval(Element):
         (300pt, 3pt)
         """
         context = self.context # Get current context and builder.
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        #self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case
         # view.showElementFrame == True
         view.drawElementFrame(self, p)
 
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None:
+            # Call if defined
             self.drawBefore(self, view, p)
 
         context.fill(self.css('fill', noColor))
