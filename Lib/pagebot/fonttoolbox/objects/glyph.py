@@ -19,8 +19,6 @@
 import sys
 import weakref
 
-# Use default drawing context for generating the glyphs path.
-# This is independent from the current main context, e.g. HtmlContext.
 from pagebot.constants import XXXL
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
 from pagebot.toolbox.units import point2D
@@ -136,7 +134,7 @@ class Glyph(object):
         p0 = None
 
         if coordinates or components:
-            self._path = self.font.context.newPath()
+            #self._path = self.font.context.newPath()
             minX = minY = XXXL # Store bounding box as we process the coordinate.
             maxX = maxY = -XXXL
         else:
@@ -166,8 +164,8 @@ class Glyph(object):
             self._points.append(p)
 
             if not openContour:
-                assert self._path is not None
-                self._path.moveTo((x, y))
+                #assert self._path is not None
+                #self._path.moveTo((x, y))
                 p0 = p
                 currentOnCurve = p
                 openContour = []
@@ -192,7 +190,7 @@ class Glyph(object):
 
                     currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
 
-                self._path.closePath()
+                #self._path.closePath()
                 openContour = None
                 openSegment = None
 
@@ -211,6 +209,12 @@ class Glyph(object):
         ]
         self._boundingBox = (minX, minY, maxX, maxY)
         self.dirty = False # All cleaned up.
+
+    def getBezierPath(self, context):
+        u"""Answer the drawable contour path for this context. Answer None if it cannot be created.
+        """
+        # TODO: Make this work, extract from current self._initialize 
+        return None
 
     def update(self):
         """Update the font if it became dirty by changing cooridinates.
@@ -270,7 +274,7 @@ class Glyph(object):
         if len(segment) == 1:
             # Straight line.
             p1 = segment.points[-1]
-            path.lineTo((p1.x, p1.y))
+            #path.lineTo((p1.x, p1.y))
             cp = p1
 
         elif len(segment) == 2:
@@ -311,7 +315,7 @@ class Glyph(object):
         pp0y = p0y + (p1y - p0y) * F
         pp1x = p2x + (p1x - p2x) * F
         pp1y = p2y + (p1y - p2y) * F
-        path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
+        #path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
 
     def _get_ttGlyph(self):
         return self.font.ttFont['glyf'][self.name]
@@ -508,7 +512,7 @@ class Glyph(object):
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> font = getFont(path)
         >>> glyph = font['H']
-        >>> glyph.path is not None
+        >>> #glyph.path is not None
         True
         """
         if self._path is None or self.dirty:

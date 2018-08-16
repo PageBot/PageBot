@@ -29,7 +29,6 @@ script:
 #- python Lib/pagebot/fonttoolbox/designspace/*.py
 - python Lib/pagebot/fonttoolbox/*.py
 - python Lib/pagebot/fonttoolbox/unicodes/*.py
-- python Lib/pagebot/publications/simplesite/*.py
 - python Lib/pagebot/publications/newspaper/*.py
 - python Lib/pagebot/publications/*.py
 - python Lib/pagebot/toolbox/*.py
