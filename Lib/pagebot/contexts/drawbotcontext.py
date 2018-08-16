@@ -155,6 +155,45 @@ class DrawBotContext(BaseContext):
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
         self.b.rect(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
+    def bluntCornerRect(self, x, y, w, h, offset=5):
+        """Draw a rectangle in the canvas.
+
+        >>> context = DrawBotContext()
+        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.rect(0, 0, 100, 100)
+        """
+        path = self.newPath()
+        path.moveTo((x+offset, y))
+        path.lineTo((x+w-offset, y))
+        path.lineTo((x+w, y+offset))
+        path.lineTo((x+w, y+h-offset))
+        path.lineTo((x+w-offset, y+h))
+        path.lineTo((x+offset, y+h))
+        path.lineTo((x, y+h-offset))
+        path.lineTo((x, y+offset))
+        self.closePath()
+        self.drawPath(path)
+
+    def roundedRect(self, x, y, w, h, offset=25):
+        """Draw a rectangle in the canvas.
+
+        >>> context = DrawBotContext()
+        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.rect(0, 0, 100, 100)
+        """
+        path = self.newPath()
+        path.moveTo((x+offset, y))
+        path.lineTo((x+w-offset, y))
+        path.curveTo((x+w, y), (x+w, y), (x+w, y+offset))
+        path.lineTo((x+w, y+h-offset))
+        path.curveTo((x+w, y+h), (x+w, y+h), (x+w-offset, y+h))
+        path.lineTo((x+offset, y+h))
+        path.curveTo((x, y+h), (x, y+h), (x, y+h-offset))
+        path.lineTo((x, y+offset))
+        path.curveTo((x, y), (x, y), (x+offset, y))
+        self.closePath()
+        self.drawPath(path)
+
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size
         (w,h).
@@ -210,8 +249,8 @@ class DrawBotContext(BaseContext):
     path = property(_get_path)
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        """Draw the NSBezierPath, or equivalent in other contexts. Scaled image is drawn on (x, y),
-        in that order."""
+        """Draw the NSBezierPath, or equivalent in other contexts. Scaled image
+        is drawn on (x, y), in that order."""
         if path is None:
             path = self._path
         if path is not None:

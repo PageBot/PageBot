@@ -32,7 +32,7 @@ HEIGHT = 2800
 #WIDTH = 842
 
 HBOX = 50
-WBOX = 180
+WBOX = 190
 GAP = 20
 HGAP = 100
 P = 15
@@ -148,7 +148,7 @@ def drawClass(name, x, y, color):
     context.stroke(None)
     #color = Color(0.6, 1, 0.6)
     context.fill(color)
-    context.rect(pt(boxx), pt(boxy), pt (WBOX), pt(HBOX))
+    context.roundedRect(boxx, boxy, WBOX, HBOX)
     context.fill(blackColor)
     context.text(name, (textx, texty))
     drawnclasses[name] = pos
