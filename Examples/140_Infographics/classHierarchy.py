@@ -18,6 +18,7 @@
 
 import sys, inspect
 from pagebot.contexts.platform import getContext
+from pagebot.constants import A3
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
 
@@ -29,8 +30,7 @@ Y0 = 100
 
 # Landscape A3.
 
-WIDTH = 1189
-HEIGHT = 842
+HEIGHT, WIDTH = A3
 
 
 HBOX = 50
@@ -190,7 +190,7 @@ def title(name):
 import pagebot.contexts.drawbotcontext
 import pagebot.contexts.flatcontext
 
-context.newPage(pt(WIDTH), pt(HEIGHT))
+context.newPage(WIDTH, HEIGHT)
 title('PageBot Contexts')
 
 connections = []
@@ -201,7 +201,7 @@ classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']
 classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.flatcontext']))
 drawClasses(classes)
 
-context.newPage(pt(WIDTH), pt(HEIGHT))
+context.newPage(WIDTH, HEIGHT)
 title('PageBot Units')
 
 connections = []
@@ -215,7 +215,7 @@ from pagebot.document import *
 from pagebot.elements import *
 from pagebot.elements.views import *
 
-context.newPage(pt(WIDTH), pt(HEIGHT))
+context.newPage(WIDTH, HEIGHT)
 title('PageBot Elements')
 
 connections = []
