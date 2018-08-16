@@ -20,24 +20,27 @@ import sys, inspect
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
+from pagebot.fonttoolbox.objects.font import findFont
 
 context = getContext()
 
-
 X0 = 100
 Y0 = 100
-WIDTH = 1189
-HEIGHT = 2800
+WIDTH = 1600
+HEIGHT = 1400
 #HEIGHT = 1189
 #WIDTH = 842
 
-HBOX = 50
-WBOX = 190
+HBOX = 34
+WBOX = 170
 GAP = 20
-HGAP = 100
+HGAP = 60
 P = 15
-TEXTSIZE = pt(14)
+TEXTSIZE = pt(12)
 OFFSET = 9
+
+font = findFont('Roboto-Regular')
+boldFont = findFont('Roboto-Bold')
 
 def drawClassHierarchy(obj, colorRange, i):
     
@@ -47,8 +50,8 @@ def drawClassHierarchy(obj, colorRange, i):
     
     for c in list(obj.__mro__)[::-1]:
         current = c.__name__
-        if current == 'object':
-            continue
+        #if current == 'object':
+        #    continue
 
         if i >= len(colorRange):
             i = 0
@@ -95,9 +98,6 @@ def drawConnection(current, previous):
     # TODO: draw only once for any location.
     context.circle(p0x, p0y, 3)
     context.circle(p1x, p1y, 3)
-    
-    # Straight line.    
-    #context.line((p0x, p0y), (p1x, p1y))
 
     # Curve.
 
@@ -150,7 +150,10 @@ def drawClass(name, x, y, color):
     context.fill(color)
     context.roundedRect(boxx, boxy, WBOX, HBOX)
     context.fill(blackColor)
-    context.text(name, (textx, texty))
+
+    style = dict(font=font.path, fontSize=TEXTSIZE, textFill=0.1)
+    bs = context.newString(name, style=style)
+    context.text(bs, (textx, texty))
     drawnclasses[name] = pos
     positions.append(pos)
     
@@ -192,4 +195,12 @@ drawClasses(classes)
 context.fill(0)
 context.stroke(None)
 context.fontSize(42)
-context.text('PageBot Conditions', (100, HEIGHT - 100))
+msg = 'PageBot Condition '
+msg1 = 'Object Hierarchy'
+style = dict(font=font.path, fontSize=18, textFill=0.3)
+boldStyle = dict(font=boldFont.path, fontSize=18, textFill=0.5)
+bs = context.newString(msg, style=style)
+bs += context.newString(msg1, style=boldStyle)
+context.text(bs, (100, HEIGHT - 100))
+context.saveDocument('_export/conditionObjectHierarchy.png')
+context.saveDocument('_export/conditionObjectHierarchy.pdf')
