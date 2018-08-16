@@ -10,17 +10,15 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     classHierarchy.py
+#     conditionsHierarchy.py
 #
-#     TODO: make OO
-#     TODO: graphics elements
-#     TODO: element alignments
 
 import sys, inspect
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.conditions import *
 
 context = getContext()
 
@@ -28,9 +26,6 @@ X0 = 100
 Y0 = 100
 WIDTH = 1600
 HEIGHT = 1400
-#HEIGHT = 1189
-#WIDTH = 842
-
 HBOX = 34
 WBOX = 170
 GAP = 20
@@ -180,10 +175,6 @@ def drawClasses(inspected):
     
     for o in classes:
         i = drawClassHierarchy(o, colorRange, i)
-
-#size('A1')
-
-from pagebot.conditions import *
 
 context.newPage(pt(WIDTH), pt(HEIGHT))
 connections = []
