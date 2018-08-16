@@ -124,7 +124,7 @@ class TextBox(Element):
     baselines = property(_get_baselines)
 
     def getRounded2Grid(self, y, roundDown=False):
-        u"""Answer the value y rounded to the page baseline grid, based on the current position self.
+        """Answer the value y rounded to the page baseline grid, based on the current position self.
         """
         start = self.baselineGridStart or self.pt
         baseline = self.baselineGrid
@@ -488,7 +488,7 @@ class TextBox(Element):
     # Text conditional movers
     
     def baseline2Grid(self, index=None, style=None):
-        u"""Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
         so the baseline of self.textLines[index] matches the parent grid.
         """
         line = self.textLines[index or 0]
@@ -500,28 +500,28 @@ class TextBox(Element):
             self.y += y2
     
     def baselineUp2Grid(self, index=None, style=None):
-        u"""Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
         so the baseline of self.textLines[index] matches the parent grid.
         """
         line = self.textLines[index or 0]
         self.y += line.y - self.getRounded2Grid(line.y)
 
     def baselineDown2Grid(self, index=None, style=None):
-        u"""Move the text box up (increasing line.y value, rounding down) in vertical direction, 
+        """Move the text box up (increasing line.y value, rounding down) in vertical direction, 
         so the baseline of self.textLines[index] matches the parent grid.
         """
         line = self.textLines[index or 0]
         self.y += line.y - self.getRounded2Grid(line.y, roundDown=True)
 
     def baseline2Top(self, index=None, style=None):
-        u"""Move the vertical position of the indexed line to match self.top.
+        """Move the vertical position of the indexed line to match self.top.
         """
         line = self.textLines[index or 0]
         print('TOP', self.y, self.top, line.y)
         self.top -= line.y
 
     def baseline2Bottom(self, index=None, style=None):
-        u"""Move the vertical position of the indexed line to match self.bottom.
+        """Move the vertical position of the indexed line to match self.bottom.
         """
         line = self.textLines[index or 0]
         self.bottom -= line.y

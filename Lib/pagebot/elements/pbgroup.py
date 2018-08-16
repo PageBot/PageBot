@@ -17,7 +17,7 @@
 from pagebot.elements.pbrect import Rect
 
 class Group(Rect):
-    u"""Draw rectangle, default identacal to Element itself.
+    """Draw rectangle, default identacal to Element itself.
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext

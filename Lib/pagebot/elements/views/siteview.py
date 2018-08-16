@@ -37,7 +37,7 @@ class SiteView(HtmlView):
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
             jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, **kwargs):
-        u"""Abstract class for views that build websites."""
+        """Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
         # Url's and paths
@@ -62,7 +62,7 @@ class SiteView(HtmlView):
         self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
     def copyResources(self, path):
-        u"""If self.resourcePaths are defined, then copy them into the destiation path.
+        """If self.resourcePaths are defined, then copy them into the destiation path.
         If the resources already exist, then delete them before copy.
         """
         # Copy resources to output
@@ -123,7 +123,7 @@ class SiteView(HtmlView):
         self.copyResources(path)
 
     def getUrl(self, name):
-        u"""Answer the local URL for Mamp Pro to find the copied website."""
+        """Answer the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
 
 

@@ -23,7 +23,7 @@ from pagebot.constants import DEFAULT_HEIGHT
 class Ruler(Element):
 
     def _get_h(self):
-        u"""Poperty for the self.h height value
+        """Poperty for the self.h height value
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.document import Document
@@ -48,7 +48,7 @@ class Ruler(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin):
-        u"""Build the Ruler in the current context
+        """Build the Ruler in the current context
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.toolbox.units import pt
@@ -111,7 +111,7 @@ class Ruler(Element):
     #   H T M L  /  S A S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Build the Ruler in the current context
+        """Build the Ruler in the current context
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> from pagebot.document import Document

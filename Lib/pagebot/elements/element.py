@@ -268,7 +268,7 @@ class Element(object):
         return len(self.elements)
 
     def checkStyleArgs(self, d):
-        u"""Fix style values where necessary.
+        """Fix style values where necessary.
 
         >>> e = Element()
         >>> style = dict(fill=(1, 0, 0), stroke=0.5)
@@ -583,7 +583,7 @@ class Element(object):
         return None
 
     def find(self, name=None, pattern=None, result=None):
-        u"""Perform a dynamic find for the named element(s) in self.elements.
+        """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
         Answer None if no element can be found.
@@ -1029,7 +1029,7 @@ class Element(object):
         return flattenedStyle
 
     def getBlendedStyle(self, t=None):
-        u"""Answer the blended style for self, blended between the current time marks on
+        """Answer the blended style for self, blended between the current time marks on
         position t or self.t. If style values are not in the time marks, then their values
 
         >>> e = Element(t=10)
@@ -4401,7 +4401,7 @@ class Element(object):
         return True
 
     def left2Left(self):
-        u"""Move left of self to padding left position of parent.
+        """Move left of self to padding left position of parent.
 
         >>> e1 = Element(w=500, pl=50)
         >>> e2 = Element(w=120, parent=e1)
@@ -4413,7 +4413,7 @@ class Element(object):
         return True
 
     def left2Right(self):
-        u"""Move left of self to padding left position of parent.
+        """Move left of self to padding left position of parent.
 
         >>> e1 = Element(w=500, pr=50)
         >>> e2 = Element(w=120, parent=e1)
@@ -4532,7 +4532,7 @@ class Element(object):
         return True
 
     def right2Left(self):
-        u"""Move right of self to padding left position of parent.
+        """Move right of self to padding left position of parent.
 
         >>> e1 = Element(w=500, pl=50)
         >>> e2 = Element(w=120, parent=e1)
@@ -4682,7 +4682,7 @@ class Element(object):
         return True
 
     def scale2Right(self):
-        u"""Make the right side of self fit the right padding of the parent, without
+        """Make the right side of self fit the right padding of the parent, without
         moving the left position. The scale the height according to the original ratio.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
