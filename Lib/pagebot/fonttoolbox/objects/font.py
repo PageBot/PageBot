@@ -382,10 +382,6 @@ class Font(object):
         >>> f
         <Font Untitled>
         """
-        from pagebot.contexts.platform import getContext
-        # FIX: Cannot get current context because of circular import?
-        self.context = getContext()
-
         if path is None and ttFont is None:
             self.ttFont = TTFont()
             self.path = '%d' % id(ttFont) # In case no path, use unique id instead.
