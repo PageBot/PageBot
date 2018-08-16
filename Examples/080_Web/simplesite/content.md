@@ -38,6 +38,14 @@ box = page.deepFind('Content')
 What makes a design process *fundamentally* different from a production process, is that repetition improves the result. Starting with quick sketches, ignoring most details, next steps take more time. It’s not a linear process, it’s an iterative process, which means repeating the previous step in more detail.
 
 ~~~Python
+box = page.deepFind('Content2')
+~~~
+
+# Repeat to improve again
+
+Second context box. *DesignDesign.Space* is an online coaching environment to develop your design skills. Query your questions and improve your sketching. Acquire new techniques and research your way of presentating. In short, a space where you can design your design process. 
+
+~~~Python
 box = page.deepFind('ColoredSectionHeader')
 ~~~
 # Some things in rows of 3 columns

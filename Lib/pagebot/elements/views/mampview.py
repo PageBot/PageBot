@@ -32,9 +32,9 @@ class MampView(SiteView):
 
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
-    SASS_PATH = SITE_ROOT_PATH + 'css/style.scss'
-    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
+    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.sass.css'
+    SASS_PATH = SITE_ROOT_PATH + 'css/style.sass'
+    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.sass'
 
     #   B U I L D  H T M L  /  C S S
 
