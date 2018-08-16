@@ -19,12 +19,12 @@ from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.toolbox.future import chr
 
 class GlyphSet(BaseFontShow):
-    u"""Showing the specified (variable) font as full page with a matrix
+    """Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
     """
     def __init__(self, f, **kwargs):
-        u"""
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -52,7 +52,7 @@ class GlyphSet(BaseFontShow):
 
 
     def build(self, view, origin, drawElements=True):
-        u"""Default drawing method just drawing the frame.
+        """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -76,7 +76,7 @@ class GlyphSet(BaseFontShow):
 
 
     def drawMatrix(self, view, origin):
-        u"""Draw the matrix of available glyphs in the font, in font.cmap order and
+        """Draw the matrix of available glyphs in the font, in font.cmap order and
         starting at the first sorted glyph after the space.
 
         TODO

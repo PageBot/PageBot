@@ -19,13 +19,13 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements import TextBox
 
 class Sampler(TextBox):
-    u"""Showing the specified (variable) font as full page with a samples of glyphs.
+    """Showing the specified (variable) font as full page with a samples of glyphs.
 
     """
     SAMPLE = 'Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz\n1234567890\n!@#$%&'
 
     def __init__(self, f, sampleText=None, **kwargs):
-        u"""
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter, RIGHT

@@ -26,8 +26,13 @@ context = getContext()
 
 X0 = 100
 Y0 = 100
-WIDTH = 1190
+
+# Landscape A3.
+
+WIDTH = 1189
 HEIGHT = 842
+
+
 HBOX = 50
 WBOX = 180
 GAP = 20
@@ -113,7 +118,7 @@ def drawConnection(current, previous):
     #context.fill(None)
     #context.circle(cp1x, cp1y, 3)
     context.fill(None)
-    context.stroke(blueColor)
+    context.stroke((1, 0, 1, 0.5))
     context.curveTo((cp0x, cp0y), (cp1x, cp1y), (p1x, p1y))
     drawPath(path)
     
@@ -176,10 +181,18 @@ def drawClasses(inspected):
 
 #size('A1')
 
+def title(name):
+    context.fill(0)
+    context.stroke(None)
+    context.fontSize(42)
+    context.text(name, (100, HEIGHT - 100))
+
 import pagebot.contexts.drawbotcontext
 import pagebot.contexts.flatcontext
 
 context.newPage(pt(WIDTH), pt(HEIGHT))
+title('PageBot Contexts')
+
 connections = []
 drawnclasses = {}
 positions = []
@@ -189,6 +202,8 @@ classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.flatcontext']))
 drawClasses(classes)
 
 context.newPage(pt(WIDTH), pt(HEIGHT))
+title('PageBot Units')
+
 connections = []
 drawnclasses = {}
 positions = []
@@ -197,19 +212,17 @@ classes.extend(inspect.getmembers(sys.modules['pagebot.toolbox.units']))
 drawClasses(classes)
 
 from pagebot.document import *
+from pagebot.elements import *
+from pagebot.elements.views import *
 
 context.newPage(pt(WIDTH), pt(HEIGHT))
+title('PageBot Elements')
+
 connections = []
 drawnclasses = {}
 positions = []
 classes = []
+classes.extend(inspect.getmembers(sys.modules['pagebot.elements']))
+classes.extend(inspect.getmembers(sys.modules['pagebot.elements.views']))
 classes.extend(inspect.getmembers(sys.modules['pagebot.document']))
-drawClasses(classes)
-
-context.newPage(pt(WIDTH), pt(HEIGHT))
-connections = []
-drawnclasses = {}
-positions = []
-classes = []    
-classes.extend(inspect.getmembers(sys.modules['pagebot.fonttoolbox.objects.font']))
 drawClasses(classes)
