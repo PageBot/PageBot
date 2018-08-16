@@ -180,9 +180,9 @@ class Hero(Element):
         b.comment('End '+self.__class__.__name__)
                                
 class Content(Element):
-    def __init__(self, **kwargs):
+    def __init__(self, contentId=None, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Content')
+        newTextBox('', parent=self, cssId=contentId or 'Content')
 
     def build_html(self, view, path):
         b = self.context.b
@@ -271,10 +271,11 @@ view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
 #view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.sass.css')
-view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
+view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/sass.css')
 
 for pn, (name, title) in enumerate(SITE):
-    page = doc[pn+1]
+    pn += 1 # Page numbers start at 1
+    page = doc[pn]
     page.name, page.title = name, title
     page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
     page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
@@ -316,10 +317,27 @@ for pn, (name, title) in enumerate(SITE):
     menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
     menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
     
-    hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
-    
-    content = Content(parent=page, fill=whiteColor)
-    section = ColoredSection(parent=page)
+    if pn == 1:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)    
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
+        content = Content(parent=page, contentId='Content2', fill=(0.7, 0.7, 0.9))
+    elif pn == 2:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)    
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
+    elif pn == 3:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)    
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
+    elif pn == 4:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)    
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
+    elif pn == 5:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)    
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
     footer = Footer(parent=page)
     
 # Create a Typesetter for this document, then create pages and fill content. 

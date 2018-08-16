@@ -31,8 +31,8 @@ class SiteView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
-    SASS_CSS_PATH = 'css/style.sass.css'
     SASS_PATH = 'css/style.sass'
+    SASS_CSS_PATH = 'css/style.sass.css'
     SASS_VARIABLES_PATH = 'css/variables.sass'
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
