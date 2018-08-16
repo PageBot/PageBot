@@ -105,8 +105,11 @@ def newOval(point=None, **kwargs):
 def newLine(point=None, **kwargs):
     return Line(point=point, **kwargs)
 
-def newPolygon(point=None, **kwargs):
-    return Polygon(point=point, **kwargs)
+def newPolygon(points=None, **kwargs):
+    return Polygon(points=points, **kwargs)
+
+def newRuler(point=None, **kwargs):
+    return Ruler(point=point, **kwargs)
 
 def newImage(path, point=None, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,

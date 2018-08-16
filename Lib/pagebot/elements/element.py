@@ -47,17 +47,17 @@ class Element(object):
     isView = False
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
-            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None, timeMarks=None,
-            parent=None, context=None, name=None, cssClass=None, cssId=None,
-            title=None, description=None, keyWords=None, language=None, style=None,
-            conditions=None, solve=False, framePath=None, elements=None, template=None,
+            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None,
+            timeMarks=None, parent=None, context=None, name=None,
+            cssClass=None, cssId=None, title=None, description=None,
+            keyWords=None, language=None, style=None, conditions=None,
+            solve=False, framePath=None, elements=None, template=None,
             nextElement=None, prevElement=None, nextPage=None, prevPage=None,
-            bleed=None, padding=None,
-            pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
-            ml=0, mzf=0, mzb=0, borders=None, borderTop=None, borderRight=None,
-            borderBottom=None, borderLeft=None, shadow=None, gradient=None,
-            drawBefore=None, drawAfter=None,
-            htmlCode=None, htmlPaths=None, **kwargs):
+            bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
+            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None,
+            borderTop=None, borderRight=None, borderBottom=None,
+            borderLeft=None, shadow=None, gradient=None, drawBefore=None,
+            drawAfter=None, htmlCode=None, htmlPaths=None, **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
@@ -144,8 +144,10 @@ class Element(object):
             self.w = w
             self.h = h
             self.d = d
+
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
+
         if bleed is not None:
             self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
         # Border info dict have format:

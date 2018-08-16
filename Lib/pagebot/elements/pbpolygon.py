@@ -21,10 +21,11 @@ from pagebot.toolbox.color import noColor
 
 class Polygon(Element):
     """The Polygon element is a simple implementation of the polygon DrawBot
-    function. More complex path-like elements inherit from the Path
-    element."""
-    def __init__(self, fs, points=None, **kwargs):
+    function. More complex path-like elements inherit from the Path element."""
+
+    def __init__(self, points=None, **kwargs):
         Element.__init__(self, **kwargs)
+
         if points is None:
             points = []
         self.points = points[:] # Force copy, so caller cannot change and not change size cache.
@@ -64,6 +65,7 @@ class Polygon(Element):
     def build(self, view, origin, drawElements=True):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
+        print('building poly')
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(p)

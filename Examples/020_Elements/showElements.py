@@ -34,13 +34,21 @@ P  = 50
 doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
 page = doc[1]
 page.padding = P
-r = newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Top2Top()), fill=0)
-print(type(r))
-o = newOval(w=SQ, h=SQ, parent=page, conditions=(Right2Right(), Top2Top()), fill=(1, 0, 0))
-print(type(o))
+r = newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Top2Top()), fill=(0,0,1), stroke=0)
+print(r)
+o = newOval(w=SQ, h=SQ, parent=page, conditions=(Right2Right(), Top2Top()), fill=(1, 0, 0), stroke=0)
+print(o)
+tb = newTextBox('Test', parent=page, conditions=(Right2Right(), Bottom2Bottom()), fill=(1, 1, 0))
+print(tb)
+#l = newLine(parent=page, conditions=(Left2Left(), Bottom2Bottom()), stroke=0)
+#print(l)
+#p = newPolygon(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Bottom2Bottom()), fill=1, stroke=0)
+#print(p)
+#r = newRuler(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Bottom2Bottom()), fill=noColor, stroke=0)
+#print(r)
+
 
 page.solve()
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/showElements.png'
 doc.export(EXPORT_PATH)
-
