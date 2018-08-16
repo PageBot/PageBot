@@ -39,8 +39,9 @@ P = 15
 TEXTSIZE = pt(12)
 OFFSET = 9
 
+titleFont = findFont('BungeeInline-Regular')
 font = findFont('Roboto-Regular')
-boldFont = findFont('Roboto-Bold')
+boldFont = findFont('BungeeOutline-Regular')
 
 def drawClassHierarchy(obj, colorRange, i):
     
@@ -195,10 +196,10 @@ drawClasses(classes)
 context.fill(0)
 context.stroke(None)
 context.fontSize(42)
-msg = 'PageBot Condition '
+msg = 'PageBot Alignment Conditions '
 msg1 = 'Object Hierarchy'
-style = dict(font=font.path, fontSize=18, textFill=0.3)
-boldStyle = dict(font=boldFont.path, fontSize=18, textFill=0.5)
+style = dict(font=titleFont.path, fontSize=36, textFill=0.5)
+boldStyle = dict(font=boldFont.path, fontSize=36, textFill=0)
 bs = context.newString(msg, style=style)
 bs += context.newString(msg1, style=boldStyle)
 context.text(bs, (100, HEIGHT - 100))
