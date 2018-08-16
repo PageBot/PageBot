@@ -88,18 +88,18 @@ def newText(bs='', point=None, **kwargs):
     return Text(bs, point=point, **kwargs)
 
 def newRect(point=None, **kwargs):
-    """Draw the rectangle. Note that w and h can also be defined in the style.
-    In case h is omitted, a square is drawn."""
+    """Draw the rectangle. Note that points can also be defined in the style.
+    When omitted, a square is drawn."""
     return Rect(point=point, **kwargs)
 
 def newGroup(point=None, **kwargs):
-    """Create a new group. Note that w and h can also be defined in the style.
-    In case h is omitted, a square is drawn."""
+    """Create a new group. Note that points can also be defined in the style.
+    When omitted, a square is drawn."""
     return Group(point=point, **kwargs)
 
 def newOval(point=None, **kwargs):
-    """Draw the oval. Note that w and h can also be defined in the style. In
-    case h is omitted, a circle is drawn."""
+    """Draw the oval. Note that points can also be defined in the style.
+    When omitted, a circle is drawn."""
     return Oval(point=point, **kwargs)
 
 def newLine(point=None, **kwargs):

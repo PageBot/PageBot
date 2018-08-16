@@ -30,11 +30,11 @@ from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
-    """The PageView contains the set of Quire instances to export the pages
-    as documents. A View is just another kind of container, kept by a Document
-    to make a certain presentation of the page tree. The PageView typically
-    holds Quire elements that make one-directional links to document pages in
-    order to compose them in spreads or folding compositions."""
+    """The PageView contains the set of Quire instances to export the pages as
+    documents. A View is just another kind of container, kept by a Document to
+    make a certain presentation of the page tree. The PageView typically holds
+    Quire elements that make one-directional links to document pages in order
+    to compose them in spreads or folding compositions."""
     viewId = 'Page'
 
     MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
@@ -506,7 +506,7 @@ class PageView(BaseView):
     def drawElementOrigin(self, e, origin):
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
-        
+
         S = e.css('viewInfoOriginMarkerSize', pt(5))
         # Draw origin of the element
         fill = e.css('viewInfoOriginMarkerFill', noColor)
@@ -520,7 +520,7 @@ class PageView(BaseView):
 
         if self.showElementDimensions:
             bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), 
+                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'),
                 textFill=color(0.1)))
             w, h = bs.size
             context.text(bs, (px - w/2, py + S*1.5))
@@ -611,7 +611,7 @@ class PageView(BaseView):
             if gridX:
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
-                        cw, gx = cw 
+                        cw, gx = cw
                     context.line((px+x, py), (px+x, py+e.h))
                     if gx:
                         context.line((px+x+cw, py), (px+x+cw, py+e.h))
@@ -630,7 +630,7 @@ class PageView(BaseView):
             if gridY:
                 for ch in gridY:
                     if isinstance(ch, (tuple, list)):
-                        ch, gy = ch 
+                        ch, gy = ch
                     context.line((px, py+y), (px+e.w, py+y))
                     if gy:
                         context.line((px, py+y+ch), (px+e.w, py+y+ch))
@@ -648,13 +648,13 @@ class PageView(BaseView):
                 x = e.pl # Position on right padding of page/e
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
-                        cw, gx = cw 
+                        cw, gx = cw
                     else:
                         gx = 0
                     y = e.pb # Position on bottom padding of page/e
                     for ch in gridY:
                         if isinstance(ch, (tuple, list)):
-                            ch, gy = ch 
+                            ch, gy = ch
                         else:
                             gy = 0
                         context.rect(px+x, py+y, cw, ch)
@@ -672,7 +672,7 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showBaselineGrid = [GRID_LINE] 
+        >>> view.showBaselineGrid = [GRID_LINE]
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
         if not self.showBaselineGrid or not GRID_LINE in self.showBaselineGrid:

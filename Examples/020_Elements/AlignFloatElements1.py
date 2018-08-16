@@ -38,7 +38,6 @@ W = H = PageSize
 G = 8 # Distance between the squares.
 SQ = 8 * G # Size of the squares
 
-
 def makeDocument(context):
     """Make a new document."""
 
@@ -76,6 +75,7 @@ def makeDocument(context):
                   (Center2Center(), Bottom2Bottom()),
                   (Left2Left(), Middle2Middle()),
                   (Right2Right(), Middle2Middle())]
+                  
     for condition in conditions:
         newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(1, 1, 0))
@@ -128,7 +128,7 @@ def makeDocument(context):
     view.showElementDimensions = ShowDimensions
     view.showElementInfo = ShowElementInfo # Show boxes with element info
 
-    return doc # Answer the doc for further doing.
+    return doc # Answer the doc.
 
 if __name__ == '__main__':
 
