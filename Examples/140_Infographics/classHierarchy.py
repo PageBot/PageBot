@@ -28,10 +28,8 @@ X0 = 100
 Y0 = 100
 
 # Landscape A3.
-
 WIDTH = 1189
 HEIGHT = 842
-
 
 HBOX = 50
 WBOX = 180
