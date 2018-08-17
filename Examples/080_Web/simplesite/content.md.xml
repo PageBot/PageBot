@@ -12,7 +12,7 @@ box = page.deepFind('Logo')
 <pre><code class="Python">box = page.deepFind('Introduction')
 </code></pre>
 
-<h2>What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
+<h2><em>What are the dreams and dragons</em> in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
 <pre><code class="Python">box = page.deepFind('HeroSlides').newSlide()
 </code></pre>
 

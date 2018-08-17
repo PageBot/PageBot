@@ -35,8 +35,9 @@ class SiteView(HtmlView):
     SASS_CSS_PATH = 'css/style.sass.css'
     SASS_VARIABLES_PATH = 'css/variables.sass'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
-            jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, **kwargs):
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, 
+            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
+            **kwargs):
         """Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
@@ -117,7 +118,7 @@ class SiteView(HtmlView):
         # Write all collected SASS vatiables into one file
         b.writeSass(self.SASS_VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+        b.compileSass(self.SASS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
