@@ -572,6 +572,9 @@ class Element(object):
         >>> element = e.deepFind(pattern='XYZ') # Answer None if element does not exist
         >>> element is None
         True
+        >>> element = e.select(name='DeeperChild') # Get all child elements matching name
+        >>> element is e2
+        True
         """
         assert name or pattern
         for e in self.elements:
@@ -583,6 +586,8 @@ class Element(object):
             if found is not None:
                 return found
         return None
+
+    select = deepFind # Intuitive name with identical result. Can be used in MarkDown.
 
     def find(self, name=None, pattern=None, result=None):
         """Perform a dynamic find for the named element(s) in self.elements.
