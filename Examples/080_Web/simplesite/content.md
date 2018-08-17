@@ -12,7 +12,7 @@ box = page.deepFind('Logo')
 ~~~Python
 box = page.deepFind('Introduction')
 ~~~
-## What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
+## *What are the dreams and dragons* in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
 ~~~Python
 box = page.deepFind('HeroSlides').newSlide()
