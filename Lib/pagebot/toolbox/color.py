@@ -368,6 +368,10 @@ class Color(object):
     >>> c = color(name='red')
     >>> c.fullString
     'Color(r=None, g=None, b=None, c=None, m=None, y=None, k=None, spot=None, ral=None, name=red)'
+    >>> color(rgb='#FFFFFF') # Convert from hex color string
+    Color(r=1, g=1, b=1)
+    >>> color(rgb='#000000')
+    Color(r=0, g=0, b=0)
     >>> c
     Color(name="red")
     >>> color(rgb='red') # Same result
@@ -418,7 +422,7 @@ class Color(object):
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
         self.overPrint = overPrint # Used by FlatBuilder
         # Some reposition of attributes, in case used as rgb='red' or cmy='magenta'
-        if isinstance(rgb, str):
+        if isinstance(rgb, str) and not rgb.startswith('#'):
             name = rgb
         elif isinstance(cmyk, str):
             name = cmyk
@@ -454,7 +458,7 @@ class Color(object):
         # rgb-string
         elif isinstance(rgb, str): # In case rgb is a hex string or a name.
             hexOrName = rgb.lower()
-            if hexOrName in CSS_COLOR_NAMES: # Not hex, but a name instead. We're tolerant: convert anyway.
+            if hexOrName in CSS_COLOR_NAMES: # Not hex, but a color name instead. We're tolerant: convert anyway.
                 self._name = hexOrName
             else: # Otherwise try to convert hex value.
                 rgbHex = hexOrName.replace('#','').replace(' ','')

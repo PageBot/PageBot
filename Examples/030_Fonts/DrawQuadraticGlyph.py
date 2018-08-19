@@ -25,12 +25,18 @@ from pagebot.toolbox.units import point3D
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
+from pagebot.contexts.platform import getContext
+from pagebot.toolbox.color import blueColor, redColor, greenColor
+
 
 ONCURVE = None
 QUADRATIC_OFFCURVE = None
 CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
 G = 10
+
+context = getContext()
+
 
 class Point(object):
 
@@ -78,14 +84,15 @@ def drawSegment(segment, implied, cps, verbose=False):
         x1 = onCurve1.x - (onCurve1.x - offCurve.x) * F
         y1 = onCurve1.y - (onCurve1.y - offCurve.y) * F
         offCurve1 = (x1, y1)
-        circle(x0, y0, r/2, color='blue')
-        circle(x1, y1, r/2, color='blue')
+        context.fill(blueColor)
+        context.circle(x0, y0, r/2)
+        context.circle(x1, y1, r/2)
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
-        stroke(0.7)
+        context.stroke(0.7)
         line((onCurve0.x, onCurve0.y), offCurve0)
         line(offCurve1, onCurve)
-        stroke(None)
+        context.stroke(None)
 
         # Store these so they can be used in the infographic.
         cps.append(offCurve0)
@@ -106,8 +113,8 @@ def drawSegment(segment, implied, cps, verbose=False):
 
         # Store these so they can be used in the infographic.
         implied.append(newOnCurve)
-
-        circle(x, y, r, color='red')
+        context.fill(redColor)
+        context.circle(x, y, r)
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
 
@@ -119,23 +126,6 @@ def drawSegment(segment, implied, cps, verbose=False):
         # recursion.
         drawSegment(curve0, implied, cps)
         drawSegment(curve1, implied, cps)
-
-def circle(x, y, r, color='pink'):
-    """
-    >>> circle(100, 100, 5, color='green')
-    """
-    stroke(None)
-    # Draws on/offcurve dots.
-    if color == 'pink':
-        fill(1, 0, 1)
-    elif color == 'green':
-        fill(0, 1, 0)
-    elif color == 'blue':
-        fill(0, 0.5, 1)
-    elif color == 'red':
-        fill(1, 0, 0)
-    oval(x - r, y - r, r*2, r*2)
-    stroke(1)
 
 def cross(x, y, d, r=1, g=0, b=0, a=1):
     """
@@ -149,7 +139,7 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
     y2 = y - d
     x3 = x - d
     y3 = y + d
-    stroke(r, g, b)
+    context.stroke(r, g, b)
     line((x0, y0), (x1, y1))
     line((x2, y2), (x3, y3))
 
@@ -176,8 +166,8 @@ translate(50, 500)
 # Draws the glyph.
 c = glyph.contours
 pbSegments = glyph._segments
-fill(0, 0, 0)
-stroke(0, 1, 0)
+context.fill((0, 0, 0))
+context.stroke((0, 1, 0))
 drawPath(glyph._path)
 stroke(None)
 fill(0.7)
@@ -238,12 +228,13 @@ for contour in contours:
         if point.onCurve:
             if ONCURVE is None:
                 ONCURVE = point
-            circle(x, y, r)
+            context.circle(x, y, r)
         else:
             if QUADRATIC_OFFCURVE is None:
                 QUADRATIC_OFFCURVE = point
             # Quadratic offcurves.
-            circle(x, y, r, color='green')
+            context.fill(greenColor)
+            context.circle(x, y, r)
 
 x = 500
 y = 400

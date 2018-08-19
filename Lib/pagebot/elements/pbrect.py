@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 from pagebot.elements.element import Element
 
 class Rect(Element):
-    u"""Draw rectangle, default identical to Element itself.
+    """Draw rectangle, default identical to Element itself.
 
     >>> from pagebot.toolbox.color import color
     >>> from pagebot.toolbox.units import pt
@@ -39,14 +39,14 @@ class Rect(Element):
     >>> e.build(view, (0, 0))
     >>> doc.export('_export/TestRect.pdf')
 
-    >>> from pagebot.contexts.flatcontext import FlatContext 
+    >>> from pagebot.contexts.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
     >>> e = Rect(parent=page, x=0, y=20, w=page.w, h=3)
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
-    >>> c.newPage(w, h) 
+    >>> c.newPage(w, h)
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy
     (0pt, 20pt)

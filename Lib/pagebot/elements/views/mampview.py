@@ -32,9 +32,9 @@ class MampView(SiteView):
 
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
-    SASS_PATH = SITE_ROOT_PATH + 'css/style.scss'
-    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
+    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.sass.css'
+    SASS_PATH = SITE_ROOT_PATH + 'css/style.sass'
+    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.sass'
 
     #   B U I L D  H T M L  /  C S S
 
@@ -76,14 +76,14 @@ class MampView(SiteView):
         # Write all collected SASS vatiables into one file
         self.context.b.writeSass(self.VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+        self.context.b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
 
 
     def getUrl(self, name):
-        u"""Answer the local URL for Mamp Pro to find the copied website."""
+        """Answer the local URL for Mamp Pro to find the copied website."""
         return self.LOCAL_HOST_URL % (name, self.DEFAULT_HTML_FILE)
 
 

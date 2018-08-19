@@ -21,11 +21,13 @@ from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.typesetter import Typesetter
 from pagebot.elements import *
-from pagebot.toolbox.color import color, whiteColor
+from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em
 
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
+#CSS_PATH = 'css/style-org.css'
+CSS_PATH = 'css/style.sass.css'
 
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
@@ -180,9 +182,9 @@ class Hero(Element):
         b.comment('End '+self.__class__.__name__)
                                
 class Content(Element):
-    def __init__(self, **kwargs):
+    def __init__(self, contentId=None, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Content')
+        newTextBox('', parent=self, cssId=contentId or 'Content')
 
     def build_html(self, view, path):
         b = self.context.b
@@ -213,7 +215,7 @@ class ColoredSection(Element):
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
-        b.section(cssId='features', cssClass='blueelement vertical-padding')
+        b.section(cssId='features', cssClass='coloredSection vertical-padding')
         b.div(cssClass='wrapper clearfix')
         self.deepFind('ColoredSectionHeader').build_html(view, path) 
         b.div(cssClass='row vertical-padding')
@@ -270,11 +272,21 @@ doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
-#view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.sass.css')
-view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
+# Set the CSS paths. The CSS_PATH decicdes if plain CSS, SCSS or SASS is used.
+view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', CSS_PATH)
+
+headerBackgroundColor = whiteColor
+heroBackgroundColor = color(0.95)
+bannerBackgroundColor = whiteColor
+navigationBackgroundColor = blackColor
+coloredSectionBackgroundColor = color(rgb='#2A8BB8')
+coloredSectionColor = color(0.9)
+footerBackgroundColor = color(0.8)
+footerColor = blackColor
 
 for pn, (name, title) in enumerate(SITE):
-    page = doc[pn+1]
+    pn += 1 # Page numbers start at 1
+    page = doc[pn]
     page.name, page.title = name, title
     page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
     page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
@@ -283,10 +295,10 @@ for pn, (name, title) in enumerate(SITE):
         
     currentPage = name + '.html'
     # Add neste content elements for this page.
-    header = Header(parent=page)
-    banner = Banner(parent=header, fill=color(0, 0.5, 1))
+    header = Header(parent=page, fill=headerBackgroundColor)
+    banner = Banner(parent=header, fill=bannerBackgroundColor)
     logo = Logo(parent=banner, name=name)
-    navigation = Navigation(parent=header)
+    navigation = Navigation(parent=header, fill=navigationBackgroundColor)
     # TODO: Build this automatic from the content of the pages table.
     menu = TopMenu(parent=navigation)
     menuItem1 = MenuItem(parent=menu, href='index.html', label='Home', current=currentPage=='index.html')
@@ -315,12 +327,30 @@ for pn, (name, title) in enumerate(SITE):
     menu5 = Menu(parent=menuItem5)
     menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
     menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
-    
-    hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
-    
-    content = Content(parent=page, fill=whiteColor)
-    section = ColoredSection(parent=page)
-    footer = Footer(parent=page)
+        
+    if pn == 1:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+        content = Content(parent=page)
+        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+        content = Content(parent=page, contentId='Content2') #  fill=(0.7, 0.7, 0.9)
+    elif pn == 2:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+        content = Content(parent=page)
+        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+    elif pn == 3:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+        content = Content(parent=page)
+        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+    elif pn == 4:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+        content = Content(parent=page)
+        section = ColoredSection(parent=page)
+    elif pn == 5:
+        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+        content = Content(parent=page)
+        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor,
+            textFill=coloredSectionColor)
+    footer = Footer(parent=page, fill=footerBackgroundColor, textFill=footerColor)
     
 # Create a Typesetter for this document, then create pages and fill content. 
 # As no Galley instance is supplied to the Typesetter, it will create one,

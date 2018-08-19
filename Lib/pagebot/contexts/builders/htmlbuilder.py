@@ -16,7 +16,7 @@
 #
 import os
 import codecs
-#import sass
+import sass
 
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
@@ -441,9 +441,13 @@ table {
         except IOError:
             print('[HtmlBuilder.writeSass] Cannot write SASS file "%s"' % path)
 
-    def compileSass(self, sassPath, cssPath):
-        pass
-        #sass.compile(sassPath, cssPath, output_style='compressed')
+    def compileSass(self, sassPath, cssPath=None, compressed=True):
+        if cssPath is None:
+            cssPath = sassPath + '.css'
+        css = sass.compile(filename=sassPath, output_style={True:'compressed'}.get(compressed))
+        f = codecs.open(cssPath, 'w', 'utf-8')
+        f.write(css)
+        f.close()
 
     def build_sass(self, e, view):
         sass = self._sassVariables

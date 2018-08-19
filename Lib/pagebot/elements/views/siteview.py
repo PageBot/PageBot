@@ -31,13 +31,14 @@ class SiteView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
-    SASS_CSS_PATH = 'css/style.sass.css'
     SASS_PATH = 'css/style.sass'
+    SASS_CSS_PATH = 'css/style.sass.css'
     SASS_VARIABLES_PATH = 'css/variables.sass'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, cssUrls=None, 
-            jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, **kwargs):
-        u"""Abstract class for views that build websites."""
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, 
+            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
+            **kwargs):
+        """Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
         # Url's and paths
@@ -62,7 +63,7 @@ class SiteView(HtmlView):
         self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
     def copyResources(self, path):
-        u"""If self.resourcePaths are defined, then copy them into the destiation path.
+        """If self.resourcePaths are defined, then copy them into the destiation path.
         If the resources already exist, then delete them before copy.
         """
         # Copy resources to output
@@ -117,13 +118,13 @@ class SiteView(HtmlView):
         # Write all collected SASS vatiables into one file
         b.writeSass(self.SASS_VARIABLES_PATH)
         # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+        b.compileSass(self.SASS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
 
     def getUrl(self, name):
-        u"""Answer the local URL for Mamp Pro to find the copied website."""
+        """Answer the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
 
 

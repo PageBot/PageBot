@@ -19,15 +19,15 @@ from pagebot.elements.element import Element
 from pagebot.constants import QUIRE_SINGLE
 
 class Quire(Element):
-    u"""A Quire element typically holds a set of pages, such as left+right -->
+    """A Quire element typically holds a set of pages, such as left+right -->
     spread, quires --> folded sheets, that can print as a single page.
 
     http://www.ndl.go.jp/incunabula/e/chapter3/index.html
 
-    After the medieval times, books took the form of codices rather than
-    scrolls, and printed books came to be made of quires, sheets of paper
-    folded over.  Quires are sewn in the middle by thread to make a booklet,
-    the minimum component of a book. By putting a number of quires together and
+    After the middle ages books took the form of codices rather than scrolls
+    and printed books were made of quires, sheets of paper that were folded
+    over. Quires are sewn in the middle with a thread to make a booklet, the
+    minimum component of a book. By putting a number of quires together and
     stitching their edges, we can make a book. The number of times the whole
     sheet of paper is folded determines the size of the book, which is called
     "format." The format of books produced by folding the whole sheet of paper
@@ -54,7 +54,8 @@ class Quire(Element):
         self.startPage = startPage or 1
 
     def __len__(self):
-        u"""Answer the amount of required pages, based on the self.folds compositions.
+        """Answers the amount of required pages, based on the `self.folds`
+        compositions.
 
         >>> from pagebot.constants import *
         >>> q = Quire(QUIRE_LEPARELLO4)
@@ -74,9 +75,6 @@ class Quire(Element):
             return folds
 
         return size(self.folds)
-
-
-
 
 if __name__ == '__main__':
     import doctest
