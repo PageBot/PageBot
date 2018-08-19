@@ -18,7 +18,7 @@ from pagebot.toolbox.color import color, noColor
 
 
 class Placer(Element):
-    u"""Draw an area showing to be a place holder, e.g. reserved places of images in a template.
+    """Draw an area showing to be a place holder, e.g. reserved places of images in a template.
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext

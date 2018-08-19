@@ -10,51 +10,50 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     classHierarchy.py
+#     conditionsHierarchy.py
 #
-#     TODO: make OO
-#     TODO: graphics elements
-#     TODO: element alignments
 
 import sys, inspect
 from pagebot.contexts.platform import getContext
-from pagebot.constants import A3
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.conditions import *
 
 context = getContext()
 
-
 X0 = 100
 Y0 = 100
-
-# Landscape A3.
-HEIGHT, WIDTH = A3
-
-HBOX = 50
-WBOX = 180
+WIDTH = 1600
+HEIGHT = 1400
+HBOX = 34
+WBOX = 170
 GAP = 20
-HGAP = 100
+HGAP = 60
 P = 15
-TEXTSIZE = pt(14)
+TEXTSIZE = pt(12)
 OFFSET = 9
 
-def drawClassHierarchy(obj, colorRange, i):
+titleFont = findFont('BungeeInline-Regular')
+font = findFont('Roboto-Regular')
+boldFont = findFont('BungeeOutline-Regular')
 
+def drawClassHierarchy(obj, colorRange, i):
+    
     previous = None
     y = Y0
     x = X0
-
+    
     for c in list(obj.__mro__)[::-1]:
         current = c.__name__
-        if current == 'object':
-            continue
+        #if current == 'object':
+        #    continue
 
         if i >= len(colorRange):
             i = 0
-
+            
         drawClass(current, x, y, colorRange[i])
-
+        
         if previous is not None:
             drawConnection(current, previous)
 
@@ -66,13 +65,13 @@ def drawClassHierarchy(obj, colorRange, i):
 def drawConnection(current, previous):
     if sorted([current, previous]) in connections:
         return
-
+        
     pos0 = drawnclasses[current]
     p0x, p0y = pos0
     pos1 = drawnclasses[previous]
     p1x, p1y = pos1
     context.stroke(blueColor)
-
+    
     # Determines box entry / exit points.
     if p0y > p1y:
         #print('%s > %s' % (current, previous))
@@ -91,13 +90,10 @@ def drawConnection(current, previous):
             p0x += WBOX
         elif p1x < p0x:
             p1x += WBOX
-
+    
     # TODO: draw only once for any location.
     context.circle(p0x, p0y, 3)
     context.circle(p1x, p1y, 3)
-
-    # Straight line.
-    #context.line((p0x, p0y), (p1x, p1y))
 
     # Curve.
 
@@ -119,7 +115,7 @@ def drawConnection(current, previous):
     context.stroke((1, 0, 1, 0.5))
     context.curveTo((cp0x, cp0y), (cp1x, cp1y), (p1x, p1y))
     drawPath(path)
-
+    
     #cp1x = p1x
     #path.moveTo((p0x, p0y))
     connections.append(sorted([current, previous]))
@@ -128,9 +124,9 @@ def drawConnection(current, previous):
 def drawClass(name, x, y, color):
     if name in drawnclasses:
         return
-
+        
     pos = (x, y)
-
+    
     while pos in positions:
         px, py = pos
         newx = px + GAP + WBOX
@@ -138,7 +134,7 @@ def drawClass(name, x, y, color):
             newx = X0
             py += HGAP# / 2
         pos = (newx, py)
-
+        
     context.fill(blackColor)
     context.fontSize(TEXTSIZE)
 
@@ -148,12 +144,15 @@ def drawClass(name, x, y, color):
     context.stroke(None)
     #color = Color(0.6, 1, 0.6)
     context.fill(color)
-    context.rect(pt(boxx), pt(boxy), pt (WBOX), pt(HBOX))
+    context.roundedRect(boxx, boxy, WBOX, HBOX)
     context.fill(blackColor)
-    context.text(name, (pt(textx), pt(texty)))
+
+    style = dict(font=font.path, fontSize=TEXTSIZE, textFill=0.1)
+    bs = context.newString(name, style=style)
+    context.text(bs, (textx, texty))
     drawnclasses[name] = pos
     positions.append(pos)
-
+    
 def getColorRange(l):
     colorRange = []
     for i in range(l):
@@ -164,63 +163,36 @@ def getColorRange(l):
 
 def drawClasses(inspected):
     classes = []
-
+    
     for _, obj in inspected:
         if inspect.isclass(obj):
             classes.append(obj)
 
     l = len(classes)
     colorRange = getColorRange(l)
-
+    
     i = 0
-
+    
     for o in classes:
         i = drawClassHierarchy(o, colorRange, i)
 
-#size('A1')
-
-def title(name):
-    context.fill(0)
-    context.stroke(None)
-    context.fontSize(42)
-    context.text(name, (100, HEIGHT - 100))
-
-import pagebot.contexts.drawbotcontext
-import pagebot.contexts.flatcontext
-
-context.newPage(WIDTH, HEIGHT)
-title('PageBot Contexts')
-
+context.newPage(pt(WIDTH), pt(HEIGHT))
 connections = []
 drawnclasses = {}
 positions = []
-classes = []
-classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.drawbotcontext']))
-classes.extend(inspect.getmembers(sys.modules['pagebot.contexts.flatcontext']))
+classes = []    
+classes.extend(inspect.getmembers(sys.modules['pagebot.conditions']))
 drawClasses(classes)
 
-context.newPage(WIDTH, HEIGHT)
-title('PageBot Units')
-
-connections = []
-drawnclasses = {}
-positions = []
-classes = []
-classes.extend(inspect.getmembers(sys.modules['pagebot.toolbox.units']))
-drawClasses(classes)
-
-from pagebot.document import *
-from pagebot.elements import *
-from pagebot.elements.views import *
-
-context.newPage(WIDTH, HEIGHT)
-title('PageBot Elements')
-
-connections = []
-drawnclasses = {}
-positions = []
-classes = []
-classes.extend(inspect.getmembers(sys.modules['pagebot.elements']))
-classes.extend(inspect.getmembers(sys.modules['pagebot.elements.views']))
-classes.extend(inspect.getmembers(sys.modules['pagebot.document']))
-drawClasses(classes)
+context.fill(0)
+context.stroke(None)
+context.fontSize(42)
+msg = 'PageBot Alignment Conditions '
+msg1 = 'Object Hierarchy'
+style = dict(font=titleFont.path, fontSize=36, textFill=0.5)
+boldStyle = dict(font=boldFont.path, fontSize=36, textFill=0)
+bs = context.newString(msg, style=style)
+bs += context.newString(msg1, style=boldStyle)
+context.text(bs, (100, HEIGHT - 100))
+context.saveDocument('_export/conditionObjectHierarchy.png')
+context.saveDocument('_export/conditionObjectHierarchy.pdf')

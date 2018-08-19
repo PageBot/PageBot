@@ -20,10 +20,12 @@ from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 
 class Polygon(Element):
-    u"""The Polygon element is a simple implementation of the polygon DrawBot function.
-    More complex path-like elements inherit from the Path element."""
-    def __init__(self, fs, points=None, **kwargs):
+    """The Polygon element is a simple implementation of the polygon DrawBot
+    function. More complex path-like elements inherit from the Path element."""
+
+    def __init__(self, points=None, **kwargs):
         Element.__init__(self, **kwargs)
+
         if points is None:
             points = []
         self.points = points[:] # Force copy, so caller cannot change and not change size cache.
@@ -60,10 +62,10 @@ class Polygon(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def buld(self, view, origin, drawElements=True):
-
+    def build(self, view, origin, drawElements=True):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
+        print('building poly')
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(p)
@@ -89,7 +91,7 @@ class Polygon(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        # Draw optional bouning box.
+        # Draw optional bounding box.
         self.drawFrame(origin, view)
 
         self._restoreScale()
@@ -98,9 +100,7 @@ class Polygon(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        u"""Drawing HTML Polygon through SVG?"""
+        """Drawing HTML Polygon through SVG?"""
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         # TODO: Needs a solution, SVG or pixels?
-
-

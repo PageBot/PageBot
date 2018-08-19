@@ -24,7 +24,7 @@ from pagebot.toolbox.color import noColor
 
 
 class Image(Element):
-    u"""The Image contains the reference to the actual binary image data.
+    """The Image contains the reference to the actual binary image data.
     eId can be (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
@@ -89,7 +89,7 @@ class Image(Element):
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
 
     def _get_size(self):
-        u"""Get/Set the size of the image. If one of (self._w, self._h) values is None,
+        """Get/Set the size of the image. If one of (self._w, self._h) values is None,
         then it is calculated by propertion. If both are None, the original size of the
         image is returned. If both are not None, then that size is answered disproportionally.
         """
@@ -105,7 +105,7 @@ class Image(Element):
     size3D = property(_get_size3D, _set_size)
 
     def _get_w(self):
-        u"""Get the intended width and calculate the new scale, validating the
+        """Get the intended width and calculate the new scale, validating the
         width to the image minimum width and the height to the image minimum height.
         If not self._h is defined, then the proportion is recalculated, depending on
         the ratio of the image."""
@@ -154,7 +154,7 @@ class Image(Element):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
 
     def addFilter(self, filters):
-        u"""Add the filter to the self.imo image object. Create the image
+        """Add the filter to the self.imo image object. Create the image
         object in case it doest not exist yet. To be extended into a better
         API. More feedback needed for what the DrawBot values in the filters do
         and what their ranges are."""
@@ -164,13 +164,13 @@ class Image(Element):
                 getattr(self.imo, filter)(**params)
 
     def setPath(self, path):
-        u"""Set the path of the image. If the path exists, the get the real
+        """Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
         self.path = path
         self.initImageSize() # Get real size from the file.
 
     def initImageSize(self):
-        u"""Initialize the image size. Note that this is done with the
+        """Initialize the image size. Note that this is done with the
         default/current Context, as there may not be a view availabe yet."""
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
@@ -178,12 +178,12 @@ class Image(Element):
             self.iw = self.ih = pt(0) # Undefined or non-existing, there is no image file.
 
     def _get_imageSize(self):
-        u"""Answer the Point2D image size in pixels."""
+        """Answer the Point2D image size in pixels."""
         return self.iw, self.ih
     imageSize = property(_get_imageSize)
 
     def getPixelColor(self, p, scaled=True):
-        u"""Answer the color in either the scaled point (x, y) or original
+        """Answer the color in either the scaled point (x, y) or original
         image size point."""
         assert self.path is not None
         x, y = point2D(p)
@@ -194,7 +194,7 @@ class Image(Element):
         return self.doc.context.imagePixelColor(self.path, p)
 
     def _getAlpha(self):
-        u"""Use alpha channel of the fill color as opacity of the image."""
+        """Use alpha channel of the fill color as opacity of the image."""
         sFill = self.css('fill', noColor)
         if isinstance(sFill, (tuple, list)) and len(sFill) == 4:
             _, _, _, alpha = sFill
@@ -209,7 +209,7 @@ class Image(Element):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
     def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
-        u"""Draw the image in the calculated scale. Since we need to use the
+        """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
 

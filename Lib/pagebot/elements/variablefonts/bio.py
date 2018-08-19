@@ -18,7 +18,7 @@ from pagebot.elements import TextBox
 from pagebot.toolbox.units import em
 
 class Bio(TextBox):
-    u"""Showing the specified (variable) font with its name as headline
+    """Showing the specified (variable) font with its name as headline
     with the bio text about the font.
 
     """
@@ -26,7 +26,7 @@ class Bio(TextBox):
 
     def __init__(self, f, foundryName=None, description=None, foundryStyle=None,
             fontNameStyle=None, bodyStyle=None, **kwargs):
-        u"""
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter

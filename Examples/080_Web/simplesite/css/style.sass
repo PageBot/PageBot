@@ -1,5 +1,5 @@
 
-@import 'variables'
+@import 'variables.sass'
 
 body
     background: $Page-page-background-color
@@ -65,19 +65,26 @@ a:hover
     margin: 0 auto
 
 header
+    background-color: $Header-background-color
     padding: 15px 0
 
 #banner
+    background-color: $Banner-background-color
     text-align: center
     
-#hero,
-#page-header
+#hero
     background: $Hero-background-color
     border-top: 1px solid #e2e2e2
     border-bottom: 1px solid #e2e2e2
     padding: 20px 0
     font-size: 1.1em
-
+   
+#page-header
+    background: $Header-background-color
+    border-top: 1px solid #e2e2e2
+    border-bottom: 1px solid #e2e2e2
+    padding: 20px 0
+    font-size: 1.1em
 
 #page-header h1
     margin: 0
@@ -188,8 +195,8 @@ img
 
 // FOOTER 
 footer
-    background: #333
-    color: #ccc
+    background: $Footer-background-color
+    color: $Footer-color
     font-size: 80%
     padding: 20px 0
 
@@ -225,9 +232,9 @@ a.buttonlinkdiap:hover
     background: #353132
     color: #FFFFFF
 
-.blueelement
-    background: #2A8BB8
-    color: #fff
+.coloredSection
+    background: $ColoredSection-background-color
+    color: $ColoredSection-color
 
 
 /* Contain floats*/ 
@@ -271,6 +278,7 @@ a.buttonlinkdiap:hover
     
     header
         padding: 0
+        background-color: $Header-background-color
     
     #banner
         float: left 
