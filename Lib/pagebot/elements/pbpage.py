@@ -179,6 +179,44 @@ class Page(Element):
         self._isRight = flag
     isRight = property(_get_isRight, _set_isRight)
 
+    def _get_next(self):
+        u"""Answer the page with the next page number the document, relative to self. 
+        Answer None if self is the last page.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> page.next.pn # Skip any sub-pages with the same page number.
+        (6, 0)
+        >>> page.next.next.pn
+        (7, 0)
+        >>> page.next.prev is page
+        True
+        """
+        if self.parent is None:
+            return None
+        return self.parent.nextPage(self, makeNew=False)
+    next = property(_get_next)
+
+    def _get_prev(self):
+        u"""Answer the previous page in the document, relative to self. Answer None
+        if self is the first page.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(name='TestDoc', autoPages=8)
+        >>> page = doc[5]
+        >>> page.prev.pn # Skip any sub-pages with the same page number.
+        (4, 0)
+        >>> page.prev.prev.pn
+        (3, 0)
+        >>> page.prev.next is page
+        True
+        """
+        if self.parent is None:
+            return None
+        return self.parent.prevPage(self)
+    prev = property(_get_prev)
+
     def _get_pn(self):
         """Answer the page number by which self is stored in the parent
         document. This property is readonly. To move or remove pages, use

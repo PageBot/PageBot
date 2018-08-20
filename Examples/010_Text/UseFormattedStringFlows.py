@@ -13,7 +13,7 @@
 #
 #     UseFormattedStringFlows.py
 #
-#     If a TextBox as self.nextElement defined as name for another text box on the
+#     If a TextBox as self.nextElementName defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
@@ -69,7 +69,7 @@ def makeDocument():
 
     e1 = newTextBox(bs,
         name='ElasticTextBox1',
-        nextElement='ElasticTextBox2', # Overflow goes here.
+        nextElementName='ElasticTextBox2', # Overflow goes here.
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
         mb=20, mr=10,       # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
@@ -82,7 +82,7 @@ def makeDocument():
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name
-        nextElement='ElasticTextBox3', nextPage='Page 2',
+        nextElementName='ElasticTextBox3', nextPageName='Page 2',
         parent=page0, padding=4, x=100, w=BoxWidth, h=200,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  fill=whiteColor, stroke=noColor,
     )
