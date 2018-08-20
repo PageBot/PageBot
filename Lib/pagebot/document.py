@@ -943,11 +943,36 @@ class Document(object):
                 if found:
                     return pg
                 if pg.eId == page.eId:
-                    found = True
+                    found = True # Trigger to select the next page in the loop.
         # Not found, create new one?
         if makeNew:
             return self.newPage()
         return None # No next page found and none created.
+
+    def prevPage(self, page, prevPage=1):
+        """Answer the previous page of page. If it does not exist, answer None.
+
+        >>> from pagebot.constants import Tabloid
+        >>> doc = Document(autoPages=4, size=Tabloid)
+        >>> len(doc.pages), len(doc)
+        (4, 4)
+        >>> page = doc[2]
+        >>> prev = doc.prevPage(page)
+        >>> prev
+        <Page:default 1 (11", 16.90")>
+        >>> doc.getPageNumber(prev)
+        (1, 0)
+        >>> prev = doc.prevPage(prev)
+        >>> doc.getPageNumber(prev) is None
+        True
+        """
+        previous = None
+        for pn, pnPages in sorted(self.pages.items()):
+            for index, pg in enumerate(pnPages):
+                if pg.eId == page.eId:
+                   return previous
+                previous = pg 
+        return None # No previous page found.
 
     def getPageNumber(self, page):
         """Answer a string with the page number (pn, index), if the page can be

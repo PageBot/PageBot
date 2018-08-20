@@ -53,7 +53,7 @@ def makeDocument():
 
     t = newTable(cols=6, rows=62, borders=0.5, parent=page0,
                  fill=color(0.85), conditions=[Fit(), Overflow2Next()],
-                 nextElement='nextTable', nextPage='Page 2')
+                 nextElement='nextTable', nextPageName='Page 2')
 
     page1 = doc.getPage(1)
     page1.name = 'Page 2'
