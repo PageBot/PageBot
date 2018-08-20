@@ -19,6 +19,7 @@ from __future__ import division
 from pagebot.contexts.platform import getContext
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
+from pagebot.toolbox.units import pt
 
 class BaseView(Element):
     """A View is just another kind of container, kept by document to make a certain presentation 
@@ -54,6 +55,7 @@ class BaseView(Element):
         self.showSpread = False # If True, show even pages on left of fold, odd on the right.
         self.showSpreadMiddleAsGap = 0 # If showing as spread, this is the gap between them.
         # Document/page stuff
+        self.minPadding = pt(20) # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
         self.showPageCropMarks = False
         self.showPageRegistrationMarks = False
         self.showPageOrigin = False # Show page origin crosshair marker

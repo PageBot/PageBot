@@ -244,8 +244,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
-        baselineGridfit = False,
-        firstLineGridfit = True,
+        baselineGridFit = False,
+        firstLineGridFit = True,
         # Keep all of the lines of the node text block in the same column.
         keepInColumn = False,
         # Check if this space is available above, to get amount of text lines above headings.

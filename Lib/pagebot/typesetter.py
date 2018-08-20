@@ -603,6 +603,28 @@ class Typesetter(object):
         # which was in nodeStyle.
         self.popStyle()
 
+    def markDown2XML(self, mdText=None, fileName=None):
+        u"""In case the markdown source mdText is defined, use that as content string. Otherwise
+        read it from the file indicated by fileName.
+        """
+        if mdText is None:
+            # If we have MarkDown content, convert to XML (XHTML)
+            f = codecs.open(fileName, mode="r", encoding="utf-8")
+            mdText = f.read()
+            f.close()
+        else:
+            fileName = 'Untitled.md' # Define to make XML saved into XML file.
+        mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+        xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+        xml = xml.replace('&nbsp;', ' ')
+        # If there is an input file name, write the xml into an output file for debugging convenience.
+        if fileName is not None:
+            fileName = fileName + '.xml' # New file name to XML export
+            f = codecs.open(fileName, mode="w", encoding="utf-8")
+            f.write(xml)
+            f.close()
+        return fileName # Answer xml for convenience of the caller.
+
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
@@ -612,17 +634,7 @@ class Typesetter(object):
         child elements. Answer the root node for convenience of the caller."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
-            # If we have MarkDown content, convert to XML (XHTML)
-            f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
-            f.close()
-            mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-            xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
-            xml = xml.replace('&nbsp;', ' ')
-            fileName = fileName + '.xml' # New file name to XML export
-            f = codecs.open(fileName, mode="w", encoding="utf-8")
-            f.write(xml)
-            f.close()
+            fileName = self.markDown2XML(fileName=fileName) # Convert MarkDown file to XML file.
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.

@@ -643,6 +643,10 @@ class DrawBotContext(BaseContext):
         u"""Answer the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
+    def numberOfImages(self, path):
+        u"""Answer the number of images in the file referenced by path."""
+        return self.b.numberOfPages(path)
+
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""
         iw, ih = self.imageSize(path)

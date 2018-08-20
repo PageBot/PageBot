@@ -34,7 +34,7 @@ class Page(Element):
     INDEX_HTML = 'index.html'
     INDEX_HTML_URL = INDEX_HTML
 
-    def __init__(self, isLeft=None, isRight=None,
+    def __init__(self, isLeft=None, isRight=None, 
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
         cssCode=None, cssPaths=None, cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
         viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,

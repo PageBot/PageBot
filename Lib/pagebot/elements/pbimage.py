@@ -62,7 +62,7 @@ class Image(Element):
     ((30pt, 99.44mm), (128.83mm, 486.32pt))
     """
     def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
-        imo=None, **kwargs):
+        imo=None, index=1, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
@@ -87,6 +87,7 @@ class Image(Element):
         self.clipRect = clipRect # Optional clip rectangle in local coordinate and size.
         self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
+        self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values is None,
@@ -149,6 +150,11 @@ class Image(Element):
 
     h = property(_get_h, _set_h)
 
+    def __len__(self):
+        u"""Answer the number of pages in the the current image file."""
+        if self.path:
+            return self.context.numberOfImages(self.path)
+        return 0
 
     def __repr__(self):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
@@ -267,9 +273,9 @@ class Image(Element):
             if self.imo is not None:
                 with self.imo:
                     b.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha())
-                b.image(self.imo, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
+                b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             else:
-                b.image(self.path, upt(px/sx, py/sy), pageNumber=1, alpha=self._getAlpha())
+                b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
             context.restore()
 

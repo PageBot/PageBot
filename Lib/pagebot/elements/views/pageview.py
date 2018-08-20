@@ -37,7 +37,6 @@ class PageView(BaseView):
     to compose them in spreads or folding compositions."""
     viewId = 'Page'
 
-    MIN_PADDING = 20 # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
     def newQuire(self, folds=None, startPage=None):
@@ -99,10 +98,10 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
-            if self.pl > self.MIN_PADDING and \
-               self.pt > self.MIN_PADDING and \
-               self.pb > self.MIN_PADDING and \
-               self.pr > self.MIN_PADDING:
+            if self.pl > self.minPadding and \
+               self.pt > self.minPadding and \
+               self.pb > self.minPadding and \
+               self.pr > self.minPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -239,8 +238,8 @@ class PageView(BaseView):
 
         """
         if self.showPageFrame and \
-                self.pl > self.MIN_PADDING and self.pr > self.MIN_PADDING and \
-                self.pt > self.MIN_PADDING and self.pb > self.MIN_PADDING:
+                self.pl > self.minPadding and self.pr > self.minPadding and \
+                self.pt > self.minPadding and self.pb > self.minPadding:
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))

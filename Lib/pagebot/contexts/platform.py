@@ -23,7 +23,7 @@ def getContext():
     """Determines which context is used:
      * DrawBotContext
      * FlatContext
-     * IndesignContext
+     * InDesignContext
 
     """
     global DEFAULT_CONTEXT, MAMP_PATH
