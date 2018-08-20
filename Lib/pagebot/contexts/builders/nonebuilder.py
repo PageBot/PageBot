@@ -138,6 +138,9 @@ class NoneBuilder(object):
         """
         return 3024, 4032
 
+    def numberOfImages(self, path):
+        return 1
+        
     def transform(self, t):
         pass
 
