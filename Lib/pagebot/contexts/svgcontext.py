@@ -57,7 +57,7 @@ class SvgContext(BaseContext):
         self._ox = pt(0) # Origin set by self.translate()
         self._oy = pt(0)
         self._rotate = 0
-        
+
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
@@ -66,13 +66,15 @@ class SvgContext(BaseContext):
         self._path = None # Hold current open SVG path
 
     def newDocument(self, w, h):
-        """Ignore for SvgContext, as Drawing open automatic if first page is created."""
+        """Ignore for SvgContext, as Drawing open automatic if first page is
+        created."""
         pass
 
     def saveDocument(self, path, multiPage=None):
-        """Select other than standard DrawBot export builders here.
-        Save the current image as path, rendering depending on the extension of the path file.
-        In case the path starts with "_export", then create it directories.
+        """Select other than standard DrawBot export builders here.  Save the
+        current image as path, rendering depending on the extension of the path
+        file.  In case the path starts with "_export", then create it
+        directories.
 
         >>> context = SvgContext()
         >>> context.saveImage('_export/MyFile.svg')
@@ -83,6 +85,9 @@ class SvgContext(BaseContext):
         os.system('mv %s %s' % (self._filePath, path))
 
     saveImage = saveDocument # Compatible API with DrawBot
+
+    def getDocument(self):
+        pass
 
     def newPage(self, w, h):
         """Create a new SVG page.
@@ -113,7 +118,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        rect = self._drawing.rect(insert=((self._ox+x).pt, (self._oy+y).pt), size=(w.pt, h.pt), 
+        rect = self._drawing.rect(insert=((self._ox+x).pt, (self._oy+y).pt), size=(w.pt, h.pt),
                            stroke_width=upt(self._strokeWidth),
                            stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(rect)
@@ -132,7 +137,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        oval = self._drawing.ellipse(center=upt((self._ox+x+w/2), (self._oy+y+h/2)), r=upt((w/2), (h/2)), 
+        oval = self._drawing.ellipse(center=upt((self._ox+x+w/2), (self._oy+y+h/2)), r=upt((w/2), (h/2)),
                                              stroke_width=upt(self._strokeWidth),
                                              stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(oval)
@@ -151,8 +156,8 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        circle = self._drawing.circle(center=upt((self._ox+x+r), (self._oy+y+r)), r=upt(r), 
-                                      stroke_width=upt(self._strokeWidth), 
+        circle = self._drawing.circle(center=upt((self._ox+x+r), (self._oy+y+r)), r=upt(r),
+                                      stroke_width=upt(self._strokeWidth),
                                       stroke=color(self._stroke).css, fill=color(self._fill).css)
         self._drawing.add(circle)
 
@@ -168,8 +173,8 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])), upt((self._ox+p2[0]), (self._oy+p2[1])), 
-                                  stroke_width=upt(self._strokeWidth), 
+        line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])), upt((self._ox+p2[0]), (self._oy+p2[1])),
+                                  stroke_width=upt(self._strokeWidth),
                                   stroke=color(self._stroke).css)
         self._drawing.add(line)
 
@@ -235,8 +240,8 @@ class SvgContext(BaseContext):
         self._rotate = gState['rotate']
 
     restore = restoreGraphicState
-    
-    #   T E X T 
+
+    #   T E X T
 
     def fontSize(self, fontSize):
         """Set the current graphic state to fontSize.
@@ -245,7 +250,8 @@ class SvgContext(BaseContext):
         self._fontSize = fontSize
 
     def font(self, font, fontSize=None):
-        """Set the current graphic state to font. 
+        """Set the current graphic state to font.
+
         TODO: Make this match the font.path.
         """
         self._font = font
@@ -253,8 +259,8 @@ class SvgContext(BaseContext):
             self.fontSize(fontSize)
 
     def text(self, sOrBs, p):
-        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
-        at position p.
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString at position p.
 
         >>> path = '~/SvgContext_text.svg'
         >>> context = SvgContext()
@@ -271,14 +277,14 @@ class SvgContext(BaseContext):
         """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        t = self._drawing.text(sOrBs, insert=point2D(upt(p)), 
+        t = self._drawing.text(sOrBs, insert=point2D(upt(p)),
                                stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
                                fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
     def textBox(self, sOrBs, r):
-        """Draw the sOrBs text string, can be a str or BabelString, including a DrawBot FormattedString
-        in rectangle r."""
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString in rectangle r."""
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         x, y, w, h = r
@@ -302,7 +308,8 @@ class SvgContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        """Set the frame duration for animated gifs to a number of seconds per frame."""
+        """Set the frame duration for animated gifs to a number of seconds per
+        frame."""
         self._frameDuration = secondsPerFrame
 
 if __name__ == '__main__':

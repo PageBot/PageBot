@@ -146,7 +146,7 @@ class FlatContext(BaseContext):
         >>> x = y = pt(0)
         >>> c = blackColor
         """
-        
+
         """
         FIX
         >>> context.fileType = FILETYPE_JPG
@@ -204,6 +204,9 @@ class FlatContext(BaseContext):
             raise NotImplementedError('[FlatContext] File format "%s" is not implemented' % path.split('/')[-1])
 
     saveImage = saveDocument # Compatible API with DrawBot
+
+    def getDocument(self):
+        pass
 
     def newPage(self, w=None, h=None, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.

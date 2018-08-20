@@ -114,6 +114,10 @@ class DrawBotContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with DrawBot
 
+    def getDocument(self):
+        """Returns a PDF document of the current state."""
+        return self.b.pdfImage()
+
     def newPage(self, w, h):
         """Creates a new drawbot page.
 
