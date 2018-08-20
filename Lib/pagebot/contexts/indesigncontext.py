@@ -114,6 +114,9 @@ class InDesignContext(BaseContext):
 
     saveImage = saveDocument # Compatible API with InDesign
 
+    def getDocument(self):
+        pass
+
     def newPage(self, w, h):
         """Create a new InDesign page.
 
