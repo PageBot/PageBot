@@ -19,6 +19,8 @@ from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
 
+FONTS = ['Roboto', 'AmstelVar', 'DecoVar', 'Bungee']
+
 class ProofApp(object):
     """Example of a proofing application."""
 
@@ -61,11 +63,11 @@ class ProofApp(object):
         y = 4
         w = 100
         h = 24
-        self.window.openFile = Button((x, y, w, h), 'Run',
-                                sizeStyle='small', callback=self.runCallback)
+        self.window.openFile = Button((x, y, w, h), 'Proof',
+                                sizeStyle='small', callback=self.proofCallback)
         x += 110
 
-        self.window.selectFont = PopUpButton((x, y, w, h), ['Roboto', 'AmstelVar'],
+        self.window.selectFont = PopUpButton((x, y, w, h), FONTS,
             sizeStyle='small', callback=self.setFontCallback)
 
         '''
@@ -74,19 +76,20 @@ class ProofApp(object):
         '''
         x += 110
 
-    def runCallback(self, sender):
-        self.run()
+    def proofCallback(self, sender):
+        self.proof()
 
     def setFontCallback(self, sender):
-        print(sender.get())
+        print(FONTS[sender.get()])
 
-    def run(self):
+    def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
         pass
         #self.runCode()
         #pdfDocument = self.getPageBotDocument()
         #self.window.drawView.setPDFDocument(pdfDocument)
 
+    '''
     def runCode(self):
         """
         Runs a PageBot script.
@@ -111,6 +114,7 @@ class ProofApp(object):
         ScriptRunner(None, path, namespace=namespace, stdout=self.stdout,
                 stderr=self.stderr)
         self.printErrors()
+    '''
 
     def printErrors(self):
         for output in self.output:
@@ -141,17 +145,7 @@ class ProofApp(object):
 
     def open(self):
         """Opens a different script by calling up the get file dialog."""
-        paths = getFile(messageText='Please select your script',
-                        title='Select a script.',
-                        allowsMultipleSelection=False,
-                        fileTypes=('py',))
-
-        if paths is not None:
-            self.scriptPath = paths[0]
-            self.scriptFileName = self.scriptPath.split('/')[-1]
-            self.scriptName = self.scriptFileName.split('.')[0]
-            self.window.path.set(self.scriptPath)
-            self.run()
+        print('open something')
 
     def close(self):
         print('close something')
