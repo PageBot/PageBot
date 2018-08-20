@@ -16,12 +16,16 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
+from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):
     """A HtmlContext instance builds all necessary for a website, taking the element.
     Most of the building is done by the HtmlBuilder instance, stored as self.b.
     Still we need this HtmlContext layer, as not all drawing can be done in html, so 
     this context can decide to include SVG or pixel images for certain types of elements.
+    
+    TODO: Add all methods compatible with DrawBotContext, even if empty functionality
+    for HTML/CSS.
     """
     
     # Used by the generic BaseContext.newString( )
@@ -29,7 +33,9 @@ class HtmlContext(BaseContext):
     EXPORT_TYPES = ('html', 'css', 'js')
 
     def __init__(self):
-           self.b = HtmlBuilder()
+        self.b = HtmlBuilder()
+        self._fill = self._stroke = noColor
+        self._strokeWidth = 0
 
     #   T E X T
 
@@ -40,15 +46,19 @@ class HtmlContext(BaseContext):
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
+        # TODO: Implement as SVG.
         pass
     
     def oval(self, x, y, w, h):
+        # TODO: Implement as SVG.
         pass
     
     def circle(self, x, y, r):
+        # TODO: Implement as SVG.
         pass
     
     def line(self, p1, p2):
+        # TODO: Implement as SVG.
         pass
 
     #   I M A G E
@@ -64,16 +74,20 @@ class HtmlContext(BaseContext):
 
     #   C O L O R
 
-    def setFillColor(self, c, b=None):
-        pass
+    def fill(self, c):
+        self._fill = c
 
-    fill = setFillColor # DrawBot compatible API
+    setFillColor = fill # DrawBot compatible API
       
-    def setStrokeColor(self, c, w=None, b=None):
-        pass
+    def stroke(self, c, w=None):
+        self._stroke = c
+        if w is not None:
+            self.strokeWidth(w)
 
-    stroke = setStrokeColor # DrawBot compatible API
+    setStrokeColor = stroke # DrawBot compatible API
        
+    def strokeWidth(self, w):
+        self._strokeWidth = w
 
 if __name__ == '__main__':
     import doctest
