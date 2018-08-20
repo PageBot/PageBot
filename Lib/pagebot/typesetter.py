@@ -42,7 +42,8 @@ class Typesetter(object):
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
 
-    def __init__(self, doc=None, context=None, galley=None, globalDocName=None, globalPageName=None, globalBoxName=None,
+    def __init__(self, doc=None, context=None, page=None, box=None, galley=None, 
+            globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False, writeTags=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
@@ -61,19 +62,6 @@ class Typesetter(object):
         >>> t.typesetNode(nodeTree, e)
 
         """
-        # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
-        # will define it in ~~~Python or it is set later by the calling application.
-        self.doc = doc
-        # Keep track of current page, as may have been defined in code blocks.
-        self.page = None
-        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element.
-        # In that case image elements are added as child, loosing contact with their position in the text.
-        # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
-        # If galley is None, then create an empty Galley instance, without parent.
-        # Note that the single Galley will use the pagebot.contexts.Context as reference.
-        # Also note that self.box and self.galley refer to the same object. self.box is used
-        # in MarkDown files as reference where text should go.
-
         # Find the context, in case no doc has be defined yet.
         if context is None and doc is not None:
             context = doc.context
@@ -81,9 +69,23 @@ class Typesetter(object):
             context = getContext()
         self.context = context
 
+        # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
+        # will define it in ~~~Python or it is set later by the calling application.
+        self.doc = doc
+        # Keep track of current page and current box, as may have been defined in code 
+        # blocks. If None, it must be selected by the MarkDown document.
+        self.page = page
+        # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element.
+        # In that case image elements are added as child, loosing contact with their position in the text.
+        # A Galley element keeps that relation, by adding multiple TextBox elements between the images.
+        # If galley is None, then create an empty Galley instance, without parent.
+        # Note that the single Galley will use the current context as reference.
+        # Also note that self.box and self.galley refer to the same object. self.box is used
+        # in MarkDown files as reference where text should go.
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
         self.galley = galley
+
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = []
         self.tagHistory = []
@@ -603,28 +605,6 @@ class Typesetter(object):
         # which was in nodeStyle.
         self.popStyle()
 
-    def markDown2XML(self, mdText=None, fileName=None):
-        u"""In case the markdown source mdText is defined, use that as content string. Otherwise
-        read it from the file indicated by fileName.
-        """
-        if mdText is None:
-            # If we have MarkDown content, convert to XML (XHTML)
-            f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
-            f.close()
-        else:
-            fileName = 'Untitled.md' # Define to make XML saved into XML file.
-        mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-        xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
-        xml = xml.replace('&nbsp;', ' ')
-        # If there is an input file name, write the xml into an output file for debugging convenience.
-        if fileName is not None:
-            fileName = fileName + '.xml' # New file name to XML export
-            f = codecs.open(fileName, mode="w", encoding="utf-8")
-            f.write(xml)
-            f.close()
-        return fileName # Answer xml for convenience of the caller.
-
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
@@ -634,7 +614,17 @@ class Typesetter(object):
         child elements. Answer the root node for convenience of the caller."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
-            fileName = self.markDown2XML(fileName=fileName) # Convert MarkDown file to XML file.
+            # If we have MarkDown content, convert to XML (XHTML)
+            f = codecs.open(fileName, mode="r", encoding="utf-8")
+            mdText = f.read()
+            f.close()
+            mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+            xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+            xml = xml.replace('&nbsp;', ' ')
+            fileName = fileName + '.xml' # New file name to XML export
+            f = codecs.open(fileName, mode="w", encoding="utf-8")
+            f.write(xml)
+            f.close()
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.
