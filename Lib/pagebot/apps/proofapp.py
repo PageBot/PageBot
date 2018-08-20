@@ -10,12 +10,11 @@
 #     scriptrunnerapp.py
 #
 
-from vanilla import Button, TextBox, Window
+from vanilla import Button, TextBox, Window, PopUpButton
 from vanilla.dialogs import getFile, putFile
 
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool
-#from drawBot.scriptTools import ScriptRunner, StdOutput
 from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
@@ -62,13 +61,24 @@ class ProofApp(object):
         y = 4
         w = 100
         h = 24
-        self.window.openFile = Button((x, y, w, h), 'Open',
-                                sizeStyle='small', callback=self.openCallback)
+        self.window.openFile = Button((x, y, w, h), 'Run',
+                                sizeStyle='small', callback=self.runCallback)
         x += 110
+
+        self.window.selectFont = PopUpButton((x, y, w, h), ['Roboto', 'AmstelVar'],
+            sizeStyle='small', callback=self.setFontCallback)
+
+        '''
         self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small',
                 callback=self.saveCallback)
+        '''
         x += 110
-        self.window.path = TextBox((x, y + 2, -40, h), '', sizeStyle='small')
+
+    def runCallback(self, sender):
+        self.run()
+
+    def setFontCallback(self, sender):
+        print(sender.get())
 
     def run(self):
         """Runs the proof and writes PDF contents to drawView."""
