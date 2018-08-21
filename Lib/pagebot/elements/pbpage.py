@@ -34,7 +34,7 @@ class Page(Element):
     INDEX_HTML = 'index.html'
     INDEX_HTML_URL = INDEX_HTML
 
-    def __init__(self, isLeft=None, isRight=None, 
+    def __init__(self, isLeft=None, isRight=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
         cssCode=None, cssPaths=None, cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
         viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,
@@ -55,7 +55,7 @@ class Page(Element):
 
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         # Overwrite flag for side of page. Otherwise test on document pagenumber.
-        self._isLeft = isLeft 
+        self._isLeft = isLeft
         self._isRight = isRight
 
         #   F I L E  S T U F F
@@ -180,8 +180,8 @@ class Page(Element):
     isRight = property(_get_isRight, _set_isRight)
 
     def _get_next(self):
-        u"""Answer the page with the next page number the document, relative to self. 
-        Answer None if self is the last page.
+        u"""Answer the page with the next page number the document, relative to
+        self. Answer None if self is the last page.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -271,7 +271,7 @@ class Page(Element):
         b.resetHtml()
 
         self.build_sass(view)
-        
+
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
         elif self.htmlPaths is not None:
@@ -403,7 +403,6 @@ class Page(Element):
             fileName += '.html'
         if view.doExport: # View flag to avoid writing, in case of testing.
             b.writeHtml(path + fileName)
-
 
 class Template(Page):
 

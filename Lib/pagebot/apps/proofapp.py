@@ -16,13 +16,12 @@ from vanilla.dialogs import putFile
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
 from pagebot.constants import A3
-from drawBot import *
-from drawBot.drawBotDrawingTools import _drawBotDrawingTool
-from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
+from pagebot.fonttoolbox.objects.font import findFont
 
-FONTS = ['Roboto', 'AmstelVar', 'DecoVar', 'Bungee']
+
+FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
 HEIGHT, WIDTH = A3
 
 class ProofApp(object):
@@ -30,6 +29,7 @@ class ProofApp(object):
 
     def __init__(self):
         """Connects main window and output window for errors."""
+        self.font = FONTS[0]
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.window.drawView = DrawView((0, 32, -0, -0))
         self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
@@ -66,7 +66,7 @@ class ProofApp(object):
         self.proof()
 
     def setFontCallback(self, sender):
-        print(FONTS[sender.get()])
+        self.font = FONTS[sender.get()]
 
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""

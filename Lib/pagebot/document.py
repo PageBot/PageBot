@@ -852,7 +852,7 @@ class Document(object):
 
     def isLeft(self):
         """This is reached for e.isleft() queries, when elements are not placed
-        on a page.  The Document cannot know the answer then. Always answer
+        on a page. The Document cannot know the answer then. Always answer
         False.
 
         >>> doc = Document(name='TestDoc')
@@ -971,7 +971,7 @@ class Document(object):
             for index, pg in enumerate(pnPages):
                 if pg.eId == page.eId:
                    return previous
-                previous = pg 
+                previous = pg
         return None # No previous page found.
 
     def getPageNumber(self, page):
