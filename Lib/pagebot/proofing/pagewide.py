@@ -20,17 +20,13 @@ from pagebot.proofing.tx import *
 
 class PageWide(Proof):
 
+    def __init__(self, context, **kwargs):
+        super(PageWide, self).__init__(context, **kwargs)
+
     def draw(self, style, content, size):
         height = 0
         nr = 1
-        upem = style.info.unitsPerEm
-
-        '''
-        Before we start making the proof for a new font size:
-        * calculate starting point based on previous proof height,
-        * recalculate y0 when we're on a new page.
-        '''
-        ascenderHeight = getAscenderHeight(style, size, upem)
+        ascenderHeight = getAscenderHeight(style, size)
         dy = height + ascenderHeight * self.leading
-        kwargs = {'dy': dy, 'size': size, 'nr': nr}
+        kwargs = {'dy': dy, 'nr': nr}
         self.drawGlyphs(style, content, size, **kwargs)
