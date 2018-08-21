@@ -259,7 +259,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         display = DISPLAY_INLINE,
 
         # Language and hyphenation
-        language = 'en', # Language for hyphenation and spelling. Can be altered per style in FormattedString.
+        language = DEFAULT_LANGUAGE, # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'utf-8',
         hyphenation = True,
         # Strip pre/post white space from e.text and e.tail and substitute by respectively prefix and postfix
