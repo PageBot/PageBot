@@ -308,14 +308,17 @@ class TextBox(Element):
         return self.nextElementName is None and self.getOverflow()
 
     def overflow2Next(self):
-        """Try to fix if there is overflow."""
+        """Try to fix if there is overflow. If there is overflow outside the page, then 
+        find the page.next with it's target element to continue, until all text fits 
+        or the element has not nextElementName defined.
+        Answer the page and result, as the page may have been altered."""
         result = True
         overflow = self.getOverflow()
+        page = self.getElementPage()
 
         if overflow and self.nextElementName: # If there is text overflow and there is a next element?
             result = False
             # Find the page of self
-            page = self.getElementPage()
             if page is not None:
                 # Try next page
                 nextElement = page.getElementByName(self.nextElementName) # Optional search  next page too.
@@ -324,8 +327,8 @@ class TextBox(Element):
                     print(page, self.nextPageName)
                     if self.nextPageName == 'next': # Force to next page, relative to current
                         page = page.next
-                    elif isinstance(page.nextPageName, (int, float)): # Offset to next page
-                        page = page.parent.pageNumber(page) + page.nextPageName
+                    elif isinstance(self.nextPageName, (int, float)): # Offset to next page
+                        page = page.parent.pageNumber(page) + self.nextPageName
                     else:
                         page = self.doc.getPage(self.nextPageName)
                     nextElement =  page.getElementByName(self.nextElementName)
@@ -336,7 +339,7 @@ class TextBox(Element):
                     nextElement.prevElementName = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
                     result = not score.fails # Test if total flow placement succeeded.
-        return result
+        return page, result
 
     #   B U I L D
 
