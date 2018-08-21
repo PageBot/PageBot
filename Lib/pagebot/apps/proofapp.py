@@ -10,8 +10,8 @@
 #     scriptrunnerapp.py
 #
 
-from vanilla import Button, TextBox, Window, PopUpButton
-from vanilla.dialogs import getFile, putFile
+from vanilla import Button, Window, PopUpButton
+from vanilla.dialogs import putFile
 
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool
@@ -84,6 +84,7 @@ class ProofApp(object):
 
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
+
         pass
         #self.runCode()
         #pdfDocument = self.getPageBotDocument()
