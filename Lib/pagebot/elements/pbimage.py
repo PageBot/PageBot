@@ -72,7 +72,9 @@ class Image(Element):
 
         # One of the two needs to be defined, the other can be None.
         # If both are set, then the image scales disproportional.
-        if size is not None: # Disproportional scaling if both are not None
+        if size is None and w is None and h is None: # Set size to original proportions in the file
+            self.size = None
+        elif size is not None: # Disproportional scaling if both are not None or reset to 100% with (None, None)
             self.size = size
         elif w is not None and h is not None: # Disproportional scaling
             self.size = w, h

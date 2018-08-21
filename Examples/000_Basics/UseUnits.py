@@ -19,20 +19,20 @@ from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, col, units
 # FIXME: visible example.
 def useUnits():
     """
-    >>> mm(2), mm(2).r # Showing the unit as instance and as rendered value
+    >>> mm(2), mm(2).rv # Showing the unit as instance and as rendered value
     (2mm, 2)
-    >>> px(5), px(5).r
+    >>> px(5), px(5).rv
     (5px, 5)
-    >>> px(5), pt(5).r
+    >>> px(5), pt(5).rv
     (5px, 5)
-    >>> fr(8, base=400), fr(8, base=400).r # Fractional units, used in CSS-grid. 
+    >>> fr(8, base=400), fr(8, base=400).rv # Fractional units, used in CSS-grid. 
     (8fr, 50pt)
-    >>> em(12, base=10), em(12, base=10).r
+    >>> em(12, base=10), em(12, base=10).rv
     (12em, 120pt)
-    >>> perc(12.5, base=400), perc(12.5, base=400).r
+    >>> perc(12.5, base=400), perc(12.5, base=400).rv
     (12.5%, 50pt)
     >>> u = col(1/4, base=mm(200), g=mm(4))
-    >>> u, u.r
+    >>> u, u.rv
     (0.25col, 164pt)
     """
 
