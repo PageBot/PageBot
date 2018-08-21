@@ -15,6 +15,7 @@ from vanilla.dialogs import putFile
 
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
+from pagebot.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
@@ -42,7 +43,7 @@ class ProofApp(object):
     def initialize(self):
         """Sets up GUI contents."""
         self.buildMenu()
-        #self.proof()
+        self.proof()
 
     def buildMenu(self):
         """Builds buttons at top.
@@ -71,6 +72,7 @@ class ProofApp(object):
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
         self.context.newPage(pt(WIDTH), pt(HEIGHT))
+        proof = PageWide(self.context)
         pdfDocument = self.context.getDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
 

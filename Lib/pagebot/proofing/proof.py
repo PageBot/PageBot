@@ -17,7 +17,11 @@
 
 class Proof(object):
 
+    leading = 1.2
 
-    def drawGlyphs(style, content, size, **kwargs):
+    def __init__(self, context, **kwargs):
+        self.context = context
+
+    def drawGlyphs(self, style, content, size, **kwargs):
         for c in content:
             print(c)
