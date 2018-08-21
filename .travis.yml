@@ -6,6 +6,7 @@ before_install:
 - pip install --upgrade pip
 install:
 - pip install -e .
+- pip install libsass
 - pip install flat
 - pip install fontTools
 - pip install pylint
@@ -18,8 +19,8 @@ script:
 - export PYLINT="pylint --disable=$WONT_FIX,$CATCHALL_MAY_FIX_LATER"
 - $PYLINT Examples/
 - $PYLINT Lib/pagebot/
-- python Examples/Howto/UseText/AdvancedHyphenation.py
-- python Examples/Howto/UseUnits.py
+- python Examples/000_Basics/UseUnits.py
+- python Examples/010_Text/AdvancedHyphenation.py
 - python Lib/pagebot/__init__.py
 - python Lib/pagebot/conditions/align.py
 - python Lib/pagebot/constants.py
