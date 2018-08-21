@@ -538,8 +538,13 @@ class DrawBotContext(BaseContext):
         xpt, ypt, wpt, hpt = upt(r)
         self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
+    def language(self, language):
+        u"""DrawBot needs an overall language flag set to code, as it is not part of the FormattedString
+        style attributes. For availabel ISO language codes, see pageboy.constants."""
+        self.b.language(language)
+
     def hyphenation(self, onOff):
-        u"""DrawBot needs an overall hyphenation flag set on/off, as it is not part of the FormattedText
+        u"""DrawBot needs an overall hyphenation flag set on/off, as it is not part of the FormattedString
         style attributes."""
         self.b.hyphenation(onOff)
 

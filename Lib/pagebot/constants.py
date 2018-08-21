@@ -38,7 +38,9 @@ A7 = mm(74,  105)
 A8 = mm(52,  74)
 A9 = mm(37,  52)
 A10 = mm(26, 37)
+#
 # ISO B Sizes
+#
 B0 = mm(1000,1414)
 B1 = mm(707, 1000)
 B2 = mm(500, 707)
@@ -50,7 +52,9 @@ B7 = mm(88,  125)
 B8 = mm(62,  88)
 B9 = mm(44,  62)
 B10 = mm(31, 44)
+#
 # ISO C Envelop Sizes
+#
 C0 = mm(917, 1297)
 C1 = mm(648, 917)
 C2 = mm(458, 648)
@@ -62,6 +66,7 @@ C7 = mm(81,  114)
 C8 = mm(57,  81)
 C9 = mm(40,  57)
 C10 = mm(28, 40)
+
 # American Sizes as non-rounded values
 HalfLetter = inch(8.5, 5.5)
 Letter = inch(8.5, 11)
