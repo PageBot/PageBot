@@ -22,7 +22,8 @@ class HtmlContext(BaseContext):
     """A HtmlContext instance builds all necessary for a website, taking the element.
     Most of the building is done by the HtmlBuilder instance, stored as self.b.
     Still we need this HtmlContext layer, as not all drawing can be done in html, so 
-    this context can decide to include SVG or pixel images for certain types of elements.
+    this context can decide to include SVG or pixel images for the HTML-representation
+    of certain types of elements.
     
     TODO: Add all methods compatible with DrawBotContext, even if empty functionality
     for HTML/CSS.

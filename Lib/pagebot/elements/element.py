@@ -52,7 +52,8 @@ class Element(object):
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElement=None, prevElement=None, nextPage=None, prevPage=None,
+            nextElementName=None, prevElementName=None, 
+            nextPageName=None, prevPageName=None,
             bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None,
             borderTop=None, borderRight=None, borderBottom=None,
@@ -217,15 +218,15 @@ class Element(object):
         self.keyWords = keyWords # Optional used for web pages
         self.language = language # Optional language code from HTML standard. Otherwise None.
         # Save flow reference names
-        self.prevElement = prevElement # Name of the prev flow element
-        self.nextElement = nextElement # Name of the next flow element
-        self.nextPage = nextPage # Name ot identifier of the next page that nextElement refers to,
-        self.prevPage = prevPage # if a flow must run over page boundaries.
+        self.prevElementName = prevElementName # Name of the prev flow element
+        self.nextElementName = nextElementName # Name of the next flow element
+        self.nextPageName = nextPageName # Name, identifier or index of the next page that nextElement refers to,
+        self.prevPageName = prevPageName # if a flow must run over page boundaries.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements)
         # Initialize the default Element behavior tags, in case this is a flow.
-        self.isFlow = not None in (prevElement, nextElement, nextPage)
+        self.isFlow = not None in (prevElementName, nextElementName, nextPageName)
         # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
         if solve:
             self.solve()
@@ -328,9 +329,9 @@ class Element(object):
             self.h = template.h
             self.padding = template.padding
             self.margin = template.margin
-            self.prevElement = template.prevElement
-            self.nextElement = template.nextElement
-            self.nextPage = template.nextPage
+            self.prevElementName = template.prevElementName
+            self.nextElementName = template.nextElementName
+            self.nextPageName = template.nextPageName
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -664,10 +665,10 @@ class Element(object):
             framePath=self.framePath,
             elements=None, # Will be copied separately, if there are child elements
             template=self.template,
-            nextElement=self.nextElement,
-            prevElement=self.prevElement,
-            nextPage=self.nextPage,
-            prevPage=self.prevPage,
+            nextElementName=self.nextElementName,
+            prevElementName=self.prevElementName,
+            nextPageName=self.nextPageName,
+            prevPageName=self.prevPageName,
             padding=self.padding, # Copies all padding values at once
             margin=self.margin, # Copies all margin values at once,
             borders=self.borders, # Copies all borders at once.
@@ -857,7 +858,7 @@ class Element(object):
         for e in self.elements:
             if not e.isFlow:
                 continue
-            # Now we know that this element has a e.nextBox and e.nextPage
+            # Now we know that this element has a e.nextBox and e.nextPageName
             # There should be a flow with that name in our flows yet
             found = False
             for nextId, seq in flows.items():
@@ -880,18 +881,18 @@ class Element(object):
             # if makeNew is set to True.
             page = self.doc.getPage(tb.nextPage)
             if page is None and makeNew:
-                page = self.doc.newPage(name=tb.nextPage)
+                page = self.doc.newPage(name=tb.nextPageName)
             # Hard check. Otherwise something must be wrong in the template flow definition.
             # or there is more content than we can handle, while not allowing to create new pages.
             assert page is not None
             assert not page is self # Make sure that we got a another page than self.
             # Get the element on the next page that
-            tb = page.getElementByName(tb.nextElement)
+            tb = page.getElementByName(tb.nextElementName)
             # Hard check. Otherwise something must be wrong in the template flow definition.
             assert tb is not None and not tb
         else:
             page = self # Staying on the same page, flowing into another column.
-            tb = self.getElementByName(tb.nextElement)
+            tb = self.getElementByName(tb.nextElementName)
             # Hard check. Make sure that this one is empty, otherwise mistake in template
             assert not tb
         return page, tb

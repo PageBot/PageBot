@@ -12,6 +12,7 @@ install:
 - pip install pylint
 - pip install svgwrite
 - pip install markdown
+- pip install sass
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme
