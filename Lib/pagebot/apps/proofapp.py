@@ -13,6 +13,9 @@
 from vanilla import Button, Window, PopUpButton
 from vanilla.dialogs import putFile
 
+from pagebot.contexts.platform import getContext
+from pagebot.toolbox.units import *
+from pagebot.constants import A3
 from drawBot import *
 from drawBot.drawBotDrawingTools import _drawBotDrawingTool
 from drawBot.context import getContextForFileExt
@@ -20,6 +23,7 @@ from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
 
 FONTS = ['Roboto', 'AmstelVar', 'DecoVar', 'Bungee']
+HEIGHT, WIDTH = A3
 
 class ProofApp(object):
     """Example of a proofing application."""
@@ -30,31 +34,17 @@ class ProofApp(object):
         self.window.drawView = DrawView((0, 32, -0, -0))
         self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
         self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
-
-        '''
-        self.scriptPath = None
-        self.scriptFileName = None
-        self.scriptName = None
-        '''
         self.initialize()
         self.window.open()
         self.outputWindow.open()
-
-    def getPath(self):
-        """
-        TODO: store in preferences.
-        TODO: add example scripts to menu.
-        TODO: remember name.
-        """
-        if self.scriptPath is not None:
-            return self.scriptPath
+        self.context = getContext()
 
     def initialize(self):
         """Sets up GUI contents."""
-        self.buildTop()
-        self.run()
+        self.buildMenu()
+        #self.proof()
 
-    def buildTop(self):
+    def buildMenu(self):
         """Builds buttons at top.
 
         TODO: put in a group.
@@ -63,17 +53,13 @@ class ProofApp(object):
         y = 4
         w = 100
         h = 24
-        self.window.openFile = Button((x, y, w, h), 'Proof',
+        self.window.proof = Button((x, y, w, h), 'Proof',
                                 sizeStyle='small', callback=self.proofCallback)
         x += 110
 
         self.window.selectFont = PopUpButton((x, y, w, h), FONTS,
             sizeStyle='small', callback=self.setFontCallback)
 
-        '''
-        self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small',
-                callback=self.saveCallback)
-        '''
         x += 110
 
     def proofCallback(self, sender):
@@ -84,38 +70,9 @@ class ProofApp(object):
 
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
-
-        pass
-        #self.runCode()
-        #pdfDocument = self.getPageBotDocument()
-        #self.window.drawView.setPDFDocument(pdfDocument)
-
-    '''
-    def runCode(self):
-        """
-        Runs a PageBot script.
-        """
-        path = self.getPath()
-
-        if path is None:
-            return
-
-        _drawBotDrawingTool.newDrawing()
-        namespace = {}
-        _drawBotDrawingTool._addToNamespace(namespace)
-
-        # Creates a new standard output, catching all print statements and tracebacks.
-        self.output = []
-        self.stdout = StdOutput(self.output,
-                outputView=self.outputWindow.outputView)
-        self.stderr = StdOutput(self.output, isError=True,
-                outputView=self.outputWindow.outputView)
-
-        # Calls DrawBot's ScriptRunner with above parameters.
-        ScriptRunner(None, path, namespace=namespace, stdout=self.stdout,
-                stderr=self.stderr)
-        self.printErrors()
-    '''
+        self.context.newPage(pt(WIDTH), pt(HEIGHT))
+        pdfDocument = self.context.getDocument()
+        self.window.drawView.setPDFDocument(pdfDocument)
 
     def printErrors(self):
         for output in self.output:
