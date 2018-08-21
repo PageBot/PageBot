@@ -561,8 +561,9 @@ class Typesetter(object):
         if self.writeTags and node.tag != 'pre':
             # Open the node in HTML export for this node
             self.htmlNode(node)
-            # Add this tag to the tag-history line
-            self.addHistory(node.tag)
+        # Add this tag to the tag-history line. It is used to connect to the right style in case
+        # we are rendering towards a FormattedString or another context-equivalent.
+        self.addHistory(node.tag)
 
         # If e is undefined, then we make sure that the stack contains the doc.rootStyle on top.
         # If e is defined then root queries for style should follow the e.parent path.
