@@ -181,7 +181,8 @@ class Page(Element):
 
     def _get_next(self):
         u"""Answer the page with the next page number the document, relative to self. 
-        Answer None if self is the last page.
+        Create a new page if self is the last page in the self.parent document.
+        Answer None if the self page has no parent.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -195,7 +196,7 @@ class Page(Element):
         """
         if self.parent is None:
             return None
-        return self.parent.nextPage(self, makeNew=False)
+        return self.parent.nextPage(self)
     next = property(_get_next)
 
     def _get_prev(self):

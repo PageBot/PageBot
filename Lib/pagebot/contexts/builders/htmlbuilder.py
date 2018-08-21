@@ -444,7 +444,7 @@ table {
     def compileSass(self, sassPath, cssPath=None, compressed=True):
         if cssPath is None:
             cssPath = sassPath + '.css'
-        css = sass.compile(filename=sassPath, output_style={True:'compressed'}.get(compressed))
+        css = sass.compile_file(sassPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)
         f.close()

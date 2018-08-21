@@ -111,7 +111,7 @@ class Typesetter(object):
         return self.galley.getTextBox(e)
 
     def node_h1(self, node, e):
-        u"""Collect the page-node-pageNumber connection."""
+        u"""Handle the <h1> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -120,7 +120,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h2(self, node, e):
-        u"""Collect the page-node-pageNumber connection."""
+        u"""Handle the <h2> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -129,7 +129,7 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h3(self, node, e):
-        u"""Collect the page-node-pageNumber connection."""
+        u"""Handle the <h3> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -138,7 +138,16 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_h4(self, node, e):
-        u"""Collect the page-node-pageNumber connection."""
+        u"""Handle the <h4> tag."""
+        # Add line break to whatever style/content there was before.
+        # Add invisible h4-marker in the string, to be retrieved by the composer.
+        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
+        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        # Typeset the block of the tag.
+        self.typesetNode(node, e)
+
+    def node_h5(self, node, e):
+        u"""Handle the <h5> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
