@@ -14,6 +14,7 @@
 #
 #     proof.py
 #
+from fontTools.pens.cocoaPen import CocoaPen
 
 class Proof(object):
 
@@ -22,6 +23,14 @@ class Proof(object):
     def __init__(self, context, **kwargs):
         self.context = context
 
-    def drawGlyphs(self, style, content, size, **kwargs):
+    def drawGlyphs(self, font, content, size, **kwargs):
+
         for c in content:
-            print(c)
+            pen = CocoaPen(font)
+            self.context.fill(0)
+            self.context.stroke(None)
+            glyph = font[c]
+            print(glyph)
+            print(glyph.contours)
+            # Missing.
+            print(glyph.path)

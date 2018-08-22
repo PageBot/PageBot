@@ -159,7 +159,7 @@ contours = []
 contour = None
 coordinates = glyph.ttGlyph.coordinates
 fill(1, 1, 0)
-rect(0, 0, width(), height())
+#rect(0, 0, width(), height())
 # Move glyph up so we can see results below descender level.
 translate(50, 500)
 
