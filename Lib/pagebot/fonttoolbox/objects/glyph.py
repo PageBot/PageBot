@@ -211,14 +211,14 @@ class Glyph(object):
         self.dirty = False # All cleaned up.
 
     def getBezierPath(self, context):
-        u"""Answer the drawable contour path for this context. Answer None if it cannot be created.
-        """
-        # TODO: Make this work, extract from current self._initialize 
+        """Answers the drawable contour path for this context. Answer None if
+        it cannot be created.  """
+        # TODO: Make this work, extract from current self._initialize
         return None
 
     def update(self):
         """Update the font if it became dirty by changing cooridinates.
-        Otherwise ignore.  Note that in case the caller cache points, contours,
+        Otherwise ignore. Note that in case the caller cache points, contours,
         components, etc. these are no longer valid."""
         if self.dirty:
             self._initialize()
@@ -250,7 +250,7 @@ class Glyph(object):
 
     def getAxisDeltas(self):
         """Answer dictionary of axis-delta relations. Key is axis name, value
-        is an *AxisDeltas* instance.  The instance containse (minValue,
+        is an *AxisDeltas* instance. The instance containse (minValue,
         defaultValue, maxValue) keys, holding the sets of deltas for the glyph
         points."""
         if self._axisDeltas is None:

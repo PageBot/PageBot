@@ -28,7 +28,7 @@ try:
         CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex, \
         CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds, \
         CTLineGetTrailingWhitespaceWidth
-        #CTFontDescriptorCopyAttribute, 
+        #CTFontDescriptorCopyAttribute,
         #kCTFontURLAttribute, \
         #CTFontDescriptorCreateWithNameAndSize, \
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
@@ -185,7 +185,7 @@ class DrawBotString(BabelString):
         if style is None:
             style = {}
         self.style = style
-        
+
         # Filled in case w or h are defined, end depending if the font is a variable font.
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterates to find width.
         self.fittingFont = None # In case we are sampling with a Variable Font.
@@ -246,7 +246,7 @@ class DrawBotString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def asText(self):
-        """Answer the text string. 
+        """Answer the text string.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -285,7 +285,7 @@ class DrawBotString(BabelString):
         @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
-        # Set the hyphenation flag and language from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag and language from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         if language is None:
             language = self.language
@@ -310,14 +310,14 @@ class DrawBotString(BabelString):
         return self.s.listFontGlyphNames()
 
     def _get_ascender(self):
-        """Returns the current font ascender as relative Em, based on the 
+        """Returns the current font ascender as relative Em, based on the
         current font and fontSize."""
         fontSize = upt(self.fontSize)
         return em(self.s.fontAscender()/fontSize, base=fontSize)
     fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
     def _get_descender(self):
-        """Returns the current font descender as Em, based on the current font 
+        """Returns the current font descender as Em, based on the current font
         and fontSize."""
         fontSize = upt(self.fontSize)
         return em(self.s.fontDescender()/fontSize, base=fontSize)
@@ -331,7 +331,7 @@ class DrawBotString(BabelString):
     fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
 
     def _get_capHeight(self):
-        """Returns the current font cap height as Em, based on the current font 
+        """Returns the current font cap height as Em, based on the current font
         and fontSize."""
         fontSize = upt(self.fontSize)
         return em(self.s.fontCapHeight()/fontSize, base=fontSize)
@@ -386,14 +386,14 @@ class DrawBotString(BabelString):
         as new DrawBotString in the current context."""
         b = self.context.b
         wpt, hpt = upt(w, h)
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         self.context.language(self.language)
         self.context.hyphenation(bool(self.hyphenation))
         overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self.context)
         self.context.hyphenation(False)
         return overflow
-      
+
     def getBaselines(self, w, h=None):
         u"""Answer the dictionary of vertical baseline positions for the self.s FormattedString
         and for the given width and height. Value is the TextLine instance at that position.
@@ -428,7 +428,7 @@ class DrawBotString(BabelString):
         >>> line = lines[0]
         >>> line.maximumLineHeight
         1.4em
-        >>> 
+        >>>
         """
         assert w
         if not h:
@@ -634,7 +634,7 @@ class DrawBotString(BabelString):
 
         b = context.b
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         language = css('language', e, style)
         hyphenation = bool(css('hyphenation', e, style))
@@ -667,7 +667,7 @@ class DrawBotString(BabelString):
             uFontSize = pt(100) # Start with large font size to scale for fitting.
         else:
             # May be scaled to fit w or h if target is defined.
-            uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)    
+            uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)
         if uFontSize is not None:
             fsAttrs['fontSize'] = fontSizePt = upt(uFontSize) # Remember as base for relative units
         else:
@@ -675,7 +675,7 @@ class DrawBotString(BabelString):
 
         uLeading = css('leading', e, style)
         fsAttrs['lineHeight'] = upt(uLeading or DEFAULT_LEADING, base=fontSizePt) # Base for em or perc
-        
+
         # Color values for text fill
         # Color: Fill the text with this color instance
         # noColor: Set the value to None, no fill will be drawn
@@ -715,7 +715,7 @@ class DrawBotString(BabelString):
                 fsAttrs['cmykFill'] = cFill.cmyk
             else:
                 fsAttrs['fill'] = cFill.rgb
-        
+
         sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
         if sAlign is not None: # yTextAlign must be solved by parent container element.
             fsAttrs['align'] = sAlign
@@ -748,7 +748,7 @@ class DrawBotString(BabelString):
         if tabs is not None:
             fsAttrs['tabs'] = tabs
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         # FIX IN DRAWBOT fsAttrs['language'] = bool(css('language', e, style))
         # FIX IN DRAWBOT fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
@@ -1108,7 +1108,7 @@ class TextLine(object):
     fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
 
     def _get_capHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the current font 
+        """Returns the max font cap height of all text runs as Em, based on the current font
         and fontSize."""
         capHeight = 0
         for textRun in self.textRuns:
@@ -1117,7 +1117,7 @@ class TextLine(object):
     fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
 
     def _get_maximumLineHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the current font 
+        """Returns the max font cap height of all text runs as Em, based on the current font
         and fontSize."""
         maximumLineHeight = 0
         for textRun in self.textRuns:
