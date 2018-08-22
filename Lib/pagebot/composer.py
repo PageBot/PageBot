@@ -62,8 +62,9 @@ class Composer(object):
         u"""Compose the galley element, based on the instruction of the ArtDirection instance
         that will run the rules what content to put where.
         """
-        print(artDirection)
+        globals = dict(composer=self, doc=self.doc, page=doc[1], style=doc.styles)        
         for galley in self.galleys:
+            globals
             print ('---', galley)
 
     def XXXcompose(self, galley, page, flowId=None):
