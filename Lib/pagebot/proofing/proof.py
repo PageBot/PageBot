@@ -34,3 +34,4 @@ class Proof(object):
             print(glyph.contours)
             print(glyph.components)
             print(glyph.segments)
+            print(glyph.cubic)
