@@ -19,97 +19,88 @@ from pagebot.toolbox.units import pointOffset
 
 class CodeBlock(Element):
 
-    def __init__(self, code, **kwargs):
+    def __init__(self, code, tryExcept=True, **kwargs):
         Element.__init__(self, **kwargs)
+        assert isinstance(code, str)
         self.code = code
+        self.tryExcept = tryExcept
 
-    #   D R A W B O T / F L A T  S U P P O R T
+    def __repr__(self):
+        return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def run(self, globals=None):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
-        ~~~Python
+        ~~~
         cid = 'NameOfBlock'
         doc = Document(w=300, h=500)
         ~~~
         block code. In this case the MacDown and MarkDown extension libraries
         convert this codeblock to
-        <pre><code class="Python">
+        <pre><code>
         cid = 'NameOfBlock'
         doc = Document(w=300, h=500)
         </code></pre>
         This way authors can run PageBot generators controlled by content.
-        Content result dictionary (per codeblock) is stored in self.codeBlocks[codeId].
+        Note that it is the author's responsibility not to overwrite global values
+        that are owned by the calling composer instance.
 
         >>> from pagebot.document import Document
-        >>> doc = Document(size=(500, 500))
+        >>> doc = Document(size=(500, 500), autoPages=10)
         >>> view = doc.view
         >>> page = doc[1]
-        >>> script = 'print(100 * 200)'
-        >>> cb = CodeBlock(script, parent=page)
-        >>> page.build(view)
-        ('CodeBlock', 'print(100 * 200)')
+        >>> code = 'a = 100 * 300\\npage = page.next.next.next\\npage.w = 300'
+        >>> cb = CodeBlock(code, parent=page, tryExcept=False)
+        >>> cb 
+        <CodeBlock:a = 100 * 300;page = page.next.next.next;page.w = 300>
+        >>> # Create globals dictionary for the script to work with
+        >>> g = dict(page=page, view=view, doc=doc) 
+        >>> result = cb.run(g) # Running the code selects 3 pages ahead
+        >>> result is g # Result global dictionary is same object as g
+        True
+        >>> sorted(result.keys())
+        ['__code__', 'a', 'doc', 'page', 'view']
+        >>> resultPage = result['page']
+        >>> resultPage # Running code block changed width of new selected page.
+        <Page:default 4 (300pt, 500pt)>
+        >>> resultPage.w, resultPage.pn
+        (300pt, (4, 0))
+        >>> cb.code = 'aa = 200 * a' # Change code of the code block, using global
+        >>> result = cb.run(g) # And run with the same globals dictionary
+        >>> sorted(result.keys()), g['aa'] # Result is added to the globals
+        (['__code__', 'a', 'aa', 'doc', 'page', 'view'], 6000000)
         """
-        context = self.context # Get current context and builder.
+        if globals is None: 
+            # If no globals defined, create a new empty dictionary as storage of result.
+            globals = {}
+        if not self.tryExcept: # For debugging show full error of code block run.
+            exec(self.code, globals) # Exectute code block, where result goes dict.
+            if '__builtins__' in globals:
+                del globals['__builtins__'] # We don't need this set of globals in the returned results.
+        else:
+            error = None
+            try:
+                exec(self.code, globals) # Exectute code block, where result goes dict.
+                if '__builtins__' in globals:
+                    del globals['__builtins__'] # We don't need this set of globals in the results.
+            except TypeError:
+                error = u'TypeError'
+            except NameError:
+                error = 'NameError'
+            except SyntaxError:
+                error = 'SyntaxError'
+            except AttributeError:
+                error = 'AttributeError'
+            globals['__error__'] = error
+            if verbose and error is not None:
+                print(u'### %s ### %s' % (error, self.code))
+            # TODO: insert more possible exec() errors here.
 
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        # For convenience, store the last source code of the block in the result dict.
+        if '__code__' not in globals:
+            globals['__code__'] = self.code
 
-        print('CodeBlock', self.code)
-        return
-
-        result = dict(view=view)
-        if execute and node.text:
-            if not self.tryExcept:
-                if self.verbose:
-                     print(u'Globals: %s' % result)
-                     print(u'Typesetter: %s' % node.text)
-                exec(node.text, result) in result # Exectute code block, where result goes dict.
-                codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
-                del result['__builtins__'] # We don't need this set of globals in the returned results.
-            else:
-                error = None
-                try:
-                    exec(node.text, result) in result # Exectute code block, where result goes dict.
-                    codeId = result.get('cid', codeId) # Overwrite base codeId, if defined in the block.
-                    del result['__builtins__'] # We don't need this set of globals in the results.
-                except TypeError:
-                    error = u'TypeError'
-                except NameError:
-                    error = 'NameError'
-                except SyntaxError:
-                    error = 'SyntaxError'
-                except AttributeError:
-                    error = 'AttributeError'
-                result['__error__'] = error
-                if self.verbose and error is not None:
-                    print(u'### %s ### %s' % (error, node.text))
-
-        # doc, page or box may have changed, store them back into the typesetter,
-        # so they are available for the execution of a next code block.
-        self.doc = result.get(self.globalDocName)
-        self.page = result.get(self.globalPageName)
-        self.box = result.get(self.globalBoxName)
-        # TODO: insert more possible exec() errors here.
-
-        # For convenience, store the source code of the block in the result dict.
-        if '__code__' not in result:
-            result['__code__'] = node.text
-
-        # Store the result dict as code block. Global values have become dict entries.
-        # Make sure that we have a unique codeId (it may have been defined in different
-        # markdown files, so sequential index it no guarantee.)
-        if codeId in self.codeBlocks:
-            n = 0
-            codeIdTmp = codeId
-            while codeIdTmp in self.codeBlocks:
-                codeIdTmp = '%s_%d' % (codeId, n)
-                n += 1
-            codeId = codeIdTmp # We have a codeId now that does not already exist.
-        # Store the result dict in self.codeBlocks under the unique name.
-        self.codeBlocks[codeId] = result
-        return codeId, result
+        return globals # Answer the globals attribute, in case it was created.
 
 if __name__ == '__main__':
     import doctest

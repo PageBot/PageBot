@@ -29,9 +29,8 @@ except ImportError:
     import sys
     sys.exit()
 
-from pagebot.contexts.platform import getContext
 #from pagebot import getMarker
-from pagebot.elements import Element, Galley, Image, Ruler, TextBox, CodeBlock
+from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 
 
 class Typesetter(object):
