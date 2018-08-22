@@ -80,19 +80,12 @@ class ProofApp(object):
         for output in self.output:
             print(output[0])
 
-    def getPageBotDocument(self):
-        """Converts template drawn in memory to a PDF document."""
-        context = getContextForFileExt('pdf')
-        _drawBotDrawingTool._drawInContext(context)
-        pdfDocument = _drawBotDrawingTool.pdfImage()
-        return pdfDocument
-
     def saveCallback(self, sender):
         """Saves current template to a PDF file."""
         self.saveAs()
 
     def saveDoCallback(self, path):
-        _drawBotDrawingTool.saveImage(path)
+        self.context.saveImage(path)
 
     def openCallback(self, sender):
         self.open()
