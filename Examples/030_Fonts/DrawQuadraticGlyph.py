@@ -168,7 +168,8 @@ c = glyph.contours
 pbSegments = glyph._segments
 context.fill((0, 0, 0))
 context.stroke((0, 1, 0))
-drawPath(glyph._path)
+context.drawGlyph(glyph)
+#drawPath(glyph._path)
 stroke(None)
 fill(0.7)
 

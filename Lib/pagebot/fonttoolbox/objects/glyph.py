@@ -88,13 +88,13 @@ class Glyph(object):
         self._contours = None
         self._segments = None
         self._components = None
-        self._path = None # "Expensive", create self.path property value on initialize.
-        self._flattenedPath = None # "More expensive", create property value upon request.
-        self._flattenedContours = None # "More expensive", create property value upon request.
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
         self._box = None
+        #self._path = None # "Expensive", create self.path property value on initialize.
+        #self._flattenedPath = None # "More expensive", create property value upon request.
+        #self._flattenedContours = None # "More expensive", create property value upon request.
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -113,9 +113,10 @@ class Glyph(object):
 
     def _initialize(self):
         """Initializes the cached data, such as self.points, self.contour,
-        self.components and self.path, as side effect of drawing the path image.
+        self.components,
 
-        TODO: Separate path creation from initialize, so we no longer need self.context here.
+        TODO: Separate path creation from initialize, so we no longer need
+        self.context here.
         """
 
         self._points = []
@@ -143,10 +144,11 @@ class Glyph(object):
         for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
-                componentPath = self.font[componentName].path
-                componentPath.transform((1, 0, 0, 1, component.x, component.y))
-                self._path.appendPath(componentPath)
-                componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
+                # FIXME: what tot do with components?
+                #componentPath = self.font[componentName].path
+                #componentPath.transform((1, 0, 0, 1, component.x, component.y))
+                #self._path.appendPath(componentPath)
+                #componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
                 cMinX, cMinY, cMaxX, cMaxY = self.font[componentName].boundingBox
                 minX = min(cMinX+component.x, minX)
                 minY = min(cMinY+component.y, minY)
@@ -159,7 +161,8 @@ class Glyph(object):
             minY = min(y, minY)
             maxY = max(y, maxY)
 
-            # Create APoint, to store weakref to self and index for altering the coordinate and onCurve
+            # Create APoint, to store weakref to self and index for altering
+            # the coordinate and onCurve
             p = APoint((x, y), flags[index], self, index)
             self._points.append(p)
 
@@ -188,15 +191,14 @@ class Glyph(object):
                     if not p.onCurve:
                         openSegment.append(p0)
 
-                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
-
+                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment)#, self._path)
                 #self._path.closePath()
                 openContour = None
                 openSegment = None
 
             elif p.onCurve:
                 # Inside contour.
-                currentOnCurve = self._drawSegment(currentOnCurve, openSegment, self._path)
+                currentOnCurve = self._drawSegment(currentOnCurve, openSegment)#, self._path)
                 openSegment = None
 
         # Add 4 spacing points, as default in TTF. No index, as they cannot be written back.
@@ -207,14 +209,9 @@ class Glyph(object):
             APoint((maxX, 0), glyph=self),
             APoint((0, maxY), glyph=self)
         ]
+
         self._boundingBox = (minX, minY, maxX, maxY)
         self.dirty = False # All cleaned up.
-
-    def getBezierPath(self, context):
-        """Answers the drawable contour path for this context. Answer None if
-        it cannot be created.  """
-        # TODO: Make this work, extract from current self._initialize
-        return None
 
     def update(self):
         """Update the font if it became dirty by changing cooridinates.
@@ -223,8 +220,20 @@ class Glyph(object):
         if self.dirty:
             self._initialize()
 
+    '''
+    def getBezierPath(self, context):
+        """Answers the drawable contour path for this context. Answer None if
+        it cannot be created.
+        TODO: implement in context instead of here.
+
+        """
+        # TODO: Make this work, extract from current self._initialize
+        return None
+
     def getFlattenedPath(self, context):
-        """Answer the flattened DrawBotContext NSBezier path."""
+        """Answer the flattened DrawBotContext NSBezier path.
+        TODO: move to context.
+        """
         if self._flattenedPath is None and self.path is not None:
             self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
         return self._flattenedPath
@@ -233,7 +242,8 @@ class Glyph(object):
         """Answer the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points.
 
-        TODO: Needs to get DrawBotContext reference, and Flex equivalent."""
+        TODO: move to context.
+        """
         if self._flattenedContours is None:
             contour = []
             self._flattenedContours = [contour]
@@ -247,6 +257,7 @@ class Glyph(object):
                         contour = []
                         self._flattenedContours.append(contour)
         return self._flattenedContours # Can still be None.
+    '''
 
     def getAxisDeltas(self):
         """Answer dictionary of axis-delta relations. Key is axis name, value
@@ -267,9 +278,12 @@ class Glyph(object):
                     self._axisDeltas[axisName][tuple(axes[axisName])] = rawDelta.coordinates
         return self._axisDeltas
 
-    def _drawSegment(self, cp, segment, path):
+    def _drawSegment(self, cp, segment):
         """Draws the Segment instance into the path. It may contain multiple
-        quadratics. Split into cubics and lines."""
+        quadratics. Split into cubics and lines.
+
+        TODO: move to context.
+        """
 
         if len(segment) == 1:
             # Straight line.
@@ -280,7 +294,7 @@ class Glyph(object):
         elif len(segment) == 2:
             # Converts quadratic curve to cubic.
             p1, p2 = segment.points
-            self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y, path)
+            self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y)#, path)
             cp = p2
 
         else:
@@ -297,17 +311,19 @@ class Glyph(object):
                     # Last (oncurve) point.
                     m = p2
 
-                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y, path)
+                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y)#, path)
                 cp = m
 
         return cp
 
-    def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y, path):
+    def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y):
         """Converts a quatratic control point into a cubic.
 
         p0 = onCurve0
         p1 = offCurve
         p2 = onCurve1
+
+        TODO: move to context.
         """
 
         # Cubic control points.
@@ -323,10 +339,12 @@ class Glyph(object):
 
     def _set_font(self, font):
         self._font = weakref.ref(font)
+
     def _get_font(self):
         if self._font is not None:
             return self._font()
         return None
+
     font = property(_get_font, _set_font)
 
     def _get_width(self):
@@ -455,8 +473,9 @@ class Glyph(object):
     def _get_segments(self): # Read only for now. List of Segment instance lists.
         if self._segments is None or self.dirty:
             self._initialize()
-        return self._contours
-    segments = property(_get_contours)
+        return self._segments
+
+    segments = property(_get_segments)
 
     def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None or self.dirty:
@@ -502,6 +521,7 @@ class Glyph(object):
         return self.font.variables.get(self.name) # Answer None if variations for this glyph don't exist.
     variables = property(_get_variables)
 
+    '''
     def _get_path(self):
         """Answer the drawn path of the glyph. For the DrawBotContext this is
         a OSX-BezierPath the can be drawn on the DrawBot convas.
@@ -517,8 +537,10 @@ class Glyph(object):
         """
         if self._path is None or self.dirty:
             self._initialize()
+
         return self._path
     path = property(_get_path) # Read only for now.
+    '''
 
     def _get_analyzer(self):
         if self._analyzer is None:
@@ -536,7 +558,10 @@ class Glyph(object):
 
     def onBlack(self, p):
         """Answers the boolean flag if the single point (x, y) is on black.
-        For now this only work in DrawBotContext."""
+        For now this only work in DrawBotContext.
+
+        FIXME: move to context.
+        """
         p = point2D(p)
         return self.path._path.containsPoint_(p)
 

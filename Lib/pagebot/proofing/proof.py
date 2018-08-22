@@ -32,5 +32,5 @@ class Proof(object):
             glyph = font[c]
             print(glyph)
             print(glyph.contours)
-            # Missing.
-            print(glyph.path)
+            print(glyph.components)
+            print(glyph.segments)
