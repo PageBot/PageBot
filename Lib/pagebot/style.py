@@ -236,16 +236,17 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         indent = pt0, # Left indent (for left-right based scripts)
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
 
-        # Vertical spacing for absolute and fontsize-related measures
+        # Vertical spacing of baselines
         baselineGrid = baselineGrid,
         baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
-        leading = defaultLeading, # Relative factor to current fontSize.
-        paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
-        paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
         baselineGridFit = False,
         firstLineGridFit = True,
+        # Leading and vertical space
+        leading = defaultLeading, # Relative factor to current fontSize.
+        paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
+        paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
         # Keep all of the lines of the node text block in the same column.
         keepInColumn = False,
         # Check if this space is available above, to get amount of text lines above headings.
