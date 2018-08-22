@@ -92,7 +92,7 @@ class CodeBlock(Element):
             except AttributeError:
                 error = 'AttributeError'
             globals['__error__'] = error
-            if verbose and error is not None:
+            if error is not None:
                 print(u'### %s ### %s' % (error, self.code))
             # TODO: insert more possible exec() errors here.
 
