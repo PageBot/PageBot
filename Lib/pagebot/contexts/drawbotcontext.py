@@ -49,6 +49,7 @@ except (AttributeError, ImportError):
     # instance is used to run DrawBot related docTests.
     drawBotBuilder = NoneDrawBotBuilder()
 
+
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
     library This way it way it hides e.g. the type of BabelString instance
@@ -273,6 +274,37 @@ class DrawBotContext(BaseContext):
         # TODO: move Bézier generation here instead of inside glyph.
         pass
 
+    def getFlattenedContours(self):
+        """Answers the flattened NSBezier path As contour list [contour,
+        contour, ...] where contours are lists of point2D() points."""
+        contour = []
+        flattenedContours = [contour]
+        flatPath = self.getFlattenedPath(context)
+
+        if flatPath is not None:
+            for index in range(flatPath.elementCount()):
+                # NSBezierPath size + index call.
+                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+
+                if p:
+                    # Make point2D() tuples, no need to add point type, all
+                    # onCurve.
+                    contour.append((p[0].x, p[0].y))
+                else:
+                    contour = []
+                    flattenedContours.append(contour)
+
+        return flattenedContours
+
+    def onBlack(self, p):
+        """Answers the boolean flag if the single point (x, y) is on black.
+        For now this only work in DrawBotContext.
+
+        FIXME: move to context.
+        """
+        p = point2D(p)
+        return self._path.containsPoint_(p)
+
     def moveTo(self, p):
         """Move to point p. Create a new path if none is open.
 
@@ -352,9 +384,10 @@ class DrawBotContext(BaseContext):
         if self._path is not None:
             self._path.closePath()
 
-    def bezierPathByFlatteningPath(self, path):
+    def bezierPathByFlatteningPath(self):
         """Use the NSBezier flatten path."""
-        return path.getNSBezierPath().bezierPathByFlatteningPath()
+        if self._path is not None:
+            return self._path.getNSBezierPath().bezierPathByFlatteningPath()
 
     def scale(self, sx, sy=None):
         """Set the drawing scale."""
