@@ -288,9 +288,9 @@ class DrawBotString(BabelString):
         # Set the hyphenation flag and language from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
         if language is None:
-            language = self.style.get('language', DEFAULT_LANGUAGE)
+            language = self.language
         if hyphenation is None:
-            hyphenation = bool(self.style.get('hyphenation', False))
+            hyphenation = self.hyphenation
         self.context.language(language)
         self.context.hyphenation(hyphenation)
         return pixelBounds(self.s)
@@ -756,7 +756,6 @@ class DrawBotString(BabelString):
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
         # sFirstParagraphIndent = style.get('firstParagraphIndent')
-        # rFirstParagraphIndent = style.get('rFirstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
             fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
