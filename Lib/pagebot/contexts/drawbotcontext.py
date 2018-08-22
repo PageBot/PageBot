@@ -239,7 +239,6 @@ class DrawBotContext(BaseContext):
         self._path = self.b.BezierPath()
         return self._path
 
-
     def _get_path(self):
         """Answers the open drawing path. Create one if it does not exist.
 
@@ -269,6 +268,10 @@ class DrawBotContext(BaseContext):
             self.b.translate(xpt/sx, ypt/sy)
             self.b.drawPath(path)
             self.restore()
+
+    def drawGlyph(self, glyph):
+        # TODO: move Bézier generation here instead of inside glyph.
+        pass
 
     def moveTo(self, p):
         """Move to point p. Create a new path if none is open.
