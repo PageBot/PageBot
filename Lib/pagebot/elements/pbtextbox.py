@@ -315,6 +315,7 @@ class TextBox(Element):
         result = True
         overflow = self.getOverflow()
         page = self.getElementPage()
+        nextElement = None
 
         if overflow and self.nextElementName: # If there is text overflow and there is a next element?
             result = False
@@ -337,9 +338,9 @@ class TextBox(Element):
                     nextElement.bs = overflow
                     nextElement.prevPageName = page.name
                     nextElement.prevElementName = self.name # Remember the back link
-                    score = nextElement.solve() # Solve any overflow on the next element.
-                    result = not score.fails # Test if total flow placement succeeded.
-        return page, result
+                    page = nextElement.overflow2Next() # Solve any overflow on the next element.
+        # TODO: In case used as condition, returning a tuple instead of boolean flag
+        return page
 
     #   B U I L D
 

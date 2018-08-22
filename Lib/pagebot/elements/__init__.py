@@ -75,51 +75,51 @@ def newPlacer(**kwargs):
     documets."""
     return Placer(**kwargs)
 
-def newTextBox(bs='', point=None, **kwargs):
+def newTextBox(bs='', **kwargs):
     """Caller must supply formatted string. Note that w and h can also be
     defined in the style."""
-    return TextBox(bs, point=point, **kwargs)
+    return TextBox(bs, **kwargs)
 
-def newText(bs='', point=None, **kwargs):
+def newText(bs='', **kwargs):
     """Draw formatted string. Normally we don't need w and h here, as it is
     made by the text and style combinations. But in case the defined font is a
     Variable Font, then we can use the width and height to interpolate a font
     that fits the space for the given string and weight. Caller must supply
     formatted string. Support both (x, y) and x, y as position."""
-    return Text(bs, point=point, **kwargs)
+    return Text(bs, **kwargs)
 
-def newRect(point=None, **kwargs):
+def newRect(**kwargs):
     """Draw the rectangle. Note that points can also be defined in the style.
     When omitted, a square is drawn."""
-    return Rect(point=point, **kwargs)
+    return Rect(**kwargs)
 
-def newGroup(point=None, **kwargs):
+def newGroup(**kwargs):
     """Create a new group. Note that points can also be defined in the style.
     When omitted, a square is drawn."""
-    return Group(point=point, **kwargs)
+    return Group(**kwargs)
 
-def newOval(point=None, **kwargs):
+def newOval(**kwargs):
     """Draw the oval. Note that points can also be defined in the style.
     When omitted, a circle is drawn."""
-    return Oval(point=point, **kwargs)
+    return Oval(**kwargs)
 
-def newLine(point=None, **kwargs):
-    return Line(point=point, **kwargs)
+def newLine(**kwargs):
+    return Line(**kwargs)
 
 def newPolygon(points=None, **kwargs):
     return Polygon(points=points, **kwargs)
 
-def newRuler(point=None, **kwargs):
-    return Ruler(point=point, **kwargs)
+def newRuler(**kwargs):
+    return Ruler(**kwargs)
 
-def newImage(path, point=None, **kwargs):
+def newImage(path, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,
     h) of which at least one of them should be defined. The path can be None,
     to be filled later. If the image is drawn with an empty path, a
     missingImage cross-frame is shown. The optional imo attribute is an
     ImageObject() with filters in place. The Image element is answered for
     convenience of the caller."""
-    return Image(path, point=point, **kwargs)
+    return Image(path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):
     """Answer a new Table instanec."""
