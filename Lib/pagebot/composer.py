@@ -15,6 +15,7 @@
 #     composer.py
 #
 from pagebot.typesetter import Typesetter
+from pagebot.elements import CodeBlock
 
 class Composer(object):
     u"""A Composer takes a artDirection and tries to make pagination from given context,
@@ -64,7 +65,10 @@ class Composer(object):
         """
         globals = dict(composer=self, doc=self.doc, page=doc[1], style=doc.styles)        
         for galley in self.galleys:
-            globals
+            for e in galley.elements:
+                if isinstance(e, CodeBlock):
+                    e.run(globals)
+                else:
             print ('---', galley)
 
     def XXXcompose(self, galley, page, flowId=None):
