@@ -48,14 +48,14 @@ class Composer(object):
         self.doc = doc
         self.galleys = [] # List of galleys, e.g. each galley is content of an article.
 
-    def typeset(self, path=None, markDown=None, styles=None):
+    def typeset(self, path=None, markDown=None, styles=None, writeTags=False):
         if styles is None:
             styles = self.doc.styles
         t = Typesetter(self.doc.context, styles=styles)
         if markDown is not None:
             path = t.markDown2FileName('/tmp/PageBot.Untitled.md', markDown)
         if path is not None:
-            t.typesetFile(path)
+            t.typesetFile(path, writeTags=writeTags)
         if t.galley: # Any input got in galley.
             self.galleys.append(t.galley)
 
