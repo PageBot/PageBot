@@ -409,14 +409,14 @@ def upt(u, *args, **kwargs):
             u = list(u)
         for arg in args:
             u.append(arg)
-    
+
     if isinstance(u, (list, tuple)):
         ruu = []
         for uu in u:
             uu = upt(uu, **kwargs)
             ruu.append(uu)
         return tuple(ruu)
-    
+
     if u is None:
         return 0
 
@@ -747,7 +747,7 @@ class Unit(object):
         3
         """
         self.v = v
-    rv = property(_get_rv, _set_rv) 
+    rv = property(_get_rv, _set_rv)
 
     def _get_ru(self):
         u"""For absolute units the rendering toward units is just a copy of self.
@@ -1025,7 +1025,7 @@ class Unit(object):
         if isinstance(u, (int, float)): # One is a scalar, just divide
             assert u, ('Zero division "%s/%s"' % (u0, u))
             u0.v /= u # Just divide, no clipping
-        elif isUnit(u): 
+        elif isUnit(u):
             upt = u.pt
             assert upt, ('Zero division "%s/%s"' % (u0, u))
             u0 = u0.pt / upt # Dividing units, create ratio float number.
@@ -2030,7 +2030,7 @@ class Perc(RelativeUnit):
     UNITC = '%'
 
     def __repr__(self):
-        v = asIntOrFloat(self.v) 
+        v = asIntOrFloat(self.v)
         if isinstance(v, int):
             return u'%d%%' % v
         return u'%s%%' % asFormatted(v)
