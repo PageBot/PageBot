@@ -14,6 +14,8 @@
 #
 #     composer.py
 #
+from pagebot.typesetter import Typesetter
+
 class Composer(object):
     u"""A Composer takes a artDirection and tries to make pagination from given context,
     a “nice” layout (on existing or new document pages), by taking the elements from 
@@ -23,24 +25,46 @@ class Composer(object):
     reshaped byt width and height, if that results in better placements.
 
     >>> from pagebot.constants import A4
+    >>> from pagebot.toolbox.units import em, pt
+    >>> from pagebot.toolbox.color import color, blackColor
     >>> from pagebot.document import Document
-    >>> from pagebot.typesetter import Typesetter
-    >>> doc = Document(size=A4)
-    >>> t = Typesetter(doc)
-    >>> md = '''~~~\\npage = page.next\\n~~~\\n# Title\\n##Subtitle\\nPlain text'''
-    >>> galley = t.typesetString(md)
-    >>> len(galley.getTextLines(w=200))
-    6
+    >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
+    >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
+    >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
+    >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
+    >>> doc = Document(size=A4, styles=styles)
     >>> c = Composer(doc)
-    >>> 
+    >>> md = '''## Subtitle at start\\n~~~\\npage = page.next\\n~~~\\n# Title\\n##Subtitle\\nPlain text'''
+    >>> c.typeset(markDown=md)
+    >>> len(c.galleys)
+    1
+    >>> len(c.galleys[0])
+    3
+    >>> doc.export('_export/ComposerTest.pdf')
+
     """
     def __init__(self, doc):
         self.doc = doc
+        self.galleys = [] # List of galleys, e.g. each galley is content of an article.
 
-    def compose(self, artDirection, galley):
+    def typeset(self, path=None, markDown=None, styles=None):
+        if styles is None:
+            styles = self.doc.styles
+        t = Typesetter(self.doc.context, styles=styles)
+        if markDown is not None:
+            path = t.markDown2FileName('/tmp/PageBot.Untitled.md', markDown)
+        if path is not None:
+            t.typesetFile(path)
+        if t.galley: # Any input got in galley.
+            self.galleys.append(t.galley)
+
+    def compose(self, artDirection):
         u"""Compose the galley element, based on the instruction of the ArtDirection instance
+        that will run the rules what content to put where.
         """
-        print(artDirection, galley)
+        print(artDirection)
+        for galley in self.galleys:
+            print ('---', galley)
 
     def XXXcompose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.

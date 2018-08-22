@@ -195,7 +195,7 @@ class PageView(BaseView):
         if self.showGridBackground: # Showing grid on foreground?
             self.drawGrid(page, origin, self.showGridBackground)
 
-    def drawPageMetaInfo(self, page, origin, path):
+    def drawPageMetaInfo(self, page, origin, path=None):
         """Draw the foreground meta info of the page, depending on the settings of the
         flags.
 
@@ -308,7 +308,8 @@ class PageView(BaseView):
             s = 'Page %s | %s | %s' % (pn, d, title)
             if page.name and page.name != 'default':
                 s += ' | ' + page.name
-            s += ' | ' + path.split('/')[-1]
+            if path is not None:
+                s += ' | ' + path.split('/')[-1]
             bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=blackColor, fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
 

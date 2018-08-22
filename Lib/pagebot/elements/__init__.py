@@ -42,9 +42,10 @@ from pagebot.elements.paths.glyphpath import GlyphPath
 # Table elements
 from pagebot.elements.pbtable import Table
 
-# Views
+# Views and code
 from pagebot.elements.views import viewClasses
 from pagebot.elements.pbquire import Quire
+from pagebot.elements.pbcodeblock import CodeBlock
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
