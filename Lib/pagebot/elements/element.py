@@ -27,7 +27,7 @@ from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, 
                            OUTLINE)
 
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted
+from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
@@ -2096,9 +2096,23 @@ class Element(object):
         return None
 
     def _get_borders(self):
-        return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
+        u"""Set all borders of the element.
 
+        >>> from pagebot.toolbox.units import p
+        >>> e = Element(stroke=(1, 0, 0))
+        >>> e.borders = 2 # Value converts to units
+        >>> e.borders[0]['strokeWidth']
+        2pt
+        >>> e.borders = p(5) # Set a unit
+        >>> e.borders[0]['strokeWidth']
+        5p
+        >>> e.borders[0]['stroke']
+        Color(r=1, g=0, b=0)
+        """
+        return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
+        if isUnit(borders) or isinstance(borders, (int, float)):
+            borders = dict(strokeWidth=units(borders))
         if not isinstance(borders, (list, tuple)):
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
