@@ -58,7 +58,7 @@ class Composer(object):
             styles = self.doc.styles
         t = Typesetter(self.doc.context, styles=styles, writeTags=writeTags)
         if markDown is not None:
-            path = t.markDown2FileName('/tmp/PageBot.Untitled.md', markDown)
+            path = t.markDown2FileName('_export/Untitled.md', markDown)
         if path is not None:
             t.typesetFile(path)
         if t.galley: # Any input got in galley.

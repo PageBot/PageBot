@@ -255,7 +255,8 @@ class Typesetter(object):
         u"""Generate bullet/Numbered list item."""
         context = self.galley.context
         bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        bulletString = context.newBulletString(bullet) # Get styled string with bullet.
+        style = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
+        bulletString = context.newBulletString(bullet, e=e, style=style) # Get styled string with bullet.
         if bulletString is not None: # HtmlContext does not want a bullet character.
             self.galley.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.
