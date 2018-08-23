@@ -19,18 +19,27 @@ from pagebot.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.font import findFont
 
 
-FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
+#FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
 HEIGHT, WIDTH = A3
 
 class ProofApp(object):
     """Example of a proofing application."""
 
+    FONTS = []
+
     def __init__(self):
         """Connects main window and output window for errors."""
-        self.font = FONTS[0]
+
+        for path in getFontPaths():
+            name = path.split('/')[-1]
+            self.FONTS.append(name)
+
+        self.font = findFont(self.FONTS[0])
+        self.context = getContext()
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.window.drawView = DrawView((0, 32, -0, -0))
         self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
@@ -38,7 +47,6 @@ class ProofApp(object):
         self.initialize()
         self.window.open()
         self.outputWindow.open()
-        self.context = getContext()
 
     def initialize(self):
         """Sets up GUI contents."""
@@ -58,7 +66,7 @@ class ProofApp(object):
                                 sizeStyle='small', callback=self.proofCallback)
         x += 110
 
-        self.window.selectFont = PopUpButton((x, y, w, h), FONTS,
+        self.window.selectFont = PopUpButton((x, y, w, h), self.FONTS,
             sizeStyle='small', callback=self.setFontCallback)
 
         x += 110
@@ -67,12 +75,17 @@ class ProofApp(object):
         self.proof()
 
     def setFontCallback(self, sender):
-        self.font = FONTS[sender.get()]
+        name = self.FONTS[sender.get()]
+        self.font = findFont(name)
 
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
         self.context.newPage(pt(WIDTH), pt(HEIGHT))
         proof = PageWide(self.context)
+        SIZE = 64
+        self.context.fill(0)
+        self.context.translate(SIZE, SIZE)
+        proof.draw(self.font, 'abcdefghijklmnop', SIZE)
         pdfDocument = self.context.getDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
 

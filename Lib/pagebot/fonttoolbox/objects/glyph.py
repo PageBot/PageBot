@@ -21,13 +21,12 @@ import weakref
 
 from pagebot.constants import XXXL
 from pagebot.fonttoolbox.analyzers import GlyphAnalyzer, APointContext
-from pagebot.toolbox.units import point2D
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.asegment import ASegment
 from pagebot.fonttoolbox.analyzers.acomponent import AComponent
 
-C = 0.5
 F = 2.0 / 3.0
+C = 0.5
 
 class AxisDeltas(object):
     """Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
@@ -57,7 +56,6 @@ class Glyph(object):
     """
 
     """
-    TODO: Separate path creation from Glyph._initialize
     >>> len(g.points)
     46
     >>> g.points[-1].onCurve
@@ -88,13 +86,11 @@ class Glyph(object):
         self._contours = None
         self._segments = None
         self._components = None
+        self._cubic = None
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
         self._box = None
-        #self._path = None # "Expensive", create self.path property value on initialize.
-        #self._flattenedPath = None # "More expensive", create property value upon request.
-        #self._flattenedContours = None # "More expensive", create property value upon request.
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -112,63 +108,67 @@ class Glyph(object):
         return self._contours[contourIndex]
 
     def _initialize(self):
-        """Initializes the cached data, such as self.points, self.contour,
-        self.components,
-
-        TODO: Separate path creation from initialize, so we no longer need
-        self.context here.
-        """
-
+        """Initializes the cached data, such as points, contours, components,
+        segments and bounding box. """
         self._points = []
-        self._points4 = [] # Same as self.points property with added 4 spacing points in TTF style.
+
+        # Same as self.points property with added 4 spacing points in TTF
+        # style.
+        self._points4 = []
         self._contours = []
         self._segments = []
+        self._cubic = []
         self._boundingBox = None
-        components = self.components
 
-        coordinates = self.coordinates # Get list from the font.
-        flags = self.flags
-        endPtsOfContours = set(self.endPtsOfContours)
-        openContour = False
-        openSegment = None
-        currentOnCurve = None
-        p0 = None
+        components = self.components
+        coordinates = self.coordinates
 
         if coordinates or components:
-            #self._path = self.font.context.newPath()
             minX = minY = XXXL # Store bounding box as we process the coordinate.
             maxX = maxY = -XXXL
         else:
             minX = minY = maxX = maxY = 0
 
+        # FIXME: what tot do with components?
         for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
-                # FIXME: what tot do with components?
+                print('TODO: add component')
+                #cubic.append(...)
                 #componentPath = self.font[componentName].path
                 #componentPath.transform((1, 0, 0, 1, component.x, component.y))
-                #self._path.appendPath(componentPath)
+                #self._cubic.appendPath(componentPath)
                 #componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
+
+                # Expand bounding box.
                 cMinX, cMinY, cMaxX, cMaxY = self.font[componentName].boundingBox
                 minX = min(cMinX+component.x, minX)
                 minY = min(cMinY+component.y, minY)
                 maxX = max(cMaxX+component.x, maxX)
                 maxY = max(cMaxY+component.y, maxY)
 
+        flags = self.flags
+        openContour = False
+        openSegment = None
+        currentOnCurve = None
+        endPtsOfContours = set(self.endPtsOfContours)
+        p0 = None
+
         for index, (x, y) in enumerate(coordinates):
+            # Expand bounding box.
             minX = min(x, minX)
             maxX = max(x, maxX)
             minY = min(y, minY)
             maxY = max(y, maxY)
 
             # Create APoint, to store weakref to self and index for altering
-            # the coordinate and onCurve
+            # the coordinate and onCurve.
             p = APoint((x, y), flags[index], self, index)
             self._points.append(p)
 
             if not openContour:
-                #assert self._path is not None
-                #self._path.moveTo((x, y))
+                # Also store as cubic command.
+                self._cubic.append(('moveTo', (x, y)))
                 p0 = p
                 currentOnCurve = p
                 openContour = []
@@ -184,25 +184,25 @@ class Glyph(object):
 
             # If there is an open segment, it may contain multiple
             # quadratics. Split into cubics.
-
             if index in endPtsOfContours and openContour:
                 # End of contour.
                 if openSegment:
                     if not p.onCurve:
                         openSegment.append(p0)
 
-                    currentOnCurve = self._drawSegment(currentOnCurve, openSegment)#, self._path)
-                #self._path.closePath()
+                    currentOnCurve = self.expandSegment(currentOnCurve, openSegment)
+                self._cubic.append(('closePath', None))
                 openContour = None
                 openSegment = None
 
             elif p.onCurve:
                 # Inside contour.
-                currentOnCurve = self._drawSegment(currentOnCurve, openSegment)#, self._path)
+                currentOnCurve = self.expandSegment(currentOnCurve, openSegment)
                 openSegment = None
 
-        # Add 4 spacing points, as default in TTF. No index, as they cannot be written back.
-        # Instead, for writing, use self.leftMargin, self.rightMargin and self.width.
+        # Add 4 spacing points, as default in TTF. No index, as they cannot be
+        # written back. Instead, for writing, use self.leftMargin,
+        # self.rightMargin and self.width.
         self._points4 = self._points[:] + [
             APoint((minX, 0), glyph=self),
             APoint((0, minY), glyph=self),
@@ -219,45 +219,6 @@ class Glyph(object):
         components, etc. these are no longer valid."""
         if self.dirty:
             self._initialize()
-
-    '''
-    def getBezierPath(self, context):
-        """Answers the drawable contour path for this context. Answer None if
-        it cannot be created.
-        TODO: implement in context instead of here.
-
-        """
-        # TODO: Make this work, extract from current self._initialize
-        return None
-
-    def getFlattenedPath(self, context):
-        """Answer the flattened DrawBotContext NSBezier path.
-        TODO: move to context.
-        """
-        if self._flattenedPath is None and self.path is not None:
-            self._flattenedPath = context.bezierPathByFlatteningPath(self.path)
-        return self._flattenedPath
-
-    def getFlattenedContours(self, context):
-        """Answer the flattened NSBezier path As contour list [contour,
-        contour, ...] where contours are lists of point2D() points.
-
-        TODO: move to context.
-        """
-        if self._flattenedContours is None:
-            contour = []
-            self._flattenedContours = [contour]
-            flatPath = self.getFlattenedPath(context)
-            if flatPath is not None: # In case self.path could not be created.
-                for index in range(flatPath.elementCount()): # Typical NSBezierPath size + index call.
-                    p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-                    if p:
-                        contour.append((p[0].x, p[0].y)) # Make point2D() tuples, no need to add point type, all onCurve.
-                    else:
-                        contour = []
-                        self._flattenedContours.append(contour)
-        return self._flattenedContours # Can still be None.
-    '''
 
     def getAxisDeltas(self):
         """Answer dictionary of axis-delta relations. Key is axis name, value
@@ -278,23 +239,20 @@ class Glyph(object):
                     self._axisDeltas[axisName][tuple(axes[axisName])] = rawDelta.coordinates
         return self._axisDeltas
 
-    def _drawSegment(self, cp, segment):
-        """Draws the Segment instance into the path. It may contain multiple
-        quadratics. Split into cubics and lines.
-
-        TODO: move to context.
-        """
+    def expandSegment(self, cp, segment):
+        """Expands the Segment instance. It may contain multiple quadratics.
+        Split into cubics and lines."""
 
         if len(segment) == 1:
             # Straight line.
             p1 = segment.points[-1]
-            #path.lineTo((p1.x, p1.y))
+            self._cubic.append(('lineTo', (p1.x, p1.y)))
             cp = p1
 
         elif len(segment) == 2:
             # Converts quadratic curve to cubic.
             p1, p2 = segment.points
-            self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y)#, path)
+            self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y)
             cp = p2
 
         else:
@@ -311,27 +269,29 @@ class Glyph(object):
                     # Last (oncurve) point.
                     m = p2
 
-                self._drawQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y)#, path)
+                self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y)
                 cp = m
 
         return cp
 
-    def _drawQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y):
-        """Converts a quatratic control point into a cubic.
+    def expandQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y):
+        """Converts a quadtratic control point into a cubic curve-to segment.
 
         p0 = onCurve0
         p1 = offCurve
         p2 = onCurve1
-
-        TODO: move to context.
         """
 
-        # Cubic control points.
+        # First cubic offcurve control points.
         pp0x = p0x + (p1x - p0x) * F
         pp0y = p0y + (p1y - p0y) * F
+
+        # Second cubic offcurve control points.
         pp1x = p2x + (p1x - p2x) * F
         pp1y = p2y + (p1y - p2y) * F
-        #path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
+
+        # i.e. curve-to (offCurve0, offCurve1, onCurve1)
+        self._cubic.append(('curveTo', ((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))))
 
     def _get_ttGlyph(self):
         return self.font.ttFont['glyf'][self.name]
@@ -454,8 +414,11 @@ class Glyph(object):
                     points = contour3[pIndex+numPoints-3:pIndex+numPoints+4]
                     if not points:
                         break # Nothing here, back out.
-                    # Make sure number of points is 7, otherwise extend by doubling on both ends.
-                    while len(points) < 7: # Alternate left-right, until we reach exact 7 point contexts.
+                    # Make sure number of points is 7, otherwise extend by
+                    # doubling on both ends.
+                    while len(points) < 7:
+                        # Alternate left-right, until we reach exact 7 point
+                        # contexts.
                         points = [points[0]] + points
                         if len(points) < 7:
                             points = points + [points[-1]]
@@ -476,6 +439,13 @@ class Glyph(object):
         return self._segments
 
     segments = property(_get_segments)
+
+    def _get_cubic(self):
+        if self._cubic is None or self.dirty:
+            self._initialize()
+        return self._cubic
+
+    cubic = property(_get_cubic)
 
     def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None or self.dirty:
@@ -521,27 +491,6 @@ class Glyph(object):
         return self.font.variables.get(self.name) # Answer None if variations for this glyph don't exist.
     variables = property(_get_variables)
 
-    '''
-    def _get_path(self):
-        """Answer the drawn path of the glyph. For the DrawBotContext this is
-        a OSX-BezierPath the can be drawn on the DrawBot convas.
-
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
-        >>> font = getFont(path)
-        >>> glyph = font['H']
-        >>> #glyph.path is not None
-        True
-        """
-        if self._path is None or self.dirty:
-            self._initialize()
-
-        return self._path
-    path = property(_get_path) # Read only for now.
-    '''
-
     def _get_analyzer(self):
         if self._analyzer is None:
             self._analyzer = self.GLYPHANALYZER_CLASS(self)
@@ -555,15 +504,6 @@ class Glyph(object):
             self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)
         return self._box
     box = property(_get_box) # Read only for now.
-
-    def onBlack(self, p):
-        """Answers the boolean flag if the single point (x, y) is on black.
-        For now this only work in DrawBotContext.
-
-        FIXME: move to context.
-        """
-        p = point2D(p)
-        return self.path._path.containsPoint_(p)
 
     def _get_minX(self):
         return self.boundingBox[0]

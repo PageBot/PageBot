@@ -14,8 +14,8 @@
 #     codeblock.py
 #
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN
-from pagebot.toolbox.units import pointOffset
+#from pagebot.constants import ORIGIN
+#from pagebot.toolbox.units import pointOffset
 
 class CodeBlock(Element):
 
@@ -28,7 +28,7 @@ class CodeBlock(Element):
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
-    def run(self, globals=None):
+    def run(self, globals=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
         ~~~
@@ -51,10 +51,10 @@ class CodeBlock(Element):
         >>> page = doc[1]
         >>> code = 'a = 100 * 300\\npage = page.next.next.next\\npage.w = 300'
         >>> cb = CodeBlock(code, parent=page, tryExcept=False)
-        >>> cb 
+        >>> cb
         <CodeBlock:a = 100 * 300;page = page.next.next.next;page.w = 300>
         >>> # Create globals dictionary for the script to work with
-        >>> g = dict(page=page, view=view, doc=doc) 
+        >>> g = dict(page=page, view=view, doc=doc)
         >>> result = cb.run(g) # Running the code selects 3 pages ahead
         >>> result is g # Result global dictionary is same object as g
         True
@@ -70,7 +70,7 @@ class CodeBlock(Element):
         >>> sorted(result.keys()), g['aa'] # Result is added to the globals
         (['__code__', 'a', 'aa', 'doc', 'page', 'view'], 6000000)
         """
-        if globals is None: 
+        if globals is None:
             # If no globals defined, create a new empty dictionary as storage of result.
             globals = {}
         if not self.tryExcept: # For debugging show full error of code block run.
