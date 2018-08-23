@@ -35,7 +35,7 @@ from pagebot.elements import Galley, Image, Ruler, TextBox
 
 class Typesetter(object):
     u"""The Typesetter takes one or more markdown files or a sequence of markdown strings
-    and builds a galley, using a dictionary of styles for the FormattedString attributes. 
+    and builds a galley, using a dictionary of styles for the FormattedString attributes.
     The result of the typesetting is a self.galley, that contains a sequence of Element instances,
     such as formatted images, textboxes (with BabelStrings), ruler elements and other nested galleys.
 
@@ -47,7 +47,7 @@ class Typesetter(object):
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
 
-    def __init__(self, styles=None, galley=None, context=None
+    def __init__(self, styles=None, galley=None, context=None,
             globalDocName=None, globalPageName=None, globalBoxName=None,
             tryExcept=True, verbose=False, writeTags=True):
         u"""
@@ -73,7 +73,7 @@ class Typesetter(object):
         # Set the doc context of the typesetter. doc be None, in which case it is expected that one of the code blocks
         # will define it in ~~~Python or it is set later by the calling application.
         self.doc = doc
-        # Keep track of current page and current box, as may have been defined in code 
+        # Keep track of current page and current box, as may have been defined in code
         # blocks. If None, it must be selected by the MarkDown document.
         self.page = page
         # The galley can be a Galley or a TextBox instance, if typsetting must go directly into a page element.

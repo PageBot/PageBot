@@ -19,8 +19,11 @@ from pagebot.toolbox.units import *
 from pagebot.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 
-font = findFont('Roboto-Regular')
+print(getFontPaths())
+
+font = findFont('Roboto-Bold')
 WIDTH, HEIGHT = A3
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
