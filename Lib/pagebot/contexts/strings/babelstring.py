@@ -70,6 +70,8 @@ class BabelString(object):
         if hasattr(self.context.b, 'textSize'):
             ts = self.context.b.textSize(self.s)
             return pt(ts)
+        else:
+            return pt(0, 0)
 
     size = property(_get_size)
 

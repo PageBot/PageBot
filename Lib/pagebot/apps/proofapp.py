@@ -19,7 +19,7 @@ from pagebot.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
-from pagebot.fonttoolbox.objects.font import findFont
+#from pagebot.fonttoolbox.objects.font import findFont
 
 
 FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
