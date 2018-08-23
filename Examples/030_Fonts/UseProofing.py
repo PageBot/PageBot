@@ -25,6 +25,6 @@ WIDTH, HEIGHT = A3
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
 proof = PageWide(context)
-context.scale(0.1)
-context.translate(1000, 1000)
-proof.draw(font, 'q', 12)
+SIZE = 64
+context.translate(SIZE, SIZE)
+proof.draw(font, 'abcdefghijklmnop', SIZE)
