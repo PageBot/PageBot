@@ -23,10 +23,10 @@ class PageWide(Proof):
     def __init__(self, context, **kwargs):
         super(PageWide, self).__init__(context, **kwargs)
 
-    def draw(self, style, content, size):
+    def draw(self, font, content, size):
         height = 0
         nr = 1
-        ascenderHeight = getAscenderHeight(style, size)
+        ascenderHeight = getAscenderHeight(font, size)
         dy = height + ascenderHeight * self.leading
         kwargs = {'dy': dy, 'nr': nr}
-        self.drawGlyphs(style, content, size, **kwargs)
+        self.drawGlyphs(font, content, size, **kwargs)

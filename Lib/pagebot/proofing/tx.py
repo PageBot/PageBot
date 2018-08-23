@@ -15,9 +15,9 @@
 #     tx.py
 #
 
-def getScale(size, upem):
+def getScale(font, size):
     """Vector size to screen size factor."""
-    return float(size) / float(upem)
+    return float(size) / float(font.info.unitsPerEm)
 
-def getAscenderHeight(style, size):
-    return style.info.ascender * getScale(size, style.info.unitsPerEm)
+def getAscenderHeight(font, size):
+    return font.info.ascender * getScale(font, size)
