@@ -14,8 +14,8 @@
 #     codeblock.py
 #
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN
-from pagebot.toolbox.units import pointOffset
+#from pagebot.constants import ORIGIN
+#from pagebot.toolbox.units import pointOffset
 
 class CodeBlock(Element):
 
