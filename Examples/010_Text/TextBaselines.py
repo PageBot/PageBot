@@ -78,21 +78,23 @@ page.baselineGrid = LEADING
 c = Composer(doc)
 c.typeset(markDown=s, styles=styles)
 
-tb = c.galleys[0].elements[0]
-tb.fill = 0.95
-tb.padding = p(0.5)
-tb.parent = page
-tb.w = COL
+tb1 = c.galleys[0].elements[0]
+tb1.fill = 0.95
+tb1.padding = p(0.5)
+tb1.parent = page
+tb1.w = COL
 #tb.conditions = (Left2Left(), Top2Top(), Fit2Height(), Baseline2Grid(index=0))
-tb.conditions = (Left2Left(), Top2Top(), Fit2Height())
+tb1.conditions = (Left2Left(), Top2Top(), Fit2Height())
 
-tb = tb.copy(parent=page)
-tb.fill = 0.9
-tb.conditions = (Left2Col(1), Top2Top(), Fit2Height())
+print(tb1.textLines)
 
-tb = tb.copy(parent=page)
-tb.fill = 0.85
-tb.conditions = (Left2Col(2), Top2Top(), Fit2Height())
+tb2 = tb1.copy(parent=page)
+tb2.fill = 0.9
+tb2.conditions = (Left2Col(1), Top2Top(), Fit2Height())
+
+tb3 = tb2.copy(parent=page)
+tb3.fill = 0.85
+tb3.conditions = (Left2Col(2), Top2Top(), Fit2Height())
 
 doc.solve()
 doc.export('_export/TextBaselines.pdf')
