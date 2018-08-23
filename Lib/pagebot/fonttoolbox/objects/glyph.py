@@ -112,8 +112,8 @@ class Glyph(object):
         return self._contours[contourIndex]
 
     def _initialize(self):
-        """Initializes the cached data, such as points, contours,
-        components, segments and bounding box. """
+        """Initializes the cached data, such as points, contours, components,
+        segments and bounding box. """
         self._points = []
 
         # Same as self.points property with added 4 spacing points in TTF
@@ -123,16 +123,9 @@ class Glyph(object):
         self._segments = []
         self._cubic = []
         self._boundingBox = None
-        components = self.components
 
-        # Get list from the font.
+        components = self.components
         coordinates = self.coordinates
-        flags = self.flags
-        endPtsOfContours = set(self.endPtsOfContours)
-        openContour = False
-        openSegment = None
-        currentOnCurve = None
-        p0 = None
 
         if coordinates or components:
             #self._path = self.font.context.newPath()
@@ -145,6 +138,7 @@ class Glyph(object):
         for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
+                print('TODO: add component')
                 #cubic.append(...)
                 #componentPath = self.font[componentName].path
                 #componentPath.transform((1, 0, 0, 1, component.x, component.y))
@@ -157,6 +151,13 @@ class Glyph(object):
                 minY = min(cMinY+component.y, minY)
                 maxX = max(cMaxX+component.x, maxX)
                 maxY = max(cMaxY+component.y, maxY)
+
+        flags = self.flags
+        openContour = False
+        openSegment = None
+        currentOnCurve = None
+        endPtsOfContours = set(self.endPtsOfContours)
+        p0 = None
 
         for index, (x, y) in enumerate(coordinates):
             # Expand bounding box.
@@ -196,7 +197,7 @@ class Glyph(object):
                     if not p.onCurve:
                         openSegment.append(p0)
 
-                    currentOnCurve = self.expandSegment(currentOnCurve, openSegment)#, self._path)
+                    currentOnCurve = self.expandSegment(currentOnCurve, openSegment)
                 #self._path.closePath()
                 self._cubic.append(('closePath', None))
                 openContour = None
@@ -204,7 +205,7 @@ class Glyph(object):
 
             elif p.onCurve:
                 # Inside contour.
-                currentOnCurve = self.expandSegment(currentOnCurve, openSegment)#, self._path)
+                currentOnCurve = self.expandSegment(currentOnCurve, openSegment)
                 openSegment = None
 
         # Add 4 spacing points, as default in TTF. No index, as they cannot be
