@@ -18,17 +18,19 @@
 from __future__ import print_function
 
 from pagebot.document import Document
-from pagebot.constants import GRID_LINE, GRID_COL, GRID_SQR, GRID_ROW
-from pagebot.toolbox.units import p, fr, pt
+from pagebot.constants import GRID_LINE, GRID_COL, GRID_SQR, GRID_ROW, LANGUAGE_EN
+from pagebot.toolbox.units import p, pt, em
 from pagebot.toolbox.color import color
 from pagebot.composer import Composer
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.conditions import *
 
-COL = p(16) # Column width
+COL = p(26) # Column width
 GUTTER = p(2) # Gutter width
-COLS = 5 # Number of columns
+COLS = 3 # Number of columns
 PADDING = p(5) # Padding of the page
-LEADING = pt(18)
+PS = pt(16) # Fontsize of body text
+LEADING = 1.4*PS
 
 # Calculate the width of the page from the column measures
 W = COLS * COL + (COLS-1) * GUTTER + 2*PADDING
@@ -39,14 +41,18 @@ for n in range(COLS-1):
     GRIDX.append((COL, GUTTER))
 GRIDX.append((COL, p(0))) # Last column does not have gutter
 
-h1Style = dict(fontSize=18, textFill=(1, 0, 0))
-pStyle = dict(fontSize=10)
-liStyle = dict(fontSize=10, indent=pt(6))
-styles = dict(h1=h1Style, p=pStyle, li=liStyle)
+font = findFont('Verdana')
+
+h1Style = dict(font=font, fontSize=1.5*PS, textFill=(1, 0, 0), leading=LEADING)
+h2Style = dict(font=font, fontSize=1.2*PS, textFill=(1, 0, 0.5), leading=LEADING,
+    paragraphTopSpacing=LEADING)
+pStyle = dict(font=font, fontSize=PS, leading=LEADING)
+liStyle = dict(font=font, fontSize=PS, indent=pt(8), firstLineIndent=0, leading=LEADING)
+styles = dict(font=font, h1=h1Style, h2=h2Style, p=pStyle, li=liStyle, ul=liStyle, bullet=liStyle)
 
 # Create a document with these attributes, single page.
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, originTop=False, styles=styles,
-    baselineGrid=LEADING)
+    baselineGrid=LEADING, language=LANGUAGE_EN)
 view = doc.view
 view.showBaselineGrid = [GRID_LINE] # Set the view to show the baseline grid
 view.showGrid = [GRID_COL, GRID_ROW, GRID_SQR] # Set the view to display the grid
@@ -56,6 +62,8 @@ s = """
 # What is PageBot?
 
 PageBot is a page layout program that enables designers to create high quality documents using code. It is available both as Python library working with [DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. Other contexts such as [Flat](http://xxyxyz.org/flat) (currently under development) allow PageBot to run environments other Mac OS X, for example on web servers. Initiated by [Type Network](https://typenetwork.com), the aim is to create a system for scriptable applications generating professionally designed documents that use high quality typography.
+
+## Some PageBot attributes
 
 * The core library, tutorial and basic examples for PageBot are available under MIT Open Source license from [github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot).
 * Desktop application examples can be found in the separate a repository, available under MIT Open Source license at [github.com/TypeNetwork/PageBotApp](https://github.com/TypeNetwork/PageBotApp).
@@ -69,12 +77,18 @@ c = Composer(doc)
 c.typeset(markDown=s, styles=styles)
 
 tb = c.galleys[0].elements[0]
-tb.fill = 0.9
-print(tb.fill, tb.__class__.__name__)
+tb.fill = 0.95
 tb.padding = p(0.5)
 tb.parent = page
 tb.w = COL
 tb.conditions = (Left2Left(), Top2Top(), Fit2Height())
+
+tb = tb.copy(parent=page)
+tb.fill = 0.7
+tb.conditions = (Left2Col(1), Top2Top(), Fit2Height())
+
+tb = tb.copy(parent=page)
+tb.conditions = (Left2Col(2), Top2Top(), Fit2Height())
 
 doc.solve()
 doc.export('_export/TextBaselines.pdf')
