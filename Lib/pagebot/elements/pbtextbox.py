@@ -14,7 +14,7 @@
 #
 #     textbox.py
 #
-from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE,
+from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
@@ -382,7 +382,8 @@ class TextBox(Element):
 
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
         # not as FormattedString attribute.
-        context.b.hyphenation(bool(self.bs.hyphenation))
+        context.language(self.css('language', DEFAULT_LANGUAGE))
+        context.hyphenation(bool(self.css('hyphenation')))
         context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset,
             self.pw, self.ph))
 
@@ -512,12 +513,13 @@ class TextBox(Element):
         """
         if self.textLines:
             line = self.textLines[index or 0]
-            y1 = abs(self.getRounded2Grid(line.y) - line.y)
-            y2 = abs(self.getRounded2Grid(line.y, roundDown=True) - line.y)
-            if y1 < y2:
-                self.y -= y1
+            dy1 = abs(self.getRounded2Grid(line.y) - line.y)
+            dy2 = abs(self.getRounded2Grid(line.y, roundDown=True) - line.y)
+            print(dy1, dy2, self.getRounded2Grid(line.y), self.getRounded2Grid(line.y, roundDown=True), line.y, )
+            if dy1 < dy2:
+                self.y -= dy1
             else:
-                self.y += y2
+                self.y += dy2
 
     
     def baselineUp2Grid(self, index=None, style=None):

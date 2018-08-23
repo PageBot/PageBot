@@ -775,6 +775,17 @@ class Unit(object):
         """
         return self.pt
 
+    def __round__(self):
+        """Answer the rounded self as value.
+
+        >>> u = pt(12.5)
+        >>> u.rounded
+        13pt
+        >>> round(u)
+        13.0
+        """
+        return self.rounded
+
     def __coerce__(self, v):
         """Converts to type of v.
 
