@@ -20,10 +20,10 @@ try:
     flatBuilder = flat
     # Id to make builder hook name. Views will try to call e.build_flat()
     flatBuilder.PB_ID = 'flat'
-    #print('Using Flat as Builder')
+    print('Using Flat as Builder')
 except ImportError:
     flatBuilder = NoneFlatBuilder()
-    #print('Using NoneFlatBuilder')
+    print('Using NoneFlatBuilder')
 
 class BezierPath(object):
     """Make BezierPath with the same API for DrawBotBuilder drawing.
