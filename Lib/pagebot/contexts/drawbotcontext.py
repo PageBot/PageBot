@@ -271,7 +271,9 @@ class DrawBotContext(BaseContext):
             self.restore()
 
     def drawGlyph(self, glyph):
+        """Converts the cubic commands to a drawable path."""
         path = self.newPath()
+
         for command, t in glyph.cubic:
             if command == 'moveTo':
                 path.moveTo(t)
