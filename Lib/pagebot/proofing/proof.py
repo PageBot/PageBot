@@ -15,6 +15,7 @@
 #     proof.py
 #
 from fontTools.pens.cocoaPen import CocoaPen
+from pagebot.proofing.tx import *
 
 class Proof(object):
 
@@ -24,13 +25,17 @@ class Proof(object):
         self.context = context
 
     def drawGlyphs(self, font, content, size, **kwargs):
+        scale = getScale(font, size)
+        self.context.scale(scale)
+
+        x = 0
 
         for c in content:
             pen = CocoaPen(font)
             self.context.fill(0)
             self.context.stroke(None)
             glyph = font[c]
-            print(glyph)
-            print(glyph.contours)
-            print(glyph.components)
-            print(glyph.segments)
+            self.context.translate(x, 0)
+            self.context.drawGlyph(glyph)
+            self.context.translate(-x, 0)
+            x += glyph.width

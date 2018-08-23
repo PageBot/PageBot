@@ -140,7 +140,7 @@ class NoneBuilder(object):
 
     def numberOfImages(self, path):
         return 1
-        
+
     def transform(self, t):
         pass
 
@@ -155,7 +155,7 @@ class NoneBuilder(object):
 
     def textBox(self, s, r):
         pass
-        
+
     def saveImage(self, path, multipage=True):
         pass
 

@@ -18,7 +18,7 @@
 import weakref
 from AppKit import NSFont
 from fontTools.ttLib import TTFont, TTLibError
-from drawBot import BezierPath, translate, line, text, stroke, fill, oval, drawPath, textSize
+from drawBot import BezierPath, translate, line, text, stroke, fill, oval, drawPath
 from drawBot import font as DBFont
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.units import point3D
@@ -158,7 +158,7 @@ path = BezierPath()
 contours = []
 contour = None
 coordinates = glyph.ttGlyph.coordinates
-fill(1, 1, 0)
+fill(0, 1, 1, 0.2)
 #rect(0, 0, width(), height())
 # Move glyph up so we can see results below descender level.
 translate(50, 500)
@@ -166,8 +166,8 @@ translate(50, 500)
 # Draws the glyph.
 c = glyph.contours
 pbSegments = glyph._segments
-context.fill((0, 0, 0))
-context.stroke((0, 1, 0))
+#context.fill((0, 0, 0))
+context.stroke((0, 0.3, 0.3))
 context.drawGlyph(glyph)
 #drawPath(glyph._path)
 stroke(None)
@@ -240,7 +240,7 @@ for contour in contours:
 x = 500
 y = 400
 d = 30
-fill(0.7)
+fill(0.2)
 
 if len(implied) > 0:
     IMPLIED_ONCURVE = implied[0]
@@ -249,7 +249,7 @@ if len(cps) > 0:
     CUBIC_OFFCURVE = cps[0]
 
 if ONCURVE:
-    stroke(0, 1, 1)
+    stroke(0)
     p1 = (ONCURVE.x, ONCURVE.y)
     p = (ONCURVE.x + d, ONCURVE.y + d)
     line(p, p1)
@@ -258,7 +258,7 @@ if ONCURVE:
     y -= 20
 
 if QUADRATIC_OFFCURVE:
-    stroke(0, 1, 1)
+    stroke(0)
     p1 = (QUADRATIC_OFFCURVE.x, QUADRATIC_OFFCURVE.y)
     p = (QUADRATIC_OFFCURVE.x + d, QUADRATIC_OFFCURVE.y + d)
     line(p, p1)
@@ -266,7 +266,7 @@ if QUADRATIC_OFFCURVE:
     text('Quadratic control point', p)
 
 if CUBIC_OFFCURVE:
-    stroke(0, 1, 1)
+    stroke(0)
     p1 = (CUBIC_OFFCURVE[0], CUBIC_OFFCURVE[1])
     p = (CUBIC_OFFCURVE[0] + d, CUBIC_OFFCURVE[1]+ d)
     line(p, p1)
@@ -274,7 +274,7 @@ if CUBIC_OFFCURVE:
     text('Cubic control point', p)
 
 if IMPLIED_ONCURVE:
-    stroke(0, 1, 1)
+    stroke(0)
     p1 = (IMPLIED_ONCURVE.x, IMPLIED_ONCURVE.y)
     p = (IMPLIED_ONCURVE.x + d, IMPLIED_ONCURVE.y + d)
     line(p, p1)
