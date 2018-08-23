@@ -2012,23 +2012,80 @@ class Element(object):
         self.back = units(z) - self.css('mzb')
     mBack = property(_get_mBack, _set_mBack)
 
-    # Borders
+    # Colors for fill and stroke 
+
+    def _get_fill(self):
+        u"""Fill color property in style, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> e = Element(fill=color('red'))
+        >>> e.fill
+        Color(name="red")
+        >>> e.fill = 1, 0, 0 # Construct color from tuple
+        >>> e.fill 
+        Color(r=1, g=0, b=0)
+        >>> e.fill = 0.5
+        >>> e.fill
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        return self.css('fill', noColor)
+    def _set_fill(self, c):
+        self.style['fill'] = color(c)
+    fill = property(_get_fill, _set_fill)
+
+    def _get_stroke(self):
+        u"""Fill color property in style, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> e = Element(stroke=color('red'))
+        >>> e.stroke
+        Color(name="red")
+        >>> e.stroke = 1, 0, 0 # Construct color from tuple
+        >>> e.stroke 
+        Color(r=1, g=0, b=0)
+        >>> e.stroke = 0.5
+        >>> e.stroke
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        return self.css('stroke', noColor)
+    def _set_stroke(self, c):
+        self.style['stroke'] = color(c)
+    stroke = property(_get_stroke, _set_stroke)
+
+    def _get_strokeWidth(self):
+        u"""Stroke width property in style, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> from pagebot.toolbox.units import mm, p
+        >>> e = Element(strokeWidth=p(6))
+        >>> e.strokeWidth
+        6p
+        >>> e.strokeWidth = mm(2)
+        >>> e.strokeWidth
+        2mm
+        """
+        return self.css('strokeWidth', pt(1))
+    def _set_strokeWidth(self, u):
+        self.style['strokeWidth'] = units(u)
+    strokeWidth = property(_get_strokeWidth, _set_strokeWidth)
+
+    # Borders (equivalent for element stroke and strokWidth)
 
     def _borderDict(self, borderData):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
         if isinstance(borderData, (int, float)):
-            return dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
+            return dict(line=ONLINE, dash=None, stroke=self.css('stroke', blackColor), strokeWidth=borderData)
         if isinstance(borderData, dict):
             if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
                 borderData['line'] = ONLINE
             if not 'dash' in borderData:
                 borderData['dash'] = None
-            if not 'strokeWidth' in borderData:
-                borderData['strokeWidth'] = pt(1)
-            if not 'stroke' in borderData:
-                borderData['stroke'] = blackColor
+            if not 'strokeWidth' in borderData: # If not defined, use the current setting of self.strokeWidth
+                borderData['strokeWidth'] = self.css('strokeWidth', pt(1))
+            if not 'stroke' in borderData: # If not defined, use the current setting of self.stroke
+                borderData['stroke'] = self.css('stroke', blackColor)
             return borderData
 
         # TODO: Solve this, error on initialize of element, _parent does not yet exist.
@@ -3667,7 +3724,7 @@ class Element(object):
             c.rect(p[0], p[1], self.w, self.h)
             c.restoreGraphicState()
 
-        eFill = self.css('fill', default=noColor)
+        eFill = self.fill # Default is npColor
         eStroke = self.css('stroke', default=noColor)
         eGradient = self.gradient
 
@@ -3679,9 +3736,10 @@ class Element(object):
                 # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
-                c.fill(eFill)
+                c.fill(eFill) 
 
-            c.stroke(eStroke, self.css('strokeWidth', pt(1)))
+            if eStroke is not noColor: # Separate from border behavior if set.
+                c.stroke(eStroke, self.css('strokeWidth', pt(1)))
 
             if self.framePath is not None: # In case defined, use instead of bounding box.
                 c.drawPath(self.framePath)
