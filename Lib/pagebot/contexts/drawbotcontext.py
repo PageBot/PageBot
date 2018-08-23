@@ -277,8 +277,7 @@ class DrawBotContext(BaseContext):
                 path.moveTo(t)
             elif command == 'lineTo':
                 path.lineTo(t)
-            elif command == 'lineTo':
-                #cp0, cp1, p1 = t
+            elif command == 'curveTo':
                 path.curveTo(*t)
             elif command == 'closePath':
                 path.closePath()
