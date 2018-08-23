@@ -56,7 +56,6 @@ class Glyph(object):
     """
 
     """
-    TODO: Separate path creation from Glyph._initialize
     >>> len(g.points)
     46
     >>> g.points[-1].onCurve
@@ -92,9 +91,6 @@ class Glyph(object):
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
         self._box = None
-        #self._path = None # "Expensive", create self.path property value on initialize.
-        #self._flattenedPath = None # "More expensive", create property value upon request.
-        #self._flattenedContours = None # "More expensive", create property value upon request.
 
     def __eq__(self, g):
         return self.font is g.font and self.name == g.name
@@ -128,7 +124,6 @@ class Glyph(object):
         coordinates = self.coordinates
 
         if coordinates or components:
-            #self._path = self.font.context.newPath()
             minX = minY = XXXL # Store bounding box as we process the coordinate.
             maxX = maxY = -XXXL
         else:
@@ -142,7 +137,7 @@ class Glyph(object):
                 #cubic.append(...)
                 #componentPath = self.font[componentName].path
                 #componentPath.transform((1, 0, 0, 1, component.x, component.y))
-                #self._path.appendPath(componentPath)
+                #self._cubic.appendPath(componentPath)
                 #componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
 
                 # Expand bounding box.
@@ -172,10 +167,8 @@ class Glyph(object):
             self._points.append(p)
 
             if not openContour:
-                #assert self._path is not None
-                # Also store as cubic coordinate.
+                # Also store as cubic command.
                 self._cubic.append(('moveTo', (x, y)))
-                #self._path.moveTo((x, y))
                 p0 = p
                 currentOnCurve = p
                 openContour = []
@@ -198,7 +191,6 @@ class Glyph(object):
                         openSegment.append(p0)
 
                     currentOnCurve = self.expandSegment(currentOnCurve, openSegment)
-                #self._path.closePath()
                 self._cubic.append(('closePath', None))
                 openContour = None
                 openSegment = None
@@ -255,13 +247,12 @@ class Glyph(object):
             # Straight line.
             p1 = segment.points[-1]
             self._cubic.append(('lineTo', (p1.x, p1.y)))
-            #path.lineTo((p1.x, p1.y))
             cp = p1
 
         elif len(segment) == 2:
             # Converts quadratic curve to cubic.
             p1, p2 = segment.points
-            self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y)#, path)
+            self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, p2.x, p2.y)
             cp = p2
 
         else:
@@ -278,7 +269,7 @@ class Glyph(object):
                     # Last (oncurve) point.
                     m = p2
 
-                self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y)#, path)
+                self.expandQuadratic2Cubic(cp.x, cp.y, p1.x, p1.y, m.x, m.y)
                 cp = m
 
         return cp
@@ -300,7 +291,6 @@ class Glyph(object):
         pp1y = p2y + (p1y - p2y) * F
 
         # i.e. curve-to (offCurve0, offCurve1, onCurve1)
-        #path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
         self._cubic.append(('curveTo', ((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))))
 
     def _get_ttGlyph(self):
@@ -500,27 +490,6 @@ class Glyph(object):
         """
         return self.font.variables.get(self.name) # Answer None if variations for this glyph don't exist.
     variables = property(_get_variables)
-
-    '''
-    def _get_path(self):
-        """Answer the drawn path of the glyph. For the DrawBotContext this is
-        a OSX-BezierPath the can be drawn on the DrawBot convas.
-
-        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
-        >>> font = getFont(path)
-        >>> glyph = font['H']
-        >>> #glyph.path is not None
-        True
-        """
-        if self._path is None or self.dirty:
-            self._initialize()
-
-        return self._path
-    path = property(_get_path) # Read only for now.
-    '''
 
     def _get_analyzer(self):
         if self._analyzer is None:

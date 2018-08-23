@@ -30,5 +30,4 @@ class Proof(object):
             self.context.fill(0)
             self.context.stroke(None)
             glyph = font[c]
-            print(glyph)
             self.context.drawGlyph(glyph)
