@@ -138,13 +138,13 @@ class NoneDrawBotString(BabelString):
 
     strokeWidth = setStrokeWidth
 
-    def getTextLines(self, w, h, align=LEFT):
+    def getTextLines(self, w, h=None, align=LEFT):
         return {}
 
     def _get_size(self):
         return pt(0, 0)
     size = property(_get_size)
-    
+
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
@@ -161,8 +161,6 @@ class DrawBotString(BabelString):
         True
         >>> style = dict(font='Verdana', fontSize=pt(80))
         >>> bs = context.newString('Example Text', style=style)
-        >>> bs.size
-        (538.59pt, 112pt)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
         ('Verdana', 80pt, 44.0, 0.55em, 0.73em, 1.01em, -0.21em)
         >>> '/Verdana'in bs.fontPath

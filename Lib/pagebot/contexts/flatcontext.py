@@ -419,9 +419,9 @@ class FlatContext(BaseContext):
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError()
 
-    def language(self, languge):
+    def language(self, language):
         self._language = language
-        
+
     def hyphenation(self, onOff):
         # TODO: Implementation in Flat should use PageBot hyphenation?
         self._hyphenation = onOff
