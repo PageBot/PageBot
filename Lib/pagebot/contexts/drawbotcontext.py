@@ -271,8 +271,19 @@ class DrawBotContext(BaseContext):
             self.restore()
 
     def drawGlyph(self, glyph):
-        # TODO: move Bézier generation here instead of inside glyph.
-        pass
+        path = self.newPath()
+        for command, t in glyph.cubic:
+            if command == 'moveTo':
+                path.moveTo(t)
+            elif command == 'lineTo':
+                path.lineTo(t)
+            elif command == 'lineTo':
+                #cp0, cp1, p1 = t
+                path.curveTo(*t)
+            elif command == 'closePath':
+                path.closePath()
+
+        self.drawPath(path)
 
     def getFlattenedContours(self):
         """Answers the flattened NSBezier path As contour list [contour,

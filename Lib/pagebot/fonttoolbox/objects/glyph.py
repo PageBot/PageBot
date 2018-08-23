@@ -87,6 +87,7 @@ class Glyph(object):
         self._contours = None
         self._segments = None
         self._components = None
+        self._cubic = None
         self._analyzer = None # Initialized upon property self.analyzer usage.
         self._axisDeltas = None # Caching for AxisDeltas instances.
         self._boundingBox = None # Initialized on property call.
@@ -120,7 +121,7 @@ class Glyph(object):
         self._points4 = []
         self._contours = []
         self._segments = []
-        self.cubic = []
+        self._cubic = []
         self._boundingBox = None
         components = self.components
 
@@ -158,19 +159,21 @@ class Glyph(object):
                 maxY = max(cMaxY+component.y, maxY)
 
         for index, (x, y) in enumerate(coordinates):
+            # Expand bounding box.
             minX = min(x, minX)
             maxX = max(x, maxX)
             minY = min(y, minY)
             maxY = max(y, maxY)
 
             # Create APoint, to store weakref to self and index for altering
-            # the coordinate and onCurve
+            # the coordinate and onCurve.
             p = APoint((x, y), flags[index], self, index)
             self._points.append(p)
 
             if not openContour:
                 #assert self._path is not None
-                self.cubic.append(('moveTo', (x, y)))
+                # Also store as cubic coordinate.
+                self._cubic.append(('moveTo', (x, y)))
                 #self._path.moveTo((x, y))
                 p0 = p
                 currentOnCurve = p
@@ -195,7 +198,7 @@ class Glyph(object):
 
                     currentOnCurve = self.expandSegment(currentOnCurve, openSegment)#, self._path)
                 #self._path.closePath()
-                self.cubic.append(('closePath', None))
+                self._cubic.append(('closePath', None))
                 openContour = None
                 openSegment = None
 
@@ -244,13 +247,13 @@ class Glyph(object):
         return self._axisDeltas
 
     def expandSegment(self, cp, segment):
-        """Expands the Segment instance. It may contain multiple
-        quadratics. Split into cubics and lines."""
+        """Expands the Segment instance. It may contain multiple quadratics.
+        Split into cubics and lines."""
 
         if len(segment) == 1:
             # Straight line.
             p1 = segment.points[-1]
-            self.cubic.append(('lineTo', (p1.x, p1.y)))
+            self._cubic.append(('lineTo', (p1.x, p1.y)))
             #path.lineTo((p1.x, p1.y))
             cp = p1
 
@@ -280,20 +283,24 @@ class Glyph(object):
         return cp
 
     def expandQuadratic2Cubic(self, p0x, p0y, p1x, p1y, p2x, p2y):
-        """Converts a quatratic control point into a cubic.
+        """Converts a quadtratic control point into a cubic curve-to segment.
 
         p0 = onCurve0
         p1 = offCurve
         p2 = onCurve1
         """
 
-        # Cubic control points.
+        # First cubic offcurve control points.
         pp0x = p0x + (p1x - p0x) * F
         pp0y = p0y + (p1y - p0y) * F
+
+        # Second cubic offcurve control points.
         pp1x = p2x + (p1x - p2x) * F
         pp1y = p2y + (p1y - p2y) * F
+
+        # i.e. curve-to (offCurve0, offCurve1, onCurve1)
         #path.curveTo((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))
-        self.cubic.append(('curveTo', ((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))))
+        self._cubic.append(('curveTo', ((pp0x, pp0y), (pp1x, pp1y), (p2x, p2y))))
 
     def _get_ttGlyph(self):
         return self.font.ttFont['glyf'][self.name]
@@ -441,6 +448,13 @@ class Glyph(object):
         return self._segments
 
     segments = property(_get_segments)
+
+    def _get_cubic(self):
+        if self._cubic is None or self.dirty:
+            self._initialize()
+        return self._cubic
+
+    cubic = property(_get_cubic)
 
     def _get_components(self): # Read only for now. List Contour instances.
         if self._components is None or self.dirty:
