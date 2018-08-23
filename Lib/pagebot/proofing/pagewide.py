@@ -20,9 +20,6 @@ from pagebot.proofing.tx import *
 
 class PageWide(Proof):
 
-    def __init__(self, context, **kwargs):
-        super(PageWide, self).__init__(context, **kwargs)
-
     def draw(self, font, content, size):
         height = 0
         nr = 1
