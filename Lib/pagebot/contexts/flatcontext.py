@@ -90,6 +90,8 @@ class FlatContext(BaseContext):
         self._ox = pt(0) # Origin set by self.translate()
         self._oy = pt(0)
         self._rotate = 0
+        self._hyphenation = True
+        self._language = DEFAULT_LANGUAGE
 
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
@@ -416,6 +418,13 @@ class FlatContext(BaseContext):
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError()
+
+    def language(self, languge):
+        self._language = language
+        
+    def hyphenation(self, onOff):
+        # TODO: Implementation in Flat should use PageBot hyphenation?
+        self._hyphenation = onOff
 
     #   I M A G E
 

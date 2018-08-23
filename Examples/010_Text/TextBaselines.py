@@ -54,6 +54,8 @@ styles = dict(font=font, h1=h1Style, h2=h2Style, p=pStyle, li=liStyle, ul=liStyl
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, originTop=False, styles=styles,
     baselineGrid=LEADING, language=LANGUAGE_EN)
 view = doc.view
+view.showTextBoxBaselines = True
+view.showTextBoxY = True
 view.showBaselineGrid = [GRID_LINE] # Set the view to show the baseline grid
 view.showGrid = [GRID_COL, GRID_ROW, GRID_SQR] # Set the view to display the grid
 
@@ -81,13 +83,15 @@ tb.fill = 0.95
 tb.padding = p(0.5)
 tb.parent = page
 tb.w = COL
+#tb.conditions = (Left2Left(), Top2Top(), Fit2Height(), Baseline2Grid(index=0))
 tb.conditions = (Left2Left(), Top2Top(), Fit2Height())
 
 tb = tb.copy(parent=page)
-tb.fill = 0.7
+tb.fill = 0.9
 tb.conditions = (Left2Col(1), Top2Top(), Fit2Height())
 
 tb = tb.copy(parent=page)
+tb.fill = 0.85
 tb.conditions = (Left2Col(2), Top2Top(), Fit2Height())
 
 doc.solve()

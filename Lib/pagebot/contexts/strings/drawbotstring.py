@@ -100,7 +100,6 @@ class NoneDrawBotString(BabelString):
         self.style = style
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
-        self.size = pt(0, 0) # Property in DrawBotString
 
         self.fittingFont = None # In case we are sampling with a Variable Font.
         self.fittingLocation = None
@@ -142,6 +141,10 @@ class NoneDrawBotString(BabelString):
     def getTextLines(self, w, h, align=LEFT):
         return {}
 
+    def _get_size(self):
+        return pt(0, 0)
+    size = property(_get_size)
+    
 class DrawBotString(BabelString):
 
     BABEL_STRING_TYPE = 'fs'
