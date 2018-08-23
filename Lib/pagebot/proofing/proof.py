@@ -31,7 +31,4 @@ class Proof(object):
             self.context.stroke(None)
             glyph = font[c]
             print(glyph)
-            print(glyph.contours)
-            print(glyph.components)
-            print(glyph.segments)
-            print(glyph.cubic)
+            self.context.drawGlyph(glyph)

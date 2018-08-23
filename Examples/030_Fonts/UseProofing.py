@@ -25,4 +25,4 @@ WIDTH, HEIGHT = A3
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
 proof = PageWide(context)
-proof.draw(font, 'abc', 12)
+proof.draw(font, 'o', 12)
