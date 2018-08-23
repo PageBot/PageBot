@@ -291,7 +291,7 @@ class DrawBotContext(BaseContext):
         contour, ...] where contours are lists of point2D() points."""
         contour = []
         flattenedContours = [contour]
-        flatPath = self.getFlattenedPath(context)
+        flatPath = self.bezierPathByFlatteningPath()
 
         if flatPath is not None:
             for index in range(flatPath.elementCount()):
