@@ -64,13 +64,17 @@ class Composer(object):
         if t.galley: # Any input got in galley.
             self.galleys.append(t.galley)
 
-    def compose(self, globals=None):
+    def compose(self, globals=None, page=None):
         u"""Compose the galley element, based on the instruction of the ArtDirection instance
         that will run the rules what content to put where.
         """
         if globals is None:
-            page = self.doc[1]
-            globals = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, box=page.select('main'), newTextBox=newTextBox)        
+            if page is None:
+                page = self.doc[1]
+            globals = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, box=page.select('main'), newTextBox=newTextBox)  
+        elif page is not None:
+            globals['page'] = page
+
         for galley in self.galleys:
             for e in galley.elements:
                 if isinstance(e, CodeBlock):
