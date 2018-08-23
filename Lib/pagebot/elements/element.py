@@ -2075,15 +2075,15 @@ class Element(object):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-        if isinstance(borderData, (int, float)):
-            return dict(line=ONLINE, dash=None, stroke=self.css('stroke', blackColor), strokeWidth=borderData)
+        if isUnit(borderData) or isinstance(borderData, (int, float)):
+            return dict(line=ONLINE, dash=None, stroke=self.css('stroke', blackColor), strokeWidth=units(borderData))
         if isinstance(borderData, dict):
             if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
                 borderData['line'] = ONLINE
             if not 'dash' in borderData:
                 borderData['dash'] = None
             if not 'strokeWidth' in borderData: # If not defined, use the current setting of self.strokeWidth
-                borderData['strokeWidth'] = self.css('strokeWidth', pt(1))
+                borderData['strokeWidth'] = self.strokeWidth
             if not 'stroke' in borderData: # If not defined, use the current setting of self.stroke
                 borderData['stroke'] = self.css('stroke', blackColor)
             return borderData
@@ -2112,7 +2112,7 @@ class Element(object):
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
         if isUnit(borders) or isinstance(borders, (int, float)):
-            borders = dict(strokeWidth=units(borders))
+            borders = self._borderDict(borders)
         if not isinstance(borders, (list, tuple)):
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
