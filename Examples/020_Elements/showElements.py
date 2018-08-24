@@ -52,3 +52,5 @@ page.solve()
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/showElements.png'
 doc.export(EXPORT_PATH)
+
+

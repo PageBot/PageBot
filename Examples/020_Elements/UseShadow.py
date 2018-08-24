@@ -19,11 +19,11 @@ from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.gradient import Shadow
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, color, blackColor
+from pagebot.toolbox.units import em
 
 
-W = 400
-H = 480
+W = H = 480
 RectSize = 300
 ShadowOffset = 0
 ShadowBlur = 10

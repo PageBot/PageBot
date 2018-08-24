@@ -12,6 +12,8 @@
 #
 #     TestColumnDivision.py
 #
+#     TODO: Adjust example to latest (relative) units additions.
+#
 from __future__ import division
 
 import sys

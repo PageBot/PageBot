@@ -26,7 +26,7 @@ for contextId, context in (
         ('DrawBot', DrawBotContext()), 
         #('Flat', FlatContext()),
     ):
-    W = H = pt(1000)
+    W, H = pt(1000, 300)
     M = pt(100)
 
     EXPORT_PATH = '_export/UseBabelStrings-%s.pdf' % contextId
@@ -38,7 +38,7 @@ for contextId, context in (
     print(bs.__class__.__name__)
     context.text(bs, (100, y))
     # Add string with formatting style dict
-    bs += context.newString('\nAdd an other string with format', 
+    bs += context.newString('\nAdd an other string with color/size format', 
         style=dict(textFill=color(1, 0, 0), fontSize=20, leading=em(1.4)))
     print(bs)
     y -= 50

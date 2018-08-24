@@ -94,14 +94,22 @@ def getFont(fontOrPath, lazy=True):
 def findFont(fontPath, lazy=True):
     """Answer the font the has name fontName.
 
-    >>> findFont('Roboto-Regular')
+    >>> roboto = findFont('Roboto-Regular')
+    >>> roboto
     <Font Roboto-Regular>
+    >>> f = findFont('Skia') 
+    >>> if f is None: f = roboto # In case Skia cannot be found in testing context
+    >>> #f = roboto # Uncomment for testing NoneBuilder
+    >>> str(f) in ('<Font Skia>', '<Font Roboto-Regular>')
+    True
+    >>> f.info.familyName in ('Skia', 'Roboto')
+    True
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
 
     if fontPath in fontPaths:
-        return getFont(fontPaths[fontPath])
+        return getFont(fontPaths[fontPath], lazy=lazy)
     return None
 
 def getMasterPath():
@@ -358,8 +366,8 @@ class Font(object):
     >>> f = findFont('RobotoDelta-VF')
     >>> sorted(f.axes.keys())
     ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
-    >>> f.name
-    u'RobotoDelta Regular'
+    >>> f.info.familyName
+    u'RobotoDelta'
     >>> len(f)
     241
     >>> f.axes['opsz']

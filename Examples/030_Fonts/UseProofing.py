@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     AlterGlyphCoordinates.py
+#     UseProofing.py
 #
 #
 
@@ -21,13 +21,13 @@ from pagebot.constants import A3
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 
-print(getFontPaths())
+#print(getFontPaths())
 
 font = findFont('Roboto-Bold')
-WIDTH, HEIGHT = A3
+WIDTH, HEIGHT = A3[0], 150
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
 proof = PageWide(context)
-SIZE = 64
+SIZE = 54
 context.translate(SIZE, SIZE)
-proof.draw(font, 'abcdefghijklmnop', SIZE)
+proof.draw(font, 'abcdefghijklmnopqrstuvwxyz', SIZE)

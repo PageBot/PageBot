@@ -25,7 +25,8 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 #from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
 from pagebot.style import CENTER
-from pagebot.toolbox.units import em
+from pagebot.toolbox.color import blackColor
+from pagebot.toolbox.units import em, upt
 
 context = getContext()
 W = H = 500
@@ -100,59 +101,58 @@ class FontIcon(object):
         x = self.x + orgX
         y = self.y + orgY
 
-        path = newPath()
-        moveTo((0, 0))
-        lineTo((0, h))
-        lineTo((w-e, h))
-        lineTo((w, h-e))
-        lineTo((w, 0))
-        lineTo((0, 0))
-        closePath()
-        moveTo((w-e, h))
-        lineTo((w-e, h-e))
-        lineTo((w, h-e))
+        context.newPath()
+        context.moveTo((0, 0))
+        context.lineTo((0, h))
+        context.lineTo((w-e, h))
+        context.lineTo((w, h-e))
+        context.lineTo((w, 0))
+        context.lineTo((0, 0))
+        context.closePath()
+        context.moveTo((w-e, h))
+        context.lineTo((w-e, h-e))
+        context.lineTo((w, h-e))
 
-        save()
-        fill(1)
-        stroke(0)
-        strokeWidth(self.line)
-        translate(x, y)
-        drawPath(path)
-        fs = context.newString(self.c,
+        context.save()
+        context.fill(1)
+        context.stroke(0, self.line)
+        context.translate(x, y)
+        context.drawPath()
+        bs = context.newString(self.c,
                                style=dict(font=self.f.path,
                                           textFill=blackColor,
                                           fontSize=h*2/3))
-        tw, th = textSize(fs)
-        text(fs, (w/2-tw/2, h/2-th/3.2))
+        tw, th = bs.size
+        context.text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if drawLabel:
             if self.title:
-                fs = context.newString(self.title,
+                bs = context.newString(self.title,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=blackColor,
+                     textFill=blackColor,
                                                   tracking=self.LABEL_RTRACKING,
                                                   fontSize=self.labelSize))
-                tw, th = textSize(fs)
-                text(fs, (w/2-tw/2, self.ih+th/2))
+                tw, th = bs.size
+                context.text(bs, (w/2-tw/2, self.ih+th/2))
 
-            y -= uptself.LABEL_RLEADING, base=self.labelSize)
+            y -= upt(self.LABEL_RLEADING, base=self.labelSize)
             if self.name:
-                fs = context.newString(self.name,
+                bs = context.newString(self.name,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=blackColor,
-                                                  tracking=self.LABEL_RTRACKING,
-                                                  fontSize=self.labelSize))
-                tw, th = textSize(fs)
-                text(fs, (w/2-tw/2, y))
+                                      textFill=blackColor,
+                                      tracking=self.LABEL_RTRACKING,
+                                      fontSize=self.labelSize))
+                tw, th = bs.size
+                context.text(bs, (w/2-tw/2, y))
                 y -= upt(self.LABEL_RLEADING, base=self.labelSize)
             if self.label:
-                fs = context.newString(self.label,
+                bs = context.newString(self.label,
                                        style=dict(font=self.labelFont.path,
-                                                  textFill=blackColor,
-                                                  tracking=self.LABEL_RTRACKING,
-                                                  fontSize=self.labelSize))
-                tw, th = textSize(fs)
-                text(fs, (w/2-tw/2, y))
+                                      textFill=blackColor,
+                                      tracking=self.LABEL_RTRACKING,
+                                      fontSize=self.labelSize))
+                tw, th = bs.size
+                context.text(bs, (w/2-tw/2, y))
         restore()
 
 class KeyFrame(object):
@@ -169,7 +169,7 @@ class KeyFrame(object):
 
     def draw(self):
         for n in range(self.steps):
-            newPage(W, H)
+            context.newPage(W, H)
             self.drawBackground()
             for o in self.objects:
                 offsetX = 0
@@ -257,35 +257,35 @@ def drawAnimation():
         line(((xl+xt)/2, (yl+yt)/2), ((xr+xb)/2, (yr+yb)/2))
         line(((xl+xb)/2, (yl+yb)/2), ((xr+xt)/2, (yr+yt)/2))
 
-        fs = context.newString('Weight %0.1f' % wghtMin,
+        bs = context.newString('Weight %0.1f' % wghtMin,
                                style=dict(font=f.path,
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=12))
-        tw, th = textSize(fs)
-        text(fs, ((xl+xt)/2-tw-20, (yl+yt)/2))
+        tw, th = bs.size
+        context.text(bs, ((xl+xt)/2-tw-20, (yl+yt)/2))
 
-        fs = context.newString('Width %0.1f' % wdthMin,
+        bs = context.newString('Width %0.1f' % wdthMin,
                                style=dict(font=f.path,
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=12))
-        tw, th = textSize(fs)
-        text(fs, ((xl+xb)/2-tw-20, (yl+yb)/2))
+        tw, th = bs.size
+        context.text(bs, ((xl+xb)/2-tw-20, (yl+yb)/2))
 
-        fs = context.newString('Width %0.1f' % wdthMax,
+        bs = context.newString('Width %0.1f' % wdthMax,
                                style=dict(font=f.path,
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=12))
-        text(fs, ((xr+xt)/2+20, (yr+yt)/2))
+        context.text(bs, ((xr+xt)/2+20, (yr+yt)/2))
 
-        fs = context.newString('Weight %0.1f' % wghtMax,
+        bs = context.newString('Weight %0.1f' % wghtMax,
                                style=dict(font=f.path,
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=12))
-        text(fs, ((xb+xr)/2+20, (yb+yr)/2))
+        context.text(bs, ((xb+xr)/2+20, (yb+yr)/2))
 
         dd = d*0.6
         stroke(0.7)
@@ -294,13 +294,13 @@ def drawAnimation():
 
         lx, ly = px + radX*dd, sy*(py + radY*dd)
 
-        fill(1, 0, 0)
-        stroke(None)
-        oval(lx-markerSize/2, ly-markerSize/2*sy, markerSize, markerSize*sy)
+        context.fill((1, 0, 0))
+        context.stroke(None)
+        context.oval(lx-markerSize/2, ly-markerSize/2*sy, markerSize, markerSize*sy)
 
-        stroke(1, 0, 0)
-        fill(None)
-        line((lx, ly), (lx, ly+20))
+        context.stroke((1, 0, 0))
+        context.fill(None)
+        context.line((lx, ly), (lx, ly+20))
 
         for icon in icons:
             icon.scale = 0.6
@@ -322,7 +322,7 @@ def drawAnimation():
         #wdthLoc = 1#wghtDef#locRadX
         #wghtLoc = locRadY
 
-        fs = context.newString(('angle %0.2f rx %0.2f'
+        bs = context.newString(('angle %0.2f rx %0.2f'
                                 ' ry %0.2f wdth %0.2f'
                                 ' wght %0.2f') % (angle, locRadX, locRadY,
                                                   wdthLoc, wghtLoc),
@@ -330,11 +330,11 @@ def drawAnimation():
                                           textFill=blackColor,
                                           tracking=em(0.02),
                                           fontSize=12))
-        text(fs, (200, 480))
+        context.text(bs, (200, 480))
 
         location = dict(wght=wghtLoc, wdth=wdthLoc)
         locFont = getVarFontInstance(f, location, styleName='Location', normalize=True)
-        print(locFont.info.location)
+        #print(locFont.info.location)
         #print(getVarLocation(f, location, normalize=False))
         """
         stroke(None)

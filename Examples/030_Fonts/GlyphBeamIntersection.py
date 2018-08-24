@@ -18,7 +18,7 @@
 from __future__ import print_function
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
-
+c = getContext()
 
 newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')
@@ -39,7 +39,7 @@ c.fill(None)
 print(gaH.glyph.leftMargin)
 x = y = 100
 s = 0.25
-c.drawPath(glyphH.path, (x, y), s)
+c.drawPath(glyphH.getPath(c), (x, y), s)
 # Draw markers on the glyph points
 c.fill((1, 0, 0))
 c.stroke(None)

@@ -20,7 +20,7 @@ from pagebot.document import Document
 from pagebot.constants import Letter, RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import color, blackColor
 from pagebot.toolbox.units import em
 
 class AnimatedBannerFrame(AnimationFrame):

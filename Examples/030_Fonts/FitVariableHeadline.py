@@ -26,6 +26,7 @@ from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.fontpaths import getTestFontsPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.color import blackColor
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
 
@@ -147,7 +148,7 @@ def draw(w):
            (PADDING + d['width'] + 5, PADDING))
     c.text('%d %0.2f' % (round(d['wideWidth']), d['wideLocation']['wdth']),
            (PADDING + d['wideWidth'] + 5, PADDING))
-    c.stroke(1, 0, 0)
+    c.stroke((1, 0, 0))
     c.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
     c.stroke(None)
     #c.fill(1, 0, 0)

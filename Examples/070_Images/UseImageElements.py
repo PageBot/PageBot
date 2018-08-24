@@ -77,7 +77,7 @@ def makeDocument():
 
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    img = newImage('../images/cookbot10.jpg', (50, 50, 10), padding=0,
+    img = newImage('../images/cookbot10.jpg', padding=0,
                    parent=page, w=200, h=300,
                    conditions=(Top2Top(),
                                Fit2Width(),
