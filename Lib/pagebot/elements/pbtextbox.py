@@ -452,7 +452,7 @@ class TextBox(Element):
         c.stroke((0, 0, 1), 0.5)
         prevY = 0
         for textLine in self.textLines: 
-            y = textLine.y + self.top
+            y = textLine.y + self.h
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))
             if view.showTextBoxIndex:
@@ -510,12 +510,29 @@ class TextBox(Element):
     def baseline2Grid(self, index=None, style=None):
         """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
         so the baseline of self.textLines[index] matches the parent grid.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.units import pt, em
+        >>> doc = Document(w=500, h=1000)
+        >>> page = doc[1]
+        >>> page.padding = pt(20)
+        >>> style = dict(font='Verdana', fontSize=pt(22), leading=em(1.4))
+        >>> conditions = [Baseline2Grid()]
+        >>> tb = TextBox('Test '*100, parent=page, style=style, conditions=conditions)
+        >>> len(tb.textLines)
+        50
+        >>> tb.textLines[10].y
+        332pt
+        >>> result = page.solve()
+        >>> tb.textLines[10].y
+        332pt
         """
         if self.textLines:
             line = self.textLines[index or 0]
             dy1 = abs(self.getRounded2Grid(line.y) - line.y)
             dy2 = abs(self.getRounded2Grid(line.y, roundDown=True) - line.y)
-            print(dy1, dy2, self.getRounded2Grid(line.y), self.getRounded2Grid(line.y, roundDown=True), line.y, )
+            #print(dy1, dy2, self.getRounded2Grid(line.y), self.getRounded2Grid(line.y, roundDown=True), line.y, )
             if dy1 < dy2:
                 self.y -= dy1
             else:

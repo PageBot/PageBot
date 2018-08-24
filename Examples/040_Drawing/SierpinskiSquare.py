@@ -18,11 +18,11 @@
 import sys
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, whiteColor
 
 context = getContext()
     
-MAX_I = 5
+MAX_I = 6
 
 def drawSierpinskiSquare(px, py, w, size, i):
     if i >= MAX_I:

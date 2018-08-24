@@ -22,10 +22,11 @@
 #
 import copy
 from math import sin, radians
-from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.contexts.platform import getContext
+from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.toolbox.color import blackColor
 
 context = getContext()
 
@@ -57,13 +58,13 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                                             fontSize=fontSize,
                                             tracking=tracking,
                                             textFill=blackColor))
-    condWidth, _ = context.textSize(condensedString)
+    condWidth, _ = condensedString.size
     wideFont = getVarFontInstance(varFont, wideLocation)
     wideString = context.newString(s, style=dict(font=wideFont.path,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        textFill=blackColor))
-    wideWidth, _ = context.textSize(wideString)
+    wideWidth, _ = wideString.size
     # Check if the requested with is inside the boundaries of the font width axis
     if w < condWidth:
         font = condFont

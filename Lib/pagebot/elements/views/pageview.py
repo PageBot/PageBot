@@ -675,8 +675,13 @@ class PageView(BaseView):
         >>> view.showBaselineGrid = [GRID_LINE]
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
-        if not self.showBaselineGrid or not GRID_LINE in self.showBaselineGrid:
+        show = self.showBaselineGrid
+        if not show:
             return
+        if isinstance(show, (list, tuple)) and not GRID_LINE in show:
+            return
+        else:
+            show = [GRID_LINE]
 
         context = self.context
 
@@ -698,12 +703,11 @@ class PageView(BaseView):
             textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.baselineGrid
         context.fill(noColor)
-        context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth'))
-
+        context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth', 0.5))
 
         while oy > e.pb:
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
-            if GRID_INDEX in self.showBaselineGrid:
+            if GRID_INDEX in show:
                 bs = context.newString(repr(line), e=self, style=style)
                 context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
                 context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))

@@ -16,11 +16,15 @@
 from __future__ import division # Make integer division result in float.
 #import pagebot # Import to know the path of non-Python resources.
 
+from pagebot.contexts.platform import getContext
+c = getContext()
+
 from pagebot.style import A4, LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
+from pagebot.toolbox.units import pt, em
 
 DoTextFlow = False
 BoxWidth = 500
@@ -92,14 +96,14 @@ def makeDocument():
         h1 = None
     e1 = newTextBox(s,
         name='ElasticTextBox1',
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1, 
+        parent=page, padding=4, x=100, w=min(BoxWidth, page.pw), font='Verdana', h=h1, 
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
-        leading=5, fontSize=9, textFill=tColor, strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor,
+        leading=em(1.4), fontSize=9, textFill=tColor, strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor,
     )
     e2 = newTextBox(s,
         name='ElasticTextBox2',
-        parent=page, padding=4, x=100, w=BoxWidth, font='Verdana',
-        conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=5,
+        parent=page, padding=4, x=100, w=min(BoxWidth, page.pw), font='Verdana',
+        conditions=[Right2Right(), Float2Top()], yAlign=TOP, leading=em(1.4),
         fontSize=9, textFill=0.9, strokeWidth=0.5, fill=tColor, stroke=noColor,
     )
 

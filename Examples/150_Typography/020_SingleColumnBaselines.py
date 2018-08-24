@@ -46,7 +46,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation
 footNoteRefStyle = dict(font=font, fontSize=18, baselineShift=em(0.2), textFill=0.2)
 footNoteStyle = dict(font=font, fontSize=20, leading=em(1.4), textFill=0.6, paragraphTopSpacing=em(1))
 
-# Make BabelString from multiple cascadeing styles
+# Make BabelString from adding multiple cascadeing styles
 t = context.newString('Headline\n', style=headStyle) # Start with headline
 t += context.newString(text * 3, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text

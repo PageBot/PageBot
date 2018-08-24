@@ -27,11 +27,12 @@ REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def getPoints(glyph):
-    # TODO: rewrite for TTF / OTF.
+    u"""Answer the list of points for this glyph."""
     points = []
     for contour in glyph:
-        for p in contour:
-            points.append(p)
+        for segment in contour:
+            for p in segment:
+                points.append(p)
     return points
 
 def getComponents(glyph):
@@ -1276,11 +1277,12 @@ class Model(object):
     >>> cy = y//2
     >>> FAMILY = 'PageBotTest'
     >>> PATH = '/tmp/%s-%s.ufo'
-
+    >>> GNAME = 'Q'
     >>> fReg = NewFont()
+    >>> fReg.axes = {} # Pretend to be a VF
     >>> fReg.info.familyName = FAMILY
     >>> fReg.info.styleName = 'Regular'
-    >>> gReg = fReg.newGlyph('I')
+    >>> gReg = fReg.newGlyph(GNAME)
     >>> pen = gReg.getPen()
     >>> pen.moveTo((0, 0))
     >>> pen.lineTo((0, y))
@@ -1294,9 +1296,10 @@ class Model(object):
     >>> fReg.save(PATH % (FAMILY, fReg.info.styleName))
 
     >>> fBld = NewFont()
+    >>> fBld.axes = {} # Pretend to be a VF
     >>> fBld.info.familyName = FAMILY
     >>> fBld.info.styleName = 'Bold'
-    >>> gBld = fBld.newGlyph('I')
+    >>> gBld = fBld.newGlyph(GNAME)
     >>> pen = gBld.getPen()
     >>> pen.moveTo((0, 0))
     >>> pen.lineTo((0, y))
@@ -1310,9 +1313,10 @@ class Model(object):
     >>> fBld.save(PATH % (FAMILY, fBld.info.styleName))
 
     >>> fLght = NewFont()
+    >>> fLght.axes = {} # Pretend to be a VF
     >>> fLght.info.familyName = FAMILY
     >>> fLght.info.styleName = 'Light'
-    >>> gLght = fLght.newGlyph('I')
+    >>> gLght = fLght.newGlyph(GNAME)
     >>> pen = gLght.getPen()
     >>> pen.moveTo((0, 0))
     >>> pen.lineTo((0, y))
@@ -1328,7 +1332,7 @@ class Model(object):
     >>> fCnd = NewFont()
     >>> fCnd.info.familyName = FAMILY
     >>> fCnd.info.styleName = 'Condensed'
-    >>> gCnd = fCnd.newGlyph('I')
+    >>> gCnd = fCnd.newGlyph(GNAME)
     >>> pen = gCnd.getPen()
     >>> pen.moveTo((0, 0))
     >>> pen.lineTo((0, y/2))
@@ -1340,16 +1344,12 @@ class Model(object):
     >>> gCnd.width
     840
     >>> fCnd.save(PATH % (FAMILY, fCnd.info.styleName))
-
-    >>> #result = os.system('open %s %s %s' % (fReg.path, fBld.path, fCnd.path) )
-
     >>> # We created the masters now build the design space from it.
     >>> ds = DesignSpace() # Start empty design space, not reading from a file.
     >>> # Construct axes as list, to maintain the defined order.
     >>> axis1 = Axis(tag='wght', name='Weight', minimum=100, default=400, maximum=900)
     >>> axis2 = Axis(tag='YTUC', name='Y-Transparancy-UC', minimum=0, default=100, maximum=100)
     >>> ds.appendAxes((axis1, axis2))
-
     >>> # Construct master info as list, to maintain the defined order.
     >>> # Default masters contains "info" attribute.
     >>> loc = Location(wght=100, YTUC=100)
@@ -1374,20 +1374,20 @@ class Model(object):
     <PageBot Model PageBotTest axes:2 masters:4>
     >>> [f.info.styleName for f in m.masterList] # Sorted as defined, with Regular as #1.
     ['Regular', 'Light', 'Bold', 'Condensed']
-
-    Get combined coordinates from all masters. This is why they need to be compatible.
-    >>> mpx, mpy, mcx, mcy, mt = m.getMasterValues('I') # Coordinates in order of masterList for (p0, p1, p2, p3)
+    >>> # Get combined coordinates from all masters. This is why they need to be compatible.
+    >>> mpx, mpy, mcx, mcy, mt = m.getMasterValues(GNAME) # Coordinates in order of masterList for (p0, p1, p2, p3)
     >>> mpx # [[px0, px0, px0, px0], [px1, px1, px1, px1], [px2, px2, px2, px2], [px3, px3, px3, px3]]
-    [[50, 70, 30, 20], [50, 70, 30, 20], [450, 270, 830, 820], [450, 270, 830, 820]]
+    [[50, 70, 30, 20], [450, 270, 830, 820], [450, 270, 830, 820], [50, 70, 30, 20]]
     >>> mpy # [[py1, py1, py1, py1], [py2, py2, py2, py2], ...]
-    [[0, 0, 0, 0], [800, 800, 800, 400.0], [800, 800, 800, 400.0], [0, 0, 0, 0]]
+    [[800, 800, 800, 400.0], [800, 800, 800, 400.0], [0, 0, 0, 0], [0, 0, 0, 0]]
     >>> mcx, mcy # No components here
     ([], [])
     >>> mt
     [[500, 340, 860, 840]]
-    >>> dpx, dpy, dcx, dcy, dt = m.getDeltas('I') # Point deltas, component deltas, metrics deltas
+
+    >>> dpx, dpy, dcx, dcy, dt = m.getDeltas(GNAME) # Point deltas, component deltas, metrics deltas
     >>> dpx # [[dx1, dx1, dx1, dx1], [dx2, dx2, dx2, dx2], ...]
-    [[70, -20.0, -40.0, -50.0], [70, -20.0, -40.0, -50.0], [270, 180.0, 560.0, 550.0], [270, 180.0, 560.0, 550.0]]
+    [[70, -20.0, -40.0, -50.0], [270, 180.0, 560.0, 550.0], [270, 180.0, 560.0, 550.0], [70, -20.0, -40.0, -50.0]]
     >>> dt
     [[340, 160.0, 520.0, 500.0]]
     >>> sorted(m.ds.axes.keys())
@@ -1409,29 +1409,28 @@ class Model(object):
     >>> m.getScalars(dict(wght=0.8, YTUC=-0.3))
     [1.0, 0.0, 0.8, 0.3]
     >>> fInt = NewFont()
-    >>> gInt = fInt.newGlyph('I')
+    >>> gInt = fInt.newGlyph(GNAME)
     >>> loc = dict(wght=0, YTUC=500)
-    >>> points, components, metrics = m.interpolateValues('I', loc)
+    >>> points, components, metrics = m.interpolateValues(GNAME, loc)
     >>> points
-    [(50.0, 0.0), (50.0, 800.0), (450.0, 800.0), (450.0, 0.0)]
+    [(50.0, 800.0), (450.0, 800.0), (450.0, 0.0), (50.0, 0.0)]
     >>> components
     []
     >>> metrics
     [500.0]
     >>> loc = dict(wght=-1, YTUC=0) # Location outside the boundaries of an axis answers min/max of the axis
-    >>> points, components, metrics = m.interpolateValues('I', loc)
+    >>> points, components, metrics = m.interpolateValues(GNAME, loc)
     >>> points
-    [(0.0, 0.0), (0.0, 400.0), (1000.0, 400.0), (1000.0, 0.0)]
+    [(0.0, 400.0), (1000.0, 400.0), (1000.0, 0.0), (0.0, 0.0)]
     >>> components
     []
     >>> metrics
     [1000.0]
-    >>> #os.system('open /tmp/%s.csv' % FAMILY)
     """
 
     def __init__(self, designSpace, masters, instances=None):
         """Create a VariableFont interpolation model. DesignSpace """
-        assert masters, ValueError('%s No masters fonts defined. The dictionay shouls master the design space.' % self)
+        assert masters, ValueError('%s No master fonts defined. The dictionay shouls master the design space.' % self)
         self.ds = designSpace
         # Property self.masterList creates font list in order of the design space.
         self.masters = masters # Can be an empty list, if the design space is new.
@@ -1579,7 +1578,7 @@ class Model(object):
                     mvx[pIndex].append(point.x)
                     mvy[pIndex].append(point.y)
                 components = getComponents(g) # Collect the master components
-
+                """
                 for cIndex, component in enumerate(components):
                     t = component.transformation
                     if len(mvCx) < cIndex:
@@ -1587,9 +1586,9 @@ class Model(object):
                         mvCy.append([])
                     mvCx[cIndex].append(t[-2])
                     mvCy[cIndex].append(t[-1])
-
+                """
                 mMt[0].append(g.width) # Other interpolating metrics can be added later.
-
+                
         return self._masterValues
 
     def interpolateValues(self, glyphName, location):

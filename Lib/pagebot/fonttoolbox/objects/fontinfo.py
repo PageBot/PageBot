@@ -69,7 +69,8 @@ class FontInfo(object):
 
     @cached_property
     def fullName(self):
-        return self._getNameTableEntry(4)
+        fullName = self._getNameTableEntry(4)
+        return fullName
 
     def _get_familyName(self):
         """Should be this, but often wrong: return self._getNameTableEntry(1)
@@ -83,7 +84,11 @@ class FontInfo(object):
         """
         if self._getNameTableEntry(1):
             return self._getNameTableEntry(1).split(' ')[0]
-        return ''
+        # If name table fails, try to guess from the file name
+        if self.ttFont.reader:
+            path = self.ttFont.reader.file.name
+            return path.split('/')[-1].split('-')[0].split('.')[0]
+        return 'Untitled'
     familyName = property(_get_familyName)
 
     def _get_styleName(self):
