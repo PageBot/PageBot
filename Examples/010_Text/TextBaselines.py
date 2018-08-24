@@ -86,7 +86,8 @@ tb1.w = COL
 #tb.conditions = (Left2Left(), Top2Top(), Fit2Height(), Baseline2Grid(index=0))
 tb1.conditions = (Left2Left(), Top2Top(), Fit2Height())
 
-print(tb1.textLines)
+for textLine in tb1.textLines:
+    print(textLine.y, textLine)
 
 tb2 = tb1.copy(parent=page)
 tb2.fill = 0.9
