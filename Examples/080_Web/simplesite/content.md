@@ -5,7 +5,7 @@ doc.lib['footer'] = "Footer of the page. Footer of the page. Footer of the page.
 
 doc.title = doc.name = 'Design&nbsp;Design&nbsp;Space'
 page = doc[1]
-box = page.deepFind('Logo')
+box = page.select('Logo')
 ~~~
 # PageBot:1
 
@@ -80,7 +80,7 @@ box = page.select('Footer').append(doc.lib['footer'])
  
 ~~~Python
 # -----------------------------------------------------------
-page = doc[2]
+page = page.next
 box = page.select('Logo')
 ~~~
 # PageBot:2
@@ -110,7 +110,7 @@ box = page.select('Footer').append(doc.lib['footer'])
 ~~~
 
 ~~~Python
-page = doc[3]
+page = page.next
 box = page.select('Logo')
 ~~~
 # PageBot:3
@@ -140,7 +140,7 @@ box = page.select('Footer').append(doc.lib['footer'])
 ~~~
 
 ~~~Python
-page = doc[4]
+page = page.next
 box = page.select('Logo')
 ~~~
 # PageBot:4
@@ -170,7 +170,7 @@ box = page.select('Footer').append(doc.lib['footer'])
 ~~~
 
 ~~~Python
-page = doc[5]
+page = page.next
 box = page.select('Logo')
 ~~~
 # PageBot:5
@@ -196,5 +196,5 @@ box = page.select('Introduction')
 ## Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
 ~~~Python
-box = page.deepFind('Footer').append(doc.lib['footer'])
+box = page.select('Footer').append(doc.lib['footer'])
 ~~~

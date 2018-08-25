@@ -34,11 +34,11 @@ from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 
 
 class Typesetter(object):
-    u"""The Typesetter takes one or more markdown files or a sequence of markdown strings
-    and builds a galley, using a dictionary of styles for the FormattedString attributes. 
-    The result of the typesetting is a self.galley, that contains a sequence of Element instances,
-    such as formatted images, textboxes (with BabelStrings), ruler elements and other nested galleys.
-
+    u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence 
+    of markdown strings and builds a galley, using a dictionary of styles for the formatted string 
+    attributes. The result of the typesetting is a self.galley, that contains a sequence of Element 
+    instances, such as formatted images, textboxes (with BabelStrings), ruler elements and other 
+    nested galleys.
     """
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
@@ -72,7 +72,7 @@ class Typesetter(object):
         self.context = context
         # Find the context, in case no doc has be defined yet.
         if galley is None:
-            galley = self.GALLEY_CLASS()
+            galley = self.GALLEY_CLASS(context=context)
         self.galley = galley
         self.styles = styles
 
@@ -438,7 +438,7 @@ class Typesetter(object):
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
-        bs = self.galley.newString(sOrBs, e=e, style=style)
+        bs = context.newString(sOrBs, e=e, style=style)
         self.append(bs)
         return bs
 

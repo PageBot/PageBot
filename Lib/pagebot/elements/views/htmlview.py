@@ -24,7 +24,7 @@ class HtmlView(BaseView):
         """Answer the default context for this type of view."""
         return HtmlContext()
 
-    def XXXbuild_sass(self, view, origin=None):
+    def XXXbuild_scss(self, view, origin=None):
         """Build the CSS for this document. Default behavior is to import the content of the file
         if there is a path reference, otherwise build the CSS from the available values and parameters
         in self.style and self.css()."""

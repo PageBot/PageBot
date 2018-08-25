@@ -32,9 +32,9 @@ class MampView(SiteView):
 
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    SASS_CSS_PATH = SITE_ROOT_PATH + 'css/style.sass.css'
-    SASS_PATH = SITE_ROOT_PATH + 'css/style.sass'
-    VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.sass'
+    SCSS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
+    SCSS_PATH = SITE_ROOT_PATH + 'css/style.scss'
+    SCSS_VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
 
     #   B U I L D  H T M L  /  C S S
 
@@ -73,10 +73,10 @@ class MampView(SiteView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
 
-        # Write all collected SASS vatiables into one file
-        self.context.b.writeSass(self.VARIABLES_PATH)
-        # Compile SASS to CSS
-        self.context.b.compileSass(self.SASS_PATH, self.SASS_CSS_PATH)
+        # Write all collected SCSS vatiables into one file
+        self.context.b.writeScss(self.SCSS_VARIABLES_PATH)
+        # Compile SCSS to CSS
+        self.context.b.compileScss(self.SCSS_PATH, self.SCSS_CSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)

@@ -271,7 +271,7 @@ class Page(Element):
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
         b.resetHtml()
 
-        self.build_sass(view)
+        self.build_scss(view)
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.

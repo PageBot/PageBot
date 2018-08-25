@@ -94,7 +94,7 @@ class HtmlString(BabelString):
         return textLines
 
     def append(self, sOrBs):
-        if not isinstance(sOrBs, str):
+        if hasattr(sOrBs, 's'):
             sOrBs = sOrBs.s
         self.s += sOrBs
 
