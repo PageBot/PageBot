@@ -3951,15 +3951,18 @@ class Element(object):
             else: # No implementation for this context, call default building method for this element.
                 e.build(view, origin)
 
-    #   H T M L  /  S A S S  S U P P O R T
+    #   H T M L  /  S C S S / S A S S  S U P P O R T
 
-    def build_sass(self, view):
-        """Build the sass variables for this element."""
+    # Sass syntax is not supported yet. It does not appear to be standard and cannot be eaily
+    # converted from existing CSS.
+
+    def build_scss(self, view):
+        """Build the scss variables for this element."""
         b = self.context.b
-        b.build_sass(self, view)
+        b.build_scss(self, view)
         for e in self.elements:
             if e.show:
-                e.build_sass(view)
+                e.build_scss(view)
 
     def build_html(self, view, path, drawElements=True):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is

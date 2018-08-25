@@ -295,7 +295,7 @@ table {
     def __init__(self):
         self.resetHtml() # Initialize the HTML output stream.
         self._cssOut = [] # Keep the collected CSS and JS from elements here.
-        self._sassVariables = {}
+        self._scssVariables = {}
         self._jsOut = []
         self._copyPaths = []
         self._initialize()
@@ -430,66 +430,67 @@ table {
 
     #   S A S S
 
-    def writeSass(self, path):
-        """Write the collect set of SASS variables to path."""
+    def writeScss(self, path):
+        """Write the collect set of SCSS variables to path."""
         try:
             print('Writing "%s"' % path)
             f = codecs.open(path, 'w', 'utf-8')
-            for sassId, value in sorted(self._sassVariables.items()):
-                f.write('$%s: %s\n' % (sassId, value))
+            for scssId, value in sorted(self._scssVariables.items()):
+                f.write('$%s: %s;\n' % (scssId, value))
             f.close()
         except IOError:
-            print('[HtmlBuilder.writeSass] Cannot write SASS file "%s"' % path)
+            print('[HtmlBuilder.writeSass] Cannot write SCSS file "%s"' % path)
 
-    def compileSass(self, sassPath, cssPath=None, compressed=True):
+    def compileScss(self, scssPath, cssPath=None, compressed=True):
+        u"""For now using sass to support SCSS. SASS support could be added later."""
         if cssPath is None:
-            cssPath = sassPath + '.css'
-        css = sass.compile_file(sassPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
+            cssPath = scssPath + '.css'
+        css = sass.compile_file(scssPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)
         f.close()
 
-    def build_sass(self, e, view):
-        sass = self._sassVariables
+    def build_scss(self, e, view):
+        scss = self._scssVariables
         if e.cssId: # If the #id is defined, then use that as CSS reference.
-            sassId = e.cssId
+            scssId = e.cssId
         elif e.cssClass: # Otherwise for now, we only can generate CSS if the element has a class name defined.
-            sassId = e.__class__.__name__ + '-' + e.cssClass.replace(' ','_')
+            scssId = e.__class__.__name__ + '-' + e.cssClass.replace(' ','_')
         else:
-            sassId = e.__class__.__name__
+            scssId = e.__class__.__name__
         if upt(e.ml):
-            sass[sassId+'-margin-left'] = e.ml
+            scss[scssId+'-margin-left'] = e.ml
         if upt(e.mt):
-            sass[sassId+'-margin-top'] = e.mt
+            scss[scssId+'-margin-top'] = e.mt
         if upt(e.mb):
-            sass[sassId+'-margin-bottom'] = e.mb
+            scss[scssId+'-margin-bottom'] = e.mb
         if upt(e.mr):
-            sass[sassId+'-margin-right'] = e.mr
+            scss[scssId+'-margin-right'] = e.mr
         if upt(e.pl):
-            sass[sassId+'-padding-left'] = e.ml
+            scss[scssId+'-padding-left'] = e.ml
         if upt(e.pt):
-            sass[sassId+'-padding-top'] = e.pt
+            scss[scssId+'-padding-top'] = e.pt
         if upt(e.pb):
-            sass[sassId+'-padding-bottom'] = e.pb
+            scss[scssId+'-padding-bottom'] = e.pb
         if upt(e.pr):
-            sass[sassId+'-padding-right'] = e.pr
+            scss[scssId+'-padding-right'] = e.pr
         if e.css('font') is not None:
             font = Font(e.css('font'))
-            sass[sassId+'-font-family'] = font.info.fullName
+            scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
         if e.css('fontSize') is not None:
-            sass[sassId+'-font-size'] = e.css('fontSize')
+            scss[scssId+'-font-size'] = e.css('fontSize')
         if e.css('fontStyle') is not None:
-            sass[sassId+'-font-style'] = e.css('fontStyle')
+            scss[scssId+'-font-style'] = e.css('fontStyle')
         if e.css('fontWeight') is not None:
-            sass[sassId+'-font-weight'] = e.css('fontWeight')
+            scss[scssId+'-font-weight'] = e.css('fontWeight')
         if e.css('tracking') is not None:
-            sass[sassId+'-letter-spacing'] = e.css('tracking')
+            scss[scssId+'-letter-spacing'] = e.css('tracking')
         if e.css('fill') not in (noColor, None): # Must Color instance
-            sass[sassId+'-background-color'] = e.css('fill').css
+            scss[scssId+'-background-color'] = e.css('fill').css
         if e.css('textFill') not in (noColor, None): # Must be Color instance
-            sass[sassId+'-color'] = e.css('textFill').css
+            scss[scssId+'-color'] = e.css('textFill').css
 
-    def build_css(self, sass, selector=None, e=None, message=None):
+    def build_css(self, scss, selector=None, e=None, message=None):
         """Build the CSS output for the defined selector and style."""
         css = ''
         attributes = []
@@ -512,7 +513,7 @@ table {
             if upt(e.pr):
                 attributes.append('padding-right: %s;' % e.pr)
             if style.get('font') is not None:
-                attributes.append('font-family: %s;' % style['font'])
+                attributes.append('font-family: "%s";' % style['font'])
             if style.get('fontSize') is not None:
                 attributes.append('font-size: %s;' % style['fontSize'])
             if style.get('fontStyle') is not None:
@@ -540,10 +541,10 @@ table {
         self.addCss(css)
 
         b = HtmlBuilder()
-        # Write all collected SASS vatiables into one file
-        b.writeSass(self.DEFAULT_SASS_PATH)
-        # Compile SASS to CSS
-        b.compileSass(self.DEFAULT_CSS_PATH)
+        # Write all collected SCSS vatiables into one file
+        b.writeScss(self.DEFAULT_SCSS_PATH)
+        # Compile SCSS to CSS
+        b.compileScss(self.DEFAULT_CSS_PATH)
 
 
     #   H T M L

@@ -31,9 +31,9 @@ class SiteView(HtmlView):
     #   B U I L D  H T M L  /  C S S
 
     SITE_ROOT_PATH = '_export/' # Redefine by inheriting website view classes.
-    SASS_PATH = 'css/style.sass'
-    SASS_CSS_PATH = 'css/style.sass.css'
-    SASS_VARIABLES_PATH = 'css/variables.sass'
+    SCSS_PATH = 'css/style.scss'
+    SCSS_CSS_PATH = 'css/style.scss.css'
+    SCSS_VARIABLES_PATH = 'css/variables.scss'
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, 
             cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
@@ -54,7 +54,7 @@ class SiteView(HtmlView):
 
         # Default CSS urls to inclide 
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
-        self.cssUrls = cssUrls or [self.SASS_CSS_PATH] # Added as links in the page <head>
+        self.cssUrls = cssUrls or [self.SCSS_CSS_PATH] # Added as links in the page <head>
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
@@ -115,10 +115,10 @@ class SiteView(HtmlView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
         
-        # Write all collected SASS vatiables into one file
-        b.writeSass(self.SASS_VARIABLES_PATH)
-        # Compile SASS to CSS
-        b.compileSass(self.SASS_PATH)
+        # Write all collected SCSS vatiables into one file
+        b.writeScss(self.SCSS_VARIABLES_PATH)
+        # Compile SCSS to CSS
+        b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)

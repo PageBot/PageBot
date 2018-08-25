@@ -44,8 +44,7 @@ class Composer(object):
     1
     >>> len(c.galleys[0])
     3
-    >>> instruction = 'Do it'
-    >>> g = c.compose(instruction)
+    >>> g = c.compose()
     >>> doc.export('_export/ComposerTest.pdf')
 
     """
@@ -62,7 +61,10 @@ class Composer(object):
         if path is not None:
             t.typesetFile(path)
         if t.galley: # Any input got in galley.
-            self.galleys.append(t.galley)
+            self.append(t.galley)
+
+    def append(self, galley):
+        self.galleys.append(galley)
 
     def compose(self, globals=None, page=None):
         u"""Compose the galley element, based on the instruction of the ArtDirection instance
@@ -82,9 +84,22 @@ class Composer(object):
                 elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
                     globals['box'].bs += e.bs
                 else:
-                    #pass
                     print('%s.compose: No box defined or box is not a TextBox in "%s - %s"' % (self.__class__.__name__, globals['page'], e))
         return globals
+
+    def debug(self):
+        for gsIndex, galleys in enumerate(self.galleys):
+            print('=== Galleys %d' % gsIndex)
+            for gIndex, galley in enumerate(galleys):
+                if galley is None:
+                    print('\t--- Galley None')
+                else:
+                    print('\t--- Galley %d' % gIndex)
+                    for eIndex, e in enumerate(galley.elements):
+                        if e is None:
+                            print('\t\t... None %d' % gIndex)
+                        else:
+                            print('\t\t... E %d' % eIndex)
 
     def XXXcompose(self, galley, page, flowId=None):
         u"""Compose the galley element, starting with the flowId text box on page.

@@ -19,7 +19,7 @@ from __future__ import division # Make integer division result in float.
 import os
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
-from pagebot.typesetter import Typesetter
+from pagebot.composer import Composer
 from pagebot.elements import *
 from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em
@@ -27,11 +27,11 @@ from pagebot.toolbox.units import em
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
 #CSS_PATH = 'css/style-org.css'
-CSS_PATH = 'css/style.sass.css'
+CSS_PATH = 'css/style.scss.css'
 
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
-#DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
+DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
 EXPORT_TYPE = DO_FILE
 
 class Header(Element):
@@ -272,7 +272,7 @@ doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
 view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
-# Set the CSS paths. The CSS_PATH decicdes if plain CSS, SCSS or SASS is used.
+# Set the CSS paths. The CSS_PATH decicdes if plain CSS or SCSS is used.
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', CSS_PATH)
 
 headerBackgroundColor = whiteColor
@@ -351,17 +351,21 @@ for pn, (name, title) in enumerate(SITE):
         section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor,
             textFill=coloredSectionColor)
     footer = Footer(parent=page, fill=footerBackgroundColor, textFill=footerColor)
-    
-# Create a Typesetter for this document, then create pages and fill content. 
-# As no Galley instance is supplied to the Typesetter, it will create one,
-# or put the current page/box variables to where the MarkDown file indicates.
-t = Typesetter(doc, tryExcept=False, verbose=False)
-# Parse the markdown content and execute the embedded Python code blocks.
-# The blocks, global defined feedback variables and text content are in the 
-# typesetter t.galley.
+
+
+# Create a Composer for this document, then create pages and fill content. 
+composer = Composer(doc)
+# The composer creates a Typesetter instance that reads the markdown content and 
+# executes the embedded Python code blocks. Typesetter result is saved as HTML strings
+# by the HtmlContext.
 # By default, the typesetter produces a single Galley with content and code blocks.
-# In this case it directly writes into the boxes on the Website template pages.
-t.typesetFile(MD_PATH)
+composer.typeset(MD_PATH)
+#for galley in composer.galleys:
+#    print(galley)
+composer.compose()
+composer.debug()
+
+print(composer.galleys)
 
 if EXPORT_TYPE == DO_FILE:
     doc.export(EXPORT_PATH)
@@ -384,7 +388,7 @@ elif EXPORT_TYPE == DO_MAMP:
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
         os.system(u'open "%s"' % mampView.getUrl('SimpleSite'))
 
-elif EXPORTTYPE == DO_GIT and False: # Not supported for SimpleSite, only one per repository?
+elif EXPORT_TYPE == DO_GIT and False: # Not supported for SimpleSite, only one per repository?
     # Make sure outside always has the right generated CSS
     view = doc.newView('Git')
     doc.build(path=EXPORT_PATH)

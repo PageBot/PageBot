@@ -5,7 +5,7 @@ doc.lib['footer'] = &quot;Footer of the page. Footer of the page. Footer of the 
 
 doc.title = doc.name = 'Design&amp;nbsp;Design&amp;nbsp;Space'
 page = doc[1]
-box = page.deepFind('Logo')
+box = page.select('Logo')
 </code></pre>
 
 <h1>PageBot:1</h1>
@@ -61,7 +61,7 @@ box = page.deepFind('Logo')
 </code></pre>
 
 <pre><code class="Python"># -----------------------------------------------------------
-page = doc[2]
+page = page.next
 box = page.select('Logo')
 </code></pre>
 
@@ -85,7 +85,7 @@ box = page.select('Logo')
 <pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code class="Python">page = doc[3]
+<pre><code class="Python">page = page.next
 box = page.select('Logo')
 </code></pre>
 
@@ -109,7 +109,7 @@ box = page.select('Logo')
 <pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code class="Python">page = doc[4]
+<pre><code class="Python">page = page.next
 box = page.select('Logo')
 </code></pre>
 
@@ -133,7 +133,7 @@ box = page.select('Logo')
 <pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code class="Python">page = doc[5]
+<pre><code class="Python">page = page.next
 box = page.select('Logo')
 </code></pre>
 
@@ -154,5 +154,5 @@ box = page.select('Logo')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
-<pre><code class="Python">box = page.deepFind('Footer').append(doc.lib['footer'])
+<pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre></document>
