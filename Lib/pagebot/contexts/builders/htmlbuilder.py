@@ -39,7 +39,7 @@ class HtmlBuilder(XmlBuilder):
     >>> b._body()
     >>> b._html()
     >>> b.getHtml()
-    u'<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
+    '<html xmlns="http://www.w3.org/1999/xhtml"><body>Hello world</body></html>'
     >>> ''.join(b._cssOut)
     'body {background-color: #FFFF00;}'
     """
@@ -333,7 +333,7 @@ table {
                 key = 'http-equiv'
             elif key == 'usemap':
                 if not value.startswith(u'#'):
-                    value = u'#' + value
+                    value = '#' + value
 
             # Handle Angular.org attributes that contain underscores, translate them to hyphens
             elif key.startswith('ng_'):
@@ -443,9 +443,8 @@ table {
 
     def compileScss(self, scssPath, cssPath=None, compressed=True):
         u"""For now using sass to support SCSS. SASS support could be added later."""
-        return
         if cssPath is None:
-            cssPath = u'%s.css' % scssPath
+            cssPath = scssPath + '.css'
         css = sass.compile_file(scssPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)
@@ -608,17 +607,17 @@ table {
         >>> b.html()
         >>> b._html()
         >>> b.getHtml()
-        u'<html xmlns="http://www.w3.org/1999/xhtml"></html>'
+        '<html xmlns="http://www.w3.org/1999/xhtml"></html>'
         """
-        self.write(u'<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
-        self.getandwrite_attributes(u'html', args)
-        self.write(u'>')
+        self.write('<html xmlns="%s"' % (xmlns or 'http://www.w3.org/1999/xhtml'))
+        self.getandwrite_attributes('html', args)
+        self.write('>')
         self.tabIn()
         # Push as last, so we can see the current tag on the stack
-        self._pushTag(u'html')
+        self._pushTag('html')
 
     def _html(self):
-        self._closeTag(u'html')
+        self._closeTag('html')
 
     def head(self, **args):
         """
@@ -632,14 +631,14 @@ table {
         """
         self.tabs()
         self.tabIn()
-        self.write(u'<head')
-        self.getandwrite_attributes(u'head', args)
-        self.write(u'>')
+        self.write('<head')
+        self.getandwrite_attributes('head', args)
+        self.write('>')
         # Push as last, so we can see the current tag on the stack
-        self._pushTag(u'head')
+        self._pushTag('head')
 
     def _head(self):
-        self._closeTag(u'head')
+        self._closeTag('head')
 
     def title(self):
         """
@@ -663,10 +662,10 @@ table {
         """
         self.tabs()
         self.tabIn()
-        self.write_tag(u'link', True, {})
+        self.write_tag('link', True, {})
 
     def _title(self):
-        self._closeTag(u'title')
+        self._closeTag('title')
 
     def title_(self, s):
         """Write the stripped string s as <title>...</title> tag.
@@ -674,11 +673,11 @@ table {
         >>> b = HtmlBuilder()
         >>> b.title_('This is a title')
         >>> b.getHtml().strip()
-        u'<title>This is a title</title>'
+        '<title>This is a title</title>'
         """
         self.tabs()
         self.tabIn()
-        self.write(u'<title>%s</title>' % s.strip())
+        self.write('<title>%s</title>' % s.strip())
 
     def link(self, **args):
         """
@@ -692,7 +691,7 @@ table {
             ...
         self._head()
         """
-        self.write_tag(u'link', False, args)
+        self.write_tag('link', False, args)
         self.newLine() # Optional newline is self.compact is False.
 
 
@@ -705,10 +704,10 @@ table {
             ...
         self._body()
         """
-        self.write_tag(u'body', True, args)
+        self.write_tag('body', True, args)
 
     def _body(self):
-        self._closeTag(u'body')
+        self._closeTag('body')
 
 
     def h1(self, **args):
@@ -726,12 +725,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h1()
         >>> b.getHtml()
-        u'<h1>Hello world</h1>'
+        '<h1>Hello world</h1>'
         """
-        self.write_tag_noWhitespace(u'h1', True, args)
+        self.write_tag_noWhitespace('h1', True, args)
 
     def _h1(self):
-        self._closeTag_noWhitespace(u'h1')
+        self._closeTag_noWhitespace('h1')
         self.newLine() # Optional newline is self.compact is False.
 
     def h1_(self, s, **args):
@@ -743,7 +742,7 @@ table {
         >>> b.compact = True
         >>> b.h1_('Hello world')
         >>> b.getHtml()
-        u'<h1>Hello world</h1>'
+        '<h1>Hello world</h1>'
         """
         self.h1(**args)
         self.addHtml(s)
@@ -764,12 +763,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h2()
         >>> b.getHtml()
-        u'<h2>Hello world</h2>'
+        '<h2>Hello world</h2>'
         """
-        self.write_tag_noWhitespace(u'h2', True, args)
+        self.write_tag_noWhitespace('h2', True, args)
 
     def _h2(self):
-        self._closeTag_noWhitespace(u'h2')
+        self._closeTag_noWhitespace('h2')
         self.newLine() # Optional newline is self.compact is False.
 
     def h2_(self, s, **args):
@@ -781,7 +780,7 @@ table {
         >>> b.compact = True
         >>> b.h2_('Hello world')
         >>> b.getHtml()
-        u'<h2>Hello world</h2>'
+        '<h2>Hello world</h2>'
         """
         self.h2(**args)
         self.addHtml(s)
@@ -802,12 +801,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h3()
         >>> b.getHtml()
-        u'<h3>Hello world</h3>'
+        '<h3>Hello world</h3>'
         """
-        self.write_tag_noWhitespace(u'h3', True, args)
+        self.write_tag_noWhitespace('h3', True, args)
 
     def _h3(self):
-        self._closeTag_noWhitespace(u'h3')
+        self._closeTag_noWhitespace('h3')
         self.newLine() # Optional newline is self.compact is False.
 
     def h3_(self, s, **args):
@@ -819,7 +818,7 @@ table {
         >>> b.compact = True
         >>> b.h3_('Hello world')
         >>> b.getHtml()
-        u'<h3>Hello world</h3>'
+        '<h3>Hello world</h3>'
         """
         self.h3(**args)
         self.addHtml(s)
@@ -840,13 +839,13 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h4()
         >>> b.getHtml()
-        u'<h4>Hello world</h4>'
+        '<h4>Hello world</h4>'
         """
-        self.write_tag_noWhitespace(u'h4', True, args)
+        self.write_tag_noWhitespace('h4', True, args)
 
     def _h4(self):
         """Closing tag of h4."""
-        self._closeTag_noWhitespace(u'h4')
+        self._closeTag_noWhitespace('h4')
         self.newLine() # Optional newline is self.compact is False.
 
     def h4_(self, s, **args):
@@ -858,7 +857,7 @@ table {
         >>> b.compact = True
         >>> b.h4_('Hello world')
         >>> b.getHtml()
-        u'<h4>Hello world</h4>'
+        '<h4>Hello world</h4>'
         """
         self.h4(**args)
         self.addHtml(s)
@@ -879,12 +878,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h5()
         >>> b.getHtml()
-        u'<h5>Hello world</h5>'
+        '<h5>Hello world</h5>'
         """
-        self.write_tag_noWhitespace(u'h5', True, args)
+        self.write_tag_noWhitespace('h5', True, args)
 
     def _h5(self):
-        self._closeTag_noWhitespace(u'h5')
+        self._closeTag_noWhitespace('h5')
 
     def h5_(self, s, **args):
         """
@@ -895,7 +894,7 @@ table {
         >>> b.compact = True
         >>> b.h5_('Hello world')
         >>> b.getHtml()
-        u'<h5>Hello world</h5>'
+        '<h5>Hello world</h5>'
         """
         self.h5(**args)
         self.addHtml(s)
@@ -916,12 +915,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._h6()
         >>> b.getHtml()
-        u'<h6>Hello world</h6>'
+        '<h6>Hello world</h6>'
         """
-        self.write_tag_noWhitespace(u'h6', True, args)
+        self.write_tag_noWhitespace('h6', True, args)
 
     def _h6(self):
-        self._closeTag_noWhitespace(u'h6')
+        self._closeTag_noWhitespace('h6')
 
     def h6_(self, s, **args):
         """
@@ -932,7 +931,7 @@ table {
         >>> b.compact = True
         >>> b.h6_('Hello world')
         >>> b.getHtml()
-        u'<h6>Hello world</h6>'
+        '<h6>Hello world</h6>'
         """
         self.h6(**args)
         self.addHtml(s)
@@ -951,12 +950,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._figure()
         >>> b.getHtml()
-        u'<figure>Hello world</figure>'
+        '<figure>Hello world</figure>'
         """
-        self.write_tag(u'figure', True, args)
+        self.write_tag('figure', True, args)
 
     def _figure(self):
-        self._closeTag(u'figure')
+        self._closeTag('figure')
 
     def figcaption(self, **args):
         """
@@ -973,12 +972,12 @@ table {
         >>> b._figcaption()
         >>> b._figure()
         >>> b.getHtml()
-        u'<figure><figcaption>Hello world</figcaption></figure>'
+        '<figure><figcaption>Hello world</figcaption></figure>'
         """
-        self.write_tag(u'figcaption', True, args)
+        self.write_tag('figcaption', True, args)
 
     def _figcaption(self):
-        self._closeTag(u'figcaption')
+        self._closeTag('figcaption')
 
     def hgroup(self, **args):
         """
@@ -992,12 +991,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._hgroup()
         >>> b.getHtml()
-        u'<hgroup>Hello world</hgroup>'
+        '<hgroup>Hello world</hgroup>'
         """
-        self.write_tag(u'hgroup', True, args)
+        self.write_tag('hgroup', True, args)
 
     def _hgroup(self):
-        self._closeTag(u'hgroup')
+        self._closeTag('hgroup')
 
     def article(self, **args):
         """
@@ -1005,64 +1004,64 @@ table {
         The external content could be a news-article from an external provider, or a text from a web log
         (blog), or a text from a forum, or any other content from an external source.
         """
-        self.write_tag(u'article', True, args)
+        self.write_tag('article', True, args)
 
     def _article(self):
-        self._closeTag(u'article')
+        self._closeTag('article')
 
     def header(self, **args):
         """The header method (HTML5) defines an introduction to the document.
         """
-        self.write_tag(u'header', True, args)
+        self.write_tag('header', True, args)
 
     def _header(self):
-        self._closeTag(u'header')
+        self._closeTag('header')
 
     def footer(self, **args):
         """The footer method (HTML5) defines a footer to the document.
         """
-        self.write_tag(u'footer', True, args)
+        self.write_tag('footer', True, args)
 
     def _footer(self):
-        self._closeTag(u'footer')
+        self._closeTag('footer')
 
     def section(self, **args):
         """
         The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers,
         or any other sections of the document.
         """
-        self.write_tag(u'section', True, args)
+        self.write_tag('section', True, args)
 
     def _section(self):
-        self._closeTag(u'section')
+        self._closeTag('section')
 
     def pre(self, **args):
         """
         The pre element defines preformatted text. The text enclosed in the pre element usually preserves spaces and line
         breaks. The text renders in a fixed-pitch font.
         """
-        self.write_tag_noWhitespace(u'pre', True, args)
+        self.write_tag_noWhitespace('pre', True, args)
 
     def _pre(self):
-        self._closeTag_noWhitespace(u'pre')
+        self._closeTag_noWhitespace('pre')
 
     def blockquote(self, **args):
         """
         The blockquote tag is the standard XHTML tag.
         """
-        self.write_tag(u'blockquote', True, args)
+        self.write_tag('blockquote', True, args)
 
     def _blockquote(self):
-        self._closeTag(u'blockquote')
+        self._closeTag('blockquote')
 
     def cite(self, **args):
         """
         The cite tag is the standard XHTML tag.
         """
-        self.write_tag(u'cite', True, args)
+        self.write_tag('cite', True, args)
 
     def _cite(self):
-        self._closeTag(u'cite')
+        self._closeTag('cite')
 
     def p(self, **args):
         """
@@ -1075,30 +1074,30 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._p()
         >>> b.getHtml()
-        u'<p>Hello world</p>'
+        '<p>Hello world</p>'
         """
-        self.write_tag_noWhitespace(u'p', True, args)
+        self.write_tag_noWhitespace('p', True, args)
 
     def _p(self):
-        self._closeTag_noWhitespace(u'p')
+        self._closeTag_noWhitespace('p')
 
     def tt(self, **args):
         """
         The tt method is showing the old teletype font.
         """
-        self.write_tag_noWhitespace(u'tt', True, args)
+        self.write_tag_noWhitespace('tt', True, args)
 
     def _tt(self):
-        self._closeTag_noWhitespace(u'tt')
+        self._closeTag_noWhitespace('tt')
 
     def code(self, **args):
         """
         The code method is the standard XHTML tag, for showing computer code in fixed width font.
         """
-        self.write_tag_noWhitespace(u'code', True, args)
+        self.write_tag_noWhitespace('code', True, args)
 
     def _code(self):
-        self._closeTag_noWhitespace(u'code')
+        self._closeTag_noWhitespace('code')
 
     def strong(self, **args):
         """
@@ -1115,21 +1114,21 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._strong()
         >>> b.getHtml()
-        u'<strong>Hello world</strong>'
+        '<strong>Hello world</strong>'
         """
-        self.write_tag_noWhitespace(u'strong', True, args)
+        self.write_tag_noWhitespace('strong', True, args)
 
     def _strong(self):
-        self._closeTag_noWhitespace(u'strong')
+        self._closeTag_noWhitespace('strong')
 
     def em(self, **args):
         """
         The em tag is the standard XHTML emphasis.
         """
-        self.write_tag_noWhitespace(u'em', True, args)
+        self.write_tag_noWhitespace('em', True, args)
 
     def _em(self):
-        self._closeTag_noWhitespace(u'em')
+        self._closeTag_noWhitespace('em')
 
     def b(self, **args):
         """
@@ -1143,12 +1142,12 @@ table {
         >>> b.addHtml('Hello world')
         >>> b._b()
         >>> b.getHtml()
-        u'<b>Hello world</b>'
+        '<b>Hello world</b>'
         """
-        self.write_tag_noWhitespace(u'b', True, args)
+        self.write_tag_noWhitespace('b', True, args)
 
     def _b(self):
-        self._closeTag_noWhitespace(u'b')
+        self._closeTag_noWhitespace('b')
 
     def u(self, **args):
         """
@@ -1159,10 +1158,10 @@ table {
         onkeyup</todo>
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
-        self.write_tag_noWhitespace(u'u', True, args)
+        self.write_tag_noWhitespace('u', True, args)
 
     def _u(self):
-        self._closeTag_noWhitespace(u'u')
+        self._closeTag_noWhitespace('u')
 
     def i(self, **args):
         """
@@ -1173,10 +1172,10 @@ table {
         onkeyup</todo>
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
         """
-        self.write_tag_noWhitespace(u'i', True, args)
+        self.write_tag_noWhitespace('i', True, args)
 
     def _i(self):
-        self._closeTag_noWhitespace(u'i')
+        self._closeTag_noWhitespace('i')
 
     def s(self, **args):
         """
@@ -1187,10 +1186,10 @@ table {
         onkeyup</todo>
         <www href="http://www.w3schools.com/tags/tag_strike.asp" target="external"/>
         """
-        self.write_tag_noWhitespace(u's', True, args)
+        self.write_tag_noWhitespace('s', True, args)
 
     def _s(self):
-        self._closeTag_noWhitespace(u's')
+        self._closeTag_noWhitespace('s')
 
     # D E P R E C A T E D ?
     # strike = s
@@ -1207,37 +1206,37 @@ table {
         <www href="http://www.w3schools.com/tags/tag_q.asp" target="external"/>
 
         """
-        self.write_tag_noWhitespace(u'q', True, args)
+        self.write_tag_noWhitespace('q', True, args)
 
     def _q(self):
-        self._closeTag_noWhitespace(u'q')
+        self._closeTag_noWhitespace('q')
 
     def sup(self, **args):
         """
         The sup tag implements the standard XTHML tag for superior (superscript) text.
-        self.text(u'Normal text')
+        self.text('Normal text')
         self.sup()
-        self.text(u'and superior')
+        self.text('and superior')
         self._sup()
         Normal text <sup>and suporior</sup>
         """
-        self.write_tag_noWhitespace(u'sup', True, args)
+        self.write_tag_noWhitespace('sup', True, args)
 
     def _sup(self):
-        self._closeTag_noWhitespace(u'sup')
+        self._closeTag_noWhitespace('sup')
 
     def sub(self, **args):
         """
         The sub tag implements the standard XTHML tag for inferior (subscript) text.
-        self.text(u'Normal text')
+        self.text('Normal text')
         self.sub()
-        self.text(u'and inferior')
+        self.text('and inferior')
         self._sub()
         Normal text <sub>and inferior</sub>
         """
-        self.write_tag_noWhitespace(u'sub', True, args)
+        self.write_tag_noWhitespace('sub', True, args)
     def _sub(self):
-        self._closeTag_noWhitespace(u'sub')
+        self._closeTag_noWhitespace('sub')
 
 
     def br(self, count=1, **args):
@@ -1249,7 +1248,7 @@ table {
         self.br()
         """
         for _ in range(count):
-            self.write_tag_noWhitespace(u'br', False, args)
+            self.write_tag_noWhitespace('br', False, args)
 
     def nbsp(self, count=1):
         """
@@ -1266,8 +1265,8 @@ table {
             ...
         self._table()
         """
-        self.write_tag_noWhitespace(u'table', True, args)
-        #self._debugclass(u'table', self.getClassName(args, self.TABLE_ATTRIBUTES))
+        self.write_tag_noWhitespace('table', True, args)
+        #self._debugclass('table', self.getClassName(args, self.TABLE_ATTRIBUTES))
 
     def getClassName(self, args, attributes):
         if 'cssClass' in args:
@@ -1276,40 +1275,40 @@ table {
             return None
 
     def _table(self):
-        self._closeTag(u'table')
+        self._closeTag('table')
 
 
     def thead(self, **args):
         """
         Defines the text header of a table.
         """
-        self.write_tag_noWhitespace(u'thead', True, args)
+        self.write_tag_noWhitespace('thead', True, args)
 
 
     def _thead(self):
-        self._closeTag_noWhitespace(u'thead')
+        self._closeTag_noWhitespace('thead')
 
 
     def tfoot(self, **args):
         """
         Defines the text footer of a table.
         """
-        self.write_tag(u'tfoot', True, args)
+        self.write_tag('tfoot', True, args)
 
 
     def _tfoot(self):
-        self._closeTag(u'tfoot')
+        self._closeTag('tfoot')
 
 
     def tbody(self, **args):
         """
         Defines the text body of a table.
         """
-        self.write_tag(u'tbody', True, args)
+        self.write_tag('tbody', True, args)
 
 
     def _tbody(self):
-        self._closeTag(u'tbody')
+        self._closeTag('tbody')
 
     def tr(self, **args):
         """
@@ -1319,10 +1318,10 @@ table {
             ...
         self._tr()
         """
-        self.write_tag(u'tr', True, args)
+        self.write_tag('tr', True, args)
 
     def _tr(self):
-        self._closeTag(u'tr')
+        self._closeTag('tr')
 
     def td(self, **args):
         """
@@ -1333,11 +1332,11 @@ table {
             ...
         self._td()
         """
-        self.write_tag_noWhitespace(u'td', True, args)
-        #self._debugclass(u'td', self.getClassName(args, self.TD_ATTRIBUTES))
+        self.write_tag_noWhitespace('td', True, args)
+        #self._debugclass('td', self.getClassName(args, self.TD_ATTRIBUTES))
 
     def _td(self):
-        self._closeTag_noWhitespace(u'td')
+        self._closeTag_noWhitespace('td')
 
     def th(self, **args):
         """
@@ -1349,10 +1348,10 @@ table {
             ...
         self._th()
         """
-        self.write_tag_noWhitespace(u'th', True, args)
+        self.write_tag_noWhitespace('th', True, args)
 
     def _th(self):
-        self._closeTag_noWhitespace(u'th')
+        self._closeTag_noWhitespace('th')
 
     def style(self, type='text/css', **args):
         """
@@ -1370,10 +1369,10 @@ table {
         self._closeTag('style')
 
     def span(self, **args):
-        self.write_tag_noWhitespace(u'span', True, args)
+        self.write_tag_noWhitespace('span', True, args)
 
     def _span(self):
-        self._closeTag_noWhitespace(u'span')
+        self._closeTag_noWhitespace('span')
 
     def div(self, **args):
         """
@@ -1384,21 +1383,21 @@ table {
             ...
         self._div()
         """
-        self.write_tag_noWhitespace(u'div', True, args)
+        self.write_tag_noWhitespace('div', True, args)
 
     def _div(self, comment=None):
-        self._closeTag_noWhitespace(u'div')
+        self._closeTag_noWhitespace('div')
         if comment is not None:
             self.comment(comment)
 
     def canvas(self, **args):
         """The canvas tag defines a canvas in a document.
         """
-        self.write_tag(u'canvas', True, args)
-        self._debugclass(u'canvas', self.getClassName(args, self.CANVAS_ATTRIBUTES))
+        self.write_tag('canvas', True, args)
+        self._debugclass('canvas', self.getClassName(args, self.CANVAS_ATTRIBUTES))
 
     def _canvas(self):
-        self._closeTag(u'canvas')
+        self._closeTag('canvas')
 
     def img(self, **args):
         """The img tag defines an image. The img tag has no block.
@@ -1410,25 +1409,25 @@ table {
         >>> b.compact = True
         >>> b.img(src="myImage.png", cssClass="myClass", width="100%")
         >>> b.getHtml()
-        u'<img src="myImage.png" class="myClass"/>'
+        '<img src="myImage.png" class="myClass"/>'
         """
         if not args.get('border'):
             args['border'] = 0
-        self.write_tag(u'img', False, args)
+        self.write_tag('img', False, args)
 
     def map(self, name):
-        self.write(u'<map name="%s">' % name)
-        self._pushTag(u'map')
+        self.write('<map name="%s">' % name)
+        self._pushTag('map')
 
     def _map(self):
-        self._closeTag(u'map')
+        self._closeTag('map')
 
     def area(self, **args):
         if not args.get('border'):
             args['border'] = self.AREA_DEFAULTBORDER
         if args['href']:
             args['href'] = self.e.getPath(args['href'])
-        self.write_tag(u'area', False, args)
+        self.write_tag('area', False, args)
 
 
     def hr(self, **args):
@@ -1439,13 +1438,13 @@ table {
         >>> b.compact = True
         >>> b.hr()
         >>> b.getHtml()
-        u'<hr/>'
+        '<hr/>'
         >>> b.resetHtml()
         >>> b.hr(cssClass='wide')
         >>> b.getHtml()
-        u'<hr class="wide"/>'
+        '<hr class="wide"/>'
         """
-        self.write_tag_noWhitespace(u'hr', False, args)
+        self.write_tag_noWhitespace('hr', False, args)
 
 
     def a(self, **kwargs):
@@ -1460,23 +1459,23 @@ table {
         >>> b.write('Hello')
         >>> b._a()
         >>> b.getHtml()
-        u'<a class="myClass" href="mypage.html" target="external">Hello</a>'
+        '<a href="mypage.html" target="external" class="myClass">Hello</a>'
         >>> b.resetHtml()
         >>> b.a(name="marker")
         >>> b.getHtml()
-        u'<a name="marker">'
+        '<a name="marker">'
         """
-        self.write_tag_noWhitespace(u'a', True, kwargs)
+        self.write_tag_noWhitespace('a', True, kwargs)
 
     def _a(self):
-        self._closeTag_noWhitespace(u'a')
+        self._closeTag_noWhitespace('a')
 
 
     def nav(self, **kwargs):
-        self.write_tag_noWhitespace(u'nav', True, kwargs)
+        self.write_tag_noWhitespace('nav', True, kwargs)
 
     def _nav(self):
-        self._closeTag_noWhitespace(u'nav')
+        self._closeTag_noWhitespace('nav')
 
 
     def frameset(self, **args):
@@ -1484,10 +1483,10 @@ table {
         The frameset tag creates an frame set that contains frames with other documents.
         <www href="http://www.w3schools.com/tags/tag_frameset.asp"/>
         """
-        self.write_tag(u'frameset', True, args)
+        self.write_tag('frameset', True, args)
 
     def _frameset(self):
-        self._closeTag(u'frameset')
+        self._closeTag('frameset')
 
 
     def frame(self, **args):
@@ -1496,12 +1495,12 @@ table {
         Each frame in a frameset can have different attributes, such as border, scrolling, the ability to resize, etc.
         <www href="http://www.w3schools.com/tags/tag_frame.asp"/>
         """
-        self.write_tag(u'frame', True, args)
-        self._debugclass(u'frame', self.getClassName(args, self.FRAME_ATTRIBUTES))
+        self.write_tag('frame', True, args)
+        self._debugclass('frame', self.getClassName(args, self.FRAME_ATTRIBUTES))
 
 
     def _frame(self):
-        self._closeTag(u'frame')
+        self._closeTag('frame')
 
 
     def noframes(self, **args):
@@ -1514,11 +1513,11 @@ table {
         The noframes element goes inside the frameset element.
         <www href="http://www.w3schools.com/tags/tag_noframes.asp"/>
         """
-        self.write_tag(u'noframes', False, args)
-        self._debugclass(u'noframes', self.getClassName(args, self.NOFRAMES_ATTRIBUTES))
+        self.write_tag('noframes', False, args)
+        self._debugclass('noframes', self.getClassName(args, self.NOFRAMES_ATTRIBUTES))
 
     def _noframes(self):
-        self._closeTag(u'noframes')
+        self._closeTag('noframes')
 
     def iframe(self, src, **args):
         """
@@ -1526,16 +1525,16 @@ table {
         <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
         """
         r = self.result
-        r.write(u'<iframe src="%s"' % src)
-        self.getandwrite_attributes(u'iframe', args)
-        self.write(u'></iframe>')
+        r.write('<iframe src="%s"' % src)
+        self.getandwrite_attributes('iframe', args)
+        self.write('></iframe>')
 
     def embed(self, **args):
         """
         <error>Does not seem to be defined in w3schools??</error>
         self.embed(src='./_images/amovie.qt')
         """
-        self.write_tag(u'embed', False, args)
+        self.write_tag('embed', False, args)
 
     def script(self, charset='UTF-8', type='text/javascript', **args):
         """
@@ -1551,26 +1550,26 @@ table {
         #     Build script. Note that if @src is used, then no self._script()
         #     must be used.
         #
-        self.write(u'<script')
+        self.write('<script')
         # Make sure to write "UTF-8" instead of "utf-8" since FireFox 2.0.0.4 will
         # ignore the script otherwise.
-        self.write(u' charset="%s"' % charset.upper())
-        self.write(u' type="%s"' % type)
-        language = args.get(u'language')
+        self.write(' charset="%s"' % charset.upper())
+        self.write(' type="%s"' % type)
+        language = args.get('language')
         if language is not None:
-            self.write(u' language="%s"' % language)
+            self.write(' language="%s"' % language)
         for key, value in args.items():
-            self.write(u' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
-        src = args.get(u'src')
+            self.write(' %s="%s"' % (dataAttribute2Html5Attribute(key), value))
+        src = args.get('src')
         if src is not None:
-            self.write(u'></script>\n')
+            self.write('></script>\n')
         else:
-            self._pushTag(u'script')
-            self.write(u'>\n')
+            self._pushTag('script')
+            self.write('>\n')
 
     def _script(self):
-        self.write(u'\n')
-        self._closeTag(u'script')
+        self.write('\n')
+        self._closeTag('script')
         self.newLine() # Optional newline is self.compact is False.
 
     #
@@ -1585,10 +1584,10 @@ table {
             ...
         self._ul()
         """
-        self.write_tag(u'ul', True, args)
+        self.write_tag('ul', True, args)
 
     def _ul(self):
-        self._closeTag(u'ul')
+        self._closeTag('ul')
 
     def ol(self, **args):
         """
@@ -1598,11 +1597,11 @@ table {
             ...
         self._ol()
         """
-        self.write_tag(u'ol', True, args)
+        self.write_tag('ol', True, args)
 
 
     def _ol(self):
-        self._closeTag(u'ol')
+        self._closeTag('ol')
 
 
     def li(self, **args):
@@ -1614,10 +1613,10 @@ table {
             ...
         self._li()
         """
-        self.write_tag_noWhitespace(u'li', True, args)
+        self.write_tag_noWhitespace('li', True, args)
 
     def _li(self):
-        self._closeTag_noWhitespace(u'li')
+        self._closeTag_noWhitespace('li')
 
     def dl(self, **args):
         """
@@ -1627,10 +1626,10 @@ table {
             ...
         self._dl()
         """
-        self.write_tag(u'dl', True, args)
+        self.write_tag('dl', True, args)
 
     def _dl(self):
-        self._closeTag(u'dl')
+        self._closeTag('dl')
 
     def dt(self, **args):
         """
@@ -1641,10 +1640,10 @@ table {
             ...
         self._dt()
         """
-        self.write_tag(u'dt', True, args)
+        self.write_tag('dt', True, args)
 
     def _dt(self):
-        self._closeTag(u'dt')
+        self._closeTag('dt')
 
     def dd(self, **args):
         """
@@ -1655,10 +1654,10 @@ table {
             ...
         self._dd()
         """
-        self.write_tag(u'dd', True, args)
+        self.write_tag('dd', True, args)
 
     def _dd(self):
-        self._closeTag(u'dd')
+        self._closeTag('dd')
 
 
     #
@@ -1692,27 +1691,27 @@ table {
             method = 'POST'
         if action is None:
             action = self.e['path']
-        self.write(u'<form method="%s" action="%s"' % (method, action))
+        self.write('<form method="%s" action="%s"' % (method, action))
         if cssClass is not None:
-            self.write(u' class="%s"' % cssClass)
+            self.write(' class="%s"' % cssClass)
         if cssId is not None:
-            self.write(u' id="%s"' % cssId)
+            self.write(' id="%s"' % cssId)
         if role is not None:
-            self.write(u' role="%s"' % role)
+            self.write(' role="%s"' % role)
         if name is not None:
-            self.write(u' name="%s"' % name)
+            self.write(' name="%s"' % name)
         if onsubmit is not None:
-            self.write(u' onsubmit="%s"' % onsubmit)
+            self.write(' onsubmit="%s"' % onsubmit)
         if enctype is not None:
-            self.write(u' enctype="%s"' % enctype)
+            self.write(' enctype="%s"' % enctype)
         if style is not None:
-            self.write(u' style="%s"' % style)
-        self.write(u' accept-charset="utf-8">')
+            self.write(' style="%s"' % style)
+        self.write(' accept-charset="utf-8">')
         # Push as last, so we can see the current tag on the stack
-        self._pushTag(u'form')
+        self._pushTag('form')
 
     def _form(self):
-        self._closeTag(u'form')
+        self._closeTag('form')
 
     def input(self, **args):
         """
@@ -1722,7 +1721,7 @@ table {
         <www href="http://www.w3schools.com/tags/tag_input.asp" target="external"/>
         self.input(type='checkbox', name='mycheckbox')
         """
-        self.write_tag(u'input', False, args)
+        self.write_tag('input', False, args)
 
     def label(self, **args):
         """
@@ -1732,10 +1731,10 @@ table {
         Text</label>…<input id='id_of_input' …>.
         <www href="http://www.w3schools.com/tags/tag_label.asp" target="external"/>
         """
-        self.write_tag(u'label', True, args)
+        self.write_tag('label', True, args)
 
     def _label(self):
-        self._closeTag(u'label')
+        self._closeTag('label')
 
     def select(self, **args):
         """
@@ -1745,10 +1744,10 @@ table {
             ...
         self._select()
         """
-        self.write_tag(u'select', True, args)
+        self.write_tag('select', True, args)
 
     def _select(self):
-        self._closeTag(u'select')
+        self._closeTag('select')
 
     def option(self, **args):
         """
@@ -1758,10 +1757,10 @@ table {
             ...
         self._option()
         """
-        self.write_tag(u'option', True, args)
+        self.write_tag('option', True, args)
 
     def _option(self):
-        self._closeTag(u'option')
+        self._closeTag('option')
 
     def optgroup(self, **args):
         """
@@ -1771,10 +1770,10 @@ table {
             ...
         self._optgroup()
         """
-        self.write_tag(u'optgroup', True, args)
+        self.write_tag('optgroup', True, args)
 
     def _optgroup(self):
-        self._closeTag(u'optgroup')
+        self._closeTag('optgroup')
 
     def button(self, **args):
         """
@@ -1782,10 +1781,10 @@ table {
         versatile. It has open and close tags, and can take almost any non-form HTML structure inside.
         <www href="http://xhtml.com/en/xhtml/reference/button/" target="external"/>
         """
-        self.write_tag(u'button', True, args)
+        self.write_tag('button', True, args)
 
     def _button(self):
-        self._closeTag(u'button')
+        self._closeTag('button')
 
     def textarea(self, **args):
         """
@@ -1796,10 +1795,10 @@ table {
             ...
         self._textarea()
         """
-        self.write_tag_noWhitespace(u'textarea', True, args) # No tabbing inside the <textarea> tag.
+        self.write_tag_noWhitespace('textarea', True, args) # No tabbing inside the <textarea> tag.
 
     def _textarea(self):
-        self._closeTag_noWhitespace(u'textarea')
+        self._closeTag_noWhitespace('textarea')
 
     def meta(self, **args):
         """
@@ -1810,34 +1809,34 @@ table {
             ...
         self._meta()
         """
-        self.write_tag(u'meta', False, args)
+        self.write_tag('meta', False, args)
 
     def object(self, **args):
         """The object defines an embedded object. Use this element to add
         multimedia to your XHTML page. This element allows you to specify the data and
         parameters for objects inserted into HTML documents, and the code that can be used to
         display/manipulate that data."""
-        self.write_tag_noWhitespace(u'object', True, args)
+        self.write_tag_noWhitespace('object', True, args)
 
     def _object(self):
-        self._closeTag_noWhitespace(u'object')
+        self._closeTag_noWhitespace('object')
 
     def small(self, **args):
-        self.write_tag_noWhitespace(u'small', True, args)
+        self.write_tag_noWhitespace('small', True, args)
 
     def _small(self):
-        self._closeTag_noWhitespace(u'small')
+        self._closeTag_noWhitespace('small')
 
     def big(self, **args):
-        self.write_tag_noWhitespace(u'big', True, args)
+        self.write_tag_noWhitespace('big', True, args)
 
     def _big(self):
-        self._closeTag_noWhitespace(u'big')
+        self._closeTag_noWhitespace('big')
 
     def param(self, **args):
         """The param element allows you to specify the run-time settings for an object inserted
         into XHTML documents."""
-        self.write_tag(u'param', False, args)
+        self.write_tag('param', False, args)
 
     # N O N - H T M L
 

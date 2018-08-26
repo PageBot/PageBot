@@ -82,7 +82,7 @@ class Composer(object):
             for e in galley.elements:
                 if isinstance(e, CodeBlock):
                     e.run(globals)
-                elif globals['box'] is None:
+                elif globals['box'] is None: # In case no box was selected
                     continue
                 elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
                     globals['box'].bs += e.bs
