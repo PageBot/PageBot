@@ -47,8 +47,9 @@ class Typesetter(object):
     CODEBLOCK_CLASS = CodeBlock
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
+    SKIP_TAGS = ('document', 'pre')
 
-    def __init__(self, context, styles=None, galley=None,
+    def __init__(self, context, styles=None, galley=None, skipTags=None,
             tryExcept=True, verbose=False, writeTags=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
@@ -68,6 +69,14 @@ class Typesetter(object):
         >>> root = t.typesetFile(path)
         >>> len(t.galley.elements)
         5
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> context = HtmlContext()
+        >>> t = Typesetter(context, styles=styles) # Create a new typesetter with a HTML context
+        >>> root = t.typesetFile(path)
+        >>> len(t.galley.elements)
+        5
+        >>> #t.galley.elements[0].bs
+
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -86,12 +95,17 @@ class Typesetter(object):
         self.verbose = verbose
         self.writeTags = writeTags
 
+        # Some MarkDown generated tags need to be skipped on output, while their content still is processed.
+        if skipTags is None:
+            skipTags = self.SKIP_TAGS
+        self.skipTags = skipTags
+
     def node_h1(self, node, e):
         u"""Handle the <h1> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -100,7 +114,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -109,7 +123,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -118,7 +132,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -127,7 +141,7 @@ class Typesetter(object):
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.galley.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
+        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -145,7 +159,7 @@ class Typesetter(object):
             # Root of stack is empty style, to force searching on the e.parent line.
             self.pushStyle({}) # Define top level for styles.
         hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
-        self.galley.appendElement(self.RULER_CLASS(e, style=hrStyle)) # Make a new Ruler instance in the Galley
+        self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
 
     def getStyleValue(self, name, e=None, style=None, default=None):
         u"""Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
@@ -171,8 +185,8 @@ class Typesetter(object):
             self.pushStyle({}) # Define top level for styles.
         brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        fs = e.newString(s, e=e, style=brStyle)
-        self.galley.append(fs) # Add newline in the current setting of FormattedString
+        bs = self.context.newString(s, e=e, style=brStyle)
+        self.append(bs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
         u"""Ignore links, but process the block"""
@@ -193,7 +207,7 @@ class Typesetter(object):
                 footnotes[index] = dict(nodeId=nodeId, index=index, node=node, e=e, p=None)
                 # Add invisible mark, so we can scan the text after page composition to find
                 # on which page it ended up.
-                #self.galley.append(getMarker('footnote', index))
+                #self.append(getMarker('footnote', index))
 
         # Typeset the block of the tag.
         self.typesetNode(node, e)
@@ -212,7 +226,7 @@ class Typesetter(object):
                 assert not nodeId in literatureRefs
                 # Make literature reference entry. Content <p> and split fields will be added later.
                 literatureRefs[index] = dict(nodeId=nodeId, node=node, e=e, p=None, pageIds=[])
-                #self.galley.append(getMarker('literature', index))
+                #self.append(getMarker('literature', index))
 
         # Typeset the block of the tag.
         self.typesetNode(node, e)
@@ -258,7 +272,7 @@ class Typesetter(object):
         style = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
         bulletString = context.newBulletString(bullet, e=e, style=style) # Get styled string with bullet.
         if bulletString is not None: # HtmlContext does not want a bullet character.
-            self.galley.append(bulletString) # Append the bullet as defined in the style.
+            self.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
@@ -271,19 +285,17 @@ class Typesetter(object):
         #src = node.attrib.get('src')
         #self.pushStyleTag(node.tag)
         #image = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
-        #self.galley.append(image)
+        #self.append(image)
         #captionString = node.get('title')
         #if captionString: # If there is no caption, we can add the Image element directly to the main galley.
-        #    caption = self.TEXTBOX_CLASS(captionString)
-        #    imageContainer.appendElement(caption)
+        #    self.TEXTBOX_CLASS(captionString, parent=imageContainer)
         # Typeset the empty block of the img, which creates the HTML tag.
         self.htmlNode_(node)
 
         """
         else:
             # If there is a caption, create a new child Galley to hold image + caption
-            g = self.GALLEY_CLASS()
-            g.append(imageElement)
+            self.GALLEY_CLASS(parent=imageElement)
             captionStyle = self.getCascadedNodeStyle('caption')
             tb = g.getTextBox(captionStyle)
             caption = node.attrib.get('title')
@@ -291,7 +303,7 @@ class Typesetter(object):
             # reference went in a textBox after slicing the string.
             tb.append(caption+'\n', captionStyle)
             tb.append(getMarker(node.tag, src))
-            self.galley.append(g)
+            self.append(tb)
         """
         #self.popStyleTag()
 
@@ -448,7 +460,7 @@ class Typesetter(object):
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
         # Ignore <pre> tag output, as it is part of a ~~~Pyhton code block
-        if self.writeTags and node.tag != 'pre':
+        if self.writeTags and not node.tag in self.skipTags:
             # Open the node in HTML export for this node
             self.htmlNode(node)
         # Add this tag to the tag-history line. It is used to connect to the right style in case
@@ -496,7 +508,7 @@ class Typesetter(object):
                 self.append(bs)
 
         # Ignore </pre> tag output, as it is part of a ~~~Pyhton code block
-        if self.writeTags and node.tag != 'pre':
+        if self.writeTags and not node.tag in self.skipTags:
             # Close the HTML tag of this node.
             self._htmlNode(node)
 
@@ -526,9 +538,9 @@ class Typesetter(object):
         if fileExtension == 'md':
             # If we have MarkDown content, convert to XML (XHTML)
             f = codecs.open(fileName, mode="r", encoding="utf-8")
-            mdText = f.read()
+            mdText = f.read() # Read the raw MarkDown source
             f.close()
-            fileName = self.markDown2FileName(fileName, mdText)
+            fileName = self.markDown2FileName(fileName, mdText) # Translate MarkDown to HTML and save in file.
 
         tree = ET.parse(fileName)
         root = tree.getroot() # Get the root element of the tree.

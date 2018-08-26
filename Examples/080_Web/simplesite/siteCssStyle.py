@@ -28,6 +28,7 @@ MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
 #CSS_PATH = 'css/style-org.css'
 CSS_PATH = 'css/style.scss.css'
+CSS_PATH = 'css/style-org.css'
 
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
@@ -363,9 +364,7 @@ composer.typeset(MD_PATH)
 #for galley in composer.galleys:
 #    print(galley)
 composer.compose()
-composer.debug()
-
-print(composer.galleys)
+#composer.debug()
 
 if EXPORT_TYPE == DO_FILE:
     doc.export(EXPORT_PATH)

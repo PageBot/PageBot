@@ -76,7 +76,7 @@ class MampView(SiteView):
         # Write all collected SCSS vatiables into one file
         self.context.b.writeScss(self.SCSS_VARIABLES_PATH)
         # Compile SCSS to CSS
-        self.context.b.compileScss(self.SCSS_PATH, self.SCSS_CSS_PATH)
+        #self.context.b.compileScss(self.SCSS_PATH, self.SCSS_CSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
