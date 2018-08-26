@@ -35,7 +35,7 @@ class SiteView(HtmlView):
     SCSS_CSS_PATH = u'css/style.scss.css'
     SCSS_VARIABLES_PATH = u'css/variables.scss'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, 
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, useScss=True,
             cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
             **kwargs):
         """Abstract class for views that build websites."""
@@ -53,6 +53,7 @@ class SiteView(HtmlView):
         self.webFontUrls = webFontUrls
 
         # Default CSS urls to inclide 
+        self.useScss = useScss # If True, then try to compile to SCSS.
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
         self.cssUrls = cssUrls or [self.SCSS_CSS_PATH] # Added as links in the page <head>
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
@@ -114,11 +115,12 @@ class SiteView(HtmlView):
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
-        
-        # Write all collected SCSS vatiables into one file
-        b.writeScss(self.SCSS_VARIABLES_PATH)
-        # Compile SCSS to CSS
-        b.compileScss(self.SCSS_PATH)
+
+        if self.useScss:
+            # Write all collected SCSS variables into one file
+            b.writeScss(self.SCSS_VARIABLES_PATH)
+            # Compile SCSS to CSS
+            b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
