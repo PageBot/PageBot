@@ -443,8 +443,9 @@ table {
 
     def compileScss(self, scssPath, cssPath=None, compressed=True):
         u"""For now using sass to support SCSS. SASS support could be added later."""
+        return
         if cssPath is None:
-            cssPath = scssPath + '.css'
+            cssPath = u'%s.css' % scssPath
         css = sass.compile_file(scssPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)
@@ -541,10 +542,8 @@ table {
         self.addCss(css)
 
         b = HtmlBuilder()
-        # Write all collected SCSS vatiables into one file
-        b.writeScss(self.DEFAULT_SCSS_PATH)
-        # Compile SCSS to CSS
-        b.compileScss(self.DEFAULT_CSS_PATH)
+        # Write all collected cSS vatiables into one file
+        b.writeScss(self.DEFAULT_CSS_PATH)
 
 
     #   H T M L

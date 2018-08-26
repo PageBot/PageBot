@@ -40,7 +40,7 @@ HEAD_CODE = """
 <link media="all" href="fonts/webfonts.css" type="text/css" rel="stylesheet"/>
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="js/flexslider/flexslider.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style-org.css">
 
 <!-- end CSS-->
     

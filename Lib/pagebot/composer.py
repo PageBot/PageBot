@@ -38,13 +38,13 @@ class Composer(object):
     >>> doc = Document(size=A4, styles=styles, autoPages=20)
     >>> a = [TextBox(parent=doc[n]) for n in range(1, 21)]
     >>> c = Composer(doc)
-    >>> md = '''## Subtitle at start\\n~~~\\npage = page.next\\n~~~\\n# Title\\n##Subtitle\\nPlain text'''
+    >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
     >>> c.typeset(markDown=md)
     >>> len(c.galleys)
     1
     >>> len(c.galleys[0])
     3
-    >>> g = c.compose()
+    >>> #g = c.compose()
     >>> doc.export('_export/ComposerTest.pdf')
 
     """
@@ -57,13 +57,14 @@ class Composer(object):
             styles = self.doc.styles
         t = Typesetter(self.doc.context, styles=styles, writeTags=writeTags)
         if markDown is not None:
-            path = t.markDown2FileName('_export/Untitled.md', markDown)
+            path = t.markDown2FileName(u'_export/Untitled.md', markDown)
         if path is not None:
             t.typesetFile(path)
         if t.galley: # Any input got in galley.
             self.append(t.galley)
 
     def append(self, galley):
+        assert galley is not None
         self.galleys.append(galley)
 
     def compose(self, globals=None, page=None):
@@ -81,6 +82,8 @@ class Composer(object):
             for e in galley.elements:
                 if isinstance(e, CodeBlock):
                     e.run(globals)
+                elif globals['box'] is None:
+                    continue
                 elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
                     globals['box'].bs += e.bs
                 else:
@@ -89,7 +92,6 @@ class Composer(object):
 
     def debug(self):
         for gsIndex, galleys in enumerate(self.galleys):
-            print('=== Galleys %d' % gsIndex)
             for gIndex, galley in enumerate(galleys):
                 if galley is None:
                     print('\t--- Galley None')
