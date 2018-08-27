@@ -28,6 +28,7 @@ class HtmlContext(BaseContext):
     TODO: Add all methods compatible with DrawBotContext, even if empty functionality
     for HTML/CSS.
     """
+    useTags = True # Indication to Typesetter that by default tags should be included in output.
     
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
