@@ -7,16 +7,17 @@ branches:
   - master
 before_install:
 - brew update && brew bundle
-- pip install --upgrade pip
+  #- pip install --upgrade pip
 install:
-- pip install -e .
-- pip install libsass
-- pip install flat
-- pip install fontTools
-- pip install pylint
-- pip install svgwrite
-- pip install markdown
-- pip install sass
+- brew install python3
+- brew install -e .
+- brew install libsass
+- brew install flat
+- brew install fontTools
+- brew install pylint
+- brew install svgwrite
+- brew install markdown
+- brew install sass
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
