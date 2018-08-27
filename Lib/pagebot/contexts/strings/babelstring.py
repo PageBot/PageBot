@@ -42,6 +42,9 @@ class BabelString(object):
     def __len__(self):
         return len(self.s)
 
+    def __contains__(self, s):
+        return s in self.s
+        
     def append(self, s):
         """Append string or FlatString to self."""
         try:

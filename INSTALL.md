@@ -1,4 +1,4 @@
-# PageBot Version 0.5
+# PageBot Version 0.6
 
 ## Installing
 
