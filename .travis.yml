@@ -8,13 +8,14 @@ before_install:
 - pip install --upgrade pip
 install:
 #- brew install python3
-#- brew install -e .
+#- pip install -e .
+#- pip install flat
 - brew install libsass
-#- brew install flat
 - brew install fontTools
-- pip install pylint
-- brew install svgwrite
 - brew install markdown
+- pip install pylint
+- pip install pyobjc
+- pip install svgwrite
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
