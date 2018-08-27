@@ -26,28 +26,32 @@ class Composer(object):
     If necessary elements can be split, new elements can be made on the page and element can be
     reshaped byt width and height, if that results in better placements.
 
+    >>> from pagebot import getResourcesPath
     >>> from pagebot.constants import A4
     >>> from pagebot.toolbox.units import em, pt
     >>> from pagebot.toolbox.color import color, blackColor
     >>> from pagebot.elements import TextBox
     >>> from pagebot.typesetter import Typesetter
     >>> from pagebot.document import Document
-    >>> numPages = 20
+    >>> numPages = 4
+    >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
     >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
     >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
     >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
     >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-    >>> doc = Document(size=A4, styles=styles, autoPages=numPages)
-    >>> galley = Typesetter(doc.context, styles=style)
-    >>> a = [TextBox(parent=doc[n]) for n in range(1, numPages+1)]
-    >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
-    >>> c.typeset(markDown=md)
+    >>> doc = Document(size=A4, styles=styles, autoPages=numPages, originOnTop=True)
+    >>> t = Typesetter(doc.context, styles=styles)
+    >>> # Create a "main" textbox in each page.
+    >>> a = [TextBox('', parent=doc[n], name='main', x=100, y=100, w=300, h=500) for n in range(1, numPages+1)] 
+    >>> galley = t.typesetFile(path)
     >>> c = Composer(doc)
-    >>> len(c.galleys)
-    1
-    >>> len(c.galleys[0])
-    3
-    >>> #g = c.compose()
+    >>> targets = c.compose(galley)
+    >>> targets['errors']
+    []
+    >>> page = doc[1]
+    >>> box = page.select('main') # Get the box of this page.
+    >>> box
+    TextBox:main ([100pt, 100pt], [300pt, 500pt]) S(1157)
     >>> doc.export('_export/ComposerTest.pdf')
 
     """
@@ -68,16 +72,16 @@ class Composer(object):
         elif page is not None:
             targets['page'] = page
 
-        if not '_errors_' in targets:
-            targets['_errors_'] = []
-        errors = targets['_errors_']
+        if not 'errors' in targets:
+            targets['errors'] = []
+        errors = targets['errors']
 
         for e in galley.elements:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)
             elif targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
-                errors.append('%s.compose: No box selected. Cannot place element %s' % e)
-            elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
+                errors.append('%s.compose: No box selected. Cannot place element %s' % (self.__class__.__name__, e))
+            elif e.isTextBox and targets['box'] is not None and targets['box'].isTextBox:
                 targets['box'].bs += e.bs
             else:
                 errors.append('%s.compose: No box defined or box is not a TextBox in "%s - %s"' % (self.__class__.__name__, globals['page'], e))

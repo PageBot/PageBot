@@ -14,6 +14,7 @@
 #
 #     typesetter.py
 #
+import os
 import copy
 import codecs
 import xml.etree.ElementTree as ET
@@ -499,7 +500,6 @@ class Typesetter(object):
         u"""Take the markdown source, convert to HTML/XML and save in the file called fileName.
         If the fileName does not end with ".xml" extension, then add it. Answer the (new) fileName.
         
-        >>> import os
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
         >>> context = HtmlContext()
@@ -519,6 +519,13 @@ class Typesetter(object):
         f.close()
         return fileName
 
+    def typesetMarkDown(self, mdText, mdExtensions=None, e=None, xPath=None):
+        tmpPath = '/tmp/PageBot_Typesetter.xml'
+        fileName = self.markDown2XmlFile(tmpPath, mdText, mdExtensions)
+        self.typesetFile(fileName, e=e, xPath=xPath)
+        os.remove(tmpPath)
+        return self.galley
+        
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
