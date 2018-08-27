@@ -1,6 +1,6 @@
 print('\nChecking installation paths... \n')
 
-import sys, os  
+import sys, os
 print('System: %s, %s' % (os.name, sys.platform))
 print('Python version is:')
 print(sys.version)
@@ -33,12 +33,19 @@ try:
 except:
     print('x No AppKit')
     CLEAN = False
-    
+
 try:
     import pagebot
     print('Pagebot found at %s' % pagebot.__path__[0])
 except:
     print('\nx Pagebot not found')
+    CLEAN = False
+
+try:
+    import vanilla
+    print('Vanilla found at %s' % vanilla.__path__[0])
+except:
+    print('\nx Vanilla not found')
     CLEAN = False
 
 try:
@@ -70,7 +77,7 @@ else:
     print(css)
     css = sass.compile(filename='sass/test.scss')
     print(css)
-    
+
     test_scss = open('test.scss', 'w')
     import os, os.path
     if not os.path.exists('css'):
@@ -80,7 +87,7 @@ else:
         print(example_css.read())
 
     # Export with HtmlBuilder.
-    from pagebot.contexts.builders.htmlbuilder import HtmlBuilder 
+    from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
     hb = HtmlBuilder()
     print(hb)
     hb.compileScss('sass/test.scss')
