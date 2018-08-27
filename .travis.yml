@@ -19,7 +19,8 @@ install:
 - python3 setup.py install
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
-- python3 vanilla-master/setup.py install
+- cd vanilla-master
+- python3 setup.py install
 #- wget https://github.com/typesupply/defconAppKit/archive/master.zip
 #-unzip master.zip
 #- python3 defconAppKit-master/setup.py install
