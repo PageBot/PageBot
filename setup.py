@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
     name='pagebot',
     url="https://github.com/TypeNetwork/PageBot",
-    version='0.5',
+    version='0.6',
     packages=find_packages('Lib'),
     package_dir={'': 'Lib'},
     #entry_points={

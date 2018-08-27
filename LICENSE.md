@@ -2,7 +2,7 @@ This project contains seperate, aggregated works (eg, found in the directories `
 
 The PageBot python source code is available under the following MIT license:
 
-Copyright 2016 Type Network, Petr van Blokland (http://pagebot.io)
+Copyright 2016 TYPETR | Petr van Blokland (http://pagebot.io)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

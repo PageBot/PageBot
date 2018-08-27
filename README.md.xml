@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<document><h1>PageBot Version 0.5</h1>
+<document><h1>PageBot Version 0.6</h1>
 <h2>What is PageBot?</h2>
 <p>PageBot is a page layout program, that enables designers to create high quality documents using code. <br />
 It is available both as Python library inside <a href="https://www.drawbot.com">DrawBot</a> and as part of a collection of stand-alone desktop applications that can be created from it. </p>

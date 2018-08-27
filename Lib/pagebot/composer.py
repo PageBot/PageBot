@@ -30,16 +30,19 @@ class Composer(object):
     >>> from pagebot.toolbox.units import em, pt
     >>> from pagebot.toolbox.color import color, blackColor
     >>> from pagebot.elements import TextBox
+    >>> from pagebot.typesetter import Typesetter
     >>> from pagebot.document import Document
+    >>> numPages = 20
     >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
     >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
     >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
     >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-    >>> doc = Document(size=A4, styles=styles, autoPages=20)
-    >>> a = [TextBox(parent=doc[n]) for n in range(1, 21)]
-    >>> c = Composer(doc)
+    >>> doc = Document(size=A4, styles=styles, autoPages=numPages)
+    >>> galley = Typesetter(doc.context, styles=style)
+    >>> a = [TextBox(parent=doc[n]) for n in range(1, numPages+1)]
     >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
     >>> c.typeset(markDown=md)
+    >>> c = Composer(doc)
     >>> len(c.galleys)
     1
     >>> len(c.galleys[0])
@@ -50,111 +53,35 @@ class Composer(object):
     """
     def __init__(self, doc):
         self.doc = doc
-        self.galleys = [] # List of galleys, e.g. each galley is content of an article.
 
-    def typeset(self, path=None, markDown=None, styles=None, writeTags=False):
-        if styles is None:
-            styles = self.doc.styles
-        t = Typesetter(self.doc.context, styles=styles, writeTags=writeTags)
-        if markDown is not None:
-            path = t.markDown2FileName(u'_export/Untitled.md', markDown)
-        if path is not None:
-            t.typesetFile(path)
-        if t.galley: # Any input got in galley.
-            self.append(t.galley)
-
-    def append(self, galley):
-        assert galley is not None
-        self.galleys.append(galley)
-
-    def compose(self, globals=None, page=None):
-        u"""Compose the galley element, based on the instruction of the ArtDirection instance
-        that will run the rules what content to put where.
+    def compose(self, galley, targets=None, page=None):
+        u"""Compose the galley element, based on code blocks in the gally.
+        Later we'll add more art-direction instructions here.
+        Targets contains the resources for the composition, such as the doc, current page, current box and other 
+        info that the MarkDown assumes to be available. If targets is omitted, then it is created by the Composer
+        and answered at the end.
         """
-        if globals is None:
+        if targets is None:
             if page is None:
                 page = self.doc[1]
-            globals = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, box=page.select('main'), newTextBox=newTextBox)  
+            targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, box=page.select('main'), newTextBox=newTextBox)  
         elif page is not None:
-            globals['page'] = page
+            targets['page'] = page
 
-        for galley in self.galleys:
-            for e in galley.elements:
-                if isinstance(e, CodeBlock):
-                    e.run(globals)
-                elif globals['box'] is None: # In case no box was selected
-                    continue
-                elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
-                    globals['box'].bs += e.bs
-                else:
-                    print('%s.compose: No box defined or box is not a TextBox in "%s - %s"' % (self.__class__.__name__, globals['page'], e))
-        return globals
+        if not '_errors_' in targets:
+            targets['_errors_'] = []
+        errors = targets['_errors_']
 
-    def debug(self):
-        for gsIndex, galleys in enumerate(self.galleys):
-            for gIndex, galley in enumerate(galleys):
-                if galley is None:
-                    print('\t--- Galley None')
-                else:
-                    print('\t--- Galley %d' % gIndex)
-                    for eIndex, e in enumerate(galley.elements):
-                        if e is None:
-                            print('\t\t... None %d' % gIndex)
-                        else:
-                            print('\t\t... E %d' % eIndex)
-
-    def XXXcompose(self, galley, page, flowId=None):
-        u"""Compose the galley element, starting with the flowId text box on page.
-        The composer negotiates between what the galley needs a sequential space
-        for its elements, and what the page has to offer.
-        If flowId is omitted, then let the page find the entry point for the first flow."""
-        if flowId is None:
-            flows = page.getFlows()
-            assert flows # There must be at least one, otherwise error in template.
-            flowId, _ = sorted(flows.keys()) # Arbitrary which one, if there are multiple entries.
-        tb = page.getElementByName(flowId) # Find the seed flow box on the page, as derived from template.
-        assert tb is not None # Make sure, otherwise there is a template error.
-        fs = None
-        # Keeping overflow of text boxes here while iterating.
-        for element in galley.elements:
-            if not element.isText: # This is a non-text element. Try to find placement.
-                self.tryPlacement(page, tb, element)
-                continue
-            if fs is None:
-                fs = element.fs
+        for e in galley.elements:
+            if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
+                e.run(targets)
+            elif targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
+                errors.append('%s.compose: No box selected. Cannot place element %s' % e)
+            elif e.isTextBox and globals['box'] is not None and globals['box'].isTextBox:
+                targets['box'].bs += e.bs
             else:
-                fs += element.fs
-            # As long as where is text, try to fit into the boxes on the page.
-            # Otherwise go to the next page, following the flow, creating new pages if necessary.
-            for n in range(1000): # Safety here, "while fs:" seems to be a dangerous method.
-                if fs is None:
-                    break
-                overflow = tb.appendString(fs)
-                if fs == overflow:
-                    print(u'NOT ABLE TO PLACE %s' % overflow)
-                    break
-                fs = overflow
-                if fs: # Can be None or empty
-                    # Overflow in this text box, find new from (page, tbFlow)
-                    page, tb = page.getNextFlowBox(tb, self.makeNewPage)
-                    if tb is None: # In case here is overflow, but no next box defined in the flow.
-                        print('Overflow in text, but no next flow column defined. %s' % flowId)
-                        break
-                else:
-                    break
-
-    def tryPlacement(self, page, tb, element):
-        u"""Try to place the element on page, in relation to the current filling of tb.
-        Try to pass on the template-element w/h by doing a proportional resize of the component."""
-        container = page.findPlacementFor(element)
-        if container is not None:
-            # Replace the component on the page. Don't add to the container, because
-            # that will damage the element that come from the template.
-            page.replaceElement(container, element)
-        else:
-            print('Could not find placement for element %s.' % element)
-        #else:
-        #    print('TRY TO PLACE', element, element.getSize(), 'on page', page.pageNumber)
+                errors.append('%s.compose: No box defined or box is not a TextBox in "%s - %s"' % (self.__class__.__name__, globals['page'], e))
+        return targets
 
 
 if __name__ == "__main__":
