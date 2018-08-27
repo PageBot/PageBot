@@ -152,7 +152,7 @@ class SlideShow(Element):
 class Hero(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Introduction')
+        newTextBox('', parent=self, cssId='HeroIntroduction')
         SlideShow(parent=self, cssId='HeroSlides')
 
     def build_html(self, view, path):
@@ -163,7 +163,7 @@ class Hero(Element):
         b.div(cssClass='row')
         
         b.div(cssClass='grid_4')
-        self.deepFind('Introduction').build_html(view, path)
+        self.deepFind('HeroIntroduction').build_html(view, path)
         b._div()
         b.comment('End .grid_4')
         

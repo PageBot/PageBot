@@ -10,7 +10,7 @@ box = page.deepFind('Logo')
 # PageBot:1
 
 ~~~Python
-box = page.select('Introduction')
+box = page.select('HeroIntroduction')
 ~~~
 ## *What are the dreams and dragons* in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
@@ -101,7 +101,7 @@ box = page.select('HeroSlides').newSlide()
 ![pagebot_tablet.jpg](images/pagebot_tablet.jpg)
 
 ~~~Python
-box = page.select('Introduction')
+box = page.select('HeroIntroduction')
 ~~~
 ## Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
@@ -131,7 +131,7 @@ box = page.select('HeroSlides').newSlide()
 ![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
-box = page.select('Introduction')
+box = page.select('HeroIntroduction')
 ~~~
 ## Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
@@ -161,7 +161,7 @@ box = page.select('HeroSlides').newSlide()
 ![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
-box = page.select('Introduction')
+box = page.select('HeroIntroduction')
 ~~~
 ## Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 
@@ -191,7 +191,7 @@ box = page.select('HeroSlides').newSlide()
 ![pagebot_macbookpro.jpg](images/pagebot_macbookpro.jpg)
 
 ~~~Python
-box = page.select('Introduction')
+box = page.select('HeroIntroduction')
 ~~~
 ## Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?
 

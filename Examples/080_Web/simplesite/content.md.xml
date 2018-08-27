@@ -9,7 +9,7 @@ box = page.select('Logo')
 </code></pre>
 
 <h1>PageBot:1</h1>
-<pre><code class="Python">box = page.select('Introduction')
+<pre><code class="Python">box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2><em>What are the dreams and dragons</em> in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
@@ -78,7 +78,7 @@ box = page.select('Logo')
 </code></pre>
 
 <p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
-<pre><code class="Python">box = page.select('Introduction')
+<pre><code class="Python">box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
@@ -102,7 +102,7 @@ box = page.select('Logo')
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('Introduction')
+<pre><code>box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
@@ -126,7 +126,7 @@ box = page.select('Logo')
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('Introduction')
+<pre><code>box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
@@ -150,7 +150,7 @@ box = page.select('Logo')
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('Introduction')
+<pre><code>box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>

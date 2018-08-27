@@ -32,6 +32,8 @@ except ImportError:
 
 #from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
+from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.color import color, blackColor
 
 
 class Typesetter(object):
@@ -50,6 +52,20 @@ class Typesetter(object):
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
     SKIP_TAGS = ('document', 'pre')
 
+    # Default styles for Typesetter, based on the standard markdown HTML-tags
+    # Some ugly colors to show that we're in default mode here, for the user to 
+    # supply a better set.
+    DEFAULT_STYLES = dict(
+        body=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
+        h1=dict(font='Verdana', fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
+        h2=dict(font='Verdana', fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
+        h3=dict(font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
+        h4=dict(font='Georgia', fontSize=pt(12), leading=em(1.2), textFill=color(0, 1, 1)),
+        h5=dict(font='Georgia-Bold', fontSize=pt(10), leading=em(1.2), textFill=(1, 0, 1)),
+        p=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
+        li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
+        em=dict(font='Georgia-Bold'),
+    )
     MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True):
@@ -89,6 +105,9 @@ class Typesetter(object):
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
         self.galley = galley
+
+        if styles is None:
+            styles = self.DEFAULT_STYLES
         self.styles = styles
 
         # Stack of graphic state as cascading styles. Last is template for the next.
