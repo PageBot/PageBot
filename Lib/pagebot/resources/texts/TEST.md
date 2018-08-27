@@ -6,7 +6,7 @@ page = doc[1]
 box = page.select('main')
 ~~~
 
-# PageBot Version 0.8
+# PageBot Version 0.6
 
 ## What is PageBot?
 
