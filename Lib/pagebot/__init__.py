@@ -17,7 +17,7 @@
 from __future__ import division
 __doc__ = """PageBot module"""
 
-__version__ = '0.8-beta'
+__version__ = '0.6-beta'
 
 import re
 
