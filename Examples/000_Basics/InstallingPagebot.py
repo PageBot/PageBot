@@ -41,13 +41,14 @@ except:
     print('\nx Pagebot not found')
     CLEAN = False
 
+'''
 try:
     import drawBot
     print('DrawBot found at %s' % drawBot.__path__[0])
 except:
     print('\nx DrawBot not found')
     CLEAN = False
-
+'''
 
 try:
     import sass
@@ -59,3 +60,7 @@ except Exception as e:
 
 if not CLEAN:
     print('Not all dependencies are installed, please install missing ones.')
+else:
+    from pagebot.contexts.platform import getContext
+    context = getContext()
+    print(context)
