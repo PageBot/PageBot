@@ -51,6 +51,21 @@ except:
 try:
     import sass
     print('Sass found at %s' % sass.__file__)
+except Exception as e:
+    print(e)
+    print('x No sass dependency found.')
+    CLEAN = False
+
+if not CLEAN:
+    print('Not all dependencies are installed, please install missing ones.')
+else:
+    # Testing PageBot.
+    from pagebot.contexts.platform import getContext
+    context = getContext()
+    print(context)
+    print(context.b)
+
+    # Testing Sass.
     css = sass.compile(string='a { b { color: blue; } }')
     print(css)
     css = sass.compile(filename='sass/test.scss')
@@ -63,14 +78,9 @@ try:
     sass.compile(dirname=('sass', 'css'), output_style='compressed')
     with open('css/test.css') as example_css:
         print(example_css.read())
-except Exception as e:
-    print(e)
-    print('x No sass dependency found.')
-    CLEAN = False
 
-if not CLEAN:
-    print('Not all dependencies are installed, please install missing ones.')
-else:
-    from pagebot.contexts.platform import getContext
-    context = getContext()
-    print(context)
+    # Export with HtmlBuilder.
+    from pagebot.contexts.builders.htmlbuilder import HtmlBuilder 
+    hb = HtmlBuilder()
+    print(hb)
+    hb.compileScss('sass/test.scss')
