@@ -17,7 +17,7 @@ import traceback
 DEFAULT_CONTEXT = None
 MAMP_PATH = None
 from sys import platform
-TESTFLATONMAC = False
+#TESTFLATONMAC = False
 
 def getContext():
     """Determines which context is used:
@@ -29,9 +29,10 @@ def getContext():
     global DEFAULT_CONTEXT, MAMP_PATH
 
     if DEFAULT_CONTEXT is None:
-        if platform == 'darwin' and not TESTFLATONMAC:
+        if platform == 'darwin':
             try:
-                # Remove comment to simulate testing on other contexts/platforms.
+                # Remove comment to simulate testing on other
+                # contexts/platforms.
                 #import ForceImportError
                 import AppKit # Force exception on non-OSX platforms
                 from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -41,11 +42,11 @@ def getContext():
                 print(traceback.format_exc())
                 raise NotImplementedError('Error loading context.')
         else:
-                # Remove comment to simulate testing on other contexts/platforms.
-                #import ForceOtherError
-                from pagebot.contexts.flatcontext import FlatContext
-                DEFAULT_CONTEXT = FlatContext()
-                MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
+            # Remove comment to simulate testing on other contexts/platforms.
+            #import ForceOtherError
+            from pagebot.contexts.flatcontext import FlatContext
+            DEFAULT_CONTEXT = FlatContext()
+            MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
 
         # TODO: Indesign context.
 
