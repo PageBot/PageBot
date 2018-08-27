@@ -23,7 +23,7 @@ install:
 - python3 setup.py install
 - cd ..
 - wget https://github.com/typesupply/defconAppKit/archive/master.zip
--unzip master.zip
+- unzip master.zip
 - cd defconAppKit-master
 - python3 setup.py install
 - cd ..
