@@ -53,10 +53,13 @@ try:
     print('Sass found at %s' % sass.__file__)
     css = sass.compile(string='a { b { color: blue; } }')
     print(css)
+    css = sass.compile(filename='sass/test.scss')
+    print(css)
+    
     test_scss = open('test.scss', 'w')
     import os, os.path
     if not os.path.exists('css'):
-        os.mkdir('css')    
+        os.mkdir('css')
     sass.compile(dirname=('sass', 'css'), output_style='compressed')
     with open('css/test.css') as example_css:
         print(example_css.read())

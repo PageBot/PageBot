@@ -445,7 +445,7 @@ table {
         u"""For now using sass to support SCSS. SASS support could be added later."""
         if cssPath is None:
             cssPath = scssPath + '.css'
-        css = sass.compile_file(scssPath)#, style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
+        css = sass.compile(filename=scssPath)#, output_style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)
         f.close()
