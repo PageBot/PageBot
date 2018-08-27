@@ -17,8 +17,9 @@ install:
 - pip3 install pyobjc
 - pip3 install svgwrite
 - python3 setup.py install
-- git clone git@github.com:typemytype/drawbot.git
-- python3 drawbot/setup.py install
+- wget https://github.com/typemytype/drawbot/archive/master.zip
+- unzip master.zip
+- python3 drawbot-master/setup.py install
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
