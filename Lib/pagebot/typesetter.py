@@ -49,8 +49,9 @@ class Typesetter(object):
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
     SKIP_TAGS = ('document', 'pre')
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None,
-            tryExcept=True, verbose=False, writeTags=True):
+    MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+
+    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -60,23 +61,27 @@ class Typesetter(object):
         >>> from pagebot.toolbox.color import color, blackColor
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
-        >>> path = getResourcesPath() + '/texts/TEST.md'
+        >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
         >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
         >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
         >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
         >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-        >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this document
-        >>> root = t.typesetFile(path)
-        >>> len(t.galley.elements)
-        5
+        >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this context
+        >>> galley = t.typesetFile(path) # Context indicates hiding of the tags in the output
+        >>> len(galley.elements)
+        6
+        >>> galley.elements[0].__class__.__name__ # First element of test-markdown is a code block
+        'CodeBlock'
+        >>> galley.elements[1].__class__.__name__ # Second element is a text box
+        'TextBox'
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> context = HtmlContext()
         >>> t = Typesetter(context, styles=styles) # Create a new typesetter with a HTML context
-        >>> root = t.typesetFile(path)
-        >>> len(t.galley.elements)
-        5
-        >>> #t.galley.elements[0].bs
-
+        >>> galley = t.typesetFile(path) # Context indicates is to include the HTML tags in output.
+        >>> len(galley.elements)
+        6
+        >>> 'What is PageBot' in galley.elements[1].bs # Skip first code block in test-markdown
+        True
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -88,12 +93,11 @@ class Typesetter(object):
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = []
         self.tagHistory = []
-        # Code block results if any ~~~ blocks defined in the Markdown file.
-        self.codeBlocks = {} # No results for now. Find codeblock result by codeId after typesetting.
         # Save some flags in case the typesetter is running in Python try-except mode.
         self.tryExcept = tryExcept
-        self.verbose = verbose
-        self.writeTags = writeTags
+        # If True add tags to the output, otherwise ignore. Can be overwritten by caller for debugging.
+        self.writeTags = context.useTags 
+        self.root = None # Will contain the root node after executing typesetFile.
 
         # Some MarkDown generated tags need to be skipped on output, while their content still is processed.
         if skipTags is None:
@@ -277,35 +281,9 @@ class Typesetter(object):
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
-        u"""Process the image. Find nearby empty space on the page to place it,
-        possibly intended to fit the w/h ratio of the image and the optional caption.
-        A new Image element is created with a PixelMap element and TextBox caption
-        element inside. The Image will use style based conditions to define the layout
-        interaction between pixelMap and caption."""
-        #src = node.attrib.get('src')
-        #self.pushStyleTag(node.tag)
-        #image = self.IMAGE_CLASS(src) # Set path, image w/h and image caontainer scale from style.
-        #self.append(image)
-        #captionString = node.get('title')
-        #if captionString: # If there is no caption, we can add the Image element directly to the main galley.
-        #    self.TEXTBOX_CLASS(captionString, parent=imageContainer)
+        u"""Process the image. adding the img tag or a new image element to the gally."""
         # Typeset the empty block of the img, which creates the HTML tag.
         self.htmlNode_(node)
-
-        """
-        else:
-            # If there is a caption, create a new child Galley to hold image + caption
-            self.GALLEY_CLASS(parent=imageElement)
-            captionStyle = self.getCascadedNodeStyle('caption')
-            tb = g.getTextBox(captionStyle)
-            caption = node.attrib.get('title')
-            # Add invisible marker to the FormattedString, to indicate where the image
-            # reference went in a textBox after slicing the string.
-            tb.append(caption+'\n', captionStyle)
-            tb.append(getMarker(node.tag, src))
-            self.append(tb)
-        """
-        #self.popStyleTag()
 
     def node_code(self, node, e):
         self.CODEBLOCK_CLASS(node.text, parent=self.galley)
@@ -517,12 +495,26 @@ class Typesetter(object):
         # which was in nodeStyle.
         self.popStyle()
 
-    def markDown2FileName(self, fileName, mdText):
-        mdExtensions = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
-        xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % markdown.markdown(mdText, extensions=mdExtensions)
+    def markDown2XmlFile(self, fileName, mdText, mdExtensions=None):
+        u"""Take the markdown source, convert to HTML/XML and save in the file called fileName.
+        If the fileName does not end with ".xml" extension, then add it. Answer the (new) fileName.
+        
+        >>> import os
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
+        >>> context = HtmlContext()
+        >>> t = Typesetter(context)
+        >>> fileName = t.markDown2XmlFile('/tmp/PageBot_Typesetter_test.xml', md)
+        >>> os.remove(fileName)
+        """
+        if mdExtensions is None:
+            mdExtensions = self.MARKDOWN_EXTENSIONS
+        xmlBody = markdown.markdown(mdText, extensions=mdExtensions)
+        xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % xmlBody
         xml = xml.replace('&nbsp;', ' ')
-        fileName = fileName + '.xml' # New file name to XML export
-        f = codecs.open(fileName, mode="w", encoding="utf-8")
+        if not fileName.endswith('.xml'):
+            fileName = fileName + '.xml' # Make sure file name has xml extension.
+        f = codecs.open(fileName, mode="w", encoding="utf-8") # Save the XML as unicode.
         f.write(xml)
         f.close()
         return fileName
@@ -540,24 +532,23 @@ class Typesetter(object):
             f = codecs.open(fileName, mode="r", encoding="utf-8")
             mdText = f.read() # Read the raw MarkDown source
             f.close()
-            fileName = self.markDown2FileName(fileName, mdText) # Translate MarkDown to HTML and save in file.
+            fileName = self.markDown2XmlFile(fileName, mdText) # Translate MarkDown to HTML and save in file.
 
         tree = ET.parse(fileName)
-        root = tree.getroot() # Get the root element of the tree.
+        self.root = tree.getroot() # Get the root element of the tree and store for later retrieval.
         # If there is XSL filtering defined, they get the filtered nodes.
         if xPath is not None:
-            filteredNodes = root.findall(xPath)
+            filteredNodes = self.root.findall(xPath)
             if filteredNodes:
-                # How to handle if there is multiple result nodes?
+                # How to handle if we got multiple result nodes?
                 self.typesetNode(filteredNodes[0], e)
         else:
             # Collect all flowing text in one formatted string, while simulating the page/flow, because
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
-            self.typesetNode(root, e)
-        # Answer the root element of the etree (Note this class also is called "Element", another kind
-        # of node than the PageBot Element.
-        return root
+            self.typesetNode(self.root, e)
+        # Answer the self.galley as convenience for the caller.
+        return self.galley
 
 if __name__ == '__main__':
     import doctest
