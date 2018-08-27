@@ -42,7 +42,7 @@ class HtmlContext(BaseContext):
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
-        """Answer the string with a bullet. As HTML does bullets automatic. Ignore answered None"""
+        """Ignore by answering None, as HTML does bullets automatic."""
         return None 
 
     #   D R A W I N G
