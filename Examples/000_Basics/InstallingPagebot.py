@@ -41,18 +41,25 @@ except:
     print('\nx Pagebot not found')
     CLEAN = False
 
-'''
 try:
     import drawBot
     print('DrawBot found at %s' % drawBot.__path__[0])
 except:
     print('\nx DrawBot not found')
     CLEAN = False
-'''
 
 try:
     import sass
     print('Sass found at %s' % sass.__file__)
+    css = sass.compile(string='a { b { color: blue; } }')
+    print(css)
+    test_scss = open('test.scss', 'w')
+    import os, os.path
+    if not os.path.exists('css'):
+        os.mkdir('css')    
+    sass.compile(dirname=('sass', 'css'), output_style='compressed')
+    with open('css/test.css') as example_css:
+        print(example_css.read())
 except Exception as e:
     print(e)
     print('x No sass dependency found.')
