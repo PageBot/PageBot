@@ -44,6 +44,8 @@ class TextBox(Element):
             self.size = size
         else:
             self.size = w or DEFAULT_WIDTH, h
+        if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
+            bs = ''
         self.bs = self.newString(bs, style=self.style) # Source can be any type: BabelString instance or plain unicode string.
         self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
