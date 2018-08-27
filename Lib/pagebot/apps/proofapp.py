@@ -80,12 +80,14 @@ class ProofApp(object):
 
     def proof(self):
         """Runs the proof and writes PDF contents to drawView."""
+        self.context.newDrawing()
         self.context.newPage(pt(WIDTH), pt(HEIGHT))
         proof = PageWide(self.context)
-        SIZE = 64
+        SIZE = 52
         self.context.fill(0)
         self.context.translate(SIZE, SIZE)
         proof.draw(self.font, 'abcdefghijklmnop', SIZE)
+        self.context.saveDocument('~/Desktop/tmp.pdf')
         pdfDocument = self.context.getDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
 
