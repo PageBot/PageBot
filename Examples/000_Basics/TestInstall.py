@@ -81,6 +81,9 @@ else:
     context = getContext()
     print(context)
     print(context.b)
+    context = getContext(contextType='Flat')
+    print(context)
+    print(context.b)
 
     # Testing Sass.
     css = sass.compile(string='a { b { color: blue; } }')

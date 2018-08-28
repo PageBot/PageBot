@@ -19,7 +19,7 @@ MAMP_PATH = None
 from sys import platform
 #TESTFLATONMAC = False
 
-def getContext():
+def getContext(contextType=None):
     """Determines which context is used:
      * DrawBotContext
      * FlatContext
@@ -28,29 +28,35 @@ def getContext():
     """
     global DEFAULT_CONTEXT, MAMP_PATH
 
-    if DEFAULT_CONTEXT is None:
+    # FIXME: what about MAMP_PATH is None?
+    if DEFAULT_CONTEXT is None or not contextType is None:
         if platform == 'darwin':
-            try:
-                # Remove comment to simulate testing on other
-                # contexts/platforms.
-                #import ForceImportError
-                import AppKit # Force exception on non-OSX platforms
-                from pagebot.contexts.drawbotcontext import DrawBotContext
-                DEFAULT_CONTEXT = DrawBotContext() # Test if platform is supporing DrawBot:
-                MAMP_PATH = '/Applications/MAMP/htdocs/'
-            except:
-                print(traceback.format_exc())
-                raise NotImplementedError('Error loading context.')
-        else:
-            # Remove comment to simulate testing on other contexts/platforms.
-            #import ForceOtherError
-            from pagebot.contexts.flatcontext import FlatContext
-            DEFAULT_CONTEXT = FlatContext()
-            MAMP_PATH = '/tmp/MAMP_PATH/' # TODO: Where is it located for Linux?
+            if contextType == 'DrawBot' or contextType is None:
+                DEFAULT_CONTEXT = getDrawBotContext()
+            elif contextType == 'Flat':
+                DEFAULT_CONTEXT = getFlatContext()
+            '''
+            elif contextType == 'InDesign':
+                ...
+            '''
 
+            MAMP_PATH = '/Applications/MAMP/htdocs/'
+        else:
+            DEFAULT_CONTEXT = getFlatContext()
+            # TODO: What's the actual path on Linux?
+
+            MAMP_PATH = '/tmp/MAMP_PATH/'
         # TODO: Indesign context.
 
     return DEFAULT_CONTEXT
+
+def getFlatContext():
+    from pagebot.contexts.flatcontext import FlatContext
+    return FlatContext()
+
+def getDrawBotContext():
+    from pagebot.contexts.drawbotcontext import DrawBotContext
+    return DrawBotContext()
 
 def getMampPath():
     """Make sure MAMP_PATH is initialized depending on the context."""
