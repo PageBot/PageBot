@@ -24,7 +24,7 @@ from pagebot.fonttoolbox.fontpaths import getFontPaths
 #print(getFontPaths())
 
 font = findFont('Roboto-Bold')
-WIDTH, HEIGHT = A3[0], 150
+WIDTH, HEIGHT = A3
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
 proof = PageWide(context)
