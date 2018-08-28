@@ -1,6 +1,7 @@
-print('\nChecking installation paths... \n')
-
+import traceback
 import sys, os
+
+print('\nChecking installation paths... \n')
 print('System: %s, %s' % (os.name, sys.platform))
 print('Executable: %s' % sys.executable)
 print('Python version is:')
@@ -45,7 +46,8 @@ except:
 try:
     import vanilla
     print('Vanilla found at %s' % vanilla.__path__[0])
-except:
+except Exception as e:
+    print(traceback.format_exc())
     print('\nx Vanilla not found')
     CLEAN = False
 
