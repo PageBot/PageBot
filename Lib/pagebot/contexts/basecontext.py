@@ -16,7 +16,7 @@
 import os
 from pagebot.style import DISPLAY_BLOCK
 
-class BaseContext(object):
+class BaseContext:
     """A BaseContext instance abstracts the specific functions of a platform
     (for instance DrawBot, Flat or HTML), thus hiding e.g. the type of
     BabelString instance needed, and the type of HTML/CSS file structure to be

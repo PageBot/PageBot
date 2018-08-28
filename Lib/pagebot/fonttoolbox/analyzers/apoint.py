@@ -14,12 +14,12 @@
 #     apoint.py
 #
 import weakref
-from pagebot.toolbox.units import point3D
 
-class APoint(object):
+class APoint:
     """Analyzer Point, used if addition information (like its type) needs to be
     stored. Otherwise just use the point2D() and point3D() which are simple
     tuples.
+    Note that the values are plain numbers in font.info.unitsPerEm, not PabeBot units.
 
     >>> p = APoint((101, 303), True)
     >>> p.onCurve is False
@@ -28,15 +28,16 @@ class APoint(object):
     APoint(101,303,On)
     """
 
-    def __init__(self, xy, onCurve=True, glyph=None, index=None):
+    def __init__(self, xyz, onCurve=True, glyph=None, index=None):
         self.glyph = glyph # Set the weakref by property
         self.index = index # Index of this point in glyph.points
-        self.p = point3D(xy)
+        self.p = list(xyz or [])
+        while len(self.p) < 3:
+            self.p.append(0)
         self.onCurve = bool(onCurve)
 
     def __getitem__(self, i):
-        u"""Allow APoint to x and y attributes to be indexed like a point2D
-        tuple.
+        u"""Allow APoint to x and y attributes to be indexed like a point2D tuple.
 
         >>> ap = APoint((100, 200))
         >>> ap, ap[0], ap[1]
@@ -45,8 +46,7 @@ class APoint(object):
         return self.p[i]
 
     def __setitem__(self, i, value):
-        u"""Allow APoint to x and y attributes to be indexed like a point2D or
-        point3D tuple.
+        u"""Allow APoint to x and y attributes to be indexed like a point2D or point3D tuple.
 
         >>> ap = APoint((100, 200))
         >>> ap[1] = 222
@@ -175,7 +175,9 @@ class APoint(object):
         (100, 250, 5)
         """
         assert isinstance(v, (int, float))
-        return self.p[0] / v, self.p[1] / v, self.p[2] / v
+        return int(round(self.p[0] / v)), int(round(self.p[1] / v)), int(round(self.p[2] / v))
+
+    __truediv__ = __div__
 
     def _get_x(self):
         u"""APoint.x property. Using indexed addressing of self.p to trigger
@@ -187,10 +189,8 @@ class APoint(object):
         (APoint(100,500,On), 100)
         """
         return self.p[0]
-
     def _set_x(self, x):
         self[0] = x # Indirect by index, triggers the update of the glyph point data.
-
     x = property(_get_x, _set_x)
 
     def _get_y(self):
@@ -235,8 +235,8 @@ class APoint(object):
 
     def __repr__(self):
         s = '%s(%s,%s' % (self.__class__.__name__, self.x, self.y)
-        if self.z:
-            s += ',%s' % self.z
+        if int(self.z):
+            s += ',%s' % int(self.z)
         return s + ',%s)' % ({True:'On', False:'Off'}[self.onCurve])
 
 if __name__ == '__main__':

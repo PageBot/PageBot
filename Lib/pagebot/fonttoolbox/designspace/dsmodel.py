@@ -15,7 +15,6 @@
 #
 #    dsmodel.py
 #
-from __future__ import division
 
 import os
 from copy import copy, deepcopy
@@ -68,7 +67,7 @@ def isValidTag(tag):
         return True
     return False
 
-class Axis(object):
+class Axis:
 
     def __init__(self, tag, name=None, minimum=None, default=None, maximum=None, mapping=None, labelNames=None):
         """Axis class that contains variable font axis data.
@@ -215,7 +214,7 @@ class BlendAxis(Axis):
         pass # Ignore, value is calculated result.
     maximum = property(_get_maximum, _set_maximum)
 
-class FontInfo(object):
+class FontInfo:
     """Holds the design space info for master and instance. """
 
     def __init__(self, name=None, familyName=None, styleName=None, path=None, location=None, info=None):
@@ -303,7 +302,7 @@ class Location(dict):
                 location[tag] = value
         return location
 
-class DesignSpace(object):
+class DesignSpace:
     """DesignSpace file wrapper. It can read from a design space source (path),
     it can be used to build one from scratch and save as subset-axes design spaces,
     and it can be used to dynamically build quiries and allows to alter content.
@@ -1265,7 +1264,7 @@ class DesignSpace(object):
 
         return ''.join(xml)
 
-class Model(object):
+class Model:
     """
     See: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview
 

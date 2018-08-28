@@ -10,11 +10,9 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
-#Z
+#
 #     UseElasticTextBox.py
 #
-from __future__ import division # Make integer division result in float.
-#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.contexts.platform import getContext
 c = getContext()

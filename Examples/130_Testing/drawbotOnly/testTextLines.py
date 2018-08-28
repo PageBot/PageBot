@@ -13,7 +13,6 @@
 #
 #     testTextLines.py
 #
-from __future__ import print_function
 import sys
 from pagebot.contexts.platform import getContext
 context = getContext()
@@ -28,7 +27,7 @@ import Quartz
 
 #    NOTE: Assumes TYPETR-Bitcount to be installed.
 
-class TextRun(object):
+class TextRun:
     def __init__(self, ctRun, string):
         self.string = string
         self.glyphCount = gc = CoreText.CTRunGetGlyphCount(ctRun)
@@ -86,7 +85,7 @@ class TextRun(object):
     def __len__(self):
         return self.glyphCount
 
-class TextLine(object):
+class TextLine:
     def __init__(self, ctLine):
         self._ctLine = ctLine
         self.glyphCount = CoreText.CTLineGetGlyphCount(ctLine)

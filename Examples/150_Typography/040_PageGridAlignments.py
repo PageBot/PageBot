@@ -107,7 +107,7 @@ c5 = newTextBox(t, parent=page, w=CW, stroke=(1, 0, 0),
     conditions=[Right2Right(), Baseline2Bottom(index=-1)])
 
 # Solve the page/element conditions, so the text box as it's position and size.
-print(doc.solve())
+doc.solve()
 # Get the position of the first baseline of the text.
 #print(sorted(c1.baselines))
 #print(firstLine, firstLine.y)

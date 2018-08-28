@@ -16,7 +16,7 @@
 #
 #     Implements a range of common transforms.
 #
-from __future__ import division # Make integer division result in float.
+
 
 import json, re
 from time import time

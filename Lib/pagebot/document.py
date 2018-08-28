@@ -24,7 +24,7 @@ from pagebot.style import getRootStyle
 from pagebot.toolbox.transformer import obj2StyleId
 from pagebot.toolbox.units import pt, units, isUnit
 
-class Document(object):
+class Document:
     """A Document a container of pages.
 
     Doctest: https://docs.python.org/2/library/doctest.html
@@ -136,8 +136,8 @@ class Document(object):
         need to exchange information across applications.
 
         >>> doc = Document(name='TestDoc', lib=dict(a=12, b=34))
-        >>> doc.lib
-        {'a': 12, 'b': 34}
+        >>> sorted(doc.lib.items())
+        [('a', 12), ('b', 34)]
         """
         return self._lib
     lib = property(_get_lib)

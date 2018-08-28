@@ -12,7 +12,6 @@
 #
 #     UseElementProperties.py
 #
-from __future__ import print_function
 from pagebot.elements import *
 
 W = H = 500

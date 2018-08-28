@@ -16,7 +16,6 @@
 #     This script generates page that show the behavior and working of the DrawBot
 #     ImageObject filters.
 #
-from __future__ import division # Make integer division result in float.
 
 from pagebot import getResourcesPath
 from pagebot.fonttoolbox.objects.family import getFamily

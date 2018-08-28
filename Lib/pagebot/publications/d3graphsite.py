@@ -17,8 +17,6 @@
 #     This will hold the basic Python generator version of Kirsten Langmuur's SimpleSite template.
 #
 from pagebot.elements import *
-from pagebot.elements.web.simplesite import Navigation, Featured, WideContent, Hero, \
-    Footer, simpleTheme, simpleCssCode
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.toolbox.units import px, fr
@@ -31,13 +29,16 @@ class D3GraphSite(Publication):
     >>> blurb = Blurb()
     >>> doc = D3GraphSite(name='D3GraphSite', viewId='Site', padding=30, autoPages=1)
     >>> doc
-    [Document-D3GraphSite "D3GraphSite"]
+    <Document-D3GraphSite "D3GraphSite" Pages=1 Templates=2 Views=1>
     >>> view = doc.newView('Mamp')
     >>> page = doc[1]
     >>> page.name = 'index'
     >>> template = doc.getTemplate('home')
     >>> page.applyTemplate(template)
-    >>> view.info.cssCode = template.info.cssCode
+    >>> view.cssCode = template.cssCode
+    """
+
+    """
     >>> doc.build()
     >>> # Try to open in browser. It works if a local server (like MAMP) runs for view.LOCAL_HOST_URL url.
     >>> import os
@@ -96,15 +97,15 @@ class D3GraphSite(Publication):
         t.headHtml = headHtml % dict(title=self.title, description='', keywords='')
         t.favIconUrl = 'images/favicon.gif'
         t.jsCode = jsCode
-        t.cssCode = simpleCssCode % simpleTheme
         # Add page template elements.
+        """
         Navigation(parent=t, name='Navigation')
         #Introduction(parent=t, name='Introduction')
         Featured(parent=t, name='Featured')
         WideContent(parent=t, name='WideContent')
         Hero(parent=t, name='Hero')
         Footer(parent=t, name='Footer')
-
+        """
 if __name__ == '__main__':
     import doctest
     import sys

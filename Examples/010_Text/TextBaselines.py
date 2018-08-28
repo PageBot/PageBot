@@ -15,13 +15,12 @@
 #     TextBaselines.py
 #
 #     Show how alignment of baselines work for 
-from __future__ import print_function
 
 from pagebot.document import Document
 from pagebot.constants import GRID_LINE, GRID_COL, GRID_SQR, GRID_ROW, LANGUAGE_EN
 from pagebot.toolbox.units import p, pt, em
 from pagebot.toolbox.color import color
-from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.conditions import *
 
@@ -75,10 +74,10 @@ PageBot is a page layout program that enables designers to create high quality d
 """
 page = doc[1]
 page.baselineGrid = LEADING
-c = Composer(doc)
-c.typeset(markDown=s, styles=styles)
+t = Typesetter(doc.context, styles=styles)
+galley = t.typesetMarkdown(s)
 
-tb1 = c.galleys[0].elements[0]
+tb1 = galley.elements[0]
 tb1.fill = 0.95
 tb1.padding = p(0.5)
 tb1.parent = page

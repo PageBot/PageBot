@@ -16,7 +16,7 @@
 #
 #     Holds the (style) constants of PageBot.
 #
-from __future__ import division # Make integer division result in float.
+
 
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE

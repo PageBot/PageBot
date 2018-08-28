@@ -48,7 +48,7 @@ INDENT = '    '
 NEWLINE = '\n'
 
 
-class Node(object):
+class Node:
     """The *Node* class is used to build the PageBot file tree, for cleaning
     doc-building and unit tests.
 
@@ -158,7 +158,7 @@ class PageBotDoc(Publication):
                     runpy.run_path(filePath)
                     relPath = self.pagebotBase + filePath.split(self.pagebotBase)[-1]
                     d = doctest.testfile(relPath)
-                except Exception, e:
+                except Exception as e:
                     # TODO: write to file.
                     print('doctest: an error occurred, file path is %s' % filePath)
                     print(traceback.format_exc())
@@ -187,7 +187,7 @@ class PageBotDoc(Publication):
                     self.packages[module_name] = mod
                 else:
                     self.classes[module_name] = mod
-            except Exception, e:
+            except Exception as e:
                 print('scanPackage: an error occurred, modulename is %s' % module_name)
                 print(traceback.format_exc())
 
@@ -289,7 +289,7 @@ class PageBotDoc(Publication):
 
                         try:
                             self.writeDocsPage(path, mod)
-                        except Exception, e:
+                        except Exception as e:
                             print('WriteDocsPages: an error occurred, path is %s' % path)
                             print(traceback.format_exc())
                 else:
@@ -461,7 +461,7 @@ class PageBotDoc(Publication):
 
                     try:
                         f.write('%s  \n' % line.encode('utf-8'))
-                    except Exception, e:
+                    except Exception as e:
                         print('An error occurred writing a doc file %s, (%s %s)' % (f, key, value))
                         print(traceback.format_exc())
 
@@ -592,7 +592,7 @@ def main(argv):
     if doTest:
         try:
             d.testDocs(logFile=logFile)
-        except Exception, e:
+        except Exception as e:
             traceback.format_exc()
 
 if __name__ == '__main__':

@@ -14,7 +14,6 @@
 #
 #     TODO: Adjust example to latest (relative) units additions.
 #
-from __future__ import division
 
 import sys
 from pagebot.contexts.platform import getContext
@@ -23,7 +22,7 @@ if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
-class E(object):
+class E:
     def css(self, n, v):
         if n == 'gw':
             return 20

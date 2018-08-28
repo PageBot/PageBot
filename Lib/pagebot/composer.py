@@ -15,10 +15,9 @@
 #     composer.py
 #
 from pagebot.elements import newTextBox
-from pagebot.typesetter import Typesetter
 from pagebot.elements import CodeBlock
 
-class Composer(object):
+class Composer:
     u"""A Composer takes a artDirection and tries to make pagination from given context,
     a “nice” layout (on existing or new document pages), by taking the elements from
     the galley pasteboard and finding the best place in pages, e.g. in page-flows that
@@ -72,7 +71,7 @@ class Composer(object):
         elif page is not None:
             targets['page'] = page
 
-        if not 'errors' in targets:
+        if 'errors' not in targets:
             targets['errors'] = []
         errors = targets['errors']
 

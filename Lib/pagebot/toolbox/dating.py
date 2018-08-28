@@ -13,7 +13,6 @@
 #
 #    dating.py
 #
-from __future__ import print_function
 import datetime
 from time import localtime
 from random import randint

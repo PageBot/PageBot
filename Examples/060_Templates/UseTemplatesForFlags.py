@@ -20,8 +20,6 @@
 #     so the order is important: first apply a new template, then add elements
 #     to a specific page.
 #
-from __future__ import division # Make integer division result in float.
-#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.contexts.platform import getContext
 from pagebot.elements import *

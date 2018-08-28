@@ -430,7 +430,7 @@ def tagToIdentifier(tag):
     return "".join(output)
 
 
-class TTFTraverser(object):
+class TTFTraverser:
 
     """TTFTraverser is a tiny framework to write functionality that has to deal with
     looking at or modifying multiple TTF/OTF tables more or less independently. Simply
@@ -461,7 +461,7 @@ class TTFTraverser(object):
         return results
 
     def handleUnknownTable(self, tableTag):
-        pass
+        return None
 
 
 class _TestTraverser(TTFTraverser):

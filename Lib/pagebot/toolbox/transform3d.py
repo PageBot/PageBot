@@ -1,4 +1,3 @@
-from __future__ import division
 
 import math
 
@@ -24,7 +23,7 @@ def _offsetArray3D(array, offset):
         yield x+dx, y+dy, z+dz
 
 
-class Transform3D(object):
+class Transform3D:
 
     def __init__(self, matrix=None, offset=None):
         if matrix is None:

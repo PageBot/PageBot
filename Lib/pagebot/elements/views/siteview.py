@@ -79,8 +79,11 @@ class SiteView(HtmlView):
                     # Safety check, only run on relative paths
                     assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
                     shutil.rmtree(dstPath)
-                # TODO: Fails in Travis.
-                shutil.copytree(resourcePath, dstPath)
+                if os.path.exists(resourcePath):
+                    shutil.copytree(resourcePath, dstPath)
+                elif self.verbose:
+                    print('[%s.build] Resource "%s" does not exist.' % (self.__class__.__name__, resourcePath))
+
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         """

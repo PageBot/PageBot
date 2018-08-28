@@ -563,7 +563,6 @@ class TextBox(Element):
         """
         if self.textLines:
             line = self.textLines[index or 0]
-            print('TOP', self.y, self.top, line.y)
             self.top -= line.y
 
     def baseline2Bottom(self, index=None, style=None):

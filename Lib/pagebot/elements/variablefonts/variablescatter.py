@@ -14,7 +14,6 @@
 #
 #	  variablescatter.py
 #
-from __future__ import division
 
 from random import random, choice
 from pagebot.elements.element import Element
@@ -67,7 +66,7 @@ class VariableScatter(Element):
             value = minValue + random() * (maxValue - minValue)
             location[axisName] = value
 
-        return location,
+        return location
 
     def draw(self, view, origin):
         c = self.doc.context

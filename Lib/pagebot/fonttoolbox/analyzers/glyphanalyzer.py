@@ -29,7 +29,7 @@ from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 SPANSTEP = 4
 
-class GlyphAnalyzer(object):
+class GlyphAnalyzer:
 
     FUZZ = 4 # Default amount that a value can be off while treated the same.
 

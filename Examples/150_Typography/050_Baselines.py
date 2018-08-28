@@ -2,20 +2,21 @@ from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newTextBox
 from pagebot.toolbox.units import pt
+from pagebot.contexts.platform import getContext
+
+context = getContext()
 
 def gridFit(e, index):
     line = tb.textLines[index]
-    print(line.y)
+    #print(line.y)
     
 def drawGrid(e):   
     for textLine in tb.textLines:
-        print(textLine.y, textLine)
         x, y, w = tb.x, textLine.y, tb.w
-        stroke(1, 0, 0)
-        strokeWidth(0.5)
-        fill(None)
+        context.stroke((1, 0, 0), 0.5)
+        context.fill(None)
         yy = page.h.v - tb.top.v - y.v
-        line((x.v, yy),((x+w).v, yy))
+        context.line((x.v, yy),((x+w).v, yy))
  
 BASELINE = pt(14)
 

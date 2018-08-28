@@ -17,7 +17,7 @@
 import os
 from pagebot.toolbox.transformer import path2Name
 
-class NoneBezierPath(object):
+class NoneBezierPath:
     """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing
     texting."""
 
@@ -38,12 +38,12 @@ class NoneBezierPath(object):
     def appendPath(self, path):
         pass
 
-class NoneImageObject(object):
+class NoneImageObject:
     """Make NoneImageObject with the same API got NonDrawBotBuilder."""
     def __init__(self, path):
         self.path = path
 
-class NoneBuilder(object):
+class NoneBuilder:
     """Make NoneBuilder with a general builder API for docTesting. Used for
     example when the platform does not support DrawBot. Methods need to be
     added here when DrawBotContext docTests fail with non-DrawBot platforms.
@@ -145,7 +145,7 @@ class NoneBuilder(object):
         pass
 
     def FormattedString(self, s):
-        class FS(object):
+        class FS:
             def __init__(self, s):
                 self.s = s
         return FS(s)

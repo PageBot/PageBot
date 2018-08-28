@@ -14,7 +14,7 @@
 #     websiteapp.py
 #
 from pagebot.apps.drawbotapps.baseapp import BaseApp
-from pabebot.publications.website import Website
+from pagebot.publications.website import Website
 
 class WebsiteApp(BaseApp):
     PUBLICATION_CLASS = Website

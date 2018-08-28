@@ -23,7 +23,7 @@ try:
 except ImportError:
     flatBuilder = NoneFlatBuilder()
 
-class BezierPath(object):
+class BezierPath:
     """Make BezierPath with the same API for DrawBotBuilder drawing.
 
     >>> path = BezierPath(flatBuilder)

@@ -16,7 +16,7 @@
 #
 from pagebot.toolbox.color import Color, blackColor, whiteColor
 
-class Gradient(object):
+class Gradient:
     """As linear gradient (startRadius or endRadius not set):
 
     startPoint as (x, y)
@@ -57,7 +57,7 @@ class Gradient(object):
         return self.startRadius is not None and self.endRadius is not None
     radial = property(_get_radial)
 
-class Shadow(object):
+class Shadow:
 
     def __init__(self, offset=None, blur=None, color=None):
         assert isinstance(color, Color)

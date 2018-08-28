@@ -20,7 +20,6 @@
 #    Implements a demo version of TextLine and TextRun.
 #    This code has been built into BabelString DrawBotString.
 #
-from __future__ import print_function
 
 import re
 import sys
@@ -38,7 +37,7 @@ except ImportError:
 
 context = getContext()
 
-class FoundPattern(object):
+class FoundPattern:
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
         self.s = s # Actual found string
         self.x = x
@@ -52,7 +51,7 @@ class FoundPattern(object):
     def __repr__(self):
         return '[Found "%s" @ %s,%s]' % (self.s, self.x, self.y)
 
-class TextRun(object):
+class TextRun:
     def __init__(self, ctRun, runIndex):
         self.runIndex = runIndex # Index of the run in the TextLine
         self._ctRun = ctRun
@@ -217,7 +216,7 @@ class TextRun(object):
     minimumLineHeight = property(_get_minimumLineHeight)
 
 
-class TextLine(object):
+class TextLine:
     def __init__(self, ctLine, p, lineIndex):
         self._ctLine = ctLine
         self.x, self.y = p # Relative position from top of TextBox
@@ -291,7 +290,7 @@ class TextLine(object):
             founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
         return founds
 
-class TextBox(object):
+class TextBox:
     """A TextBox holds a formatted string, as well as an ordered list of TextLine instances,
     that hold information about the sequence of TextRun instances (with their unique typographic
     properties). Also self.baseLines is available, ordered list of baseLine positions, relative

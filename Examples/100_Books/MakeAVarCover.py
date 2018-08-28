@@ -25,7 +25,7 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance, fitVaria
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
 from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, noColor, whiteColor
 
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)

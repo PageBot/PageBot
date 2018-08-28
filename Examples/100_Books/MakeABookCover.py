@@ -19,7 +19,7 @@ from random import random # Used for random color palet.
 
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.color import Color, noColor, whiteColor
 
 # Get function to find the Roboto family (in this case installed in the
 # PageBot repository).

@@ -16,7 +16,6 @@
 #
 #     D E P R E C A T E D
 #
-from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
@@ -60,7 +59,7 @@ def setCoordinates(glyph, coord, glyfTable):
     # font["hmtx"].metrics[glyphName] = int(round(horizontalAdvanceWidth)), int(round(leftSideBearing))
 
 
-class TTVarFontGlyphSet(object):
+class TTVarFontGlyphSet:
     # TODO: Change to PageBot Font wrapper
     def __init__(self, ttFont):
         self._ttFont = ttFont
@@ -87,7 +86,7 @@ class TTVarFontGlyphSet(object):
             return default
 
 
-class TTVarGlyph(object):
+class TTVarGlyph:
 
     def __init__(self, ttFont, glyphName, location):
         self._ttFont = ttFont
@@ -173,7 +172,7 @@ class TTVarFontDesignSpace(DesignSpaceBase):
 
 if __name__ == "__main__":
 
-    class DesignSpaceExplorerTest(object):
+    class DesignSpaceExplorerTest:
 
         def __init__(self, designSpace, previewCharacter="e"):
             from vanilla import Window

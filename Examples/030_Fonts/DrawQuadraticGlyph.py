@@ -38,7 +38,7 @@ G = 10
 context = getContext()
 
 
-class Point(object):
+class Point:
 
     def __init__(self, x, y, onCurve=True, smooth=False, start=False):
         self.x = x

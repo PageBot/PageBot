@@ -14,7 +14,6 @@
 #
 #     pagebot/__init__.py
 #
-from __future__ import division
 __doc__ = """PageBot module"""
 
 __version__ = '0.6-beta'
@@ -46,7 +45,7 @@ def getResourcesPath():
 
 pbGlobals = {}
 
-class Globals(object):
+class Globals:
     # Allow adding by attribute and key.
     def __setitem__(self, key, value):
         setattr(self, key, value)
