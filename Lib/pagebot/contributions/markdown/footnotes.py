@@ -303,7 +303,7 @@ class FootnoteTreeprocessor(Treeprocessor):
             result = self.footnotes.findFootnotesPlaceholder(root)
             if result:
                 child, parent, isText = result
-                ind = lint(parent).index(child)
+                ind = list(parent).index(child)
                 if isText:
                     parent.remove(child)
                     parent.insert(ind, footnotesDiv)

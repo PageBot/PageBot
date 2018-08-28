@@ -461,7 +461,7 @@ class TTFTraverser:
         return results
 
     def handleUnknownTable(self, tableTag):
-        pass
+        return None
 
 
 class _TestTraverser(TTFTraverser):

@@ -67,7 +67,7 @@ class VariableScatter(Element):
             value = minValue + random() * (maxValue - minValue)
             location[axisName] = value
 
-        return location,
+        return location
 
     def draw(self, view, origin):
         c = self.doc.context

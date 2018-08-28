@@ -839,7 +839,7 @@ class GlyphDeleter(LookupTraverser):
         laClassesAfter = _getClassesFromClassDef(subTable.LookAheadClassDef)
 
         if (btClassesBefore == btClassesAfter and inClassesBefore == inClassesAfter
-                and laClassesBefore == laClassesBefore):
+                and laClassesBefore == laClassesAfter):
             # the sets of used classes were unaffected by the glyph deletion: we're done.
             return
 

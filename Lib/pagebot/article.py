@@ -15,7 +15,6 @@
 #     article.py
 #
 import os
-from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 
 class Article:
