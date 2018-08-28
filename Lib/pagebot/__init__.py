@@ -46,7 +46,7 @@ def getResourcesPath():
 
 pbGlobals = {}
 
-class Globals(object):
+class Globals:
     # Allow adding by attribute and key.
     def __setitem__(self, key, value):
         setattr(self, key, value)

@@ -13,7 +13,7 @@
 #
 #     score.py
 #       
-class Score(object):
+class Score:
     def __init__(self):
         self.result = 0
         self.fails = []

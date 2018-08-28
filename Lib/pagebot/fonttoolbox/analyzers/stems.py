@@ -18,7 +18,7 @@ from pagebot.toolbox.mathematics import distance
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
-class Stem(object):
+class Stem:
     """
     The <code>Stem</code> class instant takes the CVT related to this stem, and the  left and point <code>Vertical
     </code> instance that stem binds.
@@ -259,7 +259,7 @@ class Serif(Stem):
         return 0, 0, 0, 0
     boundingBox = property(_get_boundingBox)
     
-class Overshoot(object):
+class Overshoot:
 
     def __init__(self, pc, reference):
         self.pc = pc

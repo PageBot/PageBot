@@ -50,7 +50,7 @@ def collectUniqueKernLookupListIndexes(featureRecord):
     return uniqueKernLookupIndexList
 
 
-class OTFKernReader(object):
+class OTFKernReader:
 
     def __init__(self, fontPath):
         self.font = ttLib.TTFont(fontPath)

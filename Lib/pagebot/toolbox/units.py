@@ -530,7 +530,7 @@ def uString(u, maker=None):
 
 us = uString # Convenience abbreviaion
 
-class Unit(object):
+class Unit:
     """Base class for units, implementing most of the logic.  Unit classes can
     be absolute (Pt, Px, Pica/P, Mm, Inch) and relative, which need the
     definintion of a base reference value (Perc, Fr) or em (Em).

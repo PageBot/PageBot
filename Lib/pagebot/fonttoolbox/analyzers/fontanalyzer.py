@@ -18,7 +18,7 @@
 import weakref
 from pagebot.toolbox.transformer import path2FontName
 
-class FontAnalyzer(object):
+class FontAnalyzer:
 
     def __init__(self, font):
         """Initially the variable font instance is equal to the original."""

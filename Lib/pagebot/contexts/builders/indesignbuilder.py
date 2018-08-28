@@ -28,7 +28,7 @@ from pagebot.toolbox.transformer import object2SpacedString
 from pagebot.toolbox.units import asFormatted
 from pagebot.constants import A4Rounded
 
-class BezierPath(object):
+class BezierPath:
     """Make BezierPath with the same API for DrawBotBuilder drawing.
 
     >>> from pagebot.contexts.builders.indesignbuilder import InDesignBuilder

@@ -45,7 +45,7 @@ def angleOfLines(p1, p2, q1, q2, inDegrees=True):
     elif angle > 180: angle -= 360
     return angle
 
-class APointContext(object):
+class APointContext:
     """The PointContext instance is a Point wrapper, that also takes the 3 points previous
     and next 3 points on the contour. The instance behaves like a normal point p, but
     additional information is available as interpreted from the point context in relation 

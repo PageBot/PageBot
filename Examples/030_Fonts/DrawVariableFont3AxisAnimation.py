@@ -48,7 +48,7 @@ BOLD_ITALIC = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Bold Ital
 
 LABEL_FONT = BOOK
 
-class FontIcon(object):
+class FontIcon:
     W = pt(30)
     H = pt(40)
     L = pt(2)
@@ -159,7 +159,7 @@ class FontIcon(object):
             context.text(bs, (w/2-tw/2, y))
         context.restore()
         
-class KeyFrame(object):
+class KeyFrame:
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
         self.positions = positions

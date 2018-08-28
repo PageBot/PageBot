@@ -24,7 +24,7 @@ from pagebot.style import getRootStyle
 from pagebot.toolbox.transformer import obj2StyleId
 from pagebot.toolbox.units import pt, units, isUnit
 
-class Document(object):
+class Document:
     """A Document a container of pages.
 
     Doctest: https://docs.python.org/2/library/doctest.html

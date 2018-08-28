@@ -46,7 +46,7 @@ COND = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMin), styleName='Cond',
 WIDE = getVarFontInstance(f, dict(wght=wghtDef, wdth=wdthMax), styleName='Wide', normalize=True)
 
 
-class FontIcon(object):
+class FontIcon:
     W = 30
     H = 40
     L = 2
@@ -155,7 +155,7 @@ class FontIcon(object):
                 context.text(bs, (w/2-tw/2, y))
         restore()
 
-class KeyFrame(object):
+class KeyFrame:
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
         self.positions = positions

@@ -18,7 +18,7 @@
 #
 from pagebot.fonttoolbox.ttftools import getBestCmap
 
-class cached_property(object):
+class cached_property:
     """
     A property that is only computed once per instance and then replaces itself
     with an ordinary attribute. Deleting the attribute resets the property.
@@ -37,7 +37,7 @@ class cached_property(object):
         return value
 
 
-class FontInfo(object):
+class FontInfo:
 
     """Read-only access to font information, such as names, character set and supported
     OpenType features.

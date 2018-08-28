@@ -16,7 +16,7 @@
 import weakref
 from pagebot.toolbox.units import point3D
 
-class APoint(object):
+class APoint:
     """Analyzer Point, used if addition information (like its type) needs to be
     stored. Otherwise just use the point2D() and point3D() which are simple
     tuples.

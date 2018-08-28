@@ -36,7 +36,7 @@ from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color, blackColor
 
 
-class Typesetter(object):
+class Typesetter:
     u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence 
     of markdown strings and builds a galley, using a dictionary of styles for the formatted string 
     attributes. The result of the typesetting is a self.galley, that contains a sequence of Element 

@@ -23,7 +23,7 @@ if not context.isDrawBot:
     print('Example only runs on DrawBot.')
     sys.exit()
 
-class E(object):
+class E:
     def css(self, n, v):
         if n == 'gw':
             return 20
