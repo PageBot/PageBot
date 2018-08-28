@@ -12,7 +12,6 @@
 #
 #     UseWebElements.py
 #
-from __future__ import print_function
 import os
 from pagebot.elements import *
 

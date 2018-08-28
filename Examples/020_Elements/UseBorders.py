@@ -12,7 +12,6 @@
 #
 #     UseBorders.py
 #
-from __future__ import division # Make integer division result in float.
 from random import random
 from drawBot import Variable
 from drawBot.misc import DrawBotError

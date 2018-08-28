@@ -23,7 +23,6 @@
 #     STAT table
 #     https://www.microsoft.com/typography/otspec/stat.htm
 #
-from __future__ import print_function
 
 import os, sys, shutil
 

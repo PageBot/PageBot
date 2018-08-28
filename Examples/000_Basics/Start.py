@@ -16,7 +16,6 @@
 #     Shows how to start a documentand export it to PNG and PDF in the simplest steps.
 #     
 
-from __future__ import division # Make integer division result in float.
 from random import random
 from pagebot.toolbox.color import color
 

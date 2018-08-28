@@ -17,7 +17,6 @@
 #     If the element with this condition as unmatched overflow, then it
 #     needs to try to solve it. Otherwise a fail remains after self.solve()
 #
-from __future__ import division
 from pagebot.conditions.condition import Condition
 
 # Text overflow

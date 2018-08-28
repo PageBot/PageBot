@@ -20,7 +20,6 @@
 #    Implements a demo version of TextLine and TextRun.
 #    This code has been built into BabelString DrawBotString.
 #
-from __future__ import print_function
 
 import re
 import sys

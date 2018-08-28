@@ -15,8 +15,6 @@
 #
 #     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
-from __future__ import division # Make integer division result in float.
-#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.style import LEFT, BOTTOM
 from pagebot.fonttoolbox.objects.font import findFont
@@ -96,9 +94,8 @@ def makeDocument():
     print(g.pointContexts[0].p.x)
     c.save()
     c.scale(0.3)
-    path = font[char].path
     c.fill(color(1, 0, 0))
-    c.drawPath(path)
+    c.drawGlyph(font[char])
     ga = GlyphAnalyzer(g)
     for x, vertical in ga.verticals.items():
         c.stroke(blackColor, pt(1))

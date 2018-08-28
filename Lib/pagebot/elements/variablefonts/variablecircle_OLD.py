@@ -18,7 +18,6 @@
 #     The aim is to derive as much information directly from the font, without the need
 #     for additional parameters.
 #
-from __future__ import division
 from math import pi, sin, cos
 
 from pagebot.contexts.platform import getContext

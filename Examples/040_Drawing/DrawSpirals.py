@@ -13,7 +13,7 @@
 #
 #     drawSpirals.py
 #
-from __future__ import division # Make integer division result in float.
+
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor, blackColor
 from pagebot.contexts.platform import getContext

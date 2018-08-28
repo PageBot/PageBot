@@ -33,7 +33,7 @@
 #     col, Col     Same as fr, using gutter. Works vertical as rows as well.
 #     px, Px       Equal to points (for now)
 #
-from __future__ import division # Make integer division result in float.
+
 
 import re
 import sys

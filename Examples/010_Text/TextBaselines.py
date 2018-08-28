@@ -15,7 +15,6 @@
 #     TextBaselines.py
 #
 #     Show how alignment of baselines work for 
-from __future__ import print_function
 
 from pagebot.document import Document
 from pagebot.constants import GRID_LINE, GRID_COL, GRID_SQR, GRID_ROW, LANGUAGE_EN

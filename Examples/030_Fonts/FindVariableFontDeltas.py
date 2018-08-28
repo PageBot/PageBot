@@ -15,7 +15,6 @@
 #     Delta are stored per glyph in the Font.ttFont.
 #     But you can better use the wrapper attribute font Font.
 #
-from __future__ import print_function
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.objects.font import findFont

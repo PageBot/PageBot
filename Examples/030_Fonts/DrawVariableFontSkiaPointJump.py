@@ -18,7 +18,6 @@
 #     In the future these classes will be part of the main PageBot library,
 #     which may make them incompatible with this particular example.
 #
-from __future__ import print_function
 from math import radians
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont

@@ -13,7 +13,7 @@
 #
 #     oval.py
 #
-from __future__ import division # Make integer division result in float.
+
 
 from pagebot.style import ORIGIN
 from pagebot.elements.element import Element

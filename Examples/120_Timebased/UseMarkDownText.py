@@ -12,7 +12,6 @@
 #
 #     UseMarkDownText.py
 #
-from __future__ import print_function
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
