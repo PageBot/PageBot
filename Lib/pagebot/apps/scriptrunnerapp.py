@@ -20,7 +20,7 @@ from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
 
-class ScriptRunnerApp(object):
+class ScriptRunnerApp:
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 

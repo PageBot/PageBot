@@ -71,7 +71,7 @@ FILTERWHITESPACE = 1
 randint = random.randint
 vowels = u'aeiuoAEIUO'
 
-class BlurbWriter(object):
+class BlurbWriter:
 
     '''A very unspecific recursive compiler and randomizer for text.
     '''

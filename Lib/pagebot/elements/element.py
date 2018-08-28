@@ -33,7 +33,7 @@ from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now, days
 
-class Element(object):
+class Element:
     """The base element object."""
 
     # Initializes the default Element behavior flags. These flags can be

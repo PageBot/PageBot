@@ -17,7 +17,7 @@
 from fontTools.pens.cocoaPen import CocoaPen
 from pagebot.proofing.tx import *
 
-class Proof(object):
+class Proof:
 
     leading = 1.2
 

@@ -15,7 +15,7 @@
 #
 from pagebot.toolbox.units import asFormatted
 
-class AComponent(object):
+class AComponent:
     def __init__(self, ttComponent):
         self.ttComponent = ttComponent
 

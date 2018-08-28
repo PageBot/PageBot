@@ -17,7 +17,7 @@
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 
-class Article(object):
+class Article:
     """An Article instance is the abstract binder between content (e.g. as processed by
     Typesetter, and formatted pages in a Document (required), reflecting the capabilities 
     of a given context and a given view (e.g. HTML/CSS output or PDF documents).

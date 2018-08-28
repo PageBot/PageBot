@@ -277,7 +277,7 @@ def sortFeatureList(table):
 # Implementation classes and helper functions
 #
 
-class LookupTraverser(object):
+class LookupTraverser:
 
     """LookupTraverser provides a tiny framework to dispatch operations to methods
     (to be implemented by the subclass) specialized for specific lookup types.
@@ -1207,7 +1207,7 @@ def _getClassesFromClassDef(classDef):
         return set(classDef.classDefs.values())
 
 
-class ObjectIdSet(object):
+class ObjectIdSet:
 
     """A set object using object id's for comparison and hashing. We use this to
     maintain a set of lookup subtables, which unfortunately aren't hashable, yet

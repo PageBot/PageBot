@@ -28,7 +28,7 @@ from pagebot.fonttoolbox.analyzers.acomponent import AComponent
 F = 2.0 / 3.0
 C = 0.5
 
-class AxisDeltas(object):
+class AxisDeltas:
     """Hold the list of axis parts with their minValue, defaultValue, maxValue and list of deltas."""
     def __init__(self, name):
         self.name = name
@@ -44,7 +44,7 @@ class AxisDeltas(object):
     def __getitem__(self, key):
         return self.deltas[key]
 
-class Glyph(object):
+class Glyph:
     """The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
 
