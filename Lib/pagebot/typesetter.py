@@ -538,7 +538,7 @@ class Typesetter(object):
         f.close()
         return fileName
 
-    def typesetMarkDown(self, mdText, mdExtensions=None, e=None, xPath=None):
+    def typesetMarkdown(self, mdText, mdExtensions=None, e=None, xPath=None):
         tmpPath = '/tmp/PageBot_Typesetter.xml'
         fileName = self.markDown2XmlFile(tmpPath, mdText, mdExtensions)
         self.typesetFile(fileName, e=e, xPath=xPath)
