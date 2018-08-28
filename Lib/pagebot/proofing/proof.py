@@ -29,6 +29,7 @@ class Proof(object):
         self.context.scale(scale)
 
         x = 0
+        y = self.context.b.height() - getAcenderHeight(font, size)
 
         for c in content:
             pen = CocoaPen(font)
