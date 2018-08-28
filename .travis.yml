@@ -38,6 +38,13 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
+- wget https://github.com/michielkauwatjoe/flat/archive/master.zip
+- unzip master.zip
+- cd flat-master
+- python3 setup.py install
+- cd ..
+- rm master.zip
+- rm -r flat-master
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
