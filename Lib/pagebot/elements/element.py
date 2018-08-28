@@ -993,7 +993,7 @@ class Element:
         1.4em
         >>> e = Element(fontSize=pt(24), leading=em(1.4))
         >>> e.css('leading'), round(e.css('leading').pt) # Show unit and rendered compared to
-        (1.4em, 17.0)
+        (1.4em, 17)
         """
         if name in self.style and self.style[name] is not None:
             return self.style[name]
