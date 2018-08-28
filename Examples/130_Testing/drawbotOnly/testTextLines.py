@@ -13,7 +13,6 @@
 #
 #     testTextLines.py
 #
-from __future__ import print_function
 import sys
 from pagebot.contexts.platform import getContext
 context = getContext()

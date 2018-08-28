@@ -14,7 +14,7 @@
 #
 #     animationframe.py
 #
-from __future__ import division # Make integer division result in float.
+
 
 from math import sin, cos, radians
 from pagebot.elements import Rect

@@ -14,9 +14,9 @@
 #
 #     site.py
 #
-from __future__ import division # Make integer division result in float.
-
+import webbrowser
 import os
+
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.composer import Composer
@@ -29,7 +29,7 @@ from pagebot.elements.web.simplesite.siteelements import *
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/SimpleSite'
 
-USE_SCSS = False
+USE_SCSS = True
 
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
@@ -167,9 +167,9 @@ if EXPORT_TYPE == DO_FILE:
     siteView = doc.view
     siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
-    print('Site file path: %s' % EXPORT_PATH)
-    os.system('open "%s/index.html"' % EXPORT_PATH)
-    
+    #print('Site file path: %s' % EXPORT_PATH)
+    webbrowser.get('safari').open_new('file://%s/index.html' % EXPORT_PATH)
+
 elif EXPORT_TYPE == DO_MAMP:
     # Internal CSS file may be switched off for development.
     mampView = doc.newView('Mamp')
@@ -202,4 +202,3 @@ elif EXPORT_TYPE == DO_GIT and False: # Not supported for SimpleSite, only one p
 else: # No output view defined
     print('Set EXPORTTYPE to DO_FILE or DO_MAMP or DO_GIT')
 
-print('Done') 

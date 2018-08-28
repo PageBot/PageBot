@@ -14,7 +14,6 @@
 #
 #     pageview.py
 #
-from __future__ import division
 
 import os
 from random import random

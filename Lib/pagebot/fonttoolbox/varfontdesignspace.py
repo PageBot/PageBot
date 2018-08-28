@@ -16,7 +16,6 @@
 #
 #     D E P R E C A T E D
 #
-from __future__ import division
 
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates

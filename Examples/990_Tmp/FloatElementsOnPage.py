@@ -18,7 +18,6 @@
 #
 #import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
-from __future__ import print_function
 
 # Creation of the RootStyle (dictionary) with all available
 # default style parameters filled.

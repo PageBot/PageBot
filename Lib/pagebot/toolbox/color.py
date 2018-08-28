@@ -27,7 +27,7 @@
 #       Add profiles for printers, paper, printing methods.
 #
 
-from __future__ import division # Make integer division result in float.
+
 from copy import copy
 from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB, RAL_NAMERGB, NAME_RALRGB
 

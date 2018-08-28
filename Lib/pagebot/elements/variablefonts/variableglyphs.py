@@ -17,7 +17,6 @@
 #     Show a string of variable glyphs, using spacing and kerning of the
 #     defined instance locations.
 #
-from __future__ import division
 
 from copy import copy
 from pagebot.elements import Element

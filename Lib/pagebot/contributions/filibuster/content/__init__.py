@@ -13,7 +13,6 @@ evb        - note: only one dictionary named 'contexnt' allowed per module
 4.0     2016 public release
 """
 
-from __future__ import print_function
 import glob
 import os, string
 import traceback

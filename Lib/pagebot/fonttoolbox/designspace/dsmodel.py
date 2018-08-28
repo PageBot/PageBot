@@ -15,7 +15,6 @@
 #
 #    dsmodel.py
 #
-from __future__ import division
 
 import os
 from copy import copy, deepcopy

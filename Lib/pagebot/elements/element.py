@@ -14,7 +14,6 @@
 #
 #     element.py
 #
-from __future__ import division
 
 import weakref
 import copy

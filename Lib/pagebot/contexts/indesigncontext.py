@@ -419,29 +419,48 @@ class InDesignContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyphPath(self, font, glyphName, x, y, fillColor=None, strokeColor=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
         """Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
-        if fillColor is None:
-            fillColor = blackColor
-        if strokeColor is None:
-            strokeColor = noColor
+        if fill is None:
+            fill = blackColor
+        if stroke is None:
+            stroke = noColor
 
+        font = glyph.parent
         s = fontSize/font.info.unitsPerEm
-        glyph = font[glyphName]
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s
         elif xAlign == RIGHT:
             x -= glyph.width*s
         self.save()
-        self.fill(fillColor)
-        self.stroke(strokeColor, strokeWidth)
+        self.fill(fill)
+        self.stroke(stroke, strokeWidth)
         self.transform((1, 0, 0, 1, x, y))
         self.scale(s)
-        self.drawPath(glyph.path)
+        self.drawGlyphPath(glyph)
         self.restore()
 
+    def drawGlyphPath(self, glyph):
+        """Converts the cubic commands to a drawable path."""
+        """
+        TODO
+        path = self.newPath()
+
+        for command, t in glyph.cubic:
+            if command == 'moveTo':
+                path.moveTo(t)
+            elif command == 'lineTo':
+                path.lineTo(t)
+            elif command == 'curveTo':
+                path.curveTo(*t)
+            elif command == 'closePath':
+                path.closePath()
+
+        self.drawPath(path)
+        """
+        
     #   T E X T
 
     def fontSize(self, fontSize):

@@ -13,7 +13,6 @@
 #
 #     columns.py
 #
-from __future__ import division
 from pagebot.conditions.condition import Condition
 
 #	F I T T I N G  C O L U M N S

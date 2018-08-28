@@ -14,7 +14,7 @@
 #
 #     cube.py
 #
-from __future__ import division # Make integer division result in float.
+
 
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube

@@ -22,7 +22,6 @@
 #     as Variable axis location in design space, changed from latest git,
 #     Option using this layout with UFO.
 #
-from __future__ import division
 
 from pagebot.toolbox.units import pointOffset, inch, pt, upt, em
 from pagebot.elements import *

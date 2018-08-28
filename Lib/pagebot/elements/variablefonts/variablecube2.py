@@ -14,7 +14,6 @@
 #
 #	  variablecube2.py
 #
-from __future__ import division
 
 from copy import copy
 from pagebot.elements.element import Element

@@ -14,7 +14,6 @@
 #
 #     view.py
 #
-from __future__ import division
 
 from pagebot.contexts.platform import getContext
 from pagebot.elements.element import Element

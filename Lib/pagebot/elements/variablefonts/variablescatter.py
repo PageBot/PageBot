@@ -14,7 +14,6 @@
 #
 #	  variablescatter.py
 #
-from __future__ import division
 
 from random import random, choice
 from pagebot.elements.element import Element

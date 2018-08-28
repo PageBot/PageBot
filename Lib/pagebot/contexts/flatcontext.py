@@ -300,7 +300,16 @@ class FlatContext(BaseContext):
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
+    def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
+        """Draw the font[glyphName] at the defined position with the defined fontSize.
+
+        """
+
+    def drawGlyphPath(self, glyph):
+        """Converts the cubic commands to a drawable path."""
+
     #   F R A M E S
+
     def frameDuration(self, secondsPerFrame):
         """Set the frame duretion for animated gifs to a number of seconds per frame."""
         self._frameDuration = secondsPerFrame

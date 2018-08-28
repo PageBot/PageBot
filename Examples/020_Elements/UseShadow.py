@@ -13,7 +13,6 @@
 #
 #     UseShadow.py
 #
-from __future__ import print_function
 from pagebot.style import CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
