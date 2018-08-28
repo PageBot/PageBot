@@ -14,8 +14,8 @@
 #
 #     site.py
 #
-import webbrowser
 import os
+import webbrowser
 
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
@@ -26,8 +26,10 @@ from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em, pt
 from pagebot.elements.web.simplesite.siteelements import *
 
+SITE_NAME = 'SimpleSite'
+
 MD_PATH = 'content.md'
-EXPORT_PATH = '_export/SimpleSite'
+EXPORT_PATH = '_export/' + SITE_NAME
 
 USE_SCSS = True
 
@@ -168,7 +170,7 @@ if EXPORT_TYPE == DO_FILE:
     siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
     #print('Site file path: %s' % EXPORT_PATH)
-    webbrowser.get('safari').open_new('file://%s/index.html' % EXPORT_PATH)
+    os.system(u'/usr/bin/open "%s"' % ('%s/index.html' % EXPORT_PATH))
 
 elif EXPORT_TYPE == DO_MAMP:
     # Internal CSS file may be switched off for development.
@@ -180,16 +182,16 @@ elif EXPORT_TYPE == DO_MAMP:
     print('View.jsUrls: %s' % view.jsUrls)
     print('View.cssUrls: %s' % view.cssUrls)
 
-    MAMP_PATH = '/Applications/MAMP/htdocs/SimpleSite' 
+    MAMP_PATH = '/Applications/MAMP/htdocs/' + SITE_NAME 
     print('Site path: %s' % MAMP_PATH)
     doc.export(MAMP_PATH)
 
     if not os.path.exists(MAMP_PATH):
         print('The local MAMP server application does not exist. Download and in stall from %s.' % view.MAMP_SHOP_URL)
-        os.system(u'open %s' % view.MAMP_SHOP_URL)
+        os.system(u'/usr/bin/open %s' % view.MAMP_SHOP_URL)
     else:
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
-        os.system(u'open "%s"' % mampView.getUrl('SimpleSite'))
+        os.system(u'/usr/bin/open "%s"' % mampView.getUrl(SITE_NAME))
 
 elif EXPORT_TYPE == DO_GIT and False: # Not supported for SimpleSite, only one per repository?
     # Make sure outside always has the right generated CSS
@@ -197,7 +199,7 @@ elif EXPORT_TYPE == DO_GIT and False: # Not supported for SimpleSite, only one p
     doc.build(path=EXPORT_PATH)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')
-    os.system(u'open "%s"' % view.getUrl(DOMAIN))
+    os.system(u'/usr/bin/open "%s"' % view.getUrl(DOMAIN))
 
 else: # No output view defined
     print('Set EXPORTTYPE to DO_FILE or DO_MAMP or DO_GIT')

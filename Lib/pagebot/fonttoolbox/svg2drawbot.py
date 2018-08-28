@@ -59,7 +59,7 @@ def parseSVG(strings):
                     continue
 
                 # New value.
-                if c == ',' or c == '-':
+                if c in (',', '-'):
                     addValueToPoints(valuestring, points)
 
                     # Split on minus.
