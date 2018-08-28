@@ -15,7 +15,6 @@
 #     composer.py
 #
 from pagebot.elements import newTextBox
-from pagebot.typesetter import Typesetter
 from pagebot.elements import CodeBlock
 
 class Composer:
@@ -72,7 +71,7 @@ class Composer:
         elif page is not None:
             targets['page'] = page
 
-        if not 'errors' in targets:
+        if 'errors' not in targets:
             targets['errors'] = []
         errors = targets['errors']
 
