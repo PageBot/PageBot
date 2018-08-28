@@ -26,17 +26,18 @@ class Proof(object):
 
     def drawGlyphs(self, font, content, size, **kwargs):
         scale = getScale(font, size)
+        ascender = getAscenderHeight(font, size)
         self.context.scale(scale)
 
         x = 0
-        y = self.context.b.height() - getAcenderHeight(font, size)
+        y = self.context.b.height() - (ascender + size) * scale * self.leading
 
         for c in content:
             pen = CocoaPen(font)
             self.context.fill(0)
             self.context.stroke(None)
             glyph = font[c]
-            self.context.translate(x, 0)
+            self.context.translate(x, y)
             self.context.drawGlyph(glyph)
-            self.context.translate(-x, 0)
+            self.context.translate(-x, -y)
             x += glyph.width

@@ -2,6 +2,7 @@ print('\nChecking installation paths... \n')
 
 import sys, os
 print('System: %s, %s' % (os.name, sys.platform))
+print('Executable: %s' % sys.executable)
 print('Python version is:')
 print(sys.version)
 
@@ -53,6 +54,13 @@ try:
     print('DrawBot found at %s' % drawBot.__path__[0])
 except:
     print('\nx DrawBot not found')
+    CLEAN = False
+
+try:
+    import fontTools
+    print('FontTools found at %s' % fontTools.__path__[0])
+except:
+    print('\nx FontTools not found')
     CLEAN = False
 
 try:
