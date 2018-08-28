@@ -5,7 +5,7 @@ doc.lib['footer'] = &quot;Footer of the page. Footer of the page. Footer of the 
 
 doc.title = doc.name = 'Design&amp;nbsp;Design&amp;nbsp;Space'
 page = doc[1]
-box = page.select('Logo')
+box = page.deepFind('Logo')
 </code></pre>
 
 <h1>PageBot:1</h1>
@@ -61,7 +61,7 @@ box = page.select('Logo')
 </code></pre>
 
 <pre><code class="Python"># -----------------------------------------------------------
-page = page.next
+page = doc[2]
 box = page.select('Logo')
 </code></pre>
 
@@ -85,7 +85,7 @@ box = page.select('Logo')
 <pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code class="Python">page = page.next
+<pre><code class="Python">page = doc[3]
 box = page.select('Logo')
 </code></pre>
 
@@ -102,57 +102,57 @@ box = page.select('Logo')
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('HeroIntroduction')
+<pre><code class="Python">box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
-<pre><code>box = page.select('Footer').append(doc.lib['footer'])
+<pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code>page = page.next
+<pre><code class="Python">page = doc[4]
 box = page.select('Logo')
 </code></pre>
 
 <h1>PageBot:4</h1>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('HeroIntroduction')
+<pre><code class="Python">box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
-<pre><code>box = page.select('Footer').append(doc.lib['footer'])
+<pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
 </code></pre>
 
-<pre><code>page = page.next
+<pre><code class="Python">page = doc[5]
 box = page.select('Logo')
 </code></pre>
 
 <h1>PageBot:5</h1>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_screenshot.png" src="images/pagebot_screenshot.png" /></p>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
-<pre><code>box = page.select('HeroSlides').newSlide()
+<pre><code class="Python">box = page.select('HeroSlides').newSlide()
 </code></pre>
 
 <p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
-<pre><code>box = page.select('HeroIntroduction')
+<pre><code class="Python">box = page.select('HeroIntroduction')
 </code></pre>
 
 <h2>Here is another text. What are the dreams and dragons in your design process? How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?</h2>
-<pre><code>box = page.select('Footer').append(doc.lib['footer'])
+<pre><code class="Python">box = page.deepFind('Footer').append(doc.lib['footer'])
 </code></pre></document>

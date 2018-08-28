@@ -20,6 +20,7 @@ import os
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.elements import *
 from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em, pt
@@ -35,30 +36,6 @@ DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and 
 DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
 EXPORT_TYPE = DO_FILE
 
-SITE = [
-    ('index', 'PageBot Responsive Home'),
-    ('content', 'PageBot Responsive Content'),
-    ('page3', 'PageBot Responsive Page 3'),
-    ('page4', 'PageBot Responsive Page 4'),
-    ('page5', 'PageBot Responsive Page 5'),
-]
-style = dict(
-    fill=whiteColor,
-    margin=em(0),
-    padding=em(3),
-    fontSize=pt(12),
-    leading=em(1.32),
-)
-doc = Site(viewId='Site', autoPages=len(SITE), style=style)
-view = doc.view
-view.resourcePaths = ('css','fonts','images','js')
-view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
-# SiteView will automatic generate css/style.scss.css from assumed css/style.scss
-if USE_SCSS:
-    view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.scss.css')
-else:
-    view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
-
 headerBackgroundColor = whiteColor
 heroBackgroundColor = color(0.95)
 bannerBackgroundColor = whiteColor
@@ -68,20 +45,25 @@ coloredSectionColor = color(0.9)
 footerBackgroundColor = color(0.8)
 footerColor = blackColor
 
-for pn, (name, title) in enumerate(SITE):
-    pn += 1 # Page numbers start at 1
-    page = doc[pn]
-    page.name, page.title = name, title
-    page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
-    page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
-    page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
-    page.style = style
-        
-    currentPage = name + '.html'
-    # Add neste content elements for this page.
-    header = Header(parent=page, fill=headerBackgroundColor)
-    banner = Banner(parent=header, fill=bannerBackgroundColor)
-    logo = Logo(parent=banner, name=name)
+siteDescription = [
+    ('index', 'PageBot Responsive Home'),
+    ('content', 'PageBot Responsive Content'),
+    ('page3', 'PageBot Responsive Page 3'),
+    ('page4', 'PageBot Responsive Page 4'),
+    ('page5', 'PageBot Responsive Page 5'),
+]
+styles = dict(
+    body=dict(
+        fill=whiteColor,
+        margin=em(0),
+        padding=em(3),
+        fontSize=pt(12),
+        leading=em(1.4),
+    ),
+    br=dict(leading=em(1.4)
+    ),
+)
+def makeNavigation(header, currentPage):
     navigation = Navigation(parent=header, fill=navigationBackgroundColor)
     # TODO: Build this automatic from the content of the pages table.
     menu = TopMenu(parent=navigation)
@@ -111,40 +93,75 @@ for pn, (name, title) in enumerate(SITE):
     menu5 = Menu(parent=menuItem5)
     menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
     menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
-        
-    if pn == 1:
-        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
-        content = Content(parent=page)
-        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
-        content = Content(parent=page, contentId='Content2') #  fill=(0.7, 0.7, 0.9)
-    elif pn == 2:
-        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
-        content = Content(parent=page)
-        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
-    elif pn == 3:
-        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
-        content = Content(parent=page)
-        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
-    elif pn == 4:
-        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
-        content = Content(parent=page)
-        section = ColoredSection(parent=page)
-    elif pn == 5:
-        hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
-        content = Content(parent=page)
-        section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor,
-            textFill=coloredSectionColor)
-    footer = Footer(parent=page, fill=footerBackgroundColor, textFill=footerColor)
 
+    return navigation
 
-# Create a Composer for this document, then create pages and fill content. 
-composer = Composer(doc)
-# The composer creates a Typesetter instance that reads the markdown content and 
-# executes the embedded Python code blocks. Typesetter result is saved as HTML strings
-# by the HtmlContext.
-# By default, the typesetter produces a single Galley with content and code blocks.
-composer.typeset(MD_PATH)
-composer.compose()
+def makePages(doc, siteDescription):
+
+    for pn, (name, title) in enumerate(siteDescription):
+        pn += 1 # Page numbers start at 1
+        page = doc[pn]
+        page.name, page.title = name, title
+        page.description = 'PageBot SimpleSite is a basic generated template for responsive web design'
+        page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
+        page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
+        page.style = styles['body']
+            
+        currentPage = name + '.html'
+        # Add neste content elements for this page.
+        header = Header(parent=page, fill=headerBackgroundColor)
+        banner = Banner(parent=header, fill=bannerBackgroundColor)
+        logo = Logo(parent=banner, name=name)
+        navigation = makeNavigation(header, currentPage)
+
+        if pn == 1:
+            hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+            content = Content(parent=page)
+            section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+            content = Content(parent=page, contentId='Content2') #  fill=(0.7, 0.7, 0.9)
+        elif pn == 2:
+            hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+            content = Content(parent=page)
+            section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+        elif pn == 3:
+            hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+            content = Content(parent=page)
+            section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor)
+        elif pn == 4:
+            hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+            content = Content(parent=page)
+            section = ColoredSection(parent=page)
+        elif pn == 5:
+            hero = Hero(parent=page, fontSize=em(1.1), fill=heroBackgroundColor)    
+            content = Content(parent=page)
+            section = ColoredSection(parent=page, fill=coloredSectionBackgroundColor,
+                textFill=coloredSectionColor)
+        footer = Footer(parent=page, fill=footerBackgroundColor, textFill=footerColor)
+
+def makeSite(siteDescription, styles):
+    doc = Site(viewId='Site', autoPages=len(siteDescription), styles=styles)
+    view = doc.view
+    view.resourcePaths = ('css','fonts','images','js')
+    view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
+    # SiteView will automatic generate css/style.scss.css from assumed css/style.scss
+    if USE_SCSS:
+        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.scss.css')
+    else:
+        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
+
+    # Make the all pages and elements of the site as empty containers
+    makePages(doc, siteDescription)    
+    # By default, the typesetter produces a single Galley with content and code blocks.
+    t = Typesetter(doc.context)
+    galley = t.typesetFile(MD_PATH)
+    # Create a Composer for this document, then create pages and fill content. 
+    composer = Composer(doc)
+    # The composer executes the embedded Python code blocks that direct where context should go.
+    # by the HtmlContext.
+    composer.compose(galley)
+    return doc
+    
+doc = makeSite(siteDescription, styles=styles)
 
 if EXPORT_TYPE == DO_FILE:
     siteView = doc.view
