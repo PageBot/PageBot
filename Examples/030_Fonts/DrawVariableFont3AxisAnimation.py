@@ -215,8 +215,8 @@ def positionFontIcons():
     varFontIcon.y = H/2-varFontIcon.ih/2
 
 def drawBackground(keyFrame, frame):
-    fill(1)
-    rect(0, 0, W, H)
+    context.fill(1)
+    context.rect(0, 0, W, H)
 
 def drawAnimation():
     positionFontIcons()
@@ -248,6 +248,6 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    saveImage('_export/VarFont2Axes.gif')
+    context.saveImage('_export/VarFont2Axes.gif')
 
 drawAnimation()
