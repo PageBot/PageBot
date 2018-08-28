@@ -136,8 +136,8 @@ class Document:
         need to exchange information across applications.
 
         >>> doc = Document(name='TestDoc', lib=dict(a=12, b=34))
-        >>> doc.lib
-        {'a': 12, 'b': 34}
+        >>> sorted(doc.lib.items())
+        [('a', 12), ('b', 34)]
         """
         return self._lib
     lib = property(_get_lib)

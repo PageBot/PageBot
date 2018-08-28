@@ -4,7 +4,7 @@
 #
 from __future__ import print_function
 import re
-import pagebot.contributions.filibuster.blurbwriter as blurbwriter
+from pagebot.contributions.filibuster import blurbwriter
 
 class Blurb:
     """
