@@ -13,7 +13,7 @@
 #
 #     timemark.py
 #
-class TimeMark(object):
+class TimeMark:
     """TimeMarks are used by elements to keep style attributes masters sorted 
     in a time line, and to interpolate (blend) between them."""
     def __init__(self, t, style):

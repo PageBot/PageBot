@@ -64,7 +64,7 @@ def getAxisInfo(fnt):
     return axisInfo
 
 
-class VarFontTextEditor(object):
+class VarFontTextEditor:
 
     def __init__(self):
         self.fontName = "Bitcount Grid Single"

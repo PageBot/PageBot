@@ -1,4 +1,3 @@
-from __future__ import print_function
 
 h = 'Headline\n'
 t = """Waar in de traditie van werken met opmaakprogrammatuur zoals Quark XPress en InDesign altijd een menselijke beslissing de definitieve opmaak van een pagina bepaalt, zijn er steeds meer situaties waarin dat geen optie is. Doordat steeds meer pagina’s worden gegenereerd met inhoud die uit een database komt – of van een online source – en waar de selectie van de informatie direct wordt bepaald door eigenschappen van de lezer, van de pagina’s automatisch worden berekend. """ * 2

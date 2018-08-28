@@ -13,7 +13,6 @@
 #     ShowFontContent.py
 #
 #
-from __future__ import print_function
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont

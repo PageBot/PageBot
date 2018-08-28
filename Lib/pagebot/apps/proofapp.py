@@ -26,7 +26,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 #FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
 HEIGHT, WIDTH = A3
 
-class ProofApp(object):
+class ProofApp:
     """Example of a proofing application."""
 
     FONTS = []

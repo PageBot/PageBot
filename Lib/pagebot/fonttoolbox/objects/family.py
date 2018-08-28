@@ -87,7 +87,7 @@ def newFamily(familyName, fonts=None):
     families[familyName] = family
     return family
 
-class Family(object):
+class Family:
 
     FONT_CLASS = Font
 

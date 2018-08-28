@@ -832,7 +832,7 @@ class DrawBotString(BabelString):
 
         return newS
 
-class FoundPattern(object):
+class FoundPattern:
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
         self.s = s # Actual found string
         self.x = x
@@ -846,7 +846,7 @@ class FoundPattern(object):
     def __repr__(self):
         return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y)
 
-class TextRun(object):
+class TextRun:
     u"""The ctRun object contains the chunk of text that combines a single style.
 
 
@@ -1058,7 +1058,7 @@ class TextRun(object):
     minimumLineHeight = property(_get_minimumLineHeight)
 
 
-class TextLine(object):
+class TextLine:
     def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine
         self.x = x

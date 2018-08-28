@@ -14,7 +14,7 @@
 #
 #     siteHeadBodyCode.py
 #
-from __future__ import division # Make integer division result in float.
+
 
 import os
 from pagebot.publications.publication import Publication

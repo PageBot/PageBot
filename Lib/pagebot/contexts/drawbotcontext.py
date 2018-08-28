@@ -271,7 +271,7 @@ class DrawBotContext(BaseContext):
             self.b.drawPath(path)
             self.restore()
 
-    def drawGlyph(self, glyph):
+    def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
         path = self.newPath()
 
@@ -527,22 +527,22 @@ class DrawBotContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyphPath(self, font, glyphName, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
+        font = glyph.parent
         s = fontSize/font.info.unitsPerEm
-        glyph = font[glyphName]
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s
         elif xAlign == RIGHT:
             x -= glyph.width*s
         self.save()
-        self.setFillColor(fill)
-        self.setStrokeColor(stroke, w=strokeWidth)
+        self.fill(fill)
+        self.stroke(stroke, w=strokeWidth)
         self.transform((1, 0, 0, 1, x, y))
         self.scale(s)
-        self.drawPath(glyph.path)
+        self.drawGlyphPath(glyph)
         self.restore()
 
     #   T E X T
@@ -677,7 +677,7 @@ class DrawBotContext(BaseContext):
     def strokeWidth(self, w):
         u"""Set the current stroke width.
 
-        >>> from pagebot.toolbox.units import unit, pt, mm
+        >>> from pagebot.toolbox.units import pt, mm
         >>> context = DrawBotContext()
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))

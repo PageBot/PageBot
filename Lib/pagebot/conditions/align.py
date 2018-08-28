@@ -13,7 +13,6 @@
 #
 #     align.py
 #
-from __future__ import division
 from pagebot.conditions.condition import Condition
 
 class SolveBlock(Condition):

@@ -15,7 +15,6 @@
 #
 #     Needs debugging in dimension showing of views.
 #
-from __future__ import print_function
 from pagebot.style import getRootStyle, A5, CENTER, MIDDLE
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)

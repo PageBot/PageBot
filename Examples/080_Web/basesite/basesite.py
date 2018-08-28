@@ -14,7 +14,7 @@
 #
 #     basesite.py
 #
-from __future__ import division # Make integer division result in float.
+
 
 from pagebot.publications.publication import Publication
 

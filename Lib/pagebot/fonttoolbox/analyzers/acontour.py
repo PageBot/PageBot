@@ -13,7 +13,7 @@
 #
 #     acontour.py
 #
-class AContour(object):
+class AContour:
     def __init__(self):
         self.points = []
         self._clockWise = True

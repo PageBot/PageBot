@@ -27,7 +27,7 @@
 #       Add profiles for printers, paper, printing methods.
 #
 
-from __future__ import division # Make integer division result in float.
+
 from copy import copy
 from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB, RAL_NAMERGB, NAME_RALRGB
 
@@ -334,7 +334,7 @@ def rgb2Name(rgb):
             error = e
     return rgbName
 
-class Color(object):
+class Color:
     """The Color class implements a generic color storage, that is capable of
     tranforming one type of color to another. One of the reasons to use Color
     instances, is that some contexts (such as FlatContext) are very specific

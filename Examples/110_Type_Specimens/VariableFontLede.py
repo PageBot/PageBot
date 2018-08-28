@@ -13,7 +13,6 @@
 #     Draw animation of banner, cycling through some axes and ranges.
 #     Draw the origin of the design space at the back as reference.
 #
-from __future__ import division
 
 from random import random
 from math import sin, cos, radians

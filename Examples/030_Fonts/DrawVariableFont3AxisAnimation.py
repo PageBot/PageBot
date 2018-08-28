@@ -48,7 +48,7 @@ BOLD_ITALIC = getVarFontInstance(f, dict(wght=0.7, wdth=0), styleName='Bold Ital
 
 LABEL_FONT = BOOK
 
-class FontIcon(object):
+class FontIcon:
     W = pt(30)
     H = pt(40)
     L = pt(2)
@@ -159,7 +159,7 @@ class FontIcon(object):
             context.text(bs, (w/2-tw/2, y))
         context.restore()
         
-class KeyFrame(object):
+class KeyFrame:
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects
         self.positions = positions
@@ -215,8 +215,8 @@ def positionFontIcons():
     varFontIcon.y = H/2-varFontIcon.ih/2
 
 def drawBackground(keyFrame, frame):
-    fill(1)
-    rect(0, 0, W, H)
+    context.fill(1)
+    context.rect(0, 0, W, H)
 
 def drawAnimation():
     positionFontIcons()
@@ -248,6 +248,6 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    saveImage('_export/VarFont2Axes.gif')
+    context.saveImage('_export/VarFont2Axes.gif')
 
 drawAnimation()

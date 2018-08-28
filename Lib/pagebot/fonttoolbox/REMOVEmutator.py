@@ -16,7 +16,6 @@
 #
 #    mutator.py
 #
-from __future__ import print_function, division, absolute_import
 import os.path
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont

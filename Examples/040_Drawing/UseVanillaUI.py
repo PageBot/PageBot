@@ -21,7 +21,7 @@ from vanilla import FloatingWindow, Window, CheckBox, Button
 from pagebot.contexts.platform import getContext
 context = getContext()
 
-class VariableController(object):
+class VariableController:
 
     def __init__(self, attributes, callback, document=None):
         self._callback = callback

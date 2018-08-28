@@ -15,8 +15,6 @@
 #
 #     If a TextBox as self.nextElementName defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
-from __future__ import division # Make integer division result in float.
-#import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.style import LEFT, BOTTOM, TOP
 from pagebot.conditions import *

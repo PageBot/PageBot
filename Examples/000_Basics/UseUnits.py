@@ -11,9 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-from __future__ import division # Make integer division result in float.
 
-#from pagebot.constants import MM
 from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, col, units
 
 # FIXME: visible example.

@@ -15,7 +15,7 @@
 #
 from pagebot.toolbox.units import pt
 
-class BabelString(object):
+class BabelString:
     """BabelString is the base class of various types of (formatted) string representations
     needed for different builder classes."""
 

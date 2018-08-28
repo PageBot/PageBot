@@ -52,7 +52,7 @@ BOLD = getVarFontInstance(f, dict(wght=0.0, wdth=0), styleName='Bold')
 
 LABEL_FONT = BOOK
 
-class FontIcon(object):
+class FontIcon:
     """
     """
     
@@ -183,7 +183,7 @@ class FontIcon(object):
             #text(self.label, (w/2-tw/2, y))
         c.restoreGraphicState()
 
-class KeyFrame(object):
+class KeyFrame:
     """
     """
     

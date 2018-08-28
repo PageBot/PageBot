@@ -21,7 +21,7 @@ Copyright The Python Markdown Project
 License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
-from __future__ import unicode_literals
+
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import Pattern
@@ -162,7 +162,7 @@ class LiteratureExtension(Extension):
             )
             backlink.text = LIT_BACKLINK_TEXT
 
-            if li.getchildren():
+            if list(li):
                 node = li[-1]
                 if node.tag == "p":
                     node.text = node.text + NBSP_PLACEHOLDER
@@ -300,7 +300,7 @@ class LiteratureTreeprocessor(Treeprocessor):
             result = self.literatures.findLiteraturesPlaceholder(root)
             if result:
                 child, parent, isText = result
-                ind = parent.getchildren().index(child)
+                ind = list(parent).index(child)
                 if isText:
                     parent.remove(child)
                     parent.insert(ind, literaturesDiv)

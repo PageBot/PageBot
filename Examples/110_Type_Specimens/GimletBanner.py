@@ -10,7 +10,6 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-from __future__ import division
 
 from random import random
 from math import sin, cos, radians
@@ -50,43 +49,51 @@ W, H = 2040, 1020 # Type Network banners
 # Claire: for now, add your Fit-Variable_1.ttf to your /Library/Fonts and it can be found.
 #Gimlet_Italics-VF.ttf
 #Gimlet_Romans-VF.ttf
+
+def makeBanner(font):
+    # Fit axes to select from: here we are showing the optical size.
+    # Define tag list for axes to be part of the animation as sequence
+    sequenceAxes = ['wdth']
+    sequenceLength = 3 # Seconds per sequence
+    sequences = len(sequenceAxes) # Amount of sequences, one per axis
+    duration = sequenceLength * len(sequenceAxes) # Total duration of the animation in seconds
+    framesPerSecond = 10
+    frameCnt = duration * framesPerSecond # Total number of frames
+    axisFrames = sequenceLength * framesPerSecond # Number of frames per axis sequence.
+
+    # Create a new doc, with the right amount of frames/pages.
+    doc = Document(w=W, h=H, originTop=False, frameDuration=1.0/framesPerSecond, 
+        autoPages=frameCnt, context=c)
+    # Sample text to show in the animation
+    sample = 'Fitting' 
+
+    frameIndex = 1 # Same as page index in the document
+    for axisTag in sequenceAxes:
+
+        minValue, defaultValue, maxValue = font.axes[axisTag]
+        for axisFrameIndex in range(axisFrames):
+            page = doc[frameIndex] # Get the current frame-page
+            page.w = W
+
+            axisRange = maxValue - minValue
+            phisin = sin(radians(axisFrameIndex/axisFrames * 360+3/4*360))*0.5+0.5
+        
+            # Variable Font location for this frame sample
+            location = {axisTag: phisin*axisRange+minValue}
+            # Overall style for the frame
+            style = dict(leading=em(1.4), fontSize=H-40, xTextAlign=RIGHT, textFill=whiteColor, 
+                fill=blackColor, location=location)
+        
+            af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
+                w=page.pw, h=page.ph, context=c)
+            frameIndex += 1 # Prepare for the next frame
+
+    doc.solve()
+    doc.export('_export/%s_%s.gif' % (font.info.familyName, sample))
+
 font = findFont('Gimlet_Italics-VF')
-# Fit axes to select from: here we are showing the optical size.
-# Define tag list for axes to be part of the animation as sequence
-sequenceAxes = ['wdth']
-sequenceLength = 3 # Seconds per sequence
-sequences = len(sequenceAxes) # Amount of sequences, one per axis
-duration = sequenceLength * len(sequenceAxes) # Total duration of the animation in seconds
-framesPerSecond = 10
-frameCnt = duration * framesPerSecond # Total number of frames
-axisFrames = sequenceLength * framesPerSecond # Number of frames per axis sequence.
+if font is None:
+    print('Gimlet_Italics-VF not found.')
+else:
+    makeBanner(font)
 
-# Create a new doc, with the right amount of frames/pages.
-doc = Document(w=W, h=H, originTop=False, frameDuration=1.0/framesPerSecond, 
-    autoPages=frameCnt, context=c)
-# Sample text to show in the animation
-sample = 'Fitting' 
-
-frameIndex = 1 # Same as page index in the document
-for axisTag in sequenceAxes:
-
-    minValue, defaultValue, maxValue = font.axes[axisTag]
-    for axisFrameIndex in range(axisFrames):
-        page = doc[frameIndex] # Get the current frame-page
-        page.w = W
-
-        axisRange = maxValue - minValue
-        phisin = sin(radians(axisFrameIndex/axisFrames * 360+3/4*360))*0.5+0.5
-        
-        # Variable Font location for this frame sample
-        location = {axisTag: phisin*axisRange+minValue}
-        # Overall style for the frame
-        style = dict(leading=em(1.4), fontSize=H-40, xTextAlign=RIGHT, textFill=whiteColor, 
-            fill=blackColor, location=location)
-        
-        af = AnimatedBannerFrame(sample, font, frameCnt, frameIndex, parent=page, style=style, 
-            w=page.pw, h=page.ph, context=c)
-        frameIndex += 1 # Prepare for the next frame
-
-doc.solve()
-doc.export('_export/%s_%s.gif' % (font.info.familyName, sample))

@@ -20,7 +20,7 @@ if not context.isDrawBot:
 import AppKit
 from vanilla import Window, Button, CheckBox
 
-class VariableController(object):
+class VariableController:
 
     def __init__(self, attributes, callback, document=None):
         self._callback = callback

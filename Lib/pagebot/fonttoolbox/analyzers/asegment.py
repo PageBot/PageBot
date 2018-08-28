@@ -13,7 +13,7 @@
 #
 #     asegment.py
 #
-class ASegment(object):
+class ASegment:
     """
     >>> p0 = Point(101, 303, True)
     >>> p1 = Point(202, 404, False)

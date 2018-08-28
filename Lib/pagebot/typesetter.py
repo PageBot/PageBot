@@ -36,7 +36,7 @@ from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color, blackColor
 
 
-class Typesetter(object):
+class Typesetter:
     u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence 
     of markdown strings and builds a galley, using a dictionary of styles for the formatted string 
     attributes. The result of the typesetting is a self.galley, that contains a sequence of Element 
@@ -282,12 +282,10 @@ class Typesetter(object):
                        literatureRefs[index+1]['p'] = p
                     else:
                         print('### Warning: %d literature reference not found. %s' % (index+1, literatureRefs.keys()))
-            result = None # Nothing to return, we handled the references
 
         else:
-            result = self.typesetNode(node, e)
+            self.typesetNode(node, e)
 
-        return result
 
     def node_li(self, node, e):
         u"""Generate bullet/Numbered list item."""
@@ -448,7 +446,7 @@ class Typesetter(object):
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
-        bs = context.newString(sOrBs, e=e, style=style)
+        bs = self.context.newString(sOrBs, e=e, style=style)
         self.append(bs)
         return bs
 
@@ -538,7 +536,7 @@ class Typesetter(object):
         f.close()
         return fileName
 
-    def typesetMarkDown(self, mdText, mdExtensions=None, e=None, xPath=None):
+    def typesetMarkdown(self, mdText, mdExtensions=None, e=None, xPath=None):
         tmpPath = '/tmp/PageBot_Typesetter.xml'
         fileName = self.markDown2XmlFile(tmpPath, mdText, mdExtensions)
         self.typesetFile(fileName, e=e, xPath=xPath)

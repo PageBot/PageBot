@@ -14,10 +14,10 @@
 #
 #     article.py
 #
-from pagebot.composer import Composer
+import os
 from pagebot.typesetter import Typesetter
 
-class Article(object):
+class Article:
     """An Article instance is the abstract binder between content (e.g. as processed by
     Typesetter, and formatted pages in a Document (required), reflecting the capabilities 
     of a given context and a given view (e.g. HTML/CSS output or PDF documents).
@@ -46,28 +46,28 @@ class Article(object):
         >>> ad = 'First page has a large headline and one column text. If text overfill, continue on the second page in 2 full height columns.'
         >>> md = '''# This is a head\\n## This is a subhead\\nThis is plain text.'''
         >>> a = Article(doc, ad, mdText=md)
-        >>> a.compose()
+        >>> a.typeset()
 
         """
         self.doc = doc # Reuired Document instance. Assummed to be initialized with size and styles.
         self.artDirection = artDirection
         self.path = path # Optional path to markdown file, if there is content there.
-        self.mdText = mdText # Optional marksdown string.
+        self.mdText = mdText # Optional markdown string.
         self.name = name or 'Untitled'
         self.startPage = startPage
 
-    def compose(self): 
+    def typeset(self): 
         u"""Take the composition descriptor of the Article and apply it to the document,
         by interpreting key words in the "free language" design talk and finding the 
         related functions to call.
 
         """
-        t = Typesetter(self.doc)
         if self.mdText:
-            self.path = t.markDown2XML(self.mdText)
-        t.typesetFile(self.path)
-        composer = Composer(self.doc)
-        #composer.compose(self.artDirection, t.box)
+            t = Typesetter(self.doc.context)
+            tmpPath = '/tmp/PageBot-Article.xml' 
+            path = t.markDown2XmlFile(tmpPath, self.mdText)
+            galley = t.typesetFile(path)
+            os.remove(tmpPath)
 
 if __name__ == "__main__":
     import doctest

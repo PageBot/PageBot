@@ -33,7 +33,7 @@
 #     col, Col     Same as fr, using gutter. Works vertical as rows as well.
 #     px, Px       Equal to points (for now)
 #
-from __future__ import division # Make integer division result in float.
+
 
 import re
 import sys
@@ -478,8 +478,8 @@ def uRound(u, *args):
     2em
     >>> uRound(4.2)
     4pt
-    >>> uRound(2, 2.4, pt(14.5), (20.9, pt(19.8)))
-    [2pt, 2pt, 15pt, [21pt, 20pt]]
+    >>> uRound(2, 2.4, pt(14.4), (20.9, pt(19.8)))
+    [2pt, 2pt, 14pt, [21pt, 20pt]]
     >>> uRound(pt(1.3), pt(2.4), pt(3.5))
     [1pt, 2pt, 4pt]
     >>> uRound(pt(1.000001), pt(2.44444449), 3, pt(mm(4)))
@@ -530,7 +530,7 @@ def uString(u, maker=None):
 
 us = uString # Convenience abbreviaion
 
-class Unit(object):
+class Unit:
     """Base class for units, implementing most of the logic.  Unit classes can
     be absolute (Pt, Px, Pica/P, Mm, Inch) and relative, which need the
     definintion of a base reference value (Perc, Fr) or em (Em).
@@ -778,11 +778,16 @@ class Unit(object):
     def __round__(self):
         """Answer the rounded self as value.
 
-        >>> u = pt(12.5)
+        >>> u = pt(12.4)
+        >>> u.rounded
+        12pt
+        >>> round(u)
+        12pt
+        >>> u = pt(12.51)
         >>> u.rounded
         13pt
         >>> round(u)
-        13.0
+        13pt
         """
         return self.rounded
 
@@ -2061,7 +2066,7 @@ class Perc(RelativeUnit):
     pt = property(_get_pt)
 
 UNIT_MAKERS = dict(px=px, pt=pt, mm=mm, inch=inch, p=p, pica=pica, em=em, fr=fr, col=col, perc=perc)
-MAKER_UNITS = dict([[maker, unit] for unit, maker in UNIT_MAKERS.items()])
+MAKER_UNITS = {maker: unit for unit, maker in UNIT_MAKERS.items()}
 MAKERS = set((pt, px, mm, inch, p, em, fr, col, perc))
 CLASS_MAKERS = {Pt:pt, Px:px, Mm:mm, Inch:inch, P:p, Pica:pica, Em:em, Fr:fr, Col:col, Perc:perc}
 
@@ -2123,8 +2128,7 @@ def value2Maker(v):
                 elif unitType == Perc.UNITC: # '%'
                     unitType = Perc.UNIT
 
-            if unitType in UNIT_MAKERS:
-                maker = UNIT_MAKERS[unitType]
+            maker = UNIT_MAKERS.get(unitType, maker)
     return maker
 
 def units(v, maker=None, g=None, base=None, default=None):

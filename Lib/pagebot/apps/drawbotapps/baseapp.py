@@ -15,7 +15,7 @@
 #
 from vanilla import Window, Button
 
-class BaseApp(object):
+class BaseApp:
     u"""The BaseApp class implements generic functions for more specialize App classes.
     The main function of apps is to create applications (with window UI) that
     offer an interface to PageBot publication building scripts. Without scripting. 

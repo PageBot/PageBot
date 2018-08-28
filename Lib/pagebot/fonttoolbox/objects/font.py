@@ -358,7 +358,7 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
 
 
-class Font(object):
+class Font:
     """
     Storage of font information while composing the pages.
 

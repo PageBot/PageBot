@@ -15,12 +15,12 @@
 #     Implements a PageBot font classes to get info from a TTFont.
 #     Show drawing of outline points and intersection beam with flattened path
 #
-from __future__ import print_function
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
+
 c = getContext()
 
-newPage(1000, 1000)
+c.newPage(1000, 1000)
 font = Font('/Library/Fonts/Georgia.ttf')
 print(font.analyzer )
 print(font.analyzer.name )
@@ -34,12 +34,11 @@ print('x-position of verticals:', sorted(gaH.verticals.keys()))
 # Y position of horizontal lines
 print('y-position of horizontals:', sorted(gaH.horizontals.keys()))
 
-c.stroke(0)
+c.stroke(0, 0.25)
 c.fill(None)
 print(gaH.glyph.leftMargin)
 x = y = 100
-s = 0.25
-c.drawPath(glyphH.getPath(c), (x, y), s)
+c.drawGlyphPath(glyphH, x, y)
 # Draw markers on the glyph points
 c.fill((1, 0, 0))
 c.stroke(None)

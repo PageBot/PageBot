@@ -13,7 +13,7 @@
 #
 #     condition.py
 #       
-class Condition(object):
+class Condition:
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False):
         self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
