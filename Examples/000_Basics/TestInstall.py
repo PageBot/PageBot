@@ -72,6 +72,14 @@ except Exception as e:
     print(e)
     print('x No sass dependency found.')
     CLEAN = False
+    
+try:
+    import flat
+    print('Flat found at %s' % flat.__path__[0])
+except Exception as e:
+    print(traceback.format_exc())
+    print('\nx Flat not found')
+    CLEAN = False
 
 if not CLEAN:
     print('Not all dependencies are installed, please install missing ones.')
