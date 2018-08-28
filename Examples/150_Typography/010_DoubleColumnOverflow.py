@@ -49,7 +49,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=
 # Make long text to force box overflow
 t = context.newString(text * 7, style=style)
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context)
+doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originOnTop=True)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
@@ -60,7 +60,7 @@ view.showTextBoxBaselines = True # Show baseline grid of the column lines.
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page and the condition that checks on text overflow.
-c1 = newTextBox(t, w=CW, name='c1', parent=page, nextElement='c2',
+c1 = newTextBox(t, w=CW, name='c1', parent=page, nextElementName='c2',
     conditions=[Left2Left(), Top2Top(), Fit2Height(), Overflow2Next()])
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.

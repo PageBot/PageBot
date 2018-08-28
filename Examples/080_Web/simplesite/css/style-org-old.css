@@ -1,4 +1,3 @@
-
 body{
 	background:#fff;
 	color:#706670;
@@ -15,8 +14,16 @@ h1, h2, h3, h4, h5, h6{
 	padding:0;
 } 
 
-
-
+#logo {
+	font-size: 2.5em;
+}
+#ColoredSectionHeader {
+	font-size: 1.5em;
+}
+.coloredSection {
+	background-color: #2C8CB7;
+	color: white;
+}
 /* links */
 a{text-decoration:none; color:#2E8DB6;
 },
@@ -26,7 +33,7 @@ a:hover{color:#2BC88A; text-decoration:none;}
 a:hover{ text-decoration:none;}
 
 
-/* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
+/* Box sizing. More info here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
 *{	box-sizing:border-box;
 	-moz-box-sizing:border-box;}
 
@@ -74,21 +81,25 @@ header{
 	padding:20px 0;
 	font-size:1.1em;
 }
-
 #page-header h1{
 	margin:0;
+}
+.flexslider{
+	display:block;
 }
 #content,
 aside,
 .vertical-padding{  
 	padding:3em 0;
 }
-p{ margin:0 0 1.5em;}
-
+p { 
+	margin:0 0 1.5em;
+}
 
 /* RESPONSIVE IMAGES  */
-img{ max-width:100%; height:auto;}
-
+img {
+	max-width:100%; height:auto;
+}
 
 /*MAIN MENU*/
 .menu-toggle{
@@ -113,11 +124,9 @@ img{ max-width:100%; height:auto;}
 	position:relative;
 	z-index:10;
 }
-
 .srt-menu{
 	clear:both;
 	margin-bottom:60px;
-	
 }
 .srt-menu li a {
 	color:#666;
@@ -159,13 +168,12 @@ img{ max-width:100%; height:auto;}
 	padding:10px;
 	text-decoration:none;
 }
-#secondary-navigation ul li a:hover,
-#secondary-navigation ul li.current a{
+#secondary-navigation ul li a:hover, #secondary-navigation ul li.current a {
 	background:#2C8CB7;
 	color:#fff;
 }
 
-/*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER SO FAR*/
+/*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER*/
 .grid_1,
 .grid_2,
 .grid_3,
@@ -197,7 +205,6 @@ footer ul{
 	margin:0 0 0 8%;
 	padding:0;
 }
-
 
 /*Some more colored elements*/
 a.buttonlink{ 
@@ -281,8 +288,7 @@ This is for mobile devices with a bit larger screens.
 
 /*
 TABLET & SMALLER LAPTOPS
-The average viewing window and preferred media query for those is 768px.
-But some more breathing space is always good:)
+
 */
 @media only screen and (min-width: 920px) {
 
@@ -338,7 +344,7 @@ aside {
 	width:			100%;
 }
 .srt-menu li:hover {
-	visibility:		inherit; /* fixes IE7 'sticky bug' */
+	visibility:		inherit; 
 }
 .srt-menu li {
 	float:			left;
@@ -397,7 +403,7 @@ ul.srt-menu li li li.sfHover ul {
 	margin:0; 
 	padding:10px 20px;
 }
-.srt-menu a, .srt-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+.srt-menu a, .srt-menu a:visited  { 
 	color:			#666;	
 }
 .srt-menu li li a {
@@ -466,23 +472,22 @@ ul.srt-menu li li li.sfHover ul {
 }
 
 .rightfloat{float:right;}
-/* @notation inspired by tinyGrid, .row and percentage by Twitter Bootstrap
+/* inspired by tinyGrid, .row and percentage by Twitter Bootstrap
  */
- 
-#hero .grid_8 { 
-	margin:40px 0 -13px;
-}
-
+	#hero .grid_8 { 
+		margin:40px 0 -13px;
+	}
 }
 
 /*
 DESKTOP
 This is the average viewing window. So Desktops, Laptops, and
-in general anyone not viewing on a mobile device. Here's where
-you can add resource intensive styles.
+in general anyone not viewing on a mobile device. 
 */
 @media only screen and (min-width: 1024px) {
-#hero h1{ font-size:1.6em;}
+	#hero h1 { 
+		font-size:1.6em;
+	}
 } 
 
 /*
@@ -490,7 +495,9 @@ LARGE VIEWING SIZE
 This is for the larger monitors and possibly full screen viewers.
 */
 @media only screen and (min-width: 1240px) {
-#hero h1{ font-size:1.8em;}
+	#hero h1 { 
+		font-size:1.8em;
+	}
 } 
 
 /*
@@ -501,8 +508,6 @@ other displays with a 2x resolution.
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
        only screen and (min--moz-device-pixel-ratio: 1.5),
        only screen and (min-device-pixel-ratio: 1.5) {
-
-
 } 
 
 /*
@@ -511,8 +516,6 @@ iPhone 5 or iPod Touch 5th generation styles (you can include your own file if y
 */
 @media (device-height: 568px) and (-webkit-min-device-pixel-ratio: 2) { 
 
-
-  
 }
 
 /*
