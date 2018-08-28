@@ -44,7 +44,7 @@ from pagebot.toolbox.units import em
 # real templates, which are available from the PageBotTemplates repository.
 
 W, H = B4
-W -= 48 # Make a bit more narrow format.
+#W -= 48 # Make a bit more narrow format.
 
 BLEED = 8
 
