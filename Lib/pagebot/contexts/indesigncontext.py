@@ -428,7 +428,7 @@ class InDesignContext(BaseContext):
         if stroke is None:
             stroke = noColor
 
-        font = glyph.parent
+        font = glyph.font
         s = fontSize/font.info.unitsPerEm
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s

@@ -273,19 +273,42 @@ class DrawBotContext(BaseContext):
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
-        path = self.newPath()
+        path = self.getGlyphPath(glyph)
+        self.drawPath(path)
+
+    def getGlyphPath(self, glyph, p=None, path=None):
+        u"""Answer the DrawBot path. Allow optional position offset and path, in case
+        we do recursive component drawing.
+
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> f = findFont('Roboto-Regular')
+        >>> g = f['H']
+        >>> path = context.getGlyphPath(g)
+        >>> path
+        """
+        if path is None:
+            path = self.newPath()
+        if p is None:
+            px = py = 0
+        else:
+            px = p[0]
+            py = p[1]
 
         for command, t in glyph.cubic:
             if command == 'moveTo':
-                path.moveTo(t)
+                path.moveTo((px+t[0], py+t[1]))
             elif command == 'lineTo':
-                path.lineTo(t)
+                path.lineTo((px+t[0], py+t[1]))
             elif command == 'curveTo':
-                path.curveTo(*t)
+                path.curveTo((px+t[0][0], py+t[0][1]), (px+t[1][0], py+t[1][1]), (px+t[2][0], py+t[2][1]))
             elif command == 'closePath':
                 path.closePath()
-
-        self.drawPath(path)
+            elif command == 'component':
+                (x, y), componentGlyph = t
+                self.getGlyphPath(componentGlyph, (px+x, py+y), path)
+        return path
 
     def getFlattenedContours(self):
         """Answers the flattened NSBezier path As contour list [contour,
@@ -309,14 +332,12 @@ class DrawBotContext(BaseContext):
 
         return flattenedContours
 
-    def onBlack(self, p):
+    def onBlack(self, p, path):
         """Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext.
-
-        FIXME: move to context.
         """
         p = point2D(p)
-        return self._path.containsPoint_(p)
+        return path._path.containsPoint_(p)
 
     def moveTo(self, p):
         """Move to point p. Create a new path if none is open.
@@ -531,7 +552,7 @@ class DrawBotContext(BaseContext):
         u"""Draw the font[glyphName] at the defined position with the defined fontSize.
 
         """
-        font = glyph.parent
+        font = glyph.font
         s = fontSize/font.info.unitsPerEm
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s
@@ -540,7 +561,7 @@ class DrawBotContext(BaseContext):
         self.save()
         self.fill(fill)
         self.stroke(stroke, w=strokeWidth)
-        self.transform((1, 0, 0, 1, x, y))
+        self.trajslate(x, y)
         self.scale(s)
         self.drawGlyphPath(glyph)
         self.restore()
@@ -721,7 +742,7 @@ class DrawBotContext(BaseContext):
 
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))
-        sx, sy = wpt/iw, hpt/ih
+        sx, sy = (wpt/iw).rv, (hpt/ih).rv # We need ration values, not units
         self.save()
         self.scale(sx, sy)
         #self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)

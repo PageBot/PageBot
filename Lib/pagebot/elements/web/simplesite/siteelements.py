@@ -21,6 +21,9 @@ from pagebot.publications.publication import Publication
 from pagebot.elements import *
 
 class Header(Element):
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -31,6 +34,9 @@ class Header(Element):
         b.comment('End '+self.__class__.__name__)
 
 class Banner(Element):
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -42,6 +48,9 @@ class Banner(Element):
         b.comment('End '+self.__class__.__name__)
 
 class Navigation(Element):            
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -52,6 +61,9 @@ class Navigation(Element):
         b.comment('End '+self.__class__.__name__)
         
 class TopMenu(Element):        
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b        
         b.comment('Start '+self.__class__.__name__)
@@ -66,6 +78,9 @@ class TopMenu(Element):
         b.comment('End '+self.__class__.__name__)
         
 class Menu(Element):        
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b        
         b.ul()
@@ -80,6 +95,9 @@ class MenuItem(Element):
         self.href = href
         self.label = label
         
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         u"""
         <li>
@@ -105,6 +123,9 @@ class Logo(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='Logo', fontSize=em(3))
             
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -118,12 +139,18 @@ class Logo(Element):
         b.comment('End '+self.__class__.__name__)
 
 class Introduction(Element):
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
 
 class SlideShow(Element):
     def newSlide(self):
         return newTextBox('', parent=self)
+
+    def build(self, view, path):
+        pass
 
     def build_html(self, view, path):
         b = self.context.b
@@ -143,6 +170,9 @@ class Hero(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='HeroIntroduction')
         SlideShow(parent=self, cssId='HeroSlides')
+
+    def build(self, view, path):
+        pass
 
     def build_html(self, view, path):
         b = self.context.b
@@ -173,6 +203,9 @@ class Content(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId=contentId or 'Content')
 
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -199,6 +232,9 @@ class ColoredSection(Element):
         newTextBox('', parent=self, cssId='ColoredSection1')
         newTextBox('', parent=self, cssId='ColoredSection2')
 
+    def build(self, view, path):
+        pass
+
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -223,6 +259,9 @@ class Footer(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='Footer')
+
+    def build(self, view, path):
+        pass
 
     def build_html(self, view, path):
         b = self.context.b
