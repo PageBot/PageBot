@@ -2,6 +2,8 @@
 # Only runs under Flat
 from flat import rgb, font, shape, strike, document
 
+font = findFont('Roboto-Bold')
+
 #c = rgb(255, 0, 0)
 c = rgb(0, 0, 0)
 #lato = font.open('/Library/Fonts/Verdana.ttf')
