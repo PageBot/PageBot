@@ -15,69 +15,79 @@
 #     Implements a PageBot font classes to get info from a TTFont.
 #     Show drawing of outline points and intersection beam with flattened path
 #
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
+from pagebot.toolbox.color import color, noColor, blackColor
+
+GLYPH_NAME = 'B' # 'ampersand'
 
 c = getContext()
 
 c.newPage(1000, 1000)
-font = Font('/Library/Fonts/Georgia.ttf')
+c.scale(0.5)
+
+font = findFont('Roboto-Regular')
 print(font.analyzer )
 print(font.analyzer.name )
-glyphH = font['ampersand']
-gaH = glyphH.analyzer
-print(gaH)
-print('H width:', gaH.width, gaH.glyph.width, glyphH.width)
-print('H bounding box:', gaH.boundingBox)
+glyph = font[GLYPH_NAME]
+ga = glyph.analyzer
+# Three ways to access the glyph metrics
+print('Glyph width:', ga.width, ga.glyph.width, glyph.width)
+print('Glyph bounding box:', ga.boundingBox)
 # X position of vertical lines also includes sides of serifs.
-print('x-position of verticals:', sorted(gaH.verticals.keys()))
+verticals = sorted(ga.verticals.keys())
+print('x-position of detected verticals:', verticals)
 # Y position of horizontal lines
-print('y-position of horizontals:', sorted(gaH.horizontals.keys()))
+horizontals = sorted(ga.horizontals.keys())
+print('y-position of deteted horizontals:', horizontals)
 
-c.stroke(0, 0.25)
+
+c.stroke(blackColor, 1)
 c.fill(None)
-print(gaH.glyph.leftMargin)
+print('Left margin:', glyph.leftMargin)
 x = y = 100
-c.drawGlyphPath(glyphH, x, y)
+
 # Draw markers on the glyph points
 c.fill((1, 0, 0))
 c.stroke(None)
-for p in glyphH.points:
-    r = {True:5, False:3}[p.onCurve]
-    c.rect(x+p.x*s-r/2, x+p.y*s-r/2, r, r)
+for p in glyph.points:
+	# TODO: Add drawing of off-on-off lines here
+	if p.onCurve:
+		r = 12
+	else:
+		r = 10
+	c.oval(x+p.x-r/2, x+p.y-r/2, r, r)
 
-#c.rect(x, y, 100, 100)
-# Draw flattened path next to it on H-width distance.
-c.fill(None)
-c.stroke(0)
-x += glyphH.width*s # Get scaled glyph width
-flattenedPath = glyphH.flattenedPath
-c.drawPath(flattenedPath, (x, y), s)
+# Draw flattened path next to it on glyph.width distance.
+c.fill(noColor)
+c.stroke(blackColor)
+
+# Draw the outline of the glyph
+glyphPath = c.getGlyphPath(glyph)
+c.drawPath(glyphPath, (x+12, y-12))
+# Draw the flattened outline of the glyph
+flattenedPath = c.getFlattenedPath(glyphPath)
+c.drawPath(flattenedPath, (x, y))
 # Draw the flattened contours/points
-r = 3
-c.fill((0, 0.5, 0))
-c.stroke(None)
-for contour in glyphH.flattenedContours:
+r = 6
+c.fill(color(0, 0.5, 0))
+c.stroke(noColor, 2)
+for contour in c.getFlattenedContours(glyphPath):
     for p in contour:
-        c.rect(x+p[0]*s-r/2, y+p[1]*s-r/2, r, r)
+        c.oval(x+p[0]-r/2, y+p[1]-r/2, r, r)
 # Draw intersecting points from beam lines
-r = 7
-c.fill(None)
-c.stroke((0, 0, 0.6))
+r = 16
+c.fill(noColor)
+c.stroke(color(0, 0, 0.6), 2)
 
-BeamY = 446
+# Calculate an intersection beam. Draw the line and intersection points.
+BeamY = 446 # Vertical position of the beam
+c.line((x, y+BeamY), (x+glyph.width, y+BeamY))
+beam = ((0, BeamY), (glyph.width, BeamY))
+r = 24 # Radius of the beam markers
+c.stroke(color(0, 0, 0.5), 2)
+c.fill(noColor)
+for p in c.intersectWithLine(glyph, beam):
+    c.rect(x+p[0]-r/2, y+p[1]-r/2, r, r)
 
-line((x, y+BeamY*s), (x+glyphH.width*s, y+BeamY*s))
-beam = ((0, BeamY), (glyphH.width, BeamY))
-
-r = 7
-c.fill((0, 0, 0.5))
-c.stroke(None)
-for p in gaH.intersectWithLine(beam):
-    c.rect(x+p[0]*s-r/2, y+p[1]*s-r/2, r, r)
-
-Variable([
-	dict(name="BeamY", ui='Slider', args=dict(minValue=-300, value=300, maxValue=1000)),
-], globals())
-
-
+c.saveImage('_export/GlyphBeamIntersection.pdf')

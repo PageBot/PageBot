@@ -18,19 +18,19 @@
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
 
+GLYPH_NAME = 'B'
+
 context = getContext()
 font = findFont('Georgia')
 print(font.analyzer) 
 print(font.analyzer.name) 
-glyphH = font['H']
-gaH = glyphH.analyzer
-print(gaH)
-print('H width:', gaH.width, gaH.glyph.width, glyphH.width)
-print('H bounding box:', gaH.boundingBox)
+glyph = font[GLYPH_NAME]
+ga = glyph.analyzer
+print(ga)
+print('Glyph horizontals width:', ga.width, ga.glyph.width, glyph.width)
+print('Glyph bounding box:', ga.boundingBox)
 # X position of vertical lines also includes sides of serifs.
-print('x-position of verticals:', sorted(gaH.verticals.keys()))
+print('x-position of verticals:', sorted(ga.verticals.keys()))
 # Y position of horizontal lines
-print('y-position of horizontals:', sorted(gaH.horizontals.keys()))
+print('y-position of horizontals:', sorted(ga.horizontals.keys()))
 
-# Show the stems as derived from a beam on y=200 from baseline.
-#print(gaH.getBeamStems(200))

@@ -15,8 +15,8 @@
 #     pagewide.py
 #
 
-from pagebot.proofing.proof import Proof
-from pagebot.proofing.tx import *
+from pagebot.publications.proofing.proof import Proof
+from pagebot.publications.proofing.tx import *
 
 class PageWide(Proof):
 
