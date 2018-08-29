@@ -13,7 +13,6 @@
 #
 #     pagebot/contexts/platform.py
 #
-import traceback
 DEFAULT_CONTEXT = None
 MAMP_PATH = None
 from sys import platform
