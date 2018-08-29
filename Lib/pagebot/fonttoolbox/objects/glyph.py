@@ -129,19 +129,14 @@ class Glyph:
         else:
             minX = minY = maxX = maxY = 0
 
-        # FIXME: what tot do with components?
         for component in components:
             componentName = component.baseGlyph
             if componentName in self.font.keys():
-                print('TODO: add component')
-                #cubic.append(...)
-                #componentPath = self.font[componentName].path
-                #componentPath.transform((1, 0, 0, 1, component.x, component.y))
-                #self._cubic.appendPath(componentPath)
-                #componentPath.transform((1, 0, 0, 1, -component.x, -component.y))
+                componentGlyph = self.font[componentName]
+                self._cubic.append(('component', ((component.x, component.y), componentGlyph)))
 
                 # Expand bounding box.
-                cMinX, cMinY, cMaxX, cMaxY = self.font[componentName].boundingBox
+                cMinX, cMinY, cMaxX, cMaxY = componentGlyph.boundingBox
                 minX = min(cMinX+component.x, minX)
                 minY = min(cMinY+component.y, minY)
                 maxX = max(cMaxX+component.x, maxX)
