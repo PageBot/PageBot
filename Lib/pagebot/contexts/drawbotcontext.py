@@ -333,7 +333,6 @@ class DrawBotContext(BaseContext):
         return flattenedContours
 
     def onBlack(self, p, path):
->>>>>>> Stashed changes
         """Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext.
         """
