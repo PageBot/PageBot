@@ -162,7 +162,7 @@ class DrawBotString(BabelString):
         >>> style = dict(font='Verdana', fontSize=pt(80))
         >>> bs = context.newString('Example Text', style=style)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
-        ('Verdana', 80pt, 44.0, 0.55em, 0.73em, 1.01em, -0.21em)
+        ('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
         >>> '/Verdana'in bs.fontPath
         True
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))

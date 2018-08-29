@@ -156,7 +156,7 @@ def makeSite(siteDescription, styles, viewId):
     # Make the all pages and elements of the site as empty containers
     makePages(doc, siteDescription)    
     # By default, the typesetter produces a single Galley with content and code blocks.
-    '''
+    
     t = Typesetter(doc.context)
     galley = t.typesetFile(MD_PATH)
     # Create a Composer for this document, then create pages and fill content. 
@@ -164,7 +164,7 @@ def makeSite(siteDescription, styles, viewId):
     # The composer executes the embedded Python code blocks that direct where context should go.
     # by the HtmlContext.
     composer.compose(galley)
-    '''
+    
     return doc
     
 
@@ -173,7 +173,7 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
     doc.export(EXPORT_PATH + '.pdf')
 
 elif EXPORT_TYPE == DO_FILE:
-    doc = makeSite(siteDescription, styles=styles, view='Site')
+    doc = makeSite(siteDescription, styles=styles, viewId='Site')
     siteView = doc.view
     siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
