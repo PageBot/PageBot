@@ -16,13 +16,25 @@
 #
 
 
-from pagebot.toolbox.units import em
+from pagebot.toolbox.color import noColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
+from pagebot.toolbox.units import em, pointOffset
 
 class Header(Element):
-    def build(self, view, path):
-        pass
+    def build(self, view, origin, drawElements=True):
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(view, p)
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        context = view.context
+        context.fill((1, 0, 0))
+        context.stroke(noColor)
+        context.rect(px, py, 100, 100)
+
+        if drawElements:
+            for e in self.elements:
+                e.build(view, p)
 
     def build_html(self, view, path):
         b = self.context.b
