@@ -31,28 +31,40 @@ from pagebot.toolbox.units import pt
 
 context = getContext()
 
-PagePadding = 32
-PageSize = 500
+PAGE_PADDING = 32
+W, H = A4
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/GlyphPathElement.pdf'
 
-def pathFilter(e, path, view):
+def pathFilter(e, glyph, view):
+    print(view.showElementFrame)
     r = pt(24)
-    for x in range(0, int(e.w)*4, 30):
-        for y in range(0, int(e.h)*2, 30):
+    grid = 30
+    path = context.getGlyphPath(glyph)
+    for x in range(0, int(e.w)*4, grid):
+        for y in range(0, int(e.h)*2, grid):
             # Use the glyph to query for color at this position.
             if e.glyph is not None:
-                if e.glyph.onBlack((x, y)):
+                if context.onBlack((x, y), path):
                     context.fill(color(random(), random(), random())) # Color as one tuple, in context API
-                    context.oval(pt(x-r/2), pt(y-r/2), r, r)
+                    context.oval(pt(x-r/4), pt(y-r/4), r/2, r/2)
                 else:
                     context.fill(color(0, 1, 0)) # Color as one tuple, in context API
-                    context.rect(pt(x-r/4), pt(y-r/4), r/2, r/2)
-
-#W = H = 120 # Get the standard a4 width and height in points.
-W = H = PageSize
-#W, H = A4
+                    context.oval(pt(x-r/8), pt(y-r/8), r/4, r/4)
+                    
+                if context.onBlack((x, y), path) and (
+                        not context.onBlack((x+grid, y), path) or
+                        not context.onBlack((x+grid, y-grid), path)
+                    ):
+                    context.fill(0)
+                    context.oval(pt(x-r/2), pt(y-r/2), r, r)
+                    
+    context.stroke((1, 0, 0))
+    context.fill(noColor)
+    context.drawPath(path)
+    context.stroke((0, 1, 0), 5)
+    context.rect(e.x, e.y, e.w, e.h)
 
 fontPath = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
 font = getFont(fontPath)
@@ -67,21 +79,20 @@ view.showPageRegistrationMarks = True
 view.showPageFrame = True
 view.showElementOrigin = True
 view.showElementDimensions = False
+view.showElementFrame = True
 
 # Get list of pages with equal y, then equal x.
 #page = doc[1][0] # Get the single page from te document.
 page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
 page.name = 'This is a demo page for floating child elements'
+page.padding = PAGE_PADDING
 
-e1 = GlyphPath(font[glyphName], stroke=noColor, h=600,
+e1 = GlyphPath(font[glyphName], stroke=noColor, 
     fill=noColor, pathFilter=pathFilter,
     parent=page, font='Verdana',
-    conditions=[Left2Left(), Float2Top()])
+    conditions=[Left2Left(), Top2Top()])
 
-score = page.solve()
-if score.fails:
-    print(score.fails)
-e1.y += 100
-#e2.y += 100
+
+#score = page.solve()
 
 doc.export(EXPORT_PATH)

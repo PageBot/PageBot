@@ -33,10 +33,11 @@ EXPORT_PATH = '_export/' + SITE_NAME
 
 USE_SCSS = True
 
+DO_PDF = 'Pdf' # Save as PDF representation of the site.
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
 DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
-EXPORT_TYPE = DO_FILE
+EXPORT_TYPE = DO_PDF
 
 headerBackgroundColor = whiteColor
 heroBackgroundColor = color(0.95)
@@ -108,7 +109,7 @@ def makePages(doc, siteDescription):
         page.keyWords = 'PageBot Python Scripting Simple Demo Site Design Design Space'
         page.viewPort = 'width=device-width, initial-scale=1.0, user-scalable=yes'
         page.style = styles['body']
-            
+
         currentPage = name + '.html'
         # Add neste content elements for this page.
         header = Header(parent=page, fill=headerBackgroundColor)
@@ -140,8 +141,9 @@ def makePages(doc, siteDescription):
                 textFill=coloredSectionColor)
         footer = Footer(parent=page, fill=footerBackgroundColor, textFill=footerColor)
 
-def makeSite(siteDescription, styles):
-    doc = Site(viewId='Site', autoPages=len(siteDescription), styles=styles)
+
+def makeSite(siteDescription, styles, viewId):
+    doc = Site(viewId=viewId, autoPages=len(siteDescription), styles=styles)
     view = doc.view
     view.resourcePaths = ('css','fonts','images','js')
     view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
@@ -154,6 +156,7 @@ def makeSite(siteDescription, styles):
     # Make the all pages and elements of the site as empty containers
     makePages(doc, siteDescription)    
     # By default, the typesetter produces a single Galley with content and code blocks.
+    '''
     t = Typesetter(doc.context)
     galley = t.typesetFile(MD_PATH)
     # Create a Composer for this document, then create pages and fill content. 
@@ -161,11 +164,16 @@ def makeSite(siteDescription, styles):
     # The composer executes the embedded Python code blocks that direct where context should go.
     # by the HtmlContext.
     composer.compose(galley)
+    '''
     return doc
     
-doc = makeSite(siteDescription, styles=styles)
 
-if EXPORT_TYPE == DO_FILE:
+if EXPORT_TYPE == DO_PDF: # PDF representation of the site
+    doc = makeSite(siteDescription, styles=styles, viewId='Page')
+    doc.export(EXPORT_PATH + '.pdf')
+
+elif EXPORT_TYPE == DO_FILE:
+    doc = makeSite(siteDescription, styles=styles, view='Site')
     siteView = doc.view
     siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
@@ -174,7 +182,7 @@ if EXPORT_TYPE == DO_FILE:
 
 elif EXPORT_TYPE == DO_MAMP:
     # Internal CSS file may be switched off for development.
-    mampView = doc.newView('Mamp')
+    doc = makeSite(siteDescription, styles=styles, viewId='Mamp')
     mampView.useScss = USE_SCSS
     mampView.resourcePaths = view.resourcePaths
     mampView.jsUrls = view.jsUrls
@@ -195,8 +203,8 @@ elif EXPORT_TYPE == DO_MAMP:
 
 elif EXPORT_TYPE == DO_GIT and False: # Not supported for SimpleSite, only one per repository?
     # Make sure outside always has the right generated CSS
-    view = doc.newView('Git')
-    doc.build(path=EXPORT_PATH)
+    doc = makeSite(siteDescription, styles=styles, viewId='Git')
+    doc.export(EXPORT_PATH)
     # Open the css file in the default editor of your local system.
     os.system('git pull; git add *;git commit -m "Updating website changes.";git pull; git push')
     os.system(u'/usr/bin/open "%s"' % view.getUrl(DOMAIN))
