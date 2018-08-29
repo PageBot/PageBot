@@ -97,6 +97,46 @@ class BaseContext:
                 s += bs
         return s
 
+    #   G L Y P H  
+
+    def intersectWithLine(self, glyph, line):
+        """Answers the sorted set of intersecting points between the straight
+        line and the flatteded glyph path."""
+        intersections = set() # As set,  make sure to remove any doubles.
+
+        def det(a, b):
+            return a[0] * b[1] - a[1] * b[0]
+
+        (lx0, ly0), (lx1, ly1) = line
+        maxX = max(lx0, lx1)
+        minX = min(lx0, lx1)
+        maxY = max(ly0, ly1)
+        minY = min(ly0, ly1)
+        glyphPath = self.getGlyphPath(glyph)
+        contours = self.getFlattenedContours(glyphPath)
+        if not contours: # Could not generate path or flattenedPath. Or there are no contours. Give up.
+            return None
+        for contour in contours:
+            for n in range(len(contour)):
+                pLine = contour[n], contour[n-1]
+                (px0, py0), (px1, py1) = pLine
+                if minY > max(py0, py1) or maxY < min(py0, py1) or minX > max(px0, px1) or maxX < min(px0, px1):
+                    continue # Skip if boundings boxes don't overlap.
+
+                xdiff = (line[0][0] - line[1][0], pLine[0][0] - pLine[1][0])
+                ydiff = (line[0][1] - line[1][1], pLine[0][1] - pLine[1][1])
+
+                div = det(xdiff, ydiff)
+                if div == 0:
+                   continue # No intersection
+
+                d = (det(*line), det(*pLine))
+                intersections.add((det(d, xdiff) / div, det(d, ydiff) / div))
+
+        # Answer the set as sorted list, increasing x, from left to right.
+        return sorted(intersections)
+
+
     #   P A T H
 
     def checkExportPath(self, path):

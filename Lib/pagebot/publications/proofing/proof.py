@@ -15,7 +15,7 @@
 #     proof.py
 #
 from fontTools.pens.cocoaPen import CocoaPen
-from pagebot.proofing.tx import *
+from pagebot.publications.proofing.tx import *
 
 class Proof:
 

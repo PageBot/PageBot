@@ -19,7 +19,7 @@ from random import random # Used for random color palet.
 
 # Create random title and names
 from pagebot.contributions.filibuster.blurb import blurb
-from pagebot.toolbox.color import Color, noColor, whiteColor
+from pagebot.toolbox.color import color, noColor, whiteColor
 
 # Get function to find the Roboto family (in this case installed in the
 # PageBot repository).
@@ -85,7 +85,7 @@ def makeDocument():
     
     context = view.context
     
-    C1 = Color(r=random()*0.2, g=random()*0.2, b=random()*0.9)
+    C1 = color(r=random()*0.2, g=random()*0.2, b=random()*0.9)
 
     # Make background element, filling the page color and bleed.
     colorRect1 = newRect(z=-10, name='Page area', parent=page,
@@ -99,7 +99,7 @@ def makeDocument():
                        # other elements depend on position and size.
 
     M = BLEED + 64
-    newRect(z=-10, name='Frame 2', parent=colorRect1, 
+    colorRect2 = newRect(z=-10, name='Frame 2', parent=colorRect1, 
             conditions=[Center2Center(), Middle2Middle()],
             fill=C1.darker(0.5), # Default parameter:
                                   # 50% between background color and white
@@ -115,16 +115,20 @@ def makeDocument():
     authorName = blurb.getBlurb('name', noTags=True)
     if random() < 0.33: # 1/3 chance for a second author name
         authorName += '\n' + blurb.getBlurb('name')
+    
+    titleStyle = dict(font=fontBold.path, fontSize=40, leading=em(1.2), 
+        xTextAlign=CENTER, textFill=whiteColor, hyphenation=False)
+    subTitleStyle = dict(font=fontRegular.path, fontSize=32, 
+        xTextAlign=CENTER, textFill=(1, 1, 1, 0.5), hyphenation=False)
+    authorStyle = dict(font=fontItalic.path, fontSize=24, tracking=em(0.025), 
+        xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7))
         
-    page.pt = 100 # Now the rectangles positioned automatic, alter the paddings
-    page.pl = page.pr = 80
-    page.pb = 20
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
-    title = context.newString(title+'\n\n', style=dict(font=fontBold.path, fontSize=40, leading=em(1.2), xTextAlign=CENTER, textFill=whiteColor))
-    title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
-    title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, tracking=em(0.025), xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
-    newTextBox(title, parent=page, name='Other element',
+    title = context.newString(title+'\n\n', style=titleStyle)
+    title += context.newString(subTitle + '\n\n', style=subTitleStyle)
+    title += context.newString(authorName, style=authorStyle)
+    newTextBox(title, parent=colorRect2, name='Other element',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
 

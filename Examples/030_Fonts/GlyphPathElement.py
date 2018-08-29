@@ -14,6 +14,7 @@
 #
 #     TODO: Needs some cleaning to get letter better in page, with lifted baseline.
 #
+from random import random
 import pagebot # Import to know the path of non-Python resources.
 
 from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -33,12 +34,12 @@ context = getContext()
 
 PAGE_PADDING = 32
 W, H = A4
+W, H = 500, 500
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/GlyphPathElement.pdf'
 
 def pathFilter(e, glyph, view):
-    print(view.showElementFrame)
     r = pt(24)
     grid = 30
     path = context.getGlyphPath(glyph)

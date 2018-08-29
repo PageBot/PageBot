@@ -310,32 +310,12 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def getFlattenedContours(self):
-        """Answers the flattened NSBezier path As contour list [contour,
-        contour, ...] where contours are lists of point2D() points."""
-        contour = []
-        flattenedContours = [contour]
-        flatPath = self.bezierPathByFlatteningPath()
-
-        if flatPath is not None:
-            for index in range(flatPath.elementCount()):
-                # NSBezierPath size + index call.
-                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-
-                if p:
-                    # Make point2D() tuples, no need to add point type, all
-                    # onCurve.
-                    contour.append((p[0].x, p[0].y))
-                else:
-                    contour = []
-                    flattenedContours.append(contour)
-
-        return flattenedContours
-
-    def onBlack(self, p, path):
+    def onBlack(self, p, path=None):
         """Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext.
         """
+        if path is None:
+            path = self._path
         p = point2D(p)
         return path._path.containsPoint_(p)
 
@@ -418,10 +398,36 @@ class DrawBotContext(BaseContext):
         if self._path is not None:
             self._path.closePath()
 
-    def bezierPathByFlatteningPath(self):
-        """Use the NSBezier flatten path."""
-        if self._path is not None:
+    def getFlattenedPath(self, path=None):
+        """Use the NSBezier flatten path. Answer None if the flattened path
+        could not be made."""
+        if path is None:
+            path = self._path
+        if path is not None:
             return self._path.getNSBezierPath().bezierPathByFlatteningPath()
+        return None
+
+    def getFlattenedContours(self, path=None):
+        """Answers the flattened NSBezier path As contour list [contour,
+        contour, ...] where contours are lists of point2D() points."""
+        contour = []
+        flattenedContours = [contour]
+        flatPath = self.getFlattenedPath(path)
+
+        if flatPath is not None:
+            for index in range(flatPath.elementCount()):
+                # NSBezierPath size + index call.
+                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+
+                if p:
+                    # Make point2D() tuples, no need to add point type, all
+                    # onCurve.
+                    contour.append((p[0].x, p[0].y))
+                else:
+                    contour = []
+                    flattenedContours.append(contour)
+
+        return flattenedContours
 
     def scale(self, sx, sy=None):
         """Set the drawing scale."""
@@ -553,6 +559,8 @@ class DrawBotContext(BaseContext):
 
         """
         font = glyph.font
+        if fontSize is None:
+            fontSize = font.info.unitsPerEm
         s = fontSize/font.info.unitsPerEm
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s
@@ -561,7 +569,7 @@ class DrawBotContext(BaseContext):
         self.save()
         self.fill(fill)
         self.stroke(stroke, w=strokeWidth)
-        self.trajslate(x, y)
+        self.translate(x, y)
         self.scale(s)
         self.drawGlyphPath(glyph)
         self.restore()
