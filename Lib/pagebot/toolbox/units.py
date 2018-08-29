@@ -791,6 +791,16 @@ class Unit:
         """
         return self.rounded
 
+    def __bool__(self):
+        u"""Answer the boolean representation of self, if self.rv renders to 0.
+
+        >>> bool(pt(0))
+        False
+        >>> bool(pt(100))
+        True
+        """
+        return bool(self.rv)
+
     def __coerce__(self, v):
         """Converts to type of v.
 
