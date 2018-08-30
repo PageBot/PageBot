@@ -50,7 +50,7 @@ def getContext(contextType='DrawBot'):
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
-            if contextType == 'DrawBot' or contextType == 'InDesign':
+            if contextType in ('DrawBot', 'InDesign'):
                 print('drawbot context not available')
                 # TODO: raise error
                 DEFAULT_CONTEXT = getFlatContext()

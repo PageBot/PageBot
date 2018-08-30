@@ -284,9 +284,10 @@ class DrawBotContext(BaseContext):
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> f = findFont('Roboto-Regular')
+        >>> print(f)
+        <Font Roboto-Regular>
         >>> g = f['H']
         >>> path = context.getGlyphPath(g)
-        >>> path
         """
         if path is None:
             path = self.newPath()
