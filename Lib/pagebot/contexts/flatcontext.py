@@ -349,6 +349,7 @@ class FlatContext(BaseContext):
         by family or by findFont.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.fonttoolbox.fontpaths import getFontPaths
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>
