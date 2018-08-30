@@ -63,7 +63,8 @@ def getFontPathOfFont(font, default=None):
     return font
 
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
-    """Recursive helper function for getFontPaths. If the fileName already exists in the fontPaths, then ignore."""
+    """Recursive helper function for getFontPaths. If the fileName already
+    exists in the fontPaths, then ignore."""
     if os.path.exists(path):
         if os.path.isdir(path):
             for fileName in os.listdir(path):
@@ -76,11 +77,20 @@ def _recursivelyCollectFontPaths(path, collectedFontPaths):
             if fontName is not None:
                 collectedFontPaths[fontName] = path
 
+def getPageBotFontPaths():
+    paths = {}
+    _recursivelyCollectFontPaths(TEST_FONTS_PATH, paths)
+    return paths
+
 def getFontPaths(extraPaths=None):
-    """Answer a dictionary with all available font paths on the platform, key is the single file name.
-    A typical example return for MaxOS the font paths available in directories (e.g. for user Petr):
-        ('/Library/Fonts', '/Users/petr/Library/Fonts', '/Users/petr/git/PageBot/Fonts')
-    In this order, "local" defined fonts with the same file name, will overwrite the "deeper" located font files.
+    """Answers a dictionary with all available font paths on the platform, key
+    is the single file name. Typically on Mac OS Xthe font paths
+    available in these respective directories are returned:
+
+        ('/Library/Fonts', '/Users/<username>/Library/Fonts', '/Users/<username>/<path-to>/PageBot/Fonts')
+
+    Locally defined fonts with the same file name will overwrite the font files
+    that  are located deeper.
 
     >>> import os
     >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf')
@@ -104,10 +114,14 @@ def getFontPaths(extraPaths=None):
 
     if not FONT_PATHS:
 
-        # If forced or initial call, get collect the font paths on this platform
+        # If forced or initial call, collect the font paths on this
+        # platform.
         if os.name == 'posix':
+            paths = []
+
+            # TODO: only for darwin platform.
             # Try typical OSX font folders:
-            paths = ['/Library/Fonts', os.path.expanduser('~/Library/Fonts')]
+            paths += ['/Library/Fonts', os.path.expanduser('~/Library/Fonts')]
 
             # Add other typical GNU+Linux font folders here to look at:
             paths += ['/usr/share/fonts']
@@ -121,8 +135,9 @@ def getFontPaths(extraPaths=None):
         else:
             raise NotImplementedError('Unknown platform type "%s"' % os.name)
 
-        # Add PageBot repository fonts, they always exist in this context.
-        # But they can be overwritten by fonts with the same (file) name in the extraPaths.
+        # Add PageBot repository fonts, they always exist in this context. But
+        # they can be overwritten by fonts with the same (file) name in the
+        # extraPaths.
         _recursivelyCollectFontPaths(TEST_FONTS_PATH, FONT_PATHS)
 
         if extraPaths is not None:
