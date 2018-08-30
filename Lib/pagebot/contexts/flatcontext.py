@@ -136,7 +136,6 @@ class FlatContext(BaseContext):
             w, h = size
         wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
-        #self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -223,7 +222,7 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-        assert None not in (w, h)
+
         wpt, hpt = upt(w, h)
 
         if self.doc is None:
