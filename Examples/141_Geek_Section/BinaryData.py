@@ -53,8 +53,8 @@ with open(imagePath, "rb") as binary_file:
     newFile = open("_export/test.png", "wb")
     newFile.write(data)
 
-    newDrawing()
-    newPage(1100, 1100)
+    context.newDocument(1100, 1100)
+    context.newPage(1100, 1100)
     
     print(len(data))
     x = 100
@@ -66,6 +66,8 @@ with open(imagePath, "rb") as binary_file:
         if i > 0 and i % 10 == 0:
             x = 100
             y -= 100
+
+    # TODO: Close and save drawing?
 
     binary_file.seek(0, 2)  # Seek the end
     num_bytes = binary_file.tell()  # Get the file size
