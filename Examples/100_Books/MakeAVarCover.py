@@ -87,7 +87,7 @@ def makeDocument():
     C1 = Color(r=0.2+random()*0.8, g=random()*0.2, b=0.4+random()*0.2)
 
     # Make background element, filling the page color and bleed.
-    colorRect1 = newRect(z=-10, name='Page area', parent=page,
+    colorRect1 = newRect(z=-10, name='Page area', parent=page, pt=40,
                          conditions=[Top2TopSide(),
                                      Left2LeftSide(),
                                      Fit2RightSide(),
@@ -106,7 +106,7 @@ def makeDocument():
             w=colorRect1.w-M-BLEED, h=colorRect1.h-M-BLEED,
             xAlign=CENTER, yAlign=MIDDLE)
 
-    newRect(z=-10, name='Frame 3', parent=colorRect2, 
+    colorRect3 = newRect(z=-10, name='Frame 3', parent=colorRect2, 
             conditions=[Center2Center(), Middle2Middle()],
             fill=C1.darker(0.3), # Default parameter:
                                   # 50% between background color and white
@@ -123,9 +123,6 @@ def makeDocument():
     if random() < 0.33: # 1/3 chance for a second author name
         authorName += '\n' + blurb.getBlurb('name')
         
-    page.pt = 100 # Now the rectangles positioned automatic, alter the paddings
-    page.pl = page.pr = 80
-    page.pb = 20
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
     titleS = context.newString('')
@@ -134,7 +131,7 @@ def makeDocument():
             w=page.pw, leading=em(1.2), xTextAlign=CENTER, textFill=whiteColor))
     #title += context.newString(subTitle + '\n\n', style=dict(font=fontRegular.path, fontSize=32, xTextAlign=CENTER, textFill=(1, 1, 1,0.5)))
     #title += context.newString(authorName, style=dict(font=fontItalic.path, fontSize=24, tracking=em(0.025), xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
-    newTextBox(titleS, parent=page, name='Title',
+    newTextBox(titleS, parent=colorRect2, name='Title',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
 
