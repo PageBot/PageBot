@@ -72,11 +72,11 @@ a:hover {
   margin: 0 auto; }
 
 header {
-  background-color: #FFFFFF;
+  background-color: #E6E6E6;
   padding: 15px 0; }
 
 #banner {
-  background-color: #FFFFFF;
+  background-color: #00FF00;
   text-align: center; }
 
 #hero {
@@ -87,7 +87,7 @@ header {
   font-size: 1.1em; }
 
 #page-header {
-  background: #FFFFFF;
+  background: #E6E6E6;
   border-top: 1px solid #e2e2e2;
   border-bottom: 1px solid #e2e2e2;
   padding: 20px 0;
@@ -256,7 +256,7 @@ a.buttonlinkdiap:hover {
     margin: .75em auto; }
   header {
     padding: 0;
-    background-color: #FFFFFF; }
+    background-color: #E6E6E6; }
   #banner {
     float: left;
     text-align: left;

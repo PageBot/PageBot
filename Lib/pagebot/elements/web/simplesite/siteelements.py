@@ -16,26 +16,15 @@
 #
 
 
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import noColor, blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.toolbox.units import em, pointOffset
 
 class Header(Element):
-    def build(self, view, origin, drawElements=True):
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        context = view.context
-        context.fill((1, 0, 0))
-        context.stroke(noColor)
-        context.rect(px, py, 100, 100)
-
-        if drawElements:
-            for e in self.elements:
-                e.build(view, p)
-
+    u"""Container for header elements on a page. Using standard 
+    Element.build for non-Html contexts.
+    """ 
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -46,9 +35,10 @@ class Header(Element):
         b.comment('End '+self.__class__.__name__)
 
 class Banner(Element):
-    def build(self, view, path):
-        pass
-
+    u"""Container for banner elements on a page. 
+    Often used inside the Header element.
+    Using standard Element.build for non-Html contexts.
+    """ 
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
@@ -133,21 +123,19 @@ class MenuItem(Element):
 class Logo(Element):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Logo', fontSize=em(3))
-            
-    def build(self, view, path):
-        pass
-
+        newTextBox('', parent=self, cssId='logo', textFill=self.css('textFill', blackColor), 
+            fontSize=em(3))
+ 
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
-        b.div(cssId="logo")
+        b.div(cssId="logoWrapper")
         b.a(href="index.html")
         for e in self.elements:
             e.build_html(view, path)
         b._a()
         b._div() 
-        b.comment('End #logo')
+        b.comment('End #logoWrapper')
         b.comment('End '+self.__class__.__name__)
 
 class Introduction(Element):
