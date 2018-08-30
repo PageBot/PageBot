@@ -15,7 +15,7 @@
 #
 #     Shows how to get fonts.
 #    
-
+from pagebot import *
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import *
 
