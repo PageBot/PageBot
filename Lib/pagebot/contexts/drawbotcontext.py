@@ -310,7 +310,29 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def onBlack(self, p, path=None):
+    def getFlattenedContours(self):
+        """Answers the flattened NSBezier path As contour list [contour,
+        contour, ...] where contours are lists of point2D() points."""
+        contour = []
+        flattenedContours = [contour]
+        flatPath = self.bezierPathByFlatteningPath()
+
+        if flatPath is not None:
+            for index in range(flatPath.elementCount()):
+                # NSBezierPath size + index call.
+                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+
+                if p:
+                    # Make point2D() tuples, no need to add point type, all
+                    # onCurve.
+                    contour.append((p[0].x, p[0].y))
+                else:
+                    contour = []
+                    flattenedContours.append(contour)
+
+        return flattenedContours
+
+    def onBlack(self, p, path):
         """Answers the boolean flag if the single point (x, y) is on black.
         For now this only work in DrawBotContext.
         """

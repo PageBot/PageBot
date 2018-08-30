@@ -108,6 +108,9 @@ class FlatContext(BaseContext):
 
         self._path = None # Collect path commnands here before drawing the path.
 
+    def __repr__(self):
+        return '<%s>' % self.name
+
     #   V A R I A B L E
 
     def Variable(self, variableUI, globalVariables):
@@ -133,7 +136,6 @@ class FlatContext(BaseContext):
             w, h = size
         wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
-        #self.newPage(w, h)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -220,7 +222,7 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-        assert None not in (w, h)
+
         wpt, hpt = upt(w, h)
 
         if self.doc is None:
@@ -347,8 +349,16 @@ class FlatContext(BaseContext):
         by family or by findFont.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.fonttoolbox.fontpaths import *
+        >>> pbFonts = getPageBotFontPaths()
+        >>> print(len(pbFonts))
+        48
         >>> font = findFont('Roboto-Regular')
+        >>> print(font)
+        <Font Roboto-Regular>
         >>> context = FlatContext()
+        >>> print(context)
+        <FlatContext>
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
