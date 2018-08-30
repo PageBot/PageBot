@@ -38,6 +38,6 @@ class Proof:
             self.context.stroke(None)
             glyph = font[c]
             self.context.translate(x, y)
-            self.context.drawGlyph(glyph)
+            self.context.drawGlyphPath(glyph)
             self.context.translate(-x, -y)
             x += glyph.width
