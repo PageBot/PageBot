@@ -248,6 +248,6 @@ def drawAnimation():
         drawBackground=drawBackground
     ).draw()
 
-    context.saveImage('_export/VarFont2Axes.gif')
+    context.saveImage('_export/VarFont3Axes.gif')
 
 drawAnimation()

@@ -12,10 +12,16 @@
 #
 #     ShowFontContent.py
 #
+#     Print the values of the specified font for naming, info and features
+#     and generate a simple 1000 x 1000 PDF, showing part of the glyph set.
+#     This is the simple demo version of the FontSpeciment.py that will generate 
+#     a fill specimen of the font.
 #
 import pagebot
 from pagebot.contexts.platform import getContext
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.toolbox.color import color, noColor
+from pagebot.toolbox.units import pt
 
 c = getContext()
 
@@ -71,15 +77,15 @@ M = 50
 glyphIndex = 1
 s = 0.04
 
-for y in range(GY):
-    for x in range(GX):
+for yIndex in range(GY):
+    for xIndex in range(GX):
         # Offset of drawing origin
         if glyphIndex > len(f.info.glyphSet):
             break
         c.save()
-        c.translate(M+(W-2*M)/GX*x, H-M-(H-2*M)/GY*(y+1))
+        c.translate(M+(W-2*M)/GX*xIndex, H-M-(H-2*M)/GY*(yIndex+1))
         g = f[f.info.glyphSet[glyphIndex-1]]
-        c.drawPath(g.path, (0, 0), s)
+        c.drawGlyph(g, x=0, y=0, fontSize=60, fill=color(0.1), stroke=noColor)
         glyphIndex += 1
         c.restore()
 
