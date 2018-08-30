@@ -19,6 +19,8 @@
 
 # Creates empty bytes.
 from pagebot.contexts.platform import getContext
+from pagebot import getResourcesPath
+
 context = getContext()
 
 empty_bytes = bytes(4)
@@ -39,7 +41,6 @@ print(mutable_bytes)
 immutable_bytes = bytes(mutable_bytes)
 print(immutable_bytes)
 
-from pagebot import getResourcesPath
 imagePath = getResourcesPath() + "/images/peppertom_lowres_398x530.png"
 
 with open(imagePath, "rb") as binary_file:
