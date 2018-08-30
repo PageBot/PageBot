@@ -19,16 +19,28 @@ from pagebot import *
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import *
 
-fontPaths = getFontPaths()
-print(len(fontPaths))
+def showAll():
+	fontPaths = getFontPaths()
+	print(len(fontPaths))
 
-pbFonts = getPageBotFontPaths()
-print(len(pbFonts))
-print(sorted(pbFonts.keys()))
+	import glob
 
-fontName = list(fontPaths.keys())[0]
-print(fontName)
-getFontPaths()
-font = findFont(fontName)
-print(font)
-print(len(font))
+	tfp = getTestFontsPath()
+	print(glob.glob('%s/*' % tfp))
+
+	roboto = tfp + '/google/roboto'
+	print(glob.glob('%s/*' % roboto))
+
+
+	pbFonts = getPageBotFontPaths()
+	print(len(pbFonts))
+	print(sorted(pbFonts.keys()))
+
+	fontName = list(fontPaths.keys())[0]
+	print(fontName)
+	getFontPaths()
+	font = findFont(fontName)
+	print(font)
+	print(len(font))
+
+showAll()

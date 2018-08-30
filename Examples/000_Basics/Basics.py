@@ -18,20 +18,6 @@
 from pagebot import *
 
 def doBasics():
-	"""
-	>>> rootPath = getRootPath()
-	>>> resourcesPath = getResourcesPath()
-	>>> context = getContext()
-	>>> print(context)
-	<DrawBotContext>
-	>>> context = getContext('DrawBot')
-	>>> print(context)
-	<DrawBotContext>
-	>>> context = getContext('Flat')
-	>>> print(context)
-	<FlatContext>
-
-	"""
 	rootPath = getRootPath()
 	print(rootPath)
 	resourcesPath = getResourcesPath()
@@ -42,8 +28,3 @@ def doBasics():
 	print(context)
 
 doBasics()
-
-if __name__ == '__main__':
-    import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])

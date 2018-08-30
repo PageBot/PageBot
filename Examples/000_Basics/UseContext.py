@@ -17,18 +17,22 @@ from pagebot import getContext
 #
 #     Shows how to get different types of contexts.
 
-context = getContext() # Creates a DrawBot context on Mac, Flat on others
-print(context)
-context = getContext() # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
-print(context)
-context = getContext('DrawBot') # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
-print(context)
 
-context = getContext(contextType='Flat') # Force Flat.
-print(context)
-context = getContext(contextType='Flat') # Buffered in DEFAULT_CONTEXT this time.
-print(context)
-context = getContext(contextType='HTML')
-print(context)
-context = getContext(contextType='InDesign') # To be implemented.
-print(context)
+def showContexts():
+	context = getContext() # Creates a DrawBot context on Mac, Flat on others
+	print(context)
+	context = getContext() # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
+	print(context)
+	context = getContext('DrawBot') # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
+	print(context)
+
+	context = getContext(contextType='Flat') # Force Flat.
+	print(context)
+	context = getContext(contextType='Flat') # Buffered in DEFAULT_CONTEXT this time.
+	print(context)
+	context = getContext(contextType='HTML')
+	print(context)
+	context = getContext(contextType='InDesign') # To be implemented.
+	print(context)
+
+showContexts()
