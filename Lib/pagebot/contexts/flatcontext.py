@@ -109,7 +109,7 @@ class FlatContext(BaseContext):
         self._path = None # Collect path commnands here before drawing the path.
 
     def __repr__(self):
-        return '<Flat Context>'
+        return '<%s>' % self.name
 
     #   V A R I A B L E
 
@@ -349,13 +349,16 @@ class FlatContext(BaseContext):
         by family or by findFont.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot.fonttoolbox.fontpaths import getFontPaths
+        >>> from pagebot.fonttoolbox.fontpaths import *
+        >>> pbFonts = getPageBotFontPaths()
+        >>> print(len(pbFonts))
+        48
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>
         >>> context = FlatContext()
         >>> print(context)
-        <Flat Context>
+        <FlatContext>
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
