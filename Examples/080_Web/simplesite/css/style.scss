@@ -104,6 +104,10 @@ header {
 #page-header h1 {
     margin: 0;
 }
+#logo {
+    background: $logo-background-color;
+    color: $logo-color;
+}
 
 #content, aside, .vertical-padding { 
     padding: 3em 0;
