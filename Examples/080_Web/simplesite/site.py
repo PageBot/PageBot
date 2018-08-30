@@ -22,6 +22,7 @@ from pagebot.constants import URL_JQUERY, URL_MEDIA
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import *
+from pagebot.conditions import *
 from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em, pt
 from pagebot.elements.web.simplesite.siteelements import *
@@ -37,13 +38,17 @@ DO_PDF = 'Pdf' # Save as PDF representation of the site.
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
 DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
-EXPORT_TYPE = DO_PDF
+EXPORT_TYPE = DO_FILE
 
-headerBackgroundColor = whiteColor
+blueColor = color(rgb='#2A8BB8')
+
+headerBackgroundColor = color(0.9) #whiteColor
 heroBackgroundColor = color(0.95)
-bannerBackgroundColor = whiteColor
+bannerBackgroundColor = color(0, 1, 0) #whiteColor
 navigationBackgroundColor = blackColor
-coloredSectionBackgroundColor = color(rgb='#2A8BB8')
+coloredSectionBackgroundColor = blueColor
+logoColor = blueColor
+logoBackgroundColor = color(1, 1, 0)
 coloredSectionColor = color(0.9)
 footerBackgroundColor = color(0.8)
 footerColor = blackColor
@@ -112,9 +117,11 @@ def makePages(doc, siteDescription):
 
         currentPage = name + '.html'
         # Add neste content elements for this page.
-        header = Header(parent=page, fill=headerBackgroundColor)
-        banner = Banner(parent=header, fill=bannerBackgroundColor)
-        logo = Logo(parent=banner, name=name)
+        conditions = (Left2Left(), Float2Top(), Fit2Width())
+        header = Header(parent=page, fill=headerBackgroundColor, conditions=conditions)
+        banner = Banner(parent=header, fill=bannerBackgroundColor, conditions=conditions)
+        logo = Logo(parent=banner, name=name, textFill=logoColor, fill=logoBackgroundColor,
+            conditions=(Left2Left(), Float2Top()))
         navigation = makeNavigation(header, currentPage)
 
         if pn == 1:
@@ -156,7 +163,7 @@ def makeSite(siteDescription, styles, viewId):
     # Make the all pages and elements of the site as empty containers
     makePages(doc, siteDescription)    
     # By default, the typesetter produces a single Galley with content and code blocks.
-    '''
+    
     t = Typesetter(doc.context)
     galley = t.typesetFile(MD_PATH)
     # Create a Composer for this document, then create pages and fill content. 
@@ -164,7 +171,9 @@ def makeSite(siteDescription, styles, viewId):
     # The composer executes the embedded Python code blocks that direct where context should go.
     # by the HtmlContext.
     composer.compose(galley)
-    '''
+    
+    doc.solve() # Solve all layout and float conditions for pages and elements.
+
     return doc
     
 
@@ -173,7 +182,7 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
     doc.export(EXPORT_PATH + '.pdf')
 
 elif EXPORT_TYPE == DO_FILE:
-    doc = makeSite(siteDescription, styles=styles, view='Site')
+    doc = makeSite(siteDescription, styles=styles, viewId='Site')
     siteView = doc.view
     siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)

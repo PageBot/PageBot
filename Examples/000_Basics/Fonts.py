@@ -15,12 +15,17 @@
 #
 #     Shows how to get fonts.
 #    
-
+from pagebot import *
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.fonttoolbox.fontpaths import getFontPaths
+from pagebot.fonttoolbox.fontpaths import *
 
 fontPaths = getFontPaths()
 print(len(fontPaths))
+
+pbFonts = getPageBotFontPaths()
+print(len(pbFonts))
+print(sorted(pbFonts.keys()))
+
 fontName = list(fontPaths.keys())[0]
 print(fontName)
 getFontPaths()

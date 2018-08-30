@@ -12,5 +12,5 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     fonts/__init__.py
+#     resources/__init__.py
 #
