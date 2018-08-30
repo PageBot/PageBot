@@ -22,7 +22,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.color import color
 
-W, H = 200, 250
+W, H = 200, 150
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/HandleDocWithPages.pdf'
@@ -49,7 +49,7 @@ def makeDocument():
 
     # Position square in the center of the page area.
     # Notice that their alignment (left) does not matter for the conditions.
-    newTextBox(page.name, w=30, h=30, parent=page, pl=3, pt=3,
+    newTextBox(page.name, w=60, h=30, parent=page, pl=3, pt=3,
                conditions=conditions, fill=color(0.7))
 
     page.solve()

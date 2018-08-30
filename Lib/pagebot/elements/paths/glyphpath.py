@@ -90,7 +90,7 @@ class GlyphPath(Path):
         else: # Not path filter defined, draw by regular stroke/fill.
             context.fill(self.css('fill'))
             context.stroke(self.css('stroke', noColor), (self.css('strokeWidth') or 20))
-            context.drawGlyphPath(glyph)
+            context.drawGlyphPath(self.glyph)
         context.restore()
 
         if drawElements:

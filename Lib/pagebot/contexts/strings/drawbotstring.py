@@ -162,7 +162,7 @@ class DrawBotString(BabelString):
         >>> style = dict(font='Verdana', fontSize=pt(80))
         >>> bs = context.newString('Example Text', style=style)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
-        ('Verdana', 80pt, 44.0, 0.55em, 0.73em, 1.01em, -0.21em)
+        ('Verdana', 80pt, 45, 0.56em, 0.74em, 1.01em, -0.21em)
         >>> '/Verdana'in bs.fontPath
         True
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
@@ -172,10 +172,10 @@ class DrawBotString(BabelString):
         9
         >>> line = lines[0]
         >>> line.xHeight, line.capHeight # Max metrics of all runs in line as Em
-        (0.55em, 0.73em)
+        (0.56em, 0.74em)
         >>> run = line.textRuns[0]
         >>> run.xHeight, run.capHeight
-        (0.55em, 0.73em)
+        (0.56em, 0.74em)
         """
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
