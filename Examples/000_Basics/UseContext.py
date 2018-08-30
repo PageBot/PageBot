@@ -19,6 +19,7 @@ from pagebot import getContext
 
 
 def showContexts():
+	print('Here are some examples of how to retrieve different kinds of contexts:')
 	context = getContext() # Creates a DrawBot context on Mac, Flat on others
 	print(context)
 	context = getContext() # Still DrawBot, takes the buffered DEFAULT_CONTEXT.

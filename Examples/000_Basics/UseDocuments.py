@@ -11,9 +11,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     Start.py
+#     UseDocument.py
 #
-#     Shows how to start a documentand export it to PNG and PDF in the simplest steps.
+#     Shows how to start a document and export it to PNG and PDF in the simplest steps.
 #     
 
 from random import random

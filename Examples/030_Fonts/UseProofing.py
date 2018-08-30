@@ -21,12 +21,12 @@ from pagebot.constants import A3
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 
-print(getFontPaths())
-font = findFont('Roboto-Bold')
-WIDTH, HEIGHT = A3
+print(sorted(getFontPaths().keys()))
+font = findFont('BungeeOutline-Regular')
+HEIGHT, WIDTH = A3
 context = getContext()
 context.newPage(pt(WIDTH), pt(HEIGHT))
 proof = PageWide(context)
 SIZE = 54
-context.translate(SIZE, SIZE)
+context.translate(SIZE, HEIGHT - SIZE)
 proof.draw(font, 'abcdefghijklmnopqrstuvwxyz', SIZE)
