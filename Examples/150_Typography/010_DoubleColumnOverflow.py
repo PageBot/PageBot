@@ -70,5 +70,5 @@ c2 = newTextBox(w=CW, name='c2', parent=page,
 doc.solve()
 
 # Export the document to this PDF file.
-doc.export('_export/SingleColumn.pdf')
+doc.export('_export/DoubleColumnOverflow.pdf')
 
