@@ -38,7 +38,7 @@ PH = H - 2*PADDING # Usable padded page height
 CW = (PW - G)/2 # Column width
 CH = PH
 # Hard coded grid, will be automatic in later examples.
-GRIDX = ((CW, G), (CW, 0))
+GRIDX = ((CW, G), (CW, G))
 GRIDY = ((CH, 0),)
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
