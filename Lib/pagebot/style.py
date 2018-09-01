@@ -236,11 +236,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         indent = pt0, # Left indent (for left-right based scripts)
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
 
-        # Vertical spacing of baselines
+        # Vertical spacing of baselines by PageBTextBox
+        # Note that PageView is drawing the baseline grid color as defined by viewGridStrokeX and viewGridStrokeXWidth
         baselineGrid = baselineGrid,
         baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
+        baselineColor = color(0, 0, 1), # Baseline color, drawn by TextBox
+        baselineWidth = pt(0.5), # Baseline width, drawn by TextBox
+
         baselineGridFit = False,
         firstLineGridFit = True,
         # Leading and vertical space
@@ -303,9 +307,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Grid stuff for showing
         viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), # Fill color for column/row squares.
-        viewGridStrokeX = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in horizontal direction.
+        viewGridStrokeX = color(0.7), # Stroke of page grid lines in horizontal direction.
         viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
-        viewGridStrokeY = color(r=0.1, g=0.2, b=0.8), # Stroke of grid lines in vertical direction.
+        viewGridStrokeY = color(0.7), # Stroke of grid lines in vertical direction.
         viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
 
         # Page padding grid

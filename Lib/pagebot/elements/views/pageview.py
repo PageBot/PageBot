@@ -662,7 +662,9 @@ class PageView(BaseView):
 
     def drawBaselineGrid(self, e, origin):
         """Draw baseline grid if self.showBaselineGrid is True and there is a
-        baseline defined > 0.
+        baseline defined > 0. Use the color from style values viewGridStrokeX and 
+        viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox 
+        with style values baselineColor and baselineWidth.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -689,6 +691,7 @@ class PageView(BaseView):
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
         M = pt(16)
+
         startY = e.baselineGridStart
         if startY is None:
             startY = e.pt # Otherwise use the top padding as start Y.
@@ -702,9 +705,9 @@ class PageView(BaseView):
             textFill=e.css('viewGridStroke', grayColor))
         baselineGrid = e.baselineGrid
         context.fill(noColor)
-        context.stroke(e.css('baselineGridStroke', grayColor), e.css('gridStrokeWidth', 0.5))
+        context.stroke(e.css('viewGridStrokeX', grayColor), e.css('viewGridStrokeWidthX', 0.5))
 
-        while oy > e.pb:
+        while oy > e.pb: # Run until the padding of the element is reached.
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             if GRID_INDEX in show:
                 bs = context.newString(repr(line), e=self, style=style)
