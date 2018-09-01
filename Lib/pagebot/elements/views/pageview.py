@@ -24,7 +24,7 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, GRID_LINE, GRID_INDEX
+from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, GRID_LINE, GRID_INDEX, GRID_Y
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
@@ -673,16 +673,18 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showBaselineGrid = [GRID_LINE]
+        >>> view.showBaselineGrid = [GRID_LINE, GRID_INDEX, GRID_Y]
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
         show = self.showBaselineGrid
+
+        # Sets the default, in case not drawing or show is True
         if not show:
             return
-        if isinstance(show, (list, tuple)) and not GRID_LINE in show:
-            return
-        else:
-            show = [GRID_LINE]
+        if not isinstance(show, (set, list, tuple)):
+            show = [GRID_LINE, GRID_INDEX] # Default is to show all, if set to True
+        elif not GRID_LINE in show:
+            return # Not showing the grid
 
         context = self.context
 
@@ -690,7 +692,9 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        M = pt(16)
+        baselineGrid = e.baselineGrid # Get the baseline grid of this element.
+        indexFontSize = max(9, min(16, baselineGrid*0.5)) # Index size depends on baseline.
+        indexGutter = baselineGrid/4 # Gutter between index marker and element padding
 
         startY = e.baselineGridStart
         if startY is None:
@@ -698,21 +702,26 @@ class PageView(BaseView):
         oy = e.h - startY # Assumes origin at bottom for context drawing.
 
         line = 0 # Line index
+        baselineColor = e.css('viewBaselineGridStroke', color(0,7))
+        baselineWidth = e.css('viewBaselineGridWidth', 0.5)
 
         # Format of line numbers.
-        style = dict(font=e.css('fallbackFont','Verdana'), xTextAlign=RIGHT,
-            fontSize=M/2, stroke=noColor,
-            textFill=e.css('viewGridStroke', grayColor))
-        baselineGrid = e.baselineGrid
+        style = dict(font=e.css('fallbackFont','Arial'), xTextAlign=RIGHT,
+            fontSize=indexFontSize, stroke=noColor, textFill=baselineColor)
         context.fill(noColor)
-        context.stroke(e.css('viewGridStrokeX', grayColor), e.css('viewGridStrokeWidthX', 0.5))
+        context.stroke(baselineColor, baselineWidth)
 
         while oy > e.pb: # Run until the padding of the element is reached.
             context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
-            if GRID_INDEX in show:
-                bs = context.newString(repr(line), e=self, style=style)
-                context.text(bs, (px + e.pl - 2, py + oy - e.pl * 0.6))
-                context.text(bs, (px + e.w - e.pr - 8, py + oy - e.pr * 0.6))
+            if GRID_INDEX or GRID_Y in show:
+                if GRID_INDEX in show: # Shows line baseline index
+                    t = repr(line)
+                else: # GRID_Y show vertical position marker
+                    t = repr(e.h - oy)
+                bs = context.newString(t, style=style)
+                tw, th = bs.size
+                context.text(bs, (px + e.pl - tw - indexGutter, py + oy - th/4))
+                context.text(bs, (px + e.pl + e.pw + indexGutter, py + oy - th/4))
                 line += 1 # Increment line index.
             oy -= baselineGrid # Next vertical line position of baseline grid.
 
