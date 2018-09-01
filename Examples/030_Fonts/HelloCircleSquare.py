@@ -32,4 +32,4 @@ for p in range(20):
                              style=dict(fontSize=24))
             context.text(bs, (x, y))
 
-context.saveImage('_export/OurNiceDrawing.pdf')
+context.saveImage('_export/HelloCircleSquare.pdf')

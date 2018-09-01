@@ -14,8 +14,8 @@
 #
 #     Print the values of the specified font for naming, info and features
 #     and generate a simple 1000 x 1000 PDF, showing part of the glyph set.
-#     This is the simple demo version of the FontSpeciment.py that will generate 
-#     a fill specimen of the font.
+#     This is the simple demo version of the FontSpecimen.py that will generate 
+#     a full specimen of the font.
 #
 import pagebot
 from pagebot.contexts.platform import getContext
@@ -26,7 +26,7 @@ from pagebot.toolbox.units import pt
 c = getContext()
 
 f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
-EXPORT_PATH = '_export/ShowFontContent.pdf'
+EXPORT_PATH = '_export/FontContent.pdf'
 
 L = 50
 # Names and text fields
