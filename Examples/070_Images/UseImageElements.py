@@ -17,6 +17,7 @@
 #     This script is using the style parameters "originTop", making the coordinate system run downwards.
 #
 
+from pagebot import getResourcesPath
 from pagebot.style import TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -75,7 +76,9 @@ def makeDocument():
 
     page.gutter3D = GUTTER # Set all 3 gutters to same value
 
-    img = newImage('../images/cookbot10.jpg', padding=0,
+    path = getResourcesPath() + 'cookbot10.jpg'
+
+    img = newImage(path, padding=0,
                    parent=page, w=200, h=300,
                    conditions=(Top2Top(),
                                Fit2Width(),
@@ -102,9 +105,10 @@ def makeDocument():
     if score.fails:
         print(score.fails)
 
-    print(img.h)
+    print('Image size', img.w, img.h)
+    print('Image file size', img.iw, img.ih) # TODO: Should not be pt(0, 0)
     for e in img.elements:
-        print(e.h)
+        print('Element', e)
 
     return doc # Answer the doc for further doing.
 

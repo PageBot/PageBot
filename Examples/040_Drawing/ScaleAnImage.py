@@ -23,6 +23,8 @@
 #
 import os # Import module that communicates with the file system.
 import sys
+
+from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt
 from pagebot.contexts.platform import getContext
 context = getContext()
@@ -30,7 +32,7 @@ context = getContext()
 if __name__ == '__main__':
 
 	# Define the path where to find the example image.
-	path = '../images/cookbot1.jpg'
+	path = getResourcesPath() + "/images/cookbot1.jpg"
 	# Use the standard DrawBot function to get the width/height of the image from the file.
 	w, h = context.imageSize(path)
 
@@ -44,7 +46,7 @@ if __name__ == '__main__':
 	# operation need to work in 100%.
 	context.save()
 	context.scale(newScale) # Make all drawing scale to 50%
-	context.image(path, (0, 0)) # Draw the scaled image at the bottom-left corner. It fills the whole page.
+	context.image(path, pt(0, 0)) # Draw the scaled image at the bottom-left corner. It fills the whole page.
 	# Save the page as png file (and also do conversion from jpg to png this way).
 	# Save to _export folder, so the file will not upload into git. Otherwise anyone running this script will update the (same) image.
 	if not os.path.exists('_export/'):
