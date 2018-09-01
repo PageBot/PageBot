@@ -504,6 +504,7 @@ GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
 
 GRID_LINE = 'GridLine' # Show baseline grid as lines
 GRID_INDEX = 'GridIndex' # Show baseline grid index numbers (only if GRID_LINE is set too)
+GRID_Y = 'GridY' # Show baseline grid line marker as y-position (only if GRID_LINE and not GRID_INDEX)
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 

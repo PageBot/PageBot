@@ -71,7 +71,8 @@ class BaseView(Element):
         # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
         self.showGrid = set() # If set, display the type of grid  on foreground
         self.showGridBackground = set() # If set, display the type of grid on background
-        self.showBaselineGrid = set() # If set, display options defined the type od grid to show.
+        # Types of baseline grid to be drawn using conbination set of (GRID_LINE, GRID_INDEX)
+        self.showBaselineGrid = set() # If set, display options defined the type of grid to show.
         # TextBox stuff
         self.showTextBoxIndex = False # Show the line index number on the left side.
         self.showTextBoxY = False # Show the realtic y-position value if text lines on right side.

@@ -304,8 +304,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # These parameters are used by viewers, should not part of direct elements.css( ) queries
         # as view may locally change these values.
+        # See pagebot.constants for the types of grid that can be drawn.
 
         # Grid stuff for showing
+
         viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), # Fill color for column/row squares.
         viewGridStrokeX = color(0.7), # Stroke of page grid lines in horizontal direction.
         viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
@@ -317,7 +319,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewPagePaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
 
         # Baseline grid
-        viewBaselineGridStroke = redColor, # Stroke color of baselines grid.
+        viewBaselineGridStroke = color(0.7), # Stroke color of baseline grid for page.
+        viewBaselineGridWidth = pt(0.5), # Stroke width of baseline grid for page.
 
         # Draw connection arrows between the flow boxes on a page.
         viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,

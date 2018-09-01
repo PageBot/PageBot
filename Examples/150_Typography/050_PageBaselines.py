@@ -20,20 +20,24 @@
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt
 from pagebot.contexts.platform import getContext
+from pagebot.constants import GRID_LINE, GRID_Y
 
 context = getContext() # Get the current context (e.g. DrawBotContext instance)
 
+W, H = pt(500, 500)
+
 # Example baseline position, showing that start can be different from page side
 # or top of text box.
-BASELINE = pt(14)
+BASELINE = pt(15)
 BASELINE_START = 1.5 * BASELINE
-PADDING = 3 * BASELINE
+PADDING = 3 * BASELINE # Page padding related to baseline in this example.
 
-doc = Document(w=500, h=500, baselineGrid=BASELINE, baselineGridStart=BASELINE_START,
+doc = Document(w=W, h=H, baselineGrid=BASELINE, baselineGridStart=BASELINE_START,
     originTop=True)
 
-view = doc.view
-view.showBaselineGrid = True
+view = doc.view # Get the current view of this document. Defaulse it PageView.
+view.showBaselineGrid = True # Set to True defaults to [GRID_LINE, GRID_INDEX]
+#view.showBaselineGrid = [GRID_LINE, GRID_Y] # Use this line to show vertical positions
 view.showPagePadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  
