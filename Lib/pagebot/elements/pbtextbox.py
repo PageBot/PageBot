@@ -43,7 +43,7 @@ class TextBox(Element):
         if size is not None:
             self.size = size
         else:
-            self.size = w or DEFAULT_WIDTH, h
+            self.size = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
         if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
             bs = ''
         self.bs = self.newString(bs, style=self.style) # Source can be any type: BabelString instance or plain unicode string.
@@ -441,9 +441,12 @@ class TextBox(Element):
 
         c = self.context # Get current context and builder
 
+        baselineColor = self.css('baselineColor', color(0, 0, 1))
+        baselineWidth = self.css('baselineWidth', pt(0.5))
+
         fontSize = self.css('baseLineMarkerSize')
-        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=color(r=0, g=0, b=1))
-        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=0, g=0, b=1))
+        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=baselineColor)
+        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=baselineColor)
         leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=1, g=0, b=0))
 
         if view.showTextBoxY:
@@ -451,9 +454,10 @@ class TextBox(Element):
             _, th = bs.size
             c.text(bs, (px + self.w + 3,  py + self.h - th/4))
 
-        c.stroke((0, 0, 1), 0.5)
+        c.stroke(baselineColor, baselineWidth)
         prevY = 0
         for textLine in self.textLines: 
+            print(textLine.y)
             y = textLine.y + self.h
             # TODO: Why measures not showing?
             c.line((px, py+y), (px + self.w, py+y))
@@ -519,16 +523,16 @@ class TextBox(Element):
         >>> doc = Document(w=500, h=1000)
         >>> page = doc[1]
         >>> page.padding = pt(20)
-        >>> style = dict(font='Verdana', fontSize=pt(22), leading=em(1.4))
+        >>> style = dict(font='Verdana', fontSize=pt(10), leading=em(1.4))
         >>> conditions = [Baseline2Grid()]
         >>> tb = TextBox('Test '*100, parent=page, style=style, conditions=conditions)
         >>> len(tb.textLines)
-        50
+        25
         >>> tb.textLines[10].y
-        332pt
+        152pt
         >>> result = page.solve()
         >>> tb.textLines[10].y
-        332pt
+        152pt
         """
         if self.textLines:
             line = self.textLines[index or 0]

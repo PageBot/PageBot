@@ -24,18 +24,18 @@ doc = Document(w=500, h=500, baselineGrid=BASELINE, originTop=True)
 
 view = doc.view
 view.showBaselineGrid = True
-#view.showTextBoxBaselines = True
+view.showTextBoxBaselines = False
 
 page = doc[1]
 page.padding = pt(40)
 style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE+2)
 conditions = [Fit(), Baseline2Grid()]
 
-tb = newTextBox('Test '*100, parent=page, style=style, conditions=conditions)
+#tb = newTextBox('Test '*100, parent=page, style=style, conditions=conditions)
 doc.solve()
 
    
 doc.export('_export/Baselines.pdf')
 
-drawGrid(tb)
-gridFit(tb, 4)
+#drawGrid(tb)
+#gridFit(tb, 4)
