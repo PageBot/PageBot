@@ -22,7 +22,7 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.toolbox.transformer import obj2StyleId
-from pagebot.toolbox.units import pt, units, isUnit
+from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
     """A Document a container of pages.
@@ -55,13 +55,16 @@ class Document:
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     DEFAULT_VIEWID = defaultViewClass.viewId
 
-    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, autoPages=1,
-            template=None, templates=None, originTop=True, startPage=None,
-            w=None, h=None, d=None, size=None, size3D=None,
-            padding=None, lib=None, context=None, exportPaths=None, **kwargs):
+    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, 
+            autoPages=1, template=None, templates=None, originTop=True, startPage=None,
+            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None, 
+            exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
+
+        if size is not None: # For convenience of the caller, also accept size tuples.
+            w, h, d = point3D(size)
 
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
@@ -70,14 +73,9 @@ class Document:
         self.title = title or self.name
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
 
-        if size3D is not None: # For convenience of the caller, also accept size3D and size tuples.
-            w, h, d = size3D
-        elif size is not None:
-            w, h = size
-
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
-        self.d = d or DEFAULT_DOC_DEPTH
+        self.d = d # In case depth is 0, keep is as value
 
         if padding is not None:
             self.padding = padding
@@ -113,7 +111,7 @@ class Document:
 
         # Document (w, h) size is default from page, but will modified by the type of display mode.
         if autoPages:
-            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, **kwargs)
+            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, d=self.d, **kwargs)
 
         # Call generic initialize method, allowing inheriting publication
         # classes to initialize their stuff. This can be the creation of
@@ -259,7 +257,9 @@ class Document:
         >>> doc = Document(context=context, title='MySite')
         >>> doc, doc.context, doc.title
         (<Document-Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
-        >>> from pagebot.contexts.flatcontext import FlatContext
+        """
+
+        """>>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> doc = Document(context=context)
         >>> doc.context
