@@ -16,6 +16,8 @@
 #     This script generates a page with aligned square,
 #     showing how conditional placement works.
 #
+from pagebot import getResourcesPath
+
 #import pagebot # Import to know the path of non-Python resources.
 from pagebot.contributions.filibuster.blurb import blurb
 
@@ -127,7 +129,9 @@ def makeDocument():
                padding=4, fill=0.7, conditions=(Left2Left(),
                                                          Float2Top()))
 
-    newImage('images/cookbot10.jpg', z=0, w=BlueWidth,
+    path = getResourcesPath() + 'cookbot10.jpg'
+
+    newImage(path, z=0, w=BlueWidth,
              parent=page, fill=0.7, padding=8, conditions=(Right2Right(),
                                                        Float2Top()))
 
