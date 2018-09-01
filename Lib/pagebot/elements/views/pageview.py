@@ -660,11 +660,13 @@ class PageView(BaseView):
                         y += ch + gy
                     x += cw + gx
 
-    def drawBaselineGrid(self, e, origin):
+    def drawBaselineGrid(self, e, origin, show=None, inside=False):
         """Draw baseline grid if self.showBaselineGrid is True and there is a
         baseline defined > 0. Use the color from style values viewGridStrokeX and 
         viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox 
         with style values baselineColor and baselineWidth.
+        In this method is called by an element, instead of self, the show attribute
+        is a way to overwrite the setting of self.showBaselineGrid
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -676,7 +678,7 @@ class PageView(BaseView):
         >>> view.showBaselineGrid = [GRID_LINE, GRID_INDEX, GRID_Y]
         >>> view.drawBaselineGrid(e, pt(0, 0))
         """
-        show = self.showBaselineGrid
+        show = show or self.showBaselineGrid
 
         # Sets the default, in case not drawing or show is True
         if not show:
@@ -712,7 +714,6 @@ class PageView(BaseView):
         context.stroke(baselineColor, baselineWidth)
 
         while oy > e.pb: # Run until the padding of the element is reached.
-            context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             if GRID_INDEX or GRID_Y in show:
                 if GRID_INDEX in show: # Shows line baseline index
                     t = repr(line)
@@ -720,9 +721,18 @@ class PageView(BaseView):
                     t = repr(e.h - oy)
                 bs = context.newString(t, style=style)
                 tw, th = bs.size
-                context.text(bs, (px + e.pl - tw - indexGutter, py + oy - th/4))
-                context.text(bs, (px + e.pl + e.pw + indexGutter, py + oy - th/4))
+                if inside:
+                    context.text(bs, (px + e.pl + indexGutter, py + oy - th/4))
+                    context.text(bs, (px + e.pl + e.pw - tw - indexGutter, py + oy - th/4))
+                    context.line((px + e.pl + 2*indexGutter + tw, py + oy), (px + e.pw - 2*indexGutter - tw, py + oy))
+                else:
+                    context.text(bs, (px + e.pl - tw - indexGutter, py + oy - th/4))
+                    context.text(bs, (px + e.pl + e.pw + indexGutter, py + oy - th/4))
+                    context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
                 line += 1 # Increment line index.
+            else: # Plain lines, no markers
+                context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
+
             oy -= baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S

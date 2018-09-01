@@ -1,10 +1,32 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
+#
+#     060_TextBoxBaselines.py
+#
+#     Show the baseline grid of the page (drawn by the PageView)
+#     and the relation with the baseline of a positioned text box.
+#
 from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newTextBox
 from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import color
 from pagebot.contexts.platform import getContext
 
 context = getContext()
+
+W, H = pt(500, 500)
 
 def gridFit(e, index):
     line = tb.textLines[index]
@@ -17,25 +39,30 @@ def drawGrid(e):
         context.fill(None)
         yy = page.h.v - tb.top.v - y.v
         context.line((x.v, yy),((x+w).v, yy))
- 
-BASELINE = pt(14)
 
-doc = Document(w=500, h=500, baselineGrid=BASELINE, originTop=True)
+text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
-view = doc.view
-view.showBaselineGrid = True
-view.showTextBoxBaselines = False
+# Example baseline position, showing that start can be different from page side
+# or top of text box.
+BASELINE = pt(15)
+BASELINE_START = 1.5 * BASELINE
+PADDING = 3 * BASELINE # Page padding related to baseline in this example.
 
-page = doc[1]
-page.padding = pt(40)
+doc = Document(w=W, h=H, padding=PADDING, originTop=True,
+    baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
+
+view = doc.view # Get the current view of this document. Defaulse it PageView.
+view.showBaselineGrid = True # Set to True defaults to [GRID_LINE, GRID_INDEX]
+#view.showBaselineGrid = [GRID_LINE, GRID_Y] # Use this line to show vertical positions
+view.showPagePadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
+
+page = doc[1] # Get the first (and only) page of the document
+
 style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE+2)
-conditions = [Fit(), Baseline2Grid()]
+conditions = [Fit()] # Fitting conditions for the text box
 
-#tb = newTextBox('Test '*100, parent=page, style=style, conditions=conditions)
+tb = newTextBox(text * 5, parent=page, style=style, conditions=conditions, 
+    baselineColor=color(1, 0, 0), showBaseline=True)
 doc.solve()
 
-   
-doc.export('_export/Baselines.pdf')
-
-#drawGrid(tb)
-#gridFit(tb, 4)
+doc.export('_export/TextBoxBaselines.pdf')

@@ -15,7 +15,8 @@
 #     textbox.py
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
-                            BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+                            BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
+                            GRID_LINE, GRID_INDEX, GRID_Y)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
@@ -355,8 +356,6 @@ class TextBox(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        # TODO: Add marker if there is overflow text in the textbox.
-
         self.buildFrame(view, p) # Draw optional background, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showElementFrame == True
@@ -398,7 +397,7 @@ class TextBox(Element):
 
         # TODO: Make this work for FlatContext too
         # Draw markers on TextLine and TextRun positions.
-        self._drawBaselines_drawBot(view, px, py)
+        view.drawBaselineGrid(self, origin, show=[GRID_LINE, GRID_INDEX], inside=True)
 
         if view.showTextOverflowMarker and self.isOverflow():
             # TODO: Make this work for FlatContext too
@@ -433,48 +432,6 @@ class TextBox(Element):
             self.drawAfter(self, view)
 
         b._div() # self.cssClass or self.__class__.__name__
-
-    def _drawBaselines_drawBot(self, view, px, py):
-        # Let's see if we can draw over them in exactly the same position.
-        if not view.showTextBoxBaselines and not self.showBaselines:
-            return
-
-        c = self.context # Get current context and builder
-
-        baselineColor = self.css('baselineColor', color(0, 0, 1))
-        baselineWidth = self.css('baselineWidth', pt(0.5))
-
-        fontSize = self.css('baseLineMarkerSize')
-        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=baselineColor)
-        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=baselineColor)
-        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=1, g=0, b=0))
-
-        if view.showTextBoxY:
-            bs = self.newString('0', style=indexStyle)
-            _, th = bs.size
-            c.text(bs, (px + self.w + 3,  py + self.h - th/4))
-
-        c.stroke(baselineColor, baselineWidth)
-        prevY = 0
-        for textLine in self.textLines: 
-            print(textLine.y)
-            y = textLine.y + self.h
-            # TODO: Why measures not showing?
-            c.line((px, py+y), (px + self.w, py+y))
-            if view.showTextBoxIndex:
-                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                tw, th = bs.size # Calculate right alignment
-                c.text(bs, (px-3-tw, py + y - th/4))
-            if view.showTextBoxY:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/4))
-            if view.showTextBoxLeading:
-                leading = round(abs(y - prevY))
-                bs = self.newString('%d' % leading, style=leadingStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/4))
-            prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draw the optional overflow marker, if text doesn't fit in the box."""
