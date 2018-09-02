@@ -38,7 +38,7 @@ class Composer:
     >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
     >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
     >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-    >>> doc = Document(size=A4, styles=styles, autoPages=numPages, originOnTop=True)
+    >>> doc = Document(size=A4, styles=styles, autoPages=numPages, originTop=True)
     >>> t = Typesetter(doc.context, styles=styles)
     >>> # Create a "main" textbox in each page.
     >>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)] 

@@ -49,7 +49,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=
 # Make long text to force box overflow
 t = context.newString(text * 7, style=style)
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originOnTop=True)
+doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originTop=True)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.

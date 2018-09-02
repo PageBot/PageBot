@@ -39,7 +39,7 @@ BASELINE = pt(15)
 BASELINE_START = 1.5 * BASELINE
 PADDING = 3 * BASELINE # Page padding related to baseline in this example.
 
-doc = Document(w=W, h=H, padding=PADDING, originOnTop=True,
+doc = Document(w=W, h=H, padding=PADDING, originTop=True,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.

@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     100_PageCropMarks.py
+#     110_OriginTopBottom.py
 #
 #     Show the baseline grid of the page (drawn by the PageView)
 #     and the relation with the usable page padding area.
@@ -22,6 +22,7 @@ from pagebot.toolbox.units import pt, inch
 from pagebot.contexts.platform import getContext
 from pagebot.constants import BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, B5
 from pagebot.elements import *
+from pagebot.conditions import *
 
 context = getContext() # Get the current context (e.g. DrawBotContext instance)
 
@@ -29,10 +30,10 @@ context = getContext() # Get the current context (e.g. DrawBotContext instance)
 # or top of text box.
 BASELINE = pt(15)
 BASELINE_START = 3.5 * BASELINE
-PADDING = 5 * BASELINE # Page padding related to baseline in this example.
+PADDING = 5*BASELINE, 3*BASELINE, 6*BASELINE, 4*BASELINE # Page padding related to baseline in this example.
 
-doc = Document(size=B5, padding=PADDING, originTop=True, 
-    autoPages=3, # Create multiple pages, to show the page number/total pages.
+doc = Document(size=B5, padding=PADDING, 
+    autoPages=2, # Create multiple pages, to show the page number/total pages.
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
@@ -45,7 +46,19 @@ view.showRegistrationMarks = True
 view.showNameInfo = True # Show document/name/date info in view padding area.
 view.showFrame = True # Show frame of the page size.
 
-# The page has no child elements, just showing the metrics of the padding and baseline.
+
+page = doc[1]
+page.originTop = True # Origin on top of bottom should make not difference
+r1 = newRect(conditions=[Fit()], fill=(0.5, 0.5, 0.5, 0.5), parent=page)
+
+page = doc[2]
+page.originTop = False
+r2 = newRect(conditions=[Fit()], fill=(0.5, 0.5, 0.5, 0.5), parent=page)
+
+doc.solve()
+
+print(r1)
+print(r2)
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  
 doc.export('_export/PageBaselines.pdf')
