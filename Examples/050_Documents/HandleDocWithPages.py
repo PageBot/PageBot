@@ -34,9 +34,9 @@ def makeDocument():
     print('One page in the document', doc.pages)
 
     view = doc.getView()
-    view.showPagePadding = True
-    view.showElementDimensions = True
-    view.showElementOrigin = True
+    view.showPadding = True
+    view.showDimensions = True
+    view.showOrigin = True
 
     page = doc[1] # Get the single page from te document.
     page.name = 'First page'

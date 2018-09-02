@@ -57,7 +57,7 @@ def makeDocument():
     
     view = doc.getView()
     view.padding = pt(0) # Aboid showing of crop marks, etc.
-    view.showElementOrigin = False
+    view.showOrigin = False
     view.showTextOverflowMarker = False
     
     # Get list of pages with equal y, then equal x.    
@@ -67,7 +67,7 @@ def makeDocument():
     page.padding = PagePadding
     
     # Show margin of page, can also be done by
-    # view.showPagePadding = True
+    # view.showPadding = True
     newRect(fill=color(0.9), parent=page, margin=0, 
             conditions=(Left2Left(), Fit2Right(), Bottom2Bottom(), Fit2Height()))
     

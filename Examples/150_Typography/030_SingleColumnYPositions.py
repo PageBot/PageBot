@@ -13,7 +13,7 @@
 #     030_SingleColumnYPositions.py
 #
 #     Draw a single columns with various typographic styles inside and show the
-#     baselines, using the view.showTextBoxBaselines = True display option.
+#     baselines, using the view.showBaselines = True display option.
 #     The text column includes a footnote reference with baseline shift.
 #
 #from pagebot.contexts.flatcontext import FlatContext
@@ -51,7 +51,7 @@ doc = Document(w=W, h=H, padding=PADDING, context=context)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showTextBoxBaselines = True # Show baseline grid of the column lines.
+view.showBaselines = True # Show default baseline grid of the column lines.
 # Get the first (and only) page
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions

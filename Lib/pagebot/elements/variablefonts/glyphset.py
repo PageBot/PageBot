@@ -60,7 +60,7 @@ class GlyphSet(BaseFontShow):
 
         self.buildFrame(view, p) # Draw optional frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -72,7 +72,7 @@ class GlyphSet(BaseFontShow):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
 
     def drawMatrix(self, view, origin):

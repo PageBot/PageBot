@@ -76,11 +76,11 @@ def makeDocument():
     # Set view options. Full list is in elements/views/baseviews.py
     view.padding = 40 # Showing cropmarks and registration marks
                       # need >= 20 padding of the view.
-    view.showPageRegistrationMarks = True
-    view.showPageCropMarks = True
-    view.showPageFrame = True
-    view.showPagePadding = False
-    view.showPageNameInfo = True
+    view.showRegistrationMarks = True
+    view.showCropMarks = True
+    view.showFrame = True
+    view.showPadding = False
+    view.showNameInfo = True
     view.showTextOverflowMarker = False
     
     context = view.context

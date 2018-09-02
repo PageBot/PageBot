@@ -89,7 +89,7 @@ class Ruler(Element):
         w = self.w - sIndent - sTailIndent
 
          # Let the view draw frame info for debugging, in case
-         # view.showElementFrame == True
+         # view.showFrame == True
         #view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -106,7 +106,7 @@ class Ruler(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementInfo(self, origin)
 
     #   H T M L  /  S A S S  S U P P O R T
 
@@ -147,7 +147,7 @@ class Ruler(Element):
             self.drawAfter(self, view)
 
         self._restoreScale(view)
-        #view.drawElementMetaInfo(self, origin)
+        #view.drawElementInfo(self, origin)
 
 if __name__ == '__main__':
     import doctest

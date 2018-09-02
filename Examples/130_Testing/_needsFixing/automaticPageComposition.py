@@ -133,7 +133,7 @@ def makeDocument():
     # Show grid columns and margins if rootStyle.showGrid
     # or rootStyle.showGridColumns are True
     template1.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
+    # Show baseline grid if rs.showBaselines is True
     template1.baselineGrid(rs)
     # Create empty image place holders.
     # To be filled by running content on the page.
@@ -165,7 +165,7 @@ def makeDocument():
     # Show grid columns and margins if rootStyle.showGrid
     # or rootStyle.showGridColumns are True
     template2.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
+    # Show baseline grid if rs.showBaselines is True
     template2.baselineGrid(rs)
     template2.cContainer(4, 0, 2, 3, style=rs)  # Empty image element,
                                                 # cx, cy, cw, ch

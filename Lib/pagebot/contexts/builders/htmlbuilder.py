@@ -53,23 +53,23 @@ class HtmlBuilder(XmlBuilder):
     # on tag output with separating spaces.
     CASCADING_ATTRIBUTES = ('cssClass', 'class')
 
-    HTML_ATTRIBUTES = set(['dir', 'lang', 'xmllang', 'manifest'])
+    HTML_ATTRIBUTES = {'dir', 'lang', 'xmllang', 'manifest'}
 
-    HEAD_ATTRIBUTES = set(['profile'])
+    HEAD_ATTRIBUTES = {'profile'}
 
-    LINK_ATTRIBUTES = set([ 'charset', 'href', 'hreflang', 'media', 'rel',
-        'rev', 'target', 'dir', 'lang', 'type', 'sizes', ])
+    LINK_ATTRIBUTES = {'charset', 'href', 'hreflang', 'media', 'rel',
+        'rev', 'target', 'dir', 'lang', 'type', 'sizes' }
 
-    BODY_ATTRIBUTES = set(['dir', 'lang',
+    BODY_ATTRIBUTES = {'dir', 'lang',
         'onload', 'onunload', 'ondblclick', 'onmousedown',
         'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress',
-        'onkeydown', 'onkeyup', ])
+        'onkeydown', 'onkeyup'}
 
-    H_ATTRIBUTES = set([ 'dir', 'lang', ])
+    H_ATTRIBUTES = {'dir', 'lang'}
 
-    LABEL_ATTRIBUTES = set(['for'])
+    LABEL_ATTRIBUTES = {'for'}
 
-    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = set([
+    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {
         'type', 'name', 'size', 'value', 'accept',
         'autocorrect', 'autocapitalize', 'placeholder', 'inputmode',
         'relation', 'checked', 'src', 'alt', 'readonly',
@@ -78,164 +78,157 @@ class HtmlBuilder(XmlBuilder):
         'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout',
         'onkeypress', 'onkeydown', 'onkeyup', 'maxlength', 'disabled',
         'autocorrect', 'autocapitalize', 'placeholder', 'results',
-    ])
+    }
 
-    BLOCKQUOTE_ATTRIBUTES = set([])
+    BLOCKQUOTE_ATTRIBUTES = {}
 
     INPUT_ATTRIBUTES_DEFAULTS = {'alt': '+', 'disabled': False}
 
-    CANVAS_ATTRIBUTES = set(['width_html', 'height_html'])
+    CANVAS_ATTRIBUTES = {'width_html', 'height_html'}
 
-    SELECT_ATTRIBUTES = set(['name', 'onchange', 'multiple',
-        'size', 'disabled', ])
+    SELECT_ATTRIBUTES = {'name', 'onchange', 'multiple',
+        'size', 'disabled'}
 
-    OPTION_ATTRIBUTES = set(['value', 'selected', 'onmouseup'])
+    OPTION_ATTRIBUTES = {'value', 'selected', 'onmouseup'}
 
-    OPTGROUP_ATTRIBUTES = set(['label', ])
+    OPTGROUP_ATTRIBUTES = {'label'}
 
-    TEXTAREA_ATTRIBUTES = set(['onblur', 'onchange',
+    TEXTAREA_ATTRIBUTES = {'onblur', 'onchange',
         'ondblclick', 'onfocus', 'onselect', 'onmousedown', 'onmouseout', 'onmousemove',
         'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup',
-        'name', 'cols', 'rows', ])
+        'name', 'cols', 'rows'}
 
-    PARAM_ATTRIBUTES = set(['name', 'type', 'value', 'valuetype', ])
+    PARAM_ATTRIBUTES = {'name', 'type', 'value', 'valuetype'}
 
-    OBJECT_ATTRIBUTES = set(['dir', 'lang', 'xmllang',
+    OBJECT_ATTRIBUTES = {'dir', 'lang', 'xmllang',
         'align', 'archive', 'border', 'classid', 'codebase', 'codetype', 'data',
         'declare', 'height_html', 'hspace', 'name', 'standby', 'type', 'usemap', 'vspace',
         'width_html', 'accesskey', 'tabindex', 'ondblclick', 'onmousedown',
         'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress',
-        'onkeydown', 'onkeyup', ])
+        'onkeydown', 'onkeyup'}
 
-    META_ATTRIBUTES = set(['charset', 'content', 'httpequiv', 'name', ])
+    META_ATTRIBUTES = {'charset', 'content', 'httpequiv', 'name'}
 
-    P_ATTRIBUTES = STRONG_ATTRIBUTES = EM_ATTRIBUTES = B_ATTRIBUTES = U_ATTRIBUTES = S_ATTRIBUTES = Q_ATTRIBUTES = set([
-        'type', 'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'])
+    P_ATTRIBUTES = STRONG_ATTRIBUTES = EM_ATTRIBUTES = B_ATTRIBUTES = U_ATTRIBUTES = S_ATTRIBUTES = Q_ATTRIBUTES = {
+        'type', 'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
-    H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = set([
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'])
+    H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = {
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
-    FIGURE_ATTRIBUTES = set(['accesskey', 'contenteditable', 'contextmenu', 'dir',
-        'draggable', 'hidden', 'lang', 'spellcheck', 'tabindex'])
+    FIGURE_ATTRIBUTES = {'accesskey', 'contenteditable', 'contextmenu', 'dir',
+        'draggable', 'hidden', 'lang', 'spellcheck', 'tabindex'}
 
-    SUB_ATTRIBUTES = SUP_ATTRIBUTES = set([])
+    SUB_ATTRIBUTES = SUP_ATTRIBUTES = {}
 
-    BR_ATTRIBUTES = set(['cssClass', 'cssId', 'title', 'style', 'clear' ])
+    BR_ATTRIBUTES = {'cssClass', 'cssId', 'title', 'style', 'clear' }
 
-    TABLE_ATTRIBUTES = set([
+    TABLE_ATTRIBUTES = {
         'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
-        'width_html', 'height_html'])
+        'width_html', 'height_html'}
 
-    THEAD_ATTRIBUTES = set([
+    THEAD_ATTRIBUTES = {
         'dir', 'lang', 'xmllang',
         'align', 'char', 'charoff', 'valign', 'ondblclick', 'onmousedown',
         'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress',
-        'onkeyup'])
+        'onkeyup'}
 
-    TFOOT_ATTRIBUTES = set([
+    TFOOT_ATTRIBUTES = {
         'dir', 'lang', 'xmllang',
         'align', 'char', 'charoff', 'valign', 'ondblclick', 'onmousedown',
         'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress',
-        'onkeyup'])
+        'onkeyup'}
 
-    TBODY_ATTRIBUTES = set([
+    TBODY_ATTRIBUTES = {
         'dir', 'lang',
         'xmllang', 'align', 'char', 'charoff',
         'valign', 'ondblclick', 'onmousedown',
         'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
-        'onkeydown', 'onkeypress', 'onkeyup'])
+        'onkeydown', 'onkeypress', 'onkeyup'}
 
-    TR_ATTRIBUTES = set([
+    TR_ATTRIBUTES = {
         'relation', 'onmousemove', 'onmouseout', 'onmouseover',
-        'onmouseup', 'onmousedown', 'onkeydown', 'onkeypress', 'onkeyup'])
+        'onmouseup', 'onmousedown', 'onkeydown', 'onkeypress', 'onkeyup'}
 
-    TD_ATTRIBUTES = set([ 'width_html', 'height_html', 'rowspan',
+    TD_ATTRIBUTES = {'width_html', 'height_html', 'rowspan',
         'colspan', 'valign', 'align', 'nowrap', 'relation',
         'ondblclick', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
-        'onkeydown', 'onkeypress', 'onkeyup'])
+        'onkeydown', 'onkeypress', 'onkeyup'}
 
-    TH_ATTRIBUTES = set([ 'width_html', 'height_html', 'rowspan', 'colspan',
-        'valign', 'align', 'nowrap'])
+    TH_ATTRIBUTES = {'width_html', 'height_html', 'rowspan', 'colspan',
+        'valign', 'align', 'nowrap'}
 
-    UL_ATTRIBUTES = DL_ATTRIBUTES = set([ 'type' ])
+    UL_ATTRIBUTES = DL_ATTRIBUTES = {'type'}
 
-    OL_ATTRIBUTES = set([
-    'compact', 'start', 'type'
-    ])
+    OL_ATTRIBUTES = {'compact', 'start', 'type'}
 
-    I_ATTRIBUTES = TT_ATTRIBUTES = SMALL_ATTRIBUTES = BIG_ATTRIBUTES = LI_ATTRIBUTES = DT_ATTRIBUTES = DD_ATTRIBUTES = set([
-    'dir', 'lang', 'xmllang'
-    ])
+    I_ATTRIBUTES = TT_ATTRIBUTES = SMALL_ATTRIBUTES = BIG_ATTRIBUTES = LI_ATTRIBUTES = DT_ATTRIBUTES = DD_ATTRIBUTES = {
+        'dir', 'lang', 'xmllang'}
 
-    DIV_ATTRIBUTES = set([
+    DIV_ATTRIBUTES = {
         'onmouseout', 'relation', 'name', 'disabled',
         'onmouseover', 'onmousedown', 'onmouseup', 'ondblclick', 'onfocus', 'onblur',
         'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'role', 'default',
-        'width_html', 'contenteditable'])
+        'width_html', 'contenteditable'}
 
-    IMG_ATTRIBUTES = set([
+    IMG_ATTRIBUTES = {
         'src', 'name', 'width_html', 'height_html', 'onmouseover', 'onmousedown', 'onmouseup', 'onmouseout',
         'alt', 'border', 'hspace',
         'vspace', 'align', 'relation', 'usemap',
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'])
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
     # IMG_ATTRIBUTES_DEFAULTS = {'alt': '_'}
 
-    AREA_ATTRIBUTES = set([
+    AREA_ATTRIBUTES = {
         'shape', 'coords', 'href', 'target', 'border',
-        'onmouseover', 'onmouseout', 'onmousedown', "onmouseup"])
+        'onmouseover', 'onmouseout', 'onmousedown', "onmouseup"}
 
-    SPAN_ATTRIBUTES = set([ 'relation', 'itemprop',
-        'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'contenteditable'])
+    SPAN_ATTRIBUTES = {'relation', 'itemprop',
+        'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'contenteditable'}
 
-    FRAMESET_ATTRIBUTES = set([
-        'cols', 'rows',
-        'onload', 'onunload'])
+    FRAMESET_ATTRIBUTES = {'cols', 'rows', 'onload', 'onunload'}
 
-    FRAME_ATTRIBUTES = set([
+    FRAME_ATTRIBUTES = {
         'frameborder', 'longdesc', 'marginheight', 'marginwidth',
         'name', 'noresize', 'scrolling', 'src'
-        ])
+        }
 
-    NOFRAMES_ATTRIBUTES = set([
-        'dir', 'lang'
-        ])
+    NOFRAMES_ATTRIBUTES = {'dir', 'lang'}
 
-    IFRAME_ATTRIBUTES = set([
+    IFRAME_ATTRIBUTES = {
         'src', 'align', 'frameborder', 'longdesc', 'type', 'border',
         'marginheight', 'marginwidth', 'name', 'scrolling',
-        'width_html', 'height_html'])
+        'width_html', 'height_html'}
 
     AREA_ATTRIBUTES_DEFAULTS = {'width_html': 600, 'height_html': 400}
 
-    HR_ATTRIBUTES = set([ 'align', 'color', 'noshade',
-            'size', 'width_html' ])
+    HR_ATTRIBUTES = {'align', 'color', 'noshade',
+            'size', 'width_html' }
 
-    HGROUP_ATTRIBUTES = set(['itemscope'])
+    HGROUP_ATTRIBUTES = {'itemscope'}
 
-    ARTICLE_ATTRIBUTES = set([
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'])
+    ARTICLE_ATTRIBUTES = {
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
-    SECTION_ATTRIBUTES = set([
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'])
+    SECTION_ATTRIBUTES = {
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
-    HEADER_ATTRIBUTES = set(['cite'])
+    HEADER_ATTRIBUTES = {'cite'}
 
-    EMBED_ATTRIBUTES = set([
+    EMBED_ATTRIBUTES = {
         'src', 'href', 'quality', 'name', 'menu',
         'type', 'width_html', 'wmode', 'align', 'allowscriptaccess',
         'height_html', 'autoplay', 'loop', 'controller',
         'playeveryframe', 'bgcolor', 'movieid', 'kioskmode',
         'targetcache', 'hidden', 'volume', 'pluginspace',
-        'scale', 'allowfullscreen', 'flashvars'])
+        'scale', 'allowfullscreen', 'flashvars'}
 
-    A_ATTRIBUTES = set(['href', 'target', 'alt', 'name', 'itemprop',
+    A_ATTRIBUTES = {'href', 'target', 'alt', 'name', 'itemprop',
         'onmouseout', 'onmouseover', 'onmousedown', 'onmouseup',
         'ondblclick', 'onfocus', 'accesskey', 'rel', 'rev', 'relation',
-        'type'])
+        'type'}
 
     # A_ATTRIBUTES_DEFAULTS = {'alt': '='}
-    NAV_ATTRIBUTES = set(['accesskey', 'role'])
+    NAV_ATTRIBUTES = {'accesskey', 'role'}
 
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 

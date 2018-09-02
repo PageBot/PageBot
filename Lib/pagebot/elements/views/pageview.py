@@ -24,7 +24,10 @@ from pagebot.toolbox.color import color, noColor, grayColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, GRID_LINE, GRID_INDEX, GRID_Y
+from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, 
+    GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG, 
+    BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT, 
+    BASE_INSIDE, DEFAULT_BASELINE)
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
@@ -86,7 +89,7 @@ class PageView(BaseView):
             # TODO: Add some options for layout of the combined pages,
             # depending on the spread view option.
             # self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
-            # self.showSpreadMiddleAsGap # Show the spread with single crop marks. False glues pages togethers as in real spread.
+            # page.ml and page.mr define the distance between the spread pages.
 
             # Create a new DrawBot viewport page to draw template + page, if
             # not already done. In case the document is oversized, then make
@@ -97,10 +100,10 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
-            if self.pl > self.minPadding and \
-               self.pt > self.minPadding and \
-               self.pb > self.minPadding and \
-               self.pr > self.minPadding:
+            if self.pl > self.minMetaPadding and \
+               self.pt > self.minMetaPadding and \
+               self.pb > self.minMetaPadding and \
+               self.pr > self.minMetaPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -129,8 +132,8 @@ class PageView(BaseView):
                 self.drawBefore(page, self, origin)
 
             # If there is any page meta info defined to be drawn on the background
-            # suchs as the grid, then draw that first.
-            self.drawPageMetaInfoBackground(page, origin)
+            # such as the grid, then draw that first.
+            self.drawGrid(page, origin, background=True)
 
             # Use the (docW, docH) as offset, in case cropmarks need to be
             # displayed. Recursively call all elements in the tree to build
@@ -138,7 +141,8 @@ class PageView(BaseView):
             # is a difference, the elements should make the switch themselves.
             page.buildChildElements(self, origin)
 
-            self.drawPageMetaInfo(page, origin, path) # Add path to show the file name in header.
+            # Draw parts of the grid that need to be in the foreground.
+            self.drawGrid(page, origin, background=False)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
@@ -177,26 +181,8 @@ class PageView(BaseView):
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
-    def drawPageMetaInfoBackground(self, page, origin):
-        """Draw the background meta info of the page, depending on the settings of the
-        flags.
-
-        >>> from pagebot.contexts.platform import getContext
-        >>> context = getContext()
-        >>> from pagebot.document import Document
-        >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
-        >>> page = doc[1]
-        >>> view = doc.getView()
-        >>> view.showGridBackground = [GRID_COL, GRID_ROW]
-        >>> view.drawPageMetaInfoBackground(page, (0, 0))
-        """
-        if self.showGridBackground: # Showing grid on foreground?
-            self.drawGrid(page, origin, self.showGridBackground)
-
     def drawPageMetaInfo(self, page, origin, path=None):
-        """Draw the foreground meta info of the page, depending on the settings of the
-        flags.
+        """Draw the foreground meta info of the page, depending on the settings of the flags.
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -214,11 +200,9 @@ class PageView(BaseView):
         self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
         self.drawPageRegistrationMarks(page, origin)
         self.drawPageCropMarks(page, origin)
-        if self.showGrid: # Showing grid on foreground?
-            self.drawGrid(page, origin, self.showGrid)
-        self.drawBaselineGrid(page, origin)
-        if self.showPageOrigin: # Test here, as same function is used for drawing origin on elements.
-            self.drawElementOrigin(page, origin)
+        self.drawGrid(page, origin)
+        self.drawBaselines(page, origin)
+        self.drawElementOrigin(page, origin)
 
     def drawPageFrame(self, page, origin):
         """Draw the page frame if the the flag is on and  if there ie padding
@@ -232,13 +216,13 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPageFrame = True
+        >>> view.showFrame = True
         >>> view.drawPageFrame(e, (0, 0))
 
         """
-        if self.showPageFrame and \
-                self.pl > self.minPadding and self.pr > self.minPadding and \
-                self.pt > self.minPadding and self.pb > self.minPadding:
+        if (self.showFrame or page.showFrame) and \
+                self.pl > self.minMetaPadding and self.pr > self.minMetaPadding and \
+                self.pt > self.minMetaPadding and self.pb > self.minMetaPadding:
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))
@@ -255,11 +239,11 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPageFrame = True
+        >>> view.showFrame = True
         >>> view.drawPageFrame(e, (0, 0))
         """
         pt, pr, pb, pl = page.padding
-        if self.showPagePadding and (pt or pr or pb or pl):
+        if (self.showPadding or page.showPadding) and (pt or pr or pb or pl):
             context = self.context
 
             p = pointOffset(page.origin, origin)
@@ -288,10 +272,10 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPageNameInfo = True
+        >>> view.showNameInfo = True
         >>> view.drawPageNameInfo(e, (0, 0), path)
         """
-        if self.showPageNameInfo:
+        if self.showNameInfo or page.showNameInfo:
             context = self.context
             cmDistance = self.css('viewCropMarkDistance')
             cmSize = self.css('viewCropMarkSize') - cmDistance
@@ -319,7 +303,7 @@ class PageView(BaseView):
         on the page, using their stroke/width settings of the style."""
         px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
 
-        if self.showFlowConnections:
+        if self.showFlowConnections or page.showFlowConnections:
             for seq in e.getFlows().values():
                 # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
                 # This offset is defined by optional
@@ -406,10 +390,10 @@ class PageView(BaseView):
     #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
-        """If e is not a page and the self.showElementFrame == True, then draw
+        """If e is not a page and the self.showFrame == True, then draw
         the frame of the element. If one or more margins > 0, then draw these as
         transparant rectangles instead of frame line."""
-        if self.showElementFrame and not e.isPage:
+        if (self.showFrame or e.showFrame) and not e.isPage:
             x = origin[0]
             y = origin[1]
             mt, mr, mb, ml = e.margin
@@ -420,14 +404,14 @@ class PageView(BaseView):
             context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
-    def drawElementMetaInfo(self, e, origin):
+    def drawElementInfo(self, e, origin):
         self.drawElementInfo(e, origin)
-        if self.showElementOrigin:
+        if self.showOrigin or e.showOrigin:
             self.drawElementOrigin(e, origin)
 
     def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info. The css
-        flag "showElementOrigin" defines if the origin marker of an element is
+        flag "showOrigin" defines if the origin marker of an element is
         drawn. Collect the (e, origin), so we can later draw all info, after
         the main drawing has been done."""
         if not e.eId in self.elementsNeedingInfo:
@@ -459,7 +443,7 @@ class PageView(BaseView):
                 context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 context.text(bs, (tpx+Pd, tpy+th))
 
-            if self.showElementDimensions:
+            if self.showDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
                 context.fill(noColor)
@@ -517,7 +501,7 @@ class PageView(BaseView):
         context.line((px-S, py), (px+S, py))
         context.line((px, py-S), (px, py+S))
 
-        if self.showElementDimensions:
+        if self.showDimensions:
             bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'),
                 textFill=color(0.1)))
@@ -538,12 +522,12 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showMissingElementRect = True
+        >>> view.showMissingElement = True
         >>> view.drawMissingElementRect(e, (0, 0))
         """
         context = self.context
 
-        if self.showMissingElementRect:
+        if self.showMissingElement or e.showMissingElement:
 
             p = pointOffset(e.origin, origin)
             p = self._applyScale(e, p)
@@ -573,11 +557,13 @@ class PageView(BaseView):
 
     #    G R I D
 
-    def drawGrid(self, e, origin, showGrid):
+    def drawGrid(self, e, origin, background=False):
         """Draw grid of lines and/or rectangles if colors are set in the style.
         Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
         a fixed offset.
-        If view flag self.showGrid is set, display the type of grid (GRID_COL, GRID_ROW, GRID_SQR)
+        If types self.showGrid is set, display the type of grid in forground for
+        (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG, 
+        GRID_ROW_BG, GRID_SQR_BG)
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -587,18 +573,20 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showGrid = [GRID_COL, GRID_ROW]
-        >>> view.drawGrid(e, (0, 0), view.showGrid)
-        >>> view.showGridBackground = [GRID_COL]
-        >>> view.drawGrid(e, (0, 0), view.showGridBackground)
+        >>> view.drawGrid(e, (0, 0))
+        >>> view.showGrid = [GRID_COL_BG]
+        >>> view.drawGrid(e, (0, 0), background=True)
         """
         context = self.context
+
+        showGrid = e.showGrid or self.showGrid
 
         p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        # Drawing the grid as horizontal lines.
-        if GRID_COL in showGrid:
+        # Drawing the grid as horizontal lines. Check on foreground/background flags
+        if (background and GRID_COL_BG in showGrid) or (not background and GRID_COL in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
             gridStrokeColor = e.css('viewGridStrokeY', noColor)
@@ -617,7 +605,7 @@ class PageView(BaseView):
                     x += cw + gx
 
         # Drawing the grid as vertical lines.
-        if GRID_ROW in showGrid:
+        if (background and GRID_ROW_BG in showGrid) or (not background and GRID_ROW in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
             gridStrokeColor = e.css('viewGridStrokeX', noColor)
@@ -636,7 +624,7 @@ class PageView(BaseView):
                     y += ch + gy
 
         # Drawing the grid as rectangles.
-        if GRID_SQR in showGrid:
+        if (background and GRID_SQR_BG in showGrid) or (not background and GRID_SQR in showGrid):
             # Set color for grid rectangles
             context.fill(e.css('viewGridFill', noColor))
             context.stroke(e.css('viewGridStroke', noColor))
@@ -660,13 +648,13 @@ class PageView(BaseView):
                         y += ch + gy
                     x += cw + gx
 
-    def drawBaselineGrid(self, e, origin, show=None, inside=False):
-        """Draw baseline grid if self.showBaselineGrid is True and there is a
+    def drawBaselines(self, e, origin, background=False):
+        """Draw baseline grid if self.showBaselines is True and there is a
         baseline defined > 0. Use the color from style values viewGridStrokeX and 
         viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox 
         with style values baselineColor and baselineWidth.
         In this method is called by an element, instead of self, the show attribute
-        is a way to overwrite the setting of self.showBaselineGrid
+        is a way to overwrite the setting of self.showBaselines
 
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
@@ -675,18 +663,14 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showBaselineGrid = [GRID_LINE, GRID_INDEX, GRID_Y]
-        >>> view.drawBaselineGrid(e, pt(0, 0))
+        >>> view.showBaselines = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
+        >>> view.drawBaselines(e, pt(0, 0))
         """
-        show = show or self.showBaselineGrid
+        show = e.showBaselines or self.showBaselines
 
         # Sets the default, in case not drawing or show is True
         if not show:
             return
-        if not isinstance(show, (set, list, tuple)):
-            show = [GRID_LINE, GRID_INDEX] # Default is to show all, if set to True
-        elif not GRID_LINE in show:
-            return # Not showing the grid
 
         context = self.context
 
@@ -704,8 +688,8 @@ class PageView(BaseView):
         oy = e.h - startY # Assumes origin at bottom for context drawing.
 
         line = 0 # Line index
-        baselineColor = e.css('viewBaselineGridStroke', color(0,7))
-        baselineWidth = e.css('viewBaselineGridWidth', 0.5)
+        baselineColor = e.css('baselineColor', color(0,7))
+        baselineWidth = e.css('baselineWidth', 0.5)
 
         # Format of line numbers.
         style = dict(font=e.css('fallbackFont','Arial'), xTextAlign=RIGHT,
@@ -714,25 +698,43 @@ class PageView(BaseView):
         context.stroke(baselineColor, baselineWidth)
 
         while oy > e.pb: # Run until the padding of the element is reached.
-            if GRID_INDEX or GRID_Y in show:
-                if GRID_INDEX in show: # Shows line baseline index
-                    t = repr(line)
-                else: # GRID_Y show vertical position marker
-                    t = repr(e.h - oy)
-                bs = context.newString(t, style=style)
-                tw, th = bs.size
-                if inside:
-                    context.text(bs, (px + e.pl + indexGutter, py + oy - th/4))
-                    context.text(bs, (px + e.pl + e.pw - tw - indexGutter, py + oy - th/4))
-                    context.line((px + e.pl + 2*indexGutter + tw, py + oy), (px + e.pw - 2*indexGutter - tw, py + oy))
-                else:
-                    context.text(bs, (px + e.pl - tw - indexGutter, py + oy - th/4))
-                    context.text(bs, (px + e.pl + e.pw + indexGutter, py + oy - th/4))
-                    context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
-                line += 1 # Increment line index.
-            else: # Plain lines, no markers
-                context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
+            tl = tr = None
+            if not background:    
+                if BASE_INDEX_LEFT in show and BASE_Y_LEFT in show:
+                    tl = '%s:%s' % (line, e.h - oy)
+                elif BASE_INDEX_LEFT in show: # Shows line baseline index
+                    tl = repr(line)
+                elif BASE_Y_LEFT in show: # Show vertical position marker
+                    tl = repr(e.h - oy)
+            
+                if BASE_INDEX_RIGHT in show and BASE_Y_RIGHT in show:
+                    tr = '%s:%s' % (line, e.h - oy)
+                elif BASE_INDEX_RIGHT in show: # Shows line baseline index
+                    tr = repr(line)
+                elif BASE_Y_RIGHT in show: # Show vertical position marker
+                    tr = repr(e.h - oy)
 
+            bsl = context.newString(tl, style=style)
+            bsr = context.newString(tr, style=style)
+
+            twl, thl = bsl.size
+            twr, thr = bsr.size
+            if BASE_INSIDE in show:
+                if tl:
+                    context.text(bsl, (px + e.pl + indexGutter, py + oy - thl/4))
+                if tr:
+                    context.text(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/4))
+                if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
+                    context.line((px + e.pl + 2*indexGutter + twl, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
+            else:
+                if tl:
+                    context.text(bsl, (px + e.pl - twl - indexGutter, py + oy - thl/4))
+                if tr:
+                    context.text(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/4))
+                if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
+                    context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
+            line += 1 # Increment line index.
+            
             oy -= baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S
@@ -770,10 +772,10 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element() # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPageRegistrationMarks = True
+        >>> view.showRegistrationMarks = True
         >>> view.drawPageRegistrationMarks(e, pt(0, 0))
         """
-        if self.showPageRegistrationMarks:
+        if self.showRegistrationMarks:
             cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
             x, y = point2D(origin)
@@ -793,10 +795,10 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
-        >>> view.showPageCropMarks = True
+        >>> view.showCropMarks = True
         >>> view.drawPageCropMarks(e, pt(0, 0))
         """
-        if self.showPageCropMarks:
+        if self.showCropMarks or e.showCropMarks:
             context = self.context
 
             x, y = point2D(origin) # Ignore z-axus for now.
@@ -846,14 +848,15 @@ class PageView(BaseView):
 
         self.drawElementFrame(view, p)
         for page in self.elements:
-            self.drawPageMetaInfo(page, p)
+            self.drawPageMetaInfo(page, p, background=True)
             page.build(view, p)
+            self.drawPageMetaInfo(page, p, background=False)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        #view.drawElementMetaInfo(self, origin)
+        #view.drawElementInfo(self, origin)
 
     build_flat = build_drawBot
 

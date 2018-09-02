@@ -70,7 +70,7 @@ class AnimationFrame(Rect):
 
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -83,7 +83,7 @@ class AnimationFrame(Rect):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def drawAnimatedFrame(self, view, origin):
         """Draw the content of the element, responding to size, styles, font and content.

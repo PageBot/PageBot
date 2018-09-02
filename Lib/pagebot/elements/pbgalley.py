@@ -119,7 +119,7 @@ class Galley(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         # Let the view draw frame info for debugging, in case
-        # view.showElementFrame == True
+        # view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None:
@@ -150,7 +150,7 @@ class Galley(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementInfo(self, origin)
 
     #   H T M L  /  C S S  S U P P O R T
 

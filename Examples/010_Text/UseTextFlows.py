@@ -43,12 +43,12 @@ def makeDocument():
     view = doc.getView()
     print(view.viewId, doc.views)
     view.padding = 30 # Avoid showing of crop marks, etc. when value = 0
-    view.showPageCropMarks = True
-    view.showPageRegistrationMarks = True
-    view.showPageFrame = True
-    view.showPagePadding = True
-    view.showElementOrigin = True
-    view.showElementDimensions = False
+    view.showCropMarks = True
+    view.showRegistrationMarks = True
+    view.showFrame = True
+    view.showPadding = True
+    view.showOrigin = True
+    view.showDimensions = False
     view.showElementInfo = False
 
     # Get list of pages with equal y, then equal x.

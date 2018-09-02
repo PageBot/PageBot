@@ -37,9 +37,9 @@ def makeDocument():
     view = doc.view
     c = view.context
     view.padding = 0 # Make view padding to show crop marks and frame
-    view.showPageFrame = True # Show frame of the page in blue
-    #view.showPagePadding = True
-    view.showPageCropMarks = True # Show crop marks
+    view.showFrame = True # Show frame of the page in blue
+    #view.showPadding = True
+    view.showCropMarks = True # Show crop marks
 
     page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?

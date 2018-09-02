@@ -106,7 +106,7 @@ class FontIcon(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def draw(self, view, p):
         if not self.show:

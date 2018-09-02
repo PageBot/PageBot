@@ -101,7 +101,7 @@ class Line(Element):
         context.lineTo((px + self.w, py + self.h))
         context.drawPath()
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -115,7 +115,7 @@ class Line(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementInfo(self, origin)
 
     #   H T M L  /  C S S  S U P P O R T
 
@@ -131,7 +131,7 @@ class Line(Element):
             self.drawAfter(self, view)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementInfo(self, origin)
 
 
 if __name__ == '__main__':

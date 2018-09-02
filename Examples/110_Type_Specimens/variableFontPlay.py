@@ -31,11 +31,11 @@ from pagebot.document import Document
 document = Document(w=W, h=H, originTop=False)
 view = document.view 
 view.padding = 30
-view.showPageCropMarks = True
-view.showPageRegistrationMarks = True
-view.showPagePadding = True
-view.showPageFrame = True
-view.showPageNameInfo = True
+view.showCropMarks = True
+view.showRegistrationMarks = True
+view.showPadding = True
+view.showFrame = True
+view.showNameInfo = True
 view.showPageMetaInfo = True
 page = document[1]
 page.padding = 30

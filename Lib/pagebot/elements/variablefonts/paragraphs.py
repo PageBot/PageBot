@@ -78,7 +78,7 @@ class Paragraphs(BaseFontShow):
 
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
@@ -91,7 +91,7 @@ class Paragraphs(BaseFontShow):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def getText(self, tag, cnt=None, charCnt=None):
         """If the tag type of text is in self.words, then take a random choice from there.

@@ -27,7 +27,7 @@ from pagebot.elements import * # Import all types of page-child elements for con
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, pt, p, upt
 from pagebot.conditions import * # Import all conditions for convenience.
-from pagebot.constants import GRID_LINE, GRID_INDEX, GRID_COL, GRID_ROW, GRID_SQR
+from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG
 
 
 #context = FlatContext()
@@ -43,6 +43,7 @@ CH = PH
 # Hard coded grid, will be automatic in later examples.
 GRIDX = ((CW, G), (CW, 0))
 GRIDY = ((CH, 0),)
+LEADING = pt(13)
 
 # Get the Font instances, so they can be queried for metrics.
 font = findFont('Georgia')
@@ -58,18 +59,15 @@ captionStyle['leading'] = em(1)
 t = context.newString('Hkpx', style=style) # Start with headline
 # Create a new document with 1 page. Set overall size and padding.
 # FIX: Float conditions only seem to work for originTop=False
-doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context)
+doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context, baselineGrid=LEADING)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showTextBoxBaselines = True # Show baseline grid of the column lines.
-view.showBaselineGrid = [GRID_LINE] #, GRID_INDEX
-view.showGridBackground = [GRID_COL, GRID_ROW, GRID_SQR] # Set types of grid lines to show
+view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT]
+view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set types of grid lines to show
 
 # Get the page
 page = doc[1]
-#page.style['baselineGridStart'] = None is default, starts grid on page.pt
-page.style['baselineGrid'] = pt(13) 
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
 # Red frame to show position and dimensions of the text box element.

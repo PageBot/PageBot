@@ -153,7 +153,7 @@ class Table(Element):
 
         self.drawFrame(view, p) # Draw optional frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined
@@ -166,7 +166,7 @@ class Table(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
      
     #   H T M L  /  S A S S  S U P P O R T
 
@@ -186,7 +186,7 @@ class Table(Element):
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
 
 

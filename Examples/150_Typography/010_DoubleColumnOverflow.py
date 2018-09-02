@@ -13,8 +13,8 @@
 #     010_DoubleColumnOverflow.py
 #
 #     Draw a two columns with a single text, showing overflow from one column
-#     into the other. Use some view.showGridBackground options to show the grid.
-#     Use view.showTextBoxBaselines = True to show the baselines of the text.
+#     into the other. Use some view.showGrid options to show the grid.
+#     Use view.showBaselines = True to show the default baselines of the text.
 
 #from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.platform import getContext
@@ -25,7 +25,7 @@ from pagebot.elements import * # Import all types of page-child elements for con
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
-from pagebot.constants import GRID_COL, GRID_ROW, GRID_SQR
+from pagebot.constants import *
 
 #context = FlatContext()
 context = getContext()
@@ -53,8 +53,9 @@ doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=cont
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showGridBackground = [GRID_COL, GRID_ROW, GRID_SQR] # Set types of grid lines to show
-view.showTextBoxBaselines = True # Show baseline grid of the column lines.
+# Set types of grid lines to show on foreground/background
+view.showGrid = [GRID_COL, GRID_ROW_BG, GRID_SQR_BG]
+view.showBaselines = False # Show default setting of baseline grid of the column lines.
 
 # Get the page
 page = doc[1]
@@ -65,6 +66,7 @@ c1 = newTextBox(t, w=CW, name='c1', parent=page, nextElementName='c2',
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.
 c2 = newTextBox(w=CW, name='c2', parent=page, 
+    showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrited view setting.
     conditions=[Right2Right(), Top2Top(), Fit2Height()])
 # Solve the page/element conditions
 doc.solve()

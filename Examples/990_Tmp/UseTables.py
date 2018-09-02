@@ -38,12 +38,12 @@ def makeDocument():
 
     view = doc.getView()
     view.padding = 40 # Aboid showing of crop marks, etc.
-    view.showPageCropMarks = True
-    view.showPageRegistrationMarks = True
-    view.showPageFrame = False
-    view.showPagePadding = False # Table already has background color
-    view.showElementOrigin = False
-    view.showElementDimensions = False
+    view.showCropMarks = True
+    view.showRegistrationMarks = True
+    view.showFrame = False
+    view.showPadding = False # Table already has background color
+    view.showOrigin = False
+    view.showDimensions = False
 
     # Get list of pages with equal y, then equal x.
     #page = doc[1][0] # Get the single page from te document.

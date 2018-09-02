@@ -5,7 +5,7 @@ t = """Waar in de traditie van werken met opmaakprogrammatuur zoals Quark XPress
 M = 20
 leading = 24
 
-def drawBaselineGrid():
+def drawBaselines():
     stroke(0)
     strokeWidth(0.5)
     fill(None)
@@ -69,4 +69,4 @@ fs += FormattedString(t, font=FONT, fontSize=S2, lineHeight=leading, baselineShi
 
 fs = drawBox(fs, M, M, 450, 800)
 fs = drawBox(fs, M+480, M, 450, 800)
-drawBaselineGrid()
+drawBaselines()

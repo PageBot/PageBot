@@ -285,7 +285,7 @@ class Image(Element):
             self.buildChildElements(view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin)
+        view.drawElementInfo(self, origin)
 
 if __name__ == '__main__':
     import doctest

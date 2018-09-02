@@ -41,11 +41,11 @@ doc = Document(size=SIZE, title="Demo pages", originTop=False, context=context)
 # on a DrawBotContext or FlatContext, whatever is avaialbe as default.
 view = doc.view
 view.padding = pt(40) # Space around the page to accommodate registratio and crop marks.
-view.showPageCropMarks = True # Set the view flags what to show.
-view.showPageRegistrationMarks = True
-view.showPagePadding = True
-view.showPageFrame = True
-view.showPageNameInfo = True
+view.showCropMarks = True # Set the view flags what to show.
+view.showRegistrationMarks = True
+view.showPadding = True
+view.showFrame = True
+view.showNameInfo = True
 view.showPageMetaInfo = True
 
 # Get the page of the document. Since right pages are uneven, the list of pages
