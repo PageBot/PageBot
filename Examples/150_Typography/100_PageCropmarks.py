@@ -31,7 +31,8 @@ BASELINE = pt(15)
 BASELINE_START = 3.5 * BASELINE
 PADDING = 5 * BASELINE # Page padding related to baseline in this example.
 
-doc = Document(size=B5, padding=PADDING, originTop=True,
+doc = Document(size=B5, padding=PADDING, originTop=True, 
+    autoPages=3, # Create multiple pages, to show the page number/total pages.
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
@@ -40,8 +41,9 @@ view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show basel
 #view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 view.showCropMarks = True
-view.showNameInfo = True
-view.showFrame = True
+view.showRegistrationMarks = True
+view.showNameInfo = True # Show document/name/date info in view padding area.
+view.showFrame = True # Show frame of the page size.
 
 # The page has no child elements, just showing the metrics of the padding and baseline.
 

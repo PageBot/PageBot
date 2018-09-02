@@ -99,10 +99,10 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
-            if self.pl > self.minMetaPadding and \
-               self.pt > self.minMetaPadding and \
-               self.pb > self.minMetaPadding and \
-               self.pr > self.minMetaPadding:
+            if self.pl > self.viewMinInfoPadding and \
+               self.pt > self.viewMinInfoPadding and \
+               self.pb > self.viewMinInfoPadding and \
+               self.pr > self.viewMinInfoPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -193,8 +193,8 @@ class PageView(BaseView):
             self.drawFrame(page, origin)
             self.drawPadding(page, origin)
             self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
-            self.drawPageRegistrationMarks(page, origin)
-            self.drawPageCropMarks(page, origin)
+            self.drawRegistrationMarks(page, origin)
+            self.drawCropMarks(page, origin)
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
@@ -216,8 +216,8 @@ class PageView(BaseView):
 
         """
         if (self.showFrame or e.showFrame) and \
-                self.pl > self.minMetaPadding and self.pr > self.minMetaPadding and \
-                self.pt > self.minMetaPadding and self.pb > self.minMetaPadding:
+                self.pl > self.viewMinInfoPadding and self.pr > self.viewMinInfoPadding and \
+                self.pt > self.viewMinInfoPadding and self.pb > self.viewMinInfoPadding:
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))
@@ -271,13 +271,17 @@ class PageView(BaseView):
         """
         if self.showNameInfo or e.showNameInfo:
             context = self.context
-            cmDistance = self.css('viewCropMarkDistance')
+            cmDistance = self.css('viewCropMarkDistance') # Position of text is based on crop mark size.
             cmSize = self.css('viewCropMarkSize') - cmDistance
             fontSize = self.css('viewNameFontSize')
             dt = datetime.datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
             if e.isPage and e.parent is not None: # Test if there is a document
                 pn = e.parent.getPageNumber(e)
+                if pn[1] == 0: # First or only page on this page number, then just show pn[0]
+                    pn = pn[0]
+                if len(e.parent.pages) > 1: # More than one page, then show total
+                    pn = '%s/%d' % (pn, len(e.parent.pages))
                 title = e.parent.title or 'Untitled'
                 s = 'Page %s | %s | %s' % (pn, d, title)
             else: # Otherwise always page number #1
@@ -287,7 +291,7 @@ class PageView(BaseView):
             if e.name and e.name != 'default':
                 s += ' | ' + page.name
             if path is not None:
-                s += ' | ' + path.split('/')[-1]
+                s += ' | ' + path.split('/')[-1] # We're only interested in the file name.
             bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
             self.context.text(bs, (self.pl + cmDistance, self.pb + e.h + cmSize - fontSize*2)) # Draw on top of page.
 
@@ -733,9 +737,9 @@ class PageView(BaseView):
 
     #    M A R K E R S
 
-    def _drawPageRegistrationMark(self, page, origin, cmSize, cmStrokeWidth, vertical):
+    def _drawRegistrationMark(self, e, origin, cmSize, cmStrokeWidth, vertical):
         """Draw registration mark as position x, y."""
-        context = page.context
+        context = e.context
         x, y = origin
         if vertical:
             dx = cmSize/2
@@ -755,7 +759,7 @@ class PageView(BaseView):
         context.lineTo((x, y - dy))
         context.drawPath()
 
-    def drawPageRegistrationMarks(self, page, origin):
+    def drawRegistrationMarks(self, e, origin):
         """Draw standard registration mark, to show registration of CMYK colors.
         https://en.wikipedia.org/wiki/Printing_registration.
 
@@ -767,19 +771,19 @@ class PageView(BaseView):
         >>> e = Element() # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showRegistrationMarks = True
-        >>> view.drawPageRegistrationMarks(e, pt(0, 0))
+        >>> view.drawRegistrationMarks(e, pt(0, 0))
         """
-        if page.showRegistrationMarks or self.showRegistrationMarks:
+        if e.showRegistrationMarks or self.showRegistrationMarks:
             cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
             x, y = point2D(origin)
-            w, h = page.size
-            self._drawPageRegistrationMark(page, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
-            self._drawPageRegistrationMark(page, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
-            self._drawPageRegistrationMark(page, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
-            self._drawPageRegistrationMark(page, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
+            w, h = e.size
+            self._drawRegistrationMark(e, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
+            self._drawRegistrationMark(e, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
+            self._drawRegistrationMark(e, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
+            self._drawRegistrationMark(e, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
-    def drawPageCropMarks(self, e, origin):
+    def drawCropMarks(self, e, origin):
         """If the show flag is set, then draw the cropmarks or page frame.
 
         >>> from pagebot.contexts.platform import getContext
@@ -790,7 +794,7 @@ class PageView(BaseView):
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
         >>> view.showCropMarks = True
-        >>> view.drawPageCropMarks(e, pt(0, 0))
+        >>> view.drawCropMarks(e, pt(0, 0))
         """
         if self.showCropMarks or e.showCropMarks:
             context = self.context
