@@ -327,7 +327,6 @@ class TextBox(Element):
                 nextElement = page.getElementByName(self.nextElementName) # Optional search  next page too.
                 if nextElement is None or nextElement.bs and self.nextPageName:
                     # Not found or not empty, search on next page.
-                    print(page, self.nextPageName)
                     if self.nextPageName == 'next': # Force to next page, relative to current
                         page = page.next
                     elif isinstance(self.nextPageName, (int, float)): # Offset to next page
@@ -421,9 +420,9 @@ class TextBox(Element):
         baselineWidth = self.css('baselineWidth', pt(0.5))
 
         fontSize = self.css('baseLineMarkerSize')
-        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=baselineColor)
-        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=baselineColor)
-        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=1, g=0, b=0))
+        indexStyle = dict(font=self.css('viewMarkerFont'), fontSize=pt(8), textFill=baselineColor)
+        yStyle = dict(font=self.css('viewMarkerFont'), fontSize=fontSize, textFill=baselineColor)
+        leadingStyle = dict(font=self.css('viewMarkerFont'), fontSize=fontSize, textFill=color(r=1, g=0, b=0))
 
         c.stroke(baselineColor, baselineWidth)
         prevY = 0
@@ -432,33 +431,25 @@ class TextBox(Element):
             # TODO: Why measures not showing?
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE):
                 c.line((px, py+y), (px + self.w, py+y))
-            if BASE_Y_LEFT in show and BASE_INDEX_LEFT:
-                bs = self.newString('%s:%s' % (textLine.lineIndex, round(y)), style=indexStyle)
-                tw, th = bs.size # Calculate right alignment
+            
+            if BASE_Y_LEFT in show:
+                bs = self.newString('%d' % round(y), style=yStyle)
+                _, th = bs.size
                 c.text(bs, (px + self.w + 3, py + y - th/5))
-            else:
-                if BASE_Y_LEFT in show:
-                    bs = self.newString('%d' % round(y), style=yStyle)
-                    _, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
-                elif BASE_INDEX_LEFT in show:
-                    bs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                    _, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+            elif BASE_INDEX_LEFT in show:
+                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
 
-            if BASE_Y_LEFT in show and BASE_INDEX_LEFT:
-                bs = self.newString('%s:%s' % (textLine.lineIndex, round(y)), style=indexStyle)
+            if BASE_Y_RIGHT in show:
+                bs = self.newString('%d' % round(y), style=yStyle)
                 tw, th = bs.size
                 c.text(bs, (px + self.w + 3, py + y - th/5))
-            else:
-                if BASE_Y_RIGHT in show:
-                    bs = self.newString('%d' % round(y), style=yStyle)
-                    tw, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
-                elif BASE_INDEX_RIGHT in show:
-                    bs = self.newString(str(textLine.lineIndex), style=yStyle)
-                    tw, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+            elif BASE_INDEX_RIGHT in show:
+                bs = self.newString(str(textLine.lineIndex), style=yStyle)
+                tw, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+
             if 0: #view.showTextLeading:
                 leading = round(abs(y - prevY))
                 bs = self.newString('%d' % leading, style=leadingStyle)
@@ -502,6 +493,16 @@ class TextBox(Element):
     #   C O N D I T I O N
 
     # Text conditions
+    
+    def baselineOffset(self, index=0):
+        u"""Answer the difference of the indexed line to the parent (page) setting for 
+        self.parent.baselineGrid and self.parent.baselineGridStart."""
+        try:
+            line = self.textLines[index or 0]
+            #return min(abs(self.getRounded2Grid(line.y) - line.y), abs(self.getRounded2Grid(line.y, roundDown=True) - line.y))
+            return self.getRounded2Grid(line.y) - line.y
+        except IndexError:
+            return None
 
     def isBaselineOnGrid(self, tolerance, index=None, style=None):
         try:

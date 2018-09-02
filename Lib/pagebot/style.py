@@ -380,6 +380,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         viewNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
         viewNameFontSize = pt(6),
+        viewMarkerFont = DEFAULT_MARKER_FONT,
 
         # Element info box
         viewInfoFont = DEFAULT_FONT_PATH, # Font of text in element infoBox.

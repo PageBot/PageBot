@@ -20,7 +20,7 @@
 from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newTextBox
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color
 from pagebot.contexts.platform import getContext
 from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT
@@ -28,18 +28,6 @@ from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT
 context = getContext()
 
 W, H = pt(500, 500)
-
-def gridFit(e, index):
-    line = tb.textLines[index]
-    #print(line.y)
-    
-def drawGrid(e):   
-    for textLine in tb.textLines:
-        x, y, w = tb.x, textLine.y, tb.w
-        context.stroke((1, 0, 0), 0.5)
-        context.fill(None)
-        yy = page.h.v - tb.top.v - y.v
-        context.line((x.v, yy),((x+w).v, yy))
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
@@ -58,12 +46,20 @@ view.showPadding = True # Show the padding of the page. The size is then (page.p
 
 page = doc[1] # Get the first (and only) page of the document
 
-style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE)
+style = dict(font='Verdana', fontSize=pt(12), leading=em(1.4))
 conditions = [Fit()] # Fitting conditions for the text box on (page.pw, page.ph)
 
+# Create a new text box and set the view-parameres, so they angue for today.
 tb = newTextBox(text * 5, parent=page, stroke=0.5, strokeWidth=0.5,
     style=style, conditions=conditions, 
-    baselineColor=color(1, 0, 0), showBaselines=[BASE_LINE_BG, BASE_INDEX_RIGHT])
+    baselineColor=color(1, 0, 0), # Show baselines and indices in red.
+    showBaselines=[BASE_LINE_BG, BASE_INDEX_RIGHT]) # Define type of baseline view.
+   
+# Make the text box fit to the page padding.
 doc.solve()
 
+# Adjust vertical position of the textbox, so that textLines[4] locks on page baseline. 
+tb.y += tb.baselineOffset(4)
+
+# Export to the given file name. The "_export" folder content does snot commit to git.
 doc.export('_export/TextBoxBaselines.pdf')
