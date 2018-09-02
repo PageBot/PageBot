@@ -18,7 +18,7 @@
 #     and the relation with the usable page padding area.
 #
 from pagebot.document import Document # Get the main Document class
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, inch
 from pagebot.contexts.platform import getContext
 from pagebot.constants import BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, B5
 from pagebot.elements import *
@@ -35,9 +35,14 @@ doc = Document(size=B5, padding=PADDING, originTop=True,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
+view.padding = inch(0.5) # Define padding of the view, so there is space for crop marks
 view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
 #view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
+view.showCropMarks = True
+view.showNameInfo = True
+view.showFrame = True
+
 # The page has no child elements, just showing the metrics of the padding and baseline.
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  

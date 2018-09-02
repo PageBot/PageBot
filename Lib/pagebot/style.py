@@ -358,8 +358,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
 
         # Page padding grid
-        viewPagePaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
-        viewPagePaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
+        viewPaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
+        viewPaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
 
         # Draw connection arrows between the flow boxes on a page.
         viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,
@@ -378,8 +378,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewCropMarkSize = pt(40), # Length of crop marks, including bleed distance.
         viewCropMarkStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
 
-        viewPageNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
-        viewPageNameFontSize = pt(6),
+        viewNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
+        viewNameFontSize = pt(6),
 
         # Element info box
         viewInfoFont = DEFAULT_FONT_PATH, # Font of text in element infoBox.

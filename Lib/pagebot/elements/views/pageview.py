@@ -190,16 +190,16 @@ class PageView(BaseView):
         >>> view.drawPageMetaInfo(page, (0, 0), path)
         """
         if not background:
-            self.drawPageFrame(page, origin)
-            self.drawPagePadding(page, origin)
-            self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
+            self.drawFrame(page, origin)
+            self.drawPadding(page, origin)
+            self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
             self.drawPageRegistrationMarks(page, origin)
             self.drawPageCropMarks(page, origin)
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
 
-    def drawPageFrame(self, page, originn):
+    def drawFrame(self, e, origin):
         """Draw the page frame if the the flag is on and  if there ie padding
         enough to show other meta info.  Otherwise the padding is truncated to
         0: no use to draw the frame.
@@ -212,19 +212,18 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showFrame = True
-        >>> view.drawPageFrame(e, (0, 0))
+        >>> view.drawFrame(e, (0, 0))
 
         """
-        if (self.showFrame or page.showFrame) and \
+        if (self.showFrame or e.showFrame) and \
                 self.pl > self.minMetaPadding and self.pr > self.minMetaPadding and \
                 self.pt > self.minMetaPadding and self.pb > self.minMetaPadding:
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))
-            context.rect(origin[0], origin[1], page.w, page.h)
-            #page.drawFrame(origin, self)
+            context.rect(origin[0], origin[1], e.w, e.h)
 
-    def drawPagePadding(self, page, origin):
+    def drawPadding(self, e, origin):
         """Draw the page frame of its current padding.
 
         >>> from pagebot.contexts.platform import getContext
@@ -235,27 +234,27 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showFrame = True
-        >>> view.drawPageFrame(e, (0, 0))
+        >>> view.drawFrame(e, (0, 0))
         """
-        pt, pr, pb, pl = page.padding
-        if (self.showPadding or page.showPadding) and (pt or pr or pb or pl):
+        pt, pr, pb, pl = e.padding
+        if (self.showPadding or e.showPadding) and (pt or pr or pb or pl):
             context = self.context
 
-            p = pointOffset(page.origin, origin)
-            p = page._applyScale(self, p)
-            px, py, _ = page._applyAlignment(p) # Ignore z-axis for now.
+            p = pointOffset(e.origin, origin)
+            p = e._applyScale(self, p)
+            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
             context.fill(noColor)
-            context.stroke(self.css('viewPagePaddingStroke', color(0.2, 0.2, 1)),
-                                   self.css('viewPagePaddingStrokeWidth', 0.5))
-            if page.originTop:
-                context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
+            context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
+                                   self.css('viewPaddingStrokeWidth', 0.5))
+            if e.originTop:
+                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
                 #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
             else:
-                context.rect(px+pl, py+pb, page.w-pl-pr, page.h-pt-pb)
-            page._restoreScale(self)
+                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+            e._restoreScale(self)
 
-    def drawPageNameInfo(self, page, origin, path):
+    def drawNameInfo(self, e, origin, path):
         """Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks.
 
@@ -268,28 +267,29 @@ class PageView(BaseView):
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showNameInfo = True
-        >>> view.drawPageNameInfo(e, (0, 0), path)
+        >>> view.drawNameInfo(e, (0, 0), path)
         """
-        if self.showNameInfo or page.showNameInfo:
+        if self.showNameInfo or e.showNameInfo:
             context = self.context
             cmDistance = self.css('viewCropMarkDistance')
             cmSize = self.css('viewCropMarkSize') - cmDistance
-            fontSize = self.css('viewPageNameFontSize')
+            fontSize = self.css('viewNameFontSize')
             dt = datetime.datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
-            if page.parent is not None: # Test if there is a document
-                pn = page.parent.getPageNumber(page)
-                title = page.parent.title or 'Untitled'
+            if e.isPage and e.parent is not None: # Test if there is a document
+                pn = e.parent.getPageNumber(e)
+                title = e.parent.title or 'Untitled'
+                s = 'Page %s | %s | %s' % (pn, d, title)
             else: # Otherwise always page number #1
                 pn = 1
                 title = 'Untitled'
-            s = 'Page %s | %s | %s' % (pn, d, title)
-            if page.name and page.name != 'default':
+                s = 'Element %s | %s' % (d, title)
+            if e.name and e.name != 'default':
                 s += ' | ' + page.name
             if path is not None:
                 s += ' | ' + path.split('/')[-1]
-            bs = context.newString(s, style=dict(font=self.css('viewPageNameFont'), textFill=blackColor, fontSize=fontSize))
-            self.context.text(bs, (self.pl + cmDistance, self.pb + page.h + cmSize - fontSize*2)) # Draw on top of page.
+            bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
+            self.context.text(bs, (self.pl + cmDistance, self.pb + e.h + cmSize - fontSize*2)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 
@@ -407,7 +407,7 @@ class PageView(BaseView):
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
         self.drawElementOrigin(e, origin)
-        
+
     def _drawElementsNeedingInfo(self):
         b = self.b
         context = self.context
@@ -769,7 +769,7 @@ class PageView(BaseView):
         >>> view.showRegistrationMarks = True
         >>> view.drawPageRegistrationMarks(e, pt(0, 0))
         """
-        if self.showRegistrationMarks:
+        if page.showRegistrationMarks or self.showRegistrationMarks:
             cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
             x, y = point2D(origin)
