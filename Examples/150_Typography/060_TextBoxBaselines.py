@@ -23,7 +23,7 @@ from pagebot.elements import newTextBox
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import color
 from pagebot.contexts.platform import getContext
-from pagebot.constants import BASE_LINE_BG, BASE_INDEX_RIGHT
+from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT
 
 context = getContext()
 
@@ -53,17 +53,17 @@ doc = Document(w=W, h=H, padding=PADDING, originTop=True,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
-view.showBaselines = [BASE_LINE_BG, BASE_INDEX_RIGHT] 
+view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] 
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 
 page = doc[1] # Get the first (and only) page of the document
 
 style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE+2)
-conditions = [Fit()] # Fitting conditions for the text box
+conditions = [Fit()] # Fitting conditions for the text box on (page.pw, page.ph)
 
 tb = newTextBox(text * 5, parent=page, stroke=0.5, strokeWidth=0.5,
     style=style, conditions=conditions, 
-    baselineColor=color(1, 0, 0), showBaseline=True)
+    baselineColor=color(1, 0, 0), showBaselines=[BASE_LINE_BG, BASE_INDEX_RIGHT])
 doc.solve()
 
 doc.export('_export/TextBoxBaselines.pdf')

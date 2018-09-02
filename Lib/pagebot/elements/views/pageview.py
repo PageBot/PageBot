@@ -60,7 +60,6 @@ class PageView(BaseView):
         >>> len(view.elements[0])
         8
         """
-
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
         # If default _export directory does not exist, then create it.
@@ -131,18 +130,13 @@ class PageView(BaseView):
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
 
-            # If there is any page meta info defined to be drawn on the background
-            # such as the grid, then draw that first.
-            self.drawGrid(page, origin, background=True)
+            self.drawPageMetaInfo(page, origin, background=True)
 
-            # Use the (docW, docH) as offset, in case cropmarks need to be
-            # displayed. Recursively call all elements in the tree to build
-            # themselves. Note that is independent from the context. If there
-            # is a difference, the elements should make the switch themselves.
+            # Since self already adjust origin, scale, etc. we don't use the page.build here.
+            # Instead we calle the drawing of its elements too.
             page.buildChildElements(self, origin)
 
-            # Draw parts of the grid that need to be in the foreground.
-            self.drawGrid(page, origin, background=False)
+            self.drawPageMetaInfo(page, origin, background=False)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
@@ -181,7 +175,7 @@ class PageView(BaseView):
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
-    def drawPageMetaInfo(self, page, origin, path=None):
+    def drawPageMetaInfo(self, page, origin, path=None, background=False):
         """Draw the foreground meta info of the page, depending on the settings of the flags.
 
         >>> from pagebot.contexts.platform import getContext
@@ -195,16 +189,17 @@ class PageView(BaseView):
         >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawPageMetaInfo(page, (0, 0), path)
         """
-        self.drawPageFrame(page, origin)
-        self.drawPagePadding(page, origin)
-        self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
-        self.drawPageRegistrationMarks(page, origin)
-        self.drawPageCropMarks(page, origin)
-        self.drawGrid(page, origin)
-        self.drawBaselines(page, origin)
-        self.drawElementOrigin(page, origin)
+        if not background:
+            self.drawPageFrame(page, origin)
+            self.drawPagePadding(page, origin)
+            self.drawPageNameInfo(page, origin, path) # Use path to show file name in page meta info.
+            self.drawPageRegistrationMarks(page, origin)
+            self.drawPageCropMarks(page, origin)
+            self.drawElementOrigin(page, origin)
+        self.drawGrid(page, origin, background=background)
+        self.drawBaselines(page, origin, background=background)
 
-    def drawPageFrame(self, page, origin):
+    def drawPageFrame(self, page, originn):
         """Draw the page frame if the the flag is on and  if there ie padding
         enough to show other meta info.  Otherwise the padding is truncated to
         0: no use to draw the frame.
@@ -405,18 +400,14 @@ class PageView(BaseView):
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementInfo(self, e, origin):
-        self.drawElementInfo(e, origin)
-        if self.showOrigin or e.showOrigin:
-            self.drawElementOrigin(e, origin)
-
-    def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info. The css
         flag "showOrigin" defines if the origin marker of an element is
         drawn. Collect the (e, origin), so we can later draw all info, after
         the main drawing has been done."""
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
-
+        self.drawElementOrigin(e, origin)
+        
     def _drawElementsNeedingInfo(self):
         b = self.b
         context = self.context
@@ -487,6 +478,9 @@ class PageView(BaseView):
             e._restoreScale(self)
 
     def drawElementOrigin(self, e, origin):
+        if not (self.showOrigin or e.showOrigin):
+            return
+
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
 
@@ -846,11 +840,9 @@ class PageView(BaseView):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        self.drawElementFrame(view, p)
+        self.drawElementFrame(view, p) # In case the view itself is used on a page.
         for page in self.elements:
-            self.drawPageMetaInfo(page, p, background=True)
             page.build(view, p)
-            self.drawPageMetaInfo(page, p, background=False)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

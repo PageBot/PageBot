@@ -22,7 +22,7 @@ from pagebot.conditions.score import Score
 from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
-                           DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
+                           DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE)
 
@@ -216,7 +216,7 @@ class Element:
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description
         self.keyWords = keyWords # Optional used for web pages
-        self.language = language # Optional language code from HTML standard. Otherwise None.
+        self.language = language # Optional language code from HTML standard. Otherwise DEFAULT_LANGUAGE.
         # Save flow reference names
         self.prevElementName = prevElementName # Name of the prev flow element
         self.nextElementName = nextElementName # Name of the next flow element
@@ -287,6 +287,18 @@ class Element:
         stroke = d.get('stroke')
         if stroke is not None and not isinstance(stroke, Color):
             d['stroke'] = color(stroke)
+
+    def _get_hyphenation(self):
+        return self.css('hypenation', False)
+    def _set_hyphenation(self, hyphenation):
+        self.style['hyphenation'] = bool(hyphenation)
+    hyphenation = property(_get_hyphenation, _set_hyphenation)
+
+    def _get_language(self):
+        return self.css('language', DEFAULT_LANGUAGE)
+    def _set_language(self, language):
+        self.style['language'] = language
+    language = property(_get_language, _set_language)
 
     #   T E M P L A T E
 
@@ -755,30 +767,6 @@ class Element:
         if e in self._elements:
             self._elements.remove(e)
         return e # Answer the unlinked elements for convenience of the caller.
-
-    def _get_show(self):
-        """Set flag for drawing or interpretation with conditional.
-
-        >>> e = Element(show=False) # Set a separate attribute
-        >>> e.show
-        False
-        >>> e.show = True
-        >>> e.show
-        True
-        >>> e = Element(style=dict(show=False)) # Set through local style
-        >>> e.show
-        False
-        >>> e1 = Element()
-        >>> e1.show # Default is True
-        True
-        >>> i = e.appendElement(e1) # Add to parent, inheriting show == False
-        >>> e1.show
-        False
-        """
-        return self.css('show', True)
-    def _set_show(self, showFlag):
-        self.style['show'] = showFlag # Hiding rest of css for this value.
-    show = property(_get_show, _set_show)
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
@@ -4974,7 +4962,31 @@ class Element:
         return True
 
     #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
-    
+
+    def _get_show(self):
+        """Set flag for drawing or interpretation with conditional.
+
+        >>> e = Element(show=False) # Set a separate attribute
+        >>> e.show
+        False
+        >>> e.show = True
+        >>> e.show
+        True
+        >>> e = Element(style=dict(show=False)) # Set through local style
+        >>> e.show
+        False
+        >>> e1 = Element()
+        >>> e1.show # Default is True
+        True
+        >>> i = e.appendElement(e1) # Add to parent, inheriting show == False
+        >>> e1.show
+        False
+        """
+        return self.css('show', True)
+    def _set_show(self, showFlag):
+        self.style['show'] = showFlag # Hiding rest of css for this value.
+    show = property(_get_show, _set_show)
+
     def _get_showSpread(self):
         """Boolean value. If True, show even pages on left of fold, odd on the right.
         Gap distance between the spread pages is defined by the page margins."""

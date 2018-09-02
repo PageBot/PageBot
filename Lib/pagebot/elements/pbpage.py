@@ -239,13 +239,20 @@ class Page(Element):
     #   D R A W B O T  & F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        """Draw all elements of this page in DrawBot."""
+        """Draw all elements of this page in DrawBot. Note that this method is only used
+        in case pages are drawn as element on another page. In normal usage, pages
+        get drawn by PageView.build"""
         p = pointOffset(self.origin, origin) # Ignoe z-axis for now.
+
+        view.drawPageMetaInfo(self, p, background=True)
+
         # If there are child elements, draw them over the text.
         if drawElements:
             self.buildChildElements(view, p) # Build child elements, depending in context build implementations.
+
         # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
-        view.drawPageMetaInfo(self, origin)
+        view.drawPageMetaInfo(self, p, background=False)
+
         # Check if we are in scaled mode. Then restore.
         #self._restoreScale()
 
