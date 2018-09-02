@@ -719,16 +719,16 @@ class PageView(BaseView):
             twr, thr = bsr.size
             if BASE_INSIDE in show:
                 if tl:
-                    context.text(bsl, (px + e.pl + indexGutter, py + oy - thl/4))
+                    context.text(bsl, (px + e.pl + indexGutter, py + oy - thl/5))
                 if tr:
-                    context.text(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/4))
+                    context.text(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl + 2*indexGutter + twl, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
                 if tl:
-                    context.text(bsl, (px + e.pl - twl - indexGutter, py + oy - thl/4))
+                    context.text(bsl, (px + e.pl - twl - indexGutter, py + oy - thl/5))
                 if tr:
-                    context.text(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/4))
+                    context.text(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             line += 1 # Increment line index.

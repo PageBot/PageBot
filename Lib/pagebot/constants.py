@@ -141,6 +141,28 @@ Tabloid = inch(11, 16.9)
 Broadsheet = inch(23.5, 29.5)
 Berliner = inch(12.4, 18.5)
 
+# Standard size of online printing sites. 
+# TODO: Add more online services and adapt other parameters/preferences for these PDF's
+
+# www.blurb.com
+BLURB_PHOTOBOOK_SMALL_SQUARE = inch(7, 7)
+BLURB_PHOTOBOOK_PORTRAIT = inch(8, 10)
+BLURB_PHOTOBOOK_LANDSCAPE = inch(10, 8)
+BLURB_PHOTOBOOK_LARGE_FORMAT = inch(13, 11)
+BLURB_PHOTOBOOK_LARGE_SQUARE = inch(12, 12)
+BLURB_BOOK_SMALL = inch(5, 8)
+BLURB_BOOK_MIDDLE = inch(6, 9)
+BLURB_BOOK_LARGE = inch(8, 10)
+BLURB_MAGAZINE = inch(8.5, 11) # Premium & economy
+
+# www.overnightprints.com
+OP_BOOKLET_SMALL = inch(5.5, 8.5)
+OP_BOOKLET = inch(8.5, 11)
+
+# www.bookbaby.com
+# thebookpatch.com
+
+
 # Standard view port sizes.
 # http://mediag.com/news/popular-screen-resolutions-designing-for-all/
 
