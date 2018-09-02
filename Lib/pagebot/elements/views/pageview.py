@@ -20,7 +20,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import color, noColor, grayColor, blackColor
+from pagebot.toolbox.color import color, noColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
@@ -289,7 +289,7 @@ class PageView(BaseView):
                 title = 'Untitled'
                 s = 'Element %s | %s' % (d, title)
             if e.name and e.name != 'default':
-                s += ' | ' + page.name
+                s += ' | ' + e.name
             if path is not None:
                 s += ' | ' + path.split('/')[-1] # We're only interested in the file name.
             bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
@@ -302,7 +302,7 @@ class PageView(BaseView):
         on the page, using their stroke/width settings of the style."""
         px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
 
-        if self.showFlowConnections or page.showFlowConnections:
+        if self.showFlowConnections or e.showFlowConnections:
             for seq in e.getFlows().values():
                 # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
                 # This offset is defined by optional

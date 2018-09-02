@@ -16,7 +16,7 @@
 #
 
 
-from pagebot.toolbox.color import noColor, blackColor
+from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.toolbox.units import em, pointOffset
