@@ -279,7 +279,7 @@ class TextLine:
         if isinstance(pattern, str):
             pattern = re.compile(pattern)
             #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
-        #print('3321123123', self.string)
+
         for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
             #print('fsdsdffsd', iStart, iEnd)
             xStart = self.getOffsetForStringIndex(iStart)

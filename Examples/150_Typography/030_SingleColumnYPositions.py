@@ -31,6 +31,7 @@ context = getContext()
 
 W = H = pt(1000) # Document size optionally defined as units
 PADDING = pt(80) # Page padding on all sides
+BASELINE = em(1.4)
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
@@ -39,15 +40,15 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=125, leading=em(1.4), textFill=0.1, hyphenation=False,
+headStyle = dict(font=bold, fontSize=125, leading=BASELINE, textFill=0.1, hyphenation=False,
     paragraphBottomSpacing=em(0.2))
-style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation=False)
+style = dict(font=font, fontSize=24, leading=BASELINE, textFill=0.15, hyphenation=False)
 
 # Make BabelString from multiple cascadeing styles
 t = context.newString('Å Head hkpx\n', style=headStyle) # Start with headline
 t += context.newString(text * 5, style=style) # Body text
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, context=context)
+doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.

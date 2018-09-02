@@ -30,6 +30,7 @@ context = getContext()
 
 W = H = pt(1000) # Document size optionally defined as units
 PADDING = pt(120) # Page padding on all sides
+BASELINE = em(1.4)
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
@@ -38,25 +39,25 @@ font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 
 # Defined styles
-headStyle = dict(font=bold, fontSize=36, leading=em(1.4), textFill=0.1, hyphenation=False,
+headStyle = dict(font=bold, fontSize=36, leading=BASELINE, textFill=0.1, hyphenation=False,
     paragraphBottomSpacing=em(0.5))
 subHeadStyle = dict(font=bold, fontSize=24, leading=em(1.4), textFill=0.1, 
     paragraphBottomSpacing=em(0.2), paragraphTopSpacing=em(0.8))
-style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.15, hyphenation=False)
-footNoteRefStyle = dict(font=font, fontSize=18, baselineShift=em(0.2), textFill=0.2)
-footNoteStyle = dict(font=font, fontSize=20, leading=em(1.4), textFill=0.6, paragraphTopSpacing=em(1))
+style = dict(font=font, fontSize=24, leading=BASELINE, textFill=0.15, hyphenation=False)
+footNoteRefStyle = dict(font=font, fontSize=12, baselineShift=em(0.2), textFill=0.2)
+footNoteStyle = dict(font=font, fontSize=14, leading=BASELINE, textFill=0.6, paragraphTopSpacing=em(1))
 
 # Make BabelString from adding multiple cascadeing styles
-t = context.newString('Headline\n', style=headStyle) # Start with headline
+t = context.newString('Headline of this example page\n', style=headStyle) # Start with headline
 t += context.newString(text * 3, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text
 t += context.newString('12', style=footNoteRefStyle) # Body text
 t += context.newString('\n', style=style) # Footnote referece
-t += context.newString('Subhead\n', style=subHeadStyle) # Subhead
+t += context.newString('Subhead in a column\n', style=subHeadStyle) # Subhead
 t += context.newString(text * 2 + '\n', style=style) # Body text
 t += context.newString('12 '+text, style=footNoteStyle) # Footnote on new line
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, context=context)
+doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
@@ -68,9 +69,7 @@ page = doc[1]
 # Red frame to show position and dimensions of the text box element.
 # Default behavior of the textbox is to align the text at "top of the em-square".
 c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()])
-#print(c.baselines)
-#print(c1.baselines)
-  
+
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

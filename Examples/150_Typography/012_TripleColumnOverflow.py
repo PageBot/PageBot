@@ -40,6 +40,7 @@ CH = PH
 # Hard coded grid for 3 columns, will be automatic in later examples.
 GRIDX = ((CW, G), (CW, G), (CW, G))
 GRIDY = ((CH, 0),) # No division in vertical grid.
+BASELINE = G
 
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
@@ -51,7 +52,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=
 # Make long formatted BabelString (type depends on the context) text to force box overflow
 t = context.newString(text * 16, style=style)
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originOnTop=True)
+doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originOnTop=True, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.

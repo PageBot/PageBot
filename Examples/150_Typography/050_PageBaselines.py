@@ -28,15 +28,15 @@ context = getContext() # Get the current context (e.g. DrawBotContext instance)
 # Example baseline position, showing that start can be different from page side
 # or top of text box.
 BASELINE = pt(15)
-BASELINE_START = 1.5 * BASELINE
-PADDING = 3 * BASELINE # Page padding related to baseline in this example.
+BASELINE_START = 3.5 * BASELINE
+PADDING = 5 * BASELINE # Page padding related to baseline in this example.
 
 doc = Document(size=B5, padding=PADDING, originTop=True,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
 view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
-view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
+#view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  

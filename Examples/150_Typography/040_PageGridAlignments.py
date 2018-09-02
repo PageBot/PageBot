@@ -43,13 +43,13 @@ CH = PH
 # Hard coded grid, will be automatic in later examples.
 GRIDX = ((CW, G), (CW, 0))
 GRIDY = ((CH, 0),)
-LEADING = pt(13)
+BASELINE = pt(18)
 
 # Get the Font instances, so they can be queried for metrics.
 font = findFont('Georgia')
 
 # Defined styles
-style = dict(font=font, fontSize=125, leading=em(1.2), textFill=0.1, hyphenation=False,
+style = dict(font=font, fontSize=125, leading=em(1.1), textFill=0.1, hyphenation=False,
     paragraphBottomSpacing=em(0.2))
 captionStyle = copy(style)
 captionStyle['fontSize'] = pt(10)
@@ -59,7 +59,7 @@ captionStyle['leading'] = em(1)
 t = context.newString('Hkpx', style=style) # Start with headline
 # Create a new document with 1 page. Set overall size and padding.
 # FIX: Float conditions only seem to work for originTop=False
-doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context, baselineGrid=LEADING)
+doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=GRIDY, context=context, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
