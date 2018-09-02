@@ -18,7 +18,6 @@
 from pagebot.contexts.platform import getContext
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
-from pagebot.toolbox.units import pt
 
 class BaseView(Element):
     """A View is just another kind of container, kept by document to make a certain presentation 

@@ -17,7 +17,7 @@
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
                             BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, 
-                            BASE_INSIDE, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
+                            BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
