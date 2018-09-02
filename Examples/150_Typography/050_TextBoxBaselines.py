@@ -58,7 +58,7 @@ view.showPadding = True # Show the padding of the page. The size is then (page.p
 
 page = doc[1] # Get the first (and only) page of the document
 
-style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE+2)
+style = dict(font='Verdana', fontSize=pt(12), leading=BASELINE)
 conditions = [Fit()] # Fitting conditions for the text box on (page.pw, page.ph)
 
 tb = newTextBox(text * 5, parent=page, stroke=0.5, strokeWidth=0.5,

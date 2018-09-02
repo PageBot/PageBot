@@ -16,7 +16,8 @@
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
-                            BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INSIDE)
+                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, 
+                            BASE_INSIDE, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
@@ -389,15 +390,15 @@ class TextBox(Element):
         if textShadow:
             context.restoreGraphicState()
 
-        view.drawBaselines(self, origin, background=True) # In case there is baseline at the back
+        # self has its own baseline drawing, derived from the text, instace of self.baselineGrid.
+        self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, origin)
 
-        # TODO: Make this work for FlatContext too
-        # Draw lines and markers on TextLine and TextRun positions.
-        view.drawBaselines(self, origin, background=False) # In case there is baseline at the front
+        # self has its own baseline drawing, derived from the text, instace of self.baselineGrid.
+        self.drawBaselines(view, px, py, background=False) # In case there is baseline at the front
 
         if view.showTextOverflowMarker and self.isOverflow():
             # TODO: Make this work for FlatContext too
@@ -409,10 +410,10 @@ class TextBox(Element):
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
-    def drawBaselines(self, view, px, py):
+    def drawBaselines(self, view, px, py, background=False):
         # Let's see if we can draw over them in exactly the same position.
-        if not view.showBaselines and not self.showBaselines:
-            return
+
+        show = self.showBaselines or view.showBaselines
 
         c = self.context # Get current context and builder
 
@@ -424,31 +425,45 @@ class TextBox(Element):
         yStyle = dict(font='Verdana', fontSize=fontSize, textFill=baselineColor)
         leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=1, g=0, b=0))
 
-        if view.showTextBoxY:
-            bs = self.newString('0', style=indexStyle)
-            _, th = bs.size
-            c.text(bs, (px + self.w + 3,  py + self.h - th/4))
-
         c.stroke(baselineColor, baselineWidth)
         prevY = 0
         for textLine in self.textLines: 
-            print(textLine.y)
-            y = textLine.y + self.h
+            y = self.h - textLine.y
             # TODO: Why measures not showing?
-            c.line((px, py+y), (px + self.w, py+y))
-            if view.showTextLineIndex:
-                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+            if (background and BASE_LINE_BG in show) or (not background and BASE_LINE):
+                c.line((px, py+y), (px + self.w, py+y))
+            if BASE_Y_LEFT in show and BASE_INDEX_LEFT:
+                bs = self.newString('%s:%s' % (textLine.lineIndex, round(y)), style=indexStyle)
                 tw, th = bs.size # Calculate right alignment
-                c.text(bs, (px-3-tw, py + y - th/4))
-            if view.showTextBoxY:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/4))
-            if view.showTextLeading:
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+            else:
+                if BASE_Y_LEFT in show:
+                    bs = self.newString('%d' % round(y), style=yStyle)
+                    _, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                elif BASE_INDEX_LEFT in show:
+                    bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                    _, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+
+            if BASE_Y_LEFT in show and BASE_INDEX_LEFT:
+                bs = self.newString('%s:%s' % (textLine.lineIndex, round(y)), style=indexStyle)
+                tw, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+            else:
+                if BASE_Y_RIGHT in show:
+                    bs = self.newString('%d' % round(y), style=yStyle)
+                    tw, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                elif BASE_INDEX_RIGHT in show:
+                    bs = self.newString(str(textLine.lineIndex), style=yStyle)
+                    tw, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+            if 0: #view.showTextLeading:
                 leading = round(abs(y - prevY))
                 bs = self.newString('%d' % leading, style=leadingStyle)
                 _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/4))
+                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
             prevY = y
 
     def build_html(self, view, origin=None, showElements=True):
