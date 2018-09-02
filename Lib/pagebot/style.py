@@ -310,7 +310,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
         
         # Document/page stuff
-        minMetaPadding = pt(20), # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+        viewMinInfoPadding = pt(20), # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
         showCropMarks = False,
         showRegistrationMarks = False,
         showOrigin = False, # Show page origin crosshair marker

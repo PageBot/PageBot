@@ -4996,17 +4996,17 @@ class Element:
     showSpread = property(_get_showSpread, _set_showSpread)
 
     # Document/page stuff
-    def _get_minMetaPadding(self):
+    def _get_viewMinInfoPadding(self):
         """Unit value. # Minimum padding needed to show meta info. Otherwise truncated 
         to 0 and not showing meta info."""
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
-        return units(self.css('minMetaPadding', 0), base=base)
-    def _set_minMetaPadding(self, minPadding):
-        self.style['minMetaPadding'] = units(minPadding)
-    minMetaPadding = property(_get_minMetaPadding, _set_minMetaPadding)
+        return units(self.css('viewMinInfoPadding', 0), base=base)
+    def _set_viewMinInfoPadding(self, viewMinInfoPadding):
+        self.style['viewMinInfoPadding'] = units(viewMinInfoPadding)
+    viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)
 
     def _get_showCropMarks(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show crop marks 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks 
         around the elemment."""
         return self.css('showCropMarks', False)
     def _set_showCropMarks(self, showCropMarks):
@@ -5014,15 +5014,15 @@ class Element:
     showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
 
     def _get_showRegistrationMarks(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         registration  marks around the elemment."""
-        return self.css('showCropMarks', False)
+        return self.css('showRegistrationMarks', False)
     def _set_showRegistrationMarks(self, showRegistrationMarks):
         self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_showOrigin(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         origin cross hair marker of the page or other elements."""
         return self.css('showOrigin', False)
     def _set_showOrigin(self, showOrigin):
@@ -5037,7 +5037,7 @@ class Element:
     showPadding = property(_get_showPadding, _set_showPadding)
 
     def _get_showMargin(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         margin of the page or other elements."""
         return self.css('showMargin', False)
     def _set_showMargin(self, showMargin):
@@ -5045,7 +5045,7 @@ class Element:
     showMargin = property(_get_showMargin, _set_showMargin)
 
     def _get_showFrame(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         frame of the page or other elements as self.size."""
         return self.css('showFrame', False)
     def _set_showFrame(self, showFrame):
@@ -5053,7 +5053,7 @@ class Element:
     showFrame = property(_get_showFrame, _set_showFrame)
 
     def _get_showNameInfo(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the name of the page or other elements."""
         return self.css('showNameInfo', False)
     def _set_showNameInfo(self, showNameInfo):
@@ -5061,7 +5061,7 @@ class Element:
     showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
 
     def _get_showElementInfo(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the meta info of the page or other elements."""
         return self.css('showElementInfo', False)
     def _set_showElementInfo(self, showElementInfo):
@@ -5069,7 +5069,7 @@ class Element:
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
 
     def _get_showDimensions(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the dimensions of the page or other elements."""
         return self.css('showDimensions', False)
     def _set_showDimensions(self, showDimensions):
@@ -5077,7 +5077,7 @@ class Element:
     showDimensions = property(_get_showDimensions, _set_showDimensions)
 
     def _get_showMissingElement(self):
-        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the MissingElement of the page or other elements."""
         return self.css('showMissingElement', False)
     def _set_showMissingElement(self, showMissingElement):
