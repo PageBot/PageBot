@@ -115,17 +115,17 @@ def makeDocument(context):
     # Set view options. Full list is in elements/views/baseviews.py
     view.padding = 30 # Showing cropmarks and registration marks
                       # need >= 20 padding of the view.
-    view.showPageRegistrationMarks = True
-    view.showPageCropMarks = True
-    view.showPageFrame = True
-    view.showPagePadding = True
-    view.showPageNameInfo = True
+    view.showRegistrationMarks = True
+    view.showCropMarks = True
+    view.showFrame = True
+    view.showPadding = True
+    view.showNameInfo = True
 
     # These values can be changed in the Variable window,
     # when in DrawBot context.
-    view.showElementOrigin = ShowOrigins # Show origin alignment
+    view.showOrigin = ShowOrigins # Show origin alignment
                                          # markers on each element.
-    view.showElementDimensions = ShowDimensions
+    view.showDimensions = ShowDimensions
     view.showElementInfo = ShowElementInfo # Show boxes with element info
 
     return doc # Answer the doc.

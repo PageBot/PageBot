@@ -19,11 +19,12 @@ import weakref
 import copy
 
 from pagebot.conditions.score import Score
-from pagebot.style import (makeStyle, getRootStyle, MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
+from pagebot.style import makeStyle, getRootStyle
+from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
-                           OUTLINE)
+                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE)
 
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit
@@ -3916,7 +3917,7 @@ class Element:
 
         self.buildFrame(view, p) # Draw optional frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -3930,7 +3931,7 @@ class Element:
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def buildChildElements(self, view, origin=None):
         """Draw child elements, dispatching depends on the implementation of
@@ -4972,6 +4973,198 @@ class Element:
         # ...
         return True
 
+    #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
+    
+    def _get_showSpread(self):
+        """Boolean value. If True, show even pages on left of fold, odd on the right.
+        Gap distance between the spread pages is defined by the page margins."""
+        return self.css('showSpread', False)
+    def _set_showSpread(self, spread):
+        self.style['showSpread'] = bool(spread)
+    showSpread = property(_get_showSpread, _set_showSpread)
+
+    # Document/page stuff
+    def _get_minMetaPadding(self):
+        """Unit value. # Minimum padding needed to show meta info. Otherwise truncated 
+        to 0 and not showing meta info."""
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
+        return units(self.css('minMetaPadding', 0), base=base)
+    def _set_minMetaPadding(self, minPadding):
+        self.style['minMetaPadding'] = units(minPadding)
+    minMetaPadding = property(_get_minMetaPadding, _set_minMetaPadding)
+
+    def _get_showCropMarks(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show crop marks 
+        around the elemment."""
+        return self.css('showCropMarks', False)
+    def _set_showCropMarks(self, showCropMarks):
+        self.style['showCropMarks'] = bool(showCropMarks)
+    showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
+
+    def _get_showRegistrationMarks(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        registration  marks around the elemment."""
+        return self.css('showCropMarks', False)
+    def _set_showRegistrationMarks(self, showRegistrationMarks):
+        self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
+    showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
+
+    def _get_showOrigin(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        origin cross hair marker of the page or other elements."""
+        return self.css('showOrigin', False)
+    def _set_showOrigin(self, showOrigin):
+        self.style['showOrigin'] = bool(showOrigin)
+    showOrigin = property(_get_showOrigin, _set_showOrigin)
+
+    def _get_showPadding(self):
+        """Boolean value. If True show padding of the page or other elements."""
+        return self.css('showPadding', False)
+    def _set_showPadding(self, showPadding):
+        self.style['showPadding'] = bool(showPadding)
+    showPadding = property(_get_showPadding, _set_showPadding)
+
+    def _get_showMargin(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        margin of the page or other elements."""
+        return self.css('showMargin', False)
+    def _set_showMargin(self, showMargin):
+        self.style['showMargin'] = bool(showMargin)
+    showMargin = property(_get_showMargin, _set_showMargin)
+
+    def _get_showFrame(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        frame of the page or other elements as self.size."""
+        return self.css('showFrame', False)
+    def _set_showFrame(self, showFrame):
+        self.style['showFrame'] = bool(showFrame)
+    showFrame = property(_get_showFrame, _set_showFrame)
+
+    def _get_showNameInfo(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        the name of the page or other elements."""
+        return self.css('showNameInfo', False)
+    def _set_showNameInfo(self, showNameInfo):
+        self.style['showNameInfo'] = bool(showNameInfo)
+    showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
+
+    def _get_showElementInfo(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        the meta info of the page or other elements."""
+        return self.css('showElementInfo', False)
+    def _set_showElementInfo(self, showElementInfo):
+        self.style['showElementInfo'] = bool(showElementInfo)
+    showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
+
+    def _get_showDimensions(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        the dimensions of the page or other elements."""
+        return self.css('showDimensions', False)
+    def _set_showDimensions(self, showDimensions):
+        self.style['showDimensions'] = bool(showDimensions)
+    showDimensions = property(_get_showDimensions, _set_showDimensions)
+
+    def _get_showMissingElement(self):
+        """Boolean value. If True and enough space by self.minMetaPadding, show 
+        the MissingElement of the page or other elements."""
+        return self.css('showMissingElement', False)
+    def _set_showMissingElement(self, showMissingElement):
+        self.style['showMissingElement'] = bool(showMissingElement)
+    showMissingElement = property(_get_showMissingElement, _set_showMissingElement)
+
+    #   Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
+
+    def _get_showGrid(self):
+        """Boolean value. If True show the type grid on the page or other elements."""
+        return set(self.css('showGrid') or [])
+    def _set_showGrid(self, showGrid):
+        if not showGrid:
+            showGrid = []
+        elif not isinstance(showGrid, (set, list, tuple)):
+            if showGrid in GRID_OPTIONS: # In case of single valid option, make into set
+                showGrid = set([showGrid])
+            else:
+                showGrid = DEFAULT_GRID
+        self.style['showGrid'] = set(showGrid)
+    showGrid = property(_get_showGrid, _set_showGrid)
+
+    #   Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT)
+
+    def _get_showBaselines(self):
+        """Boolean value. If True show baselines on the page or other elements."""
+        return set(self.css('showBaselines') or [])
+    def _set_showBaselines(self, showBaselines):
+        if not showBaselines:
+            showBaselines = []
+        elif not isinstance(showBaselines, (set, tuple, list)):
+            if showBaselines in BASE_OPTIONS: # In case of single valid option, make into set
+                showBaselines = set([showBaselines])
+            else:
+                showBaselines = DEFAULT_BASELINE
+        self.style['showBaselines'] = set(showBaselines)
+    showBaselines = property(_get_showBaselines, _set_showBaselines)
+
+    def _get_showTextLeading(self):
+        """Boolean value. If True show the vertical distance between text lines."""
+        return self.css('showTextLeading', False)
+    def _set_showTextLeading(self, showTextLeading):
+        self.style['showTextLeading'] = bool(showTextLeading)
+    showTextLeading = property(_get_showTextLeading, _set_showTextLeading)
+
+    #   Flow stuff
+
+    def _get_showFlowConnections(self):
+        """Boolean value. If True show connection between elements the overflow text lines."""
+        return self.css('showFlowConnections', False)
+    def _set_showFlowConnections(self, showFlowConnections):
+        self.style['showFlowConnections'] = bool(showFlowConnections)
+    showFlowConnections = property(_get_showFlowConnections, _set_showFlowConnections)
+
+    def _get_showTextOverflowMarker(self):
+        """Boolean value. If True a [+] marker is shown where text boxes have overflow,
+        while not connected to another element."""
+        return self.css('showTextOverflowMarker', False)
+    def _set_showTextOverflowMarker(self, showTextOverflowMarker):
+        self.style['showTextOverflowMarker'] = bool(showTextOverflowMarker)
+    showTextOverflowMarker = property(_get_showTextOverflowMarker, _set_showTextOverflowMarker)
+
+    #   Image stuff
+
+    def _get_showImageReference(self):
+        """Boolean value. If True, the name/reference of an image element is show.."""
+        return self.css('showImageReference', False)
+    def _set_showImageReference(self, showImageReference):
+        self.style['showImageReference'] = bool(showImageReference)
+    showImageReference = property(_get_showImageReference, _set_showImageReference)
+
+    #   Spread stuff
+
+    def _get_showImageReference(self):
+        """Boolean value. If True, the name/reference of an image element is show."""
+        return self.css('showImageReference', False)
+    def _set_showImageReference(self, showImageReference):
+        self.style['showImageReference'] = bool(showImageReference)
+    showImageReference = property(_get_showImageReference, _set_showImageReference)
+
+    #   CSS flags
+        
+    def _get_cssVerbose(self):
+        """Boolean value. If True, adds information comments with original values to 
+        CSS export."""
+        return self.css('cssVerbose', False)
+    def _set_cssVerbosee(self, cssVerbose):
+        self.style['cssVerbose'] = bool(cssVerbose)
+    cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)
+
+    #   Exporting 
+
+    def _get_doExport(self):
+        """Boolean value. Flag to turn off any export, for view, e.g. in case of testing with docTest."""
+        return self.css('doExport', False)
+    def _set_doExport(self, doExport):
+        self.style['doExport'] = bool(doExport)
+    doExport = property(_get_doExport, _set_doExport)
+        
 
 if __name__ == '__main__':
     import doctest

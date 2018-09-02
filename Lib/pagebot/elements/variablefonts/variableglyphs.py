@@ -54,7 +54,7 @@ class VariableGlyphs(Element):
         p = self._applyScale(view, p)    
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p) 
 
         if self.drawBefore is not None: # Call if defined

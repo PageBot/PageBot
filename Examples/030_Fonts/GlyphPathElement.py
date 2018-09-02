@@ -75,12 +75,12 @@ doc = Document(w=W, h=H, originTop=False, autoPages=1)
 
 view = doc.getView()
 view.padding = 40 # Aboid showing of crop marks, etc.
-view.showPageCropMarks = True
-view.showPageRegistrationMarks = True
-view.showPageFrame = True
-view.showElementOrigin = True
-view.showElementDimensions = False
-view.showElementFrame = True
+view.showCropMarks = True
+view.showRegistrationMarks = True
+view.showFrame = True
+view.showOrigin = True
+view.showDimensions = False
+view.showFrame = True
 
 # Get list of pages with equal y, then equal x.
 #page = doc[1][0] # Get the single page from te document.

@@ -90,7 +90,7 @@ def makeDocument(rs):
     template1 = Template(rs) # Create template of main size. Front page only.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
     template1.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
+    # Show baseline grid if rs.showBaselines is True
     template1.baselineGrid(rs)
     # Create empty image place holders. To be filled by running content on the page.
     template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
@@ -106,7 +106,7 @@ def makeDocument(rs):
     template2 = Template(rs) # Create second template. This is for the main pages.
     # Show grid columns and margins if rootStyle.showGrid or rootStyle.showGridColumns are True
     template2.grid(rs) 
-    # Show baseline grid if rs.showBaselineGrid is True
+    # Show baseline grid if rs.showBaselines is True
     template2.baselineGrid(rs)
     template2.cContainer(4, 0, 2, 3, rs)  # Empty image element, cx, cy, cw, ch
     template2.cContainer(0, 5, 2, 3, rs)

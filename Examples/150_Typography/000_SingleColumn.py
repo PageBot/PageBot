@@ -38,11 +38,12 @@ doc = Document(w=W, h=H, padding=PADDING, context=context)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
+view.showFrame = True
 # Get the page
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
-newTextBox(t, parent=page, stroke=0.5, strokeWidth=1, conditions=[Fit()])
+newTextBox(t, parent=page, showFrame=True, conditions=[Fit()])
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

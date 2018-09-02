@@ -236,15 +236,14 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         indent = pt0, # Left indent (for left-right based scripts)
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
 
-        # Vertical spacing of baselines by PageBTextBox
+        # Vertical spacing of baselines by TextBox
         # Note that PageView is drawing the baseline grid color as defined by viewGridStrokeX and viewGridStrokeXWidth
         baselineGrid = baselineGrid,
         baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
-        baselineColor = color(0, 0, 1), # Baseline color, drawn by TextBox
+        baselineColor = color(0.7), # Baseline color, drawn by PageView and TextBox
         baselineWidth = pt(0.5), # Baseline width, drawn by TextBox
-
         baselineGridFit = False,
         firstLineGridFit = True,
         # Leading and vertical space
@@ -300,11 +299,55 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
         underlineThickness = None,
 
-        # V I E W
+        # V I E W S
 
-        # These parameters are used by viewers, should not part of direct elements.css( ) queries
-        # as view may locally change these values.
+        # These parameters are used by viewers (implemented as properties), normally not part 
+        # of direct elements.css( ) queries as views may locally change these values.
+        # However, in some situations elements may overwrite the settings (e.g. TextBot baseline color)
+
+        # Paging
+        showSpread = False, # If True, show even pages on left of fold, odd on the right.
+        showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
+        
+        # Document/page stuff
+        minMetaPadding = pt(20), # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+        showCropMarks = False,
+        showRegistrationMarks = False,
+        showOrigin = False, # Show page origin crosshair marker
+        showPadding = False,
+        showFrame = False, # Draw frame on page.size
+        showNameInfo = False, # Show file/name/pagenumber ourside cropping area
+        showPageMetaInfo = False,
+        
+        # Element info showing
+        showElementInfo = False,
+        showDimensions = False, # TODO: Does not work if there is view padding.
+        showMissingElement = True,
+        
+        # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR, GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG)
         # See pagebot.constants for the types of grid that can be drawn.
+        showGrid = set(), # If set, display the type of grid elements on foreground and background
+        
+        # Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT)
+        showBaselines = set(), # If set, display options defined the type of grid to show.
+        showBaselinesBackground = set(), # If set, display options defined the type of grid to show on background.
+        showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
+        
+        # Flow stuff
+        showFlowConnections = False,
+        showTextOverflowMarker = False, # If True, a [+] marker is shown where text boxes have overflow.
+        
+        # Image stuff
+        showImageReference = False,
+        
+        # Spread stuff
+        showSpreadPages = False, # Show even/odd pages as spread, as well as pages that share the same pagenumber.
+        
+        # CSS flags
+        cssVerbose = True, # Adds information comments with original values to CSS export.
+        
+        # Exporting 
+        doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
 
         # Grid stuff for showing
 
@@ -315,12 +358,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
 
         # Page padding grid
-        viewPagePaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPagePadding is True
+        viewPagePaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
         viewPagePaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
-
-        # Baseline grid
-        viewBaselineGridStroke = color(0.7), # Stroke color of baseline grid for page.
-        viewBaselineGridWidth = pt(0.5), # Stroke width of baseline grid for page.
 
         # Draw connection arrows between the flow boxes on a page.
         viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,

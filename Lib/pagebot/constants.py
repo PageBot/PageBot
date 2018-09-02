@@ -488,9 +488,9 @@ BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the scr
 DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
 DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
 
-XALIGNS = set((None, LEFT, RIGHT, CENTER, JUSTIFIED))
-YALIGNS = set((None, TOP, BOTTOM, MIDDLE))
-ZALIGNS = set((None, FRONT, MIDDLE, BACK))
+XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
+YALIGNS = {None, TOP, BOTTOM, MIDDLE}
+ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
@@ -501,14 +501,25 @@ DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
 GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
 GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
 GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
+GRID_SQR_BG = 'GridSquareBackground' # Draw grid at background
+GRID_COL_BG = 'GridColumnBackground' # Drag grid as columns at background
+GRID_ROW_BG = 'GridRowBackground' # Drag grid as row
+DEFAULT_GRID = {GRID_COL, GRID_ROW}
+GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
 
-GRID_LINE = 'GridLine' # Show baseline grid as lines
-GRID_INDEX = 'GridIndex' # Show baseline grid index numbers (only if GRID_LINE is set too)
-GRID_Y = 'GridY' # Show baseline grid line marker as y-position (only if GRID_LINE and not GRID_INDEX)
+BASE_LINE = 'Baseline' # Show baseline grid as lines
+BASE_LINE_BG = 'BaselineBackground' # Show baseline grid as lines on background
+BASE_INDEX_LEFT = 'BaseIndexLeft' # Show baseline grid index numbers on left side
+BASE_INDEX_RIGHT = 'BaseIndexRight' # Show baseline grid index numbers on right side
+BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left side
+BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
+BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
+DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
+BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE}
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
-FILETYPE_PDF = DEFAULT_FILETYPE = 'pdf'
+FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'
 FILETYPE_PNG = 'png'
 FILETYPE_SVG = 'svg'
@@ -518,6 +529,7 @@ FILETYPE_APP = 'app'
 FILETYPE_UFO = 'ufo'
 FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
+DEFAULT_FILETYPE = FILETYPE_PDF
 
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.

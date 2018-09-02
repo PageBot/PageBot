@@ -80,9 +80,9 @@ def makeDocument():
 
     view = doc.getView()
     view.padding = 10 # Don't show cropmarks and such.
-    view.showPageCropMarks = True
-    view.showElementOrigin = ShowOrigin
-    view.showElementDimensions = False
+    view.showCropMarks = True
+    view.showOrigin = ShowOrigin
+    view.showDimensions = False
     view.showElementInfo = ShowElementInfo
 
     page = doc[1] # Get the single page from te document.

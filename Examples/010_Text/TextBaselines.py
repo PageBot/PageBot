@@ -17,7 +17,7 @@
 #     Show how alignment of baselines work for 
 
 from pagebot.document import Document
-from pagebot.constants import GRID_LINE, GRID_COL, GRID_SQR, GRID_ROW, LANGUAGE_EN
+from pagebot.constants import BASE_LINE, GRID_COL, GRID_SQR, GRID_ROW, LANGUAGE_EN
 from pagebot.toolbox.units import p, pt, em
 from pagebot.toolbox.color import color
 from pagebot.typesetter import Typesetter
@@ -53,10 +53,9 @@ styles = dict(font=font, h1=h1Style, h2=h2Style, p=pStyle, li=liStyle, ul=liStyl
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, originTop=False, styles=styles,
     baselineGrid=LEADING, language=LANGUAGE_EN)
 view = doc.view
-view.showTextBoxBaselines = True
 view.showTextBoxY = True
-view.showBaselineGrid = [GRID_LINE] # Set the view to show the baseline grid
-view.showGrid = [GRID_COL, GRID_ROW, GRID_SQR] # Set the view to display the grid
+view.showBaselines = [BASE_LINE, BASE_INDEX_LEFT] # Set the view to show the baseline grid
+view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set the view to display the grid
 
 s = """
 

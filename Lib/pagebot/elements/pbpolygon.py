@@ -95,7 +95,7 @@ class Polygon(Element):
         self.drawFrame(origin, view)
 
         self._restoreScale()
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
     #   H T M L  /  C S S  S U P P O R T
 

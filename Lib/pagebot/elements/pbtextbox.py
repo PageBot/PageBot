@@ -16,7 +16,7 @@
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
-                            GRID_LINE, GRID_INDEX, GRID_Y)
+                            BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INSIDE)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
@@ -29,8 +29,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, bs=None, minW=None, w=None, h=None, size=None,
-            showBaselines=False, **kwargs):
+    def __init__(self, bs=None, minW=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
@@ -48,7 +47,6 @@ class TextBox(Element):
         if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
             bs = ''
         self.bs = self.newString(bs, style=self.style) # Source can be any type: BabelString instance or plain unicode string.
-        self.showBaselines = showBaselines # Force showing of baseline if view.showBaselines is False.
 
     def _get_w(self): # Width
         """Property for self.w, holding the width of the textbox.
@@ -358,7 +356,7 @@ class TextBox(Element):
 
         self.buildFrame(view, p) # Draw optional background, frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showElementFrame == True
+        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
@@ -391,13 +389,15 @@ class TextBox(Element):
         if textShadow:
             context.restoreGraphicState()
 
+        view.drawBaselines(self, origin, background=True) # In case there is baseline at the back
+
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, p)
 
         # TODO: Make this work for FlatContext too
-        # Draw markers on TextLine and TextRun positions.
-        view.drawBaselineGrid(self, origin, show=[GRID_LINE, GRID_INDEX], inside=True)
+        # Draw lines and markers on TextLine and TextRun positions.
+        view.drawBaselines(self, origin, background=False) # In case there is baseline at the front
 
         if view.showTextOverflowMarker and self.isOverflow():
             # TODO: Make this work for FlatContext too
@@ -407,7 +407,49 @@ class TextBox(Element):
             self.drawAfter(self, view, p)
          
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+
+    def drawBaselines(self, view, px, py):
+        # Let's see if we can draw over them in exactly the same position.
+        if not view.showBaselines and not self.showBaselines:
+            return
+
+        c = self.context # Get current context and builder
+
+        baselineColor = self.css('baselineColor', color(0, 0, 1))
+        baselineWidth = self.css('baselineWidth', pt(0.5))
+
+        fontSize = self.css('baseLineMarkerSize')
+        indexStyle = dict(font='Verdana', fontSize=pt(8), textFill=baselineColor)
+        yStyle = dict(font='Verdana', fontSize=fontSize, textFill=baselineColor)
+        leadingStyle = dict(font='Verdana', fontSize=fontSize, textFill=color(r=1, g=0, b=0))
+
+        if view.showTextBoxY:
+            bs = self.newString('0', style=indexStyle)
+            _, th = bs.size
+            c.text(bs, (px + self.w + 3,  py + self.h - th/4))
+
+        c.stroke(baselineColor, baselineWidth)
+        prevY = 0
+        for textLine in self.textLines: 
+            print(textLine.y)
+            y = textLine.y + self.h
+            # TODO: Why measures not showing?
+            c.line((px, py+y), (px + self.w, py+y))
+            if view.showTextLineIndex:
+                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                tw, th = bs.size # Calculate right alignment
+                c.text(bs, (px-3-tw, py + y - th/4))
+            if view.showTextBoxY:
+                bs = self.newString('%d' % round(y), style=yStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/4))
+            if view.showTextLeading:
+                leading = round(abs(y - prevY))
+                bs = self.newString('%d' % leading, style=leadingStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/4))
+            prevY = y
 
     def build_html(self, view, origin=None, showElements=True):
         """Build the HTML code through WebBuilder (or equivalent) that is

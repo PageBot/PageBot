@@ -40,7 +40,7 @@ W, H = 500, 400
 # Creates the publication/document that holds the pages.
 doc = Document(w=W, h=H, originTop=False, autoPages=1)
 doc.view.padding = 0 # Don't show cropmarks in this example.
-doc.view.showPagePadding = True
+doc.view.showPadding = True
 
 # Gets page by pageNumber, first in row (at this point there is only one in this row).
 page = doc[1]

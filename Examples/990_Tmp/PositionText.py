@@ -57,9 +57,9 @@ def makeDocument():
     view = doc.view
     view.w = view.h = W, H
     view.padding = 40
-    view.showPageFrame = True
-    view.showPageCropMarks = True
-    view.showElementOrigin = True # Show the alignment position
+    view.showFrame = True
+    view.showCropMarks = True
+    view.showOrigin = True # Show the alignment position
                                   # of elements as plus-mark.
     fontSize = 18
     cellHeight = int(fontSize*4)

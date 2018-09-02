@@ -54,7 +54,7 @@ def makeDocument():
 
     view = doc.getView()
     view.padding = 0 # Avoid showing of crop marks, etc.
-    view.showElementOrigin = False
+    view.showOrigin = False
     view.showGrid = True
 
     # The current view holds the context

@@ -168,7 +168,7 @@ def makePages(doc, font):
 doc = Document(w=W, h=H, originTop=False, context=context)
 # Get the current default view (maker of PDF page documents) and set the flag to show padding.
 view = doc.view
-view.showPagePadding = True
+view.showPadding = True
 # Make all specimen pages for this font.
 makePages(doc, f)
 # Solve the layout conditions recursively for all elements.

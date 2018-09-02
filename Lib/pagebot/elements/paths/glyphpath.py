@@ -97,11 +97,11 @@ class GlyphPath(Path):
             for e in self.elements:
                 e.build(view, p)
 
-        # Draw optional bounding box if view.showElementFrame = True
+        # Draw optional bounding box if view.showFrame = True
         self.buildFrame(view, p) # Draw optional frame, shadow or borders.
  
         self._restoreScale(view)
-        view.drawElementMetaInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
 
 if __name__ == '__main__':
