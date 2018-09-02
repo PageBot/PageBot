@@ -107,6 +107,31 @@ class TextBox(Element):
         self.style['h'] = h
     h = property(_get_h, _set_h)
 
+    def _get_y(self):
+        """Answer the y position of self.
+
+        >>> e = Element(y=100, h=400)
+        >>> e.x, e.y, e.z
+        (0pt, 100pt, 0pt)
+        >>> e.y = 200
+        >>> e.x, e.y, e.z
+        (0pt, 200pt, 0pt)
+        >>> child = Element(y='40%', parent=e)
+        >>> child.y, child.y.pt # 40% of 400
+        (40%, 160)
+        >>> e.h = 500
+        >>> child.y, child.y.pt # 40% of 500 dynamic calculation
+        (40%, 200)
+        """
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('y'), base=base)
+    def _set_y(self, y):
+        """Convert to units, if y is not already a Unit instance."""
+        self.style['y'] = units(y)
+        #self._textLines = None # Force recalculation of y values.
+    y = property(_get_y, _set_y)
+
     def _get_textLines(self):
         if self._textLines is None:
             self._textLines = []
@@ -354,13 +379,16 @@ class TextBox(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        self.buildFrame(view, p) # Draw optional background, frame or borders.
-
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
+        self.buildFrame(view, p) # Draw optional background, frame or borders.
+
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
+
+        # self has its own baseline drawing, derived from the text, instace of self.baselineGrid.
+        self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
 
         # Draw the text with horizontal and vertical alignment
         tw, th = self.bs.size
@@ -388,9 +416,6 @@ class TextBox(Element):
 
         if textShadow:
             context.restoreGraphicState()
-
-        # self has its own baseline drawing, derived from the text, instace of self.baselineGrid.
-        self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
@@ -428,33 +453,37 @@ class TextBox(Element):
         prevY = 0
         for textLine in self.textLines: 
             y = self.h - textLine.y
-            # TODO: Why measures not showing?
+
+            # Line drawing depends on used flag and if we are in background/foreground mode.
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE):
                 c.line((px, py+y), (px + self.w, py+y))
             
-            if BASE_Y_LEFT in show:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-            elif BASE_INDEX_LEFT in show:
-                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
+            # Only text drawing in foreground mode. Text is exclusive, because of limited
+            # available space, only one type of label can be shown at either side.
+            if not background: 
+                if BASE_Y_LEFT in show:
+                    bs = self.newString('%d' % round(self.h - y), style=yStyle)
+                    _, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                elif BASE_INDEX_LEFT in show:
+                    bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                    _, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
 
-            if BASE_Y_RIGHT in show:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                tw, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-            elif BASE_INDEX_RIGHT in show:
-                bs = self.newString(str(textLine.lineIndex), style=yStyle)
-                tw, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
+                if BASE_Y_RIGHT in show:
+                    bs = self.newString('%d' % round(self.h - y), style=yStyle)
+                    tw, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                elif BASE_INDEX_RIGHT in show:
+                    bs = self.newString(str(textLine.lineIndex), style=yStyle)
+                    tw, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + y - th/5))
 
-            if 0: #view.showTextLeading:
-                leading = round(abs(y - prevY))
-                bs = self.newString('%d' % leading, style=leadingStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+                if 0: #view.showTextLeading:
+                    leading = round(abs(y - prevY))
+                    bs = self.newString('%d' % leading, style=leadingStyle)
+                    _, th = bs.size
+                    c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
             prevY = y
 
     def build_html(self, view, origin=None, showElements=True):
