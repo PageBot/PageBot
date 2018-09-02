@@ -690,7 +690,7 @@ class PageView(BaseView):
         baselineWidth = e.css('baselineWidth', 0.5)
 
         # Format of line numbers.
-        style = dict(font=e.css('fallbackFont','Arial'), xTextAlign=RIGHT,
+        style = dict(font=e.css('viewMarkerFont'), xTextAlign=RIGHT,
             fontSize=indexFontSize, stroke=noColor, textFill=baselineColor)
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)

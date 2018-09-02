@@ -237,9 +237,11 @@ DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 
 # Language codes (ISO Language Code Table http://www.lingoes.net/en/translator/langcode.htm)
 # Used with DrawBot-FormattedString hyphenation. Not testes if all codes really work,
-# besides THE 3 BELOW.
+# besides the ones directly.
 LANGUAGE_EN     = 'en'      # English
 LANGUAGE_NL     = 'nl'      # Dutch
+LANGUAGE_NL_BE  = 'nl-BE'   # Belgium
+LANGUAGE_NL_NL  = 'nl-NL'   # Netherlands
 LANGUAGE_DK     = 'dk'      # Danish
 LANGUAGE_PT_BR  = 'pt-BR'   # Portuguese (Brazil)
 
@@ -266,9 +268,9 @@ LANGUAGE_AR_TN  = 'ar-TN'   # Arabic (Tunisia)
 LANGUAGE_AR_YE  = 'ar-YE'   # Arabic (Yemen)
 LANGUAGE_AZ     = 'az'      # Azeri (Latin)
 LANGUAGE_AZ_AZ  = 'az-AZ'   # Azeri (Latin/Cyrillic) (Azerbaijan)
+LANGUAGE_BE     = 'be'      # Belarusian
 
 """ TO BE FORMATTED AS ABOVE
-be  Belarusian
 be-BY   Belarusian (Belarus)
 bg  Bulgarian
 bg-BG   Bulgarian (Bulgaria)
@@ -291,7 +293,6 @@ dv  Divehi
 dv-MV   Divehi (Maldives)
 el  Greek
 el-GR   Greek (Greece)
-en  English
 en-AU   English (Australia)
 en-BZ   English (Belize)
 en-CA   English (Canada)
@@ -399,9 +400,6 @@ mt  Maltese
 mt-MT   Maltese (Malta)
 nb  Norwegian (Bokm?l)
 nb-NO   Norwegian (Bokm?l) (Norway)
-nl  Dutch
-nl-BE   Dutch (Belgium)
-nl-NL   Dutch (Netherlands)
 nn-NO   Norwegian (Nynorsk) (Norway)
 ns  Northern Sotho
 ns-ZA   Northern Sotho (South Africa)
@@ -537,7 +535,8 @@ BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left
 BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
 BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
-BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE}
+BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, 
+   BASE_INSIDE}
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 
@@ -557,6 +556,8 @@ DEFAULT_FILETYPE = FILETYPE_PDF
 # As reference TYPETR Upgrade is mentioned.
 # In normalized keys, all CamelCase is flattened.
 # Works togehter with toolbox.transformer.path2StyleNameParts()
+
+DEFAULT_MARKER_FONT = 'Arial'
 
 FONT_SIZE_MATCHES = {
     'Micro': ('Micro', 100),
