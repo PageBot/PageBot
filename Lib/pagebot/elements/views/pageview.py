@@ -24,9 +24,10 @@ from pagebot.toolbox.color import color, noColor, blackColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
-from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, 
-    GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG, 
-    BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT, BASE_INSIDE)
+from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
+    GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
+    BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
+    BASE_INSIDE)
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
@@ -559,7 +560,7 @@ class PageView(BaseView):
         Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
         a fixed offset.
         If types self.showGrid is set, display the type of grid in forground for
-        (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG, 
+        (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG,
         GRID_ROW_BG, GRID_SQR_BG)
 
         >>> from pagebot.contexts.platform import getContext
@@ -647,8 +648,8 @@ class PageView(BaseView):
 
     def drawBaselines(self, e, origin, background=False):
         """Draw baseline grid if self.showBaselines is True and there is a
-        baseline defined > 0. Use the color from style values viewGridStrokeX and 
-        viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox 
+        baseline defined > 0. Use the color from style values viewGridStrokeX and
+        viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox
         with style values baselineColor and baselineWidth.
         In this method is called by an element, instead of self, the show attribute
         is a way to overwrite the setting of self.showBaselines
@@ -696,14 +697,14 @@ class PageView(BaseView):
 
         while oy > e.pb: # Run until the padding of the element is reached.
             tl = tr = None
-            if not background:    
+            if not background:
                 if BASE_INDEX_LEFT in show and BASE_Y_LEFT in show:
                     tl = '%s:%s' % (line, e.h - oy)
                 elif BASE_INDEX_LEFT in show: # Shows line baseline index
                     tl = repr(line)
                 elif BASE_Y_LEFT in show: # Show vertical position marker
                     tl = repr(e.h - oy)
-            
+
                 if BASE_INDEX_RIGHT in show and BASE_Y_RIGHT in show:
                     tr = '%s:%s' % (line, e.h - oy)
                 elif BASE_INDEX_RIGHT in show: # Shows line baseline index
@@ -731,7 +732,7 @@ class PageView(BaseView):
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             line += 1 # Increment line index.
-            
+
             oy -= baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S

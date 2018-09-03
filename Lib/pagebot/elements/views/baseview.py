@@ -20,7 +20,7 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 
 class BaseView(Element):
-    """A View is just another kind of container, kept by document to make a certain presentation 
+    """A View is just another kind of container, kept by document to make a certain presentation
     of the enclosed page/element tree. Views support services, such as answering the size of a formatted
     string (if possible), how much overflow there is for a certain box, etc. The view is also the only
     place where the current context should be stored."""
@@ -30,7 +30,7 @@ class BaseView(Element):
 
     def __init__(self, w=None, h=None, contect=None, parent=None, context=None, verbose=False, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
-        
+
         if not w and self.parent:
             w = self.parent.w
         if not h and self.parent:
@@ -54,4 +54,4 @@ class BaseView(Element):
         """Inheriting views can redefine to alter the default showing of parameters."""
         pass
 
- 
+
