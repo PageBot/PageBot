@@ -16,8 +16,8 @@
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
-                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, 
-                            BASE_INSIDE, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
+                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,
+                            BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color
@@ -310,8 +310,8 @@ class TextBox(Element):
         return self.nextElementName is None and self.getOverflow()
 
     def overflow2Next(self):
-        """Try to fix if there is overflow. If there is overflow outside the page, then 
-        find the page.next with it's target element to continue, until all text fits 
+        """Try to fix if there is overflow. If there is overflow outside the page, then
+        find the page.next with it's target element to continue, until all text fits
         or the element has not nextElementName defined.
         Answer the page and result, as the page may have been altered."""
         result = True
@@ -379,7 +379,7 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         context.language(self.css('language', DEFAULT_LANGUAGE))
         context.hyphenation(bool(self.css('hyphenation')))
@@ -405,7 +405,7 @@ class TextBox(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-         
+
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -426,12 +426,12 @@ class TextBox(Element):
 
         c.stroke(baselineColor, baselineWidth)
         prevY = 0
-        for textLine in self.textLines: 
+        for textLine in self.textLines:
             y = self.h - textLine.y
             # TODO: Why measures not showing?
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE):
                 c.line((px, py+y), (px + self.w, py+y))
-            
+
             if BASE_Y_LEFT in show:
                 bs = self.newString('%d' % round(y), style=yStyle)
                 _, th = bs.size
@@ -493,9 +493,9 @@ class TextBox(Element):
     #   C O N D I T I O N
 
     # Text conditions
-    
+
     def baselineOffset(self, index=0):
-        u"""Answer the difference of the indexed line to the parent (page) setting for 
+        u"""Answer the difference of the indexed line to the parent (page) setting for
         self.parent.baselineGrid and self.parent.baselineGridStart."""
         try:
             line = self.textLines[index or 0]
@@ -525,11 +525,11 @@ class TextBox(Element):
             return abs(self.bottom - line.y) <= tolerance
         except IndexError:
             return False
-            
+
     # Text conditional movers
-    
+
     def baseline2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
 
         >>> from pagebot.document import Document
@@ -559,9 +559,9 @@ class TextBox(Element):
             else:
                 self.y += dy2
 
-    
+
     def baselineUp2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
         if self.textLines:
@@ -570,7 +570,7 @@ class TextBox(Element):
             self.y -= line.y - self.getRounded2Grid(line.y)
 
     def baselineDown2Grid(self, index=None, style=None):
-        """Move the text box up (increasing line.y value, rounding down) in vertical direction, 
+        """Move the text box up (increasing line.y value, rounding down) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
         if self.textLines:

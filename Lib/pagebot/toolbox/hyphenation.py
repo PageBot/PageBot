@@ -31,7 +31,7 @@ from pagebot import getResourcesPath
 from pagebot.constants import DEFAULT_LANGUAGE
 
 # Key is language id (2 letters), value is dictionary of word-->hyphenated
-languages = {} 
+languages = {}
 
 def reset():
     global languages
@@ -54,9 +54,10 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
     return languages.get(language)
 
 def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
-    """Get the dictionary for the defined language and answer the hyphenated word if it exists.
-    If it does not exists and checkCombined flag is True, try break the word into parts and check
-    if on or nore of the parts are hyphenated. If all fails, then answer None.
+    """Get the dictionary for the defined language and answer the hyphenated
+    word if it exists.  If it does not exists and checkCombined flag is True,
+    try break the word into parts and check if on or nore of the parts are
+    hyphenated. If all fails, then answer None.
 
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
     >>> len(hyphenatedWords(LANGUAGE_EN)) # English hyphenated words in the library
@@ -69,59 +70,58 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     183426
     >>> # E N G L I S H
     >>> hyphenate('housing', LANGUAGE_EN)
-    u'hous-ing'
+    'hous-ing'
     >>> # Single English words
     >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN) # English is default
-    (u'Tut-ankh-a-mun', u'Tut-ankh-a-mun')
+    ('Tut-ankh-a-mun', 'Tut-ankh-a-mun')
     >>> # D U T C H Typically testing the hypenation of combined Dutch words
     >>> hyphenate('marmerplaatjes', LANGUAGE_NL)
-    u'mar-mer-plaat-jes'
+    'mar-mer-plaat-jes'
     >>> # Hyphenates as plaat-staal (sheet of steel) where plaats-taal (regional language) also would have been valid
-    >>> hyphenate('plaatstaal', LANGUAGE_NL) 
-    u'plaat-staal'
+    >>> hyphenate('plaatstaal', LANGUAGE_NL)
+    'plaat-staal'
     >>> # Combined dutch words, hyphenating between valid words.
     >>> hyphenate('marmer', LANGUAGE_NL)
-    u'mar-mer'
+    'mar-mer'
     >>> hyphenate('plaats', LANGUAGE_NL)
-    u'plaats'
+    'plaats'
     >>> hyphenate('marmerplaats', LANGUAGE_NL) is None # Without recursively searching combinations, does not find this word..
     True
     >>> hyphenate('marmerplaats', LANGUAGE_NL, True) # Find combination (slower), although the word itself is not part of the library.
-    u'mar-mer-plaats'
+    'mar-mer-plaats'
     >>> hyphenate('marmerplaatsbepaling', LANGUAGE_NL, True)
-    u'mar-mer-plaats-be-pa-ling'
+    'mar-mer-plaats-be-pa-ling'
     >>> hyphenate('ochtendjaskledinghangerschroefdraad', LANGUAGE_NL, True)
-    u'och-tend-jas-kle-ding-han-ger-schroef-draad'
+    'och-tend-jas-kle-ding-han-ger-schroef-draad'
     >>> hyphenate('hagelslagroomboterbloemkoolstofzuigerveerpont', LANGUAGE_NL, True)
-    u'ha-gel-slag-room-bo-ter-bloem-kool-stof-zui-ger-veer-pont'
+    'ha-gel-slag-room-bo-ter-bloem-kool-stof-zui-ger-veer-pont'
     >>> # Longest in practice. Don't go longer than this, as calculation time exponentioally increases.
     >>> hyphenate('kernenergieadviesbureaugebouwtoegangsdeurknopbedieningspaneeltjes', LANGUAGE_NL, True)
-    u'kern-ener-gie-ad-vies-bu-reau-ge-bouw-toe-gangs-deur-knop-be-die-nings-pa-neel-tjes'
+    'kern-ener-gie-ad-vies-bu-reau-ge-bouw-toe-gangs-deur-knop-be-die-nings-pa-neel-tjes'
     >>> hyphenate('housewarmingpartyinvitation', LANGUAGE_NL, True) is None # --> None: no matching in another language.
     True
     >>> hyphenate('housewarmingpartyinvitation', LANGUAGE_EN, True) # --> Still works: house-warm-ing-par-ty-in-vi-ta-tion
-    u'house-warm-ing-par-ty-in-vi-ta-tion'
+    'house-warm-ing-par-ty-in-vi-ta-tion'
     >>> # First [100:105] words of the sorted list of all language words in the dictionary.
-    >>> words('nl')[100:105] 
-    [u'aanaardt', u'aanademing', u'aanbad', u'aanbak', u'aanbakken']
+    >>> words('nl')[100:105]
+    ['aanaardt', 'aanademing', 'aanbad', 'aanbak', 'aanbakken']
     >>> # P O R T U G E S E
     >>> hyphenate('abarcar', LANGUAGE_PT_BR)
-    u'a-bar-car'
+    'a-bar-car'
     >>> hyphenate('cefalorraquidiano', LANGUAGE_PT_BR)
-    u'ce-fa-lor-ra-qui-di-a-no'
+    'ce-fa-lor-ra-qui-di-a-no'
     >>> hyphenate('abarcarcefalorraquidiano', LANGUAGE_PT_BR, True)
-    u'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
+    'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
     """
     """
     TODO: Unicode not showing well in docTest feedback
     >>> # D A N I S H
-    >>> hyphenate(u'adessiverne', LANGUAGE_DK)
-    u'ades-si-ver-ne'
-    >>> hyphenate(u'ablationsområder', LANGUAGE_DK)
-    u'ab-la-tions-om-rå-der'
-    >>> hyphenate(u'adfærdsforstyrrelse', LANGUAGE_DK)
-    u'ad-færds-for-styr-rel-se'
-    """
+    >>> hyphenate('adessiverne', LANGUAGE_DK)
+    'ades-si-ver-ne'
+    >>> hyphenate('ablationsområder', LANGUAGE_DK)
+    'ab-la-tions-om-rå-der'
+    >>> hyphenate('adfærdsforstyrrelse', LANGUAGE_DK)
+    'ad-færds-for-styr-rel-se' """
     #
     # Dutch combination check:
     #
@@ -167,7 +167,7 @@ def wordsByLength(language=DEFAULT_LANGUAGE):
             wordsByLength[l] = []
         wordsByLength[l].append(word)
     return wordsByLength
-    
+
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@
 import copy
 from pagebot.constants import *
 from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U
-from pagebot.toolbox.color import color, noColor, blackColor, redColor
+from pagebot.toolbox.color import color, noColor, blackColor
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -301,14 +301,14 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # V I E W S
 
-        # These parameters are used by viewers (implemented as properties), normally not part 
+        # These parameters are used by viewers (implemented as properties), normally not part
         # of direct elements.css( ) queries as views may locally change these values.
         # However, in some situations elements may overwrite the settings (e.g. TextBot baseline color)
 
         # Paging
         showSpread = False, # If True, show even pages on left of fold, odd on the right.
         showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
-        
+
         # Document/page stuff
         viewMinInfoPadding = pt(20), # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
         showCropMarks = False,
@@ -318,35 +318,35 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showFrame = False, # Draw frame on page.size
         showNameInfo = False, # Show file/name/pagenumber ourside cropping area
         showPageMetaInfo = False,
-        
+
         # Element info showing
         showElementInfo = False,
         showDimensions = False, # TODO: Does not work if there is view padding.
         showMissingElement = True,
-        
+
         # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR, GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG)
         # See pagebot.constants for the types of grid that can be drawn.
         showGrid = set(), # If set, display the type of grid elements on foreground and background
-        
+
         # Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT)
         showBaselines = set(), # If set, display options defined the type of grid to show.
         showBaselinesBackground = set(), # If set, display options defined the type of grid to show on background.
         showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
-        
+
         # Flow stuff
         showFlowConnections = False,
         showTextOverflowMarker = False, # If True, a [+] marker is shown where text boxes have overflow.
-        
+
         # Image stuff
         showImageReference = False,
-        
+
         # Spread stuff
         showSpreadPages = False, # Show even/odd pages as spread, as well as pages that share the same pagenumber.
-        
+
         # CSS flags
         cssVerbose = True, # Adds information comments with original values to CSS export.
-        
-        # Exporting 
+
+        # Exporting
         doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
 
         # Grid stuff for showing
