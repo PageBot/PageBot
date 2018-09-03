@@ -432,12 +432,8 @@ class TextBox(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-<<<<<<< HEAD
          
         self._restoreRotation(view, p)
-=======
-
->>>>>>> origin/master
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -464,7 +460,6 @@ class TextBox(Element):
             # Line drawing depends on used flag and if we are in background/foreground mode.
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                 c.line((px, py+y), (px + self.w, py+y))
-<<<<<<< HEAD
             
             # Only text drawing in foreground mode. Text is exclusive, because of limited
             # available space, only one type of label can be shown at either side.
@@ -492,32 +487,6 @@ class TextBox(Element):
                     bs = self.newString('%d' % leading, style=leadingStyle)
                     _, th = bs.size
                     c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
-=======
-
-            if BASE_Y_LEFT in show:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-            elif BASE_INDEX_LEFT in show:
-                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-
-            if BASE_Y_RIGHT in show:
-                bs = self.newString('%d' % round(y), style=yStyle)
-                tw, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-            elif BASE_INDEX_RIGHT in show:
-                bs = self.newString(str(textLine.lineIndex), style=yStyle)
-                tw, th = bs.size
-                c.text(bs, (px + self.w + 3, py + y - th/5))
-
-            if 0: #view.showTextLeading:
-                leading = round(abs(y - prevY))
-                bs = self.newString('%d' % leading, style=leadingStyle)
-                _, th = bs.size
-                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
->>>>>>> origin/master
             prevY = y
 
     def build_html(self, view, origin=None, showElements=True):
