@@ -698,16 +698,12 @@ class PageView(BaseView):
         while oy > e.pb: # Run until the padding of the element is reached.
             tl = tr = None
             if not background:
-                if BASE_INDEX_LEFT in show and BASE_Y_LEFT in show:
-                    tl = '%s:%s' % (line, e.h - oy)
-                elif BASE_INDEX_LEFT in show: # Shows line baseline index
+                if BASE_INDEX_LEFT in show: # Shows line baseline index
                     tl = repr(line)
                 elif BASE_Y_LEFT in show: # Show vertical position marker
                     tl = repr(e.h - oy)
 
-                if BASE_INDEX_RIGHT in show and BASE_Y_RIGHT in show:
-                    tr = '%s:%s' % (line, e.h - oy)
-                elif BASE_INDEX_RIGHT in show: # Shows line baseline index
+                if BASE_INDEX_RIGHT in show: # Shows line baseline index
                     tr = repr(line)
                 elif BASE_Y_RIGHT in show: # Show vertical position marker
                     tr = repr(e.h - oy)

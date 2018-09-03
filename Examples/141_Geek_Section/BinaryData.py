@@ -50,6 +50,7 @@ with open(imagePath, "rb") as binary_file:
     data = binary_file.read()
     #mutable_bytes = bytearray(data)
     #print(len(mutable_bytes))
+    # TODO: Make create _export if it does not exist.
     newFile = open("_export/test.png", "wb")
     newFile.write(data)
 
