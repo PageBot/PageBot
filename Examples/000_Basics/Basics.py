@@ -16,12 +16,14 @@
 #     Shows how use basic pagebot functions.
 #    
 from pagebot import *
+import glob
 
 def doBasics():
 	rootPath = getRootPath()
 	print(rootPath)
 	resourcesPath = getResourcesPath()
 	print(resourcesPath)
+	print(glob.glob('%s/*' % resourcesPath))
 	context = getContext()
 	print(context)
 	context = getContext('Flat')
