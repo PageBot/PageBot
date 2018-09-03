@@ -3647,15 +3647,21 @@ class Element:
             py = self.parent.h - py
         return px, py, pz
 
-    def _applyRotation(self, view, mx, my, angle):
+    def _applyRotation(self, view, mx=None, my=None, angle=None):
         """Apply the rotation for angle, where (mx, my) is the rotation center."""
-        view.saveGraphicState()
+        if mx is None:
+            mx = self.x
+        if my is None:
+            my = self.y
+        if angle is None:
+
+        self.context.saveGraphicState()
         # TODO: Working on this.
 
     def _restoreRotation(self, view):
         """Reset graphics state from rotation mode."""
         if self.css('rotationX') and self.css('rotationY') and self.css('rotationAngle'):
-            view.restoreGraphicState()
+            self.context.restoreGraphicState()
 
     def _applyScale(self, view, p):
         """Internal method to apply the scale, if both *self.scaleX* and
@@ -3906,7 +3912,7 @@ class Element:
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p)
+        view.drawPageMetaInfo(self, p, background=True)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -3917,6 +3923,8 @@ class Element:
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+
+        view.drawPageMetaInfo(self, p, background=False)
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'

@@ -33,10 +33,11 @@
 #     col, Col     Same as fr, using gutter. Works vertical as rows as well.
 #     px, Px       Equal to points (for now)
 #
-
-
-import re
-import sys
+#     Angle
+#     radian       Radians angle
+#     degrees      Degrees angle
+#
+import re, sys, math
 from copy import copy
 
 INCH = 72
@@ -1070,6 +1071,8 @@ class Unit:
         9.25pt
         """
         u0 = copy(self)
+        if not self.v: 
+            raise ValueError('Cannot divide "%s" by "%s"' % (u, self.v))
         u0.v = u / self.v
         return u0
 
@@ -2221,6 +2224,398 @@ def units(v, maker=None, g=None, base=None, default=None):
     if u is None and default is not None:
         u = units(default, g=g, base=base)
     return u # If possible to create, answer u. Otherwise result is None
+
+# Automatic angle conversion between degrees and radians.
+
+class Angle:
+
+    def __init__(self, angle):
+        if angle == round(angle):
+            angle = int(angle)
+        self.angle = angle
+
+    def __add__(self, angle):
+        """Add two angles, using degrees as intermedia value.
+
+        >>> degrees(45) + 5
+        50deg
+        >>> degrees(45) + radians(0.5)
+        135deg
+        >>> radians(0.5) + degrees(45)
+        0.75rad
+        >>> 5 + degrees(45)
+        50deg
+        """
+        angle = self.angle + self.asValue(angle)
+        if angle == round(angle):
+            angle = int(angle)
+        return self.__class__(angle) # Answer new Degrees instance
+
+    __radd__ = __add__ # Additions work in both directions.
+
+    def __sub__(self, angle):
+        """Subtract two angles or angle and value, using degrees as intermedia value.
+
+        >>> degrees(45) - 5
+        40deg
+        >>> degrees(45) - radians(0.5)
+        -45deg
+        >>> radians(0.5) - degrees(45)
+        0.25rad
+        """
+        angle = self.angle - self.asValue(angle)
+        if angle == round(angle):
+            angle = int(angle)
+        return self.__class__(angle) # Answer new instance
+
+    def __rsub__(self, angle):
+        """Reverse subtract value and angle, using degrees as intermedia value.
+
+        >>> 5 - degrees(45)
+        -40deg
+        >>> 1 - radians(0.5)
+        0.5rad
+        """
+        angle = self.asValue(angle) - self.angle
+        if angle == round(angle):
+            angle = int(angle)
+        return self.__class__(angle) # Answer new instance
+
+    def __mul__(self, factor):
+        """Multiply the angle with a factor. Answer a new instance of the same type.
+
+        >>> degrees(45) * 2
+        90deg
+        >>> degrees(45) * 0.5
+        22.5deg
+        >>> 3 * degrees(45)
+        135deg
+        """
+        assert isinstance(factor, (int, float))
+        angle = self.angle * factor
+        if angle == round(angle):
+            angle = int(angle)
+        return self.__class__(angle)
+
+    __rmul__ = __mul__ # Mulitplications work in both directions
+
+    def __div__(self, factor):
+        """Divide the angle by a factor. Answer a new instance of the same type.
+
+        >>> degrees(80) / 2
+        40deg
+        >>> degrees(45) / 0.5
+        90deg
+        >>> radians(0.5) / 2
+        0.25rad
+        """
+        assert isinstance(factor, (int, float))
+        angle = self.angle / factor
+        if angle == round(angle):
+            angle = int(angle)
+        return self.__class__(angle)
+
+    __truediv__ = __div__
+
+    def __floordiv__(self, factor):
+        """Fllor-divide the angle by a factor. Answer a new instance of the same type.
+
+        >>> degrees(45) // 2
+        22deg
+        >>> degrees(45) // 0.5
+        90deg
+        >>> radians(2.2) // 2
+        1rad
+        """
+        assert isinstance(factor, (int, float))
+        return self.__class__(self.angle // factor)
+
+    __itruediv__ = __floordiv__
+
+    def __le__(self, a):
+        """Test if self is less or equal to angle a or value a.
+
+        >>> degrees(90) <= degrees(30)
+        False
+        >>> degrees(30) <= 90
+        True
+        >>> degrees(30) <= 30
+        True
+        >>> radians(0.5) <= radians(0.75)
+        True
+        >>> radians(0.25) <= 0.1
+        False
+        """
+        if isinstance(a, Angle):
+            return self.degrees <= a.degrees
+        return self.angle <= a
+
+    def __lt__(self, a):
+        """Test if self is less than angle a or value a.
+
+        >>> degrees(90) < degrees(30)
+        False
+        >>> degrees(30) < 90
+        True
+        >>> radians(0.5) < radians(0.75)
+        True
+        >>> radians(0.25) < 0.1
+        False
+        """
+        if isinstance(a, Angle):
+            return self.degrees < a.degrees
+        return self.angle < a
+
+    def __ge__(self, a):
+        """Test if self is greater or equal to angle a or value a.
+
+        >>> degrees(90) >= degrees(30)
+        True
+        >>> degrees(30) >= 90
+        False
+        >>> degrees(30) >= 30
+        True
+        >>> radians(0.5) >= radians(0.75)
+        False
+        >>> radians(0.25) >= 0.1
+        True
+        """
+        if isinstance(a, Angle):
+            return self.degrees >= a.degrees
+        return self.angle >= a
+
+    def __gt__(self, a):
+        """Test if self is greater than angle a or value a.
+
+        >>> degrees(90) > degrees(30)
+        True
+        >>> degrees(30) > 90
+        False
+        >>> degrees(30) > 30
+        False
+        >>> radians(0.5) > radians(0.75)
+        False
+        >>> radians(0.25) > 0.1
+        True
+        """
+        if isinstance(a, Angle):
+            return self.degrees > a.degrees
+        return self.angle > a
+
+    def __ne__(self, a):
+        """Test if self not equal to angle a or value a.
+
+        >>> degrees(90) != degrees(30)
+        True
+        >>> degrees(30) != 90
+        True
+        >>> degrees(30) != 30
+        False
+        >>> radians(0.5) != radians(0.75)
+        True
+        >>> radians(0.25) != 0.1
+        True
+        >>> radians(0.25) != 0.25
+        False
+        """
+        if isinstance(a, Angle):
+            return self.degrees != a.degrees
+        return self.angle != a
+
+    def __eq__(self, a):
+        """Test if self not equal to angle a or value a.
+
+        >>> degrees(90) == degrees(30)
+        False
+        >>> degrees(90) == degrees(90)
+        True
+        >>> degrees(90) == radians(0.5)
+        True
+        >>> degrees(30) == 90
+        False
+        >>> degrees(30) == 30
+        True
+        >>> radians(0.5) == radians(0.75)
+        False
+        >>> radians(0.25) == 0.1
+        False
+        >>> radians(0.25) == 0.25
+        True
+        """
+        if isinstance(a, Angle):
+            return self.degrees == a.degrees
+        return self.angle == a
+
+    def __neg__(self):
+        """Reverse sign of self, answer as copied unit.
+
+        >>> a = degrees(90)
+        >>> -a
+        -90deg
+        >>> a = radians(0.5)
+        >>> -a
+        -0.5rad
+        """
+        return self.__class__(-self.angle)
+
+    def __abs__(self):
+        """Answer the absolute value as new instance.
+
+        >>> a = degrees(-30)
+        >>> abs(a)
+        30deg
+        >>> a = radians(-0.5)
+        >>> abs(a)
+        0.5rad
+        """
+        return self.__class__(abs(self.angle))
+
+
+    def __int__(self):
+        """Answers self as rounded int, rendered and converted to points.
+
+        >>> int(degrees(30.5))
+        30
+        >>> float(radians(1))
+        1.0
+        """
+        return int(self.angle)
+
+    def __float__(self):
+        """Answers self as float, rendered and converted to points.
+
+        >>> float(degrees(30))
+        30.0
+        >>> float(radians(2))
+        2.0
+        """
+        return float(self.angle)
+
+    def __round__(self):
+        """Answer the rounded self as value.
+
+        >>> round(degrees(30.5))
+        30deg
+        """
+        return self.__class__(round(self.angle))
+
+    def __bool__(self):
+        return bool(self.angle)
+
+class Degrees(Angle):
+    """Store the value as degrees.
+
+    >>> from math import pi
+    >>> a = degrees(30)
+    >>> a
+    30deg
+    >>> a.degrees
+    30
+    >>> a = degrees(90)
+    >>> a.degrees, a.radians
+    (90, 0.5)
+    >>> a + 30 - 15
+    105deg
+    >>> 20 + a # Reverse addition casts the number into degree value
+    110deg
+    >>> 120 - a
+    30deg
+    >>> a/2 # Create integer value for whole angles
+    45deg
+    >>> a/2.4
+    37.5deg
+    >>> a//3
+    30deg
+    """
+    def __repr__(self):
+        return '%sdeg' % self.angle
+
+    def asValue(self, angle):
+        u"""Answer the value of angle of the same type as self.
+
+        >>> degrees(30).asValue(60)
+        60
+        >>> degrees(30).asValue(degrees(15))
+        15
+        >>> degrees(30).asValue(radians(0.5))
+        90
+        """
+        if isinstance(angle, Angle):
+            return angle.degrees
+        return angle or 0
+
+    def _get_degrees(self):
+        return self.angle
+    degrees = property(_get_degrees)
+
+    def _get_radians(self):
+        return math.radians(self.angle/math.pi)
+    radians = property(_get_radians)
+
+def degrees(angle):
+    if isinstance(angle, Angle):
+        angle = angle.degrees.angle
+    return Degrees(angle)
+
+class Radians(Angle):
+    """Store the value as radians factor to math.pi, so 0.5*pi is stored in self.angle as 0.5
+
+    >>> from math import pi
+    >>> a = radians(0.75)
+    >>> a
+    0.75rad
+    >>> a.degrees, a.radians
+    (135, 0.75)
+    >>> a = radians(0)
+    >>> a.degrees, a.radians
+    (0, 0)
+    >>> a = radians(0.5) # Add numbers in the context of the angle type.
+    >>> a + 0.5 - 0.25
+    0.75rad
+    >>> 20 + a # Reverse addition casts the number into degree value
+    20.5rad
+    >>> 1.5 - a
+    1rad
+    >>> a/2 # Create integer value for whole angles
+    0.25rad
+    >>> -a
+    -0.5rad
+    """
+    def __repr__(self):
+        return '%srad' % self.angle
+
+    def asValue(self, angle):
+        u"""Answer the value of angle of the same type as self.
+
+        >>> radians(0.5).asValue(0.75)
+        0.75
+        >>> radians(30).asValue(radians(0.33))
+        0.33
+        >>> radians(30).asValue(degrees(45))
+        0.25
+        """
+        if isinstance(angle, Angle):
+            return angle.radians
+        return angle or 0
+
+    def _get_degrees(self):
+        angle = math.degrees(math.pi*self.angle)
+        if angle == round(angle):
+            angle = int(angle)
+        return angle
+    degrees = property(_get_degrees)
+
+    def _get_radians(self):
+        angle = self.angle
+        if angle == round(angle):
+            angle = int(angle)
+        return angle
+    radians = property(_get_radians)
+
+def radians(angle):
+    if isinstance(angle, Angle):
+        angle = angle.radians.angle
+    return Radians(angle)
 
 if __name__ == '__main__':
     import doctest
