@@ -26,8 +26,7 @@ from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
 from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR, 
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG, 
-    BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT, 
-    BASE_INSIDE, DEFAULT_BASELINE)
+    BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT, BASE_INSIDE)
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 

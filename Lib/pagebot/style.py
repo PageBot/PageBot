@@ -20,8 +20,8 @@
 #
 import copy
 from pagebot.constants import *
-from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U
-from pagebot.toolbox.color import color, noColor, blackColor, redColor
+from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U, degrees
+from pagebot.toolbox.color import noColor, blackColor, redColor
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -85,6 +85,11 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = pt0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
+
+        # For rotation, the point (x+rx, y+ry) is used as rotation center. Default is (x, y).
+        rx = pt0,
+        ry = pt0,
+        angle = degrees(0), # Angle in degrees or radians units.
 
         # In "time-dimension" this is an overall value for export. This works independent from
         # the time-marks of element attributes.
