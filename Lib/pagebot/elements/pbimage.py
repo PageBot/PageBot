@@ -230,13 +230,15 @@ class Image(Element):
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
-        px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self._applyRotation(view, p)
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
             print('Cannot display image %s' % self)
             # Draw missing element as cross
-            xpt, ypt, wpt, hpt = upt(self.x, self.y, self.w, self.h)
+            xpt, ypt, wpt, hpt = upt(px, py, self.w, self.h)
             b.stroke(0.5)
             b.strokeWidth(0.5)
             b.fill(None)
@@ -250,7 +252,7 @@ class Image(Element):
             # If there is a clipRect defined, create the bezier path
             if self.clipRect is not None:
                 clipRect = context.newPath()
-                clX, clY, clW, clH = self.clipRect
+                clX, clY, clW, clH = upt(self.clipRect)
                 sclX = clX/sx
                 sclY = clY/sx
                 sclW = clW/sx
@@ -266,8 +268,8 @@ class Image(Element):
                 # set the path as a clipping path
                 b.clipPath(clipRect)
                 # the image will be clipped inside the path
-                #fill(1, 0, 0, 0.5)
-                #drawPath(clipRect)
+                #b.fill(0, 0, 0.5, 0.5)
+                #b.drawPath(clipRect)
             elif self.clipPath is not None:
                 #Otherwise if there is a clipPath, then use it.
                 b.clipPath(self.clipPath)
@@ -279,10 +281,14 @@ class Image(Element):
             else:
                 b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
+            
+            b.clipPath(None)
             context.restore()
 
         if drawElements:
             self.buildChildElements(view, p)
+
+        self._restoreRotation(view, p)
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin)

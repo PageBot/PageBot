@@ -144,6 +144,9 @@ class NoneBuilder:
     def transform(self, t):
         pass
 
+    def rotate(self, angle, center=None):
+        pass
+
     def FormattedString(self, s):
         class FS:
             def __init__(self, s):

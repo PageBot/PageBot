@@ -27,6 +27,7 @@ from pagebot.elements.pbline import Line
 from pagebot.elements.pbruler import Ruler
 from pagebot.elements.pbpolygon import Polygon
 from pagebot.elements.pboval import Oval
+from pagebot.elements.pboval import Circle
 
 # Page elements
 from pagebot.elements.pbimage import Image
@@ -99,9 +100,12 @@ def newGroup(**kwargs):
     return Group(**kwargs)
 
 def newOval(**kwargs):
-    """Draw the oval. Note that points can also be defined in the style.
-    When omitted, a circle is drawn."""
+    """Draw the oval. Note that points can also be defined in the style."""
     return Oval(**kwargs)
+
+def newCircle(**kwargs):
+    """Draw the circle. Note that points can also be defined in the style."""
+    return Circle(**kwargs)
 
 def newLine(**kwargs):
     return Line(**kwargs)
