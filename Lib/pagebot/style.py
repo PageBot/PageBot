@@ -21,7 +21,7 @@
 import copy
 from pagebot.constants import *
 from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U, degrees
-from pagebot.toolbox.color import noColor, blackColor, redColor
+from pagebot.toolbox.color import color, noColor, blackColor, redColor
 
 def newStyle(**kwargs):
     return dict(**kwargs)
