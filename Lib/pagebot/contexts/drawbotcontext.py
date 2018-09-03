@@ -18,7 +18,7 @@ import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
-from pagebot.toolbox.units import pt, upt, point2D # Render units to points
+from pagebot.toolbox.units import pt, upt, point2D, Angle # Render units to points
 from pagebot.constants import *
 #from sys import platform
 
@@ -739,9 +739,20 @@ class DrawBotContext(BaseContext):
 
     setStrokeWidth = strokeWidth
 
-    def rotate(self, angle):
-        """Rotate the canvas by angle."""
-        self.b.rotate(angle)
+    def rotate(self, angle, center=None):
+        """Rotate the canvas by angle. If angle is not a units.Angle instance, then convert.
+
+        >>> context = DrawBotContext()
+        >>> context.rotate(40)
+        """
+        if center is None:
+            center = (0, 0)
+        else:
+            center = point2D(upt(center))
+        if isinstance(angle, Angle):
+            angle = angle.degrees
+        # Otherwise assume the value to be a degrees number.
+        self.b.rotate(angle, center=center)
 
     #   I M A G E
 

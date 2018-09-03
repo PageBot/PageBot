@@ -89,6 +89,7 @@ class FlatContext(BaseContext):
         self._frameDuration = 0
         self._ox = pt(0) # Origin set by self.translate()
         self._oy = pt(0)
+        self._rotationCenter = (0, 0)
         self._rotate = 0
         self._hyphenation = True
         self._language = DEFAULT_LANGUAGE
@@ -271,6 +272,7 @@ class FlatContext(BaseContext):
             ox=self._ox,
             oy=self._oy,
             rotate=self._rotate,
+            rotationCenter=self._rotationCenter,
         )
         self._gState.append(gState)
 
@@ -286,6 +288,7 @@ class FlatContext(BaseContext):
         self._ox = gState['ox']
         self._oy = gState['oy']
         self._rotate = gState['rotate']
+        self._rotationCenter = gState['rotationCenter']
 
     restore = restoreGraphicState
 
@@ -727,8 +730,9 @@ class FlatContext(BaseContext):
         self._ox += dxpt
         self._oy += dypt
 
-    def rotate(self, angle):
+    def rotate(self, angle, center=None):
         """Rotate by angle."""
+        self._rotationCenter = center
         self._rotate = angle
 
     #   E X P O R T

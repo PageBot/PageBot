@@ -19,6 +19,7 @@ from pagebot.style import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
+from pagebot.constants import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 
 class Oval(Element):
 
@@ -27,35 +28,11 @@ class Oval(Element):
     def build(self, view, origin=ORIGIN, drawElements=True):
         """Draw the oval in the current context canvas.
 
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.document import Document
-        >>> c = DrawBotContext()
-        >>> w, h = pt(300, 400)
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[1]
-        >>> e = Oval(parent=page, x=0, y=20, w=page.w, h=3)
-        >>> e.build(doc.getView(), (0, 0))
+        >>> e = Oval(x=0, y=20, w=500, h=3)
         >>> e.xy
         (0pt, 20pt)
         >>> e.size
-        (300pt, 3pt)
-        >>> view = doc.getView()
-        >>> e.build(view, (0, 0))
-
-        >>> from pagebot.contexts.flatcontext import FlatContext
-        >>> from pagebot.document import Document
-        >>> c = FlatContext()
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[1]
-        >>> e = Oval(parent=page, x=0, y=20, w=page.w, h=3)
-        >>> # Allow the context to create a new document and page canvas. Normally view does it.
-        >>> c.newPage(w, h)
-        >>> e.build(doc.getView(), (0, 0))
-        >>> e.xy
-        (0pt, 20pt)
-        >>> e.size
-        (300pt, 3pt)
+        (500pt, 3pt)
         """
         context = self.context # Get current context and builder.
         p = pointOffset(self.origin, origin)
@@ -84,6 +61,21 @@ class Oval(Element):
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
+
+class Circle(Oval):
+    def __init__(self, r=None, x=None, y=None, w=None, h=None, **kwargs):
+        """Draw the oval in the current context canvas.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> e = Circle(r=pt(30))
+        >>> e.xy, e.size
+        ((-15pt, -15pt), (30pt, 30pt))
+        """
+        if r is not None:
+            w = h = 2*r
+        x = (x or ORIGIN[0]) - (w or DEFAULT_WIDTH)/2
+        y = (y or ORIGIN[1]) - (h or DEFAULT_HEIGHT)/2
+        Oval.__init__(self, x=x, y=y, w=w, h=h, **kwargs)
 
 if __name__ == '__main__':
     import doctest

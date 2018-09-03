@@ -27,7 +27,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE)
 
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit
+from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
@@ -1638,9 +1638,12 @@ class Element:
         >>> e.angle = degrees(130) - radians(0.5)
         >>> e.angle
         40deg
+        >>> e.angle = 30 # Degrees is default.
         """
-        return self.style.get('angle', 0)
+        return self.style.get('angle', degrees(0))
     def _set_angle(self, angle):
+        if isinstance(angle, (int, float)):
+            angle = degrees(angle)
         self.style['angle'] = angle
     angle = property(_get_angle, _set_angle)
 
@@ -1660,7 +1663,7 @@ class Element:
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('rx'), base=base)
+        return units(self.style.get('rx', 0), base=base)
     def _set_rx(self, rx):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['rx'] = units(rx)
@@ -1681,8 +1684,8 @@ class Element:
         100mm
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('ry'), base=base)
+        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('ry', 0), base=base)
     def _set_ry(self, ry):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['ry'] = units(ry)
@@ -1703,8 +1706,8 @@ class Element:
         100mm
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('rz'), base=base)
+        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('rz', 0), base=base)
     def _set_rz(self, rz):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['rz'] = units(rz)
@@ -3734,14 +3737,15 @@ class Element:
 
     def _applyRotation(self, view, p):
         """Apply the rotation for angle, where (mx, my) is the rotation center."""
-        self.context.saveGraphicState()
-        rx, ry, angle = self.rx, self.ry, self.angle
-        px, py, _ = point3D(p)
+        if self.angle:
+            px, py, _ = point3D(p)
+            self.context.rotate(self.angle, center=(px+self.rx, py+self.ry))
 
-    def _restoreRotation(self, view):
+    def _restoreRotation(self, view, p):
         """Reset graphics state from rotation mode."""
-        if self.css('rotationX') and self.css('rotationY') and self.css('rotationAngle'):
-            self.context.restoreGraphicState()
+        if self.angle:
+            px, py, _ = point3D(p)
+            self.context.rotate(-self.angle, center=(px+self.rx, py+self.ry))
 
     def _applyScale(self, view, p):
         """Internal method to apply the scale, if both *self.scaleX* and
@@ -3987,8 +3991,9 @@ class Element:
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
-        p = self._applyRotation(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self._applyRotation(view, p)
 
         self.buildFrame(view, p) # Draw optional frame or borders.
 
@@ -4007,7 +4012,7 @@ class Element:
 
         view.drawPageMetaInfo(self, p, background=False)
 
-        self._restoreRotation(view)
+        self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
@@ -5053,6 +5058,10 @@ class Element:
 
     #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
 
+    #   Note that the viewing property values are NOT inherited by self.css(...) following
+    #   the element tree upwards. Instead they are local parameters for each element, page
+    #   or view.
+
     def _get_show(self):
         """Set flag for drawing or interpretation with conditional.
 
@@ -5072,7 +5081,7 @@ class Element:
         >>> e1.show
         False
         """
-        return self.css('show', True)
+        return self.css('show', True) # Inherited
     def _set_show(self, showFlag):
         self.style['show'] = showFlag # Hiding rest of css for this value.
     show = property(_get_show, _set_show)
@@ -5080,7 +5089,7 @@ class Element:
     def _get_showSpread(self):
         """Boolean value. If True, show even pages on left of fold, odd on the right.
         Gap distance between the spread pages is defined by the page margins."""
-        return self.css('showSpread', False)
+        return self.style.get('showSpread', False) # Not inherited
     def _set_showSpread(self, spread):
         self.style['showSpread'] = bool(spread)
     showSpread = property(_get_showSpread, _set_showSpread)
@@ -5090,7 +5099,7 @@ class Element:
         """Unit value. # Minimum padding needed to show meta info. Otherwise truncated 
         to 0 and not showing meta info."""
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
-        return units(self.css('viewMinInfoPadding', 0), base=base)
+        return units(self.style.get('viewMinInfoPadding', 0), base=base) # Not inherited
     def _set_viewMinInfoPadding(self, viewMinInfoPadding):
         self.style['viewMinInfoPadding'] = units(viewMinInfoPadding)
     viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)
@@ -5098,7 +5107,7 @@ class Element:
     def _get_showCropMarks(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks 
         around the elemment."""
-        return self.css('showCropMarks', False)
+        return self.style.get('showCropMarks', False) # Not inherited
     def _set_showCropMarks(self, showCropMarks):
         self.style['showCropMarks'] = bool(showCropMarks)
     showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
@@ -5106,7 +5115,7 @@ class Element:
     def _get_showRegistrationMarks(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         registration  marks around the elemment."""
-        return self.css('showRegistrationMarks', False)
+        return self.style.get('showRegistrationMarks', False) # Not inherited
     def _set_showRegistrationMarks(self, showRegistrationMarks):
         self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
@@ -5114,14 +5123,14 @@ class Element:
     def _get_showOrigin(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         origin cross hair marker of the page or other elements."""
-        return self.css('showOrigin', False)
+        return self.style.get('showOrigin', False) # Not inherited
     def _set_showOrigin(self, showOrigin):
         self.style['showOrigin'] = bool(showOrigin)
     showOrigin = property(_get_showOrigin, _set_showOrigin)
 
     def _get_showPadding(self):
         """Boolean value. If True show padding of the page or other elements."""
-        return self.css('showPadding', False)
+        return self.style.get('showPadding', False) # Not inherited
     def _set_showPadding(self, showPadding):
         self.style['showPadding'] = bool(showPadding)
     showPadding = property(_get_showPadding, _set_showPadding)
@@ -5129,7 +5138,7 @@ class Element:
     def _get_showMargin(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         margin of the page or other elements."""
-        return self.css('showMargin', False)
+        return self.style.get('showMargin', False) # Not inherited
     def _set_showMargin(self, showMargin):
         self.style['showMargin'] = bool(showMargin)
     showMargin = property(_get_showMargin, _set_showMargin)
@@ -5137,7 +5146,7 @@ class Element:
     def _get_showFrame(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         frame of the page or other elements as self.size."""
-        return self.css('showFrame', False)
+        return self.style.get('showFrame', False) # Not inherited
     def _set_showFrame(self, showFrame):
         self.style['showFrame'] = bool(showFrame)
     showFrame = property(_get_showFrame, _set_showFrame)
@@ -5145,7 +5154,7 @@ class Element:
     def _get_showNameInfo(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the name of the page or other elements."""
-        return self.css('showNameInfo', False)
+        return self.style.get('showNameInfo', False) # Not inherited
     def _set_showNameInfo(self, showNameInfo):
         self.style['showNameInfo'] = bool(showNameInfo)
     showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
@@ -5153,7 +5162,7 @@ class Element:
     def _get_showElementInfo(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the meta info of the page or other elements."""
-        return self.css('showElementInfo', False)
+        return self.style.get('showElementInfo', False) # Not inherited
     def _set_showElementInfo(self, showElementInfo):
         self.style['showElementInfo'] = bool(showElementInfo)
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
@@ -5161,7 +5170,7 @@ class Element:
     def _get_showDimensions(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the dimensions of the page or other elements."""
-        return self.css('showDimensions', False)
+        return self.style.get('showDimensions', False) # Not inherited
     def _set_showDimensions(self, showDimensions):
         self.style['showDimensions'] = bool(showDimensions)
     showDimensions = property(_get_showDimensions, _set_showDimensions)
@@ -5169,7 +5178,7 @@ class Element:
     def _get_showMissingElement(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         the MissingElement of the page or other elements."""
-        return self.css('showMissingElement', False)
+        return self.style.get('showMissingElement', False) # Not inherited
     def _set_showMissingElement(self, showMissingElement):
         self.style['showMissingElement'] = bool(showMissingElement)
     showMissingElement = property(_get_showMissingElement, _set_showMissingElement)
@@ -5178,7 +5187,7 @@ class Element:
 
     def _get_showGrid(self):
         """Boolean value. If True show the type grid on the page or other elements."""
-        return set(self.css('showGrid') or [])
+        return set(self.style.get('showGrid') or []) # Not inherited
     def _set_showGrid(self, showGrid):
         if not showGrid:
             showGrid = []
@@ -5194,7 +5203,7 @@ class Element:
 
     def _get_showBaselines(self):
         """Boolean value. If True show baselines on the page or other elements."""
-        return set(self.css('showBaselines') or [])
+        return set(self.style.get('showBaselines') or []) # Not inherited
     def _set_showBaselines(self, showBaselines):
         if not showBaselines:
             showBaselines = []
@@ -5208,7 +5217,7 @@ class Element:
 
     def _get_showTextLeading(self):
         """Boolean value. If True show the vertical distance between text lines."""
-        return self.css('showTextLeading', False)
+        return self.style.get('showTextLeading', False) # Not inherited
     def _set_showTextLeading(self, showTextLeading):
         self.style['showTextLeading'] = bool(showTextLeading)
     showTextLeading = property(_get_showTextLeading, _set_showTextLeading)
@@ -5217,7 +5226,7 @@ class Element:
 
     def _get_showFlowConnections(self):
         """Boolean value. If True show connection between elements the overflow text lines."""
-        return self.css('showFlowConnections', False)
+        return self.style.get('showFlowConnections', False) # Not inherited
     def _set_showFlowConnections(self, showFlowConnections):
         self.style['showFlowConnections'] = bool(showFlowConnections)
     showFlowConnections = property(_get_showFlowConnections, _set_showFlowConnections)
@@ -5225,7 +5234,7 @@ class Element:
     def _get_showTextOverflowMarker(self):
         """Boolean value. If True a [+] marker is shown where text boxes have overflow,
         while not connected to another element."""
-        return self.css('showTextOverflowMarker', False)
+        return self.style.get('showTextOverflowMarker', False) # Not inherited
     def _set_showTextOverflowMarker(self, showTextOverflowMarker):
         self.style['showTextOverflowMarker'] = bool(showTextOverflowMarker)
     showTextOverflowMarker = property(_get_showTextOverflowMarker, _set_showTextOverflowMarker)
@@ -5234,7 +5243,7 @@ class Element:
 
     def _get_showImageReference(self):
         """Boolean value. If True, the name/reference of an image element is show.."""
-        return self.css('showImageReference', False)
+        return self.style.get('showImageReference', False) # Not inherited
     def _set_showImageReference(self, showImageReference):
         self.style['showImageReference'] = bool(showImageReference)
     showImageReference = property(_get_showImageReference, _set_showImageReference)
@@ -5243,7 +5252,7 @@ class Element:
 
     def _get_showImageReference(self):
         """Boolean value. If True, the name/reference of an image element is show."""
-        return self.css('showImageReference', False)
+        return self.style.get('showImageReference', False) # Not inherited
     def _set_showImageReference(self, showImageReference):
         self.style['showImageReference'] = bool(showImageReference)
     showImageReference = property(_get_showImageReference, _set_showImageReference)
@@ -5253,7 +5262,7 @@ class Element:
     def _get_cssVerbose(self):
         """Boolean value. If True, adds information comments with original values to 
         CSS export."""
-        return self.css('cssVerbose', False)
+        return self.css('cssVerbose', False) # Inherited
     def _set_cssVerbosee(self, cssVerbose):
         self.style['cssVerbose'] = bool(cssVerbose)
     cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)

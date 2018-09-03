@@ -379,6 +379,8 @@ class TextBox(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
+        self._applyRotation(view, p)
+
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
@@ -431,6 +433,7 @@ class TextBox(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
          
+        self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -455,7 +458,7 @@ class TextBox(Element):
             y = self.h - textLine.y
 
             # Line drawing depends on used flag and if we are in background/foreground mode.
-            if (background and BASE_LINE_BG in show) or (not background and BASE_LINE):
+            if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                 c.line((px, py+y), (px + self.w, py+y))
             
             # Only text drawing in foreground mode. Text is exclusive, because of limited
