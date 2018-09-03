@@ -358,7 +358,8 @@ class TextBox(Element):
                         page = page.parent.pageNumber(page) + self.nextPageName
                     else:
                         page = self.doc.getPage(self.nextPageName)
-                    nextElement =  page.getElementByName(self.nextElementName)
+                    if page is not None:
+                        nextElement =  page.getElementByName(self.nextElementName)
                 if nextElement is not None and not nextElement.bs:
                     # Finally found one empty box on this page or next page?
                     nextElement.bs = overflow
@@ -466,12 +467,12 @@ class TextBox(Element):
             if not background: 
                 if BASE_Y_LEFT in show:
                     bs = self.newString('%d' % round(self.h - y), style=yStyle)
-                    _, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                    tw, th = bs.size
+                    c.text(bs, (px - tw - 3, py + y - th/5))
                 elif BASE_INDEX_LEFT in show:
                     bs = self.newString(str(textLine.lineIndex), style=indexStyle)
-                    _, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                    tw, th = bs.size
+                    c.text(bs, (px - tw - 3, py + y - th/5))
 
                 if BASE_Y_RIGHT in show:
                     bs = self.newString('%d' % round(self.h - y), style=yStyle)
