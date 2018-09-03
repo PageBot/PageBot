@@ -1625,6 +1625,91 @@ class Element:
         return self._applyOrigin(self.xyz)
     origin = property(_get_origin)
 
+    def _get_angle(self):
+        """Answer the rotation angle.
+
+        >>> from pagebot.toolbox.units import degrees, radians
+        >>> e = Element(angle=degrees(40))
+        >>> e.angle
+        40deg
+        >>> e.angle = radians(0.4) + 0.25
+        >>> e.angle
+        0.65rad
+        >>> e.angle = degrees(130) - radians(0.5)
+        >>> e.angle
+        40deg
+        """
+        return self.style.get('angle', 0)
+    def _set_angle(self, angle):
+        self.style['angle'] = angle
+    angle = property(_get_angle, _set_angle)
+
+    def _get_rx(self):
+        """Answer the relative rotation center for x.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(rx=120)
+        >>> e.rx
+        120pt
+        >>> e.rx += 20
+        >>> e.rx
+        140pt
+        >>> e.rx = mm(100)
+        >>> e.rx
+        100mm
+        """
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('rx'), base=base)
+    def _set_rx(self, rx):
+        """Convert to units, if rx is not already a Unit instance."""
+        self.style['rx'] = units(rx)
+    rx = property(_get_rx, _set_rx)
+
+    def _get_ry(self):
+        """Answer the relative rotation center for y.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(ry=120)
+        >>> e.ry
+        120pt
+        >>> e.ry += 20
+        >>> e.ry
+        140pt
+        >>> e.ry = mm(100)
+        >>> e.ry
+        100mm
+        """
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('ry'), base=base)
+    def _set_ry(self, ry):
+        """Convert to units, if rx is not already a Unit instance."""
+        self.style['ry'] = units(ry)
+    ry = property(_get_ry, _set_ry)
+
+    def _get_rz(self):
+        """Answer the relative rotation center for z.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(rz=120)
+        >>> e.rz
+        120pt
+        >>> e.rz += 20
+        >>> e.rz
+        140pt
+        >>> e.rz = mm(100)
+        >>> e.rz
+        100mm
+        """
+        # Retrieve as Unit instance and adjust attributes to current settings.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('rz'), base=base)
+    def _set_rz(self, rz):
+        """Convert to units, if rx is not already a Unit instance."""
+        self.style['rz'] = units(rz)
+    rz = property(_get_rz, _set_rz)
+
     #   T I M E
 
     def _get_t(self):
@@ -3647,16 +3732,11 @@ class Element:
             py = self.parent.h - py
         return px, py, pz
 
-    def _applyRotation(self, view, mx=None, my=None, angle=None):
+    def _applyRotation(self, view, p):
         """Apply the rotation for angle, where (mx, my) is the rotation center."""
-        if mx is None:
-            mx = self.x
-        if my is None:
-            my = self.y
-        if angle is None:
-
         self.context.saveGraphicState()
-        # TODO: Working on this.
+        rx, ry, angle = self.rx, self.ry, self.angle
+        px, py, _ = point3D(p)
 
     def _restoreRotation(self, view):
         """Reset graphics state from rotation mode."""
@@ -3907,6 +3987,7 @@ class Element:
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
+        p = self._applyRotation(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.buildFrame(view, p) # Draw optional frame or borders.
@@ -3926,6 +4007,7 @@ class Element:
 
         view.drawPageMetaInfo(self, p, background=False)
 
+        self._restoreRotation(view)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
