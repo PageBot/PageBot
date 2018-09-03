@@ -335,8 +335,8 @@ class TextBox(Element):
         return self.nextElementName is None and self.getOverflow()
 
     def overflow2Next(self):
-        """Try to fix if there is overflow. If there is overflow outside the page, then 
-        find the page.next with it's target element to continue, until all text fits 
+        """Try to fix if there is overflow. If there is overflow outside the page, then
+        find the page.next with it's target element to continue, until all text fits
         or the element has not nextElementName defined.
         Answer the page and result, as the page may have been altered."""
         result = True
@@ -409,7 +409,7 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function, 
+        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
         context.language(self.css('language', DEFAULT_LANGUAGE))
         context.hyphenation(bool(self.css('hyphenation')))
@@ -432,8 +432,12 @@ class TextBox(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
+<<<<<<< HEAD
          
         self._restoreRotation(view, p)
+=======
+
+>>>>>>> origin/master
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
@@ -454,12 +458,13 @@ class TextBox(Element):
 
         c.stroke(baselineColor, baselineWidth)
         prevY = 0
-        for textLine in self.textLines: 
+        for textLine in self.textLines:
             y = self.h - textLine.y
 
             # Line drawing depends on used flag and if we are in background/foreground mode.
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                 c.line((px, py+y), (px + self.w, py+y))
+<<<<<<< HEAD
             
             # Only text drawing in foreground mode. Text is exclusive, because of limited
             # available space, only one type of label can be shown at either side.
@@ -487,6 +492,32 @@ class TextBox(Element):
                     bs = self.newString('%d' % leading, style=leadingStyle)
                     _, th = bs.size
                     c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+=======
+
+            if BASE_Y_LEFT in show:
+                bs = self.newString('%d' % round(y), style=yStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+            elif BASE_INDEX_LEFT in show:
+                bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+
+            if BASE_Y_RIGHT in show:
+                bs = self.newString('%d' % round(y), style=yStyle)
+                tw, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+            elif BASE_INDEX_RIGHT in show:
+                bs = self.newString(str(textLine.lineIndex), style=yStyle)
+                tw, th = bs.size
+                c.text(bs, (px + self.w + 3, py + y - th/5))
+
+            if 0: #view.showTextLeading:
+                leading = round(abs(y - prevY))
+                bs = self.newString('%d' % leading, style=leadingStyle)
+                _, th = bs.size
+                c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+>>>>>>> origin/master
             prevY = y
 
     def build_html(self, view, origin=None, showElements=True):
@@ -525,9 +556,9 @@ class TextBox(Element):
     #   C O N D I T I O N
 
     # Text conditions
-    
+
     def baselineOffset(self, index=0):
-        u"""Answer the difference of the indexed line to the parent (page) setting for 
+        u"""Answer the difference of the indexed line to the parent (page) setting for
         self.parent.baselineGrid and self.parent.baselineGridStart."""
         try:
             line = self.textLines[index or 0]
@@ -557,11 +588,11 @@ class TextBox(Element):
             return abs(self.bottom - line.y) <= tolerance
         except IndexError:
             return False
-            
+
     # Text conditional movers
-    
+
     def baseline2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
 
         >>> from pagebot.document import Document
@@ -591,9 +622,9 @@ class TextBox(Element):
             else:
                 self.y += dy2
 
-    
+
     def baselineUp2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction, 
+        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
         if self.textLines:
@@ -602,7 +633,7 @@ class TextBox(Element):
             self.y -= line.y - self.getRounded2Grid(line.y)
 
     def baselineDown2Grid(self, index=None, style=None):
-        """Move the text box up (increasing line.y value, rounding down) in vertical direction, 
+        """Move the text box up (increasing line.y value, rounding down) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
         if self.textLines:
