@@ -20,22 +20,20 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import *
 
 def showAll():
-	print('These are some common functions used to retrieve font info:')
 	fontPaths = getFontPaths()
-	print(len(fontPaths))
+	print('Number of fonts found: %d' % len(fontPaths))
+	print(list(fontPaths.values())[0:10])
 
 	import glob
-
 	tfp = getTestFontsPath()
 	print(glob.glob('%s/*' % tfp))
 
 	roboto = tfp + '/google/roboto'
-	print(glob.glob('%s/*' % roboto))
-
+	#print(glob.glob('%s/*' % roboto))
 
 	pbFonts = getPageBotFontPaths()
 	print('Number of fonts shipped with PageBot: %d' % len(pbFonts))
-	print(sorted(pbFonts.keys()))
+	#print(sorted(pbFonts.keys()))
 
 	fontName = list(fontPaths.keys())[0]
 	print(fontName)
