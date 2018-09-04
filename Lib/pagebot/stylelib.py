@@ -16,6 +16,10 @@
 #     Default CSS reset.
 #     Library of predefined named styles.
 #
+#     D E P R E C A T E D
+#
+#     CSS is now implemented as SCSS files, using PageBot-generated variable.scss.
+#
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import whiteColor, blackColor, color
 

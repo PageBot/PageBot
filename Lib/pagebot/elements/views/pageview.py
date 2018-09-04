@@ -195,6 +195,7 @@ class PageView(BaseView):
             self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
             self.drawRegistrationMarks(page, origin)
             self.drawCropMarks(page, origin)
+            self.drawColorBars(page, origin)
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
@@ -784,6 +785,7 @@ class PageView(BaseView):
     def drawCropMarks(self, e, origin):
         """If the show flag is set, then draw the cropmarks or page frame.
 
+        >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts.platform import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
@@ -792,6 +794,7 @@ class PageView(BaseView):
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
         >>> view.showCropMarks = True
+        >>> view.folds = [(mm(40), mm(60)),]
         >>> view.drawCropMarks(e, pt(0, 0))
         """
         if (self.showCropMarks and e.isPage) or e.showCropMarks:
@@ -818,7 +821,7 @@ class PageView(BaseView):
             # Top right
             context.line((x + w + cmDistance, y + h), (x + w + cmSize, y + h))
             context.line((x + w, y + h + cmDistance), (x + w, y + h + cmSize))
-            # Any fold lines to draw?
+            # Any fold lines to draw on the page?
             if folds is not None:
                 for fx, fy in folds:
                     if fx is not None:
@@ -827,6 +830,13 @@ class PageView(BaseView):
                     if fy is not None:
                         context.line((x - cmDistance, y + fy), (x - cmSize, y + fy))
                         context.line((x + w + cmDistance, y + fy), (x + w + cmSize, y + fy))
+
+    def drawColorBars(self, e, origin):
+        """Draw the color bars for offset printing calibration.
+        """
+        # TODO Get this to work for content of the parameter set.
+        if (self.showColorBars and e.isPage) or e.showColorBars:
+            pass
 
     #   D R A W B O T  S U P P O R T
 
