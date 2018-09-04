@@ -768,7 +768,7 @@ class Color:
         g, b) tuple. This format is CSS compatible.
 
         >>> color(0.2, 0.3, 0.4).hex
-        '334D66'
+        '334C66'
         >>> color(1).hex
         'FFFFFF'
         >>> color(c=1, m=0, y=0.5, k=0.1).hex # Conversion of cmyk via rgb to hex code.
@@ -785,7 +785,7 @@ class Color:
         g, b) tuple. This format is CSS compatible.
 
         >>> color(0.2, 0.3, 0.4).css # Conversion of plain RGB color to CSS hex code
-        '#334D66'
+        '#334C66'
         >>> color('white').css # Conversion of CSS name to CSS hex code
         '#FFFFFF'
         >>> color(c=1, m=0, y=0.5, k=0.1).css # Convertsion of CMYK to CSS hex code.

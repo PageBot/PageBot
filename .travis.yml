@@ -53,7 +53,12 @@ script:
 - python3 Examples/000_Basics/Basics.py
 - python3 Examples/000_Basics/UseContext.py
 - python3 Examples/000_Basics/Fonts.py
+- python3 Examples/000_Basics/UseDocuments.py
+- python3 Examples/000_Basics/UseUnits.py
 - python3 Examples/010_Text/AdvancedHyphenation.py
+- python3 Examples/010_Text/TestHangulKanjiFormattedStrings.py
+- python3 Examples/010_Text/TextBaselines.py
+- python3 Examples/010_Text/TextLineTextRun.py
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py
 - python3 Lib/pagebot/conditions/align.py

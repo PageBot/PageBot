@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     BinaryPNGs.py
+#     BinaryPNG.py
 #
 #     Shows how to read and write a PNG image as a binary file.
 #
@@ -41,6 +41,7 @@ with open(imagePath, "rb") as binary_file:
     print(len(data))
     x = 100
     y = context.b.height() - 100
+    
     for i in range(101):
         context.text(str(data[i]), (x, y))
         
