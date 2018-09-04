@@ -19,7 +19,7 @@ from pagebot.contexts.platform import getContext
 
 from pagebot import getResourcesPath
 from pagebot.document import Document
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.units import em, p, pt, inch, degrees
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
@@ -50,8 +50,9 @@ page = doc[1]
 # Make image box as child element of the page and set its layout conditions.
 im = Image(imagePath, parent=page, conditions=[Fit()], 
     showPadding=True, padding=pt(100), stroke=(1, 0, 0))
-a = degrees(152)
+a = degrees(684)
 im.angle =a 
+im.fill = (random(), 0, 1)
 imd = im.imageData
 imd.x = 366
 imd.y = 150
@@ -62,7 +63,7 @@ imd.ry = 60
 imd.angle = -a
 
 bs = context.newString('Rotating images', style=dict(fontSize=32))
-tb = newTextBox(bs, w=400, parent=im, conditions=(Center2Center(), Middle2Middle()), angle=a)
+tb = newTextBox(bs, w=400, parent=im, conditions=(Center2Center(), Middle2Middle()), angle=-a, fill=noColor)
 # Solve the page/element conditions
 doc.solve()
 
