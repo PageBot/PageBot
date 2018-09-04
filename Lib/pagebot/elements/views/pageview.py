@@ -20,6 +20,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
+from pagebot import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
@@ -27,7 +28,8 @@ from pagebot.style import RIGHT
 from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
-    BASE_INSIDE)
+    BASE_INSIDE,
+    ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
@@ -193,9 +195,9 @@ class PageView(BaseView):
             self.drawFrame(page, origin)
             self.drawPadding(page, origin)
             self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
+            self.drawColorBars(page, origin) # Color bars under registration marks?
             self.drawRegistrationMarks(page, origin)
             self.drawCropMarks(page, origin)
-            self.drawColorBars(page, origin)
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
@@ -835,8 +837,19 @@ class PageView(BaseView):
         """Draw the color bars for offset printing calibration.
         """
         # TODO Get this to work for content of the parameter set.
-        if (self.showColorBars and e.isPage) or e.showColorBars:
-            pass
+        showColorBars = e.showColorBars or (e.isPage and self.showColorBars)
+        if not showColorBars:
+            return # Nothing to do.
+        context = self.context
+
+        ox, oy = point2D(origin)
+
+        if ECI_GrayConL in showColorBars:
+            path = getResourcesPath() + '/' + ECI_GrayConL
+            if COLORBAR_LEFT in showColorBars:
+                context.image(path, p=(ox-self.pl+pt(3), oy), h=e.h)
+            if COLORBAR_RIGHT in showColorBars: # TODO: Does not generate the right position?
+                context.image(path, p=(ox+e.w+self.pr*2/3, oy), h=e.h)
 
     #   D R A W B O T  S U P P O R T
 

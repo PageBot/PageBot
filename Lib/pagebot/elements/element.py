@@ -5142,10 +5142,7 @@ class Element:
         if not showColorBars:
             showColorBars = []
         elif not isinstance(showColorBars, (set, list, tuple)):
-            if showColorBars in GRID_OPTIONS: # In case of single valid option, make into set
-                showColorBars = set([showGrid])
-            else:
-                showColorBars = []
+            showColorBars = [showColorBars]
         self.style['showColorBars'] = set(showColorBars)
     showColorBars = property(_get_showColorBars, _set_showColorBars)
 

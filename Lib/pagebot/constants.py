@@ -21,6 +21,26 @@
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 
+# General indicators
+
+FIT = 'fit' # Special fontsize that makes text fitting on element width.
+
+ONLINE = 'online' # Positions of borders
+INLINE = 'inline'
+OUTLINE = 'outline'
+
+LEFT = 'left'
+RIGHT = 'right'
+CENTER = 'center'
+MIDDLE = 'middle'
+JUSTIFIED = 'justified'
+TOP = 'top'
+BOTTOM = 'bottom'
+FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
+BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
+DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
+
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # All measure are defined in Unit instances, to make conversion easier.
 #
@@ -221,8 +241,10 @@ QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 # http://www.sdg-net.co.jp/products/x-rite/products_detail/pdf/Creating_the_Perfect_Colorbar.pdf
 # http://www.eci.org/en/downloads
 # Markers for view color bar building.
-COLORBAR_H = 'ColorBarHorizontal' # Indicate that selection of color bars should run horizontal
-COLORBAR_V = 'ColorBarVertical' # Indicate that selection of color bars should run vertical
+COLORBAR_TOP = TOP # Indicate that selection of color bars should run on top
+COLORBAR_BOTTOM = BOTTOM # Indicate that selection of color bars should run on bottom
+COLORBAR_LEFT = LEFT # Indicate that selection of color bars should run on left
+COLORBAR_RIGHT = RIGHT # Indicate that selection of color bars should run on right
 # Predefined color bars
 COLORBAR_SOLID_INK = 'SolidInk'
 COLORBAR_TWOCOLOR_OVERPRINT = 'TwoColorOverprint'
@@ -511,24 +533,6 @@ zu-ZA   Zulu (South Africa)
 URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
-
-FIT = 'fit' # Special fontsize that makes text fitting on element width.
-
-ONLINE = 'online' # Positions of borders
-INLINE = 'inline'
-OUTLINE = 'outline'
-
-LEFT = 'left'
-RIGHT = 'right'
-CENTER = 'center'
-MIDDLE = 'middle'
-JUSTIFIED = 'justified'
-TOP = 'top'
-BOTTOM = 'bottom'
-FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
-BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
-DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
-DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
 
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE}
