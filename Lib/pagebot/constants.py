@@ -258,7 +258,7 @@ ECI_GrayConL = 'color/ECI_GrayConL_FOGRA52_v3.pdf'
 ECI_GrayConM = 'color/ECI_GrayConM_FOGRA52_v3.pdf'
 ECI_GrayConM_i1 = 'color/ECI_GrayConM_i1_FOGRA52_v3.pdf'
 ECI_GrayConS = 'color/ECI_GrayConS_FOGRA52_v3.pdf'
-
+DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
