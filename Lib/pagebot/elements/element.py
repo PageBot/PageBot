@@ -3998,6 +3998,7 @@ class Element:
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame
         view.drawPageMetaInfo(self, p, background=True)
 
         if self.drawBefore is not None: # Call if defined
