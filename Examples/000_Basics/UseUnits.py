@@ -14,7 +14,6 @@
 
 from pagebot.toolbox.units import Unit, mm, px, pt, fr, em, perc, col, units
 
-# FIXME: visible example.
 def useUnits():
     """
     >>> mm(2), mm(2).rv # Showing the unit as instance and as rendered value
@@ -33,6 +32,14 @@ def useUnits():
     >>> u, u.rv
     (0.25col, 47mm)
     """
+    print(mm(2))
+    # Real value:
+    print(mm(2).rv)
+    print(px(5))
+    print(px(5).rv)
+    # TODO: etc...
+
+useUnits()
 
 if __name__ == '__main__':
     import doctest
