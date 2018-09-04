@@ -42,8 +42,8 @@ entity.frame(10, 10, 380, 80)
 im = p.image(kind='rgb')
 if not os.path.exists('_export'):
     os.mkdir('_export')
-#p.svg('_export/hello.svg')
-#im.png('_export/hello.png')
+p.svg('_export/hello.svg')
+im.png('_export/hello.png')
 d.pdf('_export/hello.pdf')
 #im.jpeg('_export/hello.jpg')
 
