@@ -35,6 +35,8 @@ CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
 G = 10
 
+# FIXME: use context instead of DrawBot functions.
+
 context = getContext()
 
 

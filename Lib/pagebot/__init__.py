@@ -14,12 +14,12 @@
 #
 #     pagebot/__init__.py
 #
-__doc__ = """PageBot module"""
-
-__version__ = '0.6-beta'
-
 import re
 
+VERSION = '0.6'
+STATUS = 'alpha'
+__doc__ = """PageBot module"""
+__version__ = '%s-%s' % (VERSION, STATUS)
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 
