@@ -1,5 +1,4 @@
-
-# Only runs under Flat
+ # Only runs under Flat
 from flat import rgb, font, shape, strike, document
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
@@ -11,12 +10,17 @@ WIDTH = 400
 HEIGHT = 200
 
 f = findFont('Roboto-Bold')
-#print(f)
+
+#print(f)j
 #print(f.path)
 c = rgb(255, 0, 0)
+
+# Flat font.
 ff = font.open(f.path)
 #print(ff.name)
 #print(ff)
+binary = bytes(ff.source.embed())
+#print(type(binary))
 
 figure = shape().stroke(c).width(2.5)
 headline = strike(ff).color(c).size(80, 96)
