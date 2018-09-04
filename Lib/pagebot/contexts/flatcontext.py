@@ -484,8 +484,12 @@ class FlatContext(BaseContext):
     def _getValidColor(self, c):
         u"""Answer the color tuple that is valid for self.fileType, otherwise Flat gives an error."""
         # TODO: Make better match for all file types, transparance and spot color
+
         if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
             return c.rgb
+        if self.fileType in (FILETYPE_PDF):
+            import flat
+            return flat.rgb(*c.rgb)
         return c.rgb
 
     def _getShape(self):
