@@ -2675,6 +2675,17 @@ class Element:
         self.d = max(0, d - self.mzf - self.mzb) # Should not become < 0, behind viewer?
     md = property(_get_md, _set_md)
 
+    def _get_folds(self):
+        """List if [(x, y), ...] (one of them can be None) that indicate the position of folding lines
+        on a page. In general this is a view parameters (applying to all pages), but it can 
+        be overwritten by individual pages or other elements.
+        The position of folds is ignored by self.w and self.h. It is mostly to show folding markers
+        by PageView. The fold property is stored instyle and not inherited."""
+        return self.style.get('folds', []) # Not inherited
+    def _set_folds(self, folds):
+        self.style['folds'] = folds
+    folds = property(_get_folds, _set_folds)
+
 
     # Margin properties
 
@@ -3998,6 +4009,7 @@ class Element:
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
         view.drawPageMetaInfo(self, p, background=True)
 
         if self.drawBefore is not None: # Call if defined
@@ -4010,6 +4022,8 @@ class Element:
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
+        # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
         view.drawPageMetaInfo(self, p, background=False)
 
         self._restoreRotation(view, p)
@@ -5120,6 +5134,18 @@ class Element:
         self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
+    def _get_showColorBars(self):
+        """Set value, containing the selection of color bars that should be shown. 
+        See pagebot.constants for the names of the options."""
+        return set(self.style.get('showColorBars') or []) # Not inherited
+    def _set_showColorBars(self, showColorBars):
+        if not showColorBars:
+            showColorBars = []
+        elif not isinstance(showColorBars, (set, list, tuple)):
+            showColorBars = [showColorBars]
+        self.style['showColorBars'] = set(showColorBars)
+    showColorBars = property(_get_showColorBars, _set_showColorBars)
+
     def _get_showOrigin(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         origin cross hair marker of the page or other elements."""
@@ -5186,7 +5212,8 @@ class Element:
     #   Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
 
     def _get_showGrid(self):
-        """Boolean value. If True show the type grid on the page or other elements."""
+        """Set value, containing the parts of grid that should be shown. See pagebot.constants
+        for the names of the options."""
         return set(self.style.get('showGrid') or []) # Not inherited
     def _set_showGrid(self, showGrid):
         if not showGrid:
@@ -5202,7 +5229,8 @@ class Element:
     #   Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT)
 
     def _get_showBaselines(self):
-        """Boolean value. If True show baselines on the page or other elements."""
+        """Set value, containing the parts of baseline that should be shown. See pagebot.constants
+        for the names of the options."""
         return set(self.style.get('showBaselines') or []) # Not inherited
     def _set_showBaselines(self, showBaselines):
         if not showBaselines:

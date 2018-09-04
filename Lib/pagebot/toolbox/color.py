@@ -992,6 +992,7 @@ blueColor = color(0, 0, 1)
 yellowColor = color(c=0, m=0, y=1, k=0)
 magentaColor = color(c=0, m=1, y=0, k=0)
 cyanColor = color(c=1, m=0, y=0, k=0)
+registrationColor = color(cmyk=1) # All on, for registration/cropmarks usage
 
 if __name__ == "__main__":
     import doctest
