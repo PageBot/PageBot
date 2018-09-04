@@ -216,6 +216,28 @@ QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4°
 QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
 QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 
+# Color bar parameter for view.showColorBars = set()
+# http://the-print-guide.blogspot.com/2010/07/color-bar.html
+# http://www.sdg-net.co.jp/products/x-rite/products_detail/pdf/Creating_the_Perfect_Colorbar.pdf
+# http://www.eci.org/en/downloads
+# Markers for view color bar building.
+COLORBAR_H = 'ColorBarHorizontal' # Indicate that selection of color bars should run horizontal
+COLORBAR_V = 'ColorBarVertical' # Indicate that selection of color bars should run vertical
+# Predefined color bars
+COLORBAR_SOLID_INK = 'SolidInk'
+COLORBAR_TWOCOLOR_OVERPRINT = 'TwoColorOverprint'
+COLORBAR_SLUR_DOUBLING = 'SlurDoubling'
+COLORBAR_GRAY_BALANCE = 'GrayBalance'
+COLORBAR_BROWN_BALANCE = 'BrownBalance'
+COLORBAR_DOT_GAIN = 'DotGain'
+COLORBAR_SPOT_COLOR = 'SpotColor'
+# Color bar files
+ECI_GrayConL = 'color/ECI_GrayConL_FOGRA52_v3.pdf'
+ECI_GrayConM = 'color/ECI_GrayConM_FOGRA52_v3.pdf'
+ECI_GrayConM_i1 = 'color/ECI_GrayConM_i1_FOGRA52_v3.pdf'
+ECI_GrayConS = 'color/ECI_GrayConS_FOGRA52_v3.pdf'
+
+
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
 # If document.originTop == True (or page.originTop == True), 
