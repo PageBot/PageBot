@@ -20,7 +20,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot.toolbox.color import color, noColor, blackColor
+from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
 from pagebot.style import RIGHT
@@ -746,7 +746,7 @@ class PageView(BaseView):
             dx = cmSize
             dy = cmSize/2
         context.fill(noColor)
-        context.stroke(color(c=1, m=1, y=1, k=1), w=cmStrokeWidth)
+        context.stroke(registrationColor, w=cmStrokeWidth) # Draw CMYK all on, color(cmyk=1)
         context.newPath()
         # Registration circle
         context.circle(x, y, cmSize/4)
@@ -805,7 +805,7 @@ class PageView(BaseView):
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
             context.fill(noColor)
-            context.stroke(color(cmyk=1), w=cmStrokeWidth)
+            context.stroke(registrationColor, w=cmStrokeWidth) # For CMYK, draw all colors color(cmyk=1))
             # Bottom left
             context.line((x - cmDistance, y), (x - cmSize, y))
             context.line((x, y - cmDistance), (x, y - cmSize))
