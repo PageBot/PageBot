@@ -4,6 +4,7 @@ from flat import rgb, font, shape, strike, document
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.color import blackColor
+from pagebot import getResourcesPath
 import os, os.path
 
 WIDTH = 400
@@ -47,4 +48,6 @@ context = getContext('Flat')
 context.newDocument(WIDTH, HEIGHT)
 context.newPage()
 context.rect(50, 50, 20, 20	)
+imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+context.imageSize(imagePath)
 #context.saveDocument('_export/test.svg')
