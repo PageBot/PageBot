@@ -834,7 +834,7 @@ class PageView(BaseView):
                         context.line((x + w + cmDistance, y + fy), (x + w + cmSize, y + fy))
 
     def drawColorBars(self, e, origin):
-        """Draw the color bars for offset printing calibration.
+        """Draw the color bars for offset printing color calibration.
         """
         # TODO Get this to work for content of the parameter set.
         showColorBars = e.showColorBars or (e.isPage and self.showColorBars)
@@ -844,6 +844,7 @@ class PageView(BaseView):
 
         ox, oy = point2D(origin)
 
+        # TODO: Add more types of color bars and switch from scaling PDF to drawing them by script
         if ECI_GrayConL in showColorBars:
             path = getResourcesPath() + '/' + ECI_GrayConL
             if COLORBAR_LEFT in showColorBars:

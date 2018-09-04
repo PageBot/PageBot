@@ -33,6 +33,8 @@ class ImageData(Element):
 
         self.path = path
         self._iw = self._ih = None # Size from image file initialized by property upon request.
+        self._w = w # Unless defined, the properties will copy from self._iw or parent.w
+        self._h = h
 
     def initializeImageSize(self):
         """Initialize self._iw and self._ih from the size of the image file if it exists.
@@ -41,7 +43,7 @@ class ImageData(Element):
         >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
         >>> path = getResourcesPath() + imageFilePath
         >>> e = ImageData(path)
-        >>> e.iw, e.ih
+        >>> e.iw, e.ih # Get real size of image in the file
         (398pt, 530pt)
         """
         if self.path is not None and os.path.exists(self.path):
@@ -51,7 +53,7 @@ class ImageData(Element):
 
     def _get_iw(self):
         u"""Answer the width of the image file. Initialize from the file if self._iw is None.
-        Answer pt(0) if the image file does not exist or the size could not be determines.
+        Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._iw is None:
             self.initializeImageSize()
@@ -60,7 +62,7 @@ class ImageData(Element):
 
     def _get_ih(self):
         u"""Answer the height of the image file. Initialize from the file if self._ih is None.
-        Answer pt(0) if the image file does not exist or the size could not be determines.
+        Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._ih is None:
             self.initializeImageSize()
