@@ -15,6 +15,8 @@ Here are some hints to check on installation and to install without using the *s
 Run `sudo python setup.py install` to install PageBot in the default Python of the OSX.
 There are some known problems here:
 
+* PageBot now runs entirely on Pyhton 3 and DrwaBotApp 3. Python 2.7 is no longer supported.
+
 * The default `Python` may not be the same one that DrawBotApp uses. On some OSX systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 
 * Always restart DrawBotApp, as opening new libraries only takes place on startup.
@@ -23,21 +25,23 @@ There are some known problems here:
 
 ### Finding the installed PageBot with the Finder
 
-Goto `/Library/Python/2.7/site-packages` in the Finder. If there a PageBot reference here, either as .pth file or a Python egg file?
+Goto `/Library/Python/3.6/site-packages` in the Finder. If there a PageBot reference here, either as .pth file or a Python egg file?
 
 * If not, then try to reinstall, there may have been (another) error during installation
-* If there is a .pth file, look into it (click-space on the icon) and verify that the path is pointing to where 
+* If there is a .pth file, look into it (click-space on the icon) and verify that the path is pointing to where the PageBot repository is located.
 
 ### Testing in the terminal
 
 Open a terminal
 
-	++ python
-	Python 2.7.10 (default, Feb  7 2017, 00:08:15) 
-	[GCC 4.2.1 Compatible Apple LLVM 8.0.0 	(clang-800.0.34)] on darwin
-	Type "help", "copyright", "credits" or "license" for more information.
-	>>> import pagebot
-	>>> 
+~~~Python3
+++ python3
+Python 3.6.4 (v3.6.4:d48ecebad5, Dec 18 2017, 21:07:28) 
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pagebot
+>>> 
+~~~
 
 If there is no error, PageBot is installed properly for this Python.
 
