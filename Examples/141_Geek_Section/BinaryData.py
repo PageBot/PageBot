@@ -20,6 +20,7 @@
 # Creates empty bytes.
 from pagebot.contexts.platform import getContext
 from pagebot import getResourcesPath
+import os, os.path
 
 context = getContext()
 
@@ -50,7 +51,8 @@ with open(imagePath, "rb") as binary_file:
     data = binary_file.read()
     #mutable_bytes = bytearray(data)
     #print(len(mutable_bytes))
-    # TODO: Make create _export if it does not exist.
+    if not os.path.exists('_export'):
+        os.mkdir('_export')
     newFile = open("_export/test.png", "wb")
     newFile.write(data)
 
