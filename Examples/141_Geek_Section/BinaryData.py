@@ -36,3 +36,6 @@ print(mutable_bytes)
 # Cast bytearray back to bytes
 immutable_bytes = bytes(mutable_bytes)
 print(immutable_bytes)
+
+s = b'bla'
+print(s.decode('utf8'))
