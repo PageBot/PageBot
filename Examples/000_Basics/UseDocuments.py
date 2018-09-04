@@ -14,7 +14,7 @@
 #     UseDocument.py
 #
 #     Shows how to start a document and export it to PNG and PDF in the simplest steps.
-#     
+#
 
 from random import random
 from pagebot.toolbox.color import color
@@ -34,37 +34,41 @@ from pagebot.document import Document
 from pagebot.elements import newRect
 from pagebot.conditions import *
 from pagebot.toolbox.color import Color
-    
+
 W, H = 500, 400
 
-# Creates the publication/document that holds the pages.
-doc = Document(w=W, h=H, originTop=False, autoPages=1)
-doc.view.padding = 0 # Don't show cropmarks in this example.
-doc.view.showPadding = True
+def makeDocument():
+    # Creates the publication/document that holds the pages.
+    doc = Document(w=W, h=H, originTop=False, autoPages=1)
+    doc.view.padding = 0 # Don't show cropmarks in this example.
+    doc.view.showPadding = True
 
-# Gets page by pageNumber, first in row (at this point there is only one in this row).
-page = doc[1]
-page.padding = 30
+    # Gets page by pageNumber, first in row (at this point there is only one in
+    # this row).
+    page = doc[1]
+    page.padding = 30
 
-conditions = [Right2Right(), Float2Top(), Float2Left()]
-# TODO: Solve this bug, does not mirror.
-#conditions = [Left2Left(), Float2Top(), Float2Right()]
+    conditions = [Right2Right(), Float2Top(), Float2Left()]
+    # TODO: Solve this bug, does not mirror.
+    #conditions = [Left2Left(), Float2Top(), Float2Right()]
 
-for n in range(32):
-    newRect(w=40, h=42, mr=4, mt=4, parent=page,
-            fill=color(random()*0.5 + 0.5, 0, 0.5),
-            conditions=conditions)
+    for n in range(32):
+        newRect(w=40, h=42, mr=4, mt=4, parent=page,
+                fill=color(random()*0.5 + 0.5, 0, 0.5),
+                conditions=conditions)
 
-# Recursively solve the conditions in all pages.
-# If there are failing conditions, then the status
-# is returned in the Score instance.
-score = doc.solve()
-if score.fails:
-    print(score.fails)
-    
-doc.export(EXPORT_PATH_SVG) 
-doc.export(EXPORT_PATH_JPG) 
-doc.export(EXPORT_PATH_PNG) 
-doc.export(EXPORT_PATH_PDF) 
+    # Recursively solve the conditions in all pages.
+    # If there are failing conditions, then the status
+    # is returned in the Score instance.
+    score = doc.solve()
+    if score.fails:
+        print(score.fails)
 
-print('Done')
+    doc.export(EXPORT_PATH_SVG)
+    doc.export(EXPORT_PATH_JPG)
+    doc.export(EXPORT_PATH_PNG)
+    doc.export(EXPORT_PATH_PDF)
+
+    print('Done making document %s' % doc)
+
+makeDocument()
