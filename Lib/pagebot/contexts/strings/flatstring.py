@@ -22,6 +22,9 @@ import re
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
 from pagebot.toolbox.units import upt
+from flat import rgb
+
+DEFAULT_COLOR = rgb(0, 0, 0)
 
 class FlatString(BabelString):
 
@@ -77,6 +80,15 @@ class FlatString(BabelString):
         self.style['fontSize'] = fontSize
     fontSize = property(_get_fontSize, _set_fontSize)
 
+    def _get_color(self):
+        """Answer the current state of the color."""
+        return self.style.get('color')
+    def _set_color(self, color):
+        #if color is not None:
+        #    self.context.font(color)
+        self.style['color'] = color
+    color = property(_get_color, _set_color)
+
     def __len__(self):
         """Answer the number of characters in self.s
 
@@ -105,9 +117,9 @@ class FlatString(BabelString):
 
     def textSize(self, w=None, h=None):
         """Answer the (w, h) size for a given width, with the current text."""
-        return 100, 20
         # TODO: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
+        return 100, 20
 
     def textOverflow(self, w, h, align=LEFT):
         # TODO: Make this work in Flat same as in DrawBot
@@ -134,12 +146,12 @@ class FlatString(BabelString):
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
 
-
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a FlatString instance from valid attributes in *style*. Set all values after testing
-        their existence, so they can inherit from previous style formats.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
+        """Answers a FlatString instance from valid attributes in *style*. Set
+        all values after testing their existence, so they can inherit from
+        previous style formats. If target width *w* or height *h* is defined,
+        then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts.flatcontext import FlatContext
@@ -162,23 +174,29 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
-        # Since Flat does not do font GSUB feature compile, we'll make the transformed string here,
+        # Since Flat does not do font GSUB feature compile, we'll make the
+        # transformed string here,
         # using Tal's https://github.com/typesupply/compositor
-        # This needs to be installed, in case PageBot is running outside of DrawBot.
-
+        # This needs to be installed, in case PageBot is running outside of
+        # DrawBot.
         font = style.get('font')
         if font is not None and not isinstance(font, str):
             font = font.path
+
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
+
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        strike.size(fontSizePt, leadingPt, units=cls.UNITS)
+        c = style.get('color', DEFAULT_COLOR)
+        strike.color(c).size(fontSizePt, leadingPt, units=cls.UNITS)
         #if w is not None:
         #    strike.width = w
-        return cls(strike.text(s), context=context, style=style) # Make real Flat flavor BabelString here.
+
+        # Make real Flat flavor BabelString here.
+        return cls(strike.text(s), context=context, style=style)
 
 
 if __name__ == '__main__':
