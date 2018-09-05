@@ -21,6 +21,7 @@ class BabelString:
 
     def __init__(self, s, context, style=None):
         self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
+        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
         self.style = style # Optional style to set the context parameters.
         self.context = context
 
