@@ -45,7 +45,7 @@ doc = Document(w=W, h=H, padding=PADDING, originTop=True,
 view = doc.view # Get the current view of this document. Defaulse it PageView.
 view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Draw baselines at background.
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
-view.showOrigin = True
+view.showOrigin = False # No origin showing
 
 page = doc[1] # Get the first (and only) page of the document
 
@@ -64,7 +64,7 @@ doc.solve()
 
 # Adjust vertical position of the fitting textbox, so that textLines[4] locks 
 # on page baseline. 
-lineIndex = 0
+lineIndex = 8
 print(tb.x, tb.y)
 tb.y += tb.baselineOffset(lineIndex)
 print(tb.y)

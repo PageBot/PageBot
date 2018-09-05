@@ -134,9 +134,12 @@ class NoneBuilder:
     def imageSize(self, path):
         """Answer the image size of our test image
 
-        rootPath + '/Examples/Magazines/Fashion/images/IMG_8914.jpg'
+        path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         """
-        return 3024, 4032
+        return 398, 530
+
+    def clipPath(self, clipPath):
+        pass
 
     def numberOfImages(self, path):
         return 1

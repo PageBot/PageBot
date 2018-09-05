@@ -24,7 +24,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
                            INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
-                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE)
+                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
+                           DEFAULT_COLOR_BARS)
 
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
@@ -5142,7 +5143,12 @@ class Element:
         if not showColorBars:
             showColorBars = []
         elif not isinstance(showColorBars, (set, list, tuple)):
-            showColorBars = [showColorBars]
+            if isinstance(showColorBars, str):
+                showColorBars = [showColorBars]
+            elif showColorBars:
+                showColorBars = DEFAULT_COLOR_BARS
+            else:
+                showColorBars = [] # Don't show them
         self.style['showColorBars'] = set(showColorBars)
     showColorBars = property(_get_showColorBars, _set_showColorBars)
 
