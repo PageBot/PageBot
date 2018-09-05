@@ -176,13 +176,15 @@ class FlatContext(BaseContext):
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
         self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
+        self.fileType = path.split('.')[-1].lower()
 
         RGB = 'rgb'
         RGBA = 'rgba'
 
         if self.fileType == FILETYPE_PNG:
             if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind='rgba').png(path)
+                im = self.pages[0].image(kind=RGB)
+                im.png(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
@@ -484,13 +486,15 @@ class FlatContext(BaseContext):
     def _getValidColor(self, c):
         u"""Answer the color tuple that is valid for self.fileType, otherwise Flat gives an error."""
         # TODO: Make better match for all file types, transparance and spot color
+        import flat
 
         if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
-            return c.rgb
-        if self.fileType in (FILETYPE_PDF):
-            import flat
             return flat.rgb(*c.rgb)
-        return c.rgb
+            #return c.rgb
+        if self.fileType in (FILETYPE_PDF):
+            return flat.rgb(*c.rgb)
+        return flat.rgb(*c.rgb)
+        #return c.rgb
 
     def _getShape(self):
         if self._fill is noColor and self._stroke is noColor:

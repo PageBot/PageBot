@@ -24,7 +24,7 @@ setup(
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
-    package_data={'': ['*.txt', '*.md', '*.ttf']},
+    package_data={'': ['*.txt', '*.md', '*.ttf', '*.png', '*.pdf', '*.jpg']},
     license = 'MIT',
     classifiers = [
         'Development Status :: 3 - Alpha',
