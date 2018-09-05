@@ -64,7 +64,8 @@ class FlatContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
-    UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
+    #UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
+    UNITS = 'mm'
 
     def __init__(self):
         """Constructor of Flat context.
@@ -135,8 +136,8 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-        wpt, hpt = upt(w, h)
-        self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+        #wpt, hpt = upt(w, h) # FIXME convert points to mm?
+        self.doc = self.b.document(w, h, units=self.UNITS)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -217,22 +218,17 @@ class FlatContext(BaseContext):
 
     def newPage(self, w=None, h=None, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
+        # FIXME: test units, page auto-sizes to parent doc.
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newPage()
         """
-        if size is not None:
-            w, h = size
-
-        wpt, hpt = upt(w, h)
-
         if self.doc is None:
-            self.newDocument(wpt, hpt)
+            self.newDocument(w, h)
 
         self.page = self.doc.addpage()
-        self.page.size(wpt, hpt, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -339,7 +335,7 @@ class FlatContext(BaseContext):
         >>> bs = context.newString('ABC', style=style)
         >>> bs.__class__.__name__
         'FlatString'
-        >>> #context.text(bs, (100, 100))
+        >>> context.text(bs, (100, 100))
 
         """
         assert isinstance(bs, FlatString), 'FlatString.text: bs not of type %s' % FlatString.__name__
@@ -517,11 +513,12 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(xpt, ypt, wpt, hpt))
+            r = shape.rectangle(x, y, w, h)
+            self.page.place(r)
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and
