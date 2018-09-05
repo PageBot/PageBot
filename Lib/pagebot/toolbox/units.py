@@ -2227,6 +2227,60 @@ def units(v, maker=None, g=None, base=None, default=None):
 
 # Automatic angle conversion between degrees and radians.
 
+def asin(v):
+    """Answer a Radians instance, using math.asin(v)
+
+    >>> a = degrees(0)
+    >>> asin(a.sin)
+    0rad
+    >>> a = degrees(45)
+    >>> abs(asin(a.sin) - 0.25) < 0.01
+    True
+    >>> a = degrees(90)
+    >>> asin(a.sin)
+    0.5rad
+    >>> a = degrees(-90)
+    >>> asin(a.sin)
+    -0.5rad
+    """
+    return radians(math.asin(v)/math.pi)
+
+def acos(v):
+    """Answer a Radians instance, using math.acos(v)
+
+    >>> a = degrees(0)
+    >>> acos(a.cos)
+    0.5rad
+    >>> a = degrees(180)
+    >>> acos(a.cos).degrees
+    -90
+    """
+    return radians(math.asin(v)/math.pi)
+
+def atan(v):
+    """Answer a Radians instance, using math.atan(v)
+
+    >>> a = degrees(0)
+    >>> atan(a.tan)
+    0rad
+    >>> a = degrees(45)
+    >>> atan(a.tan).degrees
+    45
+    """
+    return radians(math.atan(v)/math.pi)
+
+def atan2(v1, v2):
+    """Answer a Radians instance, using math.atan2(v1, v2)
+
+    >>> atan2(1, 1).degrees
+    45
+    >>> atan2(100, -100).degrees
+    135
+    >>> atan2(-100, 100).degrees
+    -45
+    """
+    return radians(math.atan2(v1, v2)/math.pi)
+
 class Angle:
 
     def __init__(self, angle):
@@ -2502,6 +2556,62 @@ class Angle:
     def __bool__(self):
         return bool(self.angle)
 
+    # Math angle functions as properties
+
+    def _get_sin(self):
+        """Answer the math.sin(self) of this angle.
+        See also asin(v) above, that answers an Angle instance.
+
+        >>> degrees(0).sin
+        0.0
+        >>> degrees(90).sin
+        1.0
+        >>> degrees(45).sin == radians(0.25).sin
+        True
+        >>> degrees(-15).sin + radians(1/12).sin < 0.0001
+        True
+        >>> radians(8).sin < 1
+        True
+        """
+        return math.sin(math.pi*self.radians)
+    sin = property(_get_sin)
+    
+    def _get_cos(self):
+        """Answer the math.cos(self) of this angle.
+        See also acos(v) above, that answers an Angle instance.
+
+        >>> degrees(0).cos
+        1.0
+        >>> degrees(90).cos < 1
+        True
+        >>> degrees(45).cos == radians(0.25).cos
+        True
+        >>> degrees(-15).cos - radians(1/12).cos
+        0.0
+        >>> radians(8).cos
+        1.0
+        """
+        return math.cos(math.pi*self.radians)
+    cos = property(_get_cos)
+
+    def _get_tan(self):
+        """Answer the math.tan(self) of this angle.
+        See also atan2(v1, v2) above, that answers an Angle instance.
+
+        >>> degrees(0).tan
+        0.0
+        >>> degrees(90).tan == radians(0.5).tan # Large number, instead of infinity?
+        True
+        >>> degrees(45).tan == radians(0.25).tan
+        True
+        >>> degrees(-15).tan + radians(1/12).tan < 1
+        True
+        >>> radians(8).tan < 1
+        True
+        """
+        return math.tan(math.pi*self.radians)
+    tan = property(_get_tan)
+    
 class Degrees(Angle):
     """Store the value as degrees.
 

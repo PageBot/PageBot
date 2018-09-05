@@ -139,6 +139,15 @@ class DrawBotContext(BaseContext):
         """
         self.b.newDrawing()
 
+    def clipPath(self, clipPath):
+        """Set the clipPath of the DrawBot builder.
+        If clipPath is None, then reset the clipPath.
+
+        >>> context = DrawBotContext()
+        >>> context.clipPath(None)
+        """
+        self.b.clipPath(clipPath)
+
     #   V A R I A B L E
 
     def Variable(self, variableUI , globalVariables):
@@ -781,7 +790,10 @@ class DrawBotContext(BaseContext):
         elif not w and not h:
             wpt = iw
             hpt = ih
-
+        else: # Both are defined, scale disproportional
+            wpt = upt(w)
+            hpt = upt(h)
+            
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))
         sx, sy = (wpt/iw).rv, (hpt/ih).rv # We need ration values, not units
