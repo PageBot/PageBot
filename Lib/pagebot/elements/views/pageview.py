@@ -602,9 +602,9 @@ class PageView(BaseView):
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
                         cw, gx = cw
-                    context.line((px+x, py+e.pt), (px+x, py+e.pb+e.ph))
+                    context.line((px+x, py+e.pb), (px+x, py+e.pb+e.ph))
                     if gx:
-                        context.line((px+x+cw, py+e.pt), (px+x+cw, py+e.pb+e.ph))
+                        context.line((px+x+cw, py+e.pb), (px+x+cw, py+e.pb+e.ph))
                     x += cw + gx
 
         # Drawing the grid as horizontal lines. Check on foreground/background flags.
@@ -621,9 +621,9 @@ class PageView(BaseView):
                 for ch in gridY:
                     if isinstance(ch, (tuple, list)):
                         ch, gy = ch
-                    context.line((px, py+y), (px+e.w, py+y))
+                    context.line((px+e.pl, py+y), (px+e.pl+e.pw, py+y))
                     if gy:
-                        context.line((px, py+y+ch), (px+e.w, py+y+ch))
+                        context.line((px+e.pl, py+y+ch), (px+e.pl+e.pw, py+y+ch))
                     y += ch + gy
 
         # Drawing the grid as rectangles. Check on foreground/background flags.

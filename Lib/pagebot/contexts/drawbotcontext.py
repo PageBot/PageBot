@@ -240,24 +240,24 @@ class DrawBotContext(BaseContext):
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def newPath(self):
-        """Make a new DrawBot Bezierpath() to draw in.
+        """Make a new DrawBot Bezierpath() to draw in and answer it.
+        This will not initialize self._path, which is accessed by the property self.path
 
         >>> context = DrawBotContext()
-        >>> context.path is not None
+        >>> context.newPath() is not None
         True
         """
-        self._path = self.b.BezierPath()
-        return self._path
+        return self.b.BezierPath()
 
     def _get_path(self):
-        """Answers the open drawing path. Create one if it does not exist.
+        """Answers the open drawing self._path. Create one if it does not exist.
 
         >>> context = DrawBotContext()
         >>> context.path is not None
         True
         """
         if self._path is None:
-            self.newPath()
+            self._path = self.newPath()
         return self._path
     path = property(_get_path)
 
@@ -265,19 +265,19 @@ class DrawBotContext(BaseContext):
         """Draw the NSBezierPath, or equivalent in other contexts. Scaled image
         is drawn on (x, y), in that order."""
         if path is None:
-            path = self._path
-        if path is not None:
-            self.save()
-            if sy is None:
-                sy = sx
-            if p is None:
-                xpt = ypt = 0
-            else:
-                xpt, ypt = point2D(upt(p))
-            self.scale(sx, sy)
-            self.b.translate(xpt/sx, ypt/sy)
-            self.b.drawPath(path)
-            self.restore()
+            path = self.path
+
+        self.save()
+        if sy is None:
+            sy = sx
+        if p is None:
+            xpt = ypt = 0
+        else:
+            xpt, ypt = point2D(upt(p))
+        self.scale(sx, sy)
+        self.translate(xpt/sx, ypt/sy)
+        self.b.drawPath(path)
+        self.restore()
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
@@ -319,12 +319,12 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def getFlattenedContours(self):
+    def getFlattenedContours(self, path=None):
         """Answers the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points."""
         contour = []
         flattenedContours = [contour]
-        flatPath = self.bezierPathByFlatteningPath()
+        flatPath = self.bezierPathByFlatteningPath(path) # Use/create self._path if path is None
 
         if flatPath is not None:
             for index in range(flatPath.elementCount()):
@@ -341,102 +341,98 @@ class DrawBotContext(BaseContext):
 
         return flattenedContours
 
-    def onBlack(self, p, path):
+    def onBlack(self, p, path=None):
         """Answers the boolean flag if the single point (x, y) is on black.
-        For now this only work in DrawBotContext.
+        For now this only works in DrawBotContext.
         """
         if path is None:
-            path = self._path
+            path = self.path
         p = point2D(p)
         return path._path.containsPoint_(p)
 
     def moveTo(self, p):
-        """Move to point p. Create a new path if none is open.
+        """Move to point p in the running path. Create a new self._path if none is open.
 
         >>> from pagebot.toolbox.units import pt
         >>> context = DrawBotContext()
+        >>> context.moveTo(pt(100, 100))
+        >>> context.moveTo((100, 100))
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
-        >>> path.moveTo((100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)        
         """
-        if self._path is None:
-            self.newPath()
         ppt = point2D(upt(p))
-        self._path.moveTo(ppt) # Render units point tuple to tuple of values
+        self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
-        """Line to point p. Create a new path if none is open.
+        """Line to point p in the running path. Create a new self._path if none is open.
 
         >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
+        >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        if self._path is None:
-            self.newPath()
         ppt = point2D(upt(p))
-        self._path.lineTo(ppt) # Render units point tuple to tuple of values
+        self.path.lineTo(ppt) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         pass
 
     def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p. Create a new path if none is open.
+        """Curve to point p i nthe running path. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
+        >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        if self._path is None:
-            self.newPath()
         b1pt = point2D(upt(bcp1))
         b2pt = point2D(upt(bcp2))
         ppt = point2D(upt(p))
-        self._path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+        self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def closePath(self):
-        """Curve to point p. Create a new path if none is open.
+        """Close the current path, if it exists. Otherwise ignore.
 
         >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
+        >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        if self._path is not None:
+        if self._path is not None: # Only if there is an open path.
             self._path.closePath()
 
     def getFlattenedPath(self, path=None):
         """Use the NSBezier flatten path. Answer None if the flattened path
         could not be made."""
         if path is None:
-            path = self._path
-        if path is not None:
-            return self._path.getNSBezierPath().bezierPathByFlatteningPath()
-        return None
+            path = self.path
+        return path._path.getNSBezierPath().bezierPathByFlatteningPath()
 
     def getFlattenedContours(self, path=None):
         """Answers the flattened NSBezier path As contour list [contour,
@@ -449,7 +445,6 @@ class DrawBotContext(BaseContext):
             for index in range(flatPath.elementCount()):
                 # NSBezierPath size + index call.
                 p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-
                 if p:
                     # Make point2D() tuples, no need to add point type, all
                     # onCurve.
@@ -582,6 +577,16 @@ class DrawBotContext(BaseContext):
     def listOpenTypeFeatures(self, fontName):
         """Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
+
+    def installedFonts(self, patterns=None):
+        """Answer a list of all fonts (name or path) that are installed in the OS."""
+        fontNames = []
+        for fontName in self.b.installedFonts():
+            for pattern in patterns:
+                if pattern in fontName:
+                    fontNames.append(fontName)
+                    break
+        return fontNames
 
     #   G L Y P H
 
