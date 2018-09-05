@@ -825,7 +825,7 @@ class DrawBotString(BabelString):
 
         # Store any adjust fitting parameters in the string, in case the caller
         # wants to know.
-        newS.fittingFontSize = fsAttrs.get('fontSize')
+        newS.fittingFontSize = pt(fsAttrs.get('fontSize'))
         newS.fittingFont = fsAttrs.get('font') # In case we are sampling with a Variable Font.
         newS.fittingLocation = fsAttrs.get('location')
         newS.isFitting = isFitting

@@ -588,6 +588,12 @@ class DrawBotContext(BaseContext):
                     break
         return fontNames
 
+    def installFont(self, font):
+        return self.b.installFont(font.path)
+        
+    def unInstallFont(self, font):
+        return self.b.uninstallFont(font.path)
+        
     #   G L Y P H
 
     def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
@@ -627,6 +633,10 @@ class DrawBotContext(BaseContext):
         if fontSize is not None:
             fspt = upt(fontSize)
             self.b.fontSize(fspt) # Render fontSize unit to value
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answer the width/height of the formatted string for an optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
