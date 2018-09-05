@@ -218,7 +218,8 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
     return instance
     """
 
-def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, cached=True, lazy=True):
+def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, 
+        cached=True, lazy=True, kerning=None):
     """The getInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
@@ -230,7 +231,8 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     *ttFont* or the automatic location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
-    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
+    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, 
+        lazy=lazy, kerning=kerning)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
     instance.info.location = location
@@ -238,7 +240,8 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     return instance
 
 
-def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, lazy=True):
+def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, 
+        lazy=True, kerning=None):
     """
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
@@ -350,6 +353,10 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
             if tag in ttFont:
                 del ttFont[tag]
 
+        if kerning is not None:
+            for pair, value in kerning.items():
+                varFont.kerning[pair] = value
+
         #print("Saving instance font", outFile)
         varFont.save(dstPath)
 
@@ -367,9 +374,9 @@ class Font:
     >>> sorted(f.axes.keys())
     ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
     >>> f.info.familyName
-    u'RobotoDelta'
+    'RobotoDelta'
     >>> len(f)
-    241
+    188
     >>> f.axes['opsz']
     (8.0, 12.0, 144.0)
     >>> variables = f.variables
@@ -402,6 +409,8 @@ class Font:
         else: # ttFont is not None: There is ttFont data
             self.ttFont = ttFont
             self.path = path
+
+
         # Store location, incase this was a created VF instance
         self.location = location
         # TTFont is available as lazy style.info.font
@@ -811,7 +820,7 @@ class Font:
     variables = property(_get_variables)
 
     def getInstance(self, location=None, dstPath=None, opticalSize=None,
-            styleName=None, cached=True, lazy=True):
+            styleName=None, cached=True, lazy=True, kerning=None):
         """Answer the instance of self at location. If the cache file already exists, then
         just answer a Font instance to that font file.
 
@@ -842,7 +851,7 @@ class Font:
         if location is None:
             location = self.getDefaultVarLocation()
         return getInstance(self.path, location=location, dstPath=dstPath, opticalSize=opticalSize,
-            styleName=styleName, cached=cached, lazy=lazy)
+            styleName=styleName, cached=cached, lazy=lazy, kerning=kerning)
 
     def _get_features(self):
         # TODO: Use TTFont for this instead.
@@ -858,8 +867,9 @@ class Font:
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = getFont(path, lazy=False)
-        >>> len(f.kerning.keys())
+        >>> len(f.kerning)
         22827
+        >>> f.kerning[('V','a')]
         """
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs

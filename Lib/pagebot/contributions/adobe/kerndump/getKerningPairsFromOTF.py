@@ -215,7 +215,7 @@ class OTFKernReader:
                 singleGlyphs = []
                 classGlyphs = []
 
-                for gName, classID in pairPos.ClassDef1.classDefs.iteritems():
+                for gName, classID in pairPos.ClassDef1.classDefs.items():
                     if classID == 0:
                         singleGlyphs.append(gName)
                     else:
