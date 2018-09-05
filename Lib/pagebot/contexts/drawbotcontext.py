@@ -77,7 +77,7 @@ class DrawBotContext(BaseContext):
         """
         # The context builder "cls.b" is the main drawBot library, that contains all
         # drawing calls in as used regular DrawBot scripts.
-        self.b = drawBotBuilder # cls.b builder for this canvas.
+        self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open DrawBot path
         self.fileType = DEFAULT_FILETYPE # Holds the extension as soon as the export file path is defined.
@@ -139,12 +139,11 @@ class DrawBotContext(BaseContext):
         """
         self.b.newDrawing()
 
-    def clipPath(self, clipPath):
-        """Set the clipPath of the DrawBot builder.
-        If clipPath is None, then reset the clipPath.
+    #   C L I P P I N G
 
-        >>> context = DrawBotContext()
-        >>> context.clipPath(None)
+    def clipPath(self, clipPath):
+        """Set the clipPath of the DrawBot builder in a new saved graphics state.
+        Clip paths cannot be restore, so they should be inside a context.save() and context.restore()
         """
         self.b.clipPath(clipPath)
 

@@ -588,7 +588,7 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        # Drawing the grid as horizontal lines. Check on foreground/background flags
+        # Drawing the grid as vertical lines. Check on foreground/background flags.
         if (background and GRID_COL_BG in showGrid) or (not background and GRID_COL in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
@@ -602,12 +602,12 @@ class PageView(BaseView):
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
                         cw, gx = cw
-                    context.line((px+x, py), (px+x, py+e.h))
+                    context.line((px+x, py+e.pt), (px+x, py+e.pb+e.ph))
                     if gx:
-                        context.line((px+x+cw, py), (px+x+cw, py+e.h))
+                        context.line((px+x+cw, py+e.pt), (px+x+cw, py+e.pb+e.ph))
                     x += cw + gx
 
-        # Drawing the grid as vertical lines.
+        # Drawing the grid as horizontal lines. Check on foreground/background flags.
         if (background and GRID_ROW_BG in showGrid) or (not background and GRID_ROW in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
@@ -626,7 +626,7 @@ class PageView(BaseView):
                         context.line((px, py+y+ch), (px+e.w, py+y+ch))
                     y += ch + gy
 
-        # Drawing the grid as rectangles.
+        # Drawing the grid as rectangles. Check on foreground/background flags.
         if (background and GRID_SQR_BG in showGrid) or (not background and GRID_SQR in showGrid):
             # Set color for grid rectangles
             context.fill(e.css('viewGridFill', noColor))

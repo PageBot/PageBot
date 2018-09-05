@@ -550,7 +550,7 @@ GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
 GRID_SQR_BG = 'GridSquareBackground' # Draw grid at background
 GRID_COL_BG = 'GridColumnBackground' # Drag grid as columns at background
 GRID_ROW_BG = 'GridRowBackground' # Drag grid as row
-DEFAULT_GRID = {GRID_COL, GRID_ROW}
+DEFAULT_GRID = {GRID_COL_BG, GRID_ROW_BG}
 GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
 
 BASE_LINE = 'Baseline' # Show baseline grid as lines

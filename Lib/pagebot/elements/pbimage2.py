@@ -65,8 +65,8 @@ class ImageData(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        #if self._h is None:
-        #    return self.parent.h
+        if self._h is None:
+            return self.parent.h
         return self._h
     def _set_h(self, h):
         self._h = h
@@ -196,7 +196,7 @@ class Image(Element):
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> e = Image(path)
         >>> e.imageData.box # Answer the size of the plain image.
-        (0pt, 0pt, 100pt, None)
+        (0pt, 0pt, 100pt, 100pt)
         """
         if self._imageData is None:
             for e in self.elements:
@@ -227,10 +227,11 @@ class Image(Element):
         # and self.isPage or if self.showFrame. Mark that we are drawing background here.
         view.drawPageMetaInfo(self, p, background=True)
 
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None: # Call if defined, not part of clipping path.
             self.drawBefore(self, view, p)
 
         if drawElements:
+            context.save()
             if self.clipPath is not None:
                 # If there is a clipPath defined, use it.
                 clipPath = self.clipPath
@@ -239,7 +240,7 @@ class Image(Element):
                 clipPath = context.newPath()
                 # move to a point
                 clipPath.moveTo(upt(px+pl, py+pb))
-                # line to a point
+                # line to points of the clip rect.
                 clipPath.lineTo(upt(px+pl, py+pb+self.ph))
                 clipPath.lineTo(upt(px+pl+self.pw, py+pr+self.ph))
                 clipPath.lineTo(upt(px+pl+self.pw, py+pb))
@@ -247,18 +248,17 @@ class Image(Element):
                 # close the path
                 clipPath.closePath()
             
-            context.fill((0, 1, 0))
-            context.drawPath(clipPath)
+            #context.fill((0, 1, 0))
+            #context.drawPath(clipPath)
 
             # set the path as a clipping path
             context.clipPath(clipPath)
             # Build the child elements. Default this is the ImageData instance, but there
             # may be other elemnents added too in any particular order.
             self.buildChildElements(view, p)
-            # Reset the clip path
-            context.clipPath(None)
+            context.restore()
 
-        if self.drawAfter is not None: # Call if defined
+        if self.drawAfter is not None: # Call if defined, not part of clipping path
             self.drawAfter(self, view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
