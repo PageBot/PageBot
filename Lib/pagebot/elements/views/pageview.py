@@ -528,9 +528,8 @@ class PageView(BaseView):
         >>> view.showMissingElement = True
         >>> view.drawMissingElementRect(e, (0, 0))
         """
-        context = self.context
-
-        if self.showMissingElement or e.showMissingElement:
+        if (self.showMissingElement and e.isPage) or e.showMissingElement:
+            context = self.context
 
             p = pointOffset(e.origin, origin)
             p = self._applyScale(e, p)
@@ -580,9 +579,14 @@ class PageView(BaseView):
         >>> view.showGrid = [GRID_COL_BG]
         >>> view.drawGrid(e, (0, 0), background=True)
         """
-        context = self.context
+        if (self.showGrid and e.isPage):
+            showGrid = self.showGrid
+        elif e.showGrid:
+            showGrid = e.showGrid
+        else:
+            return 
 
-        showGrid = e.showGrid or self.showGrid
+        context = self.context
 
         p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
@@ -596,15 +600,19 @@ class PageView(BaseView):
             gridStrokeWidth = e.css('viewGridStrokeWidthY', blackColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
-            x = e.pl # Position on right padding of page/e
             gridX = e.gridX
             if gridX:
+                x = px+e.pl # Position on left padding of page/e
+                y1 = py+e.pb
+                y2 = y1 + e.ph
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
                         cw, gx = cw
-                    context.line((px+x, py+e.pb), (px+x, py+e.pb+e.ph))
+                    else:
+                        gx = 0
+                    context.line((x, y1), (x, y2))
                     if gx:
-                        context.line((px+x+cw, py+e.pb), (px+x+cw, py+e.pb+e.ph))
+                        context.line((x+cw, y1), (x+cw, y2))
                     x += cw + gx
 
         # Drawing the grid as horizontal lines. Check on foreground/background flags.
@@ -615,15 +623,19 @@ class PageView(BaseView):
             gridStrokeWidth = e.css('viewGridStrokeWidthX', blackColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
-            y = e.pb # Position on bottom padding of page/e
             gridY = e.gridY
             if gridY:
+                x1 = px+e.pl
+                x2 = x1 + e.pw
+                y = py+e.pb # Position on bottom padding of page/e
                 for ch in gridY:
                     if isinstance(ch, (tuple, list)):
                         ch, gy = ch
-                    context.line((px+e.pl, py+y), (px+e.pl+e.pw, py+y))
+                    else:
+                        gy = 0
+                    context.line((x1, y), (x2, y))
                     if gy:
-                        context.line((px+e.pl, py+y+ch), (px+e.pl+e.pw, py+y+ch))
+                        context.line((x1, y+ch), (x2, y+ch))
                     y += ch + gy
 
         # Drawing the grid as rectangles. Check on foreground/background flags.
@@ -750,15 +762,11 @@ class PageView(BaseView):
             dy = cmSize/2
         context.fill(noColor)
         context.stroke(registrationColor, w=cmStrokeWidth) # Draw CMYK all on, color(cmyk=1)
-        context.newPath()
         # Registration circle
         context.circle(x, y, cmSize/4)
         # Registration cross, in length of direction.
-        context.moveTo((x - dx, y)) # Horizontal line.
-        context.lineTo((x + dx, y))
-        context.moveTo((x, y + dy)) # Vertical line.
-        context.lineTo((x, y - dy))
-        context.drawPath()
+        context.line((x - dx, y), (x + dx, y)) # Horizontal line.
+        context.line((x, y + dy), (x, y - dy)) # Vertical line.
 
     def drawRegistrationMarks(self, e, origin):
         """Draw standard registration mark, to show registration of CMYK colors.

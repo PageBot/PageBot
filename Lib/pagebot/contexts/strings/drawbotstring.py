@@ -97,6 +97,7 @@ class NoneDrawBotString(BabelString):
         self.s = s
         self.fontSize = DEFAULT_FONT_SIZE
         self.font = DEFAULT_FONT_PATH
+        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
         self.style = style
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
@@ -108,6 +109,7 @@ class NoneDrawBotString(BabelString):
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
             fontSize=None, font=None, tagName=None):
+        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
         return cls(s, context=context, style=style)
 
     def textSize(self, w=None, h=None):
@@ -162,7 +164,7 @@ class DrawBotString(BabelString):
         >>> style = dict(font='Verdana', fontSize=pt(80))
         >>> bs = context.newString('Example Text', style=style)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
-        ('Verdana', 80pt, 45, 0.56em, 0.74em, 1.01em, -0.21em)
+        ('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
         >>> '/Verdana'in bs.fontPath
         True
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
@@ -172,10 +174,10 @@ class DrawBotString(BabelString):
         9
         >>> line = lines[0]
         >>> line.xHeight, line.capHeight # Max metrics of all runs in line as Em
-        (0.56em, 0.74em)
+        (0.55em, 0.73em)
         >>> run = line.textRuns[0]
         >>> run.xHeight, run.capHeight
-        (0.56em, 0.74em)
+        (0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
