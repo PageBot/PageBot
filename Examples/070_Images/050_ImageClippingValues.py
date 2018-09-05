@@ -10,11 +10,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     050_ImageClipping.py
+#     050_ImageClippingValues.py
 #
-#     Draw images with clipping paths and rotation.
+#     Draw a number of images on a page to show the influence of parameters.
 #
-#from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.platform import getContext
 
 from pagebot import getResourcesPath
@@ -34,46 +33,37 @@ imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
 
 W = H = pt(1000) # Document size
 PADDING = pt(100) # Page padding on all sides
+IH = PADDING
 
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=True)
+doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=False)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
-view.padding = inch(1)
-view.showFrame = True
 view.showPadding = True
-view.showColorBars = False
+view.showOrigin = False
+view.padding = 40
 view.showCropMarks = True
 
 # Get the page
 page = doc[1]
-# Make image box as child element of the page and set its layout conditions.
-im = Image(imagePath, parent=page, conditions=[Fit()], 
-    showPadding=True, padding=pt(100), stroke=(1, 0, 0))
+page.padding = PADDING
+page.mr = page.mb = pt(5)
 
-# Rotate the whole by selecting the value and then cmd-drag to alter the value
-# The elements rotate independently. Note that the image is rotating in the 
-# reversed direction, so it stays upright in the clipping rectangle.
-a = degrees(684)
+if 1:
+    # Make image box as child element of the page and set its layout conditions.
+    im = Image(imagePath, h=IH, w=IH, fill=(1, 0, 0), parent=page, conditions=[Right2Right(), Float2Top(), Float2Left()])
+    bs = context.newString('Image 1', style=dict(fontSize=14, textFill=0, xTextAlign=CENTER))
+    newTextBox(bs, parent=im, w=IH, conditions=(Center2Center(), Middle2Middle()))
 
-im.angle =a 
-im.fill = (random(), 0, 1)
-imd = im.imageData
-imd.x = 366
-imd.y = 150
-imd.w = 300
-imd.h = 400
-imd.rx = 50
-imd.ry = 60
-imd.angle = -a
+if 1:
+    # Make image box as child element of the page and set its layout conditions.
+    im = Image(imagePath,x=100, y=100, h=IH, w=IH, fill=(1, 1, 0), parent=page, )#conditions=[Right2Right(), Float2Top(), Float2Left()])
+    bs = context.newString('Image 2', style=dict(fontSize=14, textFill=0, xTextAlign=CENTER))
+    newTextBox(bs, parent=im, w=IH, conditions=(Center2Center(), Middle2Middle()))
 
-bs = context.newString('Rotating images', style=dict(fontSize=32))
-tb = newTextBox(bs, w=400, parent=im, conditions=(Center2Center(), Middle2Middle()), angle=-a, fill=noColor)
 # Solve the page/element conditions
 doc.solve()
 
-im.rx = im.w/2
-im.ry = im.h/2
 # Export the document to this PDF file.
 doc.export('_export/RotatingText.pdf')
 

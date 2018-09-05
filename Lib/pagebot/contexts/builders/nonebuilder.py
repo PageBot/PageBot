@@ -171,6 +171,12 @@ class NoneBuilder:
             return path2Name(fontPath)
         return None
 
+    def save(self):
+        pass
+
+    def restore(self):
+        pass
+
     def fontName2FontPath(self, fontName):
         """We cannot tell the relation of the font name and the font path for
         DrawBot without OS X unless it is a path."""
