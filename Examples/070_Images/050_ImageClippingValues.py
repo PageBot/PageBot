@@ -34,6 +34,7 @@ imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
 W = H = pt(1000) # Document size
 PADDING = pt(100) # Page padding on all sides
 IH = PADDING
+G = pt(12)
 
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=False)
@@ -43,23 +44,37 @@ view.showPadding = True
 view.showOrigin = False
 view.padding = 40
 view.showCropMarks = True
-
+view.showFrame = True
 # Get the page
 page = doc[1]
 page.padding = PADDING
-page.mr = page.mb = pt(5)
+
+
+if 1: 
+    # Make image box as child element of the page and set its layout conditions.
+    im = Image(imagePath, h=IH, w=IH, fill=(1, 0, 0, 0.5), parent=page, 
+        conditions=[Right2Right(), Float2Top(), Float2Left()], mr=G, mb=G)
+    style1 = dict(fontSize=14, textFill=0, xTextAlign=CENTER)
+    bs = context.newString('1', style=style1)
+    newTextBox(bs, parent=im, w=IH, fill=noColor,
+        conditions=(Center2Center(), Middle2Middle()))
 
 if 1:
     # Make image box as child element of the page and set its layout conditions.
-    im = Image(imagePath, h=IH, w=IH, fill=(1, 0, 0), parent=page, conditions=[Right2Right(), Float2Top(), Float2Left()])
-    bs = context.newString('Image 1', style=dict(fontSize=14, textFill=0, xTextAlign=CENTER))
-    newTextBox(bs, parent=im, w=IH, conditions=(Center2Center(), Middle2Middle()))
+    im = Image(imagePath, h=IH, w=IH, fill=(1, 1, 0, 0.5), parent=page, 
+        conditions=[Right2Right(), Float2Top(), Float2Left()], mr=G, mb=G)
+    style2 = dict(fontSize=14, textFill=0, xTextAlign=CENTER)
+    bs = context.newString('2', style=style2)
+    newTextBox(bs, parent=im, w=IH, fill=noColor,
+        conditions=(Center2Center(), Middle2Middle()))
 
 if 1:
     # Make image box as child element of the page and set its layout conditions.
-    im = Image(imagePath,x=100, y=100, h=IH, w=IH, fill=(1, 1, 0), parent=page, )#conditions=[Right2Right(), Float2Top(), Float2Left()])
-    bs = context.newString('Image 2', style=dict(fontSize=14, textFill=0, xTextAlign=CENTER))
-    newTextBox(bs, parent=im, w=IH, conditions=(Center2Center(), Middle2Middle()))
+    im = Image(imagePath, h=IH, w=IH, fill=(1, 0, 1, 0.5), parent=page, 
+        conditions=[Right2Right(), Float2Top(), Float2Left()], mr=G, mb=G)
+    bs = context.newString('3', style=dict(fontSize=14, textFill=0, xTextAlign=CENTER))
+    newTextBox(bs, parent=im, w=IH, fill=noColor,
+        conditions=(Center2Center(), Middle2Middle()))
 
 # Solve the page/element conditions
 doc.solve()

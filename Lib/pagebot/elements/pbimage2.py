@@ -134,7 +134,6 @@ class ImageData(Element):
             context.fill(0.8)
             context.rect(px+pl, py+pb, self.pw, self.ph)
         else:
-            context.save()
             #sx = self.w / self.iw
             #sy = self.h / self.ih
             #context.scale(sx.rv, sy.rv)
@@ -146,9 +145,6 @@ class ImageData(Element):
                 context.image(self.path, p=(px, py), w=self.w, h=self.h, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
             
-            #b.clipPath(None)
-            #context.restore()
-
         if drawElements:
             self.buildChildElements(view, p)
 
@@ -231,7 +227,6 @@ class Image(Element):
             self.drawBefore(self, view, p)
 
         if drawElements:
-            context.save()
             if self.clipPath is not None:
                 # If there is a clipPath defined, use it.
                 clipPath = self.clipPath
@@ -251,8 +246,9 @@ class Image(Element):
             #context.fill((0, 1, 0))
             #context.drawPath(clipPath)
 
+            context.save()
             # set the path as a clipping path
-            context.clipPath(clipPath)
+            #context.clipPath(clipPath)
             # Build the child elements. Default this is the ImageData instance, but there
             # may be other elemnents added too in any particular order.
             self.buildChildElements(view, p)
