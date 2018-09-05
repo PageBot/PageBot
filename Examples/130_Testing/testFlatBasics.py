@@ -9,13 +9,16 @@ import os, os.path
 
 WIDTH = 400
 HEIGHT = 200
+FONTSIZE = 80
+LEADING = 96
+FONTNAME = 'BungeeHairline-Regular'
 
 context = getContext('Flat')
-f = findFont('Roboto-Regular')
+f = findFont(FONTNAME)
 ff = font.open(f.path)
-style = dict(font='Roboto-Regular', fontSize=pt(80))
 c1 = rgb(180, 0, 125)
 c2 = rgb(100, 180, 0)
+style = dict(font=f, fontSize=FONTSIZE, color=c2, leading=LEADING)
 
 
 # Creates the document.
@@ -50,15 +53,13 @@ s = context.pages[0].items[0]
 #print(s.item.style.join)
 #print(s.item.style.limit)
 
-
-
-#headline = strike(ff).color(c2).size(80, 96)
-#t = headline.text('Hello world!')
-#entity = p.place(t)
-#entity.frame(10, 10, 380, 80)
-#bs = context.newString('Hello world!', style=style)
+headline = strike(ff).color(c2).size(FONTSIZE, LEADING)
+t = headline.text('Hello world!')
+entity = p.place(t)
+entity.frame(10, 10, 380, 80)
+bs = context.newString('Hello world!', style=style)
 #print(bs.__class__.__name__)
-#context.text(bs, (100, 100))
+context.text(bs, (10, 10))
 
 
 '''
@@ -70,7 +71,7 @@ print(headline.style.color.b)
 '''
 
 
-#im = p.image(kind='rgb')
+im = p.image(kind='rgb')
 #print(p.items)
 
 
@@ -90,16 +91,12 @@ if not os.path.exists('_export'):
 
 print('Exporting native')
 d.pdf('_export/native-flat.pdf')
+im.png('_export/native-flat.png')
+im.jpeg('_export/native-flat.jpg')
+p.svg('_export/native-flat.svg')
+
 print('Exporting pagebot')
 context.saveDocument('_export/pagebot-flat.pdf')
-
-'''
-p.svg('_export/hello.svg')
-im.png('_export/hello.png')
-im.jpeg('_export/hello.jpg')
-'''
-
-# FIXME:
-
-#context.saveDocument('_export/test.png')
-#context.saveDocument('_export/test.svg')
+context.saveDocument('_export/pagebot-flat.png')
+context.saveDocument('_export/pagebot-flat.jpg')
+context.saveDocument('_export/pagebot-flat.svg')
