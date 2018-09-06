@@ -534,10 +534,6 @@ URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
-XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, MIDDLE}
-ZALIGNS = {None, FRONT, MIDDLE, BACK}
-
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
@@ -563,6 +559,12 @@ BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element 
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
 BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, 
    BASE_INSIDE}
+BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of origin (for TextBox)
+BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+# Types of alignments
+XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
+YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
+ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 

@@ -477,13 +477,13 @@ class DrawBotContext(BaseContext):
         """Set the DrawBot graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
-                              color=eShadow.color.cmyk)
+                self.b.shadow(upt(eShadow.offset), # Convert units to values
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).cmyk)
             else:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
-                              color=eShadow.color.rgb)
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).rgb)
 
     def setGradient(self, gradient, origin, w, h):
         """Define the gradient call to match the size of element e., Gradient position
@@ -493,23 +493,23 @@ class DrawBotContext(BaseContext):
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
-            if gradient.colors[0].isCmyk:
-                colors = [color.cmyk for color in gradient.colors]
-                b.cmykLinearGradient(startPoint=start, endPoint=end,
+            if (gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations)
             else:
-                colors = [color.rgb for color in gradient.colors]
-                b.linearGradient(startPoint=start, endPoint=end,
+                colors = [color(c).rgb for c in gradient.colors]
+                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations)
         else: # Gradient must be radial.
-            if gradient.colors[0].isCmyk:
-                colors = [color.cmyk for color in gradient.colors]
-                b.cmykRadialGradient(startPoint=start, endPoint=end,
+            if color(gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
-                colors = [color.rgb for color in gradient.colors]
-                b.radialGradient(startPoint=start, endPoint=end,
+                colors = [color(c).rgb for c in gradient.colors]
+                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
@@ -588,11 +588,15 @@ class DrawBotContext(BaseContext):
                     break
         return fontNames
 
-    def installFont(self, font):
-        return self.b.installFont(font.path)
+    def installFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.installFont(fontOrName)
         
-    def unInstallFont(self, font):
-        return self.b.uninstallFont(font.path)
+    def unInstallFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.uninstallFont(fontOrName)
         
     #   G L Y P H
 

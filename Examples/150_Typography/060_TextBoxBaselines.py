@@ -62,15 +62,15 @@ tb = newTextBox(text * 5, parent=page, stroke=0.5, strokeWidth=0.5,
 # Make the text box fit to the page padding, solving position and size.
 doc.solve()
 
-# Adjust vertical position of the fitting textbox, so that textLines[4] locks 
-# on page baseline. 
-lineIndex = 8
-print(tb.x, tb.y)
+# Adjust vertical position of the fitting textbox, so that textLines[4] 
+# locks on page baseline. 
+lineIndex = 3
+#print(tb.x, tb.y)
 tb.y += tb.baselineOffset(lineIndex)
-print(tb.y)
+#print(tb.y)
 # Add lines to indicate to position where the text box and grid match up.
-print(-tb.textLines[0].y)
-print(tb.textLines[lineIndex].y)
+#print(-tb.textLines[0].y)
+#print(tb.textLines[lineIndex].y)
 newLine(x=0, y=tb.y,
     #tb.textLines[lineIndex].y, 
     w=page.w, h=0, parent=page, 
