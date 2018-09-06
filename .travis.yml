@@ -58,11 +58,12 @@ script:
 - python3 Examples/010_Text/AdvancedHyphenation.py
 - python3 Examples/010_Text/ElasticTextBox.py
 - python3 Examples/010_Text/HangulKanjiFormattedStrings.py
-- python3 Examples/010_Text/TextFlows.py
 - python3 Examples/010_Text/FormattedStringMetrics.py
-  #- python3 Examples/010_Text/TextBaselines.py
+- python3 Examples/010_Text/TextBoxLinesRuns.py
+- python3 Examples/010_Text/TextFlows.py
 - python3 Examples/010_Text/TextLineTextRun.py
-  python3 Examples/010_Text/UseBabelStrings.py
+  python3 Examples/010_Text/BabelStrings.py
+  python3 Examples/010_Text/FittingTextWidthWithVar.py
 - python3 Examples/130_Testing/testFlatBasics.py
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py

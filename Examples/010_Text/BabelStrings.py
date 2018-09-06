@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseBabelStrings.py
+#     BabelStrings.py
 #
 #     BabelString instances are wrappers around formatted strings, hiding their
 #     context. DrawBot BabelStrings (bs.s) contain OS X / IOS FormattedStrings.
