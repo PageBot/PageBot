@@ -15,16 +15,17 @@
 #     BabelString instances are wrappers around formatted strings,
 #     hiding their context. For DrawBot BabelStrings (bs.s) contain
 #     OSX/IOS FormattedStrings.
-#     For FlexContext, equivalent text-formatted structures are implemented.
+#
+#     For FlatContext, equivalent text-formatted structures are being implemented.
 #
 from pagebot.contexts.drawbotcontext import DrawBotContext
-# FIX from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contexts.flatcontext import FlatContext
 from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color
 
 for contextId, context in (
         ('DrawBot', DrawBotContext()), 
-        #('Flat', FlatContext()),
+        ('Flat', FlatContext()),
     ):
     W, H = pt(1000, 300)
     M = pt(100)
@@ -37,6 +38,8 @@ for contextId, context in (
     bs = context.newString('This is a formatted BabelString')
     print(bs.__class__.__name__)
     context.text(bs, (100, y))
+
+    # FIXME: solve for Flat.
     # Add string with formatting style dict
     bs += context.newString('\nAdd an other string with color/size format', 
         style=dict(textFill=color(1, 0, 0), fontSize=20, leading=em(1.4)))
