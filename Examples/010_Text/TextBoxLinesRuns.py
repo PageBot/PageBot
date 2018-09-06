@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseTextFlows.py
+#     TextBoxLinesRuns.py
 #
 #     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
@@ -88,14 +88,14 @@ def makeDocument():
     for foundPattern in e1.findPattern('Line 5'):
         print(foundPattern.x, foundPattern.y, foundPattern.line, foundPattern.line.runs)
     """
-    font = findFont('Verdana')#findFont('Roboto')#getFontByName(e1.textLines[0].runs[1].displayName)
+    font = findFont('Roboto-Regular')
     char = 'hyphen'
     g = font[char]
     print(g.pointContexts[0].p.x)
     c.save()
     c.scale(0.3)
     c.fill(color(1, 0, 0))
-    c.drawGlyph(font[char])
+    c.drawGlyphPath(font[char])
     ga = GlyphAnalyzer(g)
     for x, vertical in ga.verticals.items():
         c.stroke(blackColor, pt(1))

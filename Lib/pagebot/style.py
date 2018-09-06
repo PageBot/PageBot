@@ -21,7 +21,7 @@
 import copy
 from pagebot.constants import *
 from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U, degrees
-from pagebot.toolbox.color import color, noColor, blackColor, redColor
+from pagebot.toolbox.color import color, noColor, blackColor
 
 def newStyle(**kwargs):
     return dict(**kwargs)
@@ -99,8 +99,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Resolution in dpi for pixel based publications and elements.
         resolution = pt(72),
 
-        # Optional folds property. Keep None or empty list if no folds. Otherwise list of [(x1, None), ...] 
-        # for vertical folds or [(None, y1), ...] for horizontal folds. Also the x and y values can be 
+        # Optional folds property. Keep None or empty list if no folds. Otherwise list of [(x1, None), ...]
+        # for vertical folds or [(None, y1), ...] for horizontal folds. Also the x and y values can be
         # combined as in [(x1, y1), ...]
         folds = None,
 
@@ -110,7 +110,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # there is enough space for elements to show themselves on top of a given position.
         # originTop often goes with yAlign = TOP.
         originTop = False, # TODO: Setting to  default True has currently positioning bugs.
-        
+
         # Alignment of origin on element. Note that formatted text string are aligned by the xTextAlign attribute.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.

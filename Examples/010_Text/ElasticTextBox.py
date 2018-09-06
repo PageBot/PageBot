@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseElasticTextBox.py
+#     ElasticTextBox.py
 #
 
 from pagebot.contexts.platform import getContext
@@ -32,12 +32,14 @@ PageSize = 1000
 GUTTER = 8 # Distance between the squares.
 SQUARE = 10 * GUTTER # Size of the squares
 
-# The standard PageBot function getRootStyle() answers a standard Python dictionary,
-# where all PageBot style entries are filled by their default values. The root style is kept in RS
-# as reference for the ininitialization of all elements.
-# Each element uses the root style as copy and then modifies the values it needs.
-# Note that the use of style dictionaries is fully recursive in PageBot, implementing a cascading structure
-# that is very similar to what happens in CSS.
+# The standard PageBot function getRootStyle() answers a standard Python
+# dictionary, where all PageBot style entries are filled by their default
+# values. The root style is kept in RS as reference for the ininitialization of
+# all elements.
+# Each element uses the root style as copy and then modifies the values it
+# needs. Note that the use of style dictionaries is fully recursive in
+# PageBot, implementing a cascading structure that is very similar to what
+# happens in CSS.
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/UseElasticTextBox.pdf'
@@ -54,8 +56,9 @@ def makeDocument():
     # Page padding is centered then.
     sqx = int(W/(SQUARE + GUTTER)) # Whole amount of squares that fit on the page.
     sqy = int(H/(SQUARE + GUTTER))
-    # Calculate centered paddings for the amount of fitting squares.
-    # Set values in the rootStyle, so we can compare with column calculated square position and sizes.
+    # Calculate centered paddings for the amount of fitting squares. Set
+    # values in the rootStyle, so we can compare with column calculated square
+    # position and sizes.
     #rs['colH'] = rs['colW'] = SQUARE  # Make default colW and colH square.
 
     #padX = (W - sqx*(SQUARE + GUTTER) + GUTTER)/2
@@ -94,7 +97,7 @@ def makeDocument():
         h1 = None
     e1 = newTextBox(s,
         name='ElasticTextBox1',
-        parent=page, padding=4, x=100, w=min(BoxWidth, page.pw), font='Verdana', h=h1, 
+        parent=page, padding=4, x=100, w=min(BoxWidth, page.pw), font='Verdana', h=h1,
         conditions=[Left2Left(), Float2Top()], yAlign=BOTTOM, xAlign=LEFT,
         leading=em(1.4), fontSize=9, textFill=tColor, strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor,
     )
@@ -106,6 +109,7 @@ def makeDocument():
     )
 
     score = page.solve()
+
     if score.fails:
         print(score.fails)
 
@@ -123,4 +127,3 @@ if __name__ == '__main__':
 
     d = makeDocument()
     d.export(EXPORT_PATH)
-
