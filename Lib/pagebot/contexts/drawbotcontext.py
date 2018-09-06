@@ -362,7 +362,7 @@ class DrawBotContext(BaseContext):
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
-        >>> context.drawPath(path)        
+        >>> context.drawPath(path)
         """
         ppt = point2D(upt(p))
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
@@ -811,7 +811,7 @@ class DrawBotContext(BaseContext):
         else: # Both are defined, scale disproportional
             wpt = upt(w)
             hpt = upt(h)
-            
+
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))
         sx, sy = (wpt/iw).rv, (hpt/ih).rv # We need ration values, not units
