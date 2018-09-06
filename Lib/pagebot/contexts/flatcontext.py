@@ -73,7 +73,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(pt(100), pt(100))
+        >>> context.newDocument(100, 100)
         >>> context.doc.__class__.__name__
         'document'
         """
@@ -127,7 +127,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(pt(100), pt(100))
+        >>> context.newDocument(100, 100)
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         >>> context.newDocument(100, 100)
@@ -335,6 +335,8 @@ class FlatContext(BaseContext):
         >>> bs = context.newString('ABC', style=style)
         >>> bs.__class__.__name__
         'FlatString'
+        >>> context.newDocument(1000, 1000)
+        >>> context.newPage()
         >>> context.text(bs, (100, 100))
 
         """
@@ -353,7 +355,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.fonttoolbox.fontpaths import *
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
-        48
+        49
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>

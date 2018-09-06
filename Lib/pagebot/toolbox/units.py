@@ -1071,7 +1071,7 @@ class Unit:
         9.25pt
         """
         u0 = copy(self)
-        if not self.v: 
+        if not self.v:
             raise ValueError('Cannot divide "%s" by "%s"' % (u, self.v))
         u0.v = u / self.v
         return u0
@@ -2575,7 +2575,7 @@ class Angle:
         """
         return math.sin(math.pi*self.radians)
     sin = property(_get_sin)
-    
+
     def _get_cos(self):
         """Answer the math.cos(self) of this angle.
         See also acos(v) above, that answers an Angle instance.
@@ -2611,7 +2611,7 @@ class Angle:
         """
         return math.tan(math.pi*self.radians)
     tan = property(_get_tan)
-    
+
 class Degrees(Angle):
     """Store the value as degrees.
 
