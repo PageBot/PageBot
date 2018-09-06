@@ -13,7 +13,8 @@
 #
 #   otlTools.py
 #
-"""A collection of code to inspect and manipulate OpenType Layout features in a FontTools TTFont."""
+"""A collection of code to inspect and manipulate OpenType Layout features in a
+FontTools TTFont."""
 
 #
 # Entry points
@@ -43,22 +44,23 @@ def findLookupTypes(otlTable):
 
 
 def findAlternateGlyphs(otlTable, glyphNames):
-    """Given a set of input glyph names, return the set of possible output glyphs,
-    as the result of GSUB glyph substitutions.
+    """Given a set of input glyph names, return the set of possible output
+    glyphs, as the result of GSUB glyph substitutions.
     """
     """
-        TODO: Fix docTests working with OTF test fonts
+    TODO: Fix docTests working with OTF test fonts; switch to a resource
+    font that ships with PageBot.
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-        >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
-        ['f_f', 'f_f_i', 'f_f_ij', 'f_f_l', 'f_i', 'f_ij', 'f_l']
-        >>> font = TTFont(getFontPath("SaunaPro-RegularItalicMerged.ttf"))
-        >>> sorted(findAlternateGlyphs(font["GSUB"], ["e"]))
-        ['e.swash']
-        >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
-        ['f.swash', 'f_b.swash', 'f_f', 'f_f.swash', 'f_f_i', 'f_f_i.swash', 'f_f_ij', 'f_f_ij.swash', 'f_f_l', 'f_f_l.swash', 'f_i', 'f_i.swash', 'f_ij', 'f_ij.swash', 'f_j.swash', 'f_k.swash', 'f_l', 'f_l.swash', 'f_t.swash']
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
+    >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
+    ['f_f', 'f_f_i', 'f_f_ij', 'f_f_l', 'f_i', 'f_ij', 'f_l']
+    >>> font = TTFont(getFontPath("SaunaPro-RegularItalicMerged.ttf"))
+    >>> sorted(findAlternateGlyphs(font["GSUB"], ["e"]))
+    ['e.swash']
+    >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
+    ['f.swash', 'f_b.swash', 'f_f', 'f_f.swash', 'f_f_i', 'f_f_i.swash', 'f_f_ij', 'f_f_ij.swash', 'f_f_l', 'f_f_l.swash', 'f_i', 'f_i.swash', 'f_ij', 'f_ij.swash', 'f_j.swash', 'f_k.swash', 'f_l', 'f_l.swash', 'f_t.swash']
     """
     assert otlTable.tableTag == "GSUB"
     gf = AlternateGlyphFinder(otlTable)
@@ -66,34 +68,35 @@ def findAlternateGlyphs(otlTable, glyphNames):
 
 
 def findSingleSubstAlts(otlTable):
-    """Find the alternate glyphs that can be accessed through any direct (non-contextual)
-    GSUB SingleSubst features, listing which feature(s) may trigger the substitution.
+    """Find the alternate glyphs that can be accessed through any direct
+    (non-contextual) GSUB SingleSubst features, listing which feature(s) may
+    trigger the substitution.  """
     """
-    """
-        TODO: Fix docTests
+    TODO: Fix docTests working with OTF test fonts; switch to a resource
+    font that ships with PageBot.
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-        >>> mapping = findSingleSubstAlts(font["GSUB"])
-        >>> mapping['one']
-        [(('lnum',), 'one.lf'), (('tnum',), 'one.tosf')]
-        >>> mapping['one.lf']
-        [(('onum',), 'one'), (('tnum',), 'one.tlf')]
-        >>> mapping['zero']
-        [(('lnum',), 'zero.lf'), (('tnum',), 'zero.tosf'), (('zero',), 'zeroslash')]
-        >>> mapping["zeroslash"]
-        [(('lnum',), 'zeroslash.lf'), (('tnum',), 'zeroslash.tosf')]
-        >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> mapping = findSingleSubstAlts(font["GSUB"])
-        >>> mapping['one']
-        [(('frac', 'zz43'), 'glyph00240'), (('onum', 'zz44'), 'glyph03268'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03278'), (('salt', 'ss01', 'zz55'), 'glyph03288'), (('subs', 'zz22'), 'uni2081'), (('sups', 'zz23'), 'uni00B9')]
-        >>> mapping['four']
-        [(('frac', 'zz43'), 'glyph00568'), (('onum', 'zz44'), 'glyph03271'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03281'), (('salt', 'ss01', 'zz55'), 'glyph03291'), (('subs', 'zz22'), 'uni2084'), (('sups', 'zz23'), 'uni2074')]
-        >>> mapping['glyph03901']
-        Traceback (most recent call last):
-            ...
-        KeyError: 'glyph03901'
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
+    >>> mapping = findSingleSubstAlts(font["GSUB"])
+    >>> mapping['one']
+    [(('lnum',), 'one.lf'), (('tnum',), 'one.tosf')]
+    >>> mapping['one.lf']
+    [(('onum',), 'one'), (('tnum',), 'one.tlf')]
+    >>> mapping['zero']
+    [(('lnum',), 'zero.lf'), (('tnum',), 'zero.tosf'), (('zero',), 'zeroslash')]
+    >>> mapping["zeroslash"]
+    [(('lnum',), 'zeroslash.lf'), (('tnum',), 'zeroslash.tosf')]
+    >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
+    >>> mapping = findSingleSubstAlts(font["GSUB"])
+    >>> mapping['one']
+    [(('frac', 'zz43'), 'glyph00240'), (('onum', 'zz44'), 'glyph03268'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03278'), (('salt', 'ss01', 'zz55'), 'glyph03288'), (('subs', 'zz22'), 'uni2081'), (('sups', 'zz23'), 'uni00B9')]
+    >>> mapping['four']
+    [(('frac', 'zz43'), 'glyph00568'), (('onum', 'zz44'), 'glyph03271'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03281'), (('salt', 'ss01', 'zz55'), 'glyph03291'), (('subs', 'zz22'), 'uni2084'), (('sups', 'zz23'), 'uni2074')]
+    >>> mapping['glyph03901']
+    Traceback (most recent call last):
+        ...
+    KeyError: 'glyph03901'
     """
     return findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=True)
 
@@ -103,7 +106,8 @@ def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
     feature(s) may trigger the substitution.
     """
     """
-        TODO: Fix docTests
+        TODO: Fix docTests working with OTF test fonts; switch to a resource
+        font that ships with PageBot.
 
         >>> from fontTools.ttLib import TTFont
         >>> from tnTestFonts import getFontPath
@@ -138,8 +142,7 @@ def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
 
 def findNestedLookups(otlTable):
     """Return a list of lookup indices for lookups that are referenced from
-    within other lookups. (As opposed to directly from features.)
-    """
+    within other lookups. (As opposed to directly from features.) """
     lf = NestedLookupFinderAndRemapper(otlTable)
     result = lf.findNestedLookups()
     result = [index for subTable, index in result]
@@ -147,25 +150,23 @@ def findNestedLookups(otlTable):
 
 
 def deleteGlyphs(otlTable, glyphNames):
-    """Delete all references to the glyphs named in the glyphNames set. Lookups,
-    features, language systems and scripts that become dysfunctional because of
-    that will also be deleted.
-    """
+    """Delete all references to the glyphs named in the glyphNames set.
+    Lookups, features, language systems and scripts that become dysfunctional
+    because of that will also be deleted."""
     gd = GlyphDeleter(otlTable)
     gd.deleteGlyphs(glyphNames)
 
 
 def scaleGpos(otlTable, scaleFactor):
-    """Scale all values in the GPOS table that are in design units.
+    """Scale all values in the GPOS table that are in design units."""
     """
-    """
-        TODO: Fix docTests
+    TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("SegoeUI-Regular-All.ttf")
-        >>> f = TTFont(path)
-        >>> scaleGpos(f["GPOS"], 0.5)
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> path = getFontPath("SegoeUI-Regular-All.ttf")
+    >>> f = TTFont(path)
+    >>> scaleGpos(f["GPOS"], 0.5)
     """
     assert otlTable.tableTag == "GPOS"
     gr = GposScaler(otlTable)
@@ -176,14 +177,14 @@ def mergeFeatures(table1, table2):
     """Merge the features from table2 into table1. Note this is destructive also for table2.
     """
     """
-        TODO: Fix docTests
+    TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> font1 = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-        >>> font2 = TTFont(getFontPath("SaunaPro-RegularItalicSwash.ttf"))
-        >>> mergeFeatures(font1["GPOS"], font2["GPOS"])
-        >>> mergeFeatures(font1["GSUB"], font2["GSUB"])
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> font1 = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
+    >>> font2 = TTFont(getFontPath("SaunaPro-RegularItalicSwash.ttf"))
+    >>> mergeFeatures(font1["GPOS"], font2["GPOS"])
+    >>> mergeFeatures(font1["GSUB"], font2["GSUB"])
     """
     if hasattr(table1, "table"):
         table1 = table1.table
@@ -261,8 +262,7 @@ def mergeFeatures(table1, table2):
 
 def sortFeatureList(table):
     """Sort the feature list by feature tag, and remap the feature indices
-    elsewhere. This is needed after the feature list has been modified.
-    """
+    elsewhere. This is needed after the feature list has been modified."""
     # decorate, sort, undecorate
     tagIndexFea = [(fea.FeatureTag, index, fea) for index, fea in enumerate(table.FeatureList.FeatureRecord)]
     tagIndexFea.sort()
@@ -278,12 +278,12 @@ def sortFeatureList(table):
 #
 
 class LookupTraverser:
+    """LookupTraverser provides a tiny framework to dispatch operations to
+    methods (to be implemented by the subclass) specialized for specific lookup
+    types.
 
-    """LookupTraverser provides a tiny framework to dispatch operations to methods
-    (to be implemented by the subclass) specialized for specific lookup types.
-
-    A LookupTraverser will just contain a reference to a FontTools OTL table instance,
-    but otherwise keep no state.
+    A LookupTraverser will just contain a reference to a FontTools OTL table
+    instance, but otherwise keep no state.
 
         class MyLookupWorker(LookupTraverser):
 
@@ -417,8 +417,8 @@ class AlternateGlyphFinder(LookupTraverser):
 
 
 class AlternateGlyphAndFeatureFinder(LookupTraverser):
-
-    """Find all alternate glyphs that can be accessed through any feature that uses SingleSubst."""
+    """Find all alternate glyphs that can be accessed through any feature that
+    uses SingleSubst."""
 
     def findAlternateGlyphsAndFeatures(self, onlyDirectSingleSubst=False):
         # Build a mapping from subTable -> [featureTag] so we can easily
@@ -539,11 +539,10 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
         return self.traverseLookups("findNestedLookups", None)
 
     def remapNestedLookups(self, remap):
-        """Remap the lookup indices used inside other lookups according to the remap dict.
-        Remove references to lookups that are not mapped in the remap dict. Return a list
-        of subtables that should be removed as they have become dysfunctional after the
-        remapping/removing.
-        """
+        """Remap the lookup indices used inside other lookups according to the
+        remap dict. Remove references to lookups that are not mapped in the
+        remap dict. Return a list of subtables that should be removed as they
+        have become dysfunctional after the remapping/removing."""
         assert remap is not None
         return self.traverseLookups("findNestedLookups", remap)
 
@@ -1208,10 +1207,9 @@ def _getClassesFromClassDef(classDef):
 
 
 class ObjectIdSet:
-
-    """A set object using object id's for comparison and hashing. We use this to
-    maintain a set of lookup subtables, which unfortunately aren't hashable, yet
-    are unique objects.
+    """A set object using object id's for comparison and hashing. We use this
+    to maintain a set of lookup subtables, which unfortunately aren't hashable,
+    yet are unique objects.
     Only supports a minimal subset of the set protocol.
 
         >>> a = []
@@ -1271,10 +1269,10 @@ class ObjectIdSet:
         return id(obj) in self._objects
 
     def __iter__(self):
-        return self._objects.itervalues()
+        return iter(self._objects.values())
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, self._objects.values())
+        return "%s(%s)" % (self.__class__.__name__, list(self._objects.values()))
 
 
 def _remapAndDeleteIndices(indices, remap):
@@ -1292,10 +1290,10 @@ def _remapAndDeleteIndices(indices, remap):
 
 
 def _pruneLookups(table, deadLookups):
-    """Go through the lookup list and remove the lookups that are in the deadLookups
-    set. Return a dictionary that maps the old lookup indices to the new, for remapping
-    the lookup indices used in features and in other lookups.
-    """
+    """Go through the lookup list and remove the lookups that are in the
+    deadLookups set. Return a dictionary that maps the old lookup indices to
+    the new, for remapping the lookup indices used in features and in other
+    lookups."""
     lookupsToDelete = []
     indicesBefore = list(range(len(table.LookupList.Lookup)))
     for lookupIndex, lookup in enumerate(table.LookupList.Lookup):
@@ -1322,7 +1320,8 @@ def _pruneLookups(table, deadLookups):
 
 
 def _remapNestedLookups(table, lookupRemap):
-    """Go through all the lookups and remap the references (indices) to other lookups."""
+    """Go through all the lookups and remap the references (indices) to other
+    lookups."""
     lf = NestedLookupFinderAndRemapper(table)
     return lf.remapNestedLookups(lookupRemap)
 
@@ -1351,9 +1350,8 @@ def _remapLookupsAndPruneFeatures(table, lookupRemap):
 
 
 def _remapFeaturesAndPruneScripts(table, featureRemap):
-    """Go through the scripts list, and remap or delete feature indices. If a script
-    becomes empty, delete it.
-    """
+    """Go through the scripts list, and remap or delete feature indices. If a
+    script becomes empty, delete it."""
     scriptsToDelete = []
     for scriptIndex, script in enumerate(table.ScriptList.ScriptRecord):
         defaultLangSys = script.Script.DefaultLangSys
@@ -1455,79 +1453,79 @@ def _test():
     """
     """
     """
-        #TODO: Make these docTests to work.
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> from io import StringIO
-        >>> font = TTFont(getFontPath("ProW6.otf"))
-        >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["cid00962"]))
-        >>> len(alts)
-        28
-        >>> alts[:10]
-        ['cid00361', 'cid00962', 'cid08031', 'cid08032', 'cid08033', 'cid08036', 'cid08306', 'cid09119', 'cid10096', 'cid10431']
-        >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> findNestedLookups(font["GPOS"])
-        [33, 34, 35, 36, 37, 38, 39, 40]
-        >>> findNestedLookups(font["GSUB"])
-        [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88]
-        >>> sorted(findAlternateGlyphs(font["GSUB"], ["a"]))
-        ['glyph03307']
-        >>> sorted(findAlternateGlyphs(font["GSUB"], ["uni0652"]))
-        ['glyph03690']
-        >>> font = TTFont(getFontPath("Arial Unicode.ttf"))
-        >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["glyph07332"]))
-        >>> len(alts)
-        191
-        >>> alts[:10]
-        ['glyph06956', 'glyph06964', 'glyph06967', 'glyph06968', 'glyph06970', 'glyph06971', 'glyph06972', 'glyph06974', 'glyph06979', 'glyph06989']
-        >>> findNestedLookups(font["GPOS"])
-        [3, 4, 5, 11, 12, 13, 16, 18, 20]
-        >>> findNestedLookups(font["GSUB"])
-        [25, 27, 28, 33, 34, 35, 36, 37, 38, 41, 43, 45, 52, 53, 54, 58, 69, 71, 73, 77, 78, 79, 80, 82, 83, 93, 100, 101, 103, 107]
-        >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        23270144
-        >>> font = TTFont(getFontPath("Arial Unicode.ttf"))
-        >>> glyphsToDelete = font.getGlyphOrder()[800:]
-        >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        23203484
-        >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        5090236
-        >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> glyphsToDelete = font.getGlyphOrder()[800:]
-        >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        5025328
-        >>> font = TTFont(getFontPath("ProW6.otf"))
-        >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        8834668
-        >>> font = TTFont(getFontPath("ProW6.otf"))
-        >>> glyphsToDelete = font.getGlyphOrder()[800:]
-        >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
-        >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        8468992
+    #TODO: Make these docTests to work.
+    >>> from fontTools.ttLib import TTFont
+    >>> from tnTestFonts import getFontPath
+    >>> from io import StringIO
+    >>> font = TTFont(getFontPath("ProW6.otf"))
+    >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["cid00962"]))
+    >>> len(alts)
+    28
+    >>> alts[:10]
+    ['cid00361', 'cid00962', 'cid08031', 'cid08032', 'cid08033', 'cid08036', 'cid08306', 'cid09119', 'cid10096', 'cid10431']
+    >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
+    >>> findNestedLookups(font["GPOS"])
+    [33, 34, 35, 36, 37, 38, 39, 40]
+    >>> findNestedLookups(font["GSUB"])
+    [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88]
+    >>> sorted(findAlternateGlyphs(font["GSUB"], ["a"]))
+    ['glyph03307']
+    >>> sorted(findAlternateGlyphs(font["GSUB"], ["uni0652"]))
+    ['glyph03690']
+    >>> font = TTFont(getFontPath("Arial Unicode.ttf"))
+    >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["glyph07332"]))
+    >>> len(alts)
+    191
+    >>> alts[:10]
+    ['glyph06956', 'glyph06964', 'glyph06967', 'glyph06968', 'glyph06970', 'glyph06971', 'glyph06972', 'glyph06974', 'glyph06979', 'glyph06989']
+    >>> findNestedLookups(font["GPOS"])
+    [3, 4, 5, 11, 12, 13, 16, 18, 20]
+    >>> findNestedLookups(font["GSUB"])
+    [25, 27, 28, 33, 34, 35, 36, 37, 38, 41, 43, 45, 52, 53, 54, 58, 69, 71, 73, 77, 78, 79, 80, 82, 83, 93, 100, 101, 103, 107]
+    >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    23270144
+    >>> font = TTFont(getFontPath("Arial Unicode.ttf"))
+    >>> glyphsToDelete = font.getGlyphOrder()[800:]
+    >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    23203484
+    >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
+    >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    5090236
+    >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
+    >>> glyphsToDelete = font.getGlyphOrder()[800:]
+    >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    5025328
+    >>> font = TTFont(getFontPath("ProW6.otf"))
+    >>> deleteGlyphs(font["GPOS"], _testGlyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], _testGlyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    8834668
+    >>> font = TTFont(getFontPath("ProW6.otf"))
+    >>> glyphsToDelete = font.getGlyphOrder()[800:]
+    >>> deleteGlyphs(font["GPOS"], glyphsToDelete)
+    >>> deleteGlyphs(font["GSUB"], glyphsToDelete)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    8468992
     """
 
 def _runDocTests():
@@ -1540,8 +1538,20 @@ if __name__ == "__main__":
         import sys
         sys.exit(_runDocTests()[0])
     if False:
-        gposFormats = ['SinglePosFormat1', 'SinglePosFormat2', 'PairPosFormat1', 'PairPosFormat2', 'CursivePosFormat1', 'MarkBasePosFormat1', 'MarkLigPosFormat1', 'MarkMarkPosFormat1', 'ContextPosFormat1', 'ContextPosFormat2', 'ContextPosFormat3', 'ChainContextPosFormat1', 'ChainContextPosFormat2', 'ChainContextPosFormat3', 'ExtensionPosFormat1']
-        gsubFormats = ['SingleSubstFormat1', 'SingleSubstFormat2', 'MultipleSubstFormat1', 'AlternateSubstFormat1', 'LigatureSubstFormat1', 'ContextSubstFormat1', 'ContextSubstFormat2', 'ContextSubstFormat3', 'ChainContextSubstFormat1', 'ChainContextSubstFormat2', 'ChainContextSubstFormat3', 'ExtensionSubstFormat1', 'ReverseChainSingleSubstFormat1']
+        gposFormats = ['SinglePosFormat1', 'SinglePosFormat2',
+                'PairPosFormat1', 'PairPosFormat2', 'CursivePosFormat1',
+                'MarkBasePosFormat1', 'MarkLigPosFormat1',
+                'MarkMarkPosFormat1', 'ContextPosFormat1', 'ContextPosFormat2',
+                'ContextPosFormat3', 'ChainContextPosFormat1',
+                'ChainContextPosFormat2', 'ChainContextPosFormat3',
+                'ExtensionPosFormat1']
+        gsubFormats = ['SingleSubstFormat1', 'SingleSubstFormat2',
+                'MultipleSubstFormat1', 'AlternateSubstFormat1',
+                'LigatureSubstFormat1', 'ContextSubstFormat1',
+                'ContextSubstFormat2', 'ContextSubstFormat3',
+                'ChainContextSubstFormat1', 'ChainContextSubstFormat2',
+                'ChainContextSubstFormat3', 'ExtensionSubstFormat1',
+                'ReverseChainSingleSubstFormat1']
         print
         unsupported = 0
         supported = 0
