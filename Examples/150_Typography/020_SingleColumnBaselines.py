@@ -48,7 +48,7 @@ style = dict(font=font, fontSize=24, leading=BASELINE, textFill=0.15, hyphenatio
 footNoteRefStyle = dict(font=font, fontSize=12, baselineShift=em(0.2), textFill=0.2)
 footNoteStyle = dict(font=font, fontSize=14, leading=BASELINE, textFill=0.6, paragraphTopSpacing=em(1))
 
-# Make BabelString from adding multiple cascadeing styles
+# Make BabelString from adding multiple cascading styles
 t = context.newString('Headline of this example page\n', style=headStyle) # Start with headline
 t += context.newString(text * 3, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text
@@ -62,7 +62,7 @@ doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = False # No baselines shown in grid.
+view.showBaselines = False # No baselines shown in grid. Element shows its own.
 
 # Get the page
 page = doc[1]
@@ -72,6 +72,7 @@ page = doc[1]
 # Default behavior of the textbox is to align the text at "top of the em-square".
 # Show index of baselines on left and vertical position of baselines on the right.
 c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()],
+    showOrigin=True,
     showBaselines=[BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT])
 
 # Solve the page/element conditions

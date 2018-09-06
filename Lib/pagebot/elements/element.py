@@ -23,7 +23,7 @@ from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
-                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
+                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE, BASE_TOP, BASE_BOTTOM,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
                            DEFAULT_COLOR_BARS)
 
@@ -33,6 +33,7 @@ from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now, days
+from pagebot.gradient import Gradient, Shadow
 
 class Element:
     """The base element object."""
@@ -46,6 +47,9 @@ class Element:
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
+
+    GRADIENT_CLASS = Gradient
+    SHADOW_CLASS = Shadow
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None,
@@ -172,6 +176,7 @@ class Element:
 
         # Set timer of this element.
         # Default TimeMarks from t == now() until arbitrary one day from now().
+        """
         t0 = now()
         if timeMarks is None:
             timeMarks = [TimeMark(t0, {}), TimeMark(t0 + days(1), {})]
@@ -180,6 +185,10 @@ class Element:
             t = t0
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
+        """
+        self.t = 0
+        self.timeMarks = []
+        self.timeKeys = []
 
         if padding is not None:
             self.padding = padding # Expand by property
@@ -1930,7 +1939,9 @@ class Element:
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        """Shift the element so self.top == y."""
+        """Shift the element so self.top == y. Where the "top" is, depends on the 
+        setting of self.yAlign. If self.isTextBox, then vertical position can also
+        be defined by the top or bottom position of the baseline."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             self.y = units(y) + self.h/2
@@ -2252,13 +2263,13 @@ class Element:
         self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     xAlign = property(_get_xAlign, _set_xAlign)
 
-    def _get_yAlign(self): # Answer the type of x-alignment.
+    def _get_yAlign(self): # Answer the type of y-alignment.
         return self._validateYAlign(self.css('yAlign'))
     def _set_yAlign(self, yAlign):
         self.style['yAlign'] = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
     yAlign = property(_get_yAlign, _set_yAlign)
 
-    def _get_zAlign(self): # Answer the type of x-alignment.
+    def _get_zAlign(self): # Answer the type of z-alignment.
         return self._validateZAlign(self.css('zAlign'))
     def _set_zAlign(self, zAlign):
         self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
@@ -3340,24 +3351,28 @@ class Element:
     def _get_shadow(self):
         return self.css('shadow')
     def _set_shadow(self, shadow):
+        assert shadow is None or isinstance(shadow, self.SHADOW_CLASS)
         self.style['shadow'] = shadow
     shadow = property(_get_shadow, _set_shadow)
 
     def _get_textShadow(self):
         return self.css('textShadow')
     def _set_textShadow(self, textShadow):
+        assert textShadow is None or isinstance(textShadow, self.SHADOW_CLASS)
         self.style['textShadow'] = textShadow
     textShadow = property(_get_textShadow, _set_textShadow)
 
     def _get_gradient(self):
         return self.css('gradient')
     def _set_gradient(self, gradient):
+        assert gradient is None or isinstance(gradient, self.GRADIENT_CLASS)
         self.style['gradient'] = gradient
     gradient = property(_get_gradient, _set_gradient)
 
     def _get_textGradient(self):
         return self.css('textGradient')
     def _set_textGradient(self, textGradient):
+        assert textGradient is None or isinstance(textGradient, self.GRADIENT_CLASS)
         self.style['textGradient'] = textGradient
     textGradient = property(_get_textGradient, _set_textGradient)
 

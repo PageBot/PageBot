@@ -967,6 +967,8 @@ class Color:
 
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
         k=None, cmyk=None, spot=None, ral=None, name=None):
+    if isinstance(r, Color): # If already a color, then return it
+        return r
     return Color(r=r, g=g, b=b, a=a, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk,
             spot=spot, ral=ral, name=name)
 
