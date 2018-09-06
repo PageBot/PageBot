@@ -12,14 +12,14 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     image.py 
+#     image.py
 #
 #     (New version separating the Image-frame and the Image-pixelmap)
 #
 import os
 from pagebot.elements.element import Element
 from pagebot.style import ORIGIN # In case no image is defined.
-from pagebot.toolbox.units import pointOffset, point2D, units, pt, upt
+from pagebot.toolbox.units import pointOffset, point2D, pt, upt
 from pagebot.toolbox.color import noColor
 
 
@@ -130,6 +130,7 @@ class ImageData(Element):
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
             print('Cannot display image %s' % self)
+            _, _, pb, pl = self.padding
             context.stroke(0.5, 0.5)
             context.fill(0.8)
             context.rect(px+pl, py+pb, self.pw, self.ph)
@@ -144,7 +145,7 @@ class ImageData(Element):
             else:
                 context.image(self.path, p=(px, py), w=self.w, h=self.h, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            
+
         if drawElements:
             self.buildChildElements(view, p)
 
@@ -172,7 +173,7 @@ class Image(Element):
         as a normal child element, all operations (such as layout conditions) can be performed
         on the combination. There also is a property self.imageData to find the image data element directly.
 
-        """ 
+        """
         self.imageData = ImageData(path, parent=self, imo=imo)
         self.clipPath = clipPath
         self.pathFill = pathFill or noColor
@@ -242,7 +243,7 @@ class Image(Element):
                 clipPath.lineTo(upt(px+pl, py+pb))
                 # close the path
                 clipPath.closePath()
-            
+
             #context.fill((0, 1, 0))
             #context.drawPath(clipPath)
 

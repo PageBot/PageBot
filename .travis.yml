@@ -108,7 +108,11 @@ script:
 - python3 Lib/pagebot/elements/variablefonts/variableglyphs.py
 - python3 Lib/pagebot/elements/variablefonts/variablescatter.py
 - python3 Lib/pagebot/elements/views/pageview.py
-- python3 Lib/pagebot/fonttoolbox/objects/*.py
+- python3 Lib/pagebot/fonttoolbox/objects/family.py
+- python3 Lib/pagebot/fonttoolbox/objects/font.py
+- python3 Lib/pagebot/fonttoolbox/objects/fontinfo.py
+- python3 Lib/pagebot/fonttoolbox/objects/glyph.py
+- python3 Lib/pagebot/fonttoolbox/objects/prevarfamily.py
 - python3 Lib/pagebot/fonttoolbox/otlTools.py
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py

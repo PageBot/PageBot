@@ -161,7 +161,7 @@ Tabloid = inch(11, 16.9)
 Broadsheet = inch(23.5, 29.5)
 Berliner = inch(12.4, 18.5)
 
-# Standard size of online printing sites. 
+# Standard size of online printing sites.
 # TODO: Add more online services and adapt other parameters/preferences for these PDF's
 
 # www.blurb.com
@@ -262,9 +262,9 @@ DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
 
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
-# If document.originTop == True (or page.originTop == True), 
+# If document.originTop == True (or page.originTop == True),
 # origin is on top-left of the page. Y-positive direction is down.
-# If document.originTop == False (or page.originTop == False), 
+# If document.originTop == False (or page.originTop == False),
 # origin is on bottom-left of the page. Y-positive direction is up.
 ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
@@ -561,7 +561,7 @@ BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left
 BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
 BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
-BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, 
+BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT,
    BASE_INSIDE}
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
