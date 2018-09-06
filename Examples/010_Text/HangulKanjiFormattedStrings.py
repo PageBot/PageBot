@@ -12,7 +12,8 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     TestKanjiFormattedString.py
+#     HangulKanjiFormattedStrings.py
+
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import color
@@ -24,9 +25,9 @@ W, H = 1000, 1000
 def run():
     s = """글자가 일상이 된다 산돌커뮤니케이션 ABCD123 Latin すべての文化集団は，独自の言語，文字，書記システムを持つ．それゆえ，個々の書記システムをサイバースペースに移転することは. ABCD123 Latin included"""
     context.newPage(pt(W), pt(H))
-    fsr = context.newString(s, style=dict(font='Generic-Regular', fontSize=FontSize))
-    fsb = context.newString(s, style=dict(font='Generic-Regular_Bold', fontSize=FontSize))
-    fsbRed = context.newString(s, style=dict(font='Generic-Regular_Bold',
+    fsr = context.newString(s, style=dict(font='Verdana', fontSize=FontSize))
+    fsb = context.newString(s, style=dict(font='Verdana', fontSize=FontSize))
+    fsbRed = context.newString(s, style=dict(font='Verdana',
                                        fill=color(1, 0, 0),
                                        fontSize=FontSize))
     context.textBox(fsr, (100, 600, 820, 350))
@@ -34,8 +35,7 @@ def run():
     context.textBox(fsbRed, (100, 0, 820, 350))
     context.textBox(fsr, (100, 0, 820, 350))
 
-if __name__ == '__main__':    
-
+if __name__ == '__main__':
     context.Variable([
         #dict(name='ElementOrigin', ui='CheckBox',
         #     args=dict(value=False)),
