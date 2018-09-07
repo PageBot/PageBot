@@ -264,11 +264,18 @@ class Duration:
         else:
             self.timeDelta = datetime.timedelta(days, seconds, microseconds, milliseconds, minutes, hours, weeks)
 
-    def __getattr__(self, key):
-        if key in ('days','seconds','microseconds'):
-            return getattr(self.timeDelta, key)
-        return self.__dict__[key]
-
+    def _get_days(self):
+        return self.timeDelta.days
+    days = property(_get_days) 
+    
+    def _get_seconds(self):
+        return self.timeDelta.seconds
+    seconds = property(_get_seconds) 
+    
+    def _get_microseconds(self):
+        return self.timeDelta.microseconds
+    microseconds = property(_get_microseconds) 
+    
     def __len__(self):
         return self.days
 
@@ -568,7 +575,7 @@ class dateTime:
 
             if date is not None:
                 if isinstance(date, str):
-                    # Could one of the follovwing formats
+                    # Could be one of the follovwing formats
                     # YYYY-MM-DD HH:MM:SS
                     stamp = re.compile("(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)([\-\+]\d+)?")
                     m = stamp.match(date)
@@ -787,6 +794,10 @@ class dateTime:
         if isinstance(durationOrDate, dateTime):
             # Date - Date = Duration
             return Duration(td=self.dateTime - durationOrDate.dateTime)
+
+    def _get_year(self):
+        return self.dateTime.yearaaa
+    year = property(_get_year)
 
     @classmethod
     def timeStampRandomLong(cls):
