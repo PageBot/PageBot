@@ -514,19 +514,20 @@ class Dating:
     >>> #d3.prevMonth # Goes back to previous year
     2007-11-01 00:00:00
     >>> #d3 - d1
-
+    
+    >>> d3 = Dating(d1.year, d1.month, 1)
+    >>> d3
+    Dating(date='2018-02-01' time='00:00:00')
+    >>> d1.monthStart, d1.monthEnd
+    (Dating(date='2018-02-01' time='00:00:00'), Duration(0m, 38d, 0s, 0us))
+    >>> d1 - Duration(days=1)
+    Dating(date='2018-02-09' time='00:00:00')
+    >>> Dating(date='2007-12-10').monthStart.week # First week of this month
+    48
     """
     """
 
-    print(d3.nextMonth)
-    d3 = datetime(2008, 1, 15)
-    print(d3.prevMonth)
-    print(d3 - d1)
-    d3 = datetime(d1.year, d1.month, 1)
-    print(d3 + Duration(days=d3.monthDays - 1))
-    print(d1.monthStart, d1.monthEnd)
-    print(d1 - Duration(days=1))
-    print('First week of this month', datetime(date='2007-12-10').monthStart.week)
+    print('First week of this month', Dating(date='2007-12-10').monthStart.week)
     print('Date of start of first week of this month', datetime(date='2007-12-10').monthStart.weekStart)
     print('Previous month of 2007-12-10 is', datetime(date='2007-12-10').prevMonth.date)
     print('Previous month of 2008-1-10 is', datetime(date='2008-1-10').prevMonth.date)
