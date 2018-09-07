@@ -24,7 +24,7 @@ def uniqueLong():
     >>> len(uniqueLong())
     18
     """
-    return dateTime.timeStampRandomLong()
+    return Dating.timeStampRandomLong()
 
 def timeStampLong():
     """The timeStampLong method answers the timestamp. This may not be unique.
@@ -32,7 +32,7 @@ def timeStampLong():
     >>> len(timeStampLong()) # '152081005707'
     12
     """
-    return dateTime.timeStampLong()
+    return Dating.timeStampLong()
 
 def uniqueId(size=0):
     """The uniqueId method answers a unique number (as string) of size length concatenated
@@ -82,29 +82,29 @@ def monthDays(year, month):
     else:
         return 30
 
-def checkdateTime(date):
+def checkdatetime(date):
     """
 
-    The checkdateTime answers the date if it is a date. If date is None, then answer None. If
-    date is a string, then convert to dateTime. Check on the month and day boundaries. Answer the same type that date
-    was. Note that we do not check if date was already a dateTime. This method is especially made to set database fields
+    The checkdatetime answers the date if it is a date. If date is None, then answer None. If
+    date is a string, then convert to datetime. Check on the month and day boundaries. Answer the same type that date
+    was. Note that we do not check if date was already a datetime. This method is especially made to set database fields
     with dates, where that None will result in a NULL value for that field.
 
     """
     if not date: # Check on None or empty string
         return None
-    if not isinstance(date, dateTime):
-        return dateTime(date=date).date
+    if not isinstance(date, datetime):
+        return datetime(date=date).date
     return date
 
 def now():
-    return dateTime(date='now')
+    return datetime(date='now')
 
 def milliseconds(milliseconds):
     """Answer the Duration instance for this amount of milliseconds
 
     >>> milliseconds(5) # Shown as the amount of days and seconds
-    Duration(0m,0d,0s,5000us)
+    Duration(0m, 0d, 0s, 5000us)
     """
     return Duration(milliseconds=milliseconds)
 
@@ -112,7 +112,7 @@ def microseconds(microseconds):
     """Answer the Duration instance for this amount of microseconds
 
     >>> microseconds(5) # Shown as the amount of days and seconds
-    Duration(0m,0d,0s,5us)
+    Duration(0m, 0d, 0s, 5us)
     """
     return Duration(microseconds=microseconds)
 
@@ -120,7 +120,7 @@ def seconds(seconds):
     """Answer the Duration instance for this amount of seconds
 
     >>> seconds(5) # Shown as the amount of days and seconds
-    Duration(0m,0d,5s,0us)
+    Duration(0m, 0d, 5s, 0us)
     """
     return Duration(seconds=seconds)
 
@@ -128,13 +128,13 @@ def minutes(minutes):
     """Answer the Duration instance for this amount of minutes
 
     >>> minutes(5) # Shown as the amount of days and seconds
-    Duration(0m,0d,300s,0us)
+    Duration(0m, 0d, 300s, 0us)
     >>> minutes(100) # Shown as the amount of days and seconds
-    Duration(0m,0d,6000s,0us)
+    Duration(0m, 0d, 6000s, 0us)
     >>> minutes(1000) # Shown as the amount of days and seconds
-    Duration(0m,0d,60000s,0us)
+    Duration(0m, 0d, 60000s, 0us)
     >>> minutes(10000) # Shown as the amount of days and seconds
-    Duration(0m,6d,81600s,0us)
+    Duration(0m, 6d, 81600s, 0us)
     """
     return Duration(minutes=minutes)
 
@@ -142,9 +142,9 @@ def hours(hours):
     """Answer the Duration instance for this amount of hours
 
     >>> hours(5) # Shown as the amount of seconds
-    Duration(0m,0d,18000s,0us)
+    Duration(0m, 0d, 18000s, 0us)
     >>> hours(100) # Shown as the amount of seconds
-    Duration(0m,4d,14400s,0us)
+    Duration(0m, 4d, 14400s, 0us)
     """
     return Duration(hours=hours)
 
@@ -152,7 +152,7 @@ def days(days):
     """Answer the Duration instance for this amount of days
 
     >>> days(5) # Shown as the amount of months
-    Duration(0m,5d,0s,0us)
+    Duration(0m, 5d, 0s, 0us)
     """
     return Duration(days=days)
 
@@ -160,7 +160,7 @@ def months(months):
     """Answer the Duration instance for this amount of months
 
     >>> months(5) # Shown as the amount of months
-    Duration(5m,0d,0s,0us)
+    Duration(5m, 0d, 0s, 0us)
     """
     return Duration(months=months)
 
@@ -168,9 +168,9 @@ def years(years):
     """Answer the Duration instance for this amount of years
 
     >>> years(1) # Shown as the amount of months
-    Duration(12m,0d,0s,0us)
+    Duration(12m, 0d, 0s, 0us)
     >>> years(5) # Shown as the amount of months
-    Duration(60m,0d,0s,0us)
+    Duration(60m, 0d, 0s, 0us)
     """
     return Duration(years=years)
 
@@ -178,9 +178,9 @@ def decades(decades):
     """Answer the Duration instance for this amount of decades
 
     >>> decades(1) # Shown as the amount of months
-    Duration(120m,0d,0s,0us)
+    Duration(120m, 0d, 0s, 0us)
     >>> decades(5) # Shown as the amount of months
-    Duration(600m,0d,0s,0us)
+    Duration(600m, 0d, 0s, 0us)
     """
     return Duration(decades=decades)
 
@@ -206,28 +206,28 @@ def millennia(millennia):
 
 
 def year(year):
-    """Answer the dateTime instance of that year
+    """Answer the datetime instance of that year
 
     >>> year(2019)
-    2019-01-01 00:00:00
+    Dating(date='2019-01-01' time='00:00:00')
     """
-    return dateTime(year=year, month=1, day=1)
+    return Dating(year=year, month=1, day=1)
 
-def newDateTime(date):
+def newdatetime(date):
     """
-    The newDateTime method answers a new dateTime instance. If the date is
+    The newdatetime method answers a new datetime instance. If the date is
     None, then answer None. If date is a string, then convert to
-    dateTime. Check on the month and day boundaries.
+    datetime. Check on the month and day boundaries.
 
     """
     if date is None:
         return None
-    if not isinstance(date, dateTime):
-        date = dateTime(date=date)
+    if not isinstance(date, datetime):
+        date = datetime(date=date)
     return date
 
 class Duration:
-    """The Duration class contains a duration in time. It can e.g. be used to add to a dateTime
+    """The Duration class contains a duration in time. It can e.g. be used to add to a datetime
     instance with a new date as result.
     All common arithmetic applies to a Duration instance.
 
@@ -243,7 +243,7 @@ class Duration:
 
     """
 
-    #hack months and larger onto dateTime.timedleta, which only goes up to weeks
+    #hack months and larger onto datetime.timedleta, which only goes up to weeks
     months = None
     timeDelta = None
 
@@ -251,7 +251,7 @@ class Duration:
             weeks=0, months=0, years=0, decades=0, centuries=0, millennia=0, td=None):
         """
 
-        An extension of the builtin dateTime.timeDelta class, extending to millennia to match SQL's INTERVAL type
+        An extension of the builtin datetime.timeDelta class, extending to millennia to match SQL's INTERVAL type
         Note that by itself, a duration of months is meaningless due to diffing month lengths.
         But when doing date arithmetic, we can figure it out.
 
@@ -280,10 +280,9 @@ class Duration:
         return self.days
 
     def __str__(self):
-        return str(self)
+        return '%s(%dm, %dd, %ds, %dus)' % (self.__class__.__name__, self.months, self.days, self.seconds, self.microseconds)
 
-    def __repr__(self):
-        return 'Duration(%dm, %dd, %ds, %dus)' % (self.months, self.days, self.seconds, self.microseconds)
+    __repr__ = __str__
 
     # To be added __iter__
 
@@ -296,7 +295,6 @@ class Duration:
     def __eq__(self, other):
         if not isinstance(other, Duration):
             return False
-
         return self.months==other.months and self.days==other.days and self.seconds==other.seconds and self.microseconds==other.microseconds
 
     def __ne__(self,other):
@@ -307,6 +305,9 @@ class Duration:
 
     def __div__(self, n):
         return Duration(months=self.months / n, days=self.days / n, seconds=self.seconds / n, microseconds=self.microseconds / n)
+
+    __truediv__ = __div__
+    __itruediv__ = __rtruediv__ = __rdiv__ = __div__
 
     def __neg__(self):
         return self * -1;
@@ -321,7 +322,7 @@ class Duration:
         if isinstance(value, Duration):
             return Duration(months=self.months + value.months, days=self.days + value.days, seconds=self.seconds + value.seconds, microseconds=self.microseconds + value.microseconds)
 
-        if isinstance(value, dateTime):
+        if isinstance(value, Dating):
             #need to do some magic to take into account leap years etc
             extraDays = 0
             import math
@@ -367,22 +368,22 @@ class Duration:
                 extraDays = -extraDays
 
             if extraDays:
-                return dateTime(dt=value.dateTime + dateTime.timeDelta(days=extraDays) + self.timeDelta)
+                return Dating(dt=value.datetime + datetime.timedelta(days=extraDays) + self.timeDelta)
             else:
-                return dateTime(dt=value.dateTime + self.timeDelta)
+                return Dating(dt=value.datetime + self.timeDelta)
         raise ValueError('[Duration.__add__] Illegal type to add to a Duration instance "%s"' % value)
 
-    def __sub__(self, dt):
+    def __sub__(self, dating):
         # Duration - Date = Date
         # Duration - Duration = Duration
         # Duration - 3 = Duration
-        if isinstance(dt, (int, float, Duration)):
-            return self + -dt
+        if isinstance(dating, (int, float, Duration)):
+            return self + -dating
 
-        if isinstance(dt, dateTime):
-            return dt + -self
+        if isinstance(dating, Dating):
+            return dating + -self
 
-        raise ValueError('[Duration.__add__] Illegal type to subtract from a Duration instance "%s"' % dt)
+        raise ValueError('[Duration.__sub__] Illegal type to subtract from a Duration instance "%s"' % dt)
 
     def __iadd__(self, item):
         return self + item
@@ -400,32 +401,30 @@ class Duration:
         """Most negative timeDelta object that can be represented.
 
         """
-        return dateTime.timeDelta.min
+        return datetime.timedelta.min
 
     def max(self):
         """Most positivie timeDelta object that can be represented.
 
         """
-        return dateTime.timeDelta.max
+        return datetime.timedelta.max
 
     def resolution(self):
         """Smallest resolvable difference that a timeDelta object can represent.
 
         """
-        return dateTime.timeDelta.resolution
+        return datetime.timedelta.resolution
 
-Period = Duration    # Make the lib backward compatible. But the use of Period is supported.
-
-class dateTime:
+class Dating:
     """
-    The newdate method answers a new dateTime instance. If the date is
+    The newdate method answers a new datetime instance. If the date is
     None, then answer None. If date is a string, then convert to
-    dateTime. Check on the month and day boundaries.
+    datetime. Check on the month and day boundaries.
 
     Initialize the current date if the date is equal to now
     Initialize on first day of the week if year and week are defined
-    Initialize from existing dateTime if "dt" is defined
-    Initialize from dateTime string, date and time separated by white space.
+    Initialize from existing datetime if "dt" is defined
+    Initialize from datetime string, date and time separated by white space.
     Initialize from date string (identical to the result of self.date) if defined
     Initialize from time string (identical to the result of self.time) if defined
     Initialize from (year, month, day) if all of them are defined.
@@ -435,118 +434,146 @@ class dateTime:
     input values of the date are <em>not</em> trimmed to their minimum and maximum values. This checking is done in
     context for days in months and years.
 
-    >>> #dateTime(date='now') # 2018-03-15 13:50:55
-    >>> dateTime(date='2018-11-23')
-    2018-11-23 00:00:00
-    >>> dateTime(date='2018-11-23', time='23:11')
-    2018-11-23 23:11:00
-    >>> dateTime(date='2018-11-23', time='23:11:22')
-    2018-11-23 23:11:22
-    >>> dateTime(2018, 11, 23)
-    2018-11-23 00:00:00
-    >>> dateTime(2018, 11, 23, 23, 11, 22, 0)
-    2018-11-23 23:11:22
-    >>> dateTime(2018, week=23)
-    2018-06-04 00:00:00
-    >>> d1 = dateTime(year=2018, month=2, day=10)
-    >>> d2 = dateTime(year=2018, month=3, day=14)
+    >>> #Dating(date='now') # 2018-03-15 13:50:55
+    >>> Dating(date='2018-11-23')
+    Dating(date='2018-11-23' time='00:00:00')
+    >>> Dating(date='2018-11-23', time='23:11')
+    Dating(date='2018-11-23' time='23:11:00')
+    >>> Dating(date='2018-11-23', time='23:11:22')
+    Dating(date='2018-11-23' time='23:11:22')
+    >>> Dating(2018, 11, 23)
+    Dating(date='2018-11-23' time='00:00:00')
+    >>> Dating(2018, 11, 23, 23, 11, 22, 0)
+    Dating(date='2018-11-23' time='23:11:22')
+    >>> Dating(2018, week=23)
+    Dating(date='2018-06-04' time='00:00:00')
+    >>> d1 = Dating(year=2018, month=2, day=10)
+    >>> d2 = Dating(year=2018, month=3, day=14)
     >>> d1 + Duration(123)
-    2018-06-13 00:00:00
+    Dating(date='2018-06-13' time='00:00:00')
     >>> #d1 - Duration(days=2)
     2018-06-11 00:00:00
     >>> p = Duration(seconds=10) * 6 / 2 # Calculate with durations, 30 seconds
     >>> p
-    Duration(0m,0d,30s,0us)
+    Duration(0m, 0d, 30s, 0us)
     >>> #d1 + Duration(days=10)
     2018-06-23 00:00:00
     >>> d1.weekDay, d1.dayName, d1.month, d1.monthName
     (5, 'Sat', 2, 'Feb')
     >>> d1.nextWorkDay, d1.nextWorkDay.dayName
-    (2018-02-12 00:00:00, 'Mon')
+    (Dating(date='2018-02-12' time='00:00:00'), 'Mon')
     >>> d1 + 6 # 6 days later
-    2018-02-16 00:00:00
-
+    Dating(date='2018-02-16' time='00:00:00')
+    >>> d1.month, d1.monthName
+    (2, 'Feb')
+    >>> d1.week, d2.week
+    (6, 11)
+    >>> d1.nextWorkDay # Next working day of dating d1
+    Dating(date='2018-02-12' time='00:00:00')
+    >>> d1
+    Dating(date='2018-02-10' time='00:00:00')
+    >>> d1 + p # Date + 30 seconds
+    Dating(date='2018-02-10' time='00:00:30')
+    >>> d1 + p + minutes(20) # Add 30 seconds and 20 minutes
+    Dating(date='2018-02-10' time='00:20:30')
+    >>> d1 + 6 # Answer a Dating for six days later
+    Dating(date='2018-02-16' time='00:00:00')
+    >>> d1 + 60 # Answer a Dating for sixty days later
+    Dating(date='2018-04-11' time='00:00:00')
+    >>> d1 + 600 # Answer a Dating for sixhundred days later --> 2019
+    Dating(date='2019-10-03' time='00:00:00')
+    >>> (d1 + 60).nextWorkDay # First work day after 600 days
+    Dating(date='2018-04-11' time='00:00:00')
+    >>> #d1 - 20 # 20 days earlier
+    2018-01-21 00:00:00
+    >>> d1 - p # 30 seconds earlier
+    Dating(date='2018-02-09' time='23:59:30')
+    >>> d1.date
+    '2018-02-10'
+    >>> d1.dateNumber
+    20180210
+    >>> d1.time # Single date 
+    '00:00:00'
+    >>> d1.dateTuple
+    (2018, 2, 10)
+    >>> d1.nextDayNamed(5).dayName
+    'Sat'
+    >>> d1.nextDayNamed(5).nextWorkDay.dayName
+    'Mon'
+    >>> d1.nextDayNamed(6).nextWorkDay.dayName
+    'Mon'
+    >>> d1.leapYear
+    False
+    >>> Dating(date='2000-2-29').leapYear
+    True
+    >>> d3 = Dating(2007, 12, 20)
+    >>> d3
+    Dating(date='2007-12-20' time='00:00:00')
+    >>> d3.nextMonth
+    Dating(date='2008-01-01' time='00:00:00')
+    >>> #d3.prevMonth # Goes back to previous year
+    2007-11-01 00:00:00
+    >>> #d3 - d1
 
     """
     """
 
-    print(d1.month, d1.monthName)
-    print(d1.week, d2.week)
-    print('Next working day', d1.nextWorkDay)
-    print(d1)
-    print(d1 + p)
-    print('6 days later', d1 + 6)
-    print('60 days later', d1 + 60)
-    print('First work day after 60 days', (d1 + 60).nextWorkDay)
-    print('20 days earlier', d1 - 20)
-    print(d1 - p)
-    print(d1 - d2 + d2)
-    print(d1.date)
-    print(d1.dateNumber)
-    print(d1.dateTuple)
-    print(d1.time)
-    print(d1.timeTuple)
-    print(d1.nextDayNamed(5).dayName)
-    print(d1.nextDayNamed(5).nextWorkDay.dayName)
-    print(d1.nextDayNamed(6).nextWorkDay.dayName)
-    print(d1.leapYear)
-    d3 = dateTime(2007, 12, 20)
     print(d3.nextMonth)
-    d3 = dateTime(2008, 1, 15)
+    d3 = datetime(2008, 1, 15)
     print(d3.prevMonth)
     print(d3 - d1)
-    d3 = dateTime(d1.year, d1.month, 1)
+    d3 = datetime(d1.year, d1.month, 1)
     print(d3 + Duration(days=d3.monthDays - 1))
     print(d1.monthStart, d1.monthEnd)
     print(d1 - Duration(days=1))
-    print('First week of this month', dateTime(date='2007-12-10').monthStart.week)
-    print('Date of start of first week of this month', dateTime(date='2007-12-10').monthStart.weekStart)
-    print('Previous month of 2007-12-10 is', dateTime(date='2007-12-10').prevMonth.date)
-    print('Previous month of 2008-1-10 is', dateTime(date='2008-1-10').prevMonth.date)
-    print('Next month of 2007-12-10 is', dateTime(date='2007-12-10').nextMonth.date)
-    print('Next month of 2008-1-10 is', dateTime(date='2008-1-10').nextMonth.date)
-    print('First day of third week', dateTime(year=2008, week=2).date)
-    print('Trim day value', dateTime(year=2008, month=2, day=35).date)
-    print('Trim month and day value', dateTime(year=2008, month=22, day=35).date)
+    print('First week of this month', datetime(date='2007-12-10').monthStart.week)
+    print('Date of start of first week of this month', datetime(date='2007-12-10').monthStart.weekStart)
+    print('Previous month of 2007-12-10 is', datetime(date='2007-12-10').prevMonth.date)
+    print('Previous month of 2008-1-10 is', datetime(date='2008-1-10').prevMonth.date)
+    print('Next month of 2007-12-10 is', datetime(date='2007-12-10').nextMonth.date)
+    print('Next month of 2008-1-10 is', datetime(date='2008-1-10').nextMonth.date)
+    print('First day of third week', datetime(year=2008, week=2).date)
+    print('Trim day value', datetime(year=2008, month=2, day=35).date)
+    print('Trim month and day value', datetime(year=2008, month=22, day=35).date)
     print('Year start and end', d1.yearStart.date, d1.yearEnd.date)
     print('Month start and end', d1.monthStart.date, d1.monthEnd.date)
     print(d1.calendarMonth)
-    print(dateTime(date='2008-2-29').calendarMonth)
-    print(dateTime(date='2007-12-31').calendarYear)
+    print(datetime(date='2008-2-29').calendarMonth)
+    print(datetime(date='2007-12-31').calendarYear)
 
-    >>> dt1 = dateTime(2007, 12, 20)
+    >>> dt1 = datetime(2007, 12, 20)
     >>> dt1.nextMonth.monthName
     'Jan'
-    >>> dt2 = dateTime(2008, 1, 15)
+    >>> dt2 = datetime(2008, 1, 15)
     >>> dt2.prevMonth.monthName
     'Dec'
     >>> (dt2 - dt1).days
     26
-    >>> dt3 = dateTime(dt1.year, dt1.month, 1)
+    >>> dt3 = datetime(dt1.year, dt1.month, 1)
     >>> dt3 + Duration(days=dt3.monthDays - 1)
     2007-12-31 00:00:00
     >>> dt1.monthStart, dt1.monthEnd
     (2007-12-01 00:00:00, 2007-12-31 00:00:00)
     >>> dt1 - Duration(days=1)
     2007-12-19 00:00:00
-    >>> 'First week of this month', dateTime(date='2007-12-10').monthStart.week
+    >>> 'First week of this month', datetime(date='2007-12-10').monthStart.week
     ('First week of this month', 48)
-    >>> 'Date of start of first week of this month', dateTime(date='2007-12-10').monthStart.weekStart
+    >>> 'Date of start of first week of this month', datetime(date='2007-12-10').monthStart.weekStart
     ('Date of start of first week of this month', 2007-11-26 00:00:00)
-    >>> 'Previous month of 2007-12-10 is', dateTime(date='2007-12-10').prevMonth.date
+    >>> 'Previous month of 2007-12-10 is', datetime(date='2007-12-10').prevMonth.date
     ('Previous month of 2007-12-10 is', '2007-11-01')
 
-    print('Previous month of 2008-1-10 is', dateTime(date='2008-1-10').prevMonth.date)
-    print('Next month of 2007-12-10 is', dateTime(date='2007-12-10').nextMonth.date)
-    print('Next month of 2008-1-10 is', dateTime(date='2008-1-10').nextMonth.date)
-    print('First day of third week', dateTime(year=2008, week=2).date)
-    print('Trim day value', dateTime(year=2008, month=2, day=35).date)
-    print('Trim month and day value', dateTime(year=2008, month=22, day=35).date)
+    print('Previous month of 2008-1-10 is', datetime(date='2008-1-10').prevMonth.date)
+    print('Next month of 2007-12-10 is', datetime(date='2007-12-10').nextMonth.date)
+    print('Next month of 2008-1-10 is', datetime(date='2008-1-10').nextMonth.date)
+    print('First day of third week', datetime(year=2008, week=2).date)
+    print('Trim day value', datetime(year=2008, month=2, day=35).date)
+    print('Trim month and day value', datetime(year=2008, month=22, day=35).date)
     print('Year start and end', d1.yearStart.date, d1.yearEnd.date)
     print('Month start and end', d1.monthStart.date, d1.monthEnd.date)
     print(d1.calendarMonth)
-    print(dateTime(date='2008-2-29').calendarMonth)
-    print(dateTime(date='2007-12-31').calendarYear)
+    print(datetime(date='2008-2-29').calendarMonth)
+    print(datetime(date='2007-12-31').calendarYear)
 
     """
     # TODO: Add localized names here, supporting the language codes in constants
@@ -557,21 +584,15 @@ class dateTime:
     fullMonthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
     def __init__(self, year=None, month=None, day=None, hour=0, minute=0, second=0, microSecond=0, tz=None,
-        dt=None, dateTime=None, date=None, time=None, week=None, trimvalues=True, mtime=None):
+        dt=None, date=None, time=None, week=None, trimvalues=True, mtime=None):
 
-        if dt is not None:
-            # Assume that dt is of type date string. Direct init from existing dateTime
-            self._dateTime = dt
+        if dt is not None: # If datetime object, just store it.
+            # Assume that dt is of type date string. Direct init from existing datetime
+            self.datetime = dt
         else:
-            if date == 'now' or dateTime == 'now':
-                self._dateTime = datetime.datetime.now()
+            if date == 'now':
+                self.datetime = dating.datetime.now()
                 return
-
-            if dateTime is not None:
-                dateTime = str(dateTime) # In case of a dateTime instance from Django
-                dateTimeParts = dateTime.split(' ')
-                date = dateTimeParts[0].strip()
-                time = dateTimeParts[1].strip()
 
             if date is not None:
                 if isinstance(date, str):
@@ -597,7 +618,7 @@ class dateTime:
                             if int(day) > int(year):    # If notation 25-03-2007, then swap day and year
                                 year, day = day, year
                         except:
-                            raise ValueError('[dateTime] Wrong date format "%s"' % date)
+                            raise ValueError('[datetime] Wrong date format "%s"' % date)
                 else:
                     # If date is an integer .... format: YYYYMMDD
                     d = str(date)
@@ -629,18 +650,18 @@ class dateTime:
             if year is not None and week is not None:
                 week = int(week)
                 # Set date of first day in the requested week
-                dt = dateTime.dateTime(int(year), 1, 1) + dateTime.timeDelta(weeks=week)
-                self._dateTime = dt - datetime.timedelta(days=dt.timeTuple()[self.keys['weekDay']])
+                dt = datetime.datetime(int(year), 1, 1) + datetime.timedelta(weeks=week)
+                self.datetime = dt - datetime.timedelta(days=dt.timetuple()[self.keys['weekDay']])
                 # This algorithm may be one week off, so test and adjust if it does not match.
                 if self.week > week:
-                    self._dateTime -= datetime.timedelta(days=7)
+                    self.datetime -= datetime.timedelta(days=7)
 
             elif year is None or month is None or day is None:
                 if time is not None:
                     # Just a time was specified,
                     year = month = day = 0
                 else:
-                    raise ValueError('[dateTime] Did not supply all values of y,m,d (%s,%s,%s)' % (year, month, day))
+                    raise ValueError('[datetime] Did not supply all values of y,m,d (%s,%s,%s)' % (year, month, day))
 
             elif trimvalues:
                 year = int(year)
@@ -650,112 +671,114 @@ class dateTime:
                 minute = min(60, max(0, int(minute)))
                 second = min(60, max(0, int(second)))
                 microSecond = min(99, max(0, int(microSecond)))
-                self._dateTime = datetime.datetime(year, month, day, hour, minute, second, microSecond, tz)
+                self.datetime = datetime.datetime(year, month, day, hour, minute, second, microSecond, tz)
             else: # Nothing specified, assume it is now.
-                self._dateTime = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute), int(second),
+                self.datetime = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute), int(second),
                                                 int(microSecond), tz)
-
-    def __repr__(self):
-        """The function repr(dt) answers the string representation of the date,
-        typically identical to dt.date + ' ' + dt.time.
-
-        >>> dt = dateTime(date='2018-11-23')
-        >>> '%s' % dt
-        '2018-11-23 00:00:00'
-        """
-        return str(self)
 
     def __str__(self):
         """The function repr(dt) answers the string representation of the date,
         typically identical to dt.date + ' ' + dt.time.
 
-        >>> dt = dateTime(date='2018-11-23')
-        >>> str(dt)
-        '2018-11-23 00:00:00'
+        >>> dating = Dating(date='2018-11-23')
+        >>> str(dating)
+        "Dating(date='2018-11-23' time='00:00:00')"
         """
-        return self.date + ' ' + self.time
+        return "%s(date='%s' time='%s')" % (self.__class__.__name__, self.date, self.time)
+
+    __repr__ = __str__
 
     def __nonzero__(self):
-        """Always answer True indicating that a dateTime instance can never be zero.
+        """Always answer True indicating that a dating instance can never be zero.
 
         """
         return True
 
-    def __lt__(self, dt):
+    def __lt__(self, dating):
         """Answers True if self is in the past of date dt as in self < dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt; self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy < self.</br>
 
-        >>> dt1 = dateTime(date='2019-11-23')
-        >>> dt2 = dateTime(date='2018-11-23')
-        >>> dt2 < dt1
+        >>> dating1 = Dating(date='2019-11-23')
+        >>> dating2 = Dating(date='2018-11-23') # Same date, later in time
+        >>> dating2 < dating1
         True
         """
-        return self._dateTime < dt.datetime
+        if isinstance(dating, Dating):
+            return self.datetime < dating.datetime
+        return False
 
-    def __le__(self, dt):
+    def __le__(self, dating):
         """Answers True if self is in the past of or equal to date dt as in self <= dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
 
-        >>> dt1 = dateTime(date='2018-11-25')
-        >>> dt2 = dateTime(date='2018-11-23')
+        >>> dt1 = Dating(date='2018-11-25')
+        >>> dt2 = Dating(date='2018-11-23')
         >>> dt2 <= dt1
         True
         """
-        return self._dateTime <= dt.datetime
+        if isinstance(dating, Dating):
+            return self.datetime <= dating.datetime
+        return False
 
-    def __gt__(self, dt):
+    def __gt__(self, dating):
         """Answers True if self is in the future of or equal to date dt as in self > dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
 
-        >>> dt1 = dateTime(date='2019-11-25')
-        >>> dt2 = dateTime(date='2018-11-23')
+        >>> dt1 = Dating(date='2019-11-25')
+        >>> dt2 = Dating(date='2018-11-23')
         >>> dt2 > dt1
         False
         """
-        return self._dateTime > dt.datetime
+        if isinstance(dating, Dating):
+            return self.datetime > dating.datetime
+        return False
 
-    def __ge__(self, dt):
+    def __ge__(self, dating):
         """Answers True if self is in the future of or equal to date dt as in self >= dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
 
-        >>> dt1 = dateTime(date='2019-11-25')
-        >>> dt2 = dateTime(date='2018-11-23')
+        >>> dt1 = Dating(date='2019-11-25')
+        >>> dt2 = Dating(date='2018-11-23')
         >>> dt2 >= dt1
         False
         """
-        return self._dateTime >= dt.datetime
+        if isinstance(dating, Dating):
+            return self.datetime >= dating.datetime
+        return False
 
-    def __ne__(self, dt):
+    def __ne__(self, dating):
         """Answers True if self is in the past of or equal to date dt as in self != dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
 
-        >>> dt1 = dateTime(date='2019-11-25')
-        >>> dt2 = dateTime(date='2018-11-23')
-        >>> dt2 != dt1
+        >>> dating1 = Dating(date='2019-11-25')
+        >>> dating2 = Dating(date='2018-11-23')
+        >>> dating2 != dating1
         True
         """
-        return not self == dt
+        if isinstance(dating, Dating):
+            return self.datetime != dating.datetime
+        return False
 
     def __eq__(self, dt):
         """Answers True if self is equal to date dt as in self == dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber &amp;lt; dt.dateNumber to test on date comparison only instead of dy &amp;lt;= self.</br>
+        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy < self.
 
-        >>> dt1 = dateTime(date='2019-11-25')
-        >>> dt2 = dateTime(date='2018-11-23')
+        >>> dt1 = Dating(date='2019-11-25')
+        >>> dt2 = Dating(date='2018-11-23')
         >>> dt2 == dt1
         False
-        >>> dt3 = dateTime(date='2018-11-23')
+        >>> dt3 = Dating(date='2018-11-23')
         >>> dt2 == dt3
         True
         """
-        if isinstance(dt, dateTime):
-            return self._dateTime == dt.datetime
+        if isinstance(dt, Dating):
+            return self.datetime == dt.datetime
         return False
 
     def __coerce__(self, duration):
@@ -787,16 +810,17 @@ class dateTime:
 
         """
         if isinstance(durationOrDate, (int, float)):
-            durationOrDate = Duration(days=durationOrDate)
+            return Duration(days=durationOrDate)
         if isinstance(durationOrDate, Duration):
             # Date - Duration = Date
             return Duration.__sub__(durationOrDate,self)
-        if isinstance(durationOrDate, dateTime):
+        if isinstance(durationOrDate, Dating):
             # Date - Date = Duration
-            return Duration(td=self.dateTime - durationOrDate.dateTime)
+            return Duration(td=self.datetime - durationOrDate.datetime)
+        raise ValueError('Cannot subtract %s - %s' % (self, durationOrDate))
 
     def _get_year(self):
-        return self.dateTime.yearaaa
+        return self.datetime.year
     year = property(_get_year)
 
     @classmethod
@@ -839,6 +863,30 @@ class dateTime:
         return '%04d-%02d-%02d' % (self.year, self.month, self.day)
     date = property(_get_date)
 
+    def _get_year(self):
+        return self.datetime.year
+    year = property(_get_year)
+
+    def _get_month(self):
+        return self.datetime.month
+    month = property(_get_month)
+    
+    def _get_day(self):
+        return self.datetime.day
+    day = property(_get_day)
+    
+    def _get_hour(self):
+        return self.datetime.hour
+    hour = property(_get_hour)
+    
+    def _get_minute(self):
+        return self.datetime.minute
+    minute = property(_get_minute)
+    
+    def _get_second(self):
+        return self.datetime.second
+    second = property(_get_second)
+    
     def _get_euroDate(self):
         """The dt.euroDate property answers a formatted string 23-10-2008 of the date.
 
@@ -879,13 +927,13 @@ class dateTime:
         return '%02d:%02d:%02d' % (self.hour, self.minute, self.second)
     time = property(_get_time)
 
-    def _get_dateTime(self):
-        """The dt.dateTime property answers a formatted '2010-12-06 12:23:34' date/time
+    def _getdatetime(self):
+        """The dt.datetime property answers a formatted '2010-12-06 12:23:34' date/time
         string.
 
         """
         return '%s %s' % (self.date, self.time)
-    dateTime = property(_get_dateTime)
+    dateTime = property(_getdatetime)
 
     def _get_timeTuple(self):
         """The dt.timeTuple property answers a tuple (h, m, s) of the time.
@@ -906,7 +954,7 @@ class dateTime:
         the year that contains a thursday.
 
         """
-        return self._dateTime.isocalendar()[1]
+        return self.datetime.isocalendar()[1]
     week = property(_get_week)
 
     def _get_dayName(self):
@@ -969,14 +1017,14 @@ class dateTime:
         """The dt.yearStart property answers the first day of the current year.
 
         """
-        return dateTime(self.year, 1, 1)
+        return Dating(self.year, 1, 1)
     yearStart = property(_get_yearStart)
 
     def _get_yearEnd(self):
         """The dt.yearEnd property answers the last day of the current year.
 
         """
-        return dateTime(self.year, 12, 31)
+        return Dating(self.year, 12, 31)
     yearEnd = property(_get_yearEnd)
 
     def _get_workDay(self):
@@ -985,6 +1033,11 @@ class dateTime:
         """
         return 0 <= self.weekDay <= 4
     workDay = property(_get_workDay)
+
+    def _get_weekDay(self):
+        """Answer the number of day in the week."""
+        return self.datetime.weekday()
+    weekDay = property(_get_weekDay)
 
     def _get_nextWorkDay(self):
         """The dt.nextWorkDay property answers the first next date (including itself) that is a
@@ -1085,18 +1138,18 @@ class dateTime:
         """
         yearWeekDates = []
         for month in range(1, 13):
-            yearWeekDates.append(dateTime(year=self.year, month=month, day=1).calendarMonth)
+            yearWeekDates.append(Dating(year=self.year, month=month, day=1).calendarMonth)
         return yearWeekDates
     calendarYear = property(_get_calendarYear)
     
     def nextDayNamed(self, weekDay):
         if not (0 <= weekDay <= 7):
-            raise ValueError('[dateTime.nextDayNamed] weekDay "%s" must be in range (0, 8)' % weekDay)
+            raise ValueError('[%s.nextDayNamed] weekDay "%s" must be in range (0, 8)' % (self.__class__.__name__, weekDay))
         nextDay = self + Duration(days=1)
-        while 1:
+        for n in range(1, 8):
             if nextDay.weekDay == weekDay:
                 return nextDay
-            nextDay = nextDay + Duration(days=1)
+            nextDay = nextDay + n
         return None
 
 if __name__ == "__main__":
