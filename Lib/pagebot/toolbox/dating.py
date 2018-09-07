@@ -82,10 +82,10 @@ def monthDays(year, month):
     else:
         return 30
 
-def checkdatetime(date):
+def checkDateTime(date):
     """
 
-    The checkdatetime answers the date if it is a date. If date is None, then answer None. If
+    The checkDateTime answers the date if it is a date. If date is None, then answer None. If
     date is a string, then convert to datetime. Check on the month and day boundaries. Answer the same type that date
     was. Note that we do not check if date was already a datetime. This method is especially made to set database fields
     with dates, where that None will result in a NULL value for that field.
@@ -323,7 +323,7 @@ class Duration:
             return Duration(months=self.months + value.months, days=self.days + value.days, seconds=self.seconds + value.seconds, microseconds=self.microseconds + value.microseconds)
 
         if isinstance(value, Dating):
-            #need to do some magic to take into account leap years etc
+            # Needs to do some magic to take into account leap years etc
             extraDays = 0
             import math
 
@@ -524,10 +524,11 @@ class Dating:
     Dating(date='2018-02-09' time='00:00:00')
     >>> Dating(date='2007-12-10').monthStart.week # First week of this month
     48
+    >>> Dating(date='2007-12-10').monthStart.weekStart # Date of start of first week of this month
+
     """
     """
 
-    print('First week of this month', Dating(date='2007-12-10').monthStart.week)
     print('Date of start of first week of this month', datetime(date='2007-12-10').monthStart.weekStart)
     print('Previous month of 2007-12-10 is', datetime(date='2007-12-10').prevMonth.date)
     print('Previous month of 2008-1-10 is', datetime(date='2008-1-10').prevMonth.date)

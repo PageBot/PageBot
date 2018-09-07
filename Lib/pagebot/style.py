@@ -60,7 +60,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
     # Some calculations to show dependencies.
     defaultLeading = DEFAULT_LEADING
-    baselineGrid = BASELINE_GRID
+    baselineGrid = pt(BASELINE_GRID)
     # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
     if not isUnit(u):
         u = pt(u)
