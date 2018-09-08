@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     page.py
+#     pbpage.py
 #
 import weakref
 from pagebot.elements.element import Element

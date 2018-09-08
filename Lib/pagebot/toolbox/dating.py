@@ -13,6 +13,7 @@
 #
 #    dating.py
 #
+from copy import copy
 import datetime
 from time import localtime
 from random import randint
@@ -100,110 +101,74 @@ def checkDateTime(date):
 def now():
     return datetime(date='now')
 
-def milliseconds(milliseconds):
-    """Answer the Duration instance for this amount of milliseconds
+def milliSeconds(milliSeconds):
+    """Answer the Duration instance for this amount of milliSeconds
 
-    >>> milliseconds(5) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 0s, 5000us)
+    >>> milliSeconds(5) # Shown as the amount of weeks, days, seconds and ms
+    Duration(0d, 0s, 5000us)
     """
-    return Duration(milliseconds=milliseconds)
+    return Duration(milliSeconds=milliSeconds)
 
-def microseconds(microseconds):
-    """Answer the Duration instance for this amount of microseconds
+def microSeconds(microSeconds):
+    """Answer the Duration instance for this amount of microSeconds
 
-    >>> microseconds(5) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 0s, 5us)
+    >>> microSeconds(5) # Shown as the amount of days and seconds
+    Duration(0d, 0s, 5us)
     """
-    return Duration(microseconds=microseconds)
+    return Duration(microSeconds=microSeconds)
 
 def seconds(seconds):
     """Answer the Duration instance for this amount of seconds
 
-    >>> seconds(5) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 5s, 0us)
+    >>> seconds(5) # Shown as the amount of weeks, days, seconds and ms
+    Duration(0d, 5s, 0us)
     """
     return Duration(seconds=seconds)
 
 def minutes(minutes):
     """Answer the Duration instance for this amount of minutes
 
-    >>> minutes(5) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 300s, 0us)
-    >>> minutes(100) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 6000s, 0us)
-    >>> minutes(1000) # Shown as the amount of days and seconds
-    Duration(0m, 0d, 60000s, 0us)
-    >>> minutes(10000) # Shown as the amount of days and seconds
-    Duration(0m, 6d, 81600s, 0us)
+    >>> minutes(5) # Shown as the amount of weeks, days, seconds and ms
+    Duration(0d, 300s, 0us)
+    >>> minutes(100) 
+    Duration(0d, 6000s, 0us)
+    >>> minutes(1000) 
+    Duration(0d, 60000s, 0us)
+    >>> minutes(10000) 
+    Duration(6d, 81600s, 0us)
     """
     return Duration(minutes=minutes)
 
 def hours(hours):
     """Answer the Duration instance for this amount of hours
 
-    >>> hours(5) # Shown as the amount of seconds
-    Duration(0m, 0d, 18000s, 0us)
-    >>> hours(100) # Shown as the amount of seconds
-    Duration(0m, 4d, 14400s, 0us)
+    >>> hours(5) # Shown as the amount of weeks, days, seconds and ms
+    Duration(0d, 18000s, 0us)
+    >>> hours(100) 
+    Duration(4d, 14400s, 0us)
     """
     return Duration(hours=hours)
 
 def days(days):
     """Answer the Duration instance for this amount of days
 
-    >>> days(5) # Shown as the amount of months
-    Duration(0m, 5d, 0s, 0us)
+    >>> days(5) # Shown as the amount of weeks
+    Duration(5d, 0s, 0us)
     """
     return Duration(days=days)
 
-def months(months):
-    """Answer the Duration instance for this amount of months
+def weeks(weeks):
+    """Answer the Duration instance for this amount of weeks.
+    Beyond weeks, the duration depends on the starting date.
 
-    >>> months(5) # Shown as the amount of months
-    Duration(5m, 0d, 0s, 0us)
+    >>> weeks(5) # Shown as the amount of weeks
+    Duration(35d, 0s, 0us)
     """
-    return Duration(months=months)
+    return Duration(weeks=weeks)
 
-def years(years):
-    """Answer the Duration instance for this amount of years
-
-    >>> years(1) # Shown as the amount of months
-    Duration(12m, 0d, 0s, 0us)
-    >>> years(5) # Shown as the amount of months
-    Duration(60m, 0d, 0s, 0us)
-    """
-    return Duration(years=years)
-
-def decades(decades):
-    """Answer the Duration instance for this amount of decades
-
-    >>> decades(1) # Shown as the amount of months
-    Duration(120m, 0d, 0s, 0us)
-    >>> decades(5) # Shown as the amount of months
-    Duration(600m, 0d, 0s, 0us)
-    """
-    return Duration(decades=decades)
-
-def centuries(centuries):
-    """Answer the Duration instance for this amount of centuries
-
-    >>> centuries(1) # Shown as the amount of months
-    Duration(1200m, 0d, 0s, 0us)
-    >>> centuries(5) # Shown as the amount of months
-    Duration(6000m, 0d, 0s, 0us)
-    """
-    return Duration(centuries=centuries)
-
-def millennia(millennia):
-    """Answer the Duration instance for this amount of millennia
-
-    >>> millennia(1) # Shown as the amount of months
-    Duration(12000m, 0d, 0s, 0us)
-    >>> millennia(5) # Shown as the amount of months
-    Duration(60000m, 0d, 0s, 0us)
-    """
-    return Duration(millennia=millennia)
-
+# weeks is the maximum number of a Duration that we know without
+# using a start date. As months (and beyond) lengths depend on
+# which month it is.
 
 def year(year):
     """Answer the datetime instance of that year
@@ -232,23 +197,21 @@ class Duration:
     All common arithmetic applies to a Duration instance.
 
     >>> Duration(3)
-    Duration(0m, 3d, 0s, 0us)
+    Duration(3d, 0s, 0us)
     >>> Duration(seconds=10)
-    Duration(0m, 0d, 10s, 0us)
+    Duration(0d, 10s, 0us)
     >>> d = Duration(3)
     >>> d * 3 # is a duration of 9 days.
-    Duration(0m, 9d, 0s, 0us)
+    Duration(9d, 0s, 0us)
     >>> d + 2 # is a duration of 6 days
-    Duration(0m, 5d, 0s, 0us)
+    Duration(8d, 0s, 0us)
 
     """
 
-    #hack months and larger onto datetime.timedleta, which only goes up to weeks
-    months = None
     timeDelta = None
 
-    def __init__(self, days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, 
-            weeks=0, months=0, years=0, decades=0, centuries=0, millennia=0, td=None):
+    def __init__(self, days=0, seconds=0, microSeconds=0, milliSeconds=0, minutes=0, hours=0, 
+            weeks=0, td=None):
         """
 
         An extension of the builtin datetime.timeDelta class, extending to millennia to match SQL's INTERVAL type
@@ -256,31 +219,41 @@ class Duration:
         But when doing date arithmetic, we can figure it out.
 
         """
-        # Convert everything larger than months into months
-        self.months = float(months + years*12 + decades*120 + centuries*1200 + millennia*12000)
-
         if td is not None:
             self.timeDelta = td
         else:
-            self.timeDelta = datetime.timedelta(days, seconds, microseconds, milliseconds, minutes, hours, weeks)
+            self.timeDelta = datetime.timedelta(days, seconds, microSeconds, milliSeconds, minutes, hours, weeks)
 
+
+    def _get_weeks(self):
+        return self.timeDelta.days // 7
+    weeks = property(_get_weeks) 
+    
     def _get_days(self):
         return self.timeDelta.days
     days = property(_get_days) 
+    
+    def _get_hours(self):
+        return self.timeDelta.second // (60 * 60)
+    hours = property(_get_hours) 
+    
+    def _get_minutes(self):
+        return self.timeDelta.seconds // 60
+    minutes = property(_get_minutes) 
     
     def _get_seconds(self):
         return self.timeDelta.seconds
     seconds = property(_get_seconds) 
     
-    def _get_microseconds(self):
+    def _get_microSeconds(self):
         return self.timeDelta.microseconds
-    microseconds = property(_get_microseconds) 
+    microSeconds = property(_get_microSeconds) 
     
     def __len__(self):
         return self.days
 
     def __str__(self):
-        return '%s(%dm, %dd, %ds, %dus)' % (self.__class__.__name__, self.months, self.days, self.seconds, self.microseconds)
+        return '%s(%dd, %ds, %dus)' % (self.__class__.__name__, self.days, self.seconds, self.microSeconds)
 
     __repr__ = __str__
 
@@ -290,87 +263,47 @@ class Duration:
         return None
 
     def __nonzero__(self):
-        return self.months or self.days or self.seconds or self.microseconds
+        return self.weeks or self.days or self.seconds or self.microSeconds
 
     def __eq__(self, other):
         if not isinstance(other, Duration):
             return False
-        return self.months==other.months and self.days==other.days and self.seconds==other.seconds and self.microseconds==other.microseconds
+        return self.timedelta == other.timedelta
 
     def __ne__(self,other):
-        return not self.__eq__(other)
+        if not isinstance(other, Duration):
+            return False
+        return self.timedelta != other.timedelta
 
     def __mul__(self, n):
-        return Duration(months=self.months * n, days=self.days * n, seconds=self.seconds * n, microseconds=self.microseconds * n)
+        assert isinstance(n, (int, float))
+        return Duration(td=self.timeDelta*n) 
 
     def __div__(self, n):
-        return Duration(months=self.months / n, days=self.days / n, seconds=self.seconds / n, microseconds=self.microseconds / n)
+        assert isinstance(n, (int, float))
+        return Duration(td=self.timeDelta/n) 
 
     __truediv__ = __div__
     __itruediv__ = __rtruediv__ = __rdiv__ = __div__
 
     def __neg__(self):
-        return self * -1;
+        return Duration(td=-self.timeDelta)
 
     def __add__(self, value):
         # Duration + Date = Date
         # Duration + Duration = Duration
         # Duration + 3 = Duration
-        if isinstance(value, int):
-            return self + Duration(days=value)
+        if isinstance(value, (int, float)): # Count as days
+            return self + Duration(td=self.timeDelta + datetime.timedelta(value))
 
         if isinstance(value, Duration):
-            return Duration(months=self.months + value.months, days=self.days + value.days, seconds=self.seconds + value.seconds, microseconds=self.microseconds + value.microseconds)
+            return Duration(td=self.timeDelta + value.timeDelta)
 
         if isinstance(value, Dating):
-            # Needs to do some magic to take into account leap years etc
-            extraDays = 0
-            import math
+            return Dating(year=value.year, day=value.day+self.days, hour=value.hour, 
+                minute=value.minute, second=value.second+self.seconds, 
+                microSecond=value.microSecond+self.microSeconds)
 
-            if self.months > 0:
-                otherMonth = value.month
-                otherYear = value.year
-                monthsElapsed = 0
-
-                intMonths = math.floor(self.months)
-                decMonths = self.months - intMonths
-
-                while monthsElapsed < intMonths:
-                    extraDays += monthDays(otherYear, otherMonth)
-
-                    otherMonth += 1
-                    if otherMonth > 12:
-                        otherMonth = 1
-                        otherYear += 1
-                    monthsElapsed += 1
-
-                extraDays += decMonths * 30 #arbitrarily picking 30 days for fractional months
-
-            elif self.months < 0:
-                otherMonth = value.month
-                otherYear = value.year
-                monthsElapsed = 0
-
-                intMonths = math.floor(abs(self.months))
-                decMonths = abs(self.months) - intMonths
-
-                while monthsElapsed < intMonths:
-                    otherMonth -= 1
-                    if otherMonth < 1:
-                        otherMonth = 12
-                        otherYear -= 1
-                    monthsElapsed += 1
-
-                    extraDays += monthDays(otherYear,otherMonth)
-
-                extraDays += decMonths * 30 #arbitrarily picking 30 days for fractional months
-
-                extraDays = -extraDays
-
-            if extraDays:
-                return Dating(dt=value.datetime + datetime.timedelta(days=extraDays) + self.timeDelta)
-            else:
-                return Dating(dt=value.datetime + self.timeDelta)
         raise ValueError('[Duration.__add__] Illegal type to add to a Duration instance "%s"' % value)
 
     def __sub__(self, dating):
@@ -449,13 +382,15 @@ class Dating:
     Dating(date='2018-06-04' time='00:00:00')
     >>> d1 = Dating(year=2018, month=2, day=10)
     >>> d2 = Dating(year=2018, month=3, day=14)
+    """
+    """
     >>> d1 + Duration(123)
     Dating(date='2018-06-13' time='00:00:00')
     >>> #d1 - Duration(days=2)
     2018-06-11 00:00:00
     >>> p = Duration(seconds=10) * 6 / 2 # Calculate with durations, 30 seconds
     >>> p
-    Duration(0m, 0d, 30s, 0us)
+    Duration(0d, 30s, 0us)
     >>> #d1 + Duration(days=10)
     2018-06-23 00:00:00
     >>> d1.weekDay, d1.dayName, d1.month, d1.monthName
@@ -524,7 +459,7 @@ class Dating:
     Dating(date='2018-02-09' time='00:00:00')
     >>> Dating(date='2007-12-10').monthStart.week # First week of this month
     48
-    >>> Dating(date='2007-12-10').monthStart.weekStart # Date of start of first week of this month
+    >>> #Dating(date='2007-12-10').monthStart.weekStart # Date of start of first week of this month
 
     """
     """
@@ -585,7 +520,7 @@ class Dating:
     monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     fullMonthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-    def __init__(self, year=None, month=None, day=None, hour=0, minute=0, second=0, microSecond=0, tz=None,
+    def __init__(self, year=0, month=0, day=0, hour=0, minute=0, second=0, microSecond=0, tz=None,
         dt=None, date=None, time=None, week=None, trimvalues=True, mtime=None):
 
         if dt is not None: # If datetime object, just store it.
@@ -593,7 +528,7 @@ class Dating:
             self.datetime = dt
         else:
             if date == 'now':
-                self.datetime = dating.datetime.now()
+                self.datetime = datetime.datetime.now()
                 return
 
             if date is not None:
@@ -815,7 +750,7 @@ class Dating:
             return Duration(days=durationOrDate)
         if isinstance(durationOrDate, Duration):
             # Date - Duration = Date
-            return Duration.__sub__(durationOrDate,self)
+            return Duration.__sub__(durationOrDate, self)
         if isinstance(durationOrDate, Dating):
             # Date - Date = Duration
             return Duration(td=self.datetime - durationOrDate.datetime)
@@ -888,6 +823,10 @@ class Dating:
     def _get_second(self):
         return self.datetime.second
     second = property(_get_second)
+    
+    def _get_microSecond(self):
+        return self.datetime.microsecond
+    microSecond = property(_get_microSecond)
     
     def _get_euroDate(self):
         """The dt.euroDate property answers a formatted string 23-10-2008 of the date.
