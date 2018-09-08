@@ -174,7 +174,7 @@ def year(year):
     """Answer the datetime instance of that year
 
     >>> year(2019)
-    Dating(date='2019-01-01' time='00:00:00')
+    Dating(date='2019-01-01')
     """
     return Dating(year=year, month=1, day=1)
 
@@ -369,17 +369,17 @@ class Dating:
 
     >>> #Dating(date='now') # 2018-03-15 13:50:55
     >>> Dating(date='2018-11-23')
-    Dating(date='2018-11-23' time='00:00:00')
+    Dating(date='2018-11-23')
     >>> Dating(date='2018-11-23', time='23:11')
     Dating(date='2018-11-23' time='23:11:00')
     >>> Dating(date='2018-11-23', time='23:11:22')
     Dating(date='2018-11-23' time='23:11:22')
     >>> Dating(2018, 11, 23)
-    Dating(date='2018-11-23' time='00:00:00')
+    Dating(date='2018-11-23')
     >>> Dating(2018, 11, 23, 23, 11, 22, 0)
     Dating(date='2018-11-23' time='23:11:22')
     >>> Dating(2018, week=23)
-    Dating(date='2018-06-04' time='00:00:00')
+    Dating(date='2018-06-04')
     >>> d1 = Dating(year=2018, month=2, day=10)
     >>> d2 = Dating(year=2018, month=3, day=14)
     """
@@ -619,8 +619,11 @@ class Dating:
 
         >>> dating = Dating(date='2018-11-23')
         >>> str(dating)
-        "Dating(date='2018-11-23' time='00:00:00')"
+        "Dating(date='2018-11-23')"
+        >>> dating += hours(4)
         """
+        if self.timeTuple == (0, 0, 0):
+            return "%s(date='%s')" % (self.__class__.__name__, self.date)
         return "%s(date='%s' time='%s')" % (self.__class__.__name__, self.date, self.time)
 
     __repr__ = __str__
@@ -668,6 +671,7 @@ class Dating:
         >>> dt2 = Dating(date='2018-11-23')
         >>> dt2 > dt1
         False
+        >>> dt2 + 500, dt2 + 500 > dt1
         """
         if isinstance(dating, Dating):
             return self.datetime > dating.datetime
