@@ -1060,7 +1060,7 @@ class Unit:
             raise ValueError('Cannot divide "%s" by "%s"' % (u0, u))
         return u0
 
-    __truediv__ = __div__
+    __itruediv__ = __truediv__ = __div__
 
     def __rdiv__(self, u):
         """Dividing non-unit creates a copy of self with value u/self.v
@@ -1076,7 +1076,7 @@ class Unit:
         u0.v = u / self.v
         return u0
 
-    __itruediv__ = __rtruediv__ = __rdiv__
+    __rtruediv__ = __rdiv__
 
     def __mul__(self, u):
         """Multiply self by u, creating a new Unit instance with the same type
