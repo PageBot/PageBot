@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     100_PageCropMarks.py
+#     100_PageColorBars.py
 #
 #     Show the baseline grid of the page (drawn by the PageView)
 #     and the relation with the usable page padding area.
@@ -50,4 +50,4 @@ view.showFrame = True # Show frame of the page size.
 # The page has no child elements, just showing the metrics of the padding and baseline.
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  
-doc.export('_export/PageBaselines.pdf')
+doc.export('_export/PageColorBars.pdf')

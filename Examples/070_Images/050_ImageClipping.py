@@ -39,11 +39,12 @@ PADDING = pt(100) # Page padding on all sides
 doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=True)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
-view.padding = inch(1, 2, 3, 4)
+view.padding = inch(1)
 view.showFrame = True
 view.showPadding = True
 view.showColorBars = False
 view.showCropMarks = True
+view.showRegistrationMarks = True
 
 # Get the page
 page = doc[1]
@@ -54,10 +55,10 @@ im = Image(imagePath, parent=page, conditions=[Fit()],
 # Rotate the whole by selecting the value and then cmd-drag to alter the value
 # The elements rotate independently. Note that the image is rotating in the 
 # reversed direction, so it stays upright in the clipping rectangle.
-a = degrees(1070)
+a = degrees(100)
 
 im.angle =a 
-im.fill = (random(), 0, 1)
+im.fill = (0, 0, 0.7+random()*0.3)
 imd = im.imageData
 imd.x = 366
 imd.y = 150
@@ -67,7 +68,7 @@ imd.rx = 50
 imd.ry = 60
 imd.angle = -a
 
-bs = context.newString('Rotating images', style=dict(fontSize=32))
+bs = context.newString('Rotating images', style=dict(fontSize=32, textFill=1))
 tb = newTextBox(bs, w=400, parent=im, conditions=(Center2Center(), Middle2Middle()), angle=-a, fill=noColor)
 # Solve the page/element conditions
 doc.solve()
@@ -75,5 +76,5 @@ doc.solve()
 im.rx = im.w/2
 im.ry = im.h/2
 # Export the document to this PDF file.
-doc.export('_export/RotatingText.pdf')
+doc.export('_export/ImageClipping.pdf')
 
