@@ -56,7 +56,7 @@ MIT based open source: [https://github.com/TypeNetwork/PageBotExamples](https://
 
 ## Highlights in the code files
 
-First, let us look through some of the most important source files. 
+First, let us look through some of the most important and illustrative source files. 
 
 ### document.py
 
@@ -66,7 +66,7 @@ Contains the Python3 class *Document*, which is main source of information in a 
 * Matrix of pages, organized by (page-index) coordinate.
 * An active view, that defineds the viewing parameters (such as the on/off showing of gridlines and crop marks) and the type of requested output format.
 
-#### Sample code
+#### Sample code fragment
 ~~~
 from pagebot.document import Document
 doc = Document(w=500, h=500, title='Demo')
@@ -78,7 +78,7 @@ print(doc)
 Contains the definition of the main root style of PageBot. All parameters (location, metrics, typography, viewing parameters) have a defined name in the root style dictionary. 
 Each of these values are used as default, unless they are redefined on a lower level in the document-page-element tree. 
 
-#### Sample code
+#### Sample code fragment
 ~~~
 from pagebot.style import getRootStyle
 rootStyle = getRootStyle()
@@ -89,7 +89,7 @@ print(rootStyle['baselineGrid']) # Results in 15pt
 
 This file contains the “database” of static values that are used in the system, such as standard page and screen sizes, color conversion, font-style names, language-codes, grid types and file types.
 
-#### Sample code
+#### Sample code fragment
 ~~~
 from pagebot.constants import A4, Tabloid, GRID_OPTIONS
 print(A4)
@@ -104,13 +104,13 @@ The *Typesetter* class reads a MarkDown file (such as this one), and converts it
 
 The Typesetter is the bridge between contents MarkDown files, creating a *Galley* element, that holds an endless list of elements found in the MarkDown (codeblock, text, images, rulers, etc.). Therefor is the Typesetter often used in combination with the *Composer*, that knows how to distribute the *Galley* content on pages, doing the actual page layout.
 
-#### Sample code
+#### Sample code fragment
 ~~~
 from pagebot.typesetter import Typesetter
 from pagebot.contexts.platform import getContext
 from pagebot import getResourcesPath
 context = getContext() # Answers the DrawBot context
-# Find the path to a TEST in resources.
+# Find the path to a TEST.md file in resources.
 path = getResourcesPath() + "/texts/TEST.md"
 ts = Typesetter(context) # Create a Typesetter instance
 tree = ts.typesetFile(path) # Parse the MarkDown content and create a tree.
@@ -125,7 +125,7 @@ All generic functions of elements is bundled in this file.
 Notices that many of the style parameters are also accessable by property. The naming of the parameters may seem bit cryptic at start (e.g. *element.mr* is the margin-right of an element), but as they are used so often it saves a lot of typing.
 The abbreviations are intended to be intuitive. See the *style.py* for their names, default values and descriptions.
 
-#### Sample code
+#### Sample code fragment
 ~~~
 from pagebot.elements import Element
 e = Element(x=100, y=100, w=200, h=300)
@@ -133,7 +133,87 @@ print(e.box) # Show the box of the element
 e.ml = 20
 print(e.margin) # Show the margins around the element
 ~~~
- 
+
+### elements.pbpage.py
+
+*Page* is the global container of elements, where in most cases the *Document* is the parent. But as *Page* inherits from the *Element* class, it can also be placed on another page. This way manuals can be made, that contain pages as illustrations.
+
+Besides this standard behavior, a page also has some specific characteristics. Partly this is based on the special behavior of HTML-pages, that need to contain *head* parts, with *css* and *javascript* defined. The *Page* acccomodates such specific information to be stored.
+
+#### Sample code fragment
+~~~
+from pagebot.elements.pbpage import Page
+from pabebot.elements.pbrect import Rect
+page = Page(w=500, h=500)
+Rect(10, 10, 30, 40, parent=page)
+print(page.fileName) # Default for HTML export
+print(page.jsUrls)
+print(page.elements[0])
+~~~
+
+### elements/views/pageview.py
+
+This source defines the *PageView* class, that takes care of the viewing parameters when exporting static documents for print, such as drawing grids and cropmarks. The *PageView* class is the default view of a *Document*.
+The available view parameters can be found in the definition of the root style in *style.py*.
+
+#### Sample code fragment
+~~~
+from pagebot.document import Document
+from pagebot.toolbox.units import inch
+doc = Document(w=500, h=500)
+view = doc.view # Get the default view on the document
+view.padding = inch(1) # Make space around the page
+view.showCropMarks = True # Show crop marks on page corners
+view.showGrid = True # Show a default type of grid
+view.showFrame = True # Show the frame of the page.
+~~~
+
+### toolbox/color.py
+
+The *Color* class converts between various types of colors, keeping the original value as source (to avoid cumulative roundings). 
+
+#### Samepl code fragment
+~~~
+from pagebot.toolbox.color import color
+c = color(1, 0, 0) # Create an RGB flavoured color
+print(c)
+print(c.darker()) # Darker version
+print(c.cmyk) # As CMYK
+print(c.spot) # Closest spot color
+c = color(spot=300) # Spot color 300 as source
+print(c.rgb) # As closest RGB
+print(c.ral) # As closest RAL
+~~~
+
+### toolbox/dating.py
+
+The *Dating* and *Duration* classes offer a wide variety of absolute and relative date-time calculations. 
+
+#### Sample code fragment
+~~~
+from pagebot.toolbox.dating import Dating, Duration, days, hours
+date = Dating(date='now') 
+print(date)
+print(date + 6)
+~~~
+*(dating.py needs more debugging)*
+
+### toolbox/units.py
+
+The *Unit* is an extended and very usefull measurement class with *Pt* (points), *Mm* (millimeters), *P* (picas), *perc* (%), *em*, *degrees* and other. This way measures keep their own accuracy without intermediate roundings. They know how to transform into each other.
+
+#### Sample code fragment
+~~~
+from pagebot.toolbox.units import pt, mm, perc, p, units
+from pagebot.constants import A4, Tabloid
+print(units('3mm')) # Interpret from string
+print(mm(3)) # Create by function
+print(mm(1,2,3,4,5,6)) # Create tuple of Mm instances
+print(pt(10) + mm(10)) # Adding keeps first type
+print(mm(10) + pt(10))
+print(10 * mm(120)) # Integers adapt to closest Unit type
+
+### 
 ## Design and coding process
 
 ## Design patterns
