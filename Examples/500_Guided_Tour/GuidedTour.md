@@ -212,8 +212,67 @@ print(mm(1,2,3,4,5,6)) # Create tuple of Mm instances
 print(pt(10) + mm(10)) # Adding keeps first type
 print(mm(10) + pt(10))
 print(10 * mm(120)) # Integers adapt to closest Unit type
+~~~
 
-### 
+### fonttoolbox/object/font.py
+
+The *Font* class has an interface that is closely compatible with the *fontparts/Font* functionality (as in RoboFont). Some supporting functions, such as *findFont(fontName)* are defined to create *Font* objects, where it is known which fonts are installed in the system, and where they are located.
+
+~~~
+from pagebot.fonttoolbox.objects.font import findFont
+font = findFont('RobotoDelta-VF') # File name without .ttf
+print(font)
+print(font.info.capHeight)
+print(font.info.copyright)
+print(font.
+print(font.axes) # In case this is a Variable font, show axis info.
+~~~
+
+### fonttoolbox/objects/glyph.py
+
+The *Glyph* class gives full access to glyph information, including metrics, points and components.
+
+~~~
+from pagebot.fonttoolbox.objects.font import findFont
+font = findFont('Roboto-Regular') # File name without .ttf
+glyph = font['H']
+print(glyph)
+print(glyph.box) # Bounding box of the points
+print(glyph.leftMargin, glyph.width, glyph.rightMargin)
+print(glyph.contours) # Answers a list of contours
+print(glyph.points) # Answers a list of points
+print(glyph.pointContexts[5]) # Answers a PointContext with neighbors
+glyph = font['Aacute']
+print(glyph.components) # List of components
+~~~
+
+### fonttoolbox/analyzers/glyphanalyzer.py
+
+The *GlyphAnalyzer* takes a *Glyph* and analyses the data. It can perform several functions, such as finding sets of vertical and horizontal lines and from there it makes a guess where stems and bars are located in the outline.
+The *GlyphAnalyzer* attributes are properties that are stored as cached values for efficiency.
+
+~~~
+from pagebot.fonttoolbox.objects.font import findFont
+font = findFont('Roboto-Regular') # File name without .ttf
+glyph = font['H']
+ga = glyph.analyzer # Analyzer is an attribute of the glyph
+print(ga)
+print('Horizontals: %s\n' % ga.horizontals)
+print('Verticals: %s\n' % ga.verticals)
+print('Stems: %s\n' % ga.stems) # Answer stems as dictionary
+~~~
+
+### pagebot/elements/variablefonts
+
+This folder contains a growing number of specialized elements that can be placed on a page. Since all of them inherit from *Element* they behave as standard elements e.g. for size, shadow and layout conditions.
+
+Inside the font elements have their own specialized behavior, such as drawing (partial) type speciemens, info-graphic of design space topology, font metrics, etc. Depending on the selected output format they export as static images or animated gif.
+
+*Currently these font elements need some debugging to pass their doc tests.*
+
+
+## Modular examples
+
 ## Design and coding process
 
 ## Design patterns
