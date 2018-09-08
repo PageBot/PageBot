@@ -38,10 +38,14 @@ BASELINE = em(1.4)
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
 # Get the Font instances, so they can be queried for metrics.
-font = findFont('RobotoDelta-VF') # Use the RobotoDelta Variable font for this example
-#print(bodyFont.axes) # Uncomment to see axes and values for this VF
-location = dict(wght=700)
-bold = font.getInstance(location)
+fontVF = findFont('RobotoDelta-VF') # Use the RobotoDelta Variable font for this example
+print(fontVF.axes) # Uncomment to see axes and values for this VF
+
+location = dict(XTRA=320) # SLight condensed Roman
+font = fontVF.getInstance(location)
+
+location = dict(wght=700, XTRA=290) # Bold condensed
+bold = fontVF.getInstance(location)
 
 # Defined styles
 headStyle = dict(font=bold, fontSize=125, leading=BASELINE, textFill=whiteColor, hyphenation=False,

@@ -42,11 +42,13 @@ style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3)
 # Make long text to force box overflow
 t = context.newString(text * 10, style=style)
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=False)
+doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=True)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 # Show the usable space (=page.padding) of the page, which the same as the box after fitting
 view.showPadding = True
+view.showOrigin = True
+view.showTextOverflowMarker = True
 # Get the first (and only automatic created) page of the document
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions

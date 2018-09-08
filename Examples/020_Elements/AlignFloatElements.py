@@ -143,7 +143,7 @@ if __name__ == '__main__':
     ], globals())
 
     # Export in _export folder that does not commit in Git. Force to export PDF.
-    EXPORT_PATH = '_export/AlignElements_DB.png'
+    EXPORT_PATH = '_export/AlignElements.png'
     d.export(EXPORT_PATH)
 
     # FIX: F L A T

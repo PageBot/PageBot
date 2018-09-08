@@ -273,6 +273,210 @@ Inside the font elements have their own specialized behavior, such as drawing (p
 
 ## Modular examples
 
+A wide spectrum of small example script is in the making. Not all of the existing example scripts currently work. Below some highlights that are tested.
+
+### Examples/150_Typography/000_SingleColumn.py
+
+The scripts shows a single column of text in a *TextBox* frame. Since the text is longer than the box accommodates, a *[+]* is show at the bottom-right. The origin of the *TextBox* is shown as cross-hair marker on the top-left.
+
+![images/SingleColumn.pdf](images/SingleColumn.pdf)
+
+### Examples/150_Typography/010_DoubleColumnOverflow.py
+
+The scripts shows a two linked *TextBox* columns. The origin of the *TextBox* is shown as cross-hair marker on the top-left.
+The baseline grid of the columns is shown, with their index on the left and vertical position on the right.
+
+![images/DoubleColumnOverflow.pdf](images/DoubleColumnOverflow.pdf)
+
+The *010_TripleColumnOverflow.py* file shows the same principle with three linked columns.
+
+![images/TripleColumnOverflow.pdf](images/TripleColumnOverflow.pdf)
+
+### Examples/150_Typography/020_SingleColumnBaselines.py
+
+The script shows a single page, where now the display of baselines is based on the different typographic styles in the *TextBox*.
+
+![images/SingleColumnBaselines.pdf](images/SingleColumnBaselines.pdf)
+
+### Examples/150_Typography/030_SingleColumnGradient.py
+
+The script shows the same single page, now with a demonstration of shadow and gradient usage. Also here the body font and headline font are constructed as VF locations:
+
+~~~
+fontVF = findFont('RobotoDelta-VF') # Use the RobotoDelta Variable font for this example
+
+location = dict(XTRA=320) # SLight condensed Roman
+font = fontVF.getInstance(location)
+
+location = dict(wght=700, XTRA=290) # Bold condensed
+bold = fontVF.getInstance(location)
+~~~
+
+![images/SingleColumnYPositions.pdf](images/SingleColumnYPositions.pdf)
+
+**Note that due to an font updating bug, DrawBot not always finds the right instance font, show this error: 
+DrawBot warning: font: 'RobotoDelta-Regular--XTRA320' is not installed, back to the fallback font: 'Verdana' **
+
+### Examples/150_Typography040_PageGridAlignments.py
+
+This script is under development, but still interesting to show the various aligment options that text columns will have. The *Conditions* allow the positioning a number or anchor types on the baseline grid, such the baseline of an indexed line, or at the top of capitals of a headline, etc.
+
+![images/PageGridAlignments.pdf](images/PageGridAlignments.pdf)
+
+### Examples/150_Typography/050_PageBaselines.py
+
+This small script generates a number of pages, showing the baseline grid of the page format. Note the difference between the vertical position where the grid starts and the baseline themselves.
+
+![images/PageBaselines.pdf](images/PageBaselines.pdf)
+
+### Examples/150_Typography/060_TextBoxBaselinePlacing.py
+
+This small script is under development, showing the possibility if aligning textbox on their line position, instead of bounding box.
+
+![images/TextBoxBaselinePlacing.pdf](images/TextBoxBaselinePlacing.pdf)
+
+### Examples/150_Typography/060_TextBoxBaselines.py
+
+This script shows the relation between the baselines of the document (in gray) and the baselines of the *TextBox* (in red). On the left the document baselines are indexed. On the right the column lines are indexed. 
+
+In this example the *TextBox* is shifted, so the 3rd line is matching the page grid. Search for this line:
+
+~~~
+lineIndex = 3
+~~~
+
+to alter the line index matching the page grid.
+
+![images/TextBoxBaselines.pdf](images/TextBoxBaselines.pdf)
+
+### Examples/150_Typography/090_RotatingText.py
+
+This script shows the rotation of *TextBox* columns. Note that the baselines and index markers are rotated accordingly.
+Search for
+
+~~~
+    rx=CW/2, ry=CH/2, angle=-45,
+~~~
+
+lines that defined the position of the rotation middle point and the angle. The *(rx, ry)* are relative to the origin of the element, in this case positioned on the middle point of the element.
+
+![images/RotatingText.pdf](images/RotatingText.pdf)
+
+### Examples/150_Typography/090_RotatingText.py
+
+This script shows the rotation of *TextBox* columns, now as a grid of 16, with incremental rotation angle. Note also here that the baselines and index markers are rotated accordingly.
+Search for
+
+~~~
+	rx=CW/2, ry=CH/2, angle=90*n/15, 
+~~~
+
+lines that defined the position of the rotation middle point and the angle. 
+
+![images/RotatingText16.pdf](images/RotatingText16.pdf)
+
+### Examples/150_Typography/100_PageColorBars.py
+
+This script shows use of page color bars for offset-print calibration. For not the usage is limited, as most printers want to have their own bars there. But at least for educational purpose it is a useful option.
+
+![images/PageColorBars.pdf](images/PageColorBars.pdf)
+
+
+### Examples/040_Drawing/SierpinskiSquare.py
+
+This script creates an animated *SierpinskiSquare*. 
+
+![images/SierpinskiSquare.gif](images/SierpinskiSquare.gif)
+
+
+### Examples/040_Drawing/MakeABookCover.py
+
+This script creates a random book cover, using the random *Filibuster Blurb* text generator. Note the use of the *bleed* parameter here.
+
+![images/ABookCover.pdf](images/ABookCover.pdf)
+
+
+### Examples/140_Infographics/conditionshierarchy.py
+
+This script is an example of automated info-graphics, based on external sources. In this case the class-hierarchy of the *Condition* class is used a source. 
+
+![images/conditionObjectHierarchy.pdf](images/conditionObjectHierarchy.pdf)
+
+### Examples/020_Elements/AlignFloatElements.py
+
+This script shows the workings of automated layout conditions.
+
+![images/AlignElements.pdf](images/AlignElements.pdf)
+
+### Examples/020_Elements/DrawRedRectCenterPage.py
+
+This script shows a simple page with a centered red square.
+
+![images/DrawRedRectCenterPage.pdf](images/DrawRedRectCenterPage.pdf)
+
+### Examples/020_Elements/UseBorders.py
+
+This script shows interactively the various types of borders that can be used. The *Variables* window enables sliders and radio buttons for selection. Borders can be drawn inline, online and outline of each side of an element independently.
+
+![images/UseBordersVariations.png](images/UseBordersVariations.png)
+
+Search for
+
+~~~
+    Variable([
+	     dict(name="LineType", ui="RadioGroup", args=dict(titles=[INLINE, ONLINE, OUTLINE], 
+	        isVertical=True)),
+        dict(name='DashWhite', ui='Slider', args=dict(minValue=0, value=8, maxValue=8)),
+        dict(name='DashBlack', ui='Slider', args=dict(minValue=0, value=0, maxValue=8)),
+        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
+    ], globals())
+~~~
+
+to see how this selection interface window is implemented.
+
+Inline:
+
+![images/UseBorders.pdf](images/UseBorders.pdf)
+
+Online:
+
+![images/UseBordersOnline.pdf](images/UseBordersOnline.pdf)
+
+
+### Examples/020_Elements/DrawRedRectCenterPage.py
+
+This script shows a simple page with a centered red square.
+
+![images/DrawRedRectCenterPage.pdf](images/DrawRedRectCenterPage.pdf)
+
+### Examples/030_Fonts/FontContent.py
+
+A simple type specimen, mining the data inside the font.
+
+![images/FontContent.pdf](images/FontContent.pdf)
+
+
+### Some Example/030_Fonts example output
+
+Animations that shows the composition of Variable Fonts, adding TrueType fonts into one file. (Currently not working properly)
+
+![images/VarFont2Axes.gif](images/VarFont2Axes.gif)
+
+
+
+### Examples/070_Images/050_ImageClipping.py
+
+This script creates a page with crop marks and padding, showing an image rotated and clipped inside a rotated frame.
+Find the line:
+
+~~~
+a = degrees(100)
+~~~
+
+Select the value, hold down the "cmd-key" and drag the mouse in the script window of DrawBot. The page now refreshes interactive, showing different angles. Note that the image and the blue clipping frame have reversed angles, so the image stays upright.
+
+![images/ImageClipping.pdf](images/ImageClipping.pdf)
+
 ## Design and coding process
 
 ## Design patterns
