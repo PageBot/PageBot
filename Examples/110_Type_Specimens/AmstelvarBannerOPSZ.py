@@ -104,4 +104,4 @@ for axisTag in sequenceAxes:
         frameIndex += 1 # Prepare for the next frame
 
 doc.solve()
-doc.export('_export/%s_%s.gif' % (font.info.familyName, sample))
+doc.export('_export/%s_OpticalSize.gif' % font.info.familyName)

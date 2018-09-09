@@ -2159,30 +2159,22 @@ class Element:
 
     # Borders (equivalent for element stroke and strokWidth)
 
-    def _borderDict(self, borderData):
+    def getBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-        if isUnit(borderData) or isinstance(borderData, (int, float)):
-            return dict(line=ONLINE, dash=None, stroke=self.css('stroke', blackColor), strokeWidth=units(borderData))
-        if isinstance(borderData, dict):
-            if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
-                borderData['line'] = ONLINE
-            if not 'dash' in borderData:
-                borderData['dash'] = None
-            if not 'strokeWidth' in borderData: # If not defined, use the current setting of self.strokeWidth
-                borderData['strokeWidth'] = self.strokeWidth
-            if not 'stroke' in borderData: # If not defined, use the current setting of self.stroke
-                borderData['stroke'] = self.css('stroke', blackColor)
-            return borderData
-
-        # TODO: Solve this, error on initialize of element, _parent does not yet exist.
-        #stroke = self.css('stroke')
-        #strokeWidth = self.css('strokeWidht')
-        #if stroke is not noColor and strokeWidth:
-        #     return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
-        return None
-
+        border = {}
+        if stroke is None:
+            stroke = self.css('stroke', blackColor)
+        if strokeWidth is None:
+            strokeWidth = self.strokeWidth # Take current stroke width setting in css
+        if line is None:
+            line = ONLINE
+        # Dash can be None
+        if not strokeWidth: # If 0, then answer None for the ficy
+            return None
+        return dict(stroke=stroke, strokeWidth=strokeWidth, line=line, dash=dash)
+ 
     def _get_borders(self):
         u"""Set all borders of the element.
 
@@ -2200,7 +2192,7 @@ class Element:
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
         if isUnit(borders) or isinstance(borders, (int, float)):
-            borders = self._borderDict(borders)
+            borders = self.getBorderDict(borders)
         if not isinstance(borders, (list, tuple)):
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
@@ -2218,31 +2210,31 @@ class Element:
 
         >>> from pagebot.toolbox.color import color, blackColor
         >>> e = Element()
-        >>> e.borderTop = dict(strokeWidth=pt(5), stroke=blackColor)
+        >>> e.borderTop = e.getBorderDict(strokeWidth=pt(5), stroke=blackColor)
         >>> sorted(e.borderTop.items())
         [('dash', None), ('line', 'online'), ('stroke', Color(r=0, g=0, b=0)), ('strokeWidth', 5pt)]
         """
         return self.css('borderTop')
     def _set_borderTop(self, border):
-        self.style['borderTop'] = self._borderDict(border)
+        self.style['borderTop'] = border
     borderTop = property(_get_borderTop, _set_borderTop)
 
     def _get_borderRight(self):
         return self.css('borderRight')
     def _set_borderRight(self, border):
-        self.style['borderRight'] = self._borderDict(border)
+        self.style['borderRight'] = border
     borderRight = property(_get_borderRight, _set_borderRight)
 
     def _get_borderBottom(self):
         return self.css('borderBottom')
     def _set_borderBottom(self, border):
-        self.style['borderBottom'] = self._borderDict(border)
+        self.style['borderBottom'] = border
     borderBottom = property(_get_borderBottom, _set_borderBottom)
 
     def _get_borderLeft(self):
         return self.css('borderLeft')
     def _set_borderLeft(self, border):
-        self.style['borderLeft'] = self._borderDict(border)
+        self.style['borderLeft'] = border
     borderLeft = property(_get_borderLeft, _set_borderLeft)
 
     # Alignment types, defines where the origin of the element is located.
@@ -3967,7 +3959,7 @@ class Element:
 
             if borderRight['line'] == OUTLINE:
                 oRight = borderRight['strokeWidth']/2
-            elif borderLeft['line'] == INLINE:
+            elif borderRight['line'] == INLINE:
                 oRight = -borderRight['strokeWidth']/2
             else:
                 oRight = 0

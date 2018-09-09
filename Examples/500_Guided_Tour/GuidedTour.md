@@ -462,8 +462,6 @@ Animations that shows the composition of Variable Fonts, adding TrueType fonts i
 
 ![images/VarFont2Axes.gif](images/VarFont2Axes.gif)
 
-
-
 ### Examples/070_Images/050_ImageClipping.py
 
 This script creates a page with crop marks and padding, showing an image rotated and clipped inside a rotated frame.
@@ -476,6 +474,49 @@ a = degrees(100)
 Select the value, hold down the "cmd-key" and drag the mouse in the script window of DrawBot. The page now refreshes interactive, showing different angles. Note that the image and the blue clipping frame have reversed angles, so the image stays upright.
 
 ![images/ImageClipping.pdf](images/ImageClipping.pdf)
+
+## Variable Font examples
+
+### Examples/110_Type_Specimens/VariableFontLede.py 
+
+Sample through a combination of axes and export to an animated gif
+
+![images/RobotoDelta_Variety.gif](images/RobotoDelta_Variety.gif)
+
+### Examples/110_Type_Specimens/DecovarBanner.py 
+
+Sample through a combination of axes and export to an animated gif. In the source the axis selection can be changed. Note that the *Decovar* font design space indicates that not all axes should be turned on at the same time.
+See the source code for the available axes.
+
+(takes around 2 minutes to complete. It may be faster running from Sublime than from DrawBot)
+
+~~~
+sequenceAxes = ['SKLD', 'BLDB', 'TRMK', 'BLDA']
+~~~
+
+![images/Decovar_Decovar.gif](images/Decovar_Decovar.gif)
+
+~~~
+sequenceAxes = ['TRMC', 'SKLD', 'TRMG', 'BLDB']
+~~~
+
+![images/Decovar_Decovar2.gif](images/Decovar_Decovar2.gif)
+
+### Examples/110_Type_Specimens/AmstelvarBannerOPSZ.py 
+
+Generates an info-graphic animation, show workings of the *opsz* axis. 
+
+![images/AmstelvarAlpha_OpticalSize.gif](images/AmstelvarAlpha_OpticalSize.gif)
+
+
+### Examples/110_Type_Specimens/
+
+Show the realtion between the OS/2 values of a family and the 
+![images/RobotoDelta-VF.pdf](images/RobotoDelta-VF.pdf)
+
+
+
+
 
 ## Design and coding process
 
