@@ -514,9 +514,17 @@ Generates an info-graphic animation, show workings of the *opsz* axis.
 Show the realtion between the OS/2 values of a family and the 
 ![images/RobotoDelta-VF.pdf](images/RobotoDelta-VF.pdf)
 
+## Export to website
 
+### Examples/080_Web/simplesite/site.py
+This is an example that creates a local responsive HTML/CSS website as files, and opens them in a browser. 
 
+It's in eartly stage for development, and too much to explain right now, but it is possible to dive into the code to see what happens.
+The 
 
+![images/SimpleSite1.png](images/SimpleSite1.png)
+
+![images/SimpleSite2.png](images/SimpleSite2.png)
 
 ## Design and coding process
 
