@@ -46,7 +46,10 @@ W, H = 1360, 400 # Type Network banners
 # Claire: for now, add your Fit-Variable_1.ttf to your /Library/Fonts and it can be found.
 #Gimlet_Italics-VF.ttf
 #Gimlet_Romans-VF.ttf
-font = findFont('AlliumMediumVARGX_hyphen')
+#font = findFont('AlliumMediumVARGX_hyphen')
+#font = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
+font = findFont('RobotoDelta-VF')
+
 print(font)
 # Fit axes to select from: here we are showing the optical size.
 # Define tag list for axes to be part of the animation as sequence
