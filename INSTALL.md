@@ -2,20 +2,18 @@
 
 ## Installing
 
-Since PageBot is not part of the standard DrawBotApp, it needs to be installed separately. 
 
-Another reason for manual installation is that it allows updating PageBot to the latest version, while DrawBot is not updated. 
-And developers may choose to run an alternative branch of PageBot to test specific functions before they are merged back into github master.
-
-The installation process is part of the development of the library itself, so it may still not always work properly.
-Here are some hints to check on installation and to install without using the *setup.py* script.
 
 ### setup.py
 
-Run `sudo python setup.py install` to install PageBot in the default Python of the OSX.
-There are some known problems here:
+Run `sudo python3 setup.py install` to start installing PageBot. When setup is finished, you should see the files in your `site-packages` or `dist-packages` folder. For example,
 
-* PageBot now runs entirely on Pyhton 3 and DrwaBotApp 3. Python 2.7 is no longer supported.
+    /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages
+
+
+ Some notes:
+
+* PageBot now runs entirely on Python 3 and DrwaBotApp 3. Python 2.7 is no longer supported.
 
 * The default `Python` may not be the same one that DrawBotApp uses. On some OSX systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 
