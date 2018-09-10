@@ -20,34 +20,37 @@ Free license: [https://macdown.uranusjr.com](https://macdown.uranusjr.com)
 
 The Pagebot library code can be viewed and modified by Sublime (and other Python-based editors). And advantage of Sublime is that code can be executed from inside the editor, so it can run the doctests with direct feedback about validity of the code.
 
-The generated documents (typically generated inside the local "_export" folder) can be opnened in the Adobe Acrobat Reader or the OSX-Preview application. We have the best experience with the latter, because after running a script the Preview updates the PDF-preview, where the Acrobat Reader needs to close-open the document again to show changed.
+The generated documents (typically generated inside the local "_export" folder) can be opened in the Adobe Acrobat Reader or the OSX-Preview application. We have the best experience with the latter, because after running a script the Preview updates the PDF-preview, where the Acrobat Reader needs to close-open the document again to show changes.
 
-Sublime has a payed license: [https://www.sublimetext.com](https://www.sublimetext.com)
+Sublime has a paid license: [https://www.sublimetext.com](https://www.sublimetext.com)
 
 
 ### DrawBot
 
-PageBot started as library inside DrawBot. Most the typographic text functions and and that drawing tools are based on the API of DrawBot. Besides running in Sublime, DrawBot
+PageBot started as library inside DrawBot. Most the typographic text functions and and that drawing tools are based on the API of DrawBot.
 
 Free license: [http://www.drawbot.com](http://www.drawbot.com)
-(Download the Python 3.6 version, as PageBot now is entirely Python3. Version 2.7 is no longer supported.
+
+Make sure to download the Python 3.6 version, PageBot doesn't support Python 2.
 
 MIT based open source: [https://github.com/typemytype/drawbot](https://github.com/typemytype/drawbot)
 
 ### PageBot git-repository
 
-This respository hold the entire *import pagebot* module in *Lib/pagebot* and a large number of relative simple script in *Examples* the illustrate specific functions and coding patterns.
+This respository hold the entire *pagebot* module in *Lib/pagebot* and a large number of relatively simple scripts in *Examples* that illustrate specific functions and coding patterns.
 
-MIT based open source: [https://github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
+MIT-license open source: [https://github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
 
 ### PageBotExamples git-repository
 
-MIT based open source: [https://github.com/TypeNetwork/PageBotExamples](https://github.com/TypeNetwork/PageBotExamples)
+Here you can find some more extensive examples.
+
+MIT-license open source: [https://github.com/TypeNetwork/PageBotExamples](https://github.com/TypeNetwork/PageBotExamples)
 
 
 ### PageBot Install and Setup.
 
-* Download the PageBot git repository
+* Clone or download the PageBot git repository
 * Read the README.md
 * Install PageBot for Python3 from the INSTALL.mg guideline, using *setup.py*
 * Read this Guide Tour, and try to execute the small code examples in DrawBot+PageBot. And try to run the referenced  example scripts in Sublime or DrawBot, to check against the example images in this file.
