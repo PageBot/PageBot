@@ -20,57 +20,29 @@ except:
 # TODO automate, eval()?
 # TODO: make OS dependent.
 
-try:
-    import objc
-    print('PyObjc found at %s' % objc.__path__)
-except:
-    print('x No PyObjc installed')
-    CLEAN = False
+libs = ['pagebot', 'fontTools', 'objc', 'AppKit', 'vanilla', 'drawBot', 'sass']
+missing = []
 
-try:
-    import AppKit
-    print('AppKit found at %s' % AppKit.__path__[0])
-except:
-    print('x No AppKit')
-    CLEAN = False
-
-try:
-    import pagebot
-    print('Pagebot found at %s' % pagebot.__path__[0])
-except:
-    print('\nx Pagebot not found')
-    CLEAN = False
-
-try:
-    import vanilla
-    print('Vanilla found at %s' % vanilla.__path__[0])
-except:
-    print('\nx Vanilla not found')
-    CLEAN = False
-
-try:
-    import drawBot
-    print('DrawBot found at %s' % drawBot.__path__[0])
-except:
-    print('\nx DrawBot not found')
-    CLEAN = False
-
-try:
-    import sass
-    print('Sass found at %s' % sass.__file__)
-except Exception as e:
-    print(e)
-    print('x No sass dependency found.')
-    CLEAN = False
+for l in libs:
+    try:
+        __import__(l)
+        print('%s installed at %s' % (l, __import__(l).__file__))
+    except:
+        print('x %s not installed' % l)
+        missing.append(l)
+        CLEAN = False
 
 if not CLEAN:
-    print('Not all dependencies are installed, please install missing ones.')
+    print('Not all dependencies are installed, please install missing ones:')
+    print(', '.join(missing))
 else:
+    print('Found all dependencies, running some test...')
     # Testing PageBot.
     from pagebot.contexts.platform import getContext
     context = getContext()
     print(context)
     print(context.b)
+    import sass
 
     # Testing Sass.
     css = sass.compile(string='a { b { color: blue; } }')
