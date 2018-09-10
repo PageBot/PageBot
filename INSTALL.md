@@ -67,15 +67,29 @@ If there is no error, PageBot is installed properly for this Python.
 * Open DrawBotApp
 * Open a new editor window.
 * Type `import pagebot`
-* Presse cmd-R to run the script
+* Press cmd-R to run the script
 
-If there is no error then PageBot is installed properly for DrawBotApp.
+If there is no error then PageBot is installed properly.
 
 ### In Sublime
 
-Sublime needs to be configured to build with Python 3 first.
+Sublime needs to be configured to build with Python 3 first. An example configuration file can be found here:
 
-...
+	Patches/Python3.sublime-build
+	
+The first line should contain the path to the python3 executable:
+
+	{
+	  "cmd": ["/<path>/<to>/python3", "$file"], 
+	  "selector": "source.python", 
+	  "file_regex": "file \"(...*?)\", line ([0-9]+)"
+	}
+
+You can find out the path by using the `which` command:
+
+	which python3
+	
+might return `/usr/local/bin/python3`. After restarting Sublime, you should see the Python3 option in the Build System list. Select it and run `import pagebot` by typing cmd-B.
 
 ### Path File
 
