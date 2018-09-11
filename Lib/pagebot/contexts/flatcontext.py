@@ -64,7 +64,8 @@ class FlatContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
-    UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
+    #UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
+    UNITS = 'mm'
 
     def __init__(self):
         """Constructor of Flat context.
@@ -72,7 +73,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(pt(100), pt(100))
+        >>> context.newDocument(100, 100)
         >>> context.doc.__class__.__name__
         'document'
         """
@@ -126,7 +127,7 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> context.isFlat
         True
-        >>> context.newDocument(pt(100), pt(100))
+        >>> context.newDocument(100, 100)
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         >>> context.newDocument(100, 100)
@@ -135,8 +136,8 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-        wpt, hpt = upt(w, h)
-        self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+        #wpt, hpt = upt(w, h) # FIXME convert points to mm?
+        self.doc = self.b.document(w, h, units=self.UNITS)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -176,13 +177,15 @@ class FlatContext(BaseContext):
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
         self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
+        self.fileType = path.split('.')[-1].lower()
 
         RGB = 'rgb'
         RGBA = 'rgba'
 
         if self.fileType == FILETYPE_PNG:
             if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind='rgba').png(path)
+                im = self.pages[0].image(kind=RGB)
+                im.png(path)
             else:
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
@@ -215,22 +218,17 @@ class FlatContext(BaseContext):
 
     def newPage(self, w=None, h=None, size=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
+        # FIXME: test units, page auto-sizes to parent doc.
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newPage()
         """
-        if size is not None:
-            w, h = size
-
-        wpt, hpt = upt(w, h)
-
         if self.doc is None:
-            self.newDocument(wpt, hpt)
+            self.newDocument(w, h)
 
         self.page = self.doc.addpage()
-        self.page.size(wpt, hpt, units=self.UNITS) # Default units render to pt-units
         self.pages.append(self.page)
 
     def newDrawing(self):
@@ -337,7 +335,9 @@ class FlatContext(BaseContext):
         >>> bs = context.newString('ABC', style=style)
         >>> bs.__class__.__name__
         'FlatString'
-        >>> #context.text(bs, (100, 100))
+        >>> context.newDocument(1000, 1000)
+        >>> context.newPage()
+        >>> context.text(bs, (100, 100))
 
         """
         assert isinstance(bs, FlatString), 'FlatString.text: bs not of type %s' % FlatString.__name__
@@ -355,7 +355,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.fonttoolbox.fontpaths import *
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
-        48
+        49
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>
@@ -484,9 +484,15 @@ class FlatContext(BaseContext):
     def _getValidColor(self, c):
         u"""Answer the color tuple that is valid for self.fileType, otherwise Flat gives an error."""
         # TODO: Make better match for all file types, transparance and spot color
+        import flat
+
         if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
-            return c.rgb
-        return c.rgb
+            return flat.rgb(*c.rgb)
+            #return c.rgb
+        if self.fileType in (FILETYPE_PDF):
+            return flat.rgb(*c.rgb)
+        return flat.rgb(*c.rgb)
+        #return c.rgb
 
     def _getShape(self):
         if self._fill is noColor and self._stroke is noColor:
@@ -509,11 +515,12 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.rectangle(xpt, ypt, wpt, hpt))
+            r = shape.rectangle(x, y, w, h)
+            self.page.place(r)
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and

@@ -28,7 +28,7 @@ class BaseContext:
     isSvg = False
     isInDesign = False
     # Indication to Typesetter that by default tags should not be included in output.
-    useTags = False 
+    useTags = False
 
     # To be redefined by inheriting context classes.
     STRING_CLASS = None
@@ -52,7 +52,8 @@ class BaseContext:
         self.STRING_CLASS instance."""
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.newString(u'%s' % s, context=self, e=e,
+            s = str(s)
+            s = self.STRING_CLASS.newString(s, context=self, e=e,
                     style=style, w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
@@ -67,7 +68,8 @@ class BaseContext:
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.fitString(u'%s' % s, context=self, e=e, style=style, w=w, h=h,
+            s = str(s)
+            s = self.STRING_CLASS.fitString(s, context=self, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
@@ -97,7 +99,7 @@ class BaseContext:
                 s += bs
         return s
 
-    #   G L Y P H  
+    #   G L Y P H
 
     def intersectWithLine(self, glyph, line):
         """Answers the sorted set of intersecting points between the straight

@@ -28,7 +28,13 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.color import blackColor
 
-f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
+context = getContext()
+
+#f = findFont('Amstelvar-Roman-VF') # Get PageBot Font instance of Variable font.
+#f = findFont('AmstelvarAlpha-VF')
+f = findFont('RobotoDelta-VF')
+
+print(f, f.axes)
 
 def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
          wideLocation, fixedSize=False, tracking=None):
@@ -46,13 +52,13 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
     performed to change the size. Again this cannot be done by simple
     interpolation, as the [opsz] also changes the width.  It one of the axes
     does not exist in the font, then use the default setting of the font."""
-    c = getContext()
+
     condFont = getVarFontInstance(varFont, condensedLocation)
-    condensedString = c.newString(s, style=dict(font=condFont.path,
+    condensedString = context.newString(s, style=dict(font=condFont.path,
         fontSize=fontSize, tracking=tracking, textFill=blackColor))
     condWidth, _ = condensedString.size
     wideFont = getVarFontInstance(varFont, wideLocation)
-    wideString = c.newString(s, style=dict(font=wideFont.path, fontSize=fontSize,
+    wideString = context.newString(s, style=dict(font=wideFont.path, fontSize=fontSize,
         tracking=tracking, textFill=blackColor))
     wideWidth, _ = wideString.size
 
@@ -76,6 +82,8 @@ def fitVariableWidth(varFont, s, w, fontSize, condensedLocation,
                                        fontSize=fontSize,
                                        tracking=tracking,
                                        textFill=blackColor))
+
+    print(font, location)
     return dict(condensendFont=condFont,
                 condensedString=condensedString,
                 condWidth=condWidth,
@@ -93,18 +101,18 @@ HEADLINE_SIZE = 36
 HEADLINE = """When fonts started a new world."""
 
 
-MIN_WDTH = 0 # Minimum value of width [wdth] axis. 0 == Normal width
-MAX_WDTH = 0.8 # Maximum amount of compressions.
+MIN_WDTH = f.axes['wdth'][0] # Minimum value of width [wdth] axis. 0 == Normal width
+MAX_WDTH = f.axes['wdth'][2] # Maximum amount of compressions.
                # Larger value gives more condensed instance of
                # the Variable Font.
 assert MIN_WDTH < MAX_WDTH
 
 condensedLocation = dict(opsz=HEADLINE_SIZE,
                          wdth=MAX_WDTH,
-                         wght=0.7) # Amount of condensed-ness > 0
+                         wght=f.axes['wght'][1]) # Amount of condensed-ness > 0
 wideLocation = dict(opsz=HEADLINE_SIZE,
                     wdth=MIN_WDTH,
-                    wght=0.7) # Full default width = 0
+                    wght=f.axes['wght'][1]) # Full default width = 0
 
 W = 600
 H = 220
@@ -122,56 +130,41 @@ def draw(w):
     """
     d = fitVariableWidth(f, HEADLINE, w, HEADLINE_SIZE,
                          condensedLocation, wideLocation)
-    c = getContext()
-
-    c.newPage(W, H)
-    c.fill(1)
-    c.rect(0, 0, W, H)
-    c.text(d['condensedString'], (PADDING, 50))
-    c.text(d['bs'], (PADDING, 100))
-    c.text(d['wideString'], (PADDING, 150))
-    c.fill(None)
-    c.stroke(0)
-    c.line((PADDING, PADDING), (PADDING, H-PADDING))
-    c.line((PADDING+d['condWidth'], PADDING),
+    context.newPage(W, H)
+    context.fill(1)
+    context.rect(0, 0, W, H)
+    context.text(d['condensedString'], (PADDING, 50))
+    context.text(d['bs'], (PADDING, 100))
+    context.text(d['wideString'], (PADDING, 150))
+    context.fill(None)
+    context.stroke(0)
+    context.line((PADDING, PADDING), (PADDING, H-PADDING))
+    context.line((PADDING+d['condWidth'], PADDING),
          (PADDING+d['condWidth'], H-PADDING))
-    c.line((PADDING+d['width'], PADDING),
+    context.line((PADDING+d['width'], PADDING),
          (PADDING+d['width'], H-PADDING))
-    c.line((PADDING+d['wideWidth'], PADDING),
+    context.line((PADDING+d['wideWidth'], PADDING),
          (PADDING+d['wideWidth'], H-PADDING))
-    c.stroke(None)
-    c.fill(0)
-    c.text('%d %0.2f' % (round(d['condWidth']),
+    context.stroke(None)
+    context.fill(0)
+    context.text('%d %0.2f' % (round(d['condWidth']),
                          d['condensedLocation']['wdth']),
            (PADDING + d['condWidth'] + 5, PADDING))
-    c.text('%d %0.2f' % (round(d['width']), d['location']['wdth']),
+    context.text('%d %0.2f' % (round(d['width']), d['location']['wdth']),
            (PADDING + d['width'] + 5, PADDING))
-    c.text('%d %0.2f' % (round(d['wideWidth']), d['wideLocation']['wdth']),
+    context.text('%d %0.2f' % (round(d['wideWidth']), d['wideLocation']['wdth']),
            (PADDING + d['wideWidth'] + 5, PADDING))
-    c.stroke((1, 0, 0))
-    c.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
-    c.stroke(None)
+    context.stroke((1, 0, 0))
+    context.line((PADDING+w, PADDING), (PADDING+w, H-PADDING))
+    context.stroke(None)
     #c.fill(1, 0, 0)
-    c.text('Column %d' % w, (PADDING+w+5, H-PADDING-5))
+    context.text('Column %d' % w, (PADDING+w+5, H-PADDING-5))
 
 
-if INTERACTIVE:
-    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-    c.Variable(
-        [dict(name='Width',
-              ui='Slider',
-              args=dict(minValue=PADDING,
-                        value=200,
-                        maxValue=W-2*PADDING))
-        ], globals())
-
-    draw(Width)
-else:
-    angle = 0
-    while angle < 360:
-        dx = sin(radians(angle)) * 0.5 + 0.5
-        draw(160 + (W-2*PADDING-160) * dx)
-        angle += 360/FRAMES
-    c = getContext()
-    c.saveImage('_export/fitVariableHeadline.gif')
+angle = 0
+while angle < 360:
+    dx = sin(radians(angle)) * 0.5 + 0.5
+    draw(160 + (W-2*PADDING-160) * dx)
+    angle += 360/FRAMES
+context.saveImage('_export/FitVariableHeadline.gif')
 

@@ -23,8 +23,9 @@ from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
-                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE,
-                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE)
+                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE, BASE_TOP, BASE_BOTTOM,
+                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
+                           DEFAULT_COLOR_BARS)
 
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
@@ -32,6 +33,7 @@ from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now, days
+from pagebot.gradient import Gradient, Shadow
 
 class Element:
     """The base element object."""
@@ -45,6 +47,9 @@ class Element:
     isFlow = False # Value is True if self.next if defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
+
+    GRADIENT_CLASS = Gradient
+    SHADOW_CLASS = Shadow
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None,
@@ -171,6 +176,7 @@ class Element:
 
         # Set timer of this element.
         # Default TimeMarks from t == now() until arbitrary one day from now().
+        """
         t0 = now()
         if timeMarks is None:
             timeMarks = [TimeMark(t0, {}), TimeMark(t0 + days(1), {})]
@@ -179,6 +185,10 @@ class Element:
             t = t0
         self.t = t # Initialize self.style from t = 0
         self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
+        """
+        self.t = 0
+        self.timeMarks = []
+        self.timeKeys = []
 
         if padding is not None:
             self.padding = padding # Expand by property
@@ -1929,7 +1939,9 @@ class Element:
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        """Shift the element so self.top == y."""
+        """Shift the element so self.top == y. Where the "top" is, depends on the 
+        setting of self.yAlign. If self.isTextBox, then vertical position can also
+        be defined by the top or bottom position of the baseline."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             self.y = units(y) + self.h/2
@@ -2147,40 +2159,31 @@ class Element:
 
     # Borders (equivalent for element stroke and strokWidth)
 
-    def _borderDict(self, borderData):
+    def getBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-        if isUnit(borderData) or isinstance(borderData, (int, float)):
-            return dict(line=ONLINE, dash=None, stroke=self.css('stroke', blackColor), strokeWidth=units(borderData))
-        if isinstance(borderData, dict):
-            if not 'line' in borderData: # (ONLINE, INLINE, OUTLINE):
-                borderData['line'] = ONLINE
-            if not 'dash' in borderData:
-                borderData['dash'] = None
-            if not 'strokeWidth' in borderData: # If not defined, use the current setting of self.strokeWidth
-                borderData['strokeWidth'] = self.strokeWidth
-            if not 'stroke' in borderData: # If not defined, use the current setting of self.stroke
-                borderData['stroke'] = self.css('stroke', blackColor)
-            return borderData
-
-        # TODO: Solve this, error on initialize of element, _parent does not yet exist.
-        #stroke = self.css('stroke')
-        #strokeWidth = self.css('strokeWidht')
-        #if stroke is not noColor and strokeWidth:
-        #     return dict(line=ONLINE, dash=None, stroke=stroke, strokeWidth=strokeWidth)
-        return None
-
+        if stroke is None:
+            stroke = self.css('stroke', blackColor)
+        if strokeWidth is None:
+            strokeWidth = self.strokeWidth # Take current stroke width setting in css
+        if line is None:
+            line = ONLINE
+        # Dash can be None
+        if not strokeWidth: # If 0, then answer None for the ficy
+            return {}
+        return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
+ 
     def _get_borders(self):
         u"""Set all borders of the element.
 
         >>> from pagebot.toolbox.units import p
         >>> e = Element(stroke=(1, 0, 0))
         >>> e.borders = 2 # Value converts to units
-        >>> e.borders[0]['strokeWidth']
+        >>> e.borders[0].get('strokeWidth')
         2pt
         >>> e.borders = p(5) # Set a unit
-        >>> e.borders[0]['strokeWidth']
+        >>> e.borders[0].get('strokeWidth')
         5p
         >>> e.borders[0]['stroke']
         Color(r=1, g=0, b=0)
@@ -2188,7 +2191,7 @@ class Element:
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
         if isUnit(borders) or isinstance(borders, (int, float)):
-            borders = self._borderDict(borders)
+            borders = self.getBorderDict(strokeWidth=borders)
         if not isinstance(borders, (list, tuple)):
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
@@ -2206,31 +2209,31 @@ class Element:
 
         >>> from pagebot.toolbox.color import color, blackColor
         >>> e = Element()
-        >>> e.borderTop = dict(strokeWidth=pt(5), stroke=blackColor)
+        >>> e.borderTop = e.getBorderDict(strokeWidth=pt(5), stroke=blackColor)
         >>> sorted(e.borderTop.items())
         [('dash', None), ('line', 'online'), ('stroke', Color(r=0, g=0, b=0)), ('strokeWidth', 5pt)]
         """
         return self.css('borderTop')
     def _set_borderTop(self, border):
-        self.style['borderTop'] = self._borderDict(border)
+        self.style['borderTop'] = border
     borderTop = property(_get_borderTop, _set_borderTop)
 
     def _get_borderRight(self):
         return self.css('borderRight')
     def _set_borderRight(self, border):
-        self.style['borderRight'] = self._borderDict(border)
+        self.style['borderRight'] = border
     borderRight = property(_get_borderRight, _set_borderRight)
 
     def _get_borderBottom(self):
         return self.css('borderBottom')
     def _set_borderBottom(self, border):
-        self.style['borderBottom'] = self._borderDict(border)
+        self.style['borderBottom'] = border
     borderBottom = property(_get_borderBottom, _set_borderBottom)
 
     def _get_borderLeft(self):
         return self.css('borderLeft')
     def _set_borderLeft(self, border):
-        self.style['borderLeft'] = self._borderDict(border)
+        self.style['borderLeft'] = border
     borderLeft = property(_get_borderLeft, _set_borderLeft)
 
     # Alignment types, defines where the origin of the element is located.
@@ -2251,13 +2254,13 @@ class Element:
         self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     xAlign = property(_get_xAlign, _set_xAlign)
 
-    def _get_yAlign(self): # Answer the type of x-alignment.
+    def _get_yAlign(self): # Answer the type of y-alignment.
         return self._validateYAlign(self.css('yAlign'))
     def _set_yAlign(self, yAlign):
         self.style['yAlign'] = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
     yAlign = property(_get_yAlign, _set_yAlign)
 
-    def _get_zAlign(self): # Answer the type of x-alignment.
+    def _get_zAlign(self): # Answer the type of z-alignment.
         return self._validateZAlign(self.css('zAlign'))
     def _set_zAlign(self, zAlign):
         self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
@@ -2674,6 +2677,17 @@ class Element:
     def _set_md(self, d):
         self.d = max(0, d - self.mzf - self.mzb) # Should not become < 0, behind viewer?
     md = property(_get_md, _set_md)
+
+    def _get_folds(self):
+        """List if [(x, y), ...] (one of them can be None) that indicate the position of folding lines
+        on a page. In general this is a view parameters (applying to all pages), but it can 
+        be overwritten by individual pages or other elements.
+        The position of folds is ignored by self.w and self.h. It is mostly to show folding markers
+        by PageView. The fold property is stored instyle and not inherited."""
+        return self.style.get('folds', []) # Not inherited
+    def _set_folds(self, folds):
+        self.style['folds'] = folds
+    folds = property(_get_folds, _set_folds)
 
 
     # Margin properties
@@ -3328,24 +3342,28 @@ class Element:
     def _get_shadow(self):
         return self.css('shadow')
     def _set_shadow(self, shadow):
+        assert shadow is None or isinstance(shadow, self.SHADOW_CLASS)
         self.style['shadow'] = shadow
     shadow = property(_get_shadow, _set_shadow)
 
     def _get_textShadow(self):
         return self.css('textShadow')
     def _set_textShadow(self, textShadow):
+        assert textShadow is None or isinstance(textShadow, self.SHADOW_CLASS)
         self.style['textShadow'] = textShadow
     textShadow = property(_get_textShadow, _set_textShadow)
 
     def _get_gradient(self):
         return self.css('gradient')
     def _set_gradient(self, gradient):
+        assert gradient is None or isinstance(gradient, self.GRADIENT_CLASS)
         self.style['gradient'] = gradient
     gradient = property(_get_gradient, _set_gradient)
 
     def _get_textGradient(self):
         return self.css('textGradient')
     def _set_textGradient(self, textGradient):
+        assert textGradient is None or isinstance(textGradient, self.GRADIENT_CLASS)
         self.style['textGradient'] = textGradient
     textGradient = property(_get_textGradient, _set_textGradient)
 
@@ -3852,30 +3870,29 @@ class Element:
 
         if borderTop is not None:
             c.saveGraphicState()
-            if borderTop['dash']:
-                c.lineDash(*borderTop['dash'])
-            c.stroke(borderTop['stroke'], borderTop['strokeWidth'])
+            c.lineDash(*borderTop.get('dash')) # None for no dash
+            c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
 
-            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
-                if borderLeft['line'] == ONLINE:
-                    oLeft = borderLeft['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oLeft = borderLeft['strokeWidth']
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
 
             oRight = 0 # Extra offset on right, if there is a right border.
 
-            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
-                if borderRight['line'] == ONLINE:
-                    oRight = borderRight['strokeWidth']/2
-                elif borderRight['line'] == OUTLINE:
-                    oRight = borderRight['strokeWidth']
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
 
-            if borderTop['line'] == OUTLINE:
-                oTop = borderTop['strokeWidth']/2
-            elif borderTop['line'] == INLINE:
-                oTop = -borderTop['strokeWidth']/2
+            if borderTop.get('line') == OUTLINE:
+                oTop = borderTop.get('strokeWidth', 0)/2
+            elif borderTop('line') == INLINE:
+                oTop = -borderTop.get('strokeWidth', 0)/2
             else:
                 oTop = 0
 
@@ -3887,28 +3904,27 @@ class Element:
 
         if borderBottom is not None:
             c.saveGraphicState()
-            if borderBottom['dash']:
-                c.lineDash(*borderBottom['dash'])
-            c.stroke(borderBottom['stroke'], borderBottom['strokeWidth'])
+            c.lineDash(*borderBottom.get('dash')) # None for no dash
+            c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
-            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
-                if borderLeft['line'] == ONLINE:
-                    oLeft = borderLeft['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oLeft = borderLeft['strokeWidth']
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
 
             oRight = 0 # Extra offset on right, if there is a right border.
-            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
-                if borderRight['line'] == ONLINE:
-                    oRight = borderRight['strokeWidth']/2
-                elif borderRight['line'] == OUTLINE:
-                    oRight = borderRight['strokeWidth']
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
 
-            if borderBottom['line'] == OUTLINE:
-                oBottom = borderBottom['strokeWidth']/2
-            elif borderBottom['line'] == INLINE:
-                oBottom = -borderBottom['strokeWidth']/2
+            if borderBottom.get('line') == OUTLINE:
+                oBottom = borderBottom.get('strokeWidth', 0)/2
+            elif borderBottom.get('line') == INLINE:
+                oBottom = -borderBottom.get('strokeWidth', 0)/2
             else:
                 oBottom = 0
 
@@ -3920,28 +3936,27 @@ class Element:
 
         if borderRight is not None:
             c.saveGraphicState()
-            if borderRight['dash']:
-                c.lineDash(*borderRight['dash'])
-            c.stroke(borderRight['stroke'], borderRight['strokeWidth'])
+            c.lineDash(*borderRight.get('dash')) # None for no dash
+            c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
-                if borderTop['line'] == ONLINE:
-                    oTop = borderTop['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oTop = borderTop['strokeWidth']
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
-                if borderBottom['line'] == ONLINE:
-                    oBottom = borderBottom['strokeWidth']/2
-                elif borderBottom['line'] == OUTLINE:
-                    oBottom = borderBottom['strokeWidth']
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
 
-            if borderRight['line'] == OUTLINE:
-                oRight = borderRight['strokeWidth']/2
-            elif borderLeft['line'] == INLINE:
-                oRight = -borderRight['strokeWidth']/2
+            if borderRight.get('line') == OUTLINE:
+                oRight = borderRight.get('strokeWidth', 0)/2
+            elif borderRight.get('line') == INLINE:
+                oRight = -borderRight.get('strokeWidth', 0)/2
             else:
                 oRight = 0
 
@@ -3953,28 +3968,27 @@ class Element:
 
         if borderLeft is not None:
             c.saveGraphicState()
-            if borderLeft['dash']:
-                c.lineDash(*borderLeft['dash'])
-            c.stroke(borderLeft['stroke'], borderLeft['strokeWidth'])
+            c.lineDash(*borderLeft.get('dash')) # None for no dash
+            c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
-                if borderTop['line'] == ONLINE:
-                    oTop = borderTop['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oTop = borderTop['strokeWidth']
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
-                if borderBottom['line'] == ONLINE:
-                    oBottom = borderBottom['strokeWidth']/2
-                elif borderBottom['line'] == OUTLINE:
-                    oBottom = borderBottom['strokeWidth']
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
 
-            if borderLeft['line'] == OUTLINE:
-                oLeft = borderLeft['strokeWidth']/2
-            elif borderLeft['line'] == INLINE:
-                oLeft = -borderLeft['strokeWidth']/2
+            if borderLeft.get('line') == OUTLINE:
+                oLeft = borderLeft.get('strokeWidth', 0)/2
+            elif borderLeft.get('line') == INLINE:
+                oLeft = -borderLeft.get('strokeWidth', 0)/2
             else:
                 oLeft = 0
 
@@ -3998,6 +4012,7 @@ class Element:
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
         view.drawPageMetaInfo(self, p, background=True)
 
         if self.drawBefore is not None: # Call if defined
@@ -4010,6 +4025,8 @@ class Element:
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
+        # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
         view.drawPageMetaInfo(self, p, background=False)
 
         self._restoreRotation(view, p)
@@ -5120,6 +5137,23 @@ class Element:
         self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
+    def _get_showColorBars(self):
+        """Set value, containing the selection of color bars that should be shown. 
+        See pagebot.constants for the names of the options."""
+        return set(self.style.get('showColorBars') or []) # Not inherited
+    def _set_showColorBars(self, showColorBars):
+        if not showColorBars:
+            showColorBars = []
+        elif not isinstance(showColorBars, (set, list, tuple)):
+            if isinstance(showColorBars, str):
+                showColorBars = [showColorBars]
+            elif showColorBars:
+                showColorBars = DEFAULT_COLOR_BARS
+            else:
+                showColorBars = [] # Don't show them
+        self.style['showColorBars'] = set(showColorBars)
+    showColorBars = property(_get_showColorBars, _set_showColorBars)
+
     def _get_showOrigin(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
         origin cross hair marker of the page or other elements."""
@@ -5186,7 +5220,8 @@ class Element:
     #   Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
 
     def _get_showGrid(self):
-        """Boolean value. If True show the type grid on the page or other elements."""
+        """Set value, containing the parts of grid that should be shown. See pagebot.constants
+        for the names of the options."""
         return set(self.style.get('showGrid') or []) # Not inherited
     def _set_showGrid(self, showGrid):
         if not showGrid:
@@ -5202,7 +5237,8 @@ class Element:
     #   Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT)
 
     def _get_showBaselines(self):
-        """Boolean value. If True show baselines on the page or other elements."""
+        """Set value, containing the parts of baseline that should be shown. See pagebot.constants
+        for the names of the options."""
         return set(self.style.get('showBaselines') or []) # Not inherited
     def _set_showBaselines(self, showBaselines):
         if not showBaselines:

@@ -24,6 +24,7 @@ from pagebot.elements import * # Import all types of page-child elements for con
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, pt
 from pagebot.conditions import * # Import all conditions for convenience.
+from pagebot.constants import BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT
 
 #context = FlatContext()
 context = getContext()
@@ -47,7 +48,7 @@ style = dict(font=font, fontSize=24, leading=BASELINE, textFill=0.15, hyphenatio
 footNoteRefStyle = dict(font=font, fontSize=12, baselineShift=em(0.2), textFill=0.2)
 footNoteStyle = dict(font=font, fontSize=14, leading=BASELINE, textFill=0.6, paragraphTopSpacing=em(1))
 
-# Make BabelString from adding multiple cascadeing styles
+# Make BabelString from adding multiple cascading styles
 t = context.newString('Headline of this example page\n', style=headStyle) # Start with headline
 t += context.newString(text * 3, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text
@@ -61,14 +62,18 @@ doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = True # Show default baseline grid of the column lines.
+view.showBaselines = False # No baselines shown in grid. Element shows its own.
+
 # Get the page
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page.
 # Red frame to show position and dimensions of the text box element.
 # Default behavior of the textbox is to align the text at "top of the em-square".
-c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()])
+# Show index of baselines on left and vertical position of baselines on the right.
+c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()],
+    showOrigin=True,
+    showBaselines=[BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT])
 
 # Solve the page/element conditions
 doc.solve()

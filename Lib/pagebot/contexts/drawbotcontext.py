@@ -77,7 +77,7 @@ class DrawBotContext(BaseContext):
         """
         # The context builder "cls.b" is the main drawBot library, that contains all
         # drawing calls in as used regular DrawBot scripts.
-        self.b = drawBotBuilder # cls.b builder for this canvas.
+        self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open DrawBot path
         self.fileType = DEFAULT_FILETYPE # Holds the extension as soon as the export file path is defined.
@@ -138,6 +138,14 @@ class DrawBotContext(BaseContext):
         >>> context.newDrawing()
         """
         self.b.newDrawing()
+
+    #   C L I P P I N G
+
+    def clipPath(self, clipPath):
+        """Set the clipPath of the DrawBot builder in a new saved graphics state.
+        Clip paths cannot be restore, so they should be inside a context.save() and context.restore()
+        """
+        self.b.clipPath(clipPath)
 
     #   V A R I A B L E
 
@@ -232,24 +240,24 @@ class DrawBotContext(BaseContext):
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def newPath(self):
-        """Make a new DrawBot Bezierpath() to draw in.
+        """Make a new DrawBot Bezierpath() to draw in and answer it.
+        This will not initialize self._path, which is accessed by the property self.path
 
         >>> context = DrawBotContext()
-        >>> context.path is not None
+        >>> context.newPath() is not None
         True
         """
-        self._path = self.b.BezierPath()
-        return self._path
+        return self.b.BezierPath()
 
     def _get_path(self):
-        """Answers the open drawing path. Create one if it does not exist.
+        """Answers the open drawing self._path. Create one if it does not exist.
 
         >>> context = DrawBotContext()
         >>> context.path is not None
         True
         """
         if self._path is None:
-            self.newPath()
+            self._path = self.newPath()
         return self._path
     path = property(_get_path)
 
@@ -257,19 +265,19 @@ class DrawBotContext(BaseContext):
         """Draw the NSBezierPath, or equivalent in other contexts. Scaled image
         is drawn on (x, y), in that order."""
         if path is None:
-            path = self._path
-        if path is not None:
-            self.save()
-            if sy is None:
-                sy = sx
-            if p is None:
-                xpt = ypt = 0
-            else:
-                xpt, ypt = point2D(upt(p))
-            self.scale(sx, sy)
-            self.b.translate(xpt/sx, ypt/sy)
-            self.b.drawPath(path)
-            self.restore()
+            path = self.path
+
+        self.save()
+        if sy is None:
+            sy = sx
+        if p is None:
+            xpt = ypt = 0
+        else:
+            xpt, ypt = point2D(upt(p))
+        self.scale(sx, sy)
+        self.translate(xpt/sx, ypt/sy)
+        self.b.drawPath(path)
+        self.restore()
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
@@ -311,12 +319,12 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def getFlattenedContours(self):
+    def getFlattenedContours(self, path=None):
         """Answers the flattened NSBezier path As contour list [contour,
         contour, ...] where contours are lists of point2D() points."""
         contour = []
         flattenedContours = [contour]
-        flatPath = self.bezierPathByFlatteningPath()
+        flatPath = self.bezierPathByFlatteningPath(path) # Use/create self._path if path is None
 
         if flatPath is not None:
             for index in range(flatPath.elementCount()):
@@ -333,102 +341,98 @@ class DrawBotContext(BaseContext):
 
         return flattenedContours
 
-    def onBlack(self, p, path):
+    def onBlack(self, p, path=None):
         """Answers the boolean flag if the single point (x, y) is on black.
-        For now this only work in DrawBotContext.
+        For now this only works in DrawBotContext.
         """
         if path is None:
-            path = self._path
+            path = self.path
         p = point2D(p)
         return path._path.containsPoint_(p)
 
     def moveTo(self, p):
-        """Move to point p. Create a new path if none is open.
+        """Move to point p in the running path. Create a new self._path if none is open.
 
         >>> from pagebot.toolbox.units import pt
         >>> context = DrawBotContext()
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.moveTo((100, 100))
-        """
-        if self._path is None:
-            self.newPath()
-        ppt = point2D(upt(p))
-        self._path.moveTo(ppt) # Render units point tuple to tuple of values
-
-    def lineTo(self, p):
-        """Line to point p. Create a new path if none is open.
-
-        >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
         >>> context.moveTo(pt(100, 100))
-        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> context.closePath()
+        >>> context.moveTo((100, 100))
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        if self._path is None:
-            self.newPath()
         ppt = point2D(upt(p))
-        self._path.lineTo(ppt) # Render units point tuple to tuple of values
+        self.path.moveTo(ppt) # Render units point tuple to tuple of values
+
+    def lineTo(self, p):
+        """Line to point p in the running path. Create a new self._path if none is open.
+
+        >>> context = DrawBotContext()
+        >>> # Create a new self._path by property self.path
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> context.closePath()
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        """
+        ppt = point2D(upt(p))
+        self.path.lineTo(ppt) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         pass
 
     def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p. Create a new path if none is open.
+        """Curve to point p i nthe running path. Create a new path if none is open.
 
         >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
+        >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        if self._path is None:
-            self.newPath()
         b1pt = point2D(upt(bcp1))
         b2pt = point2D(upt(bcp2))
         ppt = point2D(upt(p))
-        self._path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+        self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def closePath(self):
-        """Curve to point p. Create a new path if none is open.
+        """Close the current path, if it exists. Otherwise ignore.
 
         >>> context = DrawBotContext()
-        >>> # Draw directly on th epath
-        >>> # Draw on the context cached path
-        >>> _ = context.newPath()
+        >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
+        >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        if self._path is not None:
+        if self._path is not None: # Only if there is an open path.
             self._path.closePath()
 
     def getFlattenedPath(self, path=None):
         """Use the NSBezier flatten path. Answer None if the flattened path
         could not be made."""
         if path is None:
-            path = self._path
-        if path is not None:
-            return self._path.getNSBezierPath().bezierPathByFlatteningPath()
-        return None
+            path = self.path
+        return path._path.getNSBezierPath().bezierPathByFlatteningPath()
 
     def getFlattenedContours(self, path=None):
         """Answers the flattened NSBezier path As contour list [contour,
@@ -441,7 +445,6 @@ class DrawBotContext(BaseContext):
             for index in range(flatPath.elementCount()):
                 # NSBezierPath size + index call.
                 p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-
                 if p:
                     # Make point2D() tuples, no need to add point type, all
                     # onCurve.
@@ -474,13 +477,13 @@ class DrawBotContext(BaseContext):
         """Set the DrawBot graphics state for shadow if all parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
-                              color=eShadow.color.cmyk)
+                self.b.shadow(upt(eShadow.offset), # Convert units to values
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).cmyk)
             else:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
-                              color=eShadow.color.rgb)
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).rgb)
 
     def setGradient(self, gradient, origin, w, h):
         """Define the gradient call to match the size of element e., Gradient position
@@ -490,23 +493,23 @@ class DrawBotContext(BaseContext):
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
 
         if gradient.linear:
-            if gradient.colors[0].isCmyk:
-                colors = [color.cmyk for color in gradient.colors]
-                b.cmykLinearGradient(startPoint=start, endPoint=end,
+            if (gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations)
             else:
-                colors = [color.rgb for color in gradient.colors]
-                b.linearGradient(startPoint=start, endPoint=end,
+                colors = [color(c).rgb for c in gradient.colors]
+                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations)
         else: # Gradient must be radial.
-            if gradient.colors[0].isCmyk:
-                colors = [color.cmyk for color in gradient.colors]
-                b.cmykRadialGradient(startPoint=start, endPoint=end,
+            if color(gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
             else:
-                colors = [color.rgb for color in gradient.colors]
-                b.radialGradient(startPoint=start, endPoint=end,
+                colors = [color(c).rgb for c in gradient.colors]
+                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
@@ -575,6 +578,26 @@ class DrawBotContext(BaseContext):
         """Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
 
+    def installedFonts(self, patterns=None):
+        """Answer a list of all fonts (name or path) that are installed in the OS."""
+        fontNames = []
+        for fontName in self.b.installedFonts():
+            for pattern in patterns:
+                if pattern in fontName:
+                    fontNames.append(fontName)
+                    break
+        return fontNames
+
+    def installFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.installFont(fontOrName)
+        
+    def unInstallFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.uninstallFont(fontOrName)
+        
     #   G L Y P H
 
     def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
@@ -614,6 +637,10 @@ class DrawBotContext(BaseContext):
         if fontSize is not None:
             fspt = upt(fontSize)
             self.b.fontSize(fspt) # Render fontSize unit to value
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answer the width/height of the formatted string for an optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
@@ -781,6 +808,9 @@ class DrawBotContext(BaseContext):
         elif not w and not h:
             wpt = iw
             hpt = ih
+        else: # Both are defined, scale disproportional
+            wpt = upt(w)
+            hpt = upt(h)
 
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))

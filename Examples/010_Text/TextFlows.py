@@ -13,8 +13,9 @@
 #
 #     UseTextFlows.py
 #
-#     If a TextBox as self.nextElement defined as name for another text box on the
-#     same page, then overflow of self will go into the other text box.
+#     If a TextBox such as self.nextElement is defined as name for another text
+#     box on the same page, then overflow of self will go into the other text
+#     box.
 
 from pagebot.style import LEFT, TOP, BOTTOM
 from pagebot.conditions import *
@@ -22,7 +23,9 @@ from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.toolbox.color import color, blackColor, whiteColor, noColor
 from pagebot.toolbox.units import pt, em
-# Document is the main instance holding all information about the document togethers (pages, styles, etc.)
+
+# Document is the main instance holding all information about the document
+# togethers (pages, styles, etc.)
 
 DoTextFlow = True
 PagePadding = 30
@@ -76,8 +79,8 @@ def makeDocument():
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions.
         yAlign=BOTTOM, xAlign=LEFT,
-        leading=em(1.4), fontSize=pt(9), 
-        textFill=blackColor, 
+        leading=em(1.4), fontSize=pt(9),
+        textFill=blackColor,
         fill=0.9, # Renders to color
         stroke=noColor,
         strokeWidth=pt(0.5)
@@ -86,7 +89,7 @@ def makeDocument():
         name='ElasticTextBox2', # Flow reference by element.name
         nextElementName='ElasticTextBox3', nextPageName='Page 2',
         parent=page0, padding=4, x=100, w=BoxWidth, h=200,
-        conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  
+        conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,
         fill=whiteColor, stroke=noColor,
     )
     # Get next page, to show flow running over page breaks.
@@ -98,7 +101,7 @@ def makeDocument():
         name='ElasticTextBox3', # Flow reference by element.name
         parent=page1, padding=4, w=BoxWidth,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom()],
-        yAlign=TOP,  
+        yAlign=TOP,
         fill=whiteColor, stroke=noColor)
 
     score = doc.solve() # Try to solve all pages.

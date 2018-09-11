@@ -54,6 +54,10 @@ view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page
 # Set types of grid lines to show on foreground/background
 view.showGrid = [GRID_COL, GRID_ROW_BG, GRID_SQR_BG]
 view.showBaselines = False # Show default setting of baseline grid of the column lines.
+#view.padding = inch(1)
+#view.showFrame = True
+#view.showCropMarks = True
+#view.showColorBars = True
 
 # Get the page
 page = doc[1]
@@ -74,5 +78,5 @@ for ix in range(4): # Horizontal index for x-position
 doc.solve() # Solve the overflowing conditions.
 
 # Export the document to this PDF file.
-doc.export('_export/RotatingText.pdf')
+doc.export('_export/RotatingText16.pdf')
 
