@@ -98,6 +98,7 @@ illustration.
 
 * Element classes supporting various types of graphs, info-graphics, maps,
   PageBot document layout, Variable Font axes layout, font metrics.
+* Font class supporting CFF (.otf) and UFO.
 * Views for thumbnail page overview, combined booklet-sheets for print,
   site-maps, etc.
 * Add export of text to MarkDown .md files.
