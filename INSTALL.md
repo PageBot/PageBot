@@ -8,9 +8,14 @@ To help with the installation of PageBot, we've provided an example script to te
     
 The script can be run from DrawBot, Sublime or on the command line to find out if all the components are in place to start using PageBot.
 
-## setup.py
+The installation process is part of the development of the library itself, so it may still not always work properly.
+Here are some hints to check on installation and to install without using the `setup.py` script.
 
 Run `sudo python3 setup.py install` to start installing PageBot. If all goes well, the setup will finish without errors while printing out the location of the files:
+
+Known problems:
+
+* The default `Python` may not be the same one that DrawBotApp uses. On some macOS systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 
 	...
 	creating dist
@@ -43,13 +48,17 @@ To install them, you can use a package manager such as pip, easy_install or home
 
 * DrawBotApp should be restarted after installation because libraries are scanned at startup.
 
+Go to `/Library/Python/2.7/site-packages` in the Finder.
+Is there a PageBot reference here, either as `.pth` file or a Python egg file?
+* If not, then try to reinstall, there may have been (another) error during installation.
+* If there is a `.pth` file, look into it (click-space on the icon) and verify that the path is pointing to your PageBot folder path.
 * Don't move the git-repository to another location after it is installed. Python builds a reference to the libary where it is located during installation. After moving, make sure to run the initializer again.
 
 ## Checking
 
 ### On the Terminal
 
-Open a terminal
+Open a terminal, and run the python command
 
 ~~~Python3
 ++ python3
@@ -60,7 +69,18 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 ~~~
 
-If there is no error, PageBot is installed properly for this Python.
+You should see the python command prompt:
+
+    Python 2.7.10 (default, Feb  7 2017, 00:08:15) 
+    [GCC 4.2.1 Compatible Apple LLVM 8.0.0 	(clang-800.0.34)] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+
+Then run the `import pagebot` command.
+If there is no error, PageBot is installed properly for this Python, and it will look like this:
+	
+    >>> import pagebot
+    >>> 
 
 ### In DrawBotApp
 
@@ -72,6 +92,7 @@ If there is no error, PageBot is installed properly for this Python.
 If there is no error then PageBot is installed properly.
 
 ### In Sublime
+
 
 Sublime needs to be configured to build with Python 3 first. An example configuration file can be found here:
 
