@@ -218,39 +218,39 @@ class Duration:
             weeks=0, td=None):
         """
 
-        An extension of the builtin datetime.timeDelta class, extending to millennia to match SQL's INTERVAL type
+        An extension of the builtin datetime.timedelta class, extending to millennia to match SQL's INTERVAL type
         Note that by itself, a duration of months is meaningless due to diffing month lengths.
         But when doing date arithmetic, we can figure it out.
 
         """
         if td is not None:
-            self.timeDelta = td
+            self.timedelta = td
         else:
-            self.timeDelta = datetime.timedelta(days, seconds, microSeconds, milliSeconds, minutes, hours, weeks)
+            self.timedelta = datetime.timedelta(days, seconds, microSeconds, milliSeconds, minutes, hours, weeks)
 
 
     def _get_weeks(self):
-        return self.timeDelta.days // 7
+        return self.timedelta.days // 7
     weeks = property(_get_weeks) 
     
     def _get_days(self):
-        return self.timeDelta.days
+        return self.timedelta.days
     days = property(_get_days) 
     
     def _get_hours(self):
-        return self.timeDelta.second // (60 * 60)
+        return self.timedelta.second // (60 * 60)
     hours = property(_get_hours) 
     
     def _get_minutes(self):
-        return self.timeDelta.seconds // 60
+        return self.timedelta.seconds // 60
     minutes = property(_get_minutes) 
     
     def _get_seconds(self):
-        return self.timeDelta.seconds
+        return self.timedelta.seconds
     seconds = property(_get_seconds) 
     
     def _get_microSeconds(self):
-        return self.timeDelta.microseconds
+        return self.timedelta.microseconds
     microSeconds = property(_get_microSeconds) 
     
     def __len__(self):
@@ -281,27 +281,27 @@ class Duration:
 
     def __mul__(self, n):
         assert isinstance(n, (int, float))
-        return Duration(td=self.timeDelta*n) 
+        return Duration(td=self.timedelta*n) 
 
     def __div__(self, n):
         assert isinstance(n, (int, float))
-        return Duration(td=self.timeDelta/n) 
+        return Duration(td=self.timedelta/n) 
 
     __truediv__ = __div__
     __itruediv__ = __rtruediv__ = __rdiv__ = __div__
 
     def __neg__(self):
-        return Duration(td=-self.timeDelta)
+        return Duration(td=-self.timedelta)
 
     def __add__(self, value):
         # Duration + Date = Date
         # Duration + Duration = Duration
         # Duration + 3 = Duration
         if isinstance(value, (int, float)): # Count as days
-            return self + Duration(td=self.timeDelta + datetime.timedelta(value))
+            return self + Duration(td=self.timedelta + datetime.timedelta(value))
 
         if isinstance(value, Duration):
-            return Duration(td=self.timeDelta + value.timeDelta)
+            return Duration(td=self.timedelta + value.timedelta)
 
         if isinstance(value, Dating):
             return Dating(year=value.year, day=value.day+self.days, hour=value.hour, 
@@ -335,19 +335,19 @@ class Duration:
         return self / item
 
     def min(self):
-        """Most negative timeDelta object that can be represented.
+        """Most negative timedelta object that can be represented.
 
         """
         return datetime.timedelta.min
 
     def max(self):
-        """Most positivie timeDelta object that can be represented.
+        """Most positivie timedelta object that can be represented.
 
         """
         return datetime.timedelta.max
 
     def resolution(self):
-        """Smallest resolvable difference that a timeDelta object can represent.
+        """Smallest resolvable difference that a timedelta object can represent.
 
         """
         return datetime.timedelta.resolution
@@ -747,29 +747,46 @@ class Dating:
         Dating(date='1950-01-04')
         >>> d1 + 2250 # Integer defaults to adding days, creating leap day
         Dating(date='1956-02-29')
+        >>> d1 + Duration(hours=8)
+        Dating(date='1950-01-01' time='08:00:00')
         """
         if isinstance(duration, (int, float)):
             duration = Duration(days=duration)
-        return Dating(dt=self.datetime + duration.timeDelta)
+        assert isinstance(duration, Duration)
+        return Dating(dt=self.datetime + duration.timedelta)
 
     def __sub__(self, durationOrDate):
-        """
+        """Subtract duration or dat from self
+
         Date - Duration = Date
         Date - Date = Duration
         Date - 3 = Date
 
+        >>> d1 = Dating(year=1950)
+        >>> d1 - 10
+        Dating(date='1949-12-22')
+        >>> d1 - Duration(days=356) # Duration(years=1) not allowed, because of leapyear context
+        Dating(date='1949-01-10')
+        >>> d1 - Dating(year=1949)
+        Duration(365d, 0s, 0us)
+
         """
-        if isinstance(durationOrDate, (int, float)):
-            return Duration(days=durationOrDate)
+        if isinstance(durationOrDate, (int, float)): # Interpret as days, create a new date
+            return Dating(dt=self.datetime - Duration(days=durationOrDate).timedelta)
         if isinstance(durationOrDate, Duration):
             # Date - Duration = Date
-            return Duration.__sub__(durationOrDate, self)
+            return Dating(dt=self.datetime - durationOrDate.timedelta)
         if isinstance(durationOrDate, Dating):
             # Date - Date = Duration
-            return Duration(td=self.datetime - durationOrDate.dateTime)
+            return Duration(td=self.datetime - durationOrDate.datetime)
         raise ValueError('Cannot subtract %s - %s' % (self, durationOrDate))
 
     def _get_year(self):
+        """Answer the year of self.
+
+        >>> Dating(year=2017).year
+        2017
+        """
         return self.datetime.year
     year = property(_get_year)
 
@@ -797,6 +814,8 @@ class Dating:
 
         >>> Dating(year=1980).getTimeStamp()
         '1980-01-01 00:00:00'
+        >>> Dating(year=2100, month=2, day=15, hour=3).getTimeStamp()
+        '2100-02-15 03:00:00'
         """
         if self.datetime.tzinfo is None or not usetz:
             tz = ""
@@ -816,36 +835,73 @@ class Dating:
     date = property(_get_date)
 
     def _get_year(self):
+        """Answer the year value of self.
+
+        >>> Dating(year=2010).year
+        2010
+        """
         return self.datetime.year
     year = property(_get_year)
 
     def _get_month(self):
+        """Answer the month value of self.
+
+        >>> Dating(year=2010, month=5).month
+        5
+        """
         return self.datetime.month
     month = property(_get_month)
     
     def _get_day(self):
+        """Answer the day value of self.
+
+        >>> Dating(year=2010, month=5, day=15).day
+        15
+        """
         return self.datetime.day
     day = property(_get_day)
     
     def _get_hour(self):
+        """Answer the hour value of self.
+
+        >>> Dating(year=2010, month=5, day=15, hour=3).hour
+        3
+        """
         return self.datetime.hour
     hour = property(_get_hour)
     
     def _get_minute(self):
+        """Answer the minute value of self.
+
+        >>> Dating(year=2010, month=5, day=15, hour=3, minute=4).minute
+        4
+        """
         return self.datetime.minute
     minute = property(_get_minute)
     
     def _get_second(self):
+        """Answer the second value of self.
+
+        >>> Dating(year=2010, month=5, day=15, hour=3, minute=4, second=7).second
+        7
+        """
         return self.datetime.second
     second = property(_get_second)
     
     def _get_microSecond(self):
+        """Answer the second value of self.
+
+        >>> Dating(year=2010, month=5, day=15, hour=3, microSecond=11).microSecond
+        11
+        """
         return self.datetime.microsecond
     microSecond = property(_get_microSecond)
     
     def _get_euroDate(self):
         """The self.euroDate property answers a formatted string 23-10-2008 of the date.
 
+        >>> Dating(date='2015-6-7').euroDate
+        '07-06-2015'
         """
         return '%02d-%02d-%02d' % (self.day, self.month, self.year)
     euroDate = property(_get_euroDate)
@@ -854,6 +910,10 @@ class Dating:
         """The self.studyYear property answers a string 0708 with leading zero for the study year
         from 2007-08-01 until 2008-07-31
 
+        >>> Dating(date='2015-6-7').studyYear
+        '1415'
+        >>> Dating(date='2005-6-7').studyYear
+        '0405'
         """
         studyYear = (self.year - 2000) * 100 + self.year - 2000 + 1
         if self.month <= 8: # Switch study year on end of summer break
@@ -865,6 +925,10 @@ class Dating:
         """The self.dateNumber property answers a long integer number 20080502 of the date. This can by
         used to compare dates on day only and not on time. Or it can be used as ordering key.
 
+        >>> Dating(date='2015-6-7').dateNumber
+        20150607
+        >>> Dating(date='2005-6-7').dateNumber
+        20050607
         """
         return self.year * 10000 + self.month * 100 + self.day
     dateNumber = property(_get_dateNumber)
@@ -872,6 +936,8 @@ class Dating:
     def _get_dateTuple(self):
         """The self.dateTuple property answers a tuple (y,m,d) of the date.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).dateTuple
+        (2015, 6, 7)
         """
         return self.year, self.month, self.day
     dateTuple = property(_get_dateTuple)
@@ -879,6 +945,8 @@ class Dating:
     def _get_time(self):
         """The self.dateNumber property answers a formatted '12:23:45' time string.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).time
+        '12:05:00'
         """
         return '%02d:%02d:%02d' % (self.hour, self.minute, self.second)
     time = property(_get_time)
@@ -887,6 +955,8 @@ class Dating:
         """The self.datetime property answers a formatted '2010-12-06 12:23:34' date/time
         string.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).dateTime
+        '2015-06-07 12:05:00'
         """
         return '%s %s' % (self.date, self.time)
     dateTime = property(_get_dateTime)
@@ -894,6 +964,8 @@ class Dating:
     def _get_timeTuple(self):
         """The self.timeTuple property answers a tuple (h, m, s) of the time.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).timeTuple
+        (12, 5, 0)
         """
         return self.hour, self.minute, self.second
     timeTuple = property(_get_timeTuple)
@@ -902,13 +974,15 @@ class Dating:
         """The self.timeZone property answers the timezone dt.tz.
 
         """
-        return self.tz
+        return self.datetime.tzinfo
     timeZone = property(_get_timeZone)
 
     def _get_week(self):
         """The self.week property answers the weeknummer according to ISO 8601 where the first week of
         the year that contains a thursday.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).week
+        23
         """
         return self.datetime.isocalendar()[1]
     week = property(_get_week)
@@ -916,6 +990,8 @@ class Dating:
     def _get_dayName(self):
         """The self.dayName property answers a 3 letter abbreviation of current day name.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).dayName
+        'Sun'
         """
         return self.dayNames[self.weekDay]
     dayName = property(_get_dayName)
@@ -923,6 +999,8 @@ class Dating:
     def _get_fullDayName(self):
         """The self.fullDayName property answers the full name of the current day.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).fullDayName
+        'Sunday'
         """
         return self.fullDayNames[self.weekDay]
     fullDayName = property(_get_fullDayName)
@@ -930,6 +1008,8 @@ class Dating:
     def _get_monthName(self):
         """The self.monthName property answers a 3 letter abbreviation of current month name.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).monthName
+        'Jun'
         """
         return self.monthNames[self.month]
     monthName = property(_get_monthName)
@@ -937,6 +1017,8 @@ class Dating:
     def _get_fullMonthName(self):
         """The self.fullMonthName property answers the full name of the current month.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).fullMonthName
+        'June'
         """
         return self.fullMonthNames[self.month]
     fullMonthName = property(_get_fullMonthName)
@@ -944,6 +1026,8 @@ class Dating:
     def _get_monthStart(self):
         """The self.monthStart property answers the first day of the current month.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).monthStart
+        Dating(date='2015-06-01' time='12:05:00')
         """
         return self + (1 - self.day) # Keep integer calculation combined by brackets
     monthStart = property(_get_monthStart)
@@ -951,6 +1035,8 @@ class Dating:
     def _get_monthEnd(self):
         """The self.monthEnd property answers the last day of the current month.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).monthEnd
+        Dating(date='2015-06-30' time='12:05:00')
         """
         return self - self.day + self.monthDays
     monthEnd = property(_get_monthEnd)
