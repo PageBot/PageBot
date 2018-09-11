@@ -64,8 +64,8 @@ class FlatContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
-    #UNITS = 'pt' # Default is point document, should not be changed. Units render to there.
-    UNITS = 'mm'
+    UNITS = 'pt' # Default is point document, should not be changed. Units render to points.
+    #UNITS = 'mm'
 
     def __init__(self):
         """Constructor of Flat context.
@@ -136,8 +136,8 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
-        #wpt, hpt = upt(w, h) # FIXME convert points to mm?
-        self.doc = self.b.document(w, h, units=self.UNITS)
+        wpt, hpt = upt(w, h) # Convert units to point values
+        self.doc = self.b.document(wpt, hpt, units=self.UNITS)
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)

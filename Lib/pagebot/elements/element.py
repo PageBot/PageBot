@@ -23,7 +23,7 @@ from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
-                           INTERPOLATING_TIME_KEYS, ONLINE, INLINE, BASE_TOP, BASE_BOTTOM,
+                           ONLINE, INLINE,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
                            DEFAULT_COLOR_BARS)
 
@@ -32,7 +32,7 @@ from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatt
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
-from pagebot.toolbox.dating import now, days
+from pagebot.toolbox.dating import now
 from pagebot.gradient import Gradient, Shadow
 
 class Element:
