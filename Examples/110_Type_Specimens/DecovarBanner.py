@@ -74,7 +74,8 @@ font = findFont('DecovarAlpha-VF')
  
 
 # Define tag list for axes to be part of the animation as sequence
-sequenceAxes = ['SKLD', 'BLDB', 'TRMK', 'BLDA']
+sequenceAxes = ['TRMC', 'SKLD', 'TRMG', 'BLDB']
+#sequenceAxes = ['SKLD', 'BLDB', 'TRMK', 'BLDA']
 sequenceLength = 3 # Seconds per sequence
 sequences = len(sequenceAxes) # Amount of sequences, one per axis
 duration = sequenceLength * len(sequenceAxes) # Total duration of the animation in seconds

@@ -91,26 +91,34 @@ def getFont(fontOrPath, lazy=True):
     except TTLibError: # Could not open font, due to bad font file.
         return None
 
-def findFont(fontPath, lazy=True):
+def findFont(fontPath, default=None, lazy=True):
     """Answer the font the has name fontName.
 
     >>> roboto = findFont('Roboto-Regular')
     >>> roboto
     <Font Roboto-Regular>
-    >>> f = findFont('Skia') 
-    >>> if f is None: f = roboto # In case Skia cannot be found in testing context
-    >>> #f = roboto # Uncomment for testing NoneBuilder
-    >>> str(f) in ('<Font Skia>', '<Font Roboto-Regular>')
+    >>> f = findFont('Skia-cannot-be-found')
+    >>> f is None
     True
-    >>> f.info.familyName in ('Skia', 'Roboto')
+    >>> f = findFont('Skia-cannot-be-found', default=roboto) # Default is a font.
+    >>> f is roboto
     True
+    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular') # Default is a name.
+    >>> f
+    <Font Roboto-Regular>
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
 
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath], lazy=lazy)
-    return None
+
+    # There ia a default defined. If it is a string, try to find it.
+    if isinstance(default, str) and default != fontPath: # Avoid circular calls
+        return findFont(default, lazy=lazy)
+
+    assert default is None or isinstance(default, Font)
+    return default # Otherwise assume it is a Font instance or None
 
 def getMasterPath():
     """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
@@ -218,7 +226,8 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
     return instance
     """
 
-def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, cached=True, lazy=True):
+def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, 
+        cached=True, lazy=True, kerning=None):
     """The getInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
     dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
@@ -230,7 +239,8 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     *ttFont* or the automatic location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
-    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, lazy=lazy)
+    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, 
+        lazy=lazy, kerning=kerning)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
     instance.info.location = location
@@ -238,7 +248,8 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     return instance
 
 
-def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, lazy=True):
+def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, 
+        lazy=True, kerning=None):
     """
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
@@ -350,6 +361,10 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
             if tag in ttFont:
                 del ttFont[tag]
 
+        if kerning is not None:
+            for pair, value in kerning.items():
+                varFont.kerning[pair] = value
+
         #print("Saving instance font", outFile)
         varFont.save(dstPath)
 
@@ -367,9 +382,9 @@ class Font:
     >>> sorted(f.axes.keys())
     ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
     >>> f.info.familyName
-    u'RobotoDelta'
+    'RobotoDelta'
     >>> len(f)
-    241
+    188
     >>> f.axes['opsz']
     (8.0, 12.0, 144.0)
     >>> variables = f.variables
@@ -402,6 +417,8 @@ class Font:
         else: # ttFont is not None: There is ttFont data
             self.ttFont = ttFont
             self.path = path
+
+
         # Store location, incase this was a created VF instance
         self.location = location
         # TTFont is available as lazy style.info.font
@@ -811,7 +828,7 @@ class Font:
     variables = property(_get_variables)
 
     def getInstance(self, location=None, dstPath=None, opticalSize=None,
-            styleName=None, cached=True, lazy=True):
+            styleName=None, cached=True, lazy=True, kerning=None):
         """Answer the instance of self at location. If the cache file already exists, then
         just answer a Font instance to that font file.
 
@@ -820,16 +837,16 @@ class Font:
         >>> sorted(f.axes.keys())
         ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
         >>> f.name
-        u'RobotoDelta Regular'
+        'RobotoDelta Regular'
         >>> len(f)
-        241
+        188
         >>> f.axes['wght']
         (100.0, 400.0, 900.0)
         >>> g = f['H']
         >>> g
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> g.points[6], g.width
-        (APoint(1288,1456,0pt,On), 1458)
+        (APoint(1288,1456,On), 1458)
         >>> instance = f.getInstance(location=dict(wght=500))
         >>> instance
         <Font RobotoDelta-VF-wght500>
@@ -837,12 +854,12 @@ class Font:
         >>> ig
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> ig.points[6], ig.width
-        (APoint(1307,1456,0pt,On), 1477)
+        (APoint(1307,1456,On), 1477)
         """
         if location is None:
             location = self.getDefaultVarLocation()
         return getInstance(self.path, location=location, dstPath=dstPath, opticalSize=opticalSize,
-            styleName=styleName, cached=cached, lazy=lazy)
+            styleName=styleName, cached=cached, lazy=lazy, kerning=kerning)
 
     def _get_features(self):
         # TODO: Use TTFont for this instead.
@@ -858,8 +875,10 @@ class Font:
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = getFont(path, lazy=False)
-        >>> len(f.kerning.keys())
+        >>> len(f.kerning)
         22827
+        >>> f.kerning[('V','a')]
+        -10
         """
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs

@@ -768,7 +768,7 @@ class Color:
         g, b) tuple. This format is CSS compatible.
 
         >>> color(0.2, 0.3, 0.4).hex
-        '334D66'
+        '334C66'
         >>> color(1).hex
         'FFFFFF'
         >>> color(c=1, m=0, y=0.5, k=0.1).hex # Conversion of cmyk via rgb to hex code.
@@ -785,7 +785,7 @@ class Color:
         g, b) tuple. This format is CSS compatible.
 
         >>> color(0.2, 0.3, 0.4).css # Conversion of plain RGB color to CSS hex code
-        '#334D66'
+        '#334C66'
         >>> color('white').css # Conversion of CSS name to CSS hex code
         '#FFFFFF'
         >>> color(c=1, m=0, y=0.5, k=0.1).css # Convertsion of CMYK to CSS hex code.
@@ -967,6 +967,8 @@ class Color:
 
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
         k=None, cmyk=None, spot=None, ral=None, name=None):
+    if isinstance(r, Color): # If already a color, then return it
+        return r
     return Color(r=r, g=g, b=b, a=a, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk,
             spot=spot, ral=ral, name=name)
 
@@ -992,6 +994,7 @@ blueColor = color(0, 0, 1)
 yellowColor = color(c=0, m=0, y=1, k=0)
 magentaColor = color(c=0, m=1, y=0, k=0)
 cyanColor = color(c=1, m=0, y=0, k=0)
+registrationColor = color(cmyk=1) # All on, for registration/cropmarks usage
 
 if __name__ == "__main__":
     import doctest

@@ -24,7 +24,7 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
-from pagebot.toolbox.units import Pt
+from pagebot.toolbox.units import Pt, upt
 from pagebot.toolbox.color import noColor, blackColor, Color
 from pagebot.contexts.strings.indesignstring import InDesignString
 
@@ -311,12 +311,12 @@ class InDesignContext(BaseContext):
         set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
                               color=eShadow.color.cmyk)
             else:
-                self.b.shadow(eShadow.offset,
-                              blur=eShadow.blur,
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
                               color=eShadow.color.rgb)
 
     def setGradient(self, gradient, origin, w, h):

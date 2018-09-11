@@ -21,6 +21,26 @@
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 
+# General indicators
+
+FIT = 'fit' # Special fontsize that makes text fitting on element width.
+
+ONLINE = 'online' # Positions of borders
+INLINE = 'inline'
+OUTLINE = 'outline'
+
+LEFT = 'left'
+RIGHT = 'right'
+CENTER = 'center'
+MIDDLE = 'middle'
+JUSTIFIED = 'justified'
+TOP = 'top'
+BOTTOM = 'bottom'
+FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
+BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
+DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
+DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
+
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # All measure are defined in Unit instances, to make conversion easier.
 #
@@ -141,7 +161,7 @@ Tabloid = inch(11, 16.9)
 Broadsheet = inch(23.5, 29.5)
 Berliner = inch(12.4, 18.5)
 
-# Standard size of online printing sites. 
+# Standard size of online printing sites.
 # TODO: Add more online services and adapt other parameters/preferences for these PDF's
 
 # www.blurb.com
@@ -216,11 +236,35 @@ QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4°
 QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
 QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 
+# Color bar parameter for view.showColorBars = set()
+# http://the-print-guide.blogspot.com/2010/07/color-bar.html
+# http://www.sdg-net.co.jp/products/x-rite/products_detail/pdf/Creating_the_Perfect_Colorbar.pdf
+# http://www.eci.org/en/downloads
+# Markers for view color bar building.
+COLORBAR_TOP = TOP # Indicate that selection of color bars should run on top
+COLORBAR_BOTTOM = BOTTOM # Indicate that selection of color bars should run on bottom
+COLORBAR_LEFT = LEFT # Indicate that selection of color bars should run on left
+COLORBAR_RIGHT = RIGHT # Indicate that selection of color bars should run on right
+# Predefined color bars
+COLORBAR_SOLID_INK = 'SolidInk'
+COLORBAR_TWOCOLOR_OVERPRINT = 'TwoColorOverprint'
+COLORBAR_SLUR_DOUBLING = 'SlurDoubling'
+COLORBAR_GRAY_BALANCE = 'GrayBalance'
+COLORBAR_BROWN_BALANCE = 'BrownBalance'
+COLORBAR_DOT_GAIN = 'DotGain'
+COLORBAR_SPOT_COLOR = 'SpotColor'
+# Color bar files
+ECI_GrayConL = 'color/ECI_GrayConL_FOGRA52_v3.pdf'
+ECI_GrayConM = 'color/ECI_GrayConM_FOGRA52_v3.pdf'
+ECI_GrayConM_i1 = 'color/ECI_GrayConM_i1_FOGRA52_v3.pdf'
+ECI_GrayConS = 'color/ECI_GrayConS_FOGRA52_v3.pdf'
+DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
+
 # Default initialize point as long as elements don't have a defined position.
 # Actual location depends on value of e.originTop flag.
-# If document.originTop == True (or page.originTop == True), 
+# If document.originTop == True (or page.originTop == True),
 # origin is on top-left of the page. Y-positive direction is down.
-# If document.originTop == False (or page.originTop == False), 
+# If document.originTop == False (or page.originTop == False),
 # origin is on bottom-left of the page. Y-positive direction is up.
 ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
@@ -490,28 +534,6 @@ URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
-FIT = 'fit' # Special fontsize that makes text fitting on element width.
-
-ONLINE = 'online' # Positions of borders
-INLINE = 'inline'
-OUTLINE = 'outline'
-
-LEFT = 'left'
-RIGHT = 'right'
-CENTER = 'center'
-MIDDLE = 'middle'
-JUSTIFIED = 'justified'
-TOP = 'top'
-BOTTOM = 'bottom'
-FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
-BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
-DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
-DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
-
-XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, MIDDLE}
-ZALIGNS = {None, FRONT, MIDDLE, BACK}
-
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
@@ -524,7 +546,7 @@ GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
 GRID_SQR_BG = 'GridSquareBackground' # Draw grid at background
 GRID_COL_BG = 'GridColumnBackground' # Drag grid as columns at background
 GRID_ROW_BG = 'GridRowBackground' # Drag grid as row
-DEFAULT_GRID = {GRID_COL, GRID_ROW}
+DEFAULT_GRID = {GRID_COL_BG, GRID_ROW_BG}
 GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
 
 BASE_LINE = 'Baseline' # Show baseline grid as lines
@@ -535,8 +557,14 @@ BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left
 BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
 BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
-BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT, 
+BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT,
    BASE_INSIDE}
+BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of origin (for TextBox)
+BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+# Types of alignments
+XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
+YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
+ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
 

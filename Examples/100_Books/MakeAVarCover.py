@@ -47,11 +47,11 @@ W -= 48 # Make a bit more narrow format.
 BLEED = 8
 
 # Export in folder that does not commit to Git. Force to export PDF.
-EXPORT_PATH = '_export/ABookCover.pdf'
+EXPORT_PATH = '_export/AVarCover.pdf'
 
 varFont = findFont('RobotoDelta-VF')
 fontRegular = getVarFontInstance(varFont, dict(wdth=75))
-print(varFont.axes)
+#print(varFont.axes)
 fontBold = varFont#family.findFont('Bold')
 fontItalic = varFont#family.findFont('Italic')
 ampersandFont = findFont('Georgia')
@@ -77,7 +77,7 @@ def makeDocument():
                       # need >= 20 padding of the view.
     view.showRegistrationMarks = True
     view.showCropMarks = True
-    view.showFrame = True
+    view.showFrame = False
     view.showPadding = False
     view.showNameInfo = True
     view.showTextOverflowMarker = False

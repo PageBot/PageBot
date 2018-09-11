@@ -38,7 +38,7 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
-- wget https://github.com/michielkauwatjoe/flat/archive/master.zip
+- wget https://github.com/TypeNetwork/flat/archive/master.zip
 - unzip master.zip
 - cd flat-master
 - python3 setup.py install
@@ -53,7 +53,18 @@ script:
 - python3 Examples/000_Basics/Basics.py
 - python3 Examples/000_Basics/UseContext.py
 - python3 Examples/000_Basics/Fonts.py
+- python3 Examples/000_Basics/UseDocuments.py
+- python3 Examples/000_Basics/UseUnits.py
 - python3 Examples/010_Text/AdvancedHyphenation.py
+- python3 Examples/010_Text/ElasticTextBox.py
+- python3 Examples/010_Text/HangulKanjiFormattedStrings.py
+- python3 Examples/010_Text/FormattedStringMetrics.py
+- python3 Examples/010_Text/TextBoxLinesRuns.py
+- python3 Examples/010_Text/TextFlows.py
+- python3 Examples/010_Text/TextLineTextRun.py
+  python3 Examples/010_Text/BabelStrings.py
+  python3 Examples/010_Text/FittingTextWidthWithVar.py
+- python3 Examples/130_Testing/testFlatBasics.py
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py
 - python3 Lib/pagebot/conditions/align.py
@@ -97,7 +108,11 @@ script:
 - python3 Lib/pagebot/elements/variablefonts/variableglyphs.py
 - python3 Lib/pagebot/elements/variablefonts/variablescatter.py
 - python3 Lib/pagebot/elements/views/pageview.py
-- python3 Lib/pagebot/fonttoolbox/objects/*.py
+- python3 Lib/pagebot/fonttoolbox/objects/family.py
+- python3 Lib/pagebot/fonttoolbox/objects/font.py
+- python3 Lib/pagebot/fonttoolbox/objects/fontinfo.py
+- python3 Lib/pagebot/fonttoolbox/objects/glyph.py
+- python3 Lib/pagebot/fonttoolbox/objects/prevarfamily.py
 - python3 Lib/pagebot/fonttoolbox/otlTools.py
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py

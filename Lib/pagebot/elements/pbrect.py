@@ -39,6 +39,8 @@ class Rect(Element):
     >>> e.build(view, (0, 0))
     >>> doc.export('_export/TestRect.pdf')
 
+    """
+    """ TODO: Get to work in Flat
     >>> from pagebot.contexts.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()

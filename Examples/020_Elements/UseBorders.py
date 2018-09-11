@@ -29,7 +29,7 @@ from pagebot.toolbox.units import pt
 ViewPadding = 64
 PageSize = 500
 
-GUTTER = 36 # Distance between the squares.
+GUTTER = 24 # Distance between the squares.
 SQUARE = 3 * GUTTER # Size of the squares
 
 DashWhite = 4
