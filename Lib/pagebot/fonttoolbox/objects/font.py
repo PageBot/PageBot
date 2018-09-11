@@ -91,26 +91,34 @@ def getFont(fontOrPath, lazy=True):
     except TTLibError: # Could not open font, due to bad font file.
         return None
 
-def findFont(fontPath, lazy=True):
+def findFont(fontPath, default=None, lazy=True):
     """Answer the font the has name fontName.
 
     >>> roboto = findFont('Roboto-Regular')
     >>> roboto
     <Font Roboto-Regular>
-    >>> f = findFont('Skia') 
-    >>> if f is None: f = roboto # In case Skia cannot be found in testing context
-    >>> #f = roboto # Uncomment for testing NoneBuilder
-    >>> str(f) in ('<Font Skia>', '<Font Roboto-Regular>')
+    >>> f = findFont('Skia-cannot-be-found')
+    >>> f is None
     True
-    >>> f.info.familyName in ('Skia', 'Roboto')
+    >>> f = findFont('Skia-cannot-be-found', default=roboto) # Default is a font.
+    >>> f is roboto
     True
+    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular') # Default is a name.
+    >>> f
+    <Font Roboto-Regular>
     """
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
 
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath], lazy=lazy)
-    return None
+
+    # There ia a default defined. If it is a string, try to find it.
+    if isinstance(default, str) and default != fontPath: # Avoid circular calls
+        return findFont(default, lazy=lazy)
+
+    assert default is None or isinstance(default, Font)
+    return default # Otherwise assume it is a Font instance or None
 
 def getMasterPath():
     """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
@@ -829,16 +837,16 @@ class Font:
         >>> sorted(f.axes.keys())
         ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
         >>> f.name
-        u'RobotoDelta Regular'
+        'RobotoDelta Regular'
         >>> len(f)
-        241
+        188
         >>> f.axes['wght']
         (100.0, 400.0, 900.0)
         >>> g = f['H']
         >>> g
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> g.points[6], g.width
-        (APoint(1288,1456,0pt,On), 1458)
+        (APoint(1288,1456,On), 1458)
         >>> instance = f.getInstance(location=dict(wght=500))
         >>> instance
         <Font RobotoDelta-VF-wght500>
@@ -846,7 +854,7 @@ class Font:
         >>> ig
         <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
         >>> ig.points[6], ig.width
-        (APoint(1307,1456,0pt,On), 1477)
+        (APoint(1307,1456,On), 1477)
         """
         if location is None:
             location = self.getDefaultVarLocation()
@@ -870,6 +878,7 @@ class Font:
         >>> len(f.kerning)
         22827
         >>> f.kerning[('V','a')]
+        -10
         """
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
