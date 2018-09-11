@@ -1,21 +1,8 @@
 # Installing PageBot
 
-## Testing
-
-To help with the installation of PageBot, we've provided an example script to test versions, locations and dependencies:
-
-    Examples/000_Installing/TestInstall.py
-    
-The script can be run from DrawBot, Sublime or on the command line to find out if all the components are in place to start using PageBot.
-
-The installation process is part of the development of the library itself, so it may still not always work properly.
-Here are some hints to check on installation and to install without using the `setup.py` script.
+# Setup
 
 Run `sudo python3 setup.py install` to start installing PageBot. If all goes well, the setup will finish without errors while printing out the location of the files:
-
-Known problems:
-
-* The default `Python` may not be the same one that DrawBotApp uses. On some macOS systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 
 	...
 	creating dist
@@ -26,7 +13,31 @@ Known problems:
 	Extracting pagebot-0.6-py3.6.egg to <path-to>/site-packages
 	Adding pagebot 0.6 to easy-install.pth file
 
-If you want to double check, you should see the files created in one of your `site-packages` or `dist-packages` locations as indicated in the lines above (see also the **Site-packages** chapter below).
+## Site-packages
+
+You should see the files created in one of your `site-packages` or `dist-packages` locations now. Note: The default version of Python 3 may not be the same one that DrawBotApp uses. On some macOS systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. In that case DrawBot cannot only find the installed PageBot if it has been installed in the shared `site-packages` folder.
+
+The `getsitepackages()` function can be used to get more information on installation paths. DrawBot has an internal packages folder containing it's own dependencies. The packages path might differ across platforms. An example:
+
+    import site
+    
+    print('Found site at %s' % site.__file__)
+    packages = site.getsitepackages()
+    for p in packages:
+        print(' - %s' % p)
+
+On the command line, this might give:
+
+ - /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages
+ - /Library/Python/3.6/site-packages
+
+And inside DrawBot:
+
+ - /Applications/DrawBotPy3.app/Contents/Resources/lib/python3.6/site-packages
+ - /Library/Python/3.6/site-packages
+
+NOTE: the `site.py` file in `/Applications/DrawBotPy3.app/Contents/Resource` needs to be renamed to something else before the `import site` line gives the correct results.
+
 
 ## Dependencies
 
@@ -38,7 +49,7 @@ PageBot needs other Open Source libraries. Some may already be included in DrawB
 * https://github.com/TypeNetwork/flat (not needed when using DrawBot only)
 * https://sass.github.io/libsass-python
 
-To install them, you can use a package manager such as pip, easy_install or homebrew or you can do it manually by downloading them from the Python Index and running the setup scripts.
+To install them, you can use a package manager such as `pip`, `easy_install` or `homebrew` or you can do it manually by downloading them from the Python Index and running the setup scripts.
 
 ## Notes
 
@@ -116,7 +127,15 @@ After the path is set, the sublime-build file should be moved to:
 
 After restarting Sublime, you should be able to select the Python3 option in the Build System list. Select it and run `import pagebot` by typing cmd-B.
 
-### Path File
+## Testing
+
+To help with the installation of PageBot, we've provided an example script to test versions, locations and dependencies:
+
+    Examples/000_Installing/TestInstall.py
+    
+The script can be run from DrawBot, Sublime or on the command line to find out if all the components are in place to start using PageBot.
+
+# Path File
 
 Alternatively, for development purposes you can simply clone the PageBot repository somewhere and link to the sources in Lib using a path file ('.pth'). For example, a file containing
 
@@ -141,25 +160,3 @@ If the module references the package or egg-file inside `site-packages`, you mig
 
 If `pip` hasn't indexed the module, you can simply delete the files.
 
-### Site-packages
-
-Not neccesarily part of the installation instructions, but sometimes the 'getsitepackages()' function can be useful when you get stuck. Python 2.7, 3.5 and 3.6 all use slightly different installation paths. Also, DrawBot has it's own packages folder containing it's own dependencies. And of course the packages path might differ across platforms. To make sure you're looking in the right pace, using the `site.getsitepackages()` function returns the python packages paths: 
-
-    import site
-    
-    print('Found site at %s' % site.__file__)
-    packages = site.getsitepackages()
-    for p in packages:
-        print(' - %s' % p)
-
-For example, on the command line, the output might look like this:
-
- - /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages
- - /Library/Python/3.6/site-packages
-
-And inside DrawBot:
-
- - /Applications/DrawBotPy3.app/Contents/Resources/lib/python3.6/site-packages
- - /Library/Python/3.6/site-packages
-
-NOTE: the `site.py` file in `/Applications/DrawBotPy3.app/Contents/Resource` needs to be renamed to something else before the `import site` line gives the correct results.
