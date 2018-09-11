@@ -2163,7 +2163,6 @@ class Element:
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-        border = {}
         if stroke is None:
             stroke = self.css('stroke', blackColor)
         if strokeWidth is None:
@@ -2172,8 +2171,8 @@ class Element:
             line = ONLINE
         # Dash can be None
         if not strokeWidth: # If 0, then answer None for the ficy
-            return None
-        return dict(stroke=stroke, strokeWidth=strokeWidth, line=line, dash=dash)
+            return {}
+        return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
  
     def _get_borders(self):
         u"""Set all borders of the element.
@@ -2181,10 +2180,10 @@ class Element:
         >>> from pagebot.toolbox.units import p
         >>> e = Element(stroke=(1, 0, 0))
         >>> e.borders = 2 # Value converts to units
-        >>> e.borders[0]['strokeWidth']
+        >>> e.borders[0].get('strokeWidth')
         2pt
         >>> e.borders = p(5) # Set a unit
-        >>> e.borders[0]['strokeWidth']
+        >>> e.borders[0].get('strokeWidth')
         5p
         >>> e.borders[0]['stroke']
         Color(r=1, g=0, b=0)
@@ -2192,7 +2191,7 @@ class Element:
         return self.borderTop, self.borderRight, self.borderBottom, self.borderLeft
     def _set_borders(self, borders):
         if isUnit(borders) or isinstance(borders, (int, float)):
-            borders = self.getBorderDict(borders)
+            borders = self.getBorderDict(strokeWidth=borders)
         if not isinstance(borders, (list, tuple)):
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
@@ -3871,30 +3870,29 @@ class Element:
 
         if borderTop is not None:
             c.saveGraphicState()
-            if borderTop['dash']:
-                c.lineDash(*borderTop['dash'])
-            c.stroke(borderTop['stroke'], borderTop['strokeWidth'])
+            c.lineDash(*borderTop.get('dash')) # None for no dash
+            c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
 
-            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
-                if borderLeft['line'] == ONLINE:
-                    oLeft = borderLeft['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oLeft = borderLeft['strokeWidth']
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
 
             oRight = 0 # Extra offset on right, if there is a right border.
 
-            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
-                if borderRight['line'] == ONLINE:
-                    oRight = borderRight['strokeWidth']/2
-                elif borderRight['line'] == OUTLINE:
-                    oRight = borderRight['strokeWidth']
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
 
-            if borderTop['line'] == OUTLINE:
-                oTop = borderTop['strokeWidth']/2
-            elif borderTop['line'] == INLINE:
-                oTop = -borderTop['strokeWidth']/2
+            if borderTop.get('line') == OUTLINE:
+                oTop = borderTop.get('strokeWidth', 0)/2
+            elif borderTop('line') == INLINE:
+                oTop = -borderTop.get('strokeWidth', 0)/2
             else:
                 oTop = 0
 
@@ -3906,28 +3904,27 @@ class Element:
 
         if borderBottom is not None:
             c.saveGraphicState()
-            if borderBottom['dash']:
-                c.lineDash(*borderBottom['dash'])
-            c.stroke(borderBottom['stroke'], borderBottom['strokeWidth'])
+            c.lineDash(*borderBottom.get('dash')) # None for no dash
+            c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
-            if borderLeft and (borderLeft['strokeWidth'] or pt(0)) > 1:
-                if borderLeft['line'] == ONLINE:
-                    oLeft = borderLeft['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oLeft = borderLeft['strokeWidth']
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
 
             oRight = 0 # Extra offset on right, if there is a right border.
-            if borderRight and (borderRight['strokeWidth'] or pt(0)) > 1:
-                if borderRight['line'] == ONLINE:
-                    oRight = borderRight['strokeWidth']/2
-                elif borderRight['line'] == OUTLINE:
-                    oRight = borderRight['strokeWidth']
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
 
-            if borderBottom['line'] == OUTLINE:
-                oBottom = borderBottom['strokeWidth']/2
-            elif borderBottom['line'] == INLINE:
-                oBottom = -borderBottom['strokeWidth']/2
+            if borderBottom.get('line') == OUTLINE:
+                oBottom = borderBottom.get('strokeWidth', 0)/2
+            elif borderBottom.get('line') == INLINE:
+                oBottom = -borderBottom.get('strokeWidth', 0)/2
             else:
                 oBottom = 0
 
@@ -3939,28 +3936,27 @@ class Element:
 
         if borderRight is not None:
             c.saveGraphicState()
-            if borderRight['dash']:
-                c.lineDash(*borderRight['dash'])
-            c.stroke(borderRight['stroke'], borderRight['strokeWidth'])
+            c.lineDash(*borderRight.get('dash')) # None for no dash
+            c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
-                if borderTop['line'] == ONLINE:
-                    oTop = borderTop['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oTop = borderTop['strokeWidth']
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
-                if borderBottom['line'] == ONLINE:
-                    oBottom = borderBottom['strokeWidth']/2
-                elif borderBottom['line'] == OUTLINE:
-                    oBottom = borderBottom['strokeWidth']
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
 
-            if borderRight['line'] == OUTLINE:
-                oRight = borderRight['strokeWidth']/2
-            elif borderRight['line'] == INLINE:
-                oRight = -borderRight['strokeWidth']/2
+            if borderRight.get('line') == OUTLINE:
+                oRight = borderRight.get('strokeWidth', 0)/2
+            elif borderRight.get('line') == INLINE:
+                oRight = -borderRight.get('strokeWidth', 0)/2
             else:
                 oRight = 0
 
@@ -3972,28 +3968,27 @@ class Element:
 
         if borderLeft is not None:
             c.saveGraphicState()
-            if borderLeft['dash']:
-                c.lineDash(*borderLeft['dash'])
-            c.stroke(borderLeft['stroke'], borderLeft['strokeWidth'])
+            c.lineDash(*borderLeft.get('dash')) # None for no dash
+            c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop['strokeWidth'] or pt(0)) > 1:
-                if borderTop['line'] == ONLINE:
-                    oTop = borderTop['strokeWidth']/2
-                elif borderLeft['line'] == OUTLINE:
-                    oTop = borderTop['strokeWidth']
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
 
             oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom['strokeWidth'] or pt(0)) > 1:
-                if borderBottom['line'] == ONLINE:
-                    oBottom = borderBottom['strokeWidth']/2
-                elif borderBottom['line'] == OUTLINE:
-                    oBottom = borderBottom['strokeWidth']
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
 
-            if borderLeft['line'] == OUTLINE:
-                oLeft = borderLeft['strokeWidth']/2
-            elif borderLeft['line'] == INLINE:
-                oLeft = -borderLeft['strokeWidth']/2
+            if borderLeft.get('line') == OUTLINE:
+                oLeft = borderLeft.get('strokeWidth', 0)/2
+            elif borderLeft.get('line') == INLINE:
+                oLeft = -borderLeft.get('strokeWidth', 0)/2
             else:
                 oLeft = 0
 
