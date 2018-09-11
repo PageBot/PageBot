@@ -25,6 +25,7 @@ setup(
     packages=find_packages('Lib'),
     include_package_data=True,
     package_data={'': ['*.txt', '*.md', '*.ttf', '*.png', '*.pdf', '*.jpg']},
+    setup_requires=['fontTools'],
     license = 'MIT',
     classifiers = [
         'Development Status :: 3 - Alpha',

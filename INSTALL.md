@@ -89,7 +89,11 @@ You can find out the path by using the `which` command:
 
 	which python3
 	
-might return `/usr/local/bin/python3`. After restarting Sublime, you should see the Python3 option in the Build System list. Select it and run `import pagebot` by typing cmd-B.
+After the path is set, the sublime-build file should be moved to:
+
+	/Users/<username>/Library/Application Support/Sublime Text 3/Packages/User
+
+After restarting Sublime, you should be able to select the Python3 option in the Build System list. Select it and run `import pagebot` by typing cmd-B.
 
 ### Path File
 

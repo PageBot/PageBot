@@ -4,6 +4,8 @@ import sys, os
 print('System: %s, %s' % (os.name, sys.platform))
 print('Python version is:')
 print(sys.version)
+print('Which Python?')
+print(sys.executable)
 
 CLEAN = True
 
