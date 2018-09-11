@@ -792,12 +792,16 @@ class Dating:
 
     @classmethod
     def timeStampRandomLong(cls):
-        """
-
-        The uniqueNumber property answers a unique number of format '20090621200511993066',
+        """The uniqueNumber property answers a unique number of format '20090621200511993066',
         derived from date, time and a six digit random number. This can be used e.g. in a URL as parameters to make sure that browser
         will not cache the content of the page. The number is also used to create a unique file name for background shell scripts.
 
+        >>> timeStamp = Dating(year=1980).timeStampRandomLong() 
+        >>> len(timeStamp) # Cannot test on random number
+        18
+        >>> d = Dating(year=2100, month=2, day=15, hour=3).timeStampRandomLong()
+        >>> len(d) # Cannot test on random number
+        18
         """
         return cls.timeStampLong() + ('%06d' % randint(0, 999999))
 
@@ -807,10 +811,9 @@ class Dating:
         return '%012d' % int(time.time()*100)
 
     def getTimeStamp(self, usetz=False):
-        """
-        The self.getTypeStamp answers a formatted string 2010-10-05 16:47:29+04 of the date. This
+        """The self.getTypeStamp answers a formatted string 2010-10-05 16:47:29+04 of the date. This
         is exactly what SQL needs as timestamp with time zone definition.
-        <note>use of tz does not yet work, and is ignored</note>
+        Use of tz does not yet work, and is ignored.
 
         >>> Dating(year=1980).getTimeStamp()
         '1980-01-01 00:00:00'
@@ -1044,6 +1047,8 @@ class Dating:
     def _get_weekStart(self):
         """The self.weekStart property answers the “Monday” date of the current week.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).weekStart
+        Dating(date='2015-06-01' time='12:05:00')
         """
         return self - self.weekDay
     weekStart = property(_get_weekStart)
@@ -1051,6 +1056,8 @@ class Dating:
     def _get_weekEnd(self):
         """The self.weekEnd property answers the Friday date of the current week.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).weekEnd
+        Dating(date='2015-06-08' time='12:05:00')
         """
         return self + (7 - self.weekDay)
     weekEnd = property(_get_weekEnd)
@@ -1058,6 +1065,8 @@ class Dating:
     def _get_yearStart(self):
         """The self.yearStart property answers the first day of the current year.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).yearStart
+        Dating(date='2015-01-01')
         """
         return Dating(self.year, 1, 1)
     yearStart = property(_get_yearStart)
@@ -1065,6 +1074,8 @@ class Dating:
     def _get_yearEnd(self):
         """The self.yearEnd property answers the last day of the current year.
 
+        >>> Dating(date='2015-6-7', hour=12, minute=5).yearEnd
+        Dating(date='2015-12-31')
         """
         return Dating(self.year, 12, 31)
     yearEnd = property(_get_yearEnd)
@@ -1072,12 +1083,25 @@ class Dating:
     def _get_workDay(self):
         """The self.workDay property answers True if this day is one of Monday till Friday.
 
+        >>> Dating(date='2015-6-7').workDay
+        False
+        >>> (Dating(date='2015-6-7') + 3).workDay
+        True
         """
         return 0 <= self.weekDay <= 4
     workDay = property(_get_workDay)
 
     def _get_weekDay(self):
-        """Answer the number of day in the week."""
+        """Answer the number of day in the week.
+
+        >>> d = Dating(date='2015-6-1')
+        >>> d.dayName, d.weekDay
+        ('Mon', 0)
+        >>> Dating(date='2015-6-7').weekDay
+        6
+        >>> (Dating(date='2015-6-7') + 12).weekDay
+        4
+        """
         return self.datetime.weekday()
     weekDay = property(_get_weekDay)
 
@@ -1085,6 +1109,9 @@ class Dating:
         """The self.nextWorkDay property answers the first next date (including itself) that is a
         workday
 
+        >>> d = Dating(date='2015-6-1') - 2
+        >>> d.dayName, d.nextWorkDay.dayName
+        ('Sat', 'Mon')
         """
         if self.workDay:
             return self
@@ -1094,6 +1121,10 @@ class Dating:
     def _get_leapYear(self):
         """The self.leapYear property answers a boolean if the dt is a leap year.
 
+        >>> Dating(date='2015-6-1').leapYear
+        False
+        >>> Dating(date='2020-6-1').leapYear
+        True
         """
         return leapYear(self.year)
     leapYear = property(_get_leapYear)
@@ -1101,6 +1132,10 @@ class Dating:
     def _get_yearDays(self):
         """The self.yearDays property answers the number of days in the current year.
 
+        >>> Dating(date='2015-6-1').yearDays
+        365
+        >>> Dating(date='2020-6-1').yearDays
+        366
         """
         if leapYear(self.year):
             return 366
@@ -1110,6 +1145,14 @@ class Dating:
     def _get_monthDays(self):
         """The self.monthDays property answers the number of days in the current month.
 
+        >>> Dating(date='2015-2-1').monthDays
+        28
+        >>> Dating(date='2020-2-1').monthDays
+        29
+        >>> Dating(date='2020-8-1').monthDays
+        31
+        >>> Dating(date='2020-9-1').monthDays
+        30
         """
         return monthDays(self.year, self.month)
     monthDays = property(_get_monthDays)
@@ -1119,6 +1162,10 @@ class Dating:
         length differences between the months, it is not consistent to answer the current day number in the next month,
         so it is set to 1.
 
+        >>> Dating(date='2015-2-1').nextMonth
+        Dating(date='2015-03-01')
+        >>> Dating(date='2015-12-1').nextMonth
+        Dating(date='2016-01-01')
         """
         return self + (self.monthDays - self.day + 1)
     nextMonth = property(_get_nextMonth)
@@ -1145,6 +1192,14 @@ class Dating:
                 [d26, d27, d28, d29, d30, n01, n02]
             ]
 
+        >>> len(Dating(date='2015-2-1').calendarMonth) # Number of weeks
+        5
+        >>> Dating(date='2015-2-1').calendarMonth[3][2] # Second day of 3rd week
+        Dating(date='2015-02-18')
+        >>> Dating(date='2015-2-1').calendarMonth[0][0] # First day of first week in previous month
+        Dating(date='2015-01-26')
+        >>> Dating(date='2015-2-1').calendarMonth[-1][-1] # Last day of last week
+        Dating(date='2015-03-01')
         """
         monthWeekDates = []
         weekStart = self.monthStart.weekStart
