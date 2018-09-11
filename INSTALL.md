@@ -2,11 +2,11 @@
 
 ## Testing
 
-To help with the installation of PageBot, there's an example script to test versions, locations and dependencies:
+To help with the installation of PageBot, we've provided an example script to test versions, locations and dependencies:
 
     Examples/000_Installing/TestInstall.py
     
-This can be run from DrawBot, Sublime or on the command line to find out if you have all the components in place to start using PageBot.
+The script can be run from DrawBot, Sublime or on the command line to find out if all the components are in place to start using PageBot.
 
 ## setup.py
 
@@ -21,11 +21,11 @@ Run `sudo python3 setup.py install` to start installing PageBot. If all goes wel
 	Extracting pagebot-0.6-py3.6.egg to <path-to>/site-packages
 	Adding pagebot 0.6 to easy-install.pth file
 
-If you want to double check, you should see the files created in one of your `site-packages` or `dist-packages` locations as indicated in the lines above.
+If you want to double check, you should see the files created in one of your `site-packages` or `dist-packages` locations as indicated in the lines above (see also the **Site-packages** chapter below).
 
 ## Dependencies
 
-PageBot needs other Open Source libraries. Some may already be included in DrawBot.
+PageBot needs other Open Source libraries. Some may already be included in DrawBot, but need to be installed separately for system-wide use.
 
 * https://github.com/fonttools/fonttools
 * https://pypi.org/project/pyobjc/ (OS X only, included in DrawBot)
