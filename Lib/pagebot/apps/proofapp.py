@@ -15,7 +15,7 @@ from vanilla.dialogs import putFile
 
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.units import *
-from pagebot.proofing.pagewide import PageWide
+from pagebot.publications.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
@@ -51,7 +51,7 @@ class ProofApp:
     def initialize(self):
         """Sets up GUI contents."""
         self.buildMenu()
-        self.proof()
+        #self.proof()
 
     def buildMenu(self):
         """Builds buttons at top.
@@ -72,7 +72,12 @@ class ProofApp:
         x += 110
 
     def proofCallback(self, sender):
-        self.proof()
+        try:
+            self.proof()
+        except Exception as e:
+            msg = traceback.format_exc()
+            print(msg)
+            # TODO: write message to output window.
 
     def setFontCallback(self, sender):
         name = self.FONTS[sender.get()]
