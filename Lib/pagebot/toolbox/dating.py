@@ -57,7 +57,7 @@ def leapYear(year):
     False
     >>> leapYear(1900) # No leapday on century crossings.
     False
-    >>> leapYear(2000) # But there is a leapday on millemium crossings.
+    >>> leapYear(2000) # But there is a leapday on millennium crossings.
     True
     """
     if year % 4 != 0:
@@ -99,7 +99,14 @@ def checkDateTime(date):
     return date
 
 def now():
-    return datetime(date='now')
+    """Answer the current DateTime instance.
+
+    >>> Dating(year=1900) < now()
+    True
+    >>> now() < Dating(year=2500) 
+    True
+    """
+    return Dating(date='now')
 
 def milliSeconds(milliSeconds):
     """Answer the Duration instance for this amount of milliSeconds
@@ -207,9 +214,6 @@ class Duration:
     Duration(8d, 0s, 0us)
 
     """
-
-    timeDelta = None
-
     def __init__(self, days=0, seconds=0, microSeconds=0, milliSeconds=0, minutes=0, hours=0, 
             weeks=0, td=None):
         """
@@ -672,6 +676,7 @@ class Dating:
         >>> dt2 > dt1
         False
         >>> dt2 + 500, dt2 + 500 > dt1
+        (Dating(date='2020-04-06'), True)
         """
         if isinstance(dating, Dating):
             return self.datetime > dating.datetime
@@ -702,10 +707,10 @@ class Dating:
         True
         """
         if isinstance(dating, Dating):
-            return self.datetime != dating.datetime
+            return self.datetime != dating.dateTime
         return False
 
-    def __eq__(self, dt):
+    def __eq__(self, dating):
         """Answers True if self is equal to date dt as in self == dt.
         Note that in evaluating the condition the difference in time is taken into account as well.
         Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy < self.
@@ -718,8 +723,8 @@ class Dating:
         >>> dt2 == dt3
         True
         """
-        if isinstance(dt, Dating):
-            return self.datetime == dt.datetime
+        if isinstance(dating, Dating):
+            return self.datetime == dating.datetime
         return False
 
     def __coerce__(self, duration):
@@ -737,11 +742,15 @@ class Dating:
         Date + Duration = Date
         Date + 3 = Date
     
+        >>> d1 = Dating(year=1950)
+        >>> d1 + 3
+        Dating(date='1950-01-04')
+        >>> d1 + 2250 # Integer defaults to adding days, creating leap day
+        Dating(date='1956-02-29')
         """
         if isinstance(duration, (int, float)):
             duration = Duration(days=duration)
-        assert isinstance(duration, Duration)
-        return Duration.__add__(duration,self)
+        return Dating(dt=self.datetime + duration.timeDelta)
 
     def __sub__(self, durationOrDate):
         """
@@ -757,7 +766,7 @@ class Dating:
             return Duration.__sub__(durationOrDate, self)
         if isinstance(durationOrDate, Dating):
             # Date - Date = Duration
-            return Duration(td=self.datetime - durationOrDate.datetime)
+            return Duration(td=self.datetime - durationOrDate.dateTime)
         raise ValueError('Cannot subtract %s - %s' % (self, durationOrDate))
 
     def _get_year(self):
@@ -782,22 +791,24 @@ class Dating:
 
     def getTimeStamp(self, usetz=False):
         """
-        The dt.getTypeStamp answers a formatted string 2010-10-05 16:47:29+04 of the date. This
+        The self.getTypeStamp answers a formatted string 2010-10-05 16:47:29+04 of the date. This
         is exactly what SQL needs as timestamp with time zone definition.
         <note>use of tz does not yet work, and is ignored</note>
 
+        >>> Dating(year=1980).getTimeStamp()
+        '1980-01-01 00:00:00'
         """
-        if self.tz is None or not usetz:
+        if self.datetime.tzinfo is None or not usetz:
             tz = ""
         elif self.tz < 0:
-            tz = "-%02d" % -self.tz
+            tz = "-%02d" % -self.datetime.tzinfo
         else:
-            tz = "+%02d" % self.tz
+            tz = "+%02d" % self.datetime.tzinfo
         return  "%s %s%s" % (self.date, self.time, tz)
 
     def _get_date(self):
         """
-        The dt.date property answers a formatted string 2008-10-23 of the date.
+        The self.date property answers a formatted string 2008-10-23 of the date.
         This is exactly what SQL needs as date-string definition.
 
         """
@@ -833,14 +844,14 @@ class Dating:
     microSecond = property(_get_microSecond)
     
     def _get_euroDate(self):
-        """The dt.euroDate property answers a formatted string 23-10-2008 of the date.
+        """The self.euroDate property answers a formatted string 23-10-2008 of the date.
 
         """
         return '%02d-%02d-%02d' % (self.day, self.month, self.year)
     euroDate = property(_get_euroDate)
 
     def _get_studyYear(self):
-        """The dt.studyYear property answers a string 0708 with leading zero for the study year
+        """The self.studyYear property answers a string 0708 with leading zero for the study year
         from 2007-08-01 until 2008-07-31
 
         """
@@ -851,7 +862,7 @@ class Dating:
     studyYear = property(_get_studyYear)
 
     def _get_dateNumber(self):
-        """The dt.dateNumber property answers a long integer number 20080502 of the date. This can by
+        """The self.dateNumber property answers a long integer number 20080502 of the date. This can by
         used to compare dates on day only and not on time. Or it can be used as ordering key.
 
         """
@@ -859,43 +870,43 @@ class Dating:
     dateNumber = property(_get_dateNumber)
 
     def _get_dateTuple(self):
-        """The dt.dateTuple property answers a tuple (y,m,d) of the date.
+        """The self.dateTuple property answers a tuple (y,m,d) of the date.
 
         """
         return self.year, self.month, self.day
     dateTuple = property(_get_dateTuple)
 
     def _get_time(self):
-        """The dt.dateNumber property answers a formatted '12:23:45' time string.
+        """The self.dateNumber property answers a formatted '12:23:45' time string.
 
         """
         return '%02d:%02d:%02d' % (self.hour, self.minute, self.second)
     time = property(_get_time)
 
-    def _getdatetime(self):
-        """The dt.datetime property answers a formatted '2010-12-06 12:23:34' date/time
+    def _get_dateTime(self):
+        """The self.datetime property answers a formatted '2010-12-06 12:23:34' date/time
         string.
 
         """
         return '%s %s' % (self.date, self.time)
-    dateTime = property(_getdatetime)
+    dateTime = property(_get_dateTime)
 
     def _get_timeTuple(self):
-        """The dt.timeTuple property answers a tuple (h, m, s) of the time.
+        """The self.timeTuple property answers a tuple (h, m, s) of the time.
 
         """
         return self.hour, self.minute, self.second
     timeTuple = property(_get_timeTuple)
 
     def _get_timeZone(self):
-        """The dt.timeZone property answers the timezone dt.tz.
+        """The self.timeZone property answers the timezone dt.tz.
 
         """
         return self.tz
     timeZone = property(_get_timeZone)
 
     def _get_week(self):
-        """The dt.week property answers the weeknummer according to ISO 8601 where the first week of
+        """The self.week property answers the weeknummer according to ISO 8601 where the first week of
         the year that contains a thursday.
 
         """
@@ -903,77 +914,77 @@ class Dating:
     week = property(_get_week)
 
     def _get_dayName(self):
-        """The dt.dayName property answers a 3 letter abbreviation of current day name.
+        """The self.dayName property answers a 3 letter abbreviation of current day name.
 
         """
         return self.dayNames[self.weekDay]
     dayName = property(_get_dayName)
 
     def _get_fullDayName(self):
-        """The dt.fullDayName property answers the full name of the current day.
+        """The self.fullDayName property answers the full name of the current day.
 
         """
         return self.fullDayNames[self.weekDay]
     fullDayName = property(_get_fullDayName)
 
     def _get_monthName(self):
-        """The dt.monthName property answers a 3 letter abbreviation of current month name.
+        """The self.monthName property answers a 3 letter abbreviation of current month name.
 
         """
         return self.monthNames[self.month]
     monthName = property(_get_monthName)
 
     def _get_fullMonthName(self):
-        """The dt.fullMonthName property answers the full name of the current month.
+        """The self.fullMonthName property answers the full name of the current month.
 
         """
         return self.fullMonthNames[self.month]
     fullMonthName = property(_get_fullMonthName)
 
     def _get_monthStart(self):
-        """The dt.monthStart property answers the first day of the current month.
+        """The self.monthStart property answers the first day of the current month.
 
         """
         return self + (1 - self.day) # Keep integer calculation combined by brackets
     monthStart = property(_get_monthStart)
 
     def _get_monthEnd(self):
-        """The dt.monthEnd property answers the last day of the current month.
+        """The self.monthEnd property answers the last day of the current month.
 
         """
         return self - self.day + self.monthDays
     monthEnd = property(_get_monthEnd)
 
     def _get_weekStart(self):
-        """The dt.weekStart property answers the “Monday” date of the current week.
+        """The self.weekStart property answers the “Monday” date of the current week.
 
         """
         return self - self.weekDay
     weekStart = property(_get_weekStart)
 
     def _get_weekEnd(self):
-        """Keep integer calculation combined by brackets
+        """The self.weekEnd property answers the Friday date of the current week.
 
         """
         return self + (7 - self.weekDay)
     weekEnd = property(_get_weekEnd)
 
     def _get_yearStart(self):
-        """The dt.yearStart property answers the first day of the current year.
+        """The self.yearStart property answers the first day of the current year.
 
         """
         return Dating(self.year, 1, 1)
     yearStart = property(_get_yearStart)
 
     def _get_yearEnd(self):
-        """The dt.yearEnd property answers the last day of the current year.
+        """The self.yearEnd property answers the last day of the current year.
 
         """
         return Dating(self.year, 12, 31)
     yearEnd = property(_get_yearEnd)
 
     def _get_workDay(self):
-        """The dt.workDay property answers True if this day is one of Monday till Friday.
+        """The self.workDay property answers True if this day is one of Monday till Friday.
 
         """
         return 0 <= self.weekDay <= 4
@@ -985,7 +996,7 @@ class Dating:
     weekDay = property(_get_weekDay)
 
     def _get_nextWorkDay(self):
-        """The dt.nextWorkDay property answers the first next date (including itself) that is a
+        """The self.nextWorkDay property answers the first next date (including itself) that is a
         workday
 
         """
@@ -995,14 +1006,14 @@ class Dating:
     nextWorkDay = property(_get_nextWorkDay)
 
     def _get_leapYear(self):
-        """The dt.leapYear property answers a boolean if the dt is a leap year.
+        """The self.leapYear property answers a boolean if the dt is a leap year.
 
         """
         return leapYear(self.year)
     leapYear = property(_get_leapYear)
 
     def _get_yearDays(self):
-        """The dt.yearDays property answers the number of days in the current year.
+        """The self.yearDays property answers the number of days in the current year.
 
         """
         if leapYear(self.year):
@@ -1011,7 +1022,7 @@ class Dating:
     yearDays = property(_get_yearDays)
         
     def _get_monthDays(self):
-        """The dt.monthDays property answers the number of days in the current month.
+        """The self.monthDays property answers the number of days in the current month.
 
         """
         return monthDays(self.year, self.month)
