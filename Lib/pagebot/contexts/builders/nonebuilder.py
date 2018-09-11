@@ -116,6 +116,9 @@ class NoneBuilder:
     def sizes(self):
         return dict(screen=(800, 600))
 
+    def installedFonts(self, pattern=None):
+        return []
+        
     def font(self, font):
         pass
 

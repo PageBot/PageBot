@@ -833,6 +833,8 @@ class Dating:
         The self.date property answers a formatted string 2008-10-23 of the date.
         This is exactly what SQL needs as date-string definition.
 
+        >>> Dating(date='2017-05-01').date
+        '2017-05-01'
         """
         return '%04d-%02d-%02d' % (self.year, self.month, self.day)
     date = property(_get_date)
@@ -1175,6 +1177,10 @@ class Dating:
         Due to length differences between the months, it is not consistent to  answer the current day number in the
         previous month
 
+        >>> Dating(date='2015-2-1').prevMonth
+        Dating(date='2015-01-01')
+        >>> Dating(date='2015-12-1').prevMonth
+        Dating(date='2015-11-01')
         """
         return (self.monthStart - 1).monthStart
     prevMonth = property(_get_prevMonth)
@@ -1232,6 +1238,10 @@ class Dating:
             ...
             ]
 
+        >>> len(Dating(date='2015-2-1').calendarYear) # Number of months
+        12
+        >>> Dating(date='2015-2-1').calendarYear[3][1][2] # Second day of first week of 3rd month
+        Dating(date='2015-04-08')
         """
         yearWeekDates = []
         for month in range(1, 13):
