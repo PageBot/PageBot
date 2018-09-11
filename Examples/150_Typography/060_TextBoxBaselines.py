@@ -64,7 +64,7 @@ doc.solve()
 
 # Adjust vertical position of the fitting textbox, so that textLines[4] 
 # locks on page baseline. 
-lineIndex = 3
+lineIndex = 4
 #print(tb.x, tb.y)
 tb.y += tb.baselineOffset(lineIndex)
 #print(tb.y)
