@@ -46,5 +46,6 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing',
-        'Topic :: Text Processing :: Fonts']
+        'Topic :: Text Processing :: Fonts'],
+    install_requires=['sass']
 )
