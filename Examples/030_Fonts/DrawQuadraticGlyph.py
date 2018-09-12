@@ -30,10 +30,6 @@ from pagebot.contexts.platform import getContext
 from pagebot.toolbox.color import blueColor, redColor, greenColor, pinkColor, orangeColor
 
 R = 12
-ONCURVE = None
-QUADRATIC_OFFCURVE = None
-CUBIC_OFFCURVE = None
-IMPLIED_ONCURVE = None
 ONCURVE_COLOR = orangeColor
 ONCURVE_SIZE = R
 IMPLIED_ONCURVE_COLOR = redColor
@@ -54,7 +50,7 @@ class Point:
         self.smooth = smooth
         self.start = start
 
-def drawSegment(segment, implied, cps, verbose=False):
+def drawSegment(path, segment, implied, cps, verbose=False):
     """
     Draws a quadratic segment as a cubic Bézier curve in drawBot. Each segment
     starts and ends with an oncurve point with 0 ... n offcurve control points.
@@ -66,7 +62,8 @@ def drawSegment(segment, implied, cps, verbose=False):
     >>> p1 = Point(200, 100, False)
     >>> p2 = Point(200, 200, True)
     >>> segment = [p0, p1, p2]
-    >>> drawSegment(segment)
+    >>> path = BezierPath()
+    >>> drawSegment(path, segment)
     """
     assert len(segment) > 1
 
@@ -131,8 +128,8 @@ def drawSegment(segment, implied, cps, verbose=False):
         # Recurse.
         # NOTE: PageBot implementation in glyph uses a loop instead of
         # recursion.
-        drawSegment(curve0, implied, cps)
-        drawSegment(curve1, implied, cps)
+        drawSegment(path, curve0, implied, cps)
+        drawSegment(path, curve1, implied, cps)
 
 def cross(x, y, d, r=1, g=0, b=0, a=1):
     """
@@ -150,181 +147,133 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
     line((x0, y0), (x1, y1))
     line((x2, y2), (x3, y3))
 
-W, H = 1750, 2250
-X0 = 75
-Y0 = 500
-C = 0.5
-F = 2 / 3
-glyphName = 'Q'
-x = 50
-context.newPage(W, H)
-DBFont('LucidaGrande', 24)
-PATH = getFontPaths()['Roboto-Black']
-font = Font(PATH)
-glyph = font[glyphName]
-path = BezierPath()
-contours = []
-contour = None
-coordinates = glyph.ttGlyph.coordinates
-context.fill((0, 1, 1, 0.2))
-# Move glyph up so we can see results below descender level.
-translate(X0, Y0)
+def draw():
+    W, H = 1750, 2250
+    X0 = 75
+    Y0 = 500
+    C = 0.5
+    F = 2 / 3
+    glyphName = 'Q'
+    x = 50
+    context.newPage(W, H)
+    DBFont('LucidaGrande', 24)
+    PATH = getFontPaths()['Roboto-Black']
+    font = Font(PATH)
+    glyph = font[glyphName]
+    path = BezierPath()
+    contours = []
+    contour = None
+    coordinates = glyph.ttGlyph.coordinates
+    context.fill((0, 1, 1, 0.2))
+    # Move glyph up so we can see results below descender level.
+    translate(X0, Y0)
 
-# Draws the glyph.
-c = glyph.contours
-pbSegments = glyph._segments
-context.stroke((0, 0.3, 0.3))
-context.drawGlyphPath(glyph)
-context.stroke(None)
-context.fill(0)
+    # Draws the glyph.
+    c = glyph.contours
+    pbSegments = glyph._segments
+    context.stroke((0, 0.3, 0.3))
+    context.drawGlyphPath(glyph)
+    context.stroke(None)
+    context.fill(0)
 
-# Converts coordinates to PageBot Points and assigns points
-# to contours.
-for i, (x, y) in enumerate(coordinates):
-    start = i - 1 in glyph.endPtsOfContours
-    p = Point(x, y, glyph.flags[i])
+    # Converts coordinates to PageBot Points and assigns points
+    # to contours.
+    for i, (x, y) in enumerate(coordinates):
+        start = i - 1 in glyph.endPtsOfContours
+        p = Point(x, y, glyph.flags[i])
 
-    if i == 0:
-        contour = [p]
-    elif start:
-        contour.append(contour[0])
-        contours.append(contour)
-        contour = [p]
-    else:
-        contour.append(p)
-
-    if i == len(coordinates) - 1:
-        contour.append(contour[0])
-        contours.append(contour)
-
-    d = 15
-    x += d
-    y += d
-    context.text('%d' % i, (x, y))
-
-segments = []
-implied = []
-cps = []
-
-for n, contour in enumerate(contours):
-    point = contour[0]
-    segment = [point]
-    path.moveTo((point.x, point.y))
-
-    for i, point in enumerate(contour[1:]):
-        if point.onCurve:
-            segment.append(point)
-            segments.append(segment)
-            segment = [point]
+        if i == 0:
+            contour = [p]
+        elif start:
+            contour.append(contour[0])
+            contours.append(contour)
+            contour = [p]
         else:
-            segment.append(point)
+            contour.append(p)
 
-    for j, segment in enumerate(segments):
-        # Lets this script calculate and draw implied points and derived cubic
-        # control points. Optionally draw path itself later by calling
-        # drawPath(path) (see below.)
-        drawSegment(segment, implied, cps)
+        if i == len(coordinates) - 1:
+            contour.append(contour[0])
+            contours.append(contour)
 
-# Draws oncurve points and offcurve control points.
-for contour in contours:
-    for i, point in enumerate(contour):
-        x = point.x
-        y = point.y
+        d = 15
+        x += d
+        y += d
+        context.text('%d' % i, (x, y))
 
-        if point.onCurve:
-            if ONCURVE is None:
-                ONCURVE = point
-            context.fill(ONCURVE_COLOR)
-            context.circle(x, y, ONCURVE_SIZE)
-        else:
-            if QUADRATIC_OFFCURVE is None:
-                QUADRATIC_OFFCURVE = point
-            # Quadratic offcurves.
-            context.fill(QUADRATIC_CONTROLPOINT_COLOR)
-            context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
+    segments = []
+    implied = []
+    cps = []
 
-x = 500
-y = 400
-d = 30
-context.fill(0.2)
+    for n, contour in enumerate(contours):
+        point = contour[0]
+        segment = [point]
+        path.moveTo((point.x, point.y))
 
-if len(implied) > 0:
-    IMPLIED_ONCURVE = implied[0]
+        for i, point in enumerate(contour[1:]):
+            if point.onCurve:
+                segment.append(point)
+                segments.append(segment)
+                segment = [point]
+            else:
+                segment.append(point)
 
-if len(cps) > 0:
-    CUBIC_OFFCURVE = cps[0]
+        for j, segment in enumerate(segments):
+            # Lets this script calculate and draw implied points and derived cubic
+            # control points. Optionally draw path itself later by calling
+            # drawPath(path) (see below.)
+            drawSegment(path, segment, implied, cps)
 
-'''
-if ONCURVE:
-    context.stroke(0)
-    p1 = (ONCURVE.x, ONCURVE.y)
-    p = (ONCURVE.x + d, ONCURVE.y + d)
-    context.line(p, p1)
+    # Draws oncurve points and offcurve control points.
+    for contour in contours:
+        for i, point in enumerate(contour):
+            x = point.x
+            y = point.y
+
+            if point.onCurve:
+                context.fill(ONCURVE_COLOR)
+                context.circle(x, y, ONCURVE_SIZE)
+            else:
+                # Quadratic offcurves.
+                context.fill(QUADRATIC_CONTROLPOINT_COLOR)
+                context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
+
+    x = 500
+    y = 400
+    d = 30
+    context.fill(0.2)
+
+    context.stroke((1, 0, 0))
+    context.line((0, 0), (W -2*X0, 0))
+
+    x = 0
+    y = -100 + 24
+    context.line((x, y), (x, y - 114))
+
+    x += 30
+    y = -100 + ONCURVE_SIZE
+
     context.stroke(None)
-    context.text('On-curve point', p)
-    y -= 20
+    context.fill(ONCURVE_COLOR)
+    context.circle(x, y, ONCURVE_SIZE)
+    y -= 30
+    context.fill(IMPLIED_ONCURVE_COLOR)
+    context.circle(x, y, IMPLIED_ONCURVE_SIZE)
+    y -= 30
+    context.fill(CUBIC_CONTROLPOINT_COLOR)
+    context.circle(x, y, CUBIC_CONTROLPOINT_SIZE)
+    y -= 30
+    context.fill(QUADRATIC_CONTROLPOINT_COLOR)
+    context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
 
-if QUADRATIC_OFFCURVE:
-    context.stroke(0)
-    p1 = (QUADRATIC_OFFCURVE.x, QUADRATIC_OFFCURVE.y)
-    p = (QUADRATIC_OFFCURVE.x + d, QUADRATIC_OFFCURVE.y + d)
-    context.line(p, p1)
-    context.stroke(None)
-    context.text('Quadratic\ncontrol point', p)
+    context.fill(0)
+    x += 30
+    y = -100
+    context.text('On-curve point', (x, y))
+    y -= 30
+    context.text('Implied on-curve point', (x, y))
+    y -= 30
+    context.text('Cubic control point', (x, y))
+    y -= 30
+    context.text('Quadratic control point', (x, y))
 
-if CUBIC_OFFCURVE:
-    context.stroke(0)
-    p1 = (CUBIC_OFFCURVE[0], CUBIC_OFFCURVE[1])
-    p = (CUBIC_OFFCURVE[0] + d, CUBIC_OFFCURVE[1]+ d)
-    context.line(p, p1)
-    context.stroke(None)
-    context.text('Cubic\ncontrol point', p)
-
-if IMPLIED_ONCURVE:
-    context.stroke(0)
-    p1 = (IMPLIED_ONCURVE.x, IMPLIED_ONCURVE.y)
-    p = (IMPLIED_ONCURVE.x + d, IMPLIED_ONCURVE.y + d)
-    context.line(p, p1)
-    context.stroke(None)
-    context.text('Implied\non-curve point', p)
-'''
-
-a = font.info.ascender
-upem = font.info.unitsPerEm
-print(upem) 
-
-context.stroke((1, 0, 0))
-context.line((0, 0), (W -2*X0, 0))
-
-
-x = 0
-y = -100 + 30
-context.line((x, y), (x, y - 120))
-
-x += 30
-y = -100 + ONCURVE_SIZE
-
-
-context.stroke(None)
-context.fill(ONCURVE_COLOR)
-context.circle(x, y, ONCURVE_SIZE)
-y -= 30
-context.fill(IMPLIED_ONCURVE_COLOR)
-context.circle(x, y, IMPLIED_ONCURVE_SIZE)
-y -= 30
-context.fill(CUBIC_CONTROLPOINT_COLOR)
-context.circle(x, y, CUBIC_CONTROLPOINT_SIZE)
-y -= 30
-context.fill(QUADRATIC_CONTROLPOINT_COLOR)
-context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
-
-context.fill(0)
-x += 30
-y = -100
-context.text('On-curve point', (x, y))
-y -= 30
-context.text('Implied on-curve point', (x, y))
-y -= 30
-context.text('Cubic control point', (x, y))
-y -= 30
-context.text('Quadratic control point', (x, y))
+draw()

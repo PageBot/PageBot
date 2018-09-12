@@ -226,7 +226,7 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
     return instance
     """
 
-def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True, 
+def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True,
         cached=True, lazy=True, kerning=None):
     """The getInstance refers to the file of the source variable font.
     The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
@@ -239,7 +239,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     *ttFont* or the automatic location name."""
     if opticalSize is None: # If forcing flag is undefined, then get info from location.
         opticalSize = location.get('opsz')
-    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached, 
+    instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached,
         lazy=lazy, kerning=kerning)
     # Answer the generated Variable Font instance. Add [opsz] value if is defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
@@ -248,7 +248,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     return instance
 
 
-def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True, 
+def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True,
         lazy=True, kerning=None):
     """
     Instantiate an instance of a variable font at the specified location.
@@ -418,8 +418,7 @@ class Font:
             self.ttFont = ttFont
             self.path = path
 
-
-        # Store location, incase this was a created VF instance
+        # Store location, in case this was a created VF instance
         self.location = location
         # TTFont is available as lazy style.info.font
         self.info = FontInfo(self.ttFont)

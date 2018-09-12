@@ -26,7 +26,7 @@ ERROR_MISSING_GLYPH = 'MissingGlyph'
 class PreVarFamily(Family):
     """A PreVarFamily is a special kind of family that contains a set of font that potentially form
     the masters to create a VariableFont export. But the collection may not be up for creation yet,
-    that is why it is not a "VarFont". The PreVarFamily is created from an existing design space file 
+    that is why it is not a "VarFont". The PreVarFamily is created from an existing design space file
     the defines the relation between fontfiles and axes.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -79,7 +79,7 @@ class PreVarFamily(Family):
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
     def _get_glyphNames(self):
-        """Answer the set of all unique glyph names in all design space fonts. Initialize 
+        """Answer the set of all unique glyph names in all design space fonts. Initialize
         if it does not exits yet.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -238,7 +238,7 @@ class PreVarFamily(Family):
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
-        >>> pvf.getMinMaxWidth() 
+        >>> pvf.getMinMaxWidth()
         (1219, 1461)
         """
         minWidth = sys.maxsize
@@ -255,7 +255,7 @@ class PreVarFamily(Family):
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
         >>> pvf = PreVarFamily('Roboto', path)
-        >>> #pvf.getMinMaxStem() 
+        >>> #pvf.getMinMaxStem()
         (54, 350)
         """
         minStem = sys.maxsize
@@ -296,10 +296,10 @@ class PreVarFamily(Family):
 
         dict(
             A=dict(
-                ok=[fontPath1, ...], 
-                error=[fontPath2, ...], 
+                ok=[fontPath1, ...],
+                error=[fontPath2, ...],
                 report=[]
-            ), 
+            ),
             ...
         )
 
@@ -313,7 +313,7 @@ class PreVarFamily(Family):
         18
         """
         errors = {} # Total collection of (font.path-->glyphName) that do not interpolate.
-            
+
         # Test compatibility of the total set of all glyph names in the design space.
         for glyphName in self.glyphNames: # Get glyphs names of all fonts combined
             for font in self.fonts.values():

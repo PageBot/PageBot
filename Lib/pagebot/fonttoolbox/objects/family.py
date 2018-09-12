@@ -19,6 +19,7 @@ import os
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.font import Font, getFont
 from pagebot.toolbox.transformer import path2FamilyName
+import traceback
 
 FAMILIES = {} # Cached build families
 
@@ -46,10 +47,19 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
         FAMILIES = {}
     if not FAMILIES: # If forced or not initialized yet
         for fontPath in getFontPaths().values():
-            font = getFont(fontPath)
+
+            try:
+                font = getFont(fontPath)
+            except Exception as e:
+                # FIXME: too many fonts opened by FontTools at a certain point,
+                # should we really load them all? Or open / close to extract naming data?
+                #print(traceback.format_exc())
+                pass
+
             if font is not None:
                 #print(font.path.split('/')[-1], repr(font.info.familyName), repr(font.info.styleName))
                 familyName = None
+
                 if useFontInfo:
                     familyName = font.info.familyName
                 if not familyName and useFileName:
@@ -381,6 +391,15 @@ class Family:
         return matchingFont
 
 if __name__ == '__main__':
+    families = getFamilies()
+    print(families)
+    for f in families:
+        if 'Roboto' in f:
+            print(f)
+    print('Roboto' in families)
+
+    '''
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
+    '''

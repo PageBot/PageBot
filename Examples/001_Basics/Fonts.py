@@ -17,8 +17,7 @@
 #
 from pagebot import *
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.fonttoolbox.objects.family import getFamilies
-from pagebot.fonttoolbox.fontpaths import *
+from pagebot.fonttoolbox.objects.family import : pagebot.fonttoolbox.fontpaths import *
 
 def showAll():
     families = getFamilies()
