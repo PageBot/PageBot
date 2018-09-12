@@ -774,7 +774,7 @@ class Unit:
         >>> float(pt(20.2))
         20.2
         """
-        return self.pt
+        return float(self.pt)
 
     def __round__(self):
         """Answer the rounded self as value.
