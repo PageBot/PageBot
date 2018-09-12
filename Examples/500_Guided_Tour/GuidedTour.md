@@ -16,6 +16,8 @@ This file (and all other MarkDown files (extension *.md*) can best be viewed and
 
 Free license: [https://macdown.uranusjr.com](https://macdown.uranusjr.com)
 
+On GNU/Linux and Windows e.g. [Remarkable](https://remarkableapp.github.io/) is an adequate MarkDown editor.
+
 ### Sublime 
 
 The Pagebot library code can be viewed and modified by Sublime (and other Python-based editors). And advantage of Sublime is that code can be executed from inside the editor, so it can run the doctests with direct feedback about validity of the code.
