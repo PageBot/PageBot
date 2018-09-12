@@ -14,6 +14,7 @@
 #
 #     Shows how to draw quadratic curves with cubic curves.
 #
+#    TODO: test with Flat.
 
 import weakref
 from AppKit import NSFont
@@ -28,17 +29,12 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
 from pagebot.toolbox.color import blueColor, redColor, greenColor
 
-
 ONCURVE = None
 QUADRATIC_OFFCURVE = None
 CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
 G = 10
-
-# FIXME: use context instead of DrawBot functions.
-
 context = getContext()
-
 
 class Point:
 
@@ -92,8 +88,8 @@ def drawSegment(segment, implied, cps, verbose=False):
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
         context.stroke(0.7)
-        line((onCurve0.x, onCurve0.y), offCurve0)
-        line(offCurve1, onCurve)
+        context.line((onCurve0.x, onCurve0.y), offCurve0)
+        context.line(offCurve1, onCurve)
         context.stroke(None)
 
         # Store these so they can be used in the infographic.
@@ -150,7 +146,6 @@ F = 2 / 3
 glyphName = 'Q'
 x = 50
 r = 12
-
 size('A1')
 DBFont('LucidaGrande', 24)
 PATH = getFontPaths()['Roboto-Black']
@@ -160,8 +155,7 @@ path = BezierPath()
 contours = []
 contour = None
 coordinates = glyph.ttGlyph.coordinates
-fill(0, 1, 1, 0.2)
-#rect(0, 0, width(), height())
+context.fill((0, 1, 1, 0.2))
 # Move glyph up so we can see results below descender level.
 translate(50, 500)
 
@@ -170,10 +164,9 @@ c = glyph.contours
 pbSegments = glyph._segments
 #context.fill((0, 0, 0))
 context.stroke((0, 0.3, 0.3))
-context.drawGlyph(glyph)
-#drawPath(glyph._path)
-stroke(None)
-fill(0.7)
+context.drawGlyphPath(glyph)
+context.stroke(None)
+context.fill(0.7)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -197,7 +190,7 @@ for i, (x, y) in enumerate(coordinates):
     d = 10
     x += d
     y += d
-    text('%d' % i, (x, y))
+    context.text('%d' % i, (x, y))
 
 segments = []
 implied = []
@@ -242,7 +235,7 @@ for contour in contours:
 x = 500
 y = 400
 d = 30
-fill(0.2)
+context.fill(0.2)
 
 if len(implied) > 0:
     IMPLIED_ONCURVE = implied[0]
@@ -251,34 +244,34 @@ if len(cps) > 0:
     CUBIC_OFFCURVE = cps[0]
 
 if ONCURVE:
-    stroke(0)
+    context.stroke(0)
     p1 = (ONCURVE.x, ONCURVE.y)
     p = (ONCURVE.x + d, ONCURVE.y + d)
-    line(p, p1)
-    stroke(None)
-    text('On-curve point', p)
+    context.line(p, p1)
+    context.stroke(None)
+    context.text('On-curve point', p)
     y -= 20
 
 if QUADRATIC_OFFCURVE:
-    stroke(0)
+    context.stroke(0)
     p1 = (QUADRATIC_OFFCURVE.x, QUADRATIC_OFFCURVE.y)
     p = (QUADRATIC_OFFCURVE.x + d, QUADRATIC_OFFCURVE.y + d)
-    line(p, p1)
-    stroke(None)
-    text('Quadratic control point', p)
+    context.line(p, p1)
+    context.stroke(None)
+    context.text('Quadratic\ncontrol point', p)
 
 if CUBIC_OFFCURVE:
-    stroke(0)
+    context.stroke(0)
     p1 = (CUBIC_OFFCURVE[0], CUBIC_OFFCURVE[1])
     p = (CUBIC_OFFCURVE[0] + d, CUBIC_OFFCURVE[1]+ d)
-    line(p, p1)
-    stroke(None)
-    text('Cubic control point', p)
+    context.line(p, p1)
+    context.stroke(None)
+    context.text('Cubic\ncontrol point', p)
 
 if IMPLIED_ONCURVE:
-    stroke(0)
+    context.stroke(0)
     p1 = (IMPLIED_ONCURVE.x, IMPLIED_ONCURVE.y)
     p = (IMPLIED_ONCURVE.x + d, IMPLIED_ONCURVE.y + d)
-    line(p, p1)
-    stroke(None)
-    text('Implied on-curve point', p)
+    context.line(p, p1)
+    context.stroke(None)
+    context.text('Implied\non-curve point', p)
