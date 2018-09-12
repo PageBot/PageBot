@@ -486,12 +486,15 @@ class FlatContext(BaseContext):
         # TODO: Make better match for all file types, transparance and spot color
         import flat
 
+        def to255(vals):
+            return [round(val * 255) for val in vals]
+
         if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
-            return flat.rgb(*c.rgb)
+            return flat.rgb(*to255(c.rgb))
             #return c.rgb
         if self.fileType in (FILETYPE_PDF):
-            return flat.rgb(*c.rgb)
-        return flat.rgb(*c.rgb)
+            return flat.rgb(*to255(c.rgb))
+        return flat.rgb(*to255(c.rgb))
         #return c.rgb
 
     def _getShape(self):
