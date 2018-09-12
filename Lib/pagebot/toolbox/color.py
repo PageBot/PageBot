@@ -989,6 +989,8 @@ whiteColor = color(1)
 redColor = color(1, 0, 0)
 greenColor = color(0, 1, 0)
 blueColor = color(0, 0, 1)
+pinkColor = color(1, 0.75, 0.8)
+orangeColor = color(1, 0.65, 0)
 
 # CMYK
 yellowColor = color(c=0, m=0, y=1, k=0)

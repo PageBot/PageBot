@@ -27,13 +27,22 @@ from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.color import blueColor, redColor, greenColor
+from pagebot.toolbox.color import blueColor, redColor, greenColor, pinkColor, orangeColor
 
+R = 12
 ONCURVE = None
 QUADRATIC_OFFCURVE = None
 CUBIC_OFFCURVE = None
 IMPLIED_ONCURVE = None
-G = 10
+ONCURVE_COLOR = orangeColor
+ONCURVE_SIZE = R
+IMPLIED_ONCURVE_COLOR = redColor
+IMPLIED_ONCURVE_SIZE = R
+QUADRATIC_CONTROLPOINT_COLOR = greenColor
+QUADRATIC_CONTROLPOINT_SIZE = R
+CUBIC_CONTROLPOINT_COLOR = pinkColor
+CUBIC_CONTROLPOINT_SIZE = R / 2
+
 context = getContext()
 
 class Point:
@@ -82,9 +91,9 @@ def drawSegment(segment, implied, cps, verbose=False):
         x1 = onCurve1.x - (onCurve1.x - offCurve.x) * F
         y1 = onCurve1.y - (onCurve1.y - offCurve.y) * F
         offCurve1 = (x1, y1)
-        context.fill(blueColor)
-        context.circle(x0, y0, r/2)
-        context.circle(x1, y1, r/2)
+        context.fill(CUBIC_CONTROLPOINT_COLOR)
+        context.circle(x0, y0, CUBIC_CONTROLPOINT_SIZE)
+        context.circle(x1, y1, CUBIC_CONTROLPOINT_SIZE)
         onCurve = (onCurve1.x, onCurve1.y)
         path.curveTo(offCurve0, offCurve1, onCurve)
         context.stroke(0.7)
@@ -111,8 +120,8 @@ def drawSegment(segment, implied, cps, verbose=False):
 
         # Store these so they can be used in the infographic.
         implied.append(newOnCurve)
-        context.fill(redColor)
-        context.circle(x, y, r)
+        context.fill(IMPLIED_ONCURVE_COLOR)
+        context.circle(x, y, IMPLIED_ONCURVE_SIZE)
         curve0.append(newOnCurve)
         curve1.insert(0, newOnCurve)
 
@@ -141,12 +150,14 @@ def cross(x, y, d, r=1, g=0, b=0, a=1):
     line((x0, y0), (x1, y1))
     line((x2, y2), (x3, y3))
 
+W, H = 1750, 2250
+X0 = 75
+Y0 = 500
 C = 0.5
 F = 2 / 3
 glyphName = 'Q'
 x = 50
-r = 12
-size('A1')
+context.newPage(W, H)
 DBFont('LucidaGrande', 24)
 PATH = getFontPaths()['Roboto-Black']
 font = Font(PATH)
@@ -157,16 +168,15 @@ contour = None
 coordinates = glyph.ttGlyph.coordinates
 context.fill((0, 1, 1, 0.2))
 # Move glyph up so we can see results below descender level.
-translate(50, 500)
+translate(X0, Y0)
 
 # Draws the glyph.
 c = glyph.contours
 pbSegments = glyph._segments
-#context.fill((0, 0, 0))
 context.stroke((0, 0.3, 0.3))
 context.drawGlyphPath(glyph)
 context.stroke(None)
-context.fill(0.7)
+context.fill(0)
 
 # Converts coordinates to PageBot Points and assigns points
 # to contours.
@@ -187,7 +197,7 @@ for i, (x, y) in enumerate(coordinates):
         contour.append(contour[0])
         contours.append(contour)
 
-    d = 10
+    d = 15
     x += d
     y += d
     context.text('%d' % i, (x, y))
@@ -215,7 +225,7 @@ for n, contour in enumerate(contours):
         # drawPath(path) (see below.)
         drawSegment(segment, implied, cps)
 
-# Draws oncurve points (pink) and offcurve control points (green).
+# Draws oncurve points and offcurve control points.
 for contour in contours:
     for i, point in enumerate(contour):
         x = point.x
@@ -224,13 +234,14 @@ for contour in contours:
         if point.onCurve:
             if ONCURVE is None:
                 ONCURVE = point
-            context.circle(x, y, r)
+            context.fill(ONCURVE_COLOR)
+            context.circle(x, y, ONCURVE_SIZE)
         else:
             if QUADRATIC_OFFCURVE is None:
                 QUADRATIC_OFFCURVE = point
             # Quadratic offcurves.
-            context.fill(greenColor)
-            context.circle(x, y, r)
+            context.fill(QUADRATIC_CONTROLPOINT_COLOR)
+            context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
 
 x = 500
 y = 400
@@ -243,6 +254,7 @@ if len(implied) > 0:
 if len(cps) > 0:
     CUBIC_OFFCURVE = cps[0]
 
+'''
 if ONCURVE:
     context.stroke(0)
     p1 = (ONCURVE.x, ONCURVE.y)
@@ -275,3 +287,44 @@ if IMPLIED_ONCURVE:
     context.line(p, p1)
     context.stroke(None)
     context.text('Implied\non-curve point', p)
+'''
+
+a = font.info.ascender
+upem = font.info.unitsPerEm
+print(upem) 
+
+context.stroke((1, 0, 0))
+context.line((0, 0), (W -2*X0, 0))
+
+
+x = 0
+y = -100 + 30
+context.line((x, y), (x, y - 120))
+
+x += 30
+y = -100 + ONCURVE_SIZE
+
+
+context.stroke(None)
+context.fill(ONCURVE_COLOR)
+context.circle(x, y, ONCURVE_SIZE)
+y -= 30
+context.fill(IMPLIED_ONCURVE_COLOR)
+context.circle(x, y, IMPLIED_ONCURVE_SIZE)
+y -= 30
+context.fill(CUBIC_CONTROLPOINT_COLOR)
+context.circle(x, y, CUBIC_CONTROLPOINT_SIZE)
+y -= 30
+context.fill(QUADRATIC_CONTROLPOINT_COLOR)
+context.circle(x, y, QUADRATIC_CONTROLPOINT_SIZE)
+
+context.fill(0)
+x += 30
+y = -100
+context.text('On-curve point', (x, y))
+y -= 30
+context.text('Implied on-curve point', (x, y))
+y -= 30
+context.text('Cubic control point', (x, y))
+y -= 30
+context.text('Quadratic control point', (x, y))
