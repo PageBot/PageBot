@@ -579,13 +579,25 @@ class DrawBotContext(BaseContext):
         return self.b.listOpenTypeFeatures(fontName)
 
     def installedFonts(self, patterns=None):
-        """Answer a list of all fonts (name or path) that are installed in the OS."""
+        """Answer a list of all fonts (name or path) that are installed in the OS.
+
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()
+        >>> installed = context.installedFonts()
+        >>> installed
+        []
+        """
+        if isinstance(patterns, str): # In case it is a string, convert to a list
+            patterns = [patterns]
         fontNames = []
         for fontName in self.b.installedFonts():
-            for pattern in patterns:
-                if pattern in fontName:
-                    fontNames.append(fontName)
-                    break
+            if not patterns:
+                fontNames.append(fontName) # If no pattern theun answer all.
+            else:
+                for pattern in patterns:
+                    if pattern in fontName:
+                        fontNames.append(fontName)
+                        break
         return fontNames
 
     def installFont(self, fontOrName):

@@ -3904,7 +3904,8 @@ class Element:
 
         if borderBottom is not None:
             c.saveGraphicState()
-            c.lineDash(*borderBottom.get('dash')) # None for no dash
+            dash = borderBottom.get('dash')
+            c.lineDash(*dash) # None for no dash
             c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.

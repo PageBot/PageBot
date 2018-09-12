@@ -121,7 +121,7 @@ def findFont(fontPath, default=None, lazy=True):
     return default # Otherwise assume it is a Font instance or None
 
 def getMasterPath():
-    """Answer the path to read master fonts, whic typically is a user/Fonts/ folder.
+    """Answer the path to read master fonts, which typically is a user/Fonts/ folder.
     Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
