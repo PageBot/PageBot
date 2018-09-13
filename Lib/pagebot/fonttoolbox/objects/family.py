@@ -24,10 +24,12 @@ import traceback
 FAMILY_PATHS = {} # Cached build families
 
 def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
-    """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If omitted, then create
-    the families from all avaible font paths found by the context.
-    The flag useFontInfo defines if the familyName, styleName) should be taken from the font.info
-    or just guessed from the font file name.
+    """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If
+    omitted, then create the families from all avaible font paths found by the
+    context.
+
+    The flag useFontInfo defines if the familyName, styleName) should be taken
+    from the font.info or just guessed from the font file name.
 
     >>> familyPaths = getFamilyPaths()
     >>> 'Roboto' in familyPaths
@@ -60,23 +62,22 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
 def getFamily(familyName, useFontInfo=True, useFileName=True):
     """Create a new Family instance and fill it with available fonts that fit the name.
 
-    >>> getFamily('Bungee')
-
-    >>> getFamilyPaths()['Bungee']
-
+    >>> f = getFamily('Roboto')
+    >>> p = getFamilyPaths()['Roboto']
     """
     familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
-    print(familyName, familyName in familyPaths)
+    #print(familyPaths)
+
     if familyName in familyPaths:
-        print(familyName, familyPaths)
         return Family(familyName, paths=familyPaths[familyName].values())
+
     return None
 
 def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answer the family that best matches the pattern.
 
     >>> #findFamily('Bungee')
-    
+
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
@@ -92,10 +93,10 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
 
 def newFamily(familyName, fonts=None):
     """Create a new family with this name. If the family already exists, then raise an error.
-    
+
     """
     """
-    >>> families = getFamilies()
+    >>> families = getFamilyPaths()
     >>> family = newFamily('MyFamily')
     >>> family.name in families
     True
@@ -420,7 +421,8 @@ class Family:
         return matchingFont
 
 if __name__ == '__main__':
-    families = getFamilies()
+    '''
+    families = getFamilyPaths()
     print(families)
     for f in families:
         if 'Roboto' in f:
@@ -431,4 +433,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-    '''

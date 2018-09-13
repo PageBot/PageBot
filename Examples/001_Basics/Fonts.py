@@ -17,11 +17,12 @@
 #
 from pagebot import *
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.fonttoolbox.objects.family import : pagebot.fonttoolbox.fontpaths import *
+from pagebot.fonttoolbox.fontpaths import *
+from pagebot.fonttoolbox.objects.family import getFamilyPaths
 
 def showAll():
-    families = getFamilies()
-    print(families)
+    families = getFamilyPaths()
+    print(families['Roboto'])
     fontPaths = getFontPaths()
     print('Number of fonts found: %d' % len(fontPaths))
     import glob
@@ -30,7 +31,7 @@ def showAll():
     print(glob.glob('%s/*' % tfp))
     roboto = tfp + '/google/roboto'
     print(glob.glob('%s/*' % roboto))
-'''
+    '''
     pbFonts = getPageBotFontPaths()
     print('Number of fonts shipped with PageBot: %d' % len(pbFonts))
     print(sorted(pbFonts.keys()))
