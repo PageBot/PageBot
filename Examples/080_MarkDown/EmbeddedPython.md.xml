@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document><h1>Embedded Python</h1>
+<p>The connection between Markdown content and Python can be made from 2 different directions. </p>
+<ul>
+<li>PageBot application scripts that create a <strong>Document</strong> instance with templates, elements and typesetters that parse Markdown text.</li>
+<li>MarkDown text files that include Python code to create documents.</li>
+</ul>
+<p>For example, you can execute Python code from MarkDown like this:</p>
+<pre><code class="Python">cid = 'Document'
+from pagebot.document import Document
+doc = Document(w=400, h=600, title='TestContent')
+</code></pre>
+
+<p>The <strong>Typesetter</strong>, reading this Markdown file, will generate this dictionary as result:</p>
+<pre><code>{'Document': {'doc': &lt;pagebot.document.Document object at 0x119037c10&gt;,
+ 'Document': &lt;class 'pagebot.document.Document'&gt;, 'id': 'Document'},
+  'Views': {'aa': 123, 'cc': ['List', 'of', 'things'], 'id': 'Views',
+   'bb': 234}}
+</code></pre>
+
+<p>The resulting dictionary contains Python code blocks, indicated by a triple “~” tilde. Because there's no “Python” after the triple tilde, the codeblock will be further ignored by the <strong>Typesetter</strong>.<br />
+If the code block contains a <strong>cid = 'NameOfCodeBlock'</strong> (“cid” is short for “codeId”), then this value is taken as name for the result dictionary.</p>
+<p>A code block can contain any kind of Python code. Any “globally” created object will become an entry in the resulting dictionary.</p>
+<pre><code class="Python">cid = 'Views' # Defines id for this code block result.
+aa = 123
+bb = 234
+cc = ['List', 'of', 'things']
+</code></pre>
+
+<pre><code class="Python">cid = 'Views'
+dd = 567
+</code></pre></document>

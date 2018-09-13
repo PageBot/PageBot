@@ -21,7 +21,8 @@ from pagebot.fonttoolbox.objects.font import Font, getFont
 from pagebot.toolbox.transformer import path2FamilyName
 import traceback
 
-FAMILY_PATHS = {} # Cached build families
+FAMILY_PATHS = {} # Cached family name --> [fontPath, fontPath, ...]
+FAMILIES = {}
 
 def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
     """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If omitted, then create
@@ -30,10 +31,9 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
     or just guessed from the font file name.
 
     >>> familyPaths = getFamilyPaths()
-    >>> 'Roboto' in familyPaths
-    True
-    >>> fontPaths = familyPaths['Bungee']
-    >>> len(fontPaths)
+    >>> len(familyPaths['Roboto'])
+    38
+    >>> len(familyPaths['Bungee'])
     5
     """
     global FAMILY_PATHS
@@ -52,30 +52,32 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
 
             if familyName is not None:
                 if familyName not in FAMILY_PATHS:
-                    FAMILY_PATHS[familyName] = {}
-                fileName = fontPath.split('/')[-1]
-                FAMILY_PATHS[familyName][fileName] = fontPath
+                    FAMILY_PATHS[familyName] = []
+                FAMILY_PATHS[familyName].append(fontPath)
     return FAMILY_PATHS
 
 def getFamily(familyName, useFontInfo=True, useFileName=True):
     """Create a new Family instance and fill it with available fonts that fit the name.
 
+    >>> getFamily('Roboto')
+    <PageBot Family Roboto (38 fonts)>
     >>> getFamily('Bungee')
-
-    >>> getFamilyPaths()['Bungee']
-
+    <PageBot Family Bungee (5 fonts)>
     """
-    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
-    print(familyName, familyName in familyPaths)
+    global getFamilies
+    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName)
+    if familyName in FAMILIES:
+        return FAMILIES[familyName] # Answer family is there is a cached on with this name.
     if familyName in familyPaths:
-        print(familyName, familyPaths)
-        return Family(familyName, paths=familyPaths[familyName].values())
+        family = Family(familyName, paths=familyPaths[familyName])
+        FAMILIES[familyName] = family # Cache the family
+        return family
     return None
 
 def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answer the family that best matches the pattern.
 
-    >>> #findFamily('Bungee')
+    >>> findFamily('Bungee')
     
     """
     familyPaths = getFamilyPaths()
@@ -93,25 +95,25 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
 def newFamily(familyName, fonts=None):
     """Create a new family with this name. If the family already exists, then raise an error.
     
-    """
-    """
-    >>> families = getFamilies()
+    >>> familyPaths = getFamilyPaths()
     >>> family = newFamily('MyFamily')
-    >>> family.name in families
+    >>> family.name in familyPaths
     True
-    >>> del families[family.name]
+    >>> del familyPaths[family.name] # Delete cache family, so it disappear.
+    >>> family.name in familyPaths
+    False
     """
-    families = getFamilies()
-    assert familyName not in families
+    familyPaths = getFamilyPaths()
+    assert familyName not in familyPaths
     family = Family(familyName, fonts=fonts)
-    families[familyName] = family
+    familyPaths[familyName] = family
     return family
 
 class Family:
 
     FONT_CLASS = Font
 
-    def __init__(self, name=None, fonts=None):
+    def __init__(self, name=None, fonts=None, paths=None):
         """The Family instance is a container of related Font instances. There are various levels of access: file name, style name,
         width and weight OS/values by DrawBot name if the font is installed.
         The fonts attribute can be a list of Font instances, a list of font file paths or directories.
@@ -124,6 +126,10 @@ class Family:
         """
         self.name = name or 'Untitled'
         self.fonts = {} # Key is unique font file path. Value is Font instances.
+        if paths is not None:
+            for path in paths:
+                if os.path.exists(path):
+                    self.addFont(path)
         if fonts is not None:
             self.addFonts(fonts) # Try to figure out what these are, and add them
 
@@ -420,15 +426,6 @@ class Family:
         return matchingFont
 
 if __name__ == '__main__':
-    families = getFamilies()
-    print(families)
-    for f in families:
-        if 'Roboto' in f:
-            print(f)
-    print('Roboto' in families)
-
-    '''
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-    '''

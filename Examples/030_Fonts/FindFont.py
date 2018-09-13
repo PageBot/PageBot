@@ -17,10 +17,15 @@
 #     Some examples how to find Font instances, for the given installed fonts.
 #
 from pagebot.contexts.platform import getContext
-from pagebot.fonttoolbox.objects.family import findFamily
-from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.family import findFamily, getFamily
+from pagebot.fonttoolbox.objects.font import getFont, findFont
 
 context = getContext()
+#
+#    Installed fonts created a list of font names that are already installed.
+#    This will miss out the fonts supported inside the PageBot library.
+#    So for now, we'll just check on Verdana and Georgia, 
+#    which is supposed to exist in all contexts.
 
 fontNames = context.installedFonts()
 # Total installed fonts: 1993
@@ -37,10 +42,13 @@ print(fontNames)
 fontNames = context.installedFonts(['Verdana', 'Georgia'])
 # ['Georgia', 'Georgia-Bold', 'Georgia-BoldItalic', 'Georgia-Italic', 'Verdana', 'Verdana-Bold', 'Verdana-BoldItalic', 'Verdana-Italic']
 print(fontNames)
- 
-family = findFamily('Roboto')
-# None
+
+# The PageBot method to look for fonts is find a fanily with an exact name match
+family = getFamily('Bungee')
+# <PageBot Family Bungee (5 fonts)>
 print(family)
+
+font = getFont('Verdana-BoldItalic')
 
 font = findFont('Roboto')
 # None

@@ -28,6 +28,9 @@ class CodeBlock(Element):
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
+    def build(self, view, origin, drawElements=True):
+        self.run()
+        
     def run(self, globals=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
