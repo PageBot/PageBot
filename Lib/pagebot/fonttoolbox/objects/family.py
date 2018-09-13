@@ -41,27 +41,10 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
         FAMILY_PATHS = {}
     if not FAMILY_PATHS: # If forced or not initialized yet
         for fontPath in getFontPaths().values():
-<<<<<<< Updated upstream
-
-            try:
-                font = getFont(fontPath)
-            except Exception as e:
-                # FIXME: too many fonts opened by FontTools at a certain point,
-                # should we really load them all? Or open / close to extract naming data?
-                #print(traceback.format_exc())
-                pass
-
-            if font is not None:
-                #print(font.path.split('/')[-1], repr(font.info.familyName), repr(font.info.styleName))
-                familyName = None
-
-                if useFontInfo:
-=======
             familyName = None
             if useFontInfo:
                 font = getFont(fontPath)
                 if font is not None:
->>>>>>> Stashed changes
                     familyName = font.info.familyName
 
             if not familyName and useFileName:
