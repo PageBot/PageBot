@@ -516,7 +516,7 @@ class DrawBotContext(BaseContext):
     def lineDash(self, lineDash):
         """Linesash is None or a list of dash lengths."""
         if lineDash is None:
-            self.b.lineDash()
+            self.b.lineDash(None)
         else:
             self.b.lineDash(*lineDash)
 

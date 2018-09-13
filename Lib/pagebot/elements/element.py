@@ -3891,7 +3891,7 @@ class Element:
 
             if borderTop.get('line') == OUTLINE:
                 oTop = borderTop.get('strokeWidth', 0)/2
-            elif borderTop('line') == INLINE:
+            elif borderTop.get('line') == INLINE:
                 oTop = -borderTop.get('strokeWidth', 0)/2
             else:
                 oTop = 0
