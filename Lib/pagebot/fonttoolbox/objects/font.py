@@ -250,11 +250,11 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
 
 def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True,
         lazy=True, kerning=None):
-    """
-    Instantiate an instance of a variable font at the specified location.
+    """Instantiate an instance of a variable font at the specified location.
+
     Keyword arguments:
-        varfilename -- a variable font file path
-        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
+    - varfilename -- a variable font file path
+    - location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
 
     >>> vf = findFont('RobotoDelta-VF')
     >>> instance = makeInstance(vf.path, dict(opsz=8))

@@ -47,11 +47,11 @@ class FontInfo:
     >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
     >>> font = getFont(path)
     >>> font.info.copyright
-    u'Copyright 2011 Google Inc. All Rights Reserved.'
+    'Copyright 2011 Google Inc. All Rights Reserved.'
     """
     def __init__(self, ttFont):
         self.ttFont = ttFont
-        self._styleName = None 
+        self._styleName = None
         # Optional informaiton, set if instance is created from a VarFont
         self.opticalSize = None
         self.location = None
@@ -80,7 +80,7 @@ class FontInfo:
         >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.familyName
-        u'Roboto'
+        'Roboto'
         """
         if self._getNameTableEntry(1):
             return self._getNameTableEntry(1).split(' ')[0]
@@ -92,7 +92,7 @@ class FontInfo:
     familyName = property(_get_familyName)
 
     def _get_styleName(self):
-        """Answer the style name of the font. 
+        """Answer the style name of the font.
         Family name should be this, but often wrong: return self._getNameTableEntry(1)
         We take the first spaced part as family name, and fill the rest here under style.
         So we add rest of family.
@@ -102,7 +102,7 @@ class FontInfo:
         >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.styleName
-        u'Regular'
+        'Regular'
         >>> font.info.styleName = 'Bold'
         >>> font.info.styleName
         'Bold'
@@ -263,8 +263,8 @@ class FontInfo:
         return self._getOTLFeatures("GSUB")
 
     def _get_metrics(self):
-        """Small collection of font metrics info data as dictionary."""     
-        # @@@ TODO Review this!   
+        """Small collection of font metrics info data as dictionary."""
+        # @@@ TODO Review this!
         return dict(typoDescender=self.typoDescender(),
                     typoAscender=self.typoAscender(),
                     descender=self.descender(),
@@ -284,7 +284,7 @@ class FontInfo:
                     subscriptYSize=self.subscriptYSize(),
                     superscriptYSize=self.superscriptYSize(),
                     unitsPerEm=self.unitsPerEm())
-    metrics = property(_get_metrics) 
+    metrics = property(_get_metrics)
 
 
 

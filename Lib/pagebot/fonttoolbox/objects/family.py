@@ -25,10 +25,12 @@ FAMILY_PATHS = {} # Cached family name --> [fontPath, fontPath, ...]
 FAMILIES = {}
 
 def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
-    """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If omitted, then create
-    the families from all avaible font paths found by the context.
-    The flag useFontInfo defines if the familyName, styleName) should be taken from the font.info
-    or just guessed from the font file name.
+    """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If
+    omitted, then create the families from all avaible font paths found by the
+    context.
+
+    The flag useFontInfo defines if the familyName, styleName) should be taken
+    from the font.info or just guessed from the font file name.
 
     >>> familyPaths = getFamilyPaths()
     >>> len(familyPaths['Roboto'])
@@ -59,6 +61,7 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
 def getFamily(familyName, useFontInfo=True, useFileName=True):
     """Create a new Family instance and fill it with available fonts that fit the name.
 
+<<<<<<< HEAD
     >>> getFamily('Roboto')
     <PageBot Family Roboto (38 fonts)>
     >>> getFamily('Bungee')
@@ -72,13 +75,29 @@ def getFamily(familyName, useFontInfo=True, useFileName=True):
         family = Family(familyName, paths=familyPaths[familyName])
         FAMILIES[familyName] = family # Cache the family
         return family
+=======
+    >>> f = getFamily('Roboto')
+    >>> p = getFamilyPaths()['Roboto']
+    """
+    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
+    #print(familyPaths)
+
+    if familyName in familyPaths:
+        return Family(familyName, paths=familyPaths[familyName].values())
+
+>>>>>>> origin/master
     return None
 
 def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answer the family that best matches the pattern.
 
+<<<<<<< HEAD
     >>> findFamily('Bungee')
     
+=======
+    >>> #findFamily('Bungee')
+
+>>>>>>> origin/master
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
@@ -183,11 +202,8 @@ class Family:
         return self.fonts.keys()
 
     def addFonts(self, fontsOrPaths):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
-        a list of font paths.
-
-        """
-        """
+        """And the fonts to the family. This can be a list of Font instances, a
+        list of font names or a list of font paths.
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
@@ -206,9 +222,8 @@ class Family:
             self.addFont(fontOrPath)
 
     def addFont(self, fontOrPath):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
-        a list of font paths.
-
+        """And the fonts to the family. This can be a list of Font instances, a
+        list of font names or a list of font paths.
         """
         """
         >>> from pagebot.fonttoolbox.objects.font import findFont

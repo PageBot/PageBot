@@ -1,3 +1,15 @@
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
 """unicodeRanges -- Some functions to deal with OS/2 unicodeRange values.
 
     >>> getUnicodeRange(300)
@@ -11,7 +23,7 @@
     >>> getUnicodeRangeByBit(50)
     [('Katakana', 12448, 12543), ('Katakana Phonetic Extensions', 12784, 12799)]
     >>> countCoverageByRangeName([65, 66, 534, 535, 536])
-    {'Latin Extended-B': (3, 208), 'Basic Latin': (2, 128)}
+    {'Basic Latin': (2, 128), 'Latin Extended-B': (3, 208)}
     >>> countCoverageByRangeBit([65, 66, 534, 535, 536])
     {0: (2, 128), 3: (3, 208)}
 
@@ -165,8 +177,8 @@ def distributeUnicodes(unicodes):
         >>> distributeUnicodes([100000])
         {None: [100000]}
         >>> distributeUnicodes([65, 165])
-        {'Latin-1 Supplement': [165], 'Basic Latin': [65]}
-        >>> unicodes = range(65, 70) + range(6000, 6005) + [100000]
+        {'Basic Latin': [65], 'Latin-1 Supplement': [165]}
+        >>> unicodes = list(range(65, 70)) + list(range(6000, 6005)) + [100000]
         >>> ranges = distributeUnicodes(unicodes)
         >>> sorted(ranges['Basic Latin'])
         [65, 66, 67, 68, 69]
@@ -214,7 +226,7 @@ def _distributeUnicodes_ReferenceImplementation(unicodes):
         >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
         >>> unicodes = range(10, 19000, 20)
         >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-        >>> unicodes = range(10, 19000, 1)
+        >>> unicodes = list(range(10, 19000, 1))
         >>> all = []
         >>> for unis in distributeUnicodes(unicodes).values():
         ...     all.extend(unis)
@@ -232,13 +244,15 @@ def _distributeUnicodes_ReferenceImplementation(unicodes):
 
 
 def countCoverageByRangeBit(unicodes):
-    """Given a set of characters, count how many characters are present in each (used) range.
-    The return value is a dict with range bits as keys, and (count, size) tuples as values.
-    'count' is the number of characters used in the range, 'size' is the total amount of
-    characters that belong to the range. Ranges that are not used are not included in the
-    dict, so 'count' is always greater than 0.
-    Characters for which no range can be found are counted under a key of None, the value
-    will be (count, None).
+    """Given a set of characters, count how many characters are present in each
+    (used) range.  The return value is a dict with range bits as keys, and
+    (count, size) tuples as values.  'count' is the number of characters used
+    in the range, 'size' is the total amount of characters that belong to the
+    range. Ranges that are not used are not included in the dict, so 'count' is
+    always greater than 0.
+
+    Characters for which no range can be found are counted under a key of None,
+    the value will be (count, None).
 
         >>> countCoverageByRangeBit([65, 66])
         {0: (2, 128)}
@@ -253,18 +267,20 @@ def countCoverageByRangeBit(unicodes):
 
 
 def countCoverageByRangeName(unicodes):
-    """Given a set of characters, count how many characters are present in each (used) range.
-    The return value is a dict with range names as keys, and (count, size) tuples as values.
-    'count' is the number of characters used in the range, 'size' is the total amount of
-    characters that belong to the range. Ranges that are not used are not included in the
-    dict, so 'count' is always greater than 0.
-    Characters for which no range can be found are counted under a key of None, the value
-    will be (count, None).
+    """Given a set of characters, count how many characters are present in each
+    (used) range.  The return value is a dict with range names as keys, and
+    (count, size) tuples as values.  'count' is the number of characters used
+    in the range, 'size' is the total amount of characters that belong to the
+    range. Ranges that are not used are not included in the dict, so 'count' is
+    always greater than 0.
+
+    Characters for which no range can be found are counted under a key of None,
+    the value will be (count, None).
 
         >>> countCoverageByRangeName([65, 66])
         {'Basic Latin': (2, 128)}
         >>> countCoverageByRangeName([65, 66, 600])
-        {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
+        {'Basic Latin': (2, 128), 'IPA Extensions': (1, 96)}
         >>> countCoverageByRangeName([8192])
         {'General Punctuation': (1, 112)}
         >>> countCoverageByRangeName([100000])
@@ -280,7 +296,7 @@ def _countCoverage(unicodes, byName=False):
         >>> _countCoverage([65, 66], byName=True)
         {'Basic Latin': (2, 128)}
         >>> _countCoverage([65, 66, 600], byName=True)
-        {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
+        {'Basic Latin': (2, 128), 'IPA Extensions': (1, 96)}
         >>> _countCoverage([8192], byName=True)
         {'General Punctuation': (1, 112)}
         >>> _countCoverage([8192], byName=False)
@@ -320,8 +336,8 @@ def _countCoverage(unicodes, byName=False):
 
 
 def packRangeBits(bitSet):
-    """Given a set of bit numbers, return the corresponding ulUnicodeRange1, ulUnicodeRange2,
-    ulUnicodeRange3 and ulUnicodeRange4 for the OS/2 table.
+    """Given a set of bit numbers, return the corresponding ulUnicodeRange1,
+    ulUnicodeRange2, ulUnicodeRange3 and ulUnicodeRange4 for the OS/2 table.
 
         >>> packRangeBits(set([0]))
         (1, 0, 0, 0)
@@ -352,17 +368,17 @@ def packRangeBits(bitSet):
 
 
 def unpackRangeBits(ur1, ur2, ur3, ur4):
-    """Given the ulUnicodeRange1, ulUnicodeRange2, ulUnicodeRange3, ulUnicodeRange4 values
-    from the OS/2 table, return a set of bit numbers.
+    """Given the ulUnicodeRange1, ulUnicodeRange2, ulUnicodeRange3,
+    ulUnicodeRange4 values from the OS/2 table, return a set of bit numbers.
 
         >>> unpackRangeBits(0x0, 0x0, 0x0, 0x0)
-        set([])
+        set()
         >>> unpackRangeBits(0x1, 0x0, 0x0, 0x0)
-        set([0])
+        {0}
         >>> unpackRangeBits(0x1, 0x1, 0x1, 0x1)
-        set([0, 32, 64, 96])
+        {0, 32, 64, 96}
         >>> unpackRangeBits(0xffffffff, 0x1, 0x2, 0x4)
-        set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98])
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98}
     """
     bitNum = 0
     bitSet = set()
@@ -376,9 +392,11 @@ def unpackRangeBits(ur1, ur2, ur3, ur4):
     return bitSet
 
 
-# Map OpenType script names to equivalent unicode range names where they in fact
-# differ. Script tags and unicode ranges do not match completely, so it's not always
-# possible to find range based on a script tag. See getUnicodeRangesByScriptTag()
+# Map OpenType script names to equivalent unicode range names where they in
+# fact differ. Script tags and unicode ranges do not match completely, so it's
+# not always possible to find range based on a script tag. See
+# getUnicodeRangesByScriptTag()
+
 _openTypeScriptToUnicodeRangeNameMapping = {
     "Latin": ["Basic Latin", "Latin-1 Supplement", "Latin Extended-A", "Latin Extended-B",
               "Latin Extended Additional", "Latin Extended-C", "Latin Extended-D"],
@@ -394,12 +412,12 @@ _openTypeScriptToUnicodeRangeNameMapping = {
 }
 
 def getUnicodeRangesByScriptTag(scriptTag):
-    """Given an OpenType script tag, return a list of unicode ranges, expressed as
-    (bit, name, rangeMinimum, rangeMaximum) tuples. Raise KeyError if no matching
-    range is found.
+    """Given an OpenType script tag, return a list of unicode ranges, expressed
+    as (bit, name, rangeMinimum, rangeMaximum) tuples. Raise KeyError if no
+    matching range is found.
 
-    Note that OpenType script tags and unicode ranges do not match completely, so
-    it's not always possible to find range based on a script tag.
+    Note that OpenType script tags and unicode ranges do not match completely,
+    so it's not always possible to find range based on a script tag.
 
         >>> getUnicodeRangesByScriptTag("hebr")
         [(11, 'Hebrew', 1424, 1535)]
