@@ -113,9 +113,11 @@ class Family:
     FONT_CLASS = Font
 
     def __init__(self, name=None, fonts=None):
-        """The Family instance is a container of related Font instances. There are various levels of access: file name, style name,
-        width and weight OS/values by DrawBot name if the font is installed.
-        The fonts attribute can be a list of Font instances, a list of font file paths or directories.
+        """The Family instance is a container of related Font instances. There
+        are various levels of access: file name, style name, width and weight
+        OS/values by DrawBot name if the font is installed. The fonts
+        attribute can be a list of Font instances, a list of font file paths or
+        directories.
 
         Test with a limited set of patsj:
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -125,6 +127,7 @@ class Family:
         """
         self.name = name or 'Untitled'
         self.fonts = {} # Key is unique font file path. Value is Font instances.
+
         if fonts is not None:
             self.addFonts(fonts) # Try to figure out what these are, and add them
 
@@ -178,11 +181,8 @@ class Family:
         return self.fonts.keys()
 
     def addFonts(self, fontsOrPaths):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
-        a list of font paths.
-
-        """
-        """
+        """And the fonts to the family. This can be a list of Font instances, a
+        list of font names or a list of font paths.
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
@@ -201,9 +201,8 @@ class Family:
             self.addFont(fontOrPath)
 
     def addFont(self, fontOrPath):
-        """And the fonts to the family. This can be a list of Font instances, a list of font names or
-        a list of font paths.
-
+        """And the fonts to the family. This can be a list of Font instances, a
+        list of font names or a list of font paths.
         """
         """
         >>> from pagebot.fonttoolbox.objects.font import findFont
