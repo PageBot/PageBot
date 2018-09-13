@@ -11,7 +11,7 @@
     >>> getUnicodeRangeByBit(50)
     [('Katakana', 12448, 12543), ('Katakana Phonetic Extensions', 12784, 12799)]
     >>> countCoverageByRangeName([65, 66, 534, 535, 536])
-    {'Latin Extended-B': (3, 208), 'Basic Latin': (2, 128)}
+    {'Basic Latin': (2, 128), 'Latin Extended-B': (3, 208)}
     >>> countCoverageByRangeBit([65, 66, 534, 535, 536])
     {0: (2, 128), 3: (3, 208)}
 
@@ -165,8 +165,8 @@ def distributeUnicodes(unicodes):
         >>> distributeUnicodes([100000])
         {None: [100000]}
         >>> distributeUnicodes([65, 165])
-        {'Latin-1 Supplement': [165], 'Basic Latin': [65]}
-        >>> unicodes = range(65, 70) + range(6000, 6005) + [100000]
+        {'Basic Latin': [65], 'Latin-1 Supplement': [165]}
+        >>> unicodes = list(range(65, 70)) + list(range(6000, 6005)) + [100000]
         >>> ranges = distributeUnicodes(unicodes)
         >>> sorted(ranges['Basic Latin'])
         [65, 66, 67, 68, 69]
@@ -214,7 +214,7 @@ def _distributeUnicodes_ReferenceImplementation(unicodes):
         >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
         >>> unicodes = range(10, 19000, 20)
         >>> assert distributeUnicodes(unicodes) == _distributeUnicodes_ReferenceImplementation(unicodes)
-        >>> unicodes = range(10, 19000, 1)
+        >>> unicodes = list(range(10, 19000, 1))
         >>> all = []
         >>> for unis in distributeUnicodes(unicodes).values():
         ...     all.extend(unis)
@@ -264,7 +264,7 @@ def countCoverageByRangeName(unicodes):
         >>> countCoverageByRangeName([65, 66])
         {'Basic Latin': (2, 128)}
         >>> countCoverageByRangeName([65, 66, 600])
-        {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
+        {'Basic Latin': (2, 128), 'IPA Extensions': (1, 96)}
         >>> countCoverageByRangeName([8192])
         {'General Punctuation': (1, 112)}
         >>> countCoverageByRangeName([100000])
@@ -280,7 +280,7 @@ def _countCoverage(unicodes, byName=False):
         >>> _countCoverage([65, 66], byName=True)
         {'Basic Latin': (2, 128)}
         >>> _countCoverage([65, 66, 600], byName=True)
-        {'IPA Extensions': (1, 96), 'Basic Latin': (2, 128)}
+        {'Basic Latin': (2, 128), 'IPA Extensions': (1, 96)}
         >>> _countCoverage([8192], byName=True)
         {'General Punctuation': (1, 112)}
         >>> _countCoverage([8192], byName=False)
@@ -356,13 +356,13 @@ def unpackRangeBits(ur1, ur2, ur3, ur4):
     from the OS/2 table, return a set of bit numbers.
 
         >>> unpackRangeBits(0x0, 0x0, 0x0, 0x0)
-        set([])
+        set()
         >>> unpackRangeBits(0x1, 0x0, 0x0, 0x0)
-        set([0])
+        {0}
         >>> unpackRangeBits(0x1, 0x1, 0x1, 0x1)
-        set([0, 32, 64, 96])
+        {0, 32, 64, 96}
         >>> unpackRangeBits(0xffffffff, 0x1, 0x2, 0x4)
-        set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98])
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 65, 98}
     """
     bitNum = 0
     bitSet = set()
