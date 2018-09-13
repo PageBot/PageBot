@@ -3870,7 +3870,7 @@ class Element:
 
         if borderTop is not None:
             c.saveGraphicState()
-            c.lineDash(*borderTop.get('dash')) # None for no dash
+            c.lineDash(borderTop.get('dash')) # None for no dash
             c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
@@ -3903,9 +3903,8 @@ class Element:
             c.restoreGraphicState()
 
         if borderBottom is not None:
-            c.saveGraphicState()
-            dash = borderBottom.get('dash')
-            c.lineDash(*dash) # None for no dash
+            c.saveGraphicState() 
+            c.lineDash(borderBottom.get('dash')) # None for no dash
             c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
             oLeft = 0 # Extra offset on left, if there is a left border.
@@ -3937,7 +3936,7 @@ class Element:
 
         if borderRight is not None:
             c.saveGraphicState()
-            c.lineDash(*borderRight.get('dash')) # None for no dash
+            c.lineDash(borderRight.get('dash')) # None for no dash
             c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.
@@ -3969,7 +3968,7 @@ class Element:
 
         if borderLeft is not None:
             c.saveGraphicState()
-            c.lineDash(*borderLeft.get('dash')) # None for no dash
+            c.lineDash(borderLeft.get('dash')) # None for no dash
             c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
 
             oTop = 0 # Extra offset on top, if there is a top border.

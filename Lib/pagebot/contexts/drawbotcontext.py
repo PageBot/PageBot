@@ -513,8 +513,12 @@ class DrawBotContext(BaseContext):
                     colors=colors, locations=gradient.locations,
                     startRadius=gradient.startRadius, endRadius=gradient.endRadius)
 
-    def lineDash(self, *lineDash):
-        self.b.lineDash(*lineDash)
+    def lineDash(self, lineDash):
+        """Linesash is None or a list of dash lengths."""
+        if lineDash is None:
+            self.b.lineDash()
+        else:
+            self.b.lineDash(*lineDash)
 
     def miterLimit(self, value):
         self.b.miterLimit(value)

@@ -21,32 +21,27 @@ from pagebot.fonttoolbox.objects.font import Font, getFont
 from pagebot.toolbox.transformer import path2FamilyName
 import traceback
 
-FAMILIES = {} # Cached build families
+FAMILY_PATHS = {} # Cached build families
 
-def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=False):
-    """Construct a dictionary of Family instances from dictionary familyPaths. If omitted, then create
-    the families from all aviable font paths found in the by the context.
+def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
+    """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If omitted, then create
+    the families from all avaible font paths found by the context.
     The flag useFontInfo defines if the familyName, styleName) should be taken from the font.info
-    or guess from the font file name.
+    or just guessed from the font file name.
 
-    >>> families = getFamilies()
-    >>> 'Roboto' in families
+    >>> familyPaths = getFamilyPaths()
+    >>> 'Roboto' in familyPaths
     True
-    >>> 'Bungee' in families
-    True
-    >>> families = getFamilies(useFontInfo=False, force=True) # Forced to look an fileName only, Roboto is a family
-    >>> 'Roboto' in families
-    True
-    >>> families = getFamilies(useFileName=False, force=True) # Looking into font.info, Roboto is the family name.
-    >>> 'Roboto' in families
-    True
-    >>> #families = getFamilies(useFontInfo=False, useFileName=False) finds nothing
+    >>> fontPaths = familyPaths['Bungee']
+    >>> len(fontPaths)
+    5
     """
-    global FAMILIES
+    global FAMILY_PATHS
     if force:
-        FAMILIES = {}
-    if not FAMILIES: # If forced or not initialized yet
+        FAMILY_PATHS = {}
+    if not FAMILY_PATHS: # If forced or not initialized yet
         for fontPath in getFontPaths().values():
+<<<<<<< Updated upstream
 
             try:
                 font = getFont(fontPath)
@@ -61,30 +56,62 @@ def getFamilies(familyPaths=None, useFontInfo=True, useFileName=True, force=Fals
                 familyName = None
 
                 if useFontInfo:
+=======
+            familyName = None
+            if useFontInfo:
+                font = getFont(fontPath)
+                if font is not None:
+>>>>>>> Stashed changes
                     familyName = font.info.familyName
-                if not familyName and useFileName:
-                    familyName = path2FamilyName(font.path)
-                if familyName:
-                    if familyName not in FAMILIES:
-                        FAMILIES[familyName] = Family(familyName)
-                    FAMILIES[familyName].addFont(font)
-    return FAMILIES
+
+            if not familyName and useFileName:
+                familyName = path2FamilyName(fontPath)
+
+            if familyName is not None:
+                if familyName not in FAMILY_PATHS:
+                    FAMILY_PATHS[familyName] = {}
+                fileName = fontPath.split('/')[-1]
+                FAMILY_PATHS[familyName][fileName] = fontPath
+    return FAMILY_PATHS
 
 def getFamily(familyName, useFontInfo=True, useFileName=True):
     """Create a new Family instance and fill it with available fonts that fit the name.
 
-    >>> families = getFamilies()
-    >>> family = families.get('Bungee')
-    >>> family.name
-    u'Bungee'
-    >>> len(family)
-    5
+    >>> getFamily('Bungee')
+
+    >>> getFamilyPaths()['Bungee']
+
     """
-    return getFamilies(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
+    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
+    print(familyName, familyName in familyPaths)
+    if familyName in familyPaths:
+        print(familyName, familyPaths)
+        return Family(familyName, paths=familyPaths[familyName].values())
+    return None
+
+def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
+    """Answer the family that best matches the pattern.
+
+    >>> #findFamily('Bungee')
+    
+    """
+    familyPaths = getFamilyPaths()
+    foundFamilyName = None
+    for familyName in familyPaths:
+        if pattern in familyName:
+            foundFmailyName = familyName
+            break
+    if foundFamilyName is None:
+        foundFamilyName = defaultName
+    if foundFamilyName in familyPaths:
+        return getFamily(foundFamilyName, useFontInfo=useFontInfo, useFileName=useFileName)
+    return None
 
 def newFamily(familyName, fonts=None):
     """Create a new family with this name. If the family already exists, then raise an error.
-
+    
+    """
+    """
     >>> families = getFamilies()
     >>> family = newFamily('MyFamily')
     >>> family.name in families
@@ -161,7 +188,7 @@ class Family:
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
-        >>> family.keys()[0] == path
+        >>> sorted(family.keys())[0] == path
         True
         """
         return self.fonts.keys()
@@ -170,6 +197,8 @@ class Family:
         """And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
+        """
+        """
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
@@ -191,6 +220,8 @@ class Family:
         """And the fonts to the family. This can be a list of Font instances, a list of font names or
         a list of font paths.
 
+        """
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Regular')
         >>> path = font.path
@@ -226,6 +257,8 @@ class Family:
     def getFonts(self):
         """Answer the unsorted list of Font instances in the family.
 
+        """
+        """
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
         >>> len(family.getFonts())
         38
@@ -240,13 +273,15 @@ class Family:
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
-        >>> family.getStyles().keys()
-        [u'Regular']
+        >>> family.getStyles()
+        {'Regular': [<Font Amstelvar-Roman-VF>]}
+        """
+        """
         >>> family = getFamily('Bungee')
         >>> family.name
-        u'Bungee'
-        >>> sorted(family.getStyles().keys())
-        [u'Regular']
+        'Bungee'
+        >>> sorted(family.getStyles())
+        ['Regular']
         """
         fontStyles = {}
         for font in self.fonts.values():
@@ -260,11 +295,13 @@ class Family:
     def getWeights(self):
         """Answer the dictionary {weightClass: [font, font, ...], ...]}
 
+        """
+        """
         >>> family = getFamily('Bungee')
-        >>> family.getWeights().keys()
+        >>> sorted(family.getWeights())
         [400]
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> sorted(family.getWeights().keys())
+        >>> sorted(family.getWeights())
         [250, 300, 400, 500, 700, 900]
         """
         weightClasses = {}
@@ -279,11 +316,13 @@ class Family:
     def getWidths(self):
         """Answer the dictionary {widthClass: [font, font, ...], ...]}
 
+        """
+        """
         >>> family = getFamily('Bungee')
-        >>> family.getWidths().keys()
+        >>> sorted(family.getWidths())
         [5]
         >>> family = getFamily('Roboto')
-        >>> family.getWidths().keys()
+        >>> sorted(family.getWidths())
         [5]
         """
         widthClasses = {}
@@ -298,6 +337,8 @@ class Family:
     def getRomanFonts(self):
         """Answer the dictionary {romanFontPath: font, ...]}
 
+        """
+        """
         >>> family = getFamily('Bungee')
         >>> len(family.getRomanFonts())
         5
@@ -314,6 +355,8 @@ class Family:
     def getItalicFonts(self):
         """Answer the dictionary {italicFontPath: font, ...]}
 
+        """
+        """
         >>> family = getFamily('Bungee')
         >>> len(family.getItalicFonts())
         0
@@ -332,14 +375,15 @@ class Family:
         Otherwise answer the font that has weight/width closest to (400, 5) and angle is closest to 0.
         Default is to find the roman. The italic is optional to find the regular italic, if it exists.
 
-        >>> from pagebot.toolbox.transformer import path2FontName
-        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
-        >>> font = family.findRegularFont()
+
         """
 
         """
+        >>> from pagebot.toolbox.transformer import path2FontName
+        >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> font = family.findRegularFont()
         >>> font.info.styleName # We got the most "default" font of the family
-        u'Regular'
+        'Regular'
         TODO: Get more docTest like these to work
         >>> path2FontName(font.path)
         'Roboto-Regular'
@@ -365,14 +409,16 @@ class Family:
         In case there is one or more fonts in the family then there always is a closest match.
         If the family is empty, None is anwere.
 
+
+        """
+        """
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        >>> family
         >>> len(family)
         38
         >>> family.findFont(weight='Medium')
         <Font Roboto-Medium>
 
-        """
-        """
         TODO: Better finding by family parameters
         >>> family.findFont(weight='Medium', italic=True)
         <Font Roboto-MediumItalic>
