@@ -56,6 +56,7 @@ class FontInfo:
         self.opticalSize = None
         self.location = None
         self.varStyleName = None
+        self.installedName = None # Storage for the instaleld (menu) name, e.g. DrawBotContext.installFont(path)
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None
@@ -69,7 +70,19 @@ class FontInfo:
 
     @cached_property
     def fullName(self):
+        """Answer the full name of the font. Construct it from family name and style name
+        if there is no full name defined.
+
+        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.objects.font import getFont
+        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> font = getFont(path)
+        >>> font.info.fullName
+        'Roboto Black'
+        """
         fullName = self._getNameTableEntry(4)
+        if not fullName:
+            fullName = '%s %s' % (self.familyName, self.styleName)
         return fullName
 
     def _get_familyName(self):

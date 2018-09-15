@@ -22,7 +22,7 @@ from pagebot.toolbox.transformer import path2FamilyName
 import traceback
 
 FAMILY_PATHS = {} # Cached family name --> [fontPath, fontPath, ...]
-FAMILIES = {}
+FAMILIES = {} # Cached family name --> Family instance
 
 def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
     """Construct a dictionary of familyName-->[fontPath, fontPath, ...]. If
@@ -61,43 +61,25 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
 def getFamily(familyName, useFontInfo=True, useFileName=True):
     """Create a new Family instance and fill it with available fonts that fit the name.
 
-<<<<<<< HEAD
     >>> getFamily('Roboto')
     <PageBot Family Roboto (38 fonts)>
     >>> getFamily('Bungee')
     <PageBot Family Bungee (5 fonts)>
     """
-    global getFamilies
-    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName)
     if familyName in FAMILIES:
         return FAMILIES[familyName] # Answer family is there is a cached on with this name.
+    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName)
     if familyName in familyPaths:
         family = Family(familyName, paths=familyPaths[familyName])
         FAMILIES[familyName] = family # Cache the family
         return family
-=======
-    >>> f = getFamily('Roboto')
-    >>> p = getFamilyPaths()['Roboto']
-    """
-    familyPaths = getFamilyPaths(useFontInfo=useFontInfo, useFileName=useFileName).get(familyName)
-    #print(familyPaths)
-
-    if familyName in familyPaths:
-        return Family(familyName, paths=familyPaths[familyName].values())
-
->>>>>>> origin/master
     return None
 
 def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answer the family that best matches the pattern.
 
-<<<<<<< HEAD
     >>> findFamily('Bungee')
     
-=======
-    >>> #findFamily('Bungee')
-
->>>>>>> origin/master
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
@@ -207,12 +189,11 @@ class Family:
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
-        >>> families = getFamilies()
+        >>> familyPaths = getFamilyPaths()
         >>> family = newFamily('MyOtherFamily')
         >>> family.addFonts(path)
         >>> len(family)
         1
-        >>> del families[family.name]
         """
         if isinstance(fontsOrPaths, dict):
             fontsOrPaths = fontsOrPaths.values()
@@ -236,7 +217,6 @@ class Family:
         True
         >>> len(family)
         1
-        >>> del families[family.name]
         """
         font = None
         if isinstance(fontOrPath, self.FONT_CLASS):

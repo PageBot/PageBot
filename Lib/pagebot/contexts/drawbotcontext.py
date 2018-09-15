@@ -586,9 +586,9 @@ class DrawBotContext(BaseContext):
         """Answer a list of all fonts (name or path) that are installed in the OS.
 
         >>> from pagebot.contexts.platform import getContext
-        >>> context = getContext()
+        >>> context = getContext()        
         >>> installed = context.installedFonts()
-        >>> installed
+        >>> installed # No fonts installed?
         []
         """
         if isinstance(patterns, str): # In case it is a string, convert to a list
@@ -605,10 +605,26 @@ class DrawBotContext(BaseContext):
         return fontNames
 
     def installFont(self, fontOrName):
+        u"""Install the font in the context. fontOrName can be a Font instance
+        (in which case the path is used) or a full font path.
+
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.contexts.platform import getContext
+        >>> context = getContext()        
+        >>> installed = context.installedFonts()
+        >>> installed # No fonts installed?
+        []
+        >>> font = findFont('Roboto-Regular')
+        >>> context.installFont(font)
+        >>> context.installedFonts()
+
+        >>> context.installedFonts()
+        """
         if hasattr(fontOrName, 'path'):
-            fontOrName = fontOrName.path
+            fontOrName.info.installedName = self.b.installFont(fontOrName.path)
+            return fontOrName.info.installedName
         return self.b.installFont(fontOrName)
-        
+
     def unInstallFont(self, fontOrName):
         if hasattr(fontOrName, 'path'):
             fontOrName = fontOrName.path
