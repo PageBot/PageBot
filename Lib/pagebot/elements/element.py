@@ -1345,6 +1345,20 @@ class Element:
                 x += cw + gw # Next column start position.
         return gridColumns
 
+    def _get_cw(self):
+        """Property to access the column width self.css['cw'] style attribute."""
+        return self.css('cw')
+    def _set_cw(self, cw):
+        self.style['cw'] = cw
+    cw = property(_get_cw, _set_cw)
+
+    def _get_ch(self):
+        """Property to access the column height self.css['ch'] style attribute."""
+        return self.css('ch')
+    def _set_ch(self, ch):
+        self.style['ch'] = ch
+    ch = property(_get_ch, _set_ch)
+
     def getGridRows(self):
         """Answer the constructed sequence of [(columnX, columnW), ...] in the
         block of the element.  Note that this is different from the gridX
@@ -4478,7 +4492,7 @@ class Element:
         if col in range(len(gridColumns)):
             self.left = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
             return True
-        return False # row is not in range of gridColumns
+        return False # Row is not in range of available gridColumns
 
     def right2Col(self, col):
         """Move right of the element to col index position."""
@@ -4486,9 +4500,12 @@ class Element:
         if col in range(len(gridColumns)):
             self.right = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
             return True
-        return False # row is not in range of gridColumns
+        return False # Row is not in range of available gridColumns
 
     def fit2ColSpan(self, col, colSpan):
+        """Fit the width of self to colSpan (can run over several columns),
+        starting at column index col.
+        """
         gridColumns = self.getGridColumns()
         indices = range(len(gridColumns))
         if col in indices and col + colSpan in indices:

@@ -551,16 +551,19 @@ class DrawBotContext(BaseContext):
         by installing it (again). Answers None if the font cannot be installed
         or if the path does not exists.
 
+        >>> import os
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> context = DrawBotContext()
-        >>> context.fontPath2FontName('Aaa.ttf') is None # Dow not exist
+        >>> context.fontPath2FontName('Aaa.ttf') is None # Does not exist
         True
         >>> path = TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf'
+        >>> os.path.exists(path)
+        True
         >>> context.fontPath2FontName(path)
         'Amstelvar-Roman-VF.ttf'
         """
         if os.path.exists(fontPath):
-            return self.b.installFont(fontPath)
+            return self.b.font(fontPath)
         return None
 
     def fontName2FontPath(self, fontName):
@@ -577,7 +580,7 @@ class DrawBotContext(BaseContext):
             url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
             return url.path()
         return None
-
+        
     def listOpenTypeFeatures(self, fontName):
         """Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)

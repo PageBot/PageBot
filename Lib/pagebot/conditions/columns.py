@@ -34,7 +34,29 @@ class RowCondition(Condition):
     	self.rowSpan = rowSpan
 
 class Left2Col(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col.
+
+	>>> from pagebot.elements import Element
+	>>> from pagebot.constants import mm
+	>>> C, G, PAD = mm(50), mm(5), mm(20) # Column width, gutter and element paddig
+	>>> gridX = [(C, G), (C, G), (C, G), (C, G), (C, G)] # Create the column grid
+	>>> W = len(gridX) * (C + G) + 2 * PAD
+	>>> e1 = Element(w=W, h=500, gridX=gridX, padding=PAD)
+	>>> e2 = Element(parent=e1, conditions=[Left2Col(1)])
+	>>> e2.x # Original default position
+	0pt
+	>>> result = e1.solve() # Solve the conditions
+	>>> e2.x # Solved position
+	75mm
+	>>> e2.conditions = [Left2Col(2)] # Change condition and solve again
+	>>> result = e1.solve()
+	>>> e2.x # Solved position
+	130mm
+	>>> e2.conditions = [Left2Col(3)] # Change condition and solve again
+	>>> result = e1.solve()
+	>>> e2.x # Solved position
+	185mm
+	"""
 	def test(self, e):
 		return e.isLeftOnCol(self.col, self.tolerance)
 
@@ -43,7 +65,29 @@ class Left2Col(ColCondition):
 			self.addScore(e.left2Col(self.col), e, score)
 
 class Right2Col(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col.
+
+	>>> from pagebot.elements import Element
+	>>> from pagebot.constants import mm
+	>>> C, G, PAD = mm(50), mm(5), mm(20) # Column width, gutter and element paddig
+	>>> gridX = [(C, G), (C, G), (C, G), (C, G), (C, G)] # Create the column grid
+	>>> W = len(gridX) * (C + G) + 2 * PAD
+	>>> e1 = Element(w=W, h=500, gridX=gridX, padding=PAD)
+	>>> e2 = Element(parent=e1, conditions=[Right2Col(2)])
+	>>> e2.x # Original default position
+	0pt
+	>>> result = e1.solve() # Solve the conditions
+	>>> e2.x # Solved position
+	75mm
+	>>> e2.conditions = [Right2Col(3)] # Change condition and solve again
+	>>> result = e1.solve()
+	>>> e2.x # Solved position
+	130mm
+	>>> e2.conditions = [Right2Col(4)] # Change condition and solve again
+	>>> result = e1.solve()
+	>>> e2.x # Solved position
+	185mm
+	"""
 	def test(self, e):
 		return e.isRightOnCol(self.col, self.tolerance)
 
@@ -52,13 +96,12 @@ class Right2Col(ColCondition):
 			self.addScore(e.right2Col(self.col), e, score)
 
 class Fit2ColSpan(ColCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	u"""Fit the width of the element to the col spans self.colSpan starting at self.col."""
 	def test(self, e):
 		return e.isLeftOnCol(self.col, self.tolerance) and e.isFitOnColSpan(self.col, self.colSpan, self.tolerance)
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails. 
-			self.addScore(e.left2Col(self.col), e, score)
 			self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
@@ -88,4 +131,10 @@ class Fit2RowSpan(RowCondition):
 		if not self.test(e): # Only try to solve if condition test fails. 
 			self.addScore(e.top2Row(self.row), e, score)
 			self.addScore(e.fit2RowSpan(self.row, self.rowSpan), e, score)
+
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
 

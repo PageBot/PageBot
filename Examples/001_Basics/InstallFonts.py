@@ -5,7 +5,7 @@ context = getContext()
 #print(installed) # No fonts installed?
 font = findFont('Roboto-Regular')
 path = '/Library/Fonts/Georgia.ttf'
-context.installFont(font.path)
+context.font(font.path)
 #print(context.installedFonts())
 
 bs = context.newString('aaa', style=dict(font=font.path, fontSize=100))

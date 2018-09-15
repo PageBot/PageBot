@@ -56,7 +56,7 @@ class FontInfo:
         self.opticalSize = None
         self.location = None
         self.varStyleName = None
-        self.installedName = None # Storage for the instaleld (menu) name, e.g. DrawBotContext.installFont(path)
+        self.installedName = None # Storage for the instaleld (menu) name, e.g. DrawBotContext.font(path)
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None
