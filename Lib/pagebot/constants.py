@@ -314,220 +314,225 @@ LANGUAGE_AZ     = 'az'      # Azeri (Latin)
 LANGUAGE_AZ_AZ  = 'az-AZ'   # Azeri (Latin/Cyrillic) (Azerbaijan)
 LANGUAGE_BE     = 'be'      # Belarusian
 
-""" TO BE FORMATTED AS ABOVE
-be-BY   Belarusian (Belarus)
-bg  Bulgarian
-bg-BG   Bulgarian (Bulgaria)
-bs-BA   Bosnian (Bosnia and Herzegovina)
-ca  Catalan
-ca-ES   Catalan (Spain)
-cs  Czech
-cs-CZ   Czech (Czech Republic)
-cy  Welsh
-cy-GB   Welsh (United Kingdom)
-da  Danish
-da-DK   Danish (Denmark)
-de  German
-de-AT   German (Austria)
-de-CH   German (Switzerland)
-de-DE   German (Germany)
-de-LI   German (Liechtenstein)
-de-LU   German (Luxembourg)
-dv  Divehi
-dv-MV   Divehi (Maldives)
-el  Greek
-el-GR   Greek (Greece)
-en-AU   English (Australia)
-en-BZ   English (Belize)
-en-CA   English (Canada)
-en-CB   English (Caribbean)
-en-GB   English (United Kingdom)
-en-IE   English (Ireland)
-en-JM   English (Jamaica)
-en-NZ   English (New Zealand)
-en-PH   English (Republic of the Philippines)
-en-TT   English (Trinidad and Tobago)
-en-US   English (United States)
-en-ZA   English (South Africa)
-en-ZW   English (Zimbabwe)
-eo  Esperanto
-es  Spanish
-es-AR   Spanish (Argentina)
-es-BO   Spanish (Bolivia)
-es-CL   Spanish (Chile)
-es-CO   Spanish (Colombia)
-es-CR   Spanish (Costa Rica)
-es-DO   Spanish (Dominican Republic)
-es-EC   Spanish (Ecuador)
-es-ES   Spanish (Castilian)
-es-ES   Spanish (Spain)
-es-GT   Spanish (Guatemala)
-es-HN   Spanish (Honduras)
-es-MX   Spanish (Mexico)
-es-NI   Spanish (Nicaragua)
-es-PA   Spanish (Panama)
-es-PE   Spanish (Peru)
-es-PR   Spanish (Puerto Rico)
-es-PY   Spanish (Paraguay)
-es-SV   Spanish (El Salvador)
-es-UY   Spanish (Uruguay)
-es-VE   Spanish (Venezuela)
-et  Estonian
-et-EE   Estonian (Estonia)
-eu  Basque
-eu-ES   Basque (Spain)
-fa  Farsi
-fa-IR   Farsi (Iran)
-fi  Finnish
-fi-FI   Finnish (Finland)
-fo  Faroese
-fo-FO   Faroese (Faroe Islands)
-fr  French
-fr-BE   French (Belgium)
-fr-CA   French (Canada)
-fr-CH   French (Switzerland)
-fr-FR   French (France)
-fr-LU   French (Luxembourg)
-fr-MC   French (Principality of Monaco)
-gl  Galician
-gl-ES   Galician (Spain)
-gu  Gujarati
-gu-IN   Gujarati (India)
-he  Hebrew
-he-IL   Hebrew (Israel)
-hi  Hindi
-hi-IN   Hindi (India)
-hr  Croatian
-hr-BA   Croatian (Bosnia and Herzegovina)
-hr-HR   Croatian (Croatia)
-hu  Hungarian
-hu-HU   Hungarian (Hungary)
-hy  Armenian
-hy-AM   Armenian (Armenia)
-id  Indonesian
-id-ID   Indonesian (Indonesia)
-is  Icelandic
-is-IS   Icelandic (Iceland)
-it  Italian
-it-CH   Italian (Switzerland)
-it-IT   Italian (Italy)
-ja  Japanese
-ja-JP   Japanese (Japan)
-ka  Georgian
-ka-GE   Georgian (Georgia)
-kk  Kazakh
-kk-KZ   Kazakh (Kazakhstan)
-kn  Kannada
-kn-IN   Kannada (India)
-ko  Korean
-ko-KR   Korean (Korea)
-kok Konkani
-kok-IN  Konkani (India)
-ky  Kyrgyz
-ky-KG   Kyrgyz (Kyrgyzstan)
-lt  Lithuanian
-lt-LT   Lithuanian (Lithuania)
-lv  Latvian
-lv-LV   Latvian (Latvia)
-mi  Maori
-mi-NZ   Maori (New Zealand)
-mk  FYRO Macedonian
-mk-MK   FYRO Macedonian (Former Yugoslav Republic of Macedonia)
-mn  Mongolian
-mn-MN   Mongolian (Mongolia)
-mr  Marathi
-mr-IN   Marathi (India)
-ms  Malay
-ms-BN   Malay (Brunei Darussalam)
-ms-MY   Malay (Malaysia)
-mt  Maltese
-mt-MT   Maltese (Malta)
-nb  Norwegian (Bokm?l)
-nb-NO   Norwegian (Bokm?l) (Norway)
-nn-NO   Norwegian (Nynorsk) (Norway)
-ns  Northern Sotho
-ns-ZA   Northern Sotho (South Africa)
-pa  Punjabi
-pa-IN   Punjabi (India)
-pl  Polish
-pl-PL   Polish (Poland)
-ps  Pashto
-ps-AR   Pashto (Afghanistan)
-pt  Portuguese
-pt-BR   Portuguese (Brazil)
-pt-PT   Portuguese (Portugal)
-qu  Quechua
-qu-BO   Quechua (Bolivia)
-qu-EC   Quechua (Ecuador)
-qu-PE   Quechua (Peru)
-ro  Romanian
-ro-RO   Romanian (Romania)
-ru  Russian
-ru-RU   Russian (Russia)
-sa  Sanskrit
-sa-IN   Sanskrit (India)
-se  Sami (Northern)
-se-FI   Sami (Northern) (Finland)
-se-FI   Sami (Skolt) (Finland)
-se-FI   Sami (Inari) (Finland)
-se-NO   Sami (Northern) (Norway)
-se-NO   Sami (Lule) (Norway)
-se-NO   Sami (Southern) (Norway)
-se-SE   Sami (Northern) (Sweden)
-se-SE   Sami (Lule) (Sweden)
-se-SE   Sami (Southern) (Sweden)
-sk  Slovak
-sk-SK   Slovak (Slovakia)
-sl  Slovenian
-sl-SI   Slovenian (Slovenia)
-sq  Albanian
-sq-AL   Albanian (Albania)
-sr-BA   Serbian (Latin) (Bosnia and Herzegovina)
-sr-BA   Serbian (Cyrillic) (Bosnia and Herzegovina)
-sr-SP   Serbian (Latin) (Serbia and Montenegro)
-sr-SP   Serbian (Cyrillic) (Serbia and Montenegro)
-sv  Swedish
-sv-FI   Swedish (Finland)
-sv-SE   Swedish (Sweden)
-sw  Swahili
-sw-KE   Swahili (Kenya)
-syr Syriac
-syr-SY  Syriac (Syria)
-ta  Tamil
-ta-IN   Tamil (India)
-te  Telugu
-te-IN   Telugu (India)
-th  Thai
-th-TH   Thai (Thailand)
-tl  Tagalog
-tl-PH   Tagalog (Philippines)
-tn  Tswana
-tn-ZA   Tswana (South Africa)
-tr  Turkish
-tr-TR   Turkish (Turkey)
-tt  Tatar
-tt-RU   Tatar (Russia)
-ts  Tsonga
-uk  Ukrainian
-uk-UA   Ukrainian (Ukraine)
-ur  Urdu
-ur-PK   Urdu (Islamic Republic of Pakistan)
-uz  Uzbek (Latin)
-uz-UZ   Uzbek (Latin) (Uzbekistan)
-uz-UZ   Uzbek (Cyrillic) (Uzbekistan)
-vi  Vietnamese
-vi-VN   Vietnamese (Viet Nam)
-xh  Xhosa
-xh-ZA   Xhosa (South Africa)
-zh  Chinese
-zh-CN   Chinese (S)
-zh-HK   Chinese (Hong Kong)
-zh-MO   Chinese (Macau)
-zh-SG   Chinese (Singapore)
-zh-TW   Chinese (T)
-zu  Zulu
-zu-ZA   Zulu (South Africa)
-"""
+# UPDATE
+LANGUAGE_BE_BY  = 'be-BY'   # Belarusian (Belarus)
+LANGUAGE_BG     = 'bg'      # Bulgarian
+LANGUAGE_BG_BG  = 'bg-BG'   # Bulgarian (Bulgaria)
+LANGUAGE_BS_BA  = 'bs-BA'   # Bosnian (Bosnia and Herzegovina)
+LANGUAGE_CA     = 'ca'      # Catalan
+LANGUAGE_CA_ES  = 'ca-ES'   # Catalan (Spain)
+LANGUAGE_CS     = 'cs'      # Czech
+LANGUAGE_CS_CZ  = 'cs-CZ'   # Czech (Czech Republic)
+LANGUAGE_CY     = 'cy'      # Welsh
+LANGUAGE_CY_GB  = 'cy-GB'   # Welsh (United Kingdom)
+LANGUAGE_DA     = 'da'      # Danish
+LANGUAGE_DA_DK  = 'da-DK'   # Danish (Denmark)
+LANGUAGE_DE     = 'de'      # German
+LANGUAGE_DA_AT  = 'de-AT'   # German (Austria)
+LANGUAGE_DE_CH  = 'de-CH'   # German (Switzerland)
+LANGUAGE_DE_DE  = 'de-DE'   # German (Germany)
+LANGUAGE_DE_LI  = 'de-LI'   # German (Liechtenstein)
+LANGUAGE_DE_LU  = 'de-LU'   # German (Luxembourg)
+LANGUAGE_DV     = 'dv'      # Divehi
+LANGUAGE_DV_MV  = 'dv-MV'   # Divehi (Maldives)
+LANGUAGE_EL     = 'el'      # Greek
+LANGUAGE_EL_GR  = 'el-GR'   # Greek (Greece)
+LANGUAGE_EN_AU  = 'en-AU'   # English (Australia)
+LANGUAGE_EN_BZ  = 'en-BZ'   # English (Belize)
+LANGUAGE_EN_CA  = 'en-CA'   # English (Canada)
+LANGUAGE_EN_CB  = 'en-CB'   # English (Caribbean)
+LANGUAGE_EN_GB  = 'en-GB'   # English (United Kingdom)
+LANGUAGE_EN_IE  = 'en-IE'   # English (Ireland)
+LANGUAGE_EN_JM  = 'en-JM'   # English (Jamaica)
+LANGUAGE_EN_NZ  = 'en-NZ'   # English (New Zealand)
+LANGUAGE_EN_PH  = 'en-PH'   # English (Republic of the Philippines)
+LANGUAGE_EN_TT  = 'en-TT'   # English (Trinidad and Tobago)
+LANGUAGE_EN_US  = 'en-US'   # English (United States)
+LANGUAGE_EN_ZA  = 'en-ZA'   # English (South Africa)
+LANGUAGE_EN_ZW  = 'en-ZW'   # English (Zimbabwe)
+LANGUAGE_EO     = 'eo'      # Esperanto
+LANGUAGE_ES     = 'es'      # Spanish
+LANGUAGE_ES_AR  = 'es-AR'   # Spanish (Argentina)
+LANGUAGE_ES_BO  = 'es-BO'   # Spanish (Bolivia)
+LANGUAGE_ES_CL  = 'es-CL'   # Spanish (Chile)
+LANGUAGE_ES_CO  = 'es-CO'   # Spanish (Colombia)
+LANGUAGE_ES_CR  = 'es-CR'   # Spanish (Costa Rica)
+LANGUAGE_ES_DO  = 'es-DO'   # Spanish (Dominican Republic)
+LANGUAGE_ES_EC  = 'es-EC'   # Spanish (Ecuador)
+# Same code for Spanish Castilian and Spain
+LANGUAGE_ES_ES  = 'es-ES'   # Spanish (Castilian)
+LANGUAGE_ES_ES  = 'es-ES'   # Spanish (Spain)
+LANGUAGE_ES_GT  = 'es-GT'   # Spanish (Guatemala)
+LANGUAGE_ES_HN  = 'es-HN'   # Spanish (Honduras)
+LANGUAGE_ES_MX  = 'es-MX'   # Spanish (Mexico)
+LANGUAGE_ES_NI  = 'es-NI'   # Spanish (Nicaragua)
+LANGUAGE_ES_PA  = 'es-PA'   # Spanish (Panama)
+LANGUAGE_ES_PE  = 'es-PE'   # Spanish (Peru)
+LANGUAGE_ES_PR  = 'es-PR'   # Spanish (Puerto Rico)
+LANGUAGE_ES_PY  = 'es-PY'   # Spanish (Paraguay)
+LANGUAGE_ES_SV  = 'es-SV'   # Spanish (El Salvador)
+LANGUAGE_ES_UY  = 'es-UY'   # Spanish (Uruguay)
+LANGUAGE_ES_VE  = 'es-VE'   # Spanish (Venezuela)
+LANGUAGE_ET     = 'et'      # Estonian
+LANGUAGE_ET_EE  = 'et-EE'   # Estonian (Estonia)
+LANGUAGE_EU     = 'eu'      # Basque
+LANGUAGE_EU_ES  = 'eu-ES'   # Basque (Spain)
+LANGUAGE_FA     = 'fa'      # Farsi
+LANGUAGE_FA_IR  = 'fa-IR'   # Farsi (Iran)
+LANGUAGE_FI     = 'fi'      # Finnish
+LANGUAGE_FI_FI  = 'fi-FI'   # Finnish (Finland)
+LANGUAGE_FO     = 'fo'      # Faroese
+LANGUAGE_FO_FO  = 'fo-FO'   # Faroese (Faroe Islands)
+LANGUAGE_FR     = 'fr'      # French
+LANGUAGE_FR_BE  = 'fr-BE'   # French (Belgium)
+LANGUAGE_FR_CA  = 'fr-CA'   # French (Canada)
+LANGUAGE_FR_CH  = 'fr-CH'   # French (Switzerland)
+LANGUAGE_FR_FR  = 'fr-FR'   # French (France)
+LANGUAGE_FR_LU  = 'fr-LU'   # French (Luxembourg)
+LANGUAGE_FR_MC  = 'fr-MC'   # French (Principality of Monaco)
+LANGUAGE_GL     = 'gl'      # Galician
+LANGUAGE_GL_ES  = 'gl-ES'   # Galician (Spain)
+LANGUAGE_GU     = 'gu'      # Gujarati
+LANGUAGE_GU_IN  = 'gu-IN'   # Gujarati (India)
+LANGUAGE_HE     = 'he'      # Hebrew
+LANGUAGE_HE_IL  = 'he-IL'   # Hebrew (Israel)
+LANGUAGE_HI     = 'hi'      # Hindi
+LANGUAGE_HI_IN  = 'hi-IN'   # Hindi (India)
+LANGUAGE_HR     = 'hr'      # Croatian
+LANGUAGE_HR_BA  = 'hr-BA'   # Croatian (Bosnia and Herzegovina)
+LANGUAGE_HR_HR  = 'hr-HR'   # Croatian (Croatia)
+LANGUAGE_HU     = 'hu'      # Hungarian
+LANGUAGE_HU_HU  = 'hu-HU'   # Hungarian (Hungary)
+LANGUAGE_HY     = 'hy'      # Armenian
+LANGUAGE_HY_AM  = 'hy-AM'   # Armenian (Armenia)
+LANGUAGE_ID     = 'id'      # Indonesian
+LANGUAGE_ID_ID  = 'id-ID'   # Indonesian (Indonesia)
+LANGUAGE_IS     = 'is'      # Icelandic
+LANGUAGE_IS_IS  = 'is-IS'   # Icelandic (Iceland)
+LANGUAGE_IT     = 'it'      # Italian
+LANGUAGE_IT_CH  = 'it-CH'   # Italian (Switzerland)
+LANGUAGE_IT_IT  = 'it-IT'   # Italian (Italy)
+LANGUAGE_JA     = 'ja'      # Japanese
+LANGUAGE_JA_JP  = 'ja-JP'   # Japanese (Japan)
+LANGUAGE_KA     = 'ka'      # Georgian
+LANGUAGE_KA_GE  = 'ka-GE'   # Georgian (Georgia)
+LANGUAGE_KK     = 'kk'      # Kazakh
+LANGUAGE_KK_KZ  = 'kk-KZ'   # Kazakh (Kazakhstan)
+LANGUAGE_KN     = 'kn'      # Kannada
+LANGUAGE_KN_IN  = 'kn-IN'   # Kannada (India)
+LANGUAGE_KO     = 'ko'      # Korean
+LANGUAGE_KO_KR  = 'ko-KR'   # Korean (Korea)
+LANGUAGE_KOK    = 'kok'     # Konkani
+LANGUAGE_KOK_IN = 'kok-IN'  # Konkani (India)
+LANGUAGE_KY     = 'ky'      # Kyrgyz
+LANGUAGE_KY_KG  = 'ky-KG'   # Kyrgyz (Kyrgyzstan)
+LANGUAGE_LT     = 'lt'      # Lithuanian
+LANGUAGE_LT_LT  = 'lt-LT'   # Lithuanian (Lithuania)
+LANGUAGE_LV     = 'lv'      # Latvian
+LANGUAGE_LV_LV  = 'lv-LV'   # Latvian (Latvia)
+LANGUAGE_MI     = 'mi'      # Maori
+LANGUAGE_MI_NZ  = 'mi-NZ'   # Maori (New Zealand)
+LANGUAGE_MK     = 'mk'      # FYRO Macedonian
+LANGUAGE_MK_MK  = 'mk-MK'   # FYRO Macedonian (Former Yugoslav Republic of Macedonia)
+LANGUAGE_MN     = 'mn'      # Mongolian
+LANGUAGE_MN_MN  = 'mn-MN'   # Mongolian (Mongolia)
+LANGUAGE_MR     = 'mr'      # Marathi
+LANGUAGE_MR_IN  = 'mr-IN'   # Marathi (India)
+LANGUAGE_MS     = 'ms'      # Malay
+LANGUAGE_MS_BN  = 'ms-BN'   # Malay (Brunei Darussalam)
+LANGUAGE_MS_MY  = 'ms-MY'   # Malay (Malaysia)
+LANGUAGE_MT     = 'mt'      # Maltese
+LANGUAGE_MT_MT  = 'mt-MT'   # Maltese (Malta)
+# (Bokm?l)
+LANGUAGE_NB     = 'nb'      # Norwegian (Bokm?l)
+LANGUAGE_NB_NO  = 'nb-NO'   # Norwegian (Bokm?l) (Norway)
+LANGUAGE_NN_NO  = 'nn-NO'   # Norwegian (Nynorsk) (Norway)
+LANGUAGE_NS     = 'ns'      # Northern Sotho
+LANGUAGE_NS_ZA  = 'ns-ZA'   # Northern Sotho (South Africa)
+LANGUAGE_PA     = 'pa'      # Punjabi
+LANGUAGE_PA_IN  = 'pa-IN'   # Punjabi (India)
+LANGUAGE_PL     = 'pl'      # Polish
+LANGUAGE_PL_PL  = 'pl-PL'   # Polish (Poland)
+LANGUAGE_PS     = 'ps'      # Pashto
+LANGUAGE_PS_AR  = 'ps-AR'   # Pashto (Afghanistan)
+LANGUAGE_PT     = 'pt'      # Portuguese
+LANGUAGE_PT_BR  = 'pt-BR'   # Portuguese (Brazil)
+LANGUAGE_PT_PT  = 'pt-PT'   # Portuguese (Portugal)
+LANGUAGE_QU     = 'qu'      # Quechua
+LANGUAGE_QU_BO  = 'qu-BO'   # Quechua (Bolivia)
+LANGUAGE_QU_EC  = 'qu-EC'   # Quechua (Ecuador)
+LANGUAGE_QU_PE  = 'qu-PE'   # Quechua (Peru)
+LANGUAGE_RO     = 'ro'      # Romanian
+LANGUAGE_RO_RO  = 'ro-RO'   # Romanian (Romania)
+LANGUAGE_RU     = 'ru'      # Russian
+LANGUAGE_RU_RU  = 'ru-RU'   # Russian (Russia)
+LANGUAGE_SA     = 'sa'      # Sanskrit
+LANGUAGE_SA_IN  = 'sa-IN'   # Sanskrit (India)
+LANGUAGE_SE     = 'se'      # Sami (Northern)
+# Same Code se-FI se-NO se-SE
+LANGUAGE_SE_FI  = 'se-FI'   # Sami (Northern) (Finland)
+LANGUAGE_SE_FI  = 'se-FI'   # Sami (Skolt) (Finland)
+LANGUAGE_SE_FI  = 'se-FI'   # Sami (Inari) (Finland)
+LANGUAGE_SE_NO  = 'se-NO'   # Sami (Northern) (Norway)
+LANGUAGE_SE_NO  = 'se-NO'   # Sami (Lule) (Norway)
+LANGUAGE_SE_NO  = 'se-NO'   # Sami (Southern) (Norway)
+LANGUAGE_SE_SE  = 'se-SE'   # Sami (Northern) (Sweden)
+LANGUAGE_SE_SE  = 'se-SE'   # Sami (Lule) (Sweden)
+LANGUAGE_SE_SE  = 'se-SE'   # Sami (Southern) (Sweden)
+LANGUAGE_SK     = 'sk'      # Slovak
+LANGUAGE_SK_SK  = 'sk-SK'   # Slovak (Slovakia)
+LANGUAGE_SL     = 'sl'      # Slovenian
+LANGUAGE_SL_SI  = 'sl-SI'   # Slovenian (Slovenia)
+LANGUAGE_SQ     = 'sq'      # Albanian
+LANGUAGE_SQ_AL  = 'sq-AL'   # Albanian (Albania)
+# Same code sr-BA sr-SP
+LANGUAGE_SR_BA  = 'sr-BA'   # Serbian (Latin) (Bosnia and Herzegovina)
+LANGUAGE_SR_BA  = 'sr-BA'   # Serbian (Cyrillic) (Bosnia and Herzegovina)
+LANGUAGE_SR_SP  = 'sr-SP'   # Serbian (Latin) (Serbia and Montenegro)
+LANGUAGE_SR_SP  = 'sr-SP'   # Serbian (Cyrillic) (Serbia and Montenegro)
+LANGUAGE_SV     = 'sv'      # Swedish
+LANGUAGE_SV_FI  = 'sv-FI'   # Swedish (Finland)
+LANGUAGE_SV_SE  = 'sv-SE'   # Swedish (Sweden)
+LANGUAGE_SW     = 'sw'      # Swahili
+LANGUAGE_SW_KE  = 'sw-KE'   # Swahili (Kenya)
+LANGUAGE_SYR    = 'syr'     # Syriac
+LANGUAGE_SYR_SY = 'syr-SY'  # Syriac (Syria)
+LANGUAGE_TA     = 'ta'      # Tamil
+LANGUAGE_TA_IN  = 'ta-IN'   # Tamil (India)
+LANGUAGE_TE     = 'te'      # Telugu
+LANGUAGE_TE_IN  = 'te-IN'   # Telugu (India)
+LANGUAGE_TH     = 'th'      # Thai
+LANGUAGE_TH_TH  = 'th-TH'   # Thai (Thailand)
+LANGUAGE_TL     = 'tl'      # Tagalog
+LANGUAGE_TL_PH  = 'tl-PH'   # Tagalog (Philippines)
+LANGUAGE_TN     = 'tn'      # Tswana
+LANGUAGE_TN_ZA  = 'tn-ZA'   # Tswana (South Africa)
+LANGUAGE_TR     = 'tr'      # Turkish
+LANGUAGE_TR_TR  = 'tr-TR'   # Turkish (Turkey)
+LANGUAGE_TT     = 'tt'      # Tatar
+LANGUAGE_TT_RU  = 'tt-RU'   # Tatar (Russia)
+LANGUAGE_TS     = 'ts'      # Tsonga
+LANGUAGE_UK     = 'uk'      # Ukrainian
+LANGUAGE_UK_UA  = 'uk-UA'   # Ukrainian (Ukraine)
+LANGUAGE_UR     = 'ur'      # Urdu
+LANGUAGE_UR_PK  = 'ur-PK'   # Urdu (Islamic Republic of Pakistan)
+LANGUAGE_UZ     = 'uz'      # Uzbek (Latin)
+# Same code uz-UZ
+LANGUAGE_UZ_UZ  = 'uz-UZ'   # Uzbek (Latin) (Uzbekistan)
+LANGUAGE_UZ_UZ  = 'uz-UZ'   # Uzbek (Cyrillic) (Uzbekistan)
+LANGUAGE_VI     = 'vi'      # Vietnamese
+LANGUAGE_VI_VN  = 'vi-VN'   # Vietnamese (Viet Nam)
+LANGUAGE_XH     = 'xh'      # Xhosa
+LANGUAGE_XH_ZA  = 'xh-ZA'   # Xhosa (South Africa)
+LANGUAGE_ZH     = 'zh'      # Chinese
+LANGUAGE_ZH_CN  = 'zh-CN'   # Chinese (S)
+LANGUAGE_ZH_HK  = 'zh-HK'   # Chinese (Hong Kong)
+LANGUAGE_ZH_MO  = 'zh-MO'   # Chinese (Macau)
+LANGUAGE_ZH_SG  = 'zh-SG'   # Chinese (Singapore)
+LANGUAGE_ZH_TW  = 'zh-TW'   # Chinese (T)
+LANGUAGE_ZU     = 'zu'      # Zulu
+LANGUAGE_ZU_ZA  = 'zu-ZA'   # Zulu (South Africa)
+
 
 # Standard external urls for Javascript import and others.
 URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
