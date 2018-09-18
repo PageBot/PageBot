@@ -296,7 +296,8 @@ class PageView(BaseView):
             if path is not None:
                 s += ' | ' + path.split('/')[-1] # We're only interested in the file name.
             bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
-            self.context.text(bs, (self.pl + cmDistance, self.pb + e.h + cmSize - fontSize*2)) # Draw on top of page.
+            tw, th = bs.size
+            self.context.textBox(bs, (self.pl + cmDistance, self.pb + e.h + cmSize - fontSize*2, e.pw, th)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 

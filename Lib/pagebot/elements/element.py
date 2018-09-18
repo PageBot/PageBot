@@ -2187,7 +2187,7 @@ class Element:
         if line is None:
             line = ONLINE
         # Dash can be None
-        if not strokeWidth: # If 0, then answer None for the ficy
+        if not strokeWidth: # If 0, then answer an empty dict 
             return {}
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
  
