@@ -4125,7 +4125,7 @@ class Element:
         text boxes."""
         if score is None:
             score = Score()
-        if self.conditions: # Can be None or empty
+        if self.conditions: # Can be None or empty list
             for condition in self.conditions: # Skip in case there are no conditions in the style.
                 condition.solve(self, score)
         for e in self.elements: # Also works if showing element is not a container.

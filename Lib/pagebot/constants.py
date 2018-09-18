@@ -544,6 +544,9 @@ DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
 
+# Default element names
+DEFAULT_GALLEY_NAME = 'Galley' # Used for page.galley default content storage while no layou defined.
+
 # Types of grid set can be used in the view.showGrid set.
 GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
 GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
@@ -562,8 +565,8 @@ BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left
 BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
 BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
-BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, BASE_Y_RIGHT,
-   BASE_INSIDE}
+BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT, 
+    BASE_Y_RIGHT, BASE_INSIDE}
 BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of origin (for TextBox)
 BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
 # Types of alignments
@@ -571,7 +574,8 @@ XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
-INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 'textFill', 'location')
+INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth', 
+    'textFill', 'location')
 
 FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'

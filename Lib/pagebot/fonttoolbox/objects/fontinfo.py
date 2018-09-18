@@ -68,8 +68,7 @@ class FontInfo:
         else:
             return None
 
-    @cached_property
-    def fullName(self):
+    def _get_fullName(self):
         """Answer the full name of the font. Construct it from family name and style name
         if there is no full name defined.
 
@@ -84,6 +83,7 @@ class FontInfo:
         if not fullName:
             fullName = '%s %s' % (self.familyName, self.styleName)
         return fullName
+    fullName = property(_get_fullName)
 
     def _get_familyName(self):
         """Should be this, but often wrong: return self._getNameTableEntry(1)

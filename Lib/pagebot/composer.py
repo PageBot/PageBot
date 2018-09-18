@@ -14,7 +14,7 @@
 #
 #     composer.py
 #
-from pagebot.elements import newTextBox
+from pagebot.elements import newTextBox, Galley
 from pagebot.elements import CodeBlock
 
 class Composer:
@@ -57,7 +57,7 @@ class Composer:
     def __init__(self, doc):
         self.doc = doc
 
-    def compose(self, galley, targets=None, page=None):
+    def compose(self, galley=None, targets=None, page=None):
         u"""Compose the galley element, based on code blocks in the gally.
         Later we'll add more art-direction instructions here.
         Targets contains the resources for the composition, such as the doc, current page, current box and other 
@@ -75,6 +75,9 @@ class Composer:
             targets['errors'] = []
         errors = targets['errors']
 
+        if galley is None:
+            galley = page.galley
+            
         for e in galley.elements:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)

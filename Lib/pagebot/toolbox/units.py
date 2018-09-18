@@ -624,7 +624,7 @@ class Unit:
 
     def _get_rounded(self):
         """Answer a new instance of self with rounded value.
-        Note that we are rounding the unclipped self.v here, not the rendered result.
+        Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
         >>> u, u.v, u.rv # Stored as float value
@@ -645,7 +645,7 @@ class Unit:
         return '%s%s' % (asFormatted(v), self.name.lower())
 
     def _get_pt(self):
-        """Answer the clipped value in *pt*. Base value for absolute unit
+        """Answer the value in *pt*. Base value for absolute unit
         values is ignored.
 
         >>> p(1).pt
@@ -667,7 +667,7 @@ class Unit:
     pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
-        """Answers the clipped value in *px*. Base value for absolute unit values
+        """Answers the value in *px*. Base value for absolute unit values
         is ignored.
 
         >>> p(1).px
@@ -683,7 +683,7 @@ class Unit:
     px = property(_get_px)
 
     def _get_inch(self):
-        u"""Answer the clipped rendered value, translated to inch via pt.
+        u"""Answer the rendered value, translated to inch via pt.
 
         >>> u = pt(72)
         >>> u.pt, u.inch
@@ -695,7 +695,7 @@ class Unit:
     inch = property(_get_inch)
 
     def _get_p(self):
-        u"""Answer the clipped rendered value, translated to Pica via pt.
+        u"""Answer the rendered value, translated to Pica via pt.
 
         >>> 2 * pt(12).p # Rendered and cast to picas
         2
@@ -706,7 +706,7 @@ class Unit:
     p = property(_get_p)
 
     def _get_cm(self):
-        u"""Answer the clipped rendered value, translated to cm via pt.
+        u"""Answer the rendered value, translated to cm via pt.
 
         >>> int(round(pt(595).cm)) # Rendered and cast to cm
         21
@@ -719,7 +719,7 @@ class Unit:
     cm = property(_get_cm)
 
     def _get_mm(self):
-        u"""Answer the clipped rendered value, translated to mm via pt.
+        u"""Answer the rendered value, translated to mm via pt.
 
         >>> int(round(4 * pt(12).mm)) # Rendered and cast to picas
         17
@@ -998,7 +998,7 @@ class Unit:
         if isinstance(u, (int, float)): # One is a scalar, just add
             u0.v += u
         elif u0.__class__ == u.__class__:
-            u0.v += u.v # Same class, just add, no clipping
+            u0.v += u.v # Same class, just add.
         elif isUnit(u):
             u0.pt += u.pt # Adding units, calculate via points
         else:
@@ -1021,7 +1021,7 @@ class Unit:
         if isinstance(u, (int, float)): # One is a scalar, just subtract
             u0.v -= u
         elif u0.__class__ == u.__class__:
-            u0.v -= u.v # Same class, just subtract, no clipping
+            u0.v -= u.v # Same class, just subtract.
         elif isUnit(u):
             u0.pt -= u.pt # Subtracting units, calculate via points
         else:
@@ -1051,7 +1051,7 @@ class Unit:
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just divide
             assert u, ('Zero division "%s/%s"' % (u0, u))
-            u0.v /= u # Just divide, no clipping
+            u0.v /= u # Just divide.
         elif isUnit(u):
             upt = u.pt
             assert upt, ('Zero division "%s/%s"' % (u0, u))
@@ -1084,26 +1084,25 @@ class Unit:
         ValueError.
 
         >>> u = units('60pt')
-        >>> u / 2 # Create a new Unit instance of the same type
-        30pt
-        >>> asFormatted(u / mm(1.5)) # Unit / Unit create ratio float number
-        '14.11'
-        >>> u / units('120pt') # Unit / Unit create a float ratio number.
-        0.5
+        >>> u * 2 # Create a new Unit instance of the same type
+        120pt
         >>> 10 * mm(10) # Thanks to implementation of __rmul__ the reverse also works.
         100mm
+        >>> pt(100) * 0.8
+        80pt
         """
-        u0 = copy(self) # Keep values of self
+        u0 = copy(self) # Keep original values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
-            u0.v *= u # Just multiply, no clipping
+            u0.v *= u # Just multiply
         elif isUnit(u) and u.isEm:
             u0.base = u.r
             u0 = u0.r
         else:
-            raise ValueError('Cannot multiply "%s" by "%s"' % (u0, u))
+            raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (u0, u, u.__class__.__name__))
         return u0
 
-    __rmul__ = __mul__
+    # Order of multiplication doesn't matter, except for the resulting unit type.
+    __rmul__ = __mul__ 
 
     def __neg__(self):
         """Reverse sign of self, answer as copied unit.
@@ -1557,10 +1556,10 @@ class RelativeUnit(Unit):
     isRelative = True
 
     def _get_rv(self):
-        """Answer the rendered clipped value of self.
+        """Answer the rendered value of self.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
-        and then clipped. self.base can be another unit or a dictionary of base unit values.
+        For relative units u.v answers the value and u.r answers the value rendered by self.base. 
+        self.base can be another unit or a dictionary of base unit values.
 
         >>> u = Inch(2)
         >>> u.v, u.rv
@@ -1570,9 +1569,9 @@ class RelativeUnit(Unit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered clipped value of self, by units type of self.base.
+        """Answer the rendered value of self, by units type of self.base.
         For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base.
+        For relative units u.v answers the value and u.r answers the value rendered by self.base.
         self.base can be another unit or a dictionary of base values.
 
         >>> uBase = Inch(24)
@@ -1798,9 +1797,9 @@ class Fr(RelativeUnit):
     UNIT = 'fr'
 
     def _get_rv(self):
-        """Answer the rendered clipped value.
+        """Answer the rendered value.
         For absolute inits u.v and u.rv are identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
+        For relative units u.v answers the value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
@@ -1814,9 +1813,9 @@ class Fr(RelativeUnit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered clipped unit.
+        """Answer the rendered unit.
         For absolute inits u and u.ru are identical.
-        For relative units u.rv answers the clipped value and u.ru answers the value rendered by self.base
+        For relative units u.rv answers the value and u.ru answers the value rendered by self.base
         self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
@@ -1886,9 +1885,9 @@ class Col(RelativeUnit):
     UNIT = 'col'
 
     def _get_rv(self):
-        """Answer the rendered clipped value.
+        """Answer the rendered value.
         For absolute inits u.v and u.r are identical.
-        For relative units u.v answers the clipped value and u.r answers the value rendered by self.base
+        For relative units u.v answers the value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
         self.g can be a unit or a number
 
@@ -2351,7 +2350,7 @@ class Angle:
             angle = int(angle)
         return self.__class__(angle)
 
-    __rmul__ = __mul__ # Mulitplications work in both directions
+    __rmul__ = __mul__ # Multiplications work in both directions
 
     def __div__(self, factor):
         """Divide the angle by a factor. Answer a new instance of the same type.

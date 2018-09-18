@@ -20,7 +20,7 @@
 #
 import copy
 from pagebot.constants import *
-from pagebot.toolbox.units import pt, em, isUnit, BASELINE_GRID, U, degrees
+from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 
 def newStyle(**kwargs):
@@ -56,15 +56,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
     42pt
     """
     if u is None:
-        u = U
+        u = U # Use default unit size from constants.
+    # Make sure to convert to units if not already
+    u = units(u)
 
     # Some calculations to show dependencies.
     defaultLeading = DEFAULT_LEADING
     baselineGrid = pt(BASELINE_GRID)
     # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
-    if not isUnit(u):
-        u = pt(u)
-    listIndent = u*0.8 # The order or multiplication matters, in case u is a Unit instance.
+    listIndent = 0.8 * u # The order or multiplication matters, in case u is a Unit instance.
     gutter = u # Make default gutter equal to the page unit.
 
     pt0 = pt(0) # Standard initialize on Unit zero

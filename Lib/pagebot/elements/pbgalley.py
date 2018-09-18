@@ -15,9 +15,10 @@
 #     galley.py
 #
 from pagebot.style import ORIGIN
-from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.elements import Element, TextBox, Ruler
+from pagebot.toolbox.units import pointOffset, pt
 from pagebot.toolbox.color import color
+from pagebot.conditions import *
 
 class Galley(Element):
     """A Galley is a sticky sequential flow of elements, where the parts can
@@ -28,20 +29,26 @@ class Galley(Element):
     slicing, adding or removing elements by the Composer. Because the Galley is
     a fully compatible Element, it can contain other galley instances
     recursively."""
-    from pagebot.elements.pbtextbox import TextBox
-    from pagebot.elements.pbruler import Ruler
+
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
     OLD_PAPER_COLOR = color(rgb=0xF8ECC2) # Color of old paper: #F8ECC2
 
-    def __init__(self, **kwargs):
+    def __init__(self, fill=None, conditions=None, **kwargs):
         Element.__init__(self,  **kwargs)
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style.
 
-        # Note that in case there is potential clash in the
-        # double usage of fill and stroke (?)
-        self.lastTextBox = None
+        if fill is None: # Set default Galley color if not defined.
+            fill = self.OLD_PAPER_COLOR
+        self.fill = fill
+
+        if conditions is None:
+            conditions = [Fit(), Overflow2Next()]
+        self.conditions = conditions
+
+        e = self.TEXTBOX_CLASS(conditions=[Fit()]) # First textbox on the Galley
+        self.appendElement(e) # Attach it to the galley self.
 
     def append(self, bs):
         """Add the string to the last text box. Create a new textbox if not found."""
@@ -125,7 +132,7 @@ class Galley(Element):
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
-        self.context.fill(self.OLD_PAPER_COLOR)
+        self.context.fill(self.css('fill')) # Find old-paper background color
         gw, gh = self.getSize()
         self.context.rect(px, py, gw, gh)
 

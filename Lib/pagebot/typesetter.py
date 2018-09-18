@@ -86,18 +86,19 @@ class Typesetter:
         >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this context
         >>> galley = t.typesetFile(path) # Context indicates hiding of the tags in the output
         >>> len(galley.elements)
-        6
-        >>> galley.elements[0].__class__.__name__ # First element of test-markdown is a code block
-        'CodeBlock'
-        >>> galley.elements[1].__class__.__name__ # Second element is a text box
+        7
+        >>> # First element of test-markdown is a code block or text box
+        >>> galley.elements[0].__class__.__name__
         'TextBox'
+        >>> galley.elements[1].__class__.__name__ # Second element is code block
+        'CodeBlock'
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> context = HtmlContext()
         >>> t = Typesetter(context, styles=styles) # Create a new typesetter with a HTML context
         >>> galley = t.typesetFile(path) # Context indicates is to include the HTML tags in output.
         >>> len(galley.elements)
-        6
-        >>> 'What is PageBot' in galley.elements[1].bs # Skip first code block in test-markdown
+        7
+        >>> 'What is PageBot' in galley.elements[2].bs # Skip first code block in test-markdown
         True
         """
         self.context = context
@@ -571,6 +572,7 @@ class Typesetter:
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(self.root, e)
+        #print('dasdasads', self.galley)
         # Answer the self.galley as convenience for the caller.
         return self.galley
 

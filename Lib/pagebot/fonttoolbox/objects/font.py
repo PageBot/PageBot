@@ -490,7 +490,7 @@ class Font:
         if not isinstance(pattern, (list, tuple)):
             pattern = [pattern]
         for part in pattern:
-            if not (part in fontName or part in self.info.fullName):
+            if not (part in fontName):# or part in self.info.fullName):
                 return 0
         return 1.0
 

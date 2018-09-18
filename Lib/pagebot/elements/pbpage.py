@@ -15,9 +15,10 @@
 #     pbpage.py
 #
 import weakref
-from pagebot.elements.element import Element
+from pagebot.elements import Element, Galley
 from pagebot.toolbox.units import pointOffset
 from pagebot.style import ORIGIN
+from pagebot.constants import DEFAULT_GALLEY_NAME
 
 class Page(Element):
     """The Page container is typically the root of a tree of Element instances.
@@ -33,6 +34,8 @@ class Page(Element):
     FAVICON_PATH = 'images/favicon.ico'
     INDEX_HTML = 'index.html'
     INDEX_HTML_URL = INDEX_HTML
+
+    GALLEY_CLASS = Galley
 
     def __init__(self, isLeft=None, isRight=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
@@ -236,7 +239,29 @@ class Page(Element):
         return self.parent.getPageNumber(self)
     pn = property(_get_pn)
 
-    #   D R A W B O T  & F L A T  S U P P O R T
+    #   E L E M E N T S
+
+    def getGalley(self, name=None):
+        """Answer the default galley element of a page. This is used in case pages 
+        need to be made with content (e.g. to accommodate overflow) without a main
+        sequence of text boxes in stalled or without an applied template that contains them.
+        Usage of the default page galley is mostly for booting a document, without the
+        final layout defined.
+        The reason to add this as function/property in the page is for convenient
+        access in MarkDown content files.
+        """
+        if name is None:
+            name = DEFAULT_GALLEY_NAME
+        galley = self.select(name)
+        if galley is None:
+            galley = Galley(name=name, parent=self, xy=self.xy, size=self.pw, nextElementName=name)
+        return galley
+
+    def _get_galley(self):
+        return self.getGalley()
+    galley = property(_get_galley)
+
+    #   D R A W B O T  &  F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
         """Draw all elements of this page in DrawBot. Note that this method is only used
