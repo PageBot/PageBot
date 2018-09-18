@@ -512,6 +512,9 @@ class Element:
                 return found
         return None
 
+    # For convenience of selecting page element in a MarkDown file, supply an alternative name,
+    select = getElementByName
+
     def deepFindAll(self, name=None, pattern=None, result=None):
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,

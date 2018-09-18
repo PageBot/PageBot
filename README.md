@@ -5,8 +5,8 @@ documents using code. It is available both as Python library working with
 [DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone
 desktop applications that can be created from it. Other contexts such as
 [Flat](http://xxyxyz.org/flat) (currently under development) allow PageBot to
-run environments other Mac OS X, for example on web servers. Initiated by
-[Type Network](https://typenetwork.com), the aim is to create a system for
+run environments other Mac OS X, for example on web servers. The aim of the developers
+of *PageBit* is to create a system for
 scriptable applications generating professionally designed documents that use
 high quality typography.
 
