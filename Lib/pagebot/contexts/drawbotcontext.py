@@ -432,7 +432,8 @@ class DrawBotContext(BaseContext):
         could not be made."""
         if path is None:
             path = self.path
-        return path._path.getNSBezierPath().bezierPathByFlatteningPath()
+        #return path._path.getNSBezierPath().bezierPathByFlatteningPath()
+        return path._path.bezierPathByFlatteningPath()
 
     def getFlattenedContours(self, path=None):
         """Answers the flattened NSBezier path As contour list [contour,
