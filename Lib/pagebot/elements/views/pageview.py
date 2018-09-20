@@ -201,6 +201,7 @@ class PageView(BaseView):
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
+        self.drawFlowConnections(page, origin)
 
     def drawFrame(self, e, origin):
         """Draw the page frame if the the flag is on and  if there ie padding
@@ -301,11 +302,10 @@ class PageView(BaseView):
 
     #   D R A W I N G  F L O W S
 
-    def drawFlowConnections(self, e, origin, b):
+    def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
-        px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
-
+        
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
             for seq in e.getFlows().values():
                 # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)

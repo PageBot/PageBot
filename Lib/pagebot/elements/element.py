@@ -44,7 +44,7 @@ class Element:
     # TextBox instance can operate as a flow.
     isText = False
     isTextBox = False
-    isFlow = False # Value is True if self.next if defined.
+    #isFlow property answers if nextElementName or prevElementName is defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
 
@@ -235,8 +235,6 @@ class Element:
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements)
-        # Initialize the default Element behavior tags, in case this is a flow.
-        self.isFlow = not None in (prevElementName, nextElementName, nextPageName)
         # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
         if solve:
             self.solve()
@@ -489,6 +487,35 @@ class Element:
         if self.parent is not None:
             return self.parent.getElementPage()
         return None
+
+    def _get_page(self):
+        """Answer the page somewhere in the parent tree, if it exists.
+        Answer None otherwise.
+
+        >>> from pagebot.elements.pbpage import Page
+        >>> page = Page()
+        >>> e1 = Element(parent=page)
+        >>> e2 = Element(parent=e1)
+        >>> e2.page.isPage
+        True
+        """
+        return self.getElementPage()
+    page = property(_get_page)
+
+    def _get_root(self):
+        """Answer the top of the parent tree.
+
+        >>> e = Element(name='root')
+        >>> e1 = Element(parent=e)
+        >>> e2 = Element(parent=e1)
+        >>> e3 = Element(parent=e2)
+        >>> e3.root.name == 'root'
+        True
+        """
+        if self.parent is None:
+            return self
+        return self.parent.root
+    root = property(_get_root)
 
     def getElementByName(self, name):
         """Answer the first element in the offspring list that fits the name.
@@ -853,50 +880,92 @@ class Element:
 
     # If the element is part of a flow, then answer the squence.
 
-    def NOTNOW_getFlows(self):
-        """Answer the set of flow element sequences on the page."""
-        flows = {} # Key is nextBox of first textBox. Values is list of TextBox instances.
-        for e in self.elements:
-            if not e.isFlow:
-                continue
-            # Now we know that this element has a e.nextBox and e.nextPageName
-            # There should be a flow with that name in our flows yet
-            found = False
-            for nextId, seq in flows.items():
-                if seq[-1].nextElement == e.name: # Glue to the end of the sequence.
-                    seq.append(e)
-                    found = True
-                elif e.nextElement == seq[0].name: # Add at the start of the list.
-                    seq.insert(0, e)
-                    found = True
-            if not found: # New entry
-                flows[e.next] = [e]
-        return flows
+    def _get_isFlow(self):
+        """Answer the boolean flag if self is part of a flow, which means that
+        either self.prevElementName or self.nextElementName is not None.
 
-    def NOTNOW_getNextFlowBox(self, tb, makeNew=True):
-        """Answer the next textBox that tb is pointing to. This can be on the
-        same page or a next page, depending how the page (and probably its
-        template) is defined."""
-        if tb.nextPage: # Page number or name
-            # The flow textBox is pointing to another page. Try to get it, and otherwise create one,
-            # if makeNew is set to True.
-            page = self.doc.getPage(tb.nextPage)
-            if page is None and makeNew:
-                page = self.doc.newPage(name=tb.nextPageName)
-            # Hard check. Otherwise something must be wrong in the template flow definition.
-            # or there is more content than we can handle, while not allowing to create new pages.
-            assert page is not None
-            assert not page is self # Make sure that we got a another page than self.
-            # Get the element on the next page that
-            tb = page.getElementByName(tb.nextElementName)
-            # Hard check. Otherwise something must be wrong in the template flow definition.
-            assert tb is not None and not tb
-        else:
-            page = self # Staying on the same page, flowing into another column.
-            tb = self.getElementByName(tb.nextElementName)
-            # Hard check. Make sure that this one is empty, otherwise mistake in template
-            assert not tb
-        return page, tb
+        >>> e = Element()
+        >>> e.isFlow
+        False
+        >>> e.nextElementName = 'e1'
+        >>> e.isFlow
+        True
+        """
+        return bool(self.prevElementName or self.nextElementName)
+    isFlow = property(_get_isFlow)
+
+    def getFlow(self, flow=None):
+        if flow is None:
+            flow = []  # List of elementa.
+
+        if self.isFlow: # Either self.prevElementName or self.nextElementName is defined.
+            if self.nextElementName is not None: 
+                flow.append(self)
+                nextElement = self.root.select(self.nextElementName, self.nextPageName)
+                if nextElement is not None:
+                    nextElement.getFlow(flow)
+            elif self.prevElementName is not None: # End of flow, still add to the list
+                flow.append(self)
+        return flow
+
+    def _get_flowStart(self):
+        """Answer the first element in the flow, starting with self. 
+        This depends on the self.prevElementName and self.prevPageName attributes
+        to be filled and referring to actual elements.
+
+        >>> e = Element(name='root')
+        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
+        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
+        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
+        >>> e3.flowStart.name == 'e1'
+        True
+        >>> e2.flowStart.name == 'e1'
+        True
+        >>> e1.flowStart.name == 'e1'
+        True
+        """
+        if self.prevElementName is not None:
+            prevElement = self.root.select(self.prevElementName)
+            if prevElement is not None:
+                return prevElement.flowStart
+        return self
+    flowStart = property(_get_flowStart)
+
+    def _get_flowEnd(self):
+        """Answer the last element of a flow (if it exists).
+
+        >>> e = Element(name='root')
+        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
+        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
+        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
+        >>> e1.flowEnd.name == 'e3'
+        True
+        >>> e2.flowEnd.name == 'e3'
+        True
+        >>> e3.flowEnd.name == 'e3'
+        True
+        """
+        return self.flow[-1]
+    flowEnd = property(_get_flowEnd)
+
+    def _get_flow(self, flow=None):
+        """Answer the list of flow element sequences starting on self.
+
+        >>> e = Element(name='root')
+        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
+        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
+        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
+        >>> e3.root.name == 'root'
+        True
+        >>> e1.isFlow
+        True
+        >>> len(e1.flow)
+        3
+        >>> e1.flow[1].name
+        'e2'
+        """
+        return self.getFlow(flow)
+    flow = property(_get_flow)
 
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
@@ -905,13 +974,13 @@ class Element:
         This method is typically called by conditions such as Overflow2Next.
         This method is redefined by inheriting classed, such as TextBox, that
         can have overflow of text."""
-        return True
+        return False
 
     def overflow2Next(self):
         """Try to fix if there is overflow. Default behavior is to do nothing.
         This method is redefined by inheriting classed, such as TextBox, that
         can have overflow of text."""
-        return True
+        return False
 
     def _get_baselineGrid(self):
         """Answer the baseline grid distance, as defined in the (parent)style.
