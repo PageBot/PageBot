@@ -15,7 +15,7 @@
 #
 #     https://svgwrite.readthedocs.io/en/master/
 #
-import os
+import os, shutil
 
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
@@ -46,13 +46,13 @@ class SvgContext(BaseContext):
         """Constructor of SvgContext.
 
         >>> context = SvgContext()
-        >>> context.saveDocument('~/SvgContext.%s' % FILETYPE_SVG)
+        >>> context.saveDocument('_export/SvgContext.%s' % FILETYPE_SVG)
 
         """
         self.b = svgBuilder
         self._filePath = self.TMP_PATH % uniqueID()
-        self._fill = noColor
-        self._stroke = noColor
+        self.fill(noColor) # Sets self._svgFill
+        self.stroke(noColor) # Sets self._svgStroke
         self._strokeWidth = pt(0)
         self._frameDuration = seconds(1)
         self._fontSize = DEFAULT_FONT_SIZE
@@ -85,7 +85,7 @@ class SvgContext(BaseContext):
         """
         self._drawing.save()
         self.checkExportPath(path)
-        os.system('mv %s %s' % (self._filePath, path))
+        shutil.move(self._filePath, path)
 
     saveImage = saveDocument # Compatible API with DrawBot
 
@@ -111,7 +111,7 @@ class SvgContext(BaseContext):
         """Draw a rectangle in the canvas.
 
         >>> from pagebot.toolbox.color import Color
-        >>> path = '~/SvgContext_rect.svg'
+        >>> path = '_export/SvgContext_rect.svg'
         >>> context = SvgContext()
         >>> context.fill((color(r=1, g=0, b=0.5)))
         >>> context.rect(pt(0), pt(100), pt(600), pt(200))
@@ -123,14 +123,14 @@ class SvgContext(BaseContext):
         """
         rect = self._drawing.rect(insert=((self._ox+x).pt, (self._oy+y).pt), size=(w.pt, h.pt),
                            stroke_width=upt(self._strokeWidth),
-                           stroke=color(self._stroke).css, fill=color(self._fill).css)
+                           stroke=self._svgStroke, fill=self._svgFill)
         self._drawing.add(rect)
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
 
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> path = '~/SvgContext_oval.svg'
+        >>> path = '_export/SvgContext_oval.svg'
         >>> context = SvgContext()
         >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.oval(pt(0), pt(100), pt(600), pt(200))
@@ -142,14 +142,14 @@ class SvgContext(BaseContext):
         """
         oval = self._drawing.ellipse(center=upt((self._ox+x+w/2), (self._oy+y+h/2)), r=upt((w/2), (h/2)),
                                              stroke_width=upt(self._strokeWidth),
-                                             stroke=color(self._stroke).css, fill=color(self._fill).css)
+                                             stroke=self._svgStroke, fill=self._svgFill)
         self._drawing.add(oval)
 
     def circle(self, x, y, r):
         """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
 
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> path = '~/SvgContext_circle.svg'
+        >>> path = '_export/SvgContext_circle.svg'
         >>> context = SvgContext()
         >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.circle(pt(0), pt(100), pt(300))
@@ -161,13 +161,13 @@ class SvgContext(BaseContext):
         """
         circle = self._drawing.circle(center=upt((self._ox+x+r), (self._oy+y+r)), r=upt(r),
                                       stroke_width=upt(self._strokeWidth),
-                                      stroke=color(self._stroke).css, fill=color(self._fill).css)
+                                      stroke=self._svgStroke, fill=self._svgFill)
         self._drawing.add(circle)
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
 
-        >>> path = '~/SvgContext_line.svg'
+        >>> path = '_export/SvgContext_line.svg'
         >>> context = SvgContext()
         >>> context.stroke((1, 0, 0.5), 30)
         >>> context.line((0, 100), (300, 300))
@@ -178,26 +178,26 @@ class SvgContext(BaseContext):
         """
         line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])), upt((self._ox+p2[0]), (self._oy+p2[1])),
                                   stroke_width=upt(self._strokeWidth),
-                                  stroke=color(self._stroke).css)
+                                  stroke=self._svgStroke)
         self._drawing.add(line)
 
     def fill(self, c):
         c = color(c)
         if c is noColor:
-            self._fill = 'none'
+            self._svgFill = 'none'
         else:
             r, g, b = c.rgb
-            self._fill = self.b.rgb(100*r, 100*g, 100*b, '%')
+            self._svgFill = self.b.rgb(100*r, 100*g, 100*b, '%')
 
     setFillColor = fill
 
     def stroke(self, c, strokeWidth=None):
         c = color(c)
         if c is noColor:
-            self._fill = 'none'
+            self._svgStroke = 'none'
         else:
             r, g, b = c.rgb
-            self._fill = self.b.rgb(100*r, 100*g, 100*b, '%')
+            self._svgStroke = self.b.rgb(100*r, 100*g, 100*b, '%')
         self._strokeWidth = upt(strokeWidth or pt(1))
 
     setStrokeColor = stroke
@@ -220,8 +220,8 @@ class SvgContext(BaseContext):
         gState = dict(
             font=self._font,
             fontSize=self._fontSize,
-            fill=self._fill,
-            stroke=self._stroke,
+            svgFill=self._svgFill,
+            svgStroke=self._svgStroke,
             strokeWidth=self._strokeWidth,
             ox=self._ox,
             oy=self._oy,
@@ -235,8 +235,8 @@ class SvgContext(BaseContext):
         gState = self._gState.pop()
         self._font = gState['font']
         self._fontSize = gState['fontSize']
-        self._fill = gState['fill']
-        self._stroke = gState['stroke']
+        self._svgFill = gState['svgFill']
+        self._svgStroke = gState['svgStroke']
         self._strokeWidth = gState['strokeWidth']
         self._ox = gState['ox']
         self._oy = gState['oy']
@@ -265,11 +265,11 @@ class SvgContext(BaseContext):
         """Draw the sOrBs text string, can be a str or BabelString, including a
         DrawBot FormattedString at position p.
 
-        >>> path = '~/SvgContext_text.svg'
+        >>> path = '_export/SvgContext_text.svg'
         >>> context = SvgContext()
         >>> context.fontSize(pt(100))
         >>> context.font('Verdana-Bold') # TODO: Match with font path.
-        >>> context.fill(r=1, g=0, b=0.5))
+        >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.text('ABCDEF', pt(100, 200))
         >>> context.fill(color(r=1, g=0, b=1))
         >>> context.stroke(color(r=0.5, g=0, b=0.5), pt(5))
@@ -281,8 +281,8 @@ class SvgContext(BaseContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         t = self._drawing.text(sOrBs, insert=point2D(upt(p)),
-                               stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
-                               fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
+                               stroke=self._svgStroke, stroke_width=upt(self._strokeWidth),
+                               fill=self._svgFill, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
     def textBox(self, sOrBs, r):
@@ -292,8 +292,8 @@ class SvgContext(BaseContext):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         x, y, w, h = r
         t = self._drawing.text(sOrBs, insert=point2D(upt(x, y)),
-                               stroke=color(self._stroke).css, stroke_width=upt(self._strokeWidth),
-                               fill=color(self._fill).css, font_size=upt(self._fontSize), font_family=self._font)
+                               stroke=self._svgStroke, stroke_width=upt(self._strokeWidth),
+                               fill=self._svgFill, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
     def translate(self, dx, dy):

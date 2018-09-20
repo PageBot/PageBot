@@ -17,6 +17,7 @@ from pagebot.elements import *
 
 from pagebot.document import Document
 from pagebot.contexts.svgcontext import SvgContext
+from pagebot.toolbox.color import color 
 
 context = SvgContext()
 
