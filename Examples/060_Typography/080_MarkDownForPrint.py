@@ -54,11 +54,12 @@ font = findFont('PageBot-Regular')
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=LANGUAGE_EN)
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, 
-    autoPages=NUM_PAGES, originTop=True, baselineGrid=BASELINE)
+    autoPages=NUM_PAGES, originTop=False, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showFlowConnections = True # Draw arrows between elements of there is a flow.
+# TODO: Fix the Arrow-connection drawing
+view.showFlowConnections = False # Draw arrows between elements of there is a flow.
 view.showOrigin = True # Show position of elements as cross-hair
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set types of grid lines to show for background
 view.showBaselines = True # Show default baseline grid of the column lines.
@@ -80,7 +81,7 @@ for n in range(1, NUM_PAGES+1):
         conditions=[Left2Col(1), Top2Top(), Fit2Height(), Overflow2Next()])
     # Text without initial content, will be filled by overflow of c2.
     # Showing the [+] marker, as the overflow text does not fit in the third column.
-    c3 = newTextBox(w=CW, name='c3', parent=page, nextElementName='c3', nextPageName=n+1,
+    c3 = newTextBox(w=CW, name='c3', parent=page, nextElementName='c1', nextPageName=n+1,
         conditions=[Left2Col(2), Top2Top(), Fit2Height()])
 # Solve the page/element conditions. It will test the conditions (in page
 # order, element order and order of the conditions list), adjusting the

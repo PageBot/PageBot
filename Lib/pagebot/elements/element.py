@@ -519,7 +519,10 @@ class Element:
 
     def getElementByName(self, name):
         """Answer the first element in the offspring list that fits the name.
-        Answer None if it cannot be found.
+        Answer None if it cannot be found. 
+        Note that the result of the search depends on where in the tree self is.
+        If self.isPage there probably is a different set of elements found than
+        searching witn self as arbitrary Element instance.
 
         >>> e1 = Element(name='Deeper')
         >>> e2 = Element(name='Deeper')
@@ -547,6 +550,10 @@ class Element:
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the collected list of matching child
         elements. Answer an empty list if no elements can be found.
+        
+        Note that the result of the search depends on where in the tree self is.
+        If self.isPage there probably is a different set of elements found than
+        searching witn self as arbitrary Element instance.
 
         >>> e1 = Element(name='DeeperChild')
         >>> e2 = Element(name='DeeperChild', elements=[e1])
@@ -578,6 +585,10 @@ class Element:
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
         elements. Answer an empty list if no elements can be found.
+        
+        Note that the result of the search depends on where in the tree self is.
+        If self.isPage there probably is a different set of elements found than
+        searching witn self as arbitrary Element instance.
 
         >>> e1 = Element(name='OtherChild')
         >>> e2 = Element(name='OtherChild')
@@ -607,6 +618,10 @@ class Element:
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the first matching child
         element. Answer None if no elements can be found.
+       
+        Note that the result of the search depends on where in the tree self is.
+        If self.isPage there probably is a different set of elements found than
+        searching witn self as arbitrary Element instance.
 
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child', parent=e)
@@ -647,6 +662,10 @@ class Element:
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
         Answer None if no element can be found.
+        
+        Note that the result of the search depends on where in the tree self is.
+        If self.isPage there probably is a different set of elements found than
+        searching witn self as arbitrary Element instance.
 
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='OtherChild', parent=e)
@@ -880,6 +899,52 @@ class Element:
 
     # If the element is part of a flow, then answer the squence.
 
+    def _get_next(self):
+        """If self if part of a flow, answer the next element, defined by self.nextElementName.
+        If self.nextPageName is defined too, then search on the indicated page.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(autoPages=3)
+        >>> page = doc[1]
+        >>> e1_1 = Element(parent=page, name='e1', nextElementName='e2')
+        >>> e1_2 = Element(parent=page, name='e2', nextElementName='e1', nextPageName=2)
+        >>> page = doc[2]
+        >>> e2_1 = Element(parent=page, name='e1', nextElementName='e2')
+        >>> e2_2 = Element(parent=page, name='e2', nextElementName='e3')
+        >>> e2_3 = Element(parent=page, name='e3', nextElementName='e1', nextPageName=3)
+        >>> page = doc[3]
+        >>> e3_1 = Element(parent=page, name='e1', nextElementName='e2')
+        >>> e3_2 = Element(parent=page, name='e2', nextElementName='e3')
+        >>> e3_3 = Element(parent=page, name='e3')
+        >>> e1_1.next.name
+        'e2'
+        >>> e1_1.next.next == e2_1 # Crosses page borders.
+        True
+        >>> e2_2.next.next.next.next == e3_3 # Crosses page borders
+        True
+        >>> e3_2.next.next is None # End of flow
+        True
+        >>> e3_2.prevElementName # Gets repaired by the e3_2.next usage
+        'e1'
+        >>> e3_1.prevPageName # Get repaired by the e3_1.next usage.
+        (2, 0)
+        """
+        nextElement = None
+        if self.nextElementName:
+            if self.nextPageName:
+                page = self.doc[self.nextPageName]
+            else:
+                page = self.page
+            if page is not None: # Only if a page was found for this element
+                nextElement = page.select(self.nextElementName)
+                if nextElement is not None:
+                    nextElement.prevElementName = self.name # Repair in case it is broken
+                    if self.nextPageName:
+                        nextElement.prevPageName = self.page.pn
+
+        return nextElement
+    next = property(_get_next)
+
     def _get_isFlow(self):
         """Answer the boolean flag if self is part of a flow, which means that
         either self.prevElementName or self.nextElementName is not None.
@@ -895,76 +960,40 @@ class Element:
     isFlow = property(_get_isFlow)
 
     def getFlow(self, flow=None):
+        """Answer the list of flow element sequences starting on self. In case self.nextPageName
+        is defined, then 
+        
+        >>> from pagebot.document import Document
+        >>> doc = Document(autoPages=3)
+        >>> page = doc[1]
+        >>> e1_1 = Element(parent=page, name='e1', nextElementName='e2')
+        >>> e1_2 = Element(parent=page, name='e2', nextElementName='e1', nextPageName=2)
+        >>> page = doc[2]
+        >>> e2_1 = Element(parent=page, name='e1', nextElementName='e2')
+        >>> e2_2 = Element(parent=page, name='e2', nextElementName='e3')
+        >>> e2_3 = Element(parent=page, name='e3')
+        >>> flow = e1_1.getFlow() # Identical to e1_1.flow
+        >>> len(flow)
+        5
+        >>> flow[1].page.pn
+        (1, 0)
+        >>> flow[3].page.pn # Cross page border
+        (2, 0)
+
+        """
         if flow is None:
             flow = []  # List of elementa.
-
-        if self.isFlow: # Either self.prevElementName or self.nextElementName is defined.
-            if self.nextElementName is not None: 
-                flow.append(self)
-                nextElement = self.root.select(self.nextElementName, self.nextPageName)
-                if nextElement is not None:
-                    nextElement.getFlow(flow)
-            elif self.prevElementName is not None: # End of flow, still add to the list
-                flow.append(self)
+        e = self
+        while e is not None:
+            flow.append(e)
+            e = e.next
         return flow
 
-    def _get_flowStart(self):
-        """Answer the first element in the flow, starting with self. 
-        This depends on the self.prevElementName and self.prevPageName attributes
-        to be filled and referring to actual elements.
-
-        >>> e = Element(name='root')
-        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
-        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
-        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
-        >>> e3.flowStart.name == 'e1'
-        True
-        >>> e2.flowStart.name == 'e1'
-        True
-        >>> e1.flowStart.name == 'e1'
-        True
-        """
-        if self.prevElementName is not None:
-            prevElement = self.root.select(self.prevElementName)
-            if prevElement is not None:
-                return prevElement.flowStart
-        return self
-    flowStart = property(_get_flowStart)
-
-    def _get_flowEnd(self):
-        """Answer the last element of a flow (if it exists).
-
-        >>> e = Element(name='root')
-        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
-        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
-        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
-        >>> e1.flowEnd.name == 'e3'
-        True
-        >>> e2.flowEnd.name == 'e3'
-        True
-        >>> e3.flowEnd.name == 'e3'
-        True
-        """
-        return self.flow[-1]
-    flowEnd = property(_get_flowEnd)
-
-    def _get_flow(self, flow=None):
+    def _get_flow(self):
         """Answer the list of flow element sequences starting on self.
-
-        >>> e = Element(name='root')
-        >>> e1 = Element(parent=e, name='e1', nextElementName='e2')
-        >>> e2 = Element(parent=e, name='e2', prevElementName='e1', nextElementName='e3')
-        >>> e3 = Element(parent=e, name='e3', prevElementName='e2')
-        >>> e3.root.name == 'root'
-        True
-        >>> e1.isFlow
-        True
-        >>> len(e1.flow)
-        3
-        >>> e1.flow[1].name
-        'e2'
+        As property identical to calling self.getFlow()
         """
-        return self.getFlow(flow)
+        return self.getFlow()
     flow = property(_get_flow)
 
     #   If self.nextElement is defined, then check the condition if there is overflow.

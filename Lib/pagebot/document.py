@@ -197,12 +197,16 @@ class Document:
         (<Page:default 66 (300pt, 400pt)>, (66, 0))
         >>> doc.getPageNumber(page)
         (66, 0)
+        >>> doc[-10] is None and doc[10000] is None # Answer None if out of range.
+        True
         """
         if isinstance(pnIndex, (list, tuple)):
             pn, index = pnIndex
         else:
             pn, index = pnIndex, 0 # Default is left page on pn row.
-        return self.pages[pn][index]
+        if pn in self.pages:
+            return self.pages[pn][index]
+        return None
     def __setitem__(self, pn, page):
         if not pn in self.pages: # Add list as
             self.pages[pn] = []

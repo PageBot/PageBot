@@ -30,7 +30,7 @@ from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
     BASE_INSIDE,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
-from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
+from pagebot.toolbox.units import pt, upt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -305,34 +305,45 @@ class PageView(BaseView):
     def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, then draw the flow connections
         on the page, using their stroke/width settings of the style."""
-        
-        if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
-            for seq in e.getFlows().values():
-                # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
-                # This offset is defined by optional
-                tbStart = e.getElement(seq[0].eId)
-                startX = tbStart.x
-                startY = tbStart.y
-                for tbTarget in seq[1:]:
-                    tbTarget = e.getElement(tbTarget.eId)
-                    targetX = tbTarget.x
-                    targetY = tbTarget.y
-                    self.drawArrow(e, px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
-                    self.drawArrow(e, px+startX+tbStart.w, py+startY, px+targetX, py+targetY+tbTarget.h, 1)
-                    tbStart = tbTarget
-                    startX = targetX
-                    startY = targetY
-                self.drawArrow(e, px+startX, py+startY+tbStart.h, px+startX+tbStart.w, py+startY, -1)
 
-                if e != e.parent.getLastPage():
-                    # Finalize with a line to the start, assuming it is on the next page.
-                    tbTarget = e.getElement(seq[0].eId)
-                    self.drawArrow(e, px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-e.h, 1)
+        context = self.context
+        p = pointOffset(e.origin, origin)
+        p = e._applyScale(self, p)
+        px, py, _ = p = e._applyAlignment(p) # Ignore z-axis for now.
+
+        if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
+
+            fmf = 0.15#self.css('viewFlowCurvatureFactor', 0.15)
+            for startE in e.elements:
+                nextE = startE.next
+                if nextE is not None:                
+                    # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
+                    # This offset is defined by optional
+                    sx = startE.right
+                    sy = startE.bottom
+                    nx = nextE.left
+                    ny = nextE.top
+
+                    xm = (nx + sx)/2
+                    ym = (ny + sy)/2
+                    xb1 = xm * upt(ny - sy) * fmf
+                    yb1 = ym * upt(nx - sx) * fmf
+                    xb2 = xm * upt(ny - sy) * fmf
+                    yb2 = ym * upt(nx - sx) * fmf
+
+                    context.fill(noColor)
+                    context.stroke(color(0), 1)
+
+                    context.newPath()
+                    context.moveTo((sx, sy))
+                    context.curveTo((xb1, yb1), (xb2, yb2), (nx, ny)) #((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+                    context.drawPath()
 
     def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None,
             fill=noColor, stroke=noColor, strokeWidth=None):
-        """Draw curved arrow marker between the two points.
-        TODO: Add drawing of real arrow-heads, rotated in the right direction."""
+        """Draw curved arrow marker between the two points."""
+        context = self.context
+
         if fms is None:
             fms = self.css('viewFlowMarkerSize')
         if fmf is None:
@@ -346,12 +357,12 @@ class PageView(BaseView):
         if strokeWidth is None:
             strokeWidth = self.css('viewFlowConnectionStrokeWidth', 0.5)
 
-        self.setStrokeColor(stroke, strokeWidth)
+        context.stroke(stroke, strokeWidth)
         if startMarker:
             if fill is None:
                 fill = self.css('viewFlowMarkerFill', noColor)
-            self.setFillColor(fill)
-            self.context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
+            context.fill(fill)
+            context.oval(xs - fms, ys - fms, 2 * fms, 2 * fms)
 
         xm = (xt + xs)/2
         ym = (yt + ys)/2
@@ -369,26 +380,25 @@ class PageView(BaseView):
         ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
         ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
 
-        b = self.b
-        b.newPath()
-        self.setFillColor(noColor)
-        b.moveTo((xs, ys))
-        b.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
-        b.drawPath()
+        context.newPath()
+        context.fill(noColor)
+        context.moveTo((xs, ys))
+        context.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+        context.drawPath()
 
         #  Draw the arrow head.
-        b.newPath()
-        self.setFillColor(stroke)
-        self.setStrokeColor(noColor)
-        b.moveTo((xt, yt))
-        b.lineTo((ax1, ay1))
-        b.lineTo((ax2, ay2))
-        b.closePath()
-        b.drawPath()
+        context.newPath()
+        context.fill(stroke)
+        context.stroke(noColor)
+        context.moveTo((xt, yt))
+        context.lineTo((ax1, ay1))
+        context.lineTo((ax2, ay2))
+        context.closePath()
+        context.drawPath()
 
         if endMarker:
-            self.setFillColor(self.css('viewFlowMarkerFill', noColor))
-            b.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+            context.fill(self.css('viewFlowMarkerFill', noColor))
+            context.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
 
     #   D R A W I N G  E L E M E N T
 
