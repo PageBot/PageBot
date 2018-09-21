@@ -443,7 +443,7 @@ class Font:
         >>> str(font)
         '<Font Roboto-Black>'
         """
-        return '<Font %s>' % (path2FontName(self.path) or self.name or 'Untitled')
+        return '<Font %s>' % (path2FontName(self.path) or self.name or 'Untitled').strip()
 
     def __getitem__(self, glyphName):
         """Answer the glyph with glyphName.
