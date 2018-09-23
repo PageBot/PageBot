@@ -4644,6 +4644,375 @@ class Element:
 
     #   Page block and Page side alignments
 
+    #   Horizontal alignments
+
+    def center2Center(self):
+        """Move center of self to padding center position of parent.
+        Note that this different from self.center2CenterSides if the left 
+        and right padding of parent is not identical.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2 - 120/2
+        (165pt, 165.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2 + 120/2
+        (285pt, 285.0)
+        """
+        self.center = self.parent.pl + self.parent.pw/2
+        return True
+
+    def center2CenterSides(self):
+        """Move center of self to center of sides of parent.
+        Note that this different from self.center2Center if the left 
+        and right padding of parent is not identical.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2CenterSides()
+        >>> e2.x, 500/2 - 120/2
+        (190pt, 190.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2CenterSides()
+        >>> e2.x, 500/2
+        (250pt, 250.0)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2CenterSides()
+        >>> e2.x, 500/2 + 120/2
+        (310pt, 310.0)
+        """
+        self.center = self.parent.w/2
+        return True
+
+    def center2Left(self):
+        """Move center of self to left padding of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2Left()
+        >>> e2.x, 30 - 120/2
+        (-30pt, -30.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2Left()
+        >>> e2.x, 30
+        (30pt, 30)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2Left()
+        >>> e2.x, 30 + 120/2
+        (90pt, 90.0)
+        """
+        self.center = self.parent.pl # Padding left
+        return True
+
+    def center2LeftSide(self):
+        """Move center of self to left side of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2LeftSide()
+        >>> e2.x, -120/2
+        (-60pt, -60.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2LeftSide()
+        >>> e2.x
+        0pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2LeftSide()
+        >>> e2.x, 120/2
+        (60pt, 60.0)
+        """
+        self.center = 0
+        return True
+
+    def center2Right(self):
+        """Move center of self to the right padding of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2Right()
+        >>> e2.x, 500 - 80 - 120/2
+        (360pt, 360.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2Right()
+        >>> e2.x, 500 - 80
+        (420pt, 420)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2Right()
+        >>> e2.x, 500 - 80 + 120/2
+        (480pt, 480.0)
+        """
+        self.center = self.parent.w - self.parent.pr
+        return True
+
+    def center2RightSide(self):
+        """Move center of self to the right side of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.center2RightSide()
+        >>> e2.x, 500 - 120/2
+        (440pt, 440.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.center2RightSide()
+        >>> e2.x, 500
+        (500pt, 500)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.center2RightSide()
+        >>> e2.x, 500 + 120/2
+        (560pt, 560.0)
+        """
+        self.center = self.parent.w
+        return True
+
+    def left2Center(self):
+        pl = self.parent.pl # Get parent padding left
+        self.left = pl + (self.parent.w - self.parent.pr - pl)/2
+        return True
+
+    def left2CenterSides(self):
+        self.left = self.parent.w/2
+        return True
+
+    def left2Left(self):
+        """Move left of self to padding left position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.left2Left()
+        >>> e2.x
+        50pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2Left()
+        >>> e2.x
+        110pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.left2Left()
+        >>> e2.x
+        170pt
+        """
+        self.left = self.parent.pl # Padding left
+        return True
+
+    def left2LeftSide(self):
+        """Move left of self to left position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.left2LeftSide()
+        >>> e2.x
+        0pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2LeftSide()
+        >>> e2.x
+        60pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.left2LeftSide()
+        >>> e2.x
+        120pt
+        """
+        self.left = 0
+        return True
+
+    def left2Right(self):
+        """Move left of self to padding right position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=RIGHT)
+        >>> success = e2.left2Right()
+        >>> e2.x
+        570pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2Right()
+        >>> e2.x
+        510pt
+        >>> e2.xAlign = LEFT
+        >>> success = e2.left2Right()
+        >>> e2.x
+        450pt
+        """
+        self.left = self.parent.w - self.parent.pr
+        return True
+
+    def left2RightSide(self):
+        """Move left of self to full width (right position) of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=RIGHT)
+        >>> success = e2.left2RightSide()
+        >>> e2.x
+        620pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2RightSide()
+        >>> e2.x
+        560pt
+        >>> e2.xAlign = LEFT
+        >>> success = e2.left2RightSide()
+        >>> e2.x
+        500pt
+        """
+        self.left = self.parent.w
+        return True
+
+    def right2Center(self):
+        """Position the right side centered on the padding of the parent.
+        Note that this different from self.right2Center if the left 
+        and right padding of parent is not identical.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2Center()
+        >>> e2.x, e1.pl, e1.pw/2, 30 + (500 - 30 - 80)/2 - 120
+        (105pt, 30pt, 195pt, 105.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2 - 120/2
+        (165pt, 165.0)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        """
+        self.right = self.parent.pl + self.parent.pw/2
+        return True
+
+    def right2CenterSides(self):
+        """Position the right side centered on the sides of the parent.
+        Note that this different from self.right2Center if the left 
+        and right padding of parent is not identical.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2CenterSides()
+        >>> e2.x # 500/2 - 120
+        130pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2CenterSides()
+        >>> e2.x # 500/2 - 120/2
+        190pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2CenterSides()
+        >>> e2.x # 500/2 
+        250pt
+        """
+        self.right = self.parent.w/2
+        return True
+
+    def right2Left(self):
+        """Move right of self to padding left position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2Left()
+        >>> e2.x # 50 - 120
+        -70pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2Left()
+        >>> e2.x # 50 - 120/2
+        -10pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2Left()
+        >>> e2.x 
+        50pt
+        """
+        self.right = self.parent.pl # Padding left
+        return True
+
+    def right2LeftSide(self):
+        """Move right of self to left position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2LeftSide()
+        >>> e2.x 
+        -120pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2LeftSide()
+        >>> e2.x # -120/2
+        -60pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2LeftSide()
+        >>> e2.x 
+        0pt
+        """
+        self.right = 0 # Left side of parent position
+        return True
+
+    def right2Right(self):
+        """Move right of self to padding right position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2Right()
+        >>> e2.x # 500 - 50 - 120
+        330pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2Right()
+        >>> e2.x # 500 - 50 - 120/2
+        390pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2Right()
+        >>> e2.x # 500 - 60
+        450pt
+        """
+        self.right = self.parent.w - self.parent.pr
+        return True
+
+    def right2RightSide(self):
+        """Move right of self to right width position of parent.
+        The position of e2 element origin depends on the horitontal
+        alignment type.
+
+        >>> e1 = Element(w=500, padding=50)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.right2RightSide()
+        >>> e2.x # 500 - 120
+        380pt
+        >>> e2.xAlign = CENTER
+        >>> success = e2.right2RightSide()
+        >>> e2.x # 500 - 120/2
+        440pt
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.right2RightSide()
+        >>> e2.x # 500 
+        500pt
+        """
+        self.right = self.parent.w
+        return True
+
+    #   Vertical alignments
+
     def bottom2Bottom(self):
         """Move bottom of the element to the bottom of the parent block.
 
@@ -4698,31 +5067,6 @@ class Element:
             self.middle = 0
         return True
 
-    def center2Center(self):
-        pl = self.parent.pl # Get parent padding left
-        self.center = pl + (self.parent.w - self.parent.pr - pl)/2
-        return True
-
-    def center2CenterSides(self):
-        self.center = self.parent.w/2
-        return True
-
-    def center2Left(self):
-        self.center = self.parent.pl # Padding left
-        return True
-
-    def center2LeftSide(self):
-        self.center = 0
-        return True
-
-    def center2Right(self):
-        self.center = self.parent.w - self.parent.pr
-        return True
-
-    def center2RightSide(self):
-        self.center = self.parent.w
-        return True
-
     def middle2Top(self):
         if self.originTop:
             self.middle = self.parent.pt
@@ -4750,46 +5094,6 @@ class Element:
     def middle2MiddleSides(self):
         self.middle = self.parent.h/2
 
-    def left2Center(self):
-        pl = self.parent.pl # Get parent padding left
-        self.left = pl + (self.parent.w - self.parent.pr - pl)/2
-        return True
-
-    def left2CenterSides(self):
-        self.left = self.parent.w/2
-        return True
-
-    def left2Left(self):
-        """Move left of self to padding left position of parent.
-
-        >>> e1 = Element(w=500, pl=50)
-        >>> e2 = Element(w=120, parent=e1)
-        >>> success = e2.left2Left()
-        >>> e2.x
-        50pt
-        """
-        self.left = self.parent.pl # Padding left
-        return True
-
-    def left2Right(self):
-        """Move left of self to padding left position of parent.
-
-        >>> e1 = Element(w=500, pr=50)
-        >>> e2 = Element(w=120, parent=e1)
-        >>> success = e2.left2Right()
-        >>> e2.x
-        450pt
-        """
-        self.left = self.parent.w - self.parent.pr
-        return True
-
-    def left2RightSide(self):
-        self.left = self.parent.w
-        return True
-
-    def left2LeftSide(self):
-        self.left = 0
-        return True
 
     def top2Middle(self):
         pt = self.parent.pt # Get parent padding left
@@ -4869,45 +5173,6 @@ class Element:
 
     def origin2MiddleSides(self):
         self.y = self.parent.h/2
-        return True
-
-    def right2Center(self):
-        pl = self.parent.pl # Get parent padding left
-        self.right = pl + (self.parent.w - self.parent.pr - pl)/2
-        return True
-
-    def right2CenterSides(self):
-        """Position the right side to the center sides of the parent.
-
-        >>> e = Element(w=480)
-        >>> child = Element(w=100, parent=e)
-        >>> child.x, child.left, child.right # Show default position
-        (0pt, 0pt, 0pt)
-        >>> success = child.right2CenterSides()
-        >>> #FIX child.x, child.left, child.right, child.w
-
-        """
-        self.right = self.parent.w/2
-        return True
-
-    def right2Left(self):
-        """Move right of self to padding left position of parent.
-
-        >>> e1 = Element(w=500, pl=50)
-        >>> e2 = Element(w=120, parent=e1)
-        >>> success = e2.right2Left()
-        >>> e2.box
-        (50pt, 0pt, 120pt, 100pt)
-        """
-        self.right = self.parent.pl # Padding left
-        return True
-
-    def right2Right(self):
-        self.right = self.parent.w - self.parent.pr
-        return True
-
-    def right2RightSide(self):
-        self.right = self.parent.w
         return True
 
     def bottom2Middle(self):

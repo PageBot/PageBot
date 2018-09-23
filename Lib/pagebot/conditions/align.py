@@ -49,8 +49,8 @@ class Fit(Condition):
 
 	def evaluate(self, e, score):
 		u"""Fit the element on all paddings of the parent. First align left and top,
-		then fit right and bottom. This order to avoid that element temporary
-		get smaller than their minimum size, if the start position is wrong."""
+		then fit right and bottom. This order to make sure size fitting is based on 
+		the right position on the parent.."""
 		self.evaluateAll(e, self._getConditions(), score)
 
 	def solve(self, e, score):
