@@ -2122,15 +2122,18 @@ class Element:
     def _get_bottom(self):
         """On bounding box, not including margins.
 
-        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> e = Element(h=500, originTop=True, yAlign=TOP)
+        >>> e.bottom 
+        500pt
+        >>> e.yAlign = MIDDLE
         >>> e.bottom
-        -148pt
+        250pt
         >>> e.yAlign = BOTTOM
         >>> e.bottom
-        100pt
-        >>> e.yAlign = MIDDLE
-        >>> e.bottom.pt # Get the integer value
-        224
+        0pt
+        >>> e.bottom = 300
+        >>> e.bottom
+        300pt
         """
         yAlign = self.yAlign
         if yAlign == TOP:
@@ -2138,7 +2141,9 @@ class Element:
                 return self.y + self.h
             return self.y - self.h
         if yAlign == MIDDLE:
-            return self.y + self.h/2
+            if self.originTop:
+                return self.y + self.h/2
+            return self.y - self.h/2
         return self.y
     def _set_bottom(self, y):
         yAlign = self.yAlign
@@ -2148,7 +2153,10 @@ class Element:
             else:
                 self.y = units(y) + self.h
         elif yAlign == MIDDLE:
-            self.y = y - self.h/2
+            if self.originTop:
+                self.y = units(y) - self.h/2
+            else:
+                self.y = units(y) + self.h/2
         else:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
@@ -2600,18 +2608,36 @@ class Element:
     # Absolute positions
 
     def _get_bleedOrigin(self):
-        """Answer the origin of the element, shifted by the defined bleed.
+        """Answer the origin of the element, shifted by the defined bleed and 
+        and depending the side of alignment.
 
-        >>> from pagebot.toolbox.units import p, pt
-        >>> e = Element(size=pt(500, 800), bleed=p(1))
+        >>> from pagebot.toolbox.units import p
+        >>> e = Element(bleed=p(1), xAlign=LEFT, yAlign=TOP, originTop=True)
+        >>> e.bleed
+        (1p, 1p, 1p, 1p)
         >>> e.bleedOrigin
         (-12pt, -12pt)
+        >>> e.xAlign=RIGHT
+        >>> e.yAlign=BOTTOM
+        >>> e.bleedOrigin
+        (12pt, 12pt)
         """
-        if self.originTop:
-            y = self.top + self.bleedTop
-        else:
-            y = self.bottom - self.bleedBottom
-        return self.x - self.bleedLeft, y
+        ox, oy = self.xy
+        if self.xAlign == LEFT:
+            ox -= self.bleedLeft
+        elif self.xAlign == RIGHT:
+            ox += self.bleedRight
+        if self.yAlign == TOP:
+            if self.originTop:
+                oy -= self.bleedTop
+            else:
+                oy += self.bleedTop
+        elif self.yAlign == BOTTOM:
+            if self.originTop:
+                oy += self.bleedBottom
+            else:
+                oy -= self.bleedBottom
+        return ox, oy
     bleedOrigin = property(_get_bleedOrigin)
 
     def _get_rootX(self):
@@ -4650,10 +4676,12 @@ class Element:
         """Move center of self to padding center position of parent.
         Note that this different from self.center2CenterSides if the left 
         and right padding of parent is not identical.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2Center() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2Center()
         >>> e2.x, 30 + (500 - 30 - 80)/2 - 120/2
@@ -4667,6 +4695,8 @@ class Element:
         >>> e2.x, 30 + (500 - 30 - 80)/2 + 120/2
         (285pt, 285.0)
         """
+        if self.parent is None:
+            return False
         self.center = self.parent.pl + self.parent.pw/2
         return True
 
@@ -4674,10 +4704,12 @@ class Element:
         """Move center of self to center of sides of parent.
         Note that this different from self.center2Center if the left 
         and right padding of parent is not identical.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2CenterSides() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2CenterSides()
         >>> e2.x, 500/2 - 120/2
@@ -4691,15 +4723,19 @@ class Element:
         >>> e2.x, 500/2 + 120/2
         (310pt, 310.0)
         """
+        if self.parent is None:
+            return False
         self.center = self.parent.w/2
         return True
 
     def center2Left(self):
         """Move center of self to left padding of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2Left() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2Left()
         >>> e2.x, 30 - 120/2
@@ -4713,15 +4749,19 @@ class Element:
         >>> e2.x, 30 + 120/2
         (90pt, 90.0)
         """
+        if self.parent is None:
+            return False
         self.center = self.parent.pl # Padding left
         return True
 
     def center2LeftSide(self):
         """Move center of self to left side of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2LeftSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2LeftSide()
         >>> e2.x, -120/2
@@ -4735,15 +4775,19 @@ class Element:
         >>> e2.x, 120/2
         (60pt, 60.0)
         """
+        if self.parent is None:
+            return False
         self.center = 0
         return True
 
     def center2Right(self):
         """Move center of self to the right padding of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2Right() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2Right()
         >>> e2.x, 500 - 80 - 120/2
@@ -4757,15 +4801,19 @@ class Element:
         >>> e2.x, 500 - 80 + 120/2
         (480pt, 480.0)
         """
+        if self.parent is None:
+            return False
         self.center = self.parent.w - self.parent.pr
         return True
 
     def center2RightSide(self):
         """Move center of self to the right side of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.center2RightSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.center2RightSide()
         >>> e2.x, 500 - 120/2
@@ -4779,24 +4827,71 @@ class Element:
         >>> e2.x, 500 + 120/2
         (560pt, 560.0)
         """
+        if self.parent is None:
+            return False
         self.center = self.parent.w
         return True
 
     def left2Center(self):
-        pl = self.parent.pl # Get parent padding left
-        self.left = pl + (self.parent.w - self.parent.pr - pl)/2
+        """Move left of self to the padding center of parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.left2Center() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.left2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2 + 120/2
+        (285pt, 285.0)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.left2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2 + 120
+        (345pt, 345.0)
+        """
+        if self.parent is None:
+            return False
+        self.left = self.parent.pl + self.parent.pw/2
         return True
 
     def left2CenterSides(self):
+        """Move left of self to the sides center of parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
+
+        >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
+        >>> e1.left2Center() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.left2CenterSides()
+        >>> e2.x, 500/2
+        (250pt, 250.0)
+        >>> e2.xAlign = CENTER
+        >>> success = e2.left2CenterSides()
+        >>> e2.x, 500/2 + 120/2
+        (310pt, 310.0)
+        >>> e2.xAlign = RIGHT
+        >>> success = e2.left2CenterSides()
+        >>> e2.x, 500/2 + 120
+        (370pt, 370.0)
+        """
+        if self.parent is None:
+            return False
         self.left = self.parent.w/2
         return True
 
     def left2Left(self):
         """Move left of self to padding left position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=50)
+        >>> e1.left2Left() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.left2Left()
         >>> e2.x
@@ -4810,15 +4905,19 @@ class Element:
         >>> e2.x
         170pt
         """
+        if self.parent is None:
+            return False
         self.left = self.parent.pl # Padding left
         return True
 
     def left2LeftSide(self):
         """Move left of self to left position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, pl=50)
+        >>> e1.left2LeftSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.left2LeftSide()
         >>> e2.x
@@ -4832,15 +4931,19 @@ class Element:
         >>> e2.x
         120pt
         """
+        if self.parent is None:
+            return False
         self.left = 0
         return True
 
     def left2Right(self):
         """Move left of self to padding right position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, padding=50)
+        >>> e1.left2Right() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=RIGHT)
         >>> success = e2.left2Right()
         >>> e2.x
@@ -4854,15 +4957,19 @@ class Element:
         >>> e2.x
         450pt
         """
+        if self.parent is None:
+            return False
         self.left = self.parent.w - self.parent.pr
         return True
 
     def left2RightSide(self):
         """Move left of self to full width (right position) of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, padding=50)
+        >>> e1.left2RightSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=RIGHT)
         >>> success = e2.left2RightSide()
         >>> e2.x
@@ -4876,6 +4983,8 @@ class Element:
         >>> e2.x
         500pt
         """
+        if self.parent is None:
+            return False
         self.left = self.parent.w
         return True
 
@@ -4885,6 +4994,8 @@ class Element:
         and right padding of parent is not identical.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
+        >>> e1.right2Center() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2Center()
         >>> e2.x, e1.pl, e1.pw/2, 30 + (500 - 30 - 80)/2 - 120
@@ -4898,6 +5009,8 @@ class Element:
         >>> e2.x, 30 + (500 - 30 - 80)/2
         (225pt, 225.0)
         """
+        if self.parent is None:
+            return False
         self.right = self.parent.pl + self.parent.pw/2
         return True
 
@@ -4907,6 +5020,8 @@ class Element:
         and right padding of parent is not identical.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
+        >>> e1.right2CenterSides() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2CenterSides()
         >>> e2.x # 500/2 - 120
@@ -4920,15 +5035,19 @@ class Element:
         >>> e2.x # 500/2 
         250pt
         """
+        if self.parent is None:
+            return False
         self.right = self.parent.w/2
         return True
 
     def right2Left(self):
         """Move right of self to padding left position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, padding=50)
+        >>> e1.right2Left() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2Left()
         >>> e2.x # 50 - 120
@@ -4942,72 +5061,86 @@ class Element:
         >>> e2.x 
         50pt
         """
+        if self.parent is None:
+            return False
         self.right = self.parent.pl # Padding left
         return True
 
     def right2LeftSide(self):
         """Move right of self to left position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, padding=50)
+        >>> e1.right2LeftSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2LeftSide()
         >>> e2.x 
         -120pt
         >>> e2.xAlign = CENTER
         >>> success = e2.right2LeftSide()
-        >>> e2.x # -120/2
-        -60pt
+        >>> e2.x, -120/2
+        (-60pt, -60.0)
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2LeftSide()
         >>> e2.x 
         0pt
         """
+        if self.parent is None:
+            return False
         self.right = 0 # Left side of parent position
         return True
 
     def right2Right(self):
         """Move right of self to padding right position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
-        >>> e1 = Element(w=500, padding=50)
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.right2Right() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2Right()
-        >>> e2.x # 500 - 50 - 120
-        330pt
+        >>> e2.x, 500 - 80 - 120
+        (300pt, 300)
         >>> e2.xAlign = CENTER
         >>> success = e2.right2Right()
-        >>> e2.x # 500 - 50 - 120/2
-        390pt
+        >>> e2.x, 500 - 80 - 120/2
+        (360pt, 360.0)
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2Right()
-        >>> e2.x # 500 - 60
-        450pt
+        >>> e2.x, 500 - 80
+        (420pt, 420)
         """
+        if self.parent is None:
+            return False
         self.right = self.parent.w - self.parent.pr
         return True
 
     def right2RightSide(self):
         """Move right of self to right width position of parent.
-        The position of e2 element origin depends on the horitontal
+        The position of e2 element origin depends on the horizontal
         alignment type.
 
         >>> e1 = Element(w=500, padding=50)
+        >>> e1.right2RightSide() # Element without parent answers False
+        False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2RightSide()
-        >>> e2.x # 500 - 120
-        380pt
+        >>> e2.x, 500 - 120
+        (380pt, 380)
         >>> e2.xAlign = CENTER
         >>> success = e2.right2RightSide()
-        >>> e2.x # 500 - 120/2
-        440pt
+        >>> e2.x, 500 - 120/2
+        (440pt, 440.0)
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2RightSide()
-        >>> e2.x # 500 
+        >>> e2.x 
         500pt
         """
+        if self.parent is None:
+            return False
         self.right = self.parent.w
         return True
 
@@ -5015,28 +5148,90 @@ class Element:
 
     def bottom2Bottom(self):
         """Move bottom of the element to the bottom of the parent block.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
 
-        >>> e1 = Element(y=300)
-        >>> e2 = Element(elements=[e1], pb=20)
-        >>> success = e1.bottom2Bottom()
-        >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
-        20pt
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.bottom2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop
+        (True, True)
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 500 - 80 - 120
+        (300pt, 300)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 500 - 80 - 120/2, e1.h - e1.pb - e2.h/2
+        (360pt, 360.0, 360pt)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False
+        >>> e2.yAlign=TOP
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 80 + 120
+        (200pt, 200)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 80 + 120/2
+        (140pt, 140.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Bottom()
+        >>> e2.y, 80
+        (80pt, 80)
         """
-        if self.originTop:
+        if self.parent is None:
+            return False
+        if self.parent.originTop:
             self.bottom = self.parent.h - self.parent.pb
         else:
             self.bottom = self.parent.pb
         return True
 
     def bottom2BottomSide(self):
-        """Move bottom of the element to the bottom of the parent side.
+        """Move bottom of the element to the bottom side of the parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
 
-        >>> e1 = Element(y=300)
-        >>> e2 = Element(elements=[e1])
-        >>> success = e1.bottom2BottomSide()
-        >>> e1.bottom # Move bottom of e1 down to padding-bottom position of e2
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.bottom2BottomSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y, 500 - 120
+        (380pt, 380)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y, 500 - 120/2, e1.h - e2.h/2
+        (440pt, 440.0, 440pt)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y, 500
+        (500pt, 500)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y, 120
+        (120pt, 120)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2BottomSide()
+        >>> e2.y
         0pt
         """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.bottom = self.parent.h
         else:
