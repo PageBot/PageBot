@@ -31,10 +31,11 @@ BASELINE = pt(15)
 BASELINE_START = 3.5 * BASELINE
 PADDING = 5 * BASELINE # Page padding related to baseline in this example.
 
-doc = Document(size=B5, padding=PADDING, originTop=True,
+# TODO: View grid drawing does not work with originTop=True
+doc = Document(size=B5, padding=PADDING, originTop=False,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
-view = doc.view # Get the current view of this document. Defaulse it PageView.
+view = doc.view # Get the current view of this document. Default is PageView.
 view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
 #view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)

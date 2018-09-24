@@ -53,6 +53,7 @@ font = findFont('PageBot-Regular')
 # Make the style dictionary for the body text.
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=LANGUAGE_EN)
 # Create a new document with 1 page. Set overall size and padding.
+# TODO: View grid drawing, etc. does not work properly for originTop=True
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, 
     autoPages=NUM_PAGES, originTop=False, baselineGrid=BASELINE)
 # Get the default page view of the document and set viewing parameters

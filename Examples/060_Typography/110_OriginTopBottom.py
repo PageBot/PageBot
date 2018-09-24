@@ -21,6 +21,7 @@
 #
 #     TODO: Seems to be a problem when using picas p( ) as measurements for page size
 #     TODO: color circles have wrong offset for originTop=False
+#     TODO: ducplicate drawing (shifted) of element origin
 #
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt, inch, p

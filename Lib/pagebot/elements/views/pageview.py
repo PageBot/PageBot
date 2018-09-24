@@ -709,9 +709,14 @@ class PageView(BaseView):
         indexGutter = baselineGrid/4 # Gutter between index marker and element padding
 
         startY = e.baselineGridStart
-        if startY is None:
-            startY = e.pt # Otherwise use the top padding as start Y.
-        oy = e.h - startY # Assumes origin at bottom for context drawing.
+        if e.originTop:
+            if startY is None:
+                startY = e.pt # Otherwise use the top padding as start Y.
+            oy = startY # Assumes origin at top for context drawing
+        else: # Page origin is at the bottom
+            if startY is None:
+                startY = e.h - e.pt # Otherwise use the top padding as start Y.
+            oy = e.h - startY # Assumes origin at bottom for context drawing.
 
         line = 0 # Line index
         baselineColor = e.css('baselineColor', color(0,7))
