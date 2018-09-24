@@ -2043,11 +2043,13 @@ class Element:
         348pt
         >>> e.yAlign = MIDDLE
         >>> e.top
-        -24pt
+        224pt
         """
         yAlign = self.yAlign
         if yAlign == MIDDLE:
-            return self.y - self.h/2
+            if self.originTop:
+                return self.y - self.h/2
+            return self.y + self.h/2
         if yAlign == BOTTOM:
             if self.originTop:
                 return self.y - self.h
@@ -2059,7 +2061,10 @@ class Element:
         be defined by the top or bottom position of the baseline."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
-            self.y = units(y) + self.h/2
+            if self.originTop:
+                self.y = units(y) + self.h/2
+            else:
+                self.y = units(y) - self.h/2
         elif yAlign == BOTTOM:
             if self.originTop:
                 self.y = units(y) + self.h
@@ -2083,7 +2088,18 @@ class Element:
     def _get_middle(self):
         """On bounding box, not including margins.
 
-        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> e = Element(y=100, h=248, yAlign=TOP, originTop=True)
+        >>> e.middle
+        224pt
+        >>> e.yAlign = BOTTOM
+        >>> e.middle
+        -24pt
+        >>> e.yAlign = MIDDLE
+        >>> e.middle
+        100pt
+
+        >>> e.originTop = False
+        >>> e.yAlign = TOP
         >>> e.middle
         -24pt
         >>> e.yAlign = BOTTOM
@@ -3385,7 +3401,7 @@ class Element:
     ph = property(_get_ph)
 
     def _get_pd(self):
-        """Padded depth read-only property of the element block.
+        """Padded depth read-only property of the element block. Answer the distance between depth padding.
 
         >>> e = Element(d=400, pzf=22, pzb=33)
         >>> e.pd
@@ -3411,26 +3427,40 @@ class Element:
         """Answer the style flag if all point y values should measure top-down
         (typographic page orientation), instead of bottom-up (mathematical
         orientation). For Y-axis only. The axes in X and Z directions are
-        fixed.
+        fixed. The value is stored on page level, so there is no origin top/down
+        switching possible inside the element tree of a page.
+        Note that by changing, the position of existing glyphs does NOT change,
+        so their (x,y) position changes (unless referred to by side positions
+        such as e.top and e.center, etc.).
 
-        >>> e = Element()
-        >>> e.originTop is None
+        >>> e1 = Element()
+        >>> e1.originTop is None # Undefined by default, means that origin is at bottom left.
         True
-        >>> e = Element(originTop=True)
-        >>> e.originTop
-        True
-        >>> e.originTop = False
-        >>> e.originTop
+        >>> e1.originTop = False
+        >>> e1.originTop
         False
+        >>> e1 = Element(originTop=True)
+        >>> e1.originTop
+        True
+        >>> e2 = Element(parent=e1)
+        >>> e2.originTop # Inherit from parent
+        True
+        >>> e2.originTop = False
+        >>> e2.originTop, e1.originTop # Sets page or top of the element tree.
+        (False, False)
         """
-        return self.css('originTop')
+        if self.isPage: # Only interested in the flag on top of tree or on page level
+            return self.style.get('originTop')
+        if self.parent is not None: 
+            return self.parent.originTop
+        return self.style.get('originTop')
     def _set_originTop(self, flag):
-        if flag:
-            self.style['originTop'] = True # Overwrite element local style from here, parent css becomes inaccessable.
-            self.style['yAlign'] = TOP
+        if self.isPage:
+            self.style['originTop'] = bool(flag) # originTop is property of page.
+        elif self.parent is not None:
+            self.parent.originTop = bool(flag) # Recursively up parent tree.
         else:
-            self.style['originTop'] = False
-            self.style['yAlign'] = BOTTOM
+            self.style['originTop'] = bool(flag) # No parent, then set local property
     originTop = property(_get_originTop, _set_originTop)
 
     def _get_size(self):
@@ -5144,11 +5174,104 @@ class Element:
         self.right = self.parent.w
         return True
 
+    def origin2Center(self):
+        """Move origin of the element to the padding center of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.origin2Center() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2Center()
+        >>> e2.x, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        """
+        if self.parent is None:
+            return False
+        self.x = self.parent.pl + self.parent.pw/2
+        return True
+
+    def origin2CenterSides(self):
+        """Move origin of the element to the sides center of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.origin2CenterSides() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2CenterSides()
+        >>> e2.x, 500/2
+        (250pt, 250.0)
+        """
+        if self.parent is None:
+            return False
+        self.x = self.parent.w/2
+        return True
+
+    def origin2Left(self):
+        """Move origin of the element to the padding left of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.origin2Left() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2Left()
+        >>> e2.x, 30
+        (30pt, 30)
+        """
+        if self.parent is None:
+            return False
+        self.x = self.parent.pl # Padding left
+        return True
+
+    def origin2LeftSide(self):
+        """Move origin of the element to the left side of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2LeftSide()
+        >>> e2.x
+        0pt
+        """
+        self.x = 0
+        return True
+
+    def origin2Right(self):
+        """Move origin of the element to the right padding of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.origin2Right() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2Right()
+        >>> e2.x, 500 - 80
+        (420pt, 420)
+        """
+        if self.parent is None:
+            return False
+        self.x = self.parent.w - self.parent.pr
+        return True
+
+    def origin2RightSide(self):
+        """Move origin of the element to the right padding of the parent.
+
+        >>> e1 = Element(w=500, pl=30, pr=80)
+        >>> e1.origin2RightSide() # Element without parent answers False
+        False
+        >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
+        >>> success = e2.origin2RightSide()
+        >>> e2.x, 500
+        (500pt, 500)
+        """
+        if self.parent is None:
+            return False
+        self.x = self.parent.w
+        return True
+
+
     #   Vertical alignments
 
     def bottom2Bottom(self):
         """Move bottom of the element to the bottom of the parent block.
-        The position of e2 element origin depends on the horizontal
+        The position of e2 element origin depends on the vertical
         alignment type.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
@@ -5194,7 +5317,7 @@ class Element:
 
     def bottom2BottomSide(self):
         """Move bottom of the element to the bottom side of the parent.
-        The position of e2 element origin depends on the horizontal
+        The position of e2 element origin depends on the vertical
         alignment type.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
@@ -5239,7 +5362,45 @@ class Element:
         return True
 
     def bottom2Top(self):
-        """Move bottom of the element to the top of the parent block."""
+        """Move bottom of the element to the top padding of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.bottom2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 30 - 120
+        (-90pt, -90)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 30 - 120/2
+        (-30pt, -30.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 500 - 30 + 120
+        (590pt, 590)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 500 - 30 + 120/2
+        (530pt, 530.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Top()
+        >>> e2.y, 500 - 30
+        (470pt, 470)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.bottom = self.parent.pt
         else:
@@ -5247,7 +5408,45 @@ class Element:
         return True
 
     def middle2Bottom(self):
-        """Move middle of the element to the bottom of the parent block."""
+        """Move middle of the element to the bottom padding of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 500 - 80 - 120/2
+        (360pt, 360.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 500 - 80 + 120/2
+        (480pt, 480.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 80 + 120/2
+        (140pt, 140.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 80
+        (80pt, 80)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Bottom()
+        >>> e2.y, 80 - 120/2
+        (20pt, 20.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.middle = self.parent.h - self.parent.pb
         else:
@@ -5255,14 +5454,92 @@ class Element:
         return True
 
     def middle2BottomSide(self):
-        """Move middle of the element to the bottom parent side."""
+        """Move middle of the element to the bottom side of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2BottomSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y, 500 - 120/2
+        (440pt, 440.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y, 500
+        (500pt, 500)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y, 500 + 120/2
+        (560pt, 560.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y
+        0pt
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2BottomSide()
+        >>> e2.y, -120/2
+        (-60pt, -60.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.middle = self.parent.h
         else:
             self.middle = 0
         return True
 
+
     def middle2Top(self):
+        """Move middle of the element to the top side of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30 - 120/2
+        (-30pt, -30.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30 + 120/2
+        (90pt, 90.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2Top()
+        >>> e2.y, 500 - 30 + 120/2
+        (530pt, 530.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Top()
+        >>> e2.y, 500 - 30
+        (470pt, 470)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Top()
+        >>> e2.y, 500 - 30 - 120/2
+        (410pt, 410.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.middle = self.parent.pt
         else:
@@ -5270,6 +5547,45 @@ class Element:
         return True
 
     def middle2TopSide(self):
+        """Move middle of the element to the top side of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2TopSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2TopSide()
+        >>> e2.y, -120/2
+        (-60pt, -60.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2TopSide()
+        >>> e2.y
+        0pt
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2TopSide()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2TopSide()
+        >>> e2.y, 500 + 120/2
+        (560pt, 560.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2TopSide()
+        >>> e2.y, 500
+        (500pt, 500)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2TopSide()
+        >>> e2.y, 500 - 120/2
+        (440pt, 440.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.middle = 0
         else:
@@ -5277,34 +5593,205 @@ class Element:
         return True
 
     def middle2Middle(self): # Vertical center, following CSS naming.
-        pt = self.parent.pt # Get parent padding top
-        pb = self.parent.pb
-        middle = (self.parent.h - pb - pt)/2
+        """Move middle of the element to the padding middle of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 - 120/2
+        (165pt, 165.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 
+        (225pt, 225.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120/2
+        (285pt, 285.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 + 120/2
+        (335pt, 335.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2
+        (275pt, 275.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 - 120/2
+        (215pt, 215.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
-            self.middle = pt + middle
+            self.middle = self.parent.pt + self.parent.ph/2
         else:
-            self.middle = pb + middle
+            self.middle = self.parent.pb + self.parent.ph/2
         return True
 
     def middle2MiddleSides(self):
+        """Move middle of the element to the sides middle of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2MiddleSides() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2 - 120/2
+        (190pt, 190.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2 
+        (250pt, 250.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2 + 120/2
+        (310pt, 310.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2 + 120/2
+        (310pt, 310.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2MiddleSides()
+        >>> e2.y, 500/2 - 120/2
+        (190pt, 190.0)
+        """
+        if self.parent is None:
+            return False
         self.middle = self.parent.h/2
 
 
     def top2Middle(self):
-        pt = self.parent.pt # Get parent padding left
-        pb = self.parent.pb
-        middle = (self.parent.h - pb - pt)/2
+        """Move top of the element to the padding middle of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120/2
+        (285pt, 285.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120
+        (345pt, 345.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.top2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2
+        (275pt, 275.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 - 120/2
+        (215pt, 215.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 - 120
+        (155pt, 155.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
-            self.top = pt + middle
+            self.top = self.parent.pt + self.parent.ph/2
         else:
-            self.top = pb + middle
+            self.top = self.parent.pb + self.parent.ph/2
         return True
 
     def top2MiddleSides(self):
+        """Move top of the element to the middle between sides of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2MiddleSides() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 + 120/2
+        (310pt, 310.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 + 120
+        (370pt, 370.0)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 
+        (250pt, 250.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 - 120/2
+        (190pt, 190.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 - 120
+        (130pt, 130.0)
+        """
+        if self.parent is None:
+            return False
         self.top = self.parent.h/2
         return True
 
     def origin2Bottom(self):
+        """Move origin of the element to the padding bottom of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.origin2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.origin2Bottom()
+        >>> e2.y, 80
+        (80pt, 80)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.y = self.parent.h - self.parent.pb
         else:
@@ -5312,37 +5799,51 @@ class Element:
         return True
 
     def origin2BottomSide(self):
+        """Move origin of the element to the padding bottom of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2BottomSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.origin2BottomSide()
+        >>> e2.y
+        500pt
+
+        >>> # Parent origin bottom
+        >>> e1.originTop = False # e2 inherits the flag
+        >>> e2.yAlign = TOP
+        >>> success = e2.origin2BottomSide()
+        >>> e2.y
+        0pt
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.y = self.parent.h
         else:
             self.y = 0
         return True
 
-    def origin2Center(self):
-        self.x = self.parent.ml + (self.parent.w - self.parent.pr - self.parent.pl)/2
-        return True
-
-    def origin2CenterSides(self):
-        self.x = self.parent.w/2
-        return True
-
-    def origin2Left(self):
-        self.x = self.parent.pl # Padding left
-        return True
-
-    def origin2LeftSide(self):
-        self.x = 0
-        return True
-
-    def origin2Right(self):
-        self.x = self.parent.w - self.parent.pr
-        return True
-
-    def origin2RightSide(self):
-        self.x = self.parent.w
-        return True
-
     def origin2Top(self):
+        """Move origin of the element to the top padding of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+
+        >>> e1.originTop = False
+        >>> success = e2.origin2Top()
+        >>> e2.y, 500 - 30
+        (470pt, 470)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.y = self.parent.pt
         else:
@@ -5350,6 +5851,23 @@ class Element:
         return True
 
     def origin2TopSide(self):
+        """Move origin of the element to the top side of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2TopSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2TopSide()
+        >>> e2.y
+        0pt
+
+        >>> e1.originTop = False
+        >>> success = e2.origin2TopSide()
+        >>> e2.y, 500
+        (500pt, 500)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.y = 0
         else:
@@ -5357,34 +5875,164 @@ class Element:
         return True
 
     def origin2Middle(self):
-        pt = self.parent.pt # Get parent padding top
-        pb = self.parent.pb
-        middle = (self.parent.h - pb - pt)/2
+        """Move origin of the element to the top side of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+
+        >>> e1.originTop = False
+        >>> success = e2.origin2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2
+        (275pt, 275.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
-            self.y = pt + middle
+            self.y = self.parent.pt + self.parent.ph/2
         else:
-            self.y = pb + middle
+            self.y = self.parent.pb + self.parent.ph/2
         return True
 
     def origin2MiddleSides(self):
+        """Move origin of the element to the sides middle of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2MiddleSides() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+
+        >>> e1.originTop = False
+        >>> success = e2.origin2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+        """
+        if self.parent is None:
+            return False
         self.y = self.parent.h/2
         return True
 
     def bottom2Middle(self):
-        pt = self.parent.pt # Get parent padding top
-        pb = self.parent.pb
-        middle = (self.parent.h - pb - pt)/2
+        """Move bottom of the element to the padding middle of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.bottom2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 - 120 
+        (105pt, 105.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 - 120/2
+        (165pt, 165.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 + 120 
+        (395pt, 395.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2 + 120/2
+        (335pt, 335.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2Middle()
+        >>> e2.y, 80 + (500 - 30 - 80)/2
+        (275pt, 275.0)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
-            self.bottom = pt + middle
+            self.bottom = self.parent.pt + self.parent.ph/2
         else:
-            self.bottom = pb + middle
+            self.bottom = self.parent.pb + self.parent.ph/2
         return True
 
     def bottom2MiddleSides(self):
+        """Move bottom of the element to the sides middle of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.bottom2MiddleSides() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2 - 120 
+        (130pt, 130.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2 - 120/2
+        (190pt, 190.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2 + 120 
+        (370pt, 370.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2 + 120/2
+        (310pt, 310.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.bottom2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+        """
+        if self.parent is None:
+            return False
         self.bottom = self.parent.h/2
         return True
 
     def top2Bottom(self):
+        """Move top of the element to the padding bottom of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80 + 120/2
+        (480pt, 480.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80 + 120
+        (540pt, 540)
+
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 80
+        (80pt, 80)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 80 - 120/2
+        (20pt, 20.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 80 - 120
+        (-40pt, -40)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.top = self.parent.h - self.parent.pb
         else:
@@ -5392,6 +6040,40 @@ class Element:
         return True
 
     def top2Top(self):
+        """Move top of the element to the padding top of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Top()
+        >>> e2.y, 30 + 120/2
+        (90pt, 90.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Top()
+        >>> e2.y, 30 + 120
+        (150pt, 150)
+
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.top2Top()
+        >>> e2.y, 500 - 30
+        (470pt, 470)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Top()
+        >>> e2.y, 500 - 30 - 120/2
+        (410pt, 410.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Top()
+        >>> e2.y, 500 - 30 - 120
+        (350pt, 350)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.top = self.parent.pt
         else:
@@ -5399,6 +6081,40 @@ class Element:
         return True
 
     def top2TopSide(self):
+        """Move top of the element to the top side of the parent.
+
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2TopSide() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2TopSide()
+        >>> e2.y
+        0pt
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2TopSide()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2TopSide()
+        >>> e2.y, 120
+        (120pt, 120)
+
+        >>> e1.originTop = False
+        >>> e2.yAlign = TOP
+        >>> success = e2.top2TopSide()
+        >>> e2.y, 500
+        (500pt, 500)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2TopSide()
+        >>> e2.y, 500 - 120/2
+        (440pt, 440.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2TopSide()
+        >>> e2.y, 500 - 120
+        (380pt, 380)
+        """
+        if self.parent is None:
+            return False
         if self.originTop:
             self.mTop = 0
         else:

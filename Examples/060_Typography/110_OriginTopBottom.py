@@ -16,112 +16,218 @@
 #
 #     Test the relation between hard-coded positions (from e.x and e.w, etc.)
 #     and the more abstract positions of e.top, e.right, e.bottom and e.left
-#     Text on variations of origin alignments and top/bottom of element origin.
+#     that are used by conditions.
+#     Test on variations of origin alignments and top/bottom of element origin.
 #
 from pagebot.document import Document # Get the main Document class
-from pagebot.toolbox.units import pt, inch
+from pagebot.toolbox.units import p
 from pagebot.toolbox.color import color
 from pagebot.contexts.platform import getContext
-from pagebot.constants import (BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, B5, CENTER, MIDDLE,
+from pagebot.constants import (BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, CENTER, MIDDLE,
     LEFT, RIGHT, TOP, BOTTOM)
 from pagebot.elements import *
 from pagebot.conditions import *
 
 context = getContext() # Get the current context (e.g. DrawBotContext instance)
 
+DO_SOLVE = False
+
 # Example baseline position, showing that start can be different from page side
 # or top of text box.
-BASELINE = pt(15)
-BASELINE_START = 3.5 * BASELINE
-PADDING = 5*BASELINE, 3*BASELINE, 6*BASELINE, 4*BASELINE # Page padding related to baseline in this example.
+UNIT = p(1)
+TP = 8*UNIT
+RP = 2*UNIT
+BP = 12*UNIT
+LP = 4*UNIT
+PADDING = TP, RP, BP, LP # Page padding related to baseline in this example.
+W, H = p(50, 75)
+EW = W - LP - RP
+EH = H - TP - BP
 
-doc = Document(size=B5, padding=PADDING, 
+E_FILL = color(0.5, 0.5, 0.5, 0.5)
+GREEN = color(rgb='green')
+RED = color(rgb='red')
+
+R = 10 # Radius of the red/green circles.
+
+CONDS = []#[Fit()]
+
+doc = Document(w=W, h=H, padding=PADDING, 
     autoPages=2*3, # Create multiple pages, to show page origin top/bottom and element alignments.
-    baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
+)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
-view.padding = 0 # Define padding of the view, so there is space for crop marks
-view.showBaselines = False #[BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
-#view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
-view.showCropMarks = False
-view.showRegistrationMarks = False
-view.showNameInfo = True # Show document/name/date info in view padding area.
-view.showFrame = True # Show frame of the page size.
-
-r = 10 # Radius of the red/green circles.
 
 page = doc[1]
 page.originTop = True # Origin on top of bottom should make not differenc
-r1 = newRect(conditions=[Fit()], fill=(0.5, 0.5, 0.5, 0.5), parent=page)
-# 'Origin Top, box alignment top-left', 
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
 r1.showOrigin = True
-page.solve() # Make the r1 fit the page padding
-print('r1.top', r1.top, 'page.pt', page.pt, r1.top == page.pt)
-newCircle(x=r1.x+r1.w/2-r, y=r1.y, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+r, y=r1.top, r=r, fill=color(rgb='red'), parent=page)
+# 'Origin Top, box alignment top-left', 
+r1.xAlign = LEFT
+r1.yAlign = TOP
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP
+    r1.y = TP
+    r1.size = EW, EH
+
+newCircle(x=r1.x+r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page) # x,y position
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page) # sides location
  
-print('r1.right', r1.right, page.pl + page.pw, page.w - page.pr, r1.right == page.pl + page.pw == page.w - page.pr)
-newCircle(x=r1.x+r1.w-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.right+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x+r1.w-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
 
-print('r1.bottom', r1.bottom, page.h - page.pb, r1.bottom == page.h - page.pb)
-newCircle(x=r1.x+r1.w/2-10, y=r1.y+r1.h, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+10, y=r1.bottom, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x+r1.w/2-R, y=r1.y+r1.h, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page)
 
-print('r1.left', r1.left, page.pl, r1.left == page.pl)
-newCircle(x=r1.x-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.left+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
 
 
 page = doc[2]
 page.originTop = True # Origin on top of bottom should make not differenc
-r1 = newRect(conditions=[Fit()], fill=(0.5, 0.5, 0.5, 0.5), parent=page)
-# 'Origin Top, box alignment middle-center', 
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
 r1.showOrigin = True
-r1.xAlign = LEFT
+# 'Origin Top, box alignment middle-center', 
+r1.xAlign = CENTER
 r1.yAlign = MIDDLE
-page.solve() # Make the r1 fit the page padding
-print('r1.top', r1.top, 'page.pt', page.pt, r1.top == page.pt)
-newCircle(x=r1.x+r1.w/2-r, y=r1.y, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+r, y=r1.top, r=r, fill=color(rgb='red'), parent=page)
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP + EW/2
+    r1.y = TP + EH/2
+    r1.size = EW, EH
+
+newCircle(x=r1.x-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page)
  
-print('r1.right', r1.right, page.pl + page.pw, page.w - page.pr, r1.right == page.pl + page.pw == page.w - page.pr)
-newCircle(x=r1.x+r1.w-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.right+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x+r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
 
-print('r1.bottom', r1.bottom, page.h - page.pb, r1.bottom == page.h - page.pb)
-newCircle(x=r1.x+r1.w/2-10, y=r1.y+r1.h, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+10, y=r1.bottom, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page) # By coordinates
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page) # By positioning on sides
 
-print('r1.left', r1.left, page.pl, r1.left == page.pl)
-newCircle(x=r1.x-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.left+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
 
 
 page = doc[3]
 page.originTop = True # Origin on top of bottom should make not differenc
-r1 = newRect(conditions=[Fit()], fill=(0.5, 0.5, 0.5, 0.5), parent=page)
-# 'Origin Top, box alignment bottom-right', 
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
 r1.showOrigin = True
-r1.xAlign =RIGHT
+# 'Origin Top, box alignment bottom-right', 
+r1.xAlign = RIGHT
 r1.yAlign = BOTTOM
-page.solve() # Make the r1 fit the page padding
-print('r1.top', r1.top, 'page.pt', page.pt, r1.top == page.pt)
-newCircle(x=r1.x+r1.w/2-r, y=r1.y, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+r, y=r1.top, r=r, fill=color(rgb='red'), parent=page)
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP + EW
+    r1.y = TP + EH
+    r1.size = EW, EH
+
+newCircle(x=r1.x-r1.w/2-R, y=r1.y-r1.h, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page)
  
-print('r1.right', r1.right, page.pl + page.pw, page.w - page.pr, r1.right == page.pl + page.pw == page.w - page.pr)
-newCircle(x=r1.x+r1.w-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.right+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
 
-print('r1.bottom', r1.bottom, page.h - page.pb, r1.bottom == page.h - page.pb)
-newCircle(x=r1.x+r1.w/2-10, y=r1.y+r1.h, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.x+r1.w/2+10, y=r1.bottom, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page) # By coordinates
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page) # By positioning on sides
 
-print('r1.left', r1.left, page.pl, r1.left == page.pl)
-newCircle(x=r1.x-10, y=r1.y+r1.h/2, r=r, fill=color(rgb='green'), parent=page)
-newCircle(x=r1.left+10, y=r1.y+r1.h/2, r=r, fill=color(rgb='red'), parent=page)
+newCircle(x=r1.x-r1.w-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+
+page = doc[4]
+page.originTop = False # Origin on top of bottom should make not differenc
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
+r1.showOrigin = True
+# 'Origin Bottom, box alignment top-left', 
+r1.xAlign = LEFT
+r1.yAlign = TOP
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP 
+    r1.y = BP + EH
+    r1.size = EW, EH
+
+newCircle(x=r1.x+r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page)
+ 
+newCircle(x=r1.x+r1.w-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x+r1.w/2-R, y=r1.y-r1.h, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+
+page = doc[5]
+page.originTop = False # Origin on top of bottom should make not differenc
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
+r1.showOrigin = True
+# 'Origin Bottom, box alignment middle-center', 
+r1.xAlign = CENTER
+r1.yAlign = MIDDLE
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP + EW/2
+    r1.y = BP + EH/2
+    r1.size = EW, EH
+
+newCircle(x=r1.x-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page)
+ 
+newCircle(x=r1.x+r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-R, y=r1.y-r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+
+page = doc[6]
+page.originTop = False # Origin on top of bottom should make not differenc
+page.padding = PADDING
+r1 = newRect(conditions=CONDS, fill=E_FILL, parent=page)
+r1.showOrigin = True
+# 'Origin Bottom, box alignment bottom-right', 
+r1.xAlign = RIGHT
+r1.yAlign = BOTTOM
+if DO_SOLVE:
+    page.solve() # Make the r1 fit the page padding
+else:
+    r1.x = LP + EW
+    r1.y = BP
+    r1.size = EW, EH
+
+print(page.pt, page.pr, page.pb, page.pl)
+print(page.h-r1.top, page.w-r1.right, r1.bottom, r1.left)
+
+newCircle(x=r1.x-r1.w/2-R, y=r1.y+r1.h, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.top, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.right+R, y=r1.middle, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-r1.w/2-R, y=r1.y, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.center+R, y=r1.bottom, r=R, fill=RED, parent=page)
+
+newCircle(x=r1.x-r1.w-R, y=r1.y+r1.h/2, r=R, fill=GREEN, parent=page)
+newCircle(x=r1.left+R, y=r1.middle, r=R, fill=RED, parent=page)
 
 
 # Export the document showing the baselines of the page as horizontal lines and the padding.  
