@@ -6,9 +6,8 @@ documents using code. It is available both as Python library working with
 desktop applications that can be created from it. Other contexts such as
 [Flat](http://xxyxyz.org/flat) (currently under development) allow PageBot to
 run environments other Mac OS X, for example on web servers. The aim of the developers
-of *PageBit* is to create a system for
-scriptable applications generating professionally designed documents that use
-high quality typography.
+of *PageBot* is to create a system ofscriptable applications to generate professionally
+designed documents that use high quality typography.
 
 - The core library, tutorial and basic examples for PageBot are available under
 MIT Open Source license from
