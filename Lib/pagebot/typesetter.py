@@ -572,7 +572,7 @@ class Typesetter:
             # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(self.root, e)
-        #print('dasdasads', self.galley)
+
         # Answer the self.galley as convenience for the caller.
         return self.galley
 
