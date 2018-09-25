@@ -40,7 +40,3 @@ def useUnits():
     # TODO: etc...
 
 useUnits()
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

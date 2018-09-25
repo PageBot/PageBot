@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     testBabelStrings.py
+#
+# Compares pure Flat and FlatContext functionality.
+
  # Only runs under Flat
 from flat import rgb, font, shape, strike, document
 from pagebot.fonttoolbox.objects.font import findFont
@@ -21,16 +37,10 @@ def testFlat():
 	c2 = rgb(100, 180, 0)
 	style = dict(font=f, fontSize=FONTSIZE, color=c2, leading=LEADING)
 
-
 	# Creates the document.
 	d = document(WIDTH, HEIGHT, 'mm')
-	#print(d.width)
-	#print(d.height)
 	p = d.addpage()
-	#print(p.width)
 	context.newDocument(WIDTH, HEIGHT)
-	#print(context.doc.width)
-	#print(context.doc.height)
 
 	context.newPage()
 	print(context.pages[0].width)
@@ -52,8 +62,9 @@ def testFlat():
 	#print(s.item.style.fill)
 	#print(s.item.style.stroke)
 	#print(s.item.style.join)
-	#print(s.item.style.limit)
+        #print(s.item.style.limit)
 
+        print(type(c2))
 	headline = strike(ff).color(c2).size(FONTSIZE, LEADING)
 	t = headline.text('Hello world!')
 	entity = p.place(t)
@@ -74,13 +85,10 @@ def testFlat():
 	im = p.image(kind='rgb')
 	#print(p.items)
 
-
 	# TODO:
 	#imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
 	#size = context.imageSize(imagePath)
 	#print(size)
-
-
 
 	if not os.path.exists('_export'):
 	    os.mkdir('_export')
@@ -93,8 +101,8 @@ def testFlat():
 
 	print('Exporting pagebot')
 	context.saveDocument('_export/pagebot-flat.pdf')
-	context.saveDocument('_export/pagebot-flat.png')
-	context.saveDocument('_export/pagebot-flat.jpg')
-	context.saveDocument('_export/pagebot-flat.svg')
+	#context.saveDocument('_export/pagebot-flat.png')
+	#context.saveDocument('_export/pagebot-flat.jpg')
+	#context.saveDocument('_export/pagebot-flat.svg')
 
 testFlat()

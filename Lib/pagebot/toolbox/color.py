@@ -262,8 +262,10 @@ def rgb2Spot(rgb):
     return foundSpot
 
 def spot2Cmyk(spot, default=None):
-    """Answers the CMYK value of spot color. If the value does not exist, answer default of black.
-    Note that this is a double conversion: spot-->rgb-->cmyk
+    """Answers the CMYK value of spot color. If the value does not exist,
+    answer default of black. Note that this is a double conversion:
+
+    spot-->rgb-->cmyk
 
     >>> '%0.2f, %0.2f, %0.2f, %0.2f' % spot2Cmyk(300)
     '0.78, 0.33, 0.00, 0.22'
@@ -337,20 +339,21 @@ def rgb2Name(rgb):
 class Color:
     """The Color class implements a generic color storage, that is capable of
     tranforming one type of color to another. One of the reasons to use Color
-    instances, is that some contexts (such as FlatContext) are very specific
-    in what kind of color is possible depending on the selected output format.
-    As the intension of PageBot is to define evert aspect of documents, without
-    knowing their output medium or format in advance, all colors need to be stored
-    as generic intance of Color.
+    instances, is that some contexts (such as FlatContext) are very specific in
+    what kind of color is possible depending on the selected output format. As
+    the intension of PageBot is to define evert aspect of documents, without
+    knowing their output medium or format in advance, all colors need to be
+    stored as generic intance of Color.
 
-    The values of defined Color instances are stored without conversion, so there
-    is not double conversion done (except for cmyk-->rgb-->spot and spot-->rgb-->cmyk,
-    as we don't have a direct translation table (yet) for those.
+    The values of defined Color instances are stored without conversion, so
+    there is not double conversion done (except for cmyk-->rgb-->spot and
+    spot-->rgb-->cmyk, as we don't have a direct translation table (yet) for
+    those.
 
     Other projects: Add profiles, exceptions to calculated conversion.
 
-    It is assumed that all UI-colors (such as floats or tuples) are translated
-    into Color instances.
+    We assume that all UI-colors (such as floats or tuples) are translated into
+    Color instances.
 
     Options to defined the color:
 
@@ -446,7 +449,7 @@ class Color:
         elif ral is not None:
             self._ral = ral
 
-        # rgb-list
+        # RGB-list
         elif isinstance(rgb, (tuple, list)):
             if len(rgb) == 3:
                 self.r, self.g, self.b = rgb[0] or 0, rgb[1] or 0, rgb[2] or 0
@@ -455,7 +458,7 @@ class Color:
             else:
                 raise ValueError('Color rgb tuple "%s" should be 3 or 4 digits' % rgb)
 
-        # rgb-string
+        # RGB-string
         elif isinstance(rgb, str): # In case rgb is a hex string or a name.
             hexOrName = rgb.lower()
             if hexOrName in CSS_COLOR_NAMES: # Not hex, but a color name instead. We're tolerant: convert anyway.
@@ -472,7 +475,7 @@ class Color:
             else:
                 self.r, self.g, self.b = int2Rgb(rgb)
 
-        # rgb-float
+        # RGB-float
         elif isinstance(rgb, float):
             if rgb <= 0:
                 self.r = self.g = self.b = 0
@@ -483,14 +486,14 @@ class Color:
             else:
                 self.r, self.g, self.b = int2Rgb(int(round(rgb)))
 
-        # cmyk-list
+        # CMYK-list
         elif isinstance(cmyk, (tuple, list)):
             if len(cmyk) == 4:
                 self.c, self.m, self.y, self.k = cmyk[0] or 0, cmyk[1] or 0, cmyk[2] or 0, cmyk[3] or 0
             else:
                 raise ValueError('Color cmyk tuple "%s" should be 4 digits' % str(cmyk))
 
-        # cmyk-int
+        # CMYK-int
         elif isinstance(cmyk, (float, int)):
             if cmyk <= 0:
                 cmyk = 0
