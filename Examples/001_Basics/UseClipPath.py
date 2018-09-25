@@ -1,5 +1,3 @@
-from pagebot import getContext
-
 #!/usr/bin/env python
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -20,11 +18,8 @@ from pagebot import getContext
 from pagebot.contexts.platform import getContext
 
 context = getContext()
-
 context.fill((0, 1, 1))
-#Deze verandert het clip path
 context.rect(80, 80, 400, 400)
-
 path = context.newPath()
 path.moveTo((100, 100))
 path.lineTo((100, 150))
@@ -32,6 +27,8 @@ path.lineTo((200, 200))
 path.lineTo((200, 150))
 path.lineTo((100, 150))
 path.closePath()
+
+# This changes the clip path:
 
 context.save()
 context.clipPath(path)
@@ -41,5 +38,3 @@ context.restore()
 
 context.fill((1, 1, 0, 0.8))
 context.rect(400, 20, 300, 400)
-
-
