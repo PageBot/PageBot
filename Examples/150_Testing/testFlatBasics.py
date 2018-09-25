@@ -18,7 +18,7 @@
 from flat import rgb, font, shape, strike, document
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.platform import getContext
-from pagebot.toolbox.color import blackColor
+from pagebot.toolbox.color import blackColor, color
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt
 import os, os.path
@@ -31,11 +31,12 @@ FONTNAME = 'BungeeHairline-Regular'
 
 def testFlat():
 	context = getContext('Flat')
-	f = findFont(FONTNAME)
-	ff = font.open(f.path)
-	c1 = rgb(180, 0, 125)
-	c2 = rgb(100, 180, 0)
-	style = dict(font=f, fontSize=FONTSIZE, color=c2, leading=LEADING)
+	pagebotFont = findFont(FONTNAME)
+	flatFont = font.open(pagebotFont.path)
+        fillColorTuple = (180, 0, 125)
+        strokeColorTuple = (100, 180, 0)
+	fillColor = rgb(*fillColorTuple)
+	strokeColor = rgb(*strokeColorTuple)
 
 	# Creates the document.
 	d = document(WIDTH, HEIGHT, 'mm')
@@ -46,13 +47,13 @@ def testFlat():
 	print(context.pages[0].width)
 	print(context.pages[0].height)
 
-	figure = shape().fill(c1).stroke(c2).width(2.5)
+	figure = shape().fill(fillColor).stroke(strokeColor).width(2.5)
 	r = figure.rectangle(50, 50, 20, 20)
-	print(r)
+	#print(r)
 	p.place(r)
 
-	context.fill((180, 0, 125))
-	context.stroke((100, 180, 0))
+	context.fill(fillColorTuple)
+	context.stroke(strokeColorTuple)
 	context.strokeWidth(2.5)
 	context.rect(50, 50, 20, 20)
 
@@ -64,11 +65,13 @@ def testFlat():
 	#print(s.item.style.join)
         #print(s.item.style.limit)
 
-        print(type(c2))
-	headline = strike(ff).color(c2).size(FONTSIZE, LEADING)
+	headline = strike(flatFont).color(strokeColor).size(FONTSIZE, LEADING)
 	t = headline.text('Hello world!')
 	entity = p.place(t)
 	entity.frame(10, 10, 380, 80)
+
+        style = dict(font=pagebotFont, fontSize=FONTSIZE,
+                color=color(strokeColorTuple), leading=LEADING)
 	bs = context.newString('Hello world!', style=style)
 	#print(bs.__class__.__name__)
 	context.text(bs, (10, 10))

@@ -482,7 +482,8 @@ class FlatContext(BaseContext):
     #   D R A W I N G
 
     def _getValidColor(self, c):
-        u"""Answer the color tuple that is valid for self.fileType, otherwise Flat gives an error."""
+        u"""Answer the color tuple that is valid for self.fileType, otherwise
+        Flat gives an error."""
         # TODO: Make better match for all file types, transparance and spot color
         import flat
 
@@ -626,6 +627,7 @@ class FlatContext(BaseContext):
         """
         if isinstance(c, (tuple, list, int, float)):
             c = color(c)
+
         assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
 
