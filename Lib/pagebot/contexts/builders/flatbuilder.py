@@ -16,7 +16,7 @@
 from pagebot.contexts.builders.nonebuilder import NoneFlatBuilder
 
 try:
-    # Id to make builder hook name. Views will try to call e.build_flat()
+    # ID to make builder hook name. Views will try to call e.build_flat().
     import flat
     flatBuilder = flat
     flatBuilder.PB_ID = 'flat'

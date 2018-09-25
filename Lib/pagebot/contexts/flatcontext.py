@@ -22,6 +22,7 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.constants import *
+from flat import rgb
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
@@ -79,11 +80,11 @@ class FlatContext(BaseContext):
         """
         # Keep status of last color, to make difference between fill and stroke colors.
         self.name = self.__class__.__name__
-        self._fill = blackColor
-        self._stroke = noColor
+        self._fill = rgb(0, 0, 0)
+        self._stroke = rgb(0, 0, 0)
         self._strokeWidth = 0
-        self._textFill = blackColor
-        self._textStroke = noColor
+        self._textFill = rgb(0, 0, 0)
+        self._textStroke = rgb(0, 0, 0)
         self._textStrokeWidth = 0
         self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
         self._fontSize = DEFAULT_FONT_SIZE
@@ -98,7 +99,8 @@ class FlatContext(BaseContext):
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
-        self.b = flatBuilder # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
+        # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
+        self.b = flatBuilder
 
         self.doc = None
         self.pages = []
@@ -501,15 +503,18 @@ class FlatContext(BaseContext):
     def _getShape(self):
         if self._fill is noColor and self._stroke is noColor:
             return None
+
         shape = self.b.shape()
         if self._fill is None:
             shape.nofill()
         elif self._fill != noColor:
-            shape.fill(self._getValidColor(self._fill))
+            #shape.fill(self._getValidColor(self._fill))
+            shape.fill(self._fill)
         if self._stroke is None:
             shape.nostroke()
         elif self._stroke != noColor:
-            shape.stroke(self._getValidColor(self._stroke)).width(self._strokeWidth)
+            #shape.stroke(self._getValidColor(self._stroke)).width(self._strokeWidth)
+            shape.stroke(self._stroke).width(self._strokeWidth)
         return shape
 
     def ensure_page(self):
@@ -521,6 +526,7 @@ class FlatContext(BaseContext):
     def rect(self, x, y, w, h):
         #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             r = shape.rectangle(x, y, w, h)
@@ -528,7 +534,7 @@ class FlatContext(BaseContext):
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom left origin and
-        (w,h) is the size.  This default DrawBot behavior, different from
+        (w,h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x,y) is the middle if the oval. Compensate for
         the difference."""
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
@@ -538,7 +544,7 @@ class FlatContext(BaseContext):
             self.page.place(shape.ellipse(xpt-wpt/2, ypt-hpt/2, wpt, hpt))
 
     def circle(self, x, y, r):
-        """Draw an circle in square, with radius r and (x,y) as middle."""
+        """Draws a circle in square with radius r and (x,y) as middle."""
         xpt, ypt, rpt = upt(x, y, r)
         shape = self._getShape()
         if shape is not None:
@@ -626,9 +632,9 @@ class FlatContext(BaseContext):
 
         """
         if isinstance(c, (tuple, list, int, float)):
-            c = color(c)
+            c = rgb(*c)
 
-        assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
+        #assert isinstance(c, Color), ('FlatContext.fill: Color "%s" is not Color instance' % str(c))
         self._fill = c
 
         '''
@@ -684,8 +690,8 @@ class FlatContext(BaseContext):
 
         """
         if isinstance(c, (tuple, list, int, float)):
-            c = color(c)
-        assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
+            c = rgb(*c)
+        #assert isinstance(c, Color), ('FlatContext.stroke: Color "%s" is not Color instance' % c)
         self._stroke = c
 
         '''
