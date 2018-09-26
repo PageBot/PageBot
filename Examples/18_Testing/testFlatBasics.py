@@ -33,11 +33,11 @@ def testFlat():
 	context = getContext('Flat')
 	pagebotFont = findFont(FONTNAME)
 	flatFont = font.open(pagebotFont.path)
-        fillColorTuple = (180, 0, 125)
-        strokeColorTuple = (100, 180, 0)
-	fillColor = rgb(*fillColorTuple)
-	strokeColor = rgb(*strokeColorTuple)
-        strokeWidth = 2.5
+	flatFill = rgb(180, 0, 125)
+	pagebotFill = color((180.0 / 255, 0, 125.0 / 255))
+	flatStroke = rgb(100, 180, 0)
+	pagebotStroke = color(100.0 / 255, 180.0 / 255, 0)
+        strokeWidth = 1
 
 	''' Creates a document. '''
 
@@ -52,13 +52,13 @@ def testFlat():
         ''' Draws a figure. '''
 
         # Flat.
-	figure = shape().fill(fillColor).stroke(strokeColor).width(strokeWidth)
+	figure = shape().fill(flatFill).stroke(flatStroke).width(strokeWidth)
 	r = figure.rectangle(50, 50, 20, 20)
 	p.place(r)
 
         # Pagebot.
-	context.fill(fillColorTuple)
-	context.stroke(strokeColorTuple)
+	context.fill(pagebotFill)
+	context.stroke(pagebotStroke)
 	context.strokeWidth(strokeWidth)
 	context.rect(50, 50, 20, 20)
 
@@ -81,14 +81,14 @@ def testFlat():
         msg = 'Hello world!'
 
         # Flat.
-	headline = strike(flatFont).color(strokeColor).size(FONTSIZE, LEADING)
+	headline = strike(flatFont).color(flatStroke).size(FONTSIZE, LEADING)
 	t = headline.text(msg)
 	entity = p.place(t)
 	entity.frame(10, 10, 380, 80)
 
         # Pagebot.
         style = dict(font=pagebotFont, fontSize=FONTSIZE,
-                color=color(*strokeColorTuple), leading=LEADING)
+                color=pagebotStroke, leading=LEADING)
 	bs = context.newString(msg, style=style)
 	context.text(bs, (10, 10))
 

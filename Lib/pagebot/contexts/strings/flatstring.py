@@ -18,6 +18,7 @@ import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
+from pagebot.contexts.flatconversion import *
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, \
     DEFAULT_LEADING
 from pagebot.toolbox.units import upt
@@ -208,8 +209,8 @@ class FlatString(BabelString):
         strike = context.b.strike(flatFont)
         c = style.get('color', DEFAULT_COLOR)
         # TODO: use flatBuilder.getValidColor().
-        c = rgb(*c.rgb)
-        strike.color(c).size(fontSizePt, leadingPt, units=cls.UNITS)
+        rgb = getFlatRGB(c)
+        strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
 
         # FIXME
         #if w is not None:
