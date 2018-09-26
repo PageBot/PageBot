@@ -14,12 +14,12 @@
 #     builddoc.py
 #
 #
-#    Run through the entire PageBot source tree. Run all .py for unit-test errors.
-#    Create TOC.md and TOC.pdf in every folder, with descriptions of all code in
-#    that folder. The docs contains an HTML with all PageBot info.
-#    If scripts make images in the local gallery folder with the same name as the
-#    script, then use that image in the example.
-#    Note that this applications script is an example of PageBot functions in itself.
+#    Run through the entire PageBot source tree. Run all .py for unit-test
+#    errors.  Create TOC.md and TOC.pdf in every folder, with descriptions of
+#    all code in that folder. The docs contains an HTML with all PageBot info.
+#
+#    If scripts make images in the local gallery folder with the same name as
+#    the script, then use that image in the example.
 #
 import runpy
 import os, pkgutil, traceback

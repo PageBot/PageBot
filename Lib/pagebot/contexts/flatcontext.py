@@ -27,6 +27,9 @@ from flat import rgb
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
 
+def to255(values):
+    return [round(val * 255) for val in values]
+
 class FlatContext(BaseContext):
     """A FlatContext instance combines the specific functions of the Flat
     library, and offers a PageBot “standard” API, so it can be swapped with the
@@ -65,8 +68,10 @@ class FlatContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
-    UNITS = 'pt' # Default is point document, should not be changed. Units render to points.
+
+    # Default is point document, should not be changed. Units render to points.
     #UNITS = 'mm'
+    UNITS = 'pt'
 
     def __init__(self):
         """Constructor of Flat context.
@@ -162,13 +167,15 @@ class FlatContext(BaseContext):
         >>> context.newPage(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG) # Flat is too scrict with color-format match
+        # Flat is too strict with color-format match?
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG)
         >>> context.fileType = FILETYPE_PDF
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF) # Flat is too scrict with color-format match
+        # Flat is too strict with color-format match?
+        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF)
         >>> context.fileType = FILETYPE_PNG
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
@@ -178,7 +185,9 @@ class FlatContext(BaseContext):
         >>> context.saveDocument(exportPath + '/MyTextDocument_F.gif')
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
-        self.checkExportPath(path) # In case path starts with "_export", make sure that the directories exist.
+        # In case path starts with "_export", make sure that the directory
+        # exists.
+        self.checkExportPath(path)
         self.fileType = path.split('.')[-1].lower()
 
         RGB = 'rgb'
@@ -294,7 +303,7 @@ class FlatContext(BaseContext):
 
     def translate(self, ox, soy):
         """Shift the origin of the canvas by (ox, oy).
-        TODO: To be implenented."""
+        TODO: To be implemented."""
         pass
 
     #   F O N T S
@@ -305,18 +314,21 @@ class FlatContext(BaseContext):
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
-    def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0, fontSize=None, xAlign=CENTER):
-        """Draw the font[glyphName] at the defined position with the defined fontSize.
-
-        """
+    def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0,
+            fontSize=None, xAlign=CENTER):
+        """Draw the font[glyphName] at the defined position with the defined
+        fontSize."""
+        pass
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
+        pass
 
     #   F R A M E S
 
     def frameDuration(self, secondsPerFrame):
-        """Set the frame duretion for animated gifs to a number of seconds per frame."""
+        """Set the frame duretion for animated gifs to a number of seconds per
+        frame."""
         self._frameDuration = secondsPerFrame
 
     #   T E X T
@@ -327,9 +339,11 @@ class FlatContext(BaseContext):
     def text(self, bs, p):
         """Place the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
-        FlatContext version of the BabelString is supposed to contain
-        Flat.text. Note that in the Flat model, the positions is an attribute
-        of the string, so strings cannot be reused to show on multiple
+        FlatContext version of the BabelString should contain
+        Flat.text.
+
+        NOTE:in the Flat model the position is an attribute of the string,
+        therefore strings cannot be reused to be displayed on multiple
         positions.
 
         >>> context = FlatContext()
@@ -349,9 +363,9 @@ class FlatContext(BaseContext):
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
-        """Set the current font, in case it is not defined in a formatted string.
-        font can be a Font instance, or a full font file path, or an abbreveation that can be found
-        by family or by findFont.
+        """Set the current font, in case it is not defined in a formatted
+        string. Font can be a Font instance, or a full font file path, or an
+        abbreveation that can be found by family or by findFont.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
@@ -380,7 +394,8 @@ class FlatContext(BaseContext):
             self._fontSize = upt(fontSize)
 
     def fontSize(self, fontSize):
-        """Set the current fontSize, in case it is not defined in a formatted string
+        """Sets the current fontSize in case it is not defined in a formatted
+        string.
 
         >>> from pagebot.toolbox.units import p
         >>> context = FlatContext()
@@ -394,7 +409,10 @@ class FlatContext(BaseContext):
         self._fontSize = upt(fontSize)
 
     def textBox(self, bs, r):
-        u"""Not usigin width and height here?"""
+        """
+        ...
+
+        FIXME: Not using width and height here?"""
         xpt, ypt, _, _ = upt(r)
         placedText = self.page.place(bs.s)
         placedText.position(xpt, ypt)
@@ -484,37 +502,39 @@ class FlatContext(BaseContext):
     #   D R A W I N G
 
     def _getValidColor(self, c):
-        u"""Answer the color tuple that is valid for self.fileType, otherwise
-        Flat gives an error."""
-        # TODO: Make better match for all file types, transparance and spot color
-        import flat
+        """Answer the color tuple that is valid for self.fileType, otherwise
+        Flat gives an error.
 
-        def to255(vals):
-            return [round(val * 255) for val in vals]
-
+        TODO: Make better match for all file types, transparency and spot
+        color."""
         if self.fileType in (FILETYPE_JPG, FILETYPE_PNG):
-            return flat.rgb(*to255(c.rgb))
-            #return c.rgb
-        if self.fileType in (FILETYPE_PDF):
-            return flat.rgb(*to255(c.rgb))
-        return flat.rgb(*to255(c.rgb))
-        #return c.rgb
+            return rgb(*to255(c.rgb))
+
+        elif self.fileType in (FILETYPE_PDF):
+            return rgb(*to255(c.rgb))
+
+        return rgb(*to255(c.rgb))
 
     def _getShape(self):
+        """Renders Pagebot FlatBuilder shape to Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
             return None
 
         shape = self.b.shape()
+
+        # TODO: revert to PageBot Color globally, convert to Flat rgb here.
         if self._fill is None:
             shape.nofill()
         elif self._fill != noColor:
             #shape.fill(self._getValidColor(self._fill))
             shape.fill(self._fill)
+
         if self._stroke is None:
             shape.nostroke()
         elif self._stroke != noColor:
             #shape.stroke(self._getValidColor(self._stroke)).width(self._strokeWidth)
             shape.stroke(self._stroke).width(self._strokeWidth)
+
         return shape
 
     def ensure_page(self):
@@ -609,7 +629,8 @@ class FlatContext(BaseContext):
     #   S H A D O W  &  G R A D I E N T
 
     def setShadow(self, eShadow):
-        """Set the DrawBot graphics state for shadow if all parameters are set."""
+        """Sets the DrawBot graphics state for shadow if all parameters are
+        set."""
         pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):

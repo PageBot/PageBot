@@ -62,26 +62,34 @@ def testFlat():
 	context.strokeWidth(strokeWidth)
 	context.rect(50, 50, 20, 20)
 
-	#print(p.items[0].item.style.width)
-	#print(context.pages[0].items[0].item.style.width)
+        '''
+	print(p.items[0].item.style.width)
+	print(context.pages[0].items[0].item.style.width)
+        '''
+
 	s = context.pages[0].items[0]
-	#print(s.item.style.fill)
-	#print(s.item.style.stroke)
-	#print(s.item.style.join)
-        #print(s.item.style.limit)
+
+        '''
+	print(s.item.style.fill)
+	print(s.item.style.stroke)
+	print(s.item.style.join)
+        print(s.item.style.limit)
+        '''
 
         ''' Draws text. '''
 
+        msg = 'Hello world!'
+
         # Flat.
 	headline = strike(flatFont).color(strokeColor).size(FONTSIZE, LEADING)
-	t = headline.text('Hello world!')
+	t = headline.text(msg)
 	entity = p.place(t)
 	entity.frame(10, 10, 380, 80)
 
         # Pagebot.
         style = dict(font=pagebotFont, fontSize=FONTSIZE,
-                color=rgb(*strokeColorTuple), leading=LEADING)
-	bs = context.newString('Hello world!', style=style)
+                color=color(*strokeColorTuple), leading=LEADING)
+	bs = context.newString(msg, style=style)
 	context.text(bs, (10, 10))
 
 	'''

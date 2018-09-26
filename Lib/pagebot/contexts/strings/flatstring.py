@@ -13,14 +13,13 @@
 #
 #     flatstring.py
 #
-#     xxyxyz.org/flat
-#     xxyxyz.org/flat
 
 import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
+from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, \
+    DEFAULT_LEADING
 from pagebot.toolbox.units import upt
 from flat import rgb
 
@@ -33,8 +32,9 @@ class FlatString(BabelString):
 
     """FlatString is a wrapper around the Flat string."""
     def __init__(self, s, context, style=None):
-        """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
-        Optionally store the (latest) style that was used to produce the formatted string.
+        """Constructor of the DrawBotString, which is a wrapper around
+        DrawBot.FormattedString. Optionally stores the (latest) style that was
+        used to produce the formatted string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -46,47 +46,57 @@ class FlatString(BabelString):
         """
         self.context = context # Store context, in case we need more of its functions.
         self.s = s # Store the Flat equivalent of the DrawBot FormattedString.
-        # In case defined, store current status here as property and set the current FormattedString
-        # for future additions. Also the answered metrics will not be based on these values.
+
+        # In case defined, store current status here as property and set the
+        # current FormattedString for future additions. Also the answered
+        # metrics will not be based on these values.
         if style is None:
             style = {}
         self.style = style
 
     def _get_s(self):
-        """Answer the embedded Flat equivalent of a OSX FormattedString by property, to enforce
-        checking type of the string."""
+        """Answers the embedded Flat equivalent of a OS X FormattedString by
+        property to enforce checking type of the string."""
         return self._s
+
     def _set_s(self, s):
         if isinstance(s, str):
             s = s # TODO: Change to Flat equivalent of FormattedString.
         self._s = s
+
     s = property(_get_s, _set_s)
 
     def _get_font(self):
         """Answer the current state of fontName."""
         return self.style.get('font')
+
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
         self.style['font'] = fontName
+
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
         """Answer the current state of the fontSize."""
         return self.style.get('fontSize')
+
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.font(fontSize)
         self.style['fontSize'] = fontSize
+
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_color(self):
         """Answer the current state of the color."""
         return self.style.get('color')
+
     def _set_color(self, color):
         #if color is not None:
         #    self.context.font(color)
         self.style['color'] = color
+
     color = property(_get_color, _set_color)
 
     def __len__(self):
@@ -128,7 +138,7 @@ class FlatString(BabelString):
 
     def append(self, s):
         """Append string or FlatString to self."""
-        # TODO: Make this to work.
+        # FIXME
         #try:
         #    self.s += s.s
         #except TypeError:
@@ -167,6 +177,7 @@ class FlatString(BabelString):
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
+
         if sUpperCase:
             s = s.upper()
         elif sLowercase:
@@ -174,12 +185,17 @@ class FlatString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
 
-        # Since Flat does not do font GSUB feature compile, we'll make the
-        # transformed string here,
-        # using Tal's https://github.com/typesupply/compositor
+        # TODO
+        # Because Flat does not do font GSUB feature compile, we'll make the
+        # transformed string here, using Tal's Compositor:
+        #
+        #     https://github.com/typesupply/compositor
+        #
         # This needs to be installed, in case PageBot is running outside of
         # DrawBot.
+
         font = style.get('font')
+
         if font is not None and not isinstance(font, str):
             font = font.path
 
@@ -191,13 +207,15 @@ class FlatString(BabelString):
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
         c = style.get('color', DEFAULT_COLOR)
+        # TODO: use flatBuilder.getValidColor().
+        c = rgb(*c.rgb)
         strike.color(c).size(fontSizePt, leadingPt, units=cls.UNITS)
+
+        # FIXME
         #if w is not None:
         #    strike.width = w
 
-        # Make real Flat flavor BabelString here.
         return cls(strike.text(s), context=context, style=style)
-
 
 if __name__ == '__main__':
     import doctest
