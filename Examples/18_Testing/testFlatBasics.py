@@ -37,24 +37,29 @@ def testFlat():
         strokeColorTuple = (100, 180, 0)
 	fillColor = rgb(*fillColorTuple)
 	strokeColor = rgb(*strokeColorTuple)
+        strokeWidth = 2.5
 
-	# Creates the document.
-	d = document(WIDTH, HEIGHT, 'mm')
-	p = d.addpage()
+	''' Creates a document. '''
+
+        # Flat.
+	doc = document(WIDTH, HEIGHT, 'mm')
+	p = doc.addpage()
+
+        # Pagebot.
 	context.newDocument(WIDTH, HEIGHT)
-
 	context.newPage()
-	print(context.pages[0].width)
-	print(context.pages[0].height)
 
-	figure = shape().fill(fillColor).stroke(strokeColor).width(2.5)
+        ''' Draws a figure. '''
+
+        # Flat.
+	figure = shape().fill(fillColor).stroke(strokeColor).width(strokeWidth)
 	r = figure.rectangle(50, 50, 20, 20)
-	#print(r)
 	p.place(r)
 
+        # Pagebot.
 	context.fill(fillColorTuple)
 	context.stroke(strokeColorTuple)
-	context.strokeWidth(2.5)
+	context.strokeWidth(strokeWidth)
 	context.rect(50, 50, 20, 20)
 
 	#print(p.items[0].item.style.width)
@@ -65,17 +70,19 @@ def testFlat():
 	#print(s.item.style.join)
         #print(s.item.style.limit)
 
+        ''' Draws text. '''
+
+        # Flat.
 	headline = strike(flatFont).color(strokeColor).size(FONTSIZE, LEADING)
 	t = headline.text('Hello world!')
 	entity = p.place(t)
 	entity.frame(10, 10, 380, 80)
 
+        # Pagebot.
         style = dict(font=pagebotFont, fontSize=FONTSIZE,
-                color=color(strokeColorTuple), leading=LEADING)
+                color=rgb(*strokeColorTuple), leading=LEADING)
 	bs = context.newString('Hello world!', style=style)
-	#print(bs.__class__.__name__)
 	context.text(bs, (10, 10))
-
 
 	'''
 	print(headline.style.size)
@@ -84,6 +91,8 @@ def testFlat():
 	print(headline.style.color.g)
 	print(headline.style.color.b)
 	'''
+
+        ''' Exports file. '''
 
 	im = p.image(kind='rgb')
 	#print(p.items)
@@ -96,14 +105,17 @@ def testFlat():
 	if not os.path.exists('_export'):
 	    os.mkdir('_export')
 
-	print('Exporting native')
-	d.pdf('_export/native-flat.pdf')
+	#print('Exporting native')
+	doc.pdf('_export/native-flat.pdf')
+        '''
 	im.png('_export/native-flat.png')
 	im.jpeg('_export/native-flat.jpg')
 	p.svg('_export/native-flat.svg')
+        '''
+        print(context.doc)
 
-	print('Exporting pagebot')
 	context.saveDocument('_export/pagebot-flat.pdf')
+	#print('Exporting pagebot')
 	#context.saveDocument('_export/pagebot-flat.png')
 	#context.saveDocument('_export/pagebot-flat.jpg')
 	#context.saveDocument('_export/pagebot-flat.svg')
