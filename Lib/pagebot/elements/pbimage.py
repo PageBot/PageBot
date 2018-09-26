@@ -61,6 +61,8 @@ class Image(Element):
     >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc
     ((30pt, 99.44mm), (128.83mm, 486.32pt))
     """
+    isImage = True
+    
     def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, index=1, **kwargs):
         Element.__init__(self, **kwargs)
@@ -216,7 +218,7 @@ class Image(Element):
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
-    def build_drawBot(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True):
         """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
@@ -285,8 +287,10 @@ class Image(Element):
             b.clipPath(None)
             context.restore()
 
-        if drawElements:
-            self.buildChildElements(view, p)
+        self.buildFrame(view, p) # Draw optional frame or borders.
+
+        #if drawElements:
+        #    self.buildChildElements(view, p)
 
         self._restoreRotation(view, p)
 

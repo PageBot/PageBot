@@ -47,6 +47,7 @@ class Element:
     #isFlow property answers if nextElementName or prevElementName is defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
+    isImage = False
 
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow
@@ -60,8 +61,8 @@ class Element:
             nextElementName=None, prevElementName=None, 
             nextPageName=None, prevPageName=None,
             bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
-            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, borders=None,
-            borderTop=None, borderRight=None, borderBottom=None,
+            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
+            borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             drawAfter=None, htmlCode=None, htmlPaths=None, **kwargs):
         """Base initialize function for all Element constructors. Element
@@ -2335,12 +2336,12 @@ class Element:
             # Make copy, in case it is a dict, otherwise changes will be made in all.
             borders = copy.copy(borders), copy.copy(borders), copy.copy(borders), copy.copy(borders)
         elif len(borders) == 2:
-            borders = borders*2
+            borders = [borders[0], borders[0], borders[1], borders[1]]
         elif len(borders) == 1:
-            borders = borders*4
+            borders = [borders[0],borders[0],borders[0],borders[0]]
         self.borderTop, self.borderRight, self.borderBottom, self.borderLeft = borders
     # Seems to be confusing having only one of the two. So allow both property
-    # names for the same.
+    # names for the same property.
     border = borders = property(_get_borders, _set_borders)
 
     def _get_borderTop(self):
@@ -3996,7 +3997,6 @@ class Element:
         self.bleed is defined, then shift and resize background by that size.
         """
         c = view.context
-        b = c.b # Get builder from context
         eShadow = self.shadow
 
         if eShadow:

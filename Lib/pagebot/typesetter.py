@@ -68,7 +68,8 @@ class Typesetter:
     )
     MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True):
+    def __init__(self, context, styles=None, galley=None, skipTags=None, 
+            imageAsElement=False, tryExcept=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -110,6 +111,8 @@ class Typesetter:
         if styles is None:
             styles = self.DEFAULT_STYLES
         self.styles = styles
+
+        self.imageAsElement = imageAsElement # If True, add the image as element. Otherwise embed as tag.
 
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = []
@@ -300,9 +303,12 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
-        u"""Process the image. adding the img tag or a new image element to the gally."""
+        u"""Process the image. adding the img tag or a new image element to the galley."""
         # Typeset the empty block of the img, which creates the HTML tag.
-        self.htmlNode_(node)
+        if self.imageAsElement:
+            self.galley.appendElement(self.IMAGE_CLASS(path=node.attrib.get('src'), index=0))
+        else:
+            self.htmlNode_(node)
 
     def node_code(self, node, e):
         self.CODEBLOCK_CLASS(node.text, parent=self.galley)

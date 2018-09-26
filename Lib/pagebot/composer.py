@@ -67,7 +67,8 @@ class Composer:
         if targets is None:
             if page is None:
                 page = self.doc[1]
-            targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, box=page.select('main'), newTextBox=newTextBox)  
+            targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, 
+                image=page.select('image'), box=page.select('main'), newTextBox=newTextBox)  
         elif page is not None:
             targets['page'] = page
 
@@ -82,11 +83,14 @@ class Composer:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)
             elif targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
-                errors.append('%s.compose: No box selected. Cannot place element %s' % (self.__class__.__name__, e))
+                errors.append('%s.compose: No box or image selected. Cannot place element %s' % (self.__class__.__name__, e))
             elif e.isTextBox and targets['box'] is not None and targets['box'].isTextBox:
                 targets['box'].bs += e.bs
+            elif e.isImage and targets.get('image') is not None and targets['image'].isImage:
+                targets['image'].path = e.path
             else:
-                errors.append('%s.compose: No box defined or box is not a TextBox in "%s - %s"' % (self.__class__.__name__, globals['page'], e))
+                errors.append('%s.compose: No box defined or box is not a TextBox or Image in "%s - %s"' % (
+                    self.__class__.__name__, targets.get('page'), e))
         return targets
 
 

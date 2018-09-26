@@ -165,6 +165,8 @@ class Image(Element):
     >>> e.path.endswith(imageFilePath)
     True
     """
+    isImage = True
+
     IMAGE_CLASS = ImageData
 
     def __init__(self, path, clipPath=None, pathFill=None, mask=None, imo=None, **kwargs):
