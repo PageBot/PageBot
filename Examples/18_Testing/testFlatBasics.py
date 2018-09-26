@@ -25,8 +25,8 @@ import os, os.path
 
 WIDTH = 400
 HEIGHT = 200
-FONTSIZE = 80
-LEADING = 96
+FONTSIZE = 24
+LEADING = 36
 FONTNAME = 'BungeeHairline-Regular'
 
 def testFlat():
@@ -42,7 +42,7 @@ def testFlat():
 	''' Creates a document. '''
 
         # Flat.
-	doc = document(WIDTH, HEIGHT, 'mm')
+	doc = document(WIDTH, HEIGHT, 'pt')
 	p = doc.addpage()
 
         # Pagebot.
@@ -81,16 +81,17 @@ def testFlat():
         msg = 'Hello world!'
 
         # Flat.
-	headline = strike(flatFont).color(flatStroke).size(FONTSIZE, LEADING)
+	headline = strike(flatFont).color(flatStroke).size(FONTSIZE, LEADING, units='pt')
 	t = headline.text(msg)
 	entity = p.place(t)
-	entity.frame(10, 10, 380, 80)
+	entity.frame(100, 100, 380, 80)
 
         # Pagebot.
         style = dict(font=pagebotFont, fontSize=FONTSIZE,
                 color=pagebotStroke, leading=LEADING)
 	bs = context.newString(msg, style=style)
-	context.text(bs, (10, 10))
+        print(bs)
+	context.text(bs, (100, 100))
 
 	'''
 	print(headline.style.size)

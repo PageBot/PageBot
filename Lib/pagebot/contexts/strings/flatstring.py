@@ -27,11 +27,11 @@ from flat import rgb
 DEFAULT_COLOR = rgb(0, 0, 0)
 
 class FlatString(BabelString):
+    """FlatString is a wrapper around the Flat string."""
 
     BABEL_STRING_TYPE = 'flat'
     UNITS = 'pt'
 
-    """FlatString is a wrapper around the Flat string."""
     def __init__(self, s, context, style=None):
         """Constructor of the DrawBotString, which is a wrapper around
         DrawBot.FormattedString. Optionally stores the (latest) style that was
@@ -208,7 +208,6 @@ class FlatString(BabelString):
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
         c = style.get('color', DEFAULT_COLOR)
-        # TODO: use flatBuilder.getValidColor().
         rgb = getFlatRGB(c)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
 
