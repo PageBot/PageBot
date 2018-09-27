@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document><pre><code class="Python">cid = 'D3 Beziers'
+
+
+doc.lib['footer'] = &quot;Footer. How do you change a plan into a planning and mistakes into treasures? Where can you find the design space to develop?&quot;
+
+doc.title = doc.name = 'D3%nbsp;Beziers'
+page = doc[1]
+box = page.deepFind('Logo')
+</code></pre>
+
+<h1>D3 Beziers</h1>
+<pre><code class="Python">box = page.select('Content')
+</code></pre>
+
+<h1>The Bezier Game</h1>
+<p>For a second-order (quadratic) Bézier curve, first we find two intermediate points that are t along the lines between the three control points. Then we perform the same interpolation step again and find another point that is t along the line between those two intermediate points. Plotting this last point yields a quadratic Bézier curve. The same steps can be repeated for higher orders.</p>
+<pre><code class="Python">box = page.select('Content2')
+</code></pre>
+
+<h2>Repeat to improve again</h2>
+<p>DesignDesign.Space</p>
+<pre><code class="Python">box = page.select('ColoredSectionHeader')
+</code></pre>
+
+<pre><code class="Python">box = page.select('ColoredSection0')
+</code></pre>
+
+<p><img alt="pagebot_macbookpro.jpg" src="images/pagebot_macbookpro.jpg" /></p>
+<p>Now more than ever, people buy brands not products. They react to beautiful delightful experiences. Beauty and elegance are core to our strategy and purposeful in our design.</p>
+<pre><code class="Python">box = page.select('ColoredSection1')
+</code></pre>
+
+<p><img alt="pagebot_smartphone_with_hand.jpg" src="images/pagebot_smartphone_with_hand.jpg" /></p>
+<p>Now more than ever, people buy brands not products. They react to beautiful delightful experiences. Beauty and elegance are core to our strategy and purposeful in our design.</p>
+<pre><code class="Python">box = page.select('ColoredSection2')
+</code></pre>
+
+<p><img alt="pagebot_tablet.jpg" src="images/pagebot_tablet.jpg" /></p>
+<p>Now more than ever, people buy brands not products. They react to beautiful delightful experiences. Beauty and elegance are core to our strategy and purposeful in our design.</p>
+<pre><code class="Python">box = page.select('Footer').append(doc.lib['footer'])
+</code></pre></document>
