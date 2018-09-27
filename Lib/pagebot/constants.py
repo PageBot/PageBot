@@ -2193,6 +2193,7 @@ SPOT_RGB = {
     814: (140, 96, 193), #8C60C1
     814.2: (112, 63, 175), #703FAF
 }
+
 # Replace integers by float numbers.
 for spot, (r, g, b) in SPOT_RGB.items():
     SPOT_RGB[spot] = r/255, g/255, b/255
@@ -2200,5 +2201,3 @@ for spot, (r, g, b) in SPOT_RGB.items():
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
-

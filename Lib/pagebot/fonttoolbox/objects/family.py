@@ -19,7 +19,6 @@ import os
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.font import Font, getFont
 from pagebot.toolbox.transformer import path2FamilyName
-import traceback
 
 FAMILY_PATHS = {} # Cached family name --> [fontPath, fontPath, ...]
 FAMILIES = {} # Cached family name --> Family instance
@@ -79,7 +78,7 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answer the family that best matches the pattern.
 
     >>> findFamily('Bungee')
-    
+
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
@@ -95,7 +94,7 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
 
 def newFamily(familyName, fonts=None):
     """Create a new family with this name. If the family already exists, then raise an error.
-    
+
     >>> familyPaths = getFamilyPaths()
     >>> family = newFamily('MyFamily')
     >>> family.name in familyPaths

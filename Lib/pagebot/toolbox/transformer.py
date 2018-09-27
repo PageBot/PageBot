@@ -428,10 +428,8 @@ def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
 
 def path2FontId(path):
-    """
-    Answers the font ID for the font associated with this path. If the path does not exist, or if the font name
-    is invalid, then answer None.
-    """
+    """Answers the font ID for the font associated with this path. If the path
+    does not exist, or if the font name is invalid, then answer None."""
     if path is not None:
         name = path2Name(path)
         return name
@@ -471,15 +469,19 @@ def font2Path(font):
     return font.path
 
 def font2ID(font):
-    """Answer the unique record/adapter ID of the font/style. This can be the unique database record id
-    or the unique file path. For now we just answer the file path."""
+    """Answer the unique record/adapter ID of the font/style. This can be the
+    unique database record id or the unique file path. For now we just answer
+    the file path."""
     return font2Path(font)
 
 def font2FamilyID(font):
-    """Answer the unique record/adapter ID of the family of *font*. This can be the unique database
-    record id of the font parent or the unique directory path of the font. For now we just answer the
-    the location of the family plist file.
-    Special situation is if the font is not saved yet. In that case it does not have a path."""
+    """Answer the unique record/adapter ID of the family of *font*. This can be
+    the unique database record id of the font parent or the unique directory
+    path of the font. For now we just answer the the location of the family
+    plist file.
+
+    Special situation is if the font is not saved yet. In that case it does not
+    have a path."""
     fontPath = font2Path(font)
     if fontPath is not None:
         return path2ParentPath(fontPath) + '/' + font2FamilyName(font) + '.plist'
@@ -492,10 +494,10 @@ def font2StyleName(font):
     return fontName2StyleName(font2Name(font))
 
 def fontName2FamilyName(name):
-    """For now take the chunk up till "-" in the filename and ignore the family name as set in the font.info
-    Also make sure that the extension is removed, if the font has no "-" it isn't name. Relay-Medium_Italic.ufo
-    becomes Relay. ThisFont.ufo becomes ThisFont.
-    """
+    """For now take the chunk up till "-" in the filename and ignore the family
+    name as set in the font.info Also make sure that the extension is removed,
+    if the font has no "-" it isn't name. Relay-Medium_Italic.ufo becomes
+    Relay. ThisFont.ufo becomes ThisFont."""
     return name.split('.')[0].split('-')[0]
 
 def fontName2StyleName(name):
@@ -612,7 +614,8 @@ def arabic2RomanNumerals(arabic):
 #    U N I C O D E
 
 def dec2hex(n, uni=1):
-    """Convert decimal number to hex string with 4 digits, and more digits if the number is larger.
+    """Convert decimal number to hex string with 4 digits, and more digits if
+    the number is larger.
 
     >>> dec2hex(12)
     '000C'
@@ -630,7 +633,8 @@ def dec2hex(n, uni=1):
     return hex
 
 def hex2dec(s):
-    """ Convert hex string to decimal number. Answer None if conversion raises an error.
+    """ Convert hex string to decimal number. Answer None if conversion raises
+    an error.
 
     >>> hex2dec('0064')
     100
@@ -648,7 +652,8 @@ def hex2dec(s):
     return None
 
 def hex2char(hex):
-    """Answer the unicode char that matcher the hex value. Answer None if conversion fails.
+    """Answer the unicode char that matcher the hex value. Answer None if
+    conversion fails.
 
     >>> hex(ord('A'))
     '0x41'

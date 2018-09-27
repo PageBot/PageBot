@@ -40,7 +40,7 @@ from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
-from pagebot.style import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
+from pagebot.constants import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
 
 def isFontPath(fontPath):
     """Answer the boolean flag if the path is a font path.

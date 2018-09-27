@@ -22,7 +22,9 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.contexts.flatconversion import *
-from pagebot.constants import *
+from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
+    FILETYPE_PNG, CENTER, LEFT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE, \
+    DEFAULT_LANGUAGE, DEFAULT_FILETYPE
 
 class FlatContext(BaseContext):
     """A FlatContext instance combines the specific functions of the Flat
