@@ -1,54 +1,4 @@
 #!/usr/bin/env python
-DEFAULT_CONTEXT = None
-CONTEXT_TYPE = None
-MAMP_PATH = None
-from sys import platform
-
-def getContext(contextType='DrawBot'):
-    """Determines which context is used:
-     * DrawBotContext
-     * FlatContext
-     * HtmlContext
-     * InDesignContext
-
-    """
-    global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
-
-    if CONTEXT_TYPE and contextType != CONTEXT_TYPE:
-        # Switching contexts, so resetting the buffered global object.
-        DEFAULT_CONTEXT = None
-
-    # FIXME: what about MAMP_PATH is None?
-    # FIXME: what about HTMLContext()
-    if DEFAULT_CONTEXT is None:
-        if platform == 'darwin':
-            if contextType == 'DrawBot':
-                DEFAULT_CONTEXT = getDrawBotContext()
-            elif contextType == 'Flat':
-                DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'HTML':
-                DEFAULT_CONTEXT = getHtmlContext()
-            elif contextType == 'InDesign':
-                '''
-                To be implemented.
-                '''
-
-            MAMP_PATH = '/Applications/MAMP/htdocs/'
-        else:
-            if contextType in ('DrawBot', 'InDesign'):
-                print('drawbot context not available')
-                # TODO: raise error
-                DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Flat':
-                DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'HTML':
-                DEFAULT_CONTEXT = getHtmlContext()
-
-            # TODO: What's the actual path on Linux?
-            MAMP_PATH = '/tmp/MAMP_PATH/'
-
-        CONTEXT_TYPE = contextType
-
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -64,6 +14,7 @@ def getContext(contextType='DrawBot'):
 #
 #     drawbotcontext.py
 #
+
 import os
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
@@ -71,15 +22,8 @@ from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle # Render units to points
 from pagebot.constants import *
 import traceback
-#from sys import platform
 
 try:
-#if platform == 'darwin':
-    #from CoreText import CTFontDescriptorCreateWithNameAndSize, \
-    #    CTFontDescriptorCopyAttribute, kCTFontURLAttribute, \
-    #    CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
-    #    CTFrameGetLines, CTFrameGetLineOrigins
-    #from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
     from drawBot import Variable
 
@@ -100,7 +44,6 @@ except (AttributeError, ImportError):
     # If DrawBot is not available on the platform, the noneDrawBotBuilder
     # instance is used to run DrawBot related docTests.
     drawBotBuilder = NoneDrawBotBuilder()
-
 
 class DrawBotContext(BaseContext):
     """A DrawBotContext instance combines the specific functions of the DrawBot
