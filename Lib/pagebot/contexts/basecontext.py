@@ -14,7 +14,7 @@
 #     basecontext.py
 #
 import os
-from pagebot.style import DISPLAY_BLOCK
+from pagebot.constants import DISPLAY_BLOCK
 
 class BaseContext:
     """A BaseContext instance abstracts the specific functions of a platform

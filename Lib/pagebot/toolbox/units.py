@@ -1102,7 +1102,7 @@ class Unit:
         return u0
 
     # Order of multiplication doesn't matter, except for the resulting unit type.
-    __rmul__ = __mul__ 
+    __rmul__ = __mul__
 
     def __neg__(self):
         """Reverse sign of self, answer as copied unit.
@@ -1558,7 +1558,7 @@ class RelativeUnit(Unit):
     def _get_rv(self):
         """Answer the rendered value of self.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the value and u.r answers the value rendered by self.base. 
+        For relative units u.v answers the value and u.r answers the value rendered by self.base.
         self.base can be another unit or a dictionary of base unit values.
 
         >>> u = Inch(2)

@@ -19,7 +19,9 @@
 #     to be used local in an element or string.
 #
 import copy
-from pagebot.constants import *
+from pagebot.constants import DISPLAY_INLINE, DEFAULT_LANGUAGE, DEFAULT_LEADING, \
+        DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT, DEFAULT_FONT_PATH, \
+        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 
@@ -266,7 +268,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         rNeedsAbove = em0,
         # Check if this point space is available below, to get amount of text lines below headings.
         needsBelow = pt0,
-        # CSS-behavior as <div> and <span>, adding trailing \n to block context is value set to DISPLAY_BLOCK
+        # CSS-behavior as <div> and <span>, adding trailing \n to block context
+        # is value set to DISPLAY_BLOCK
         # Interpreted by
         display = DISPLAY_INLINE,
 

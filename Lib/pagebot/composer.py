@@ -14,16 +14,18 @@
 #
 #     composer.py
 #
-from pagebot.elements import newTextBox, Galley
+from pagebot.elements import newTextBox
 from pagebot.elements import CodeBlock
 
 class Composer:
-    u"""A Composer takes a artDirection and tries to make pagination from given context,
-    a “nice” layout (on existing or new document pages), by taking the elements from
-    the galley pasteboard and finding the best place in pages, e.g. in page-flows that
-    are copied from their templates.
-    If necessary elements can be split, new elements can be made on the page and element can be
-    reshaped byt width and height, if that results in better placements.
+    """A Composer takes a artDirection and tries to make pagination from given
+    context, a “nice” layout (on existing or new document pages), by taking the
+    elements from the galley pasteboard and finding the best place in pages,
+    e.g. in page-flows that are copied from their templates.
+
+    If necessary elements can be split, new elements can be made on the page
+    and element can be reshaped byt width and height, if that results in better
+    placements.
 
     >>> from pagebot import getResourcesPath
     >>> from pagebot.constants import A4
@@ -41,7 +43,7 @@ class Composer:
     >>> doc = Document(size=A4, styles=styles, autoPages=numPages, originTop=True)
     >>> t = Typesetter(doc.context, styles=styles)
     >>> # Create a "main" textbox in each page.
-    >>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)] 
+    >>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
     >>> galley = t.typesetFile(path)
     >>> c = Composer(doc)
     >>> targets = c.compose(galley)
@@ -58,17 +60,20 @@ class Composer:
         self.doc = doc
 
     def compose(self, galley=None, targets=None, page=None):
-        u"""Compose the galley element, based on code blocks in the gally.
-        Later we'll add more art-direction instructions here.
-        Targets contains the resources for the composition, such as the doc, current page, current box and other 
-        info that the MarkDown assumes to be available. If targets is omitted, then it is created by the Composer
+        """Compose the galley element, based on code blocks in the galley.
+
+        TODO: add more art-direction instructions here.
+
+        Targets contains the resources for the composition, such as the doc,
+        current page, current box and other info that the MarkDown assumes to
+        be available. If targets is omitted, then it is created by the Composer
         and answered at the end.
         """
         if targets is None:
             if page is None:
                 page = self.doc[1]
-            targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles, 
-                image=page.select('image'), box=page.select('main'), newTextBox=newTextBox)  
+            targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles,
+                image=page.select('image'), box=page.select('main'), newTextBox=newTextBox)
         elif page is not None:
             targets['page'] = page
 
@@ -78,7 +83,7 @@ class Composer:
 
         if galley is None:
             galley = page.galley
-            
+
         for e in galley.elements:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)
@@ -92,7 +97,6 @@ class Composer:
                 errors.append('%s.compose: No box defined or box is not a TextBox or Image in "%s - %s"' % (
                     self.__class__.__name__, targets.get('page'), e))
         return targets
-
 
 if __name__ == "__main__":
     import doctest

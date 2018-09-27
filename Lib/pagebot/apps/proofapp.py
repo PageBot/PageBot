@@ -10,6 +10,7 @@
 #     scriptrunnerapp.py
 #
 
+import traceback
 from vanilla import Button, Window, PopUpButton
 from vanilla.dialogs import putFile
 

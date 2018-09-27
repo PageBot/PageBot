@@ -16,7 +16,7 @@
 #
 from pagebot.style import ORIGIN
 from pagebot.elements import Element, TextBox, Ruler
-from pagebot.toolbox.units import pointOffset, pt
+from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import color
 from pagebot.conditions import *
 

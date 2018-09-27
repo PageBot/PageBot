@@ -14,8 +14,8 @@
 #
 #     gradient.py
 #
-from pagebot.toolbox.color import Color, blackColor, whiteColor, color as makeColor
-from pagebot.toolbox.units import pt, units
+from pagebot.toolbox.color import blackColor, whiteColor, color as makeColor
+from pagebot.toolbox.units import units
 
 class Gradient:
     """As linear gradient (startRadius or endRadius not set):
@@ -62,7 +62,7 @@ class Gradient:
 class Shadow:
 
     def __init__(self, offset=None, blur=None, color=None):
-        """Set he parameter of the Shadow instance. 
+        """Set he parameter of the Shadow instance.
         TODO: Make optional to use the z-position of an element really cast the shadow,
         defining both the offset (from light-source position) and blur from distance."""
         self.offset = units(offset or (6, -6))

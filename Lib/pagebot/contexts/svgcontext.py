@@ -15,7 +15,7 @@
 #
 #     https://svgwrite.readthedocs.io/en/master/
 #
-import os, shutil
+import shutil
 
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
@@ -34,7 +34,7 @@ class SvgContext(BaseContext):
     # In case of specific builder addressing, callers can check here.
     isSvg = True
     # Indication to Typesetter that by default tags should be included in output.
-    useTags = True 
+    useTags = True
 
     TMP_PATH = '/tmp/pagebot%s.' + FILETYPE_SVG
 
