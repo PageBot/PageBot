@@ -29,7 +29,7 @@ from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
 from fontTools.varLib.mutator import iup_delta
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.toolbox.color import blackColor
 

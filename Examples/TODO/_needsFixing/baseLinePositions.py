@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 c = getContext()
 

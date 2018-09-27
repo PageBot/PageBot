@@ -27,7 +27,7 @@
 import os, sys, shutil
 
 from pagebot.toolbox.color import whiteColor, blackColor
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.varfamily import VarFamily
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer

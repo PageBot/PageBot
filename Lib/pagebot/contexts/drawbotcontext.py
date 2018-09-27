@@ -1,4 +1,54 @@
 #!/usr/bin/env python
+DEFAULT_CONTEXT = None
+CONTEXT_TYPE = None
+MAMP_PATH = None
+from sys import platform
+
+def getContext(contextType='DrawBot'):
+    """Determines which context is used:
+     * DrawBotContext
+     * FlatContext
+     * HtmlContext
+     * InDesignContext
+
+    """
+    global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
+
+    if CONTEXT_TYPE and contextType != CONTEXT_TYPE:
+        # Switching contexts, so resetting the buffered global object.
+        DEFAULT_CONTEXT = None
+
+    # FIXME: what about MAMP_PATH is None?
+    # FIXME: what about HTMLContext()
+    if DEFAULT_CONTEXT is None:
+        if platform == 'darwin':
+            if contextType == 'DrawBot':
+                DEFAULT_CONTEXT = getDrawBotContext()
+            elif contextType == 'Flat':
+                DEFAULT_CONTEXT = getFlatContext()
+            elif contextType == 'HTML':
+                DEFAULT_CONTEXT = getHtmlContext()
+            elif contextType == 'InDesign':
+                '''
+                To be implemented.
+                '''
+
+            MAMP_PATH = '/Applications/MAMP/htdocs/'
+        else:
+            if contextType in ('DrawBot', 'InDesign'):
+                print('drawbot context not available')
+                # TODO: raise error
+                DEFAULT_CONTEXT = getFlatContext()
+            elif contextType == 'Flat':
+                DEFAULT_CONTEXT = getFlatContext()
+            elif contextType == 'HTML':
+                DEFAULT_CONTEXT = getHtmlContext()
+
+            # TODO: What's the actual path on Linux?
+            MAMP_PATH = '/tmp/MAMP_PATH/'
+
+        CONTEXT_TYPE = contextType
+
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -20,6 +70,7 @@ from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle # Render units to points
 from pagebot.constants import *
+import traceback
 #from sys import platform
 
 try:
@@ -37,6 +88,7 @@ try:
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
 except (AttributeError, ImportError):
+    print(traceback.format_exc())
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
@@ -581,7 +633,7 @@ class DrawBotContext(BaseContext):
             url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
             return url.path()
         return None
-        
+
     def listOpenTypeFeatures(self, fontName):
         """Answer the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
@@ -589,8 +641,8 @@ class DrawBotContext(BaseContext):
     def installedFonts(self, patterns=None):
         """Answer a list of all fonts (name or path) that are installed in the OS.
 
-        >>> from pagebot.contexts.platform import getContext
-        >>> context = getContext()        
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> installed = context.installedFonts()
         >>> installed # No fonts installed?
         []
@@ -613,8 +665,8 @@ class DrawBotContext(BaseContext):
         (in which case the path is used) or a full font path.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot.contexts.platform import getContext
-        >>> context = getContext()        
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> installed = context.installedFonts()
         >>> installed # No fonts installed?
         []
@@ -633,7 +685,7 @@ class DrawBotContext(BaseContext):
         if hasattr(fontOrName, 'path'):
             fontOrName = fontOrName.path
         return self.b.uninstallFont(fontOrName)
-        
+
     #   G L Y P H
 
     def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):

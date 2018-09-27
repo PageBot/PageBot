@@ -14,7 +14,7 @@
 #
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import *
 from pagebot.publications.proofing.pagewide import PageWide
 from pagebot.constants import A3

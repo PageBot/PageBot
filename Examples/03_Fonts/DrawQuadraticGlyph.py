@@ -26,7 +26,7 @@ from pagebot.toolbox.units import point3D
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import *
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.color import blueColor, redColor, greenColor, pinkColor, orangeColor
 
 R = 12

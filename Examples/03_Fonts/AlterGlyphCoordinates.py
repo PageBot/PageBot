@@ -16,7 +16,7 @@
 #
 
 import pagebot
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.units import pt
 from pprint import pprint

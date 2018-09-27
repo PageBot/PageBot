@@ -15,7 +15,7 @@
 #
 #     Only works in DrwaBotContext.
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 context = getContext()
 

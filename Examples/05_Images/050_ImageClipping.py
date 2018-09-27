@@ -15,7 +15,7 @@
 #     Draw images with clipping paths and rotation.
 #
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot import getResourcesPath
 from pagebot.document import Document

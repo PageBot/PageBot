@@ -18,7 +18,7 @@
 #     where there is already a chain of text boxes spread over several pages.
 #
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot import getResourcesPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document

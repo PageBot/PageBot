@@ -1,5 +1,5 @@
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 context = getContext()        
 #installed = context.installedFonts()
 #print(installed) # No fonts installed?

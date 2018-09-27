@@ -85,7 +85,7 @@ if not CLEAN:
     print('Not all dependencies are installed, please install missing ones.')
 else:
     # Testing PageBot.
-    from pagebot.contexts.platform import getContext
+    from pagebot import getContext
     context = getContext()
     print(context)
     print(context.b)

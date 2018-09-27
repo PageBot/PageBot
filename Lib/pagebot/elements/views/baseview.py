@@ -15,7 +15,7 @@
 #     view.py
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 

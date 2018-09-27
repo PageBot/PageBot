@@ -16,7 +16,7 @@
 #
 from pagebot.style import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
-                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT, 
+                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,
                             BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
@@ -253,7 +253,7 @@ class TextBox(Element):
         size of the string is answers, as if it was already inside the text box.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> context.name in ('DrawBotContext', 'FlatContext', 'SvgContext')
         True
@@ -433,7 +433,7 @@ class TextBox(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-         
+
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
@@ -461,10 +461,10 @@ class TextBox(Element):
             # Line drawing depends on used flag and if we are in background/foreground mode.
             if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                 c.line((px, py+y), (px + self.w, py+y))
-            
+
             # Only text drawing in foreground mode. Text is exclusive, because of limited
             # available space, only one type of label can be shown at either side.
-            if not background: 
+            if not background:
                 if BASE_Y_LEFT in show:
                     bs = self.newString('%d' % round(self.h - y), style=yStyle)
                     tw, th = bs.size

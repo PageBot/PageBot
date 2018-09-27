@@ -15,7 +15,7 @@
 #
 #     Shows how to read and write a PDF file.
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 import os, os.path
 
 context = getContext()

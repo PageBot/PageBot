@@ -24,7 +24,7 @@ from pagebot.conditions import *
 from pagebot.elements import newTextBox, newLine
 from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT
 
 context = getContext()

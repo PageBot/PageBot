@@ -46,7 +46,7 @@ def getContext(contextType='DrawBot'):
     >>> print(context)
     <HtmlContext>
     """
-    from pagebot.contexts.platform import getContext as getPlatformContext
+    from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
 # In order to let PageBot scripts and/applications exchange information

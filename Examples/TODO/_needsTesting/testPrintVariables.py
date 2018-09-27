@@ -14,7 +14,7 @@
 #     testPrintVariables.py
 #
 # Variable == vanilla power in DrawBot
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 context = getContext()
 

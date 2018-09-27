@@ -13,7 +13,7 @@
 #     showElements.py
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor
 from pagebot.elements import *

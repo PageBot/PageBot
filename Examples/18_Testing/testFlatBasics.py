@@ -17,7 +17,7 @@
  # Only runs under Flat
 from flat import rgb, font, shape, strike, document
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.color import blackColor, color
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt

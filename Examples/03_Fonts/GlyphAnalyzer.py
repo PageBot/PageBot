@@ -16,7 +16,7 @@
 #     Show the values that the GlyphAnalyzer get derive from font and glyph outline.
 #   
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 GLYPH_NAME = 'B'
 

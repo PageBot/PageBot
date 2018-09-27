@@ -17,7 +17,7 @@
 #     Use view.showBaselines = True to show the default baselines of the text.
 
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document

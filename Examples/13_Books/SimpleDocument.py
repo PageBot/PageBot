@@ -24,7 +24,7 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import pt, p
 
 if 1:
-    from pagebot.contexts.platform import getContext
+    from pagebot import getContext
     context = getContext() # DrawBotContext or FlatContext if available.
 else:
     from pagebot.contexts.svgcontext import SvgContext

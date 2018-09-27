@@ -16,7 +16,7 @@
 #
 #     Some examples how to find Font instances, for the given installed fonts.
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.family import findFamily, getFamily
 from pagebot.fonttoolbox.objects.font import getFont, findFont
 

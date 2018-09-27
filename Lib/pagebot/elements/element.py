@@ -27,7 +27,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
                            DEFAULT_COLOR_BARS)
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
@@ -58,10 +58,10 @@ class Element:
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElementName=None, prevElementName=None, 
+            nextElementName=None, prevElementName=None,
             nextPageName=None, prevPageName=None,
             bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
-            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, 
+            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             drawAfter=None, htmlCode=None, htmlPaths=None, **kwargs):
@@ -520,7 +520,7 @@ class Element:
 
     def getElementByName(self, name):
         """Answer the first element in the offspring list that fits the name.
-        Answer None if it cannot be found. 
+        Answer None if it cannot be found.
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -551,7 +551,7 @@ class Element:
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the collected list of matching child
         elements. Answer an empty list if no elements can be found.
-        
+
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -586,7 +586,7 @@ class Element:
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
         elements. Answer an empty list if no elements can be found.
-        
+
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -619,7 +619,7 @@ class Element:
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the first matching child
         element. Answer None if no elements can be found.
-       
+
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -663,7 +663,7 @@ class Element:
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
         Answer None if no element can be found.
-        
+
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -962,8 +962,8 @@ class Element:
 
     def getFlow(self, flow=None):
         """Answer the list of flow element sequences starting on self. In case self.nextPageName
-        is defined, then 
-        
+        is defined, then
+
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
@@ -2057,7 +2057,7 @@ class Element:
             return self.y + self.h
         return self.y
     def _set_top(self, y):
-        """Shift the element so self.top == y. Where the "top" is, depends on the 
+        """Shift the element so self.top == y. Where the "top" is, depends on the
         setting of self.yAlign. If self.isTextBox, then vertical position can also
         be defined by the top or bottom position of the baseline."""
         yAlign = self.yAlign
@@ -2140,7 +2140,7 @@ class Element:
         """On bounding box, not including margins.
 
         >>> e = Element(h=500, originTop=True, yAlign=TOP)
-        >>> e.bottom 
+        >>> e.bottom
         500pt
         >>> e.yAlign = MIDDLE
         >>> e.bottom
@@ -2240,7 +2240,7 @@ class Element:
         self.back = units(z) - self.css('mzb')
     mBack = property(_get_mBack, _set_mBack)
 
-    # Colors for fill and stroke 
+    # Colors for fill and stroke
 
     def _get_fill(self):
         u"""Fill color property in style, using self.css to query cascading values.
@@ -2250,7 +2250,7 @@ class Element:
         >>> e.fill
         Color(name="red")
         >>> e.fill = 1, 0, 0 # Construct color from tuple
-        >>> e.fill 
+        >>> e.fill
         Color(r=1, g=0, b=0)
         >>> e.fill = 0.5
         >>> e.fill
@@ -2269,7 +2269,7 @@ class Element:
         >>> e.stroke
         Color(name="red")
         >>> e.stroke = 1, 0, 0 # Construct color from tuple
-        >>> e.stroke 
+        >>> e.stroke
         Color(r=1, g=0, b=0)
         >>> e.stroke = 0.5
         >>> e.stroke
@@ -2310,10 +2310,10 @@ class Element:
         if line is None:
             line = ONLINE
         # Dash can be None
-        if not strokeWidth: # If 0, then answer an empty dict 
+        if not strokeWidth: # If 0, then answer an empty dict
             return {}
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
- 
+
     def _get_borders(self):
         u"""Set all borders of the element.
 
@@ -2625,7 +2625,7 @@ class Element:
     # Absolute positions
 
     def _get_bleedOrigin(self):
-        """Answer the origin of the element, shifted by the defined bleed and 
+        """Answer the origin of the element, shifted by the defined bleed and
         and depending the side of alignment.
 
         >>> from pagebot.toolbox.units import p
@@ -2838,7 +2838,7 @@ class Element:
 
     def _get_folds(self):
         """List if [(x, y), ...] (one of them can be None) that indicate the position of folding lines
-        on a page. In general this is a view parameters (applying to all pages), but it can 
+        on a page. In general this is a view parameters (applying to all pages), but it can
         be overwritten by individual pages or other elements.
         The position of folds is ignored by self.w and self.h. It is mostly to show folding markers
         by PageView. The fold property is stored instyle and not inherited."""
@@ -3452,7 +3452,7 @@ class Element:
         """
         if self.isPage: # Only interested in the flag on top of tree or on page level
             return self.style.get('originTop')
-        if self.parent is not None: 
+        if self.parent is not None:
             return self.parent.originTop
         return self.style.get('originTop')
     def _set_originTop(self, flag):
@@ -4017,7 +4017,7 @@ class Element:
                 # TODO: Make bleed work here too.
                 c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
             else:
-                c.fill(eFill) 
+                c.fill(eFill)
 
             if eStroke is not noColor: # Separate from border behavior if set.
                 c.stroke(eStroke, self.css('strokeWidth', pt(1)))
@@ -4074,7 +4074,7 @@ class Element:
             c.restoreGraphicState()
 
         if borderBottom is not None:
-            c.saveGraphicState() 
+            c.saveGraphicState()
             c.lineDash(borderBottom.get('dash')) # None for no dash
             c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
@@ -4704,7 +4704,7 @@ class Element:
 
     def center2Center(self):
         """Move center of self to padding center position of parent.
-        Note that this different from self.center2CenterSides if the left 
+        Note that this different from self.center2CenterSides if the left
         and right padding of parent is not identical.
         The position of e2 element origin depends on the horizontal
         alignment type.
@@ -4732,7 +4732,7 @@ class Element:
 
     def center2CenterSides(self):
         """Move center of self to center of sides of parent.
-        Note that this different from self.center2Center if the left 
+        Note that this different from self.center2Center if the left
         and right padding of parent is not identical.
         The position of e2 element origin depends on the horizontal
         alignment type.
@@ -5020,7 +5020,7 @@ class Element:
 
     def right2Center(self):
         """Position the right side centered on the padding of the parent.
-        Note that this different from self.right2Center if the left 
+        Note that this different from self.right2Center if the left
         and right padding of parent is not identical.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
@@ -5046,7 +5046,7 @@ class Element:
 
     def right2CenterSides(self):
         """Position the right side centered on the sides of the parent.
-        Note that this different from self.right2Center if the left 
+        Note that this different from self.right2Center if the left
         and right padding of parent is not identical.
 
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
@@ -5062,7 +5062,7 @@ class Element:
         190pt
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2CenterSides()
-        >>> e2.x # 500/2 
+        >>> e2.x # 500/2
         250pt
         """
         if self.parent is None:
@@ -5088,7 +5088,7 @@ class Element:
         -10pt
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2Left()
-        >>> e2.x 
+        >>> e2.x
         50pt
         """
         if self.parent is None:
@@ -5106,7 +5106,7 @@ class Element:
         False
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.right2LeftSide()
-        >>> e2.x 
+        >>> e2.x
         -120pt
         >>> e2.xAlign = CENTER
         >>> success = e2.right2LeftSide()
@@ -5114,7 +5114,7 @@ class Element:
         (-60pt, -60.0)
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2LeftSide()
-        >>> e2.x 
+        >>> e2.x
         0pt
         """
         if self.parent is None:
@@ -5166,7 +5166,7 @@ class Element:
         (440pt, 440.0)
         >>> e2.xAlign = RIGHT
         >>> success = e2.right2RightSide()
-        >>> e2.x 
+        >>> e2.x
         500pt
         """
         if self.parent is None:
@@ -5608,7 +5608,7 @@ class Element:
         (165pt, 165.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.middle2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2 
+        >>> e2.y, 30 + (500 - 30 - 80)/2
         (225pt, 225.0)
         >>> e2.yAlign = BOTTOM
         >>> success = e2.middle2Middle()
@@ -5654,7 +5654,7 @@ class Element:
         (190pt, 190.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.middle2MiddleSides()
-        >>> e2.y, 500/2 
+        >>> e2.y, 500/2
         (250pt, 250.0)
         >>> e2.yAlign = BOTTOM
         >>> success = e2.middle2MiddleSides()
@@ -5754,7 +5754,7 @@ class Element:
         >>> e1.originTop = False # e2 inherits the flag
         >>> e2.yAlign = TOP
         >>> success = e2.top2MiddleSides()
-        >>> e2.y, 500/2 
+        >>> e2.y, 500/2
         (250pt, 250.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.top2MiddleSides()
@@ -5927,7 +5927,7 @@ class Element:
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
         >>> success = e2.bottom2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2 - 120 
+        >>> e2.y, 30 + (500 - 30 - 80)/2 - 120
         (105pt, 105.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.bottom2Middle()
@@ -5941,7 +5941,7 @@ class Element:
         >>> e1.originTop = False
         >>> e2.yAlign = TOP
         >>> success = e2.bottom2Middle()
-        >>> e2.y, 80 + (500 - 30 - 80)/2 + 120 
+        >>> e2.y, 80 + (500 - 30 - 80)/2 + 120
         (395pt, 395.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.bottom2Middle()
@@ -5968,7 +5968,7 @@ class Element:
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
         >>> success = e2.bottom2MiddleSides()
-        >>> e2.y, 500/2 - 120 
+        >>> e2.y, 500/2 - 120
         (130pt, 130.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.bottom2MiddleSides()
@@ -5982,7 +5982,7 @@ class Element:
         >>> e1.originTop = False
         >>> e2.yAlign = TOP
         >>> success = e2.bottom2MiddleSides()
-        >>> e2.y, 500/2 + 120 
+        >>> e2.y, 500/2 + 120
         (370pt, 370.0)
         >>> e2.yAlign = MIDDLE
         >>> success = e2.bottom2MiddleSides()
@@ -6407,7 +6407,7 @@ class Element:
 
     # Document/page stuff
     def _get_viewMinInfoPadding(self):
-        """Unit value. # Minimum padding needed to show meta info. Otherwise truncated 
+        """Unit value. # Minimum padding needed to show meta info. Otherwise truncated
         to 0 and not showing meta info."""
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
         return units(self.style.get('viewMinInfoPadding', 0), base=base) # Not inherited
@@ -6416,7 +6416,7 @@ class Element:
     viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)
 
     def _get_showCropMarks(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks
         around the elemment."""
         return self.style.get('showCropMarks', False) # Not inherited
     def _set_showCropMarks(self, showCropMarks):
@@ -6424,7 +6424,7 @@ class Element:
     showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
 
     def _get_showRegistrationMarks(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         registration  marks around the elemment."""
         return self.style.get('showRegistrationMarks', False) # Not inherited
     def _set_showRegistrationMarks(self, showRegistrationMarks):
@@ -6432,7 +6432,7 @@ class Element:
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_showColorBars(self):
-        """Set value, containing the selection of color bars that should be shown. 
+        """Set value, containing the selection of color bars that should be shown.
         See pagebot.constants for the names of the options."""
         return set(self.style.get('showColorBars') or []) # Not inherited
     def _set_showColorBars(self, showColorBars):
@@ -6449,7 +6449,7 @@ class Element:
     showColorBars = property(_get_showColorBars, _set_showColorBars)
 
     def _get_showOrigin(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         origin cross hair marker of the page or other elements."""
         return self.style.get('showOrigin', False) # Not inherited
     def _set_showOrigin(self, showOrigin):
@@ -6464,7 +6464,7 @@ class Element:
     showPadding = property(_get_showPadding, _set_showPadding)
 
     def _get_showMargin(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         margin of the page or other elements."""
         return self.style.get('showMargin', False) # Not inherited
     def _set_showMargin(self, showMargin):
@@ -6472,7 +6472,7 @@ class Element:
     showMargin = property(_get_showMargin, _set_showMargin)
 
     def _get_showFrame(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         frame of the page or other elements as self.size."""
         return self.style.get('showFrame', False) # Not inherited
     def _set_showFrame(self, showFrame):
@@ -6480,7 +6480,7 @@ class Element:
     showFrame = property(_get_showFrame, _set_showFrame)
 
     def _get_showNameInfo(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the name of the page or other elements."""
         return self.style.get('showNameInfo', False) # Not inherited
     def _set_showNameInfo(self, showNameInfo):
@@ -6488,7 +6488,7 @@ class Element:
     showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
 
     def _get_showElementInfo(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the meta info of the page or other elements."""
         return self.style.get('showElementInfo', False) # Not inherited
     def _set_showElementInfo(self, showElementInfo):
@@ -6496,7 +6496,7 @@ class Element:
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
 
     def _get_showDimensions(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the dimensions of the page or other elements."""
         return self.style.get('showDimensions', False) # Not inherited
     def _set_showDimensions(self, showDimensions):
@@ -6504,7 +6504,7 @@ class Element:
     showDimensions = property(_get_showDimensions, _set_showDimensions)
 
     def _get_showMissingElement(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show 
+        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the MissingElement of the page or other elements."""
         return self.style.get('showMissingElement', False) # Not inherited
     def _set_showMissingElement(self, showMissingElement):
@@ -6588,16 +6588,16 @@ class Element:
     showImageReference = property(_get_showImageReference, _set_showImageReference)
 
     #   CSS flags
-        
+
     def _get_cssVerbose(self):
-        """Boolean value. If True, adds information comments with original values to 
+        """Boolean value. If True, adds information comments with original values to
         CSS export."""
         return self.css('cssVerbose', False) # Inherited
     def _set_cssVerbosee(self, cssVerbose):
         self.style['cssVerbose'] = bool(cssVerbose)
     cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)
 
-    #   Exporting 
+    #   Exporting
 
     def _get_doExport(self):
         """Boolean value. Flag to turn off any export, for view, e.g. in case of testing with docTest."""
@@ -6605,7 +6605,7 @@ class Element:
     def _set_doExport(self, doExport):
         self.style['doExport'] = bool(doExport)
     doExport = property(_get_doExport, _set_doExport)
-        
+
 
 if __name__ == '__main__':
     import doctest

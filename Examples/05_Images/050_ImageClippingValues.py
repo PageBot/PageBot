@@ -14,7 +14,7 @@
 #
 #     Draw a number of images on a page to show the influence of parameters.
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot import getResourcesPath
 from pagebot.document import Document

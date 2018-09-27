@@ -26,7 +26,7 @@ import sys
 
 from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 context = getContext()
 
 if __name__ == '__main__':

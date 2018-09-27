@@ -12,7 +12,7 @@
 #
 #     UseMarkDownText.py
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *

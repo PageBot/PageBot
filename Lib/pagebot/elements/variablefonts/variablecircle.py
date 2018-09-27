@@ -21,7 +21,7 @@
 
 from math import pi, sin, cos
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
@@ -211,7 +211,7 @@ class VariableCircle(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)

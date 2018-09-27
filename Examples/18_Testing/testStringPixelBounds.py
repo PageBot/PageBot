@@ -14,7 +14,7 @@
 #     testFormattedString.py
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.color import noColor, color
 from pagebot.toolbox.units import pt
 

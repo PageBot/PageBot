@@ -16,7 +16,7 @@
 # https://twitter.com/petrvanblokland/status/860610270410018817
 
 import sys
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, whiteColor
 

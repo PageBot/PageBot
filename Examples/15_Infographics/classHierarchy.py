@@ -17,7 +17,7 @@
 #     TODO: element alignments
 
 import sys, inspect
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.constants import A3
 from pagebot.toolbox.units import *
 from pagebot.toolbox.color import Color, blackColor, blueColor, greenColor

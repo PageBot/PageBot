@@ -18,7 +18,7 @@ import sys
 import vanilla
 import AppKit
 from vanilla import FloatingWindow, Window, CheckBox, Button
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 context = getContext()
 
 class VariableController:

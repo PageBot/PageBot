@@ -14,7 +14,7 @@
 #     ElasticTextBox.py
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 c = getContext()
 
 from pagebot.style import A4, LEFT, TOP, BOTTOM

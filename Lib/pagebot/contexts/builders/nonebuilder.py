@@ -118,7 +118,7 @@ class NoneBuilder:
 
     def installedFonts(self, pattern=None):
         return []
-        
+
     def font(self, font):
         pass
 

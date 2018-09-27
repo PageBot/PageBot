@@ -16,7 +16,7 @@
 #     It is possible to measure on the content of FormattedString instances.
 #     These show examples how to do that.
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import Color, color
 

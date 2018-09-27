@@ -54,7 +54,7 @@ if not CLEAN:
 else:
     print('Found all dependencies, running some test...')
     # Testing PageBot.
-    from pagebot.contexts.platform import getContext
+    from pagebot import getContext
     context = getContext()
     print(context)
     print(context.b)

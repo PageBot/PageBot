@@ -14,7 +14,7 @@
 #     testTextLines.py
 #
 import sys
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 context = getContext()
 
 if not context.isDrawBot:

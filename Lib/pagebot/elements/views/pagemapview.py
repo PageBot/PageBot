@@ -177,7 +177,7 @@ class PageMapView(BaseView):
     def drawPageMetaInfo(self, page, origin, path=None, background=False):
         """Draw the foreground meta info of the page, depending on the settings of the flags.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
@@ -204,7 +204,7 @@ class PageMapView(BaseView):
         enough to show other meta info.  Otherwise the padding is truncated to
         0: no use to draw the frame.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -226,7 +226,7 @@ class PageMapView(BaseView):
     def drawPadding(self, e, origin):
         """Draw the page frame of its current padding.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -258,7 +258,7 @@ class PageMapView(BaseView):
         """Draw additional document information, color markers, page number, date, version, etc.
         outside the page frame, if drawing crop marks.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -390,7 +390,7 @@ class PageMapView(BaseView):
 
     def drawElementFrame(self, e, origin):
         """If self.showFrame and e is a page, or if e.showFrame == True, then draw
-        the frame of the element. 
+        the frame of the element.
         """
         if (self.showFrame and e.isPage) or e.showFrame:
             x = origin[0]
@@ -515,7 +515,7 @@ class PageMapView(BaseView):
         content (as in unused image frames). Only draw if the list self.showGrid
         contains proper types of grid names.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -564,7 +564,7 @@ class PageMapView(BaseView):
         (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG,
         GRID_ROW_BG, GRID_SQR_BG)
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -581,7 +581,7 @@ class PageMapView(BaseView):
         elif e.showGrid:
             showGrid = e.showGrid
         else:
-            return 
+            return
 
         context = self.context
 
@@ -668,7 +668,7 @@ class PageMapView(BaseView):
         In this method is called by an element, instead of self, the show attribute
         is a way to overwrite the setting of self.showBaselines
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -769,7 +769,7 @@ class PageMapView(BaseView):
         """Draw standard registration mark, to show registration of CMYK colors.
         https://en.wikipedia.org/wiki/Printing_registration.
 
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -793,7 +793,7 @@ class PageMapView(BaseView):
         """If the show flag is set, then draw the cropmarks or page frame.
 
         >>> from pagebot.toolbox.units import mm
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle

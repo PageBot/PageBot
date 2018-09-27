@@ -112,7 +112,7 @@ The Typesetter is the bridge between contents MarkDown files, creating a *Galley
 #### Sample code fragment
 ~~~
 from pagebot.typesetter import Typesetter
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot import getResourcesPath
 context = getContext() # Answers the DrawBot context
 # Find the path to a TEST.md file in resources.

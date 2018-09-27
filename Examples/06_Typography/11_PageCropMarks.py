@@ -19,7 +19,7 @@
 #
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt, inch
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.constants import BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, B5
 from pagebot.elements import *
 

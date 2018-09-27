@@ -16,7 +16,7 @@
 #     Show drawing of outline points and intersection beam with flattened path
 #
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.color import color, noColor, blackColor
 
 GLYPH_NAME = 'B' # 'ampersand'

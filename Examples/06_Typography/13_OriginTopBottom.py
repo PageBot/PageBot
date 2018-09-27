@@ -26,7 +26,7 @@
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt, inch, p
 from pagebot.toolbox.color import color
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.constants import (BASE_LINE_BG, BASE_Y_LEFT, BASE_INDEX_LEFT, B5, CENTER, MIDDLE,
     LEFT, RIGHT, TOP, BOTTOM)
 from pagebot.elements import *

@@ -17,7 +17,7 @@
 import os
 import shutil
 
-from pagebot.contexts.platform import getMampPath
+from pagebot import getMampPath
 from pagebot.elements.views.siteview import SiteView
 
 class MampView(SiteView):

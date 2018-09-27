@@ -17,7 +17,7 @@
 #     The usable area of the page is defined by the remainder of page.padding.
 
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document

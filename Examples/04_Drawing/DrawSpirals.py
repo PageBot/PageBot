@@ -16,7 +16,7 @@
 
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor, blackColor
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 c = getContext()
 #import pagebot # Import to know the path of non-Python resources.
 

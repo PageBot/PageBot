@@ -31,7 +31,7 @@ from pagebot.conditions import *
 from pagebot.toolbox.color import color, whiteColor, blackColor,  noColor
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 context = getContext()
 
 if 0:

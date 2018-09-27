@@ -24,7 +24,7 @@
 import re
 import sys
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.elements import newTextBox
 from pagebot.toolbox.color import color
 from pagebot.document import Document

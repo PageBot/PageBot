@@ -16,7 +16,7 @@
 #     Needs debug in view dimension showing.
 #
 from pagebot.style import getRootStyle, CENTER
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document

@@ -12,7 +12,7 @@
 #
 #     testVariableTTFont.py
 #
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.document import Document
 from pagebot.style import A4
 from pagebot.fonttoolbox.objects.font import findFont

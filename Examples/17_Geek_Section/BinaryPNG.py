@@ -16,7 +16,7 @@
 #     Shows how to read and write a PNG image as a binary file.
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot import getResourcesPath
 import os, os.path
 

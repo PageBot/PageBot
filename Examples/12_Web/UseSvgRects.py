@@ -22,7 +22,7 @@ if 0:
     context = SvgContext()
     EXPORT_PATH = '_export/useSvg.svg'
 else:
-    from pagebot.contexts.platform import getContext
+    from pagebot import getContext
     context = getContext()
     EXPORT_PATH = '_export/useSvg.pdf'
 

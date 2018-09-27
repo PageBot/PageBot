@@ -19,7 +19,7 @@
 #     on vertical position page.h/2
 
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document

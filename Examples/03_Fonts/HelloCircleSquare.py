@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 #
 from random import random
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 context = getContext()
 

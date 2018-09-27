@@ -1,6 +1,6 @@
 
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.toolbox.units import em
 from pagebot.toolbox.color import blackColor
 

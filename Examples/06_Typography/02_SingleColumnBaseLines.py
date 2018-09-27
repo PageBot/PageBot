@@ -16,7 +16,7 @@
 #     vertical positions. This allows for alignment on parts of the headline.
 #
 #from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document

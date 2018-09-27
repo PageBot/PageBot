@@ -37,10 +37,10 @@ from pagebot.toolbox.color import color, blackColor
 
 
 class Typesetter:
-    u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence 
-    of markdown strings and builds a galley, using a dictionary of styles for the formatted string 
-    attributes. The result of the typesetting is a self.galley, that contains a sequence of Element 
-    instances, such as formatted images, textboxes (with BabelStrings), ruler elements and other 
+    u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence
+    of markdown strings and builds a galley, using a dictionary of styles for the formatted string
+    attributes. The result of the typesetting is a self.galley, that contains a sequence of Element
+    instances, such as formatted images, textboxes (with BabelStrings), ruler elements and other
     nested galleys.
     """
     IMAGE_CLASS = Image
@@ -53,7 +53,7 @@ class Typesetter:
     SKIP_TAGS = ('document', 'pre')
 
     # Default styles for Typesetter, based on the standard markdown HTML-tags
-    # Some ugly colors to show that we're in default mode here, for the user to 
+    # Some ugly colors to show that we're in default mode here, for the user to
     # supply a better set.
     DEFAULT_STYLES = dict(
         body=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
@@ -68,7 +68,7 @@ class Typesetter:
     )
     MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None, 
+    def __init__(self, context, styles=None, galley=None, skipTags=None,
             imageAsElement=False, tryExcept=True):
         u"""
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
@@ -77,7 +77,7 @@ class Typesetter:
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> from pagebot.contexts.platform import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
         >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
@@ -120,7 +120,7 @@ class Typesetter:
         # Save some flags in case the typesetter is running in Python try-except mode.
         self.tryExcept = tryExcept
         # If True add tags to the output, otherwise ignore. Can be overwritten by caller for debugging.
-        self.writeTags = context.useTags 
+        self.writeTags = context.useTags
         self.root = None # Will contain the root node after executing typesetFile.
 
         # Some MarkDown generated tags need to be skipped on output, while their content still is processed.
@@ -523,7 +523,7 @@ class Typesetter:
     def markDown2XmlFile(self, fileName, mdText, mdExtensions=None):
         u"""Take the markdown source, convert to HTML/XML and save in the file called fileName.
         If the fileName does not end with ".xml" extension, then add it. Answer the (new) fileName.
-        
+
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
         >>> context = HtmlContext()
@@ -549,7 +549,7 @@ class Typesetter:
         self.typesetFile(fileName, e=e, xPath=xPath)
         os.remove(tmpPath)
         return self.galley
-        
+
     def typesetFile(self, fileName, e=None, xPath=None):
         u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.

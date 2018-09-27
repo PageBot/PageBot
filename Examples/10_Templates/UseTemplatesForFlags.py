@@ -21,7 +21,7 @@
 #     to a specific page.
 #
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.document import Document

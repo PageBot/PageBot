@@ -16,7 +16,7 @@
 #
 
 import pagebot
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 c = getContext()
 

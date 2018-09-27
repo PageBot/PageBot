@@ -181,7 +181,7 @@ class GlyphAnalyzer:
     def onBlack(self, p):
         """Answers the boolean flag is the single point (x, y) is on black."""
         # TODO: We need to make a method to have the context available here.
-        from pagebot.contexts.platform import getContext
+        from pagebot import getContext
         context = getContext()
         glyphPath = context.getGlyphPath(self.glyph)
         return context.onBlack(p, glyphPath)

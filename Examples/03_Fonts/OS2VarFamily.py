@@ -24,7 +24,7 @@
 
 import os, sys, shutil
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer

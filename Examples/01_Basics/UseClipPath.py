@@ -15,7 +15,7 @@
 #
 #     Shows how to get different types of contexts.
 
-from pagebot.contexts.platform import getContext
+from pagebot import getContext
 
 context = getContext()
 context.fill((0, 1, 1))
