@@ -18,7 +18,7 @@
 
 import os
 from pagebot.elements.element import Element
-from pagebot.style import ORIGIN # In case no image is defined.
+from pagebot.constants import ORIGIN # In case no image is defined.
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
 
@@ -52,7 +52,7 @@ class Image(Element):
     >>> e.size
     (50mm, 100p)
     >>> e.size = None # Force answering the original image size
-    >>> e.size # Initialize from file 
+    >>> e.size # Initialize from file
     (398pt, 530pt)
     >>> page.w = mm(150)
     >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt
@@ -62,7 +62,7 @@ class Image(Element):
     ((30pt, 99.44mm), (128.83mm, 486.32pt))
     """
     isImage = True
-    
+
     def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, index=1, **kwargs):
         Element.__init__(self, **kwargs)
@@ -283,7 +283,7 @@ class Image(Element):
             else:
                 b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
-            
+
             b.clipPath(None)
             context.restore()
 

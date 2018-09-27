@@ -18,7 +18,7 @@
 #
 import os
 from pagebot.elements.element import Element
-from pagebot.style import ORIGIN # In case no image is defined.
+from pagebot.constants import ORIGIN # In case no image is defined.
 from pagebot.toolbox.units import pointOffset, point2D, pt, upt
 from pagebot.toolbox.color import noColor
 

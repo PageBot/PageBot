@@ -17,7 +17,7 @@
 from pagebot.elements.paths.pbpath import Path
 from pagebot.toolbox.units import pointOffset, units
 from pagebot.toolbox.color import noColor
-from pagebot.style import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
+from pagebot.constants import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
 class GlyphPath(Path):
     """GlyphPath is an element to show show the path of a glyph with additional features.
@@ -37,12 +37,12 @@ class GlyphPath(Path):
     >>> e.w = 150
     >>> e.w, e.w == page[e.eId].w
     (150pt, True)
-    
+
     """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Path.__init__(self, **kwargs)
         self.font = glyph.font # Store separate, to avoid disappearing weakref.
-        self.glyph = glyph 
+        self.glyph = glyph
         # One of the two needs to be defined, the other should be None to scale proportional.
         # If both are set, then the image scales disproportional.
         self.w = w
@@ -73,11 +73,11 @@ class GlyphPath(Path):
     h = property(_get_h, _set_h)
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        
+
         context = self.context # Get current context
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         context.save()
@@ -99,7 +99,7 @@ class GlyphPath(Path):
 
         # Draw optional bounding box if view.showFrame = True
         self.buildFrame(view, p) # Draw optional frame, shadow or borders.
- 
+
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 

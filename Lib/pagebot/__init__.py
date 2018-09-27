@@ -15,13 +15,12 @@
 #     pagebot/__init__.py
 #
 import re
+from pagebot.paths import *
 
 VERSION = '0.6'
 STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
-ROOT_PATH = '/'.join(__file__.split('/')[:-1])
-RESOURCES_PATH = ROOT_PATH + '/resources'
 
 def getRootPath():
     """Answer the root path on the platform for the PageBot module."""

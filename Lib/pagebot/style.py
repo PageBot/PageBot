@@ -19,9 +19,10 @@
 #     to be used local in an element or string.
 #
 import copy
-from pagebot.constants import DISPLAY_INLINE, DEFAULT_LANGUAGE, DEFAULT_LEADING, \
-        DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT, DEFAULT_FONT_PATH, \
-        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT
+from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
+        DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
+        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT)
+from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 

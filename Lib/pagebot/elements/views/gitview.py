@@ -15,16 +15,16 @@
 #     gitview.py
 #
 from pagebot.elements.views.siteview import SiteView
-from pagebot.style import ORIGIN
+from pagebot.constants import ORIGIN
 
 class GitView(SiteView):
     viewId = 'Git'
-    
+
     GIT_PATH = 'docs/'
     DEFAULT_HTML_FILE = 'index.html'
     DEFAULT_HTML_PATH = GIT_PATH + DEFAULT_HTML_FILE
     DEFAULT_CSS_PATH = GIT_PATH + 'css/style.css'
-    
+
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
@@ -34,7 +34,7 @@ class GitView(SiteView):
         sitePath = self.GIT_PATH
         if not sitePath.endswith('/'):
             sitePath += '/'
-            
+
         b = self.b # Get builder from self.doc.context of this view.
         for pn, pages in doc.pages.items():
             for page in pages:
@@ -48,7 +48,7 @@ class GitView(SiteView):
                     fileName = self.DEFAULT_HTML_FILE
                 if not fileName.lower().endswith('.html'):
                     fileName += '.html'
- 
+
                 b.writeHtml(sitePath + fileName)
         # Write all collected CSS into one file
         #b.writeCss(self.DEFAULT_CSS_PATH)

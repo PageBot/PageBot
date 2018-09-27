@@ -13,7 +13,6 @@
 #
 #    dating.py
 #
-from copy import copy
 import datetime
 from time import localtime
 from random import randint
@@ -103,7 +102,7 @@ def now():
 
     >>> Dating(year=1900) < now()
     True
-    >>> now() < Dating(year=2500) 
+    >>> now() < Dating(year=2500)
     True
     """
     return Dating(date='now')
@@ -137,11 +136,11 @@ def minutes(minutes):
 
     >>> minutes(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 300s, 0us)
-    >>> minutes(100) 
+    >>> minutes(100)
     Duration(0d, 6000s, 0us)
-    >>> minutes(1000) 
+    >>> minutes(1000)
     Duration(0d, 60000s, 0us)
-    >>> minutes(10000) 
+    >>> minutes(10000)
     Duration(6d, 81600s, 0us)
     """
     return Duration(minutes=minutes)
@@ -151,7 +150,7 @@ def hours(hours):
 
     >>> hours(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 18000s, 0us)
-    >>> hours(100) 
+    >>> hours(100)
     Duration(4d, 14400s, 0us)
     """
     return Duration(hours=hours)
@@ -214,7 +213,7 @@ class Duration:
     Duration(8d, 0s, 0us)
 
     """
-    def __init__(self, days=0, seconds=0, microSeconds=0, milliSeconds=0, minutes=0, hours=0, 
+    def __init__(self, days=0, seconds=0, microSeconds=0, milliSeconds=0, minutes=0, hours=0,
             weeks=0, td=None):
         """
 
@@ -231,28 +230,28 @@ class Duration:
 
     def _get_weeks(self):
         return self.timedelta.days // 7
-    weeks = property(_get_weeks) 
-    
+    weeks = property(_get_weeks)
+
     def _get_days(self):
         return self.timedelta.days
-    days = property(_get_days) 
-    
+    days = property(_get_days)
+
     def _get_hours(self):
         return self.timedelta.second // (60 * 60)
-    hours = property(_get_hours) 
-    
+    hours = property(_get_hours)
+
     def _get_minutes(self):
         return self.timedelta.seconds // 60
-    minutes = property(_get_minutes) 
-    
+    minutes = property(_get_minutes)
+
     def _get_seconds(self):
         return self.timedelta.seconds
-    seconds = property(_get_seconds) 
-    
+    seconds = property(_get_seconds)
+
     def _get_microSeconds(self):
         return self.timedelta.microseconds
-    microSeconds = property(_get_microSeconds) 
-    
+    microSeconds = property(_get_microSeconds)
+
     def __len__(self):
         return self.days
 
@@ -281,11 +280,11 @@ class Duration:
 
     def __mul__(self, n):
         assert isinstance(n, (int, float))
-        return Duration(td=self.timedelta*n) 
+        return Duration(td=self.timedelta*n)
 
     def __div__(self, n):
         assert isinstance(n, (int, float))
-        return Duration(td=self.timedelta/n) 
+        return Duration(td=self.timedelta/n)
 
     __truediv__ = __div__
     __itruediv__ = __rtruediv__ = __rdiv__ = __div__
@@ -304,8 +303,8 @@ class Duration:
             return Duration(td=self.timedelta + value.timedelta)
 
         if isinstance(value, Dating):
-            return Dating(year=value.year, day=value.day+self.days, hour=value.hour, 
-                minute=value.minute, second=value.second+self.seconds, 
+            return Dating(year=value.year, day=value.day+self.days, hour=value.hour,
+                minute=value.minute, second=value.second+self.seconds,
                 microSecond=value.microSecond+self.microSeconds)
 
         raise ValueError('[Duration.__add__] Illegal type to add to a Duration instance "%s"' % value)
@@ -431,7 +430,7 @@ class Dating:
     '2018-02-10'
     >>> d1.dateNumber
     20180210
-    >>> d1.time # Single date 
+    >>> d1.time # Single date
     '00:00:00'
     >>> d1.dateTuple
     (2018, 2, 10)
@@ -453,7 +452,7 @@ class Dating:
     >>> #d3.prevMonth # Goes back to previous year
     2007-11-01 00:00:00
     >>> #d3 - d1
-    
+
     >>> d3 = Dating(d1.year, d1.month, 1)
     >>> d3
     Dating(date='2018-02-01' time='00:00:00')
@@ -741,7 +740,7 @@ class Dating:
 
         Date + Duration = Date
         Date + 3 = Date
-    
+
         >>> d1 = Dating(year=1950)
         >>> d1 + 3
         Dating(date='1950-01-04')
@@ -796,7 +795,7 @@ class Dating:
         derived from date, time and a six digit random number. This can be used e.g. in a URL as parameters to make sure that browser
         will not cache the content of the page. The number is also used to create a unique file name for background shell scripts.
 
-        >>> timeStamp = Dating(year=1980).timeStampRandomLong() 
+        >>> timeStamp = Dating(year=1980).timeStampRandomLong()
         >>> len(timeStamp) # Cannot test on random number
         18
         >>> d = Dating(year=2100, month=2, day=15, hour=3).timeStampRandomLong()
@@ -856,7 +855,7 @@ class Dating:
         """
         return self.datetime.month
     month = property(_get_month)
-    
+
     def _get_day(self):
         """Answer the day value of self.
 
@@ -865,7 +864,7 @@ class Dating:
         """
         return self.datetime.day
     day = property(_get_day)
-    
+
     def _get_hour(self):
         """Answer the hour value of self.
 
@@ -874,7 +873,7 @@ class Dating:
         """
         return self.datetime.hour
     hour = property(_get_hour)
-    
+
     def _get_minute(self):
         """Answer the minute value of self.
 
@@ -883,7 +882,7 @@ class Dating:
         """
         return self.datetime.minute
     minute = property(_get_minute)
-    
+
     def _get_second(self):
         """Answer the second value of self.
 
@@ -892,7 +891,7 @@ class Dating:
         """
         return self.datetime.second
     second = property(_get_second)
-    
+
     def _get_microSecond(self):
         """Answer the second value of self.
 
@@ -901,7 +900,7 @@ class Dating:
         """
         return self.datetime.microsecond
     microSecond = property(_get_microSecond)
-    
+
     def _get_euroDate(self):
         """The self.euroDate property answers a formatted string 23-10-2008 of the date.
 
@@ -1143,7 +1142,7 @@ class Dating:
             return 366
         return 365
     yearDays = property(_get_yearDays)
-        
+
     def _get_monthDays(self):
         """The self.monthDays property answers the number of days in the current month.
 
@@ -1158,7 +1157,7 @@ class Dating:
         """
         return monthDays(self.year, self.month)
     monthDays = property(_get_monthDays)
-    
+
     def _get_nextMonth(self):
         """The nextMonth property answers the first day of the month after the current month. Due to
         length differences between the months, it is not consistent to answer the current day number in the next month,
@@ -1171,7 +1170,7 @@ class Dating:
         """
         return self + (self.monthDays - self.day + 1)
     nextMonth = property(_get_nextMonth)
-    
+
     def _get_prevMonth(self):
         """The prevMonth property answers the first day of the month previous to the current month.
         Due to length differences between the months, it is not consistent to  answer the current day number in the
@@ -1184,7 +1183,7 @@ class Dating:
         """
         return (self.monthStart - 1).monthStart
     prevMonth = property(_get_prevMonth)
-    
+
     def _get_calendarMonth(self):
         """The calendarMonth property answers a list of lists containing the weeks with dates of the
         current month. Note that the first and lost week are filled with the days of end of the previous month and the
@@ -1219,7 +1218,7 @@ class Dating:
             running = True
         return monthWeekDates
     calendarMonth = property(_get_calendarMonth)
-    
+
     def _get_calendarYear(self):
         """The calendarYear property answers a list of lists of lists containing all
         calendarMonths of the year.
@@ -1248,7 +1247,7 @@ class Dating:
             yearWeekDates.append(Dating(year=self.year, month=month, day=1).calendarMonth)
         return yearWeekDates
     calendarYear = property(_get_calendarYear)
-    
+
     def nextDayNamed(self, weekDay):
         if not (0 <= weekDay <= 7):
             raise ValueError('[%s.nextDayNamed] weekDay "%s" must be in range (0, 8)' % (self.__class__.__name__, weekDay))

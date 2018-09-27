@@ -21,11 +21,13 @@ from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.svgbuilder import svgBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
-from pagebot.style import DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH
-from pagebot.constants import *
+from pagebot.constants import DEFAULT_FONT_SIZE
+from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import upt, point2D
 from pagebot.toolbox.dating import seconds
 from pagebot.toolbox.color import noColor, color
+from pagebot.toolbox.units import pt
+from pagebot.constants import FILETYPE_SVG
 
 class SvgContext(BaseContext):
     """An SvgContext uses svgwrite to export as SVG drawing."""

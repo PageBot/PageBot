@@ -13,12 +13,8 @@
 #
 #     articles.py
 #
-from pagebot.style import ORIGIN
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot.toolbox.units import pointOffset
-from pagebot.toolbox.color import noColor
-from pagebot.constants import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 
 class Article(Rect):
     pass

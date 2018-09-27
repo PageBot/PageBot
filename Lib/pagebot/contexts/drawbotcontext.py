@@ -17,10 +17,11 @@
 
 import os
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.style import CENTER, RIGHT, DEFAULT_FRAME_DURATION
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle # Render units to points
-from pagebot.constants import *
+from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION,
+        FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
+        FILETYPE_MOV, DEFAULT_FILETYPE)
 import traceback
 
 try:

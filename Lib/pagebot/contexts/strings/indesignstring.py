@@ -20,7 +20,9 @@ import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, DEFAULT_LEADING
+from pagebot.style import css
+from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
+from pagebot import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import isUnit
 from pagebot.fonttoolbox.objects.font import findFont
 

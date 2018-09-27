@@ -64,7 +64,9 @@ except (AttributeError, ImportError):
 
 #from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING, DEFAULT_FONT_PATH
+from pagebot.style import css
+from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
+from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL, DEFAULT_LANGUAGE
 from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance

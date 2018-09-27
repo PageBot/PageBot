@@ -18,7 +18,6 @@
 #
 
 
-from pagebot import getResourcesPath
 from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 
 # General indicators
@@ -541,7 +540,6 @@ URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
-DEFAULT_FONT_PATH = getResourcesPath() + '/testfonts/google/roboto/Roboto-Regular.ttf'
 DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
 
 # Default element names

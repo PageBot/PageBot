@@ -14,8 +14,10 @@
 #
 #     galley.py
 #
-from pagebot.style import ORIGIN
-from pagebot.elements import Element, TextBox, Ruler
+from pagebot.constants import ORIGIN
+from pagebot.elements.element import Element
+from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.pbruler import Ruler
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import color
 from pagebot.conditions import *

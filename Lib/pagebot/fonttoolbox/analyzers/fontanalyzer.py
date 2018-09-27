@@ -59,16 +59,16 @@ class FontAnalyzer:
             # Try to find vertical stem width for the 'I'
             self._stems = self['I'].stems
             # If no stem found in the 'I' or more than one, then do second guess beaming "I".
-            if not self._stems or len(self._stems) > 1: 
+            if not self._stems or len(self._stems) > 1:
                 # This will still not catch on outlines or flourishes, but better that nothing.
-                self._stems, self._horizontalCounters = self['I'].getBeamStemCounters() 
+                self._stems, self._horizontalCounters = self['I'].getBeamStemCounters()
         # No stems found by beaming the 'I', then try verticals on the "H"
         if not self._stems and 'H' in self.font: # Check if there is a "H" in the font anyway
             self._stems = self['H'].stems
             # If no stems found in the 'H' or more than two, then second guess beaming the 'H' on 0.25 height
             if not self._stems or len(self._stems) > 2:
                 # This will still not catch on outlines or flourishes, but better that nothing.
-                self._stems, self._horizontalCounters = self['H'].getBeamStemCounters(self['H'].maxY/4) # Cache both.               
+                self._stems, self._horizontalCounters = self['H'].getBeamStemCounters(self['H'].maxY/4) # Cache both.
         return self._stems # If still empty, give up for now.
     stems = property(_get_stems)
 
@@ -80,7 +80,7 @@ class FontAnalyzer:
             self._horizontalCounters = self['H'].horizontalCounters
             # If not counters found in the 'H' this way, or more than 1, then second guess beaming the 'H' on 0,25 height
             if not self._horizontalCounters or len(self._horizontalCounters) > 1:
-                self._stems, self._horizontalCounters = self['H'].getBeamStemCounters(self['H'].maxY/4) # Cache both. 
+                self._stems, self._horizontalCounters = self['H'].getBeamStemCounters(self['H'].maxY/4) # Cache both.
         return self._horizontalCounters
     horizontalCounters = property(_get_horizontalCounters)
 

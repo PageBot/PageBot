@@ -15,7 +15,7 @@
 #
 
 
-from pagebot.style import ORIGIN
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor

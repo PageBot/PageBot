@@ -15,10 +15,10 @@
 #     pbpage.py
 #
 import weakref
-from pagebot.elements import Element, Galley
+from pagebot.elements.element import Element
+from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
-from pagebot.style import ORIGIN
-from pagebot.constants import DEFAULT_GALLEY_NAME
+from pagebot.constants import DEFAULT_GALLEY_NAME, ORIGIN
 
 class Page(Element):
     """The Page container is typically the root of a tree of Element instances.
@@ -242,7 +242,7 @@ class Page(Element):
     #   E L E M E N T S
 
     def getGalley(self, name=None):
-        """Answer the default galley element of a page. This is used in case pages 
+        """Answer the default galley element of a page. This is used in case pages
         need to be made with content (e.g. to accommodate overflow) without a main
         sequence of text boxes in stalled or without an applied template that contains them.
         Usage of the default page galley is mostly for booting a document, without the

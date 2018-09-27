@@ -14,7 +14,7 @@
 #
 #     pbtable.py
 #
-from pagebot.style import CENTER, ORIGIN, MIDDLE
+from pagebot.constants import CENTER, ORIGIN, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
@@ -29,7 +29,7 @@ class Row(Element):
         return self.elements[index]
 
 class Header(Row):
-    """The Table header is a special kind of row. The header holds the titles of 
+    """The Table header is a special kind of row. The header holds the titles of
     the columns and is reference for their widthts."""
     pass
 
@@ -68,7 +68,7 @@ class Table(Element):
     def initCells(self, colNames, cols, rows, fillHeader):
         cellConditions = [Float2Left(), Top2Top(), Fit2Bottom()]
         rowConditions = [Fit2Width(), Float2Top()]
- 
+
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
             bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=whiteColor, fontSize=10))
@@ -76,8 +76,8 @@ class Table(Element):
                 colName = colNames[colIndex]
             else:
                 colName = None
-            self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H, 
-                xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName, 
+            self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H,
+                xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName,
                 borders=self.borders, fill=color(0.4), conditions=cellConditions)
 
         bs = self.newString('abc', style=dict(font='Verdana', textFill=blackColor, fontSize=10))
@@ -127,14 +127,14 @@ class Table(Element):
             result = False
             # Find the page of self
             page = self.getElementPage()
-            if page is not None:        
+            if page is not None:
                 # Try next page
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
                 if nextElement is None or nextElement.fs and self.nextPageName:
                     # Not found or not empty, search on next page.
                     page = self.doc.getPage(self.nextPageName)
                     nextElement =  page.getElementByName(self.nextElementName)
-                if nextElement is not None and not nextElement.bs: 
+                if nextElement is not None and not nextElement.bs:
                     # Finally found one empty box on this page or next page?
                     nextElement.fs = overflow
                     nextElement.prevPageName = page.name
@@ -148,32 +148,32 @@ class Table(Element):
     def build(self, view, origin=ORIGIN, drawElements=True):
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.drawFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
         if drawElements:
             self.buildChildElements(view, p)
- 
+
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-     
+
     #   H T M L  /  S A S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(p)    
+        p = self._applyScale(p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

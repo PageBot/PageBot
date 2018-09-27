@@ -14,7 +14,8 @@
 #     htmlstring.py
 #
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css, LEFT
+from pagebot.style import css
+from pagebot.constants import LEFT
 from pagebot.toolbox.units import upt
 from pagebot.constants import XXXL
 
@@ -84,7 +85,7 @@ class HtmlString(BabelString):
         >>> #FIX line = lines[0]
         >>> #FIX line.maximumLineHeight
         1.4em
-        >>> 
+        >>>
         """
         assert w
         if not h:

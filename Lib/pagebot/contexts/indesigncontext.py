@@ -23,7 +23,8 @@
 #
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
-from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_PATH, DEFAULT_FONT_SIZE
+from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_SIZE
+from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import Pt, upt
 from pagebot.toolbox.color import noColor, blackColor, Color
 from pagebot.contexts.strings.indesignstring import InDesignString
@@ -460,7 +461,7 @@ class InDesignContext(BaseContext):
 
         self.drawPath(path)
         """
-        
+
     #   T E X T
 
     def fontSize(self, fontSize):
