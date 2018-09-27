@@ -49,6 +49,10 @@ def getContext(contextType='DrawBot'):
     from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
+def getMampPath():
+    from pagebot.contexts import getMampPath
+    return getMampPath()
+
 # In order to let PageBot scripts and/applications exchange information
 # without the need to save data in files, the pbglobals module supports the
 # storage of non-persistent information. This way, applications with Vanilla
