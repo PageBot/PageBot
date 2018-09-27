@@ -63,7 +63,7 @@ else:
     # Testing Sass.
     css = sass.compile(string='a { b { color: blue; } }')
     print(css)
-    css = sass.compile(filename='sass/test.scss')
+    css = sass.compile(filename='test.scss')
     print(css)
 
     test_scss = open('test.scss', 'w')
