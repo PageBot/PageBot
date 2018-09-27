@@ -30,103 +30,103 @@ LEADING = 36
 FONTNAME = 'BungeeHairline-Regular'
 
 def testFlat():
-	context = getContext('Flat')
-	pagebotFont = findFont(FONTNAME)
-	flatFont = font.open(pagebotFont.path)
-	flatFill = rgb(180, 0, 125)
-	pagebotFill = color((180.0 / 255, 0, 125.0 / 255))
-	flatStroke = rgb(100, 180, 0)
-	pagebotStroke = color(100.0 / 255, 180.0 / 255, 0)
-        strokeWidth = 1
+    context = getContext('Flat')
+    pagebotFont = findFont(FONTNAME)
+    flatFont = font.open(pagebotFont.path)
+    flatFill = rgb(180, 0, 125)
+    pagebotFill = color((180.0 / 255, 0, 125.0 / 255))
+    flatStroke = rgb(100, 180, 0)
+    pagebotStroke = color(100.0 / 255, 180.0 / 255, 0)
+    strokeWidth = 1
 
-	''' Creates a document. '''
+    ''' Creates a document. '''
 
-        # Flat.
-	doc = document(WIDTH, HEIGHT, 'pt')
-	p = doc.addpage()
+    # Flat.
+    doc = document(WIDTH, HEIGHT, 'pt')
+    p = doc.addpage()
 
-        # Pagebot.
-	context.newDocument(WIDTH, HEIGHT)
-	context.newPage()
+    # Pagebot.
+    context.newDocument(WIDTH, HEIGHT)
+    context.newPage()
 
-        ''' Draws a figure. '''
+    ''' Draws a figure. '''
 
-        # Flat.
-	figure = shape().fill(flatFill).stroke(flatStroke).width(strokeWidth)
-	r = figure.rectangle(50, 50, 20, 20)
-	p.place(r)
-
-        # Pagebot.
-	context.fill(pagebotFill)
-	context.stroke(pagebotStroke)
-	context.strokeWidth(strokeWidth)
-	context.rect(50, 50, 20, 20)
-
-        '''
-	print(p.items[0].item.style.width)
-	print(context.pages[0].items[0].item.style.width)
-        '''
-
-	s = context.pages[0].items[0]
-
-        '''
-	print(s.item.style.fill)
-	print(s.item.style.stroke)
-	print(s.item.style.join)
-        print(s.item.style.limit)
-        '''
-
-        ''' Draws text. '''
-
-        msg = 'Hello world!'
-
-        # Flat.
-	headline = strike(flatFont).color(flatStroke).size(FONTSIZE, LEADING, units='pt')
-	t = headline.text(msg)
-	entity = p.place(t)
-	entity.frame(100, 100, 380, 80)
+    # Flat.
+    figure = shape().fill(flatFill).stroke(flatStroke).width(strokeWidth)
+    r = figure.rectangle(50, 50, 20, 20)
+    p.place(r)
 
         # Pagebot.
-        style = dict(font=pagebotFont, fontSize=FONTSIZE,
-                color=pagebotStroke, leading=LEADING)
-	bs = context.newString(msg, style=style)
-        print(bs)
-	context.text(bs, (100, 100))
+    context.fill(pagebotFill)
+    context.stroke(pagebotStroke)
+    context.strokeWidth(strokeWidth)
+    context.rect(50, 50, 20, 20)
 
-	'''
-	print(headline.style.size)
-	print(headline.style.leading)
-	print(headline.style.color.r)
-	print(headline.style.color.g)
-	print(headline.style.color.b)
-	'''
+    '''
+    print(p.items[0].item.style.width)
+    print(context.pages[0].items[0].item.style.width)
+    '''
 
-        ''' Exports file. '''
+    s = context.pages[0].items[0]
 
-	im = p.image(kind='rgb')
-	#print(p.items)
+    '''
+    print(s.item.style.fill)
+    print(s.item.style.stroke)
+    print(s.item.style.join)
+    print(s.item.style.limit)
+    '''
 
-	# TODO:
-	#imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-	#size = context.imageSize(imagePath)
-	#print(size)
+    ''' Draws text. '''
 
-	if not os.path.exists('_export'):
-	    os.mkdir('_export')
+    msg = 'Hello world!'
 
-	#print('Exporting native')
-	doc.pdf('_export/native-flat.pdf')
-        '''
-	im.png('_export/native-flat.png')
-	im.jpeg('_export/native-flat.jpg')
-	p.svg('_export/native-flat.svg')
-        '''
-        print(context.doc)
+    # Flat.
+    headline = strike(flatFont).color(flatStroke).size(FONTSIZE, LEADING, units='pt')
+    t = headline.text(msg)
+    entity = p.place(t)
+    entity.frame(100, 100, 380, 80)
 
-	context.saveDocument('_export/pagebot-flat.pdf')
-	#print('Exporting pagebot')
-	#context.saveDocument('_export/pagebot-flat.png')
-	#context.saveDocument('_export/pagebot-flat.jpg')
-	#context.saveDocument('_export/pagebot-flat.svg')
+    # Pagebot.
+    style = dict(font=pagebotFont, fontSize=FONTSIZE, color=pagebotStroke,
+            leading=LEADING)
+    bs = context.newString(msg, style=style)
+    print(bs)
+    context.text(bs, (100, 100))
+
+    '''
+    print(headline.style.size)
+    print(headline.style.leading)
+    print(headline.style.color.r)
+    print(headline.style.color.g)
+    print(headline.style.color.b)
+    '''
+
+    ''' Exports file. '''
+
+    im = p.image(kind='rgb')
+    #print(p.items)
+
+    # TODO:
+    #imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+    #size = context.imageSize(imagePath)
+    #print(size)
+
+    if not os.path.exists('_export'):
+        os.mkdir('_export')
+
+    #print('Exporting native')
+    doc.pdf('_export/native-flat.pdf')
+    '''
+    im.png('_export/native-flat.png')
+    im.jpeg('_export/native-flat.jpg')
+    p.svg('_export/native-flat.svg')
+    '''
+    print(context.doc)
+
+    context.saveDocument('_export/pagebot-flat.pdf')
+    #print('Exporting pagebot')
+    #context.saveDocument('_export/pagebot-flat.png')
+    #context.saveDocument('_export/pagebot-flat.jpg')
+    #context.saveDocument('_export/pagebot-flat.svg')
 
 testFlat()
