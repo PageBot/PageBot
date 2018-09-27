@@ -22,9 +22,9 @@ from pagebot.contexts.flatconversion import *
 from pagebot.style import css, LEFT, DEFAULT_FONT_SIZE, DEFAULT_FONT_PATH, \
     DEFAULT_LEADING
 from pagebot.toolbox.units import upt
-from flat import rgb
+from pagebot.toolbox.color import Color
 
-DEFAULT_COLOR = rgb(0, 0, 0)
+DEFAULT_COLOR = Color(0, 0, 0)
 
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string."""
@@ -208,6 +208,7 @@ class FlatString(BabelString):
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
         c = style.get('color', DEFAULT_COLOR)
+        assert isinstance(c, Color)
         rgb = getFlatRGB(c)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
 

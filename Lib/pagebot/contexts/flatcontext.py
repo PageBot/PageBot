@@ -366,7 +366,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.fonttoolbox.fontpaths import *
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
-        49
+        57
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>
@@ -420,10 +420,16 @@ class FlatContext(BaseContext):
         >>> w = h = 500 # Default to pt-units
         >>> x = y = 0
         >>> context = FlatContext()
+        >>> print(context)
+        <FlatContext>
         >>> context.newDocument(w, h)
         >>> context.newPage(w, h)
         >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
+        >>> print(style)
+        {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ' * 100, style=style)
+        >>> print(type(bs))
+        <class 'pagebot.contexts.strings.flatstring.FlatString'>
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()

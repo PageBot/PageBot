@@ -93,7 +93,7 @@ class DrawBotContext(BaseContext):
     #   D O C U M E N T
 
     def newDocument(self, w, h):
-        u"""Ignore for DrawBot, as document opens automatically if first page
+        """Ignore for DrawBot, as document opens automatically if first page
         is created."""
         pass
 
@@ -137,16 +137,18 @@ class DrawBotContext(BaseContext):
     #   C L I P P I N G
 
     def clipPath(self, clipPath):
-        """Set the clipPath of the DrawBot builder in a new saved graphics state.
-        Clip paths cannot be restore, so they should be inside a context.save() and context.restore()
-        """
+        """Sets the clipPath of the DrawBot builder in a new saved graphics
+        state. Clip paths cannot be restored, so they should be inside a
+        context.save() and context.restore()."""
         self.b.clipPath(clipPath)
 
     #   V A R I A B L E
 
     def Variable(self, variableUI , globalVariables):
-        """Offers interactive global value manipulation in DrawBot. Probably to be ignored in other contexts."""
-        # Variable is a DrawBot context global, used to make simple UI with controls on input parameters.
+        """Offers interactive global value manipulation in DrawBot. Probably to
+        be ignored in other contexts."""
+        # Variable is a DrawBot context global, used to make simple UI with
+        # controls on input parameters.
         try:
             Variable(variableUI, globalVariables)
         except self.b.misc.DrawBotError:
@@ -215,7 +217,7 @@ class DrawBotContext(BaseContext):
         self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def circle(self, x, y, r):
-        u"""Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
         >>> context = DrawBotContext()
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -235,8 +237,8 @@ class DrawBotContext(BaseContext):
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def newPath(self):
-        """Make a new DrawBot Bezierpath() to draw in and answer it.
-        This will not initialize self._path, which is accessed by the property self.path
+        """Make a new DrawBot Bezierpath() to draw in and answer it. This will
+        not initialize self._path, which is accessed by the property self.path
 
         >>> context = DrawBotContext()
         >>> context.newPath() is not None
@@ -280,8 +282,8 @@ class DrawBotContext(BaseContext):
         self.drawPath(path)
 
     def getGlyphPath(self, glyph, p=None, path=None):
-        u"""Answer the DrawBot path. Allow optional position offset and path, in case
-        we do recursive component drawing.
+        """Answer the DrawBot path. Allow optional position offset and path,
+        in case we do recursive component drawing.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -346,7 +348,8 @@ class DrawBotContext(BaseContext):
         return path._path.containsPoint_(p)
 
     def moveTo(self, p):
-        """Move to point p in the running path. Create a new self._path if none is open.
+        """Move to point p in the running path. Create a new self._path if none
+        is open.
 
         >>> from pagebot.toolbox.units import pt
         >>> context = DrawBotContext()
@@ -363,7 +366,8 @@ class DrawBotContext(BaseContext):
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
-        """Line to point p in the running path. Create a new self._path if none is open.
+        """Line to point p in the running path. Create a new self._path if none
+        is open.
 
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
@@ -385,7 +389,8 @@ class DrawBotContext(BaseContext):
         pass
 
     def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p i nthe running path. Create a new path if none is open.
+        """Curve to point p i nthe running path. Create a new path if none is
+        open.
 
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
@@ -464,7 +469,8 @@ class DrawBotContext(BaseContext):
         self.b.translate(dxpt, dypt)
 
     def transform(self, t):
-        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift over vector (dx, dy)"""
+        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
+        over vector (dx, dy)"""
         self.b.transform(t)
 
     #   G R A D I E N T  &  S H A D O W
@@ -482,8 +488,9 @@ class DrawBotContext(BaseContext):
                               color=color(eShadow.color).rgb)
 
     def setGradient(self, gradient, origin, w, h):
-        """Define the gradient call to match the size of element e., Gradient position
-        is from the origin of the page, so we need the current origin of e."""
+        """Define the gradient call to match the size of element e., Gradient
+        position is from the origin of the page, so we need the current origin
+        of e."""
         b = self.b
         start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
         end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
@@ -566,7 +573,8 @@ class DrawBotContext(BaseContext):
         """Answers the unchanged path, if it exists as file. Answers the path
         that is source of the given font name. Answers None if the font cannot
         be found."""
-        # If the font cannot be found by name, then test if the file exists as path and answer it.
+        # If the font cannot be found by name, then test if the file exists as
+        # path and answer it.
         if os.path.exists(fontName): #
             return fontName
         # Otherwise try OSX for the conversion.
@@ -582,7 +590,8 @@ class DrawBotContext(BaseContext):
         return self.b.listOpenTypeFeatures(fontName)
 
     def installedFonts(self, patterns=None):
-        """Answer a list of all fonts (name or path) that are installed in the OS.
+        """Answer a list of all fonts (name or path) that are installed in the
+        OS.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -604,7 +613,7 @@ class DrawBotContext(BaseContext):
         return fontNames
 
     def installFont(self, fontOrName):
-        u"""Install the font in the context. fontOrName can be a Font instance
+        """Install the font in the context. fontOrName can be a Font instance
         (in which case the path is used) or a full font path.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -630,9 +639,8 @@ class DrawBotContext(BaseContext):
     #   G L Y P H
 
     def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
-        u"""Draw the font[glyphName] at the defined position with the defined fontSize.
-
-        """
+        """Draw the font[glyphName] at the defined position with the defined
+        fontSize."""
         font = glyph.font
         if fontSize is None:
             fontSize = font.info.unitsPerEm
@@ -668,7 +676,8 @@ class DrawBotContext(BaseContext):
             self.b.fontSize(fspt) # Render fontSize unit to value
 
     def textSize(self, bs, w=None, h=None, align=None):
-        """Answer the width/height of the formatted string for an optional given w or h."""
+        """Answer the width/height of the formatted string for an optional
+        given w or h."""
         return self.b.textSize(bs.s, width=w, height=h, align=align)
 
     def newBulletString(self, bullet, e=None, style=None):
@@ -696,13 +705,14 @@ class DrawBotContext(BaseContext):
         self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
     def language(self, language):
-        u"""DrawBot needs an overall language flag set to code, as it is not part of the FormattedString
-        style attributes. For availabel ISO language codes, see pageboy.constants."""
+        """DrawBot needs an overall language flag set to code, as it is not
+        part of the FormattedString style attributes. For availabel ISO
+        language codes, see pageboy.constants."""
         self.b.language(language)
 
     def hyphenation(self, onOff):
-        u"""DrawBot needs an overall hyphenation flag set on/off, as it is not part of the FormattedString
-        style attributes."""
+        """DrawBot needs an overall hyphenation flag set on/off, as it is not
+        part of the FormattedString style attributes."""
         self.b.hyphenation(onOff)
 
     def openTypeFeatures(self, features):
@@ -723,7 +733,7 @@ class DrawBotContext(BaseContext):
     #   C O L O R
 
     def fill(self, c):
-        u"""Set the color for global or the color of the formatted string.
+        """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
@@ -752,7 +762,7 @@ class DrawBotContext(BaseContext):
     setFillColor = fill # DrawBot compatible API
 
     def stroke(self, c, w=None):
-        u"""Set the color for global or the color of the formatted string.
+        """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
         >>> context = DrawBotContext()
@@ -783,7 +793,7 @@ class DrawBotContext(BaseContext):
     setStrokeColor = stroke # DrawBot compatible API
 
     def strokeWidth(self, w):
-        u"""Set the current stroke width.
+        """Set the current stroke width.
 
         >>> from pagebot.toolbox.units import pt, mm
         >>> context = DrawBotContext()
@@ -796,7 +806,8 @@ class DrawBotContext(BaseContext):
     setStrokeWidth = strokeWidth
 
     def rotate(self, angle, center=None):
-        """Rotate the canvas by angle. If angle is not a units.Angle instance, then convert.
+        """Rotate the canvas by angle. If angle is not a units.Angle instance,
+        then convert.
 
         >>> context = DrawBotContext()
         >>> context.rotate(40)
@@ -817,11 +828,11 @@ class DrawBotContext(BaseContext):
         return self.b.imagePixelColor(path, ppt)
 
     def imageSize(self, path):
-        u"""Answer the (w, h) image size of the image file at path."""
+        """Answer the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
     def numberOfImages(self, path):
-        u"""Answer the number of images in the file referenced by path."""
+        """Answer the number of images in the file referenced by path."""
         return self.b.numberOfPages(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
