@@ -613,7 +613,7 @@ class DrawBotContext(BaseContext):
         >>> os.path.exists(path)
         True
         >>> context.fontPath2FontName(path)
-        'Amstelvar-Roman-VF.ttf'
+        'Amstelvar-Roman'
         """
         if os.path.exists(fontPath):
             return self.b.font(fontPath)
@@ -644,8 +644,8 @@ class DrawBotContext(BaseContext):
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> installed = context.installedFonts()
-        >>> installed # No fonts installed?
-        []
+        >>> len(installed) > 0
+        True
         """
         if isinstance(patterns, str): # In case it is a string, convert to a list
             patterns = [patterns]
@@ -668,13 +668,11 @@ class DrawBotContext(BaseContext):
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> installed = context.installedFonts()
-        >>> installed # No fonts installed?
-        []
+        >>> len(installed) > 0
+        True
         >>> font = findFont('Roboto-Regular')
         >>> context.installFont(font)
-        >>> context.installedFonts()
-
-        >>> context.installedFonts()
+        'Roboto-Regular'
         """
         if hasattr(fontOrName, 'path'):
             fontOrName.info.installedName = self.b.installFont(fontOrName.path)
