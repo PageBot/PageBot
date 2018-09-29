@@ -769,7 +769,7 @@ class DrawBotString(BabelString):
         if uIndent is not None:
             fsAttrs['indent'] = upt(uIndent, base=fontSizePt) # Base for em or perc
 
-        uTailIndent = css('tailldIndent', e, style)
+        uTailIndent = css('tailIndent', e, style)
         if uTailIndent is not None:
             fsAttrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) # Base for em or perc
 

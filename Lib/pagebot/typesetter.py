@@ -110,7 +110,7 @@ class Typesetter:
 
         if styles is None:
             styles = self.DEFAULT_STYLES
-        self.styles = styles
+        self.styles = styles # Style used, in case the current text box does not have them.
 
         self.imageAsElement = imageAsElement # If True, add the image as element. Otherwise embed as tag.
 
