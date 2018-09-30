@@ -116,14 +116,14 @@ def newPolygon(points=None, **kwargs):
 def newRuler(**kwargs):
     return Ruler(**kwargs)
 
-def newImage(path, **kwargs):
+def newImage(path=None, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,
     h) of which at least one of them should be defined. The path can be None,
     to be filled later. If the image is drawn with an empty path, a
     missingImage cross-frame is shown. The optional imo attribute is an
     ImageObject() with filters in place. The Image element is answered for
     convenience of the caller."""
-    return Image(path, **kwargs)
+    return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):
     """Answer a new Table instanec."""

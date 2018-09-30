@@ -72,15 +72,10 @@ def makeSite(viewId):
     view.resourcePaths = ('css','fonts','images','js')
     view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/d3.js', 'js/main.js')
     # SiteView will automatic generate css/style.scss.css from assumed css/style.scss
-    if USE_SCSS:
-        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.scss.css')
-    else:
-        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
+    view.cssUrls = ('css/normalize.css', 'css/style.scss.css')
 
     # Make the single page and elements of the site as empty containers
-    makePage(doc)    
-    # By default, the typesetter produces a single Galley with content and code blocks.
-    
+    makePage(doc)        
     
     doc.solve() # Solve all layout and float conditions for pages and elements.
 

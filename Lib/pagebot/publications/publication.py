@@ -13,15 +13,16 @@
 #
 #     publication.py
 #
-from pagebot.document import Document
-      
-class Publication(Document):
-    u"""Subclass of Document, implementing templates for generic publications.
+from pagebot.elements import Element
+
+class Publication(Element):
+    u"""Implementing data and templates for generic publications.
     See also other – more specific – implementations, such as Poster, Brochure and Magazines.
 
-    Originally Publication was an abstract class, holding multiple documents. But since the split 
-    between the Document container class and View classes for representations, there is no need
-    to have a "top-class" containing multiple documents."""
+    An old approach was to make Publication subclass from Document, but it shows to be more
+    flexible as holding all kinds of information, generating multiple types of documents,
+    the Publication class is now an independent base class, holding multiple documents. 
+    """
 
     def getAPI(self):
     	u"""Answer the API dictionary for this class that can be used by calling apps,

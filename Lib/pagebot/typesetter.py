@@ -193,6 +193,7 @@ class Typesetter:
         u"""Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
         value = None
+        
         if style is not None:
             value = style.get(name)
         if value is None and e is not None:

@@ -63,7 +63,7 @@ class Image(Element):
     """
     isImage = True
 
-    def __init__(self, path, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
+    def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
         imo=None, index=1, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -238,13 +238,16 @@ class Image(Element):
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # TODO: Also show error, in case the image does not exist, to differ from empty box.
-            print('Cannot display image %s' % self)
+            if self.path is not None and not os.path.exists(self.path):
+                print('Warning: cannot find image file %s' % self.path)
             # Draw missing element as cross
             xpt, ypt, wpt, hpt = upt(px, py, self.w, self.h)
-            b.stroke(0.5)
-            b.strokeWidth(0.5)
-            b.fill(None)
-            b.rect(xpt, ypt, wpt, hpt)
+            context.stroke(0.5)
+            context.strokeWidth(0.5)
+            context.fill(None)
+            context.rect(xpt, ypt, wpt, hpt)
+            context.line((xpt, ypt), (xpt+wpt, ypt+hpt))
+            context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
         else:
             context.save()
             sx = self.w / self.iw

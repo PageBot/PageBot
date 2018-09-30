@@ -2445,7 +2445,7 @@ class Element:
         """
         return self.gw, self.gh
     def _set_gutter(self, gutter):
-        if isinstance(gutter, (int, float)):
+        if not isinstance(gutter, (list, tuple)):
             gutter = [gutter]
         if len(gutter) == 1:
             gutter = (gutter[0], gutter[0])
@@ -2476,7 +2476,7 @@ class Element:
         """
         return self.gw, self.gh, self.gd
     def _set_gutter3D(self, gutter3D):
-        if isinstance(gutter3D, (int, float)):
+        if not isinstance(gutter3D, (list, tuple)):
             gutter3D = [gutter3D]
         if len(gutter3D) == 1:
             gutter3D = (gutter3D[0], gutter3D[0], gutter3D[0])
