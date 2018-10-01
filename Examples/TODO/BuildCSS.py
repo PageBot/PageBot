@@ -20,7 +20,7 @@ import os
 
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
-from pagebot.style import LEFT, TOP, BOTTOM
+from pagebot.constants import LEFT, TOP, BOTTOM
 
 from pagebot.conditions import *
 from pagebot.elements import newTextBox

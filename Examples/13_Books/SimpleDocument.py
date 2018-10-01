@@ -13,10 +13,10 @@
 #
 #     SimpleDocument.py
 #
-#     This is a simple page document to show the working of layouts 
+#     This is a simple page document to show the working of layouts
 #     using conditions.
 #
-from pagebot.style import A4
+from pagebot.constants import A4
 from pagebot.document import Document
 from pagebot.elements import newRect, newTextBox
 from pagebot.conditions import *
@@ -53,17 +53,17 @@ view.showPageMetaInfo = True
 page = doc[1]
 # Set the padding of the page, as we don't use a template here.
 # In multipage documents this also can be done in the document, so pages inherit.
-page.padding = PAD, PAD, 2*PAD, PAD 
+page.padding = PAD, PAD, 2*PAD, PAD
 # Create rectangles. Default position and size is (0, 0, 100, 100). The conditions define the layout.
-newRect(fill=color(1, 0, 0), parent=page, h=pt(62), 
+newRect(fill=color(1, 0, 0), parent=page, h=pt(62),
     conditions=(Left2Left(), Float2Top(),Fit2Right()))
-newRect(fill=color(1, 0, 1), parent=page, 
+newRect(fill=color(1, 0, 1), parent=page,
     conditions=(Left2LeftSide(), Float2Top()))
-newRect(fill=color(spot=300), parent=page, 
+newRect(fill=color(spot=300), parent=page,
     conditions=(Right2Right(), Float2Top(), Float2Left(), Fit2Right()))
 
 # Add a floating text box.
-newTextBox('BB', parent=page, x=100, y=150, w=300, h=400, fill=color(spot=400), 
+newTextBox('BB', parent=page, x=100, y=150, w=300, h=400, fill=color(spot=400),
     fontSize=p(8), font='Verdana', textFill=color(spot=120))
 
 # Solve the conditions of the layout in defined order.

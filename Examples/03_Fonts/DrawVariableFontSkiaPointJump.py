@@ -23,7 +23,7 @@ from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 #from pagebot.fonttoolbox.variablefontbuilder import drawGlyphPath
-from pagebot.style import CENTER
+from pagebot.constants import CENTER
 from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import em, upt
 

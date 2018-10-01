@@ -27,7 +27,8 @@ from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.fonttoolbox.objects.font import findFont
 # Creation of the RootStyle (dictionary) with all
 # available default style parameters filled.
-from pagebot.style import getRootStyle, B4, CENTER, MIDDLE, TOP 
+from pagebot.style import getRootStyle
+from pagebot.constants import B4, CENTER, MIDDLE, TOP
 
 # Document is the main instance holding all information
 # about the document togethers (pages, styles, etc.)
@@ -37,7 +38,7 @@ from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newRect, newTextBox
 from pagebot.toolbox.units import em
-  
+
 # For clarity, most of the MakeABookCover.py example document is setup
 # as a sequential excecution of Python functions. For complex documents
 # this is not the best method. More functions and classes will be used in the
@@ -64,11 +65,11 @@ def makeDocument():
     # Make number of pages with default document size.
     # Initially make all pages default with template
     # One page, just the cover.
-    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, originTop=False) 
+    doc = Document(w=W, h=H, title='A Demo Book Cover', autoPages=1, originTop=False)
 
     page = doc[1] # Get the first/single page of the document.
     page.name = 'Cover'
-    
+
     # Get the current view of the document. This allows setting of
     # parameters how the document is represented on output.
     view = doc.view
@@ -82,9 +83,9 @@ def makeDocument():
     view.showPadding = False
     view.showNameInfo = True
     view.showTextOverflowMarker = False
-    
+
     context = view.context
-    
+
     C1 = color(r=random()*0.2, g=random()*0.2, b=random()*0.9)
 
     # Make background element, filling the page color and bleed.
@@ -99,7 +100,7 @@ def makeDocument():
                        # other elements depend on position and size.
 
     M = BLEED + 64
-    colorRect2 = newRect(z=-10, name='Frame 2', parent=colorRect1, 
+    colorRect2 = newRect(z=-10, name='Frame 2', parent=colorRect1,
             conditions=[Center2Center(), Middle2Middle()],
             fill=C1.darker(0.5), # Default parameter:
                                   # 50% between background color and white
@@ -115,14 +116,14 @@ def makeDocument():
     authorName = blurb.getBlurb('name', noTags=True)
     if random() < 0.33: # 1/3 chance for a second author name
         authorName += '\n' + blurb.getBlurb('name')
-    
-    titleStyle = dict(font=fontBold.path, fontSize=40, leading=em(1.2), 
+
+    titleStyle = dict(font=fontBold.path, fontSize=40, leading=em(1.2),
         xTextAlign=CENTER, textFill=whiteColor, hyphenate=False)
-    subTitleStyle = dict(font=fontRegular.path, fontSize=32, 
+    subTitleStyle = dict(font=fontRegular.path, fontSize=32,
         xTextAlign=CENTER, textFill=(1, 1, 1, 0.5), hyphenation=False)
-    authorStyle = dict(font=fontItalic.path, fontSize=24, tracking=em(0.025), 
+    authorStyle = dict(font=fontItalic.path, fontSize=24, tracking=em(0.025),
         xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7))
-        
+
     # Add some title (same width, different height) at the "wrongOrigin" position.
     # They will be repositioned by solving the colorConditions.
     title = context.newString(title+'\n\n', style=titleStyle)
@@ -141,7 +142,7 @@ def makeDocument():
     score = page.evaluate()
     if score.fails: # There is new "failing" elements. Solve their layout.
         page.solve()
-    
+
     return doc
 
 d = makeDocument()

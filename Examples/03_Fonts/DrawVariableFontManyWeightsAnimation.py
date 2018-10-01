@@ -24,7 +24,7 @@ from pagebot import getRootPath
 from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.style import CENTER
+from pagebot.constants import CENTER
 from pagebot.toolbox.units import pt, em, upt
 from pagebot.toolbox.color import color, blackColor
 
@@ -32,7 +32,7 @@ c = getContext()
 W = H = pt(500)
 
 # Get PageBot Font instances of Variable font.
-f = findFont('Amstelvar-Roman-VF') 
+f = findFont('Amstelvar-Roman-VF')
 ULTRALIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Ultra Light Condensed')
 ULTRALIGHT = getVarFontInstance(f, dict(wght=1, wdth=0), styleName='Ultra Light')
 LIGHT_CONDENSED = getVarFontInstance(f, dict(wght=0.9, wdth=0.7), styleName='Light Condensed')
@@ -55,7 +55,7 @@ LABEL_FONT = BOOK
 class FontIcon:
     """
     """
-    
+
     W = pt(30)
     H = pt(40)
     L = pt(2)
@@ -101,11 +101,11 @@ class FontIcon:
 
     def draw(self, orgX, orgY):
         """Draws a font icon"""
-        
+
         bs = c.newString('Book Cover', style=dict(font='Georgia', fontSize=pt(50), fill=blackColor))
-        c.text(bs, (100, 100))   
+        c.text(bs, (100, 100))
         return
-        
+
         if not self.show:
             return
 
@@ -134,7 +134,7 @@ class FontIcon:
         c.moveTo((pt(x), pt(y)))
         c.drawPath(path)
         c.saveGraphicState()
-        
+
         labelSize = e
         bs = c.newString(self.char,
                          style=dict(font=self.f.path,
@@ -146,7 +146,7 @@ class FontIcon:
         stroke(0)
         print(type(bs.s))
         text(bs.s, (w/2-tw/2, h/2-th/3.2))
-     
+
 
         if self.title:
             bs = c.newString(self.title,
@@ -160,7 +160,7 @@ class FontIcon:
             text(bs.s, (w/2-tw/2, self.ih+th/2))
 
         y -= upt(self.LABEL_RLEADING, base=labelSize)
-        
+
         if self.name:
             bs = c.newString(self.name,
                              style=dict(font=self.labelFont.path,
@@ -170,7 +170,7 @@ class FontIcon:
             tw, th = bs.size
             c.text(bs, (w/2-tw/2, y))
             #text(self.name, (w/2-tw/2, y))
-            
+
             y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.label:
             bs = c.newString(self.label,
@@ -186,7 +186,7 @@ class FontIcon:
 class KeyFrame:
     """
     """
-    
+
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         print('this is a new keyframe')
         self.objects = objects
@@ -201,7 +201,7 @@ class KeyFrame:
     def draw(self):
         for n in range(self.steps):
             c.newPage(pt(W), pt(H))
-            
+
             # Formattted string using append.
             print(' * Testing with append')
             bs = c.newString('')
@@ -212,7 +212,7 @@ class KeyFrame:
             print(aa._fontSize)
             print(aa._fill)
             c.text(bs, (pt(100), pt(100)))
-            
+
             # Formatted string without append.
             print(' * Testing without append')
             bs = c.newString('bla', style=dict(font='Helvetica', fontSize=pt(100), fill=0))
@@ -221,7 +221,7 @@ class KeyFrame:
             print(aa._font)
             print(aa._fontSize)
             #c.setTextFillColor(aa, blackColor)
-            print(aa._fill) 
+            print(aa._fill)
             c.b.text(aa, (100, 200))
 
             c.text(bs, (100, 200))
@@ -231,7 +231,7 @@ class KeyFrame:
             if self.drawBackgroundHook is not None:
                 self.drawBackgroundHook(self, n)
             """
-            
+
             for o in self.objects:
                 offsetX = 0
                 offsetY = 0
@@ -283,7 +283,7 @@ def positionFontIcons():
         y -= fontIcon.h*1.1
 
     y = Y
-    
+
     for iconId in ('Light', 'Book', 'Medium', 'Bold'):
         fontIcon = id2FontIcon[iconId]
         fontIcon.x = 150
@@ -329,9 +329,9 @@ def drawAnimation():
 
     positionFontIcons()
     varFontIcon = id2FontIcon['VarFont']
-    
+
     '''
-    # 
+    #
     KeyFrame(fontIcons, {}, 15,
         drawBackground=drawBackground1
     ).draw()
@@ -342,7 +342,7 @@ def drawAnimation():
         {'Regular': (varFontIcon.x, varFontIcon.y)}, 10,
         #drawBackground=None
     ).draw()
-    
+
     id2FontIcon['Regular'].show = False
     varFontIcon.title = '0 axis'
     varFontIcon.label = FSIZE
@@ -384,7 +384,7 @@ def drawAnimation():
         drawBackground=drawBackground3
     ).draw()
     '''
-    
+
     c.saveImage('_export/VarFontManyWeights.gif')
 
 drawAnimation()

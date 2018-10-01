@@ -19,7 +19,7 @@
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
 #TODO from pagebot.contexts.flatcontext import FlatContext
 from pagebot.contexts.drawbotcontext import DrawBotContext
-from pagebot.style import CENTER #, BOTTOM
+from pagebot.constants import CENTER
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document
@@ -75,7 +75,7 @@ def makeDocument(context):
                   (Center2Center(), Bottom2Bottom()),
                   (Left2Left(), Middle2Middle()),
                   (Right2Right(), Middle2Middle())]
-                  
+
     for condition in conditions:
         newRect(w=SQ, h=SQ, stroke=noColor, parent=page, xAlign=CENTER,
                 conditions=condition, fill=color(1, 1, 0))

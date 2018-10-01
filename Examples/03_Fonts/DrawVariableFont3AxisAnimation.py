@@ -22,7 +22,7 @@
 from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.style import CENTER
+from pagebot.constants import CENTER
 from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import pt, em, upt
 
@@ -148,7 +148,7 @@ class FontIcon:
             tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
             y -= upt(self.LABEL_RLEADING, base=labelSize)
-            
+
         if self.label:
             bs = context.newString(self.label,
                                    style=dict(font=self.labelFont.path,
@@ -158,7 +158,7 @@ class FontIcon:
             tw, th = bs.size
             context.text(bs, (w/2-tw/2, y))
         context.restore()
-        
+
 class KeyFrame:
     def __init__(self, objects, positions, steps=None, drawBackground=None):
         self.objects = objects

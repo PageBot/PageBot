@@ -15,7 +15,8 @@
 #
 #     Needs debugging in dimension showing of views.
 #
-from pagebot.style import getRootStyle, A5, CENTER, MIDDLE
+from pagebot.style import getRootStyle
+from pagebot.constants import A5, CENTER, MIDDLE
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document

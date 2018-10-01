@@ -19,7 +19,7 @@
 
 from pagebot import getResourcesPath
 from pagebot.fonttoolbox.objects.family import getFamily
-from pagebot.style import TOP, BOTTOM, A4
+from pagebot.constants import TOP, BOTTOM, A4
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document

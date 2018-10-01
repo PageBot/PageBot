@@ -16,7 +16,7 @@
 #     If a TextBox as self.nextElementName defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
 
-from pagebot.style import LEFT, BOTTOM, TOP
+from pagebot.constants import LEFT, BOTTOM, TOP
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document
@@ -57,7 +57,7 @@ def makeDocument():
     bs = c.newString('')
     for n in range(10):
         bs += c.newString('(Line %d) ' % (n+1), style=dict(font='Verdana-Bold', fontSize=9, leading=10, textFill=blackColor))
-        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n', 
+        bs += c.newString('Volume of text defines the box height. Volume of text defines the box height. \n',
             style=dict(font='Verdana', fontSize=9, leading=10, textFill=blackColor))
 
     if DoTextFlow:

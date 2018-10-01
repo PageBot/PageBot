@@ -17,7 +17,7 @@
 from pagebot import getContext
 c = getContext()
 
-from pagebot.style import A4, LEFT, TOP, BOTTOM
+from pagebot.constants import A4, LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document

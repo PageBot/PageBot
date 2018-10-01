@@ -24,7 +24,7 @@ from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.units import pt, em, upt
 from pagebot.toolbox.color import color, blackColor, whiteColor
-from pagebot.style import CENTER
+from pagebot.constants import CENTER
 
 c = getContext()
 

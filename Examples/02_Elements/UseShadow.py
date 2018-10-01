@@ -13,7 +13,7 @@
 #
 #     UseShadow.py
 #
-from pagebot.style import CENTER, MIDDLE
+from pagebot.constants import CENTER, MIDDLE
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *

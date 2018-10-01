@@ -17,7 +17,7 @@
 #     box on the same page, then overflow of self will go into the other text
 #     box.
 
-from pagebot.style import LEFT, TOP, BOTTOM
+from pagebot.constants import LEFT, TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document

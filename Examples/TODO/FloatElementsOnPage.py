@@ -23,7 +23,7 @@ from pagebot.contributions.filibuster.blurb import blurb
 
 # Creation of the RootStyle (dictionary) with all available
 # default style parameters filled.
-from pagebot.style import CENTER, TOP, MIDDLE
+from pagebot.constants import CENTER, TOP, MIDDLE
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
 from pagebot.document import Document

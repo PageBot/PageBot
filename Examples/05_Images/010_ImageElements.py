@@ -18,7 +18,7 @@
 #
 
 from pagebot import getResourcesPath
-from pagebot.style import TOP, BOTTOM
+from pagebot.constants import TOP, BOTTOM
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.document import Document

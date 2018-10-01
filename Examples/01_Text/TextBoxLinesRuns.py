@@ -16,7 +16,7 @@
 #     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
 
-from pagebot.style import LEFT, BOTTOM
+from pagebot.constants import LEFT, BOTTOM
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.analyzers.glyphanalyzer import GlyphAnalyzer
 from pagebot.conditions import *

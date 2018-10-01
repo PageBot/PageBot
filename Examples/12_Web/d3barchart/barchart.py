@@ -20,7 +20,7 @@
 
 from pagebot.elements import Rect
 from pagebot.toolbox.color import color
-from pagebot.style import RIGHT
+from pagebot.constants import RIGHT
 from pagebot.toolbox.units import px
 
 class BarChart(Rect):

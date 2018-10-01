@@ -14,7 +14,7 @@
 #
 from pagebot import getContext
 from pagebot.document import Document
-from pagebot.style import A4
+from pagebot.constants import A4
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements import newText
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance

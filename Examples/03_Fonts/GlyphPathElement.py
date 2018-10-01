@@ -20,7 +20,8 @@ import pagebot # Import to know the path of non-Python resources.
 from pagebot.fonttoolbox.fontpaths import getTestFontsPath
 from pagebot import getContext
 # Creation of the RootStyle (dictionary) with all available default style parameters filled.
-from pagebot.style import getRootStyle, A4, CENTER, RIGHT, LEFT,TOP, BOTTOM
+from pagebot.style import getRootStyle
+from pagebot.constants import A4, CENTER, RIGHT, LEFT,TOP, BOTTOM
 # Document is the main instance holding all information about the document togethers (pages, styles, etc.)
 from pagebot.fonttoolbox.objects.font import getFont
 
@@ -53,14 +54,14 @@ def pathFilter(e, glyph, view):
                 else:
                     context.fill(color(0, 1, 0)) # Color as one tuple, in context API
                     context.oval(pt(x-r/8), pt(y-r/8), r/4, r/4)
-                    
+
                 if context.onBlack((x, y), path) and (
                         not context.onBlack((x+grid, y), path) or
                         not context.onBlack((x+grid, y-grid), path)
                     ):
                     context.fill(0)
                     context.oval(pt(x-r/2), pt(y-r/2), r, r)
-                    
+
     context.stroke((1, 0, 0))
     context.fill(noColor)
     context.drawPath(path)
@@ -88,7 +89,7 @@ page = doc.getPage(1) # Get page on pageNumber, first in row (this is only one n
 page.name = 'This is a demo page for floating child elements'
 page.padding = PAGE_PADDING
 
-e1 = GlyphPath(font[glyphName], stroke=noColor, 
+e1 = GlyphPath(font[glyphName], stroke=noColor,
     fill=noColor, pathFilter=pathFilter,
     parent=page, font='Verdana',
     conditions=[Left2Left(), Top2Top()])
