@@ -319,7 +319,7 @@ class Duration:
         if isinstance(dating, Dating):
             return dating + -self
 
-        raise ValueError('[Duration.__sub__] Illegal type to subtract from a Duration instance "%s"' % dt)
+        raise ValueError('[Duration.__sub__] Illegal type to subtract from a Duration instance "%s"' % dating)
 
     def __iadd__(self, item):
         return self + item

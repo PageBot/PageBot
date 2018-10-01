@@ -36,7 +36,8 @@ class ArticleHCC(Rect):
         Rect.__init__(self, **kwargs)
         newTextBox(parent=self, name='ArticleHead', conditions=(Left2Left(), Top2Top(), Fit2Width()))
         newTextBox(parent=self, name='ArticleCol1', conditions=(Left2Left(), Fit2ColSpan(1), Float2Top()))
-        newTextBox(parent=self, name='ArticleCol2', conditions=(Left2ColSpan(1), Fit2ColSpan(1), Float2Top()))
+        # FIXME: Left2ColSpan doesn't exist.
+        #newTextBox(parent=self, name='ArticleCol2', conditions=(Left2ColSpan(1), Fit2ColSpan(1), Float2Top()))
 
 class ArticleHCCC(Rect):
     pass

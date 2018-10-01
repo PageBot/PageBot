@@ -312,13 +312,13 @@ def rgb2Name(rgb):
     """Method to convert rgb to a name. Answer None if no name can be found.
 
     >>> rgb2Name((0.2, 0.3, 0.4))
-    'darkslategrey'
+    'darkslategray'
     >>> color(spot=300).name
     'darkcyan'
     >>> color(spot=0).name
     'black'
     >>> color(rgb=(0.4, 0.5, 0.6)).name
-    'slategrey'
+    'slategray'
     >>> color(cmyk=(0.2, 0.2, 0.6, 0.2)).name
     'darkkhaki'
     >>> rgb = (0.4, 0.5, 0.6)

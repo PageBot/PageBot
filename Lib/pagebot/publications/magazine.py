@@ -16,7 +16,7 @@ from pagebot.publications.publication import Publication
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
-from pagebot.toolbox.units import p, pt
+from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import LEFT, RIGHT
@@ -48,14 +48,14 @@ class ThumbPage(Element):
             xAlign = LEFT
         bs = context.newString(pageNumber, style=dict(font=bookFont, fontSize=pt(7), xTextAlign=xAlign))
         tb2 = newTextBox(bs, w=w, h=self.gh/2, parent=self, stroke=noColor)
-                
+
 
 class PageSpread(Element):
 
     def __init__(self, spread, pageNumber=0, **kwargs):
         Element.__init__(self, **kwargs)
         self.spread = spread
-        if len(spread) and spread[0] is not None:
+        if spread > 0 and spread[0] is not None:
             ThumbPage(spread[0], pageNumber, w=self.w/2, h=self.h, padding=0, parent=self)
         if len(spread) > 1 and spread[1] is not None:
             ThumbPage(spread[1], pageNumber+1, x=self.w/2, w=self.w/2, h=self.h, padding=0, parent=self)
@@ -87,7 +87,7 @@ class Magazine(Publication):
         """Export the magazine map into a PDF document at path.
         """
         if cols is None:
-            cols = 2 # Number of columns per spread  
+            cols = 2 # Number of columns per spread
         sw = self.cw*cols + self.gw*(cols-1)
 
         if maxSpread is None:
@@ -95,10 +95,10 @@ class Magazine(Publication):
 
         if path is None:
             path = '_export/%s.pdf' % self.name.replace(' ', '_')
-        doc = Document(w=self.w, h=self.h, originTop=False,  
+        doc = Document(w=self.w, h=self.h, originTop=False,
             gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
             baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
-        
+
         view = doc.view
         view.showPadding = True
         view.showGrid = True
@@ -116,7 +116,7 @@ class Magazine(Publication):
                     page = page.next
                 page.padding = self.padding
                 for pageSpread in pageSpreads:
-                    PageSpread(pageSpread, pn, w=sw, h=self.h/self.w*sw/2+self.gh, mr=self.gw, mb=self.gh, parent=page, 
+                    PageSpread(pageSpread, pn, w=sw, h=self.h/self.w*sw/2+self.gh, mr=self.gw, mb=self.gh, parent=page,
                         conditions=(Right2RightSide(), Float2Top(), Float2Left()))
                     pn += 2
 
