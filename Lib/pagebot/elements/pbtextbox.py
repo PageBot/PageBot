@@ -71,7 +71,7 @@ class TextBox(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answer the height of the textBox. If self.style['h'] is None, then answer the
+        """Answers the height of the textBox. If self.style['h'] is None, then answer the
         vertical space that the text needs.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -108,7 +108,7 @@ class TextBox(Element):
     h = property(_get_h, _set_h)
 
     def _get_y(self):
-        """Answer the y position of self.
+        """Answers the y position of self.
 
         >>> e = Element(y=100, h=400)
         >>> e.x, e.y, e.z
@@ -151,7 +151,7 @@ class TextBox(Element):
     baselines = property(_get_baselines)
 
     def getRounded2Grid(self, y, roundDown=False):
-        """Answer the value y rounded to the page baseline grid, based on the current position self.
+        """Answers the value y rounded to the page baseline grid, based on the current position self.
         """
         start = self.baselineGridStart or self.pt
         baseline = self.baselineGrid
@@ -170,7 +170,7 @@ class TextBox(Element):
         return len(self.textLines)
 
     def __repr__(self):
-        """Answer the representation string of the element.
+        """Answers the representation string of the element.
 
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> style = dict(textFill=blackColor, textStroke=noColor)
@@ -200,7 +200,7 @@ class TextBox(Element):
         return '%s%s (%s, %s)%s%s' % (self.__class__.__name__, name, uRound(self.xy), uRound(self.size), s, elements)
 
     def copy(self, parent=None):
-        """Answer a full copy of self, where the "unique" fields are set to default.
+        """Answers a full copy of self, where the "unique" fields are set to default.
         Also perform a deep copy on all child elements.
 
         >>> from pagebot.toolbox.color import blackColor, noColor
@@ -226,7 +226,7 @@ class TextBox(Element):
         self.bs = bs
 
     def _get_text(self):
-        """Answer the plain text of the current self.bs"""
+        """Answers the plain text of the current self.bs"""
         return u'%s' % self.bs
     text = property(_get_text)
 
@@ -298,14 +298,14 @@ class TextBox(Element):
         return self.bs.textOverflow(w, h, LEFT)
 
     def _findStyle(self, run):
-        """Answer the name and style that desctibes this run best. If there is a doc
+        """Answers the name and style that desctibes this run best. If there is a doc
         style, then answer that one with its name. Otherwise answer a new unique style name
         and the style dict with its parameters."""
         print(run.attrs)
         return('ZZZ', run.style)
 
     def _get_styledLines(self):
-        """Answer the list with (styleName, style, textRun) tuples, reversed
+        """Answers the list with (styleName, style, textRun) tuples, reversed
         engeneered from the FormattedString `self.bs`. This list can be used to
         query the style parameters used in the textBox, or to create CSS styles
         from its content."""
@@ -325,9 +325,9 @@ class TextBox(Element):
     #   F L O W
 
     def isOverflow(self, tolerance=0):
-        """Answer the boolean flag if this element needs overflow to be solved.
-        This method is typically called by conditions such as Overflow2Next or
-        during drawing if the overflow marker needs to be drawn.
+        """Answers if this element needs overflow to be solved.  This method is
+        typically called by conditions such as Overflow2Next or during drawing
+        if the overflow marker needs to be drawn.
 
         NOTE: There is currently not a test if text actually went into the next
         element. It's just checking if there is a name defined, not if it
@@ -528,7 +528,7 @@ class TextBox(Element):
     # Text conditions
 
     def baselineOffset(self, index=0):
-        u"""Answer the difference of the indexed line to the parent (page) setting for
+        u"""Answers the difference of the indexed line to the parent (page) setting for
         self.parent.baselineGrid and self.parent.baselineGridStart."""
         try:
             line = self.textLines[index or 0]

@@ -222,7 +222,7 @@ class APoint:
     z = property(_get_z, _set_z)
 
     def _get_glyph(self):
-        """Answer the parent glyph, if the weakref is still allive."""
+        """Answers the parent glyph, if the weakref is still allive."""
         if self._glyph is not None:
             return self._glyph()
         return None

@@ -39,6 +39,7 @@ class HtmlContext(BaseContext):
 
     def __init__(self):
         self.b = HtmlBuilder()
+        self.name = self.__class__.__name__
         self._fill = self._stroke = noColor
         self._strokeWidth = 0
 

@@ -42,7 +42,7 @@ class Vertical(APointContextList):
     y = property(_get_y)
 
     def _get_minYPoint(self):
-        """Answer the point context with the minimum Y of all vertical point contexts."""
+        """Answers the point context with the minimum Y of all vertical point contexts."""
         bottomPC = None
         for pc in self:
             if bottomPC is None or pc.y < bottomPC.y:
@@ -51,7 +51,7 @@ class Vertical(APointContextList):
     minYPoint = property(_get_minYPoint)
         
     def _get_maxYPoint(self):
-        """Answer the point context with the maximum Y of all vertical point contexts."""
+        """Answers the point context with the maximum Y of all vertical point contexts."""
         topPC = None
         for pc in self:
             if topPC is None or pc.y > topPC.y:
@@ -60,7 +60,7 @@ class Vertical(APointContextList):
     maxYPoint = property(_get_maxYPoint)
     
     def _get_alternates(self):
-        """Answer the list of points that are not top or bottom."""
+        """Answers the list of points that are not top or bottom."""
         alternates = []
         topBottom = (self.minYPoint, self.maxYPoint)
         for pc in self:
@@ -85,7 +85,7 @@ class Horizontal(APointContextList):
     y = property(_get_y)
     
     def _get_minXPoint(self):
-        """Answer the point context with the minimum X of all horizontal point contexts."""
+        """Answers the point context with the minimum X of all horizontal point contexts."""
         leftPC = None
         for pc in self:
             if leftPC is None or pc.x < leftPC.x:
@@ -94,7 +94,7 @@ class Horizontal(APointContextList):
     minXPoint = property(_get_minXPoint)
         
     def _get_maxXPoint(self):
-        """Answer the point context with the maximum X of all horizontal point contexts."""
+        """Answers the point context with the maximum X of all horizontal point contexts."""
         rightPC = None
         for pc in self:
             if rightPC is None or pc.x > rightPC.x:
@@ -105,7 +105,7 @@ class Horizontal(APointContextList):
     # self.alternates
     
     def _get_alternates(self):
-        """Answer the list of points that are not left or right extremes."""
+        """Answers the list of points that are not left or right extremes."""
         alternates = []
         leftRight = (self.minX, self.maxX)
         for pc in self:

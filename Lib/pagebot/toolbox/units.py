@@ -51,7 +51,7 @@ BASELINE_GRID = U*2+3 # 2.5U = 15pt
 # Generic number transforms
 
 def asNumber(v):
-    """Answer v converted to a float or int. Answer 0 if the conversion raised an error.
+    """Answers v converted to a float or int. Answer 0 if the conversion raised an error.
 
     >>> asNumber(1234)
     1234
@@ -92,7 +92,7 @@ def asNumberOrNone(v):
     return None
 
 def asFloatOrNone(value):
-    """Answer a float if it can be converted. Answer None otherwise.
+    """Answers a float if it can be converted. Answer None otherwise.
 
     >>> asFloatOrNone(123)
     123.0
@@ -107,7 +107,7 @@ def asFloatOrNone(value):
         return None
 
 def asIntOrNone(v):
-    """Answer v converted to int. Answer None if the conversion raised an error.
+    """Answers v converted to int. Answer None if the conversion raised an error.
 
     >>> asIntOrNone(1234)
     1234
@@ -121,7 +121,7 @@ def asIntOrNone(v):
     return asIntOrDefault(v)
 
 def asIntOrDefault(v, default=None):
-    """Answer v converted to int. Answer None if the conversion raised an error.
+    """Answers v converted to int. Answer None if the conversion raised an error.
 
     >>> asIntOrNone(1234)
     1234
@@ -169,7 +169,7 @@ def asFloat(value, default=None):
         return default
 
 def asIntOrFloat(value):
-    u"""Answer value converted to int if same value, otherwise answer float.
+    u"""Answers value converted to int if same value, otherwise answer float.
 
     >>> asIntOrFloat(100.00)
     100
@@ -184,7 +184,7 @@ def asIntOrFloat(value):
     return value
 
 def asFormatted(value, default=None, format=None):
-    u"""Answer the formatted string of value. Use the format string if defined.
+    u"""Answers the formatted string of value. Use the format string if defined.
     Otherwise answer the cleanest representation, eating all 0 and /. from the
     right side.
 
@@ -257,7 +257,7 @@ def point3D(p=None):
     return p
 
 def point2D(p=None):
-    """Answer the 2D point from a 2D or 3D point.
+    """Answers the 2D point from a 2D or 3D point.
 
     >>> point2D() # Default 2D origin
     (0pt, 0pt)
@@ -271,7 +271,7 @@ def point2D(p=None):
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
-    """Answer new 3D point, shifted by offset.
+    """Answers new 3D point, shifted by offset.
 
     Note that in normal usage the elements probably will be Unit instances.
 
@@ -299,7 +299,7 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-    """Answer the point as string of units. Ignore `z`-value if it renders to
+    """Answers the point as string of units. Ignore `z`-value if it renders to
     0.
 
     >>> point2S(pt(22.4, 33.5, 44.6))
@@ -313,7 +313,7 @@ def point2S(p):
     return '%s %s' % (x, y)
 
 def point2roundedS(p):
-    """Answer the point as string of rounded units. Ignore `z`-value if it
+    """Answers the point as string of rounded units. Ignore `z`-value if it
     renders to 0.
 
     >>> point2roundedS(pt(22.4, 33.5, 44.6))
@@ -430,7 +430,7 @@ def upt(u, *args, **kwargs):
     return uu
 
 def isUnits(u, *args):
-    """Answer the boolean flag is u (and all of the other items in the argument list)
+    """Answers is u (and all of the other items in the argument list)
     are a Unit instance.
 
     >>> isUnits(Em(2))
@@ -459,7 +459,7 @@ def isUnits(u, *args):
     return False
 
 def isUnit(u):
-    """Answer the boolean flag if u is an instance of Unit.
+    """Answers if u is an instance of Unit.
 
     >>> isUnit(pt(20))
     True
@@ -472,7 +472,7 @@ def isUnit(u):
     return hasattr(u, 'v') and hasattr(u, 'g') and hasattr(u, 'base')
 
 def uRound(u, *args):
-    """Answer the list with rounded units (and all of the other items in the argument list)
+    """Answers the list with rounded units (and all of the other items in the argument list)
     are a Unit instance.
 
     >>> uRound(Em(2.3))
@@ -505,7 +505,7 @@ def uRound(u, *args):
     return u
 
 def classOf(u):
-    """Answer the class of the Unit instance. Otherwise answer None.
+    """Answers the class of the Unit instance. Otherwise answer None.
 
     >>> u = Em(2)
     >>> classOf(u) is Em
@@ -516,7 +516,7 @@ def classOf(u):
     return None
 
 def uString(u, maker=None):
-    """Answer the unit `u` as a string. In case it is not a Unit instance,
+    """Answers the unit `u` as a string. In case it is not a Unit instance,
     convert to Unit first.
 
     >>> u = Em(2)
@@ -612,7 +612,7 @@ class Unit:
         self.g = g # Default gutter for reference by relative units. Ignored by absolute units.
 
     def _get_name(self):
-        """Answer the unit name.
+        """Answers the unit name.
 
         >>> pt(123).name
         'Pt'
@@ -623,7 +623,7 @@ class Unit:
     name = property(_get_name)
 
     def _get_rounded(self):
-        """Answer a new instance of self with rounded value.
+        """Answers a new instance of self with rounded value.
         Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
@@ -645,7 +645,7 @@ class Unit:
         return '%s%s' % (asFormatted(v), self.name.lower())
 
     def _get_pt(self):
-        """Answer the value in *pt*. Base value for absolute unit
+        """Answers the value in *pt*. Base value for absolute unit
         values is ignored.
 
         >>> p(1).pt
@@ -683,7 +683,7 @@ class Unit:
     px = property(_get_px)
 
     def _get_inch(self):
-        u"""Answer the rendered value, translated to inch via pt.
+        u"""Answers the rendered value, translated to inch via pt.
 
         >>> u = pt(72)
         >>> u.pt, u.inch
@@ -695,7 +695,7 @@ class Unit:
     inch = property(_get_inch)
 
     def _get_p(self):
-        u"""Answer the rendered value, translated to Pica via pt.
+        u"""Answers the rendered value, translated to Pica via pt.
 
         >>> 2 * pt(12).p # Rendered and cast to picas
         2
@@ -706,7 +706,7 @@ class Unit:
     p = property(_get_p)
 
     def _get_cm(self):
-        u"""Answer the rendered value, translated to cm via pt.
+        u"""Answers the rendered value, translated to cm via pt.
 
         >>> int(round(pt(595).cm)) # Rendered and cast to cm
         21
@@ -719,7 +719,7 @@ class Unit:
     cm = property(_get_cm)
 
     def _get_mm(self):
-        u"""Answer the rendered value, translated to mm via pt.
+        u"""Answers the rendered value, translated to mm via pt.
 
         >>> int(round(4 * pt(12).mm)) # Rendered and cast to picas
         17
@@ -777,7 +777,7 @@ class Unit:
         return float(self.pt)
 
     def __round__(self):
-        """Answer the rounded self as value.
+        """Answers the rounded self as value.
 
         >>> u = pt(12.4)
         >>> u.rounded
@@ -793,7 +793,7 @@ class Unit:
         return self.rounded
 
     def __bool__(self):
-        u"""Answer the boolean representation of self, if self.rv renders to 0.
+        u"""Answers the boolean representation of self, if self.rv renders to 0.
 
         >>> bool(pt(0))
         False
@@ -1143,7 +1143,7 @@ def mm(v, *args, **kwargs):
     return u
 
 class Mm(Unit):
-    """Answer the mm instance.
+    """Answers the mm instance.
 
     >>> u = Mm(210)
     >>> u
@@ -1211,7 +1211,7 @@ def cm(v, *args, **kwargs):
     return u
 
 class Cm(Unit):
-    """Answer the mm instance.
+    """Answers the mm instance.
 
     >>> u = Cm(210)
     >>> u
@@ -1556,7 +1556,7 @@ class RelativeUnit(Unit):
     isRelative = True
 
     def _get_rv(self):
-        """Answer the rendered value of self.
+        """Answers the rendered value of self.
         The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
         For relative units u.v answers the value and u.r answers the value rendered by self.base.
         self.base can be another unit or a dictionary of base unit values.
@@ -1569,7 +1569,7 @@ class RelativeUnit(Unit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered value of self, by units type of self.base.
+        """Answers the rendered value of self, by units type of self.base.
         For absolute units the result of u.v and u.r is identical.
         For relative units u.v answers the value and u.r answers the value rendered by self.base.
         self.base can be another unit or a dictionary of base values.
@@ -1585,7 +1585,7 @@ class RelativeUnit(Unit):
     ru = property(_get_ru)
 
     def _get_pt(self):
-        """Answer the rendered value in pt.
+        """Answers the rendered value in pt.
 
         >>> u = fr(2, base=12)
         >>> u, u.pt
@@ -1598,7 +1598,7 @@ class RelativeUnit(Unit):
     pt = property(_get_pt)
 
     def _get_mm(self):
-        """Answer the rendered value in mm.
+        """Answers the rendered value in mm.
 
         >>> u = fr(2, base=mm(10))
         >>> u, u.mm, mm(u)
@@ -1608,7 +1608,7 @@ class RelativeUnit(Unit):
     mm = property(_get_mm)
 
     def _get_p(self):
-        """Answer the rendered value in picas.
+        """Answers the rendered value in picas.
 
         >>> u = fr(2, base=p(12))
         >>> u, u.p
@@ -1621,7 +1621,7 @@ class RelativeUnit(Unit):
     p = property(_get_p)
 
     def _get_inch(self):
-        """Answer the rendered value in inch.
+        """Answers the rendered value in inch.
 
         >>> fr(2, base='4"').inch
         2
@@ -1711,7 +1711,7 @@ def px(v, *args, **kwargs):
     return u
 
 class Px(RelativeUnit):
-    """Answer the px (pixel) instance.
+    """Answers the px (pixel) instance.
 
     >>> Px(12) # Direct creation of class instance, only for (int, float, Unit)
     12px
@@ -1797,7 +1797,7 @@ class Fr(RelativeUnit):
     UNIT = 'fr'
 
     def _get_rv(self):
-        """Answer the rendered value.
+        """Answers the rendered value.
         For absolute inits u.v and u.rv are identical.
         For relative units u.v answers the value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1813,7 +1813,7 @@ class Fr(RelativeUnit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answer the rendered unit.
+        """Answers the rendered unit.
         For absolute inits u and u.ru are identical.
         For relative units u.rv answers the value and u.ru answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1885,7 +1885,7 @@ class Col(RelativeUnit):
     UNIT = 'col'
 
     def _get_rv(self):
-        """Answer the rendered value.
+        """Answers the rendered value.
         For absolute inits u.v and u.r are identical.
         For relative units u.v answers the value and u.r answers the value rendered by self.base
         self.base can be a unit or a number.
@@ -1955,7 +1955,7 @@ class Em(RelativeUnit):
     BASE_KEY = 'em' # Key in optional base of relative units.
 
     def _get_pt(self):
-        """Answer the rendered value in pt. Base value for absolute unit values is ignored.
+        """Answers the rendered value in pt. Base value for absolute unit values is ignored.
         self.base can be a unit or a number.
 
         >>> u = units('10em', base=12)
@@ -2023,7 +2023,7 @@ def perc(v, *args, **kwargs):
     return u
 
 class Perc(RelativeUnit):
-    """Answer the relative percentage unit, if parsing as percentage (ending with % order "perc").
+    """Answers the relative percentage unit, if parsing as percentage (ending with % order "perc").
 
     >>> units('100%')
     100%
@@ -2064,7 +2064,7 @@ class Perc(RelativeUnit):
         return u'%s%%' % asFormatted(v)
 
     def _get_pt(self):
-        """Answer the rendered value in pt. Base value for absolute unit values is ignored.
+        """Answers the rendered value in pt. Base value for absolute unit values is ignored.
 
         >>> u = units('10%', base=120)
         >>> u, pt(u)
@@ -2227,7 +2227,7 @@ def units(v, maker=None, g=None, base=None, default=None):
 # Automatic angle conversion between degrees and radians.
 
 def asin(v):
-    """Answer a Radians instance, using math.asin(v)
+    """Answers a Radians instance, using math.asin(v)
 
     >>> a = degrees(0)
     >>> asin(a.sin)
@@ -2245,7 +2245,7 @@ def asin(v):
     return radians(math.asin(v)/math.pi)
 
 def acos(v):
-    """Answer a Radians instance, using math.acos(v)
+    """Answers a Radians instance, using math.acos(v)
 
     >>> a = degrees(0)
     >>> acos(a.cos)
@@ -2257,7 +2257,7 @@ def acos(v):
     return radians(math.asin(v)/math.pi)
 
 def atan(v):
-    """Answer a Radians instance, using math.atan(v)
+    """Answers a Radians instance, using math.atan(v)
 
     >>> a = degrees(0)
     >>> atan(a.tan)
@@ -2269,7 +2269,7 @@ def atan(v):
     return radians(math.atan(v)/math.pi)
 
 def atan2(v1, v2):
-    """Answer a Radians instance, using math.atan2(v1, v2)
+    """Answers a Radians instance, using math.atan2(v1, v2)
 
     >>> atan2(1, 1).degrees
     45
@@ -2512,7 +2512,7 @@ class Angle:
         return self.__class__(-self.angle)
 
     def __abs__(self):
-        """Answer the absolute value as new instance.
+        """Answers the absolute value as new instance.
 
         >>> a = degrees(-30)
         >>> abs(a)
@@ -2545,7 +2545,7 @@ class Angle:
         return float(self.angle)
 
     def __round__(self):
-        """Answer the rounded self as value.
+        """Answers the rounded self as value.
 
         >>> round(degrees(30.5))
         30deg
@@ -2558,7 +2558,7 @@ class Angle:
     # Math angle functions as properties
 
     def _get_sin(self):
-        """Answer the math.sin(self) of this angle.
+        """Answers the math.sin(self) of this angle.
         See also asin(v) above, that answers an Angle instance.
 
         >>> degrees(0).sin
@@ -2576,7 +2576,7 @@ class Angle:
     sin = property(_get_sin)
 
     def _get_cos(self):
-        """Answer the math.cos(self) of this angle.
+        """Answers the math.cos(self) of this angle.
         See also acos(v) above, that answers an Angle instance.
 
         >>> degrees(0).cos
@@ -2594,7 +2594,7 @@ class Angle:
     cos = property(_get_cos)
 
     def _get_tan(self):
-        """Answer the math.tan(self) of this angle.
+        """Answers the math.tan(self) of this angle.
         See also atan2(v1, v2) above, that answers an Angle instance.
 
         >>> degrees(0).tan
@@ -2640,7 +2640,7 @@ class Degrees(Angle):
         return '%sdeg' % self.angle
 
     def asValue(self, angle):
-        u"""Answer the value of angle of the same type as self.
+        u"""Answers the value of angle of the same type as self.
 
         >>> degrees(30).asValue(60)
         60
@@ -2694,7 +2694,7 @@ class Radians(Angle):
         return '%srad' % self.angle
 
     def asValue(self, angle):
-        u"""Answer the value of angle of the same type as self.
+        u"""Answers the value of angle of the same type as self.
 
         >>> radians(0.5).asValue(0.75)
         0.75

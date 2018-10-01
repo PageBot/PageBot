@@ -55,7 +55,7 @@ class Gradient:
     linear = property(_get_linear)
 
     def _get_radial(self):
-        """Answer the radial type flag, as result of there is a radius defined."""
+        """Answers the radial type flag, as result of there is a radius defined."""
         return self.startRadius is not None and self.endRadius is not None
     radial = property(_get_radial)
 

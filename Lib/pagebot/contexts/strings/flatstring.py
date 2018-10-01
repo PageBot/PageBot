@@ -69,7 +69,7 @@ class FlatString(BabelString):
     s = property(_get_s, _set_s)
 
     def _get_font(self):
-        """Answer the current state of fontName."""
+        """Answers the current state of fontName."""
         return self.style.get('font')
 
     def _set_font(self, fontName):
@@ -80,7 +80,7 @@ class FlatString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize."""
+        """Answers the current state of the fontSize."""
         return self.style.get('fontSize')
 
     def _set_fontSize(self, fontSize):
@@ -91,7 +91,7 @@ class FlatString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_color(self):
-        """Answer the current state of the color."""
+        """Answers the current state of the color."""
         return self.style.get('color')
 
     def _set_color(self, color):
@@ -102,7 +102,7 @@ class FlatString(BabelString):
     color = property(_get_color, _set_color)
 
     def __len__(self):
-        """Answer the number of characters in self.s
+        """Answers the number of characters in self.s
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -115,7 +115,7 @@ class FlatString(BabelString):
         return len(str(self.s))
 
     def asText(self):
-        """Answer as unicode string.
+        """Answers as unicode string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -128,7 +128,7 @@ class FlatString(BabelString):
         return str(self.s) # TODO: To be changed to Flat string behavior.
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text."""
+        """Answers the (w, h) size for a given width, with the current text."""
         # TODO: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
         return 100, 20
@@ -153,7 +153,7 @@ class FlatString(BabelString):
         """Append an invisible marker string."""
 
     def findMarkers(self, reCompiled=None):
-        """Answer a dictionary of markers with their arguments in self.s."""
+        """Answers a dictionary of markers with their arguments in self.s."""
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)

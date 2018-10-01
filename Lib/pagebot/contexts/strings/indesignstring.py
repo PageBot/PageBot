@@ -52,7 +52,7 @@ class InDesignString(BabelString):
         self.style = style
 
     def _get_s(self):
-        """Answer the embedded Indesign equivalent of a OSX FormattedString by property, to enforce
+        """Answers the embedded Indesign equivalent of a OSX FormattedString by property, to enforce
         checking type of the string."""
         return self._s
 
@@ -64,7 +64,7 @@ class InDesignString(BabelString):
     s = property(_get_s, _set_s)
 
     def _get_font(self):
-        """Answer the current state of fontName."""
+        """Answers the current state of fontName."""
         return self.style.get('font')
 
     def _set_font(self, fontName):
@@ -75,7 +75,7 @@ class InDesignString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize."""
+        """Answers the current state of the fontSize."""
         return self.style.get('fontSize')
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
@@ -84,7 +84,7 @@ class InDesignString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def __len__(self):
-        """Answer the number of characters in self.s
+        """Answers the number of characters in self.s
 
         >>> from pagebot.contexts.indesigncontext import InDesignContext
         >>> context = InDesignContext()
@@ -97,7 +97,7 @@ class InDesignString(BabelString):
         return len(str(self.s))
 
     def asText(self):
-        """Answer as unicode string.
+        """Answers as unicode string.
 
         >>> from pagebot.contexts.indesigncontext import InDesignContext
         >>> context = InDesignContext()
@@ -110,7 +110,7 @@ class InDesignString(BabelString):
         return str(self.s) # TODO: To be changed to Indesign string behavior.
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text."""
+        """Answers the (w, h) size for a given width, with the current text."""
         return 100, 20
         # TODO: Make this work in Indesign same as in DrawBot
         #return self.b.textSize(s)
@@ -135,7 +135,7 @@ class InDesignString(BabelString):
         """Append an invisible marker string."""
 
     def findMarkers(self, reCompiled=None):
-        """Answer a dictionary of markers with their arguments in self.s."""
+        """Answers a dictionary of markers with their arguments in self.s."""
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
@@ -143,7 +143,7 @@ class InDesignString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answer a InDesignString instance from valid attributes in *style*. Set all values after testing
+        """Answers a InDesignString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
 

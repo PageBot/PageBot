@@ -56,7 +56,7 @@ class ImageData(Element):
             self._iw = self._ih = pt(0) # Undefined or non-existing, there is no image file.
 
     def _get_w(self):
-        """Answer the width of the image if it is defined. If self._w is None, ..."""
+        """Answers the width of the image if it is defined. If self._w is None, ..."""
         if self._w is None:
             return self.parent.w
         return self._w
@@ -73,7 +73,7 @@ class ImageData(Element):
     h = property(_get_h, _set_h)
 
     def _get_iw(self):
-        u"""Answer the width of the image file. Initialize from the file if self._iw is None.
+        u"""Answers the width of the image file. Initialize from the file if self._iw is None.
         Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._iw is None:
@@ -82,7 +82,7 @@ class ImageData(Element):
     iw = property(_get_iw)
 
     def _get_ih(self):
-        u"""Answer the height of the image file. Initialize from the file if self._ih is None.
+        u"""Answers the height of the image file. Initialize from the file if self._ih is None.
         Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._ih is None:
@@ -91,7 +91,7 @@ class ImageData(Element):
     ih = property(_get_ih)
 
     def getPixelColor(self, p, scaled=True):
-        """Answer the color in either the scaled point (x, y) or original
+        """Answers the color in either the scaled point (x, y) or original
         image size point."""
         assert self.path is not None
         x, y = point2D(p)
@@ -189,7 +189,7 @@ class Image(Element):
     path = property(_get_path)
 
     def _get_imageData(self):
-        """Answer the first (and suppedly only) ImageData element that is in the child element list.
+        """Answers the first (and suppedly only) ImageData element that is in the child element list.
 
         >>> from pagebot import getResourcesPath
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'

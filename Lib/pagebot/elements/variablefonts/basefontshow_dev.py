@@ -30,7 +30,7 @@ class BaseFontShow(Element):
     DEFAULT_LABEL_SIZE = 7
 
     def getTextStyle(self, vf, fontSize=None, alignment=None, leading=None):
-        """Answer a copy of self.style with modified parameters (if defined)"""
+        """Answers a copy of self.style with modified parameters (if defined)"""
         # Make a copy of the entire cascading style from self perspective
         style = self.getFlattenedStyle() 
         style['font'] = vf.path
@@ -43,7 +43,7 @@ class BaseFontShow(Element):
         return style
 
     def getAxisValue(self, vf, tag, value):
-        """Answer the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
+        """Answers the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
         ratio in (minValue, defaultValue, maxValue)."""
         if not tag in vf.axes:
             return None
@@ -56,7 +56,7 @@ class BaseFontShow(Element):
         return defaultValue + (maxValue - defaultValue)*value
 
     def getLocation(self, vf, wght=None, wdth=None, opsz=None):
-        """Answer the instance of self, corresponding to the normalized location.
+        """Answers the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.

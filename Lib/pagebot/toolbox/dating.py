@@ -98,7 +98,7 @@ def checkDateTime(date):
     return date
 
 def now():
-    """Answer the current DateTime instance.
+    """Answers the current DateTime instance.
 
     >>> Dating(year=1900) < now()
     True
@@ -108,7 +108,7 @@ def now():
     return Dating(date='now')
 
 def milliSeconds(milliSeconds):
-    """Answer the Duration instance for this amount of milliSeconds
+    """Answers the Duration instance for this amount of milliSeconds
 
     >>> milliSeconds(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 0s, 5000us)
@@ -116,7 +116,7 @@ def milliSeconds(milliSeconds):
     return Duration(milliSeconds=milliSeconds)
 
 def microSeconds(microSeconds):
-    """Answer the Duration instance for this amount of microSeconds
+    """Answers the Duration instance for this amount of microSeconds
 
     >>> microSeconds(5) # Shown as the amount of days and seconds
     Duration(0d, 0s, 5us)
@@ -124,7 +124,7 @@ def microSeconds(microSeconds):
     return Duration(microSeconds=microSeconds)
 
 def seconds(seconds):
-    """Answer the Duration instance for this amount of seconds
+    """Answers the Duration instance for this amount of seconds
 
     >>> seconds(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 5s, 0us)
@@ -132,7 +132,7 @@ def seconds(seconds):
     return Duration(seconds=seconds)
 
 def minutes(minutes):
-    """Answer the Duration instance for this amount of minutes
+    """Answers the Duration instance for this amount of minutes
 
     >>> minutes(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 300s, 0us)
@@ -146,7 +146,7 @@ def minutes(minutes):
     return Duration(minutes=minutes)
 
 def hours(hours):
-    """Answer the Duration instance for this amount of hours
+    """Answers the Duration instance for this amount of hours
 
     >>> hours(5) # Shown as the amount of weeks, days, seconds and ms
     Duration(0d, 18000s, 0us)
@@ -156,7 +156,7 @@ def hours(hours):
     return Duration(hours=hours)
 
 def days(days):
-    """Answer the Duration instance for this amount of days
+    """Answers the Duration instance for this amount of days
 
     >>> days(5) # Shown as the amount of weeks
     Duration(5d, 0s, 0us)
@@ -164,7 +164,7 @@ def days(days):
     return Duration(days=days)
 
 def weeks(weeks):
-    """Answer the Duration instance for this amount of weeks.
+    """Answers the Duration instance for this amount of weeks.
     Beyond weeks, the duration depends on the starting date.
 
     >>> weeks(5) # Shown as the amount of weeks
@@ -177,7 +177,7 @@ def weeks(weeks):
 # which month it is.
 
 def year(year):
-    """Answer the datetime instance of that year
+    """Answers the datetime instance of that year
 
     >>> year(2019)
     Dating(date='2019-01-01')
@@ -781,7 +781,7 @@ class Dating:
         raise ValueError('Cannot subtract %s - %s' % (self, durationOrDate))
 
     def _get_year(self):
-        """Answer the year of self.
+        """Answers the year of self.
 
         >>> Dating(year=2017).year
         2017
@@ -839,7 +839,7 @@ class Dating:
     date = property(_get_date)
 
     def _get_year(self):
-        """Answer the year value of self.
+        """Answers the year value of self.
 
         >>> Dating(year=2010).year
         2010
@@ -848,7 +848,7 @@ class Dating:
     year = property(_get_year)
 
     def _get_month(self):
-        """Answer the month value of self.
+        """Answers the month value of self.
 
         >>> Dating(year=2010, month=5).month
         5
@@ -857,7 +857,7 @@ class Dating:
     month = property(_get_month)
 
     def _get_day(self):
-        """Answer the day value of self.
+        """Answers the day value of self.
 
         >>> Dating(year=2010, month=5, day=15).day
         15
@@ -866,7 +866,7 @@ class Dating:
     day = property(_get_day)
 
     def _get_hour(self):
-        """Answer the hour value of self.
+        """Answers the hour value of self.
 
         >>> Dating(year=2010, month=5, day=15, hour=3).hour
         3
@@ -875,7 +875,7 @@ class Dating:
     hour = property(_get_hour)
 
     def _get_minute(self):
-        """Answer the minute value of self.
+        """Answers the minute value of self.
 
         >>> Dating(year=2010, month=5, day=15, hour=3, minute=4).minute
         4
@@ -884,7 +884,7 @@ class Dating:
     minute = property(_get_minute)
 
     def _get_second(self):
-        """Answer the second value of self.
+        """Answers the second value of self.
 
         >>> Dating(year=2010, month=5, day=15, hour=3, minute=4, second=7).second
         7
@@ -893,7 +893,7 @@ class Dating:
     second = property(_get_second)
 
     def _get_microSecond(self):
-        """Answer the second value of self.
+        """Answers the second value of self.
 
         >>> Dating(year=2010, month=5, day=15, hour=3, microSecond=11).microSecond
         11
@@ -1093,7 +1093,7 @@ class Dating:
     workDay = property(_get_workDay)
 
     def _get_weekDay(self):
-        """Answer the number of day in the week.
+        """Answers the number of day in the week.
 
         >>> d = Dating(date='2015-6-1')
         >>> d.dayName, d.weekDay

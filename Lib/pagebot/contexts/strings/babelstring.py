@@ -16,12 +16,14 @@
 from pagebot.toolbox.units import pt
 
 class BabelString:
-    """BabelString is the base class of various types of (formatted) string representations
-    needed for different builder classes."""
+    """BabelString is the base class of various types of (formatted) string
+    representations needed for different builder classes."""
 
     def __init__(self, s, context, style=None):
-        self.s = s # Enclose the Flat/Drawbot/html string in this wrapper.
-        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
+        # Encloses the Flat/Drawbot/html string in this wrapper.
+        self.s = s
+        # Some checking, in case we get something else here.
+        assert style is None or isinstance(style, dict)
         self.style = style # Optional style to set the context parameters.
         self.context = context
 
@@ -37,7 +39,7 @@ class BabelString:
         for n in range(d-1):
             s += self.s
         self.s = s
-        # Something to do with the html?
+        # Something to do with the HTML?
         return self
 
     def __len__(self):
@@ -45,32 +47,32 @@ class BabelString:
 
     def __contains__(self, s):
         return s in self.s
-        
+
     def append(self, s):
-        """Append string or FlatString to self."""
+        """Appends string or FlatString to self."""
         try:
             self.s += s.s
         except (TypeError, AttributeError):
             self.s += s # Convert to babel string, whatever it is.
 
     def _get_type(self):
-        """Answer the id of the class, in case a caller wants to know what kind of
-        BabelString this is."""
+        """Answers the ID of the class, in case a caller wants to know what
+        kind of BabelString this is."""
         return self.BABEL_STRING_TYPE
     type = property(_get_type)
 
     def _get_w(self):
-        u"""Answer measure as point units."""
+        """Answers measure as point units."""
         return pt(self.size[0])
     w = property(_get_w)
 
     def _get_h(self):
-        u"""Answer measure as point units."""
+        """Answers measure as point units."""
         return pt(self.size[1])
     h = property(_get_h)
 
     def _get_size(self):
-        u"""Answer the size tuple (w, h) of the string."""
+        """Answers the size tuple (w, h) of the string."""
         if hasattr(self.context.b, 'textSize'):
             ts = self.context.b.textSize(self.s)
             return pt(ts)

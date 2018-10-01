@@ -27,7 +27,7 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.transformer import path2FontName
 
 def getMasterPath():
-    """Answer the path to read master fonts. Default is at the same level as pagebot module.
+    """Answers the path to read master fonts. Default is at the same level as pagebot module.
 
     >>> getMasterPath().endswith('/Fonts/')
     True
@@ -39,7 +39,7 @@ def getMasterPath():
 
 
 def getInstancePath():
-    """Answer the path to write instance fonts.
+    """Answers the path to write instance fonts.
 
     >>> getInstancePath().endswith('/Fonts/_instances/')
     True

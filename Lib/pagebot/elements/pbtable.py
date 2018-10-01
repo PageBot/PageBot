@@ -29,8 +29,8 @@ class Row(Element):
         return self.elements[index]
 
 class Header(Row):
-    """The Table header is a special kind of row. The header holds the titles of
-    the columns and is reference for their widthts."""
+    """The Table header is a special kind of row. The header holds the titles
+    of the columns and is reference for their widthts."""
     pass
 
 class Cell(TextBox):
@@ -43,8 +43,8 @@ class HeaderCell(Cell):
     pass
 
 class EmptyCell(Element):
-    """Placeholder cell to make index of columns match up if there are empty areas,
-    such as colspan and rowspan."""
+    """Placeholder cell to make index of columns match up if there are empty
+    areas, such as colspan and rowspan."""
     pass
 
 class Table(Element):
@@ -94,12 +94,12 @@ class Table(Element):
         self.elements[0] = header
 
     def getRow(self, index):
-        """Answer the Row instance at index. Same as self.elements[index]. Raise an index error
-        if the row index does not exist."""
+        """Answers the Row instance at index. Same as self.elements[index].
+        Raise an index error if the row index does not exist."""
         return self.elements[index]
 
     def getColumn(self, index):
-        """Answer a list if cells (including the header) of the indexed column."""
+        """Answers a list if cells (including the header) of the indexed column."""
         column = []
         for row in self.elements:
             column.append(row.getCell(index))
@@ -115,8 +115,8 @@ class Table(Element):
         return overflow
 
     def isOverflow(self, tolerance):
-        """Answer the boolean flag if this element needs overflow to be solved.
-        This method is typically called by conditions such as Overflow2Next."""
+        """Answers if this element needs overflow to be solved. This method is
+        typically called by conditions such as Overflow2Next."""
         return self.nextElement is None or not self.getOverflow()
 
     def overflow2Next(self):

@@ -155,7 +155,7 @@ class Image(Element):
     h = property(_get_h, _set_h)
 
     def __len__(self):
-        u"""Answer the number of pages in the the current image file."""
+        u"""Answers the number of pages in the the current image file."""
         if self.path:
             return self.context.numberOfImages(self.path)
         return 0
@@ -188,12 +188,12 @@ class Image(Element):
             self.iw = self.ih = pt(0) # Undefined or non-existing, there is no image file.
 
     def _get_imageSize(self):
-        """Answer the Point2D image size in pixels."""
+        """Answers the Point2D image size in pixels."""
         return self.iw, self.ih
     imageSize = property(_get_imageSize)
 
     def getPixelColor(self, p, scaled=True):
-        """Answer the color in either the scaled point (x, y) or original
+        """Answers the color in either the scaled point (x, y) or original
         image size point."""
         assert self.path is not None
         x, y = point2D(p)

@@ -25,7 +25,10 @@ def getContext(contextType='DrawBot'):
      * FlatContext
      * HtmlContext
      * InDesignContext
+     * SvgContext
 
+    NOTE: the global DEFAULT_CONTEXT sets the last loaded context to default
+    for caching purposes. Switching context type will reload it.
     """
     global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
 
@@ -44,20 +47,22 @@ def getContext(contextType='DrawBot'):
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'InDesign':
-                '''
-                To be implemented.
-                '''
+                DEFAULT_CONTEXT = getInDesignContext()
+            elif contextType == 'SVG':
+                DEFAULT_CONTEXT = getSvgContext()
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
             if contextType in ('DrawBot', 'InDesign'):
-                print('drawbot context not available')
+                print('Selected context type is not available on this platform: %s for %s' % (contextType, platform))
                 # TODO: raise error
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
+            elif contextType == 'SVG':
+                DEFAULT_CONTEXT = getSvgContext()
 
             # TODO: What's the actual path on Linux?
             MAMP_PATH = '/tmp/MAMP_PATH/'
@@ -77,6 +82,14 @@ def getDrawBotContext():
 def getHtmlContext():
     from pagebot.contexts.htmlcontext import HtmlContext
     return HtmlContext()
+
+def getInDesignContext():
+    from pagebot.contexts.indesigncontext import InDesignContext
+    return InDesignContext()
+
+def getSvgContext():
+    from pagebot.contexts.svgcontext import SvgContext
+    return SvgContext()
 
 def getMampPath():
     """Make sure MAMP_PATH is initialized depending on the context."""

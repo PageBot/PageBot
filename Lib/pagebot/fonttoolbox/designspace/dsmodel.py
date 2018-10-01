@@ -26,7 +26,7 @@ REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def getPoints(glyph):
-    u"""Answer the list of points for this glyph."""
+    u"""Answers the list of points for this glyph."""
     points = []
     for contour in glyph:
         for segment in contour:
@@ -46,7 +46,7 @@ def getComponents(glyph):
 
 #classmethod
 def isValidTag(tag):
-    """Answers the boolean flag, if tag is a valid tag string.
+    """Answers if tag is a valid tag string.
 
     >>> isValidTag('wght')
     True
@@ -1140,7 +1140,7 @@ class DesignSpace:
     # Validation
 
     def validate(self):
-        """Answers the boolean flag checking if all data is valid: testing.
+        """Answers checking if all data is valid: testing.
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('ABCD', minimum=600)
@@ -1587,7 +1587,7 @@ class Model:
                     mvCy[cIndex].append(t[-1])
                 """
                 mMt[0].append(g.width) # Other interpolating metrics can be added later.
-                
+
         return self._masterValues
 
     def interpolateValues(self, glyphName, location):

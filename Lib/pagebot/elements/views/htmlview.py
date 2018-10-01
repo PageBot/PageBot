@@ -21,7 +21,7 @@ class HtmlView(BaseView):
     """Abstract class for HTML/CSS generating views."""
 
     def _getContext(self):
-        """Answer the default context for this type of view."""
+        """Answers the default context for this type of view."""
         return HtmlContext()
 
     def XXXbuild_scss(self, view, origin=None):

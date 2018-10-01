@@ -135,7 +135,7 @@ class NoneBuilder:
         pass
 
     def imageSize(self, path):
-        """Answer the image size of our test image
+        """Answers the image size of our test image
 
         path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         """

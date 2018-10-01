@@ -16,10 +16,8 @@
 #
 import re
 from copy import copy
-#from sys import platform
 
 try:
-#if platform == 'darwin':
     from CoreText import CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
         CTFrameGetLines, CTFrameGetLineOrigins, CTRunGetGlyphCount, \
         CTRunGetStringRange, CTRunGetStringIndicesPtr, CTRunGetAdvances, \
@@ -28,9 +26,6 @@ try:
         CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex, \
         CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds, \
         CTLineGetTrailingWhitespaceWidth
-        #CTFontDescriptorCopyAttribute,
-        #kCTFontURLAttribute, \
-        #CTFontDescriptorCreateWithNameAndSize, \
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
 
@@ -42,9 +37,6 @@ except (AttributeError, ImportError):
     CTFrameGetLines = None
     CTRunGetStringRange = None
     CTFrameGetLineOrigins = None
-    #CTFontDescriptorCopyAttribute = None
-    #CTFontDescriptorCreateWithNameAndSize = None
-    #kCTFontURLAttribute = None
     CTFramesetterCreateFrame = None
     CTRunGetGlyphCount = None
     CTRunGetStringIndicesPtr = None
@@ -62,7 +54,6 @@ except (AttributeError, ImportError):
     CTLineGetTypographicBounds = None
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
 
-#from pagebot.contexts.basecontext import BaseContext # TODO: Solve this
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
@@ -74,7 +65,8 @@ from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColo
 from pagebot.toolbox.units import pt, upt, isUnit, units, em
 
 def pixelBounds(fs):
-    """Answer the pixel-bounds rectangle of the text.
+    """Answers the pixel-bounds rectangle of the text.
+
     Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
     @bh is the amount of pixels above the baseline.
     For the total height of the pixel-map, calculate @ph - @py.
@@ -83,10 +75,11 @@ def pixelBounds(fs):
         return pt(0, 0, 0, 0)
     p = drawBotBuilder.BezierPath()
     p.text(fs, (0, 0))
-    # OSX answers bw and bh as difference with bx and by. That is not really intuitive, as the
-    # the total (width, height) then always needs to be calculated by the caller.
-    # So, instead, the width and height answered is the complete bounding box, and the (x, y)
-    # is the position of the bounding box, compared to the (0, 0) of the string origin.
+    # OSX answers bw and bh as difference with bx and by. That is not really
+    # intuitive, as the the total (width, height) then always needs to be
+    # calculated by the caller. So, instead, the width and height answered is
+    # the complete bounding box, and the (x, y) is the position of the bounding
+    # box, compared to the (0, 0) of the string origin.
     bx, by, bw, bh = p.bounds()
     return pt(bx, by, bw - bx, bh - by)
 
@@ -115,8 +108,9 @@ class NoneDrawBotString(BabelString):
         return cls(s, context=context, style=style)
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
-        to top-emsize (including ascender+ and descender+) and the string width (including margins)."""
+        """Answers the (w, h) size for a given width, with the current text,
+        measured from bottom em-size to top-emsize (including ascender+ and
+        descender+) and the string width (including margins)."""
         return w or 100, h or 100
 
     def __repr__(self):
@@ -201,9 +195,10 @@ class DrawBotString(BabelString):
         self.hyphenation = False
 
     def _get_s(self):
-        """Answer the embedded FormattedString by property, to enforce checking
+        """Answers the embedded FormattedString by property, to enforce checking
         type of the string."""
         return self._s
+
     def _set_s(self, s):
         """ Check on the type of s. Three types are supported here: plain strings,
         DrawBot FormattedString and the class of self."""
@@ -216,8 +211,9 @@ class DrawBotString(BabelString):
     s = property(_get_s, _set_s)
 
     def _get_font(self):
-        """Answer the current state of fontName."""
+        """Answers the current state of fontName."""
         return self.style.get('font')
+
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
@@ -225,7 +221,7 @@ class DrawBotString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize.
+        """Answers the current state of the fontSize.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -251,7 +247,7 @@ class DrawBotString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def asText(self):
-        """Answer the text string.
+        """Answers the text string.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -262,8 +258,9 @@ class DrawBotString(BabelString):
         return str(self.s) #  Convert to text
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text, measured from bottom em-size
-        to top-emsize (including ascender+ and descender+) and the string width (including margins).
+        """Answers the (w, h) size for a given width, with the current text,
+        measured from bottom em-size to top-emsize (including ascender+ and
+        descender+) and the string width (including margins).
 
         >>> from pagebot.toolbox.units import mm, uRound
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -285,8 +282,11 @@ class DrawBotString(BabelString):
         return b.textSize(self.s)
 
     def bounds(self, language=None, hyphenation=None):
-        """Answer the pixel-bounds rectangle of the text, if formatted by the option (w, h).
-        Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
+        """Answers the pixel-bounds rectangle of the text, if formatted by the
+        option (w, h).
+
+        Note that @by can be a negative value, if there is text (e.g.
+        overshoot) below the baseline.
         @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
@@ -363,17 +363,20 @@ class DrawBotString(BabelString):
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
 
     def appendMarker(self, markerId, arg):
-        """Append a formatted string with markerId that can be used as non-display marker.
-        This way the Composer can find the position of markers in text boxes, after
-        FS-slicing has been done. Note there is always a very small "white-space"
-        added to the string, so there is a potential difference in width that matters.
-        For that reason markers should not be changed after slicing (which would theoretically
-        alter the flow of the FormattedString in an box) and the markerId and amount/length
-        of args should be kept as small as possible.
-        Note that there is a potential problem of slicing through the argument string at
-        the end of a textBox. That is another reason to keep the length of the arguments short.
-        And not to use any spaces, etc. inside the markerId.
-        Possible slicing through line-endings is not a problem, as the raw string ignores them.
+        """Appends a formatted string with markerId that can be used as
+        non-display marker. This way the Composer can find the position of
+        markers in text boxes, after FS-slicing has been done. Note there is
+        always a very small "white-space" added to the string, so there is a
+        potential difference in width that matters. For that reason markers
+        should not be changed after slicing (which would theoretically alter
+        the flow of the FormattedString in an box) and the markerId and
+        amount/length of args should be kept as small as possible.
+
+        NOTE that there is a potential problem of slicing through the argument
+        string at the end of a textBox. That is another reason to keep the
+        length of the arguments short. And not to use any spaces, etc. inside
+        the markerId. Possible slicing through line-endings is not a problem,
+        as the raw string ignores them.
 
         """
         marker = self.MARKER_PATTERN % (markerId, arg or '')
@@ -381,13 +384,13 @@ class DrawBotString(BabelString):
         self.append(fs)
 
     def findMarkers(self, reCompiled=None):
-        """Answer a dictionary of markers with their arguments in self.s."""
+        """Answers a dictionary of markers with their arguments in self.s."""
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
 
     def textOverflow(self, w, h, align=LEFT):
-        """Answer the overflowing of from the box (0, 0, w, h)
+        """Answers the overflowing of from the box (0, 0, w, h)
         as new DrawBotString in the current context."""
         b = self.context.b
         wpt, hpt = upt(w, h)
@@ -400,8 +403,9 @@ class DrawBotString(BabelString):
         return overflow
 
     def getBaselines(self, w, h=None):
-        u"""Answer the dictionary of vertical baseline positions for the self.s FormattedString
-        and for the given width and height. Value is the TextLine instance at that position.
+        """Answers the dictionary of vertical baseline positions for the self.s
+        FormattedString and for the given width and height. Value is the
+        TextLine instance at that position.
 
         """
         """
@@ -420,7 +424,8 @@ class DrawBotString(BabelString):
         return baselines
 
     def getTextLines(self, w, h=None, align=LEFT):
-        u"""Answer the dictionary of TextLine instances. Key is y position of the line.
+        """Answers the dictionary of TextLine instances. Key is y position of
+        the line.
 
         >>> from pagebot.toolbox.units import mm, uRound
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -484,7 +489,7 @@ class DrawBotString(BabelString):
     @classmethod
     def fitString(cls, t, context, e=None, style=None, w=None, h=None,
             useXTRA=True, pixelFit=True):
-        """Answer the DrawBotString instance from valid attributes in style.
+        """Answers the DrawBotString instance from valid attributes in style.
         Set all values after testing their existence, so they can inherit from
         previous style formats in the string. If the target width w and height
         are defined, and if there is a [wdth] or [XTRA] axis in the current
@@ -759,7 +764,8 @@ class DrawBotString(BabelString):
         # FIX IN DRAWBOT fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
-        # TODO: Use this value instead, if current tag is different from previous tag. How to get this info?
+        # TODO: Use this value instead, if current tag is different from
+        # previous tag. How to get this info?
         # sFirstParagraphIndent = style.get('firstParagraphIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
@@ -907,8 +913,8 @@ class TextRun:
         return self.string[index]
 
     def _get_style(self):
-        """Answer the constructed style dictionary, with names that fit the standard
-        PageBot style."""
+        """Answers the constructed style dictionary, with names that fit the
+        standard PageBot style."""
         if self._style is None:
             self._style = dict(
                 textFill=self.fill,
@@ -952,9 +958,9 @@ class TextRun:
         return self.nsFont.renderingMode()
     renderingMode = property(_get_renderingMode)
 
-    #   Font metrics, based on self.nsFont. This can be different from
-    #   self.fontAswcencender and self.fontDescender, etc. which are
-    #   based on the current setting in the FormattedString
+    # Font metrics, based on self.nsFont. This can be different from
+    # self.fontAswcencender and self.fontDescender, etc. which are based on the
+    # current setting in the FormattedString
 
     def _get_ascender(self):
         fontSize = self.nsFont.pointSize()
@@ -1070,7 +1076,7 @@ class TextLine:
         self.lineIndex = lineIndex # Vertical line index in TextBox.
         self.string = ''
         self.textRuns = []
-        #print(ctLine)
+
         for runIndex, ctRun in enumerate(CTLineGetGlyphRuns(ctLine)):
             textRun = TextRun(ctRun, runIndex)
             self.textRuns.append(textRun)
@@ -1086,8 +1092,8 @@ class TextLine:
         return self.textRuns[index]
 
     def _get_ascender(self):
-        """Returns the max ascender of all text runs as Em, based on the current font
-        and fontSize."""
+        """Returns the max ascender of all text runs as Em, based on the
+        current font and fontSize."""
         ascender = 0
         for textRun in self.textRuns:
             ascender = max(ascender, textRun.ascender)
@@ -1095,8 +1101,8 @@ class TextLine:
     fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
     def _get_descender(self):
-        """Returns the max descender of all text runs as Em, based on the current font
-        and fontSize."""
+        """Returns the max descender of all text runs as Em, based on the
+        current font and fontSize."""
         descender = 0
         for textRun in self.textRuns:
             descender = min(descender, textRun.descender)
@@ -1104,8 +1110,8 @@ class TextLine:
     fontDescender = descender = property(_get_descender) # Compatibility with DrawBot API
 
     def _get_xHeight(self):
-        """Returns the max x-height of all text runs as Em, based on the current font
-        and fontSize."""
+        """Returns the max x-height of all text runs as Em, based on the
+        current font and fontSize."""
         xHeight = 0
         for textRun in self.textRuns:
             xHeight = max(xHeight, textRun.xHeight)
@@ -1113,8 +1119,8 @@ class TextLine:
     fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
 
     def _get_capHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the current font
-        and fontSize."""
+        """Returns the max font cap height of all text runs as Em, based on the
+        current font and fontSize."""
         capHeight = 0
         for textRun in self.textRuns:
             capHeight = max(capHeight, textRun.capHeight)
@@ -1122,8 +1128,8 @@ class TextLine:
     fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
 
     def _get_maximumLineHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the current font
-        and fontSize."""
+        """Returns the max font cap height of all text runs as Em, based on the
+        current font and fontSize."""
         maximumLineHeight = 0
         for textRun in self.textRuns:
             maximumLineHeight = max(maximumLineHeight, textRun.maximumLineHeight)
@@ -1135,8 +1141,9 @@ class TextLine:
         return CTLineGetStringIndexForPosition(self._ctLine, CGPoint(xpt, ypt))[0]
 
     def getOffsetForStringIndex(self, i):
-        """Answer the z position that is closest to glyph string index i. If i is out of bounds,
-        then answer the closest x position (left and right side of the string)."""
+        """Answers the z position that is closest to glyph string index i. If i
+        is out of bounds, then answer the closest x position (left and right
+        side of the string)."""
         return CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
 
     def _get_stringIndex(self):
@@ -1154,7 +1161,8 @@ class TextLine:
     #alignment = property(_get_alignment)
 
     def _get_imageBounds(self):
-        """Property that answers the bounding box (actual black shape) of the text line."""
+        """Property that answers the bounding box (actual black shape) of the
+        text line."""
         (xpt, ypt), (wpt, hpt) = CTLineGetImageBounds(self._ctLine, None)
         return pt(xpt, ypt, wpt, hpt)
     imageBounds = property(_get_imageBounds)
@@ -1208,7 +1216,7 @@ class TextLine:
 
 '''
 def getTextLines(txt, box):
-    """Answer a list of (x,y) positions of all line starts in the box. This function may become part
+    """Answers a list of (x,y) positions of all line starts in the box. This function may become part
     of standard DrawBot in the near future."""
     x, y, w, h = box
     attrString = txt.getNSObject()
@@ -1220,7 +1228,7 @@ def getTextLines(txt, box):
     return ctLines
 
 def getBaselines(txt, box):
-    """Answer a list of (x,y) positions of all line starts in the box. This function may become part
+    """Answers a list of (x,y) positions of all line starts in the box. This function may become part
     of standard DrawBot in the near future."""
     x, y, w, h = box
     attrString = txt.getNSObject()
@@ -1286,7 +1294,8 @@ def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
     #   F I N D
 
 def findPattern(textLines, pattern):
-    """Answer the point locations where this pattern occures in the Formatted String."""
+    """Answers the point locations where this pattern occures in the Formatted
+    String."""
     foundPatterns = [] # List of FoundPattern instances.
     for lineIndex, textLine in enumerate(textLines):
         for foundPattern in textLine.findPattern(pattern):

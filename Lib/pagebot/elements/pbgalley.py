@@ -78,7 +78,7 @@ class Galley(Element):
         return len(self._elements)-1 # Answer the element index for e.
 
     def getSize(self):
-        """Answer the enclosing rectangle of all elements in the galley."""
+        """Answers the enclosing rectangle of all elements in the galley."""
         w = self.w or 0
         h = self.h or 0
         if w and h: # Galley has fixed/forced size:
@@ -97,7 +97,7 @@ class Galley(Element):
         return self.getSize()[1]
 
     def getLastElement(self):
-        """Answer the last element in the sequence."""
+        """Answers the last element in the sequence."""
         elements = self.elements
         if not elements:
             return None

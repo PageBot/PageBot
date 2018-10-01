@@ -73,7 +73,7 @@ class Magazine(Publication):
         return length
 
     def _get_spreads(self):
-        """Answer a flattened list of spread elements, containing all page elements.
+        """Answers a flattened list of spread elements, containing all page elements.
         Note that the e.parent of all elements is untouched. If parts run over several
         pages, then the same part instance is there.
         """

@@ -186,7 +186,7 @@ class InDesignBuilder(BaseBuilder):
         self._copyPaths.append(path)
 
     def getJs(self, newLine=True):
-        """Answer the flat string of JS."""
+        """Answers the flat string of JS."""
         if newLine:
             newLine = '\n'
         else:
@@ -203,7 +203,7 @@ class InDesignBuilder(BaseBuilder):
             print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
     def getInDesignScriptPath(self):
-        u"""Answer the user local script path. For now this assumes one version of InDesign.
+        u"""Answers the user local script path. For now this assumes one version of InDesign.
         TODO: Should be made more generic.
 
         >>> b = InDesignBuilder()

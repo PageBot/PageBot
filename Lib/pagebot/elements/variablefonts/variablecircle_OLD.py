@@ -64,7 +64,7 @@ class VariableCircle(Element):
         return recipe
 
     def _angle2XY(self, angle, r):
-        """Answer the XY position for a given angled (degrees) and r, located on the origin."""
+        """Answers the XY position for a given angled (degrees) and r, located on the origin."""
         return cos(angle/180*pi) * r, sin(angle/180*pi) * r
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):

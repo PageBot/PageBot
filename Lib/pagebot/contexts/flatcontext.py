@@ -301,7 +301,7 @@ class FlatContext(BaseContext):
     #   F O N T S
 
     def listOpenTypeFeatures(self, fontName):
-        """Answer the list of opentype features available in the named font.
+        """Answers the list of opentype features available in the named font.
         TODO: To be implemented."""
         #return self.b.listOpenTypeFeatures(fontName)
         return []
@@ -411,7 +411,7 @@ class FlatContext(BaseContext):
         placedText.position(xpt, ypt)
 
     def textSize(self, bs, w=None, h=None):
-        """Answer the size tuple (w, h) of the current text. Answer (0, 0) if
+        """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
         there is no text defined.  Answer the height of the string if the width
         w is given.
 
@@ -452,7 +452,7 @@ class FlatContext(BaseContext):
             return (w, w/len(bs))
 
     def textOverflow(self, bs, w, h, align=LEFT):
-        """Answer the overflowing of from the box (0, 0, w, h) as new FlatString
+        """Answers the overflowing of from the box (0, 0, w, h) as new FlatString
         in the current context."""
         wpt, hpt = upt(w, h)
         return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
@@ -473,7 +473,7 @@ class FlatContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answer the (w, h) image size of the image file at path.
+        """Answers the (w, h) image size of the image file at path.
 
         >>> from pagebot import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'

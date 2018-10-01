@@ -356,7 +356,7 @@ table {
         self._copyPaths.append(path)
 
     def getJs(self):
-        """Answer the flat string of JS."""
+        """Answers the flat string of JS."""
         return ''.join(self._jsOut)
 
     def writeJs(self, path):
@@ -377,11 +377,11 @@ table {
             self._cssOut.append(css)
 
     def getCss(self):
-        """Answer the joined content of sel._cssOut."""
+        """Answers the joined content of sel._cssOut."""
         return ''.join(self._cssOut)
 
     def hasCss(self):
-        """Answer the boolean flag if there is any cumulated CSS in self._cssOut."""
+        """Answers if there is any cumulated CSS in self._cssOut."""
         return len(self._cssOut)
 
     def importCss(self, path):
@@ -575,7 +575,7 @@ table {
             print('Cannot write HTML file "%s"' % path)
 
     def getHtml(self):
-        """Answer the cumulated html as single string."""
+        """Answers the cumulated html as single string."""
         return ''.join(self._htmlOut)
 
     def resetHtml(self):

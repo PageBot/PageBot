@@ -47,7 +47,7 @@ class BaseView(Element):
         self._isDrawn = False # Automatic call self.drawPages if build is called without drawing.
 
     def _getContext(self):
-        """Answer the best/default context for this type of view."""
+        """Answers the best/default context for this type of view."""
         return getContext() # Default is DrawBotContext or FlatContext instance.
 
     def setControls(self):

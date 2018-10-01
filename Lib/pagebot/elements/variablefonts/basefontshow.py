@@ -38,7 +38,7 @@ class BaseFontShow(Element):
         return style
 
     def getLocation(self, vf=None, wght=None, wdth=None, opsz=None):
-        """Answer the instance of self, corresponding to the normalized location.
+        """Answers the instance of self, corresponding to the normalized location.
         (-1, 0, 1) values for axes [wght] and [wdth].
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.

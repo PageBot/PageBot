@@ -126,9 +126,9 @@ def newImage(path=None, **kwargs):
     return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):
-    """Answer a new Table instanec."""
+    """Answers a new Table instanec."""
     return Table(rows=rows, cols=cols, **kwargs)
 
 def newGalley(**kwargs):
-    """Answer a new Galley instance."""
+    """Answers a new Galley instance."""
     return Galley(**kwargs)

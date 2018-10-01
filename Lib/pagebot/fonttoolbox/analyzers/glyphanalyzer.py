@@ -90,7 +90,7 @@ class GlyphAnalyzer:
     font = property(_get_font)
 
     def _get_parent(self):
-        """Answer the analyzer of the parent font."""
+        """Answers the analyzer of the parent font."""
         font = self.font
         if font is not None:
             return font.analyzer
@@ -163,7 +163,7 @@ class GlyphAnalyzer:
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
-        """Answers the boolean flag if the line between *pc0* and
+        """Answers if the line between *pc0* and
         *pc1* just spans black area."""
         return self.lineOnBlack(pc0, pc1)
 
@@ -173,13 +173,13 @@ class GlyphAnalyzer:
         return self.spanBlack(m0, m1, step)
 
     def lineOnBlack(self, p0, p1, step=SPANSTEP):
-        """Answers the boolean flag if the line between point p0 and p1
+        """Answers if the line between point p0 and p1
         is entirely running on black, except for the end point. To
         test if the line is entirely on black, use **self.lineInBlack()"""
         return self.spanBlack(p0, p1, step)
 
     def onBlack(self, p):
-        """Answers the boolean flag is the single point (x, y) is on black."""
+        """Answers is the single point (x, y) is on black."""
         # TODO: We need to make a method to have the context available here.
         from pagebot import getContext
         context = getContext()
@@ -187,7 +187,7 @@ class GlyphAnalyzer:
         return context.onBlack(p, glyphPath)
 
     def spanBlack(self, p0, p1, step=SPANSTEP):
-        """The spanBlack method answers the boolean flag if the number
+        """The spanBlack method answers if the number
         of recursive steps between p1 and p2 are on black area
         of the glyph. If step is smaller than the distance between the points,
         then just check in the middle of the line.  The method does not check
@@ -206,7 +206,7 @@ class GlyphAnalyzer:
     #   W H I T E
 
     def spanWhite(self, p0, p1, step=SPANSTEP):
-        """The **spanWhite** method answers the boolean flag if the number
+        """The **spanWhite** method answers if the number
         of recursive steps between *pc0* and *pc1* are all on white
         area of the glyph. If step is smaller than the distance between the
         points, then just check in the middle of the line.  """
@@ -221,16 +221,16 @@ class GlyphAnalyzer:
         return result
 
     def lineOnWhite(self, pc0, pc1, step=SPANSTEP):
-        """Answers the boolean flag if the line is just spanning white area."""
+        """Answers if the line is just spanning white area."""
         return self.spanWhite(pc0, pc1, step)
 
     def onWhite(self, p):
-        """Answers the boolean flag if the single point **(x, y)** is on
+        """Answers if the single point **(x, y)** is on
         white."""
         return not self.onBlack(p)
 
     def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
-        """Answers the boolean flag if the vertical span between *pc0*
+        """Answers if the vertical span between *pc0*
         and *pc1* just spans black area, by stepping from a point on one
         line to a point on the other line. The trick is to fine the right
         points. If the line it too angled (e.g. under certain circumstances the
@@ -425,7 +425,7 @@ class GlyphAnalyzer:
         return not self.isLandscape(pc0, pc1)
 
     def isRoundStem(self, pc0, pc1):
-        """The **isRoundStem** method answers the boolean flag if the
+        """The **isRoundStem** method answers if the
         *pc0* and *pc1* define a round stem. This is @True@ if one of
         both of point contexts are extremes and if both, they must “bend” in
         the same direction.
@@ -437,7 +437,7 @@ class GlyphAnalyzer:
             and self.spanRoundsOnBlack(pc0, pc1)
 
     def isStraightRoundStem(self, pc0, pc1):
-        """Answers the boolean flag if one of (pc0, pc1) is a straight extreme
+        """Answers if one of (pc0, pc1) is a straight extreme
         and the other is a curve extreme.  The stem is only valid if the y of
         the curve extreme is between the y of the 2 vertical on-curves."""
         if not self.spanRoundsOnBlack(pc0, pc1):
@@ -474,7 +474,7 @@ class GlyphAnalyzer:
     allStems = property(_get_allStems)
 
     def _get_stem(self):
-        """Answer left stem. Answer None if no stems can be found."""
+        """Answers left stem. Answer None if no stems can be found."""
         if self._stem is None:
             self.findStems()
             for stems in self.allStems.values():
@@ -487,7 +487,7 @@ class GlyphAnalyzer:
     #   H O R I Z O N T A L  C O U N T E R
 
     def isHorizontalCounter(self, pc0, pc1, tolerance=0):
-        """Answers the boolean flag is the connection between pc0.x and pc1.x
+        """Answers is the connection between pc0.x and pc1.x
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white stem”."""
         #print('pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance))
@@ -512,7 +512,7 @@ class GlyphAnalyzer:
     horizontalCounters = property(_get_horizontalCounters)
 
     def _get_hotizontalCounter(self):
-        """Answer single horizontal counter value, which by definintion is the smallest straight counter found.
+        """Answers single horizontal counter value, which by definintion is the smallest straight counter found.
         Answer None if no counters can be found."""
         counters = self.horizontalCounters.keys()
         if counters:
@@ -523,7 +523,7 @@ class GlyphAnalyzer:
     #   V E R T I C A L  C O U N T E R
 
     def isVerticalCounter(self, pc0, pc1, tolerance=0):
-        """Answers the boolean flag is the connection between pc0.y and pc1.y
+        """Answers is the connection between pc0.y and pc1.y
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white bar”."""
         if not (pc0.isVerticalRoundExtreme(tolerance) or pc0.isHorizontal(tolerance)):
@@ -697,7 +697,7 @@ class GlyphAnalyzer:
             and self.spanRoundsOnBlack(pc0, pc1)
 
     def isStraightRoundBar(self, pc0, pc1):
-        """Answers the boolean flag if one of (pc0, pc1) is a straight extreme
+        """Answers if one of (pc0, pc1) is a straight extreme
         and the other is a curve extreme.  The stem is only valid if the y of
         the curve extreme is between the y of the 2 vertical on-curves."""
         if not self.spanRoundsOnBlack(pc0, pc1):

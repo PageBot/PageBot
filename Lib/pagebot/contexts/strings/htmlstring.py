@@ -32,7 +32,7 @@ class HtmlString(BabelString):
         self.style = style
 
     def _get_font(self):
-        """Answer the current state of fontName."""
+        """Answers the current state of fontName."""
         return self.style.get('font') or self.context.getFont()
     def _set_font(self, fontName):
         if fontName is not None:
@@ -41,7 +41,7 @@ class HtmlString(BabelString):
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the current state of the fontSize."""
+        """Answers the current state of the fontSize."""
         return self.style.get('fontSize') or self.context.getFontSize()
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
@@ -50,7 +50,7 @@ class HtmlString(BabelString):
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_s(self):
-        """Answer the embedded HTML string by property, to enforce checking type of the string."""
+        """Answers the embedded HTML string by property, to enforce checking type of the string."""
         return self._s
     def _set_s(self, html):
         # TODO: Test later if html is the right type
@@ -62,7 +62,7 @@ class HtmlString(BabelString):
         return self.s # TODO: Use re to find non-tagged text to return.
 
     def textSize(self, w=None, h=None):
-        """Answer the (w, h) size for a given width, with the current text.
+        """Answers the (w, h) size for a given width, with the current text.
         For html this probably won't be an accurate guess. Let's think about something else."""
         return len(self.s)*10, 12
 
@@ -72,7 +72,7 @@ class HtmlString(BabelString):
         return ''
 
     def getTextLines(self, w, h=None, align=LEFT):
-        u"""Answer the dictionary of TextLine instances. Key is y position of the line.
+        u"""Answers the dictionary of TextLine instances. Key is y position of the line.
 
         >>> from pagebot.toolbox.units import mm, uRound, pt
         >>> from pagebot.contexts.htmlcontext import HtmlContext
@@ -112,7 +112,7 @@ class HtmlString(BabelString):
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None,
             pixelFit=None, tagName=None):
-        """Answer a FlatString instance from valid attributes in *style*. Set all values after testing
+        """Answers a FlatString instance from valid attributes in *style*. Set all values after testing
         their existence, so they can inherit from previous style formats.
         If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
 

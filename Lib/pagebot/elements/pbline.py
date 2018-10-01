@@ -21,7 +21,7 @@ from pagebot.toolbox.color import noColor
 class Line(Element):
 
     def _get_w(self):
-        """Answer the width of the Line element.
+        """Answers the width of the Line element.
 
         >>> e = Line(w=100)
         >>> e.w
@@ -37,7 +37,7 @@ class Line(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answer the height of the Line element.
+        """Answers the height of the Line element.
 
         >>> e = Line(h=100)
         >>> e.h

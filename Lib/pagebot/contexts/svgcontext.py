@@ -53,6 +53,7 @@ class SvgContext(BaseContext):
 
         """
         self.b = svgBuilder
+        self.name = self.__class__.__name__
         self._filePath = self.TMP_PATH % uniqueID()
         self.fill(noColor) # Sets self._svgFill
         self.stroke(noColor) # Sets self._svgStroke

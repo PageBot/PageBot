@@ -69,7 +69,7 @@ class FontInfo:
             return None
 
     def _get_fullName(self):
-        """Answer the full name of the font. Construct it from family name and style name
+        """Answers the full name of the font. Construct it from family name and style name
         if there is no full name defined.
 
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
@@ -105,7 +105,7 @@ class FontInfo:
     familyName = property(_get_familyName)
 
     def _get_styleName(self):
-        """Answer the style name of the font.
+        """Answers the style name of the font.
         Family name should be this, but often wrong: return self._getNameTableEntry(1)
         We take the first spaced part as family name, and fill the rest here under style.
         So we add rest of family.

@@ -214,11 +214,11 @@ class XmlBuilder(BaseBuilder):
             self.newLine() # Optional write newline if not self.compat
 
     def _peekTag(self):
-        """Answer the name of the current tag."""
+        """Answers the name of the current tag."""
         return self._tagStack[-1]
 
     def getTagStack(self):
-        """Answer the stack of current tag names."""
+        """Answers the stack of current tag names."""
         return self._tagStack
 
 

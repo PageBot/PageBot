@@ -52,7 +52,7 @@ def value01(v):
     return v
 
 def asRgb(c, *args):
-    u"""Answer the color as rgb tuple. If c is a list or tuple, then answer the
+    u"""Answers the color as rgb tuple. If c is a list or tuple, then answer the
     rgb tuples in the same structure.
 
     >>> asRgb(color(1, 0, 0))
@@ -538,7 +538,7 @@ class Color:
     fullString = property(_get_fullString)
 
     def _get_isRgb(self):
-        """Answers the boolean flag if the base of this color is defined as rgb or if an (rgb) name is defined.
+        """Answers if the base of this color is defined as rgb or if an (rgb) name is defined.
 
         >>> color(rgb=0.5).isRgb
         True
@@ -553,7 +553,7 @@ class Color:
     isRgb = property(_get_isRgb)
 
     def _get_isCmyk(self):
-        """Answers the boolean flag if the base of this color is defined as cmyk.
+        """Answers if the base of this color is defined as cmyk.
 
         >>> color(rgb=0.5).isCmyk
         False
@@ -568,7 +568,7 @@ class Color:
     isCmyk = property(_get_isCmyk)
 
     def _get_isSpot(self):
-        """Answers the boolean flag if the base of this color is defined as spot color.
+        """Answers if the base of this color is defined as spot color.
 
         >>> color(rgb=0.5).isSpot
         False
@@ -583,7 +583,7 @@ class Color:
     isSpot = property(_get_isSpot)
 
     def _get_isRal(self):
-        """Answers the boolean flag if the base of this color is defined as RAL color.
+        """Answers if the base of this color is defined as RAL color.
 
         >>> color(rgb=0.5).isRal
         False

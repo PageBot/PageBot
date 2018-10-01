@@ -38,7 +38,7 @@ def reset():
     languages = {}
 
 def hyphenatedWords(language=DEFAULT_LANGUAGE):
-    """Answer the dictionary of hyphenated words for this language (default is English)."""
+    """Answers the dictionary of hyphenated words for this language (default is English)."""
     if language not in languages:
         # Not initialized yet, try to read.
         path = getResourcesPath() + '/languages/%s.txt' % language
@@ -155,11 +155,11 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     return None
 
 def words(language=DEFAULT_LANGUAGE):
-    """Answer the sorted list of all words in the dictionary for this language."""
+    """Answers the sorted list of all words in the dictionary for this language."""
     return sorted(hyphenatedWords(language).keys())
 
 def wordsByLength(language=DEFAULT_LANGUAGE):
-    """Answer the dictionary with lists of words, groups by their length as key."""
+    """Answers the dictionary with lists of words, groups by their length as key."""
     wordsByLength = {}
     for word in words(language):
         l = len(word)

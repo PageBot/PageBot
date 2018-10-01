@@ -70,7 +70,7 @@ class InDesignContext(BaseContext):
         self.save() # Save current set of values on gState stack.
 
     def getInDesignScriptPath(self):
-        """Answer the user local script path. For now this assumes one version
+        """Answers the user local script path. For now this assumes one version
         of InDesign.
 
         TODO: Should be made more generic.
@@ -84,7 +84,7 @@ class InDesignContext(BaseContext):
     #   S C R E E N
 
     def screenSize(self):
-        """Answer the current screen size. Otherwise default is to do
+        """Answers the current screen size. Otherwise default is to do
         nothing."""
         return None
 
@@ -189,7 +189,7 @@ class InDesignContext(BaseContext):
         return self._path
 
     def _get_path(self):
-        """Answer the open drawing path. Create one if it does not exist.
+        """Answers the open drawing path. Create one if it does not exist.
 
         >>> context = InDesignContext()
         >>> context.path is not None
@@ -415,7 +415,7 @@ class InDesignContext(BaseContext):
     #   F O N T S
 
     def listOpenTypeFeatures(self, fontName):
-        """Answer the list of opentype features available in the named font."""
+        """Answers the list of opentype features available in the named font."""
         return [] #self.b.listOpenTypeFeatures(fontName)
 
     #   G L Y P H
@@ -559,7 +559,7 @@ class InDesignContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answer the (w, h) image size of the image file at path."""
+        """Answers the (w, h) image size of the image file at path."""
         return self.b.imageSize(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
@@ -582,7 +582,7 @@ class InDesignContext(BaseContext):
         self.restore()
 
     def getImageObject(self, path):
-        """Answer the ImageObject that knows about image filters.
+        """Answers the ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot.contexts.indesigncontext import InDesignContext

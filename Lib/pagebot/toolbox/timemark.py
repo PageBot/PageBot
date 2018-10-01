@@ -39,7 +39,7 @@ class TimeMark:
         return self.t == tm.t
 
     def blend(self, tm, t, name):
-        u"""Answer the blended value between self and tm at time t for 
+        u"""Answers the blended value between self and tm at time t for 
         the name attribute of self.style.
 
 

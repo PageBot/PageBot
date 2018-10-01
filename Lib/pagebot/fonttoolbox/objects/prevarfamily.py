@@ -63,7 +63,7 @@ class PreVarFamily(Family):
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
 
     def __init__(self, name, path):
-        """Answer a PreVarFamily instance from the defined design space path."""
+        """Answers a PreVarFamily instance from the defined design space path."""
         self.designSpace = ds = DesignSpaceDocument()
         ds.read(path)
         self.axes = {}
@@ -87,7 +87,7 @@ class PreVarFamily(Family):
         self.baseGlyphName = self.BASE_GLYPH_NAME
 
     def _get_glyphNames(self):
-        """Answer the set of all unique glyph names in all design space fonts.
+        """Answers the set of all unique glyph names in all design space fonts.
         Initialize if it does not exist yet.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -107,7 +107,7 @@ class PreVarFamily(Family):
     glyphNames = property(_get_glyphNames)
 
     def _get_defaultFont(self):
-        """Answer the cached font that is defined as origin. Try to guess if
+        """Answers the cached font that is defined as origin. Try to guess if
         not defined.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -170,7 +170,7 @@ class PreVarFamily(Family):
         Family.addFont(self, pathOrFont)
 
     def _get_metrics(self):
-        """Answer the metrics dictionary for the current included fonts.
+        """Answers the metrics dictionary for the current included fonts.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
@@ -189,7 +189,7 @@ class PreVarFamily(Family):
     metrics = property(_get_metrics)
 
     def getDefaultFont(self):
-        """Answer the font that is on the design space location with all axes
+        """Answers the font that is on the design space location with all axes
         as default.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -204,7 +204,7 @@ class PreVarFamily(Family):
         return self.fonts.get(path)
 
     def getClosestOS2Weight(self, weightClass=ORIGIN_OS2_WEIGHT_CLASS):
-        """Answer the list of fonts (there can be more that one, accidentally
+        """Answers the list of fonts (there can be more that one, accidentally
         located at that position. Default is the origin at weightClass ==
         ORIGIN_OS2_WEIGHT_CLASS (400). Answer None if no matching font could
         be found."""
@@ -219,7 +219,7 @@ class PreVarFamily(Family):
         return os2Weights[min(os2Weights.keys())] # Answer the set of fonts with the smallest difference.
 
     def getOS2WeightWidthClasses(self):
-        """Answer the (x, y) dictionary, with (OS/2 weight class, OS/2 width
+        """Answers the (x, y) dictionary, with (OS/2 weight class, OS/2 width
         class) as key and fonts list as value (as often there are be multiple
         fonts on the same (x, y) if not filled with the right OS/2 value."""
         weightWidthClasses = {}
@@ -231,7 +231,7 @@ class PreVarFamily(Family):
         return weightWidthClasses
 
     def getWeightWidthLocations(self):
-        """Answer the (x, y) dictionary, with (H-stem width, H-width) as key
+        """Answers the (x, y) dictionary, with (H-stem width, H-width) as key
         and fonts list as value (theoretically there can be multiple fonts on
         the same (x, y)."""
         weightWidthLocations = {}
@@ -248,7 +248,7 @@ class PreVarFamily(Family):
         return weightWidthLocations
 
     def getMinMaxWidth(self):
-        """Answer the minimal/maximal widths of H.
+        """Answers the minimal/maximal widths of H.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
@@ -265,7 +265,7 @@ class PreVarFamily(Family):
         return minWidth, maxWidth
 
     def getMinMaxStem(self):
-        """Answer the minimal/max stems of H.
+        """Answers the minimal/max stems of H.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'
@@ -283,7 +283,7 @@ class PreVarFamily(Family):
     #   C O N S T R U C T  P A R A M E T R I C  F O N T S
 
     def makeParametricFonts(self, axisName):
-        """Answer the two Font instances for calculated parametric Min and Max.
+        """Answers the two Font instances for calculated parametric Min and Max.
         If one of the extreme is equal to the origin, then answer None for that
         instance."""
         parametricAxisFonts = self.parametricAxisFonts

@@ -129,7 +129,7 @@ class SiteView(HtmlView):
         self.copyResources(path)
 
     def getUrl(self, name):
-        """Answer the local URL for Mamp Pro to find the copied website."""
+        """Answers the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
 
 

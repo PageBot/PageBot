@@ -21,7 +21,7 @@ class Condition:
         self.verbose = verbose
 
     def evaluate(self, e, score):
-        u"""Answer the value between 0 and 1 to the level where the element
+        u"""Answers the value between 0 and 1 to the level where the element
         is left aligned with the left margin of the parent."""
         parent = e.parent
         self.addScore(parent is not None and self.test(e), e, score)

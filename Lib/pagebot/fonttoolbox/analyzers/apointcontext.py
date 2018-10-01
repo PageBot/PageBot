@@ -24,7 +24,7 @@ from pagebot.toolbox.mathematics import *
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 
 def calculateAngle(p1, p2, inDegrees=True):
-    """Calculate the angle between points p1 and p2. Points can be either 2D or 3D 
+    """Calculate the angle between points p1 and p2. Points can be either 2D or 3D
     point tuples or Point instances. In the case of Point3D, only the 2D projection
     in (x, y) plane is calculated."""
     xDiff = p2[0] - p1[0]
@@ -35,8 +35,8 @@ def calculateAngle(p1, p2, inDegrees=True):
     return angle
 
 def angleOfLines(p1, p2, q1, q2, inDegrees=True):
-    """Answer the angle difference (radials or default degrees) between p1-->p2 and q1-->q2.
-    Points can be either 2D or 3D point tuples or Point instances. 
+    """Answers the angle difference (radials or default degrees) between p1-->p2 and q1-->q2.
+    Points can be either 2D or 3D point tuples or Point instances.
     In the case of Point3D, only the 2D projection in (x, y) plane is calculated."""
     angle1 = calculateAngle(p1, p2, inDegrees)
     angle2 = calculateAngle(q1, q2, inDegrees)
@@ -48,13 +48,13 @@ def angleOfLines(p1, p2, q1, q2, inDegrees=True):
 class APointContext:
     """The PointContext instance is a Point wrapper, that also takes the 3 points previous
     and next 3 points on the contour. The instance behaves like a normal point p, but
-    additional information is available as interpreted from the point context in relation 
+    additional information is available as interpreted from the point context in relation
     to the neighbor points. The total of 7 points is derived
-    from the average construction of a serif, so it is possible to hold (and interpret) an 
+    from the average construction of a serif, so it is possible to hold (and interpret) an
     entire serif sequence inside one point context.
     """
     PARALLEL_TOLERANCE = 2 # Difference tolerance angle in degrees to take point contexts as parallel
-    
+
     def __init__(self, points, index=None, contourIndex=None, clockwise=None, glyphName=None):
         """Points list is supposed to contain Point instances, not point lists.
         We need the extra storage, e.g. for point type that Point holds."""
@@ -66,7 +66,7 @@ class APointContext:
         self.glyphName = glyphName
         self._direction = None  # Cache direction once calculated.
         self._angle = None  # Cache axis once calculated.
-    
+
     def __getitem__(self, index):
         return self.p[index]
 
@@ -83,7 +83,7 @@ class APointContext:
         False
         """
         return self.p < p.p
-        
+
     def __le__(self, p):
         u"""Compare the points.
 
@@ -97,7 +97,7 @@ class APointContext:
         False
         """
         return self.p <= p.p
-        
+
     def __gt__(self, p):
         u"""Compare the points.
 
@@ -111,7 +111,7 @@ class APointContext:
         True
         """
         return self.p > p.p
-        
+
     def __ge__(self, p):
         u"""Compare the points.
 
@@ -125,7 +125,7 @@ class APointContext:
         True
         """
         return self.p >= p.p
-        
+
     def __sub__(self, p):
         u"""Subtract the points. Result is a point3D tuple.
 
@@ -180,12 +180,12 @@ class APointContext:
     def _get_y(self):
         return self.p.y
     y = property(_get_y)
-    
+
     def _get_rx(self):
         # Get rounded value.
         return int(round(self.x))
     rx = property(_get_x)
-    
+
     def _get_ry(self):
         # Get rounded value
         return int(round(self.y))
@@ -200,7 +200,7 @@ class APointContext:
         return self._angle
     angle = property(_get_angle)
 
-    # self.normalizedAngle    Answer the normalized angle of self, -90 <= angle <= 90    
+    # self.normalizedAngle    Answer the normalized angle of self, -90 <= angle <= 90
     def _get_normalizedAngle(self):
         angle = self.angle
         while angle < 0:
@@ -209,7 +209,7 @@ class APointContext:
             angle -= 180
         return angle
     normalizedAngle = property(_get_normalizedAngle)
-    
+
     def __repr__(self):
         s = 'pc'
         if self.index is not None:
@@ -262,7 +262,7 @@ class APointContext:
 
     def isHorizontalExtreme(self, tolerance=0):
         """
-        The <code>isHorizontalExtreme</code> method answers the boolean flag if the point context is an extreme
+        The <code>isHorizontalExtreme</code> method answers if the point context is an extreme
         (such as the side of an O).
         """
         # Is the point context a vertical and extreme in x-direction?
@@ -273,7 +273,7 @@ class APointContext:
             and self.isOffCurve(self.p_1)
 
     def isLeftRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a left round extreme. 
+        """Answers if the point context is a left round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
@@ -282,7 +282,7 @@ class APointContext:
             and self.p[0] < (prevP[0] - tolerance)
 
     def isRightRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a right round extreme. 
+        """Answers if the point context is a right round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
@@ -291,7 +291,7 @@ class APointContext:
             and self.p[0] > (prevP[0] + tolerance)
 
     def isTopRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a top round extreme. 
+        """Answers if the point context is a top round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
@@ -300,7 +300,7 @@ class APointContext:
             and self.p[1] > (prevP[1] + tolerance)
 
     def isBottomRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a bottom round extreme. 
+        """Answers if the point context is a bottom round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         nextP = self.nextOnCurvePoint
         prevP = self.prevOnCurvePoint
@@ -309,24 +309,24 @@ class APointContext:
             and self.p[1] < (prevP[1] - tolerance)
 
     def isVerticalRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a vertical round extreme. 
+        """Answers if the point context is a vertical round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return self.isTopRoundExtreme(tolerance) or self.isBottomRoundExtreme(tolerance)
 
     def isHorizontalRoundExtreme(self, tolerance=0):
-        """Answer the boolean flag if the point context is a horizontal round extreme. 
+        """Answers if the point context is a horizontal round extreme.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return self.isLeftRoundExtreme(tolerance) or self.isRightRoundExtreme(tolerance)
 
     def isNextVertical(self, tolerance=0):
-        """Answer the boolean flag if the point context next point is vertical. 
+        """Answers if the point context next point is vertical.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return abs(self.p[0] - self.p1[0]) <= tolerance
 
     isVertical = isNextVertical
 
     def isPrevVertical(self, tolerance=0):
-        """Answer the boolean flag if the point context prev point is vertical. 
+        """Answers if the point context prev point is vertical.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return abs(self.p[0] - self.p_1[0]) <= tolerance
 
@@ -338,14 +338,14 @@ class APointContext:
             and self.isOffCurve(self.p_1)
 
     def isNextHorizontal(self, tolerance=0):
-        """Answer the boolean flag if the point context prev point is horizontal. 
+        """Answers if the point context prev point is horizontal.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return abs(self.p[1] - self.p1[1]) <= tolerance
 
     isHorizontal = isNextHorizontal
 
     def isPrevHorizontal(self, tolerance=0):
-        """Answer the boolean flag if the point context prev point is horizontal. 
+        """Answers if the point context prev point is horizontal.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return abs(self.p[1] - self.p_1[1]) <= tolerance
 
@@ -364,13 +364,13 @@ class APointContext:
         return not (self.isVertical() or self.isHorizontal())
 
     def isParallel(self, pc, tolerance=None):
-        """Answer the boolean flag if self is parallel to pc point context. 
+        """Answers if self is parallel to pc point context.
         Optional attribute tolerance
         is the margin to interpret point context lines to be parallel. Default is self.PARALLEL_TOLERANCE."""
         if tolerance is None:
             tolerance = self.PARALLEL_TOLERANCE
         return abs(self.normalizedAngle - pc.normalizedAngle) <= tolerance
-            
+
     def isRoundStemExtreme(self, tolerance=0):
         return self.isHorizontalExtreme(tolerance)\
             and (self.isLeftRoundExtreme(tolerance) or self.isRightRoundExtreme(tolerance))\
@@ -387,7 +387,7 @@ class APointContext:
         return False
 
     def isRoundStem(self, pc0, pc1, tolerance=0):
-        """The isRoundStem method answers the boolean flag if the pc0 and pc1 define a
+        """The isRoundStem method answers if the pc0 and pc1 define a
         round stem. This is True if one of both of point contexts are extremes and if both, they must
         “bend” in the same direction.
         Also there should be overlap in horizontal direction and the point context should span black only.
@@ -400,19 +400,19 @@ class APointContext:
         """
         The <code>inVerticalWindow</code> method checks if there is any overlap in X-direction to make
         the vertical comparison optically define as a "bar".
-        
+
         True    self.minx-------------self.maxx
                             p.minx----------------p.maxx
-                        
+
         True               self.minx----------------------p.maxx
                 p.minx---------------p.maxx
-                        
+
         True               self.minx------------self.maxx
                 p.minx-------------------------------p.maxx
-                 
+
         False                               self.minx----------self.maxx
                 p.minx--------p.maxx
-                 
+
         False   self.minx--------self.maxx
                                                  p.minx------------------------p.maxx
         """
@@ -422,59 +422,59 @@ class APointContext:
         """
         The <code>inHorizontalWindow</code> method checks if there is any overlap in X-direction to make
         the vertical comparison optically define as a "stem".
-        
+
         True    self.miny-------------self.maxy
                             p.miny----------------p.maxy
-                        
+
         True               self.miny----------------------p.maxy
                 p.miny---------------p.maxy
-                        
+
         True               self.miny------------self.maxy
                 p.miny-------------------------------p.maxy
-                 
+
         False                               self.miny----------self.maxy
                 p.miny--------p.maxy
-                 
+
         False   self.miny--------self.maxy
                                                  p.miny------------------------p.maxy
         """
         return pc.miny() < self.maxy() and self.miny() < pc.maxy()
 
     def inDiagonalWindow(self, pc):
-        """Answer the boolean flag if pc fits in the diagonal window of self."""
+        """Answers if pc fits in the diagonal window of self."""
         return not None in self.getProjectedWindowLine(pc)
-    
+
     def getProjectedPoint(self, p):
-        """Answer the perpendicular projection of point p in the line segment of self.
+        """Answers the perpendicular projection of point p in the line segment of self.
         If the projection in not within the range of the line segment, then answer None.
         """
         pp = self.projectedOnLine(p)
         if self.inBoundingBox(pp): # Is the projected point in inside the line segment
             return pp
         return None # Projection not within the line segment window.
-    
+
     def getProjectedWindowLines(self, pc):
-        """Answer all 4 projected window lines. Note that some of them can be None
-        is the projects falls outside the window (the overlapping area of a perpendicular line that 
+        """Answers all 4 projected window lines. Note that some of them can be None
+        is the projects falls outside the window (the overlapping area of a perpendicular line that
         intersects with both line segments). This method is different from self.getProjectedWindowLine
         as that one only answers one of the projected points that is not None. For efficiency
         reasons only one of the projections is made there. For almost parallel lines all projects are
         more or less identical."""
         return (
-            (pc.p, self.getProjectedPoint(pc.p)), 
-            (pc.p1, self.getProjectedPoint(pc.p1)), 
-            (self.p, pc.getProjectedPoint(self.p)), 
+            (pc.p, self.getProjectedPoint(pc.p)),
+            (pc.p1, self.getProjectedPoint(pc.p1)),
+            (self.p, pc.getProjectedPoint(self.p)),
             (self.p1, pc.getProjectedPoint(self.p1))
         )
-    
-    def getProjectedWindowLine(self, pc):  
-        """Answer a tuple of one of the 4 points of (self.p, self.p1, pc.p, pc.p1)
+
+    def getProjectedWindowLine(self, pc):
+        """Answers a tuple of one of the 4 points of (self.p, self.p1, pc.p, pc.p1)
         that has a projection on the other line and its projection point.
-        If no projection exists in the window of the two line segments, then answer 
+        If no projection exists in the window of the two line segments, then answer
         (None, None)."""
         pp = self.getProjectedPoint(pc.p)
         if pp is not None:
-            return pc.p, pp  
+            return pc.p, pp
         pp = self.getProjectedPoint(pc.p1)
         if pp is not None:
             return pc.p1, pp
@@ -485,52 +485,52 @@ class APointContext:
         if pp is not None:
             return self.p1, pp
         return None, None
-        
+
     def inBoundingBox(self, p):
-        """Answer the boolean flag is p is inside the bounding box of the glyph.
+        """Answers is p is inside the bounding box of the glyph.
         p can be a point-typles or a Point instance."""
         return (self.p[0] <= p[0] <= self.p1[0] or self.p1[0] <= p[0] <= self.p[0]) and \
                (self.p[1] <= p[1] <= self.p1[1] or self.p1[1] <= p[1] <= self.p[1])
-        
+
     def minx(self):
-        """Answer the minimum x, compared with the two neighbor points. 
+        """Answers the minimum x, compared with the two neighbor points.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return min(self.p_1[0], self.p[0], self.p1[0])
-    
+
     def maxx(self):
-        """Answer the maximum x, compared with the two neighbor points. 
+        """Answers the maximum x, compared with the two neighbor points.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return max(self.p_1[0], self.p[0], self.p1[0])
-    
+
     def miny(self):
-        """Answer the minimum y, compared with the two neighbor points. 
+        """Answers the minimum y, compared with the two neighbor points.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return min(self.p_1[1], self.p[1], self.p1[1])
-    
+
     def maxy(self):
-        """Answer the maximum y, compared with the two neighbor points. 
+        """Answers the maximum y, compared with the two neighbor points.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         return max(self.p_1[1], self.p[1], self.p1[1])
-    
+
     def middle(self, p1=None):
-        """Answer the Point instance of the middle between the optional attribute points p0 and p1.
+        """Answers the Point instance of the middle between the optional attribute points p0 and p1.
         If the points are omitted, then use respectively self.p and self.p1.
         x/y selection by index, as these can be APoint or point2D tuple instances."""
         if p1 is None:
             p1 = self.p1
         return int(round((self.p[0] + p1[0])/2)), int(round((self.p[1] + p1[1])/2))
-     
+
     def distanceTo(self, p):
-        """Answer the distance of point p to the line of self."""
+        """Answers the distance of point p to the line of self."""
         return point2Line(self.p, self.p1, p)
-    
+
     def projectedOnLine(self, p):
-        """Answer the point context pc projects on the line of self."""
+        """Answers the point context pc projects on the line of self."""
         xy = pointProjectedOnLine(self.p.p, self.p1.p, p.p)
         return APoint(xy)
-    
+
     # self.nextOnCurvePoint
-    
+
     def _get_nextOnCurvePoint(self):
         if self.isOnCurve(self.p1):
             return self.p1
@@ -541,9 +541,9 @@ class APointContext:
         return None
 
     nextOnCurvePoint = property(_get_nextOnCurvePoint)
-    
+
     # self.prevOnCurvePoint
-    
+
     def _get_prevOnCurvePoint(self):
         if self.isOnCurve(self.p_1):
             return self.p_1

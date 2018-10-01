@@ -75,7 +75,7 @@ def getFamily(familyName, useFontInfo=True, useFileName=True):
     return None
 
 def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
-    """Answer the family that best matches the pattern.
+    """Answers the family that best matches the pattern.
 
     >>> findFamily('Bungee')
 
@@ -134,15 +134,15 @@ class Family:
             self.addFonts(fonts) # Try to figure out what these are, and add them
 
     def __repr__(self):
-        """Answer the representation stirng of the family."""
+        """Answers the representation stirng of the family."""
         return '<PageBot Family %s (%d fonts)>' % (self.name, len(self))
 
     def __len__(self):
-        """Answer the length of the family, as the amount of fonts."""
+        """Answers the length of the family, as the amount of fonts."""
         return len(self.fonts)
 
     def __contains__(self, fontPath):
-        """Answer the boolean flag if there is a Font instance with path fontPath.
+        """Answers if there is a Font instance with path fontPath.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -155,7 +155,7 @@ class Family:
         return fontPath in self.fonts
 
     def __getitem__(self, fontPath):
-        """Answer the Font instance by this fontPath.
+        """Answers the Font instance by this fontPath.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -170,7 +170,7 @@ class Family:
         return self.fonts[fontPath]
 
     def keys(self):
-        """Answer the paths of fonts, which are the keys in self.fonts.
+        """Answers the paths of fonts, which are the keys in self.fonts.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -238,7 +238,7 @@ class Family:
         return font
 
     def getFonts(self):
-        """Answer the unsorted list of Font instances in the family.
+        """Answers the unsorted list of Font instances in the family.
 
         """
         """
@@ -249,7 +249,7 @@ class Family:
         return self.fonts.values()
 
     def getStyles(self):
-        """Answer the dictionary {fontStyle: [font, font, ...], ...}
+        """Answers the dictionary {fontStyle: [font, font, ...], ...}
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
@@ -276,7 +276,7 @@ class Family:
         return fontStyles
 
     def getWeights(self):
-        """Answer the dictionary {weightClass: [font, font, ...], ...]}
+        """Answers the dictionary {weightClass: [font, font, ...], ...]}
 
         """
         """
@@ -297,7 +297,7 @@ class Family:
         return weightClasses
 
     def getWidths(self):
-        """Answer the dictionary {widthClass: [font, font, ...], ...]}
+        """Answers the dictionary {widthClass: [font, font, ...], ...]}
 
         """
         """
@@ -318,7 +318,7 @@ class Family:
         return widthClasses
 
     def getRomanFonts(self):
-        """Answer the dictionary {romanFontPath: font, ...]}
+        """Answers the dictionary {romanFontPath: font, ...]}
 
         """
         """
@@ -336,7 +336,7 @@ class Family:
         return romanFonts
 
     def getItalicFonts(self):
-        """Answer the dictionary {italicFontPath: font, ...]}
+        """Answers the dictionary {italicFontPath: font, ...]}
 
         """
         """
@@ -387,7 +387,7 @@ class Family:
         return matchingFont
 
     def findFont(self, name=None, weight=None, width=None, italic=False):
-        """Answer the font that is the closest match on name, weight as name or weight as number,
+        """Answers the font that is the closest match on name, weight as name or weight as number,
         width as name or width as number and italic angle as name or number, if any of these are defined.
         In case there is one or more fonts in the family then there always is a closest match.
         If the family is empty, None is anwere.

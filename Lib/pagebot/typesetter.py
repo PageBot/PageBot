@@ -190,7 +190,7 @@ class Typesetter:
         self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
 
     def getStyleValue(self, name, e=None, style=None, default=None):
-        u"""Answer the best style value match for *name*, depending on the status of *style*, *e* and *default*,
+        u"""Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
         value = None
         
@@ -328,7 +328,7 @@ class Typesetter:
         return self.peekStyle()
 
     def peekStyle(self):
-        u"""Answer the top cascaded style, without changing the stack."""
+        u"""Answers the top cascaded style, without changing the stack."""
         if not self.gState: # It's empty, answer None
             return None
         return self.gState[-1]
@@ -342,7 +342,7 @@ class Typesetter:
         return self.tagHistory
 
     def getFootnotes(self, e):
-        u"""Answer the footnotes dictionary from the e.lib (derived from the root document)"""
+        u"""Answers the footnotes dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -352,7 +352,7 @@ class Typesetter:
         return None
 
     def getLiteratureRefs(self, e):
-        u"""Answer the literature reference dictionary from the e.lib (derived from the root document)"""
+        u"""Answers the literature reference dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -362,7 +362,7 @@ class Typesetter:
         return None
 
     def getImageRefs(self, e):
-        u"""Answer the image reference dictionary from the e.lib (derived from the root document)
+        u"""Answers the image reference dictionary from the e.lib (derived from the root document)
         if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary.
         Answer None if e.lib does not exist."""
         lib = e.lib
@@ -384,7 +384,7 @@ class Typesetter:
         return s
 
     def getMatchingStyleNames(self, tag):
-        u"""Answer the list of matching style, with decreasing relevance."""
+        u"""Answers the list of matching style, with decreasing relevance."""
         revHistory = self.tagHistory[:]
         revHistory.reverse()
         matches = []
@@ -399,7 +399,7 @@ class Typesetter:
         return matches
 
     def getNamedStyle(self, styleName):
-        u"""Answer the named style and otherwise an empty style dict if the named style
+        u"""Answers the named style and otherwise an empty style dict if the named style
         does not exist."""
         return self.styles.get(styleName, {})
 

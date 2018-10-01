@@ -61,12 +61,12 @@ class BaseTheme:
         self.styles[selector] = style
 
     def getStyles(self):
-        u"""Answer the theme as a dictionary of styles."""
+        u"""Answers the theme as a dictionary of styles."""
         self.applyPalette() # In case it was not executed before, substitute the palette values
         return self.styles
 
     def getCss(self):
-        u"""Answer the theme as a CSS source, compiled from the available
+        u"""Answers the theme as a CSS source, compiled from the available
         styles, the palette, and the optional file at self.SCSS_PATH.
         Construct the SCSS variable files, and compile the result into CSS."""
         if self.SCSS_PATH is not None:

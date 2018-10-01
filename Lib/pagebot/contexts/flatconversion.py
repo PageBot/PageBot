@@ -20,7 +20,7 @@ def to255(values):
     return [round(val * 255) for val in values]
 
 def getFlatRGB(c):
-    """Answer the color tuple that is valid for self.fileType, otherwise
+    """Answers the color tuple that is valid for self.fileType, otherwise
     Flat gives an error.
 
     TODO: Make better match for all file types, transparency and spot

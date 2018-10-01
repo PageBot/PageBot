@@ -131,7 +131,7 @@ class Page(Element):
         return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
 
     def _get_isLeft(self):
-        """Answer if this is a left page (even pagenumber), unless the
+        """Answers if this is a left page (even pagenumber), unless the
         self._isLeft is overwritten by a boolean, other than None. Note
         that pages can be both left or right.
 
@@ -157,7 +157,7 @@ class Page(Element):
     isLeft = property(_get_isLeft, _set_isLeft)
 
     def _get_isRight(self):
-        """Answer if this is a right page, if that info is stored. Note that
+        """Answers if this is a right page, if that info is stored. Note that
         pages can be neither left or right. Otherwise, the only one who can
         know that is the document.
 
@@ -183,7 +183,7 @@ class Page(Element):
     isRight = property(_get_isRight, _set_isRight)
 
     def _get_next(self):
-        """Answer the page with the next page number the document, relative to
+        """Answers the page with the next page number the document, relative to
         self. Create a new page if self is the last page in the self.parent
         document. Answer None if the self page has no parent.
 
@@ -203,7 +203,7 @@ class Page(Element):
     next = property(_get_next)
 
     def _get_prev(self):
-        u"""Answer the previous page in the document, relative to self. Answer None
+        u"""Answers the previous page in the document, relative to self. Answer None
         if self is the first page.
 
         >>> from pagebot.document import Document
@@ -222,7 +222,7 @@ class Page(Element):
     prev = property(_get_prev)
 
     def _get_pn(self):
-        """Answer the page number by which self is stored in the parent
+        """Answers the page number by which self is stored in the parent
         document. This property is readonly. To move or remove pages, use
         Document.movePage() or Document.removePage()
 
@@ -242,7 +242,7 @@ class Page(Element):
     #   E L E M E N T S
 
     def getGalley(self, name=None):
-        """Answer the default galley element of a page. This is used in case pages
+        """Answers the default galley element of a page. This is used in case pages
         need to be made with content (e.g. to accommodate overflow) without a main
         sequence of text boxes in stalled or without an applied template that contains them.
         Usage of the default page galley is mostly for booting a document, without the
@@ -440,7 +440,7 @@ class Page(Element):
 class Template(Page):
 
     def _get_parent(self):
-        """Answer the parent of the element, if it exists, by weakref
+        """Answers the parent of the element, if it exists, by weakref
         reference. Answer None of there is not parent defined or if the parent
         not longer exists."""
         if self._parent is not None:

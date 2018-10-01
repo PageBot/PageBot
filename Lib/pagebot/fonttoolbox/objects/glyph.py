@@ -216,7 +216,7 @@ class Glyph:
             self._initialize()
 
     def getAxisDeltas(self):
-        """Answer dictionary of axis-delta relations. Key is axis name, value
+        """Answers dictionary of axis-delta relations. Key is axis name, value
         is an *AxisDeltas* instance. The instance containse (minValue,
         defaultValue, maxValue) keys, holding the sets of deltas for the glyph
         points."""
@@ -323,7 +323,7 @@ class Glyph:
     rightMargin = property(_get_rightMargin)
 
     def isClockwise(self, contour):
-        """Answer Contour direction. Simple and fast.
+        """Answers Contour direction. Simple and fast.
 
         http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
         """
@@ -373,7 +373,7 @@ class Glyph:
         return len(self.contours)
 
     def _get_points(self):
-        """Answer the list of APoint instances, representing the outline of
+        """Answers the list of APoint instances, representing the outline of
         the glyph, not including the standard 4 spacing points at the end of
         the list in TTF style.  Read only for now. Although APoints are
         constructed from the self.ttFont coordinates, they keep a weakref to
@@ -385,7 +385,7 @@ class Glyph:
     points = property(_get_points)
 
     def _get_points4(self):
-        """Answer the list of APoints instances, representing the outline of
+        """Answers the list of APoints instances, representing the outline of
         the glyph, including the standard 4 spacing points at the end of the
         list in TTF style.  Read only for now. Although APoints are constructed
         from the self.ttFont coordinates, they keep a weakref to the glyph and
@@ -461,7 +461,7 @@ class Glyph:
         return componentNames
 
     def _get_variables(self):
-        """Answer the axis-deltas for this glyph. Answer an None if there are
+        """Answers the axis-deltas for this glyph. Answer an None if there are
         no deltas for this glyph or if the parent is not a Var-font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -493,7 +493,7 @@ class Glyph:
     analyzer = property(_get_analyzer) # Read only for now.
 
     def _get_box(self):
-        u"""Answer the bounding box as defined by self.ttGlyph boundaries.
+        u"""Answers the bounding box as defined by self.ttGlyph boundaries.
         """
         if self._box is None:
             self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)

@@ -55,9 +55,9 @@ class Document:
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     DEFAULT_VIEWID = defaultViewClass.viewId
 
-    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None, 
+    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
             autoPages=1, template=None, templates=None, originTop=True, startPage=None,
-            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None, 
+            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None,
             exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -126,7 +126,7 @@ class Document:
         pass
 
     def _get_lib(self):
-        """Answer the global storage dictionary, used by TypeSetter and others
+        """Answers the global storage dictionary, used by TypeSetter and others
         to keep track of footnotes, table of content, etc. Some common entries
         are predefined. In the future this lib could be saved into JSON, in
         case it needs to be shared between documents. E.g. this could happen if
@@ -141,7 +141,7 @@ class Document:
     lib = property(_get_lib)
 
     def __len__(self):
-        """Answer the amount of pages in the document.
+        """Answers the amount of pages in the document.
 
         >>> doc = Document(name='TestDoc', startPage=13, autoPages=42)
         >>> len(doc) == len(doc.pages) == 42
@@ -181,7 +181,7 @@ class Document:
     doc = property(_get_doc)
 
     def _get_context(self):
-        """Answer the context of the current view to allow searching the
+        """Answers the context of the current view to allow searching the
         parents --> document --> view. """
         return self.view.context
     context = property(_get_context)
@@ -189,7 +189,7 @@ class Document:
     # Document[12] answers a list of pages where page.y == 12
     # This behaviour is different from regular elements, who want the page.eId as key.
     def __getitem__(self, pnIndex):
-        """Answer the pages with pageNumber equal to page.y.
+        """Answers the pages with pageNumber equal to page.y.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
@@ -238,7 +238,7 @@ class Document:
     parent = property(_get_parent)
 
     def getGlossary(self):
-        """Answer a string glossary with most representing info about the
+        """Answers a string glossary with most representing info about the
         document.
 
         >>> doc = Document(name='DemoDoc')
@@ -254,7 +254,7 @@ class Document:
         return '\n'.join(glossary)
 
     def _get_builder(self):
-        """Answer the builder, which should be available from self.context.
+        """Answers the builder, which should be available from self.context.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -289,7 +289,7 @@ class Document:
         self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
-        """Answer the named template. If it does not exist, then answer the
+        """Answers the named template. If it does not exist, then answer the
         default template. Answer `None` if there is no default.
 
         >>> from pagebot.constants import A6
@@ -320,7 +320,7 @@ class Document:
         return template
 
     def _get_defaultTemplate(self):
-        """Answer the default template of the document.
+        """Answers the default template of the document.
 
         >>> from pagebot.constants import Legal
         >>> doc = Document(name='TestDoc', size=Legal)
@@ -403,7 +403,7 @@ class Document:
         return style.get(name, default)
 
     def findStyle(self, styleId):
-        """Answer the style that fits the optional sequence naming of styleId.
+        """Answers the style that fits the optional sequence naming of styleId.
         Answer `None` if no style can be found. styleId can have one of these
         formats:
 
@@ -427,12 +427,12 @@ class Document:
         return self.getStyle(styleName)
 
     def getStyle(self, name):
-        """Answer the names style. If that does not exist, answer the default
+        """Answers the names style. If that does not exist, answer the default
         root style."""
         return self.styles.get(name)
 
     def getRootStyle(self):
-        """Answer the default root style, used by the Typesetter as default for
+        """Answers the default root style, used by the Typesetter as default for
         all other stacked styles."""
         return self.rootStyle
 
@@ -477,7 +477,7 @@ class Document:
     #   D E F A U L T  A T T R I B U T E S
 
     def _get_originTop(self):
-        """Answer the document flag if origin is on top.
+        """Answers the document flag if origin is on top.
 
         >>> doc = Document(name='TestDoc', originTop=True)
         >>> doc.originTop
@@ -509,7 +509,7 @@ class Document:
     # CSS property service to children.
 
     def _get_em(self):
-        """Answer the current em value (for use in relative units), as value of
+        """Answers the current em value (for use in relative units), as value of
         self.css('fontSize', DEFAULT_FONT_SIZE)."""
         return self.rootStyle.get('fontSize', DEFAULT_FONT_SIZE)
     def _set_em(self, em):
@@ -581,7 +581,7 @@ class Document:
     d = property(_get_d, _set_d)
 
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
-        """Answer the document global padding, as defined in the root style.
+        """Answers the document global padding, as defined in the root style.
         Intercace is identical to Element.padding
 
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40))
@@ -809,7 +809,7 @@ class Document:
     appendElement = appendPage
 
     def getPage(self, pnOrName, index=0):
-        """Answer the page at (pn, index). Otherwise search for a page with this name.
+        """Answers the page at (pn, index). Otherwise search for a page with this name.
         Raise index errors if it does not exist."""
         if pnOrName in self.pages:
             if index >= len(self.pages[pnOrName]):
@@ -831,7 +831,7 @@ class Document:
         """
 
     def getPages(self, pn):
-        """Answer all pages that share the same page number. Raise KeyError if
+        """Answers all pages that share the same page number. Raise KeyError if
         none exist.
 
         >>> doc = Document(name='TestDoc', autoPages=100)
@@ -919,7 +919,7 @@ class Document:
         return None
 
     def nextPage(self, page, nextPage=1, makeNew=True):
-        """Answer the next page of page. If it does not exist, create a new
+        """Answers the next page of page. If it does not exist, create a new
         page.
 
         >>> from pagebot.constants import Tabloid
@@ -954,7 +954,7 @@ class Document:
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):
-        """Answer the previous page of page. If it does not exist, answer None.
+        """Answers the previous page of page. If it does not exist, answer None.
 
         >>> from pagebot.constants import Tabloid
         >>> doc = Document(autoPages=4, size=Tabloid)
@@ -979,7 +979,7 @@ class Document:
         return None # No previous page found.
 
     def getPageNumber(self, page):
-        """Answer a string with the page number (pn, index), if the page can be
+        """Answers a string with the page number (pn, index), if the page can be
         found and there are multiple.  Pages are organized as dict of lists
         (allowing multiple pages on the same page number)
 
@@ -995,7 +995,7 @@ class Document:
         return None # Cannot find this page
 
     def getFirstPage(self):
-        """Answer the list of pages with the lowest sorted page.y. Answer empty
+        """Answers the list of pages with the lowest sorted page.y. Answer empty
         list if there are no pages.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=624, autoPages=10)
@@ -1008,7 +1008,7 @@ class Document:
         return None
 
     def getLastPage(self):
-        """Answer last page with the highest sorted page.y. Answer empty list
+        """Answers last page with the highest sorted page.y. Answer empty list
         if there are no pages.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=5, autoPages=10)
@@ -1019,7 +1019,7 @@ class Document:
         return self.pages[pn][-1]
 
     def getSortedPages(self, pageSelection=None):
-        """Answer the dynamic list of pages, sorted by y, x and index."""
+        """Answers the dynamic list of pages, sorted by y, x and index."""
         pages = [] # List of (pn, pnPages) tuples of pages with the same page number.
         for pn, pnPages in sorted(self.pages.items()):
             if pageSelection is not None and not pn in pageSelection:
@@ -1028,7 +1028,7 @@ class Document:
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
-        """Answer the (w, h, d) size of all pages together.
+        """Answers the (w, h, d) size of all pages together.
         If the optional pageSelection is defined (set of y-values),
         then only evaluate the selected pages.
         Clip the found values against the document min/max proportions.
@@ -1078,7 +1078,7 @@ class Document:
     #   V I E W S
 
     def getView(self, viewId=None, create=True):
-        """Answer the view viewId exists. Otherwise if create is True and
+        """Answers the view viewId exists. Otherwise if create is True and
         viewId is a known class of view, then create a new instance and answers
         it. Otherwise answer self.view.
 

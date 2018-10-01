@@ -83,7 +83,7 @@ class MampView(SiteView):
 
 
     def getUrl(self, name):
-        """Answer the local URL for Mamp Pro to find the copied website."""
+        """Answers the local URL for Mamp Pro to find the copied website."""
         return self.LOCAL_HOST_URL % (name, self.DEFAULT_HTML_FILE)
 
 

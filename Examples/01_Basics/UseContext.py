@@ -35,5 +35,8 @@ def showContexts():
 	print(context)
 	context = getContext(contextType='InDesign') # To be implemented.
 	print(context)
+	context = getContext(contextType='SVG') # To be implemented.
+	print(context)
+
 
 showContexts()

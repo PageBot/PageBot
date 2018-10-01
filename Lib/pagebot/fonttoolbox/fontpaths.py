@@ -26,11 +26,11 @@ TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
 FONT_PATHS = {}
 
 def getTestFontsPath():
-    """Answer the path of the PageBot test fonts."""
+    """Answers the path of the PageBot test fonts."""
     return TEST_FONTS_PATH
 
 def getFontPathOfFont(font, default=None):
-    """Answer the path that is source of the given font name.
+    """Answers the path that is source of the given font name.
     If the path is already a valid font path, then aswer it unchanged.
     Answer None if the font cannot be found.
 

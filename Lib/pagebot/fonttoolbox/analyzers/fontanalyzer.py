@@ -29,7 +29,7 @@ class FontAnalyzer:
         return '<Analyzer of %s>' % self.font.info.fullName
 
     def __getitem__(self, glyphName):
-        """Answer the glyph analyzer of glyphName."""
+        """Answers the glyph analyzer of glyphName."""
         return self.font[glyphName].analyzer
 
     def _get_name(self):
@@ -75,7 +75,7 @@ class FontAnalyzer:
     #    C O U N T E R S
 
     def _get_horizontalCounters(self):
-        """Answer the counters of the H."""
+        """Answers the counters of the H."""
         if 'H' in self.font:
             self._horizontalCounters = self['H'].horizontalCounters
             # If not counters found in the 'H' this way, or more than 1, then second guess beaming the 'H' on 0,25 height

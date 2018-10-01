@@ -28,7 +28,7 @@ WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
 def value2Tuple4(v):
-    """Answer a tuple of 4 values. Can be used for colors and rectangles.
+    """Answers a tuple of 4 values. Can be used for colors and rectangles.
 
     >>> value2Tuple4(123)
     (123, 123, 123, 123)
@@ -87,7 +87,7 @@ def asSet(value):
     return value
 
 def interpolate(a, b, v, doRound=False):
-    """Answer the interpolated value of factor v between a and b. If doRound is True (default is False), then
+    """Answers the interpolated value of factor v between a and b. If doRound is True (default is False), then
     round the result before answering it."""
     i = a + (b-a) * v
     if doRound:
@@ -140,7 +140,7 @@ def none2Empty(value):
     return value
 
 def asDict(value, isRoot=True):
-    """Answer the value as dict as root. If the value itself is not a dict,
+    """Answers the value as dict as root. If the value itself is not a dict,
     answer it as dict(value=value). For lower levels than root, answer
     the plain value if is it a string or a number. Basic classed don't get
     translated when not called as root.
@@ -324,7 +324,7 @@ def path2ParentPath(path):
     return '/'.join(path.split('/')[:-1])
 
 def path2ScriptId(path):
-    """Answer the scriptId, derived from the __file__ of the main source."""
+    """Answers the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]
 
 def path2FormatPath(path, format=None):
@@ -350,7 +350,7 @@ def path2Name(path):
     return path.split('/')[-1]
 
 def path2Extension(path):
-    """Answer the file extension of path.
+    """Answers the file extension of path.
 
     >>> path2Extension('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'ufo'
@@ -386,7 +386,7 @@ def path2FontName(path, extensions=None):
 familyNameParts = re.compile('([A-Za-z]*)')
 
 def path2FamilyName(path):
-    """Answer the first A-Za-z part of the file name.
+    """Answers the first A-Za-z part of the file name.
 
     >>> path2FamilyName('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency'
@@ -400,7 +400,7 @@ path2GlyphIdName = path2FontName
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
 def path2StyleNameParts(pathOrName, extensions=None):
-    """Answer the fileName or name as set of unique parts that can be checked
+    """Answers the fileName or name as set of unique parts that can be checked
     for as style e.g. by the abbreviated style names in style.py.
     The parts a split on Cap(+Cap)(+lc) patterns.
     Note that the family name is also included, as often there is no difference
@@ -454,7 +454,7 @@ def font2Name(font):
     return name
 
 def font2FileName(font):
-    """Answer the font file name. In case of a new unsaved font,
+    """Answers the font file name. In case of a new unsaved font,
     answer *"Untitled"*."""
     return (font.path or 'Untitled').split('/')[-1]
 
@@ -469,13 +469,13 @@ def font2Path(font):
     return font.path
 
 def font2ID(font):
-    """Answer the unique record/adapter ID of the font/style. This can be the
+    """Answers the unique record/adapter ID of the font/style. This can be the
     unique database record id or the unique file path. For now we just answer
     the file path."""
     return font2Path(font)
 
 def font2FamilyID(font):
-    """Answer the unique record/adapter ID of the family of *font*. This can be
+    """Answers the unique record/adapter ID of the family of *font*. This can be
     the unique database record id of the font parent or the unique directory
     path of the font. For now we just answer the the location of the family
     plist file.
@@ -521,7 +521,7 @@ def family2UfoQueryName(font):
 #    G E N E R A T O R
 
 def uniqueID(obj=None):
-    """Answer unique Id as hex string, based on time and id(obj) if defined.
+    """Answers unique Id as hex string, based on time and id(obj) if defined.
 
     >>> id = int('0x' + uniqueID(), base=16)
     >>> isinstance(id, int)
@@ -535,7 +535,7 @@ def uniqueID(obj=None):
 #   T I M E
 
 def seconds2Date(seconds, year=1904):
-    """Answer TTF seconds converted to a datetime instance.
+    """Answers TTF seconds converted to a datetime instance.
 
     >>> seconds2Date(20, year=2018)
     datetime.datetime(2018, 1, 1, 0, 0, 20)
@@ -545,7 +545,7 @@ def seconds2Date(seconds, year=1904):
     return datetime.datetime(year, 1, 1, 0, 0, 0) + datetime.timedelta(seconds=seconds)
 
 def date2Seconds(dt):
-    """Answer the datetime converted to TTF seconds.
+    """Answers the datetime converted to TTF seconds.
 
     >>> dt = seconds2Date(20, year=2018)
     >>> date2Seconds(dt)
@@ -652,7 +652,7 @@ def hex2dec(s):
     return None
 
 def hex2char(hex):
-    """Answer the unicode char that matcher the hex value. Answer None if
+    """Answers the unicode char that matcher the hex value. Answer None if
     conversion fails.
 
     >>> hex(ord('A'))
@@ -921,7 +921,7 @@ def value2TagName(value):
     return ''.join(tagname)
 
 def object2SpacedString(o):
-    """Answer the object as string.
+    """Answers the object as string.
 
     >>> object2SpacedString(2)
     '2'
