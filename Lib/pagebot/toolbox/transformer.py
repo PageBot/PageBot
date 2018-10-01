@@ -403,7 +403,8 @@ def path2StyleNameParts(pathOrName, extensions=None):
     """Answers the fileName or name as set of unique parts that can be checked
     for as style e.g. by the abbreviated style names in style.py.
     The parts a split on Cap(+Cap)(+lc) patterns.
-    Note that the family name is also included, as often there is no difference
+
+    NOTE that the family name is also included, as often there is no difference
     between the family name and the style parts.
 
     >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo', ['ufo']))
@@ -413,7 +414,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
     ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
-    #from pagebot.constants import STYLE_REPLACEMENTS
+    from pagebot.cons.style import STYLE_REPLACEMENTS
     fontName = path2FontName(pathOrName, extensions)
     if fontName is None:
         return []
@@ -454,8 +455,8 @@ def font2Name(font):
     return name
 
 def font2FileName(font):
-    """Answers the font file name. In case of a new unsaved font,
-    answer *"Untitled"*."""
+    """Answers the font file name. In case of a new unsaved font, answers
+    *"Untitled"*."""
     return (font.path or 'Untitled').split('/')[-1]
 
 def font2Naked(font):

@@ -683,46 +683,6 @@ for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
                 d[value] = values
 # TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
 
-STYLE_REPLACEMENTS = (
-    # Pre-replacement in font names, to get standard non-CamelCase style names
-    # Works togehter with toolbox.transformer.path2StyleNameParts()
-    # From --> To pattern replacement.
-    # Weight
-    ('UltraLight', 'Ultralight'),
-    ('UltLt', 'Ultralight'),
-    ('SemiLight', 'Semilight'),
-    ('SemiBold', 'Semibold'),
-    ('SemBold', 'Semibold'),
-    ('ExtraBold', 'Extrabold'),
-    ('UltraBlack', 'Ultrablack'),
-    ('Ultra Black', 'Ultrablack'),
-    ('Ultra-Black', 'Ultrablack'),
-    ('Ultra_Black', 'Ultrablack'),
-    ('ExtrBlack', 'Extrablack'),
-    ('ExtBlack', 'Extrablack'),
-    ('ExBla', 'Extrablack'),
-    ('ExBlck', 'Extrablack'),
-
-    # Width
-    ('UltCnd', 'Ultracondensed'),
-    ('UltraCondensed', 'Ultracondensed'),
-    ('ExtraCondensed', 'Extracondensed'),
-    ('Ultra Condensed', 'Ultracondensed'),
-    ('Extra Condensed', 'Extracondensed'),
-    ('Ultra-Condensed', 'Ultracondensed'),
-    ('Extra-Condensed', 'Extracondensed'),
-    ('Ultra_Condensed', 'Ultracondensed'),
-    ('Extra_Condensed', 'Extracondensed'),
-
-    ('ExtraExtended', 'Extraextended'),
-    ('UltraExtended', 'Ultraextended'),
-    ('Extra Extended', 'Extraextended'),
-    ('Ultra Extended', 'Ultraextended'),
-    ('Extra-Extended', 'Extraextended'),
-    ('Ultra-Extended', 'Ultraextended'),
-    ('Extra_Extended', 'Extraextended'),
-    ('Ultra_Extended', 'Ultraextended'),
-)
 # Note that any conversion between RAL (paint) and RGB can only be a approximation.
 # Material colors by definition have a different range of possible colors than RGB.
 RAL_NAMERGB = {
