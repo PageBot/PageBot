@@ -59,7 +59,7 @@ class Element:
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
             nextElementName=None, prevElementName=None,
-            nextPageName=None, prevPageName=None,
+            nextPageName=None, prevPageName=None, thumbPath=None,
             bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
@@ -233,6 +233,8 @@ class Element:
         self.nextElementName = nextElementName # Name of the next flow element
         self.nextPageName = nextPageName # Name, identifier or index of the next page that nextElement refers to,
         self.prevPageName = prevPageName # if a flow must run over page boundaries.
+        # Optional storage for the a thumbnail image path visualizing this element. 
+        self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
         self.applyTemplate(template, elements)
