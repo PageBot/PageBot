@@ -28,15 +28,14 @@ from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
     DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_FILETYPE
 
 class FlatContext(BaseContext):
-    """A FlatContext instance combines the specific functions of the Flat
-    library, and offers a PageBot “standard” API, so it can be swapped with the
-    DrawBotContext. This way it also hides e.g. the type of BabelString
-    instance needed, and the type of HTML/CSS file structure to be created.
+    """The FlatContext implements the Flat functionality within the PageBot
+    framework.
 
     * xxyxyz.org/flat
     * xxyxyz.org/flat
 
     Text behavior:
+
     st = strike(font)
         st.size(size, leading=0.0, units=Pt.UNIT)
         st.color(color)
@@ -67,7 +66,6 @@ class FlatContext(BaseContext):
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
     # Default is point document, should not be changed. Units render to points.
-    #UNITS = 'mm'
     UNITS = 'pt'
 
     def __init__(self):
@@ -113,9 +111,6 @@ class FlatContext(BaseContext):
         self.fileType = DEFAULT_FILETYPE
 
         self._path = None # Collect path commnands here before drawing the path.
-
-    def __repr__(self):
-        return '<%s>' % self.name
 
     #   V A R I A B L E
 

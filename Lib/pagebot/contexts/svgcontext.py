@@ -15,8 +15,8 @@
 #
 #     https://svgwrite.readthedocs.io/en/master/
 #
-import shutil
 
+import shutil
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.svgbuilder import svgBuilder
@@ -30,7 +30,8 @@ from pagebot.toolbox.units import pt
 from pagebot.constants import FILETYPE_SVG
 
 class SvgContext(BaseContext):
-    """An SvgContext uses svgwrite to export as SVG drawing."""
+    """The SvgContext implements SVG functionality within the PageBot framework
+    using the svgwrite library to export a drawing."""
 
 
     # In case of specific builder addressing, callers can check here.
@@ -71,14 +72,14 @@ class SvgContext(BaseContext):
         self._path = None # Hold current open SVG path
 
     def newDocument(self, w, h):
-        """Ignore for SvgContext, as Drawing open automatic if first page is
-        created."""
+        """Ignore for SvgContext; Drawing opens automatically if first page
+        is created."""
         pass
 
     def saveDocument(self, path, multiPage=None):
-        """Select other than standard DrawBot export builders here.  Save the
+        """Select other than standard DrawBot export builders here. Save the
         current image as path, rendering depending on the extension of the path
-        file.  In case the path starts with "_export", then create it
+        file. In case the path starts with "_export", then create it
         directories.
 
         >>> context = SvgContext()
@@ -142,9 +143,10 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        oval = self._drawing.ellipse(center=upt((self._ox+x+w/2), (self._oy+y+h/2)), r=upt((w/2), (h/2)),
-                                             stroke_width=upt(self._strokeWidth),
-                                             stroke=self._svgStroke, fill=self._svgFill)
+        oval = self._drawing.ellipse(center=upt((self._ox+x+w/2),
+            (self._oy+y+h/2)), r=upt((w/2), (h/2)),
+            stroke_width=upt(self._strokeWidth), stroke=self._svgStroke,
+            fill=self._svgFill)
         self._drawing.add(oval)
 
     def circle(self, x, y, r):

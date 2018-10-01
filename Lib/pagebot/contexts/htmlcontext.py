@@ -19,17 +19,20 @@ from pagebot.contexts.strings.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):
-    """A HtmlContext instance builds all necessary for a website, taking the element.
-    Most of the building is done by the HtmlBuilder instance, stored as self.b.
-    Still we need this HtmlContext layer, as not all drawing can be done in html, so 
-    this context can decide to include SVG or pixel images for the HTML-representation
-    of certain types of elements.
-    
-    TODO: Add all methods compatible with DrawBotContext, even if empty functionality
-    for HTML/CSS.
+    """The HtmlContext builds all parts necessary for a website. Most of the
+    building is done by the HtmlBuilder instance, stored as self.b.
+
+    HtmlContext is needed, because not all drawing can be done in HTML.
+    Htmlcontext will decide to include SVG or pixel images for the
+    HTML-representation depending on the type of element.
+
+    TODO: Add all methods compatible with DrawBotContext, even if empty
+    functionality for HTML/CSS.
     """
-    useTags = True # Indication to Typesetter that by default tags should be included in output.
-    
+    # Indication to Typesetter that by default tags should be included in
+    # output.
+    useTags = True
+
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = HtmlString
     EXPORT_TYPES = ('html', 'css', 'js')
@@ -42,23 +45,23 @@ class HtmlContext(BaseContext):
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):
-        """Ignore by answering None, as HTML does bullets automatic."""
-        return None 
+        """Ignore by answering None, HTML creates bullets by default."""
+        return None
 
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
         # TODO: Implement as SVG.
         pass
-    
+
     def oval(self, x, y, w, h):
         # TODO: Implement as SVG.
         pass
-    
+
     def circle(self, x, y, r):
         # TODO: Implement as SVG.
         pass
-    
+
     def line(self, p1, p2):
         # TODO: Implement as SVG.
         pass
@@ -70,7 +73,7 @@ class HtmlContext(BaseContext):
         #return cls.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answer the (w, h) image size of the image file at path."""
+        """Answers the (w, h) image size of the image file at path."""
         return (0, 0)
         #return cls.b.imageSize(path)
 
@@ -80,14 +83,14 @@ class HtmlContext(BaseContext):
         self._fill = c
 
     setFillColor = fill # DrawBot compatible API
-      
+
     def stroke(self, c, w=None):
         self._stroke = c
         if w is not None:
             self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
-       
+
     def strokeWidth(self, w):
         self._strokeWidth = w
 

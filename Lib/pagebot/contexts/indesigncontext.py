@@ -30,8 +30,8 @@ from pagebot.toolbox.color import noColor, blackColor, Color
 from pagebot.contexts.strings.indesignstring import InDesignString
 
 class InDesignContext(BaseContext):
-    """An InDesignContext instance combines the specific functions of the
-    InDesign JS-API This way it way it hides e.g. the type of BabelString."""
+    """The InDesignContext implements the InDesign JS-API within the PageBot
+    framework."""
 
     # In case of specific builder addressing, callers can check here.
     isInDesign = True

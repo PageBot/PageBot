@@ -16,13 +16,13 @@
 #
 
 import os
+import traceback
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
-from pagebot.toolbox.units import pt, upt, point2D, Angle # Render units to points
+from pagebot.toolbox.units import pt, upt, point2D, Angle
 from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION,
         FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
         FILETYPE_MOV, DEFAULT_FILETYPE)
-import traceback
 
 try:
     import drawBot
@@ -47,16 +47,16 @@ except (AttributeError, ImportError):
     drawBotBuilder = NoneDrawBotBuilder()
 
 class DrawBotContext(BaseContext):
-    """A DrawBotContext instance combines the specific functions of the DrawBot
-    library This way it way it hides e.g. the type of BabelString instance
-    needed, and the type of HTML/CSS file structure to be created."""
+    """The DrawBotContext implements the DrawBot functionality within the
+    PageBot framework."""
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = stringClass
-    EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG, FILETYPE_GIF, FILETYPE_MOV)
+    EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG,
+            FILETYPE_GIF, FILETYPE_MOV)
 
     def __init__(self):
         """Constructor of DrawBotContext if drawBot import exists.
@@ -71,17 +71,19 @@ class DrawBotContext(BaseContext):
         >>> context.name
         'DrawBotContext'
         """
-        # The context builder "cls.b" is the main drawBot library, that contains all
-        # drawing calls in as used regular DrawBot scripts.
+        # The context builder "cls.b" is  drawBot which executes actual drawing
+        # calls, similar to function calls in DrawBot scripts.
         self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
-        self._path = None # Hold current open DrawBot path
-        self.fileType = DEFAULT_FILETYPE # Holds the extension as soon as the export file path is defined.
+        self._path = None # Hold current open DrawBot path.
+
+        # Holds the extension as soon as the export file path is defined.
+        self.fileType = DEFAULT_FILETYPE
 
     #   S C R E E N
 
     def screenSize(self):
-        """Answer the current screen size in DrawBot. Otherwise default is to
+        """Answers the current screen size in DrawBot. Otherwise default is to
         do nothing.
 
         >>> context = DrawBotContext()
@@ -153,7 +155,9 @@ class DrawBotContext(BaseContext):
         try:
             Variable(variableUI, globalVariables)
         except self.b.misc.DrawBotError:
-            pass # Ingore if there is a DrawBot context, but not running inside DrawBot.
+            # Ignore if there is a DrawBot context, but not running inside
+            # DrawBot.
+            print(traceback.format_exc())
 
     #   D R A W I N G
 
@@ -283,7 +287,7 @@ class DrawBotContext(BaseContext):
         self.drawPath(path)
 
     def getGlyphPath(self, glyph, p=None, path=None):
-        """Answer the DrawBot path. Allow optional position offset and path,
+        """Answers the DrawBot path. Allow optional position offset and path,
         in case we do recursive component drawing.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -340,9 +344,8 @@ class DrawBotContext(BaseContext):
         return flattenedContours
 
     def onBlack(self, p, path=None):
-        """Answers the boolean flag if the single point (x, y) is on black.
-        For now this only works in DrawBotContext.
-        """
+        """Answers if the single point (x, y) is on black.  For now this only
+        works in DrawBotContext."""
         if path is None:
             path = self.path
         p = point2D(p)
@@ -429,7 +432,7 @@ class DrawBotContext(BaseContext):
             self._path.closePath()
 
     def getFlattenedPath(self, path=None):
-        """Use the NSBezier flatten path. Answer None if the flattened path
+        """Use the NSBezier flatten path. Answers None if the flattened path
         could not be made."""
         if path is None:
             path = self.path
@@ -587,11 +590,11 @@ class DrawBotContext(BaseContext):
         return None
 
     def listOpenTypeFeatures(self, fontName):
-        """Answer the list of opentype features available in the named font."""
+        """Answers the list of opentype features available in the named font."""
         return self.b.listOpenTypeFeatures(fontName)
 
     def installedFonts(self, patterns=None):
-        """Answer a list of all fonts (name or path) that are installed in the
+        """Answers a list of all fonts (name or path) that are installed in the
         OS.
 
         >>> from pagebot import getContext
@@ -677,7 +680,7 @@ class DrawBotContext(BaseContext):
             self.b.fontSize(fspt) # Render fontSize unit to value
 
     def textSize(self, bs, w=None, h=None, align=None):
-        """Answer the width/height of the formatted string for an optional
+        """Answers the width/height of the formatted string for an optional
         given w or h."""
         return self.b.textSize(bs.s, width=w, height=h, align=align)
 
@@ -829,11 +832,11 @@ class DrawBotContext(BaseContext):
         return self.b.imagePixelColor(path, ppt)
 
     def imageSize(self, path):
-        """Answer the (w, h) image size of the image file at path."""
+        """Answers the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
     def numberOfImages(self, path):
-        """Answer the number of images in the file referenced by path."""
+        """Answers the number of images in the file referenced by path."""
         return self.b.numberOfPages(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
@@ -863,7 +866,7 @@ class DrawBotContext(BaseContext):
         self.restore()
 
     def getImageObject(self, path):
-        """Answer the ImageObject that knows about image filters.
+        """Answers the ImageObject that knows about image filters.
         For names and parameters of filters see:
         http://www.drawbot.com/content/image/imageObject.html
 

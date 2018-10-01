@@ -35,7 +35,7 @@ class BaseContext:
     EXPORT_TYPES = None
 
     def __repr__(self):
-        return '<%s>' % self.__class__.__name__
+        return '<%s>' % self.name
 
     #   S C R E E N
 
@@ -137,7 +137,6 @@ class BaseContext:
 
         # Answer the set as sorted list, increasing x, from left to right.
         return sorted(intersections)
-
 
     #   P A T H
 
