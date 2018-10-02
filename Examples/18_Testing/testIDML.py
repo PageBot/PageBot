@@ -15,6 +15,7 @@
 # Test InDesign Markup Language.
 #
 import traceback
+from pagebot import getResourcesPath
 
 IDML = False
 
@@ -25,7 +26,8 @@ except:
     print(traceback.format_exc())
 
 def testIDML():
-    pkg = idml.IDMLPackage("test.idml")
+    path = getResourcesPath() + "/templates/test.idml"
+    pkg = idml.IDMLPackage(path)
     print(pkg.font_families)
     l = [e.get("Name") for e in pkg.font_families]
     print(l)
