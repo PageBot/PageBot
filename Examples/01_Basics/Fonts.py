@@ -27,11 +27,6 @@ def showAll():
     print('Number of fonts found: %d' % len(fontPaths))
     import glob
     tfp = getTestFontsPath()
-    '''
-    print(glob.glob('%s/*' % tfp))
-    roboto = tfp + '/google/roboto'
-    print(glob.glob('%s/*' % roboto))
-    '''
     pbFonts = getPageBotFontPaths()
     print('Number of fonts shipped with PageBot: %d' % len(pbFonts))
     print(sorted(pbFonts.keys()))

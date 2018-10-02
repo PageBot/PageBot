@@ -23,12 +23,18 @@ __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
 def getRootPath():
-    """Answers the root path on the platform for the PageBot module."""
+    """Answers the root path of the PageBot module for the current platform."""
     return ROOT_PATH
 
 def getResourcesPath():
-    """Answers the root path on the platform for the PageBot module."""
+    """Answers the resources path within the PageBot module for the current
+    platform."""
     return RESOURCES_PATH
+
+def getDefaultFontPath():
+    """Answers the default font path within the PageBot module for the current
+    platform."""
+    return DEFAULT_FONT_PATH
 
 def getContext(contextType='DrawBot'):
     """

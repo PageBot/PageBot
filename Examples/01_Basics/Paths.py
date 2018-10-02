@@ -11,22 +11,24 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     Basics.py
+#     Paths.py
 #
-#     Shows how use basic pagebot functions.
-#    
+#     Shows how get pagebot paths.
+#
 from pagebot import *
 import glob
 
-def doBasics():
+def showPaths():
 	rootPath = getRootPath()
 	print(rootPath)
 	resourcesPath = getResourcesPath()
 	print(resourcesPath)
 	print(glob.glob('%s/*' % resourcesPath))
+	defaultFontPath = getDefaultFontPath()
+	print(defaultFontPath)
 	context = getContext()
 	print(context)
 	context = getContext('Flat')
 	print(context)
 
-doBasics()
+showPaths()
