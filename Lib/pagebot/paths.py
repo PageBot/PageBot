@@ -15,6 +15,7 @@
 #     paths.py
 #
 #
+#    NOTE: should stay at root level, else derived path won't be correct.
 
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'

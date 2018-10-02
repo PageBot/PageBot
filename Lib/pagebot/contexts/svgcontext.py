@@ -64,12 +64,9 @@ class SvgContext(BaseContext):
         self._ox = pt(0) # Origin set by self.translate()
         self._oy = pt(0)
         self._rotate = 0
-
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
-
         self.newDrawing()
-
         self._path = None # Hold current open SVG path
 
     def newDocument(self, w, h):
@@ -164,9 +161,9 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        circle = self._drawing.circle(center=upt((self._ox+x+r), (self._oy+y+r)), r=upt(r),
-                                      stroke_width=upt(self._strokeWidth),
-                                      stroke=self._svgStroke, fill=self._svgFill)
+        circle = self._drawing.circle(center=upt((self._ox+x+r),
+            (self._oy+y+r)), r=upt(r), stroke_width=upt(self._strokeWidth),
+            stroke=self._svgStroke, fill=self._svgFill)
         self._drawing.add(circle)
 
     def line(self, p1, p2):
@@ -181,9 +178,9 @@ class SvgContext(BaseContext):
         >>> context.saveDocument(path)
         >>> #r = os.system('open %s' % path)
         """
-        line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])), upt((self._ox+p2[0]), (self._oy+p2[1])),
-                                  stroke_width=upt(self._strokeWidth),
-                                  stroke=self._svgStroke)
+        line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])),
+                upt((self._ox+p2[0]), (self._oy+p2[1])),
+                stroke_width=upt(self._strokeWidth), stroke=self._svgStroke)
         self._drawing.add(line)
 
     def fill(self, c):

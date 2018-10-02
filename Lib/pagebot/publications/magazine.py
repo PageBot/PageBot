@@ -58,7 +58,7 @@ class PageSpread(Element):
     def __init__(self, spread, pageNumber=0, **kwargs):
         Element.__init__(self, **kwargs)
         self.spread = spread
-        if len(spread) and spread[0] is not None:
+        if spread and spread[0] is not None:
             ThumbPage(spread[0], pageNumber, w=self.w/2, h=self.h, padding=0, parent=self, style=self.style)
         if len(spread) > 1 and spread[1] is not None:
             ThumbPage(spread[1], pageNumber+1, x=self.w/2, w=self.w/2, h=self.h, padding=0, parent=self, style=self.style)

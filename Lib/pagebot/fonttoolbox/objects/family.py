@@ -202,10 +202,10 @@ class Family:
             self.addFont(fontOrPath)
 
     def addFont(self, fontOrPath):
-        """And the fonts to the family. This can be a list of Font instances, a
-        list of font names or a list of font paths.
+        """Add the fonts to the family. This can be a list of Font instances, a
+        list of font names or a list of font paths."""
         """
-        """
+        FIXME: restore doctests.
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Regular')
         >>> path = font.path

@@ -16,17 +16,20 @@
 #     https://svgwrite.readthedocs.io/en/master/
 #     sudo pip install svgwrite
 #
+import traceback
 from pagebot.contexts.builders.nonebuilder import NoneSvgBuilder
 
-try: 
+try:
 	import svgwrite
 	svgBuilder = svgwrite
 	# Id to make builder hook name. Views will try to call e.build_svg()
-	svgBuilder.PB_ID = 'svg' 
+	svgBuilder.PB_ID = 'svg'
 
 except ImportError:
-    svgBuilder = NoneSvgBuilder()
+    # Throws an exception if svgwrite is not installed.
+    print(traceback.format_exc())
     print('Using NoneSvgBuilder instead of svgwriter')
+    svgBuilder = NoneSvgBuilder()
 
 
 if __name__ == '__main__':

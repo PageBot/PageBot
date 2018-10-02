@@ -26,7 +26,6 @@ def showContexts():
 	print(context)
 	context = getContext('DrawBot') # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
 	print(context)
-
 	context = getContext(contextType='Flat') # Force Flat.
 	print(context)
 	context = getContext(contextType='Flat') # Buffered in DEFAULT_CONTEXT this time.
