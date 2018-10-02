@@ -14,12 +14,13 @@
 
 print('\nChecking installation paths... \n')
 
-import sys, os
+import sys, os, shutil
 print('System: %s, %s' % (os.name, sys.platform))
 print('Python version is:')
 print(sys.version)
 print('Which Python?')
 print(sys.executable)
+from pagebot import getResourcesPath
 
 CLEAN = True
 
@@ -63,19 +64,24 @@ else:
     # Testing Sass.
     css = sass.compile(string='a { b { color: blue; } }')
     print(css)
-    css = sass.compile(filename='test.scss')
+    path = getResourcesPath() + '/templates/test.scss'
+    css = sass.compile(filename=path)
     print(css)
 
-    test_scss = open('test.scss', 'w')
+
+    #test_scss = open('test.scss', 'w')
     import os, os.path
-    if not os.path.exists('css'):
-        os.mkdir('css')
+    
+    for f in ('css', 'sass'):
+        if not os.path.exists(f):
+            os.mkdir(f)
+    shutil.copy(path, 'sass')
     sass.compile(dirname=('sass', 'css'), output_style='compressed')
     with open('css/test.css') as example_css:
-        print(example_css.read())
+        print(example_css)
 
     # Export with HtmlBuilder.
     from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
     hb = HtmlBuilder()
     print(hb)
-    hb.compileScss('sass/test.scss')
+    hb.compileScss(path)
