@@ -86,6 +86,12 @@ class Magazine(Publication):
         return spreads
     spreads = property(_get_spreads)
 
+    def newDocument(self):
+
+        doc = Document(w=self.w, h=self.h, originTop=False,
+            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
+            baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
+
     def exportMap(self, cols=None, maxSpread=None, path=None, showGrid=False, showPadding=False):
         """Export the magazine map into a PDF document at path.
         """
@@ -99,56 +105,68 @@ class Magazine(Publication):
 
         date = now()
         if path is None:
-            path = '_export/%d-%02d-%02d-%02d %s.pdf' % (date.year, date.month, date.day, date.hour, self.name.replace(' ', '_'))
+            path = '_export/%d-%02d-%02d-%02d %s.pdf' % (date.year, date.month, date.day, date.hour, 
+                self.name.replace(' ', '_'))
 
-        doc = Document(w=self.w, h=self.h, originTop=False,
-            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
-            baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
+        doc = self.newDocument()
 
-        font = findFont('Upgrade-Regular')
+        font = self.style['font']
         headStyle = dict(font=font, fontSize=pt(24))
         labelStyle = dict(font=font, fontSize=pt(7))
 
+        # Set to True if padding and grid to be shown. The magazine map has the same layout
+        # as the main magazine pages, which allows the map export to be used as full page
+        # illustration in the magazine. :)
         view = doc.view
-        view.showPadding = showPadding
+        view.showPadding = showPadding 
         view.showGrid = showGrid
 
-        page = None
-        pn = 0
-        headerH = pt(80)
+        page = None # Force first page to initialize.
+        pn = 0 # Pagenumber: TODO--> Translate to real pagenumber, this is only page index.
+        headerH = pt(80) # Height of the header box.
 
-        spreads = self.spreads
-        for index in range(0, len(spreads), maxSpread):
+        spreads = self.spreads # Run property that accumulates all spreads width Page instances.
+        for index in range(0, len(spreads), maxSpread): # Take chunks of spreads for each page.
             pageSpreads = spreads[index:index+maxSpread]
-            if pageSpreads:
+            if pageSpreads: # If there still are spreads in the chunk, process them on a new page.
                 if page is None:
-                    page = doc[1]
+                    page = doc[1] # Start at first (autoPage) of the document.
                 else:
-                    page = page.next
-                page.padding = self.padding
-
+                    page = page.next # Otherwise automatic create a new page in the document.
+                page.padding = self.padding # Set the padding of this page from self.
+                # Create a new header text box for each page.
+                # TODO: This could contain more info from self, number of pager, etc.
                 bs = self.context.newString('Map %s' % self.name, style=headStyle)
                 newTextBox(bs, x=page.pl, y=page.pb + page.ph - headerH, w=page.pw, h=headerH, parent=page)
 
+                # Set coordinate of the first spread thumbnail to be positioned.
                 x = page.pl
                 y = page.pb + page.ph - sh - headerH
 
-                for pageSpread in pageSpreads:
+                for pageSpread in pageSpreads: # Process all spreads in the chunk of this page.
                     ps = PageSpread(pageSpread, pn, x=x, y=y, w=sw, h=sh, parent=page, style=labelStyle)
                     pn += 2
-                    x += sw + page.gw
-                    if x >= page.pw:
+                    x += sw + page.gw # Position of next spread thumbnail
+                    if x >= page.pw: # If all columns used, then continue on the next row.
                         x = page.pl
                         y -= ps.h
 
         # TODO: Why is export so slow?
         doc.export(path)
 
-    def composePart(self, name, showGrid=False, showPadding=False):
-        pass
+    def composePartOfBook(self, name):
+        part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
+        doc = self.newDocument()
+        #for page in part.elements:
+        #    doc.
 
-    def exportPart(self, name, path=None, showGrid=False, showPadding=False):
-        pass
+        return doc
 
+    def exportPart(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False):
+        if path is None:
+            path = '_export/%s-%s.pdf' % (self.name, name)
+
+        doc = self.composePartOfBook(showGrid)
+        doc.export(path)
 
 
