@@ -277,15 +277,20 @@ class Website(Publication):
     >>> t = website.templates['default']
     >>> t.size
     (1000pt, 1000pt)
-    >>> page = website.pages[1][0]
-    >>> page.template.name
-    'default'
-    >>> website.padding
-    (42pt, 30pt, 36pt, 30pt)
-    >>> page.elements # No elements on these pages.
-    []
-    >>> mn = MobileNavigation(parent=page, name='My Mobile Page Navigation')
-    >>> #page.elements
+    >>> print(website)
+    <Website:Home Site (0pt, 0pt, 100pt, 100pt)>
+    >>> print(website.pages)
+
+    #>>> page = website.pages[1][0]
+    #>>> print(page)
+    #>>> page.template.name
+    #'default'
+    #>>> website.padding
+    #(42pt, 30pt, 36pt, 30pt)
+    #>>> page.elements # No elements on these pages.
+    #[]
+    #>>> mn = MobileNavigation(parent=page, name='My Mobile Page Navigation')
+    #>>> #page.elements
     """
 
     DEFAULT_CONTEXT = HtmlContext()
