@@ -24,7 +24,9 @@ setup(
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
-    package_data={'': ['*.txt', '*.md', '*.ttf', '*.png', '*.pdf', '*.jpg', '*.designspace']},
+    package_data={'': ['*.txt', '*.md', '*.ttf', '*.png', '*.pdf', '*.jpg',
+        '*.designspace', '*.scss', '*.css', '*.js', '*.idml', '*.indd',
+        '*.html', '*.xml']},
     setup_requires=['fontTools'],
     license = 'MIT',
     classifiers = [
