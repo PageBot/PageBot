@@ -21,7 +21,7 @@ from pagebot.conditions import *
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.dating import now
-from pagebot.fonttoolbox.objects.font import findFont
+#from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import LEFT, RIGHT
 
 class ThumbPage(Element):
@@ -88,7 +88,7 @@ class Magazine(Publication):
 
     def newDocument(self):
 
-        doc = Document(w=self.w, h=self.h, originTop=False,
+        return Document(w=self.w, h=self.h, originTop=False,
             gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
             baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
 
@@ -105,7 +105,7 @@ class Magazine(Publication):
 
         date = now()
         if path is None:
-            path = '_export/%d-%02d-%02d-%02d %s.pdf' % (date.year, date.month, date.day, date.hour, 
+            path = '_export/%d-%02d-%02d-%02d %s.pdf' % (date.year, date.month, date.day, date.hour,
                 self.name.replace(' ', '_'))
 
         doc = self.newDocument()
@@ -118,7 +118,7 @@ class Magazine(Publication):
         # as the main magazine pages, which allows the map export to be used as full page
         # illustration in the magazine. :)
         view = doc.view
-        view.showPadding = showPadding 
+        view.showPadding = showPadding
         view.showGrid = showGrid
 
         page = None # Force first page to initialize.
