@@ -437,7 +437,7 @@ table {
     def compileScss(self, scssPath, cssPath=None, compressed=True):
         u"""For now using sass to support SCSS. SASS support could be added later."""
         if cssPath is None:
-            cssPath = scssPath + '.css'
+            cssPath = scssPath.replace('.scss', '.css')
         css = sass.compile(filename=scssPath)#, output_style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))
         f = codecs.open(cssPath, 'w', 'utf-8')
         f.write(css)

@@ -69,7 +69,7 @@ class Circle(Oval):
         >>> from pagebot.toolbox.units import pt
         >>> e = Circle(r=pt(30))
         >>> e.xy, e.size
-        ((-15pt, -15pt), (30pt, 30pt))
+        ((-30pt, -30pt), (60pt, 60pt))
         """
         if r is not None:
             w = h = 2*r

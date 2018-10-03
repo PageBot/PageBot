@@ -65,13 +65,14 @@ else:
     css = sass.compile(string='a { b { color: blue; } }')
     print(css)
     path = getResourcesPath() + '/templates/test.scss'
+    import os.path
+    print(os.path.exists(path))
     css = sass.compile(filename=path)
     print(css)
 
-
     #test_scss = open('test.scss', 'w')
     import os, os.path
-    
+
     for f in ('css', 'sass'):
         if not os.path.exists(f):
             os.mkdir(f)
@@ -84,4 +85,4 @@ else:
     from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
     hb = HtmlBuilder()
     print(hb)
-    hb.compileScss(path)
+    hb.compileScss(path, cssPath = 'css/testHtmlBuilder.css')
