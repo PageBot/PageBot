@@ -112,7 +112,16 @@ script:
 - python3 Lib/pagebot/elements/variablefonts/variableeditor.py
 - python3 Lib/pagebot/elements/variablefonts/variableglyphs.py
 - python3 Lib/pagebot/elements/variablefonts/variablescatter.py
+- python3 Lib/pagebot/elements/views/__init__.py
+- python3 Lib/pagebot/elements/views/baseview.py
+- python3 Lib/pagebot/elements/views/gitview.py
+- python3 Lib/pagebot/elements/views/googleappsview.py
+- python3 Lib/pagebot/elements/views/googlecloudview.py
+- python3 Lib/pagebot/elements/views/htmlview.py
+- python3 Lib/pagebot/elements/views/mampview.py
 - python3 Lib/pagebot/elements/views/pageview.py
+- python3 Lib/pagebot/elements/views/pagemapview.py
+- python3 Lib/pagebot/elements/views/siteview.py
 - python3 Lib/pagebot/fonttoolbox/objects/family.py
 - python3 Lib/pagebot/fonttoolbox/objects/font.py
 - python3 Lib/pagebot/fonttoolbox/objects/fontinfo.py
