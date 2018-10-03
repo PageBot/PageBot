@@ -61,7 +61,7 @@ class Left2Col(ColCondition):
 		return e.isLeftOnCol(self.col, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2Col(self.col), e, score)
 
 class Right2Col(ColCondition):
@@ -78,21 +78,21 @@ class Right2Col(ColCondition):
 	0pt
 	>>> result = e1.solve() # Solve the conditions
 	>>> e2.x # Solved position
-	75mm
+	130mm
 	>>> e2.conditions = [Right2Col(3)] # Change condition and solve again
 	>>> result = e1.solve()
 	>>> e2.x # Solved position
-	130mm
+	185mm
 	>>> e2.conditions = [Right2Col(4)] # Change condition and solve again
 	>>> result = e1.solve()
 	>>> e2.x # Solved position
-	185mm
+	240mm
 	"""
 	def test(self, e):
 		return e.isRightOnCol(self.col, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2Col(self.col), e, score)
 
 class Fit2ColSpan(ColCondition):
@@ -101,7 +101,7 @@ class Fit2ColSpan(ColCondition):
 		return e.isLeftOnCol(self.col, self.tolerance) and e.isFitOnColSpan(self.col, self.colSpan, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
@@ -110,7 +110,7 @@ class Top2Row(RowCondition):
 		return e.isTopOnRow(self.row, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Row(self.row), e, score)
 
 class Bottom2Row(RowCondition):
@@ -119,7 +119,7 @@ class Bottom2Row(RowCondition):
 		return e.isBottomOnRow(self.row, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.bottom2Row(self.row), e, score)
 
 class Fit2RowSpan(RowCondition):
@@ -128,7 +128,7 @@ class Fit2RowSpan(RowCondition):
 		return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowSpan(self.row, self.rowSpan, self.tolerance)
 
 	def solve(self, e, score):
-		if not self.test(e): # Only try to solve if condition test fails. 
+		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.top2Row(self.row), e, score)
 			self.addScore(e.fit2RowSpan(self.row, self.rowSpan), e, score)
 

@@ -258,11 +258,17 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
     - location -- a dictionary of axis tag and value {"wght": 0.75, "wdth": -0.5}
 
     >>> vf = findFont('RobotoDelta-VF')
+    >>> print(vf)
+    <Font RobotoDelta-VF>
     >>> instance = makeInstance(vf.path, dict(opsz=8))
     >>> instance
     <Font RobotoDelta-VF-opsz8>
+    >>> len(instance)
+    241
     >>> len(instance['H'].points)
     12
+    >>> instance['Egrave']
+    <PageBot Glyph Egrave Pts:0/Cnt:0/Cmp:2>
     >>> len(instance['Egrave'].components)
     2
     """

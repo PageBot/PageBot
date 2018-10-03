@@ -151,7 +151,10 @@ class TextBox(Element):
     baselines = property(_get_baselines)
 
     def getRounded2Grid(self, y, roundDown=False):
-        """Answers the value y rounded to the page baseline grid, based on the current position self.
+        """Answers the value y rounded to the page baseline grid, based on the
+        current position self.
+
+        FIXME: rounding differences across OS'es. Add doctests here.
         """
         start = self.baselineGridStart or self.pt
         baseline = self.baselineGrid
@@ -562,8 +565,9 @@ class TextBox(Element):
     # Text conditional movers
 
     def baseline2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
-        so the baseline of self.textLines[index] matches the parent grid.
+        """Move the text box down (increasing line.y value, rounding up) in
+        vertical direction, so the baseline of self.textLines[index] matches
+        the parent grid.
 
         >>> from pagebot.document import Document
         >>> from pagebot.conditions import *
