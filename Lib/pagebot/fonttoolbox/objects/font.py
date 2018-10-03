@@ -260,7 +260,9 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
     >>> vf = findFont('RobotoDelta-VF')
     >>> print(vf)
     <Font RobotoDelta-VF>
-    >>> instance = makeInstance(vf.path, dict(opsz=8))
+    >>> print(len(vf))
+    188
+    >>> instance = makeInstance(vf.path, dict(opsz=8), cached=False)
     >>> instance
     <Font RobotoDelta-VF-opsz8>
     >>> len(instance)
@@ -272,11 +274,13 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
     >>> len(instance['Egrave'].components)
     2
     """
-
-    # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
+    # make a custom file name from the location e.g.
+    # VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""
+
     if isinstance(pathOrVarFont, Font):
         pathOrVarFont = pathOrVarFont.path
+
     varFont = Font(pathOrVarFont, lazy=lazy)
     ttFont = varFont.ttFont
 
@@ -295,11 +299,11 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
             os.makedirs(targetDirectory)
         dstPath = targetDirectory + targetFileName
 
+    # Instance does not exist as file. Create it.
     if not cached or not os.path.exists(dstPath):
-        # Instance does not exist as file. Create it.
-
         # Set the instance name IDs in the name table
         platforms=((1, 0, 0), (3, 1, 0x409)) # Macintosh and Windows
+
         for platformID, platEncID, langID in platforms:
             familyName = ttFont['name'].getName(1, platformID, platEncID, langID) # 1 Font Family name
             if not familyName:
@@ -332,10 +336,12 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
                 glyf[name].getCompositeMaxpValues(glyf).maxComponentDepth
                 if glyf[name].isComposite() else 0,
                 name))
+
         for glyphName in glyphNames:
             variations = gvar.variations[glyphName]
             coordinates,_ = _GetCoordinates(ttFont, glyphName)
             origCoords, endPts = None, None
+
             for var in variations:
                 scalar = supportScalar(loc, var.axes)#, ot=True)
                 if not scalar: continue
@@ -377,8 +383,6 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
     # Answer instance.
     return Font(dstPath, lazy=lazy)
-
-
 
 class Font:
     """
