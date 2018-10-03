@@ -205,6 +205,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
@@ -227,6 +228,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
@@ -259,6 +261,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> path = '_export/PageNameInfo.pdf'
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -516,6 +519,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
@@ -565,6 +569,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
@@ -669,6 +674,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
@@ -767,6 +773,7 @@ class PageMapView(BaseView):
         https://en.wikipedia.org/wiki/Printing_registration.
 
         >>> from pagebot import getContext
+        >>> from pagebot.elements.views.pageview import PageView
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
@@ -794,6 +801,7 @@ class PageMapView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
