@@ -445,13 +445,16 @@ def getUnicodeRangesByScriptTag(scriptTag):
     script = otScriptTags[scriptTag]
     script = script.replace(" v.2", "")
     bits = set()
+
     for rangeName in _openTypeScriptToUnicodeRangeNameMapping.get(script, [script]):
         try:
             bit, rangeMinimum, rangeMaximum  = getUnicodeRangeByName(rangeName)
         except KeyError:
-            raise KeyError("no unicode ranges euivalent for '%s' script found" % scriptTag)
+            raise KeyError("no unicode ranges equivalent for '%s' script found" % scriptTag)
         bits.add(bit)
+
     ranges = []
+
     for bit in sorted(bits):
         for name, rangeMinimum, rangeMaximum in getUnicodeRangeByBit(bit):
             ranges.append((bit, name, rangeMinimum, rangeMaximum))

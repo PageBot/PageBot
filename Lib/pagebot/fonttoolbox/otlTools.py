@@ -1007,7 +1007,10 @@ class GlyphDeleter(LookupTraverser):
     #
 
     def deleteGlyphs_SingleSubstFormat1(self, subTable, glyphNames):
-        for input, output in subTable.mapping.items():
+        from copy import deepcopy
+        mappingCopy = deepcopy(subTable.mapping)
+
+        for input, output in mappingCopy.items():
             if input in glyphNames or output in glyphNames:
                 del subTable.mapping[input]
         if not subTable.mapping:

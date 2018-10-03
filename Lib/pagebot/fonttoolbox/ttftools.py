@@ -16,7 +16,7 @@
 import re
 from pagebot.fonttoolbox import otlTools
 from pagebot.fonttoolbox.unicodes import unicoderanges
-
+import traceback
 
 #
 # Entry points
@@ -549,6 +549,7 @@ class FontSubsetter(TTFTraverser):
             except KeyError:
                 import sys
                 sys.stderr.write("pruneOTScripts: can't find unicode range for %r script\n" % scriptTag)
+                print(traceback.format_exc())
             else:
                 for bit, name, rangeMinimum, rangeMaximum in ranges:
                     if bit in rangeBits:
@@ -634,17 +635,22 @@ class FontSubsetter(TTFTraverser):
         raise NotImplementedError("JSTF table is not yet supported for subsetting")
 
     def subsetFont_glyf(self, table, glyphsToDelete):
-        # we must load (and thus decompile) all glyphs to dereference the glyph IDs in components
+        """We have to load (and thus decompile) all glyphs to dereference the
+        glyph IDs in components.  """
         for gn in table.keys():
             g = table[gn]
+
         for glyphName in glyphsToDelete:
             del table.glyphs[glyphName]  # do not do del table[glyphName] as that affects the glyphOrder too soon
+
         del table.glyphOrder  # this will force the glyf table to fetch the new glyph order from the font
 
     def subsetFont_cmap(self, table, glyphsToDelete):
         for cmap in table.tables:
             if hasattr(cmap, "cmap"):
-                for code, glyphName in cmap.cmap.items():
+                from copy import deepcopy
+                mapCopy = deepcopy(cmap.cmap)
+                for code, glyphName in mapCopy.items():
                     if glyphName in glyphsToDelete:
                         if cmap.format != 0:
                             del cmap.cmap[code]
