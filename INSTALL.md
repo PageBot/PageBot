@@ -46,14 +46,14 @@ PageBot needs other Open Source libraries. Some may already be included in DrawB
 * https://github.com/fonttools/fonttools
 * https://pypi.org/project/pyobjc/ (OS X only, included in DrawBot)
 * https://github.com/typesupply/vanilla (OS X only, included in DrawBot)
-* https://github.com/TypeNetwork/flat (not needed when using DrawBot only)
+* https://github.com/PageBot/flat (not needed when using DrawBot only)
 * https://sass.github.io/libsass-python
 
 To install them, you can use a package manager such as `pip`, `easy_install` or `homebrew` or you can do it manually by downloading them from the Python Index and running the setup scripts.
 
 ## Notes
 
-* PageBot now runs entirely on Python 3 and DrawBotApp 3. Python 2.7 is no longer supported. We have ported the flat library to Python 3 and are currently maintaining it at https://github.com/TypeNetwork/flat.
+* PageBot now runs entirely on Python 3 and DrawBotApp 3. Python 2.7 is no longer supported. We have ported the flat library to Python 3 and are currently maintaining it at https://github.com/PageBot/flat.
 
 * The default `Python` may not be the same one that DrawBotApp uses. On some OSX systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
 

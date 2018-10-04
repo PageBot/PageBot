@@ -41,13 +41,13 @@ MIT based open source: [https://github.com/typemytype/drawbot](https://github.co
 
 This respository hold the entire *pagebot* module in *Lib/pagebot* and a large number of relatively simple scripts in *Examples* that illustrate specific functions and coding patterns.
 
-MIT-license open source: [https://github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
+MIT-license open source: [https://github.com/PageBot/PageBot](https://github.com/PageBot/PageBot)
 
 ### PageBotExamples git-repository
 
 Here you can find some more extensive examples.
 
-MIT-license open source: [https://github.com/TypeNetwork/PageBotExamples](https://github.com/TypeNetwork/PageBotExamples)
+MIT-license open source: [https://github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
 
 
 ### PageBot Install and Setup.

@@ -119,7 +119,7 @@ If all goes well, you should be able to view the updated documentation at [https
 INFO    -  Cleaning site directory 
 INFO    -  Building documentation to directory: /Users/michiel/Code/PageBot/site 
 INFO    -  Copying '/Users/michiel/Code/PageBot/site' to 'gh-pages' branch and pushing to GitHub. 
-INFO    -  Your documentation should shortly be available at: https://TypeNetwork.github.io/PageBot/ 
+INFO    -  Your documentation should shortly be available at: https://pagebot.github.io/PageBot/ 
 ``` 
 
 ### Doctest

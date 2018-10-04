@@ -15,7 +15,7 @@ It is available both as Python library context for [DrawBot](https://www.drawbot
 
 Initiated by [TYPETR](https://typetr.typenetwork.com), the aim is to create a system for scriptable applications generating high quality typographic documents for a variety of output media, that support high quality fonts.
 
-PageBot is available under MIT Open Source license from [github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot)
+PageBot is available under MIT Open Source license from [github.com/PageBot/PageBot](https://github.com/PageBot/PageBot)
 
 A manual, generated automatically with PageBot, is at [typenetwork.github.io/PageBot](https://typenetwork.github.io/PageBot)
 
@@ -96,7 +96,7 @@ box = page.select('main')
 
 ## Types of publications to develop
 
-* TypeNetwork stationary and publications as scripted templates
+* PageBot stationary and publications as scripted templates
 * Specimens for TN library
 * Recreation of legacy type specimens as PageBot templates
 * Magazines

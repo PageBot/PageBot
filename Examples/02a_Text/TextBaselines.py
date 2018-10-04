@@ -77,13 +77,13 @@ typography.
 
 * The core library, tutorial and basic examples for PageBot are available under
 MIT Open Source license from
-[github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot).
+[github.com/PageBot/PageBot](https://github.com/PageBot/PageBot).
 * Desktop application examples can be found in the separate a repository,
 available under MIT Open Source license at
-[github.com/TypeNetwork/PageBotApp](https://github.com/TypeNetwork/PageBotApp).
+[github.com/PageBot/PageBotApp](https://github.com/PageBot/PageBotApp).
 * A growing library of real document examples are bundled in Examples,
 available under MIT Open Source license from
-[github.com/TypeNetwork/PageBotExamples](https://github.com/TypeNetwork/PageBotExamples)
+[github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
 * A website fully generated with PageBot can be found at
 [designdesign.space](http://designdesign.space). It also includes entry points
 for studies and workshops on how to work with PageBot.

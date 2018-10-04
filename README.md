@@ -11,15 +11,15 @@ designed documents that use high quality typography.
 
 - The core library, tutorial and basic examples for PageBot are available under
 MIT Open Source license from
-[github.com/TypeNetwork/PageBot](https://github.com/TypeNetwork/PageBot).
+[github.com/PageBot/PageBot](https://github.com/PageBot/PageBot).
 - Desktop application examples can be found in the separate a repository,
 available under MIT Open Source license at
-[github.com/TypeNetwork/PageBotApp](https://github.com/TypeNetwork/PageBotApp).
+[github.com/PageBot/PageBotApp](https://github.com/PageBot/PageBotApp).
 - A growing library of real document examples are bundled in Examples, available
 under MIT Open Source license from
-[github.com/TypeNetwork/PageBotExamples](https://github.com/TypeNetwork/PageBotExamples)
+[github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
 - A manual, generated automatically with PageBot, is at
-[typenetwork.github.io/PageBot](https://typenetwork.github.io/PageBot)
+[pagebot.github.io/PageBot](https://pagebot.github.io/PageBot)
 - A website fully generated with PageBot can be found at
 [designdesign.space](http://designdesign.space). It also includes entry points
 for studies and workshops on how to work with PageBot.
@@ -45,9 +45,9 @@ test all functions. Issue reports and contributions are highly appreciated!
 
 We keep track of known bugs, development and future features in the issue tracker:
 
- * https://github.com/TypeNetwork/PageBot/issues
- * https://github.com/TypeNetwork/PageBot/projects
- * https://github.com/TypeNetwork/PageBot/milestones
+ * https://github.com/PageBot/PageBot/issues
+ * https://github.com/PageBot/PageBot/projects
+ * https://github.com/PageBot/PageBot/milestones
 
 ## Current Functionality
 
@@ -117,7 +117,7 @@ illustration.
 
 ## Types of Publications
 
-* TypeNetwork stationary and publications as scripted templates
+* PageBot stationary and publications as scripted templates
 * Specimens for TN library
 * Recreation of legacy type specimens as PageBot templates
 * Magazines

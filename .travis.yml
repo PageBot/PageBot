@@ -38,7 +38,7 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
-- wget https://github.com/TypeNetwork/flat/archive/master.zip
+- wget https://github.com/PageBot/flat/archive/master.zip
 - unzip master.zip
 - cd flat-master
 - python3 setup.py install

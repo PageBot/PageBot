@@ -56,7 +56,7 @@ BASE_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/"
 
 # Old data
 #EXPORT_GIF = '_export/FontBureauFamilies.gif'
-#BASE_PATH = '/FontDevelopment/TypeNetwork/WebType-Raw/WT-TTF/'
+#BASE_PATH = '/FontDevelopment/WebType-Raw/WT-TTF/'
 
 def findFontPaths(basePath, paths=None):
     """Answer the recursive list of TTF non-Italic font paths that are in directory basePath."""

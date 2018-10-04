@@ -17,7 +17,7 @@ from setuptools import setup, find_packages
 setup(
     name='pagebot',
     description='Scripted page layout framework for Python.',
-    url="https://github.com/TypeNetwork/PageBot",
+    url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanchez, Dave Crossland',
     author_email = 'r@petr.org',
     version='0.6',

@@ -1,11 +1,11 @@
 # -----------------------------------------------------------------------------
-#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens 
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting usage of DrawBot, www.drawbot.com
 #     Supporting usage of Flat, https://github.com/xxyxyz/flat
 # -----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ EXPORT_PATH = '_export/OS2VarFamily.pdf'
 
 #EXPORT_PATH = '_export/TYPETR-Upgrade.pdf'
 #BASE_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/"
-    
+
 #EXPORT_PATH = '_export/GoogleFontFamilies.pdf'
 #BASE_PATH = u"/Users/petr/Desktop/git/fonts/ofl/"
 
@@ -57,7 +57,7 @@ EXPORT_PATH = '_export/OS2VarFamily.pdf'
 
 # Old data
 #EXPORT_GIF = '_export/FontBureauFamilies.gif'
-#BASE_PATH = '/FontDevelopment/TypeNetwork/WebType-Raw/WT-TTF/'
+#BASE_PATH = '/FontDevelopment/WebType-Raw/WT-TTF/'
 
 def findFontPaths(basePath, paths=None):
     u"""Answer the recursive list of TTF non-Italic font paths that are in directory basePath."""
@@ -88,7 +88,7 @@ def checkInterpolation(fonts):
     for font in fonts:
         glyphNames = glyphNames.union(set(font.keys()))
         pathFonts[font.path] = font # So we can make a sorted list.
-        
+
     for glyphName in glyphNames:
         ok = []
         error = []
@@ -101,36 +101,36 @@ def checkInterpolation(fonts):
                 report.append('Glyph "%s" does not exist in font "%s"' % (glyphName, font))
                 continue
             g = font[glyphName]
-            
+
     return glyphs
- 
+
 def guessVarFamilyFromPaths(basePath, name=None):
-    u"""Initialize by guessing the self._font axis locations. 
+    u"""Initialize by guessing the self._font axis locations.
     """
-    paths = findFontPaths(basePath)    
+    paths = findFontPaths(basePath)
     name = name or path2Name(basePath)
     return VarFamily(name, paths)
 
 class VarFamily(Family):
-    u"""A VarFamily contains a set of font paths that potentially form that masters to create a 
+    u"""A VarFamily contains a set of font paths that potentially form that masters to create a
     VariableFont export. But the collection may not be up for creation yet, that is why it is not
     a "VarFont".
     """
     # The quality of automatic parametric axis creation depends on the type of design and if
     # there are interpolating sources (e.g. for compensation of stem width in 'xtra' and 'xopq'.
-    # Currently supporting these (automatic) parametric axes, if they can be derived from the 
+    # Currently supporting these (automatic) parametric axes, if they can be derived from the
     # available source fonts.
     XTRA = 'xtra' # Fixed H-stems, variable H-counter, variable margins
     XOPQ = 'xopq' # Variable H-stems, fixed H-counter, variable margins
     XTRK = 'xtrk' # Variable H-stems, variable H-counter, fixed margins
-    YTRA = 'ytra' # 
+    YTRA = 'ytra' #
     YOPQ = 'yopq'
     YLTC = 'yltc'
     YTUC = 'ytuc'
     YTDE = 'ytde'
     YTAS = 'ytas'
     PARAMETRIC_AXES = [XTRA, XOPQ, YTRA, YOPQ, YLTC, YTUC, YTDE, YTAS]
-    
+
     def __init__(self, name, pathsOrFonts=None):
         self.name = name
         self._fonts = {} # Key is font.path
@@ -140,17 +140,17 @@ class VarFamily(Family):
         # Add the fonts. Also initialize self._originFont
         for pathOrFont in pathsOrFonts or []:
             self.addFont(pathOrFont)
-            
+
     def __len__(self):
         return len(self._fonts)
-        
+
     def __getitem__(self, path):
         return self._fonts[path]
- 
+
     def _get_fonts(self):
         return self._fonts.values()
     fonts = property(_get_fonts)
-    
+
     def _get_originFont(self):
         u"""Answer the cashed font that is defined as origin. Try to guess if not defined."""
         if not self._originFont:
@@ -161,14 +161,14 @@ class VarFamily(Family):
                 self._originFont.info.weightClass = 400
         return self._originFont
     originFont = property(_get_originFont)
-    
+
     def _get_parametricAxisFonts(self):
         u"""Generate the dictionary with parametric axis fonts. Key is the parametric axis name,
         value is the font instance (there can only be one font per axis). If the fonts don't
-        exist as cached files, they are created. The font currently under self.originFont is 
+        exist as cached files, they are created. The font currently under self.originFont is
         used a neutral, for which all delta's are 0."""
         origin = self.originFont
-        
+
         # Create directory for the parametric axis fonts, if it does not exist.
         paFontDir = path2ParentPath(origin.path) + '/@axes'
         if not os.path.exists(paFontDir):
@@ -185,7 +185,7 @@ class VarFamily(Family):
             self._parametricAxisMetrics[axisName] = origin.analyzer.stems
         return self._parametricAxisFonts
     parametricAxisFonts = property(_get_parametricAxisFonts)
-    
+
     def _get_parametricAxisMetrics(self):
         u"""The parametric axis metrcs is a compilation of all measures and calculation of
         values, required to generate the parameteric axis fonts."""
@@ -193,7 +193,7 @@ class VarFamily(Family):
             self._parametricAxisMetrics = {}
         return self._parametricAxisMetrics
     parametricAxisMetrics = property(_get_parametricAxisMetrics)
-           
+
     def addFont(self, pathOrFont):
         self._originFont = None # Reset to force new initialization of the property.
         if isinstance(pathOrFont, str): # If it is a path, then open a new Font instance.
@@ -208,7 +208,7 @@ class VarFamily(Family):
             self._metrics[path] = dict(path=path, stems=fa.stems, bars=fa.bars)
         return self._metrics
     metrics = property(_get_metrics)
-    
+
     def getClosestOS2Weight(self, weightClass=ORIGIN_OS2_WEIGHT_CLASS):
         u"""Answer the list of fonts (there can be more that one, accidentally located at that position.
         Default is the origin at weightClass == ORIGIN_OS2_WEIGHT_CLASS (400)."""
@@ -219,7 +219,7 @@ class VarFamily(Family):
                 os2Weights[diff] = []
             os2Weights[diff].append(font)
         return os2Weights[min(os2Weights.keys())] # Answer the set of fonts with the smallest difference.
-        
+
     def getOS2WeightWidthClasses(self):
         u"""Answer the (x, y) dictionary, with (OS/2 weight class, OS/2 width class) as key and fonts list as value
         (as often there are be multiple fonts on the same (x, y) if not filled with the right OS/2 value."""
@@ -246,7 +246,7 @@ class VarFamily(Family):
                 weightWidthLocations[location] = []
             weightWidthLocations[location].append(font)
         return weightWidthLocations
-            
+
     def getMinMaxWidth(self):
         u"""Answer the minimal/max widths of H."""
         minWidth = sys.maxint
@@ -254,7 +254,7 @@ class VarFamily(Family):
         for font in self._fonts.values():
             minWidth = min(font[GLYPH].width, minWidth)
             maxWidth = max(font[GLYPH].width, maxWidth)
-        return minWidth, maxWidth    
+        return minWidth, maxWidth
 
     def getMinMaxStem(self):
         u"""Answer the minimal/max stems of H."""
@@ -263,10 +263,10 @@ class VarFamily(Family):
         for metrics in self.metrics.values():
             minStem = min(min(metrics['stems'].keys()), minStem)
             maxStem = max(max(metrics['stems'].keys()), maxStem)
-        return minStem, maxStem    
+        return minStem, maxStem
 
     #   C O N S T R U C T  P A R A M E T R I C  F O N T S
-    
+
     def makeParametricFonts(self, axisName):
         u"""Answer the two Font instances for calculated parametric Min and Max."""
         axisFontMin, axisFontMax = self.parametricAxisFonts[axisName]
@@ -289,31 +289,31 @@ def drawOS2Label(varFamily, fonts, weight, width):
     R = 20
     x, y = weight, width * 100 # Scale OS/2 width to 1000
     oval(x-R/2, y-R/2, R, R)
-    if varFamily.originFont in fonts: 
+    if varFamily.originFont in fonts:
         # If one of these is the guessed origin font, then draw marker
         c.fill(noColor)
         c.stroke(Color(1, 0, 0), 2)
         R = 27
         oval(x-R/2, y-R/2, R, R)
-    return x, y    
+    return x, y
 
 def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
         x, y = p
         #print f.info.styleName, f.info.weightClass, f.info.widthClass
-        
+
         if not GLYPH in f:
             print('###', GLYPH, 'not in font', f.path)
             return
-            
+
         glyphH = f[GLYPH]
         if not glyphH.width:
             print('###', GLYPH, 'No width', f.path)
             return
-        
+
         stems = glyphH.analyzer.stems
         # Draw marker on actual position of H.stem and H.weight as green dot
         stemValues = stems.keys()
-    
+
         s = 0.05 * 1000/f.info.unitsPerEm
         leading = 2048/f.info.unitsPerEm
         c.stroke(noColor)
@@ -324,16 +324,16 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
         drawPath(glyphH.path)
         restore()
         y -= leading+50
-        
+
         save()
         pathLabel = '-'.join(path2Name(f.path).split('-')[1:])
         #label = path2Name(f.path)
         if fAxis is not None:
-            label = '@'+fAxis 
+            label = '@'+fAxis
         elif fIndex is None:
             label = ''
         else:
-            label = '#%d ' % fIndex 
+            label = '#%d ' % fIndex
         label += '%s\n(%s)\n%d' % (pathLabel.replace('.ttf', '').replace('_','\n').replace('-','\n'), f.info.styleName, f.info.weightClass)
         fs = FormattedString(label, style=dict(fontSize=10, align=CENTER))
         tw, th = textSize(fs)
@@ -345,26 +345,26 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             stem = min(stemValues)
             stemS = '%d'%stem
             normalizedStemS = '%0.2f'%(stem*1000/f.info.unitsPerEm)
-            
+
             # XOPQ (counter) + H.stem == H.width - H.stem - H.lsb - H.rsb
-            width = glyphH.width - stem - glyphH.leftMargin - glyphH.rightMargin 
-    
+            width = glyphH.width - stem - glyphH.leftMargin - glyphH.rightMargin
+
             c.fill(Color(0, 0.5, 0))
             c.stroke(noColor)
             R = 16
             weightLoc, widthLoc = stem, width/2
             c.oval(weightLoc-R/2, widthLoc-R/2, R, R)
             if fAxis is not None:
-                label = '@'+fAxis 
+                label = '@'+fAxis
             elif fIndex is None:
-                label = ''               
+                label = ''
             else:
                 label = '#%d\n' % fIndex
             bs = c.newString(label + ('S:%d\nW:%d\n%d' % (weightLoc, widthLoc, f.info.weightClass)), style=dict(fontSize=10, xTextAlign='center', textFill=Color(0)))
             tw, th = c.textSize(bs)
             c.text(bs, (weightLoc-tw/2, widthLoc-24))
 
-            if varFamily.originFont is f: 
+            if varFamily.originFont is f:
                 # If one of these is the guessed origin font, then draw marker
                 c.fill(noColor)
                 c.stroke(Color(0, 0.5, 0), 2) # Stroke color and width
@@ -385,12 +385,12 @@ def drawFontLabel(p, varFamily, f, fIndex=None, fAxis=None):
             x1 = x2 = 0
             #print 'No stem for', glyphH.font
 
-        
+
         exportCSV.write('%s,%d,%s,%s,%s,%d,%d,%d,%d,%d\n' % (f.path.split('/')[-1],
             f.info.unitsPerEm,
             stemS, normalizedStemS,
             x2-x1, (x2-x1)*1000/f.info.unitsPerEm,
-            #normalizedWidth, 
+            #normalizedWidth,
             #normalizedWeight,
             #guessedOS2Width,
             #guessedOS2Weight,
@@ -402,11 +402,11 @@ def getCalculatedWeightWidth(varFamily, font, weight, width):
     print(varFamily.originFont)
     px = py = pWeight = pWidth = 0
     return px, py, pWeight, pWidth
-       
+
 def drawCalculatedWeightWidthArrow(pOS2, p, pWeight, pWidth, varFamily, f, fIndex):
-    pass    
-    
-          
+    pass
+
+
 def drawFamilyOverview(path):
     varFamily = guessVarFamilyFromPaths(path)
     if not varFamily: # No TTF fonts there?
@@ -420,7 +420,7 @@ def drawFamilyOverview(path):
     #print checkInterpolation(varFamily.fonts)
     #print '=== Parametric axis fonts:', varFamily.parametricAxisFonts
     #print '=== Parametric axis metrics:', varFamily.parametricAxisMetrics
-    
+
     newPage(1200, 1200)
     # Draw design space for width/weight
     c.translate(100,100)
@@ -445,7 +445,7 @@ def drawFamilyOverview(path):
             bs = c.newString(str(y), style=dict(fontSize=12, fill=blackColor))
             tw, th = c.textSize(bs)
         c.text(bs, (-10-tw, 1000/10*y-th/2))
-    
+
     # Draw axis labels
     bs = c.newString('OS/2 weight class ', style=dict(fontSize=12, fill=Color(1, 0, 0)))
     bs += c.newString('&', style=dict(fontSize=12, fill=Color(0)))
@@ -461,15 +461,15 @@ def drawFamilyOverview(path):
     tw, th = c.textSize(bs)
     c.text(bs, (0, 60))
     c.restore()
-    
-    # Draw family name title    
+
+    # Draw family name title
     bs = c.newString(varFamily.name, style=dict(fontSize=24))
     c.text(bs, (0, 1000+30))
 
     fIndex = 1
     # Find widths and weights as defined by OS/2 and plot them as dots + names
     for (weight, width), fonts in varFamily.getOS2WeightWidthClasses().items():
-    
+
         # Draw positions according to OS/2 values
         x, y = drawOS2Label(varFamily, fonts, weight, width)
 
@@ -481,20 +481,20 @@ def drawFamilyOverview(path):
             # Calculate the percentage of width and weight and their position in the graph
             #px, py, pWeight, pWidth = getCalculatedWeightWidth(varFamily, font, weight, width)
             #drawCalculatedWeightWidthArrow((x, y), (px, py), pWeight, pWidth, varFamily, f, fIndex)
-                    
+
     if varFamily is not None:
         xtraMinFont, xtraMaxFont = varFamily.makeParametricFonts(varFamily.XTRA)
-        #print xtraMinFont, xtraMaxFont 
+        #print xtraMinFont, xtraMaxFont
         x, y = drawOS2Label(varFamily, [xtraMinFont], xtraMinFont.info.weightClass, xtraMinFont.info.widthClass)
         drawFontLabel((x, y), varFamily, xtraMinFont, fAxis=varFamily.XTRA+'_min')
 
         x, y = drawOS2Label(varFamily, [xtraMaxFont], xtraMaxFont.info.weightClass, xtraMaxFont.info.widthClass)
         drawFontLabel((x, y), varFamily, xtraMaxFont, fAxis=varFamily.XTRA+'_max')
-            
+
     return varFamily
-    
+
 #exportCSV = open(CSV_PATH, 'w')
-#exportCSV.write('StyleName,em,H-stem,%H-stem,H-width,%H-width,OS/2-width,OS/2-weight,capHeight,%capHeight\n')   
+#exportCSV.write('StyleName,em,H-stem,%H-stem,H-width,%H-width,OS/2-width,OS/2-weight,capHeight,%capHeight\n')
 #for path in PATHS:
 index = 0
 for path in os.listdir(BASE_PATH):#[:20]:
@@ -508,7 +508,7 @@ for path in os.listdir(BASE_PATH):#[:20]:
     if index > 3:
         break
 exportCSV.close()
-    
+
 saveImage(EXPORT_PATH)
 #saveImage(EXPORT_GIF)
-     
+
