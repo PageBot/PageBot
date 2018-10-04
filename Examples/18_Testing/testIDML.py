@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -40,7 +40,15 @@ def testIDML():
 
     #with pkg.prefix("main") as f:
 
+def testPDFImport():
+    path = getResourcesPath() + "/templates/test.idml"
+    pdfpath = getResourcesPath() + "/templates/test.pdf"
+
+    with idml.IDMLPackage(path) as idml_file:
+        with idml_file.import_pdf(pdfpath, at="/Root/modules/module[0]") as f:
+            f.export_xml()
 
 if IDML:
-    testIDML()
+    #testIDML()
+    testPDFImport()
 
