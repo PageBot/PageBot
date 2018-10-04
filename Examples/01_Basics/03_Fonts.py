@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     Fonts.py
+#     03_Fonts.py
 #
 #     Shows how to get fonts.
 #

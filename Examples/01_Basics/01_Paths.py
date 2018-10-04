@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     Paths.py
+#     01_Paths.py
 #
 #     Shows how get pagebot paths.
 #

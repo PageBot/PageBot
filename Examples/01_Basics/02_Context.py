@@ -13,7 +13,7 @@ from pagebot import getContext
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseContext.py
+#     02_Context.py
 #
 #     Shows how to get different types of contexts.
 

@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseDocument.py
+#     05_Document.py
 #
 #     Shows how to start a document and export it to PNG and PDF in the simplest steps.
 #
