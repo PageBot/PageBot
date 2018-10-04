@@ -38,14 +38,14 @@ class Placer(Element):
     >>> view = doc.getView()
     >>> e.build(view, pt(0, 0))
 
-    >>> from pagebot.contexts.flatcontext import FlatContext 
+    >>> from pagebot.contexts.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
     >>> e = Placer(parent=page, x=0, y=20, w=page.w, h=3)
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
-    >>> c.newPage(w, h) 
+    >>> c.newPage(w, h)
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy
     (0pt, 20pt)
@@ -56,8 +56,8 @@ class Placer(Element):
     """
     DEFAULT_FILL = color(0.8, 0.8, 0.8)
 
-    def __init__(self, fill=noColor, **kwargs):  
-        if fill is None:
+    def __init__(self, fill=noColor, **kwargs):
+        if fill is noColor:
             fill = self.DEFAULT_FILL
         Element.__init__(self, fill=fill, **kwargs)
 

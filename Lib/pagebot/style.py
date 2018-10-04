@@ -107,11 +107,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # combined as in [(x1, y1), ...]
         folds = None,
 
-        # Position of origin. DrawBot has y on bottom-left. In PageBot it is optional. Default is top-left.
-        # Note that the direcion of display is always upwards. This means that the position of text and elements
-        # goes downward from the top, they are not flipped vertical. It is up to the caller to make sure
-        # there is enough space for elements to show themselves on top of a given position.
-        # originTop often goes with yAlign = TOP.
+        # Position of origin. DrawBot has y on bottom-left. In PageBot it is
+        # optional. Default is top-left.  Note that the direcion of display is
+        # always upwards. This means that the position of text and elements
+        # goes downward from the top, they are not flipped vertical. It is up
+        # to the caller to make sure there is enough space for elements to show
+        # themselves on top of a given position. originTop often goes with
+        # yAlign = TOP.
         originTop = False, # TODO: Setting to  default True has currently positioning bugs.
 
         # Alignment of origin on element. Note that formatted text string are aligned by the xTextAlign attribute.
@@ -119,11 +121,12 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
-        # Although it is common to talk about the "margins" on a page, as the space between elements
-        # and the side of the page, this naming is not conform the current CSS definition.
-        # To guarantee compatibility with CSS export, it seems better to use the same naming.
-        # Margins define the space outside an element (or page) around the object.
-        # Padding defines the space inside the element.
+        # Although it is common to talk about the "margins" on a page, as the
+        # space between elements and the side of the page, this naming is not
+        # conform the current CSS definition.  To guarantee compatibility with
+        # CSS export, it seems better to use the same naming.  Margins define
+        # the space outside an element (or page) around the object. Padding
+        # defines the space inside the element.
 
         # Margins, outside element box. Can contain number values or Unit instances.
         mt = pt0, # Margin top
@@ -133,14 +136,16 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         mzf = pt0, # Margin “near” front in z-axis direction, closest to viewer.
         mzb = pt0, # Margin “far” back in z-axis direction.
 
-        # Basic grid units in 3 directions. In case it holds a number it interprets as pt(value), points as 1/72".
-        # Otherwise a Unit instance should be used.
+        # Basic grid units in 3 directions. In case it holds a number it
+        # interprets as pt(value), points as 1/72". Otherwise a Unit instance
+        # should be used.
         xUnits = u, # Base unit for Dutch/Swiss typography :)
         yUnits = u,
         zUnits = u,
 
-        # Padding where needed, inside elemen box. Can contain number values or Unit instances.
-        # Multiplication order (u*7 instead of 7*u) matters, in case u is a Unit instance.
+        # Padding where needed, inside elemen box. Can contain number values or
+        # Unit instances.  Multiplication order (u*7 instead of 7*u) matters,
+        # in case u is a Unit instance.
         pt = u*7, # Padding top, identical to default start of baseline grid
         pl = u*7, # Padding left
         pr = u*6, # Padding right
@@ -149,8 +154,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         pzb = pt0, # Padding ”far” back in z-axis direction.
 
         # Borders, independent for all sides, value is thickness of the line.
-        # None will show no border. Single value > 0 shows black line of that thickness.
-        # Other options need to be store in dictionary value.
+        # None will show no border. Single value > 0 shows black line of that
+        # thickness. Other options need to be store in dictionary value.
         # Borders hold dictionaries of format
         # border = dict(strokeWidth=3, line=lineType, stroke=color(1, 0, 0, 0,5), dash=(4,4))
         # where lineType is one of (INLINE, ONLINE, OUTLINE)
@@ -159,16 +164,21 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         borderRight = None, # Border right
         borderBottom = None, # Border bottom
 
-        # Grid definitions, used by static media as well as CSS display: grid; exports.
-        # gridX, gridY and gridZ are optional lists of grid line positions, to allow the use of non-repeating grids.
-        # The format is [(width1, gutter1), (width2, gutter2), (None, 0)] in case different gutters are needed.
-        # If the format is [width1, width2, (width3, gutter3)], then the missing gutters are used from gw or gh.
-        # If this paramater is set, then the style values for column width "cw" and column gutter "gw" are ignored.
-        # If a width is None, it is assumed to fill the rest of the available space. If there are multiple widths
-        # defined as None, then the remaining width is equally devided from the element.parent.w
-        # If the width is a float between 0..1 or a string with format "50%" then these are interpreted as percentages.
-        # If there are multiple None widths, then their values are calculated from an equal division of available space.
-        # It is up to the caller to make sure that the grid values fit the width of the current element.
+        # Grid definitions, used by static media as well as CSS display: grid;
+        # exports.  gridX, gridY and gridZ are optional lists of grid line
+        # positions, to allow the use of non-repeating grids.  The format is
+        # [(width1, gutter1), (width2, gutter2), (None, 0)] in case different
+        # gutters are needed.  If the format is [width1, width2, (width3,
+        # gutter3)], then the missing gutters are used from gw or gh.  If this
+        # paramater is set, then the style values for column width "cw" and
+        # column gutter "gw" are ignored.  If a width is None, it is assumed to
+        # fill the rest of the available space. If there are multiple widths
+        # defined as None, then the remaining width is equally devided from the
+        # element.parent.w If the width is a float between 0..1 or a string
+        # with format "50%" then these are interpreted as percentages. If
+        # there are multiple None widths, then their values are calculated from
+        # an equal division of available space.  It is up to the caller to make
+        # sure that the grid values fit the width of the current element.
         #
         # HTML/CSS builders convert to:
         # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap,

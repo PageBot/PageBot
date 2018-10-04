@@ -35,8 +35,9 @@ def timeStampLong():
     return Dating.timeStampLong()
 
 def uniqueId(size=0):
-    """The uniqueId method answers a unique number (as string) of size length concatenated
-    timestamps. Minimum length of the number is 18 digits, or else string will not be unique.
+    """The uniqueId method answers a unique number (as string) of size length
+    concatenated timestamps. Minimum length of the number is 18 digits, or else
+    string will not be unique.
 
     >>> len(uniqueId())
     18
@@ -83,14 +84,12 @@ def monthDays(year, month):
         return 30
 
 def checkDateTime(date):
-    """
-
-    The checkDateTime answers the date if it is a date. If date is None, then answer None. If
-    date is a string, then convert to datetime. Check on the month and day boundaries. Answer the same type that date
-    was. Note that we do not check if date was already a datetime. This method is especially made to set database fields
-    with dates, where that None will result in a NULL value for that field.
-
-    """
+    """The checkDateTime answers the date if it is a date. If date is None,
+    then answer None. If date is a string, then convert to datetime. Check on
+    the month and day boundaries. Answer the same type that date was. Note that
+    we do not check if date was already a datetime. This method is especially
+    made to set database fields with dates, where that None will result in a
+    NULL value for that field."""
     if not date: # Check on None or empty string
         return None
     if not isinstance(date, datetime):
@@ -185,12 +184,9 @@ def year(year):
     return Dating(year=year, month=1, day=1)
 
 def newdatetime(date):
-    """
-    The newdatetime method answers a new datetime instance. If the date is
-    None, then answer None. If date is a string, then convert to
-    datetime. Check on the month and day boundaries.
-
-    """
+    """The newdatetime method answers a new datetime instance. If the date is
+    None, then answer None. If date is a string, then convert to datetime.
+    Check on the month and day boundaries."""
     if date is None:
         return None
     if not isinstance(date, datetime):
@@ -198,8 +194,9 @@ def newdatetime(date):
     return date
 
 class Duration:
-    """The Duration class contains a duration in time. It can e.g. be used to add to a datetime
-    instance with a new date as result.
+    """The Duration class contains a duration in time. It can e.g. be used to
+    add to a datetime instance with a new date as result.
+
     All common arithmetic applies to a Duration instance.
 
     >>> Duration(3)
@@ -215,13 +212,10 @@ class Duration:
     """
     def __init__(self, days=0, seconds=0, microSeconds=0, milliSeconds=0, minutes=0, hours=0,
             weeks=0, td=None):
-        """
-
-        An extension of the builtin datetime.timedelta class, extending to millennia to match SQL's INTERVAL type
-        Note that by itself, a duration of months is meaningless due to diffing month lengths.
-        But when doing date arithmetic, we can figure it out.
-
-        """
+        """An extension of the builtin datetime.timedelta class, extending to
+        millennia to match SQL's INTERVAL type Note that by itself, a duration
+        of months is meaningless due to diffing month lengths. But when doing
+        date arithmetic, we can figure it out."""
         if td is not None:
             self.timedelta = td
         else:
@@ -352,23 +346,23 @@ class Duration:
         return datetime.timedelta.resolution
 
 class Dating:
-    """
-    The newdate method answers a new datetime instance. If the date is
-    None, then answer None. If date is a string, then convert to
-    datetime. Check on the month and day boundaries.
+    """The newdate method answers a new datetime instance. If the date is None,
+    then answer None. If date is a string, then convert to datetime. Check on
+    the month and day boundaries.
 
-    Initialize the current date if the date is equal to now
-    Initialize on first day of the week if year and week are defined
-    Initialize from existing datetime if "dt" is defined
-    Initialize from datetime string, date and time separated by white space.
-    Initialize from date string (identical to the result of self.date) if defined
-    Initialize from time string (identical to the result of self.time) if defined
-    Initialize from (year, month, day) if all of them are defined.
-    Otherwise raise an error
+    - Initialize the current date if the date is equal to now
+    - Initialize on first day of the week if year and week are defined
+    - Initialize from existing datetime if "dt" is defined
+    - Initialize from datetime string, date and time separated by white space.
+    - Initialize from date string (identical to the result of self.date) if defined
+    - Initialize from time string (identical to the result of self.time) if defined
+    - Initialize from (year, month, day) if all of them are defined.
+    - Otherwise raise an error
 
     If the trimvalues attribute is set to False (default is True) then the
-    input values of the date are <em>not</em> trimmed to their minimum and maximum values. This checking is done in
-    context for days in months and years.
+    input values of the date are _not_ trimmed to their minimum and
+    maximum values. This checking is done in context for days in months and
+    years.
 
     >>> #Dating(date='now') # 2018-03-15 13:50:55
     >>> Dating(date='2018-11-23')
@@ -639,8 +633,9 @@ class Dating:
 
     def __lt__(self, dating):
         """Answers True if self is in the past of date dt as in self < dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy < self.</br>
+        Note that in evaluating the condition the difference in time is taken
+        into account as well.  Use self.dateNumber < dt.dateNumber to test on
+        date comparison only instead of dy < self.
 
         >>> dating1 = Dating(date='2019-11-23')
         >>> dating2 = Dating(date='2018-11-23') # Same date, later in time
@@ -652,9 +647,11 @@ class Dating:
         return False
 
     def __le__(self, dating):
-        """Answers True if self is in the past of or equal to date dt as in self <= dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
+        """Answers True if self is in the past of or equal to date dt as in
+        self <= dt.  Note that in evaluating the condition the difference in
+        time is taken into account as well.  Use self.dateNumber <
+        dt.dateNumber to test on date comparison only instead of dy <=
+        self.
 
         >>> dt1 = Dating(date='2018-11-25')
         >>> dt2 = Dating(date='2018-11-23')
@@ -666,9 +663,11 @@ class Dating:
         return False
 
     def __gt__(self, dating):
-        """Answers True if self is in the future of or equal to date dt as in self > dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
+        """Answers True if self is in the future of or equal to date dt as in
+        self > dt.  Note that in evaluating the condition the difference in
+        time is taken into account as well.  Use self.dateNumber <
+        dt.dateNumber to test on date comparison only instead of dy <=
+        self.
 
         >>> dt1 = Dating(date='2019-11-25')
         >>> dt2 = Dating(date='2018-11-23')
@@ -682,9 +681,11 @@ class Dating:
         return False
 
     def __ge__(self, dating):
-        """Answers True if self is in the future of or equal to date dt as in self >= dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
+        """Answers True if self is in the future of or equal to date dt as in
+        self >= dt.  Note that in evaluating the condition the difference in
+        time is taken into account as well.  Use self.dateNumber <
+        dt.dateNumber to test on date comparison only instead of dy <=
+        self.
 
         >>> dt1 = Dating(date='2019-11-25')
         >>> dt2 = Dating(date='2018-11-23')
@@ -696,9 +697,11 @@ class Dating:
         return False
 
     def __ne__(self, dating):
-        """Answers True if self is in the past of or equal to date dt as in self != dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy <= self.</br>
+        """Answers True if self is in the past of or equal to date dt as in
+        self != dt.  Note that in evaluating the condition the difference in
+        time is taken into account as well.  Use self.dateNumber <
+        dt.dateNumber to test on date comparison only instead of dy <=
+        self.
 
         >>> dating1 = Dating(date='2019-11-25')
         >>> dating2 = Dating(date='2018-11-23')
@@ -710,9 +713,10 @@ class Dating:
         return False
 
     def __eq__(self, dating):
-        """Answers True if self is equal to date dt as in self == dt.
-        Note that in evaluating the condition the difference in time is taken into account as well.
-        Use self.dateNumber < dt.dateNumber to test on date comparison only instead of dy < self.
+        """Answers True if self is equal to date dt as in self == dt.  Note
+        that in evaluating the condition the difference in time is taken into
+        account as well. Use self.dateNumber < dt.dateNumber to test on date
+        comparison only instead of dy < self.
 
         >>> dt1 = Dating(date='2019-11-25')
         >>> dt2 = Dating(date='2018-11-23')
@@ -791,9 +795,11 @@ class Dating:
 
     @classmethod
     def timeStampRandomLong(cls):
-        """The uniqueNumber property answers a unique number of format '20090621200511993066',
-        derived from date, time and a six digit random number. This can be used e.g. in a URL as parameters to make sure that browser
-        will not cache the content of the page. The number is also used to create a unique file name for background shell scripts.
+        """The uniqueNumber property answers a unique number of format
+        '20090621200511993066', derived from date, time and a six digit random
+        number. This can be used e.g. in a URL as parameters to make sure that
+        browser will not cache the content of the page. The number is also used
+        to create a unique file name for background shell scripts.
 
         >>> timeStamp = Dating(year=1980).timeStampRandomLong()
         >>> len(timeStamp) # Cannot test on random number
@@ -810,9 +816,10 @@ class Dating:
         return '%012d' % int(time.time()*100)
 
     def getTimeStamp(self, usetz=False):
-        """The self.getTypeStamp answers a formatted string 2010-10-05 16:47:29+04 of the date. This
-        is exactly what SQL needs as timestamp with time zone definition.
-        Use of tz does not yet work, and is ignored.
+        """The self.getTypeStamp answers a formatted string 2010-10-05
+        16:47:29+04 of the date. This is exactly what SQL needs as timestamp
+        with time zone definition. Use of tz does not yet work, and is
+        ignored.
 
         >>> Dating(year=1980).getTimeStamp()
         '1980-01-01 00:00:00'
@@ -828,9 +835,8 @@ class Dating:
         return  "%s %s%s" % (self.date, self.time, tz)
 
     def _get_date(self):
-        """
-        The self.date property answers a formatted string 2008-10-23 of the date.
-        This is exactly what SQL needs as date-string definition.
+        """The self.date property answers a formatted string 2008-10-23 of the
+        date. This is exactly what SQL needs as date-string definition.
 
         >>> Dating(date='2017-05-01').date
         '2017-05-01'
@@ -902,7 +908,8 @@ class Dating:
     microSecond = property(_get_microSecond)
 
     def _get_euroDate(self):
-        """The self.euroDate property answers a formatted string 23-10-2008 of the date.
+        """The self.euroDate property answers a formatted string 23-10-2008 of
+        the date.
 
         >>> Dating(date='2015-6-7').euroDate
         '07-06-2015'
@@ -911,9 +918,8 @@ class Dating:
     euroDate = property(_get_euroDate)
 
     def _get_studyYear(self):
-        """The self.studyYear property answers a string 0708 with leading zero for the study year
-        from 2007-08-01 until 2008-07-31
-
+        """The self.studyYear property answers a string 0708 with leading zero
+        for the study year from 2007-08-01 until 2008-07-31
         >>> Dating(date='2015-6-7').studyYear
         '1415'
         >>> Dating(date='2005-6-7').studyYear
@@ -926,8 +932,9 @@ class Dating:
     studyYear = property(_get_studyYear)
 
     def _get_dateNumber(self):
-        """The self.dateNumber property answers a long integer number 20080502 of the date. This can by
-        used to compare dates on day only and not on time. Or it can be used as ordering key.
+        """The self.dateNumber property answers a long integer number 20080502
+        of the date. This can by used to compare dates on day only and not on
+        time. Or it can be used as ordering key.
 
         >>> Dating(date='2015-6-7').dateNumber
         20150607
@@ -956,8 +963,8 @@ class Dating:
     time = property(_get_time)
 
     def _get_dateTime(self):
-        """The self.datetime property answers a formatted '2010-12-06 12:23:34' date/time
-        string.
+        """The self.datetime property answers a formatted '2010-12-06 12:23:34'
+        date/time string.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).dateTime
         '2015-06-07 12:05:00'
@@ -982,8 +989,8 @@ class Dating:
     timeZone = property(_get_timeZone)
 
     def _get_week(self):
-        """The self.week property answers the weeknummer according to ISO 8601 where the first week of
-        the year that contains a thursday.
+        """The self.week property answers the weeknummer according to ISO 8601
+        where the first week of the year that contains a thursday.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).week
         23
@@ -992,7 +999,8 @@ class Dating:
     week = property(_get_week)
 
     def _get_dayName(self):
-        """The self.dayName property answers a 3 letter abbreviation of current day name.
+        """The self.dayName property answers a 3 letter abbreviation of current
+        day name.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).dayName
         'Sun'
@@ -1001,7 +1009,8 @@ class Dating:
     dayName = property(_get_dayName)
 
     def _get_fullDayName(self):
-        """The self.fullDayName property answers the full name of the current day.
+        """The self.fullDayName property answers the full name of the current
+        day.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).fullDayName
         'Sunday'
@@ -1010,7 +1019,8 @@ class Dating:
     fullDayName = property(_get_fullDayName)
 
     def _get_monthName(self):
-        """The self.monthName property answers a 3 letter abbreviation of current month name.
+        """The self.monthName property answers a 3 letter abbreviation of
+        current month name.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).monthName
         'Jun'
@@ -1019,7 +1029,8 @@ class Dating:
     monthName = property(_get_monthName)
 
     def _get_fullMonthName(self):
-        """The self.fullMonthName property answers the full name of the current month.
+        """The self.fullMonthName property answers the full name of the current
+        month.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).fullMonthName
         'June'
@@ -1028,7 +1039,8 @@ class Dating:
     fullMonthName = property(_get_fullMonthName)
 
     def _get_monthStart(self):
-        """The self.monthStart property answers the first day of the current month.
+        """The self.monthStart property answers the first day of the current
+        month.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).monthStart
         Dating(date='2015-06-01' time='12:05:00')
@@ -1037,7 +1049,8 @@ class Dating:
     monthStart = property(_get_monthStart)
 
     def _get_monthEnd(self):
-        """The self.monthEnd property answers the last day of the current month.
+        """The self.monthEnd property answers the last day of the current
+        month.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).monthEnd
         Dating(date='2015-06-30' time='12:05:00')
@@ -1046,7 +1059,8 @@ class Dating:
     monthEnd = property(_get_monthEnd)
 
     def _get_weekStart(self):
-        """The self.weekStart property answers the “Monday” date of the current week.
+        """The self.weekStart property answers the “Monday” date of the current
+        week.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).weekStart
         Dating(date='2015-06-01' time='12:05:00')
@@ -1055,7 +1069,8 @@ class Dating:
     weekStart = property(_get_weekStart)
 
     def _get_weekEnd(self):
-        """The self.weekEnd property answers the Friday date of the current week.
+        """The self.weekEnd property answers the Friday date of the current
+        week.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).weekEnd
         Dating(date='2015-06-08' time='12:05:00')
@@ -1064,7 +1079,8 @@ class Dating:
     weekEnd = property(_get_weekEnd)
 
     def _get_yearStart(self):
-        """The self.yearStart property answers the first day of the current year.
+        """The self.yearStart property answers the first day of the current
+        year.
 
         >>> Dating(date='2015-6-7', hour=12, minute=5).yearStart
         Dating(date='2015-01-01')
@@ -1082,7 +1098,8 @@ class Dating:
     yearEnd = property(_get_yearEnd)
 
     def _get_workDay(self):
-        """The self.workDay property answers True if this day is one of Monday till Friday.
+        """The self.workDay property answers True if this day is one of Monday
+        till Friday.
 
         >>> Dating(date='2015-6-7').workDay
         False
@@ -1107,8 +1124,8 @@ class Dating:
     weekDay = property(_get_weekDay)
 
     def _get_nextWorkDay(self):
-        """The self.nextWorkDay property answers the first next date (including itself) that is a
-        workday
+        """The self.nextWorkDay property answers the first next date (including
+        itself) that is a workday
 
         >>> d = Dating(date='2015-6-1') - 2
         >>> d.dayName, d.nextWorkDay.dayName
@@ -1120,7 +1137,8 @@ class Dating:
     nextWorkDay = property(_get_nextWorkDay)
 
     def _get_leapYear(self):
-        """The self.leapYear property answers a boolean if the dt is a leap year.
+        """The self.leapYear property answers a boolean if the dt is a leap
+        year.
 
         >>> Dating(date='2015-6-1').leapYear
         False
@@ -1131,7 +1149,8 @@ class Dating:
     leapYear = property(_get_leapYear)
 
     def _get_yearDays(self):
-        """The self.yearDays property answers the number of days in the current year.
+        """The self.yearDays property answers the number of days in the current
+        year.
 
         >>> Dating(date='2015-6-1').yearDays
         365
@@ -1144,7 +1163,8 @@ class Dating:
     yearDays = property(_get_yearDays)
 
     def _get_monthDays(self):
-        """The self.monthDays property answers the number of days in the current month.
+        """The self.monthDays property answers the number of days in the
+        current month.
 
         >>> Dating(date='2015-2-1').monthDays
         28
@@ -1159,9 +1179,10 @@ class Dating:
     monthDays = property(_get_monthDays)
 
     def _get_nextMonth(self):
-        """The nextMonth property answers the first day of the month after the current month. Due to
-        length differences between the months, it is not consistent to answer the current day number in the next month,
-        so it is set to 1.
+        """The nextMonth property answers the first day of the month after the
+        current month. Due to length differences between the months, it is not
+        consistent to answer the current day number in the next month, so it is
+        set to 1.
 
         >>> Dating(date='2015-2-1').nextMonth
         Dating(date='2015-03-01')
@@ -1172,9 +1193,10 @@ class Dating:
     nextMonth = property(_get_nextMonth)
 
     def _get_prevMonth(self):
-        """The prevMonth property answers the first day of the month previous to the current month.
-        Due to length differences between the months, it is not consistent to  answer the current day number in the
-        previous month
+        """The prevMonth property answers the first day of the month previous
+        to the current month. Due to length differences between the months, it
+        is not consistent to answer the current day number in the previous
+        month
 
         >>> Dating(date='2015-2-1').prevMonth
         Dating(date='2015-01-01')
@@ -1185,8 +1207,9 @@ class Dating:
     prevMonth = property(_get_prevMonth)
 
     def _get_calendarMonth(self):
-        """The calendarMonth property answers a list of lists containing the weeks with dates of the
-        current month. Note that the first and lost week are filled with the days of end of the previous month and the
+        """The calendarMonth property answers a list of lists containing the
+        weeks with dates of the current month. Note that the first and lost
+        week are filled with the days of end of the previous month and the
         start of the next month.
 
             [
@@ -1220,8 +1243,8 @@ class Dating:
     calendarMonth = property(_get_calendarMonth)
 
     def _get_calendarYear(self):
-        """The calendarYear property answers a list of lists of lists containing all
-        calendarMonths of the year.
+        """The calendarYear property answers a list of lists of lists
+        containing all calendarMonths of the year.
 
             [
             [

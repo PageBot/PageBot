@@ -233,7 +233,7 @@ class Element:
         self.nextElementName = nextElementName # Name of the next flow element
         self.nextPageName = nextPageName # Name, identifier or index of the next page that nextElement refers to,
         self.prevPageName = prevPageName # if a flow must run over page boundaries.
-        # Optional storage for the a thumbnail image path visualizing this element. 
+        # Optional storage for the a thumbnail image path visualizing this element.
         self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
