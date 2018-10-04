@@ -49,5 +49,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing',
         'Topic :: Text Processing :: Fonts'],
-    install_requires=['libsass']
+    install_requires=['libsass', 'fontTools']
 )

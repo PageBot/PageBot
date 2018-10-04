@@ -11,20 +11,21 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
+#    01_Dependencies.py
 
-print('\nChecking installation paths... \n')
+import sys, os
 
-import sys, os, shutil
 print('System: %s, %s' % (os.name, sys.platform))
 print('Python version is:')
 print(sys.version)
-print('Which Python?')
-print(sys.executable)
-from pagebot import getResourcesPath
+print('Python executable: %s' % sys.executable)
 
 CLEAN = True
 
+print('\nChecking installation paths... \n')
+
 try:
+    # Note: inside DrawBot site.pyc needs to be removed from root level.
     import site
     print('Found site at %s' % site.__file__)
     packages = site.getsitepackages()
@@ -67,8 +68,9 @@ if not CLEAN:
     print(', '.join(missing))
 else:
     print('Found all dependencies, running some test...')
-    # Testing PageBot.
+
+    # Testing PageBot context.
     from pagebot import getContext
     context = getContext()
-    print(context)
-    print(context.b)
+    print('The default PageBot context is %s' % context)
+    print('The default builder module is %s' % context.b)

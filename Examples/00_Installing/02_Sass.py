@@ -11,6 +11,8 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
+from pagebot import getResourcesPath
+import shutil
 
 def testSass():
     import sass
