@@ -12,53 +12,7 @@
 # -----------------------------------------------------------------------------
 #
 
-print('\nChecking installation paths... \n')
-
-import sys, os, shutil
-print('System: %s, %s' % (os.name, sys.platform))
-print('Python version is:')
-print(sys.version)
-print('Which Python?')
-print(sys.executable)
-from pagebot import getResourcesPath
-
-CLEAN = True
-
-try:
-    import site
-    print('Found site at %s' % site.__file__)
-    packages = site.getsitepackages()
-    for p in packages:
-        print(' - %s' % p)
-except:
-    print('x Could not read site packages :S')
-
-# TODO: add svgwrite, flat, markdown etc?
-# TODO automate, eval()?
-# TODO: make OS dependent.
-
-libs = ['pagebot', 'fontTools', 'objc', 'AppKit', 'vanilla', 'drawBot', 'sass']
-missing = []
-
-for l in libs:
-    try:
-        __import__(l)
-        print('%s installed at %s' % (l, __import__(l).__file__))
-    except:
-        print('x %s not installed' % l)
-        missing.append(l)
-        CLEAN = False
-
-if not CLEAN:
-    print('Not all dependencies are installed, please install missing ones:')
-    print(', '.join(missing))
-else:
-    print('Found all dependencies, running some test...')
-    # Testing PageBot.
-    from pagebot import getContext
-    context = getContext()
-    print(context)
-    print(context.b)
+def testSass():
     import sass
 
     # Testing Sass.
@@ -86,3 +40,5 @@ else:
     hb = HtmlBuilder()
     print(hb)
     hb.compileScss(path, cssPath = 'css/testHtmlBuilder.css')
+
+testSass()
