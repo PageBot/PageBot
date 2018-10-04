@@ -26,7 +26,7 @@ except:
     print(traceback.format_exc())
 
 def testIDML():
-    path = getResourcesPath() + "/templates/test.idml"
+    path = getResourcesPath() + "/templates/template.idml"
     pkg = idml.IDMLPackage(path)
     print(pkg.font_families)
     l = [e.get("Name") for e in pkg.font_families]
