@@ -580,6 +580,11 @@ class Document:
         self.rootStyle['d'] = units(d) # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
+    def _get_size(self):
+        """Answer the (w, h) tuple of the document size."""
+        return self.w, self.h
+    size = property(_get_size)
+     
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         """Answers the document global padding, as defined in the root style.
         Intercace is identical to Element.padding

@@ -21,7 +21,7 @@ from pagebot.conditions import *
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.dating import now
-#from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import LEFT, RIGHT
 
 class ThumbPage(Element):
@@ -110,7 +110,8 @@ class Magazine(Publication):
 
         doc = self.newDocument()
 
-        font = self.style['font']
+        font = self.style.get('font') or findFont('Roboto Regular')
+        print(font)
         headStyle = dict(font=font, fontSize=pt(24))
         labelStyle = dict(font=font, fontSize=pt(7))
 
@@ -157,19 +158,26 @@ class Magazine(Publication):
     def composePartOfBook(self, name):
         part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
         doc = self.newDocument()
-        #for page in part.elements:
-        #    doc.
-
+        if part.compose is not None:
+            part.compose(self, part, doc)
         return doc
 
     def exportPart(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False):
         if path is None:
             path = '_export/%s-%s.pdf' % (self.name, name)
 
-        doc = self.composePartOfBook(showGrid)
+        doc = self.composePartOfBook(name)
+
+        view = doc.view
+        view.showGrid = showGrid
+        view.showPadding = showPadding
+
         doc.export(path)
 
-
+    def exportTableOfContext(self):
+        """Export the automatic markdown file that contains the table of content of the magazine.
+        """
+        
 
 if __name__ == '__main__':
     import doctest
