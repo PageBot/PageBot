@@ -15,7 +15,6 @@
 from copy import copy
 
 from pagebot.publications.publication import Publication
-from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.units import pt
@@ -85,12 +84,6 @@ class Magazine(Publication):
             e.getSpreads(spreads)
         return spreads
     spreads = property(_get_spreads)
-
-    def newDocument(self):
-
-        return Document(w=self.w, h=self.h, originTop=False,
-            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
-            baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
 
     def exportMap(self, cols=None, maxSpread=None, path=None, showGrid=False, showPadding=False):
         """Export the magazine map into a PDF document at path.

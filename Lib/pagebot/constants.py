@@ -587,6 +587,10 @@ FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
 DEFAULT_FILETYPE = FILETYPE_PDF
 
+# Commonly used groups of files.
+IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF)
+FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
+
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.
 # In normalized keys, all CamelCase is flattened.

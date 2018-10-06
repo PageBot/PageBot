@@ -45,11 +45,11 @@ FILTER_TYPES = {
 }
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/UseImageElements.pdf'
+EXPORT_PATH = '_export/UseImageObjectFilters.pdf'
 
 def makeDocument():
 
-    gridX = ((CW, GUTTER), (CW, GUTTER), (CW, None))
+    gridX = ((CW, GUTTER), (CW, GUTTER), (CW, 0))
     doc = Document(w=W, h=H, originTop=False, title='Color Squares', autoPages=1, gridX=gridX)
 
     view = doc.getView()
@@ -70,7 +70,7 @@ def makeDocument():
     group.solve()
 
     for n in range(15):
-        img = newImage(IMAGE_PATH, (50, 50, 10), padding=0, mb=GUTTER,
+        img = newImage(path=IMAGE_PATH, x=50,y=50, z=10, padding=0, mb=GUTTER,
                        parent=group, w=CW-2, h=CW-2, #clipRect=(120, 120, 1440, 440),
                        conditions=(Right2Right(),
                                    Float2Top(),
@@ -113,7 +113,7 @@ def makeDocument():
 
             # colorInvert()
             # Inverts the colors in an image.
-            #('colorInvert', []),
+            ('colorInvert', {}),
 
             #('colorPosterize', (2,))
 
@@ -128,7 +128,7 @@ def makeDocument():
             # twirlDistortion(center=None, radius=None, angle=None)
             # Rotates pixels around a point to give a twirling effect.
             # Attributes: center a tuple (x, y), radius a float, angle a float in degrees.
-            ('twirlDistortion', ((150, 150), 200, 0.4)),
+            #('twirlDistortion', ((150, 150), 200, 0.4)),
         ]
         img.addFilter(filters)
         # Give parent on creation, to have the css chain working.

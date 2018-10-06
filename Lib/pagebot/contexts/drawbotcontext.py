@@ -462,6 +462,9 @@ class DrawBotContext(BaseContext):
 
     def scale(self, sx, sy=None):
         """Set the drawing scale."""
+        if isinstance(sx, (tuple, list)):
+            assert len(sx) in (2, 3)
+            sx, sy = sz[0], s[1]
         if sy is None:
             sy = sx
         assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), ('DrawBotContext.scale: Values (%s, %s) must all be of numbers' % (sx, sy))
@@ -858,7 +861,7 @@ class DrawBotContext(BaseContext):
 
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))
-        sx, sy = (wpt/iw).rv, (hpt/ih).rv # We need ration values, not units
+        sx, sy = wpt/iw, hpt/ih # We need ratio values, not units
         self.save()
         self.scale(sx, sy)
         #self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)

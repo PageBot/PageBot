@@ -80,5 +80,5 @@ if 1:
 doc.solve()
 
 # Export the document to this PDF file.
-doc.export('_export/RotatingText.pdf')
+doc.export('_export/ImageClippingValues.pdf')
 
