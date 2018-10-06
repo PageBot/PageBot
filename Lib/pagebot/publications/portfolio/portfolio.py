@@ -29,14 +29,6 @@ class PortFolio(Publication):
     pages from a recursive search in child folders. By defaul the name of the folders
     is used as chapter headers.
     Subclassed from Element-->Publication-->Magazine.
-
-    >>> path = '/Volumes/Flatter/2018-10 tekeningen clau bijeenkomst nina'
-    >>> from pagebot.constants import A4
-    >>> name = 'Portfolio Claudia Mens'
-    >>> pf = PortFolio(path=path, cols=2, rows=3, size=A4, name=name)
-    >>> doc = pf.compose()
-    >>> doc.export()
-
     """
     def __init__(self, path=None, cols=None, rows=None, imageTypes=None, styles=None, **kwargs):
         Publication.__init__(self, **kwargs)
@@ -75,26 +67,34 @@ class PortFolio(Publication):
     def compose(self):
         doc = self.newDocument()
         page = doc[1]
+        page.padding = doc.padding
         prevTitle = None
+        index = 0 #
         for title, imagePaths in sorted(self.imagePaths.items()):
-            if title != prevTitle:
-                bs = doc.context.newString(title, style=self.styles['title'])
-                newTextBox(bs, conditions=[Left2Left(), Top2Top(),Fit2Width()], parent=page)
-                prevTitle = title
+            #if title != prevTitle:
+            #    bs = doc.context.newString(title, style=self.styles['title'])
+            #    newTextBox(bs, conditions=[Left2Left(), Top2Top(),Fit2Width()], parent=page)
+            #    prevTitle = title
             for imagePath in sorted(imagePaths):
-                newImage(path=imagePath, conditions=[Left2Left(), Fit2Width(), Float2Top()], parent=page)
+                newImage(path=imagePath, w=page.pw/self.cols, conditions=[Right2Right(), Float2Top(), Float2Left()], parent=page)
+                index += 1
+                if index == 7:
+                    page = page.next
+                    page.padding = doc.padding
+                    index = 0
         return doc
 
     def export(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False):
         if path is None:
             path = '_export/%s-%s.pdf' % (self.name, name)
 
-        doc = self.compose(name)
+        doc = self.compose()
 
         view = doc.view
         view.showGrid = showGrid
         view.showPadding = showPadding
 
+        doc.solve()
         doc.export(path)
 
 

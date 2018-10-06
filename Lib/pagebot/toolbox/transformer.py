@@ -342,12 +342,30 @@ def path2Name(path):
 
     >>> path2Name('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed.ufo'
+    >>> path2Name('')
+    'Untitled'
+    >>> path2Name(None) is None
+    True
     """
     if path is None:
         return None
     if not path:
         return 'Untitled'
     return path.split('/')[-1]
+
+def path2Dir(path):
+    """Answers the file name part of the path.
+
+    >>> path2Dir('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
+    '/xxx/yyy/zzz'
+    >>> path2Dir('') is None
+    True
+    >>> path2Dir(None) is None
+    True
+    """
+    if not path:
+        return None
+    return '/'.join(path.split('/')[:-1])
 
 def path2Extension(path):
     """Answers the file extension of path.

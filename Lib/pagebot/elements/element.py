@@ -4173,6 +4173,17 @@ class Element:
 
     #   D R A W B O T / F L A T  S U P P O R T
 
+    def prepare(self, view):
+        """Respond to the top-down element broadcast to prepare for build.
+        If the original image needs scaling, then prepare the build by letting the context
+        make a new cache file with the scaled images.
+        If the cache file already exists, then ignore, just continue the broadcast
+        towards the child elements.
+        Default behavior is to do nothing. Inheriting Element classes can redefine.
+        """
+        for e in self.elements:
+            e.prepare(view)
+
     def build(self, view, origin, drawElements=True):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""

@@ -20,6 +20,7 @@ import traceback
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle
+from pagebot.toolbox.transformer import path2Name, path2Dir
 from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION,
         FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
         FILETYPE_MOV, DEFAULT_FILETYPE)
@@ -861,7 +862,7 @@ class DrawBotContext(BaseContext):
 
         # else both w and h are defined, scale disproportional
         xpt, ypt, = point2D(upt(p))
-        sx, sy = wpt/iw, hpt/ih # We need ratio values, not units
+        sx, sy = upt(wpt/iw, hpt/ih) # We need ratio values, not units
         self.save()
         self.scale(sx, sy)
         #self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
@@ -881,6 +882,48 @@ class DrawBotContext(BaseContext):
         """
         return self.b.ImageObject(path)
 
+    def path2ScaledImagePath(self, path, w, h):
+        """Answer the path to the scaled image.
+
+        >>> context = DrawBotContext()
+        >>> context.path2ScaledImagePath('/xxx/yyy/zzz/This.Is.An.Image.jpg', 110, 120)
+        ('/xxx/yyy/zzz/_scaled/', 'This.Is.An.Image.110x120.jpg')
+        """
+        cachePath = '%s/_scaled/' % path2Dir(path)
+        fileNameParts = path2Name(path).split('.')
+        cachedFileName = '%s.%dx%d.%s' % ('.'.join(fileNameParts[:-1]), w, h, fileNameParts[-1].lower())
+        return cachePath, cachedFileName
+
+    def scaleImage(self, path, w, h, force=False):
+        """Scale the image at the path into a new cached image file.
+        Ignore if the cache file is already there, 
+        First create the new file name, depending on the resolution of the scaled image.
+        Note that in DrawBot this scaling and saving should be done before any real
+        document/page drawing started, since this proces is using DrawBot canvas
+        pages to execute.
+
+        >>> from pagebot import getResourcesPath
+        >>> context = DrawBotContext()
+        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> scaledImagePath = context.scaleImage(path, 300, 400)
+        >>> os.path.exists(scaledImagePath)
+        True
+        >>> scaledImagePath = context.scaleImage(path, 3, 4) # Reall small
+        >>> os.path.exists(scaledImagePath)
+        True
+        """
+        # If default _scaled directory does not exist, then create it.
+        cachePath, fileName = self.path2ScaledImagePath(path, w, h)
+        if not os.path.exists(cachePath):
+            os.makedirs(cachePath)
+        cachedFilePath = cachePath + fileName
+        if force or not os.path.exists(cachedFilePath):
+            self.newDrawing() # Clean the drawing stack.
+            self.newPage(w, h)
+            self.image(path, (0, 0), w=w, h=h)
+            self.saveImage(cachedFilePath)
+            self.newDrawing() # Clean the drawing stack.
+        return cachedFilePath
 
 if __name__ == '__main__':
     import doctest

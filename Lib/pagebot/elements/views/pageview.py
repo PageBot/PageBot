@@ -83,7 +83,16 @@ class PageView(BaseView):
         context.newDrawing()
         context.newDocument(w, h) # Allow the context to create a new document and page canvas.
 
-        for pn, pages in self.doc.getSortedPages():
+        sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
+
+        # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
+        # into cache if that file does not already exists. Note that this is done on a page-by-page
+        # level, not a preparation of all 
+        for pn, pages in sortedPages:
+            for page in pages:
+                page.prepare(self)
+
+        for pn, pages in sortedPages:
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
 

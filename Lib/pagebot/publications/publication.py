@@ -36,7 +36,7 @@ class Publication(Element):
         u"""Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages.
         """
-        return Document(w=self.w, h=self.h, originTop=False,
+        return Document(w=self.w, h=self.h, originTop=self.originTop, padding=self.padding,
             gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
             baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
 

@@ -64,12 +64,12 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
-        imo=None, index=1, **kwargs):
+        imo=None, index=1, saveScaled=True, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
         # If the path does not exist, then self.im = self.ih = pt(0)
-        self.setPath(path) # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
+        self.path = path # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
         self.initImageSize()
 
         # One of the two needs to be defined, the other can be None.
@@ -92,6 +92,9 @@ class Image(Element):
         self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
+        # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
+        # Do not scale the image, if the cache file already exists. If False, then not scaled cache is created.
+        self.saveScaled = saveScaled 
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values is None,
@@ -176,12 +179,19 @@ class Image(Element):
     def setPath(self, path):
         """Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
-        self.path = path
+        self._path = path
         self.initImageSize() # Get real size from the file.
+
+    def _get_path(self):
+        return self._path
+    def _set_path(self, path):
+        self.setPath(path)
+    path = property(_get_path, _set_path)
 
     def initImageSize(self):
         """Initialize the image size. Note that this is done with the
         default/current Context, as there may not be a view availabe yet."""
+        print('DSDDDSD', self.path)
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
         else:
@@ -211,6 +221,30 @@ class Image(Element):
         else:
             alpha = 1
         return alpha
+
+    def saveScaledCache(self):
+        """If the self.saveScaled is True and the scale is outside the range,
+        then create a new image if it does not already exist. Scaling images in 
+        the DrawBot context is a fast operation, so always worth while to creating
+        large export PDF files.
+        """
+        if self.path is None or not self.saveScaled:
+            return
+        sx, sy = upt(self.w / self.iw, self.h / self.ih)
+        if 0.8 <= sx <= 1.2 and 0.8 <= sx < 1.2: # If no real scale changes, then skip
+            return
+        # Scale the image the cache does not exist already.
+        # A new path is answers for the scaled image file. Reset the (self.iw, self.ih)
+        self.path = self.context.scaleImage(self.path, self.w, self.h)
+  
+    def prepare(self, view, origin=None, drawElements=True):
+        """Respond to the top-down element broadcast to prepare for build.
+        If the original image needs scaling, then prepare the build by letting the context
+        make a new cache file with the scaled images.
+        If the cache file already exists, then ignore, just continue the broadcast
+        towards the child elements.
+        """
+        self.saveScaledCache() 
 
     def build_html(self, view, origin=None, drawElements=True):
         print('[%s.build_html] Not implemented yet' % self.__class__.__name__)
@@ -250,6 +284,9 @@ class Image(Element):
             context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
         else:
             context.save()
+            # Check if scaling exceeds limit, then generate a cached file and update the path
+            # and (self.iw, self.ih) accordingly.
+
             sx = self.w / self.iw
             sy = self.h / self.ih
             context.scale(sx, sy)
