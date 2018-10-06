@@ -31,7 +31,7 @@ class Publication(Element):
 		This method needs to be redefined by inheriting publications classes to answer
 		different than the default empty dictionary."""
     	return {}
-
+        
     def newDocument(self):
         u"""Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages.

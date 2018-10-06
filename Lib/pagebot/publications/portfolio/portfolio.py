@@ -30,7 +30,8 @@ class PortFolio(Publication):
     is used as chapter headers.
     Subclassed from Element-->Publication-->Magazine.
     """
-    def __init__(self, path=None, cols=None, rows=None, imageTypes=None, styles=None, **kwargs):
+    def __init__(self, path=None, cols=None, rows=None, imageTypes=None, styles=None, 
+            resolution=1, **kwargs):
         Publication.__init__(self, **kwargs)
         self.path = path
         self.imageTypes = imageTypes # If None, select all standard image types.
@@ -40,10 +41,11 @@ class PortFolio(Publication):
         self.cols = cols or DEFAULT_COLS
         self.rows = rows or DEFAULT_ROWS
         self.imagePaths = self.findImagePaths(path)
-        
+        self.resolution = resolution # Factor that scaled images should be larger than usage.
+
     def getDefaultStyles(self):
         styles = dict(
-            title=dict(font=findFont('Roboto-Regular'), fontSize=pt(32))
+            title=dict(font=findFont('Upgrade-Regular'), fontSize=pt(32))
         )
         return styles
 
@@ -55,6 +57,8 @@ class PortFolio(Publication):
             imagePaths = {}
         title = path.split('/')[-1]
         for fileName in os.listdir(path):
+            if fileName.startswith('.') or fileName == '_scaled':
+                continue
             filePath = path + '/' + fileName
             if os.path.isdir(filePath):
                 self.findImagePaths(filePath, imagePaths)
@@ -69,16 +73,30 @@ class PortFolio(Publication):
         page = doc[1]
         page.padding = doc.padding
         prevTitle = None
+        gutter = pt(8)
+
         index = 0 #
         for title, imagePaths in sorted(self.imagePaths.items()):
-            #if title != prevTitle:
-            #    bs = doc.context.newString(title, style=self.styles['title'])
-            #    newTextBox(bs, conditions=[Left2Left(), Top2Top(),Fit2Width()], parent=page)
-            #    prevTitle = title
+            if page is None:
+                page = doc[1]
+            elif index == 7:
+                page = page.next
+                page.padding = doc.padding
+                index = 0
+
+            h = (page.ph - (self.rows - 1) * gutter) / self.rows
+            if title != prevTitle:
+                bs = doc.context.newString(title, style=self.styles['title'])
+                tw, th = bs.size
+                newTextBox(bs, conditions=[Left2Left(), Fit2Width(), Float2Top()], h=1.5*th, parent=page)
+                prevTitle = title
+            
             for imagePath in sorted(imagePaths):
-                newImage(path=imagePath, w=page.pw/self.cols, conditions=[Right2Right(), Float2Top(), Float2Left()], parent=page)
+                newImage(path=imagePath, h=h, mr=gutter, mb=gutter, resolution=self.resolution,
+                    conditions=[Right2Right(), Float2Top(), Float2Left()], parent=page)
                 index += 1
-                if index == 7:
+                if index == 8:
+                    newRect(parent=page, h=2, w=page.pw, conditions=[Left2Left(), Float2Top()])
                     page = page.next
                     page.padding = doc.padding
                     index = 0

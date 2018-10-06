@@ -64,7 +64,7 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
-        imo=None, index=1, saveScaled=True, **kwargs):
+        imo=None, index=1, saveScaled=True, resolution=1, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
@@ -95,6 +95,7 @@ class Image(Element):
         # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
         # Do not scale the image, if the cache file already exists. If False, then not scaled cache is created.
         self.saveScaled = saveScaled 
+        self.resolution = resolution # Factor by which scaled images should be larger than usage.
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values is None,
@@ -191,7 +192,6 @@ class Image(Element):
     def initImageSize(self):
         """Initialize the image size. Note that this is done with the
         default/current Context, as there may not be a view availabe yet."""
-        print('DSDDDSD', self.path)
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
         else:
@@ -230,12 +230,14 @@ class Image(Element):
         """
         if self.path is None or not self.saveScaled:
             return
-        sx, sy = upt(self.w / self.iw, self.h / self.ih)
+        w = self.w * self.resolution
+        h = self.h * self.resolution
+        sx, sy = upt(w / self.iw, h / self.ih)
         if 0.8 <= sx <= 1.2 and 0.8 <= sx < 1.2: # If no real scale changes, then skip
             return
         # Scale the image the cache does not exist already.
         # A new path is answers for the scaled image file. Reset the (self.iw, self.ih)
-        self.path = self.context.scaleImage(self.path, self.w, self.h)
+        self.path = self.context.scaleImage(self.path, self.w * self.resolution, self.h * self.resolution)
   
     def prepare(self, view, origin=None, drawElements=True):
         """Respond to the top-down element broadcast to prepare for build.
