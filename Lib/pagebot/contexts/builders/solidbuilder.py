@@ -15,7 +15,7 @@
 #
 #	  https://github.com/SolidCode/SolidPython/tree/master/solid
 #	  https://github.com/felipesanches/SolidPinball
-#	
+#
 from basebuilder import BaseBuilder
 
 class SolidBuilder(BaseBuilder):

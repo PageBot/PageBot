@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,12 +12,18 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     sitebuilder.py
+#     idmlbuilder.py
 #
-from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
+from pagebot.contexts.builders.basebuilder import BaseBuilder
+from pagebot.contexts.builders.nonebezierpath import BezierPath
 
-class SiteBuilder(HtmlBuilder):
-    """Generic output builder container, used of collecting html, css, js,
-    include paths and other data needed to export the website, e.g. by the
-    GitView or MampView."""
+class IDMLBuilder(BaseBuilder):
 
+    def __init__(self):
+        pass
+
+    def newPage(self, w=None, h=None):
+        pass
+
+    def newDrawing(self):
+        pass
