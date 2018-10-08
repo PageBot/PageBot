@@ -16,8 +16,17 @@
 #
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.contexts.builders.nonebezierpath import BezierPath
+try:
+    import simple_idml
+except:
+    print('Cannot find simple_idml library')
 
 class IDMLBuilder(BaseBuilder):
+    """
+    >>> b = IDMLBuilder()
+    >>> b.newDrawing()
+    >>> b.newPage()
+    """
 
     def __init__(self):
         pass
@@ -27,3 +36,8 @@ class IDMLBuilder(BaseBuilder):
 
     def newDrawing(self):
         pass
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
