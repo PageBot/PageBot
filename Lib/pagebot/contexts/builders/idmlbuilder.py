@@ -28,13 +28,10 @@ class IDMLBuilder(BaseBuilder):
     >>> b.newPage()
     """
 
-    def __init__(self):
-        pass
-
     def newPage(self, w=None, h=None):
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, path=None):
         pass
 
 if __name__ == '__main__':

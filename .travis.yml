@@ -16,6 +16,7 @@ install:
 - pip3 install pylint
 - pip3 install pyobjc
 - pip3 install svgwrite
+- pip3 install SimpleIDML
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
@@ -82,14 +83,23 @@ script:
 - python3 Lib/pagebot/conditions/flow.py
 - python3 Lib/pagebot/conditions/score.py
 - python3 Lib/pagebot/conditions/text.py
-- python3 Lib/pagebot/contexts/builders/htmlbuilder.py
+- python3 Lib/pagebot/contexts/__init__.py
 - python3 Lib/pagebot/contexts/basecontext.py
 - python3 Lib/pagebot/contexts/drawbotcontext.py
 - python3 Lib/pagebot/contexts/flatcontext.py
 - python3 Lib/pagebot/contexts/flatconversion.py
 - python3 Lib/pagebot/contexts/htmlcontext.py
-- python3 Lib/pagebot/contexts/__init__.py
+- python3 Lib/pagebot/contexts/indesigncontext.py
+- python3 Lib/pagebot/contexts/svgcontext.py
+- python3 Lib/pagebot/contexts/builders/basebuilder.py
 - python3 Lib/pagebot/contexts/builders/nonebuilder.py
+- python3 Lib/pagebot/contexts/builders/htmlbuilder.py
+- python3 Lib/pagebot/contexts/builders/svgbuilder.py
+- python3 Lib/pagebot/contexts/builders/idmlbuilder.py
+- python3 Lib/pagebot/contexts/builders/sitebuilder.py
+- python3 Lib/pagebot/contexts/builders/solidbuilder.py
+- python3 Lib/pagebot/contexts/builders/flatbuilder.py
+- python3 Lib/pagebot/contexts/builders/xmlbuilder.py
 - python3 Lib/pagebot/contexts/strings/babelstring.py
 - python3 Lib/pagebot/contexts/strings/drawbotstring.py
 - python3 Lib/pagebot/contexts/strings/flatstring.py
