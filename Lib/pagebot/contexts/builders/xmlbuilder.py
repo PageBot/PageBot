@@ -23,8 +23,10 @@ class XmlBuilder(BaseBuilder):
 
     @classmethod
     def class2SpaceString(cls, cssClass):
-        # Format the class to comma separated output. Takes any construction of strings and lists.
-        # cssClass can be ['name', 'name'] or 'name name' or 'name, name' or ['name', ('name', 'name')]
+        # Format the class to comma separated output. Takes any construction of
+        # strings and lists.
+        # cssClass can be ['name', 'name'] or 'name name' or 'name, name' or
+        # ['name', ('name', 'name')]
         if not isinstance(cssClass, (list, tuple)):
             cssClass = [cssClass]
         s = []
@@ -51,8 +53,9 @@ class XmlBuilder(BaseBuilder):
         self._useOnline = True
 
     def tabs(self):
-        """"Output tabs to the current level and add newlines, depending on the setting of self._newKine
-        (string with newlines) and self._tabLevel (number of indents)."""
+        """"Output tabs to the current level and add newlines, depending on the
+        setting of self._newLine (string with newlines) and self._tabLevel
+        (number of indents)."""
         if not self.compact and self._verbose:
             self.write(self._newLine + (self._tabIndent * self._tabLevel))
 
@@ -81,11 +84,15 @@ class XmlBuilder(BaseBuilder):
         return key
 
     def write_attributes(self, attributes, default_attributes, args, tagname):
-        """Generic function to write HTML attributes. The new HTML5 feature to store custom data inside the attribute
-        @data-xxx@ is defined as attribute name *data_xxx*. See "HTML-5 Attributes":http://ejohn.org/blog/html-5-data-attributes/
+        """Generic function to write HTML attributes. The new HTML5 feature to
+        store custom data inside the attribute @data-xxx@ is defined as
+        attribute name *data_xxx*. See "HTML-5 Attributes":
+
+        http://ejohn.org/blog/html-5-data-attributes/
+
         If the key has an attached builder type as @xxx-html@ or @xxx-css@,
-        then show the attribute only with the builder type matches the type of @self@.
-        """
+        then show the attribute only with the builder type matches the type of
+        @self@."""
         for key, value in args.items():
             if key == 'php':
                 self.write_php_attribute(value)
@@ -94,6 +101,7 @@ class XmlBuilder(BaseBuilder):
                 if not value is None:
                     key = self.get_clean_attribute_key(key)
                     self.get_attribute_exceptions(key, value)
+
             # TODO: Make attribute writing directly by builder if valid extension
             #else:
             #    key, builderType = attrName2attrBuilderType(key)
@@ -105,15 +113,16 @@ class XmlBuilder(BaseBuilder):
                 self.get_attribute_exceptions(key, value)
 
     def write_attribute(self, key, value):
-        """
-        Auxiliary function to write each attribute to @self.result@. If the *key* is defined in
-        @self.SINGLE_ATTRIBUTES@ then only output the single key name (even if this breaks XML
-        validation). By default the @self.SINGLE_ATTRIBUTES@ is empty, but it can be redefined by the
+        """Auxiliary function to write each attribute to @self.result@. If the
+        *key* is defined in @self.SINGLE_ATTRIBUTES@ then only output the
+        single key name (even if this breaks XML validation). By default the
+        @self.SINGLE_ATTRIBUTES@ is empty, but it can be redefined by the
         inheriting application class.
-        If the *key* is in @self.CASCADING_ATTRIBUTES@ and the *value* is tuple or
-        a list, then join the *value*, separated by spaces. This feature is especially used to build flexible
-        cascading *cssClass* attributes.
-        If the attribute has no value, then the output is skipped.
+
+        If the *key* is in @self.CASCADING_ATTRIBUTES@ and the *value* is tuple
+        or a list, then join the *value*, separated by spaces. This feature is
+        especially used to build flexible cascading *cssClass* attributes.  If
+        the attribute has no value, then the output is skipped.
         """
         line = None
         if key == 'cssClass':
@@ -142,8 +151,8 @@ class XmlBuilder(BaseBuilder):
         self.write(value)
 
     def write_tag(self, tagname, open, args):
-        """
-        Writes a normally formatted HTML tag, exceptions have a custom implementation, see respective functions.
+        """Writes a normally formatted HTML tag, exceptions have a custom
+        implementation, see respective functions.
         """
         self.tabs()
         self.write(u'<' + tagname)
@@ -159,9 +168,9 @@ class XmlBuilder(BaseBuilder):
         self.newLine() # Optional write newline if not self.compat
 
     def write_tag_noWhitespace(self, tagname, open, args):
-        """Writes a normally formatted HTML tag, exceptions have a custom implementation,
-        see respective functions. Don’t write any white space inside the block. E.g. used by <textarea>
-        """
+        """Writes a normally formatted HTML tag, exceptions have a custom
+        implementation, see respective functions. Don’t write any white space
+        inside the block. E.g. used by <textarea>"""
         self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)
 
@@ -173,7 +182,6 @@ class XmlBuilder(BaseBuilder):
             self.write(u'/>')
         self.newLine() # Optional write newline if not self.compat
 
-    # ---------------------------------------------------------------------------------------------------------
     #     B L O C K
 
     def buildTag(self, tag, **kwargs):
@@ -186,7 +194,6 @@ class XmlBuilder(BaseBuilder):
             if hasattr(self, tag):
                 getattr(self, tag)(**kwargs)
 
-    # ---------------------------------------------------------------------------------------------------------
     #     N O D E S T A C K
 
     def _pushTag(self, tag):
@@ -201,7 +208,8 @@ class XmlBuilder(BaseBuilder):
         self._popTag(tag)
 
     def _closeTag_noWhitespace(self, tag):
-        """Close the tag. Don’t write any white space inside the block. E.g. used by <textarea>."""
+        """Close the tag. Don’t write any white space inside the block. E.g.
+        used by <textarea>."""
         self.write(u'</%s>' % tag)
         self.newLine() # Optional write newline if not self.compat
         self._popTag(tag)
@@ -220,6 +228,3 @@ class XmlBuilder(BaseBuilder):
     def getTagStack(self):
         """Answers the stack of current tag names."""
         return self._tagStack
-
-
-

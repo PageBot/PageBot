@@ -71,8 +71,8 @@ class BezierPath:
 
 
 class InDesignBuilder(BaseBuilder):
-    """
-    The InDesignBuilder class implements the all necessary API-Javascript to communicate with InDesign.
+    """The InDesignBuilder class implements the all necessary API-Javascript to
+    communicate with InDesign.
 
     >>> import os
     >>> W, H = A4Rounded
@@ -203,7 +203,9 @@ class InDesignBuilder(BaseBuilder):
             print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
     def getInDesignScriptPath(self):
-        u"""Answers the user local script path. For now this assumes one version of InDesign.
+        u"""Answers the user local script path. For now this assumes one
+        version of InDesign.
+
         TODO: Should be made more generic.
 
         >>> b = InDesignBuilder()
@@ -217,7 +219,6 @@ class InDesignBuilder(BaseBuilder):
     def comment(self, s):
         if s:
             self.addJs('/* %s */' % object2SpacedString(s))
-
 
 if __name__ == '__main__':
     import doctest

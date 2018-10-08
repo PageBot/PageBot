@@ -48,7 +48,8 @@ class NoneBuilder:
     example when the platform does not support DrawBot. Methods need to be
     added here when DrawBotContext docTests fail with non-DrawBot platforms.
 
-    NOTE: when completed this set of methods should match with DrawBot itself."""
+    NOTE: when completed this set of methods should match with DrawBot
+    itself."""
 
     def __init__(self):
         self._installedFonts = []

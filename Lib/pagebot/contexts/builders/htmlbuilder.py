@@ -381,7 +381,7 @@ table {
         return ''.join(self._cssOut)
 
     def hasCss(self):
-        """Answers if there is any cumulated CSS in self._cssOut."""
+        """Answers if there is any accumulated CSS in self._cssOut."""
         return len(self._cssOut)
 
     def importCss(self, path):
@@ -394,7 +394,7 @@ table {
             self.comment('Cannot find CSS file "%s"' % path)
 
     def writeCss(self, path):
-        """Write the collected set of css chunks to path."""
+        """Write the collected set of CSS chunks to path."""
         try:
             f = codecs.open(path, 'w', 'utf-8')
             f.write(self.getCss())
@@ -541,10 +541,11 @@ table {
     #   H T M L
 
     def addHtml(self, html):
-        """Add the html chunk to self.html, the ordered list of html for output. Test if the html
-        is a plain string or of type HtmlString(BabelString). Otherwise raise an error, because
-        we don't want to support BabelString conversion. They should have been created of the right
-        type in the context from the start."""
+        """Add the HTML chunk to self.html, the ordered list of HTML for
+        output. Test if the html is a plain string or of type
+        HtmlString(BabelString). Otherwise raise an error, because we don't
+        want to support BabelString conversion. They should have been created
+        of the right type in the context from the start."""
 
         #if not isinstance(html, str): # It's something else, test on the kind of BabelString.
         #    assert isinstance(html, HtmlString)
@@ -575,7 +576,7 @@ table {
             print('Cannot write HTML file "%s"' % path)
 
     def getHtml(self):
-        """Answers the cumulated html as single string."""
+        """Answers the accumulated HTML as single string."""
         return ''.join(self._htmlOut)
 
     def resetHtml(self):
@@ -613,10 +614,10 @@ table {
         self._closeTag('html')
 
     def head(self, **args):
-        """
-        The head element can contain information about the document.¬†The browser does not display the
-        "head information" to the user. The following tags can be in the head section: base,
-        link, meta, script, style and title.
+        """The head element can contain information about the document. The
+        browser does not display the "head information" to the user. The
+        following tags can be in the head section: base, link, meta, script,
+        style and title.
         <www href="http://www.w3schools.com/tags/tag_head.asp" target="external"/>
         self.head()
             ...
@@ -634,8 +635,8 @@ table {
         self._closeTag('head')
 
     def title(self):
-        """
-        This tag defines the title of the document.
+        """This tag defines the title of the document.
+
         <www href="http://www.w3schools.com/tags/tag_title.asp" target="external"/>
         self.title()
             ...
@@ -673,10 +674,8 @@ table {
         self.write('<title>%s</title>' % s.strip())
 
     def link(self, **args):
-        """
-        The link tag defines the relationship between two linked documents.
-        Note that this tag is defined by XierpaBuilder. When using an inheriting class
-        from XierpaBuilder then use the rellink tag name instead.
+        """The link tag defines the relationship between two linked documents.
+
         <www href="http://www.w3schools.com/tags/tag_link.asp" target="external"/>
         self.head()
             ...
@@ -689,9 +688,9 @@ table {
 
 
     def body(self, **args):
-        """
-        The body element defines the documents' body. It contains all the contents
-        of the document (like text, images, colors, graphics, etc.).
+        """The body element defines the documents' body. It contains all the
+        contents of the document (like text, images, colors, graphics, etc.).
+
         <www href="http://www.w3schools.com/tags/tag_body.asp" target="external"/>
         self.body(onload='javascript:loadpage()')
             ...
@@ -705,8 +704,8 @@ table {
 
     def h1(self, **args):
         """
-        The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
+        The h1 to h6 tags define headers. h1 defines the largest header. h6
+        defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         self.h1(cssClass='chapter')
             ...
@@ -727,9 +726,8 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h1_(self, s, **args):
-        """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
-        where the s attribute is the block content.
+        """The h1_ to h6_ tags define headers, combining the opening and
+        closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -742,8 +740,7 @@ table {
         self._h1()
 
     def h2(self, **args):
-        """
-        The h1 to h6 tags define headers.
+        """The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         self.h2(cssClass='head')
@@ -931,11 +928,12 @@ table {
         self._h6()
 
     def figure(self, **args):
-        """
-        The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
-        You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
-        You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
-        of your <tag>figure</tag> element.
+        """The figure method (HTML5) is used for annotating illustrations,
+        diagrams, photos, code listings, etc. You can use the tag to associate
+        a caption together with some embedded content, such as a graphic or
+        video.  You can use the tag in conjunction with the
+        <tag>figcaption</tag> element to provide a caption for the contents of
+        your <tag>figure</tag> element.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -951,11 +949,12 @@ table {
         self._closeTag('figure')
 
     def figcaption(self, **args):
-        """
-        The figure method (HTML5) is used for annotating illustrations, diagrams, photos, code listings, etc.
-        You can use the tag to associate a caption together with some embedded content, such as a graphic or video.
-        You can use the tag in conjunction with the <tag>figcaption</tag> element to provide a caption for the contents
-        of your <tag>figure</tag> element.
+        """The figure method (HTML5) is used for annotating illustrations,
+        diagrams, photos, code listings, etc. You can use the tag to associate
+        a caption together with some embedded content, such as a graphic or
+        video.  You can use the tag in conjunction with the
+        <tag>figcaption</tag> element to provide a caption for the contents of
+        your <tag>figure</tag> element.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -1347,10 +1346,10 @@ table {
         self._closeTag_noWhitespace('th')
 
     def style(self, type='text/css', **args):
-        """
-        Defines a style in a document. The style element goes in the head section. If you want to include a style sheet in
-        your page, you should define the style sheet externally, and link to it using XHTML link (note that
-        this tag is redefined in XierpaBuilder.
+        """Defines a style in a document. The style element goes in the head
+        section. If you want to include a style sheet in your page, you should
+        define the style sheet externally, and link to it using XHTML link.
+
         <www href="http://www.w3schools.com/tags/tag_style.asp" target="external"/>
         self.style()
             ...
@@ -1769,9 +1768,9 @@ table {
         self._closeTag('optgroup')
 
     def button(self, **args):
-        """
-        button is the standard XHTML control. It is much like input type="button" but more
-        versatile. It has open and close tags, and can take almost any non-form HTML structure inside.
+        """button is the standard XHTML control. It is much like input
+        type="button" but more versatile. It has open and close tags, and can
+        take almost any non-form HTML structure inside.
         <www href="http://xhtml.com/en/xhtml/reference/button/" target="external"/>
         """
         self.write_tag('button', True, args)
@@ -1780,9 +1779,10 @@ table {
         self._closeTag('button')
 
     def textarea(self, **args):
-        """
-        Defines a text area (a multi-line text input control). A user can write text in the text area. In a text
-        area you can write an unlimited number of characters. The default font in the text area is fixed pitch.
+        """Defines a text area (a multi-line text input control). A user can
+        write text in the text area. In a text area you can write an unlimited
+        number of characters. The default font in the text area is fixed pitch.
+
         <www href="http://www.w3schools.com/tags/tag_textarea.asp" target="external"/>
         self.textarea()
             ...
@@ -1794,9 +1794,9 @@ table {
         self._closeTag_noWhitespace('textarea')
 
     def meta(self, **args):
-        """
-        The meta element provides meta-information about your page, such as descriptions and keywords for
-        search engines and refresh rates.
+        """The meta element provides meta-information about your page, such as
+        descriptions and keywords for search engines and refresh rates.
+
         <www href="http://www.w3schools.com/tags/tag_meta.asp" target="external"/>
         self.meta()
             ...
