@@ -17,7 +17,8 @@ from pagebot.elements import *
 
 class PartOfBook(Element):
 
-    def __init__(self, length=None, elements=None, name=None, compose=None, toc=True, **kwargs):
+    def __init__(self, length=None, elements=None, name=None, compose=None, useInToc=True, 
+            pn=None, **kwargs):
         """Abstract type of element that contain parts of the book and/or single pages.
 
         >>> elements = (
@@ -27,7 +28,7 @@ class PartOfBook(Element):
         ... )
         >>> coverFront = CoverFront(elements=elements)
         >>> elements = (
-        ...     TableOfContent(1),
+        ...     TableOfContent(1, pn=1), # Right page, start of page count
         ...     MastHead(1),
         ...     Ad(1),
         ...     Dummy(12),
@@ -47,17 +48,22 @@ class PartOfBook(Element):
         >>> elements = (
         ...     coverFront,
         ...     frontOfTheBook,
-        ...     Article(12, name='Article 1'),
-        ...     Article(8, name='Article 2'),
+        ...     Article(12, name='Article about something'),
+        ...     Article(8, name='Article about something else'),
         ...     backOfTheBook,
         ...     coverBack,
         ... )
-        >>> pob = PartOfBook()
-        >>> pob.getSpreads()
+        >>> pob = PartOfBook(elements=elements)
+        >>> spreads = pob.spreads # Identical to pob.getSpreads()
+        >>> len(spreads)
+        23
+        >>> spreads[12]
+        [<Page:Article about something 0 (100pt, 100pt)>, <Page:Article about something 0 (100pt, 100pt)>]
+        >>> spreads[12][0].pn
         """
         Element.__init__(self, name=name, **kwargs)
         self.compose = compose
-        self.toc = toc # Flag indicates if this part should be added to the Table of Content.
+        self.useInToc = useInToc # Flag indicates if this part should be added to the Table of Content.
 
         if elements is not None:
             self.elements = elements
@@ -68,7 +74,9 @@ class PartOfBook(Element):
                 else:
                     thumbPath = None
                 self.appendElement(Page(name=name or self.__class__.__name__, 
-                    w=self.w, h=self.h, thumbPath=thumbPath))
+                    pn=pn, w=self.w, h=self.h, thumbPath=thumbPath))
+                if pn is not None:
+                    pn += 1
 
     def __len__(self):
         if not self.elements:
@@ -82,9 +90,10 @@ class PartOfBook(Element):
                     length += len(e)
         return length
 
-    def getSpreads(self, spreads=None):
+    def getSpreads(self, spreads=None, pn=None):
         if spreads is None:
-            spreads = []
+            spreads = [[]]
+
         for e in self.elements:
             if e.isPage:
                 if len(spreads[-1]) == 2:
@@ -95,6 +104,8 @@ class PartOfBook(Element):
         return spreads
 
     def _get_spreads(self):
+        for spread in self.getSpreads():
+            print(spread)
         return self.getSpreads()
     spreads = property(_get_spreads)
 

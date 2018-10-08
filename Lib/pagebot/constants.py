@@ -575,13 +575,18 @@ ZALIGNS = {None, FRONT, MIDDLE, BACK}
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
+# Image formats
 FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'
 FILETYPE_PNG = 'png'
 FILETYPE_SVG = 'svg'
+FILETYPE_TIF = 'tif'
+FILETYPE_TIFF = 'tifF'
 FILETYPE_GIF = 'gif'
 FILETYPE_MOV = 'mov'
+# Application format
 FILETYPE_APP = 'app'
+# Font formats
 FILETYPE_UFO = 'ufo'
 FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
@@ -591,6 +596,25 @@ DEFAULT_FILETYPE = FILETYPE_PDF
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 
+# Default factors to save images (e.g. thumbnails) larger than used (w, h) size
+DEFAULT_RESOLUTION_FACTORS = {
+    FILETYPE_PDF: 1,
+    FILETYPE_JPG: 3, 
+    FILETYPE_PNG: 3, 
+    FILETYPE_SVG: 1, 
+    FILETYPE_GIF: 2,
+    FILETYPE_TIF: 1,
+    FILETYPE_TIFF:1,
+}
+CACHE_EXTENSIONS = {
+    FILETYPE_PDF: FILETYPE_JPG,
+    FILETYPE_JPG: FILETYPE_JPG,
+    FILETYPE_PNG: FILETYPE_PNG,
+    FILETYPE_SVG: FILETYPE_JPG,
+    FILETYPE_GIF: FILETYPE_JPG,
+    FILETYPE_TIF: FILETYPE_JPG,
+    FILETYPE_TIFF: FILETYPE_JPG,
+}
 # Standard font style names, with the matching abbreviations they can have in font style
 # As reference TYPETR Upgrade is mentioned.
 # In normalized keys, all CamelCase is flattened.

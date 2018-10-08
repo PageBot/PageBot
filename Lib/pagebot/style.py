@@ -21,7 +21,8 @@
 import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
-        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT)
+        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
+        DEFAULT_RESOLUTION_FACTORS)
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
@@ -101,6 +102,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = pt(72),
+        # Dictionary of multiplation factors for (e.g. thumbnail) image sizes per image type
+        resolutionFactors = DEFAULT_RESOLUTION_FACTORS, 
 
         # Optional folds property. Keep None or empty list if no folds. Otherwise list of [(x1, None), ...]
         # for vertical folds or [(None, y1), ...] for horizontal folds. Also the x and y values can be
@@ -361,6 +364,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Image stuff
         showImageReference = False,
+        showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
 
         # Spread stuff
         showSpreadPages = False, # Show even/odd pages as spread, as well as pages that share the same pagenumber.

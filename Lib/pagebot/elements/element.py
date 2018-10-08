@@ -23,7 +23,7 @@ from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
-                           ONLINE, INLINE,
+                           ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
                            DEFAULT_COLOR_BARS)
 
@@ -311,6 +311,28 @@ class Element:
         self.style['language'] = language
     language = property(_get_language, _set_language)
 
+    #   I M A G I N G
+
+    def _get_resolution(self):
+        """Answer the style value self.css('resolution') for the amount of dpi."""
+        return self.css('resolution')
+    def _set_resolution(self, resolution):
+        self.style['resolution'] = resolution
+    resolution = property(_get_resolution, _set_resolution)
+    
+    def _get_resolutionFactors(self):
+        """Answer the style value self.css('resolutionFactors') for image cacheing size factors.
+        If set to None, the resolutionFactor defaults to DEFAULT_RESOLUTION_FACTORS.
+        This will indicate, e.g. value 2, to write a thumbnail png twice the size it will be used in.
+        """
+        return self.css('resolutionFactors', default=DEFAULT_RESOLUTION_FACTORS)
+    def _set_resolutionFactors(self, resolutionFactors):
+        if resolutionFactors is None:
+            resolutionFactors = DEFAULT_RESOLUTION_FACTORS
+        assert isinstance(resolutionFactors, dict)
+        self.style['resolutionFactors'] = resolutionFactors
+    resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
+    
     #   T E M P L A T E
 
     def applyTemplate(self, template, elements=None):
@@ -339,7 +361,7 @@ class Element:
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        <Template:MyTemplate (100pt, 200pt)>
+        <Template MyTemplate (100pt, 200pt)>
         """
         return self._template
     def _set_template(self, template):
@@ -6585,11 +6607,18 @@ class Element:
     #   Image stuff
 
     def _get_showImageReference(self):
-        """Boolean value. If True, the name/reference of an image element is show.."""
+        """Boolean value. If True, the name/reference of an image element is show."""
         return self.style.get('showImageReference', False) # Not inherited
     def _set_showImageReference(self, showImageReference):
         self.style['showImageReference'] = bool(showImageReference)
     showImageReference = property(_get_showImageReference, _set_showImageReference)
+
+    def _get_showImageLoresMarker(self):
+        """Boolean value. If True, show lorea-cache marker on images. This property inherits cascading. """
+        return self.css('showImageLoresMarker', False) # Inherited
+    def _set_showImageLoresMarker(self, showImageLoresMarker):
+        self.style['showImageLoresMarker'] = bool(showImageLoresMarker)
+    showImageLoresMarker = property(_get_showImageLoresMarker, _set_showImageLoresMarker)
 
     #   Spread stuff
 

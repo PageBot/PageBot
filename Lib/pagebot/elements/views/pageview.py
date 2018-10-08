@@ -61,7 +61,7 @@ class PageView(BaseView):
         2
         >>> len(view.elements[0])
         8
-        """
+        """        
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
         # If default _export directory does not exist, then create it.
@@ -182,7 +182,6 @@ class PageView(BaseView):
         #    frameDuration(frameDuration)
 
         context.saveDocument(path, multiPage=multiPage)
-
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

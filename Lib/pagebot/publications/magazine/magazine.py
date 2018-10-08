@@ -104,7 +104,6 @@ class Magazine(Publication):
         doc = self.newDocument()
 
         font = self.style.get('font') or findFont('Roboto Regular')
-        print(font)
         headStyle = dict(font=font, fontSize=pt(24))
         labelStyle = dict(font=font, fontSize=pt(7))
 
@@ -151,11 +150,14 @@ class Magazine(Publication):
     def composePartOfBook(self, name):
         part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
         doc = self.newDocument()
-        if part.compose is not None:
+        if part.compose is not None: # If the part has its own composer defined, then use that.
             part.compose(self, part, doc)
+        else: # Otherwise use the default composer of self
+            self.compose(part, doc) 
         return doc
 
-    def exportPart(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False):
+    def exportPart(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False,
+            showImageLoresMarker=False):
         if path is None:
             path = '_export/%s-%s.pdf' % (self.name, name)
 
@@ -164,6 +166,7 @@ class Magazine(Publication):
         view = doc.view
         view.showGrid = showGrid
         view.showPadding = showPadding
+        view.showImageLoresMarker = showImageLoresMarker # If True, mark lores-cache images with label.
 
         doc.export(path)
 

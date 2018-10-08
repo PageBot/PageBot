@@ -23,7 +23,7 @@ from pagebot.toolbox.units import pt, upt, point2D, Angle
 from pagebot.toolbox.transformer import path2Name, path2Dir
 from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION,
         FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
-        FILETYPE_MOV, DEFAULT_FILETYPE)
+        FILETYPE_MOV, DEFAULT_FILETYPE, DEFAULT_FALLBACK_FONT_PATH)
 
 try:
     import drawBot
@@ -882,26 +882,31 @@ class DrawBotContext(BaseContext):
         """
         return self.b.ImageObject(path)
 
-    def path2ScaledImagePath(self, path, w, h):
+    def path2ScaledImagePath(self, path, w, h, index=None, exportExtension=None):
         """Answer the path to the scaled image.
 
         >>> context = DrawBotContext()
         >>> context.path2ScaledImagePath('/xxx/yyy/zzz/This.Is.An.Image.jpg', 110, 120)
-        ('/xxx/yyy/zzz/_scaled/', 'This.Is.An.Image.110x120.jpg')
+        ('/xxx/yyy/zzz/_scaled/', 'This.Is.An.Image.110x120.0.jpg')
         """
         cachePath = '%s/_scaled/' % path2Dir(path)
         fileNameParts = path2Name(path).split('.')
-        cachedFileName = '%s.%dx%d.%s' % ('.'.join(fileNameParts[:-1]), w, h, fileNameParts[-1].lower())
+        if not exportExtension: # If undefined, take the original extension for exporting the cache.
+            exportExtension = fileNameParts[-1].lower()
+        cachedFileName = '%s.%dx%d.%d.%s' % ('.'.join(fileNameParts[:-1]), w, h, index or 0, exportExtension)
         return cachePath, cachedFileName
 
-    def scaleImage(self, path, w, h, force=False):
-        """Scale the image at the path into a new cached image file.  Ignore if
-        the cache file is already there.
-
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False, exportExtension=None, 
+            force=False):
+        """Scale the image at the path into a new cached image file.
+        Ignore if the cache file is already there.
+        
         First create the new file name, depending on the resolution of the
         scaled image.  Note that in DrawBot this scaling and saving should be
         done before any real document/page drawing started, since this proces
         is using DrawBot canvas pages to execute.
+        In case the source contains indexed pages, then use index to select the page.
+        If omitted, the default index is 0 (works in DrawBot also on non-PDF files).
 
         >>> from pagebot import getResourcesPath
         >>> context = DrawBotContext()
@@ -914,14 +919,19 @@ class DrawBotContext(BaseContext):
         True
         """
         # If default _scaled directory does not exist, then create it.
-        cachePath, fileName = self.path2ScaledImagePath(path, w, h)
+        cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
         if not os.path.exists(cachePath):
             os.makedirs(cachePath)
         cachedFilePath = cachePath + fileName
         if force or not os.path.exists(cachedFilePath):
             self.newDrawing() # Clean the drawing stack.
             self.newPage(w, h)
-            self.image(path, (0, 0), w=w, h=h)
+            self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
+            if showImageLoresMarker:
+                bs = self.newString('LO-RES', style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(64), 
+                    fill=color(0, 1, 1), textFill=color(1, 0, 0)))
+                tw, th = bs.size
+                self.text(bs, (w/2-tw/2, h/2-th/4))
             self.saveImage(cachedFilePath)
             self.newDrawing() # Clean the drawing stack.
         return cachedFilePath

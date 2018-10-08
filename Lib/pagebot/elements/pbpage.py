@@ -40,7 +40,7 @@ class Page(Element):
     def __init__(self, isLeft=None, isRight=None,
         htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
         cssCode=None, cssPaths=None, cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
-        viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None,
+        viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None, pn=None,
         **kwargs):
 
         """Add specific parameters for a page, besides the parameters for standard Elements.
@@ -60,6 +60,10 @@ class Page(Element):
         # Overwrite flag for side of page. Otherwise test on document pagenumber.
         self._isLeft = isLeft
         self._isRight = isRight
+        # Optional storage of page number in the page (normally this is owned by the containing document)
+        # It is used if the pagnumbering of the document with format (1, 0) is different from the
+        # pagnumber that needs to be shown in the page.
+        self.pn = pn
 
         #   F I L E  S T U F F
 
@@ -105,12 +109,12 @@ class Page(Element):
         >>> from pagebot.constants import A4
         >>> doc = Document(name='TestDoc', autoPages=8, size=A4)
         >>> doc[5] # Remembers original unit size.
-        <Page:default 5 (210mm, 297mm)>
+        <Page #5 default (210mm, 297mm)>
         """
         if self.title:
-            name = ':'+self.title
+            name = ' '+self.title
         elif self.name:
-            name = ':'+self.name
+            name = ' '+self.name
         else: # No name
             name = ' Unplaced'
 
@@ -121,14 +125,17 @@ class Page(Element):
 
         pn = ''
         if self.parent: # If there is a parent, get the (pageNumber, index) tuple.
-            pn_index = self.parent.getPageNumber(self)
+            if self._pn is not None: # Hard coded page number, then ignore document index.
+                pn_index = self._pn
+            else:
+                pn_index = self.parent.getPageNumber(self)
             if pn_index is not None:
                 if pn_index[1]: # Index > 1, then show.
-                    pn = ' %d:%d' % pn_index
+                    pn = ' #%d:%d' % pn_index
                 else:
-                    pn = ' %d' % pn_index[0]
+                    pn = ' #%d' % pn_index[0]
 
-        return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, name, pn, self.w, self.h, elements)
+        return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, pn, name, self.w, self.h, elements)
 
     def _get_isLeft(self):
         """Answers if this is a left page (even pagenumber), unless the
@@ -223,8 +230,9 @@ class Page(Element):
 
     def _get_pn(self):
         """Answers the page number by which self is stored in the parent
-        document. This property is readonly. To move or remove pages, use
-        Document.movePage() or Document.removePage()
+        document. To move or remove pages, use Document.movePage() or Document.removePage()
+        In case the self._pn is set, the page numbering is hard-coded, independent
+        of the pages in the containing document.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -233,11 +241,24 @@ class Page(Element):
         >>> page = doc[5]
         >>> page.pn
         (5, 0)
+        >>> page.pn = 320 # Overwrites the document paging
+        >>> page.pn
+        (320, 0)
+        >>> page.pn = None # Reset document paging
+        >>> page.pn
+        (5, 0)
         """
+        if self._pn is not None:
+            return self._pn
         if self.parent is None:
             return None # Not placed directly in a document. No page number known.
         return self.parent.getPageNumber(self)
-    pn = property(_get_pn)
+    def _set_pn(self, pn):
+        """Set the optional page numbere, overwriting queries into the containing document."""
+        if pn is not None and not isinstance(pn, (list, tuple)):
+            pn = pn, 0
+        self._pn = pn
+    pn = property(_get_pn, _set_pn)
 
     #   E L E M E N T S
 

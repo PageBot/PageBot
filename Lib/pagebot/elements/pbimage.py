@@ -12,15 +12,17 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     image.py
+#     pbimage.py
 #
 
 
 import os
+
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN # In case no image is defined.
+from pagebot.constants import ORIGIN, CACHE_EXTENSIONS #
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
+from pagebot.toolbox.transformer import path2Extension
 
 
 class Image(Element):
@@ -64,7 +66,7 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
-        imo=None, index=1, saveScaled=True, resolution=1, **kwargs):
+        imo=None, index=1, saveScaled=True, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
@@ -95,7 +97,6 @@ class Image(Element):
         # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
         # Do not scale the image, if the cache file already exists. If False, then not scaled cache is created.
         self.saveScaled = saveScaled 
-        self.resolution = resolution # Factor by which scaled images should be larger than usage.
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values is None,
@@ -222,23 +223,35 @@ class Image(Element):
             alpha = 1
         return alpha
 
-    def saveScaledCache(self):
-        """If the self.saveScaled is True and the scale is outside the range,
-        then create a new image if it does not already exist. Scaling images in 
-        the DrawBot context is a fast operation, so always worth while to creating
+    def saveScaledCache(self, view):
+        """If the self.saveScaled is True and the reduction scale is inside the range,
+        then create a new cached image file, if it does not already exist. Scaling images in 
+        the DrawBot context is a fast operation, so always worthwhile to creating PNG from
         large export PDF files.
+        In case the source is a PDF, then use self.index to request for the page.
         """
         if self.path is None or not self.saveScaled:
             return
-        w = self.w * self.resolution
-        h = self.h * self.resolution
-        sx, sy = upt(w / self.iw, h / self.ih)
-        if 0.8 <= sx <= 1.2 and 0.8 <= sx < 1.2: # If no real scale changes, then skip
+        if not self.iw or not self.ih: # Make sure not zero, to avoid division
+            print('Image.saveScaledCache: %dx%d zero image size' % (self.iw, self.ih))
+            return
+        extension = path2Extension(self.path)
+        resolutionFactor = self.resolutionFactor.get(extension, 1)
+        # Translate the extension to the related type of output.
+        exportExtension = CACHE_EXTENSIONS.get(extension, extension)
+        resW = self.w * resolutionFactor 
+        resH = self.h * resolutionFactor
+        sx, sy = upt(resW / self.iw, resH / self.ih)
+        if not self.saveScaled and 0.8 <= sx and 0.8 <= sy: # If no real scale reduction, then skip. Never enlarge.
             return
         # Scale the image the cache does not exist already.
         # A new path is answers for the scaled image file. Reset the (self.iw, self.ih)
-        self.path = self.context.scaleImage(self.path, self.w * self.resolution, self.h * self.resolution)
-  
+        self.path = self.context.scaleImage(
+            path=self.path, w=resW, h=resH, index=self.index, 
+            showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker, 
+            exportExtension=exportExtension
+        )
+
     def prepare(self, view, origin=None, drawElements=True):
         """Respond to the top-down element broadcast to prepare for build.
         If the original image needs scaling, then prepare the build by letting the context
@@ -246,7 +259,9 @@ class Image(Element):
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.saveScaledCache() 
+        self.saveScaledCache(view) 
+        for e in self.elements:
+            e.prepare(view, origin, drawElements)
 
     def build_html(self, view, origin=None, drawElements=True):
         print('[%s.build_html] Not implemented yet' % self.__class__.__name__)
@@ -320,7 +335,7 @@ class Image(Element):
 
             if self.imo is not None:
                 with self.imo:
-                    b.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha())
+                    b.image(self.path, (0, 0), pn=1, alpha=self._getAlpha())
                 b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             else:
                 b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
