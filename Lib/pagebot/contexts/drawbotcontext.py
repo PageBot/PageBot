@@ -895,12 +895,13 @@ class DrawBotContext(BaseContext):
         return cachePath, cachedFileName
 
     def scaleImage(self, path, w, h, force=False):
-        """Scale the image at the path into a new cached image file.
-        Ignore if the cache file is already there, 
-        First create the new file name, depending on the resolution of the scaled image.
-        Note that in DrawBot this scaling and saving should be done before any real
-        document/page drawing started, since this proces is using DrawBot canvas
-        pages to execute.
+        """Scale the image at the path into a new cached image file.  Ignore if
+        the cache file is already there.
+
+        First create the new file name, depending on the resolution of the
+        scaled image.  Note that in DrawBot this scaling and saving should be
+        done before any real document/page drawing started, since this proces
+        is using DrawBot canvas pages to execute.
 
         >>> from pagebot import getResourcesPath
         >>> context = DrawBotContext()

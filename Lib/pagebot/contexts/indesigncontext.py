@@ -23,11 +23,11 @@
 #
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
+from pagebot.contexts.strings.indesignstring import InDesignString
 from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_SIZE
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import Pt, upt
 from pagebot.toolbox.color import noColor, blackColor, Color
-from pagebot.contexts.strings.indesignstring import InDesignString
 
 class InDesignContext(BaseContext):
     """The InDesignContext implements the InDesign JS-API within the PageBot

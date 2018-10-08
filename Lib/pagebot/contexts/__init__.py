@@ -48,12 +48,14 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'InDesign':
                 DEFAULT_CONTEXT = getInDesignContext()
+            elif contextType == 'IDML':
+                DEFAULT_CONTEXT = getIDMLContext()
             elif contextType == 'SVG':
                 DEFAULT_CONTEXT = getSvgContext()
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
-            if contextType in ('DrawBot', 'InDesign'):
+            if contextType in ('DrawBot'):
                 print('Selected context type is not available on this platform: %s for %s' % (contextType, platform))
                 # TODO: raise error
                 DEFAULT_CONTEXT = getFlatContext()
@@ -63,6 +65,10 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'SVG':
                 DEFAULT_CONTEXT = getSvgContext()
+            elif contextType == 'InDesign':
+                DEFAULT_CONTEXT = getInDesignContext()
+            elif contextType == 'IDML':
+                DEFAULT_CONTEXT = getIDMLContext()
 
             # TODO: What's the actual path on Linux?
             MAMP_PATH = '/tmp/MAMP_PATH/'
@@ -86,6 +92,10 @@ def getHtmlContext():
 def getInDesignContext():
     from pagebot.contexts.indesigncontext import InDesignContext
     return InDesignContext()
+
+def getIDMLContext():
+    from pagebot.contexts.idmlcontext import IDMLContext
+    return IDMLContext()
 
 def getSvgContext():
     from pagebot.contexts.svgcontext import SvgContext
