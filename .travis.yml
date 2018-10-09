@@ -78,7 +78,9 @@ script:
   python3 Examples/03_Elements/UseContainerElements.py
   python3 Examples/03_Elements/UseElementProperties.py
   python3 Examples/03_Elements/UseShadow.py
-- python3 Examples/18_Testing/testFlatBasics.py
+- python3 Examples/18_Testing/Contexts.py
+- python3 Examples/18_Testing/Flat.py
+- python3 Examples/18_Testing/IDML.py
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py
 - python3 Lib/pagebot/conditions/align.py
