@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -299,7 +299,7 @@ def name2Rgb(name):
     (1, 0, 0)
     >>> name2Rgb('white')
     (1, 1, 1)
-    >>> colorName = 'slategrey'
+    >>> colorName = 'slategray'
     >>> rgb = name2Rgb(colorName) # Get nearest rounded (r,g,b) for this spot color
     >>> '%0.2f, %0.2f, %0.2f' % rgb
     '0.44, 0.50, 0.56'
@@ -337,17 +337,17 @@ def rgb2Name(rgb):
     return rgbName
 
 class Color:
-    """The Color class implements a generic color storage, that is capable of
+    """The Color class implements a generic color storage that is capable of
     tranforming one type of color to another. One of the reasons to use Color
-    instances, is that some contexts (such as FlatContext) are very specific in
+    instances is that some contexts (such as FlatContext) are very specific in
     what kind of color is possible depending on the selected output format. As
-    the intension of PageBot is to define evert aspect of documents, without
-    knowing their output medium or format in advance, all colors need to be
-    stored as generic intance of Color.
+    the intention of PageBot is to define all aspects of documents without
+    knowing the output medium or format in advance, all colors should be stored
+    as a generic instance of Color.
 
-    The values of defined Color instances are stored without conversion, so
-    there is not double conversion done (except for cmyk-->rgb-->spot and
-    spot-->rgb-->cmyk, as we don't have a direct translation table (yet) for
+    The values of defined Color instances are stored without conversion, thus
+    no double conversion is done, except for CMYK-->RGB-->Spot and
+    Spot-->RGB-->CMYK, as we don't have a direct translation table (yet) for
     those.
 
     Other projects: Add profiles, exceptions to calculated conversion.
@@ -355,7 +355,7 @@ class Color:
     We assume that all UI-colors (such as floats or tuples) are translated into
     Color instances.
 
-    Options to defined the color:
+    Options to define the color:
 
     >>> c = color(g=1)
     >>> c.fullString
@@ -424,14 +424,17 @@ class Color:
         self.a = a
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
         self.overPrint = overPrint # Used by FlatBuilder
-        # Some reposition of attributes, in case used as rgb='red' or cmy='magenta'
+        # Some reposition of attributes, in case used as rgb='red' or
+        # cmy='magenta'
         if isinstance(rgb, str) and not rgb.startswith('#'):
             name = rgb
         elif isinstance(cmyk, str):
             name = cmyk
         elif g is not None or b is not None:
             rgb = r, g, b
-        elif r is not None and rgb is None: # Tolerate attribute exception, if the first is  a value and None in (g, b).
+        elif r is not None and rgb is None:
+            # Tolerate attribute exception, if the first is  a value and None
+            # in (g, b).
             rgb, r = r, None
         elif c is not None or m is not None or y is not None or k is not None:
             cmyk = c, m, y, k
@@ -461,7 +464,9 @@ class Color:
         # RGB-string
         elif isinstance(rgb, str): # In case rgb is a hex string or a name.
             hexOrName = rgb.lower()
-            if hexOrName in CSS_COLOR_NAMES: # Not hex, but a color name instead. We're tolerant: convert anyway.
+            if hexOrName in CSS_COLOR_NAMES:
+                # Not hex, but a color name instead. We're tolerant: convert
+                # anyway.
                 self._name = hexOrName
             else: # Otherwise try to convert hex value.
                 rgbHex = hexOrName.replace('#','').replace(' ','')
@@ -538,7 +543,8 @@ class Color:
     fullString = property(_get_fullString)
 
     def _get_isRgb(self):
-        """Answers if the base of this color is defined as rgb or if an (rgb) name is defined.
+        """Answers if the base of this color is defined as RGB or if an (RGB)
+        name is defined.
 
         >>> color(rgb=0.5).isRgb
         True
@@ -553,7 +559,7 @@ class Color:
     isRgb = property(_get_isRgb)
 
     def _get_isCmyk(self):
-        """Answers if the base of this color is defined as cmyk.
+        """Answers if the base of this color is defined as CMYK.
 
         >>> color(rgb=0.5).isCmyk
         False
@@ -811,7 +817,8 @@ class Color:
     css = property(_get_css)
 
     def moreRed(self, v=0.5):
-        """Answers the color more red than self. This converts to internal rgb storage.
+        """Answers the color more red than self. This converts to internal RGB
+        storage.
 
         >>> color(0.1, 0.2, 0.3).moreRed()
         Color(r=0.55, g=0.2, b=0.3)
@@ -823,10 +830,12 @@ class Color:
         Color(r=0.77, g=0.48, b=0.42)
         """
         r, g, b = self.rgb
-        return color(min(1, r + (1 - r)*v), g, b, self.a)
+        r = min(1, r + (1 - r) * v)
+        return color(r, g, b, self.a)
 
     def moreGreen(self, v=0.5):
-        """Answers the color more green than self. This converts to internal rgb storage.
+        """Answers the color more green than self. This converts to internal
+        RGB storage.
 
         >>> color(0.1, 0, 0.3).moreGreen()
         Color(r=0.1, g=0.5, b=0.3)
@@ -841,7 +850,8 @@ class Color:
         return color(r=r, g=min(1, g + (1 - g)*v), b=b, a=self.a)
 
     def moreBlue(self, v=0.5):
-        """Answers the color more blue than self. This converts to internal rgb storage.
+        """Answers the color more blue than self. This converts to internal RGB
+        storage.
 
         >>> color(0.1, 0, 0).moreBlue()
         Color(r=0.1, g=0, b=0.5)
@@ -856,7 +866,8 @@ class Color:
         return color(r=r, g=g, b=min(1, b + (1 - b)*v), a=self.a)
 
     def lighter(self, v=0.5):
-        """Answers the color lighter than self. This converts to internal rgb storage.
+        """Answers the color lighter than self. This converts to internal RGB
+        storage.
 
         >>> blackColor.lighter()
         Color(r=0.5, g=0.5, b=0.5)
@@ -869,7 +880,8 @@ class Color:
         return color(rgb=rgb, a=self.a)
 
     def lessRed(self, v=0.5):
-        """Answers the color less red than self. This converts to internal rgb storage.
+        """Answers the color less red than self. This converts to internal RGB
+        storage.
 
         >>> color(1).lessRed()
         Color(r=0.5, g=1, b=1)
@@ -884,7 +896,8 @@ class Color:
         return color(r=min(1, max(0, r*v)), g=g, b=b, a=self.a)
 
     def lessGreen(self, v=0.5):
-        """Answers the color less green than self. This converts to internal rgb storage.
+        """Answers the color less green than self. This converts to internal
+        RGB storage.
 
         >>> color(1).lessGreen()
         Color(r=1, g=0.5, b=1)
@@ -899,7 +912,8 @@ class Color:
         return color(r=r, g=min(1, max(0, g*v)), b=b, a=self.a)
 
     def lessBlue(self, v=0.5):
-        """Answers the color less blue than self. This converts to internal rgb storage.
+        """Answers the color less blue than self. This converts to internal RGB
+        storage.
 
         >>> color(1).lessBlue()
         Color(r=1, g=1, b=0.5)
@@ -929,7 +943,7 @@ class Color:
 
     def lessOpaque(self, v=0.5):
         """Answers a less opaque color of self. v = 0 gives full transparant.
-        This converts to internal rgb storage.
+        This converts to internal RGB storage.
 
         >>> color(1).lessOpaque()
         Color(r=1, g=1, b=1, a=0.5)
@@ -961,7 +975,7 @@ class Color:
         >>> color(0x828085).name # Real value for 'gray' is 0x808080
         'gray'
         >>> color(0xffe4e1).name, color(0xffe4f1).name, color(0xffe4f8).name
-        ('mistyrose', 'mistyrose', 'lavenderblush')
+        ('mistyrose', 'lavenderblush', 'lavenderblush')
         """
         if self._name is None:
             self._name = rgb2Name(self.rgb)
