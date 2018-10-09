@@ -10,15 +10,14 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     030_SingleColumnYPositions.py
+#     04_SingleColumnYPositions.py
 #
 #     Draw a single columns with various typographic styles inside and show the
 #     baselines, using the view.showBaselines = True display option.
 #     The text column includes a footnote reference with baseline shift.
 #
-#from pagebot.contexts.flatcontext import FlatContext
-from pagebot import getContext
 
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -27,7 +26,6 @@ from pagebot.toolbox.units import em, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import * # Import all constants for convenience
 
-#context = FlatContext()
 context = getContext()
 
 W = H = pt(1000) # Document size optionally defined as units

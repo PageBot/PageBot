@@ -10,15 +10,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     090_RotatingText.py
+#     09_RotatingText.py
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
 #     Use view.showBaselines = True to show the default baselines of the text.
 
-#from pagebot.contexts.flatcontext import FlatContext
 from pagebot import getContext
-
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -27,7 +25,6 @@ from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
 
-#context = FlatContext()
 context = getContext()
 
 W = H = pt(1000) # Document size

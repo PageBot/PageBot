@@ -16,9 +16,7 @@
 #     by applying the layout condition Fit() with doc.solve()
 #     The usable area of the page is defined by the remainder of page.padding.
 
-#from pagebot.contexts.flatcontext import FlatContext
 from pagebot import getContext
-
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -27,7 +25,6 @@ from pagebot.toolbox.units import em
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import * # Import all constants for convenience
 
-#context = FlatContext()
 context = getContext()
 
 W = H = 1000 # Document size

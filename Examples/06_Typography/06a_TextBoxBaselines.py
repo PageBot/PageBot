@@ -12,13 +12,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     060_TextBoxBaselines.py
+#     06a_TextBoxBaselines.py
 #
 #     Show the baseline grid of the page (drawn by the PageView)
 #     and the relation with the baseline of a positioned text box.
 #     Intentionally give the baseline grid and text grid a different leading.
 #     Position the fifth text line from top on the page baseline grid.
-#
+
 from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.elements import newTextBox, newLine

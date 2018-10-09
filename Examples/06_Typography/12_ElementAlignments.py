@@ -12,13 +12,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     110_ElementALignments.py
+#     12_ElementALignments.py
 #
 #     Build a square page with a number of circle elements on top of each other.
-#     ALl with the same propertion on the same position, where measures are derived
-#     in a different way. If all alignments work, there should be one circle 
-#     visibiel.
-#
+#     ALl with the same proportion on the same position, where measures are derived
+#     in a different way. If all alignments work, a single circle should be
+#     visibile.
+
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt, inch
 from pagebot.toolbox.color import color, noColor
