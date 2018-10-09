@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -10,12 +10,12 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     testBabelStrings.py
+#     Strings.py
 #
-# Test BabelString in both DrawBotContext and FlatContext
+#     Test BabelString in both DrawBotContext and FlatContext
 
 from pagebot.contexts.drawbotcontext import DrawBotContext
-#from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contexts.flatcontext import FlatContext
 from pagebot.fonttoolbox.objects.font import findFont
 
 W, H = 800, 220
@@ -26,7 +26,7 @@ bold = findFont('Roboto-Bold')
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    #(FlatContext(), '_export/testFlatString.pdf'),
+    (FlatContext(), '_export/testFlatString.pdf'),
 )
 
 for context, path in testContexts:

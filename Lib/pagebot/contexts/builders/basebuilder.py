@@ -13,6 +13,10 @@
 #
 #     basebuilder.py
 #
+
+import os
+from pagebot.toolbox.transformer import path2Name
+
 class BaseBuilder:
     """The BaseBuilder is the abstract builder class, for all builders that
     need to import and write files in a directory, or draw on their builders,

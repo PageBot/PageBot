@@ -71,6 +71,13 @@ script:
   python3 Examples/02b_Fonts/AlterGlyphCoordinates.py
   python3 Examples/02b_Fonts/DrawQuadraticGlyph.py
   python3 Examples/02b_Fonts/UseProofing.py
+  python3 Examples/03_Elements/AlignFloatElements.py
+  python3 Examples/03_Elements/DrawRedRectCenterPage.py
+  python3 Examples/03_Elements/ShowElements.py
+  python3 Examples/03_Elements/UseBorders.py
+  python3 Examples/03_Elements/UseContainerElements.py
+  python3 Examples/03_Elements/UseElementProperties.py
+  python3 Examples/03_Elements/UseShadow.py
 - python3 Examples/18_Testing/testFlatBasics.py
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py

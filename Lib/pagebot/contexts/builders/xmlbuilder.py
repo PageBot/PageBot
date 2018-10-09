@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -14,8 +14,8 @@
 #
 #     xmlbuilder.py
 #
-from pagebot.contexts.builders.basebuilder import BaseBuilder
 
+from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 class XmlBuilder(BaseBuilder):
 

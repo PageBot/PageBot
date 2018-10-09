@@ -10,17 +10,16 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     040_PageGridAlignments.py
+#     03_PageGridAlignments.py
 #
 #     Draw a words on different positions of vertical alignment, based on the
 #     typographic metrics and the postion of baselines.
 #
 #     TODO: Make the baseline alignments work.
 #
-from copy import copy
-#from pagebot.contexts.flatcontext import FlatContext
-from pagebot import getContext
 
+from copy import copy
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -29,8 +28,6 @@ from pagebot.toolbox.units import em, pt, p, upt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import BASE_LINE_BG, BASE_INDEX_LEFT, GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG
 
-
-#context = FlatContext()
 context = getContext()
 
 W = H = pt(1000) # Document size

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -581,10 +581,10 @@ class TextBox(Element):
         >>> len(tb.textLines)
         25
         >>> tb.textLines[10].y
-        152pt
+        151pt
         >>> result = page.solve()
         >>> tb.textLines[10].y
-        152pt
+        151pt
         """
         if self.textLines:
             line = self.textLines[index or 0]

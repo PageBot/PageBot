@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -9,14 +8,19 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     paths.py
+#     Contexts.py
 #
-#
-#    NOTE: should stay at root level, else derived path won't be correct.
+from pagebot import getAllContexts
 
-ROOT_PATH = '/'.join(__file__.split('/')[:-1])
-RESOURCES_PATH = ROOT_PATH + '/resources'
-DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/google/roboto/Roboto-Regular.ttf'
+def testContexts():
+    for c in getAllContexts():
+        testContext(c)
+
+def testContext(context):
+    print(context)
+    for key, value in context.__dict__.items():
+        print(' * %s: %s' % (key, value))
+
+testContexts()

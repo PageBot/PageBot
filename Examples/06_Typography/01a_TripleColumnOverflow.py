@@ -10,15 +10,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     010_TripleColumnOverflow.py
+#     01a_TripleColumnOverflow.py
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
 #     Use view.showBaselines = True to show the baselines of the text.
 
-#from pagebot.contexts.flatcontext import FlatContext
 from pagebot import getContext
-
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -27,7 +25,6 @@ from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, LANGUAGE_EN
 
-#context = FlatContext()
 context = getContext() # Get the context that we are running in (e.g. DrawBotContext = DrawBot)
 
 W, H = pt(1500, 1000) # Document size

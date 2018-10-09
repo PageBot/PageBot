@@ -10,14 +10,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     020_SingleColumnBaselines.py
+#     02_SingleColumnBaselines.py
 #
 #     Draw a single columns with various typographic styles inside and show their
 #     vertical positions. This allows for alignment on parts of the headline.
 #
-#from pagebot.contexts.flatcontext import FlatContext
-from pagebot import getContext
 
+from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -26,7 +25,6 @@ from pagebot.toolbox.units import em, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT
 
-#context = FlatContext()
 context = getContext()
 
 W = H = pt(1000) # Document size optionally defined as units

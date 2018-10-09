@@ -18,9 +18,7 @@
 #     Then use BASE_TOP and BASE_BOTTOM to place the top and bottom baseline
 #     on vertical position page.h/2
 
-#from pagebot.contexts.flatcontext import FlatContext
 from pagebot import getContext
-
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -29,7 +27,6 @@ from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
 
-#context = FlatContext()
 context = getContext()
 
 W = H = pt(1000) # Document size

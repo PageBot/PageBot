@@ -10,7 +10,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     testIDML.py
+#     IDML.py
 #
 # Test InDesign Markup Language.
 #

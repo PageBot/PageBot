@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,9 +15,8 @@
 #
 #     indesigncontext.py
 #
-#     Version 0.1
+#     Documentation for InDesign API:
 #
-#     Documentation for InDesign API is here.
 #     https://www.adobe.com/devnet/indesign/documentation.html
 #     https://wwwimages2.adobe.com/content/dam/acom/en/devnet/indesign/sdk/cs6/scripting/InDesign_ScriptingGuide_JS.pdf
 #

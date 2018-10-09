@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -12,11 +12,12 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     100_PageCropMarks.py
+#     11_PageCropMarks.py
 #
 #     Show the baseline grid of the page (drawn by the PageView)
 #     and the relation with the usable page padding area.
 #
+
 from pagebot.document import Document # Get the main Document class
 from pagebot.toolbox.units import pt, inch
 from pagebot import getContext

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -12,12 +12,12 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     080_MarkDownForPrint.py
+#     07_MarkDownForPrint.py
 #
 #     Show the placement of text from a MarkDown file using Typesetter,
 #     where there is already a chain of text boxes spread over several pages.
 #
-#from pagebot.contexts.flatcontext import FlatContext
+
 from pagebot import getContext
 from pagebot import getResourcesPath
 from pagebot.fonttoolbox.objects.font import findFont
@@ -28,7 +28,6 @@ from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, LANGUAGE_EN
 
-#context = FlatContext()
 context = getContext() # Get the context that we are running in (e.g. DrawBotContext = DrawBot)
 
 TEXT_PATH = getResourcesPath() + "/texts/TEST.md"

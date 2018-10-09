@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -27,48 +27,7 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import object2SpacedString
 from pagebot.toolbox.units import asFormatted
 from pagebot.constants import A4Rounded
-
-class BezierPath:
-    """Make BezierPath with the same API for DrawBotBuilder drawing.
-
-    >>> from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
-    >>> indesignBuilder = InDesignBuilder()
-    >>> path = BezierPath(indesignBuilder)
-    >>> path.moveTo((0, 0))
-    >>> path.lineTo((0, 100))
-    >>> path.lineTo((100, 100))
-    >>> path.lineTo((100, 0))
-    >>> path.lineTo((0, 0))
-    >>> path.closePath()
-
-    """
-    def __init__(self, b):
-        self.b = b
-        self.commands = []
-
-    def append(self, command):
-        self.commands.append(command)
-
-    def moveTo(self, p):
-        pass
-
-    def lineTo(self, p):
-        pass
-
-    def quadTo(self, bcp, p):
-        pass
-
-    def curveTo(self, bcp1, bcp2, p):
-        pass
-
-    def closePath(self):
-        pass
-        # TODO Seems to be a problem in direct closing, not storing as command?
-        #self.commands.append(self.b.closepath
-
-    def appendPath(self, path):
-        self.commands += path.commands
-
+from pagebot.contexts.builders.nonebezierpath import CommandBezierPath as BezierPath
 
 class InDesignBuilder(BaseBuilder):
     """The InDesignBuilder class implements the all necessary API-Javascript to
