@@ -14,8 +14,12 @@
 #
 #     idmlbuilder.py
 #
+
+import os
+from pagebot.toolbox.transformer import path2Name
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.builders.nonebezierpath import BezierPath
+from pagebot.contexts.builders.nonebezierpath import CommandBezierPath as BezierPath
+
 try:
     import simple_idml
 except:
