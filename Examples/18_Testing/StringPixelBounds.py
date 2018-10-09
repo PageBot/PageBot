@@ -11,7 +11,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     testFormattedString.py
+#     StringPixelBounds.py
 #
 
 from pagebot import getContext

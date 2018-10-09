@@ -1,4 +1,17 @@
-
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+# -----------------------------------------------------------------------------
+#
+#     TextWidthTracking.py
+#
 
 from pagebot import getContext
 from pagebot.toolbox.units import em
@@ -21,7 +34,7 @@ y = 20
 
 def textBounds(s, x, y, w):
     bs = context.newString(s, w=w,
-                           style=dict(font='Georgia', 
+                           style=dict(font='Georgia',
                                       tracking=em(0.02),
                                       textFill=blackColor))
 

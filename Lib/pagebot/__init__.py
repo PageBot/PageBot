@@ -22,6 +22,8 @@ STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
+contextTypes = ('DrawBot', 'Flat', 'HTML', 'SVG', 'InDesign', 'IDML')
+
 def getRootPath():
     """Answers the root path of the PageBot module for the current platform."""
     return ROOT_PATH
@@ -50,33 +52,51 @@ def getContext(contextType='DrawBot'):
     >>> context = getContext('HTML')
     >>> print(context)
     <HtmlContext>
+    >>> context = getContext('SVG')
+    >>> print(context)
+    <SvgContext>
+    >>> context = getContext('InDesign')
+    >>> print(context)
+    <InDesignContext>
+    >>> context = getContext('IDML')
+    >>> print(context)
+    <IDMLContext>
     """
     from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
+
+def getAllContexts():
+    from pagebot.contexts import getContext as getPlatformContext
+    contexts = []
+    for contextType in contextTypes:
+        contexts.append(getPlatformContext(contextType=contextType))
+    return contexts
 
 def getMampPath():
     from pagebot.contexts import getMampPath
     return getMampPath()
 
-# In order to let PageBot scripts and/applications exchange information
-# without the need to save data in files, the pbglobals module supports the
-# storage of non-persistent information. This way, applications with Vanilla
-# windows can be used as UI for scripts that perform as batch process.
+'''
+In order to let PageBot scripts and applications exchange information without
+the need to save data in files, the pbglobals module supports the storage of
+non-persistent information. This way, applications with Vanilla windows can be
+used as UI for scripts that perform as batch process.
 
-# Note that it is the responsibilty of individual scripts to create unique ids
-# for attributes. Also they need to know of each other, in case information is
-# exchanged.
-#
-# Key is script/application id, e.g. their __file__ value.
-#
-# Access as:
-#
-#   from pagebot.toolbox.transformer import path2ScriptId
-#   scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
-#
-# or direct as:
-#
-# ...
+Note that it is the responsibilty of individual scripts to create unique ID's
+for attributes. Also they need to know of each other, in case information is
+exchanged.
+
+Key is script/application id, e.g. their __file__ value.
+
+Access as:
+
+  from pagebot.toolbox.transformer import path2ScriptId
+  scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
+
+or direct as:
+
+...
+'''
 
 pbGlobals = {}
 

@@ -10,12 +10,12 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     testBabelStrings.py
+#     Strings.py
 #
-# Test BabelString in both DrawBotContext and FlatContext
+#     Test BabelString in both DrawBotContext and FlatContext
 
 from pagebot.contexts.drawbotcontext import DrawBotContext
-#from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contexts.flatcontext import FlatContext
 from pagebot.fonttoolbox.objects.font import findFont
 
 W, H = 800, 220
