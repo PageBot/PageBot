@@ -14,8 +14,8 @@
 #
 #     xmlbuilder.py
 #
-from pagebot.contexts.builders.basebuilder import BaseBuilder
 
+from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 class XmlBuilder(BaseBuilder):
 

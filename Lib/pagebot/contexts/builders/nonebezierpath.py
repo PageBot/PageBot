@@ -15,7 +15,28 @@
 #     nonebezierpath.py
 #
 
-class BezierPath:
+class NoneBezierPath:
+    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing
+    texting."""
+
+    def moveTo(self, p):
+        pass
+
+    lineTo = moveTo
+
+    def quadTo(self, pcp, p):
+        pass
+
+    def curveTo(self, bcp1, bcp2, p):
+        pass
+
+    def closePath(self):
+        pass
+
+    def appendPath(self, path):
+        pass
+
+class CommandBezierPath:
     """Make BezierPath with the same API for DrawBotBuilder drawing.
     """
 
