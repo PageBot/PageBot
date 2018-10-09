@@ -573,7 +573,7 @@ table {
             f.write(self.getHtml())
             f.close()
         except IOError:
-            print('Cannot write HTML file "%s"' % path)
+            print('### Cannot write HTML file "%s"' % path)
 
     def getHtml(self):
         """Answers the accumulated HTML as single string."""

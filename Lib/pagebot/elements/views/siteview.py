@@ -53,9 +53,9 @@ class SiteView(HtmlView):
         self.webFontUrls = webFontUrls
 
         # Default CSS urls to inclide 
-        self.useScss = useScss # If True, then try to compile to SCSS.
+        self.useScss = useScss # If True, then try to compile from SCSS.
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
-        self.cssUrls = cssUrls or [self.SCSS_CSS_PATH] # Added as links in the page <head>
+        self.cssUrls = cssUrls # List of CSS urls, added as links in the page <head>. Could be [self.SCSS_CSS_PATH] 
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
@@ -113,20 +113,20 @@ class SiteView(HtmlView):
         if not os.path.exists(path):
             os.makedirs(path)
 
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
+
         for pn, pages in doc.pages.items():
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
-
+                
         if self.useScss:
             # Write all collected SCSS variables into one file
             b.writeScss(self.SCSS_VARIABLES_PATH)
             # Compile SCSS to CSS
             b.compileScss(self.SCSS_PATH)
-
-        # If resources defined, copy them to the export folder.
-        self.copyResources(path)
 
     def getUrl(self, name):
         """Answers the local URL for Mamp Pro to find the copied website."""

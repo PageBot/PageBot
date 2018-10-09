@@ -15,6 +15,8 @@
 #     pbpage.py
 #
 import weakref
+import os
+
 from pagebot.elements.element import Element
 from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
@@ -365,6 +367,12 @@ class Page(Element):
                         for webFontUrl in webFontUrls:
                             b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
 
+                # If there is cumulated CSS in the builder, then add that inside the page
+                if b.hasCss():
+                    b.style()
+                    b.addHtml(b.getCss())
+                    b._style()
+
                 # View and pages can both implements CSS paths
                 for cssUrls in (view.cssUrls, self.cssUrls):
                     if cssUrls is not None:
@@ -442,7 +450,7 @@ class Page(Element):
 
                 if b.hasJs():
                     b.script()
-                    b.addHtml('\n'.join(b.getJs()))
+                    b.addHtml(b.getJs())
                     b._script()
                 #else no default JS. To be added by the calling application.
                 # Close the page body
@@ -456,6 +464,9 @@ class Page(Element):
         if not fileName.lower().endswith('.html'):
             fileName += '.html'
         if view.doExport: # View flag to avoid writing, in case of testing.
+            # Make sure that the path folder is there
+            if not os.path.exists(path):
+                os.makedirs(path)
             b.writeHtml(path + fileName)
 
 class Template(Page):

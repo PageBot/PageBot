@@ -4259,8 +4259,8 @@ class Element:
 
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
-    # Sass syntax is not supported yet. It does not appear to be standard and cannot be eaily
-    # converted from existing CSS.
+    # Sass syntax is not supported yet. It does not appear to be standard and cannot be easily
+    # converted from existing CSS. Meanwhile, many CSS designers can extend easier to SCSS.
 
     def build_scss(self, view):
         """Build the scss variables for this element."""
