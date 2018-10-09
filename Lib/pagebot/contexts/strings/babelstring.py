@@ -16,10 +16,24 @@
 from pagebot.toolbox.units import pt
 
 class BabelString:
-    """BabelString is the base class of various types of (formatted) string
-    representations needed for different builder classes."""
+    """BabelString is the base class of all types of (formatted) string
+    representations needed for the builder classes.
+    >>> from pagebot import getContext
+    >>> context = getContext()
+    >>> bla = context.newString('bla')
+    >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
+    >>> isinstance(bla, DrawBotString)
+    True
+    >>> type(bla)
+    DrawBotString
+    >>> isinstance(bla, BabelString)
+    True
+    >>> import inspect
+    >>> inspect.getmro(DrawBotString)
+    """
 
     def __init__(self, s, context, style=None):
+        print('bs init')
         # Encloses the Flat/Drawbot/html string in this wrapper.
         self.s = s
         # Some checking, in case we get something else here.
@@ -52,8 +66,11 @@ class BabelString:
         """Appends string or FlatString to self."""
         try:
             self.s += s.s
-        except (TypeError, AttributeError):
-            self.s += s # Convert to babel string, whatever it is.
+        except (TypeError, AttributeError) as e:
+            print(e)
+            # FIXME: check type before, then convert to babel string, whatever
+            # it is.
+            self.s += s
 
     def _get_type(self):
         """Answers the ID of the class, in case a caller wants to know what

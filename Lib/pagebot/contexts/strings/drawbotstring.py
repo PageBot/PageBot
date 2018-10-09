@@ -67,7 +67,8 @@ from pagebot.toolbox.units import pt, upt, isUnit, units, em
 def pixelBounds(fs):
     """Answers the pixel-bounds rectangle of the text.
 
-    Note that @by can be a negative value, if there is text (e.g. overshoot) below the baseline.
+    Note that @by can be a negative value, if there is text (e.g. overshoot)
+    below the baseline.
     @bh is the amount of pixels above the baseline.
     For the total height of the pixel-map, calculate @ph - @py.
     For the total width of the pixel-map, calculate @pw - @px."""
@@ -176,16 +177,18 @@ class DrawBotString(BabelString):
         (0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
-        # Store the DrawBot FormattedString, as property to make sure it is a FormattedString,
-        # otherwise create it.
+        # Store the DrawBot FormattedString, as property to make sure it is a
+        # FormattedString, otherwise create it.
         self.s = s
-        # In case defined, store current status here as property and set the current FormattedString
-        # for future additions. Also the answered metrics will not be based on these values.
+        # In case defined, store current status here as property and set the
+        # current FormattedString for future additions. Also the answered
+        # metrics will not be based on these values.
         if style is None:
             style = {}
         self.style = style
 
-        # Filled in case w or h are defined, end depending if the font is a variable font.
+        # Filled in case w or h are defined, end depending if the font is a
+        # variable font.
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterates to find width.
         self.fittingFont = None # In case we are sampling with a Variable Font.
         self.fittingLocation = None
@@ -193,6 +196,8 @@ class DrawBotString(BabelString):
 
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
+        print('drawbot string init')
+        super(DrawBotString, self).__init__(s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded FormattedString by property, to enforce checking

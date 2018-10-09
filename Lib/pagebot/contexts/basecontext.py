@@ -52,6 +52,7 @@ class BaseContext:
         `s` (converted to plain unicode string), using e or style as
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance."""
+        print(self.STRING_CLASS)
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = str(s)
