@@ -152,4 +152,3 @@ if __name__ == '__main__':
     # Export in _export folder that does not commit in Git. Force to export PDF.
     #EXPORT_PATH = '_export/AlignElements_F.pdf'
     #d.export(EXPORT_PATH)
-
