@@ -26,7 +26,7 @@ bold = findFont('Roboto-Bold')
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    #(FlatContext(), '_export/testFlatString.pdf'),
+    (FlatContext(), '_export/testFlatString.pdf'),
 )
 
 for context, path in testContexts:
