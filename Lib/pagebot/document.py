@@ -194,7 +194,7 @@ class Document:
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=100)
         >>> page = doc[66]
         >>> page, page.pn
-        (<Page:default 66 (300pt, 400pt)>, (66, 0))
+        (<Page #66 default (300pt, 400pt)>, (66, 0))
         >>> doc.getPageNumber(page)
         (66, 0)
         >>> doc[-10] is None and doc[10000] is None # Answer None if out of range.
@@ -295,7 +295,7 @@ class Document:
         >>> from pagebot.constants import A6
         >>> doc = Document(name='TestDoc', size=A6)
         >>> doc.getTemplate()
-        <Template:default (105mm, 148mm)>
+        <Template default (105mm, 148mm)>
         >>> doc.getTemplate() == doc.defaultTemplate
         True
         """
@@ -311,7 +311,7 @@ class Document:
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
         >>> doc.addTemplate('myTemplate', t)
-        <Template:TestTemplate (200pt, 300pt)>
+        <Template TestTemplate (200pt, 300pt)>
         >>> doc.getTemplate('myTemplate').name == name
         True
         """
@@ -325,7 +325,7 @@ class Document:
         >>> from pagebot.constants import Legal
         >>> doc = Document(name='TestDoc', size=Legal)
         >>> doc.defaultTemplate
-        <Template:default (8.50", 14")>
+        <Template default (8.50", 14")>
         """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
@@ -584,7 +584,39 @@ class Document:
         """Answer the (w, h) tuple of the document size."""
         return self.w, self.h
     size = property(_get_size)
-     
+
+    def _get_gridX(self):
+        """Answer the style value for gridX as property
+
+        >>> gridX = [(100,8),(100,8)]
+        >>> doc = Document(gridX=gridX)
+        >>> doc.gridX
+        [(100, 8), (100, 8)]
+        >>> doc.gridX = [(120,9),(120,9),(120,9)]
+        >>> doc.gridX
+        [(120, 9), (120, 9), (120, 9)]
+        """
+        return self.rootStyle['gridX']
+    def _set_gridX(self, gridX):
+        self.rootStyle['gridX'] = gridX
+    gridX = property(_get_gridX, _set_gridX)
+
+    def _get_gridY(self):
+        """Answer the style value for gridY as property
+
+        >>> gridY = [(100,8),(100,8)]
+        >>> doc = Document(gridY=gridY)
+        >>> doc.gridY
+        [(100, 8), (100, 8)]
+        >>> doc.gridY = [(120,9),(120,9),(120,9)]
+        >>> doc.gridY
+        [(120, 9), (120, 9), (120, 9)]
+        """
+        return self.rootStyle['gridY']
+    def _set_gridY(self, gridY):
+        self.rootStyle['gridY'] = gridY
+    gridY = property(_get_gridY, _set_gridY)
+
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
         """Answers the document global padding, as defined in the root style.
         Intercace is identical to Element.padding
@@ -832,7 +864,7 @@ class Document:
         >>> doc = Document(name='TestDoc', autoPages=5, size=A5)
         >>> page = doc[3]
         >>> page
-        <Page:default 3 (148mm, 210mm)>
+        <Page #3 default (148mm, 210mm)>
         """
 
     def getPages(self, pn):
@@ -934,7 +966,7 @@ class Document:
         >>> page = doc[2]
         >>> next = doc.nextPage(page)
         >>> next
-        <Page:default 3 (11", 16.90")>
+        <Page #3 default (11", 16.90")>
         >>> doc.getPageNumber(next)
         (3, 0)
         >>> next = doc.nextPage(next)
@@ -968,7 +1000,7 @@ class Document:
         >>> page = doc[2]
         >>> prev = doc.prevPage(page)
         >>> prev
-        <Page:default 1 (11", 16.90")>
+        <Page #1 default (11", 16.90")>
         >>> doc.getPageNumber(prev)
         (1, 0)
         >>> prev = doc.prevPage(prev)
@@ -1005,7 +1037,7 @@ class Document:
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=624, autoPages=10)
         >>> doc.getFirstPage()
-        <Page:default 624 (500pt, 500pt)>
+        <Page #624 default (500pt, 500pt)>
         """
         for pn, pnPages in sorted(self.pages.items()):
             for index, page in enumerate(pnPages):
@@ -1018,7 +1050,7 @@ class Document:
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=5, autoPages=10)
         >>> doc.getLastPage()
-        <Page:default 14 (500pt, 500pt)>
+        <Page #14 default (500pt, 500pt)>
         """
         pn = sorted(self.pages.keys())[-1]
         return self.pages[pn][-1]
@@ -1046,7 +1078,7 @@ class Document:
         (500pt, 500pt)
         >>> page.w = 1400
         >>> page
-        <Page:default 1 (1400pt, 500pt)>
+        <Page #1 default (1400pt, 500pt)>
         >>> doc[4].h = 850
         >>> doc.getMaxPageSizes() # Clipped to max size
         (1400pt, 850pt, 100pt)

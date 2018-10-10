@@ -32,11 +32,15 @@ class Placer(Element):
     >>> e.xy
     (0pt, 20pt)
     >>> e.css('fill')
-    Color(r=0.8, g=0.8, b=0.8)
+    Color(r=0.5, g=0.5, b=0.5, a=0.5)
     >>> e.size
     (300pt, 3pt)
     >>> view = doc.getView()
     >>> e.build(view, pt(0, 0))
+
+    """
+
+    """ TODO: Make this work in Flat
 
     >>> from pagebot.contexts.flatcontext import FlatContext
     >>> from pagebot.document import Document
@@ -50,17 +54,27 @@ class Placer(Element):
     >>> e.xy
     (0pt, 20pt)
     >>> e.css('fill')
-    Color(r=0.8, g=0.8, b=0.8)
+    Color(r=0.5, g=0.5, b=0.5, a=0.5)
     >>> e.size
     (300pt, 3pt)
     """
-    DEFAULT_FILL = color(0.8, 0.8, 0.8)
+    DEFAULT_FILL = color(0.5, 0.5, 0.5, 0.5)
 
-    def __init__(self, fill=noColor, **kwargs):
-        if fill is noColor:
+    def __init__(self, fill=None, name=None, drawAfter=None, **kwargs):
+        if fill is None:
             fill = self.DEFAULT_FILL
-        Element.__init__(self, fill=fill, **kwargs)
+        if name is None:
+            name = 'Unnamed Placer'
+        if drawAfter is None:
+            drawAfter = self._drawNameLabel
 
+        Element.__init__(self, fill=fill, name=name, drawAfter=drawAfter, **kwargs)
+
+    def _drawNameLabel(self, aa, view, p):
+        context = self.context
+        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=40, textFill=(1, 0, 0)))
+        tw, th = bs.size
+        context.text(bs, (self.w/2 - th/2, self.h/2 - tw/4))
 
 
 if __name__ == '__main__':

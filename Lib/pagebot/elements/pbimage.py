@@ -236,7 +236,7 @@ class Image(Element):
             print('Image.saveScaledCache: %dx%d zero image size' % (self.iw, self.ih))
             return
         extension = path2Extension(self.path)
-        resolutionFactor = self.resolutionFactor.get(extension, 1)
+        resolutionFactor = self.resolutionFactors.get(extension, 1)
         # Translate the extension to the related type of output.
         exportExtension = CACHE_EXTENSIONS.get(extension, extension)
         resW = self.w * resolutionFactor 

@@ -768,6 +768,8 @@ class Element:
             padding=self.padding, # Copies all padding values at once
             margin=self.margin, # Copies all margin values at once,
             borders=self.borders, # Copies all borders at once.
+            gridX=copy.deepcopy(self.gridX),
+            gridY=copy.deepcopy(self.gridY),
             shadow=self.shadow, # Needs to be copied?
             gradient=self.gradient, # Needs to be copied?
             drawBefore=self.drawBefore,

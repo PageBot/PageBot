@@ -34,7 +34,8 @@ from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.pbplacer import Placer # Place holder element, typically for Templates.
+# Placeholder element, typically for Templates. Shows name.
+from pagebot.elements.pbplacer import Placer 
 
 # Path and mask elements
 from pagebot.elements.paths.pbpath import Path

@@ -58,7 +58,7 @@ class PartOfBook(Element):
         >>> len(spreads)
         23
         >>> spreads[12]
-        [<Page:Article about something 0 (100pt, 100pt)>, <Page:Article about something 0 (100pt, 100pt)>]
+        [<Page #0 Article about something (100pt, 100pt)>, <Page #0 Article about something (100pt, 100pt)>]
         >>> spreads[12][0].pn
         """
         Element.__init__(self, name=name, **kwargs)
@@ -104,8 +104,8 @@ class PartOfBook(Element):
         return spreads
 
     def _get_spreads(self):
-        for spread in self.getSpreads():
-            print(spread)
+        #for spread in self.getSpreads():
+        #    print(spread)
         return self.getSpreads()
     spreads = property(_get_spreads)
 

@@ -22,6 +22,9 @@ class BabelString:
     TODO: add abstract functions for proper inheritance.
     >>> from pagebot import getContext
     >>> context = getContext()
+    """
+
+    """
     >>> bla = context.newString('bla')
     >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
     >>> isinstance(bla, DrawBotString)
@@ -36,6 +39,7 @@ class BabelString:
 
     def __init__(self, s, context, style=None):
         # Wraps the native string.
+        # Encloses the Flat/Drawbot/html string in this wrapper.
         self.s = s
 
         # Some checking, in case we get something else here.

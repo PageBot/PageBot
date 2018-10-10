@@ -156,18 +156,12 @@ class Magazine(Publication):
             self.compose(part, doc) 
         return doc
 
-    def exportPart(self, name, start=0, end=None, path=None, showGrid=False, showPadding=False,
-            showImageLoresMarker=False):
+    def exportPart(self, name, start=0, end=None, path=None):
         if path is None:
             path = '_export/%s-%s.pdf' % (self.name, name)
 
+        # Create a new doocument, including the current settings of self for the view parameters.
         doc = self.composePartOfBook(name)
-
-        view = doc.view
-        view.showGrid = showGrid
-        view.showPadding = showPadding
-        view.showImageLoresMarker = showImageLoresMarker # If True, mark lores-cache images with label.
-
         doc.export(path)
 
     def exportTableOfContext(self):
