@@ -58,20 +58,12 @@ class D3VFDesignSpace(D3BaseElement):
       stroke: green;
       stroke-width: 1.5px;
     }
-    .link.width {
+    .link.catalog {
       stroke: red;
       stroke-width: 1.5px;
     }
-    .link.rounds {
+    .link.serif {
       stroke: blue;
-      stroke-width: 1.5px;
-    }
-    .link.opticalSize {
-      stroke: orange;
-      stroke-width: 1.5px;
-    }
-    .link.grade {
-      stroke: violet;
       stroke-width: 1.5px;
     }
     .link.supporter {
@@ -104,35 +96,45 @@ class D3VFDesignSpace(D3BaseElement):
 // http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
 var links = [
 
-    {source: "Neutral", target:"Bold 270", type:"weight"},
-    {source: "Bold 270", target:"UltraBlack 310", type:"weight"},
-    {source: "Neutral", target:"Light 48", type:"weight"},
-    {source: "Light 48", target:"Hairline 16", type:"weight"},
+    {source: "Neutral", target:"Black Slab", type:"weight"}, /* Regular Slab */
+    {source: "Neutral", target:"Light Slab", type:"weight"},
 
-    {source: "Neutral", target:"Wide 700", type:"width"},
-    {source: "Wide 700", target:"UltraWide 900", type:"width"},
-    {source: "Neutral", target:"Condensed 300", type:"width"},
-    {source: "Condensed 300", target:"Compressed 100", type:"width"},
+    {source: "Regular Open", target:"Light Open", type:"weight"},
+    {source: "Regular Open", target:"Black Open", type:"weight"},
 
-    {source: "Bold 270", target:"BoldWide", type:"supporter"},
-    {source: "Wide 700", target:"BoldWide", type:"supporter"},
+    {source: "Regular Sans", target:"Light Sans", type:"weight"},
+    {source: "Regular Sans", target:"Black Sans", type:"weight"},
 
-    {source: "Condensed 300", target:"Condensed Light", type:"supporter"},
-    {source: "Light 48", target:"Condensed Light", type:"supporter"},
-    {source: "Condensed Light", target:"Compressed Light", type:"supporter"},
-    {source: "Compressed 100", target:"Compressed Light", type:"supporter"},
-    {source: "Hairline 16", target:"Condensed Hairline", type:"supporter"},
-    {source: "Condensed Light", target:"Condensed Hairline", type:"supporter"},
-    {source: "Condensed Hairline", target:"Compressed Hairline", type:"supporter"},
-    {source: "Compressed Light", target:"Compressed Hairline", type:"supporter"},
+    {source: "Regular Line", target:"Light Line", type:"weight"},
+    {source: "Regular Line", target:"Black Line", type:"weight"},
 
-    {source: "Neutral", target:"Grade-min", type:"grade"},
-    {source: "Neutral", target:"Grade-max", type:"grade"},
+    {source: "Regular Stem", target:"Light Stem", type:"weight"},
+    {source: "Regular Stem", target:"Black Stem", type:"weight"},
 
-    {source: "Grade-min", target:"Hairline 16", type:"supporter"},
+    {source: "Neutral", target:"Regular Open", type:"catalog"},
+    {source: "Regular Open", target:"Regular Sans", type:"catalog"},
+    {source: "Regular Sans", target:"Regular Line", type:"catalog"},
+    {source: "Regular Line", target:"Regular Stem", type:"catalog"},
 
-    {source: "Neutral", target:"opsz-min", type:"opticalSize"},
-    {source: "Neutral", target:"Rounds", type:"rounds"},
+    {source: "Light Slab", target:"Light Open", type:"catalog"},
+    {source: "Light Open", target:"Light Sans", type:"catalog"},
+    {source: "Light Sans", target:"Light Line", type:"catalog"},
+    {source: "Light Line", target:"Light Stem", type:"catalog"},
+
+    {source: "Black Slab", target:"Black Open", type:"catalog"},
+    {source: "Black Open", target:"Black Sans", type:"catalog"},
+    {source: "Black Sans", target:"Black Line", type:"catalog"},
+    {source: "Black Line", target:"Black Stem", type:"catalog"},
+
+    {source: "Neutral", target:"Regular Slab Serif", type:"serif"}, 
+    {source: "Regular Open", target:"Regular Open Serif", type:"serif"}, 
+    {source: "Regular Sans", target:"Regular Sans Serif", type:"serif"}, 
+    {source: "Regular Line", target:"Regular Line Serif", type:"serif"},
+
+    {source: "Regular Slab Serif", target:"Regular Open Serif", type:"serif"}, 
+    {source: "Regular Open Serif", target:"Regular Sans Serif", type:"serif"}, 
+    {source: "Regular Sans Serif", target:"Regular Line Serif", type:"serif"}, 
+    {source: "Regular Line Serif", target:"Regular Stem", type:"serif"}, 
 
 ];
 
@@ -170,7 +172,7 @@ var svg = d3.select("body").append("svg")
 
 // Per-type markers, as they don't inherit styles.
 svg.append("defs").selectAll("marker")
-    .data(["weight", "width", "rounds", "opticalSize", "grade"])
+    .data(["weight", "catalog", "serif"])
   .enter().append("marker")
     .attr("id", function(d) { return d; })
     .attr("viewBox", "0 -5 10 10")

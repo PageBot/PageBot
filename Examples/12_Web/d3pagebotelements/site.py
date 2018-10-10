@@ -122,6 +122,7 @@ var links = [
     {source: "Element", target:"D3 Base", type:"inheritance"},
     {source: "D3 Base", target:"D3PageBotElements (this)", type:"inheritance"},
     {source: "D3 Base", target:"D3BarChart", type:"inheritance"},
+    {source: "D3 Base", target:"D3Bezier", type:"inheritance"},
 
     {source: "View", target:"Page", type:"reference"},
     {source: "View", target:"Context", type:"reference"},
@@ -131,6 +132,13 @@ var links = [
     {source: "DrawBot", target:"Image files", type:"export"},
     {source: "FlatBuilder", target:"Image files", type:"export"},
     {source: "HtmlBuider", target:"HTML Files", type:"export"},
+
+    {source: "Image files", target:".jpg", type:"export"},
+    {source: "Image files", target:".png", type:"export"},
+    {source: "Image files", target:".pdf", type:"export"},
+    {source: "Image files", target:".gif", type:"export"},
+
+
 ];
 
 var nodes = {};
