@@ -20,11 +20,8 @@ from pagebot.contexts.svgcontext import SvgContext
 from pagebot.toolbox.color import color 
 
 context = SvgContext()
-
 EXPORT_PATH = '_export/useSvg.svg'
-
 doc = Document(autoPages=1, context=context)
-
 page = doc[1]
 newRect(x=100, y=200, w=300, h=400, fill=color(1, 0, 0), parent=page)
 bs = context.newString('ABCDEF', style=dict(fontSize=100))

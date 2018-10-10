@@ -16,7 +16,13 @@
 
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
+from pagebot.contexts.htmlcontext import HtmlContext
+from pagebot.contexts.svgcontext import SvgContext
+from pagebot.contexts.indesigncontext import InDesignContext
+from pagebot.contexts.idmlcontext import IdmlContext
+from pagebot.contexts.xmlcontext import XmlContext
 from pagebot.fonttoolbox.objects.font import findFont
+
 
 W, H = 800, 220
 M = 100
@@ -27,6 +33,9 @@ bold = findFont('Roboto-Bold')
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
     (FlatContext(), '_export/testFlatString.pdf'),
+    (HtmlContext(), '_export/testHtmlString.pdf'),
+    (InDesignContext(), '_export/testInDesignString.pdf')
+    (XmlContext(), '_export/testXmlString.pdf')
 )
 
 for context, path in testContexts:
@@ -35,16 +44,16 @@ for context, path in testContexts:
     style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
     # It prints its content.
-    print(bs)
+    #print(bs)
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
     bs += ' and more'
-    print(bs)
+    #print(bs)
     # Reusing the same style with adjustments
     style['font'] = bold.path
     style['textFill'] = 0.5, 0, 1 # Auto-converts to Color instance
     bs += context.newString(' and more', style=style)
-    print(bs)
+    #print(bs)
     # Draw grid, matching the position of the text.
     context.fill(None) # Auto-converts to noColor
     context.stroke(0.7) # Auto-converts to pt( )

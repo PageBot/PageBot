@@ -54,7 +54,7 @@ class DrawBotContext(BaseContext):
     # In case of specific builder addressing, callers can check here.
     isDrawBot = True
 
-    # Used by the generic BaseContext.newString( )
+    # Used by the generic BaseContext.newString()
     STRING_CLASS = stringClass
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG,
             FILETYPE_GIF, FILETYPE_MOV)
@@ -72,7 +72,7 @@ class DrawBotContext(BaseContext):
         >>> context.name
         'DrawBotContext'
         """
-        # The context builder "cls.b" is  drawBot which executes actual drawing
+        # The context builder "cls.b" is drawBot which executes actual drawing
         # calls, similar to function calls in DrawBot scripts.
         self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
@@ -97,7 +97,7 @@ class DrawBotContext(BaseContext):
     #   D O C U M E N T
 
     def newDocument(self, w, h):
-        """Ignore for DrawBot, as document opens automatically if first page
+        """Ignore for DrawBot; document opens automatically if first page
         is created."""
         pass
 
@@ -896,11 +896,11 @@ class DrawBotContext(BaseContext):
         cachedFileName = '%s.%dx%d.%d.%s' % ('.'.join(fileNameParts[:-1]), w, h, index or 0, exportExtension)
         return cachePath, cachedFileName
 
-    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False, exportExtension=None, 
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False, exportExtension=None,
             force=False):
-        """Scale the image at the path into a new cached image file.
-        Ignore if the cache file is already there.
-        
+        """Scale the image at the path into a new cached image file. Ignore if
+        the cache file is already there.
+
         First create the new file name, depending on the resolution of the
         scaled image.  Note that in DrawBot this scaling and saving should be
         done before any real document/page drawing started, since this proces
@@ -928,7 +928,7 @@ class DrawBotContext(BaseContext):
             self.newPage(w, h)
             self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
             if showImageLoresMarker:
-                bs = self.newString('LO-RES', style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(64), 
+                bs = self.newString('LO-RES', style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(64),
                     fill=color(0, 1, 1), textFill=color(1, 0, 0)))
                 tw, th = bs.size
                 self.text(bs, (w/2-tw/2, h/2-th/4))

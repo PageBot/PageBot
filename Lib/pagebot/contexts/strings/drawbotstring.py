@@ -41,7 +41,7 @@ try:
 
     drawBotBuilder = drawBot
 except (AttributeError, ImportError):
-    # When importing doesn't work, set variables to None.
+    # When importing doesn't work because not on OS X, set variables to None.
     NSFont = None
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
     CTFramesetterCreateWithAttributedString = None
@@ -77,7 +77,7 @@ def pixelBounds(fs):
         return pt(0, 0, 0, 0)
     p = drawBotBuilder.BezierPath()
     p.text(fs, (0, 0))
-    # OSX answers bw and bh as difference with bx and by. That is not really
+    # OS X answers bw and bh as difference with bx and by. That is not really
     # intuitive, as the the total (width, height) then always needs to be
     # calculated by the caller. So, instead, the width and height answered is
     # the complete bounding box, and the (x, y) is the position of the bounding
@@ -104,8 +104,8 @@ class NoneDrawBotString(BabelString):
         self.isFitting = False
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True,
-            fontSize=None, font=None, tagName=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None,
+            pixelFit=True, fontSize=None, font=None, tagName=None):
         assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
         return cls(s, context=context, style=style)
 

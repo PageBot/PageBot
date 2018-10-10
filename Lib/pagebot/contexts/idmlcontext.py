@@ -17,16 +17,13 @@
 #     idmlcontext.py
 
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.idmlbuilder import IDMLBuilder
-from pagebot.contexts.strings.indesignstring import InDesignString
+from pagebot.contexts.builders.idmlbuilder import IdmlBuilder
+from pagebot.contexts.strings.idmlstring import IdmlString
 
-class IDMLContext(BaseContext):
-
-    # In case of specific builder addressing, callers can check here.
-    isInDesign = True
+class IdmlContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = InDesignString
+    STRING_CLASS = IdmlString
     EXPORT_TYPES = ('idml',)
 
     def __init__(self):
@@ -36,7 +33,7 @@ class IDMLContext(BaseContext):
         >>> context.isInDesign
         True
         """
-        self.b = IDMLBuilder() # cls.b builder for this canvas.
+        self.b = IdmlBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__
 
     def newDrawing(self, path=None):

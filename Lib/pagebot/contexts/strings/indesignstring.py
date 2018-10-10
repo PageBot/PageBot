@@ -13,8 +13,6 @@
 #
 #     indesignstring.py
 #
-#     xxyxyz.org/indesign
-#     xxyxyz.org/indesign
 
 import os
 import re

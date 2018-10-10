@@ -60,6 +60,6 @@ def testContext(context):
         x, y = getRandom()
         context.text(bla, (x, y))
     except Exception as e:
-    	    print(e)
+    	    print('!!! %s' % e)
 
 testContexts()

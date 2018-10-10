@@ -25,9 +25,9 @@ try:
 except:
     print('Cannot find simple_idml library')
 
-class IDMLBuilder(BaseBuilder):
+class IdmlBuilder(BaseBuilder):
     """
-    >>> b = IDMLBuilder()
+    >>> b = IdmlBuilder()
     >>> b.newDrawing()
     >>> b.newPage()
     """

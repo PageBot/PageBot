@@ -49,7 +49,7 @@ def getContext(contextType='DrawBot'):
             elif contextType == 'InDesign':
                 DEFAULT_CONTEXT = getInDesignContext()
             elif contextType == 'IDML':
-                DEFAULT_CONTEXT = getIDMLContext()
+                DEFAULT_CONTEXT = getIdmlContext()
             elif contextType == 'SVG':
                 DEFAULT_CONTEXT = getSvgContext()
 
@@ -68,7 +68,7 @@ def getContext(contextType='DrawBot'):
             elif contextType == 'InDesign':
                 DEFAULT_CONTEXT = getInDesignContext()
             elif contextType == 'IDML':
-                DEFAULT_CONTEXT = getIDMLContext()
+                DEFAULT_CONTEXT = getIdmlContext()
 
             # TODO: What's the actual path on Linux?
             MAMP_PATH = '/tmp/MAMP_PATH/'
@@ -93,9 +93,9 @@ def getInDesignContext():
     from pagebot.contexts.indesigncontext import InDesignContext
     return InDesignContext()
 
-def getIDMLContext():
-    from pagebot.contexts.idmlcontext import IDMLContext
-    return IDMLContext()
+def getIdmlContext():
+    from pagebot.contexts.idmlcontext import IdmlContext
+    return IdmlContext()
 
 def getSvgContext():
     from pagebot.contexts.svgcontext import SvgContext
