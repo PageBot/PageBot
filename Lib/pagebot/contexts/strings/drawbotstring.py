@@ -16,21 +16,32 @@
 #
 import re
 from copy import copy
+from pagebot.contexts.strings.babelstring import BabelString
+from pagebot.style import css
+from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
+from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL, DEFAULT_LANGUAGE
+from pagebot.toolbox.future import chr
+from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
+from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
+from pagebot.toolbox.units import pt, upt, isUnit, units, em
 
 try:
-    from CoreText import CTFramesetterCreateWithAttributedString, CTFramesetterCreateFrame, \
-        CTFrameGetLines, CTFrameGetLineOrigins, CTRunGetGlyphCount, \
-        CTRunGetStringRange, CTRunGetStringIndicesPtr, CTRunGetAdvances, \
-        CTRunGetStatus, CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes, \
-        CFRange, CTRunGetTextMatrix, CTLineGetGlyphRuns, CGPoint, \
-        CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex, \
-        CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds, \
-        CTLineGetTrailingWhitespaceWidth
-    from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
     import drawBot
+    from CoreText import (CTFramesetterCreateWithAttributedString,
+            CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins,
+            CTRunGetGlyphCount, CTRunGetStringRange, CTRunGetStringIndicesPtr,
+            CTRunGetAdvances, CTRunGetStatus, CTRunGetPositions,
+            CTRunGetGlyphs, CTRunGetAttributes, CFRange, CTRunGetTextMatrix,
+            CTLineGetGlyphRuns, CGPoint, CTLineGetStringIndexForPosition,
+            CTLineGetOffsetForStringIndex, CTLineGetStringRange,
+            CTLineGetImageBounds, CTLineGetTypographicBounds,
+            CTLineGetTrailingWhitespaceWidth)
+    from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
 
     drawBotBuilder = drawBot
 except (AttributeError, ImportError):
+    # When importing doesn't work, set variables to None.
     NSFont = None
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
     CTFramesetterCreateWithAttributedString = None
@@ -54,20 +65,10 @@ except (AttributeError, ImportError):
     CTLineGetTypographicBounds = None
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
 
-from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.style import css
-from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.paths import DEFAULT_FONT_PATH
-from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL, DEFAULT_LANGUAGE
-from pagebot.toolbox.future import chr
-from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
-from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
-from pagebot.toolbox.units import pt, upt, isUnit, units, em
-
 def pixelBounds(fs):
     """Answers the pixel-bounds rectangle of the text.
 
-    Note that @by can be a negative value, if there is text (e.g. overshoot)
+    NOTE that @by can be a negative value, if there is text (e.g. overshoot)
     below the baseline.
     @bh is the amount of pixels above the baseline.
     For the total height of the pixel-map, calculate @ph - @py.
@@ -145,14 +146,14 @@ class NoneDrawBotString(BabelString):
     size = property(_get_size)
 
 class DrawBotString(BabelString):
+    """DrawBotString is a wrapper around the standard DrawBot FormattedString."""
 
     BABEL_STRING_TYPE = 'fs'
 
-    """DrawBotString is a wrapper around the standard DrawBot FormattedString."""
     def __init__(self, s, context, style=None):
-        """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
-        Optionally store the (latest) style that was used to produce the
-        formatted string.
+        """Constructor of the DrawBotString, wrapper around DrawBot
+        FormattedString. Optionally store the (latest) style that was used to
+        produce the formatted string.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -205,8 +206,8 @@ class DrawBotString(BabelString):
         return self._s
 
     def _set_s(self, s):
-        """ Check on the type of s. Three types are supported here: plain strings,
-        DrawBot FormattedString and the class of self."""
+        """ Check on the type of s. Three types are supported here: plain
+        strings, DrawBot FormattedString and the class of self."""
         assert isinstance(s, (DrawBotString, str)) or s.__class__.__name__ == 'FormattedString'
         if isinstance(s, str):
             s = self.context.b.FormattedString(s)
@@ -264,7 +265,7 @@ class DrawBotString(BabelString):
 
     def textSize(self, w=None, h=None):
         """Answers the (w, h) size for a given width, with the current text,
-        measured from bottom em-size to top-emsize (including ascender+ and
+        measured from bottom em-size to top em-size (including ascender+ and
         descender+) and the string width (including margins).
 
         >>> from pagebot.toolbox.units import mm, uRound
@@ -290,7 +291,7 @@ class DrawBotString(BabelString):
         """Answers the pixel-bounds rectangle of the text, if formatted by the
         option (w, h).
 
-        Note that @by can be a negative value, if there is text (e.g.
+        NOTE that @by can be a negative value, if there is text (e.g.
         overshoot) below the baseline.
         @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
@@ -306,8 +307,9 @@ class DrawBotString(BabelString):
         return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
-        """Return a bool if the current font contains the provided characters.
-        Characters is a string containing one or more characters."""
+        """Return a boolean if the current font contains the provided
+        characters.  Characters is a string containing one or more
+        characters."""
         return self.s.fontContainsCharacters(characters)
 
     def _get_fontFilePath(self):
@@ -537,14 +539,18 @@ class DrawBotString(BabelString):
         if isinstance(font, str): # Assuming it's a path, get the Font instance.
             font = getFont(font) # Make sure we gave a real Font instance.
         style['font'] = font
-        # Get the flag if fit locations should be rounded (less cached instance) or accurate.
+
+        # Get the flag if fit locations should be rounded (less cached
+        # instance) or accurate.
         roundVariableFitLocation = style.get('roundVariableFitLocation', True)
-        # In case font is not a variable font, or not [wdth] or [XTRA] present, then using normal
-        # string fit is the best we can do.
+
+        # In case font is not a variable font, or not [wdth] or [XTRA] present,
+        # then using normal string fit is the best we can do.
         if not 'wdth' in font.axes and not 'XTRA' in font.axes:
             return cls.newString(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
-        # Decide which axis to use for width adjustments and get the axis values.
+        # Decide which axis to use for width adjustments and get the axis
+        # values.
         if not useXTRA or not 'XTRA' in font.axes: # Try to force usage of [XTRA] if it exists, otherwise use[wdth]
             axisTag = 'wdth'
         else:
@@ -649,8 +655,8 @@ class DrawBotString(BabelString):
 
         b = context.b
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
-        # not as FormattedString attribute.
+        # Set the hyphenation flag from style, as in DrawBot this is set by a
+        # global function, not as FormattedString attribute.
         language = css('language', e, style)
         hyphenation = bool(css('hyphenation', e, style))
         b.language(language)
@@ -676,7 +682,9 @@ class DrawBotString(BabelString):
         # 100. The resulting width or height is then used as base value to
         # calculate the needed point size.
         # Forced fontSize, then this overwrites the style['fontSize'] if it is
-        # there.  TODO: add calculation of rFontSize (relative float based on
+        # there.
+        #
+        # TODO: add calculation of rFontSize (relative float based on
         # root-fontSize) here too.
         if w is not None or h is not None:
             uFontSize = pt(100) # Start with large font size to scale for fitting.

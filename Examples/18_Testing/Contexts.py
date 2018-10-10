@@ -12,6 +12,8 @@
 #
 #     Contexts.py
 #
+
+from random import random
 from pagebot import getAllContexts
 from pagebot.toolbox.color import Color
 
@@ -24,6 +26,11 @@ def testContexts():
     for c in getAllContexts():
         testContext(c)
 
+def getRandom():
+    	x = W * random()
+    	y = H * random()
+    	return x, y
+
 def testContext(context):
     print(context)
     print(context.__dict__['b'])
@@ -31,20 +38,28 @@ def testContext(context):
     #    print(' * %s: %s' % (key, value))
 
     try:
-    	context.newDrawing()
-    	context.newPage(w=W, h=H)
-    	context.fill(f)
-    	context.stroke(s)
-    	context.rect(10, 10, 100, 100)
-    	context.oval(10, 10, 100, 100)
-    	context.circle(10, 10, 100)
-    	bla = context.newString('bla')
-    	context.text('bla1', (10, 10))
-    	style = {'font': 'Helvetica'}
-    	bla = context.newString('bla', style=style)
-    	context.text('bla2', (10, 10))
-    	context.text(bla, (10, 10))
+        context.newDrawing()
+        context.newPage(w=W, h=H)
+        context.fill(f)
+        context.stroke(s)
+        x, y = getRandom()
+        context.rect(x, y, 100, 100)
+        x, y = getRandom()
+        context.oval(x, y, 100, 100)
+        x, y = getRandom()
+        context.circle(x, y, 100)
+        bla = context.newString('BabelString No Style')
+        x, y = getRandom()
+        context.text(bla, (x, y))
+        x, y = getRandom()
+        context.text('plain string', (x, y))
+        style = {'font': 'Helvetica', 'textFill': f}
+        bla = context.newString('Babel String with Style', style=style)
+        x, y = getRandom()
+        context.text('bla2', (x, y))
+        x, y = getRandom()
+        context.text(bla, (x, y))
     except Exception as e:
-    	print(e)
+    	    print(e)
 
 testContexts()
