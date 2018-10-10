@@ -28,7 +28,7 @@ from pagebot.conditions import *
 from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em, pt
 
-SITE_NAME = 'D3-VFDesignSpace'
+SITE_NAME = 'D3-VFUpgradeBrand'
 
 EXPORT_PATH = '_export/' + SITE_NAME
 

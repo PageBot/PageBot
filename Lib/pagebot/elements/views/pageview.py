@@ -701,7 +701,7 @@ class PageView(BaseView):
         >>> view.drawBaselines(e, pt(0, 0))
         """
         show = e.showBaselines or self.showBaselines
-
+        
         # Sets the default, in case not drawing or show is True
         if not show:
             return

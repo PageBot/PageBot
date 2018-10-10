@@ -14,8 +14,8 @@
 #     placer.py
 #
 from pagebot.elements.element import Element
-from pagebot.toolbox.color import color, noColor
-
+from pagebot.toolbox.color import color, noColor, whiteColor
+from pagebot.toolbox.units import point2D, pt
 
 class Placer(Element):
     """Draw an area showing to be a place holder, e.g. reserved places of images in a template.
@@ -71,10 +71,15 @@ class Placer(Element):
         Element.__init__(self, fill=fill, name=name, drawAfter=drawAfter, **kwargs)
 
     def _drawNameLabel(self, aa, view, p):
+        x, y = point2D(p)
         context = self.context
-        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=40, textFill=(1, 0, 0)))
+        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=18, 
+            textFill=(1, 0, 0)))
         tw, th = bs.size
-        context.text(bs, (self.w/2 - th/2, self.h/2 - tw/4))
+        M = pt(8)
+        context.fill(color(1, 1, 1, 0.6))
+        context.rect(x + self.w/2 - tw/2 - M, y + self.h/2 - th/2 - M, tw + 2*M, th + 2*M)
+        context.text(bs, (x + self.w/2 - tw/2, y + self.h/2 - th/4))
 
 
 if __name__ == '__main__':

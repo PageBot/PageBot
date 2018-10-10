@@ -280,13 +280,13 @@ Inside the font elements have their own specialized behavior, such as drawing (p
 
 A wide spectrum of small example script is in the making. Not all of the existing example scripts currently work. Below some highlights that are tested.
 
-### Examples/150_Typography/000_SingleColumn.py
+### Examples/06_Typography/00_SingleColumn.py
 
 The scripts shows a single column of text in a *TextBox* frame. Since the text is longer than the box accommodates, a *[+]* is show at the bottom-right. The origin of the *TextBox* is shown as cross-hair marker on the top-left.
 
 ![images/SingleColumn.pdf](images/SingleColumn.pdf)
 
-### Examples/150_Typography/010_DoubleColumnOverflow.py
+### Examples/06_Typography/01_DoubleColumnOverflow.py
 
 The scripts shows a two linked *TextBox* columns. The origin of the *TextBox* is shown as cross-hair marker on the top-left.
 The baseline grid of the columns is shown, with their index on the left and vertical position on the right.
@@ -297,13 +297,13 @@ The *010_TripleColumnOverflow.py* file shows the same principle with three linke
 
 ![images/TripleColumnOverflow.pdf](images/TripleColumnOverflow.pdf)
 
-### Examples/150_Typography/020_SingleColumnBaselines.py
+### Examples/06_Typography/02_SingleColumnBaselines.py
 
 The script shows a single page, where now the display of baselines is based on the different typographic styles in the *TextBox*.
 
 ![images/SingleColumnBaselines.pdf](images/SingleColumnBaselines.pdf)
 
-### Examples/150_Typography/030_SingleColumnGradient.py
+### Examples/06_Typography/03_SingleColumnGradient.py
 
 The script shows the same single page, now with a demonstration of shadow and gradient usage. Also here the body font and headline font are constructed as VF locations:
 
@@ -322,25 +322,25 @@ bold = fontVF.getInstance(location)
 **Note that due to an font updating bug, DrawBot not always finds the right instance font, show this error: 
 DrawBot warning: font: 'RobotoDelta-Regular--XTRA320' is not installed, back to the fallback font: 'Verdana' **
 
-### Examples/150_Typography040_PageGridAlignments.py
+### Examples/06_Typography/03_PageGridAlignments.py
 
 This script is under development, but still interesting to show the various aligment options that text columns will have. The *Conditions* allow the positioning a number or anchor types on the baseline grid, such the baseline of an indexed line, or at the top of capitals of a headline, etc.
 
 ![images/PageGridAlignments.pdf](images/PageGridAlignments.pdf)
 
-### Examples/150_Typography/050_PageBaselines.py
+### Examples/06_Typography/05_PageBaselines.py
 
 This small script generates a number of pages, showing the baseline grid of the page format. Note the difference between the vertical position where the grid starts and the baseline themselves.
 
 ![images/PageBaselines.pdf](images/PageBaselines.pdf)
 
-### Examples/150_Typography/060_TextBoxBaselinePlacing.py
+### Examples/06_Typography/06_TextBoxBaselinePlacing.py
 
 This small script is under development, showing the possibility if aligning textbox on their line position, instead of bounding box.
 
 ![images/TextBoxBaselinePlacing.pdf](images/TextBoxBaselinePlacing.pdf)
 
-### Examples/150_Typography/060_TextBoxBaselines.py
+### Examples/06_Typography/06_TextBoxBaselines.py
 
 This script shows the relation between the baselines of the document (in gray) and the baselines of the *TextBox* (in red). On the left the document baselines are indexed. On the right the column lines are indexed. 
 
@@ -354,7 +354,7 @@ to alter the line index matching the page grid.
 
 ![images/TextBoxBaselines.pdf](images/TextBoxBaselines.pdf)
 
-### Examples/150_Typography/090_RotatingText.py
+### Examples/06_Typography/09_RotatingText.py
 
 This script shows the rotation of *TextBox* columns. Note that the baselines and index markers are rotated accordingly.
 Search for
@@ -367,7 +367,7 @@ lines that defined the position of the rotation middle point and the angle. The 
 
 ![images/RotatingText.pdf](images/RotatingText.pdf)
 
-### Examples/150_Typography/090_RotatingText.py
+### Examples/06_Typography/09_RotatingText.py
 
 This script shows the rotation of *TextBox* columns, now as a grid of 16, with incremental rotation angle. Note also here that the baselines and index markers are rotated accordingly.
 Search for
@@ -380,46 +380,46 @@ lines that defined the position of the rotation middle point and the angle.
 
 ![images/RotatingText16.pdf](images/RotatingText16.pdf)
 
-### Examples/150_Typography/100_PageColorBars.py
+### Examples/06_Typography/10_PageColorBars.py
 
 This script shows use of page color bars for offset-print calibration. For not the usage is limited, as most printers want to have their own bars there. But at least for educational purpose it is a useful option.
 
 ![images/PageColorBars.pdf](images/PageColorBars.pdf)
 
 
-### Examples/040_Drawing/SierpinskiSquare.py
+### Examples/04_Drawing/SierpinskiSquare.py
 
 This script creates an animated *SierpinskiSquare*. 
 
 ![images/SierpinskiSquare.gif](images/SierpinskiSquare.gif)
 
 
-### Examples/040_Drawing/MakeABookCover.py
+### Examples/04_Drawing/MakeABookCover.py
 
 This script creates a random book cover, using the random *Filibuster Blurb* text generator. Note the use of the *bleed* parameter here.
 
 ![images/ABookCover.pdf](images/ABookCover.pdf)
 
 
-### Examples/140_Infographics/conditionshierarchy.py
+### Examples/15_Infographics/conditionshierarchy.py
 
 This script is an example of automated info-graphics, based on external sources. In this case the class-hierarchy of the *Condition* class is used a source. 
 
 ![images/conditionObjectHierarchy.pdf](images/conditionObjectHierarchy.pdf)
 
-### Examples/020_Elements/AlignFloatElements.py
+### Examples/03_Elements/AlignFloatElements.py
 
 This script shows the workings of automated layout conditions.
 
 ![images/AlignElements.pdf](images/AlignElements.pdf)
 
-### Examples/020_Elements/DrawRedRectCenterPage.py
+### Examples/03_Elements/DrawRedRectCenterPage.py
 
 This script shows a simple page with a centered red square.
 
 ![images/DrawRedRectCenterPage.pdf](images/DrawRedRectCenterPage.pdf)
 
-### Examples/020_Elements/UseBorders.py
+### Examples/03_Elements/UseBorders.py
 
 This script shows interactively the various types of borders that can be used. The *Variables* window enables sliders and radio buttons for selection. Borders can be drawn inline, online and outline of each side of an element independently.
 
@@ -448,26 +448,26 @@ Online:
 ![images/UseBordersOnline.pdf](images/UseBordersOnline.pdf)
 
 
-### Examples/020_Elements/DrawRedRectCenterPage.py
+### Examples/03_Elements/DrawRedRectCenterPage.py
 
 This script shows a simple page with a centered red square.
 
 ![images/DrawRedRectCenterPage.pdf](images/DrawRedRectCenterPage.pdf)
 
-### Examples/030_Fonts/FontContent.py
+### Examples/02b_Fonts/FontContent.py
 
 A simple type specimen, mining the data inside the font.
 
 ![images/FontContent.pdf](images/FontContent.pdf)
 
 
-### Some Example/030_Fonts example output
+### Some Example/02b_Fonts example output
 
 Animations that shows the composition of Variable Fonts, adding TrueType fonts into one file. (Currently not working properly)
 
 ![images/VarFont2Axes.gif](images/VarFont2Axes.gif)
 
-### Examples/070_Images/050_ImageClipping.py
+### Examples/05_Images/05_ImageClipping.py
 
 This script creates a page with crop marks and padding, showing an image rotated and clipped inside a rotated frame.
 Find the line:
@@ -482,13 +482,13 @@ Select the value, hold down the "cmd-key" and drag the mouse in the script windo
 
 ## Variable Font examples
 
-### Examples/110_Type_Specimens/VariableFontLede.py 
+### Examples/14_Type_Specimens/VariableFontLede.py 
 
 Sample through a combination of axes and export to an animated gif
 
 ![images/RobotoDelta_Variety.gif](images/RobotoDelta_Variety.gif)
 
-### Examples/110_Type_Specimens/DecovarBanner.py 
+### Examples/14_Type_Specimens/DecovarBanner.py 
 
 Sample through a combination of axes and export to an animated gif. In the source the axis selection can be changed. Note that the *Decovar* font design space indicates that not all axes should be turned on at the same time.
 See the source code for the available axes.
@@ -507,21 +507,22 @@ sequenceAxes = ['TRMC', 'SKLD', 'TRMG', 'BLDB']
 
 ![images/Decovar_Decovar2.gif](images/Decovar_Decovar2.gif)
 
-### Examples/110_Type_Specimens/AmstelvarBannerOPSZ.py 
+### Examples/14_Type_Specimens/AmstelvarBannerOPSZ.py 
 
 Generates an info-graphic animation, show workings of the *opsz* axis. 
 
 ![images/AmstelvarAlpha_OpticalSize.gif](images/AmstelvarAlpha_OpticalSize.gif)
 
 
-### Examples/110_Type_Specimens/
+### Examples/14_Type_Specimens/
 
 Show the realtion between the OS/2 values of a family and the 
 ![images/RobotoDelta-VF.pdf](images/RobotoDelta-VF.pdf)
 
 ## Export to website
 
-### Examples/080_Web/simplesite/site.py
+### Examples/12_Web/simplesite/site.py
+
 This is an example that creates a local responsive HTML/CSS website as files, and opens them in a browser. 
 
 It's in eartly stage for development, and too much to explain right now, but it is possible to dive into the code to see what happens.
@@ -530,6 +531,31 @@ The
 ![images/SimpleSite1.png](images/SimpleSite1.png)
 
 ![images/SimpleSite2.png](images/SimpleSite2.png)
+
+### Examples/12_Web/d3pagebotelements/site.py
+
+This script generates a D3-based interactive graph of the most important classes in PageBot, showing their relation (green), class inheritance (red), export (blue) and parent references (dashed).
+
+Note the location in the graph of the *D3PageBotElements* Element class, that is doing the actual building of this graph in a page.
+
+![images/PageBotClasses.png](images/PageBotClasses.png)
+
+### Examples/12_Web/d3vfdesignspace/siteUpgradeBrand.py
+
+This script generates a D3-based interactive graph of design space of *Upgrade Brand* showing the axes Weight (wght-green), Catalog (CATL-red) and Serif (SERF-blue). Note the double use of the *Regular Stem* master, to absorb the effect of the slab serig in that compartment of the catalog axis.
+
+Next development on this type of Element is to show the actual interpolated VF-instance, generated by CSS.
+
+![images/UpgradeDesignSpace.png](images/UpgradeDesignSpace.png)
+
+### Examples/12_Web/d3vfdesignspace/siteAmstelvar.py
+
+This script generates a D3-based interactive graph of design space of *Amstelvar VF* (reading directly from the font) and showing the various axes in a “star” shape.  
+
+Next development on this type of Element is to show better relation between min-max parts of the axes, show the difference between primary axes, blended axes and registered axes.
+And show the actual rendered images of the font in the axis-end-point locations.
+
+![images/AmstelvarAxisWheel.png](images/AmstelvarAxisWheel.png)
 
 ## Design and coding process
 
