@@ -30,6 +30,7 @@ class HtmlString(BabelString):
         if style is None:
             style = {}
         self.style = style
+        super().__init__(s, context, style=style)
 
     def _get_font(self):
         """Answers the current state of fontName."""

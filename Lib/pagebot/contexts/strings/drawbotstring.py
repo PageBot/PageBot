@@ -197,8 +197,7 @@ class DrawBotString(BabelString):
 
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
-        print('drawbot string init')
-        super(DrawBotString, self).__init__(s, context, style=style)
+        super().__init__(s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded FormattedString by property, to enforce checking

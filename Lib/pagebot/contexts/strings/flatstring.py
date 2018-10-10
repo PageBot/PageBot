@@ -55,6 +55,7 @@ class FlatString(BabelString):
         if style is None:
             style = {}
         self.style = style
+        super().__init__(s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by

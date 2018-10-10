@@ -48,6 +48,7 @@ class InDesignString(BabelString):
         if style is None:
             style = {}
         self.style = style
+        super().__init__(s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded Indesign equivalent of a OSX FormattedString by property, to enforce

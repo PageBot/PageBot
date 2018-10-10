@@ -19,7 +19,6 @@ from pagebot.contexts.strings.babelstring import BabelString
 class IdmlString(BabelString):
     pass
 
-
 if __name__ == '__main__':
     import doctest
     import sys
