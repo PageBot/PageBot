@@ -18,7 +18,7 @@ import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.contexts.flatconversion import *
+from pagebot.contexts.flat.math import *
 from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.paths import DEFAULT_FONT_PATH

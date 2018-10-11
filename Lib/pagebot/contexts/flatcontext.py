@@ -22,7 +22,7 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.contexts.flatconversion import *
+from pagebot.contexts.flat.math import *
 from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
     FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, \
     DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_FILETYPE
@@ -507,7 +507,7 @@ class FlatContext(BaseContext):
 
         shape = self.b.shape()
 
-        # TODO: revert to PageBot Color globally, convert to Flat rgb here.
+        # TODO: revert to PageBot Color globally, convert to Flat RGB here.
         if self._fill is None:
             shape.nofill()
         elif self._fill != noColor:
@@ -550,6 +550,7 @@ class FlatContext(BaseContext):
         """Draws a circle in square with radius r and (x,y) as middle."""
         xpt, ypt, rpt = upt(x, y, r)
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.circle(xpt, ypt, rpt))
@@ -635,8 +636,12 @@ class FlatContext(BaseContext):
         See: http://xxyxyz.org/flat, color.py.
 
         """
-        if isinstance(c, (tuple, list, int, float)):
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list)):
             c = color(*c)
+        elif isinstance(c, (int, float)):
+            c = color(c)
 
         msg = 'FlatContext.fill: Color "%s" is not Color instance'
         assert isinstance(c, Color), (msg % str(c))
@@ -653,8 +658,12 @@ class FlatContext(BaseContext):
 
     def stroke(self, c, w=None):
         u"""Set global stroke color or the color of the formatted string."""
-        if isinstance(c, (tuple, list, int, float)):
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list)):
             c = color(*c)
+        elif isinstance(c, (int, float)):
+            c = color(c)
 
         msg = 'FlatContext.stroke: Color "%s" is not Color instance'
         assert isinstance(c, Color), (msg % c)

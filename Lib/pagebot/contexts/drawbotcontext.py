@@ -81,19 +81,6 @@ class DrawBotContext(BaseContext):
         # Holds the extension as soon as the export file path is defined.
         self.fileType = DEFAULT_FILETYPE
 
-    #   S C R E E N
-
-    def screenSize(self):
-        """Answers the current screen size in DrawBot. Otherwise default is to
-        do nothing.
-
-        >>> context = DrawBotContext()
-        >>> size = context.screenSize()
-        >>> size[0] > 100 and size[1] > 100
-        True
-        """
-        return pt(self.b.sizes().get('screen', None))
-
     #   D O C U M E N T
 
     def newDocument(self, w, h):
@@ -137,6 +124,19 @@ class DrawBotContext(BaseContext):
         >>> context.newDrawing()
         """
         self.b.newDrawing()
+
+    #   S C R E E N
+
+    def screenSize(self):
+        """Answers the current screen size in DrawBot. Otherwise default is to
+        do nothing.
+
+        >>> context = DrawBotContext()
+        >>> size = context.screenSize()
+        >>> size[0] > 100 and size[1] > 100
+        True
+        """
+        return pt(self.b.sizes().get('screen', None))
 
     #   C L I P P I N G
 
@@ -265,8 +265,8 @@ class DrawBotContext(BaseContext):
     path = property(_get_path)
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        """Draw the NSBezierPath, or equivalent in other contexts. Scaled image
-        is drawn on (x, y), in that order."""
+        """Draws the BezierPath. Scaled image is drawn on (x, y), in that
+        order."""
         if path is None:
             path = self.path
 
@@ -314,7 +314,8 @@ class DrawBotContext(BaseContext):
             elif command == 'lineTo':
                 path.lineTo((px+t[0], py+t[1]))
             elif command == 'curveTo':
-                path.curveTo((px+t[0][0], py+t[0][1]), (px+t[1][0], py+t[1][1]), (px+t[2][0], py+t[2][1]))
+                path.curveTo((px+t[0][0], py+t[0][1]),
+                        (px+t[1][0], py+t[1][1]), (px+t[2][0], py+t[2][1]))
             elif command == 'closePath':
                 path.closePath()
             elif command == 'component':
@@ -345,7 +346,7 @@ class DrawBotContext(BaseContext):
         return flattenedContours
 
     def onBlack(self, p, path=None):
-        """Answers if the single point (x, y) is on black.  For now this only
+        """Answers if the single point (x, y) is on black. For now this only
         works in DrawBotContext."""
         if path is None:
             path = self.path
@@ -415,7 +416,7 @@ class DrawBotContext(BaseContext):
         self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def closePath(self):
-        """Close the current path, if it exists. Otherwise ignore.
+        """Closes the current path if it exists, otherwise ignore it.
 
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
@@ -468,7 +469,9 @@ class DrawBotContext(BaseContext):
             sx, sy = sz[0], s[1]
         if sy is None:
             sy = sx
-        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), ('DrawBotContext.scale: Values (%s, %s) must all be of numbers' % (sx, sy))
+
+        msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
+        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
         self.b.scale(sx, sy)
 
     def translate(self, dx, dy):
@@ -484,7 +487,8 @@ class DrawBotContext(BaseContext):
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
-        """Set the DrawBot graphics state for shadow if all parameters are set."""
+        """Set the DrawBot graphics state for shadow if all parameters are
+        set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
                 self.b.shadow(upt(eShadow.offset), # Convert units to values
@@ -646,7 +650,8 @@ class DrawBotContext(BaseContext):
 
     #   G L Y P H
 
-    def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor, strokeWidth=0, fontSize=None, xAlign=CENTER):
+    def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor,
+            strokeWidth=0, fontSize=None, xAlign=CENTER):
         """Draw the font[glyphName] at the defined position with the defined
         fontSize."""
         font = glyph.font
@@ -734,7 +739,7 @@ class DrawBotContext(BaseContext):
     #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        """Set the self._frameDuretion for animated gifs to a number of seconds
+        """Set the self._frameDuration for animated GIFs to a number of seconds
         per frame. Used when initializing a new page."""
         self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
@@ -755,19 +760,27 @@ class DrawBotContext(BaseContext):
             c = noColor
         elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
-        assert isinstance(c, Color), ('DrawBotContext.fill: %s should be of type Color' % c)
-        if c is inheritColor: # Keep color setting as it is.
+
+        msg = 'DrawBotContext.fill: %s should be of type Color'
+        assert isinstance(c, Color), (msg % c)
+
+        if c is inheritColor:
+            # Keep color setting as it is.
             pass
         elif c is noColor:
             self.b.fill(None) # Set color to no-color
         elif c.isCmyk:
-            c, m, y, k = c.cmyk # DrawBot.fill has slight API difference with FormattedString.fill
+            # DrawBot.fill has slight API differences compared to
+            # FormattedString fill().
+            c, m, y, k = c.cmyk
             self.b.cmykFill(c, m, y, k, alpha=c.a)
         else:
-            r, g, b = c.rgb # DrawBot.fill has slight API difference with FormattedString.fill
-            self.b.fill(r, g, b, alpha=c.a) # Convert to rgb, whatever the type of color
+            # DrawBot.fill has slight API differences compared to
+            # FormattedString fill(). Convert to RGB, whatever the color type.
+            r, g, b = c.rgb
+            self.b.fill(r, g, b, alpha=c.a)
 
-    setFillColor = fill # DrawBot compatible API
+    setFillColor = fill # For DrawBot compatibility.
 
     def stroke(self, c, w=None):
         """Set the color for global or the color of the formatted string.
@@ -784,16 +797,24 @@ class DrawBotContext(BaseContext):
             c = noColor
         elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
-        assert isinstance(c, Color), ('DrawBotContext.stroke: %s should be of type Color' % c)
-        if c is inheritColor: # Keep color setting as it is.
+
+        msg = 'DrawBotContext.stroke: %s should be of type Color'
+        assert isinstance(c, Color), (msg % c)
+
+        if c is inheritColor:
+            # Keep color setting as it is.
             pass
         if c is noColor:
             self.b.stroke(None) # Set color to no-color
         elif c.isCmyk:
-            cc, cm, cy, ck = c.cmyk # DrawBot.stroke has slight API difference with FormattedString.stroke
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke().
+            cc, cm, cy, ck = c.cmyk
             self.b.cmykStroke(cc, cm, cy, ck, alpha=c.a)
         else:
-            r, g, b = c.rgb # DrawBot.stroke has slight API difference with FormattedString.stroke
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke(). Convert to RGB, whatever the color type.
+            r, g, b = c.rgb
             self.b.stroke(r, g, b, alpha=c.a)
         if w is not None:
             self.strokeWidth(w)
@@ -844,7 +865,7 @@ class DrawBotContext(BaseContext):
         return self.b.numberOfPages(path)
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        """Draw the image. If w or h is defined, then scale the image to fit."""
+        """Draws the image. If w or h is defined, scale the image to fit."""
         iw, ih = self.imageSize(path)
 
         if w and not h: # Scale proportional
@@ -860,19 +881,19 @@ class DrawBotContext(BaseContext):
             wpt = upt(w)
             hpt = upt(h)
 
-        # else both w and h are defined, scale disproportional
+        # Else both w and h are defined, scale disproportionally.
         xpt, ypt, = point2D(upt(p))
         sx, sy = upt(wpt/iw, hpt/ih) # We need ratio values, not units
         self.save()
         self.scale(sx, sy)
-        #self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
         self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
     def getImageObject(self, path):
-        """Answers the ImageObject that knows about image filters.
-        For names and parameters of filters see:
-        http://www.drawbot.com/content/image/imageObject.html
+        """Answers the ImageObject that knows about image filters. For names
+        and parameters of filters see:
+
+        * http://www.drawbot.com/content/image/imageObject.html
 
         >>> from pagebot import getResourcesPath
         >>> context = DrawBotContext()
@@ -883,7 +904,7 @@ class DrawBotContext(BaseContext):
         return self.b.ImageObject(path)
 
     def path2ScaledImagePath(self, path, w, h, index=None, exportExtension=None):
-        """Answer the path to the scaled image.
+        """Answers the path to the scaled image.
 
         >>> context = DrawBotContext()
         >>> context.path2ScaledImagePath('/xxx/yyy/zzz/This.Is.An.Image.jpg', 110, 120)
@@ -896,17 +917,19 @@ class DrawBotContext(BaseContext):
         cachedFileName = '%s.%dx%d.%d.%s' % ('.'.join(fileNameParts[:-1]), w, h, index or 0, exportExtension)
         return cachePath, cachedFileName
 
-    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False, exportExtension=None,
-            force=False):
-        """Scale the image at the path into a new cached image file. Ignore if
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        """Scales the image at the path into a new cached image file. Ignore if
         the cache file is already there.
 
         First create the new file name, depending on the resolution of the
         scaled image.  Note that in DrawBot this scaling and saving should be
         done before any real document/page drawing started, since this proces
         is using DrawBot canvas pages to execute.
-        In case the source contains indexed pages, then use index to select the page.
-        If omitted, the default index is 0 (works in DrawBot also on non-PDF files).
+
+        In case the source contains indexed pages, use index to select the
+        page. If omitted, the default index is 0 (in DrawBot this also works on
+        non-PDF files).
 
         >>> from pagebot import getResourcesPath
         >>> context = DrawBotContext()
@@ -928,8 +951,10 @@ class DrawBotContext(BaseContext):
             self.newPage(w, h)
             self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
             if showImageLoresMarker:
-                bs = self.newString('LO-RES', style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(64),
-                    fill=color(0, 1, 1), textFill=color(1, 0, 0)))
+                bs = self.newString('LO-RES',
+                        style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
+                            fontSize=pt(64), fill=color(0, 1, 1),
+                            textFill=color(1, 0, 0)))
                 tw, th = bs.size
                 self.text(bs, (w/2-tw/2, h/2-th/4))
             self.saveImage(cachedFilePath)

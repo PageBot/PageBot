@@ -165,6 +165,52 @@ class BaseContext:
         ignored in other contexts."""
         pass
 
+    def fill(self, c):
+        raise NotImplementedError
+
+    def stroke(self, c, w=None):
+        raise NotImplementedError
+
+    def frameDuration(self, secondsPerFrame):
+        raise NotImplementedError
+
+    def hyphenation(self, onOff):
+        raise NotImplementedError
+
+    def language(self, language):
+        raise NotImplementedError
+
+    # Document.
+
+    def newDocument(self, w, h):
+        raise NotImplementedError
+    def saveDocument(self, path, multiPage=None):
+        raise NotImplementedError
+    def newPage(self, w, h):
+        raise NotImplementedError
+    def newDrawing(self):
+        raise NotImplementedError
+
+    # Drawing.
+
+    def rect(self, x, y, w, h):
+        raise NotImplementedError
+    def oval(self, x, y, w, h):
+        raise NotImplementedError
+    def circle(self, x, y, r):
+        raise NotImplementedError
+    def line(self, p1, p2):
+        raise NotImplementedError
+    def newPath(self):
+        raise NotImplementedError
+    def drawPath(self, path=None, p=None, sx=1, sy=None):
+        raise NotImplementedError
+    #def clipPath(self, clipPath):
+    #def roundedRect(self, x, y, w, h, offset=25):
+    #def bluntCornerRect(self, x, y, w, h, offset=5):
+    #def drawGlyphPath(self, glyph):
+    #def getGlyphPath(self, glyph, p=None, path=None):
+
 if __name__ == '__main__':
     import doctest
     import sys

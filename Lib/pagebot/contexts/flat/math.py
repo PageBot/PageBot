@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     flatconversion.py
+#     math.py
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))

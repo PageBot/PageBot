@@ -11,7 +11,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     StringPixelBounds.py
+#     Bounds.py
 #
 
 from pagebot import getContext
@@ -35,7 +35,7 @@ TEXTS = {
     (3, 2): 'Abc',
 }
 
-EXPORT_PATH = '_export/testStringPixelBounds.pdf'
+EXPORT_PATH = '_export/testBounds.pdf'
 D = 8 # Size of origin marker
 W = H = pt(1000) # Size of export page.
 context.newPage(W, H) # Make new DrawBot page.
