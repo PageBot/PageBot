@@ -39,12 +39,6 @@ class BaseContext:
     def __repr__(self):
         return '<%s>' % self.name
 
-    #   S C R E E N
-
-    def screenSize(self):
-        """Answers the current screen size."""
-        return None
-
     #   T E X T
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
@@ -118,7 +112,9 @@ class BaseContext:
         minY = min(ly0, ly1)
         glyphPath = self.getGlyphPath(glyph)
         contours = self.getFlattenedContours(glyphPath)
-        if not contours: # Could not generate path or flattenedPath. Or there are no contours. Give up.
+        if not contours:
+            # Could not generate path or flattenedPath. Or there are no
+            # contours. Give up.
             return None
         for contour in contours:
             for n in range(len(contour)):
@@ -165,14 +161,30 @@ class BaseContext:
         ignored in other contexts."""
         pass
 
-    def fill(self, c):
-        raise NotImplementedError
+    #   S C R E E N
 
-    def stroke(self, c, w=None):
-        raise NotImplementedError
+    def screenSize(self):
+        """Answers the current screen size."""
+        return None
+
+    # Gradient & Shadow.
+
+    # Animation.
 
     def frameDuration(self, secondsPerFrame):
         raise NotImplementedError
+
+    # Fonts.
+
+    # Canvas.
+
+    def save(self):
+        raise NotImplementedError
+
+    def restore(self):
+        raise NotImplementedError
+
+    # Text
 
     def hyphenation(self, onOff):
         raise NotImplementedError
@@ -210,6 +222,27 @@ class BaseContext:
     #def bluntCornerRect(self, x, y, w, h, offset=5):
     #def drawGlyphPath(self, glyph):
     #def getGlyphPath(self, glyph, p=None, path=None):
+
+    # Color.
+
+    def fill(self, c):
+        raise NotImplementedError
+
+    def stroke(self, c, w=None):
+        raise NotImplementedError
+
+    def strokeWidth(self, w):
+        raise NotImplementedError
+
+    # Image.
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        raise NotImplementedError
+
+    #def imagePixelColor(self, path, p):
+    #def imageSize(self, path):
+    #def numberOfImages(self, path):
+    #def getImageObject(self, path):
 
 if __name__ == '__main__':
     import doctest

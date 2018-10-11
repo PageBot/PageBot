@@ -462,28 +462,6 @@ class DrawBotContext(BaseContext):
 
         return flattenedContours
 
-    def scale(self, sx, sy=None):
-        """Set the drawing scale."""
-        if isinstance(sx, (tuple, list)):
-            assert len(sx) in (2, 3)
-            sx, sy = sz[0], s[1]
-        if sy is None:
-            sy = sx
-
-        msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
-        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
-        self.b.scale(sx, sy)
-
-    def translate(self, dx, dy):
-        """Translate the origin to this point."""
-        dxpt, dypt = point2D(upt(dx, dy))
-        self.b.translate(dxpt, dypt)
-
-    def transform(self, t):
-        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
-        over vector (dx, dy)"""
-        self.b.transform(t)
-
     #   G R A D I E N T  &  S H A D O W
 
     def setShadow(self, eShadow):
@@ -833,6 +811,30 @@ class DrawBotContext(BaseContext):
         self.b.strokeWidth(wpt)
 
     setStrokeWidth = strokeWidth
+
+    # Transformation.
+
+    def scale(self, sx, sy=None):
+        """Set the drawing scale."""
+        if isinstance(sx, (tuple, list)):
+            assert len(sx) in (2, 3)
+            sx, sy = sz[0], s[1]
+        if sy is None:
+            sy = sx
+
+        msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
+        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
+        self.b.scale(sx, sy)
+
+    def translate(self, dx, dy):
+        """Translate the origin to this point."""
+        dxpt, dypt = point2D(upt(dx, dy))
+        self.b.translate(dxpt, dypt)
+
+    def transform(self, t):
+        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
+        over vector (dx, dy)"""
+        self.b.transform(t)
 
     def rotate(self, angle, center=None):
         """Rotate the canvas by angle. If angle is not a units.Angle instance,
