@@ -20,7 +20,13 @@ class BaseContext:
     """A BaseContext instance abstracts the specific functions of a platform
     (for instance DrawBot, Flat or HTML), thus hiding e.g. the type of
     BabelString instance needed, and the type of HTML/CSS file structure to be
-    created."""
+    created.
+
+    Should comply to:
+
+    * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
+
+    """
 
     # In case of specific builder addressing, callers can check here.
     isDrawBot = False
@@ -154,13 +160,6 @@ class BaseContext:
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
 
-    #   V A R I A B L E
-
-    def Variable(self, ui, globals):
-        """Offers interactive global value manipulation in DrawBot. Can be
-        ignored in other contexts."""
-        pass
-
     #   S C R E E N
 
     def screenSize(self):
@@ -196,23 +195,63 @@ class BaseContext:
 
     def newDocument(self, w, h):
         raise NotImplementedError
+
     def saveDocument(self, path, multiPage=None):
         raise NotImplementedError
+
     def newPage(self, w, h):
         raise NotImplementedError
+
     def newDrawing(self):
+        raise NotImplementedError
+
+    def endDrawing(self):
+        raise NotImplementedError
+
+    def width(self):
+        raise NotImplementedError
+
+    def height(self):
+        raise NotImplementedError
+
+    def sizes(self, paperSize=None):
+        raise NotImplementedError
+
+    def size(self, width, height=None):
+        raise NotImplementedError
+
+    def pages(self):
+        raise NotImplementedError
+
+    def pageCount(self):
+        raise NotImplementedError
+
+     def saveImage(self, path, *args, **options):
+        raise NotImplementedError
+
+    def printImage(self, pdf=None):
+        raise NotImplementedError
+
+    def pdfImage(self):
         raise NotImplementedError
 
     # Drawing.
 
     def rect(self, x, y, w, h):
         raise NotImplementedError
+
     def oval(self, x, y, w, h):
         raise NotImplementedError
+
     def circle(self, x, y, r):
         raise NotImplementedError
+
     def line(self, p1, p2):
         raise NotImplementedError
+
+    def polygon(self, *points, **kwargs):
+        raise NotImplementedError
+
     def newPath(self):
         raise NotImplementedError
     def drawPath(self, path=None, p=None, sx=1, sy=None):
@@ -234,15 +273,62 @@ class BaseContext:
     def strokeWidth(self, w):
         raise NotImplementedError
 
+    def colorSpace(self, colorSpace):
+        raise NotImplementedError
+
+    def listColorSpaces(self):
+        raise NotImplementedError
+
+    def blendMode(self, operation)
+        raise NotImplementedError
+
+    # def miterLimit(self, value):
+    # def lineJoin(self, value):
+    # def lineCap(self, value):
+    # def lineDash(self, *value):
+
+    # Transform.
+
+    def transform(self, matrix, center=(0, 0)):
+        raise NotImplementedError
+
+    def translate(self, x=0, y=0):
+        raise NotImplementedError
+
+    def rotate(self, angle, center=(0, 0)):
+        raise NotImplementedError
+
+    def scale(self, x=1, y=None, center=(0, 0)):
+        raise NotImplementedError
+
+    def skew(self, angle1, angle2=0, center=(0, 0)):
+        raise NotImplementedError
+
     # Image.
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         raise NotImplementedError
 
     #def imagePixelColor(self, path, p):
-    #def imageSize(self, path):
+
+    def imageSize(self, path):
+        raise NotImplementedError
+
     #def numberOfImages(self, path):
     #def getImageObject(self, path):
+
+    # Objects.
+
+    def BezierPath(self, path=None, glyphSet=None):
+        raise NotImplementedError
+
+    def ImageObject(self, path=None):
+        raise NotImplementedError
+
+    def Variable(self, ui, globals):
+        """Offers interactive global value manipulation in DrawBot. Can be
+        ignored in other contexts."""
+        pass
 
 if __name__ == '__main__':
     import doctest
