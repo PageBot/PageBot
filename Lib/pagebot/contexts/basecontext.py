@@ -226,7 +226,7 @@ class BaseContext:
     def pageCount(self):
         raise NotImplementedError
 
-     def saveImage(self, path, *args, **options):
+    def saveImage(self, path, *args, **options):
         raise NotImplementedError
 
     def printImage(self, pdf=None):
@@ -279,7 +279,7 @@ class BaseContext:
     def listColorSpaces(self):
         raise NotImplementedError
 
-    def blendMode(self, operation)
+    def blendMode(self, operation):
         raise NotImplementedError
 
     # def miterLimit(self, value):
