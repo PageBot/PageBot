@@ -173,7 +173,52 @@ class BaseContext:
     def frameDuration(self, secondsPerFrame):
         raise NotImplementedError
 
-    # Fonts.
+    # Text.
+
+    def font(self, fontName, fontSize=None):
+        raise NotImplementedError
+
+    def fallbackFont(self, fontName):
+        raise NotImplementedError
+
+    def fontSize(self, fontSize):
+        raise NotImplementedError
+
+    def lineHeight(self, value):
+        raise NotImplementedError
+
+    def tracking(self, value):
+        raise NotImplementedError
+
+    def baselineShift(self, value):
+        raise NotImplementedError
+
+    def underline(self, value):
+        raise NotImplementedError
+
+    def hyphenation(self, onOff):
+        raise NotImplementedError
+
+    def tabs(self, *tabs):
+        raise NotImplementedError
+
+    def language(self, language):
+        raise NotImplementedError
+
+    def listLanguages(self):
+        raise NotImplementedError
+
+    def openTypeFeatures(self, *args, **features):
+        raise NotImplementedError
+
+    def listOpenTypeFeatures(self, fontName=None):
+        raise NotImplementedError
+
+    def fontVariations(self, *args, **axes):
+        raise NotImplementedError
+
+    def listFontVariations(self, fontName=None):
+        raise NotImplementedError
 
     # Canvas.
 
@@ -181,14 +226,6 @@ class BaseContext:
         raise NotImplementedError
 
     def restore(self):
-        raise NotImplementedError
-
-    # Text
-
-    def hyphenation(self, onOff):
-        raise NotImplementedError
-
-    def language(self, language):
         raise NotImplementedError
 
     # Document.
