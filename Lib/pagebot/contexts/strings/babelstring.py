@@ -69,7 +69,9 @@ class BabelString:
         return s in self.s
 
     def append(self, s):
-        """Appends string or FlatString to self."""
+        """Appends string or BabelString to self."""
+        # if isinstance(s, str):
+        # elif isinstance(s, BabelString):
         try:
             self.s += s.s
         except (TypeError, AttributeError) as e:
@@ -97,6 +99,7 @@ class BabelString:
     def _get_h(self):
         """Answers measure as point units."""
         return pt(self.size[1])
+
     h = property(_get_h)
 
     def _get_size(self):
@@ -108,6 +111,23 @@ class BabelString:
             return pt(0, 0)
 
     size = property(_get_size)
+
+    @classmethod
+    def newString(cls, s, context, e=None, style=None, w=None, h=None,
+            pixelFit=True):
+        raise NotImplementedError
+
+    #def textSize(self, w=None, h=None):
+    #def _get_fontSize(self):
+    #def _set_fontSize(self, fontSize):
+    #def asText(self):
+    #def bounds(self, language=None, hyphenation=None):
+    #def fill(self, r, g=None, b=None, a=None, alpha=None):
+    #def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
+    #def stroke(self, r, g=None, b=None, a=None, alpha=None):
+    #def setStrokeWidth(self, w):
+    #def getTextLines(self, w, h=None, align=LEFT):
+    #def _get_size(self):
 
 if __name__ == '__main__':
     import doctest

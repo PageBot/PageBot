@@ -14,6 +14,7 @@
 #
 #     drawbotstring.py
 #
+
 import re
 from copy import copy
 from pagebot.contexts.strings.babelstring import BabelString
@@ -27,7 +28,8 @@ from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColo
 from pagebot.toolbox.units import pt, upt, isUnit, units, em
 
 try:
-    import drawBot
+    import drawBot as drawBotBuilder
+    #drawBotBuilder = drawBot
     from CoreText import (CTFramesetterCreateWithAttributedString,
             CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins,
             CTRunGetGlyphCount, CTRunGetStringRange, CTRunGetStringIndicesPtr,
@@ -38,9 +40,8 @@ try:
             CTLineGetImageBounds, CTLineGetTypographicBounds,
             CTLineGetTrailingWhitespaceWidth)
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
-
-    drawBotBuilder = drawBot
 except (AttributeError, ImportError):
+    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
     # When importing doesn't work because not on OS X, set variables to None.
     NSFont = None
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
@@ -63,7 +64,6 @@ except (AttributeError, ImportError):
     CTLineGetStringIndexForPosition = None
     CTLineGetTrailingWhitespaceWidth = None
     CTLineGetTypographicBounds = None
-    from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
 
 def pixelBounds(fs):
     """Answers the pixel-bounds rectangle of the text.
@@ -84,66 +84,6 @@ def pixelBounds(fs):
     # box, compared to the (0, 0) of the string origin.
     bx, by, bw, bh = p.bounds()
     return pt(bx, by, bw - bx, bh - by)
-
-class NoneDrawBotString(BabelString):
-    """Used for testing DrawBotString doctest in non-DrawBot Environment."""
-    BABEL_STRING_TYPE = 'fs'
-
-    def __init__(self, s, context, style=None):
-        self.context = context # Store context, in case we need more of its functions.
-        self.s = s
-        self.fontSize = DEFAULT_FONT_SIZE
-        self.font = DEFAULT_FONT_PATH
-        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
-        self.style = style
-        self.language = DEFAULT_LANGUAGE
-        self.hyphenation = False
-
-        self.fittingFont = None # In case we are sampling with a Variable Font.
-        self.fittingLocation = None
-        self.isFitting = False
-
-    @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None,
-            pixelFit=True, fontSize=None, font=None, tagName=None):
-        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
-        return cls(s, context=context, style=style)
-
-    def textSize(self, w=None, h=None):
-        """Answers the (w, h) size for a given width, with the current text,
-        measured from bottom em-size to top-emsize (including ascender+ and
-        descender+) and the string width (including margins)."""
-        return w or 100, h or 100
-
-    def __repr__(self):
-        return self.s
-
-    def fill(self, r, g=None, b=None, a=None, alpha=None):
-        pass
-
-    setFillColor = fill
-
-    def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
-        pass
-
-    cmykStroke = cmykFill
-
-    def stroke(self, r, g=None, b=None, a=None, alpha=None):
-        pass
-
-    setStrokeColor = stroke
-
-    def setStrokeWidth(self, w):
-        pass
-
-    strokeWidth = setStrokeWidth
-
-    def getTextLines(self, w, h=None, align=LEFT):
-        return {}
-
-    def _get_size(self):
-        return pt(0, 0)
-    size = property(_get_size)
 
 class DrawBotString(BabelString):
     """DrawBotString is a wrapper around the standard DrawBot FormattedString."""
@@ -212,7 +152,9 @@ class DrawBotString(BabelString):
             s = self.context.b.FormattedString(s)
         elif isinstance(s, DrawBotString):
             s = s.s
+
         self._s = s
+
     s = property(_get_s, _set_s)
 
     def _get_font(self):
@@ -223,6 +165,7 @@ class DrawBotString(BabelString):
         if fontName is not None:
             self.context.font(fontName)
         self.style['font'] = fontName
+
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
@@ -245,10 +188,12 @@ class DrawBotString(BabelString):
         1.4em
         """
         return units(self.style.get('fontSize'))
+
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.fontSize(upt(fontSize))
         self.style['fontSize'] = fontSize
+
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def asText(self):
@@ -295,12 +240,15 @@ class DrawBotString(BabelString):
         @bh is the amount of pixels above the baseline.
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
-        # Set the hyphenation flag and language from style, as in DrawBot this is set by a global function,
-        # not as FormattedString attribute.
+
+        # Set the hyphenation flag and language from style, as in DrawBot this
+        # is set by a global function, not as FormattedString attribute.
         if language is None:
             language = self.language
+
         if hyphenation is None:
             hyphenation = self.hyphenation
+
         self.context.language(language)
         self.context.hyphenation(hyphenation)
         return pixelBounds(self.s)
@@ -324,7 +272,8 @@ class DrawBotString(BabelString):
         """Returns the current font ascender as relative Em, based on the
         current font and fontSize."""
         fontSize = upt(self.fontSize)
-        return em(self.s.fontAscender()/fontSize, base=fontSize)
+        return em(self.s.fontAscender() / fontSize, base=fontSize)
+
     fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
 
     def _get_descender(self):
@@ -362,7 +311,8 @@ class DrawBotString(BabelString):
     fontLineHeight = lineHeight = property(_get_lineHeight) # Compatibility with DrawBot API
 
     def appendGlyph(self, *glyphNames):
-        """Append a glyph by his glyph name using the current font. Multiple glyph names are possible."""
+        """Append a glyph by his glyph name using the current font. Multiple
+        glyph names are possible."""
         self.s.appendGlyph(glyphNames)
 
     MARKER_PATTERN = '==%s@%s=='
@@ -855,6 +805,7 @@ class DrawBotString(BabelString):
         return newS
 
 class FoundPattern:
+
     def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
         self.s = s # Actual found string
         self.x = x
@@ -867,441 +818,6 @@ class FoundPattern:
 
     def __repr__(self):
         return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y)
-
-class TextRun:
-    u"""The ctRun object contains the chunk of text that combines a single style.
-
-
-    """
-    def __init__(self, ctRun, runIndex):
-        self.runIndex = runIndex # Index of the run in the TextLine
-        self._ctRun = ctRun
-        self._style = None # Property cash for constructed style from run parameters.
-        self.glyphCount = gc = CTRunGetGlyphCount(ctRun)
-        # Reverse the style from
-        attrs = CTRunGetAttributes(ctRun)
-        self.nsFont = attrs['NSFont']
-        #self.fontDescriptor = f.fontDescriptor()
-        self.fill = attrs['NSColor']
-        self.nsParagraphStyle = attrs['NSParagraphStyle']
-        self.attrs = attrs # Save, in case the caller want to query run parameters.
-
-        self.iStart, self.iEnd = CTRunGetStringRange(ctRun)
-        self.string = u''
-        # Hack for now to find the string in repr-string if self._ctLine.
-        # TODO: Make a better conversion here, not relying on the format of the repr-string.
-        for index, part in enumerate(str(ctRun).split('"')[1].split('\\u')):
-            if index == 0:
-                self.string += part
-            elif len(part) >= 4:
-                self.string += chr(int(part[0:4], 16))
-                self.string += part[4:]
-
-        #print(gc, len(CTRunGetStringIndicesPtr(ctRun)), CTRunGetStringIndicesPtr(ctRun), ctRun)
-        try:
-            self.stringIndices = CTRunGetStringIndicesPtr(ctRun)[0:gc]
-        except TypeError:
-            self.stringIndices = [0]
-        #CTRunGetStringIndices(ctRun._ctRun, CFRange(0, 5), None)[4]
-        self.advances = CTRunGetAdvances(ctRun, CFRange(0, 5), None)
-        #self.positions = CTRunGetPositionsPtr(ctRun)[0:gc]
-        #CTRunGetPositions(ctRun, CFRange(0, 5), None)[4]
-        #self.glyphFontIndices = CTRunGetGlyphsPtr(ctRun)[0:gc]
-        #print(CTRunGetGlyphs(ctRun, CFRange(0, 5), None)[0:5])
-        self.status = CTRunGetStatus(ctRun)
-
-        # get all positions
-        self.positions = CTRunGetPositions(ctRun, (0, gc), None)
-        # get all glyphs
-        self.glyphs = CTRunGetGlyphs(ctRun, (0, gc), None)
-
-    def __len__(self):
-        return self.glyphCount
-
-    def __repr__(self):
-        return '[TextRun #%d "%s"]' % (self.runIndex, self.string)
-
-    def __getitem__(self, index):
-        return self.string[index]
-
-    def _get_style(self):
-        """Answers the constructed style dictionary, with names that fit the
-        standard PageBot style."""
-        if self._style is None:
-            self._style = dict(
-                textFill=self.fill,
-                pl=self.headIndent,
-                pr=self.tailIndent,
-                fontSize=self.fontSize,
-                font=self.fontPath,
-                leading=self.leading
-            )
-        return self._style
-    style = property(_get_style)
-
-    # Font stuff
-
-    def _get_displayName(self):
-        return self.nsFont.displayName()
-    displayName = property(_get_displayName)
-
-    def _get_familyName(self):
-        return self.nsFont.familyName()
-    familyName = property(_get_familyName)
-
-    def _get_fontName(self):
-        return self.nsFont.fontName()
-    fontName = font = property(_get_fontName)
-
-    def _get_isVertical(self):
-        return self.nsFont.isVertical()
-    isVertical = property(_get_isVertical)
-
-    def _get_isFixedPitch(self):
-        return self.nsFont.isFixedPitch()
-    isFixedPitch = property(_get_isFixedPitch)
-
-    def _get_boundingRectForFont(self):
-        (x, y), (w, h) = self.nsFont.boundingRectForFont()
-        return x, y, w, h
-    boundingRectForFont = property(_get_boundingRectForFont)
-
-    def _get_renderingMode(self):
-        return self.nsFont.renderingMode()
-    renderingMode = property(_get_renderingMode)
-
-    # Font metrics, based on self.nsFont. This can be different from
-    # self.fontAswcencender and self.fontDescender, etc. which are based on the
-    # current setting in the FormattedString
-
-    def _get_ascender(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.ascender()/fontSize, base=fontSize)
-    ascender = property(_get_ascender)
-
-    def _get_descender(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.descender()/fontSize, base=fontSize)
-    descender = property(_get_descender)
-
-    def _get_capHeight(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.capHeight()/fontSize, base=fontSize)
-    capHeight = property(_get_capHeight)
-
-    def _get_xHeight(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.xHeight()/fontSize, base=fontSize)
-    xHeight = property(_get_xHeight)
-
-    def _get_italicAngle(self):
-        return self.nsFont.italicAngle()
-    italicAngle = property(_get_italicAngle)
-
-    def _get_fontSize(self):
-        return pt(self.nsFont.pointSize())
-    fontSize = property(_get_fontSize)
-
-    #def _get_leading(self):
-    #    return self.nsFont.leading()
-    #leading = property(_get_leading)
-
-    def _get_fontMatrix(self):
-        return self.nsFont.matrix()
-    fontMatrix = property(_get_fontMatrix)
-
-    def _get_textTransform(self):
-        return self.nsFont.textTransform()
-    textTransform = property(_get_textTransform)
-
-    def _get_underlinePosition(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.underlinePosition()/fontSize, base=fontSize)
-    underlinePosition = property(_get_underlinePosition)
-
-    def _get_underlineThickness(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsFont.underlineThickness()/fontSize, base=fontSize)
-    underlineThickness = property(_get_underlineThickness)
-
-    #   Paragraph attributes
-
-    def _get_matrix(self):
-        return CTRunGetTextMatrix(self._ctRun)
-    matrix = property(_get_matrix)
-
-    def _get_alignment(self):
-        return self.nsParagraphStyle.alignment()
-    alignment = property(_get_alignment)
-
-    def _get_lineSpacing(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.lineSpacing()/fontSize, base=fontSize)
-    lineSpacing = property(_get_lineSpacing)
-
-    def _get_paragraphSpacing(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.paragraphSpacing()/fontSize, base=fontSize)
-    paragraphSpacing = property(_get_paragraphSpacing)
-
-    def _get_paragraphSpacingBefore(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.paragraphSpacingBefore()/fontSize, base=fontSize)
-    paragraphSpacingBefore = property(_get_paragraphSpacingBefore)
-
-    def _get_headIndent(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.headIndent()/fontSize, base=fontSize)
-    headIndent = property(_get_headIndent)
-
-    def _get_tailIndent(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.tailIndent()/fontSize, base=fontSize)
-    tailIndent = property(_get_tailIndent)
-
-    def _get_firstLineHeadIndent(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.firstLineHeadIndent()/fontSize, base=fontSize)
-    firstLineHeadIndent = property(_get_firstLineHeadIndent)
-
-    def _get_lineHeightMultiple(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.lineHeightMultiple()/fontSize, base=fontSize)
-    lineHeightMultiple = property(_get_lineHeightMultiple)
-
-    def _get_maximumLineHeight(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.maximumLineHeight()/fontSize, base=fontSize)
-    maximumLineHeight = leading = property(_get_maximumLineHeight)
-
-    def _get_minimumLineHeight(self):
-        fontSize = self.nsFont.pointSize()
-        return em(self.nsParagraphStyle.minimumLineHeight()/fontSize, base=fontSize)
-    minimumLineHeight = property(_get_minimumLineHeight)
-
-
-class TextLine:
-    def __init__(self, ctLine, x, y, lineIndex):
-        self._ctLine = ctLine
-        self.x = x
-        self.y = y
-        self.lineIndex = lineIndex # Vertical line index in TextBox.
-        self.string = ''
-        self.textRuns = []
-
-        for runIndex, ctRun in enumerate(CTLineGetGlyphRuns(ctLine)):
-            textRun = TextRun(ctRun, runIndex)
-            self.textRuns.append(textRun)
-            self.string += textRun.string
-
-    def __repr__(self):
-        return '<%s #%d Runs:%d>' % (self.__class__.__name__, self.lineIndex, len(self.textRuns))
-
-    def __len__(self):
-        return self.glyphCount
-
-    def __getitem__(self, index):
-        return self.textRuns[index]
-
-    def _get_ascender(self):
-        """Returns the max ascender of all text runs as Em, based on the
-        current font and fontSize."""
-        ascender = 0
-        for textRun in self.textRuns:
-            ascender = max(ascender, textRun.ascender)
-        return ascender
-    fontAscender = ascender = property(_get_ascender) # Compatibility with DrawBot API
-
-    def _get_descender(self):
-        """Returns the max descender of all text runs as Em, based on the
-        current font and fontSize."""
-        descender = 0
-        for textRun in self.textRuns:
-            descender = min(descender, textRun.descender)
-        return descender
-    fontDescender = descender = property(_get_descender) # Compatibility with DrawBot API
-
-    def _get_xHeight(self):
-        """Returns the max x-height of all text runs as Em, based on the
-        current font and fontSize."""
-        xHeight = 0
-        for textRun in self.textRuns:
-            xHeight = max(xHeight, textRun.xHeight)
-        return xHeight
-    fontXHeight = xHeight = property(_get_xHeight) # Compatibility with DrawBot API
-
-    def _get_capHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the
-        current font and fontSize."""
-        capHeight = 0
-        for textRun in self.textRuns:
-            capHeight = max(capHeight, textRun.capHeight)
-        return capHeight
-    fontCapHeight = capHeight = property(_get_capHeight) # Compatibility with DrawBot API
-
-    def _get_maximumLineHeight(self):
-        """Returns the max font cap height of all text runs as Em, based on the
-        current font and fontSize."""
-        maximumLineHeight = 0
-        for textRun in self.textRuns:
-            maximumLineHeight = max(maximumLineHeight, textRun.maximumLineHeight)
-        return maximumLineHeight
-    maximumLineHeight = property(_get_maximumLineHeight) # Compatibility with DrawBot API
-
-    def getIndexForPosition(self, x, y):
-        xpt, ypt = upt(x, y)
-        return CTLineGetStringIndexForPosition(self._ctLine, CGPoint(xpt, ypt))[0]
-
-    def getOffsetForStringIndex(self, i):
-        """Answers the z position that is closest to glyph string index i. If i
-        is out of bounds, then answer the closest x position (left and right
-        side of the string)."""
-        return CTLineGetOffsetForStringIndex(self._ctLine, i, None)[0]
-
-    def _get_stringIndex(self):
-        return CTLineGetStringRange(self._ctLine).location
-    stringIndex = property(_get_stringIndex)
-
-    def getGlyphIndex2Run(self, glyphIndex):
-        for run in self.runs:
-            if run.iStart >= glyphIndex:
-                return run
-        return None
-
-    #def _get_alignment(self):
-    #    return CTTextAlignment(self._ctLine)
-    #alignment = property(_get_alignment)
-
-    def _get_imageBounds(self):
-        """Property that answers the bounding box (actual black shape) of the
-        text line."""
-        (xpt, ypt), (wpt, hpt) = CTLineGetImageBounds(self._ctLine, None)
-        return pt(xpt, ypt, wpt, hpt)
-    imageBounds = property(_get_imageBounds)
-
-    def _getBounds(self):
-        return CTLineGetTypographicBounds(self._ctLine, None, None, None)
-
-    def _get_bounds(self):
-        """Property that returns the EM bounding box of the line."""
-        return self._getBounds()
-    bounds = property(_get_bounds)
-
-    def _get_size(self):
-        _, _, wpt, hpt = self._getBounds()
-        return pt(wpt, hpt)
-    size = property(_get_size)
-
-    def _get_w(self):
-        _, _, wpt, _ = self._getBounds()
-        return pt(wpt)
-
-    def _get_y(self):
-        _, _, _, hpt = self._getBounds()
-        return pt(hpt)
-
-    def _get_x(self):
-        xpt, _, _, _ = self._getBounds()
-        return pt(xpt)
-
-    def _get_y(self):
-        _, ypt, _, _ = self._getBounds()
-        return pt(ypt)
-
-    def _get_trailingWhiteSpace(self):
-        return CTLineGetTrailingWhitespaceWidth(self._ctLine)
-    trailingWhiteSpace = property(_get_trailingWhiteSpace)
-
-    def findPattern(self, pattern):
-        founds = []
-        if isinstance(pattern, str):
-            pattern = re.compile(pattern)
-            #pattern = re.compile('([a-ZA-Z0-9\.\-\_]*])
-        for iStart, iEnd in [(m.start(0), m.end(0)) for m in re.finditer(pattern, self.string)]:
-            xStart = self.getOffsetForStringIndex(iStart)
-            xEnd = self.getOffsetForStringIndex(iEnd)
-            #print('xStart, xEnd', xStart, xEnd)
-            run = self.getGlyphIndex2Run(xStart)
-            #print('iStart, xStart', iStart, xStart, iEnd, xEnd, run)
-            founds.append(FoundPattern(self.string[iStart:iEnd], xStart, iStart, line=self, run=run))
-        return founds
-
-'''
-def getTextLines(txt, box):
-    """Answers a list of (x,y) positions of all line starts in the box. This function may become part
-    of standard DrawBot in the near future."""
-    x, y, w, h = box
-    attrString = txt.getNSObject()
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    path = Quartz.CGPathCreateMutable()
-    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(x, y, w, h))
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-    ctLines = CoreText.CTFrameGetLines(box)
-    return ctLines
-
-def getBaselines(txt, box):
-    """Answers a list of (x,y) positions of all line starts in the box. This function may become part
-    of standard DrawBot in the near future."""
-    x, y, w, h = box
-    attrString = txt.getNSObject()
-    setter = CoreText.CTFramesetterCreateWithAttributedString(attrString)
-    path = Quartz.CGPathCreateMutable()
-    Quartz.CGPathAddRect(path, None, Quartz.CGRectMake(x, y, w, h))
-    box = CoreText.CTFramesetterCreateFrame(setter, (0, 0), path, None)
-    ctLines = CoreText.CTFrameGetLines(box)
-    #print(ctLines)
-    origins = CoreText.CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-    #print(origins)
-    return [(x + o.x, y + o.y) for o in origins]
-
-def getTextPositionSearch(bs, w, h, search, xTextAlign=LEFT, hyphenation=True):
-    from AppKit import NSLocationInRange
-    bc = BaseContext()
-    path = CoreText.CGPathCreateMutable()
-    CoreText.CGPathAddRect(path, None, CoreText.CGRectMake(0, 0, w, h))
-
-    attrString = bc.attributedString(bs, align=xTextAlign)
-    if hyphenation and bc._state.hyphenation:
-        attrString = bc.hyphenateAttributedString(attrString, w)
-
-    txt = attrString.string()
-    searchRE = re.compile(search)
-    locations = []
-    for found in searchRE.finditer(txt):
-        locations.append((found.start(), found.end()))
-
-    setter = CTFramesetterCreateWithAttributedString(attrString)
-    box = CTFramesetterCreateFrame(setter, (0, 0), path, None)
-
-    ctLines = CTFrameGetLines(box)
-    origins = CTFrameGetLineOrigins(box, (0, len(ctLines)), None)
-
-    rectangles = []
-    for startLocation, endLocation in locations:
-        minx = miny = maxx = maxy = None
-        for i, (originX, originY) in enumerate(origins):
-            ctLine = ctLines[i]
-            bounds = CTLineGetImageBounds(ctLine, None)
-            if bounds.size.width == 0:
-                continue
-            _, ascent, descent, leading = CTLineGetTypographicBounds(ctLine, None, None, None)
-            height = ascent + descent
-            lineRange = CTLineGetStringRange(ctLine)
-            miny = maxy = originY
-
-            if NSLocationInRange(startLocation, lineRange):
-                minx, _ = CTLineGetOffsetForStringIndex(ctLine, startLocation, None)
-
-            if NSLocationInRange(endLocation, lineRange):
-                maxx, _ = CTLineGetOffsetForStringIndex(ctLine, endLocation, None)
-                rectangles.append((ctLine, (minx, miny - descent, maxx - minx, height)))
-
-            if minx and maxx is None:
-                rectangles.append((ctLine, (minx, miny - descent, bounds.size.width - minx, height)))
-                minx = 0
-
-    return rectangles
-'''
 
     #   F I N D
 
