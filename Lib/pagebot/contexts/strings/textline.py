@@ -14,6 +14,7 @@
 #
 #     textline.py
 #
+from pagebot.contexts.strings.textrun import TextRun
 
 try:
     from CoreText import (CGPoint, CTLineGetGlyphRuns,

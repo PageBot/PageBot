@@ -61,7 +61,10 @@ def testContext(context):
         context.text(bla, (x, y))
         x, y = getRandom()
         path = getResourcesPath() + "/images/cookbot1.jpg"
+        # FIXME: image() incorrectly scaling x and y coordinates.
         context.image(path, (x, y), w=100, h=100)
+
+        context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
     	    print('!!! %s' % e)
 

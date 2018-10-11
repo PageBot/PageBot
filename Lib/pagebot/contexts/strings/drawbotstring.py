@@ -27,7 +27,6 @@ from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
 from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
 from pagebot.toolbox.units import pt, upt, isUnit, units, em
 from pagebot.contexts.strings.textline import TextLine
-from pagebot.contexts.strings.textrun import TextRun
 
 try:
     import drawBot as drawBotBuilder
