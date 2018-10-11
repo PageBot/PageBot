@@ -26,19 +26,13 @@ from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
 from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
 from pagebot.toolbox.units import pt, upt, isUnit, units, em
+from pagebot.contexts.strings.textline import TextLine
+from pagebot.contexts.strings.textrun import TextRun
 
 try:
     import drawBot as drawBotBuilder
-    #drawBotBuilder = drawBot
     from CoreText import (CTFramesetterCreateWithAttributedString,
-            CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins,
-            CTRunGetGlyphCount, CTRunGetStringRange, CTRunGetStringIndicesPtr,
-            CTRunGetAdvances, CTRunGetStatus, CTRunGetPositions,
-            CTRunGetGlyphs, CTRunGetAttributes, CFRange, CTRunGetTextMatrix,
-            CTLineGetGlyphRuns, CGPoint, CTLineGetStringIndexForPosition,
-            CTLineGetOffsetForStringIndex, CTLineGetStringRange,
-            CTLineGetImageBounds, CTLineGetTypographicBounds,
-            CTLineGetTrailingWhitespaceWidth)
+            CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins)
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
 except (AttributeError, ImportError):
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
@@ -47,23 +41,6 @@ except (AttributeError, ImportError):
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
     CTFramesetterCreateWithAttributedString = None
     CTFrameGetLines = None
-    CTRunGetStringRange = None
-    CTFrameGetLineOrigins = None
-    CTFramesetterCreateFrame = None
-    CTRunGetGlyphCount = None
-    CTRunGetStringIndicesPtr = None
-    CTRunGetAdvances = None
-    CTRunGetStatus = None
-    CTRunGetPositions = None
-    CTRunGetGlyphs = None
-    CTRunGetAttributes = None
-    CFRange = CGPoint = None
-    CTRunGetTextMatrix = None
-    CTLineGetGlyphRuns = None
-    CTLineGetImageBounds = None
-    CTLineGetStringIndexForPosition = None
-    CTLineGetTrailingWhitespaceWidth = None
-    CTLineGetTypographicBounds = None
 
 def pixelBounds(fs):
     """Answers the pixel-bounds rectangle of the text.

@@ -112,12 +112,6 @@ class FlatContext(BaseContext):
 
         self._path = None # Collect path commnands here before drawing the path.
 
-    #   V A R I A B L E
-
-    def Variable(self, variableUI, globalVariables):
-        # TODO: Make this work in Flat-way. Getting parameters from command line?
-        pass
-
     #   D O C U M E N T
 
     def newDocument(self, w, h, size=None):
@@ -293,6 +287,8 @@ class FlatContext(BaseContext):
 
     restore = restoreGraphicState
 
+    #   T R A N S F O R M A T I O N
+
     def translate(self, ox, soy):
         """Shift the origin of the canvas by (ox, oy).
         TODO: To be implemented."""
@@ -316,7 +312,7 @@ class FlatContext(BaseContext):
         """Converts the cubic commands to a drawable path."""
         pass
 
-    #   F R A M E S
+    #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
         """Set the frame duretion for animated gifs to a number of seconds per
@@ -458,7 +454,7 @@ class FlatContext(BaseContext):
         return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
     def textBoxBaseLines(self, txt, box):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def language(self, language):
         self._language = language
@@ -672,46 +668,6 @@ class FlatContext(BaseContext):
         self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
-
-    '''
-    overPrint = c.overPrint
-    # TODO: Make this work in Flat
-    b = self.b
-    success = False
-    if c is NO_COLOR:
-        self._stroke = NO_COLOR # Ignore drawing
-        success = True # Color is undefined, do nothing.
-    elif c is None:
-        self._stroke = None # no stroke
-        success = True
-    elif isinstance(c, (float, int)): # Grayscale
-        self._stroke = b.gray(iround(c))
-        success = True
-    elif isinstance(c, (list, tuple)):
-        if len(c) == 2 and isinstance(c[0], str) and isinstance(c[1], (list,tuple)) and len(c[1]) == 4:
-            name, (cyan, magenta, yellow, k) = c
-            self._stroke = b.spot(name, (iround(cyan), iround(magenta), iround(yellow)))
-            success = True
-        # Not supported in PDF, leave out for general compatibility?
-        #elif len(c) == 2:
-        #    gray, a = c
-        #    self._stroke = b.ga(gray, a)
-        #    success = True
-        elif cmyk:
-            cyan, magenta, yellow, k = c
-            self._stroke = b.cmyk(iround(cyan), iround(magenta), iround(yellow), iround(k))
-            success = True
-        elif len(c) == 4: # rgb and opaque
-            red, green, blue, a = c
-            self._stroke = b.rgba(iround(red), iround(green), iround(blue), iround(a))
-            success = True
-        elif len(c) == 3:
-            red, green, blue = c
-            self._stroke = b.rgb(iround(red), iround(green), iround(blue))
-            success = True
-    if not success:
-        raise ValueError('Flatcontext.stroke: Error in color format "%s"' % c)
-    '''
 
     def strokeWidth(self, w):
         self._strokeWidth = upt(w)

@@ -15,6 +15,19 @@
 #     textline.py
 #
 
+try:
+    from CoreText import (CGPoint, CTLineGetGlyphRuns,
+            CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex,
+            CTLineGetStringRange, CTLineGetImageBounds,
+            CTLineGetTypographicBounds, CTLineGetTrailingWhitespaceWidth)
+except:
+    CTLineGetGlyphRuns = None
+    CTLineGetImageBounds = None
+    CTLineGetStringIndexForPosition = None
+    CTLineGetTrailingWhitespaceWidth = None
+    CTLineGetTypographicBounds = None
+    CGPoint = None
+
 class TextLine:
     def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine

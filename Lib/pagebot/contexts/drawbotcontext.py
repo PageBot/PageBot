@@ -884,10 +884,12 @@ class DrawBotContext(BaseContext):
             hpt = upt(h)
 
         # Else both w and h are defined, scale disproportionally.
-        xpt, ypt, = point2D(upt(p))
+        xpt, ypt, = point2D(p)
         sx, sy = upt(wpt/iw, hpt/ih) # We need ratio values, not units
+        x, y = p
         self.save()
         self.scale(sx, sy)
+        #self.b.image(path, (x, y), alpha=alpha, pageNumber=pageNumber)
         self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 

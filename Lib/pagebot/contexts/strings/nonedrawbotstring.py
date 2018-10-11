@@ -20,11 +20,11 @@ class NoneDrawBotString(BabelString):
     BABEL_STRING_TYPE = 'fs'
 
     def __init__(self, s, context, style=None):
-        self.context = context # Store context, in case we need more of its functions.
+        self.context = context
         self.s = s
         self.fontSize = DEFAULT_FONT_SIZE
         self.font = DEFAULT_FONT_PATH
-        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
+        assert style is None or isinstance(style, dict)
         self.style = style
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
@@ -36,7 +36,7 @@ class NoneDrawBotString(BabelString):
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
             pixelFit=True, fontSize=None, font=None, tagName=None):
-        assert style is None or isinstance(style, dict) # Some checking, in case we get something else here.
+        assert style is None or isinstance(style, dict)
         return cls(s, context=context, style=style)
 
     def textSize(self, w=None, h=None):

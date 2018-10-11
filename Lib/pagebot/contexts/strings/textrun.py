@@ -15,6 +15,25 @@
 #     textrun.py
 #
 
+try:
+    from CoreText import (CTRunGetGlyphCount, CTRunGetStringRange,
+            CTRunGetStringIndicesPtr, CTRunGetAdvances, CTRunGetStatus,
+            CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes,
+            CTRunGetTextMatrix, CFRange)
+except:
+    CTRunGetStringRange = None
+    CTFrameGetLineOrigins = None
+    CTFramesetterCreateFrame = None
+    CTRunGetGlyphCount = None
+    CTRunGetStringIndicesPtr = None
+    CTRunGetAdvances = None
+    CTRunGetStatus = None
+    CTRunGetPositions = None
+    CTRunGetGlyphs = None
+    CTRunGetAttributes = None
+    CFRange = None
+    CTRunGetTextMatrix = None
+
 class TextRun:
     """The ctRun object contains the chunk of text that combines a single
     style."""

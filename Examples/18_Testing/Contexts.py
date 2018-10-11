@@ -14,7 +14,7 @@
 #
 
 from random import random
-from pagebot import getAllContexts
+from pagebot import getAllContexts, getResourcesPath
 from pagebot.toolbox.color import Color
 
 W = 1000
@@ -27,8 +27,8 @@ def testContexts():
         testContext(c)
 
 def getRandom():
-    	x = W * random()
-    	y = H * random()
+    	x = (W-100) * random()
+    	y = (H-100) * random()
     	return x, y
 
 def testContext(context):
@@ -59,6 +59,9 @@ def testContext(context):
         context.text('bla2', (x, y))
         x, y = getRandom()
         context.text(bla, (x, y))
+        x, y = getRandom()
+        path = getResourcesPath() + "/images/cookbot1.jpg"
+        context.image(path, (x, y), w=100, h=100)
     except Exception as e:
     	    print('!!! %s' % e)
 
