@@ -417,15 +417,25 @@ class TextBox(Element):
         # not as FormattedString attribute.
         context.language(self.css('language', DEFAULT_LANGUAGE))
         context.hyphenation(bool(self.css('hyphenation')))
-        context.textBox(self.bs, (px + self.pl + xOffset, py + self.pb-yOffset,
-            self.pw, self.ph))
+
+        if self.elements: # Use the elements as clip path:
+            clipPath = self.clipPath
+            context.save()
+            clipPath.translate(0, 1000) #px + self.pl, py + self.pb + self.h)
+            context.textBox(self.bs, clipPath=clipPath)
+            context.restore()
+        else: # Otherwise draw in normal text box frame., 
+            # If there are child elements, then these are used as layout for the clipping path.
+            # Otherwise the self.clipPath property answers None
+            context.textBox(self.bs, (px + self.pl, py + self.pb,
+                self.pw, self.ph))
 
         if textShadow:
             context.restoreGraphicState()
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, origin)
+            self.buildChildElements(view, p)
 
         # self has its own baseline drawing, derived from the text, instace of self.baselineGrid.
         self.drawBaselines(view, px, py, background=False) # In case there is baseline at the front
@@ -580,11 +590,11 @@ class TextBox(Element):
         >>> tb = TextBox('Test '*100, parent=page, style=style, conditions=conditions)
         >>> len(tb.textLines)
         25
-        >>> tb.textLines[10].y
-        151pt
+        >>> 150 < tb.textLines[10].y < 160 # Various system give different answers
+        True
         >>> result = page.solve()
-        >>> tb.textLines[10].y
-        151pt
+        >>> 150 < tb.textLines[10].y < 160 # Various system give different answers
+        True
         """
         if self.textLines:
             line = self.textLines[index or 0]

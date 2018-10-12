@@ -779,6 +779,29 @@ class Element:
             e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
         return e
 
+    def _get_clipPath(self):
+        """Answer the clipping context.BezierPath, derived from the layout of child elements.
+
+        >>> from pagebot.conditions import *
+        >>> e = Element(w=500, h=500)
+        >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
+        >>> e.clipPath.points
+
+        >>> e = Element(w=500, h=500)
+        >>> e1 = Element(parent=e, w=100, h=100, conditions=[Left2Left(), Top2Top()])
+        >>> e2 = Element(parent=e, w=100, h=100, conditions=(Left2Left(), Bottom2Bottom()))
+        >>> score = e.solve()
+        >>> e.clipPath.points
+        """
+        context = self.context
+        path = context.newPath()
+        path.rect(0, 0, self.w, self.h)
+        for e in self.elements:
+            path = path.difference(e.clipPath)
+        path.translate(self.x, self.y)
+        return path
+    clipPath = property(_get_clipPath)
+
     def setElementByIndex(self, e, index):
         """Replace the element, if there is already one at index. Otherwise
         append it to self.elements and answer the index number that is assigned

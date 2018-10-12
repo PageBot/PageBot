@@ -682,7 +682,7 @@ class DrawBotContext(BaseContext):
         ppt = point2D(upt(p))
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
-    def textBox(self, sOrBs, r):
+    def textBox(self, sOrBs, r=None, clipPath=None):
         """Draw the sOrBs text string, can be a str or BabelString, including a
         DrawBot FormattedString in rectangle r.
 
@@ -692,8 +692,11 @@ class DrawBotContext(BaseContext):
         """
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        xpt, ypt, wpt, hpt = upt(r)
-        self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
+        if clipPath is not None:
+            self.b.textBox(sOrBs, clipPath) # Render rectangle units to value tuple
+        elif r is not None:
+            xpt, ypt, wpt, hpt = upt(r)
+            self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
     def language(self, language):
         """DrawBot needs an overall language flag set to code, as it is not
