@@ -14,6 +14,8 @@
 #     06_ClipPath.py
 #
 #     Shows how to get different types of contexts.
+#     This example works on context level of direct drawing
+#     not using the typical Element-based layout of PageBot.
 
 from pagebot import getContext
 

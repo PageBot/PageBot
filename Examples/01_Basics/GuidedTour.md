@@ -555,6 +555,8 @@ This script generates a D3-based interactive graph of design space of *Amstelvar
 Next development on this type of Element is to show better relation between min-max parts of the axes, show the difference between primary axes, blended axes and registered axes.
 And show the actual rendered images of the font in the axis-end-point locations.
 
+Also this wheel, currently only shoes the min-max values of the axes. Not the location masters and supporter masters.
+
 ![images/AmstelvarAxisWheel.png](images/AmstelvarAxisWheel.png)
 
 ## Design and coding process

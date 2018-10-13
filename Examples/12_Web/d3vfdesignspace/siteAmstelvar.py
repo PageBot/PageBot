@@ -29,7 +29,7 @@ from pagebot.toolbox.color import color, whiteColor, blackColor
 from pagebot.toolbox.units import em, pt, upt
 from pagebot.fonttoolbox.objects.font import findFont
 
-SITE_NAME = 'D3-VFUpgradeBrand'
+SITE_NAME = 'D3-VFAmstelvar'
 
 EXPORT_PATH = '_export/' + SITE_NAME
 
@@ -46,6 +46,11 @@ class D3VFDesignSpace(D3BaseElement):
     u"""Container to show the design space of a given Variable Font.
     """
     SCSS = """
+    @font-face {
+      font-family: Amstelvar;
+      src: url("fonts/AmstelvarAlpha-VF.ttf");
+    }
+
     .link {
         fill: none;
         stroke: #666;
@@ -80,7 +85,8 @@ class D3VFDesignSpace(D3BaseElement):
     }
 
     text {
-        font: 12px sans-serif;
+        font-size: 20px; 
+        font-family: Amstelvar;
         pointer-events: none;
         text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
     }
@@ -108,6 +114,8 @@ class D3VFDesignSpace(D3BaseElement):
     def build_scss(self, view):
             b = self.context.b
             b.addCss(self.SCSS)
+            for axis, (minValue, defaultValue, maxValue) in self.variableFont.axes.items():
+                b.addCss(".%s {font-family: 'Amstelvar'; font-size=23; font-variation-settings: '%s' %d;}\n" % (axis, axis, maxValue))
             for e in self.elements:
                     e.build_scss(view)
 
@@ -138,7 +146,7 @@ var linkCharge = -500;
 var labelGutter = 4; /* Distance between node and label */
 
 var width = %(w)s,
-        height = %(h)s;
+    height = %(h)s;
 
 var force = d3.layout.force()
         .nodes(d3.values(nodes))
@@ -221,7 +229,7 @@ def makePage(doc):
 def makeSite(viewId):
         doc = Document(viewId=viewId, autoPages=1)
         view = doc.view
-        view.resourcePaths = ['js']
+        view.resourcePaths = ['js', 'fonts']
         view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/d3.js')
         # SiteView will automatically generate css/style.scss.css from assumed css/style.scss
         view.cssUrls = None#('css/normalize.css', 'css/style.scss.css')
