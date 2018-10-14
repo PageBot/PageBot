@@ -62,9 +62,11 @@ class Element:
             nextPageName=None, prevPageName=None, thumbPath=None,
             bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
             margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0,
+            scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            drawAfter=None, htmlCode=None, htmlPaths=None, **kwargs):
+            drawAfter=None, htmlCode=None, htmlPaths=None, 
+            clipPath=None, **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
@@ -152,6 +154,13 @@ class Element:
             self.h = h
             self.d = d
 
+        if scale is not None: # Convenience attribute, setting self.scaleX, self.scaleY, self.scaleZ
+            self.scale = scale # Works for (scaleX, scaleY) and (scaleX, scaleY, scaleZ)
+        else:
+            self.scaleX = scaleX
+            self.scaleY = scaleY
+            self.scaleZ = scaleZ
+
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
 
@@ -222,6 +231,11 @@ class Element:
             conditions = [conditions]
         # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.conditions = conditions
+
+        # Optional storage of self.context.BezierPath() to clip the content of self.
+        # Also note the possibility of the self.childClipPath property, which returns a 
+        # self.context.BezierPath() constructed from the position and layout of self.elements 
+        self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
 
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
@@ -779,28 +793,29 @@ class Element:
             e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
         return e
 
-    def _get_clipPath(self):
+    def _get_childClipPath(self):
         """Answer the clipping context.BezierPath, derived from the layout of child elements.
 
         >>> from pagebot.conditions import *
         >>> e = Element(w=500, h=500)
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
-        >>> e.clipPath.points
-
+        >>> e.childClipPath.points
+        [(50.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 80.0), (50.0, 80.0), (50.0, 0.0)]
         >>> e = Element(w=500, h=500)
         >>> e1 = Element(parent=e, w=100, h=100, conditions=[Left2Left(), Top2Top()])
         >>> e2 = Element(parent=e, w=100, h=100, conditions=(Left2Left(), Bottom2Bottom()))
         >>> score = e.solve()
-        >>> e.clipPath.points
+        >>> e.childClipPath.points
+        [(100.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0)]
         """
         context = self.context
         path = context.newPath()
         path.rect(0, 0, self.w, self.h)
         for e in self.elements:
-            path = path.difference(e.clipPath)
+            path = path.difference(e.childClipPath)
         path.translate(self.x, self.y)
         return path
-    clipPath = property(_get_clipPath)
+    childClipPath = property(_get_childClipPath)
 
     def setElementByIndex(self, e, index):
         """Replace the element, if there is already one at index. Otherwise
@@ -3862,6 +3877,48 @@ class Element:
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
+    def _get_scale(self):
+        """Answer the 2-tuple of (self.scaleX, self.scaleY)
+
+        >>> e = Element(scale=2)
+        >>> e.scaleX, e.scaleY
+        (2, 2)
+        >>> e.scale
+        (2, 2)
+        >>> e.scale = (2, 3, 4)
+        >>> e.scale
+        (2, 3)
+        >>> e.scale3D
+        (2, 3, 4)
+        >>> e.scaleZ = 5
+        >>> e.scale3D
+        (2, 3, 5)
+        >>> e.scale = 1.5
+        >>> e.scale
+        (1.5, 1.5)
+        >>> e.scale = None
+        >>> e.scale
+        (1, 1)
+        """
+        return self.scaleX, self.scaleY
+    def _set_scale(self, scale):
+        if not scale: # Reset to 1. Scale cannot be 0
+            scale = 1
+        if not isinstance(scale, (list, tuple)):
+            scale = [scale]
+        if len(scale) == 1:
+            self.scaleX = self.scaleY = self.scaleZ = scale[0]
+        elif len(scale) == 2:
+            self.scaleX, self.scaleY = scale
+            self.scaleZ = 1
+        else:
+            self.scaleZ, self.scaleY, self.scaleZ = scale[:3]
+    scale = property(_get_scale, _set_scale)
+
+    def _get_scale3D(self):
+        return self.scaleX, self.scaleY, self.scaleZ
+    scale3D = property(_get_scale3D, _set_scale)
+
     # Element positions
 
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
@@ -3997,8 +4054,8 @@ class Element:
         sz = self.scaleZ
         p = point3D(p)
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
-            view.saveGraphicState()
-            view.scale(sx, sy)
+            self.context.saveGraphicState()
+            view.scale = sx, sy
             p = (p[0] / sx, p[1] / sy, p[2] / sz) # Scale point in 3 dimensions.
         return p
 
@@ -4010,7 +4067,7 @@ class Element:
         sy = self.scaleY
         sz = self.scaleZ
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
-            view.restoreGraphicState()
+            self.context.restoreGraphicState()
 
     #   D R A W I N G  S U P P O R T
 

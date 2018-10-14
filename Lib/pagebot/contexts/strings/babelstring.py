@@ -13,6 +13,7 @@
 #
 #     babelstring.py
 #
+from copy import copy
 from pagebot.toolbox.units import pt
 
 class BabelString:
@@ -67,6 +68,27 @@ class BabelString:
 
     def __contains__(self, s):
         return s in self.s
+
+    def __getitem__(self, given):
+        """Answer a copy of self with sliced string or with single indexed character.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.newString('blablabla')[2:]
+        ablabla
+        >>> context.newString('blablabla')[5]
+        a
+        """
+        if isinstance(given, slice):
+            bs = copy(self)
+            bs.s = bs.s[given.start:given.stop]
+            return bs
+        if isinstance(given, (list, tuple)):
+            return self # Untouched
+        # Must be a single index
+        bs = copy(self)
+        bs.s = bs.s[given]
+        return bs
 
     def append(self, s):
         """Appends string or BabelString to self."""

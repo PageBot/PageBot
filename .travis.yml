@@ -46,6 +46,10 @@ install:
 - cd ..
 - rm master.zip
 - rm -r flat-master
+
+# ADD
+# git@github.com:typemytype/booleanOperations.git
+
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member

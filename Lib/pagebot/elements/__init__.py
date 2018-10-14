@@ -33,13 +33,13 @@ from pagebot.elements.pboval import Circle
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
-from pagebot.elements.pbpage import Page, Template
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.pbplacer import Placer 
 
 # Path and mask elements
-from pagebot.elements.paths.pbpath import Path
-from pagebot.elements.paths.glyphpath import GlyphPath
+#from pagebot.elements.paths.pbpath import Path
+#from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
+#from pagebot.elements.paths.glyphpath import GlyphPath
 
 # Table elements
 from pagebot.elements.pbtable import Table
@@ -116,6 +116,10 @@ def newPolygon(points=None, **kwargs):
 
 def newRuler(**kwargs):
     return Ruler(**kwargs)
+
+def newBezierPath(self, bpo=None, **kwargs):
+    """Draw the BezierPath object in the element frame."""
+    return BezierPaths(bpo, **kwargs)
 
 def newImage(path=None, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,

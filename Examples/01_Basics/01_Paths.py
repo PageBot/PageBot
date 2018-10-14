@@ -13,7 +13,8 @@
 #
 #     01_Paths.py
 #
-#     Shows how get pagebot paths.
+#     Shows how get pagebot file paths.
+#     Not to be confused with BezierPaths, which is a different thing.
 #
 from pagebot import *
 import glob

@@ -65,7 +65,7 @@ class Image(Element):
     """
     isImage = True
 
-    def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, clipRect=None, clipPath=None, mask=None,
+    def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, mask=None,
         imo=None, index=1, saveScaled=True, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -90,8 +90,6 @@ class Image(Element):
 
         self.name = name
         self.mask = mask # Optional mask element.
-        self.clipRect = clipRect # Optional clip rectangle in local coordinate and size.
-        self.clipPath = clipPath # Optional clip path.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
         # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.

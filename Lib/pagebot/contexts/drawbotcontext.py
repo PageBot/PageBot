@@ -21,7 +21,7 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle
 from pagebot.toolbox.transformer import path2Name, path2Dir
-from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION,
+from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION, ORIGIN,
         FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
         FILETYPE_MOV, DEFAULT_FILETYPE, DEFAULT_FALLBACK_FONT_PATH)
 
@@ -164,6 +164,8 @@ class DrawBotContext(BaseContext):
 
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
+        This method is using the core BezierPath as path to draw on. For a more rich 
+        environment use PageBotPath(context) instead.
 
         >>> context = DrawBotContext()
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
@@ -173,47 +175,55 @@ class DrawBotContext(BaseContext):
         self.b.rect(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def bluntCornerRect(self, x, y, w, h, offset=5):
-        """Draw a rectangle in the canvas.
+        """Draw a rectangle in the canvas. This method is using the core BezierPath
+        as path to draw on. For a more rich environment use PageBotPath(context)
+        instead.
 
         >>> context = DrawBotContext()
-        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
-        >>> context.rect(0, 0, 100, 100)
+        >>> context.bluntCornerRect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.bluntCornerRect(0, 0, 100, 100)
         """
-        path = self.newPath()
-        path.moveTo((x+offset, y))
-        path.lineTo((x+w-offset, y))
-        path.lineTo((x+w, y+offset))
-        path.lineTo((x+w, y+h-offset))
-        path.lineTo((x+w-offset, y+h))
-        path.lineTo((x+offset, y+h))
-        path.lineTo((x, y+h-offset))
-        path.lineTo((x, y+offset))
+
+        xPt, yPt, wPt, hPt, offsetPt = upt(x, y, w, h, offset)
+        path = self.newPath() # 
+        path.moveTo((xPt+offsetPt, yPt))
+        path.lineTo((xPt+wPt-offsetPt, yPt))
+        path.lineTo((xPt+wPt, yPt+offsetPt))
+        path.lineTo((xPt+wPt, yPt+hPt-offsetPt))
+        path.lineTo((xPt+w-offsetPt, y+hPt))
+        path.lineTo((xPt+offsetPt, y+hPt))
+        path.lineTo((xPt, yPt+h-offsetPt))
+        path.lineTo((xPt, yPt+offsetPt))
         self.closePath()
         self.drawPath(path)
 
     def roundedRect(self, x, y, w, h, offset=25):
-        """Draw a rectangle in the canvas.
+        """Draw a rectangle in the canvas. This method is using the core BezierPath
+        as path to draw on. For a more rich environment use PageBotPath(context)
+        instead.
 
         >>> context = DrawBotContext()
-        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
-        >>> context.rect(0, 0, 100, 100)
+        >>> context.roundedRect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.roundedRect(0, 0, 100, 100)
         """
+        xPt, yPt, wPt, hPt, offsetPt = upt(x, y, w, h, offset)
         path = self.newPath()
-        path.moveTo((x+offset, y))
-        path.lineTo((x+w-offset, y))
-        path.curveTo((x+w, y), (x+w, y), (x+w, y+offset))
-        path.lineTo((x+w, y+h-offset))
-        path.curveTo((x+w, y+h), (x+w, y+h), (x+w-offset, y+h))
-        path.lineTo((x+offset, y+h))
-        path.curveTo((x, y+h), (x, y+h), (x, y+h-offset))
-        path.lineTo((x, y+offset))
-        path.curveTo((x, y), (x, y), (x+offset, y))
+        path.moveTo((xPt+offsetPt, yPt))
+        path.lineTo((xPt+wPt-offsetPt, yPt))
+        path.curveTo((xPt+wPt, yPt), (xPt+wPt, yPt), (xPt+wPt, yPt+offsetPt))
+        path.lineTo((xPt+wPt, yPt+hPt-offsetPt))
+        path.curveTo((xPt+wPt, yPt+hPt), (xPt+wPt, yPt+hPt), (xPt+wPt-offsetPt, yPt+hPt))
+        path.lineTo((xPt+offsetPt, yPt+hPt))
+        path.curveTo((xPt, yPt+hPt), (xPt, yPt+hPt), (xPt, yPt+hPt-offsetPt))
+        path.lineTo((xPt, yPt+offsetPt))
+        path.curveTo((xPt, yPt), (xPt, yPt), (xPt+offsetPt, yPt))
         self.closePath()
         self.drawPath(path)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom-left and size
-        (w,h).
+        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        This method is using the core BezierPath as path to draw on. For a more rich 
+        environment use PageBotPath(context), instead.
 
         >>> context = DrawBotContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
@@ -224,6 +234,9 @@ class DrawBotContext(BaseContext):
 
     def circle(self, x, y, r):
         """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        This method is using the core BezierPath as path to draw on. For a more rich 
+        environment use PageBotPath(context) instead.
+
         >>> context = DrawBotContext()
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -233,22 +246,31 @@ class DrawBotContext(BaseContext):
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
+        This method is using the core BezierPath as path to draw on. For a more rich 
+        ennvironment use PageBotPath(context).
 
         >>> context = DrawBotContext()
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
         """
-        p1pt  = point2D(upt(p1))
-        p2pt  = point2D(upt(p2))
+        p1pt  = upt(point2D(p1))
+        p2pt  = upt(point2D(p2))
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
+    #   P A T H 
+    #
+    #   Function that work on the current running path stored in self._path
+    #
+
     def newPath(self):
-        """Make a new DrawBot Bezierpath() to draw in and answer it. This will
+        """Make a new core DrawBot.Bezierpath to draw in and answer it. This will
         not initialize self._path, which is accessed by the property self.path
+        This method is using the core DrawBot.BezierPath as path to draw on. 
+        For a more rich environment use PageBotPath(context) instead.
 
         >>> context = DrawBotContext()
-        >>> context.newPath() is not None
-        True
+        >>> context.newPath()
+        <BezierPath>
         """
         return self.b.BezierPath()
 
@@ -256,19 +278,68 @@ class DrawBotContext(BaseContext):
         """Answers the open drawing self._path. Create one if it does not exist.
 
         >>> context = DrawBotContext()
-        >>> context.path is not None
+        >>> path = context.path
+        >>> path is not None
         True
+        >>> path.moveTo((0, 0))
+        >>> path.lineTo((100, 100)) # Adding 2 points
+        >>> len(context.path.points)
+        2
         """
         if self._path is None:
             self._path = self.newPath()
         return self._path
     path = property(_get_path)
 
+    
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        """Draws the BezierPath. Scaled image is drawn on (x, y), in that
-        order."""
+        """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
+        Use self._path if path is omitted.
+
+        >>> context = DrawBotContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
+        >>> len(context.path.points) # Property self.path creates a self._path BezierPath
+        0
+        >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
+        >>> context.lineTo((110, 10))
+        >>> context.lineTo((110, 110))
+        >>> context.lineTo((10, 110))
+        >>> context.lineTo((10, 10))
+        >>> context.closePath()
+        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._path
+        >>> len(context.path.points)
+        6
+        >>> context.fill((1, 0, 0))
+        >>> context.drawPath(p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(p=(200, 200))
+        >>> context.drawPath(p=(0, 200))
+        >>> context.drawPath(p=(200, 0))
+        >>> context.saveImage('_export/DrawBotContext1.pdf')
+        >>> # Drawing directly on a path, created by context
+        >>> path = context.newPath() # Leaves current self._path untouched
+        >>> len(path.points)
+        0
+        >>> path.moveTo((10, 10)) # Drawing on context._path
+        >>> path.lineTo((110, 10))
+        >>> path.lineTo((110, 110))
+        >>> path.lineTo((10, 110))
+        >>> path.lineTo((10, 10))
+        >>> path.closePath()
+        >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
+        >>> len(path.points)
+        19
+        >>> context.fill((0, 0.5, 1))
+        >>> context.drawPath(path, p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(path, p=(200, 200))
+        >>> context.drawPath(path, p=(0, 200))
+        >>> context.drawPath(path, p=(200, 0))
+        >>> context.saveImage('_export/DrawBotContext2.pdf')
+        """
         if path is None:
             path = self.path
+        elif hasattr(path, 'bp'): # If it's a PageBotPath, get the core path
+            path = path.bp
 
         self.save()
         if sy is None:
@@ -368,7 +439,7 @@ class DrawBotContext(BaseContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        ppt = point2D(upt(p))
+        ppt = upt(point2D(p))
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
@@ -387,7 +458,7 @@ class DrawBotContext(BaseContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        ppt = point2D(upt(p))
+        ppt = upt(point2D(p))
         self.path.lineTo(ppt) # Render units point tuple to tuple of values
 
     def quadTo(bcp, p):
@@ -410,9 +481,9 @@ class DrawBotContext(BaseContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        b1pt = point2D(upt(bcp1))
-        b2pt = point2D(upt(bcp2))
-        ppt = point2D(upt(p))
+        b1pt = upt(point2D(bcp1))
+        b2pt = upt(point2D(bcp2))
+        ppt = upt(point2D(p))
         self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def closePath(self):
@@ -857,7 +928,9 @@ class DrawBotContext(BaseContext):
 
     #   I M A G E
 
-    def imagePixelColor(self, path, p):
+    def imagePixelColor(self, path, p=None):
+        if p is None:
+            p = ORIGIN
         ppt = point2D(upt(p))
         return self.b.imagePixelColor(path, ppt)
 
@@ -869,8 +942,11 @@ class DrawBotContext(BaseContext):
         """Answers the number of images in the file referenced by path."""
         return self.b.numberOfPages(path)
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
         """Draws the image. If w or h is defined, scale the image to fit."""
+        if p is None:
+            p = ORIGIN
+
         iw, ih = self.imageSize(path)
 
         if w and not h: # Scale proportional
@@ -889,7 +965,7 @@ class DrawBotContext(BaseContext):
         # Else both w and h are defined, scale disproportionally.
         xpt, ypt, = point2D(p)
         sx, sy = upt(wpt/iw, hpt/ih) # We need ratio values, not units
-        x, y = p
+
         self.save()
         self.scale(sx, sy)
         #self.b.image(path, (x, y), alpha=alpha, pageNumber=pageNumber)

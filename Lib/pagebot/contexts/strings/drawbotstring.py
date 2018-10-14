@@ -573,7 +573,7 @@ class DrawBotString(BabelString):
         # Get the drawBotBuilder, no need to check, we already must be in context here.
         if t is None:
             t = ''
-        elif isinstance(t, str):
+        elif not isinstance(t, str):
             t = str(t)
 
         fsAttrs = {}

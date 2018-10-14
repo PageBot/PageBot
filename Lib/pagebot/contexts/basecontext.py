@@ -51,11 +51,10 @@ class BaseContext:
         """Creates a new styles BabelString instance of self.STRING_CLASS from
         `s` (converted to plain unicode string), using e or style as
         typographic parameters. Ignore and just answer `s` if it is already a
-        self.STRING_CLASS instance."""
+        self.STRING_CLASS instance and no style is forced."""
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = str(s)
-            s = self.STRING_CLASS.newString(s, context=self, e=e,
+            s = self.STRING_CLASS.newString(str(s), context=self, e=e,
                     style=style, w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
@@ -70,9 +69,8 @@ class BaseContext:
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = str(s)
-            s = self.STRING_CLASS.fitString(s, context=self, e=e, style=style, w=w, h=h,
-                pixelFit=pixelFit)
+            s = self.STRING_CLASS.fitString(str(s), context=self, e=e, style=style, 
+                w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
 
@@ -291,8 +289,10 @@ class BaseContext:
 
     def newPath(self):
         raise NotImplementedError
+    
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         raise NotImplementedError
+    
     #def clipPath(self, clipPath):
     #def roundedRect(self, x, y, w, h, offset=25):
     #def bluntCornerRect(self, x, y, w, h, offset=5):

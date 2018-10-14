@@ -2283,8 +2283,9 @@ def atan2(v1, v2):
 class Angle:
 
     def __init__(self, angle):
-        if angle == round(angle):
-            angle = int(angle)
+        if isinstance(angle, float):
+            if angle == round(angle):
+                angle = int(angle)
         self.angle = angle
 
     def __add__(self, angle):
@@ -2663,7 +2664,7 @@ class Degrees(Angle):
 
 def degrees(angle):
     if isinstance(angle, Angle):
-        angle = angle.degrees.angle
+        angle = angle.degrees
     return Degrees(angle)
 
 class Radians(Angle):

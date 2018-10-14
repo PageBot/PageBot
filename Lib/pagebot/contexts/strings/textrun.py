@@ -14,6 +14,7 @@
 #
 #     textrun.py
 #
+from pagebot.toolbox.units import em
 
 try:
     from CoreText import (CTRunGetGlyphCount, CTRunGetStringRange,
