@@ -44,7 +44,7 @@ install:
 - rm -r flat-master
 - wget https://github.com/typemytype/booleanOperations/archive/master.zip
 - unzip master.zip
-- cd booleanOperations-master.zip
+- cd booleanOperations-master
 - python3 setup.py install
 - cd ..
 - rm master.zip
