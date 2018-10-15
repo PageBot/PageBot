@@ -217,28 +217,6 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def getFlattenedContours(self, path=None):
-        """Answers the flattened NSBezier path As contour list [contour,
-        contour, ...] where contours are lists of point2D() points."""
-        contour = []
-        flattenedContours = [contour]
-        flatPath = self.bezierPathByFlatteningPath(path) # Use/create self._path if path is None
-
-        if flatPath is not None:
-            for index in range(flatPath.elementCount()):
-                # NSBezierPath size + index call.
-                p = flatPath.elementAtIndex_associatedPoints_(index)[1]
-
-                if p:
-                    # Make point2D() tuples, no need to add point type, all
-                    # onCurve.
-                    contour.append((p[0].x, p[0].y))
-                else:
-                    contour = []
-                    flattenedContours.append(contour)
-
-        return flattenedContours
-
     def moveTo(self, p):
         """Move to point p in the running path. Create a new self._path if none
         is open.
@@ -328,16 +306,17 @@ class DrawBotContext(BaseContext):
         return path._path.bezierPathByFlatteningPath()
 
     def getFlattenedContours(self, path=None):
-        """Answers the flattened NSBezier path As contour list [contour,
+        """Answers the flattened Bézier path as  a contour list [contour,
         contour, ...] where contours are lists of point2D() points."""
         contour = []
         flattenedContours = [contour]
-        flatPath = self.getFlattenedPath(path)
+        flatPath = self.bezierPathByFlatteningPath(path) # Use/create self._path if path is None
 
         if flatPath is not None:
             for index in range(flatPath.elementCount()):
                 # NSBezierPath size + index call.
                 p = flatPath.elementAtIndex_associatedPoints_(index)[1]
+
                 if p:
                     # Make point2D() tuples, no need to add point type, all
                     # onCurve.
