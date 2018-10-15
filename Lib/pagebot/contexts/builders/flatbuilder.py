@@ -75,7 +75,7 @@ class BezierPath:
             path = self.path
         path.closePath()
 
-    def beginPath(self, identifier=None, path=None): 
+    def beginPath(self, identifier=None, path=None):
         """Start a new path/polyhon in self.path.
 
         >>> context = DrawBotContext()
@@ -169,7 +169,7 @@ class BezierPath:
         path.drawToPointPen(pointPen)
 
     def arc(self, center, radius, startAngle, endAngle, clockwise, path=None):
-        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is 
+        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is
         True and counter clockwise if clockwise is False.
         """
         if path is None:

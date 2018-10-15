@@ -13,8 +13,9 @@
 #
 #     basecontext.py
 #
+
 import os
-from pagebot.constants import DISPLAY_BLOCK
+from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
 
 class BaseContext:
     """A BaseContext instance abstracts the specific functions of a platform
@@ -69,7 +70,7 @@ class BaseContext:
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.fitString(str(s), context=self, e=e, style=style, 
+            s = self.STRING_CLASS.fitString(str(s), context=self, e=e, style=style,
                 w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
@@ -116,10 +117,12 @@ class BaseContext:
         minY = min(ly0, ly1)
         glyphPath = self.getGlyphPath(glyph)
         contours = self.getFlattenedContours(glyphPath)
+
         if not contours:
             # Could not generate path or flattenedPath. Or there are no
             # contours. Give up.
             return None
+
         for contour in contours:
             for n in range(len(contour)):
                 pLine = contour[n], contour[n-1]
@@ -164,14 +167,14 @@ class BaseContext:
         """Answers the current screen size."""
         return None
 
-    # Gradient & Shadow.
+    #   G R A D I E N T    &   S H A D O W
 
-    # Animation.
+    #   A N I M A T I O N
 
     def frameDuration(self, secondsPerFrame):
-        raise NotImplementedError
+        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
-    # Text.
+    #   T E X T
 
     def font(self, fontName, fontSize=None):
         raise NotImplementedError
@@ -218,7 +221,7 @@ class BaseContext:
     def listFontVariations(self, fontName=None):
         raise NotImplementedError
 
-    # Canvas.
+    #   C A N V A S
 
     def save(self):
         raise NotImplementedError
@@ -226,7 +229,7 @@ class BaseContext:
     def restore(self):
         raise NotImplementedError
 
-    # Document.
+    #   D O C U M E N T
 
     def newDocument(self, w, h):
         raise NotImplementedError
@@ -270,7 +273,7 @@ class BaseContext:
     def pdfImage(self):
         raise NotImplementedError
 
-    # Drawing.
+    #   D R A W I N G
 
     def rect(self, x, y, w, h):
         raise NotImplementedError
@@ -289,17 +292,17 @@ class BaseContext:
 
     def newPath(self):
         raise NotImplementedError
-    
+
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         raise NotImplementedError
-    
+
     #def clipPath(self, clipPath):
     #def roundedRect(self, x, y, w, h, offset=25):
     #def bluntCornerRect(self, x, y, w, h, offset=5):
     #def drawGlyphPath(self, glyph):
     #def getGlyphPath(self, glyph, p=None, path=None):
 
-    # Color.
+    #   C O L O R
 
     def fill(self, c):
         raise NotImplementedError
@@ -324,7 +327,7 @@ class BaseContext:
     # def lineCap(self, value):
     # def lineDash(self, *value):
 
-    # Transform.
+    #   T R A N S F O R M
 
     def transform(self, matrix, center=(0, 0)):
         raise NotImplementedError
@@ -341,7 +344,7 @@ class BaseContext:
     def skew(self, angle1, angle2=0, center=(0, 0)):
         raise NotImplementedError
 
-    # Image.
+    #   I M A G E
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         raise NotImplementedError
@@ -354,7 +357,7 @@ class BaseContext:
     #def numberOfImages(self, path):
     #def getImageObject(self, path):
 
-    # Objects.
+    #   O B J E C T S
 
     def BezierPath(self, path=None, glyphSet=None):
         raise NotImplementedError

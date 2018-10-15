@@ -26,10 +26,13 @@ class BaseBuilder:
     def __init__(self):
         self._installedFonts = []
 
+    def installedFonts(self, pattern=None):
+        return []
+
     def newDrawing(self, path=None):
         raise NotImplementedError
 
-    def frameDuration(self, v):
+    def frameDuration(self, secondsPerFrame):
         raise NotImplementedError
 
     def restore(self):
@@ -96,9 +99,6 @@ class BaseBuilder:
 
     def sizes(self):
         return dict(screen=(800, 600))
-
-    def installedFonts(self, pattern=None):
-        return []
 
     def font(self, font):
         raise NotImplementedError
@@ -171,4 +171,3 @@ class BaseBuilder:
     def ImageObject(self, path):
         raise NotImplementedError
         #return NoneImageObject(path)
-

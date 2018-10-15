@@ -38,6 +38,7 @@ def testContext(context):
     #    print(' * %s: %s' % (key, value))
 
     try:
+        print(context.frameDuration(1))
         context.newDrawing()
         context.newPage(w=W, h=H)
         context.fill(f)

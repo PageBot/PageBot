@@ -164,7 +164,7 @@ class DrawBotContext(BaseContext):
 
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
-        This method is using the core BezierPath as path to draw on. For a more rich 
+        This method is using the core BezierPath as path to draw on. For a more rich
         environment use PageBotPath(context) instead.
 
         >>> context = DrawBotContext()
@@ -185,7 +185,7 @@ class DrawBotContext(BaseContext):
         """
 
         xPt, yPt, wPt, hPt, offsetPt = upt(x, y, w, h, offset)
-        path = self.newPath() # 
+        path = self.newPath() #
         path.moveTo((xPt+offsetPt, yPt))
         path.lineTo((xPt+wPt-offsetPt, yPt))
         path.lineTo((xPt+wPt, yPt+offsetPt))
@@ -222,7 +222,7 @@ class DrawBotContext(BaseContext):
 
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
-        This method is using the core BezierPath as path to draw on. For a more rich 
+        This method is using the core BezierPath as path to draw on. For a more rich
         environment use PageBotPath(context), instead.
 
         >>> context = DrawBotContext()
@@ -234,7 +234,7 @@ class DrawBotContext(BaseContext):
 
     def circle(self, x, y, r):
         """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
-        This method is using the core BezierPath as path to draw on. For a more rich 
+        This method is using the core BezierPath as path to draw on. For a more rich
         environment use PageBotPath(context) instead.
 
         >>> context = DrawBotContext()
@@ -246,7 +246,7 @@ class DrawBotContext(BaseContext):
 
     def line(self, p1, p2):
         """Draw a line from p1 to p2.
-        This method is using the core BezierPath as path to draw on. For a more rich 
+        This method is using the core BezierPath as path to draw on. For a more rich
         ennvironment use PageBotPath(context).
 
         >>> context = DrawBotContext()
@@ -257,7 +257,7 @@ class DrawBotContext(BaseContext):
         p2pt  = upt(point2D(p2))
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
-    #   P A T H 
+    #   P A T H
     #
     #   Function that work on the current running path stored in self._path
     #
@@ -265,7 +265,7 @@ class DrawBotContext(BaseContext):
     def newPath(self):
         """Make a new core DrawBot.Bezierpath to draw in and answer it. This will
         not initialize self._path, which is accessed by the property self.path
-        This method is using the core DrawBot.BezierPath as path to draw on. 
+        This method is using the core DrawBot.BezierPath as path to draw on.
         For a more rich environment use PageBotPath(context) instead.
 
         >>> context = DrawBotContext()
@@ -291,7 +291,6 @@ class DrawBotContext(BaseContext):
         return self._path
     path = property(_get_path)
 
-    
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
         Use self._path if path is omitted.
