@@ -16,6 +16,7 @@
 from random import random
 from pagebot import getAllContexts, getResourcesPath
 from pagebot.toolbox.color import Color
+import traceback
 
 W = 1000
 H = 800
@@ -68,5 +69,6 @@ def testContext(context):
         context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
     	    print('!!! %s' % e)
+    	    print(traceback.format_exc())
 
 testContexts()

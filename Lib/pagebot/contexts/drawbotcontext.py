@@ -76,10 +76,9 @@ class DrawBotContext(BaseContext):
         # calls, similar to function calls in DrawBot scripts.
         self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
-        self._path = None # Hold current open DrawBot path.
-
         # Holds the extension as soon as the export file path is defined.
         self.fileType = DEFAULT_FILETYPE
+        super().__init__()
 
     #   D O C U M E N T
 
@@ -106,46 +105,6 @@ class DrawBotContext(BaseContext):
         """Returns a PDF document of the current state."""
         return self.b.pdfImage()
 
-    def newPage(self, w, h):
-        """Creates a new drawbot page.
-
-        >>> from pagebot.toolbox.units import px
-        >>> context = DrawBotContext()
-        >>> context.newPage(pt(100), pt(100))
-        >>> context.newPage(100, 100)
-        """
-        wpt, hpt = upt(w, h)
-        self.b.newPage(wpt, hpt)
-
-    def newDrawing(self):
-        """Clear output canvas, start new export file.
-
-        >>> context = DrawBotContext()
-        >>> context.newDrawing()
-        """
-        self.b.newDrawing()
-
-    #   S C R E E N
-
-    def screenSize(self):
-        """Answers the current screen size in DrawBot. Otherwise default is to
-        do nothing.
-
-        >>> context = DrawBotContext()
-        >>> size = context.screenSize()
-        >>> size[0] > 100 and size[1] > 100
-        True
-        """
-        return pt(self.b.sizes().get('screen', None))
-
-    #   C L I P P I N G
-
-    def clipPath(self, clipPath):
-        """Sets the clipPath of the DrawBot builder in a new saved graphics
-        state. Clip paths cannot be restored, so they should be inside a
-        context.save() and context.restore()."""
-        self.b.clipPath(clipPath)
-
     #   V A R I A B L E
 
     def Variable(self, variableUI , globalVariables):
@@ -166,6 +125,8 @@ class DrawBotContext(BaseContext):
         """Draw a rectangle in the canvas. This method is using the core BezierPath
         as path to draw on. For a more rich environment use PageBotPath(context)
         instead.
+
+        TODO: move to elements.
 
         >>> context = DrawBotContext()
         >>> context.bluntCornerRect(pt(0), pt(0), pt(100), pt(100))
@@ -190,6 +151,8 @@ class DrawBotContext(BaseContext):
         as path to draw on. For a more rich environment use PageBotPath(context)
         instead.
 
+        TODO: move to elements.
+
         >>> context = DrawBotContext()
         >>> context.roundedRect(pt(0), pt(0), pt(100), pt(100))
         >>> context.roundedRect(0, 0, 100, 100)
@@ -212,96 +175,6 @@ class DrawBotContext(BaseContext):
     #
     #   Function that work on the current running path stored in self._path
     #
-
-    def newPath(self):
-        """Make a new core DrawBot.Bezierpath to draw in and answer it. This will
-        not initialize self._path, which is accessed by the property self.path
-        This method is using the core DrawBot.BezierPath as path to draw on.
-        For a more rich environment use PageBotPath(context) instead.
-
-        >>> context = DrawBotContext()
-        >>> context.newPath()
-        <BezierPath>
-        """
-        return self.b.BezierPath()
-
-    def _get_path(self):
-        """Answers the open drawing self._path. Create one if it does not exist.
-
-        >>> context = DrawBotContext()
-        >>> path = context.path
-        >>> path is not None
-        True
-        >>> path.moveTo((0, 0))
-        >>> path.lineTo((100, 100)) # Adding 2 points
-        >>> len(context.path.points)
-        2
-        """
-        if self._path is None:
-            self._path = self.newPath()
-        return self._path
-    path = property(_get_path)
-
-    def drawPath(self, path=None, p=None, sx=1, sy=None):
-        """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
-        Use self._path if path is omitted.
-
-        >>> context = DrawBotContext()
-        >>> context.newDrawing()
-        >>> context.newPage(420, 420)
-        >>> len(context.path.points) # Property self.path creates a self._path BezierPath
-        0
-        >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
-        >>> context.lineTo((110, 10))
-        >>> context.lineTo((110, 110))
-        >>> context.lineTo((10, 110))
-        >>> context.lineTo((10, 10))
-        >>> context.closePath()
-        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._path
-        >>> len(context.path.points)
-        6
-        >>> context.fill((1, 0, 0))
-        >>> context.drawPath(p=(0, 0)) # Draw self._path with various offsets
-        >>> context.drawPath(p=(200, 200))
-        >>> context.drawPath(p=(0, 200))
-        >>> context.drawPath(p=(200, 0))
-        >>> context.saveImage('_export/DrawBotContext1.pdf')
-        >>> # Drawing directly on a path, created by context
-        >>> path = context.newPath() # Leaves current self._path untouched
-        >>> len(path.points)
-        0
-        >>> path.moveTo((10, 10)) # Drawing on context._path
-        >>> path.lineTo((110, 10))
-        >>> path.lineTo((110, 110))
-        >>> path.lineTo((10, 110))
-        >>> path.lineTo((10, 10))
-        >>> path.closePath()
-        >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
-        >>> len(path.points)
-        19
-        >>> context.fill((0, 0.5, 1))
-        >>> context.drawPath(path, p=(0, 0)) # Draw self._path with various offsets
-        >>> context.drawPath(path, p=(200, 200))
-        >>> context.drawPath(path, p=(0, 200))
-        >>> context.drawPath(path, p=(200, 0))
-        >>> context.saveImage('_export/DrawBotContext2.pdf')
-        """
-        if path is None:
-            path = self.path
-        elif hasattr(path, 'bp'): # If it's a PageBotPath, get the core path
-            path = path.bp
-
-        self.save()
-        if sy is None:
-            sy = sx
-        if p is None:
-            xpt = ypt = 0
-        else:
-            xpt, ypt = point2D(upt(p))
-        self.scale(sx, sy)
-        self.translate(xpt/sx, ypt/sy)
-        self.b.drawPath(path)
-        self.restore()
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
@@ -365,14 +238,6 @@ class DrawBotContext(BaseContext):
                     flattenedContours.append(contour)
 
         return flattenedContours
-
-    def onBlack(self, p, path=None):
-        """Answers if the single point (x, y) is on black. For now this only
-        works in DrawBotContext."""
-        if path is None:
-            path = self.path
-        p = point2D(p)
-        return path._path.containsPoint_(p)
 
     def moveTo(self, p):
         """Move to point p in the running path. Create a new self._path if none
@@ -671,24 +536,6 @@ class DrawBotContext(BaseContext):
 
     #   T E X T
 
-    def font(self, font, fontSize=None):
-        self.b.font(font)
-
-        # Also renders fontSize unit to value.
-        if fontSize is not None:
-            fspt = upt(fontSize)
-            self.b.fontSize(fspt)
-
-    def fontSize(self, fontSize):
-        """Set the font size in the context.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = DrawBotContext()
-        >>> context.fontSize(pt(12))
-        """
-        fspt = upt(fontSize)
-        self.b.fontSize(fspt) # Render fontSize unit to value
-
     def text(self, sOrBs, p):
         """Draw the sOrBs text string, can be a str or BabelString, including a
         DrawBot FormattedString at position p."""
@@ -712,27 +559,6 @@ class DrawBotContext(BaseContext):
         elif r is not None:
             xpt, ypt, wpt, hpt = upt(r)
             self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
-
-    def language(self, language):
-        """DrawBot needs an overall language flag set to code, as it is not
-        part of the FormattedString style attributes. For availabel ISO
-        language codes, see pageboy.constants."""
-        self.b.language(language)
-
-    def hyphenation(self, onOff):
-        """DrawBot needs an overall hyphenation flag set on/off, as it is not
-        part of the FormattedString style attributes."""
-        self.b.hyphenation(onOff)
-
-    def openTypeFeatures(self, features):
-        """Set the current of opentype features in the context canvas.
-
-        >>> context = DrawBotContext()
-        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
-        """
-        self.b.openTypeFeatures(**features)
-
-    #   A N I M A T I O N
 
     #   C O L O R
 
@@ -812,19 +638,6 @@ class DrawBotContext(BaseContext):
 
     setStrokeColor = stroke # DrawBot compatible API
 
-    def strokeWidth(self, w):
-        """Set the current stroke width.
-
-        >>> from pagebot.toolbox.units import pt, mm
-        >>> context = DrawBotContext()
-        >>> context.setStrokeWidth(pt(0.5))
-        >>> context.setStrokeWidth(mm(0.5))
-        """
-        wpt = upt(w)
-        self.b.strokeWidth(wpt)
-
-    setStrokeWidth = strokeWidth
-
     # Transformation.
 
     def scale(self, sx, sy=None):
@@ -872,10 +685,6 @@ class DrawBotContext(BaseContext):
             p = ORIGIN
         ppt = point2D(upt(p))
         return self.b.imagePixelColor(path, ppt)
-
-    def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
-        return pt(self.b.imageSize(path))
 
     def numberOfImages(self, path):
         """Answers the number of images in the file referenced by path."""

@@ -15,7 +15,7 @@
 #
 #     The PageBotPath class is the wrapper around a core BezierPath instance.
 #     The reason to make a generic PageBotPage wrapper class is to add
-#     awareness of babelString, units and color and other additional functions 
+#     awareness of babelString, units and color and other additional functions
 #     that don't exist in the main DrawBot.BezierPath.
 #
 #     The wrapper assumes the core BezierPath API identical to DrawBot.BezierPath
@@ -76,7 +76,7 @@ class PageBotPath:
         """
         self.bp.closePath()
 
-    def beginPath(self, identifier=None): 
+    def beginPath(self, identifier=None):
         """Start a new path/polyhon in self.path.
 
         >>> from pagebot.contexts import getContext
@@ -190,7 +190,7 @@ class PageBotPath:
         """
         return self.bp.points
     points = property(_get_points)
-    
+
     def _get_onCurvePoints(self):
         """Property that answers the list of on-curve of the BezierPath.
 
@@ -205,7 +205,7 @@ class PageBotPath:
         """
         return self.bp.onCurvePoints
     onCurvePoints = property(_get_onCurvePoints)
-    
+
     def _get_offCurvePoints(self):
         """Property that answers the list of off-curve points of the BezierPath.
 
@@ -220,9 +220,9 @@ class PageBotPath:
         """
         return self.bp.offCurvePoints
     offCurvePoints = property(_get_offCurvePoints)
-    
+
     def _get_contours(self):
-        """Return a list of contours with all point coordinates sorted in segments. 
+        """Return a list of contours with all point coordinates sorted in segments.
         A contour object has an open attribute.
 
         >>> from pagebot.contexts import getContext
@@ -325,7 +325,7 @@ class PageBotPath:
         self.bp.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
-        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is 
+        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is
         True and counter clockwise if clockwise is False.
 
         >>> from pagebot.toolbox.units import mm
@@ -340,7 +340,7 @@ class PageBotPath:
         ptRradius = upt(radius or DEFAULT_WIDTH/2)
         dgStartAngle = degrees(startAngle or 0)
         dgEndAngle = degrees(endAngle or 90)
-        self.bp.arc(center=ptCenter, radius=ptRradius, startAngle=dgStartAngle.degrees, 
+        self.bp.arc(center=ptCenter, radius=ptRradius, startAngle=dgStartAngle.degrees,
             endAngle=dgEndAngle.degrees, clockwise=clockwise)
 
     def arcTo(self, pt1, pt2, radius):
@@ -403,7 +403,7 @@ class PageBotPath:
         self.bp.oval(ptx-ptr, pty-ptr, ptr*2, ptr*2)
 
     def text(self, bs, offset=None, style=None):
-        """Draws a txt with a font and fontSize at an offset in the bezier path. If a font path is given 
+        """Draws a txt with a font and fontSize at an offset in the bezier path. If a font path is given
         the font will be installed and used directly. Style is normal optional PageBot style dictionary.
         Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
         The default alignment is left. Optionally txt can be a context-related BabelString.
@@ -425,7 +425,7 @@ class PageBotPath:
         self.bp.text(bs, offset=offset, font=font, fontSize=fontSize, align=align)
 
     def textBox(self, bs, box, style=None):
-        """Draws a txt with a font and fontSize in a box in the bezier path. If a font path is given 
+        """Draws a txt with a font and fontSize in a box in the bezier path. If a font path is given
         the font will be installed and used directly. Style is normal optional PageBot style dictionary.
         Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
         The default alignment is left. Optionally hyphenation can be provided.
@@ -471,7 +471,7 @@ class PageBotPath:
         False
         """
         return self.bp.pointInside(upt(p))
-    
+
     def traceImage(self, imagePath, threshold=0.2, blur=None, invert=False, turd=2, tolerance=0.2, offset=None):
         """Convert a given image to a vector outline.
         Optionally some tracing options can be provide:
@@ -495,7 +495,7 @@ class PageBotPath:
         if offset is None:
             offset = ORIGIN
         offset = upt(point2D(offset))
-        self.bp.traceImage(imagePath, threshold=threshold, blur=blur, invert=invert, turd=turd, 
+        self.bp.traceImage(imagePath, threshold=threshold, blur=blur, invert=invert, turd=turd,
             tolerance=tolerance, offset=offset)
 
     #def getNSBezierPath()
@@ -520,7 +520,7 @@ class PageBotPath:
         False
         """
         return self.bp.pointInside(upt(p))
-    
+
     def bounds(self):
         """Return the bounding box of the path.
 
@@ -539,7 +539,7 @@ class PageBotPath:
     def _get_box(self):
         return self.bounds()
     box = property(_get_box)
-    
+
     def controlPointBounds(self):
         """Return the bounding box of the path including the offcurve points.
 
@@ -598,7 +598,7 @@ class PageBotPath:
         >>> path2.circle(0, 0, 100)
         >>> len(path1)
         5
-        >>> path1.points 
+        >>> path1.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
         >>> path1.appendPath(path2)
         >>> len(path1)
@@ -613,10 +613,10 @@ class PageBotPath:
         >>> context = getContext()
         >>> path = PageBotPath(context)
         >>> path.rect(0, 0, 200, 200)
-        >>> path.points 
+        >>> path.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
         >>> path.translate(pt(20, 30))
-        >>> path.points 
+        >>> path.points
         [(20.0, 30.0), (220.0, 30.0), (220.0, 230.0), (20.0, 230.0), (20.0, 30.0)]
         """
         ptx, pty = upt(point2D(p))
@@ -625,19 +625,19 @@ class PageBotPath:
     moveBy = translate
 
     def rotate(self, angle, center=None):
-        """Rotate the path around the center point (which is the origin by default) 
+        """Rotate the path around the center point (which is the origin by default)
         with a given angle in degrees, Degrees or Radians instance.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> path = PageBotPath(context)
         >>> path.rect(0, 0, 200, 200)
-        >>> path.points 
+        >>> path.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
         >>> angle = degrees(180)
         >>> path.rotate(angle)
         >>> path.rotate(-angle)
-        >>> path.points 
+        >>> path.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
         """
         dgAngle = degrees(angle)
@@ -646,7 +646,7 @@ class PageBotPath:
         center = upt(point2D(center))
         self.bp.rotate(dgAngle.degrees, center)
 
-    def scale(self, x=1, y=None, center=None):      
+    def scale(self, x=1, y=None, center=None):
         """Scale the path with a given x (horizontal scale) and y (vertical scale).
         If only 1 argument is provided a proportional scale is applied.
         The center of scaling can optionally be set via the center keyword argument. By default this is the origin.
