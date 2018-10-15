@@ -43,6 +43,12 @@ class BaseContext(AbstractDrawBotContext):
     def __init__(self):
         self._path = None # Hold current open DrawBot path.
 
+    def newDocument(self, w, h):
+        raise NotImplementedError
+
+    def saveDocument(self, path, multiPage=None):
+        raise NotImplementedError
+
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
         `s` (converted to plain unicode string), using e or style as
@@ -168,6 +174,20 @@ class BaseContext(AbstractDrawBotContext):
         True
         """
         return pt(self.b.sizes().get('screen', None))
+
+    def circle(self, x, y, r):
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        This method is using the core BezierPath as path to draw on. For a more rich
+        environment use PageBotPath(context) instead.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.circle(pt(100), pt(200), pt(50))
+        >>> context.circle(100, 200, 50)
+        """
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+
 
 if __name__ == '__main__':
     import doctest
