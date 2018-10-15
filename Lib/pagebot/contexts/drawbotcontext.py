@@ -694,9 +694,10 @@ class DrawBotContext(BaseContext):
         sx, sy = upt(wpt/iw, hpt/ih) # We need ratio values, not units
 
         self.save()
+        self.translate(xpt, ypt)
         self.scale(sx, sy)
         #self.b.image(path, (x, y), alpha=alpha, pageNumber=pageNumber)
-        self.b.image(path, ((xpt*sx), (ypt*sy)), alpha=alpha, pageNumber=pageNumber)
+        self.b.image(path, (0, 0), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
     def getImageObject(self, path):
