@@ -13,6 +13,7 @@ install:
 - pip3 install pyobjc
 - pip3 install svgwrite
 - pip3 install SimpleIDML
+- pip3 install booleanOperations
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
@@ -42,12 +43,6 @@ install:
 - cd ..
 - rm master.zip
 - rm -r flat-master
-- wget https://github.com/typemytype/booleanOperations/archive/master.zip
-- unzip master.zip
-- cd booleanOperations-master
-- python3 setup.py install
-- cd ..
-- rm master.zip
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
