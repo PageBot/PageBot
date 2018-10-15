@@ -100,14 +100,17 @@ class BaseBuilder:
     def sizes(self):
         return dict(screen=(800, 600))
 
-    def font(self, font):
+    #   T E X T
+
+    def font(self, font, fontSize=None):
         raise NotImplementedError
 
     def fontSize(self, fontSize):
         raise NotImplementedError
 
-    def textSize(self, s):
-        return 10, 10
+    def textSize(self, bs, width=None, height=None, align=None):
+        #return 10, 10
+        raise NotImplementedError
 
     def hyphenation(self, language):
         raise NotImplementedError

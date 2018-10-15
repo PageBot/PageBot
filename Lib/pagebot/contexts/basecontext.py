@@ -169,20 +169,29 @@ class BaseContext:
 
     #   G R A D I E N T    &   S H A D O W
 
-    #   A N I M A T I O N
-
-    def frameDuration(self, secondsPerFrame):
-        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
-
     #   T E X T
 
     def font(self, fontName, fontSize=None):
-        raise NotImplementedError
+        self.b.font(font)
 
-    def fallbackFont(self, fontName):
-        raise NotImplementedError
+        # Also renders fontSize unit to value.
+        if fontSize is not None:
+            fspt = upt(fontSize)
+            self.b.fontSize(fspt)
 
     def fontSize(self, fontSize):
+        fspt = upt(fontSize)
+        self.b.fontSize(fspt) # Render fontSize unit to value
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
+
+    def newBulletString(self, bullet, e=None, style=None):
+        return self.newString(bullet, e=e, style=style)
+
+    def fallbackFont(self, fontName):
         raise NotImplementedError
 
     def lineHeight(self, value):
@@ -276,16 +285,58 @@ class BaseContext:
     #   D R A W I N G
 
     def rect(self, x, y, w, h):
-        raise NotImplementedError
+        """Draws a rectangle in the canvas.  This method is using the core
+        BezierPath as path to draw on. For a more rich environment use
+        PageBotPath(context) instead.
+
+        >>> from pagebot.context.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.rect(0, 0, 100, 100)
+        """
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        # Render units to points for DrawBot.
+        self.b.rect(xpt, ypt, wpt, hpt)
 
     def oval(self, x, y, w, h):
-        raise NotImplementedError
+        """Draw an oval in rectangle where (x,y) is the bottom-left and size
+        (w,h).  This method uses BezierPath; for a more rich environment use
+        PageBotPath(context) instead.
+
+        >>> from pagebot.context.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.oval(pt(0), pt(0), pt(100), pt(100))
+        >>> context.oval(0, 0, 100, 100)
+        """
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def circle(self, x, y, r):
-        raise NotImplementedError
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        This method is using the core BezierPath as path to draw on. For a more rich
+        environment use PageBotPath(context) instead.
+
+        >>> from pagebot.context.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.circle(pt(100), pt(200), pt(50))
+        >>> context.circle(100, 200, 50)
+        """
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
 
     def line(self, p1, p2):
-        raise NotImplementedError
+        """Draw a line from p1 to p2.
+        This method is using the core BezierPath as path to draw on. For a more rich
+        ennvironment use PageBotPath(context).
+
+        >>> from pagebot.context.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.line(pt(100, 100), pt(200, 200))
+        >>> context.line((100, 100), (200, 200))
+        """
+        p1pt = upt(point2D(p1))
+        p2pt = upt(point2D(p2))
+        self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def polygon(self, *points, **kwargs):
         raise NotImplementedError
@@ -369,6 +420,13 @@ class BaseContext:
         """Offers interactive global value manipulation in DrawBot. Can be
         ignored in other contexts."""
         pass
+
+    #   A N I M A T I O N
+
+    def frameDuration(self, secondsPerFrame):
+        """Set the self._frameDuration for animated GIFs to a number of seconds
+        per frame. Used when initializing a new page."""
+        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
 if __name__ == '__main__':
     import doctest

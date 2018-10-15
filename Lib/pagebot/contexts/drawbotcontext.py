@@ -162,18 +162,6 @@ class DrawBotContext(BaseContext):
 
     #   D R A W I N G
 
-    def rect(self, x, y, w, h):
-        """Draw a rectangle in the canvas.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context) instead.
-
-        >>> context = DrawBotContext()
-        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
-        >>> context.rect(0, 0, 100, 100)
-        """
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
-        self.b.rect(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
-
     def bluntCornerRect(self, x, y, w, h, offset=5):
         """Draw a rectangle in the canvas. This method is using the core BezierPath
         as path to draw on. For a more rich environment use PageBotPath(context)
@@ -219,43 +207,6 @@ class DrawBotContext(BaseContext):
         path.curveTo((xPt, yPt), (xPt, yPt), (xPt+offsetPt, yPt))
         self.closePath()
         self.drawPath(path)
-
-    def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context), instead.
-
-        >>> context = DrawBotContext()
-        >>> context.oval(pt(0), pt(0), pt(100), pt(100))
-        >>> context.oval(0, 0, 100, 100)
-        """
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
-        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
-
-    def circle(self, x, y, r):
-        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context) instead.
-
-        >>> context = DrawBotContext()
-        >>> context.circle(pt(100), pt(200), pt(50))
-        >>> context.circle(100, 200, 50)
-        """
-        xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
-
-    def line(self, p1, p2):
-        """Draw a line from p1 to p2.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        ennvironment use PageBotPath(context).
-
-        >>> context = DrawBotContext()
-        >>> context.line(pt(100, 100), pt(200, 200))
-        >>> context.line((100, 100), (200, 200))
-        """
-        p1pt  = upt(point2D(p1))
-        p2pt  = upt(point2D(p2))
-        self.b.line(p1pt, p2pt) # Render tuple of units point
 
     #   P A T H
     #
@@ -720,6 +671,14 @@ class DrawBotContext(BaseContext):
 
     #   T E X T
 
+    def font(self, font, fontSize=None):
+        self.b.font(font)
+
+        # Also renders fontSize unit to value.
+        if fontSize is not None:
+            fspt = upt(fontSize)
+            self.b.fontSize(fspt)
+
     def fontSize(self, fontSize):
         """Set the font size in the context.
 
@@ -729,20 +688,6 @@ class DrawBotContext(BaseContext):
         """
         fspt = upt(fontSize)
         self.b.fontSize(fspt) # Render fontSize unit to value
-
-    def font(self, font, fontSize=None):
-        self.b.font(font)
-        if fontSize is not None:
-            fspt = upt(fontSize)
-            self.b.fontSize(fspt) # Render fontSize unit to value
-
-    def textSize(self, bs, w=None, h=None, align=None):
-        """Answers the width/height of the formatted string for an optional
-        given w or h."""
-        return self.b.textSize(bs.s, width=w, height=h, align=align)
-
-    def newBulletString(self, bullet, e=None, style=None):
-        return self.newString(bullet, e=e, style=style)
 
     def text(self, sOrBs, p):
         """Draw the sOrBs text string, can be a str or BabelString, including a
@@ -788,11 +733,6 @@ class DrawBotContext(BaseContext):
         self.b.openTypeFeatures(**features)
 
     #   A N I M A T I O N
-
-    def frameDuration(self, secondsPerFrame):
-        """Set the self._frameDuration for animated GIFs to a number of seconds
-        per frame. Used when initializing a new page."""
-        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
 
     #   C O L O R
 
