@@ -415,6 +415,8 @@ class PageBotPath:
         """
         if hasattr(bs, 's'):
             bs = bs.s
+        elif not isinstance(bs, str):
+            bs = str(bs)
         if offset is not None:
             offset = upt(point2D(offset))
         if style is None:
@@ -440,6 +442,8 @@ class PageBotPath:
         """
         if hasattr(bs, 's'):
             bs = bs.s
+        elif not isinstance(bs, str):
+            bs = str(bs)
         if isinstance(box, PageBotPath):
             box = box.bp
         elif isinstance(box, (list, tuple)):
