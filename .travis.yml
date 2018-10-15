@@ -4,12 +4,8 @@ branches:
   only:
   - master
 before_install:
-#- brew update
 - pip3 install --upgrade pip
 install:
-#- brew install python3
-#- pip install -e .
-#- pip install flat
 - pip3 install libsass
 - pip3 install fontTools
 - pip3 install markdown
@@ -46,10 +42,12 @@ install:
 - cd ..
 - rm master.zip
 - rm -r flat-master
-
-# ADD
-# git@github.com:typemytype/booleanOperations.git
-
+- wget https://github.com/typemytype/booleanOperations/archive/master.zip
+- unzip master.zip
+- cd booleanOperations-master.zip
+- python3 setup.py install
+- cd ..
+- rm master.zip
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
