@@ -16,6 +16,7 @@
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
 from pagebot.toolbox.units import upt, pt, point2D
+from pagebot.toolbox.color import color
 
 class AbstractDrawBotContext:
     """All contexts should at least contain the same (public) functions DrawBot does.
@@ -227,7 +228,7 @@ class AbstractDrawBotContext:
         if self._path is not None: # Only if there is an open path.
             self._path.closePath()
 
-    def drawPath(self, path=None, p=None, sx=1, sy=None):
+    def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None, stroke=None, strokeWidth=None):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
         Use self._path if path is omitted.
 
@@ -274,8 +275,17 @@ class AbstractDrawBotContext:
         """
         if path is None:
             path = self.path
-        elif hasattr(path, 'bp'): # If it's a PageBotPath, get the core path
-            path = path.bp
+        if hasattr(path, 'bp'): # If it's a PageBotPath, get the core BezierPath
+            bezierPath = path.bp
+            # If not forced as attribute, then try to get from the PageBotPath.style
+            if fill is None:
+                fill = path.style.get('fill')
+            if stroke is None:
+                stroke = path.style.get('stroke')
+            if strokeWidth is None:
+                stroke = path.style.get('strokeWidth')
+        else:
+            bezierPath = path # Otherwise we assume it is a context core BezierPath instance
 
         self.save()
         if sy is None:
@@ -286,7 +296,13 @@ class AbstractDrawBotContext:
             xpt, ypt = point2D(upt(p))
         self.scale(sx, sy)
         self.translate(xpt/sx, ypt/sy)
-        self.b.drawPath(path)
+        # Set fill and stroke if they are defined by attribute or by path.style
+        # Otherwise ignore and use the setting as defined already in the graphic state.
+        if fill is not None:
+            self.fill(color(fill))
+        if stroke is not None and strokeWidth:
+            self.stroke(color(stroke), upt(strokeWidth))
+        self.b.drawPath(bezierPath)
         self.restore()
 
     def clipPath(self, clipPath):

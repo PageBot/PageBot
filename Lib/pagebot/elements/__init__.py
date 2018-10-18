@@ -40,6 +40,8 @@ from pagebot.elements.pbplacer import Placer
 #from pagebot.elements.paths.pbpath import Path
 #from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath
+from pagebot.elements.paths.pbpaths import Paths
+from pagebot.elements.paths.pagebotpath import PageBotPath
 
 # Table elements
 from pagebot.elements.pbtable import Table

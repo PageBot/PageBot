@@ -48,11 +48,14 @@ class PageBotPath:
     except for the extension of awareness of units and some other additions.
 
     """
-    def __init__(self, context, bezierPath=None):
+    def __init__(self, context, bezierPath=None, style=None):
         self.context = context
         if bezierPath is None:
             bezierPath = context.newPath()
         assert not isinstance(bezierPath, PageBotPath)
+        if style is None:
+            style = {} # Make sure that there is an empty style dictionary
+        self.style = style # Optional fill & stroke options, hard-coding the drawing.
         self.bp = bezierPath
 
     def __len__(self):
