@@ -269,6 +269,18 @@ context.fill(0)
 context.stroke(noColor)
 context.drawPath(path, (x, y))
 
+x -= CW+G
+path = PageBotPath(context)
+path.text('B', style=dict(font=font.path, fontSize=250))
+path.removeOverlap()
+context.fill(noColor)
+context.stroke(color(1, 0, 0), 0.5)
+context.drawPath(path, (x, y))
+path = PageBotPath(context)
+path.text('Text', (TP, TP+G), style=style)
+context.fill(0)
+context.stroke(noColor)
+context.drawPath(path, (x, y))
 
 # Export the document to this PDF file.
 context.saveImage('_export/BezierPaths.pdf')
