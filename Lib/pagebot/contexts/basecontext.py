@@ -126,6 +126,19 @@ class BaseContext(AbstractDrawBotContext):
 
     # Basic shapes.
 
+    def circle(self, x, y, r):
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        This method is using the core BezierPath as path to draw on. For a more rich
+        environment use PageBotPath(context) instead.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.circle(pt(100), pt(200), pt(50))
+        >>> context.circle(100, 200, 50)
+        """
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+
     #def roundedRect(self, x, y, w, h, offset=25):
     #def bluntCornerRect(self, x, y, w, h, offset=5):
 
@@ -214,18 +227,10 @@ class BaseContext(AbstractDrawBotContext):
         """
         return pt(self.b.sizes().get('screen', None))
 
-    def circle(self, x, y, r):
-        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context) instead.
+    # Images.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> context.circle(pt(100), pt(200), pt(50))
-        >>> context.circle(100, 200, 50)
-        """
-        xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+    #def numberOfImages(self, path):
+    #def getImageObject(self, path):
 
 
 if __name__ == '__main__':

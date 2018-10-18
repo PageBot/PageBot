@@ -370,10 +370,13 @@ class AbstractDrawBotContext:
 
     def miterLimit(self, value):
         raise NotImplementedError
+
     def lineJoin(self, value):
         raise NotImplementedError
+
     def lineCap(self, value):
         raise NotImplementedError
+
     def lineDash(self, *value):
         raise NotImplementedError
 
@@ -447,9 +450,12 @@ class AbstractDrawBotContext:
     def listLanguages(self):
         raise NotImplementedError
 
-    #def openTypeFeatures(self, *args, **features):
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
+
+        NOTE: signature differs from DrawBot:
+
+            def openTypeFeatures(self, *args, **features):
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -506,18 +512,39 @@ class AbstractDrawBotContext:
     def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        raise NotImplementedError
+    def FormattedString(self, *args, **kwargs):
+        # refer to BabelString?
+        pass
 
-    def imagePixelColor(self, path, p):
+    # Images
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         raise NotImplementedError
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
-    #def numberOfImages(self, path):
-    #def getImageObject(self, path):
+    def imagePixelColor(self, path, p):
+        raise NotImplementedError
+
+    def numberOfPages(self, path):
+        raise NotImplementedError
+
+    # Mov.
+
+    def frameDuration(self, secondsPerFrame):
+        """Set the self._frameDuration for animated GIFs to a number of seconds
+        per frame. Used when initializing a new page."""
+        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
+
+    # PDF links.
+
+    def linkDestination(self, name, x=None, y=None):
+        raise NotImplementedError
+
+    def linkRect(self, name, xywh):
+        raise NotImplementedError
 
     # Helpers.
 
@@ -568,10 +595,40 @@ class AbstractDrawBotContext:
             return fontOrName.info.installedName
         return self.b.installFont(fontOrName)
 
-    def unInstallFont(self, fontOrName):
+    def uninstallFont(self, fontOrName):
         if hasattr(fontOrName, 'path'):
             fontOrName = fontOrName.path
         return self.b.uninstallFont(fontOrName)
+
+    def fontContainsCharacters(self, characters):
+        raise NotImplementedError
+
+    def fontContainsGlyph(self, glyphName):
+        raise NotImplementedError
+
+    def fontFilePath(self):
+        raise NotImplementedError
+
+    def listFontGlyphNames(self):
+        raise NotImplementedError
+
+    def fontAscender(self):
+        raise NotImplementedError
+
+    def fontDescender(self):
+        raise NotImplementedError
+
+    def fontXHeight(self):
+        raise NotImplementedError
+
+    def fontCapHeight(self):
+        raise NotImplementedError
+
+    def fontLeading(self):
+        raise NotImplementedError
+
+    def fontLineHeight(self):
+        raise NotImplementedError
 
     def BezierPath(self, path=None, glyphSet=None):
         raise NotImplementedError
@@ -581,13 +638,11 @@ class AbstractDrawBotContext:
 
     def Variable(self, ui, globals):
         """Offers interactive global value manipulation in DrawBot. Can be
-        ignored in most contexts except DrawBot for now."""
-        pass
+        ignored in most contexts except DrawBot for now.
 
-    def frameDuration(self, secondsPerFrame):
-        """Set the self._frameDuration for animated GIFs to a number of seconds
-        per frame. Used when initializing a new page."""
-        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
+        NOTE: signature differs from DrawBot.
+        """
+        pass
 
 if __name__ == '__main__':
     import doctest
