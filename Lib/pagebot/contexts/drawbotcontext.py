@@ -217,85 +217,9 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def moveTo(self, p):
-        """Move to point p in the running path. Create a new self._path if none
-        is open.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = DrawBotContext()
-        >>> context.moveTo(pt(100, 100))
-        >>> context.moveTo((100, 100))
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        """
-        ppt = upt(point2D(p))
-        self.path.moveTo(ppt) # Render units point tuple to tuple of values
-
-    def lineTo(self, p):
-        """Line to point p in the running path. Create a new self._path if none
-        is open.
-
-        >>> context = DrawBotContext()
-        >>> # Create a new self._path by property self.path
-        >>> context.moveTo(pt(100, 100))
-        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> context.closePath()
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        """
-        ppt = upt(point2D(p))
-        self.path.lineTo(ppt) # Render units point tuple to tuple of values
-
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         pass
-
-    def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p i nthe running path. Create a new path if none is
-        open.
-
-        >>> context = DrawBotContext()
-        >>> # Create a new self._path by property self.path
-        >>> context.moveTo(pt(100, 100))
-        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> context.closePath()
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        """
-        b1pt = upt(point2D(bcp1))
-        b2pt = upt(point2D(bcp2))
-        ppt = upt(point2D(p))
-        self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
-
-    def closePath(self):
-        """Closes the current path if it exists, otherwise ignore it.
-
-        >>> context = DrawBotContext()
-        >>> # Create a new self._path by property self.path
-        >>> context.moveTo(pt(100, 100))
-        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> context.closePath()
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        """
-        if self._path is not None: # Only if there is an open path.
-            self._path.closePath()
 
     def getFlattenedPath(self, path=None):
         """Use the NSBezier flatten path. Answers None if the flattened path
@@ -576,8 +500,6 @@ class DrawBotContext(BaseContext):
             r, g, b = c.rgb
             self.b.fill(r, g, b, alpha=c.a)
 
-    setFillColor = fill # For DrawBot compatibility.
-
     def stroke(self, c, w=None):
         """Set the color for global or the color of the formatted string.
 
@@ -614,8 +536,6 @@ class DrawBotContext(BaseContext):
             self.b.stroke(r, g, b, alpha=c.a)
         if w is not None:
             self.strokeWidth(w)
-
-    setStrokeColor = stroke # DrawBot compatible API
 
     # Transformation.
 
