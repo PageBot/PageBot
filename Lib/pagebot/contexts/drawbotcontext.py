@@ -27,8 +27,6 @@ from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION, ORIGIN,
 
 try:
     import drawBot
-    from drawBot import Variable
-
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
@@ -39,7 +37,6 @@ except (AttributeError, ImportError):
     CTFontDescriptorCreateWithNameAndSize = None
     CTFontDescriptorCopyAttribute = None
     kCTFontURLAttribute = None
-    Variable = None
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder
     from pagebot.contexts.strings.drawbotstring import NoneDrawBotString as stringClass
 
@@ -107,13 +104,14 @@ class DrawBotContext(BaseContext):
 
     #   V A R I A B L E
 
-    def Variable(self, variableUI , globalVariables):
+    def Variable(self, variables, workSpace):
         """Offers interactive global value manipulation in DrawBot. Probably to
         be ignored in other contexts."""
         # Variable is a DrawBot context global, used to make simple UI with
         # controls on input parameters.
         try:
-            Variable(variableUI, globalVariables)
+            from drawBot import Variable
+            Variable(variables, workSpace)
         except self.b.misc.DrawBotError:
             # Ignore if there is a DrawBot context, but not running inside
             # DrawBot.
@@ -217,10 +215,6 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def quadTo(bcp, p):
-        # TODO: Convert to Bezier with 0.6 rule
-        pass
-
     def getFlattenedPath(self, path=None):
         """Use the NSBezier flatten path. Answers None if the flattened path
         could not be made."""
@@ -250,81 +244,6 @@ class DrawBotContext(BaseContext):
                     flattenedContours.append(contour)
 
         return flattenedContours
-
-    #   G R A D I E N T  &  S H A D O W
-
-    def setShadow(self, eShadow):
-        """Set the DrawBot graphics state for shadow if all parameters are
-        set."""
-        if eShadow is not None and eShadow.offset is not None:
-            if eShadow.color.isCmyk:
-                self.b.shadow(upt(eShadow.offset), # Convert units to values
-                              blur=upt(eShadow.blur),
-                              color=color(eShadow.color).cmyk)
-            else:
-                self.b.shadow(upt(eShadow.offset),
-                              blur=upt(eShadow.blur),
-                              color=color(eShadow.color).rgb)
-
-    def setGradient(self, gradient, origin, w, h):
-        """Define the gradient call to match the size of element e., Gradient
-        position is from the origin of the page, so we need the current origin
-        of e."""
-        b = self.b
-        start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
-        end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
-
-        if gradient.linear:
-            if (gradient.colors[0]).isCmyk:
-                colors = [color(c).cmyk for c in gradient.colors]
-                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations)
-            else:
-                colors = [color(c).rgb for c in gradient.colors]
-                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations)
-        else: # Gradient must be radial.
-            if color(gradient.colors[0]).isCmyk:
-                colors = [color(c).cmyk for c in gradient.colors]
-                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-            else:
-                colors = [color(c).rgb for c in gradient.colors]
-                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-
-    def lineDash(self, lineDash):
-        """Linesash is None or a list of dash lengths."""
-        if lineDash is None:
-            self.b.lineDash(None)
-        else:
-            self.b.lineDash(*lineDash)
-
-    def miterLimit(self, value):
-        self.b.miterLimit(value)
-
-    def lineJoin(self, value):
-        """option value"""
-        self.b.lineJoin(value)
-
-    def lineCap(self, value):
-        """Possible values are butt, square and round."""
-        assert value in ('butt', 'square', 'round')
-        self.b.lineCap(value)
-
-    #   C A N V A S
-
-    def save(self):
-        self.b.save()
-
-    saveGraphicState = save # Compatible with DrawBot API
-
-    def restore(self):
-        self.b.restore()
-
-    restoreGraphicState = restore # Compatible with DrawBot API
 
     #   F O N T S
 

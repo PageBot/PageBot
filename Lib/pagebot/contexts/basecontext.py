@@ -62,11 +62,15 @@ class BaseContext(AbstractDrawBotContext):
 
     path = property(_get_path)
 
+    # Documents.
+
     def newDocument(self, w, h):
         raise NotImplementedError
 
     def saveDocument(self, path, multiPage=None):
         raise NotImplementedError
+
+    # Text.
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
@@ -123,7 +127,6 @@ class BaseContext(AbstractDrawBotContext):
                 s += bs
         return s
 
-
     # Basic shapes.
 
     def circle(self, x, y, r):
@@ -139,10 +142,19 @@ class BaseContext(AbstractDrawBotContext):
         xpt, ypt, rpt = upt(x, y, r)
         self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
 
-    #def roundedRect(self, x, y, w, h, offset=25):
-    #def bluntCornerRect(self, x, y, w, h, offset=5):
+    def roundedRect(self, x, y, w, h, offset=25):
+        raise NotImplementedError
+
+    def bluntCornerRect(self, x, y, w, h, offset=5):
+        raise NotImplementedError
 
     #   G L Y P H
+
+    def drawGlyphPath(self, glyph):
+        raise NotImplementedError
+
+    def getGlyphPath(self, glyph, p=None, path=None):
+        raise NotImplementedError
 
     def onBlack(self, p, path=None):
         """Answers if the single point (x, y) is on black. For now this only
@@ -151,9 +163,6 @@ class BaseContext(AbstractDrawBotContext):
             path = self.path
         p = point2D(p)
         return path._path.containsPoint_(p)
-
-    #def drawGlyphPath(self, glyph):
-    #def getGlyphPath(self, glyph, p=None, path=None):
 
     def intersectWithLine(self, glyph, line):
         """Answers the sorted set of intersecting points between the straight
@@ -196,6 +205,65 @@ class BaseContext(AbstractDrawBotContext):
 
         # Answer the set as sorted list, increasing x, from left to right.
         return sorted(intersections)
+
+    def getFlattenedPath(self, path=None):
+        raise NotImplementedError
+
+    def getFlattenedContours(self, path=None):
+        raise NotImplementedError
+
+    #   G R A D I E N T  &  S H A D O W
+
+    def setShadow(self, eShadow):
+        """Set the DrawBot graphics state for shadow if all parameters are
+        set."""
+        if eShadow is not None and eShadow.offset is not None:
+            if eShadow.color.isCmyk:
+                self.b.shadow(upt(eShadow.offset), # Convert units to values
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).cmyk)
+            else:
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).rgb)
+
+    def setGradient(self, gradient, origin, w, h):
+        """Define the gradient call to match the size of element e., Gradient
+        position is from the origin of the page, so we need the current origin
+        of e."""
+        b = self.b
+        start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
+        end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
+
+        if gradient.linear:
+            if (gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations)
+            else:
+                colors = [color(c).rgb for c in gradient.colors]
+                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations)
+        else: # Gradient must be radial.
+            if color(gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+            else:
+                colors = [color(c).rgb for c in gradient.colors]
+                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+
+    # Paths.
+
+    def quadTo(bcp, p):
+        # TODO: Convert to Bezier with 0.6 rule
+        raise NotImplementedError
+
+
+    # Export.
 
     def checkExportPath(self, path):
         """If the path starts with "_export" make sure it exists, otherwise

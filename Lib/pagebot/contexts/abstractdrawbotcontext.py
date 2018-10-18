@@ -18,12 +18,10 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
 from pagebot.toolbox.units import upt, pt, point2D
 
 class AbstractDrawBotContext:
-    """All contexts should at least contain the same functions DrawBot does.
+    """All contexts should at least contain the same (public) functions DrawBot does.
 
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
     """
-
-    #   D O C U M E N T
 
     def newDrawing(self):
         """Clear output canvas, start new export file.
@@ -84,10 +82,14 @@ class AbstractDrawBotContext:
     # Graphics state.
 
     def save(self):
-        raise NotImplementedError
+        self.b.save()
+
+    saveGraphicState = save
 
     def restore(self):
-        raise NotImplementedError
+        self.b.restore()
+
+    restoreGraphicState = restore
 
     def savedState(self):
         raise NotImplementedError
@@ -369,16 +371,22 @@ class AbstractDrawBotContext:
     setStrokeWidth = strokeWidth
 
     def miterLimit(self, value):
-        raise NotImplementedError
+        self.b.miterLimit(value)
 
     def lineJoin(self, value):
-        raise NotImplementedError
+        self.b.lineJoin(value)
 
     def lineCap(self, value):
-        raise NotImplementedError
+        """Possible values are butt, square and round."""
+        assert value in ('butt', 'square', 'round')
+        self.b.lineCap(value)
 
-    def lineDash(self, *value):
-        raise NotImplementedError
+    def lineDash(self, value):
+        """LineDash is None or a list of dash lengths."""
+        if lineDash is None:
+            self.b.lineDash(None)
+        else:
+            self.b.lineDash(*value)
 
     # Transform.
 
@@ -636,11 +644,9 @@ class AbstractDrawBotContext:
     def ImageObject(self, path=None):
         raise NotImplementedError
 
-    def Variable(self, ui, globals):
+    def Variable(self, variables, workSpace):
         """Offers interactive global value manipulation in DrawBot. Can be
         ignored in most contexts except DrawBot for now.
-
-        NOTE: signature differs from DrawBot.
         """
         pass
 
