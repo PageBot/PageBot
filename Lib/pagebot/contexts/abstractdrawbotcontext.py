@@ -325,14 +325,14 @@ class AbstractDrawBotContext:
         raise NotImplementedError
 
     def fill(self, c):
-        # FIXME: signature differs from DrawBot.
+        # NOTE: signature differs from DrawBot.
         raise NotImplementedError
 
     setFillColor = fill
     cmykFill = fill
 
     def stroke(self, c, w=None):
-        # FIXME: signature differs from DrawBot.
+        # NOTE: signature differs from DrawBot.
         raise NotImplementedError
 
     setStrokeColor = stroke
@@ -348,10 +348,53 @@ class AbstractDrawBotContext:
 
     cmykLinearGradient = linearGradient
 
-    def radialGradient(self, startPoint=None, endPoint=None, colors=None, locations=None, startRadius=0, endRadius=100):
+    def radialGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None, startRadius=0, endRadius=100):
         raise NotImplementedError
 
-    #
+    # Path drawing behavior.
+
+    def strokeWidth(self, w):
+        """Set the current stroke width.
+
+        >>> from pagebot.toolbox.units import pt, mm
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.setStrokeWidth(pt(0.5))
+        >>> context.setStrokeWidth(mm(0.5))
+        """
+        wpt = upt(w)
+        self.b.strokeWidth(wpt)
+
+    setStrokeWidth = strokeWidth
+
+    def miterLimit(self, value):
+        raise NotImplementedError
+    def lineJoin(self, value):
+        raise NotImplementedError
+    def lineCap(self, value):
+        raise NotImplementedError
+    def lineDash(self, *value):
+        raise NotImplementedError
+
+    # Transform.
+
+    def transform(self, matrix, center=(0, 0)):
+        raise NotImplementedError
+
+    def translate(self, x=0, y=0):
+        raise NotImplementedError
+
+    def rotate(self, angle, center=(0, 0)):
+        raise NotImplementedError
+
+    def scale(self, x=1, y=None, center=(0, 0)):
+        raise NotImplementedError
+
+    def skew(self, angle1, angle2=0, center=(0, 0)):
+        raise NotImplementedError
+
+    # Text.
 
     def font(self, fontName, fontSize=None):
         self.b.font(font)
@@ -360,6 +403,9 @@ class AbstractDrawBotContext:
         if fontSize is not None:
             fspt = upt(fontSize)
             self.b.fontSize(fspt)
+
+    def fallbackFont(self, fontName):
+        raise NotImplementedError
 
     def fontSize(self, fontSize):
         """Set the font size in the context.
@@ -371,17 +417,6 @@ class AbstractDrawBotContext:
         """
         fspt = upt(fontSize)
         self.b.fontSize(fspt) # Render fontSize unit to value
-
-    def textSize(self, bs, w=None, h=None, align=None):
-        """Answers the width and height of the formatted string with an
-        optional given w or h."""
-        return self.b.textSize(bs.s, width=w, height=h, align=align)
-
-    def newBulletString(self, bullet, e=None, style=None):
-        return self.newString(bullet, e=e, style=style)
-
-    def fallbackFont(self, fontName):
-        raise NotImplementedError
 
     def lineHeight(self, value):
         raise NotImplementedError
@@ -422,9 +457,9 @@ class AbstractDrawBotContext:
         """
         self.b.openTypeFeatures(**features)
 
-
     def listOpenTypeFeatures(self, fontName=None):
-        raise NotImplementedError
+        """Answers the list of opentype features available in the named font."""
+        return self.b.listOpenTypeFeatures(fontName)
 
     def fontVariations(self, *args, **axes):
         raise NotImplementedError
@@ -432,69 +467,43 @@ class AbstractDrawBotContext:
     def listFontVariations(self, fontName=None):
         raise NotImplementedError
 
-    def _get_path(self):
-        """Answers the open drawing self._path. Create one if it does not exist.
+    # Drawing text.
 
+    def text(self, sOrBs, p):
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString at position p.
+
+        NOTE: signature differs from DrawBot.
+        """
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        ppt = point2D(upt(p))
+        self.b.text(sOrBs, ppt) # Render point units to value tuple
+
+    def textOverflow(self, txt, box, align=None):
+        raise NotImplementedError
+
+    def textBox(self, sOrBs, r=None, clipPath=None):
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString in rectangle r.
+
+        NOTE: signature differs from DrawBot.
+
+        >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> path = context.path
-        >>> path is not None
-        True
-        >>> path.moveTo((0, 0))
-        >>> path.lineTo((100, 100)) # Adding 2 points
-        >>> len(context.path.points)
-        2
+        >>> context.textBox('ABC', (10, 10, 200, 200))
         """
-        if self._path is None:
-            self._path = self.newPath()
-        return self._path
-    path = property(_get_path)
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        if clipPath is not None:
+            self.b.textBox(sOrBs, clipPath) # Render rectangle units to value tuple
+        elif r is not None:
+            xpt, ypt, wpt, hpt = upt(r)
+            # Render rectangle units to value tuple
+            self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt))
 
-    def onBlack(self, p, path=None):
-        """Answers if the single point (x, y) is on black. For now this only
-        works in DrawBotContext."""
-        if path is None:
-            path = self.path
-        p = point2D(p)
-        return path._path.containsPoint_(p)
-
-    #def roundedRect(self, x, y, w, h, offset=25):
-    #def bluntCornerRect(self, x, y, w, h, offset=5):
-    #def drawGlyphPath(self, glyph):
-    #def getGlyphPath(self, glyph, p=None, path=None):
-
-    def strokeWidth(self, w):
-        """Set the current stroke width.
-
-        >>> from pagebot.toolbox.units import pt, mm
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> context.setStrokeWidth(pt(0.5))
-        >>> context.setStrokeWidth(mm(0.5))
-        """
-        wpt = upt(w)
-        self.b.strokeWidth(wpt)
-
-    setStrokeWidth = strokeWidth
-
-    # def miterLimit(self, value):
-    # def lineJoin(self, value):
-    # def lineCap(self, value):
-    # def lineDash(self, *value):
-
-    def transform(self, matrix, center=(0, 0)):
-        raise NotImplementedError
-
-    def translate(self, x=0, y=0):
-        raise NotImplementedError
-
-    def rotate(self, angle, center=(0, 0)):
-        raise NotImplementedError
-
-    def scale(self, x=1, y=None, center=(0, 0)):
-        raise NotImplementedError
-
-    def skew(self, angle1, angle2=0, center=(0, 0)):
+    def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
@@ -507,9 +516,62 @@ class AbstractDrawBotContext:
         """Answers the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
-
     #def numberOfImages(self, path):
     #def getImageObject(self, path):
+
+    # Helpers.
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
+
+    def installedFonts(self, patterns=None):
+        """Answers a list of all fonts (name or path) that are installed in the
+        OS.
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> installed = context.installedFonts()
+        >>> len(installed) > 0
+        True
+        """
+        if isinstance(patterns, str): # In case it is a string, convert to a list
+            patterns = [patterns]
+        fontNames = []
+        for fontName in self.b.installedFonts():
+            if not patterns:
+                fontNames.append(fontName) # If no pattern theun answer all.
+            else:
+                for pattern in patterns:
+                    if pattern in fontName:
+                        fontNames.append(fontName)
+                        break
+        return fontNames
+
+    def installFont(self, fontOrName):
+        """Install the font in the context. fontOrName can be a Font instance
+        (in which case the path is used) or a full font path.
+
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> installed = context.installedFonts()
+        >>> len(installed) > 0
+        True
+        >>> font = findFont('Roboto-Regular')
+        >>> context.installFont(font)
+        'Roboto-Regular'
+        """
+        if hasattr(fontOrName, 'path'):
+            fontOrName.info.installedName = self.b.installFont(fontOrName.path)
+            return fontOrName.info.installedName
+        return self.b.installFont(fontOrName)
+
+    def unInstallFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.uninstallFont(fontOrName)
 
     def BezierPath(self, path=None, glyphSet=None):
         raise NotImplementedError

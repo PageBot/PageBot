@@ -37,11 +37,30 @@ class BaseContext(AbstractDrawBotContext):
     STRING_CLASS = None
     EXPORT_TYPES = None
 
+    def __init__(self):
+        self._path = None # Hold current open DrawBot path.
+
     def __repr__(self):
         return '<%s>' % self.name
 
-    def __init__(self):
-        self._path = None # Hold current open DrawBot path.
+    def _get_path(self):
+        """Answers the open drawing self._path. Create one if it does not exist.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> path = context.path
+        >>> path is not None
+        True
+        >>> path.moveTo((0, 0))
+        >>> path.lineTo((100, 100)) # Adding 2 points
+        >>> len(context.path.points)
+        2
+        """
+        if self._path is None:
+            self._path = self.newPath()
+        return self._path
+
+    path = property(_get_path)
 
     def newDocument(self, w, h):
         raise NotImplementedError
@@ -60,6 +79,9 @@ class BaseContext(AbstractDrawBotContext):
                     style=style, w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)
         return s
+
+    def newBulletString(self, bullet, e=None, style=None):
+        return self.newString(bullet, e=e, style=style)
 
     def fitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
@@ -101,7 +123,24 @@ class BaseContext(AbstractDrawBotContext):
                 s += bs
         return s
 
+
+    # Basic shapes.
+
+    #def roundedRect(self, x, y, w, h, offset=25):
+    #def bluntCornerRect(self, x, y, w, h, offset=5):
+
     #   G L Y P H
+
+    def onBlack(self, p, path=None):
+        """Answers if the single point (x, y) is on black. For now this only
+        works in DrawBotContext."""
+        if path is None:
+            path = self.path
+        p = point2D(p)
+        return path._path.containsPoint_(p)
+
+    #def drawGlyphPath(self, glyph):
+    #def getGlyphPath(self, glyph, p=None, path=None):
 
     def intersectWithLine(self, glyph, line):
         """Answers the sorted set of intersecting points between the straight

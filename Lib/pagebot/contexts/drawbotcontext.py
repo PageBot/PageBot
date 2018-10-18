@@ -364,57 +364,6 @@ class DrawBotContext(BaseContext):
             return url.path()
         return None
 
-    def listOpenTypeFeatures(self, fontName):
-        """Answers the list of opentype features available in the named font."""
-        return self.b.listOpenTypeFeatures(fontName)
-
-    def installedFonts(self, patterns=None):
-        """Answers a list of all fonts (name or path) that are installed in the
-        OS.
-
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> installed = context.installedFonts()
-        >>> len(installed) > 0
-        True
-        """
-        if isinstance(patterns, str): # In case it is a string, convert to a list
-            patterns = [patterns]
-        fontNames = []
-        for fontName in self.b.installedFonts():
-            if not patterns:
-                fontNames.append(fontName) # If no pattern theun answer all.
-            else:
-                for pattern in patterns:
-                    if pattern in fontName:
-                        fontNames.append(fontName)
-                        break
-        return fontNames
-
-    def installFont(self, fontOrName):
-        """Install the font in the context. fontOrName can be a Font instance
-        (in which case the path is used) or a full font path.
-
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> installed = context.installedFonts()
-        >>> len(installed) > 0
-        True
-        >>> font = findFont('Roboto-Regular')
-        >>> context.installFont(font)
-        'Roboto-Regular'
-        """
-        if hasattr(fontOrName, 'path'):
-            fontOrName.info.installedName = self.b.installFont(fontOrName.path)
-            return fontOrName.info.installedName
-        return self.b.installFont(fontOrName)
-
-    def unInstallFont(self, fontOrName):
-        if hasattr(fontOrName, 'path'):
-            fontOrName = fontOrName.path
-        return self.b.uninstallFont(fontOrName)
-
     #   G L Y P H
 
     def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor,
@@ -436,32 +385,6 @@ class DrawBotContext(BaseContext):
         self.scale(s)
         self.drawGlyphPath(glyph)
         self.restore()
-
-    #   T E X T
-
-    def text(self, sOrBs, p):
-        """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString at position p."""
-        if not isinstance(sOrBs, str):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        ppt = point2D(upt(p))
-        self.b.text(sOrBs, ppt) # Render point units to value tuple
-
-    def textBox(self, sOrBs, r=None, clipPath=None):
-        """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString in rectangle r.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = DrawBotContext()
-        >>> context.textBox('ABC', (10, 10, 200, 200))
-        """
-        if not isinstance(sOrBs, str):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        if clipPath is not None:
-            self.b.textBox(sOrBs, clipPath) # Render rectangle units to value tuple
-        elif r is not None:
-            xpt, ypt, wpt, hpt = upt(r)
-            self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt)) # Render rectangle units to value tuple
 
     #   C O L O R
 
