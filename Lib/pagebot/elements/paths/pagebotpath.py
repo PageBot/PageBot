@@ -44,8 +44,8 @@ class PageBotContour:
     points = property(_get_points)
 
 class PageBotPath:
-    """Implements a wrapping around DrawBot.BezierPath with the same API,
-    except for the extension of awareness of units and some other additions.
+    """Implements a wrapper around DrawBot.BezierPath with the same API,
+    except adding the awareness of units and some other additions.
 
     """
     def __init__(self, context, bezierPath=None, style=None):

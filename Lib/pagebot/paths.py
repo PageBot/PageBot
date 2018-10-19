@@ -16,7 +16,10 @@
 #
 #
 #    NOTE: should stay at root level, else derived path won't be correct.
-
+#    Also note that these are file paths, not to be mixed up with
+#    PageBotPath and DrawBotContext.BezierPath, which are "recorded"
+#    drawing instructions.
+#
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/google/roboto/Roboto-Regular.ttf'
