@@ -29,9 +29,7 @@ class IdmlContext(BaseContext):
     def __init__(self):
         """Constructor of InDesignContext.
 
-        >>> context = InDesignContext()
-        >>> context.isInDesign
-        True
+        >>> context = IdmlContext()
         """
         self.b = IdmlBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__

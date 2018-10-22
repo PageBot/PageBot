@@ -23,13 +23,6 @@ from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
 class BaseContext(AbstractDrawBotContext):
     """Extends the DrawBot interface.
     """
-
-    # In case of specific builder addressing, callers can check here.
-    isDrawBot = False
-    isFlat = False
-    isSvg = False
-    isInDesign = False
-
     # Indication to Typesetter that by default tags should not be included in
     # output.
     useTags = False

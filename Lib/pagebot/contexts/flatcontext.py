@@ -58,9 +58,6 @@ class FlatContext(BaseContext):
 
     """
 
-    # In case of specific builder addressing, callers can check here.
-    isFlat = True
-
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
@@ -72,8 +69,6 @@ class FlatContext(BaseContext):
         """Constructor of Flat context.
 
         >>> context = FlatContext()
-        >>> context.isFlat
-        True
         >>> context.newDocument(100, 100)
         >>> context.doc.__class__.__name__
         'document'
@@ -118,8 +113,6 @@ class FlatContext(BaseContext):
         """Create a new self.doc Flat canvas to draw on.
 
         >>> context = FlatContext()
-        >>> context.isFlat
-        True
         >>> context.newDocument(100, 100)
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)

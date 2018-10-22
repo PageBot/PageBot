@@ -49,7 +49,7 @@ class DrawBotContext(BaseContext):
     PageBot framework."""
 
     # In case of specific builder addressing, callers can check here.
-    isDrawBot = True
+    #isDrawBot = True
 
     # Used by the generic BaseContext.newString()
     STRING_CLASS = stringClass
@@ -64,8 +64,6 @@ class DrawBotContext(BaseContext):
         >>> drawBotBuilder is not None and drawBotBuilder.PB_ID == 'drawBot'
         True
         >>> context = DrawBotContext()
-        >>> context.isDrawBot
-        True
         >>> context.name
         'DrawBotContext'
         """

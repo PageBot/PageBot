@@ -34,8 +34,6 @@ class SvgContext(BaseContext):
     using the svgwrite library to export a drawing."""
 
 
-    # In case of specific builder addressing, callers can check here.
-    isSvg = True
     # Indication to Typesetter that by default tags should be included in
     # output.
     useTags = True

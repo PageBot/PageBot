@@ -17,10 +17,8 @@
 
 import sys
 from pagebot import getContext
+
 context = getContext()
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
 
 class E:
     def css(self, n, v):
@@ -28,7 +26,7 @@ class E:
             return 20
         if n == 'cw':
             return 60
-        
+
 def w2cw(w, e):
     gutterW = e.css('gw', 0)
     cw = e.css('cw', 0)

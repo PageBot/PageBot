@@ -40,8 +40,6 @@ class FlatString(BabelString):
 
         >>> from pagebot.contexts.flatcontext import FlatContext
         >>> context = FlatContext()
-        >>> context.isFlat
-        True
         >>> bs = context.newString('ABC')
         >>> #bs
         ABC

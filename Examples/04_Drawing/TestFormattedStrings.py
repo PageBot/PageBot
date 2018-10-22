@@ -19,10 +19,6 @@ from pagebot.toolbox.color import blackColor, noColor, color
 
 context = getContext()
 
-if not context.isDrawBot:
-    print('Example only runs on DrawBot.')
-    sys.exit()
-
 def run():
     # Make BabelString,
     bs = context.newString('Book Cover', style=dict(font='Georgia', fontSize=pt(50)))
@@ -50,7 +46,7 @@ def run():
     w, h = textSize(aa)
     context.rect(pt(100), pt(100), pt(w), pt(h))
     context.fill(blackColor)
-    context.fontSize(pt(80))    
+    context.fontSize(pt(80))
     context.text(bs, (100, 100))
 
 if __name__ == '__main__':

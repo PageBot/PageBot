@@ -32,9 +32,6 @@ class InDesignContext(BaseContext):
     """The InDesignContext implements the InDesign JS-API within the PageBot
     framework."""
 
-    # In case of specific builder addressing, callers can check here.
-    isInDesign = True
-
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = InDesignString
     EXPORT_TYPES = ('jsx',)
@@ -43,8 +40,6 @@ class InDesignContext(BaseContext):
         """Constructor of InDesignContext.
 
         >>> context = InDesignContext()
-        >>> context.isInDesign
-        True
         """
         self.b = InDesignBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__

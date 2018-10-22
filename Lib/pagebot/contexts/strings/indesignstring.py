@@ -35,8 +35,6 @@ class InDesignString(BabelString):
 
         >>> from pagebot.contexts.indesigncontext import InDesignContext
         >>> context = InDesignContext()
-        >>> context.isInDesign
-        True
         >>> bs = context.newString('ABC')
         >>> #bs
         ABC
