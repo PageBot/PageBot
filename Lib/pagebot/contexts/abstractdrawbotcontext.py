@@ -14,7 +14,7 @@
 #     abstractdrawbot.py
 #
 
-from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
+from pagebot.constants import DEFAULT_FRAME_DURATION
 from pagebot.toolbox.units import upt, pt, point2D
 from pagebot.toolbox.color import color
 
@@ -399,7 +399,7 @@ class AbstractDrawBotContext:
 
     def lineDash(self, value):
         """LineDash is None or a list of dash lengths."""
-        if lineDash is None:
+        if value is None:
             self.b.lineDash(None)
         else:
             self.b.lineDash(*value)
@@ -424,7 +424,8 @@ class AbstractDrawBotContext:
     # Text.
 
     def font(self, fontName, fontSize=None):
-        self.b.font(font)
+        # FIXME: fontSize?
+        self.b.font(fontName)
 
         # Also renders fontSize unit to value.
         if fontSize is not None:

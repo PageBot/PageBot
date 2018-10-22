@@ -15,8 +15,9 @@
 #
 
 import os
-from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
+from pagebot.constants import DISPLAY_BLOCK
 from pagebot.toolbox.units import upt, pt, point2D
+from pagebot.toolbox.color import color
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
 
 class BaseContext(AbstractDrawBotContext):
