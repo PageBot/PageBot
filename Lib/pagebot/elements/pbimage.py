@@ -26,8 +26,8 @@ from pagebot.toolbox.transformer import path2Extension
 
 
 class Image(Element):
-    """The Image contains the reference to the actual binary image data.
-    eId can be (unique) file path or eId.
+    """The Image contains the reference to the actual binary image data. eId
+    can be (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
     >>> from pagebot import getResourcesPath
@@ -94,13 +94,13 @@ class Image(Element):
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
         # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
         # Do not scale the image, if the cache file already exists. If False, then not scaled cache is created.
-        self.saveScaled = saveScaled 
+        self.saveScaled = saveScaled
 
     def _get_size(self):
-        """Get/Set the size of the image. If one of (self._w, self._h) values is None,
-        then it is calculated by propertion. If both are None, the original size of the
-        image is returned. If both are not None, then that size is answered disproportionally.
-        """
+        """Get/Set the size of the image. If one of (self._w, self._h) values
+        is None, then it is calculated by propertion. If both are None, the
+        original size of the image is returned. If both are not None, then that
+        size is answered disproportionally."""
         return self.w, self.h
     def _set_size(self, size):
         if size is None: # Reset to original size by single None value.
@@ -114,9 +114,9 @@ class Image(Element):
 
     def _get_w(self):
         """Get the intended width and calculate the new scale, validating the
-        width to the image minimum width and the height to the image minimum height.
-        If not self._h is defined, then the proportion is recalculated, depending on
-        the ratio of the image."""
+        width to the image minimum width and the height to the image minimum
+        height. If not self._h is defined, then the proportion is recalculated,
+        depending on the ratio of the image."""
         u = None
         if not self._w: # Width is undefined
             ihpt = upt(self.ih)
@@ -167,12 +167,12 @@ class Image(Element):
         return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
 
     def addFilter(self, filters):
-        """Add the filter to the self.imo image object. Create the image
-        object in case it doest not exist yet. To be extended into a better
-        API. More feedback needed for what the DrawBot values in the filters do
-        and what their ranges are."""
+        """Add the filter to the self.imo image object. Create the image object
+        in case it doest not exist yet. To be extended into a better API. More
+        feedback needed for what the DrawBot values in the filters do and what
+        their ranges are."""
         if self.imo is None and self.path is not None:
-            self.imo = self.context.getImageObject(self.path)
+            self.imo = self.context.ImageObject(self.path)
             for filter, params in filters:
                 getattr(self.imo, filter)(**params)
 
@@ -223,7 +223,7 @@ class Image(Element):
 
     def saveScaledCache(self, view):
         """If the self.saveScaled is True and the reduction scale is inside the range,
-        then create a new cached image file, if it does not already exist. Scaling images in 
+        then create a new cached image file, if it does not already exist. Scaling images in
         the DrawBot context is a fast operation, so always worthwhile to creating PNG from
         large export PDF files.
         In case the source is a PDF, then use self.index to request for the page.
@@ -237,7 +237,7 @@ class Image(Element):
         resolutionFactor = self.resolutionFactors.get(extension, 1)
         # Translate the extension to the related type of output.
         exportExtension = CACHE_EXTENSIONS.get(extension, extension)
-        resW = self.w * resolutionFactor 
+        resW = self.w * resolutionFactor
         resH = self.h * resolutionFactor
         sx, sy = upt(resW / self.iw, resH / self.ih)
         if not self.saveScaled and 0.8 <= sx and 0.8 <= sy: # If no real scale reduction, then skip. Never enlarge.
@@ -245,8 +245,8 @@ class Image(Element):
         # Scale the image the cache does not exist already.
         # A new path is answers for the scaled image file. Reset the (self.iw, self.ih)
         self.path = self.context.scaleImage(
-            path=self.path, w=resW, h=resH, index=self.index, 
-            showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker, 
+            path=self.path, w=resW, h=resH, index=self.index,
+            showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker,
             exportExtension=exportExtension
         )
 
@@ -257,7 +257,7 @@ class Image(Element):
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.saveScaledCache(view) 
+        self.saveScaledCache(view)
         for e in self.elements:
             e.prepare(view, origin, drawElements)
 

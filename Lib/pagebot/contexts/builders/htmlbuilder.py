@@ -21,7 +21,8 @@ import sass
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
-from pagebot.toolbox.transformer import dataAttribute2Html5Attribute, object2SpacedString, value2Bool
+from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,
+        object2SpacedString, value2Bool)
 from pagebot.toolbox.units import upt
 from pagebot.fonttoolbox.objects.font import Font
 
@@ -61,23 +62,22 @@ class HtmlBuilder(XmlBuilder):
         'rev', 'target', 'dir', 'lang', 'type', 'sizes' }
 
     BODY_ATTRIBUTES = {'dir', 'lang',
-        'onload', 'onunload', 'ondblclick', 'onmousedown',
-        'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress',
-        'onkeydown', 'onkeyup'}
+        'onload', 'onunload', 'ondblclick', 'onmousedown', 'onmouseup',
+        'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown',
+        'onkeyup'}
 
     H_ATTRIBUTES = {'dir', 'lang'}
 
     LABEL_ATTRIBUTES = {'for'}
 
     BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {
-        'type', 'name', 'size', 'value', 'accept',
-        'autocorrect', 'autocapitalize', 'placeholder', 'inputmode',
-        'relation', 'checked', 'src', 'alt', 'readonly',
-        'tabindex', 'accesskey', 'onfocus', 'onblur', 'onselect',
-        'onchange', 'ondblclick', 'onmousedown',
-        'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout',
-        'onkeypress', 'onkeydown', 'onkeyup', 'maxlength', 'disabled',
-        'autocorrect', 'autocapitalize', 'placeholder', 'results',
+        'type', 'name', 'size', 'value', 'accept', 'autocorrect',
+        'autocapitalize', 'placeholder', 'inputmode', 'relation', 'checked',
+        'src', 'alt', 'readonly', 'tabindex', 'accesskey', 'onfocus', 'onblur',
+        'onselect', 'onchange', 'ondblclick', 'onmousedown', 'onmouseup',
+        'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown',
+        'onkeyup', 'maxlength', 'disabled', 'autocorrect', 'autocapitalize',
+        'placeholder', 'results',
     }
 
     BLOCKQUOTE_ATTRIBUTES = {}
@@ -94,18 +94,18 @@ class HtmlBuilder(XmlBuilder):
     OPTGROUP_ATTRIBUTES = {'label'}
 
     TEXTAREA_ATTRIBUTES = {'onblur', 'onchange',
-        'ondblclick', 'onfocus', 'onselect', 'onmousedown', 'onmouseout', 'onmousemove',
-        'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup',
-        'name', 'cols', 'rows'}
+        'ondblclick', 'onfocus', 'onselect', 'onmousedown', 'onmouseout',
+        'onmousemove', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress',
+        'onkeyup', 'name', 'cols', 'rows'}
 
     PARAM_ATTRIBUTES = {'name', 'type', 'value', 'valuetype'}
 
     OBJECT_ATTRIBUTES = {'dir', 'lang', 'xmllang',
-        'align', 'archive', 'border', 'classid', 'codebase', 'codetype', 'data',
-        'declare', 'height_html', 'hspace', 'name', 'standby', 'type', 'usemap', 'vspace',
-        'width_html', 'accesskey', 'tabindex', 'ondblclick', 'onmousedown',
-        'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress',
-        'onkeydown', 'onkeyup'}
+        'align', 'archive', 'border', 'classid', 'codebase', 'codetype',
+        'data', 'declare', 'height_html', 'hspace', 'name', 'standby', 'type',
+        'usemap', 'vspace', 'width_html', 'accesskey', 'tabindex',
+        'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove',
+        'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup'}
 
     META_ATTRIBUTES = {'charset', 'content', 'httpequiv', 'name'}
 
@@ -127,16 +127,14 @@ class HtmlBuilder(XmlBuilder):
         'width_html', 'height_html'}
 
     THEAD_ATTRIBUTES = {
-        'dir', 'lang', 'xmllang',
-        'align', 'char', 'charoff', 'valign', 'ondblclick', 'onmousedown',
-        'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress',
-        'onkeyup'}
+        'dir', 'lang', 'xmllang', 'align', 'char', 'charoff', 'valign',
+        'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout',
+        'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup'}
 
     TFOOT_ATTRIBUTES = {
-        'dir', 'lang', 'xmllang',
-        'align', 'char', 'charoff', 'valign', 'ondblclick', 'onmousedown',
-        'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress',
-        'onkeyup'}
+        'dir', 'lang', 'xmllang', 'align', 'char', 'charoff', 'valign',
+        'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout',
+        'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup'}
 
     TBODY_ATTRIBUTES = {
         'dir', 'lang',
@@ -150,8 +148,8 @@ class HtmlBuilder(XmlBuilder):
         'onmouseup', 'onmousedown', 'onkeydown', 'onkeypress', 'onkeyup'}
 
     TD_ATTRIBUTES = {'width_html', 'height_html', 'rowspan',
-        'colspan', 'valign', 'align', 'nowrap', 'relation',
-        'ondblclick', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
+        'colspan', 'valign', 'align', 'nowrap', 'relation', 'ondblclick',
+        'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
         'onkeydown', 'onkeypress', 'onkeyup'}
 
     TH_ATTRIBUTES = {'width_html', 'height_html', 'rowspan', 'colspan',
@@ -165,25 +163,25 @@ class HtmlBuilder(XmlBuilder):
         'dir', 'lang', 'xmllang'}
 
     DIV_ATTRIBUTES = {
-        'onmouseout', 'relation', 'name', 'disabled',
-        'onmouseover', 'onmousedown', 'onmouseup', 'ondblclick', 'onfocus', 'onblur',
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'role', 'default',
-        'width_html', 'contenteditable'}
+        'onmouseout', 'relation', 'name', 'disabled', 'onmouseover',
+        'onmousedown', 'onmouseup', 'ondblclick', 'onfocus', 'onblur',
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'role',
+        'default', 'width_html', 'contenteditable'}
 
     IMG_ATTRIBUTES = {
-        'src', 'name', 'width_html', 'height_html', 'onmouseover', 'onmousedown', 'onmouseup', 'onmouseout',
-        'alt', 'border', 'hspace',
-        'vspace', 'align', 'relation', 'usemap',
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
+        'src', 'name', 'width_html', 'height_html', 'onmouseover',
+        'onmousedown', 'onmouseup', 'onmouseout', 'alt', 'border', 'hspace',
+        'vspace', 'align', 'relation', 'usemap', 'itemid', 'itemprop',
+        'itemref', 'itemscope', 'itemtype'}
 
     # IMG_ATTRIBUTES_DEFAULTS = {'alt': '_'}
 
     AREA_ATTRIBUTES = {
-        'shape', 'coords', 'href', 'target', 'border',
-        'onmouseover', 'onmouseout', 'onmousedown', "onmouseup"}
+        'shape', 'coords', 'href', 'target', 'border', 'onmouseover',
+        'onmouseout', 'onmousedown', "onmouseup"}
 
-    SPAN_ATTRIBUTES = {'relation', 'itemprop',
-        'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'contenteditable'}
+    SPAN_ATTRIBUTES = {'relation', 'itemprop', 'onmouseover', 'onmouseout',
+            'onmousedown', 'onmouseup', 'contenteditable'}
 
     FRAMESET_ATTRIBUTES = {'cols', 'rows', 'onload', 'onunload'}
 
@@ -215,17 +213,15 @@ class HtmlBuilder(XmlBuilder):
     HEADER_ATTRIBUTES = {'cite'}
 
     EMBED_ATTRIBUTES = {
-        'src', 'href', 'quality', 'name', 'menu',
-        'type', 'width_html', 'wmode', 'align', 'allowscriptaccess',
-        'height_html', 'autoplay', 'loop', 'controller',
-        'playeveryframe', 'bgcolor', 'movieid', 'kioskmode',
-        'targetcache', 'hidden', 'volume', 'pluginspace',
-        'scale', 'allowfullscreen', 'flashvars'}
+        'src', 'href', 'quality', 'name', 'menu', 'type', 'width_html',
+        'wmode', 'align', 'allowscriptaccess', 'height_html', 'autoplay',
+        'loop', 'controller', 'playeveryframe', 'bgcolor', 'movieid',
+        'kioskmode', 'targetcache', 'hidden', 'volume', 'pluginspace', 'scale',
+        'allowfullscreen', 'flashvars'}
 
-    A_ATTRIBUTES = {'href', 'target', 'alt', 'name', 'itemprop',
-        'onmouseout', 'onmouseover', 'onmousedown', 'onmouseup',
-        'ondblclick', 'onfocus', 'accesskey', 'rel', 'rev', 'relation',
-        'type'}
+    A_ATTRIBUTES = {'href', 'target', 'alt', 'name', 'itemprop', 'onmouseout',
+            'onmouseover', 'onmousedown', 'onmouseup', 'ondblclick', 'onfocus',
+            'accesskey', 'rel', 'rev', 'relation', 'type'}
 
     # A_ATTRIBUTES_DEFAULTS = {'alt': '='}
     NAV_ATTRIBUTES = {'accesskey', 'role'}
@@ -991,11 +987,10 @@ table {
         self._closeTag('hgroup')
 
     def article(self, **args):
-        """
-        The article method (HTML5) defines external content.
-        The external content could be a news-article from an external provider, or a text from a web log
-        (blog), or a text from a forum, or any other content from an external source.
-        """
+        """The article method (HTML5) defines external content. The external
+        content could be a news-article from an external provider, or a text
+        from a web log (blog), or a text from a forum, or any other content
+        from an external source."""
         self.write_tag('article', True, args)
 
     def _article(self):
@@ -1018,46 +1013,39 @@ table {
         self._closeTag('footer')
 
     def section(self, **args):
-        """
-        The section method (HTML5) defines defines sections in a document. Such as chapters, headers, footers,
-        or any other sections of the document.
-        """
+        """The section method (HTML5) defines defines sections in a document.
+        Such as chapters, headers, footers, or any other sections of the
+        document."""
         self.write_tag('section', True, args)
 
     def _section(self):
         self._closeTag('section')
 
     def pre(self, **args):
-        """
-        The pre element defines preformatted text. The text enclosed in the pre element usually preserves spaces and line
-        breaks. The text renders in a fixed-pitch font.
-        """
+        """The pre element defines preformatted text. The text enclosed in the
+        pre element usually preserves spaces and line breaks. The text renders
+        in a fixed-pitch font."""
         self.write_tag_noWhitespace('pre', True, args)
 
     def _pre(self):
         self._closeTag_noWhitespace('pre')
 
     def blockquote(self, **args):
-        """
-        The blockquote tag is the standard XHTML tag.
-        """
+        """The blockquote tag is the standard XHTML tag."""
         self.write_tag('blockquote', True, args)
 
     def _blockquote(self):
         self._closeTag('blockquote')
 
     def cite(self, **args):
-        """
-        The cite tag is the standard XHTML tag.
-        """
+        """The cite tag is the standard XHTML tag."""
         self.write_tag('cite', True, args)
 
     def _cite(self):
         self._closeTag('cite')
 
     def p(self, **args):
-        """
-        The p tag is the standard XHTML paragraph.
+        """The p tag is the standard XHTML paragraph.
         http://www.w3schools.com/tags/tag_p.asp
 
         >>> b = HtmlBuilder()
@@ -1074,30 +1062,30 @@ table {
         self._closeTag_noWhitespace('p')
 
     def tt(self, **args):
-        """
-        The tt method is showing the old teletype font.
-        """
+        """The tt method is showing the old teletype font."""
         self.write_tag_noWhitespace('tt', True, args)
 
     def _tt(self):
         self._closeTag_noWhitespace('tt')
 
     def code(self, **args):
-        """
-        The code method is the standard XHTML tag, for showing computer code in fixed width font.
-        """
+        """The code method is the standard XHTML tag, for showing computer code
+        in fixed width font."""
         self.write_tag_noWhitespace('code', True, args)
 
     def _code(self):
         self._closeTag_noWhitespace('code')
 
     def strong(self, **args):
-        """
-        The strong tag is the standard XHTML strong.  Note that nowadays it is better to implement this
-        typographic behavior through span and CSS.<para/>
-        <todo>Add the other attributes to the b tag such as: id, class, title, style, dir, lang,
-        onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
-        onkeyup</todo>
+        """The strong tag is the standard XHTML strong.  Note that nowadays it
+        is better to implement this typographic behavior through span and
+        CSS.
+
+        TODO: Add the other attributes to the b tag such as: id, class, title,
+        style, dir, lang, onclick, ondblclick, onmousedown, onmouseup,
+        onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
+        onkeyup.
+
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
 
         >>> b = HtmlBuilder()
@@ -1471,8 +1459,8 @@ table {
 
 
     def frameset(self, **args):
-        """
-        The frameset tag creates an frame set that contains frames with other documents.
+        """The frameset tag creates an frame set that contains frames with
+        other documents.
         <www href="http://www.w3schools.com/tags/tag_frameset.asp"/>
         """
         self.write_tag('frameset', True, args)
@@ -1482,9 +1470,10 @@ table {
 
 
     def frame(self, **args):
-        """
-        The frame tag defines one particular window (frame) within a frameset.
-        Each frame in a frameset can have different attributes, such as border, scrolling, the ability to resize, etc.
+        """The frame tag defines one particular window (frame) within a
+        frameset. Each frame in a frameset can have different attributes, such
+        as border, scrolling, the ability to resize, etc.
+
         <www href="http://www.w3schools.com/tags/tag_frame.asp"/>
         """
         self.write_tag('frame', True, args)
@@ -1496,12 +1485,12 @@ table {
 
 
     def noframes(self, **args):
-        """
-        The noframes tag is used for browsers that do not handle frames.
-        The noframes element can contain all the elements that you can find inside the body element of a normal HTML
-        page.
-        The noframes element is most used to link to a non-frameset version of the web site or to display a message to
-        users that frames are required.
+        """The noframes tag is used for browsers that do not handle frames.
+        The noframes element can contain all the elements that you can find
+        inside the body element of a normal HTML page.
+
+        The noframes element is most used to link to a non-frameset version of
+        the web site or to display a message to users that frames are required.
         The noframes element goes inside the frameset element.
         <www href="http://www.w3schools.com/tags/tag_noframes.asp"/>
         """
@@ -1512,8 +1501,7 @@ table {
         self._closeTag('noframes')
 
     def iframe(self, src, **args):
-        """
-        The iframe tag creates an inline frame that contains another document.
+        """The iframe tag creates an inline frame that contains another document.
         <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
         """
         r = self.result
@@ -1522,17 +1510,19 @@ table {
         self.write('></iframe>')
 
     def embed(self, **args):
-        """
-        <error>Does not seem to be defined in w3schools??</error>
+        """FIXME: Does not seem to be defined in w3schools??
         self.embed(src='./_images/amovie.qt')
         """
         self.write_tag('embed', False, args)
 
     def script(self, charset='UTF-8', type='text/javascript', **args):
-        """
-        The br tag inserts a single line break.
-        Defines a script, such as a JavaScript. Note that if @src is used, then no self._script() must be used.
-        The count attribute is not standard XHTML. It indicates the number of br to repeat.
+        """The br tag inserts a single line break.  Defines a script, such as a
+        JavaScript. Note that if @src is used, then no self._script() must be
+        used.
+
+        The count attribute is not standard XHTML. It indicates the number of
+        br to repeat.
+
         <www href="http://www.w3schools.com/tags/tag_script.asp" target="external"/>
         self.script()
             ...
@@ -1569,8 +1559,8 @@ table {
     #
 
     def ul(self, **args):
-        """
-        The ul tag defines an unordered list.
+        """The ul tag defines an unordered list.
+
         <www href="http://www.w3schools.com/tags/tag_ul.asp" target="external"/>
         self.ul()
             ...
@@ -1582,8 +1572,8 @@ table {
         self._closeTag('ul')
 
     def ol(self, **args):
-        """
-        The ol tag defines the start of a definition list.
+        """The ol tag defines the start of a definition list.
+
         <www href="http://www.w3schools.com/tags/tag_ol.asp" target="external"/>
         self.ol()
             ...
@@ -1597,9 +1587,9 @@ table {
 
 
     def li(self, **args):
-        """
-        The li tag defines the start of a list item. The li tag is used in both ordered
-        (ol) and unordered lists (ul).
+        """The li tag defines the start of a list item. The li tag is used in
+        both ordered (ol) and unordered lists (ul).
+
         <www href="http://www.w3schools.com/tags/tag_li.asp" target="external"/>
         self.li()
             ...
@@ -1611,8 +1601,8 @@ table {
         self._closeTag_noWhitespace('li')
 
     def dl(self, **args):
-        """
-        The dl tag defines an unordered list.
+        """The dl tag defines an unordered list.
+
         <www href="http://www.w3schools.com/tags/tag_dl.asp" target="external"/>
         self.dl()
             ...
@@ -1624,9 +1614,9 @@ table {
         self._closeTag('dl')
 
     def dt(self, **args):
-        """
-        The dt tag defines the start of a definition list term.
-        The dt tag is used only in definition lists (dl).
+        """The dt tag defines the start of a definition list term.  The dt tag
+        is used only in definition lists (dl).
+
         <www href="http://www.w3schools.com/tags/tag_dt.asp" target="external"/>
         self.dt()
             ...
@@ -1638,9 +1628,9 @@ table {
         self._closeTag('dt')
 
     def dd(self, **args):
-        """
-        The dd tag defines the start of a definition list term.
-        The dd tag is used only in definition lists (dl).
+        """The dd tag defines the start of a definition list term.  The dd tag
+        is used only in definition lists (dl).
+
         <www href="http://www.w3schools.com/tags/tag_dd.asp" target="external"/>
         self.dd()
             ...
@@ -1706,21 +1696,22 @@ table {
         self._closeTag('form')
 
     def input(self, **args):
-        """
-        The input tag defines the start of an input field where the user can enter data.
-        The attribute type can be one of button | checkbox | file | hidden | image | password | radio |
-        reset | submit | text.
+        """The input tag defines the start of an input field where the user can
+        enter data.  The attribute type can be one of button | checkbox | file
+        | hidden | image | password | radio | reset | submit | text.
+
         <www href="http://www.w3schools.com/tags/tag_input.asp" target="external"/>
         self.input(type='checkbox', name='mycheckbox')
         """
         self.write_tag('input', False, args)
 
     def label(self, **args):
-        """
-        The label tag associates a block of plain text with a form input, usually a check or radio box.
-        This way the user can click anywhere in the label text to toggle the input on or off.
-        It can be implemented two ways: <label><input…> Text</label>, or <label for='id_of_input'>
+        """The label tag associates a block of plain text with a form input,
+        usually a check or radio box.  This way the user can click anywhere in
+        the label text to toggle the input on or off.  It can be implemented
+        two ways: <label><input…> Text</label>, or <label for='id_of_input'>
         Text</label>…<input id='id_of_input' …>.
+
         <www href="http://www.w3schools.com/tags/tag_label.asp" target="external"/>
         """
         self.write_tag('label', True, args)
@@ -1729,8 +1720,7 @@ table {
         self._closeTag('label')
 
     def select(self, **args):
-        """
-        The select element creates a drop-down list.
+        """The select element creates a drop-down list.
         <www href="http://www.w3schools.com/tags/tag_select.asp" target="external"/>
         self.select()
             ...
@@ -1742,8 +1732,7 @@ table {
         self._closeTag('select')
 
     def option(self, **args):
-        """
-        The option tag defines an option in the drop-down list.
+        """The option tag defines an option in the drop-down list.
         <www href="http://www.w3schools.com/tags/tag_option.asp" target="external"/>
         self.option()
             ...
@@ -1755,8 +1744,7 @@ table {
         self._closeTag('option')
 
     def optgroup(self, **args):
-        """
-        The optgroup tag defines an option group in the drop-down list.
+        """The optgroup tag defines an option group in the drop-down list.
         <www href="http://www.w3schools.com/tags/tag_optgroup.asp" target="external"/>
         self.optgroup()
             ...
@@ -1806,9 +1794,9 @@ table {
 
     def object(self, **args):
         """The object defines an embedded object. Use this element to add
-        multimedia to your XHTML page. This element allows you to specify the data and
-        parameters for objects inserted into HTML documents, and the code that can be used to
-        display/manipulate that data."""
+        multimedia to your XHTML page. This element allows you to specify the
+        data and parameters for objects inserted into HTML documents, and the
+        code that can be used to display/manipulate that data."""
         self.write_tag_noWhitespace('object', True, args)
 
     def _object(self):
@@ -1827,8 +1815,8 @@ table {
         self._closeTag_noWhitespace('big')
 
     def param(self, **args):
-        """The param element allows you to specify the run-time settings for an object inserted
-        into XHTML documents."""
+        """The param element allows you to specify the run-time settings for an
+        object inserted into XHTML documents."""
         self.write_tag('param', False, args)
 
     # N O N - H T M L

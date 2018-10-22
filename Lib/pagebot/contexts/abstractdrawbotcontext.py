@@ -407,16 +407,46 @@ class AbstractDrawBotContext:
     # Transform.
 
     def transform(self, matrix, center=(0, 0)):
+        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
+        over vector (dx, dy)"""
+        self.b.transform(matrix, center=center)
+
         raise NotImplementedError
 
     def translate(self, x=0, y=0):
-        raise NotImplementedError
+        """Translate the origin to this point."""
+        xpt, ypt = point2D(upt(x, y))
+        self.b.translate(xpt, ypt)
 
-    def rotate(self, angle, center=(0, 0)):
-        raise NotImplementedError
+    def rotate(self, angle, center=None):
+        """Rotate the canvas by angle. If angle is not a units.Angle instance,
+        then convert.
+
+        >>> context = DrawBotContext()
+        >>> context.rotate(40)
+        """
+        if center is None:
+            center = (0, 0)
+        else:
+            center = point2D(upt(center))
+        if isinstance(angle, Angle):
+            angle = angle.degrees
+
+        # Otherwise assume the value to be a degrees number.
+        self.b.rotate(angle, center=center)
 
     def scale(self, x=1, y=None, center=(0, 0)):
-        raise NotImplementedError
+        """Sets the drawing scale."""
+        if isinstance(x, (tuple, list)):
+            assert len(x) in (2, 3)
+            x, y = sz[0], s[1] # FIXME: where are sz and s?
+
+        if y is None:
+            y = x
+
+        msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
+        assert isinstance(x, (int, float)) and isinstance(y, (int, float)), (msg % (x, y))
+        self.b.scale(x, y, center=center)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         raise NotImplementedError
@@ -656,10 +686,22 @@ class AbstractDrawBotContext:
         raise NotImplementedError
 
     def BezierPath(self, path=None, glyphSet=None):
-        raise NotImplementedError
+        return self.b.BezierPath(path=path, glyphSet=glyphSet)
 
     def ImageObject(self, path=None):
-        raise NotImplementedError
+        """Answers the ImageObject that knows about image filters. For names
+        and parameters of filters see:
+
+        * http://www.drawbot.com/content/image/imageObject.html
+
+        >>> from pagebot import getResourcesPath
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> imo = context.getImageObject(path)
+
+        """
+        return self.b.ImageObject(path=path)
 
     def Variable(self, variables, workSpace):
         """Offers interactive global value manipulation in DrawBot. Can be

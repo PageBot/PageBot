@@ -377,46 +377,6 @@ class DrawBotContext(BaseContext):
         if w is not None:
             self.strokeWidth(w)
 
-    # Transformation.
-
-    def scale(self, sx, sy=None):
-        """Set the drawing scale."""
-        if isinstance(sx, (tuple, list)):
-            assert len(sx) in (2, 3)
-            sx, sy = sz[0], s[1]
-        if sy is None:
-            sy = sx
-
-        msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
-        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
-        self.b.scale(sx, sy)
-
-    def translate(self, dx, dy):
-        """Translate the origin to this point."""
-        dxpt, dypt = point2D(upt(dx, dy))
-        self.b.translate(dxpt, dypt)
-
-    def transform(self, t):
-        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
-        over vector (dx, dy)"""
-        self.b.transform(t)
-
-    def rotate(self, angle, center=None):
-        """Rotate the canvas by angle. If angle is not a units.Angle instance,
-        then convert.
-
-        >>> context = DrawBotContext()
-        >>> context.rotate(40)
-        """
-        if center is None:
-            center = (0, 0)
-        else:
-            center = point2D(upt(center))
-        if isinstance(angle, Angle):
-            angle = angle.degrees
-        # Otherwise assume the value to be a degrees number.
-        self.b.rotate(angle, center=center)
-
     #   I M A G E
 
     def imagePixelColor(self, path, p=None):
@@ -459,20 +419,6 @@ class DrawBotContext(BaseContext):
         #self.b.image(path, (x, y), alpha=alpha, pageNumber=pageNumber)
         self.b.image(path, (0, 0), alpha=alpha, pageNumber=pageNumber)
         self.restore()
-
-    def getImageObject(self, path):
-        """Answers the ImageObject that knows about image filters. For names
-        and parameters of filters see:
-
-        * http://www.drawbot.com/content/image/imageObject.html
-
-        >>> from pagebot import getResourcesPath
-        >>> context = DrawBotContext()
-        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-        >>> imo = context.getImageObject(path)
-
-        """
-        return self.b.ImageObject(path)
 
     def path2ScaledImagePath(self, path, w, h, index=None, exportExtension=None):
         """Answers the path to the scaled image.

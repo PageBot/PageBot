@@ -575,7 +575,7 @@ class InDesignContext(BaseContext):
         self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
-    def getImageObject(self, path):
+    def ImageObject(self, path):
         """Answers the ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
