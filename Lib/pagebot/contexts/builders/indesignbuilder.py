@@ -27,7 +27,7 @@ from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import object2SpacedString
 from pagebot.toolbox.units import asFormatted
 from pagebot.constants import A4Rounded
-from pagebot.contexts.builders.nonebezierpath import CommandBezierPath as BezierPath
+from pagebot.contexts.bezierpaths.commandbezierpath import CommandBezierPath as BezierPath
 
 class InDesignBuilder(BaseBuilder):
     """The InDesignBuilder class implements the all necessary API-Javascript to

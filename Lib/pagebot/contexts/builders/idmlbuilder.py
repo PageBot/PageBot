@@ -18,7 +18,7 @@
 import os
 from pagebot.toolbox.transformer import path2Name
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.builders.nonebezierpath import CommandBezierPath as BezierPath
+from pagebot.contexts.bezierpaths.commandbezierpath import CommandBezierPath as BezierPath
 
 try:
     import simple_idml

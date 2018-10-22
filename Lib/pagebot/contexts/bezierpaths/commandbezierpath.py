@@ -12,33 +12,11 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     nonebezierpath.py
+#     commandbezierpath.py
 #
 
-class NoneBezierPath:
-    """Make NoneBezierPath with the same API for NoneDrawBotBuilder drawing
-    texting."""
-
-    def moveTo(self, p):
-        pass
-
-    lineTo = moveTo
-
-    def quadTo(self, pcp, p):
-        pass
-
-    def curveTo(self, bcp1, bcp2, p):
-        pass
-
-    def closePath(self):
-        pass
-
-    def appendPath(self, path):
-        pass
-
 class CommandBezierPath:
-    """Make BezierPath with the same API for DrawBotBuilder drawing.
-    """
+    """Bézier path that stores commands to be executed later."""
 
     def __init__(self, b):
         self.b = b

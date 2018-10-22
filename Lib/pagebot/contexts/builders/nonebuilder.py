@@ -14,15 +14,12 @@
 #
 #     nonebuilder.py
 #
+
 import os
 from pagebot.toolbox.transformer import path2Name
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.builders.nonebezierpath import NoneBezierPath
-
-class NoneImageObject:
-    """Make NoneImageObject with the same API got NonDrawBotBuilder."""
-    def __init__(self, path):
-        self.path = path
+from pagebot.contexts.bezierpaths.nonebezierpath import NoneBezierPath
+from pagebot.contexts.imageobjects.noneimageobject import NoneImageObject
 
 class NoneBuilder(BaseBuilder):
     """Make NoneBuilder with a general builder API for docTesting. Used for

@@ -173,4 +173,3 @@ class BaseBuilder:
 
     def ImageObject(self, path):
         raise NotImplementedError
-        #return NoneImageObject(path)
