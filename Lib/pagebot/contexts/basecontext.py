@@ -16,8 +16,8 @@
 
 import os
 from pagebot.constants import DISPLAY_BLOCK
-from pagebot.toolbox.units import upt, pt, point2D
-from pagebot.toolbox.color import color
+from pagebot.toolbox.units import upt, pt, point2D, Angle
+from pagebot.toolbox.color import color, noColor, Color, inheritColor
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
 
 class BaseContext(AbstractDrawBotContext):
@@ -81,21 +81,21 @@ class BaseContext(AbstractDrawBotContext):
     # Magic variables.
 
     def width(self):
-        raise NotImplementedError
+        return self.b.width()
 
     def height(self):
-        raise NotImplementedError
+        return self.b.height()
 
     def sizes(self, paperSize=None):
-        raise NotImplementedError
+        return self.b.sizes(paperSize=paperSize)
 
     def pageCount(self):
-        raise NotImplementedError
+        return self.b.pageCount()
 
     # Public callbacks.
 
     def size(self, width, height=None):
-        raise NotImplementedError
+        return self.b.size(width, height=height)
 
     def newPage(self, w, h):
         """Creates a new drawbot page.
@@ -110,16 +110,16 @@ class BaseContext(AbstractDrawBotContext):
         self.b.newPage(wpt, hpt)
 
     def pages(self):
-        raise NotImplementedError
+        return self.b.pages()
 
     def saveImage(self, path, *args, **options):
-        raise NotImplementedError
+        return self.b.saveImage(path, *args, **options)
 
     def printImage(self, pdf=None):
-        raise NotImplementedError
+        return self.b.printImage(pdf=pdf)
 
     def pdfImage(self):
-        raise NotImplementedError
+        return self.b.pdfImage()
 
     # Graphics state.
 
@@ -130,7 +130,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.restore()
 
     def savedState(self):
-        raise NotImplementedError
+        return self.b.savedState()
 
     # Basic shapes.
 
@@ -175,10 +175,10 @@ class BaseContext(AbstractDrawBotContext):
         self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
 
     def roundedRect(self, x, y, w, h, offset=25):
-        raise NotImplementedError
+        return self.b.roundedRect(x, y, w, h, offset=offset)
 
     def bluntCornerRect(self, x, y, w, h, offset=5):
-        raise NotImplementedError
+        return self.b.bluntCornerRect(x, y, w, h, offset=offset)
 
     # Path.
 
@@ -257,13 +257,13 @@ class BaseContext(AbstractDrawBotContext):
         self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def qCurveTo(self, *points):
-        raise NotImplementedError
+        return self.b.qCurveTo(*points)
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
-        raise NotImplementedError
+        return self.b.arc(center, radius, startAngle, endAngle, clockwise)
 
     def arcTo(self, xy1, xy2, radius):
-        raise NotImplementedError
+        return self.b.arcTo(xy1, xy2, radius)
 
     def closePath(self):
         """Closes the current path if it exists, otherwise ignore it.
@@ -386,28 +386,29 @@ class BaseContext(AbstractDrawBotContext):
         self.b.line(p1pt, p2pt) # Render tuple of units point
 
     def polygon(self, *points, **kwargs):
-        raise NotImplementedError
+        return self.b.polygon(*points, **kwargs)
 
     def quadTo(bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         # What's difference with qCurveTo()?
-        raise NotImplementedError
+        return self.b.quadTo(bcp, p)
 
     # Color.
 
     def colorSpace(self, colorSpace):
-        raise NotImplementedError
+        return self.b.colorSpace(colorSpace)
 
     def listColorSpaces(self):
-        raise NotImplementedError
+        return self.b.listColorSpaces()
 
     def blendMode(self, operation):
-        raise NotImplementedError
+        return self.b.blendMode(operation)
 
     def fill(self, c):
         """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -445,6 +446,7 @@ class BaseContext(AbstractDrawBotContext):
         """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
@@ -528,11 +530,14 @@ class BaseContext(AbstractDrawBotContext):
 
     def linearGradient(self, startPoint=None, endPoint=None, colors=None,
             locations=None):
-        raise NotImplementedError
+        return self.b.linearGradient(startPoint=startPoint, endPoint=endPoint,
+                color=colors, locations=locations)
 
     def radialGradient(self, startPoint=None, endPoint=None, colors=None,
             locations=None, startRadius=0, endRadius=100):
-        raise NotImplementedError
+        return self.b.radialGradient(startPoint=startPoint, endPoint=endPoint,
+                colors=colors, locations=locations, startRadius=startRadius,
+                endRadius=endRadius)
 
     # Path drawing behavior.
 
@@ -584,6 +589,7 @@ class BaseContext(AbstractDrawBotContext):
         """Rotate the canvas by angle. If angle is not a units.Angle instance,
         then convert.
 
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.rotate(40)
         """
@@ -611,7 +617,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.scale(x, y, center=center)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
-        raise NotImplementedError
+        return self.b.skew(angle1, angle2=angle2, center=center)
 
     # Text.
 
@@ -625,7 +631,7 @@ class BaseContext(AbstractDrawBotContext):
             self.b.fontSize(fspt)
 
     def fallbackFont(self, fontName):
-        raise NotImplementedError
+        return self.b.fallbackFont(fontName)
 
     def fontSize(self, fontSize):
         """Set the font size in the context.
@@ -639,16 +645,16 @@ class BaseContext(AbstractDrawBotContext):
         self.b.fontSize(fspt) # Render fontSize unit to value
 
     def lineHeight(self, value):
-        raise NotImplementedError
+        return self.b.lineHeight(value)
 
     def tracking(self, value):
-        raise NotImplementedError
+        return self.b.tracking(value)
 
     def baselineShift(self, value):
-        raise NotImplementedError
+        return self.b.baselineShift(value)
 
     def underline(self, value):
-        raise NotImplementedError
+        return self.b.underline(value)
 
     def hyphenation(self, onOff):
         """DrawBot needs an overall hyphenation flag set on/off, as it is not
@@ -656,7 +662,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.hyphenation(onOff)
 
     def tabs(self, *tabs):
-        raise NotImplementedError
+        return self.b.tabs(*tabs)
 
     def language(self, language):
         """DrawBot needs an overall language flag set to code, as it is not
@@ -665,7 +671,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.language(language)
 
     def listLanguages(self):
-        raise NotImplementedError
+        return self.b.listLanguages()
 
     def openTypeFeatures(self, features):
         """Set the current of opentype features in the context canvas.
@@ -685,10 +691,10 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.listOpenTypeFeatures(fontName)
 
     def fontVariations(self, *args, **axes):
-        raise NotImplementedError
+        return self.b.fontVariations(*args, **axes)
 
     def listFontVariations(self, fontName=None):
-        raise NotImplementedError
+        return self.b.listFontVariations(fontName=fontName)
 
     # Drawing text.
 
@@ -704,7 +710,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
     def textOverflow(self, txt, box, align=None):
-        raise NotImplementedError
+        return self.b.textOverflow(txt, box, align=align)
 
     def textBox(self, sOrBs, r=None, clipPath=None):
         """Draw the sOrBs text string, can be a str or BabelString, including a
@@ -727,11 +733,11 @@ class BaseContext(AbstractDrawBotContext):
             self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt))
 
     def textBoxBaselines(self, txt, box, align=None):
-        raise NotImplementedError
+        return self.b.textBoxBaselines(txt, box, align=align)
 
     def FormattedString(self, *args, **kwargs):
         # refer to BabelString?
-        raise NotImplementedError
+        return self.b.FormattedString(*args, **kwargs)
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
@@ -799,24 +805,26 @@ class BaseContext(AbstractDrawBotContext):
         return pt(self.b.imageSize(path))
 
     def imagePixelColor(self, path, p):
-        raise NotImplementedError
+        return self.b.imagePixelColor(path, p)
 
     def numberOfPages(self, path):
-        raise NotImplementedError
+        return self.b.numberOfPages(path)
 
+    def numberOfImages(self, path):
+        raise NotImplementedError
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        raise NotImplementedError
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w, h=h)
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path."""
         return pt(self.b.imageSize(path))
 
     def imagePixelColor(self, path, p):
-        raise NotImplementedError
+        return self.b.imagePixelColor(path, p)
 
     def numberOfPages(self, path):
-        raise NotImplementedError
+        return self.b.numberOfPages(path)
 
     # Mov.
 
@@ -828,10 +836,10 @@ class BaseContext(AbstractDrawBotContext):
     # PDF links.
 
     def linkDestination(self, name, x=None, y=None):
-        raise NotImplementedError
+        return self.b.linkDestination(name, x=x, y=y)
 
     def linkRect(self, name, xywh):
-        raise NotImplementedError
+        return self.b.linkRect(name, xywh)
 
     # Helpers.
 
@@ -888,34 +896,34 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.uninstallFont(fontOrName)
 
     def fontContainsCharacters(self, characters):
-        raise NotImplementedError
+        return self.b.fontContainsCharacters(characters)
 
     def fontContainsGlyph(self, glyphName):
-        raise NotImplementedError
+        return self.b.fontContainsGlyph(glyphName)
 
     def fontFilePath(self):
-        raise NotImplementedError
+        return self.b.fontFilePath()
 
     def listFontGlyphNames(self):
-        raise NotImplementedError
+        return self.b.listFontGlyphNames()
 
     def fontAscender(self):
-        raise NotImplementedError
+        return self.b.fontAscender()
 
     def fontDescender(self):
-        raise NotImplementedError
+        return self.b.fontDescender()
 
     def fontXHeight(self):
-        raise NotImplementedError
+        return self.b.fontXHeight()
 
     def fontCapHeight(self):
-        raise NotImplementedError
+        return self.b.fontCapHeight()
 
     def fontLeading(self):
-        raise NotImplementedError
+        return self.b.fontLeading()
 
     def fontLineHeight(self):
-        raise NotImplementedError
+        return self.b.fontLineHeight()
 
     def BezierPath(self, path=None, glyphSet=None):
         return self.b.BezierPath(path=path, glyphSet=glyphSet)
@@ -935,6 +943,8 @@ class BaseContext(AbstractDrawBotContext):
         """
         return self.b.ImageObject(path=path)
 
+    getImageObject = ImageObject
+
     def Variable(self, variables, workSpace):
         """Offers interactive global value manipulation in DrawBot. Can be
         ignored in most contexts except DrawBot for now.
@@ -944,9 +954,11 @@ class BaseContext(AbstractDrawBotContext):
     # Glyphs.
 
     def drawGlyphPath(self, glyph):
+        """PageBot function."""
         raise NotImplementedError
 
     def getGlyphPath(self, glyph, p=None, path=None):
+        """PageBot function."""
         raise NotImplementedError
 
     def onBlack(self, p, path=None):
@@ -1027,7 +1039,7 @@ class BaseContext(AbstractDrawBotContext):
 
     def screenSize(self):
         """Answers the current screen size in DrawBot. Otherwise default is to
-        do nothing.
+        do nothing. PageBot function.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -1036,12 +1048,6 @@ class BaseContext(AbstractDrawBotContext):
         True
         """
         return pt(self.b.sizes().get('screen', None))
-
-    # Images.
-
-    #def numberOfImages(self, path):
-    #def getImageObject(self, path):
-
 
 if __name__ == '__main__':
     import doctest
