@@ -21,7 +21,7 @@ from pagebot.toolbox.color import color
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
 
 class BaseContext(AbstractDrawBotContext):
-    """Extends the DrawBot interface.
+    """Base API for all contexts. Extends the DrawBot interface.
     """
     # Indication to Typesetter that by default tags should not be included in
     # output.
@@ -58,20 +58,43 @@ class BaseContext(AbstractDrawBotContext):
 
     # Documents.
 
-    def newDrawing(self):
-        """Clear output canvas, start new export file.
+    def newDocument(self, w, h):
+        """PageBot function."""
+        raise NotImplementedError
 
-        >>> from pagebot.toolbox.units import px
+    def saveDocument(self, path, multiPage=None):
+        """PageBot function."""
+        raise NotImplementedError
+
+    def newDrawing(self):
+        """Clear output canvas, start new export file. DrawBot function.
+
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newDrawing()
         """
         self.b.newDrawing()
 
-    def newDocument(self, w, h):
+    def endDrawing(self):
         raise NotImplementedError
 
-    def saveDocument(self, path, multiPage=None):
+    # Magic variables.
+
+    def width(self):
+        raise NotImplementedError
+
+    def height(self):
+        raise NotImplementedError
+
+    def sizes(self, paperSize=None):
+        raise NotImplementedError
+
+    def pageCount(self):
+        raise NotImplementedError
+
+    # Public callbacks.
+
+    def size(self, width, height=None):
         raise NotImplementedError
 
     def newPage(self, w, h):
@@ -85,6 +108,465 @@ class BaseContext(AbstractDrawBotContext):
         """
         wpt, hpt = upt(w, h)
         self.b.newPage(wpt, hpt)
+
+    def pages(self):
+        raise NotImplementedError
+
+    def saveImage(self, path, *args, **options):
+        raise NotImplementedError
+
+    def printImage(self, pdf=None):
+        raise NotImplementedError
+
+    def pdfImage(self):
+        raise NotImplementedError
+
+    # Graphics state.
+
+    def save(self):
+        self.b.save()
+
+    def restore(self):
+        self.b.restore()
+
+    def savedState(self):
+        raise NotImplementedError
+
+    # Basic shapes.
+
+    def rect(self, x, y, w, h):
+        """Draws a rectangle in the canvas.  This method is using the core
+        BezierPath as path to draw on. For a more rich environment use
+        PageBotPath(context) instead.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.rect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.rect(0, 0, 100, 100)
+        """
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        # Render units to points for DrawBot.
+        self.b.rect(xpt, ypt, wpt, hpt)
+
+    def oval(self, x, y, w, h):
+        """Draw an oval in rectangle where (x,y) is the bottom-left and size
+        (w,h).  This method uses BezierPath; for a more rich environment use
+        PageBotPath(context) instead.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.oval(pt(0), pt(0), pt(100), pt(100))
+        >>> context.oval(0, 0, 100, 100)
+        """
+        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
+
+    def circle(self, x, y, r):
+        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
+        This method is using the core BezierPath as path to draw on. For a more rich
+        environment use PageBotPath(context) instead. PageBot function.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.circle(pt(100), pt(200), pt(50))
+        >>> context.circle(100, 200, 50)
+        """
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+
+    def roundedRect(self, x, y, w, h, offset=25):
+        raise NotImplementedError
+
+    def bluntCornerRect(self, x, y, w, h, offset=5):
+        raise NotImplementedError
+
+    # Path.
+
+    def newPath(self):
+        """Makes a new Bezierpath to draw in and answers it. This will not
+        initialize self._path, which is accessed by the property self.path.
+        This method is using the BezierPath as path to draw on. For a more
+        rich environment use PageBotPath(context) instead.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.newPath()
+        <BezierPath>
+        """
+        return self.b.BezierPath()
+
+    def moveTo(self, p):
+        """Move to point p in the running path. Create a new self._path if none
+        is open.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.moveTo(pt(100, 100))
+        >>> context.moveTo((100, 100))
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        """
+        ppt = upt(point2D(p))
+        self.path.moveTo(ppt) # Render units point tuple to tuple of values
+
+    def lineTo(self, p):
+        """Line to point p in the running path. Create a new self._path if none
+        is open.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> # Create a new self._path by property self.path
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> context.closePath()
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        """
+        ppt = upt(point2D(p))
+        self.path.lineTo(ppt) # Render units point tuple to tuple of values
+
+    def curveTo(self, bcp1, bcp2, p):
+        """Curve to point p i nthe running path. Create a new path if none is
+        open.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> # Create a new self._path by property self.path
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> context.closePath()
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        """
+        b1pt = upt(point2D(bcp1))
+        b2pt = upt(point2D(bcp2))
+        ppt = upt(point2D(p))
+        self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+
+    def qCurveTo(self, *points):
+        raise NotImplementedError
+
+    def arc(self, center, radius, startAngle, endAngle, clockwise):
+        raise NotImplementedError
+
+    def arcTo(self, xy1, xy2, radius):
+        raise NotImplementedError
+
+    def closePath(self):
+        """Closes the current path if it exists, otherwise ignore it.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> # Create a new self._path by property self.path
+        >>> context.moveTo(pt(100, 100))
+        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> context.closePath()
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        """
+        if self._path is not None: # Only if there is an open path.
+            self._path.closePath()
+
+    def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None,
+            stroke=None, strokeWidth=None):
+        """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
+        Use self._path if path is omitted.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
+        >>> len(context.path.points) # Property self.path creates a self._path BezierPath
+        0
+        >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
+        >>> context.lineTo((110, 10))
+        >>> context.lineTo((110, 110))
+        >>> context.lineTo((10, 110))
+        >>> context.lineTo((10, 10))
+        >>> context.closePath()
+        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._path
+        >>> len(context.path.points)
+        6
+        >>> context.fill((1, 0, 0))
+        >>> context.drawPath(p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(p=(200, 200))
+        >>> context.drawPath(p=(0, 200))
+        >>> context.drawPath(p=(200, 0))
+        >>> context.saveImage('_export/DrawBotContext1.pdf')
+        >>> # Drawing directly on a path, created by context
+        >>> path = context.newPath() # Leaves current self._path untouched
+        >>> len(path.points)
+        0
+        >>> path.moveTo((10, 10)) # Drawing on context._path
+        >>> path.lineTo((110, 10))
+        >>> path.lineTo((110, 110))
+        >>> path.lineTo((10, 110))
+        >>> path.lineTo((10, 10))
+        >>> path.closePath()
+        >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
+        >>> len(path.points)
+        19
+        >>> context.fill((0, 0.5, 1))
+        >>> context.drawPath(path, p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(path, p=(200, 200))
+        >>> context.drawPath(path, p=(0, 200))
+        >>> context.drawPath(path, p=(200, 0))
+        >>> context.saveImage('_export/DrawBotContext2.pdf')
+        """
+        if path is None:
+            path = self.path
+        if hasattr(path, 'bp'): # If it's a PageBotPath, get the core BezierPath
+            bezierPath = path.bp
+            # If not forced as attribute, then try to get from the PageBotPath.style
+            if fill is None:
+                fill = path.style.get('fill')
+            if stroke is None:
+                stroke = path.style.get('stroke')
+            if strokeWidth is None:
+                stroke = path.style.get('strokeWidth')
+        else:
+            bezierPath = path # Otherwise we assume it is a context core BezierPath instance
+
+        self.save()
+        if sy is None:
+            sy = sx
+        if p is None:
+            xpt = ypt = 0
+        else:
+            xpt, ypt = point2D(upt(p))
+        self.scale(sx, sy)
+        self.translate(xpt/sx, ypt/sy)
+        # Set fill and stroke if they are defined by attribute or by path.style
+        # Otherwise ignore and use the setting as defined already in the graphic state.
+        if fill is not None:
+            self.fill(color(fill))
+        if stroke is not None and strokeWidth:
+            self.stroke(color(stroke), upt(strokeWidth))
+        self.b.drawPath(bezierPath)
+        self.restore()
+
+    def clipPath(self, clipPath):
+        """Sets the clipPath of the DrawBot builder in a new saved graphics
+        state. Clip paths cannot be restored, so they should be inside a
+        context.save() and context.restore().
+
+        TODO: add unit tests.
+        """
+        self.b.clipPath(clipPath)
+
+    def line(self, p1, p2):
+        """Draw a line from p1 to p2. This method is using the core BezierPath
+        as path to draw on. For a more rich ennvironment use
+        PageBotPath(context).
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.line(pt(100, 100), pt(200, 200))
+        >>> context.line((100, 100), (200, 200))
+        """
+        p1pt = upt(point2D(p1))
+        p2pt = upt(point2D(p2))
+        self.b.line(p1pt, p2pt) # Render tuple of units point
+
+    def polygon(self, *points, **kwargs):
+        raise NotImplementedError
+
+    def quadTo(bcp, p):
+        # TODO: Convert to Bezier with 0.6 rule
+        # What's difference with qCurveTo()?
+        raise NotImplementedError
+
+    # Color.
+
+    def colorSpace(self, colorSpace):
+        raise NotImplementedError
+
+    def listColorSpaces(self):
+        raise NotImplementedError
+
+    def blendMode(self, operation):
+        raise NotImplementedError
+
+    def fill(self, c):
+        """Set the color for global or the color of the formatted string.
+
+        >>> from pagebot.toolbox.color import color
+        >>> context = DrawBotContext()
+        >>> context.fill(color(0.5)) # Same as setFillColor
+        >>> context.fill(color('red'))
+        >>> context.fill(inheritColor)
+        >>> context.fill(noColor)
+        >>> context.fill(0.5)
+        """
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list, int, float)):
+            c = color(c)
+
+        msg = 'DrawBotContext.fill: %s should be of type Color'
+        assert isinstance(c, Color), (msg % c)
+
+        if c is inheritColor:
+            # Keep color setting as it is.
+            pass
+        elif c is noColor:
+            self.b.fill(None) # Set color to no-color
+        elif c.isCmyk:
+            # DrawBot.fill has slight API differences compared to
+            # FormattedString fill().
+            c, m, y, k = c.cmyk
+            self.b.cmykFill(c, m, y, k, alpha=c.a)
+        else:
+            # DrawBot.fill has slight API differences compared to
+            # FormattedString fill(). Convert to RGB, whatever the color type.
+            r, g, b = c.rgb
+            self.b.fill(r, g, b, alpha=c.a)
+
+    setFillColor = fill
+
+    def stroke(self, c, w=None):
+        """Set the color for global or the color of the formatted string.
+
+        >>> from pagebot.toolbox.color import color
+        >>> context = DrawBotContext()
+        >>> context.stroke(color(0.5)) # Same as setStrokeColor
+        >>> context.stroke(color('red'))
+        >>> context.stroke(inheritColor)
+        >>> context.stroke(noColor)
+        >>> context.stroke(0.5)
+        """
+        if c is None:
+            c = noColor
+        elif isinstance(c, (tuple, list, int, float)):
+            c = color(c)
+
+        msg = 'DrawBotContext.stroke: %s should be of type Color'
+        assert isinstance(c, Color), (msg % c)
+
+        if c is inheritColor:
+            # Keep color setting as it is.
+            pass
+        if c is noColor:
+            self.b.stroke(None) # Set color to no-color
+        elif c.isCmyk:
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke().
+            cc, cm, cy, ck = c.cmyk
+            self.b.cmykStroke(cc, cm, cy, ck, alpha=c.a)
+        else:
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke(). Convert to RGB, whatever the color type.
+            r, g, b = c.rgb
+            self.b.stroke(r, g, b, alpha=c.a)
+        if w is not None:
+            self.strokeWidth(w)
+
+    setStrokeColor = stroke
+
+    def shadow(self, eShadow):
+        """Set the DrawBot graphics state for shadow if all parameters are
+        set."""
+        if eShadow is not None and eShadow.offset is not None:
+            if eShadow.color.isCmyk:
+                self.b.shadow(upt(eShadow.offset), # Convert units to values
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).cmyk)
+            else:
+                self.b.shadow(upt(eShadow.offset),
+                              blur=upt(eShadow.blur),
+                              color=color(eShadow.color).rgb)
+
+    setShadow = shadow
+
+    def gradient(self, gradient, origin, w, h):
+        """Define the gradient call to match the size of element e., Gradient
+        position is from the origin of the page, so we need the current origin
+        of e."""
+        b = self.b
+        start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
+        end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
+
+        if gradient.linear:
+            if (gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations)
+            else:
+                colors = [color(c).rgb for c in gradient.colors]
+                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations)
+        else: # Gradient must be radial.
+            if color(gradient.colors[0]).isCmyk:
+                colors = [color(c).cmyk for c in gradient.colors]
+                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+            else:
+                colors = [color(c).rgb for c in gradient.colors]
+                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
+                    colors=colors, locations=gradient.locations,
+                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
+
+    setGradient = gradient
+
+    def linearGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None):
+        raise NotImplementedError
+
+    def radialGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None, startRadius=0, endRadius=100):
+        raise NotImplementedError
+
+    # Path drawing behavior.
+
+    def strokeWidth(self, w):
+        """Set the current stroke width.
+
+        >>> from pagebot.toolbox.units import pt, mm
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.setStrokeWidth(pt(0.5))
+        >>> context.setStrokeWidth(mm(0.5))
+        """
+        wpt = upt(w)
+        self.b.strokeWidth(wpt)
+
+    setStrokeWidth = strokeWidth
+
+    def miterLimit(self, value):
+        self.b.miterLimit(value)
+
+    def lineJoin(self, value):
+        self.b.lineJoin(value)
+
+    def lineCap(self, value):
+        """Possible values are butt, square and round."""
+        assert value in ('butt', 'square', 'round')
+        self.b.lineCap(value)
+
+    def lineDash(self, value):
+        """LineDash is None or a list of dash lengths."""
+        if value is None:
+            self.b.lineDash(None)
+        else:
+            self.b.lineDash(*value)
 
     # Transform.
 
@@ -133,11 +615,130 @@ class BaseContext(AbstractDrawBotContext):
 
     # Text.
 
+    def font(self, fontName, fontSize=None):
+        # FIXME: fontSize?
+        self.b.font(fontName)
+
+        # Also renders fontSize unit to value.
+        if fontSize is not None:
+            fspt = upt(fontSize)
+            self.b.fontSize(fspt)
+
+    def fallbackFont(self, fontName):
+        raise NotImplementedError
+
+    def fontSize(self, fontSize):
+        """Set the font size in the context.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.fontSize(pt(12))
+        """
+        fspt = upt(fontSize)
+        self.b.fontSize(fspt) # Render fontSize unit to value
+
+    def lineHeight(self, value):
+        raise NotImplementedError
+
+    def tracking(self, value):
+        raise NotImplementedError
+
+    def baselineShift(self, value):
+        raise NotImplementedError
+
+    def underline(self, value):
+        raise NotImplementedError
+
+    def hyphenation(self, onOff):
+        """DrawBot needs an overall hyphenation flag set on/off, as it is not
+        part of the FormattedString style attributes."""
+        self.b.hyphenation(onOff)
+
+    def tabs(self, *tabs):
+        raise NotImplementedError
+
+    def language(self, language):
+        """DrawBot needs an overall language flag set to code, as it is not
+        part of the FormattedString style attributes. For availabel ISO
+        language codes, see pageboy.constants."""
+        self.b.language(language)
+
+    def listLanguages(self):
+        raise NotImplementedError
+
+    def openTypeFeatures(self, features):
+        """Set the current of opentype features in the context canvas.
+
+        NOTE: signature differs from DrawBot:
+
+            def openTypeFeatures(self, *args, **features):
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
+        """
+        self.b.openTypeFeatures(**features)
+
+    def listOpenTypeFeatures(self, fontName=None):
+        """Answers the list of opentype features available in the named font."""
+        return self.b.listOpenTypeFeatures(fontName)
+
+    def fontVariations(self, *args, **axes):
+        raise NotImplementedError
+
+    def listFontVariations(self, fontName=None):
+        raise NotImplementedError
+
+    # Drawing text.
+
+    def text(self, sOrBs, p):
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString at position p.
+
+        NOTE: signature differs from DrawBot.
+        """
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        ppt = point2D(upt(p))
+        self.b.text(sOrBs, ppt) # Render point units to value tuple
+
+    def textOverflow(self, txt, box, align=None):
+        raise NotImplementedError
+
+    def textBox(self, sOrBs, r=None, clipPath=None):
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString in rectangle r.
+
+        NOTE: signature differs from DrawBot.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.textBox('ABC', (10, 10, 200, 200))
+        """
+        if not isinstance(sOrBs, str):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        if clipPath is not None:
+            self.b.textBox(sOrBs, clipPath) # Render rectangle units to value tuple
+        elif r is not None:
+            xpt, ypt, wpt, hpt = upt(r)
+            # Render rectangle units to value tuple
+            self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt))
+
+    def textBoxBaselines(self, txt, box, align=None):
+        raise NotImplementedError
+
+    def FormattedString(self, *args, **kwargs):
+        # refer to BabelString?
+        raise NotImplementedError
+
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
         `s` (converted to plain unicode string), using e or style as
         typographic parameters. Ignore and just answer `s` if it is already a
-        self.STRING_CLASS instance and no style is forced."""
+        self.STRING_CLASS instance and no style is forced. PageBot function.
+        """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,
@@ -154,7 +755,7 @@ class BaseContext(AbstractDrawBotContext):
         pointing to one. If the for is not a VF, then behavior is the same as
         newString. (converted to plain unicode string), using e or style as
         typographic parameters. Ignore and just answer s if it is already a
-        `self.STRING_CLASS` instance.
+        `self.STRING_CLASS` instance. PageBot function.
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
@@ -188,28 +789,159 @@ class BaseContext(AbstractDrawBotContext):
                 s += bs
         return s
 
-    # Basic shapes.
+    # Images
 
-    def circle(self, x, y, r):
-        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context) instead.
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        raise NotImplementedError
 
+    def imageSize(self, path):
+        """Answers the (w, h) image size of the image file at path."""
+        return pt(self.b.imageSize(path))
+
+    def imagePixelColor(self, path, p):
+        raise NotImplementedError
+
+    def numberOfPages(self, path):
+        raise NotImplementedError
+
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        raise NotImplementedError
+
+    def imageSize(self, path):
+        """Answers the (w, h) image size of the image file at path."""
+        return pt(self.b.imageSize(path))
+
+    def imagePixelColor(self, path, p):
+        raise NotImplementedError
+
+    def numberOfPages(self, path):
+        raise NotImplementedError
+
+    # Mov.
+
+    def frameDuration(self, secondsPerFrame):
+        """Set the self._frameDuration for animated GIFs to a number of seconds
+        per frame. Used when initializing a new page."""
+        self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)
+
+    # PDF links.
+
+    def linkDestination(self, name, x=None, y=None):
+        raise NotImplementedError
+
+    def linkRect(self, name, xywh):
+        raise NotImplementedError
+
+    # Helpers.
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
+
+    def installedFonts(self, patterns=None):
+        """Answers a list of all fonts (name or path) that are installed in the
+        OS.
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> installed = context.installedFonts()
+        >>> len(installed) > 0
+        True
+        """
+        if isinstance(patterns, str): # In case it is a string, convert to a list
+            patterns = [patterns]
+        fontNames = []
+        for fontName in self.b.installedFonts():
+            if not patterns:
+                fontNames.append(fontName) # If no pattern theun answer all.
+            else:
+                for pattern in patterns:
+                    if pattern in fontName:
+                        fontNames.append(fontName)
+                        break
+        return fontNames
+
+    def installFont(self, fontOrName):
+        """Install the font in the context. fontOrName can be a Font instance
+        (in which case the path is used) or a full font path.
+
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> installed = context.installedFonts()
+        >>> len(installed) > 0
+        True
+        >>> font = findFont('Roboto-Regular')
+        >>> context.installFont(font)
+        'Roboto-Regular'
+        """
+        if hasattr(fontOrName, 'path'):
+            fontOrName.info.installedName = self.b.installFont(fontOrName.path)
+            return fontOrName.info.installedName
+        return self.b.installFont(fontOrName)
+
+    def uninstallFont(self, fontOrName):
+        if hasattr(fontOrName, 'path'):
+            fontOrName = fontOrName.path
+        return self.b.uninstallFont(fontOrName)
+
+    def fontContainsCharacters(self, characters):
+        raise NotImplementedError
+
+    def fontContainsGlyph(self, glyphName):
+        raise NotImplementedError
+
+    def fontFilePath(self):
+        raise NotImplementedError
+
+    def listFontGlyphNames(self):
+        raise NotImplementedError
+
+    def fontAscender(self):
+        raise NotImplementedError
+
+    def fontDescender(self):
+        raise NotImplementedError
+
+    def fontXHeight(self):
+        raise NotImplementedError
+
+    def fontCapHeight(self):
+        raise NotImplementedError
+
+    def fontLeading(self):
+        raise NotImplementedError
+
+    def fontLineHeight(self):
+        raise NotImplementedError
+
+    def BezierPath(self, path=None, glyphSet=None):
+        return self.b.BezierPath(path=path, glyphSet=glyphSet)
+
+    def ImageObject(self, path=None):
+        """Answers the ImageObject that knows about image filters. For names
+        and parameters of filters see:
+
+        * http://www.drawbot.com/content/image/imageObject.html
+
+        >>> from pagebot import getResourcesPath
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> context.circle(pt(100), pt(200), pt(50))
-        >>> context.circle(100, 200, 50)
+        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> imo = context.getImageObject(path)
+
         """
-        xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+        return self.b.ImageObject(path=path)
 
-    def roundedRect(self, x, y, w, h, offset=25):
-        raise NotImplementedError
+    def Variable(self, variables, workSpace):
+        """Offers interactive global value manipulation in DrawBot. Can be
+        ignored in most contexts except DrawBot for now.
+        """
+        pass
 
-    def bluntCornerRect(self, x, y, w, h, offset=5):
-        raise NotImplementedError
-
-    #   G L Y P H
+    # Glyphs.
 
     def drawGlyphPath(self, glyph):
         raise NotImplementedError
@@ -272,57 +1004,6 @@ class BaseContext(AbstractDrawBotContext):
 
     def getFlattenedContours(self, path=None):
         raise NotImplementedError
-
-    #   G R A D I E N T  &  S H A D O W
-
-    def setShadow(self, eShadow):
-        """Set the DrawBot graphics state for shadow if all parameters are
-        set."""
-        if eShadow is not None and eShadow.offset is not None:
-            if eShadow.color.isCmyk:
-                self.b.shadow(upt(eShadow.offset), # Convert units to values
-                              blur=upt(eShadow.blur),
-                              color=color(eShadow.color).cmyk)
-            else:
-                self.b.shadow(upt(eShadow.offset),
-                              blur=upt(eShadow.blur),
-                              color=color(eShadow.color).rgb)
-
-    def setGradient(self, gradient, origin, w, h):
-        """Define the gradient call to match the size of element e., Gradient
-        position is from the origin of the page, so we need the current origin
-        of e."""
-        b = self.b
-        start = origin[0] + gradient.start[0] * w, origin[1] + gradient.start[1] * h
-        end = origin[0] + gradient.end[0] * w, origin[1] + gradient.end[1] * h
-
-        if gradient.linear:
-            if (gradient.colors[0]).isCmyk:
-                colors = [color(c).cmyk for c in gradient.colors]
-                b.cmykLinearGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations)
-            else:
-                colors = [color(c).rgb for c in gradient.colors]
-                b.linearGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations)
-        else: # Gradient must be radial.
-            if color(gradient.colors[0]).isCmyk:
-                colors = [color(c).cmyk for c in gradient.colors]
-                b.cmykRadialGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-            else:
-                colors = [color(c).rgb for c in gradient.colors]
-                b.radialGradient(startPoint=upt(start), endPoint=upt(end),
-                    colors=colors, locations=gradient.locations,
-                    startRadius=gradient.startRadius, endRadius=gradient.endRadius)
-
-    # Paths.
-
-    def quadTo(bcp, p):
-        # TODO: Convert to Bezier with 0.6 rule
-        raise NotImplementedError
-
 
     # Export.
 

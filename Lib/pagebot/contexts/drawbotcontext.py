@@ -48,10 +48,6 @@ class DrawBotContext(BaseContext):
     """The DrawBotContext implements the DrawBot functionality within the
     PageBot framework."""
 
-    # In case of specific builder addressing, callers can check here.
-    #isDrawBot = True
-
-    # Used by the generic BaseContext.newString()
     STRING_CLASS = stringClass
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG,
             FILETYPE_GIF, FILETYPE_MOV)
@@ -302,80 +298,6 @@ class DrawBotContext(BaseContext):
         self.scale(s)
         self.drawGlyphPath(glyph)
         self.restore()
-
-    #   C O L O R
-
-    def fill(self, c):
-        """Set the color for global or the color of the formatted string.
-
-        >>> from pagebot.toolbox.color import color
-        >>> context = DrawBotContext()
-        >>> context.fill(color(0.5)) # Same as setFillColor
-        >>> context.fill(color('red'))
-        >>> context.fill(inheritColor)
-        >>> context.fill(noColor)
-        >>> context.fill(0.5)
-        """
-        if c is None:
-            c = noColor
-        elif isinstance(c, (tuple, list, int, float)):
-            c = color(c)
-
-        msg = 'DrawBotContext.fill: %s should be of type Color'
-        assert isinstance(c, Color), (msg % c)
-
-        if c is inheritColor:
-            # Keep color setting as it is.
-            pass
-        elif c is noColor:
-            self.b.fill(None) # Set color to no-color
-        elif c.isCmyk:
-            # DrawBot.fill has slight API differences compared to
-            # FormattedString fill().
-            c, m, y, k = c.cmyk
-            self.b.cmykFill(c, m, y, k, alpha=c.a)
-        else:
-            # DrawBot.fill has slight API differences compared to
-            # FormattedString fill(). Convert to RGB, whatever the color type.
-            r, g, b = c.rgb
-            self.b.fill(r, g, b, alpha=c.a)
-
-    def stroke(self, c, w=None):
-        """Set the color for global or the color of the formatted string.
-
-        >>> from pagebot.toolbox.color import color
-        >>> context = DrawBotContext()
-        >>> context.stroke(color(0.5)) # Same as setStrokeColor
-        >>> context.stroke(color('red'))
-        >>> context.stroke(inheritColor)
-        >>> context.stroke(noColor)
-        >>> context.stroke(0.5)
-        """
-        if c is None:
-            c = noColor
-        elif isinstance(c, (tuple, list, int, float)):
-            c = color(c)
-
-        msg = 'DrawBotContext.stroke: %s should be of type Color'
-        assert isinstance(c, Color), (msg % c)
-
-        if c is inheritColor:
-            # Keep color setting as it is.
-            pass
-        if c is noColor:
-            self.b.stroke(None) # Set color to no-color
-        elif c.isCmyk:
-            # DrawBot.stroke has slight API differences compared to
-            # FormattedString stroke().
-            cc, cm, cy, ck = c.cmyk
-            self.b.cmykStroke(cc, cm, cy, ck, alpha=c.a)
-        else:
-            # DrawBot.stroke has slight API differences compared to
-            # FormattedString stroke(). Convert to RGB, whatever the color type.
-            r, g, b = c.rgb
-            self.b.stroke(r, g, b, alpha=c.a)
-        if w is not None:
-            self.strokeWidth(w)
 
     #   I M A G E
 
