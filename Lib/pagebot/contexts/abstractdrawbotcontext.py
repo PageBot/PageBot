@@ -14,10 +14,6 @@
 #     abstractdrawbot.py
 #
 
-from pagebot.constants import DEFAULT_FRAME_DURATION
-from pagebot.toolbox.units import upt, pt, point2D
-from pagebot.toolbox.color import color
-
 class AbstractDrawBotContext:
     """All contexts should at least contain the same (public) functions DrawBot does.
 
@@ -69,12 +65,8 @@ class AbstractDrawBotContext:
     def save(self):
         raise NotImplementedError
 
-    saveGraphicState = save
-
     def restore(self):
         raise NotImplementedError
-
-    restoreGraphicState = restore
 
     def savedState(self):
         raise NotImplementedError

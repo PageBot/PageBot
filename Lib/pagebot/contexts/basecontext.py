@@ -15,7 +15,7 @@
 #
 
 import os
-from pagebot.constants import DISPLAY_BLOCK
+from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
 from pagebot.toolbox.units import upt, pt, point2D, Angle
 from pagebot.toolbox.color import color, noColor, Color, inheritColor
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
@@ -126,8 +126,12 @@ class BaseContext(AbstractDrawBotContext):
     def save(self):
         self.b.save()
 
+    saveGraphicState = save
+
     def restore(self):
         self.b.restore()
+
+    restoreGraphicState = restore
 
     def savedState(self):
         return self.b.savedState()
