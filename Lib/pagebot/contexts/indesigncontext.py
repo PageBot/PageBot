@@ -44,6 +44,7 @@ class InDesignContext(BaseContext):
         self.b = InDesignBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__
         self._path = None # Hold current open polygon path
+        self.units = Pt.UNIT
 
         self._fill = blackColor
         self._stroke = noColor
@@ -86,7 +87,6 @@ class InDesignContext(BaseContext):
 
     def newDocument(self, w, h):
         """Creates a new document."""
-        self.units = Pt.UNIT
         self.b.newDocument(w, h)
 
     def saveDocument(self, path, multiPage=None):
@@ -128,13 +128,6 @@ class InDesignContext(BaseContext):
         >>> context.newDrawing()
         """
         self.b.newDrawing()
-
-    #   V A R I A B L E
-
-    def Variable(self, variableUI , globalVariables):
-        """Offers interactive global value manipulation in InDesignContext.
-        Probably to be ignored in other contexts."""
-        pass
 
     #   D R A W I N G
 
@@ -194,7 +187,7 @@ class InDesignContext(BaseContext):
         return self._path
     path = property(_get_path)
 
-    def drawPath(self, path=None, p=(0,0), sx=1, sy=None):
+    def drawPath(self, path=None, p=(0, 0), sx=1, sy=None):
         """Draw the path, or equivalent in other contexts. Scaled image is
         drawn on (x, y), in that order."""
         if path is None:
@@ -393,6 +386,7 @@ class InDesignContext(BaseContext):
     save = saveGraphicState
 
     def restoreGraphicState(self):
+        """Restores current graphic state."""
         gState = self._gState.pop()
         self._font = gState['font']
         self._fontSize = gState['fontSize']
@@ -438,9 +432,9 @@ class InDesignContext(BaseContext):
         self.restore()
 
     def drawGlyphPath(self, glyph):
-        """Converts the cubic commands to a drawable path."""
-        """
-        TODO
+        """Converts the cubic commands to a drawable path.
+
+        TODO:
         path = self.newPath()
 
         for command, t in glyph.cubic:
@@ -455,6 +449,7 @@ class InDesignContext(BaseContext):
 
         self.drawPath(path)
         """
+        pass
 
     #   T E X T
 
@@ -543,9 +538,9 @@ class InDesignContext(BaseContext):
 
     strokeWidth = setStrokeWidth
 
-    def rotate(self, angle):
+    def rotate(self, angle, center=None):
         """Rotate the canvas by angle."""
-        self.b.rotate(angle)
+        self.b.rotate(angle, center=center)
 
     #   I M A G E
 

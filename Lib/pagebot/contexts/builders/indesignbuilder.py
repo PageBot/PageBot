@@ -67,22 +67,30 @@ class InDesignBuilder(BaseBuilder):
         self._path = None
         self._hyphenation = False
 
+    def __repr__(self):
+        return '\n'.join(self._jsOut)
+
     def _initialize(self):
         self.comment('Created by PageBot')
 
     #   Chunks of InDesign functions
 
     def newDocument(self, w, h, units='pt'):
-        u"""Create a new document. Store the (w, h) for the moment that pages are created."""
+        """Create a new document. Store the (w, h) for the moment that pages
+        are created."""
         self.w = w
         self.h = h
         self.units = units
-        # Creates a new document without showing the document window.
-        # The first parameter (showingWindow) controls the visibility of the document.
-        # Hidden documents are not minimized, and will not appear until you add a new window to the document.
+
+        # Creates a new document without showing the document window.  The
+        # first parameter (showingWindow) controls the visibility of the
+        # document. Hidden documents are not minimized and will not appear
+        # until you add a new window to the document.
         if self.title:
             self.comment('--- %s ---' % (self.title or 'Untitled'))
+
         self.addJs('var myDocument = app.documents.add(%s);' % str(self.openDocument).lower()) # Make document in background
+
         self.addJs('var myPage;') # Storage of current page
         self.addJs('var myElement;') # Storage of current parent element
         self.addJs('var myTextFrame;') # Storage of current text frame.
@@ -107,14 +115,14 @@ class InDesignBuilder(BaseBuilder):
             self._path = BezierPath(self)
         return self._path
 
-    #   E L E M E N T S
+    # Basic shapes.
 
     def line(self, p1, p2):
         self.addJs('myElement = myPage.paths.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p1[0].v, p1[1].v, p2[0].v, p2[1].v))
 
     def oval(self, x, y, w, h):
-        u"""Export the InDesign bounding box for the Oval."""
+        """Export the InDesign bounding box for the Oval."""
         self.addJs('myElement = myPage.ovals.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
@@ -122,7 +130,6 @@ class InDesignBuilder(BaseBuilder):
         self.addJs('myElement = myPage.rectangles.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
 
-    #   C O L E
     #   J S
 
     def addJs(self, js):
@@ -162,8 +169,8 @@ class InDesignBuilder(BaseBuilder):
             print('[%s.writeCss] Cannot write JS file "%s"' % (self.__class__.__name__, path))
 
     def getInDesignScriptPath(self):
-        u"""Answers the user local script path. For now this assumes one
-        version of InDesign.
+        """Answers the user local script path. For now this assumes one version
+        of InDesign.
 
         TODO: Should be made more generic.
 

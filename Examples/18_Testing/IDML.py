@@ -38,7 +38,7 @@ def testIDML():
     s = etree.tostring(xml, pretty_print=True)
     print(s)
 
-    #with pkg.prefix("main") as f:
+    #with pkg.prefix("main") as co:
 
 def testPDFImport():
     path = getResourcesPath() + "/templates/test.idml"
