@@ -21,9 +21,12 @@ class AbstractDrawBotContext:
     """
 
     def newDrawing(self):
+        """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
 
     def endDrawing(self):
+        """Explicitly tells DrawBot the drawing is done. This is advised when
+        using DrawBot as a standalone module."""
         raise NotImplementedError
 
     # Magic variables.
@@ -130,11 +133,17 @@ class AbstractDrawBotContext:
         raise NotImplementedError
 
     def fill(self, c):
-        # FIXME: signature differs from DrawBot.
+        """
+        FIXME: signature differs from DrawBot.
+        def fill(self, r, g=None, b=None, a=None, alpha=None):
+        """
         raise NotImplementedError
 
     def cmykFill(self, c):
-        # FIXME: signature differs from DrawBot.
+        """
+        FIXME: signature differs from DrawBot.
+        def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
+        """
         raise NotImplementedError
 
     def stroke(self, c, w=None):

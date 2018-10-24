@@ -16,7 +16,6 @@
 #
 
 #import imageio
-from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, upt, point2D
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.contexts.basecontext import BaseContext
@@ -73,39 +72,13 @@ class FlatContext(BaseContext):
         >>> context.doc.__class__.__name__
         'document'
         """
-        # Keep status of last color, to make difference between fill and stroke colors.
+        super().__init__()
         self.name = self.__class__.__name__
-        self._fill = color(0, 0, 0)
-        self._stroke = color(0, 0, 0)
-        self._strokeWidth = 0
-        self._textFill = color(0, 0, 0)
-        self._textStroke = color(0, 0, 0)
-        self._textStrokeWidth = 0
-        self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
-        self._fontSize = DEFAULT_FONT_SIZE
-        self._frameDuration = 0
-        self._ox = pt(0) # Origin set by self.translate()
-        self._oy = pt(0)
-        self._rotationCenter = (0, 0)
-        self._rotate = 0
-        self._hyphenation = True
-        self._language = DEFAULT_LANGUAGE
-
-        self._gState = [] # Stack of graphic states.
-        self.save() # Save current set of values on gState stack.
-
-        # Builder for this canvas, e.g. equivalent of bare drawbot.fill( )
         self.b = flatBuilder
-
-        self.doc = None
-        self.pages = []
-        self.page = None # Current open page
-        self.style = None # Current open style
+        self.save() # Save current set of values on gState stack.
         self.shape = None # Current open shape
         self.flatString = None
         self.fileType = DEFAULT_FILETYPE
-
-        self._path = None # Collect path commnands here before drawing the path.
 
     #   D O C U M E N T
 
@@ -351,6 +324,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
+        >>> from pagebot.paths import DEFAULT_FONT_PATH
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         57
@@ -490,7 +464,7 @@ class FlatContext(BaseContext):
     #   D R A W I N G
 
     def _getShape(self):
-        """Renders Pagebot FlatBuilder shape to Flat shape."""
+        """Renders Pagebot FlatBuilder shape to Flat shape. Flat function."""
         if self._fill is noColor and self._stroke is noColor:
             return None
 
@@ -510,6 +484,9 @@ class FlatContext(BaseContext):
         return shape
 
     def ensure_page(self):
+        """
+        Flat function?
+        """
         if not self.doc:
             self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
         if not self.pages:
@@ -636,15 +613,6 @@ class FlatContext(BaseContext):
         assert isinstance(c, Color), (msg % str(c))
         self._fill = c
 
-    setFillColor = fill # DrawBot compatible API
-
-    def textStroke(self, c, w=None):
-        msg = 'FlatContext.stroke: Color "%s" is not Color instance'
-        assert isinstance(c, Color), (msg % c)
-        self.stroke(c, w)
-
-    setTextStrokeColor = textStroke
-
     def stroke(self, c, w=None):
         u"""Set global stroke color or the color of the formatted string."""
         if c is None:
@@ -660,7 +628,15 @@ class FlatContext(BaseContext):
 
         self.strokeWidth(w)
 
-    setStrokeColor = stroke # DrawBot compatible API
+    def textStroke(self, c, w=None):
+        """
+        Flat function?
+        """
+        msg = 'FlatContext.textStroke: Color "%s" is not Color instance'
+        assert isinstance(c, Color), (msg % c)
+        self.stroke(c, w)
+
+    setTextStrokeColor = textStroke
 
     def strokeWidth(self, w):
         self._strokeWidth = upt(w)
@@ -680,7 +656,10 @@ class FlatContext(BaseContext):
 
     def create_gif(self, filenames, duration):
         """
-        #TODO: Not implement yet.
+        Flat function?
+
+        TODO: Not implement yet.
+
         images = []
         for filename in filenames:
             images.append(imageio.imread(filename))

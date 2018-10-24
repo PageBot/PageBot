@@ -20,13 +20,17 @@ from pagebot.toolbox.units import pt
 
 
 context = InDesignContext()
-path = context.getInDesignScriptPath() + 'text.jsx'
+path = context.getInDesignScriptPath() + 'test.jsx'
 print(path)
-w = 1000
-h = 800
-context.newDocument(w, h)
+W = 1000
+H = 800
+
+# FIXME: synchronize newDocument() and newDrawing() across contexts.
+context.newDocument(W, H)
+context.newPage(w=W, h=H)
 p1 = (100, 100)
 p2 = (200, 200)
-context.line(pt(p1), pt(p2))
+#context.line(pt(p1), pt(p2))
+context.oval(100, 100, 200, 200)
 print(context.b)
 context.saveDocument(path)

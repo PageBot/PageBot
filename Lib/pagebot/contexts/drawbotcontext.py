@@ -63,13 +63,13 @@ class DrawBotContext(BaseContext):
         >>> context.name
         'DrawBotContext'
         """
+        super().__init__()
         # The context builder "cls.b" is drawBot which executes actual drawing
         # calls, similar to function calls in DrawBot scripts.
         self.b = drawBotBuilder #  Builder for this canvas.
         self.name = self.__class__.__name__
         # Holds the extension as soon as the export file path is defined.
         self.fileType = DEFAULT_FILETYPE
-        super().__init__()
 
     #   D O C U M E N T
 

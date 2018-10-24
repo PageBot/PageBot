@@ -14,10 +14,12 @@
 #     basecontext.py
 #
 
+from pagebot.paths import DEFAULT_FONT_PATH
 import os
-from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION)
-from pagebot.toolbox.units import upt, pt, point2D, Angle
-from pagebot.toolbox.color import color, noColor, Color, inheritColor
+from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
+from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
+from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
 
 class BaseContext(AbstractDrawBotContext):
@@ -33,6 +35,27 @@ class BaseContext(AbstractDrawBotContext):
 
     def __init__(self):
         self._path = None # Hold current open DrawBot path.
+        self._fill = blackColor
+        self._stroke = noColor
+        self._strokeWidth = 0
+        self._textFill = blackColor
+        self._textStroke = noColor
+        self._textStrokeWidth = 0
+        self._font = DEFAULT_FONT_PATH
+        self._fontSize = DEFAULT_FONT_SIZE
+        self._frameDuration = 0
+        self._ox = pt(0) # Origin set by self.translate()
+        self._oy = pt(0)
+        self._rotationCenter = (0, 0)
+        self._rotate = 0
+        self._hyphenation = True
+        self._language = DEFAULT_LANGUAGE
+        self._gState = [] # Stack of graphic states.
+        self.doc = None
+        self.pages = []
+        self.page = None # Current open page
+        self.style = None # Current open style
+        self.units = Pt.UNIT
 
     def __repr__(self):
         return '<%s>' % self.name
@@ -190,7 +213,7 @@ class BaseContext(AbstractDrawBotContext):
         """Makes a new Bezierpath to draw in and answers it. This will not
         initialize self._path, which is accessed by the property self.path.
         This method is using the BezierPath as path to draw on. For a more
-        rich environment use PageBotPath(context) instead.
+        rich environment use PageBotPath(context) instead. PageBot function.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -218,6 +241,9 @@ class BaseContext(AbstractDrawBotContext):
         ppt = upt(point2D(p))
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
+    lineTo = moveTo
+
+    '''
     def lineTo(self, p):
         """Line to point p in the running path. Create a new self._path if none
         is open.
@@ -237,6 +263,7 @@ class BaseContext(AbstractDrawBotContext):
         """
         ppt = upt(point2D(p))
         self.path.lineTo(ppt) # Render units point tuple to tuple of values
+    '''
 
     def curveTo(self, bcp1, bcp2, p):
         """Curve to point p i nthe running path. Create a new path if none is
@@ -271,6 +298,7 @@ class BaseContext(AbstractDrawBotContext):
 
     def closePath(self):
         """Closes the current path if it exists, otherwise ignore it.
+        PageBot function.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -291,7 +319,7 @@ class BaseContext(AbstractDrawBotContext):
     def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None,
             stroke=None, strokeWidth=None):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
-        Use self._path if path is omitted.
+        Use self._path if path is omitted. PageBot function.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -425,7 +453,7 @@ class BaseContext(AbstractDrawBotContext):
         elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
 
-        msg = 'DrawBotContext.fill: %s should be of type Color'
+        msg = 'BaseContext.fill: %s should be of type Color'
         assert isinstance(c, Color), (msg % c)
 
         if c is inheritColor:
@@ -463,7 +491,7 @@ class BaseContext(AbstractDrawBotContext):
         elif isinstance(c, (tuple, list, int, float)):
             c = color(c)
 
-        msg = 'DrawBotContext.stroke: %s should be of type Color'
+        msg = 'BaseContext.stroke: %s should be of type Color'
         assert isinstance(c, Color), (msg % c)
 
         if c is inheritColor:
@@ -864,7 +892,9 @@ class BaseContext(AbstractDrawBotContext):
         """
         if isinstance(patterns, str): # In case it is a string, convert to a list
             patterns = [patterns]
+
         fontNames = []
+
         for fontName in self.b.installedFonts():
             if not patterns:
                 fontNames.append(fontName) # If no pattern theun answer all.

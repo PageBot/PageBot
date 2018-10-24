@@ -31,6 +31,7 @@ class IdmlContext(BaseContext):
 
         >>> context = IdmlContext()
         """
+        super().__init__()
         self.b = IdmlBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__
 

@@ -38,10 +38,10 @@ class HtmlContext(BaseContext):
     EXPORT_TYPES = ('html', 'css', 'js')
 
     def __init__(self):
+        super().__init__()
         self.b = HtmlBuilder()
         self.name = self.__class__.__name__
-        self._fill = self._stroke = noColor
-        self._strokeWidth = 0
+        self._fill = noColor
 
     #   T E X T
 

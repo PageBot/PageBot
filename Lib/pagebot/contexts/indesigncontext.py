@@ -41,27 +41,9 @@ class InDesignContext(BaseContext):
 
         >>> context = InDesignContext()
         """
+        super().__init__()
         self.b = InDesignBuilder() # cls.b builder for this canvas.
         self.name = self.__class__.__name__
-        self._path = None # Hold current open polygon path
-        self.units = Pt.UNIT
-
-        self._fill = blackColor
-        self._stroke = noColor
-        self._strokeWidth = 0
-        self._textFill = blackColor
-        self._textStroke = noColor
-        self._textStrokeWidth = 0
-        self._font = DEFAULT_FONT_PATH # Optional setting of the current font and fontSize
-        self._fontSize = DEFAULT_FONT_SIZE
-        self._frameDuration = 0
-        self._ox = 0 # Origin set by self.translate()
-        self._oy = 0
-        self._rotate = 0
-        self._hyphenation = None
-        self._openTypeFeatures = None
-
-        self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
 
     def getInDesignScriptPath(self):
