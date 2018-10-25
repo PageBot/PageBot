@@ -125,10 +125,23 @@ class InDesignBuilder(BaseBuilder):
         """Export the InDesign bounding box for the Oval."""
         self.addJs('myElement = myPage.ovals.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
+        self.addJs('myElement.fillColor = fill')
 
     def rect(self, x, y, w, h):
         self.addJs('myElement = myPage.rectangles.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
+        self.addJs('myElement.fillColor = fill')
+
+    # Colors.
+
+    def fill(self, r, g, b, alpha=None):
+        js = 'var fill = '
+        value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('fill', r, g, b, alpha)
+        js += 'myDocument.colors.add(%s);' % value
+        self.addJs(js)
+
+    def stroke(self, r, g, b, alpha=None):
+        print("%d %d %d %d" % (r, g, b, alpha))
 
     #   J S
 

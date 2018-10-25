@@ -111,7 +111,7 @@ class InDesignContext(BaseContext):
         """
         self.b.newDrawing()
 
-    #   D R A W I N G
+    # Basic shapes.
 
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
@@ -151,6 +151,8 @@ class InDesignContext(BaseContext):
         >>> context.line(mm(100, 100), mm(200, 200))
         """
         self.b.line(p1, p2)
+
+    # Path.
 
     def newPath(self):
         """Make a new InDesign Bezierpath to draw in.
@@ -496,6 +498,7 @@ class InDesignContext(BaseContext):
 
     #   C O L O R
 
+    '''
     def setTextFillColor(self, fs, c):
         assert isinstance(c, Color)
         self._textFill = c
@@ -528,6 +531,7 @@ class InDesignContext(BaseContext):
     def rotate(self, angle, center=None):
         """Rotate the canvas by angle."""
         self.b.rotate(angle, center=center)
+    '''
 
     #   I M A G E
 

@@ -34,6 +34,7 @@ class BaseContext(AbstractDrawBotContext):
     EXPORT_TYPES = None
 
     def __init__(self):
+        print('base init')
         # Hold current open DrawBot path.
         self._path = None
 
@@ -448,7 +449,7 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.blendMode(operation)
 
     def fill(self, c):
-        """Set the color for global or the color of the formatted string.
+        """Sets the global fill color.
 
         >>> from pagebot.toolbox.color import color
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -459,6 +460,7 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.fill(noColor)
         >>> context.fill(0.5)
         """
+        print("base fill")
         if c is None:
             c = noColor
         elif isinstance(c, (tuple, list, int, float)):
