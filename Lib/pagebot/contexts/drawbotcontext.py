@@ -90,7 +90,7 @@ class DrawBotContext(BaseContext):
         self.checkExportPath(path)
         self.b.saveImage(path, multipage=multiPage)
 
-    saveImage = saveDocument # Compatible API with DrawBot
+    saveImage = saveDocument
 
     def getDocument(self):
         """Returns a PDF document of the current state."""

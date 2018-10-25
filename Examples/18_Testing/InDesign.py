@@ -17,20 +17,25 @@
 
 from pagebot.contexts.indesigncontext import InDesignContext
 from pagebot.toolbox.units import pt
-
+from pagebot.toolbox.color import Color
+from pagebot.constants import A4Rounded
 
 context = InDesignContext()
 path = context.getInDesignScriptPath() + 'test.jsx'
 print(path)
-W = 1000
-H = 800
+H, W = A4Rounded
+f = Color(0, 1, 0)
+s = Color(1, 0, 0)
 
 # FIXME: synchronize newDocument() and newDrawing() across contexts.
 context.newDocument(W, H)
 context.newPage(w=W, h=H)
+context.fill(f)
+context.stroke(s)
 p1 = (100, 100)
 p2 = (200, 200)
-#context.line(pt(p1), pt(p2))
+context.line(pt(p1), pt(p2))
 context.oval(100, 100, 200, 200)
+context.rect(pt(10), pt(20), pt(110), pt(120))
 print(context.b)
 context.saveDocument(path)

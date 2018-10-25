@@ -89,7 +89,7 @@ class InDesignContext(BaseContext):
         self.checkExportPath(path)
         self.b.writeJs(path)
 
-    saveImage = saveDocument # Compatible API with InDesign
+    saveImage = saveDocument
 
     def getDocument(self):
         pass
@@ -128,13 +128,18 @@ class InDesignContext(BaseContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> context = InDesignContext()
-        >>> context.oval(0, 0, 100, 100)
+        >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         """
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
         """Circle draws an InDesign oval with (x,y) as middle point and radius
-        r."""
+        r.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> context = InDesignContext()
+        >>> context.circle(pt(100), pt(100), pt(150))
+        """
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):

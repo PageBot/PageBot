@@ -34,7 +34,9 @@ class BaseContext(AbstractDrawBotContext):
     EXPORT_TYPES = None
 
     def __init__(self):
-        self._path = None # Hold current open DrawBot path.
+        # Hold current open DrawBot path.
+        self._path = None
+
         self._fill = blackColor
         self._stroke = noColor
         self._strokeWidth = 0
@@ -44,24 +46,33 @@ class BaseContext(AbstractDrawBotContext):
         self._font = DEFAULT_FONT_PATH
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
-        self._ox = pt(0) # Origin set by self.translate()
+
+        # Origin set by self.translate()
+        self._ox = pt(0)
         self._oy = pt(0)
+
         self._rotationCenter = (0, 0)
         self._rotate = 0
         self._hyphenation = True
         self._language = DEFAULT_LANGUAGE
-        self._gState = [] # Stack of graphic states.
+        self._openTypeFeatures = None # FIXME: what type?
+
+        # Stack of graphic states.
+        self._gState = []
+
         self.doc = None
         self.pages = []
-        self.page = None # Current open page
-        self.style = None # Current open style
+
+        self.page = None
+        self.style = None
         self.units = Pt.UNIT
 
     def __repr__(self):
         return '<%s>' % self.name
 
     def _get_path(self):
-        """Answers the open drawing self._path. Create one if it does not exist.
+        """Answers the open drawing self._path. Creates one if it does not
+        exist.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()

@@ -13,13 +13,13 @@
 #     Contexts.py
 #
 
+import traceback
 from random import random
 from pagebot import getAllContexts, getResourcesPath
 from pagebot.toolbox.color import Color
-import traceback
+from pagebot.constants import A4Rounded
 
-W = 1000
-H = 800
+H, W = A4Rounded
 f = Color(0, 1, 0)
 s = Color(1, 0, 0)
 
@@ -28,9 +28,9 @@ def testContexts():
         testContext(c)
 
 def getRandom():
-    	x = (W-100) * random()
-    	y = (H-100) * random()
-    	return x, y
+    x = (W-100) * random()
+    y = (H-100) * random()
+    return x, y
 
 def testContext(context):
     print(context)
