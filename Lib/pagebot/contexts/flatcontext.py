@@ -21,10 +21,19 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.contexts.flat.math import *
+from pagebot.contexts.toolbox.mathematics import *
 from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
     FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, \
     DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_FILETYPE
+
+def getFlatRGB(c):
+    """Answers the color tuple that is valid for self.fileType, otherwise
+    Flat gives an error.
+
+    TODO: Make better match for all file types, transparency and spot
+    color."""
+    from flat import rgb
+    return rgb(*to255(c.rgb))
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot

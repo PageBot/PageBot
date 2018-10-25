@@ -460,10 +460,11 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.fill(noColor)
         >>> context.fill(0.5)
         """
-        print("base fill")
         if c is None:
             c = noColor
-        elif isinstance(c, (tuple, list, int, float)):
+        elif isinstance(c, (tuple, list)):
+            c = color(*c)
+        elif isinstance(c, (int, float)):
             c = color(c)
 
         msg = 'BaseContext.fill: %s should be of type Color'
@@ -501,7 +502,9 @@ class BaseContext(AbstractDrawBotContext):
         """
         if c is None:
             c = noColor
-        elif isinstance(c, (tuple, list, int, float)):
+        elif isinstance(c, (tuple, list)):
+            c = color(*c)
+        elif isinstance(c, (int, float)):
             c = color(c)
 
         msg = 'BaseContext.stroke: %s should be of type Color'

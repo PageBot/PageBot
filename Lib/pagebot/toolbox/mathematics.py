@@ -18,6 +18,14 @@ import operator
 from pagebot.toolbox.units import point2D
 from functools import reduce
 
+def iround(value):
+    return min(255, max(0, int(round(value*255.0))))
+
+def to255(values):
+    return [round(val * 255) for val in values]
+
+def to100(values):
+    return [round(val * 100) for val in values]
 def lucasRange(a, z, n, minN=None, maxN=None):
     """Answers the range stem widths for interpolation, according to
     Lucas’ formula.

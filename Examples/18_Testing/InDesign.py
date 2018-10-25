@@ -24,8 +24,10 @@ context = InDesignContext()
 path = context.getInDesignScriptPath() + 'test.jsx'
 #print(path)
 H, W = A4Rounded
-f = Color(1, 0, 0)
-s = Color(1, 0, 0)
+
+# CMYK by default?
+f = Color(c=0, m=0, y=1, k=0)
+s = Color(c=0, m=1, y=0, k=0)
 
 # FIXME: synchronize newDocument() and newDrawing() across contexts.
 context.newDocument(W, H)

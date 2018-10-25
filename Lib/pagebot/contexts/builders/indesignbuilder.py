@@ -41,6 +41,7 @@ class InDesignBuilder(BaseBuilder):
     >>> b.getJs(newLine=False).startswith('/* Created by PageBot */')
     True
     >>> b.newPage()
+    # FIXME: should be points (pt())
     >>> b.oval(100, 100, 200, 200) # x, y, w, h
     >>> b.rect(300, 100, 100, 200)
     >>> b.rect(100, 300, 200, 100)
@@ -126,14 +127,15 @@ class InDesignBuilder(BaseBuilder):
         self.addJs('myElement = myPage.ovals.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
         self.addJs('myElement.fillColor = fill')
+        self.addJs('myElement.strokeColor = stroke')
 
     def rect(self, x, y, w, h):
         self.addJs('myElement = myPage.rectangles.add();')
         self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
         self.addJs('myElement.fillColor = fill')
+        self.addJs('myElement.strokeColor = stroke')
 
     # Colors.
-
     def fill(self, r, g, b, alpha=None):
         js = 'var fill = '
         value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('fill', r, g, b, alpha)
@@ -141,7 +143,24 @@ class InDesignBuilder(BaseBuilder):
         self.addJs(js)
 
     def stroke(self, r, g, b, alpha=None):
-        print("%d %d %d %d" % (r, g, b, alpha))
+        js = 'var stroke = '
+        value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('stroke', r, g, b, alpha)
+        js += 'myDocument.colors.add(%s);' % value
+        self.addJs(js)
+
+    def cmykFill(self, c, m, y, k, alpha=None):
+        # TODO: alpha.
+        js = 'var fill = '
+        value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('fill', c, m, y, k)
+        js += 'myDocument.colors.add(%s);' % value
+        self.addJs(js)
+
+    def cmykStroke(self, c, m, y, k, alpha=None):
+        # TODO: alpha.
+        js = 'var stroke = '
+        value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('stroke', c, m, y, k)
+        js += 'myDocument.colors.add(%s);' % value
+        self.addJs(js)
 
     #   J S
 

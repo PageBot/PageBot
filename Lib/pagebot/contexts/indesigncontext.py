@@ -26,7 +26,9 @@ from pagebot.contexts.strings.indesignstring import InDesignString
 from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_SIZE
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import Pt, upt
-from pagebot.toolbox.color import noColor, blackColor, Color
+from pagebot.toolbox.mathematics import *
+from pagebot.toolbox.color import noColor, blackColor, Color, inheritColor
+from pagebot.contexts.flat.math import *
 
 class InDesignContext(BaseContext):
     """The InDesignContext implements the InDesign JS-API within the PageBot
@@ -151,6 +153,84 @@ class InDesignContext(BaseContext):
         >>> context.line(mm(100, 100), mm(200, 200))
         """
         self.b.line(p1, p2)
+
+    # Color.
+
+    def fill(self, color):
+        """Sets the global fill color.
+
+        >>> from pagebot.toolbox.color import color
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.fill(color(0.5)) # Same as setFillColor
+        >>> context.fill(color('red'))
+        >>> context.fill(inheritColor)
+        >>> context.fill(noColor)
+        >>> context.fill(0.5)
+        """
+        if color is None:
+            color = noColor
+        elif isinstance(color, (tuple, list)):
+            color= color(*color)
+        elif isinstance(color, (int, float)):
+            color = color(color)
+
+        msg = 'InDesignContext.fill: %s should be of type Color'
+        assert isinstance(color, Color), (msg % color)
+
+        if color is inheritColor:
+            # Keep color setting as it is.
+            pass
+        elif color is noColor:
+            self.b.fill(None) # Set color to no-color
+        elif color.isCmyk:
+            c, m, y, k = to100(color.cmyk)
+            self.b.cmykFill(c, m, y, k, alpha=color.a)
+        else:
+            r, g, b = to255(color.rgb)
+            self.b.fill(r, g, b, alpha=color.a)
+
+    def stroke(self, color, w=None):
+        """Set the color for global or the color of the formatted string.
+
+        >>> from pagebot.toolbox.color import color
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.stroke(color(0.5)) # Same as setStrokeColor
+        >>> context.stroke(color('red'))
+        >>> context.stroke(inheritColor)
+        >>> context.stroke(noColor)
+        >>> context.stroke(0.5)
+        """
+        if color is None:
+            color = noColor
+        elif isinstance(color, (tuple, list)):
+            color = color(*color)
+        elif isinstance(color, (int, float)):
+            color = color(color)
+
+        msg = 'BaseContext.stroke: %s should be of type Color'
+        assert isinstance(color, Color), (msg % color)
+
+        if color is inheritColor:
+            # Keep color setting as it is.
+            pass
+
+        if color is noColor:
+            self.b.stroke(None) # Set color to no-color
+        elif color.isCmyk:
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke().
+            c, m, y, k = to100(color.cmyk)
+            self.b.cmykStroke(c, m, y, k, alpha=color.a)
+        else:
+            # DrawBot.stroke has slight API differences compared to
+            # FormattedString stroke(). Convert to RGB, whatever the color type.
+            r, g, b = to255(color.rgb)
+            self.b.stroke(r, g, b, alpha=color.a)
+
+        if w is not None:
+            self.strokeWidth(w)
 
     # Path.
 
