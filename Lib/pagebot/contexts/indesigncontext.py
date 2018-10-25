@@ -122,6 +122,7 @@ class InDesignContext(BaseContext):
         >>> context = InDesignContext()
         >>> context.rect(pt(10), pt(20), pt(110), pt(120))
         """
+        #TODO default to points.
         self.b.rect(x, y, w, h)
 
     def oval(self, x, y, w, h):
@@ -132,6 +133,7 @@ class InDesignContext(BaseContext):
         >>> context = InDesignContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         """
+        #TODO default to points.
         self.b.oval(x, y, w, h)
 
     def circle(self, x, y, r):
@@ -142,6 +144,7 @@ class InDesignContext(BaseContext):
         >>> context = InDesignContext()
         >>> context.circle(pt(100), pt(100), pt(150))
         """
+        #TODO default to points.
         self.b.oval(x-r, y-r, r*2, r*2)
 
     def line(self, p1, p2):

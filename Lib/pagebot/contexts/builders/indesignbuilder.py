@@ -94,7 +94,6 @@ class InDesignBuilder(BaseBuilder):
 
         self.addJs('var myPage;') # Storage of current page
         self.addJs('var myElement;') # Storage of current parent element
-        self.addJs('var myTextFrame;') # Storage of current text frame.
         self.comment('-'*60)
         self.addJs('with(myDocument.documentPreferences){')
         self.addJs('    pageWidth = "%s%s";' % (asFormatted(h), self.units))
@@ -107,6 +106,7 @@ class InDesignBuilder(BaseBuilder):
 
     def newPage(self, w=None, h=None):
         self.addJs('myPage = myDocument.pages.add();')
+        self.addJs('var myTextFrames = app.activeDocument.pages.item(0).textFrames;')
 
     def newDrawing(self):
         pass
@@ -119,23 +119,23 @@ class InDesignBuilder(BaseBuilder):
     # Basic shapes.
 
     def line(self, p1, p2):
-        self.addJs('myElement = myPage.paths.add();')
-        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p1[0].v, p1[1].v, p2[0].v, p2[1].v))
+        pass
+        #self.addJs('myElement = myPage.paths.add();')
+        #self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p1[0].v, p1[1].v, p2[0].v, p2[1].v))
 
     def oval(self, x, y, w, h):
         """Export the InDesign bounding box for the Oval."""
-        self.addJs('myElement = myPage.ovals.add();')
-        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
+        self.addJs('myElement = myPage.ovals.add({geometricBounds: ["%s", "%s", "%s", "%s"]});' % (y, x+w, y+h, x))
         self.addJs('myElement.fillColor = fill')
         self.addJs('myElement.strokeColor = stroke')
 
     def rect(self, x, y, w, h):
-        self.addJs('myElement = myPage.rectangles.add();')
-        self.addJs('myElement.geometricBounds = ["%s", "%s", "%s", "%s"];' % (y, x+w, y+h, x))
+        self.addJs('myElement = myPage.rectangles.add({geometricBounds: ["%s", "%s", "%s", "%s"]});' % (y, x+w, y+h, x))
         self.addJs('myElement.fillColor = fill')
         self.addJs('myElement.strokeColor = stroke')
 
     # Colors.
+
     def fill(self, r, g, b, alpha=None):
         js = 'var fill = '
         value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('fill', r, g, b, alpha)
@@ -161,6 +161,24 @@ class InDesignBuilder(BaseBuilder):
         value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('stroke', c, m, y, k)
         js += 'myDocument.colors.add(%s);' % value
         self.addJs(js)
+
+    # Text.
+
+    def text(self, bs, p):
+        """Place the babelstring instance at position p. The position can be
+        any 2D or 3D points tuple. Currently the z-axis is ignored
+        """
+        #msg = 'InDesignString.text: bs not of type %s' % InDesignString.__name__
+        #assert isinstance(bs, InDesignString), msg
+        print(type(bs))
+        self.addJs('var myTextFrame = myTextFrames.add();') # Storage of current text frame.
+        self.addJs('myTextFrame.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p[0], p[1], '200pt', '200pt'))
+        self.addJs('myTextFrame.contents = "%s";' % bs)
+
+        #assert self.page is not None, 'FlatString.text: self.page is not set.'
+        #placedText = self.page.place(bs.s)
+        #xpt, ypt = point2D(upt(p))
+        #placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     #   J S
 
