@@ -420,15 +420,12 @@ class TextBox(Element):
 
         if self.clipPath is None and self.elements: # Use the elements as clip path:
             # If there are child elements, then these are used as layout for the clipping path.
-            clipPath = self.childClipPath
-            #context.save()
-            #clipPath.translate(0, 1000) #px + self.pl, py + self.pb + self.h)
-            #context.restore()
+            clipPath = self.childClipPath # Construct the clip path, so we don't need to restore translate.
+            clipPath.translate(px, py) #px + self.pl, py + self.pb + self.h)
+            context.textBox(self.bs, (px + self.pl, py + self.pb, self.pw, self.ph), clipPath)
         else:
-            # Otherwise the self.clipPath property answers None
-            clipPath = self.clipPath
-        context.textBox(self.bs, (px + self.pl, py + self.pb,
-            self.pw, self.ph), clipPath)
+            # Otherwise the self.clipPath property is undefined, so we can ignore.
+            context.textBox(self.bs, (px + self.pl, py + self.pb, self.pw, self.ph))
 
         if textShadow:
             context.restoreGraphicState()

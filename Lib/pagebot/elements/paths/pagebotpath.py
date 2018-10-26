@@ -24,7 +24,7 @@
 #
 import os
 from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE
-from pagebot.toolbox.units import pt, upt, degrees, point2D, Degrees, Radians
+from pagebot.toolbox.units import units, pt, upt, degrees, point2D, Degrees, Radians
 
 class PageBotContour:
     def __init__(self, context, bezierContour=None):
@@ -405,7 +405,7 @@ class PageBotPath:
         ptx, pty, ptr = upt(x, y, r)
         self.bp.oval(ptx-ptr, pty-ptr, ptr*2, ptr*2)
 
-    def text(self, bs, offset=None, style=None):
+    def text(self, bs, x=None, y=None, style=None):
         """Draws a txt with a font and fontSize at an offset in the bezier path. If a font path is given
         the font will be installed and used directly. Style is normal optional PageBot style dictionary.
         Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
@@ -420,8 +420,11 @@ class PageBotPath:
             bs = bs.s
         elif not isinstance(bs, str):
             bs = str(bs)
-        if offset is not None:
-            offset = upt(point2D(offset))
+        if x is None:
+            x = 0
+        if y is None:
+            y = 0
+        offset = upt(x, y)
         if style is None:
             style = {}
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
@@ -429,7 +432,7 @@ class PageBotPath:
         align = style.get('align')
         self.bp.text(bs, offset=offset, font=font, fontSize=fontSize, align=align)
 
-    def textBox(self, bs, box, style=None):
+    def textBox(self, bs, x=None, y=None, w=None, h=None, clipPath=None, style=None):
         """Draws a txt with a font and fontSize in a box in the bezier path. If a font path is given
         the font will be installed and used directly. Style is normal optional PageBot style dictionary.
         Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
@@ -440,19 +443,35 @@ class PageBotPath:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> path = PageBotPath(context)
-        >>> box = pt(10), pt(10), p(30), p(10)
-        >>> path.textBox('ABC', (10, 10, 400, 400), style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(100)))
+        >>> path.textBox('ABC', x=10, y=10, w=400, h=400, style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(100)))
         """
         if hasattr(bs, 's'):
-            bs = bs.s
-        elif not isinstance(bs, str):
-            bs = str(bs)
-        if isinstance(box, PageBotPath):
-            box = box.bp
-        elif isinstance(box, (list, tuple)):
-            assert len(box) == 4
-            box = upt(box[0]), upt(box[1]), upt(box[2]), upt(box[3])
-        #else: # Otherwise, assume it alread is a DrawBot.BezierPath
+            s = bs.s
+            tx, ty, tw, th = bs.bounds
+        else:
+            s = str(bs)
+            tx, ty, tw, th = 0, 0, 100, 100
+
+        if clipPath is None:
+            if x is None or x < 0:
+                x = 0
+            if y is None or y < 0:
+                y = 0
+            if w is None:
+                w = tw - tx
+                # TODO: condider to re-render the line to see if there is wrapping from w.
+                #if hasattr(bs, 's'):
+                #    h = bs.getSize(w=w)[1]
+                #else: 
+                #    h = 100
+            if h is None:
+                h = th - ty
+            clipPathOrBox = x, y, w, h
+        else: # Otherwise take size from the string
+            if isinstance(clipPath, PageBotPath):
+                clipPathOrBox = clipPath.bp # It can be another clippath
+            else:  # Otherwise, assume it alread is a DrawBot.BezierPath or None
+                clipPathOrBox = clipPath
 
         if style is None:
             style = {}
@@ -460,24 +479,7 @@ class PageBotPath:
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         align = style.get('align') # Can be None for default LEFT
         hyphenation = style.get('hyphenation', False)
-        self.bp.textBox(bs, box, font=font, fontSize=fontSize, align=align, hyphenation=hyphenation)
-
-    def pointInside(self, p):
-        """Check if a point x, y is inside a path.
-
-        >>> from pagebot.toolbox.units import p
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = PageBotPath(context)
-        >>> path.rect(0, 0, 100, 100)
-        >>> p = pt(50, 50)
-        >>> path.pointInside(p)
-        True
-        >>> p = pt(500, 500)
-        >>> path.pointInside(p)
-        False
-        """
-        return self.bp.pointInside(upt(p))
+        self.bp.textBox(s, clipPathOrBox, font=font, fontSize=fontSize, align=align, hyphenation=hyphenation)
 
     def traceImage(self, imagePath, threshold=0.2, blur=None, invert=False, turd=2, tolerance=0.2, offset=None):
         """Convert a given image to a vector outline.

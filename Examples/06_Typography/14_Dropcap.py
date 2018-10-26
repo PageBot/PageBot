@@ -53,31 +53,33 @@ page = doc[1]
 # of the clipping path. Here is it shown as separate steps.
 
 # Make main text, skipping the first character
-style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3)
+style = dict(font=font, fontSize=24, leading=em(1.4))
 bs1 = context.newString(text[1:] + text * 10, style=style)
 
 # Make the BabelString of the dropcap, taking the first character of t.
-dropCapStyle = dict(font='Georgia', fontSize=pt(200), textFill=(1, 0, 0))
-bs2 = context.newString(text[0], style=dropCapStyle)
+dropCapStyle = dict(font='Georgia', fontSize=pt(100))
+bs2 = context.newString(text[0:15], style=dropCapStyle)
 
 # Create a new BezierPath object, that contains a rectangle with the size of the text box.
-bpo1 = context.newPath()
-bpo1.text(bs2.s)
-minX, minY, maxX, maxY = path1.bounds() # Get the bounds of the dropcap pixels
+dropCapPath = PageBotPath(context)
+dropCapPath.text(bs2.s) # Place the initial letter as drop cap. Path size is calculated around the result.
+#dropCapPath.rect(0, 0, 200, 200)
+minX, minY, maxX, maxY = dropCapPath.bounds() # Get the bounds of the dropcap pixels
 dcw = maxX - minX
 dch = maxY - minY
-#path1.rect(page.pl, page.pb, page.pw, page.ph)
 
-# Create another path with the size amd position of the dropcap reserved space.
+# Create another path with the size and position of the dropcap reserved space.
 # Normally this would come from the position of a child element inside the main textbox.
-path2 = context.newPath()
-M = 16
-path2.rect(page.pl, page.pb+page.ph+dcy-dch-M, dcw-dcx+2*M, dch-dcy+2*M)
-path = path1.difference(path2)
-newTextBox(bs1, parent=page, yAlign=TOP, showFrame=True, conditions=[Fit()], clipPath=path)
+# Note that the core context.newPath() answers a DrawBot.BezierPath, which is contained
+# by a PageBothPath() instance.
+textFramePath = PageBotPath(context)
+textFramePath.rect(0, 0, page.pw, page.ph) # Make a rectangle path with size of text box.
+textFlowPath = textFramePath.difference(dropCapPath) # Make a new path for the available text flow
+newTextBox(bs1, parent=page, yAlign=TOP, showFrame=True, conditions=[Fit()], clipPath=textFlowPath)
 
-newImage(bs2, parent=page, conditions=(Left2Left(), Top2TopSide()), w=dcw+2, h=dch*2+M)
-
+newPaths(textFlowPath, parent=page, fill=(0, 1, 0, 0.2), conditions=(Left2Left(), Top2Top()))
+zz = newPaths(dropCapPath, parent=page, w=400, stroke=(1, 0, 0), conditions=(Left2Left(), Top2Top()))
+print('ZZZZZ', zz.pathsW, zz.pathsH, zz.w, zz.h, zz.scaleX, zz.scaleY)
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

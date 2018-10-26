@@ -72,11 +72,22 @@ class Paths(Element):
         if paths is None:
             paths = []
         elif not isinstance(paths, (tuple, list)):
-            paths = [paths] # Create an ordered list of PageBotPaths
+            paths = [paths] # Create an ordered list of PageBotPath instances
         self.paths = paths
         for path in paths:
             assert isinstance(path, self.PATH_CLASS)
         Element.__init__(self, **kwargs)
+
+    def _get_pathsW(self):
+        """Read only property that answers the cumulated total width of all paths."""
+        minX = 0 # At least cover the origin of the element, or smaller. 
+        maxX = 0
+        for path in self.paths:
+            bounds = path.bounds()
+            minX = min(minX, bounds[0])
+            maxX = max(maxX, bounds[2])
+        return max(0, maxX - minX)
+    pathsW = property(_get_pathsW)
 
     def _get_w(self):
         """Get the cumulated width of the bounding box of all paths combined.
@@ -91,19 +102,24 @@ class Paths(Element):
         >>> e.w
         400.0
         """
-        minX = 0 # At least cover the origin of the element, or smaller. 
-        maxX = 0
-        for path in self.paths:
-            bounds = path.bounds()
-            minX = min(minX, bounds[0])
-            maxX = max(maxX, bounds[2])
-        return max(0, maxX - minX) * self.scaleX
+        return self.pathsW * self.scaleX
     def _set_w(self, w):
         """Set the scale accordingly, as the width of the cumulated paths is fixed."""
-        bpw = self.w
+        bpw = self.pathsW
         if w and bpw:
-            self.scaleX = self.scaleY = w/self.w # Default is proportional scaling
+            self.scaleX = self.scaleY = w/bpw # Default is proportional scaling
     w = property(_get_w, _set_w)
+
+    def _get_pathsH(self):
+        """Read only property that answers the cumulated total height of all paths."""
+        minY = 0 # At least cover the origin of the element, or smaller. 
+        maxY = 0
+        for path in self.paths:
+            bounds = path.bounds()
+            minY = min(minY, bounds[1])
+            maxY = max(maxY, bounds[3])
+        return max(0, maxY - minY)
+    pathsH = property(_get_pathsH)
 
     def _get_h(self):
         """Get the cumulated height of the bounding box of all paths combined.
@@ -118,22 +134,18 @@ class Paths(Element):
         >>> e.h
         700.0
         """
-        maxY = minY = 0
-        for path in self.paths:
-            bounds = path.bounds()
-            minY = min(minY, bounds[1])
-            maxY = max(maxY, bounds[3])
-        return max(0, maxY - minY) * self.scaleY
+        return self.pathsH * self.scaleY
     def _set_h(self, h):
         """Set the scale accordingly, as the width of the cumulated paths is fixed."""
-        bph = self.h
+        bph = self.pathsH
         if h and bph:
-            self.scaleX = self.scaleY = h/self.h # Default is proportional scaling
+            self.scaleX = self.scaleY = h/bph # Default is proportional scaling
     h = property(_get_h, _set_h)
 
     def build(self, view, origin, drawElements=True):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
+
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

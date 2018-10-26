@@ -374,6 +374,8 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.drawPath(path, p=(200, 0))
         >>> context.saveImage('_export/DrawBotContext2.pdf')
         """
+        print('fsdsfdfsdfsd', sx, sy)
+
         if path is None:
             path = self.path
         if hasattr(path, 'bp'): # If it's a PageBotPath, get the core BezierPath
@@ -774,7 +776,7 @@ class BaseContext(AbstractDrawBotContext):
         if not isinstance(sOrBs, str):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
         if clipPath is not None:
-            self.b.textBox(sOrBs, clipPath) # Render rectangle units to value tuple
+            self.b.textBox(sOrBs, clipPath.bp) # Render rectangle units to value tuple
         elif r is not None:
             xpt, ypt, wpt, hpt = upt(r)
             # Render rectangle units to value tuple
