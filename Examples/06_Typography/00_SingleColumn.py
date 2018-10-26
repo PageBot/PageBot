@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     000_SingleColumn.py
+#     00_SingleColumn.py
 #
 #     Draw one column that fills the entire usable space of the page (self.pw, self.ph)
 #     by applying the layout condition Fit() with doc.solve()
