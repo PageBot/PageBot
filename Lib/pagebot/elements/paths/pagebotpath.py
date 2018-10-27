@@ -549,6 +549,36 @@ class PageBotPath:
         return self.bounds()
     box = property(_get_box)
 
+    def _get_w(self):
+        """Return the width of the path.
+
+        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.rect(20, 30, 110, 120)
+        >>> path.w
+        110.0
+        """
+        x, _, w, _ = self.box
+        return w - x
+    w = property(_get_w)
+
+    def _get_h(self):
+        """Return the height the path.
+
+        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.rect(20, 30, 110, 120)
+        >>> path.h
+        120.0
+        """
+        _, y, _, h = self.box
+        return h - y
+    h = property(_get_h)
+
     def controlPointBounds(self):
         """Return the bounding box of the path including the offcurve points.
 
@@ -629,6 +659,7 @@ class PageBotPath:
         [(20.0, 30.0), (220.0, 30.0), (220.0, 230.0), (20.0, 230.0), (20.0, 30.0)]
         """
         ptx, pty = upt(point2D(p))
+        print('3333333', p)
         self.bp.translate(ptx, pty)
 
     moveBy = translate

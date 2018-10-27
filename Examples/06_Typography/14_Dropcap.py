@@ -57,16 +57,17 @@ style = dict(font=font, fontSize=24, leading=em(1.4))
 bs1 = context.newString(text[1:] + text * 10, style=style)
 
 # Make the BabelString of the dropcap, taking the first character of t.
-dropCapStyle = dict(font='Georgia', fontSize=pt(100))
-bs2 = context.newString(text[0:15], style=dropCapStyle)
+dropCapStyle = dict(font='Georgia', fontSize=pt(400))
 
 # Create a new BezierPath object, that contains a rectangle with the size of the text box.
 dropCapPath = PageBotPath(context)
-dropCapPath.text(bs2.s) # Place the initial letter as drop cap. Path size is calculated around the result.
-#dropCapPath.rect(0, 0, 200, 200)
+dropCapPath.text(text[0], style=dropCapStyle) # Place the initial letter as drop cap. Path size is calculated around the result.
 minX, minY, maxX, maxY = dropCapPath.bounds() # Get the bounds of the dropcap pixels
 dcw = maxX - minX
 dch = maxY - minY
+dropCapPathFrame = PageBotPath(context)
+dropCapPathFrame.rect(0, 0, maxX, maxY)
+dropCapPathFrame.moveBy((0, page.ph - dch))
 
 # Create another path with the size and position of the dropcap reserved space.
 # Normally this would come from the position of a child element inside the main textbox.
@@ -74,12 +75,12 @@ dch = maxY - minY
 # by a PageBothPath() instance.
 textFramePath = PageBotPath(context)
 textFramePath.rect(0, 0, page.pw, page.ph) # Make a rectangle path with size of text box.
-textFlowPath = textFramePath.difference(dropCapPath) # Make a new path for the available text flow
+textFlowPath = textFramePath.difference(dropCapPathFrame) # Make a new path for the available text flow
 newTextBox(bs1, parent=page, yAlign=TOP, showFrame=True, conditions=[Fit()], clipPath=textFlowPath)
 
-newPaths(textFlowPath, parent=page, fill=(0, 1, 0, 0.2), conditions=(Left2Left(), Top2Top()))
-zz = newPaths(dropCapPath, parent=page, w=400, stroke=(1, 0, 0), conditions=(Left2Left(), Top2Top()))
-print('ZZZZZ', zz.pathsW, zz.pathsH, zz.w, zz.h, zz.scaleX, zz.scaleY)
+newPaths(textFlowPath, parent=page, fill=(0, 0, 0.5, 0.2), conditions=(Left2Left(), Top2Top()))
+newPaths(dropCapPath, parent=page, stroke=(1, 0, 0), conditions=(Left2Left(), Top2Top()))
+
 # Solve the page/element conditions
 doc.solve()
 # Export the document to this PDF file.

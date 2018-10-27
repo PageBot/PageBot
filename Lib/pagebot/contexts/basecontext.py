@@ -34,7 +34,7 @@ class BaseContext(AbstractDrawBotContext):
     EXPORT_TYPES = None
 
     def __init__(self):
-        print('base init')
+        #print('base init')
         # Hold current open DrawBot path.
         self._path = None
 
@@ -374,8 +374,6 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.drawPath(path, p=(200, 0))
         >>> context.saveImage('_export/DrawBotContext2.pdf')
         """
-        print('fsdsfdfsdfsd', sx, sy)
-
         if path is None:
             path = self.path
         if hasattr(path, 'bp'): # If it's a PageBotPath, get the core BezierPath
@@ -439,7 +437,7 @@ class BaseContext(AbstractDrawBotContext):
         # What's difference with qCurveTo()?
         return self.b.quadTo(bcp, p)
 
-    # Color.
+    # Color
 
     def colorSpace(self, colorSpace):
         return self.b.colorSpace(colorSpace)
@@ -762,7 +760,7 @@ class BaseContext(AbstractDrawBotContext):
     def textOverflow(self, txt, box, align=None):
         return self.b.textOverflow(txt, box, align=align)
 
-    def textBox(self, sOrBs, r=None, clipPath=None):
+    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draw the sOrBs text string, can be a str or BabelString, including a
         DrawBot FormattedString in rectangle r.
 
@@ -773,14 +771,20 @@ class BaseContext(AbstractDrawBotContext):
         >>> context = DrawBotContext()
         >>> context.textBox('ABC', (10, 10, 200, 200))
         """
-        if not isinstance(sOrBs, str):
+        if hasattr(sOrBs, 's'):
             sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        else:
+            sOrBs = str(sOrBs) # Otherwise convert to string if it is not already
+
         if clipPath is not None:
+            box = clipPath.bp
             self.b.textBox(sOrBs, clipPath.bp) # Render rectangle units to value tuple
-        elif r is not None:
-            xpt, ypt, wpt, hpt = upt(r)
+        elif isinstance(r, (tuple, list)):
             # Render rectangle units to value tuple
-            self.b.textBox(sOrBs, (xpt, ypt, wpt, hpt))
+            box = upt(r)
+        else:
+            raise ValueError('%s.textBox has no box or clipPath defined' % self.__class__.__name__)
+        self.b.textBox(sOrBs, box, align=None)
 
     def textBoxBaselines(self, txt, box, align=None):
         return self.b.textBoxBaselines(txt, box, align=align)
