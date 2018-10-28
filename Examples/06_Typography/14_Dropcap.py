@@ -59,7 +59,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4))
 bs1 = context.newString(text[1:] + text * 10, style=style)
 
 # Make the BabelString of the dropcap, taking the first character of t.
-dropCapStyle = dict(font='Georgia', fontSize=pt(300))
+dropCapStyle = dict(font='Georgia-Bold', fontSize=pt(250))
 
 PADDING = pt(12)
 

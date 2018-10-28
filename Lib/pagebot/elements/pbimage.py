@@ -307,7 +307,8 @@ class Image(Element):
             context.scale(sx, sy)
 
             # If there is a clipRect defined, create the bezier path
-            if self.clipRect is not None:
+            """
+            if self.clipPath is not None:
                 clipRect = context.newPath()
                 clX, clY, clW, clH = upt(self.clipRect)
                 sclX = clX/sx
@@ -330,7 +331,7 @@ class Image(Element):
             elif self.clipPath is not None:
                 #Otherwise if there is a clipPath, then use it.
                 b.clipPath(self.clipPath)
-
+            """
             if self.imo is not None:
                 with self.imo:
                     b.image(self.path, (0, 0), pn=1, alpha=self._getAlpha())
