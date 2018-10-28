@@ -42,7 +42,7 @@ CUBIC_CONTROLPOINT_SIZE = R / 2
 context = getContext()
 
 class Point:
-
+    # FIX: See more generic implentation in PageBotPath
     def __init__(self, x, y, onCurve=True, smooth=False, start=False):
         self.x = x
         self.y = y

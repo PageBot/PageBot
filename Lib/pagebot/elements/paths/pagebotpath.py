@@ -26,6 +26,16 @@ import os
 from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import units, pt, upt, degrees, point2D, Degrees, Radians
 
+
+class PageBotPoint:
+    def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None):
+        # http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
+        self.x = x
+        self.y = y
+        self.segmentType = segmentType
+        self.smooth = smooth
+        self.start = start
+
 class PageBotContour:
     def __init__(self, context, bezierContour=None):
         self.context = context
@@ -53,10 +63,13 @@ class PageBotPath:
         if bezierPath is None:
             bezierPath = context.newPath()
         assert not isinstance(bezierPath, PageBotPath)
+        # Optional fill, stroke and strokeWidth options, hard-coding the drawing.
+        # Otherwise take the fill/stroke settings already defined in the context.
         if style is None:
-            style = {} # Make sure that there is an empty style dictionary
-        self.style = style # Optional fill & stroke options, hard-coding the drawing.
+            style = {} # Make sure that there is at least an empty style dictionary
+        self.style = style 
         self.bp = bezierPath
+        self.isOpenPath = False # self.beginPath() sets to True. self.endPath() sets to False.
 
     def __len__(self):
         return len(self.bp.points)
@@ -64,8 +77,99 @@ class PageBotPath:
     def __repr__(self):
         return '<%s %d>' % (self.__class__.__name__, len(self.bp or []))
 
-    def closePath(self, path=None):
-        """Close the current open path. Create the self._path if is does not exitt.
+    #   Path as pen drawing
+
+    def beginPath(self, identifier=None):
+        """Start a new path/polyhon in self.path. Set the self.isOpenPath flag to True
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.beginPath('MyPath')
+        >>> len(path)
+        0
+        >>> path.isOpenPath
+        True
+        """
+        assert not self.isOpenPath, ('%s.beginPath: Pen path is already open' % self.__class__.__name__)
+        self.isOpenPath = True
+        self.bp.beginPath(identifier)
+
+    def addPoints(self, *args, **kwargs):
+        """Add one or multiple points to the current self.path. Create the path if it does not exist.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> len(path)
+        0
+        >>> path.isOpenPath
+        False
+        >>> path.beginPath()
+        >>> path.addPoints((0, 0), (100, 100), (200, 200))
+        >>> path.isOpenPath # Set by self.
+        True
+        >>> path.endPath()
+        >>> path.isOpenPath
+        False
+        """
+        assert self.isOpenPath, ('%s.addPoints: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
+        for point in args:
+            self.addPoint(point, **kwargs)
+
+    def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
+        assert isinstance(point, (list, tuple, PageBotPoint)), ('%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__)
+        if isinstance(point, (list, tuple)):
+            px, py = upt(point2D(point))
+        else:  
+            px = point.x
+            py = point.y
+            segmentType = segmentType or point.segmentType
+            smooth = smooth or point.smooth
+            identifier = identifier or point.identifier
+        self.bp.addPoint((px, py), segmentType=segmentType, smooth=smooth, name=name, identifier=identifier, **kwargs)
+
+    def endPath(self):
+        """End the path, if it is open.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.beginPath('MyPath')
+        >>> len(path)
+        0
+        >>> path.isOpenPath
+        True
+        >>> path.endPath()
+        >>> path.isOpenPath
+        False
+        """
+        assert self.isOpenPath, ('%s.endPath: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
+        self.isOpenPath = False
+        self.bp.endPath()
+
+    #   P A T H  M E T H O D S
+
+    def moveTo(self, p):
+        """Move the path to point p.
+
+        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> point = pt(100), p(5) # Mixing different unit types
+        >>> path.moveTo(point)
+        >>> point = 100, 50 # Plain values are interpreted as pt
+        >>> path.lineTo(point)
+        >>> path.points
+        [(100.0, 60.0), (100.0, 50.0)]
+        """
+        self.isOpenLine = True
+        ptp = upt(point2D(p))
+        self.bp.moveTo(ptp)
+
+    def closePath(self):
+        """Close the current open path. 
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -75,37 +179,92 @@ class PageBotPath:
         >>> path.lineTo((100, 100))
         >>> path.lineTo((100, 0))
         >>> path.lineTo((0, 0))
+        >>> path.isOpenLine
+        True
         >>> path.closePath()
+        >>> path.isOpenLine
+        False
         """
+        self.isOpenLine = False
         self.bp.closePath()
 
-    def beginPath(self, identifier=None):
-        """Start a new path/polyhon in self.path.
+    def lineTo(self, p):
+        """Move the path to point p.
 
+        >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> path = PageBotPath(context)
-        >>> path.beginPath('MyPath')
-        >>> len(path)
-        0
+        >>> p = pt(100), mm(50) # Mixing different unit types
+        >>> path.moveTo(p)
+        >>> p = 100, 50 # Plain values are interpreted as pt
+        >>> path.lineTo(p)
+        >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        return self.bp.beginPath(identifier)
+        ptp = upt(point2D(p))
+        self.bp.lineTo(ptp)
 
-    def addPoint(self, *args, **kwargs):
-        """Add one or multiple points to the current self.path. Create the path if it does not exist.
+    def curveTo(self, bcp1, bcp2, p):
+        """Curve to point p i nthe running path. Create a new path if none is
+        open.
 
+        >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> path = context.newPath()
-        >>> #path.addPoint((0, 0), (100, 100), (200, 200))
-        >>> len(path)
-        0
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
         """
-        points = []
-        for point in args:
-            px, py = upt(point2D(point))
-            points.append((upt(px), upt(py)))
-        return self.bp.addPoint(*points, **kwargs)
+        assert self.isOpenPath, ('%s.curveTo: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
+        b1pt = point2D(upt(bcp1))
+        b2pt = point2D(upt(bcp2))
+        ppt = point2D(upt(p))
+        self.bp.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+
+    def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
+        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is
+        True and counter clockwise if clockwise is False.
+
+        >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.beginPath()
+        >>> path.arc(center=(pt(100), mm(50)), radius=pt(30))
+        >>> path.endPath()
+        """
+        if center is None:
+            center = ORIGIN
+        ptCenter = upt(point2D(center))
+        ptRradius = upt(radius or DEFAULT_WIDTH/2)
+        dgStartAngle = degrees(startAngle or 0)
+        dgEndAngle = degrees(endAngle or 90)
+        self.bp.arc(center=ptCenter, radius=ptRradius, startAngle=dgStartAngle.degrees,
+            endAngle=dgEndAngle.degrees, clockwise=clockwise)
+
+    def arcTo(self, pt1, pt2, radius):
+        """Arc from one point to an other point with a given radius.
+
+        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> path = PageBotPath(context)
+        >>> path.moveTo((0, 0))
+        >>> p1 = pt(100), p(6)
+        >>> p2 = p(10), pt(200)
+        >>> r = pt(300)
+        >>> path.arcTo(p1, p2, r)
+        >>> path.closePath()
+        """
+        pt1 = upt(point2D(pt1))
+        pt2 = upt(point2D(pt2))
+        ptRadius = upt(radius or DEFAULT_WIDTH/2)
+        self.bp.arcTo(pt1, pt2, ptRadius)
+
+    #   Pen drawing
 
     def drawToPen(self, pen):
         """Draw the content of the current path onto the pen.
@@ -160,6 +319,7 @@ class PageBotPath:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> path = PageBotPath(context)
+        >>> path.beginPath()
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> path.lineTo((200, 200))
@@ -186,6 +346,7 @@ class PageBotPath:
         >>> path = PageBotPath(context)
         >>> len(path.points)
         0
+        >>> path.beginPath()
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> path.points
@@ -275,95 +436,9 @@ class PageBotPath:
         return total > 0
     clockWise = property(_get_clockWise)
 
-    #   P A T H  M E T H O D S
 
-    def moveTo(self, p):
-        """Move the path to point p.
-
-        >>> from pagebot.toolbox.units import p
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = PageBotPath(context)
-        >>> point = pt(100), p(5) # Mixing different unit types
-        >>> path.moveTo(point)
-        >>> point = 100, 50 # Plain values are interpreted as pt
-        >>> path.lineTo(point)
-        >>> path.points
-        [(100.0, 60.0), (100.0, 50.0)]
-        """
-        ptp = upt(point2D(p))
-        self.bp.moveTo(ptp)
-
-    def lineTo(self, p):
-        """Move the path to point p.
-
-        >>> from pagebot.toolbox.units import mm
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = PageBotPath(context)
-        >>> p = pt(100), mm(50) # Mixing different unit types
-        >>> path.moveTo(p)
-        >>> p = 100, 50 # Plain values are interpreted as pt
-        >>> path.lineTo(p)
-        """
-        ptp = upt(point2D(p))
-        self.bp.lineTo(ptp)
-
-    def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p i nthe running path. Create a new path if none is
-        open.
-
-        >>> from pagebot.toolbox.units import mm
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        """
-        b1pt = point2D(upt(bcp1))
-        b2pt = point2D(upt(bcp2))
-        ppt = point2D(upt(p))
-        self.bp.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
-
-    def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
-        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is
-        True and counter clockwise if clockwise is False.
-
-        >>> from pagebot.toolbox.units import mm
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = PageBotPath(context)
-        >>> path.arc(center=(pt(100), mm(50)), radius=pt(30))
-        """
-        if center is None:
-            center = ORIGIN
-        ptCenter = upt(point2D(center))
-        ptRradius = upt(radius or DEFAULT_WIDTH/2)
-        dgStartAngle = degrees(startAngle or 0)
-        dgEndAngle = degrees(endAngle or 90)
-        self.bp.arc(center=ptCenter, radius=ptRradius, startAngle=dgStartAngle.degrees,
-            endAngle=dgEndAngle.degrees, clockwise=clockwise)
-
-    def arcTo(self, pt1, pt2, radius):
-        """Arc from one point to an other point with a given radius.
-
-        >>> from pagebot.toolbox.units import p
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> path = PageBotPath(context)
-        >>> path.moveTo((0, 0))
-        >>> p1 = pt(100), p(6)
-        >>> p2 = p(10), pt(200)
-        >>> r = pt(300)
-        >>> path.arcTo(p1, p2, r)
-        """
-        pt1 = upt(point2D(pt1))
-        pt2 = upt(point2D(pt2))
-        ptRadius = upt(radius or DEFAULT_WIDTH/2)
-        self.bp.arcTo(pt1, pt2, ptRadius)
-
+    #   Object drawing
+    
     def rect(self, x, y, w, h):
         """Add a rectangle at position x, y with a size of w, h.
 
@@ -659,7 +734,6 @@ class PageBotPath:
         [(20.0, 30.0), (220.0, 30.0), (220.0, 230.0), (20.0, 230.0), (20.0, 30.0)]
         """
         ptx, pty = upt(point2D(p))
-        print('3333333', p)
         self.bp.translate(ptx, pty)
 
     moveBy = translate
