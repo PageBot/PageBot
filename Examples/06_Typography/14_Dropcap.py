@@ -10,14 +10,16 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     00_Dropcap.py
+#     14_Dropcap.py
 #
 #     Draw one column that fills the entire usable space of the page,
 #     add a positioned element, containing a dropcap and fill the rest
 #     of the column as path, constructed from the position of the
 #     child elements in the textbox element.
 #     The usable area of the page is defined by the remainder of page.padding.
-
+#
+#     TODO: This example needs to be more generalized, hiding most of the code.
+#
 from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
