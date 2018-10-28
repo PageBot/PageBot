@@ -57,7 +57,9 @@ style = dict(font=font, fontSize=24, leading=em(1.4))
 bs1 = context.newString(text[1:] + text * 10, style=style)
 
 # Make the BabelString of the dropcap, taking the first character of t.
-dropCapStyle = dict(font='Georgia', fontSize=pt(400))
+dropCapStyle = dict(font='Georgia', fontSize=pt(300))
+
+PADDING = pt(12)
 
 # Create a new BezierPath object, that contains a rectangle with the size of the text box.
 dropCapPath = PageBotPath(context)
@@ -66,8 +68,8 @@ minX, minY, maxX, maxY = dropCapPath.bounds() # Get the bounds of the dropcap pi
 dcw = maxX - minX
 dch = maxY - minY
 dropCapPathFrame = PageBotPath(context)
-dropCapPathFrame.rect(0, 0, maxX, maxY)
-dropCapPathFrame.moveBy((0, page.ph - dch))
+dropCapPathFrame.rect(0, 0, maxX+PADDING, maxY+PADDING)
+dropCapPathFrame.moveBy((0, page.ph - dch - PADDING))
 
 # Create another path with the size and position of the dropcap reserved space.
 # Normally this would come from the position of a child element inside the main textbox.
@@ -75,11 +77,12 @@ dropCapPathFrame.moveBy((0, page.ph - dch))
 # by a PageBothPath() instance.
 textFramePath = PageBotPath(context)
 textFramePath.rect(0, 0, page.pw, page.ph) # Make a rectangle path with size of text box.
-textFlowPath = textFramePath.difference(dropCapPathFrame) # Make a new path for the available text flow
+# Make a new path for the available text flow, which is the difference between the paths
+textFlowPath = textFramePath.difference(dropCapPathFrame) 
 newTextBox(bs1, parent=page, yAlign=TOP, showFrame=True, conditions=[Fit()], clipPath=textFlowPath)
 
-newPaths(textFlowPath, parent=page, fill=(0, 0, 0.5, 0.2), conditions=(Left2Left(), Top2Top()))
-newPaths(dropCapPath, parent=page, stroke=(1, 0, 0), conditions=(Left2Left(), Top2Top()))
+newPaths(textFlowPath, parent=page, conditions=(Left2Left(), Top2Top()))
+newPaths(dropCapPath, parent=page, mr=PADDING, mb=PADDING, fill=(1, 0, 0), conditions=(Left2Left(), Top2Top()))
 
 # Solve the page/element conditions
 doc.solve()

@@ -152,7 +152,8 @@ class Paths(Element):
 
         self._applyRotation(view, p)
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        # No automatic frame drawing on Paths elements
+        #self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing background here.

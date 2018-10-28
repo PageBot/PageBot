@@ -28,6 +28,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            DEFAULT_COLOR_BARS)
 
 from pagebot import getContext
+from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
 from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
@@ -51,6 +52,7 @@ class Element:
 
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow
+    PATH_CLASS = PageBotPath
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None,
@@ -234,7 +236,9 @@ class Element:
 
         # Optional storage of self.context.BezierPath() to clip the content of self.
         # Also note the possibility of the self.childClipPath property, which returns a 
-        # self.context.BezierPath() constructed from the position and layout of self.elements 
+        # PageBotPaht instance, constructed from the position and layout of self.elements 
+        if clipPath is not None:
+            clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
         self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
 
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
@@ -807,13 +811,14 @@ class Element:
         >>> score = e.solve()
         >>> e.childClipPath.points
         [(100.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0)]
+        >>> e.childClipPath.__class__.__name__
+        'PageBotPath'
         """
-        context = self.context
-        path = context.newPath()
-        path.rect(0, 0, self.w, self.h)
+        path = self.PATH_CLASS(self.context)
+        path.rect(-self.ml, -self.mb, self.ml + self.w + self.mr, self.mb + self.h + self.mt)
         for e in self.elements:
             path = path.difference(e.childClipPath)
-        path.translate(self.x, self.y)
+        path.translate(self.xy)
         return path
     childClipPath = property(_get_childClipPath)
 

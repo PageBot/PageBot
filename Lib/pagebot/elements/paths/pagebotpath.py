@@ -503,6 +503,8 @@ class PageBotPath:
         if style is None:
             style = {}
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
+        if hasattr(font, 'path'): # In case it is a Font instance, extract the path.
+            font = font.path
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         align = style.get('align')
         self.bp.text(bs, offset=offset, font=font, fontSize=fontSize, align=align)
@@ -551,6 +553,8 @@ class PageBotPath:
         if style is None:
             style = {}
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
+        if hasattr(font, 'path'): # In case it is a Font instance, extract the path.
+            font = font.path
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         align = style.get('align') # Can be None for default LEFT
         hyphenation = style.get('hyphenation', False)
@@ -760,7 +764,7 @@ class PageBotPath:
         center = upt(point2D(center))
         self.bp.rotate(dgAngle.degrees, center)
 
-    def scale(self, x=1, y=None, center=None):
+    def scale(self, sx=1, sy=None, center=None):
         """Scale the path with a given x (horizontal scale) and y (vertical scale).
         If only 1 argument is provided a proportional scale is applied.
         The center of scaling can optionally be set via the center keyword argument. By default this is the origin.
@@ -776,7 +780,7 @@ class PageBotPath:
         if center is None:
             center = ORIGIN
         center = upt(point2D(center))
-        self.bp.scale(x, y, center)
+        self.bp.scale(sx, sy, center)
 
     def skew(self, angle1, angle2=0, center=None):
         """Skew the path with given angle1 and angle2.
