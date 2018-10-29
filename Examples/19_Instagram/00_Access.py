@@ -19,11 +19,10 @@
 
 from instagram.client import InstagramAPI
 
-"""
-access_token = "YOUR_ACCESS_TOKEN"
-client_secret = "YOUR_CLIENT_SECRET"
+access_token = "8759299402.3e3cf2b.8b2e6d0ccd664e3e8955548993c649c0"
+client_secret = "b21318ea3d3a4795a7b2e89080f1b120"
+
 api = InstagramAPI(access_token=access_token, client_secret=client_secret)
 recent_media, next_ = api.user_recent_media(user_id="userid", count=10)
-for media in recent_media:
-   print(media.caption.text)
-"""
+#for media in recent_media:
+#   print(media.caption.text)

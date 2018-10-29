@@ -64,7 +64,10 @@ def testContext(context):
         x, y = getRandom()
         path = getResourcesPath() + "/images/cookbot1.jpg"
         context.image(path, (x, y), w=100, h=100)
-
+        # TODO:
+        # - test Bézier path
+        # - test glyph path
+        # ...
         context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
     	    print('!!! %s' % e)
