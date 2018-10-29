@@ -32,12 +32,13 @@ class Publication(Element):
 		different than the default empty dictionary."""
     	return {}
         
-    def newDocument(self):
+    def newDocument(self, autoPages=1):
         u"""Answer a new Document instance for this publication, to be filled by the 
-        publication composer, using existing data and pages.
+        publication composer, using existing data and pages. Set autoPages to 0,
+        so all pages are appended by the publication.
         """
         doc = Document(w=self.w, h=self.h, originTop=self.originTop, padding=self.padding,
-            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY,
+            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY, autoPages=autoPages,
             baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
         view = doc.view
         view.showGrid = self.showGrid

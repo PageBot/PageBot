@@ -113,6 +113,7 @@ class Magazine(Publication):
         view = doc.view
         view.showPadding = showPadding
         view.showGrid = showGrid
+        view.showBaselineGrid = False
 
         page = None # Force first page to initialize.
         pn = 0 # Pagenumber: TODO--> Translate to real pagenumber, this is only page index.
@@ -149,7 +150,7 @@ class Magazine(Publication):
 
     def composePartOfBook(self, name):
         part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
-        doc = self.newDocument()
+        doc = self.newDocument(autoPages=0)
         if part.compose is not None: # If the part has its own composer defined, then use that.
             part.compose(self, part, doc)
         else: # Otherwise use the default composer of self
