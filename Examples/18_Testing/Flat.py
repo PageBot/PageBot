@@ -90,7 +90,7 @@ def testFlat():
     style = dict(font=pagebotFont, fontSize=FONTSIZE, color=pagebotStroke,
             leading=LEADING)
     bs = context.newString(msg, style=style)
-    print(bs)
+    context.text('bla', (50, 100)) # TODO: also for native flat.
     context.text(bs, (100, 100))
 
     '''

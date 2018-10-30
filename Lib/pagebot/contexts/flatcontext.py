@@ -310,8 +310,13 @@ class FlatContext(BaseContext):
         >>> context.text(bs, (100, 100))
 
         """
-        msg = 'FlatString.text: bs not of type %s' % FlatString.__name__
-        assert isinstance(bs, FlatString), msg
+        if not isinstance(bs, FlatString):
+            if isinstance(bs, str):
+                bs = self.newString(bs)
+            else:
+                print('wrong type %s' % type(s))
+                # TODO: raise error.
+
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         xpt, ypt = point2D(upt(p))

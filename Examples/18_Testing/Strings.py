@@ -21,6 +21,8 @@ from pagebot.contexts.svgcontext import SvgContext
 from pagebot.contexts.indesigncontext import InDesignContext
 from pagebot.contexts.idmlcontext import IdmlContext
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.contexts.strings.babelstring import BabelString
+
 
 
 W, H = 800, 220
@@ -44,6 +46,7 @@ def testContext(context, path):
     bs = context.newString('This is a string', style=style)
     # It prints its contents.
     print(bs)
+    print(isinstance(bs, BabelString))
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
     bs += ' and more'

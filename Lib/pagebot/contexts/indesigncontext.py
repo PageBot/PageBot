@@ -28,7 +28,6 @@ from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import Pt, upt
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.color import noColor, blackColor, Color, inheritColor
-from pagebot.contexts.flat.math import *
 
 class InDesignContext(BaseContext):
     """The InDesignContext implements the InDesign JS-API within the PageBot

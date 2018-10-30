@@ -18,7 +18,6 @@ import os
 import re
 
 from pagebot.contexts.strings.babelstring import BabelString
-from pagebot.contexts.flat.math import *
 from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.paths import DEFAULT_FONT_PATH
@@ -45,7 +44,7 @@ class FlatString(BabelString):
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the Flat equivalent of the DrawBot FormattedString.
+        self.s = s # Store the Flat equivalent of the DrawBot FormattedString, a strike.
 
         # In case defined, store current status here as property and set the
         # current FormattedString for future additions. Also the answered

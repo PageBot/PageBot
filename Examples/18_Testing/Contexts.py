@@ -18,6 +18,7 @@ from random import random
 from pagebot import getAllContexts, getResourcesPath
 from pagebot.toolbox.color import Color
 from pagebot.constants import A4Rounded
+from pagebot.contexts.strings.babelstring import BabelString
 
 H, W = A4Rounded
 f = Color(0, 1, 0)
@@ -51,6 +52,7 @@ def testContext(context):
         x, y = getRandom()
         context.circle(x, y, 100)
         bla = context.newString('BabelString No Style')
+        print(isinstance(bla, BabelString))
         x, y = getRandom()
         context.text(bla, (x, y))
         x, y = getRandom()
@@ -70,7 +72,6 @@ def testContext(context):
         # ...
         context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
-    	    print('!!! %s' % e)
     	    print(traceback.format_exc())
 
 testContexts()
