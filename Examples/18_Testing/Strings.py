@@ -22,6 +22,8 @@ from pagebot.contexts.indesigncontext import InDesignContext
 from pagebot.contexts.idmlcontext import IdmlContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.strings.babelstring import BabelString
+from pagebot.contexts.strings.drawbotstring import DrawBotString
+from pagebot.contexts.strings.flatstring import FlatString
 
 
 
@@ -34,19 +36,24 @@ bold = findFont('Roboto-Bold')
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
     (FlatContext(), '_export/testFlatString.pdf'),
+    (InDesignContext(), '_export/testInDesignString.pdf'),
     #(HtmlContext(), '_export/testHtmlString.pdf'),
     #(InDesignContext(), '_export/testInDesignString.pdf'),
     #(IdmlContext(), '_export/testIdmlString.pdf')
 )
 
 def testContext(context, path):
+    print('Testing strings in %s' % context)
     context.newPage(W, H)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
     # It prints its contents.
     print(bs)
-    print(isinstance(bs, BabelString))
+    print('Is a BabelString: %s' % isinstance(bs, BabelString))
+    print('Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
+    print('Is a FlatString: %s' % isinstance(bs, FlatString))
+
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
     bs += ' and more'
@@ -69,5 +76,5 @@ def testContext(context, path):
 def testAllContexts():
     for context, path in testContexts:
         testContext(context, path)
-        
+
 testAllContexts()

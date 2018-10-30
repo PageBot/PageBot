@@ -92,15 +92,10 @@ class BabelString:
 
     def append(self, s):
         """Appends string or BabelString to self."""
-        # if isinstance(s, str):
-        # elif isinstance(s, BabelString):
-        try:
-            self.s += s.s
-        except (TypeError, AttributeError) as e:
-            print(e)
-            # FIXME: check type before, then convert to babel string, whatever
-            # it is.
+        if isinstance(s, str):
             self.s += s
+        elif isinstance(s, BabelString):
+            self.s += s.s
 
     def _get_type(self):
         """Answers the ID of the class, in case a caller wants to know what
