@@ -10,14 +10,16 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     00_Dropcap.py
+#     14_Dropcap.py
 #
 #     Draw one column that fills the entire usable space of the page,
 #     add a positioned element, containing a dropcap and fill the rest
 #     of the column as path, constructed from the position of the
 #     child elements in the textbox element.
 #     The usable area of the page is defined by the remainder of page.padding.
-
+#
+#     TODO: This example needs to be more generalized, hiding most of the code.
+#
 from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
@@ -57,7 +59,7 @@ style = dict(font=font, fontSize=24, leading=em(1.4))
 bs1 = context.newString(text[1:] + text * 10, style=style)
 
 # Make the BabelString of the dropcap, taking the first character of t.
-dropCapStyle = dict(font='Georgia', fontSize=pt(300))
+dropCapStyle = dict(font='Georgia-Bold', fontSize=pt(250))
 
 PADDING = pt(12)
 

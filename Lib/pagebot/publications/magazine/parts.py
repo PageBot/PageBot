@@ -126,7 +126,7 @@ class PartOfBook(Element):
     def getPageNumber(self, page):
         return (0, 0)
 
-class CoverFront(PartOfBook):
+class Cover(PartOfBook):
     pass
 
 class FrontOfTheBook(PartOfBook):

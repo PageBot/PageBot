@@ -499,7 +499,7 @@ class PageBotPath:
             x = 0
         if y is None:
             y = 0
-        offset = upt(x, y)
+        p = upt(x, y)
         if style is None:
             style = {}
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
@@ -507,7 +507,7 @@ class PageBotPath:
             font = font.path
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         align = style.get('align')
-        self.bp.text(bs, offset=offset, font=font, fontSize=fontSize, align=align)
+        self.bp.text(bs, offset=p, font=font, fontSize=fontSize, align=align)
 
     def textBox(self, bs, x=None, y=None, w=None, h=None, clipPath=None, style=None):
         """Draws a txt with a font and fontSize in a box in the bezier path. If a font path is given
