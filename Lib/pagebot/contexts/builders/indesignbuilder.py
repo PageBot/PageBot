@@ -15,23 +15,23 @@
 #
 #     indesignbuilder.py
 #
-#     Version 0.1
+#     InDesign scripting docs:
 #
-#     Documentation for InDesign API is here.
-#     https://www.adobe.com/devnet/indesign/documentation.html
-#     https://wwwimages2.adobe.com/content/dam/acom/en/devnet/indesign/sdk/cs6/scripting/InDesign_ScriptingGuide_JS.pdf
+#     - https://www.adobe.com/devnet/indesign/documentation.html
+#     - https://wwwimages2.adobe.com/content/dam/acom/en/devnet/indesign/sdk/cs6/scripting/InDesign_ScriptingGuide_JS.pdf
 #
+
 import os
 import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import object2SpacedString
-from pagebot.toolbox.units import asFormatted
+from pagebot.toolbox.units import asFormatted, pt
 from pagebot.constants import A4Rounded
 from pagebot.contexts.bezierpaths.commandbezierpath import CommandBezierPath as BezierPath
 
 class InDesignBuilder(BaseBuilder):
-    """The InDesignBuilder class implements the all necessary API-Javascript to
-    communicate with InDesign.
+    """The InDesignBuilder class uses the InDesign Javascript API to
+    generate output.
 
     >>> import os
     >>> W, H = A4Rounded
@@ -82,6 +82,7 @@ class InDesignBuilder(BaseBuilder):
         are created."""
         self.w = w
         self.h = h
+        self.margin = 36
         self.units = units
 
         # Creates a new document without showing the document window.  The
@@ -172,9 +173,11 @@ class InDesignBuilder(BaseBuilder):
         """
         #msg = 'InDesignString.text: bs not of type %s' % InDesignString.__name__
         #assert isinstance(bs, InDesignString), msg
-        #print(type(bs))
+        # TODO: get text dimensions or element dimensions.
         self.addJs('var currentTextFrame = currentTextFrames.add();')
-        self.addJs('currentTextFrame.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p[0], p[1], '400pt', '600pt'))
+        p3 = self.w - self.margin
+        p4 = self.h - self.margin
+        self.addJs('currentTextFrame.geometricBounds = ["%s", "%s", "%s", "%s"];' % (p[0], p[1], pt(p3), pt(p4)))
         self.addJs('currentTextFrame.contents = "%s";' % bs)
 
         #assert self.page is not None, 'FlatString.text: self.page is not set.'
