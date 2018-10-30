@@ -43,16 +43,17 @@ testContexts = (
 )
 
 def testContext(context, path):
-    print('Testing strings in %s' % context)
+    print('# Testing strings in %s' % context)
     context.newPage(W, H)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
-    bs = context.newString('This is a string', style=style)
+    bs = context.newString('! This is a string', style=style)
     # It prints its contents.
+    print(' - Is a BabelString: %s' % isinstance(bs, BabelString))
+    print(' - Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
+    print(' - Is a FlatString: %s' % isinstance(bs, FlatString))
+    print(' - Is an InDesignString: %s' % isinstance(bs, FlatString))
     print(bs)
-    print('Is a BabelString: %s' % isinstance(bs, BabelString))
-    print('Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
-    print('Is a FlatString: %s' % isinstance(bs, FlatString))
 
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.

@@ -44,7 +44,7 @@ class FlatString(BabelString):
         ABC
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the Flat equivalent of the DrawBot FormattedString, a strike.
+        self.s = s # Store the Flat equivalent of a DrawBot FormattedString.
 
         # In case defined, store current status here as property and set the
         # current FormattedString for future additions. Also the answered
@@ -53,6 +53,15 @@ class FlatString(BabelString):
             style = {}
         self.style = style
         super().__init__(s, context, style=style)
+
+    def __repr__(self):
+        s = ''
+
+        for  p in self.s.paragraphs:
+            for span in p.spans:
+                s += span.string
+
+        return s
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by
