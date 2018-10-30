@@ -165,6 +165,8 @@ class InDesignBuilder(BaseBuilder):
         js += 'currentDocument.colors.add(%s);' % value
         self.addJs(js)
 
+    # Paths.
+
     # Text.
 
     def text(self, bs, p):

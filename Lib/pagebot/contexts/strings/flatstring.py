@@ -209,7 +209,7 @@ class FlatString(BabelString):
         strike = context.b.strike(flatFont)
         c = style.get('color', DEFAULT_COLOR)
         assert isinstance(c, Color)
-        rgb = getFlatRGB(c)
+        rgb = context.getFlatRGB(c)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
 
         # FIXME

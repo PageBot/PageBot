@@ -21,19 +21,10 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
-from pagebot.contexts.toolbox.mathematics import *
+from pagebot.toolbox.mathematics import *
 from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
     FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, \
     DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_FILETYPE
-
-def getFlatRGB(c):
-    """Answers the color tuple that is valid for self.fileType, otherwise
-    Flat gives an error.
-
-    TODO: Make better match for all file types, transparency and spot
-    color."""
-    from flat import rgb
-    return rgb(*to255(c.rgb))
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -472,6 +463,16 @@ class FlatContext(BaseContext):
 
     #   D R A W I N G
 
+    def getFlatRGB(self, c):
+        """Answers the color tuple that is valid for self.fileType, otherwise
+        Flat gives an error.
+
+        TODO: Make better match for all file types, transparency and spot
+        color."""
+        from flat import rgb
+        return rgb(*to255(c.rgb))
+
+
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to Flat shape. Flat function."""
         if self._fill is noColor and self._stroke is noColor:
@@ -483,12 +484,12 @@ class FlatContext(BaseContext):
         if self._fill is None:
             shape.nofill()
         elif self._fill != noColor:
-            shape.fill(getFlatRGB(self._fill))
+            shape.fill(self.getFlatRGB(self._fill))
 
         if self._stroke is None:
             shape.nostroke()
         elif self._stroke != noColor:
-            shape.stroke(getFlatRGB(self._stroke)).width(self._strokeWidth)
+            shape.stroke(self.getFlatRGB(self._stroke)).width(self._strokeWidth)
 
         return shape
 
