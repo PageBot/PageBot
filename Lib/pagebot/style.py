@@ -14,10 +14,11 @@
 #
 #     style.py
 #
-#     Holds the main style definintion and constants of PageBot.
-#     Note that each value of a style (inheriting from the root) can be redefined
-#     to be used local in an element or string.
+#     Holds the main style definintion and constants of PageBot. Note that
+#     each value of a style (inheriting from the root) can be redefined to be
+#     used local in an element or string.
 #
+
 import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
@@ -81,12 +82,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         tag = None, # Optional marker to match the style with the running tag.
         show = True, # If set to False, then the element does not evaluate in the self.elements loop.
 
-        # Basic page/template/element positions. Can contain number values or Unit instances.
+        # Basic page/template/element positions. Can contain number values or
+        # Unit instances.
         x = pt0, # Default local origin, relative to parent.
         y = pt0,
         z = pt0,
-        # Basic page/template/element proportions of box. Can contain number values or Unit instances.
-        w = w, # Default page width, basis size of the document. Point rounding of 210mm, international generic fit.
+
+        # Basic page/template/element proportions of box. Can contain number
+        # values or Unit instances.
+        w = w, # Default page width, basic size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = pt0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
 
@@ -95,23 +99,24 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         ry = pt0,
         angle = degrees(0), # Angle in degrees or radians units.
 
-        # In "time-dimension" this is an overall value for export. This works independent from
-        # the time-marks of element attributes.
+        # In "time-dimension" this is an overall value for export. This works
+        # independent from the time-marks of element attributes.
         # In case saving as .mov or .gif, this value defines 1/frames_per_second
         frameDuration = DEFAULT_FRAME_DURATION,
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = pt(72),
         # Dictionary of multiplation factors for (e.g. thumbnail) image sizes per image type
-        resolutionFactors = DEFAULT_RESOLUTION_FACTORS, 
+        resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
 
-        # Optional folds property. Keep None or empty list if no folds. Otherwise list of [(x1, None), ...]
-        # for vertical folds or [(None, y1), ...] for horizontal folds. Also the x and y values can be
+        # Optional folds property. Keep None or empty list if no folds.
+        # Otherwise list of [(x1, None), ...] for vertical folds or [(None,
+        # y1), ...] for horizontal folds. Also the x and y values can be
         # combined as in [(x1, y1), ...]
         folds = None,
 
         # Position of origin. DrawBot has y on bottom-left. In PageBot it is
-        # optional. Default is top-left.  Note that the direcion of display is
+        # optional. Default is top-left. Note that the direcion of display is
         # always upwards. This means that the position of text and elements
         # goes downward from the top, they are not flipped vertical. It is up
         # to the caller to make sure there is enough space for elements to show
@@ -119,7 +124,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # yAlign = TOP.
         originTop = False, # TODO: Setting to  default True has currently positioning bugs.
 
-        # Alignment of origin on element. Note that formatted text string are aligned by the xTextAlign attribute.
+        # Alignment of origin on element. Note that formatted text string are
+        # aligned by the xTextAlign attribute.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
@@ -245,11 +251,12 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
         openTypeFeatures = None,
 
-        # Horizontal spacing for absolute and fontsize-related measures
+        # Horizontal spacing for absolute and fontsize-related measures.
         tracking = pt0, # Absolute tracking value. Note that this is different from standard name definition.
-        # Set tabs,tuples of (float, alignment) Alignment can be “left”, “center”, “right”
-        # or any other character. If a character is provided the alignment will be right and
-        # centered on the specified character.
+
+        # Set tabs,tuples of (float, alignment) Alignment can be “left”,
+        # “center”, “right” or any other character. If a character is provided
+        # the alignment will be right and centered on the specified character.
         listTabs = [(listIndent, LEFT)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
@@ -260,8 +267,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         indent = pt0, # Left indent (for left-right based scripts)
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
 
-        # Vertical spacing of baselines by TextBox
-        # Note that PageView is drawing the baseline grid color as defined by viewGridStrokeX and viewGridStrokeXWidth
+        # Vertical spacing of baselines by TextBox. Note that PageView is
+        # drawing the baseline grid color as defined by viewGridStrokeX and
+        # viewGridStrokeXWidth
         baselineGrid = baselineGrid,
         baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
@@ -270,18 +278,27 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         baselineWidth = pt(0.5), # Baseline width, drawn by TextBox
         baselineGridFit = False,
         firstLineGridFit = True,
+
         # Leading and vertical space
         leading = defaultLeading, # Relative factor to current fontSize.
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
+
         # Keep all of the lines of the node text block in the same column.
         keepInColumn = False,
-        # Check if this space is available above, to get amount of text lines above headings.
+
+        # Check if this space is available above, to get amount of text lines
+        # above headings.
         needsAbove = pt0,
-        # Check if this relative fontSize space is available above, to get amount of text lines above headings.
+
+        # Check if this relative fontSize space is available above, to get
+        # amount of text lines above headings.
         rNeedsAbove = em0,
-        # Check if this point space is available below, to get amount of text lines below headings.
+
+        # Check if this point space is available below, to get amount of text
+        # lines below headings.
         needsBelow = pt0,
+
         # CSS-behavior as <div> and <span>, adding trailing \n to block context
         # is value set to DISPLAY_BLOCK
         # Interpreted by
@@ -291,16 +308,20 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         language = DEFAULT_LANGUAGE, # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'utf-8',
         hyphenation = True,
-        # Strip pre/post white space from e.text and e.tail and substitute by respectively prefix and postfix
-        # if they are not None. Set to e.g. newline(s) "\n" or empty string, if tags need to glue together.
-        # Make None for no stripping
+
+        # Strip pre/post white space from e.text and e.tail and substitute by
+        # respectively prefix and postfix if they are not None. Set to e.g.
+        # newline(s) "\n" or empty string, if tags need to glue together.  Make
+        # None for no stripping.
         prefix = '', # Default is to strip white space from a block. Make None for no stripping.
         postfix = '', # Default is to strip white space from tail of XML tag block into a single space.
 
         # Paging
         pageIdMarker = '#??#', # The text pattern will be replaced by current page id.
-        # First page number of the document. Note that “page numbers” can be strings too, as long as pages
-        # can define what is “next page”, when referred to by a flow.
+
+        # First page number of the document. Note that “page numbers” can be
+        # strings too, as long as pages can define what is “next page”, when
+        # referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
         # Flag that indicates if errors and warning should be written to the element.report list.
@@ -326,9 +347,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # V I E W S
 
-        # These parameters are used by viewers (implemented as properties), normally not part
-        # of direct elements.css( ) queries as views may locally change these values.
-        # However, in some situations elements may overwrite the settings (e.g. TextBot baseline color)
+        # These parameters are used by viewers (implemented as properties),
+        # normally not part of direct elements.css( ) queries as views may
+        # locally change these values. However, in some cases elements
+        # may overwrite the settings (e.g. TextBot baseline color).
 
         # Paging
         showSpread = False, # If True, show even pages on left of fold, odd on the right.
@@ -349,11 +371,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showDimensions = False, # TODO: Does not work if there is view padding.
         showMissingElement = True,
 
-        # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR, GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG)
-        # See pagebot.constants for the types of grid that can be drawn.
+        # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR,
+        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for the
+        # types of grid that can be drawn.
         showGrid = set(), # If set, display the type of grid elements on foreground and background
 
-        # Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT)
+        # Types of baseline grid to be drawn using conbination set of
+        # (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT).
         showBaselines = set(), # If set, display options defined the type of grid to show.
         showBaselinesBackground = set(), # If set, display options defined the type of grid to show on background.
         showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
