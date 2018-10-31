@@ -30,8 +30,9 @@ class InDesignString(BabelString):
 
     """InDesignString is a wrapper around the Indesign string."""
     def __init__(self, s, context, style=None):
-        """Constructor of the DrawBotString, wrapper around DrawBot.FormattedString.
-        Optionally store the (latest) style that was used to produce the formatted string.
+        """Constructor of the DrawBotString, wrapper around
+        DrawBot.FormattedString. Optionally store the (latest) style that was
+        used to produce the formatted string.
 
         >>> from pagebot.contexts.indesigncontext import InDesignContext
         >>> context = InDesignContext()
@@ -49,8 +50,8 @@ class InDesignString(BabelString):
         super().__init__(s, context, style=style)
 
     def _get_s(self):
-        """Answers the embedded Indesign equivalent of a OSX FormattedString by property, to enforce
-        checking type of the string."""
+        """Answers the embedded Indesign equivalent of a OSX FormattedString by
+        property, to enforce checking type of the string."""
         return self._s
 
     def _set_s(self, s):
@@ -74,10 +75,12 @@ class InDesignString(BabelString):
     def _get_fontSize(self):
         """Answers the current state of the fontSize."""
         return self.style.get('fontSize')
+
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.font(fontSize)
         self.style['fontSize'] = fontSize
+
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def __len__(self):
@@ -140,9 +143,10 @@ class InDesignString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answers a InDesignString instance from valid attributes in *style*. Set all values after testing
-        their existence, so they can inherit from previous style formats.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*.
+        """Answers a InDesignString instance from valid attributes in *style*.
+        Set all values after testing their existence, so they can inherit from
+        previous style formats. If target width *w* or height *h* is defined,
+        then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts.indesigncontext import InDesignContext
@@ -158,6 +162,7 @@ class InDesignString(BabelString):
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
+
         if sUpperCase:
             s = s.upper()
         elif sLowercase:

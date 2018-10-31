@@ -552,6 +552,8 @@ class DrawBotString(BabelString):
         defines if the current width or height comes from the pixel image of em
         size.
 
+        TODO: move shared functionality to BabelString.
+
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Black')
@@ -560,6 +562,7 @@ class DrawBotString(BabelString):
 
         """
         TODO: Get more docTests to work
+
         >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(22)))
         >>> bs
         ABC
@@ -588,14 +591,16 @@ class DrawBotString(BabelString):
         b.hyphenation(hyphenation)
 
         # Font selection
-
         sFont = css('font', e, style)
+
         if sFont is not None:
-            if hasattr(sFont, 'path'): # If the Font instance was supplied, then use it's path.
+            # If the Font instance was supplied, then use it's path.
+            if hasattr(sFont, 'path'):
                 sFont = sFont.path
             fsAttrs['font'] = sFont
 
         sFallbackFont = css('fallbackFont', e, style)
+
         if isinstance(sFallbackFont, Font):
             sFallbackFont = sFallbackFont.path
         elif sFallbackFont is None:
@@ -616,19 +621,24 @@ class DrawBotString(BabelString):
         else:
             # May be scaled to fit w or h if target is defined.
             uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)
+
         if uFontSize is not None:
-            fsAttrs['fontSize'] = fontSizePt = upt(uFontSize) # Remember as base for relative units
+            # Remember as base for relative units.
+            fsAttrs['fontSize'] = fontSizePt = upt(uFontSize)
         else:
             fontSizePt = DEFAULT_FONT_SIZE
 
         uLeading = css('leading', e, style)
-        fsAttrs['lineHeight'] = upt(uLeading or DEFAULT_LEADING, base=fontSizePt) # Base for em or perc
+
+        # Base for em or percent.
+        fsAttrs['lineHeight'] = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
 
         # Color values for text fill
         # Color: Fill the text with this color instance
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
-        cFill = css('textFill', e, style, default=blackColor) # Default is blackColor, not noColor
+        cFill = css('textFill', e, style, default=blackColor)
+
         if cFill is not inheritColor:
             if isinstance(cFill, (tuple, list, int, float)):
                 cFill = color(cFill)
@@ -648,15 +658,19 @@ class DrawBotString(BabelString):
         # inheritColor: Don't set color, inherit the current setting for stroke
         cStroke = css('textStroke', e, style, default=noColor)
         strokeWidth = css('textStrokeWidth', e, style)
+
         if strokeWidth is not None:
             assert isUnit(strokeWidth), ('DrawBotString.newString: strokeWidth %s must of type Unit' % strokeWidth)
             fsAttrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
+
         if cStroke is not inheritColor:
             if isinstance(cStroke, (tuple, list, int, float)):
                 cStroke = color(cStroke)
             elif cStroke is None:
                 cStroke = noColor
+
             assert isinstance(cStroke, Color), ('DrawBotString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
+
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsAttrs['stroke'] = None
             elif cFill.isCmyk:
@@ -664,35 +678,44 @@ class DrawBotString(BabelString):
             else:
                 fsAttrs['fill'] = cFill.rgb
 
-        sAlign = css('xTextAlign', e, style) # Warning: xAlign is used for element alignment, not text.
+        # NOTE: xAlign is used for element alignment, not text.
+        sAlign = css('xTextAlign', e, style)
+
         if sAlign is not None: # yTextAlign must be solved by parent container element.
             fsAttrs['align'] = sAlign
 
         sUnderline = css('underline', e, style)
+
         if sUnderline in ('single', None): # Only these values work in FormattedString
             fsAttrs['underline'] = sUnderline
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
+
         if uParagraphTopSpacing is not None:
             fsAttrs['paragraphTopSpacing'] = upt(uParagraphTopSpacing, base=fontSizePt) # Base for em or perc
 
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
+
         if uParagraphBottomSpacing:
             fsAttrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) # Base for em or perc
 
         uTracking = css('tracking', e, style)
+
         if uTracking is not None:
             fsAttrs['tracking'] = upt(uTracking, base=fontSizePt) # Base for em or perc
 
         uBaselineShift = css('baselineShift', e, style)
+
         if uBaselineShift is not None:
             fsAttrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt) # Base for em or perc
 
         openTypeFeatures = css('openTypeFeatures', e, style)
+
         if openTypeFeatures is not None:
             fsAttrs['openTypeFeatures'] = openTypeFeatures
 
         tabs = css('tabs', e, style)
+
         if tabs is not None:
             fsAttrs['tabs'] = tabs
 
@@ -731,6 +754,7 @@ class DrawBotString(BabelString):
         newT = b.FormattedString(t, **fsAttrs) # Format plain string t onto new formatted fs.
 
         isFitting = True
+
         if w is not None:
             # There is a target width defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds

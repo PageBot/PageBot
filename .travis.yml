@@ -43,6 +43,13 @@ install:
 - cd ..
 - rm master.zip
 - rm -r flat-master
+- wget https://github.com/typesupply/compositor/archive/master.zip
+- unzip master.zip
+- cd compositor-master
+- python3 setup.py install
+- cd ..
+- rm master.zip
+- rm -r compositor-master
 script:
 - mkdir _export
 - export WONT_FIX=invalid-name,bad-indentation,trailing-newlines,wrong-import-position,fixme,c-extension-no-member
