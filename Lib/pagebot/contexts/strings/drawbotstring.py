@@ -542,55 +542,10 @@ class DrawBotString(BabelString):
         return bs
 
     @classmethod
-    def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answers a DrawBotString instance from valid attributes in *style*.
-        Set all values after testing their existence, so they can inherit from
-        previous style formats in the string.
-
-        If target width *w* or height *h* is defined, then *fontSize* is scaled
-        to make the string fit *w* or *h*.  In that case the pixelFit flag
-        defines if the current width or height comes from the pixel image of em
-        size.
-
-        TODO: move shared functionality to BabelString.
-
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> font = findFont('Roboto-Black')
-        >>> context = DrawBotContext()
-        """
-
-        """
-        TODO: Get more docTests to work
-
-        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(22)))
-        >>> bs
-        ABC
-        >>> bs = context.newString('ABC', style=dict(font=font.path, w=pt(100))
-        >>> int(round(bs.fontSize))
-        51
-        >>> bs = context.newString('ABC', style=dict(font=font, w=pt(100)) # Use the font instance instead of path.
-        >>> int(round(bs.fontSize))
-        0.56em
-        """
-        # Get the drawBotBuilder, no need to check, we already must be in context here.
-        if t is None:
-            t = ''
-        elif not isinstance(t, str):
-            t = str(t)
-
+    def getFSAttrs(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
         fsAttrs = {}
 
-        b = context.b
-
-        # Set the hyphenation flag from style, as in DrawBot this is set by a
-        # global function, not as FormattedString attribute.
-        language = css('language', e, style)
-        hyphenation = bool(css('hyphenation', e, style))
-        b.language(language)
-        b.hyphenation(hyphenation)
-
-        # Font selection
+        # Font selection.
         sFont = css('font', e, style)
 
         if sFont is not None:
@@ -605,17 +560,21 @@ class DrawBotString(BabelString):
             sFallbackFont = sFallbackFont.path
         elif sFallbackFont is None:
             sFallbackFont = DEFAULT_FALLBACK_FONT_PATH
+
         fsAttrs['fallbackFont'] = sFallbackFont
 
-        # If there is a target (pixel) width or height defined, ignore the
-        # requested fontSize and try the width or height first for fontSize =
-        # 100. The resulting width or height is then used as base value to
-        # calculate the needed point size.
-        # Forced fontSize, then this overwrites the style['fontSize'] if it is
-        # there.
-        #
-        # TODO: add calculation of rFontSize (relative float based on
-        # root-fontSize) here too.
+        '''
+        If there is a target (pixel) width or height defined, ignore the
+        requested fontSize and try the width or height first for fontSize =
+        100. The resulting width or height is then used as base value to
+        calculate the needed point size.
+
+        Forced fontSize, then this overwrites the style['fontSize'] if it is
+        there.
+
+        TODO: add calculation of rFontSize (relative float based on
+        root-fontSize) here too.
+        '''
         if w is not None or h is not None:
             uFontSize = pt(100) # Start with large font size to scale for fitting.
         else:
@@ -719,10 +678,11 @@ class DrawBotString(BabelString):
         if tabs is not None:
             fsAttrs['tabs'] = tabs
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
-        # not as FormattedString attribute.
+        # Set the hyphenation flag from style, as in DrawBot this is set by a
+        # global function, not as FormattedString attribute.
         # FIX IN DRAWBOT fsAttrs['language'] = bool(css('language', e, style))
-        # FIX IN DRAWBOT fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
+        # FIX IN DRAWBOT
+        #fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from
@@ -733,6 +693,7 @@ class DrawBotString(BabelString):
             fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
 
         uIndent = css('indent', e, style)
+
         if uIndent is not None:
             fsAttrs['indent'] = upt(uIndent, base=fontSizePt) # Base for em or perc
 
@@ -741,8 +702,57 @@ class DrawBotString(BabelString):
             fsAttrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) # Base for em or perc
 
         sLanguage = css('language', e, style)
+
         if sLanguage is not None:
             fsAttrs['language'] = sLanguage
+
+        return fsAttrs
+
+    @classmethod
+    def newString(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
+        """Answers a DrawBotString instance from valid attributes in *style*.
+        Set all values after testing their existence, so they can inherit from
+        previous style formats in the string.
+
+        If target width *w* or height *h* is defined, then *fontSize* is scaled
+        to make the string fit *w* or *h*.  In that case the pixelFit flag
+        defines if the current width or height comes from the pixel image of em
+        size.
+
+        TODO: move shared functionality to BabelString.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('Roboto-Black')
+        >>> context = DrawBotContext()
+        """
+
+        """
+        TODO: Get more docTests to work
+
+        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(22)))
+        >>> bs
+        ABC
+        >>> bs = context.newString('ABC', style=dict(font=font.path, w=pt(100))
+        >>> int(round(bs.fontSize))
+        51
+        >>> bs = context.newString('ABC', style=dict(font=font, w=pt(100)) # Use the font instance instead of path.
+        >>> int(round(bs.fontSize))
+        0.56em
+        """
+        if t is None:
+            t = ''
+
+        elif not isinstance(t, str):
+            t = str(t)
+
+        # Set the hyphenation flag from style, as in DrawBot this is set by a
+        # global function, not as FormattedString attribute.
+        language = css('language', e, style)
+        hyphenation = bool(css('hyphenation', e, style))
+        context.b.language(language)
+        context.b.hyphenation(hyphenation)
+        fsAttrs = cls.getFSAttrs(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
         if css('uppercase', e, style):
             t = t.upper()
@@ -751,16 +761,16 @@ class DrawBotString(BabelString):
         elif css('capitalized', e, style):
             t = t.capitalize()
 
-        newT = b.FormattedString(t, **fsAttrs) # Format plain string t onto new formatted fs.
-
+        # Format plain string t onto new formatted fs.
+        newT = context.b.FormattedString(t, **fsAttrs)
         isFitting = True
 
         if w is not None:
-            # There is a target width defined, calculate again with the
+            # A target width is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds
-            # instead of the context.textSide(newt) here, because it is much
-            # more consistent for tracked text. context.textSize will add space
-            # to the right of the string.
+            # instead of the context.textSide(newT) here, because it is more
+            # consistent for tracked text. context.textSize will add space to
+            # the right of the string.
             fsAttrs = copy(fsAttrs)
             fittingFontSize = cls._newFitWidthString(newT, context, uFontSize, w, pixelFit)
             if fittingFontSize is not None: # Chedked on zero division
@@ -775,13 +785,14 @@ class DrawBotString(BabelString):
                 newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         elif h is not None:
-            # There is a target height defined, calculate again with the
+            # A target height is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds
-            # instead of the context.textSide(newt) here, because it is much
+            # instead of the context.textSide(newT) here, because it is
             # more consistent for tracked text. context.textSize will add space
             # to the right of the string.
             fsAttrs = copy(fsAttrs)
             fittingFontSize = cls._newFitHeightString(newT, context, uFontSize, h, pixelFit)
+
             if fittingFontSize is not None:
                 fsAttrs['fontSize'] = fittingFontSize
                 newS = cls.newString(t, context, style=fsAttrs)
@@ -801,7 +812,6 @@ class DrawBotString(BabelString):
         newS.isFitting = isFitting
         newS.language = language
         newS.hyphenation = hyphenation
-
         return newS
 
 class FoundPattern:

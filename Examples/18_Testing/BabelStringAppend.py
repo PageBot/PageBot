@@ -5,10 +5,9 @@ from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.constants import CENTER
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import color, Color
+from pagebot.contributions.filibuster.blurb import Blurb
 
 # TODO: merge with Strings
-
-from pagebot.contributions.filibuster.blurb import Blurb
 
 NO_TAGS = True # Flag to show/hide HTML tags in output
 

@@ -12,19 +12,22 @@
 #
 #     Strings.py
 #
-#     Test BabelString in both DrawBotContext and FlatContext
+#     Tests pagebot string and style classes in different contexts.
 
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.contexts.flatcontext import FlatContext
-from pagebot.contexts.htmlcontext import HtmlContext
-from pagebot.contexts.svgcontext import SvgContext
 from pagebot.contexts.indesigncontext import InDesignContext
-from pagebot.contexts.idmlcontext import IdmlContext
+#from pagebot.contexts.htmlcontext import HtmlContext
+#from pagebot.contexts.svgcontext import SvgContext
+#from pagebot.contexts.idmlcontext import IdmlContext
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.contexts.strings.drawbotstring import DrawBotString
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.units import pt
+from pagebot.contributions.filibuster.blurb import Blurb
+
+# TODO: move to basics when finished.
 
 W, H = 800, 300
 M = 100
@@ -32,6 +35,9 @@ M = 100
 font = findFont('Roboto-Regular')
 bold = findFont('Roboto-Bold')
 bungee = findFont('BungeeHairline-Regular')
+
+blurb = Blurb()
+txt = blurb.getBlurb('news_headline', noTags=True)
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
@@ -73,12 +79,23 @@ def testContext(context, path):
     # Draw grid, matching the position of the text.
     context.text(bs, (M, M))
     context.line((0, 2*M), (W, 2*M))
-    
-    bs = context.newString('ABC', style=dict(font=bungee, fontSize=pt(72), w=pt(100)))
+
+    style = getFullStyle()
+    bs = context.newString(txt, style=style)
     # Usage in DrawBot by addressing the embedded FS for drawing.
     context.text(bs, (M, 2*M))
+    context.stroke((0, 1, 0))
+    context.strokeWidth(0.1)
+    ch = bungee.info.capHeight
+    upem = bungee.info.unitsPerEm
+    context.rect(x=pt(M), y=pt(2*M), w=pt(400), h=pt(M-ch/upem*72))
     context.saveImage(path)
-
+    
+def getFullStyle():
+    style = dict()
+    style = dict(font=bungee, fontSize=pt(72), w=pt(100), hyphenation=True, baseLineShift=200)
+    return style
+    
 def testAllContexts():
     for context, path in testContexts:
         testContext(context, path)
