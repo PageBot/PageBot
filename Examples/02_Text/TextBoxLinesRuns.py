@@ -69,6 +69,7 @@ def makeDocument():
                          style=dict(textFill=blackColor,
                                     font='Verdana',
                                     fontSize=pt(10+n*2)))
+
     e1 = newTextBox(s, parent=page0, padding=pt(4), x=pt(100),
                     w=BoxWidth, font='Verdana', h=None, mb=20, mr=10,
                     #Conditions make the element move to top-left of the page.
@@ -82,31 +83,39 @@ def makeDocument():
                     yAlign=BOTTOM, xAlign=LEFT,
                     leading=pt(5), fontSize=pt(9), textFill=color(0),
                     strokeWidth=pt(0.5), fill=color(0.9), stroke=noColor)
+
     """
     for line in e1.textLines:
         print(line, line.x, line.y)
     for foundPattern in e1.findPattern('Line 5'):
         print(foundPattern.x, foundPattern.y, foundPattern.line, foundPattern.line.runs)
     """
+
     font = findFont('Roboto-Regular')
     char = 'hyphen'
     g = font[char]
     print(g.pointContexts[0].p.x)
     c.save()
+
     c.scale(0.3)
     c.fill(color(1, 0, 0))
     c.drawGlyphPath(font[char])
     ga = GlyphAnalyzer(g)
+
+
     for x, vertical in ga.verticals.items():
         c.stroke(blackColor, pt(1))
         c.fill(noColor)
         c.line(pt(x, 0), pt(x, 3000))
-    print(ga.horizontals    )
+
+    print(ga.horizontals)
+
     for y, horizontal in ga.horizontals.items():
         c.stroke(blackColor, pt(1))
         c.fill(noColor)
         c.line(pt(0, y), pt(2000, y))
     c.restore()
+
     """
     for contour in ga.glyph.pointContexts:
         path = BezierPath()
@@ -123,6 +132,7 @@ def makeDocument():
             #print(index, pc   )
     """
     score = doc.solve() # Try to solve all pages.
+
     if score.fails:
         print(score.fails)
 

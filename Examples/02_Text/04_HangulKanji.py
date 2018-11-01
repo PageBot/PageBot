@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     HangulKanjiFormattedStrings.py
+#     HangulKanji.py
 
 from pagebot import getContext
 from pagebot.toolbox.units import pt
@@ -30,6 +30,7 @@ def run():
     fsbRed = context.newString(s, style=dict(font='Verdana',
                                        fill=color(1, 0, 0),
                                        fontSize=FontSize))
+
     context.textBox(fsr, (100, 600, 820, 350))
     context.textBox(fsb, (100, 300, 820, 350))
     context.textBox(fsbRed, (100, 0, 820, 350))
