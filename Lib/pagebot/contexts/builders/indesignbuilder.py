@@ -139,17 +139,25 @@ class InDesignBuilder(BaseBuilder):
 
     # Colors.
 
-    def fill(self, r, g, b, alpha=None):
+    def fill(self, r, g=None, b=None, alpha=None):
+        print('!!! InDesign RGB fill to be implemented')
+        return
+        '''
         js = 'var fill = '
         value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('fill', r, g, b, alpha)
         js += 'currentDocument.colors.add(%s);' % value
         self.addJs(js)
+        '''
 
     def stroke(self, r, g, b, alpha=None):
+        print('!!! InDesign RGB stroke to be implemented')
+        return
+        '''
         js = 'var stroke = '
         value = '{name:"%s", model:ColorModel.process, colorValue:[%d, %d, %d, %d]}' % ('stroke', r, g, b, alpha)
         js += 'currentDocument.colors.add(%s);' % value
         self.addJs(js)
+        '''
 
     def cmykFill(self, c, m, y, k, alpha=None):
         # TODO: alpha.

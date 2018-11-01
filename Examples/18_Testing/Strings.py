@@ -20,11 +20,14 @@ from pagebot.contexts.indesigncontext import InDesignContext
 #from pagebot.contexts.htmlcontext import HtmlContext
 #from pagebot.contexts.svgcontext import SvgContext
 #from pagebot.contexts.idmlcontext import IdmlContext
+from pagebot.document import Document
+from pagebot.elements import *
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.contexts.strings.drawbotstring import DrawBotString
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import noColor, color
 from pagebot.contributions.filibuster.blurb import Blurb
 
 # TODO: move to basics when finished.
@@ -32,8 +35,8 @@ from pagebot.contributions.filibuster.blurb import Blurb
 W, H = 800, 300
 M = 100
 
-font = findFont('Roboto-Regular')
-bold = findFont('Roboto-Bold')
+roboto = findFont('Roboto-Regular')
+robotoBold = findFont('Roboto-Bold')
 bungee = findFont('BungeeHairline-Regular')
 
 blurb = Blurb()
@@ -50,15 +53,18 @@ testContexts = (
 
 def testContext(context, path):
     
-    context.newDocument(W, H)
+    doc = Document(w=W, h=H, autoPages=1)
+    page = doc[1]
+
+    #context.newDocument(W, H)
     print('# Testing strings in %s' % context)
     context.newPage(W, H)
-    context.fill(None) # Auto-converts to noColor
+    context.fill(noColor) # Auto-converts to noColor
     context.stroke(0.7) # Auto-converts to pt( )
     context.line((M, 0), (M, H))
     context.line((0, M), (W, M))
     # Create a new BabelString with the DrawBot FormttedString inside.
-    style=dict(font=font.path, fontSize=40, textFill=(1, 0, 0))
+    style=dict(font=roboto.path, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('! This is a string', style=style)
     # It prints its contents.
     print(' - Is a BabelString: %s' % isinstance(bs, BabelString))
@@ -72,7 +78,7 @@ def testContext(context, path):
     bs += ' and more'
     print(bs)
     # Reusing the same style with adjustments
-    style['font'] = bold.path
+    style['font'] = robotoBold.path
     style['textFill'] = 0.5, 0, 1 # Auto-converts to Color instance
     bs += context.newString(' and more', style=style)
     #print(bs)
@@ -83,7 +89,9 @@ def testContext(context, path):
     style = getFullStyle()
     bs = context.newString(txt, style=style)
     # Usage in DrawBot by addressing the embedded FS for drawing.
-    context.text(bs, (M, 2*M))
+    #context.text(bs, (M, 2*M))
+    newTextBox(bs, x=M, y=2*M, w=pt(100), h=pt(400), parent=page, border=1, fill=color(0.3, 0.2, 0.1, 0.5))
+    
     context.stroke((0, 1, 0))
     context.strokeWidth(0.1)
     ch = bungee.info.capHeight
