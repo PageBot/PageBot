@@ -10,7 +10,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     Strings.py
+#     Documents.py
 #
 #     Tests pagebot string and style classes in different contexts.
 
@@ -22,6 +22,7 @@ from pagebot.contexts.indesigncontext import InDesignContext
 #from pagebot.contexts.idmlcontext import IdmlContext
 from pagebot.document import Document
 from pagebot.elements import *
+from pagebot.conditions import *
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.contexts.strings.drawbotstring import DrawBotString
@@ -30,13 +31,12 @@ from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor, color
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.constants import *
-
-# TODO: move to basics when finished.
-
-W, H = A3
-
+W, H = A5
+H = pt(H)
+W = pt(W)
 M = 100
 s = 36
+print(H)
 
 roboto = findFont('Roboto-Regular')
 robotoBold = findFont('Roboto-Bold')
@@ -55,61 +55,34 @@ testContexts = (
 )
 
 def testContext(context, path):
+    
     doc = Document(w=W, h=H, context=context, autoPages=1)
     page = doc[1]
 
-    #print('Units: %s' % context.units)
-    #context.newDocument(W, H)
-    print('# Testing strings in %s' % context)
-    context.newPage(W, H)
-    context.fill(noColor) # Auto-converts to noColor
+    print('Units: %s' % context.units)
+    print('# Testing document in %s' % context)
+    #context.newPage(W, H)
+    context.fill((1, 0, 0)) # Auto-converts to noColor
     context.stroke(0.7) # Auto-converts to pt( )
     context.line((M, 0), (M, H))
     context.line((0, M), (W, M))
-    # Create a new BabelString with the DrawBot FormttedString inside.
-    style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
-    bs = context.newString('! This is a string', style=style)
-    # It prints its contents.
-    print(' - Is a BabelString: %s' % isinstance(bs, BabelString))
-    print(' - Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
-    print(' - Is a FlatString: %s' % isinstance(bs, FlatString))
-    print(' - Is an InDesignString: %s' % isinstance(bs, FlatString))
-    print(bs)
-
-    # Adding or appending strings are added to the internal formatted string.
-    # Adding plain strings take over the existing style.
-    bs += ' and more'
-    print(bs)
-    # Reusing the same style with adjustments
-    style['font'] = robotoBold
-    style['textFill'] = 0.5, 0, 1 # Auto-converts to Color instance
-    bs += context.newString(' and more', style=style)
-
-    # Draw grid, matching the position of the text.
-    context.text(bs, (M, M))
     context.line((0, 2*M), (W, 2*M))
-
-    style = getFullStyle()
-    bs = context.newString(txt, style=style)
-    # Usage in DrawBot by addressing the embedded FS for drawing.
-    #context.text(bs, (M, 2*M))
-    tb = newTextBox(bs, context=context, x=M, y=H-M, w=300, h=300, parent=page, border=1, fill=color(0.3, 0.2, 0.1, 0.5))
-    print(tb)
+    print(doc.view.context == context)
+    conditions = [Right2Right(), Float2Top(), Float2Left()]
+    doc.view.context.fill((1, 0, 0)) # Auto-converts to noColor
+    doc.view.context.rect(x=0, y=0, w=100, h=100)
     
-    context.stroke((0, 1, 0))
-    context.strokeWidth(0.1)
-    ch = bungee.info.capHeight
-    upem = bungee.info.unitsPerEm
-    #context.rect(x=pt(M), y=pt(2*M), w=pt(400), h=pt(M-ch/upem*72))
-    #context.saveImage(path)
-    #print(doc.view.context == context)
+    for n in range(32):
+        r = newRect(w=40, h=42, mr=4, mt=4, parent=page,
+                fill=color(random()*0.5 + 0.5, 0, 0.5),
+                conditions=conditions, context=context)
+        #print(r)
+        #print(isinstance(r, Element))
+        #print(r._context == context)
+
+    #doc.view.build_drawBot(doc.view, origin=(0, 0))
     #doc.view.build()
     #doc.export('_export/Strings.pdf')
-    
-def getFullStyle():
-    style = dict()
-    style = dict(font=bungee, fontSize=pt(s), w=pt(300), hyphenation=True, baseLineShift=200)
-    return style
     
 def testAllContexts():
     for context, path in testContexts:

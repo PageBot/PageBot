@@ -67,7 +67,7 @@ class Element:
             scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            drawAfter=None, htmlCode=None, htmlPaths=None, 
+            drawAfter=None, htmlCode=None, htmlPaths=None,
             clipPath=None, **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -168,6 +168,7 @@ class Element:
 
         if bleed is not None:
             self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
+
         # Border info dict have format:
         # dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
         # If not borders defined, then drawing will use the stroke and
@@ -211,8 +212,9 @@ class Element:
         self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
         self.cssId = cssId # Optional id name. Ignored if None.
 
-        # Optional resources that can be included for web output (HtmlContext)
-        # Define string or file paths where to read content, instead of constructing by the builder.
+        # Optional resources that can be included for web output (HtmlContext).
+        # Define string or file paths where to read content, instead of
+        # constructing by the builder.
         self.htmlCode = htmlCode # Set to string in case element has HTML as source.
         self.htmlPaths = htmlPaths # List or paths, in case full element HTML is defined in files.
 
@@ -234,9 +236,10 @@ class Element:
         # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.conditions = conditions
 
-        # Optional storage of self.context.BezierPath() to clip the content of self.
-        # Also note the possibility of the self.childClipPath property, which returns a 
-        # PageBotPaht instance, constructed from the position and layout of self.elements 
+        # Optional storage of self.context.BezierPath() to clip the content of
+        # self.  Also note the possibility of the self.childClipPath property,
+        # which returns a PageBotPath instance, constructed from the position
+        # and layout of self.elements
         if clipPath is not None:
             clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
         self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
@@ -332,16 +335,18 @@ class Element:
     #   I M A G I N G
 
     def _get_resolution(self):
-        """Answer the style value self.css('resolution') for the amount of dpi."""
+        """Answer the style value self.css('resolution') for the amount of
+        DPI."""
         return self.css('resolution')
     def _set_resolution(self, resolution):
         self.style['resolution'] = resolution
     resolution = property(_get_resolution, _set_resolution)
-    
+
     def _get_resolutionFactors(self):
-        """Answer the style value self.css('resolutionFactors') for image cacheing size factors.
-        If set to None, the resolutionFactor defaults to DEFAULT_RESOLUTION_FACTORS.
-        This will indicate, e.g. value 2, to write a thumbnail png twice the size it will be used in.
+        """Answer the style value self.css('resolutionFactors') for image
+        cacheing size factors.  If set to None, the resolutionFactor defaults
+        to DEFAULT_RESOLUTION_FACTORS. This will indicate, e.g. value 2, to
+        write a thumbnail png twice the size it will be used in.
         """
         return self.css('resolutionFactors', default=DEFAULT_RESOLUTION_FACTORS)
     def _set_resolutionFactors(self, resolutionFactors):
@@ -350,7 +355,7 @@ class Element:
         assert isinstance(resolutionFactors, dict)
         self.style['resolutionFactors'] = resolutionFactors
     resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
-    
+
     #   T E M P L A T E
 
     def applyTemplate(self, template, elements=None):

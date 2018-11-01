@@ -61,14 +61,14 @@ class PageView(BaseView):
         2
         >>> len(view.elements[0])
         8
-        """        
+        """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
         # If default _export directory does not exist, then create it.
         if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
             os.makedirs(self.EXPORT_PATH)
 
-        context = self.context # Get current context and builder from doc. Can be DrawBot or Flat
+        context = self.context # Get current context and builder from document. Can be DrawBot or Flat
 
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
@@ -87,7 +87,7 @@ class PageView(BaseView):
 
         # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
         # into cache if that file does not already exists. Note that this is done on a page-by-page
-        # level, not a preparation of all 
+        # level, not a preparation of all
         for pn, pages in sortedPages:
             for page in pages:
                 page.prepare(self)
@@ -412,8 +412,7 @@ class PageView(BaseView):
 
     def drawElementFrame(self, e, origin):
         """If self.showFrame and e is a page, or if e.showFrame == True, then draw
-        the frame of the element.
-        """
+        the frame of the element."""
         if (self.showFrame and e.isPage) or e.showFrame:
             x = origin[0]
             y = origin[1]
@@ -534,8 +533,8 @@ class PageView(BaseView):
         """When designing templates and pages, this will draw a filled
         rectangle on the element bounding box (if self.css('missingElementFill'
         is defined) and a cross, indicating that this element has missing
-        content (as in unused image frames). Only draw if the list self.showGrid
-        contains proper types of grid names.
+        content (as in unused image frames). Only draw if the list
+        self.showGrid contains proper types of grid names.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -582,6 +581,7 @@ class PageView(BaseView):
         """Draw grid of lines and/or rectangles if colors are set in the style.
         Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
         a fixed offset.
+
         If types self.showGrid is set, display the type of grid in forground for
         (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG,
         GRID_ROW_BG, GRID_SQR_BG)
@@ -684,11 +684,12 @@ class PageView(BaseView):
 
     def drawBaselines(self, e, origin, background=False):
         """Draw baseline grid if self.showBaselines is True and there is a
-        baseline defined > 0. Use the color from style values viewGridStrokeX and
-        viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox
-        with style values baselineColor and baselineWidth.
-        In this method is called by an element, instead of self, the show attribute
-        is a way to overwrite the setting of self.showBaselines
+        baseline defined > 0. Use the color from style values viewGridStrokeX
+        and viewGridStrokeWidthX to make a difference with the baselines drawn
+        by TextBox with style values baselineColor and baselineWidth.
+
+        In this method is called by an element, instead of self, the show
+        attribute is a way to overwrite the setting of self.showBaselines
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -701,7 +702,7 @@ class PageView(BaseView):
         >>> view.drawBaselines(e, pt(0, 0))
         """
         show = e.showBaselines or self.showBaselines
-        
+
         # Sets the default, in case not drawing or show is True
         if not show:
             return

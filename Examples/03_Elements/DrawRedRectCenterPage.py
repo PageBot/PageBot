@@ -76,9 +76,7 @@ def makeDocument():
     return doc
 
 if __name__ == '__main__':
-
     d = makeDocument()
-
     d.context.Variable([
         #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
         dict(name='ShowOrigins', ui='CheckBox', args=dict(value=True)),
@@ -86,6 +84,5 @@ if __name__ == '__main__':
         dict(name='RedRect', ui='CheckBox', args=dict(value=True)),
         dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
     ], globals())
-
     d.export('_export/DrawRedRectCenterPage.pdf')
 
