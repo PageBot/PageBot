@@ -372,6 +372,29 @@ class TextBox(Element):
         # TODO: In case used as condition, returning a tuple instead of boolean flag
         return page
 
+    #   C O N D I T I O N S
+
+    def fit2Right(self):
+        """Make the right side of self fit the right padding of the parent, without
+        moving the left position. Overwriting the default behavior of Element, as we want 
+        text to be fiting too.
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> context = getContext()
+        >>> e = Element(padding=pt(30), w=1000, h=1000)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
+        >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
+        >>> result = e.solve()
+        >>> tb.w
+        940pt
+        >>> tb.bs.fittingFontSize > 400 # Enlarge beyond this size (can differ between platforms)
+        True
+        """
+        self.w = self.parent.w - self.parent.pr - self.x
+        self.bs = self.context.newString(self.bs.s, style=self.style, w=self.pw)
+        return True
+
     #   B U I L D
 
     def build(self, view, origin, drawElements=True):

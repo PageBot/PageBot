@@ -17,6 +17,8 @@
 #     Graphs, Maps, 3Dto2DContainers.
 #
 from pagebot.elements.element import Element
+from pagebot.toolbox.transformer import path2Extension
+from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 
 # Simple elements
 from pagebot.elements.pbtext import Text
@@ -50,6 +52,23 @@ from pagebot.elements.pbtable import Table
 from pagebot.elements.views import viewClasses
 from pagebot.elements.pbquire import Quire
 from pagebot.elements.pbcodeblock import CodeBlock
+
+def elementFromPath(path, **kwargs):
+    """Answer the element that is best suitable to hold the data in the path.
+    """
+    extension = path2Extension(path).lower()
+    if extension in IMAGE_TYPES:
+        e = newImage(path, **kwargs)
+    elif extension in FONT_TYPES:
+        e = None # TODO: Answer a default specimen element to show the font.
+    elif extension in MOVIE_TYPES:
+        e = None # TODO: Answer a MovieElement instance (to be developed)
+    elif extendion in TEXT_TYPES:
+        e = newTextBox(path, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
+    else:
+        e = None # If no extension-->element can be found.
+
+    return e
 
 #   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
 
@@ -85,7 +104,7 @@ def newTextBox(bs='', **kwargs):
     return TextBox(bs, **kwargs)
 
 def newText(bs='', **kwargs):
-    """Draw formatted string. Normally we don't need w and h here, as it is
+    """Create a Text element. Normally we don't need w and h here, as it is
     made by the text and style combinations. But in case the defined font is a
     Variable Font, then we can use the width and height to interpolate a font
     that fits the space for the given string and weight. Caller must supply
@@ -93,44 +112,48 @@ def newText(bs='', **kwargs):
     return Text(bs, **kwargs)
 
 def newRect(**kwargs):
-    """Draw the rectangle. Note that points can also be defined in the style.
+    """Create a new Rect element. Note that points can also be defined in the style.
     When omitted, a square is drawn."""
     return Rect(**kwargs)
 
 def newGroup(**kwargs):
-    """Create a new group. Note that points can also be defined in the style.
+    """Create a new Group element. Note that points can also be defined in the style.
     When omitted, a square is drawn."""
     return Group(**kwargs)
 
 def newOval(**kwargs):
-    """Draw the oval. Note that points can also be defined in the style."""
+    """Create an Oval element. Note that points can also be defined in the style."""
     return Oval(**kwargs)
 
 def newCircle(**kwargs):
-    """Draw the circle. Note that points can also be defined in the style."""
+    """Create a Circle element. Note that points can also be defined in the style."""
     return Circle(**kwargs)
 
 def newLine(**kwargs):
+    """Create a Line element."""
     return Line(**kwargs)
 
 def newPolygon(points=None, **kwargs):
+    """Create a Polygon element."""
     return Polygon(points=points, **kwargs)
 
 def newRuler(**kwargs):
+    """Create a Ruler element."""
     return Ruler(**kwargs)
 
 def newPaths(paths, **kwargs):
-    """Draw the PageBotPath object(s) in the element frame. The paths can be a single
-    PageBotPath instance or a list/tuple of instances."""
+    """Create a Paths element, holding PageBotPath object(s) in the element frame. 
+    The paths can be a single PageBotPath instance or a list/tuple of instances. 
+    Not be confused with the filePath in Image."""
     return Paths(paths, **kwargs)
 
 def newImage(path=None, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,
     h) of which at least one of them should be defined. The path can be None,
-    to be filled later. If the image is drawn with an empty path, a
+    to be filled later. If the image is drawn with an empty or non-existent file path, a
     missingImage cross-frame is shown. The optional imo attribute is an
-    ImageObject() with filters in place. The Image element is answered for
-    convenience of the caller."""
+    DrawBot-modelled ImageObject() with filters in place. 
+    The created Image element is answered as convenience to the caller."""
     return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):

@@ -584,7 +584,9 @@ FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
+# Movie formates
 FILETYPE_MOV = 'mov'
+FILETYPE_MP4 = 'mp4'
 # Application format
 FILETYPE_APP = 'app'
 # Font formats
@@ -593,10 +595,16 @@ FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
 DEFAULT_FILETYPE = FILETYPE_PDF
 
-# Commonly used groups of files.
+# Text formats
+FILETYPE_TXT = 'txt'
+FILETYPE_MD = 'md' # Markdown file extension
+
+# Commonly used groups of file types.
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF,
     FILETYPE_TIF, FILETYPE_TIFF)
+MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
+TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {

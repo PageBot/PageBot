@@ -15,6 +15,7 @@
 from copy import copy
 
 from pagebot.publications.publication import Publication
+from pagebot.publications.magazine.parts import * # Import al specific Magazine Part element classes.
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.units import pt
@@ -148,27 +149,54 @@ class Magazine(Publication):
         # TODO: Why is export so slow?
         doc.export(path)
 
-    def composePartOfBook(self, name):
-        part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
-        doc = self.newDocument(autoPages=0)
-        if part.compose is not None: # If the part has its own composer defined, then use that.
-            part.compose(self, part, doc)
-        else: # Otherwise use the default composer of self
-            self.compose(part, doc) 
+    def compose(self, names=None, doc=None, publication=None):
+        """Compose the magazine in a document. If name is defined, then only compose the part with that name."""
+        if names is not None and not ininstance(names, (list, tuple)):
+            names = [names]
+        elif names is None:
+            names = self.partNames # Property collecting the names of all self.elements
+        elif insinstance(names, str):
+            names = [names]
+        if names:
+            parts = []
+            for name in names:
+                part = self.select(name) # Find the selected part of self (e.g. a chapter in the magazine)
+                parts.append(part)
+        else:
+            parts = self.elements
+
+        if publication is None:
+            publication = self
+        if doc is None:
+            doc = self.newDocument(autoPages=0) # Pages will be defined by the need of parts.
+
+        for part in parts:
+            part.compose(doc=doc, publication=publication)
+        
+        # Not solving conditions here yet.
         return doc
 
-    def exportPart(self, name, start=0, end=None, path=None):
+    def exportPart(self, name=None, start=0, end=None, path=None):
         if path is None:
-            path = '_export/%s-%s.pdf' % (self.name, name)
+            path = '_export/%s-%s.pdf' % (self.name, name or 'All')
 
         # Create a new doocument, including the current settings of self for the view parameters.
-        doc = self.composePartOfBook(name)
+        doc = self.compose(name)
         doc.export(path)
 
     def exportTableOfContext(self):
         """Export the automatic markdown file that contains the table of content of the magazine.
         """
-        
+
+    #   P A R T S
+
+    def newCoverFront(self):
+        """Create a new CoverFront element instance for Magazine self. Answer the coverFton.
+        Note that a CoverFront contains a Cover part, and also can contain the initialize
+        ad pages of the magazine."""
+        coverFront = CoverFront()
+        self.elements.append(coverFront)
+        return coverFront # Answer CoverFront element for convenience of the caller.
 
 if __name__ == '__main__':
     import doctest

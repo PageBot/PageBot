@@ -284,6 +284,17 @@ class Page(Element):
         return self.getGalley()
     galley = property(_get_galley)
 
+    #   C O M P O S I T I O N  S U P P O R T
+
+    def compose(self, doc, publication):
+        """Recusively compose Page and add it to doc. Note that this will alter the self.parent to doc.
+        The recursively pass the composing on to the page elements, which at that time can use the 
+        full document style settings by e.css(...).
+        """
+        doc.appendPage(self)
+        for e in self.elements:
+            e.compose(doc, publication)
+
     #   D R A W B O T  &  F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):

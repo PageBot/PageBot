@@ -881,6 +881,8 @@ class Element:
             self._eIds[e.eId] = e
         return len(self._elements)-1 # Answer the element index for e.
 
+    append = appendElement # Add alternative method name for conveniece of high-level element additions.
+
     def removeElement(self, e):
         """If the element is placed in self, then remove it. Don't touch the
         position.
@@ -4079,6 +4081,15 @@ class Element:
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
             self.context.restoreGraphicState()
 
+    #   C O M P O S I T I O N  S U P P O R T
+
+    def compose(self, doc, publication):
+        """Recusively compose Pubkication, Pages and Elements to compose the document of a publication.
+        Default behavior is to just pass it on to the chidren. 
+        """
+        for e in self.elements:
+            e.compose(doc, publication)
+
     #   D R A W I N G  S U P P O R T
 
     def getMetricsString(self, view=None):
@@ -6312,7 +6323,7 @@ class Element:
         else:
             top = self.top
             self.bottom = 0
-            self.h += top - self.top
+            self.h = top
         return True
 
     def fit2Left(self):
@@ -6330,6 +6341,7 @@ class Element:
     def fit2Right(self):
         """Make the right side of self fit the right padding of the parent, without
         moving the left position.
+        TextBox implements it's own method to make the text fit by adjusting the size.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
