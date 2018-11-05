@@ -31,13 +31,13 @@ from pagebot.toolbox.color import noColor, color
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.constants import *
 
-# TODO: move to basics when finished.
+# TODO: move to basics when finishedself.
 
 H, W = A3
 W = pt(W)
 H = pt(H)
 M = 48
-s = 36
+bungeeSize = 48
 
 roboto = findFont('Roboto-Regular')
 robotoBold = findFont('Roboto-Bold')
@@ -82,46 +82,55 @@ def testContext(context, path):
     drawLines(context)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
-    bs = context.newString('! This is a string', style=style)
+    bs = context.newString('This is a string', style=style)
     # It prints its contents.
-    print(' - Is a BabelString: %s' % isinstance(bs, BabelString))
-    print(' - Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
-    print(' - Is a FlatString: %s' % isinstance(bs, FlatString))
-    print(' - Is an InDesignString: %s' % isinstance(bs, FlatString))
+    #print(' - Is a BabelString: %s' % isinstance(bs, BabelString))
+    #print(' - Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
+    #print(' - Is a FlatString: %s' % isinstance(bs, FlatString))
+    #print(' - Is an InDesignString: %s' % isinstance(bs, FlatString))
     print(bs)
 
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
-    bs += ' and more'
+    bs += ' and more,'
     print(bs)
-    # Reusing the same style with adjustments
-    style['font'] = robotoBold
-    style['textFill'] = 0.5, 0, 1 # Auto-converts to Color instance
-    bs += context.newString(' and more', style=style)
+    
+    # Reusing the same style different text fill color.
+    style['textFill'] = 0.1, 0.5, 0.9
+    bs += context.newString(' more and', style=style)
 
-    # Draw grid, matching the position of the text.
+    # Different color and weight.
+    style['textFill'] = 0.5, 0, 1
+    style['font'] = robotoBold
+    bs += context.newString(' even more!', style=style)
     context.text(bs, (M, H-2*M))
 
     style = getFullStyle()
     bs = context.newString(txt, style=style)
     # Usage in DrawBot by addressing the embedded FS for drawing.
-    #context.text(bs, (M, 2*M))
+    context.text(bs, (M, H- 4*M))
     tb = newTextBox(bs, context=context, x=M, y=H-M, w=300, h=300, parent=page, border=1, fill=color(0.3, 0.2, 0.1, 0.5))
     print(tb)
     
     context.stroke((0, 1, 0))
     context.strokeWidth(0.1)
-    ch = bungee.info.capHeight
+    
+    capHeight = bungee.info.capHeight
     upem = bungee.info.unitsPerEm
-    #context.rect(x=pt(M), y=pt(2*M), w=pt(400), h=pt(M-ch/upem*72))
+    h = capHeight / upem * bungeeSize
+    print(h)
+    
+    context.rect(x=M, y=H-4*M, w=pt(400), h=h)
+    
     #context.saveImage(path)
-    #print(doc.view.context == context)
+    print(doc.view.context == context)
+    
     #doc.view.build()
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
     style = dict()
-    style = dict(font=bungee, fontSize=pt(s), w=pt(300), hyphenation=True, baseLineShift=200)
+    style = dict(font=bungee, fontSize=pt(bungeeSize), w=pt(300), hyphenation=True, baseLineShift=200)
     return style
     
 def testAllContexts():
