@@ -33,9 +33,10 @@ from pagebot.constants import *
 
 # TODO: move to basics when finished.
 
-W, H = A3
-
-M = 100
+H, W = A3
+W = pt(W)
+H = pt(H)
+M = 48
 s = 36
 
 roboto = findFont('Roboto-Regular')
@@ -54,6 +55,22 @@ testContexts = (
     #(IdmlContext(), '_export/testIdmlString.pdf')
 )
 
+def drawLines(context):
+    context.fill(noColor)
+    context.stroke((0.2, 0.7, 0.5, 0.3))
+    context.strokeWidth(2)
+    context.line((M, 0), (M, H))
+    
+    # Number of lines.
+    
+    r = H/M
+    
+    for i in range(int(r)):
+        y = H - i*M
+        if i > 1:
+            context.strokeWidth(0.5)
+        context.line((0, y), (W, y))
+
 def testContext(context, path):
     doc = Document(w=W, h=H, context=context, autoPages=1)
     page = doc[1]
@@ -62,10 +79,7 @@ def testContext(context, path):
     #context.newDocument(W, H)
     print('# Testing strings in %s' % context)
     context.newPage(W, H)
-    context.fill(noColor) # Auto-converts to noColor
-    context.stroke(0.7) # Auto-converts to pt( )
-    context.line((M, 0), (M, H))
-    context.line((0, M), (W, M))
+    drawLines(context)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('! This is a string', style=style)
@@ -86,8 +100,7 @@ def testContext(context, path):
     bs += context.newString(' and more', style=style)
 
     # Draw grid, matching the position of the text.
-    context.text(bs, (M, M))
-    context.line((0, 2*M), (W, 2*M))
+    context.text(bs, (M, H-2*M))
 
     style = getFullStyle()
     bs = context.newString(txt, style=style)
