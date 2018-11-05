@@ -573,6 +573,13 @@ XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
+VIEW_PRINT = 'Print' # View settings flags to True for print (such as crop marks and registration marks)
+VIEW_PRINT2 = 'Print2' # Extended view settings flags to True for print (such as color bars)
+VIEW_DEBUG = 'Debug' # View settings flags to True that are useful for debugging a document
+VIEW_DEBUG2 = 'Debug2' # Extended view settings flags to True that are useful for debugging a document
+VIEW_FLOW = 'Flow' # View settings that show text flow markers.
+VIEW_NONE = None # View settings are all off.
+
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
