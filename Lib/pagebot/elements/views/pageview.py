@@ -267,7 +267,6 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPaddingStrokeWidth', 0.5))
-            print('xxxxxx', e.originTop, px, py, e.padding, px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
             if e.originTop:
                 context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
                 #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)

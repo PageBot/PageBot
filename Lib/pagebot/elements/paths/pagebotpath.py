@@ -928,7 +928,11 @@ class PageBotPath:
         bp.removeOverlap()
         return self.__class__(self.context, bp)
 
-
+def newRectPath(context, w, h):
+    pbp = PageBotPath(context)
+    pbp.rect(0, 0, w, h)
+    return pbp
+    
 if __name__ == '__main__':
     import doctest
     import sys

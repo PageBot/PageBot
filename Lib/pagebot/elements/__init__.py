@@ -39,7 +39,7 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.pbplacer import Placer
 
 # Path and mask elements
-from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
+from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 #OLD from pagebot.elements.paths.pbpath import Path
 #OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath

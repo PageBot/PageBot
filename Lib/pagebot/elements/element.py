@@ -6286,9 +6286,9 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.mTop = -self.bleedTop
+            self.top = -self.bleedTop
         else:
-            self.mTop = self.parent.h + self.bleedTop
+            self.top = self.parent.h + self.bleedTop
         return True
 
 
@@ -6299,6 +6299,13 @@ class Element:
         into another element at the same z-layer position.
         Include margin to decide if it fits."""
         if self.originTop:
+            self.top = min(self.getFloatTopSide(), self.parent.pt)
+        else:
+            self.top = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
+        return True
+
+    def floatMargin2Top(self):
+        if self.originTop:
             self.mTop = min(self.getFloatTopSide(), self.parent.pt)
         else:
             self.mTop = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
@@ -6306,34 +6313,65 @@ class Element:
 
     def float2Bottom(self):
         if self.originTop:
+            self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
+        else:
+            self.bottom = min(self.getFloatBottomSide(), self.parent.pb)
+        return True
+
+    def floatMargin2Bottom(self):
+        if self.originTop:
             self.mBottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
             self.mBottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2Left(self):
+        self.left = max(self.getFloatLeftSide(), self.parent.pl) # padding left
+        return True
+
+    def floatMargin2Left(self):
         self.mLeft = max(self.getFloatLeftSide(), self.parent.pl) # padding left
         return True
 
     def float2Right(self):
+        self.right = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
+        return True
+
+    def floatMargin2Right(self):
         self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
         return True
 
-    # Floating parent sides
+    # Floating to parent sides, go as far as there are no other elements in the same z-layer
 
     def float2TopSide(self):
+        self.top = self.getFloatTopSide()
+        return True
+
+    def floatMargin2TopSide(self):
         self.mTop = self.getFloatTopSide()
         return True
 
     def float2BottomSide(self):
+        self.bottom = self.getFloatBottomSide()
+        return True
+
+    def floatMargin2BottomSide(self):
         self.mBottom = self.getFloatBottomSide()
         return True
 
     def float2LeftSide(self):
+        self.left = self.getFloatLeftSide()
+        return True
+
+    def floatMargin2LeftSide(self):
         self.mLeft = self.getFloatLeftSide()
         return True
 
     def float2RightSide(self):
+        self.right = self.getFloatRightSide()
+        return True
+
+    def floatMargin2RightSide(self):
         self.mRight = self.getFloatRightSide()
         return True
 
@@ -6357,6 +6395,15 @@ class Element:
             top = self.top
             self.bottom = 0
             self.h = top
+        return True
+
+    def fit2BottomBleed(self):
+        if self.originTop:
+            self.h += self.parent.h - self.bottom + self.bleedBottom
+        else:
+            top = self.top
+            self.bottom = -self.bleedBottom
+            self.h = top + self.bleedBottom
         return True
 
     def fit2Left(self):
@@ -6452,6 +6499,15 @@ class Element:
             self.h += bottom - self.bottom
         else:
             self.h += self.parent.h - self.top
+        return True
+
+    def fit2TopBleed(self):
+        if self.originTop:
+            bottom = self.bottom
+            self.top = -self.bleedTop
+            self.h += bottom - self.bottom
+        else:
+            self.h += self.parent.h - self.top + self.bleedTop
         return True
 
     #   Shrinking

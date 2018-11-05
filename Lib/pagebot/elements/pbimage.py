@@ -132,13 +132,13 @@ class Image(Element):
         # If self._h is set too, do disproportional sizing. Otherwise set to 0 or None.
         if w:
             w = units(w)
-        self._w = w
+        self._w = w # Width is lead, height is undefined.
         self._h = None
     w = property(_get_w, _set_w)
 
     def _get_h(self):
         u = None
-        if not self._h: # Width is undefined
+        if not self._h: # Height is undefined
             iwpt = upt(self.iw)
             if self._w and iwpt:
                 u = self.ih * upt(self._w / iwpt)  # Width is lead, calculate height.
@@ -152,7 +152,7 @@ class Image(Element):
         # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
         if h:
             h = units(h)
-        self._w = None
+        self._w = None # Height is lead, width is undefined.
         self._h = h
 
     h = property(_get_h, _set_h)
