@@ -25,7 +25,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
                            ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
-                           DEFAULT_COLOR_BARS, 
+                           DEFAULT_COLOR_BARS, DEFAULT_MININFOPADDING,
                            VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 
 from pagebot import getContext
@@ -6543,13 +6543,12 @@ class Element:
     #   the element tree upwards. Instead they are local parameters for each element, page
     #   or view.
 
-    def setShowings(self, setNames):
+    def setShowings(self, *args):
         """Set the showing flags of self (often a View instance) to predefined flags, depending
         on a type of stage of usage.
 
         """
-        if not isinstance(setNames, (tuple, list)):
-            setNames = [setNames]
+        setNames = set(args)
 
         self.showSpread = False
         self.viewMinInfoPadding = 0
@@ -6573,12 +6572,12 @@ class Element:
         if VIEW_PRINT in setNames:
             # View settings flags to True for print (such as crop marks and registration marks)
             self.showSpread = True
-            self.viewMinInfoPadding = pt(60)
+            self.viewMinInfoPadding = DEFAULT_MININFOPADDING
             self.showCropMarks = True
             self.showRegistrationMarks = True
             self.showNameInfo = True
             if self.isView:
-                self.padding = pt(72)
+                self.padding = DEFAULT_MININFOPADDING
 
         if VIEW_PRINT2 in setNames:
             # Extended show options for printing 

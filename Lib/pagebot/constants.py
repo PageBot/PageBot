@@ -573,6 +573,8 @@ XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
+DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
+
 VIEW_PRINT = 'Print' # View settings flags to True for print (such as crop marks and registration marks)
 VIEW_PRINT2 = 'Print2' # Extended view settings flags to True for print (such as color bars)
 VIEW_DEBUG = 'Debug' # View settings flags to True that are useful for debugging a document

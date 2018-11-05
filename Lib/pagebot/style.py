@@ -23,7 +23,7 @@ import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
-        DEFAULT_RESOLUTION_FACTORS)
+        DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING)
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
@@ -357,7 +357,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
 
         # Document/page stuff
-        viewMinInfoPadding = pt(20), # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+        viewMinInfoPadding = DEFAULT_MININFOPADDING, # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
         showCropMarks = False,
         showRegistrationMarks = False,
         showOrigin = False, # Show page origin crosshair marker

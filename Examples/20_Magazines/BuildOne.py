@@ -48,7 +48,7 @@ coverImage.conditions = [Top2TopSide()]#, Fit2BottomSide()]
 coverImage.conditions = [Bottom2BottomSide()]#, Fit2BottomSide()]
 
 #titleBox = newTextBox('Magazine', style=coverTitleStyle, fill=(1, 1, 0), conditions=[Fit2Width(), Bottom2Bottom()])
-test = newRect(fill=(0, 1, 0), h=p(1), conditions=[Fit2Width(), Top2TopBleed()])
+test = newRect(fill=(0, 1, 0), h=p(1), conditions=[Fit2Width(), Bottom2BottomBleed()])
 
 # Create a coverFront part/element in the Magazine, including a Cover part.
 # coverFront(=part)-->cover(=part)-->coverPage-->coverImage(=Image)
@@ -66,7 +66,8 @@ doc.solve() # Solve any unsolved conditions on the pages.
 
 # Set view paramters for the output document.
 view = doc.view
-view.setShowings((VIEW_PRINT, VIEW_DEBUG))
+view.setShowings(VIEW_PRINT, VIEW_DEBUG)
+#view.showColorBars = True # Modify showing set by individual flag.
 
 print(coverImage.box)
 
