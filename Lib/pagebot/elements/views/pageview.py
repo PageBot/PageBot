@@ -43,11 +43,7 @@ class PageView(BaseView):
 
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
-    def newQuire(self, folds=None, startPage=None):
-        """Add a new Quire instance to self.elements."""
-        Quire(folds=folds, startPage=startPage, parent=self)
-
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, new=True):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
 
@@ -64,24 +60,24 @@ class PageView(BaseView):
         """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
+
         # If default _export directory does not exist, then create it.
         if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
             os.makedirs(self.EXPORT_PATH)
 
-        context = self.context # Get current context and builder from document. Can be DrawBot or Flat
-
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
-        context.fileType = path.split('.')[-1]
+        self.context.fileType = path.split('.')[-1]
 
         # Find the maximum document page size to this in all page sizes of the
         # document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
-        # Make sure that canvas is empty, there may have been another document
-        # building in this context.
-        context.newDrawing()
-        context.newDocument(w, h) # Allow the context to create a new document and page canvas.
+        if new:
+            # Make sure that canvas is empty, there may have been another document
+            # building in this context.
+            self.context.newDrawing()
+            self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
 
         sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
 
@@ -125,18 +121,20 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+            if new:
+                self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
-            context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
+            self.context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)
 
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
-                context.fill(fillColor)
-                context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
+                self.context.fill(fillColor)
+                self.context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
@@ -157,8 +155,9 @@ class PageView(BaseView):
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo(e)
 
-        """Export the document to fileName for all pages in sequential order.
-        If pageSelection is defined, it must be a list with page numbers to
+        '''
+        Export the document to fileName for all pages in sequential order. If
+        pageSelection is defined, it must be a list with page numbers to
         export. This allows the order to be changed and pages to be omitted.
         The fileName can have extensions ['pdf', 'svg', 'png', 'gif'] to direct
         the type of drawing and export that needs to be done.
@@ -168,7 +167,8 @@ class PageView(BaseView):
         special cases, there is not straighforward (or sequential) export of
         pages, e.g. when generating HTML/CSS. In that case use
         MyBuilder(document).export(fileName), the builder is responsible to
-        query the document, pages, elements and styles."""
+        query the document, pages, elements and styles.
+        '''
 
         folder = path2ParentPath(path)
 
@@ -181,7 +181,11 @@ class PageView(BaseView):
         #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
         #    frameDuration(frameDuration)
 
-        context.saveDocument(path, multiPage=multiPage)
+        self.context.saveDocument(path, multiPage=multiPage)
+
+    def newQuire(self, folds=None, startPage=None):
+        """Add a new Quire instance to self.elements."""
+        Quire(folds=folds, startPage=startPage, parent=self)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
