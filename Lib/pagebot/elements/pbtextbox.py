@@ -40,7 +40,9 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
-        self._textLines = self._baselines = None # Force initiaize upon first usage.
+        self._textLines = None
+        self._baselines = None # Force initiaize upon first usage.
+
         if size is not None:
             self.size = size
         else:
@@ -64,10 +66,12 @@ class TextBox(Element):
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
+
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
         # Note choice for difference in camelCase
-        self._textLines = self._baselines = None # Force reset if being called
+        #self._textLines = self._baselines = None # Force reset if being called
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -100,11 +104,13 @@ class TextBox(Element):
             base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
             h = units(self.css('h', 0), base=base)
         return h
+
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
         if h is not None: # If None, then self.h is elastic defined by content
             h = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
         self.style['h'] = h
+
     h = property(_get_h, _set_h)
 
     def _get_y(self):
@@ -130,18 +136,25 @@ class TextBox(Element):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
         #self._textLines = None # Force recalculation of y values.
+
     y = property(_get_y, _set_y)
 
     def _get_textLines(self):
         if self._textLines is None:
+            print('get Textlines')
             self._textLines = []
             self._baselines = {}
+
             for textLine in self.bs.getTextLines(self.pw, self.ph):
                 #print('---', textLine.y, self.h - textLine.y)
                 textLine.y = self.h - textLine.y # Make postion relative to text box self.
                 self._textLines.append(textLine)
                 self._baselines[upt(textLine.y)] = textLine
+
+        print(self._textLines)
         return self._textLines
+
+
     textLines = property(_get_textLines)
 
     def _get_baselines(self):
@@ -234,14 +247,15 @@ class TextBox(Element):
     text = property(_get_text)
 
     def append(self, bs, style=None):
-        """Append to the string type that is defined by the current view/builder type.
-        Note that the string is already assumed to be styled or can be added as plain string.
-        Don't calculate the overflow here, as this is a slow/expensive operation.
-        Also we don't want to calculate the textLines/runs for every string appended,
-        as we don't know how much more the caller will add. bs._textLines is set to None
-        to force recalculation as soon as bs.textLines is called again.
-        If bs is not a BabelString instance, then create one, defined by the self.context,
-        and based on the style of self."""
+        """Appends to the string type that is defined by the current view /
+        builder type. Note that the string is already assumed to be styled or
+        can be added as plain string. Don't calculate the overflow here, as
+        this is a slow/expensive operation. Also we don't want to calculate
+        the textLines/runs for every string appended, as we don't know how much
+        more the caller will add. bs._textLines is set to None to force
+        recalculation as soon as bs.textLines is called again. If bs is not a
+        BabelString instance, then create one, defined by the self.context, and
+        based on the style of self."""
         #assert isinstance(bs, (str, self.context.STRING_CLASS))
         #self.bs += self.newString(bs, e=self, style=style)
         self.bs += bs
@@ -420,7 +434,7 @@ class TextBox(Element):
 
         box = clipPath = None
         if self.clipPath is not None: # Use the elements as clip path:
-            clipPath = self.clipPath        
+            clipPath = self.clipPath
             clipPath.translate((px, py))
             context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
 

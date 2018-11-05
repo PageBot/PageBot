@@ -107,19 +107,23 @@ def testContext(context, path):
 
     style = getFullStyle()
     bs = context.newString(txt, style=style)
+
     # Usage in DrawBot by addressing the embedded FS for drawing.
     context.text(bs, (M, H- 4*M))
     capHeight = bungee.info.capHeight
     upem = bungee.info.unitsPerEm
     h = capHeight / upem * bungeeSize
+    
     #context.stroke((0, 1, 0))
     #context.strokeWidth(0.1)
     #context.rect(x=M, y=H-4*M, w=pt(400), h=h)
-    
     #context.saveImage(path)
+    
     print(doc.view.context == context)
     tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5))
-    doc.view.build(new=False)
+    
+    print('textlines: %s' % tb._textLines)
+    doc.build(new=False)
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
