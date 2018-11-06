@@ -2,20 +2,32 @@ t = '''Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm
 claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium
 lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.'''
 
-fontSize(36)
+s = 36
+fontSize(s)
 font('Helvetica')
 hyphenation(True)
 
-overflow = textBox(t, (10, 10, 600, 400), align='right')
+p= 10
+x = p
+w = 600
+h = 400
+y0 = p
+y1 = h + 2*p
+
+overflow = textBox(t, (x, y0, w, h), align='right')
 print('Overflow: %d' % len(overflow))
 
 hyphenation(False)
+baselineShift(0)
 
-overflow = textBox(t, (10, 410, 600, 400), align='right')
+overflow = textBox(t, (x, y1, w, h), align='center')
 print('Overflow: %d' % len(overflow))
 
 
 fill(None)
 stroke(0, 1, 0)
-rect(x=10, y=10, w=600, h=400)
-rect(x=10, y=410, w=600, h=400)
+rect(x=x, y=y0, w=w, h=h)
+rect(x=x, y=y1, w=w, h=h)
+stroke(1, 0, 0)
+line((x, y0+h-s), (w+x, y0+h-s))
+line((x, y1 + h-s), (w+x, y1 + h-s))
