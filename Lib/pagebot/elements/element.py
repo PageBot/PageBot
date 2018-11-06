@@ -25,7 +25,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
                            DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
                            ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS,
                            OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
-                           DEFAULT_COLOR_BARS)
+                           DEFAULT_COLOR_BARS, DEFAULT_MININFOPADDING,
+                           VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 
 from pagebot import getContext
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
@@ -880,6 +881,8 @@ class Element:
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
         return len(self._elements)-1 # Answer the element index for e.
+
+    append = appendElement # Add alternative method name for conveniece of high-level element additions.
 
     def removeElement(self, e):
         """If the element is placed in self, then remove it. Don't touch the
@@ -2563,7 +2566,7 @@ class Element:
 
     def _get_bleed(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves
+        Elements will take care of the reposition/scaling themselves
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleed=21)
@@ -2592,7 +2595,7 @@ class Element:
 
     def _get_bleedTop(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves.
+        Elements will take care of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedTop=20)
@@ -2611,7 +2614,7 @@ class Element:
 
     def _get_bleedBottom(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves.
+        Elements will take care of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedBottom=20)
@@ -2632,7 +2635,7 @@ class Element:
 
     def _get_bleedLeft(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves.
+        Elements will take care of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedLeft=20)
@@ -2651,7 +2654,7 @@ class Element:
 
     def _get_bleedRight(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take of the reposition/scaling themselves.
+        Elements will take care of the reposition/scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedRight=20)
@@ -4079,6 +4082,15 @@ class Element:
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
             self.context.restoreGraphicState()
 
+    #   C O M P O S I T I O N  S U P P O R T
+
+    def compose(self, doc, publication):
+        """Recusively compose Pubkication, Pages and Elements to compose the document of a publication.
+        Default behavior is to just pass it on to the chidren. 
+        """
+        for e in self.elements:
+            e.compose(doc, publication)
+
     #   D R A W I N G  S U P P O R T
 
     def getMetricsString(self, view=None):
@@ -4109,8 +4121,7 @@ class Element:
         """Draw fill of the rectangular element space. The self.css('fill')
         defines the color of the element background. Instead of the DrawBot
         stroke and strokeWidth attributes, use borders or (borderTop,
-        borderRight, borderBottom, borderLeft) attributes. If one of the
-        self.bleed is defined, then shift and resize background by that size.
+        borderRight, borderBottom, borderLeft) attributes. 
         """
         c = view.context
         eShadow = self.shadow
@@ -4140,12 +4151,7 @@ class Element:
 
             if self.framePath is not None: # In case defined, use instead of bounding box.
                 c.drawPath(self.framePath)
-            elif self.originTop:
-                c.rect(p[0] - self.bleedLeft, p[1] - self.bleedTop,
-                    self.w + self.bleedLeft + self.bleedRight, self.h + self.bleedTop + self.bleedBottom)
-            else:
-                c.rect(p[0] - self.bleedLeft, p[1] - self.bleedBottom,
-                    self.w + self.bleedLeft + self.bleedRight, self.h + self.bleedTop + self.bleedBottom)
+            c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
 
             c.restoreGraphicState()
 
@@ -4429,6 +4435,11 @@ class Element:
             return abs(self.parent.h - self.bottom) <= tolerance
         return abs(self.bottom) <= tolerance
 
+    def isBottomOnBottomBleed(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.h - self.bottom + self.bleedBottom) <= tolerance
+        return abs(self.bottom - self.bleedBottom) <= tolerance
+
     def isBottomOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.bottom) <= tolerance
@@ -4642,6 +4653,11 @@ class Element:
         if self.originTop:
             return abs(self.top) <= tolerance
         return abs(self.parent.h - self.top) <= tolerance
+
+    def isTopOnTopBleed(self, tolerance=0):
+        if self.originTop:
+            return abs(self.top - self.bleedTop) <= tolerance
+        return abs(self.parent.h - self.top + self.bleedTop) <= tolerance
 
     # Shrink block conditions
 
@@ -5488,6 +5504,19 @@ class Element:
             self.bottom = 0
         return True
 
+    def bottom2BottomBleed(self):
+        """Move bottom of the element to the bottom side of the parent, overshooting by bleed.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+        """
+        if self.parent is None:
+            return False
+        if self.originTop:
+            self.bottom = self.parent.h + self.bleedBottom
+        else:
+            self.bottom = -self.bleedBottom
+        return True
+
     def bottom2Top(self):
         """Move bottom of the element to the top padding of the parent.
         The position of e2 element origin depends on the vertical
@@ -6248,6 +6277,19 @@ class Element:
             self.mTop = self.parent.h
         return True
 
+    def top2TopBleed(self):
+        """Move top of the element to the top side of the parent, overshooting by bleed.
+
+        """
+        if self.parent is None:
+            return False
+        if self.originTop:
+            self.mTop = -self.bleedTop
+        else:
+            self.mTop = self.parent.h + self.bleedTop
+        return True
+
+
     # Floating parent padding
 
     def float2Top(self):
@@ -6312,7 +6354,7 @@ class Element:
         else:
             top = self.top
             self.bottom = 0
-            self.h += top - self.top
+            self.h = top
         return True
 
     def fit2Left(self):
@@ -6330,6 +6372,7 @@ class Element:
     def fit2Right(self):
         """Make the right side of self fit the right padding of the parent, without
         moving the left position.
+        TextBox implements it's own method to make the text fit by adjusting the size.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
@@ -6499,6 +6542,67 @@ class Element:
     #   Note that the viewing property values are NOT inherited by self.css(...) following
     #   the element tree upwards. Instead they are local parameters for each element, page
     #   or view.
+
+    def setShowings(self, *args):
+        """Set the showing flags of self (often a View instance) to predefined flags, depending
+        on a type of stage of usage.
+
+        """
+        setNames = set(args)
+
+        self.showSpread = False
+        self.viewMinInfoPadding = 0
+        self.showCropMarks = False
+        self.showRegistrationMarks = False
+        self.showColorBars = False
+        self.showOrigin = False
+        self.showPadding = False
+        self.showFrame = False
+        self.showNameInfo = False
+        self.showElementInfo = False
+        self.showMissingElement = False
+        self.showGrid = False
+        self.showBaselines = False
+        self.showTextLeading = False
+        self.showFlowConnections = False
+        self.showTextOverflowMarker = False
+        self.showImageReference = False
+        self.cssVerbose = False
+
+        if VIEW_PRINT in setNames:
+            # View settings flags to True for print (such as crop marks and registration marks)
+            self.showSpread = True
+            self.viewMinInfoPadding = DEFAULT_MININFOPADDING
+            self.showCropMarks = True
+            self.showRegistrationMarks = True
+            self.showNameInfo = True
+            if self.isView:
+                self.padding = DEFAULT_MININFOPADDING
+
+        if VIEW_PRINT2 in setNames:
+            # Extended show options for printing 
+            self.showColorBars = True
+
+        if VIEW_DEBUG in setNames:
+            # View settings flags to True that are useful for debugging a document
+            self.showOrigin = True
+            self.showPadding = True
+            self.showFrame = True
+            self.showGrid = DEFAULT_GRID
+            self.showBaselines = DEFAULT_BASELINE
+            self.showTextLeading = True
+
+        if VIEW_DEBUG2 in setNames:
+            self.showElementInfo = True
+            self.showMissingElement = True
+            self.cssVerbose = True
+
+        if VIEW_FLOW in setNames:
+            self.showFlowConnections = True
+            self.showTextOverflowMarker = True
+            self.showImageReference = True
+
+        #else VIEW_NONE in setNames: # View settings are all off.
 
     def _get_show(self):
         """Set flag for drawing or interpretation with conditional.

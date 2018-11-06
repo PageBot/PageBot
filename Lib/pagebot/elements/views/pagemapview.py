@@ -95,10 +95,10 @@ class PageMapView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
-            if self.pl > self.viewMinInfoPadding and \
-               self.pt > self.viewMinInfoPadding and \
-               self.pb > self.viewMinInfoPadding and \
-               self.pr > self.viewMinInfoPadding:
+            if self.pl >= self.viewMinInfoPadding and \
+               self.pt >= self.viewMinInfoPadding and \
+               self.pb >= self.viewMinInfoPadding and \
+               self.pr >= self.viewMinInfoPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -214,8 +214,8 @@ class PageMapView(BaseView):
 
         """
         if ((self.showFrame and e.isPage) or e.showFrame) and \
-                self.pl > self.viewMinInfoPadding and self.pr > self.viewMinInfoPadding and \
-                self.pt > self.viewMinInfoPadding and self.pb > self.viewMinInfoPadding:
+                self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
+                self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))

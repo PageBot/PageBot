@@ -106,10 +106,10 @@ class PageView(BaseView):
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
-            if self.pl > self.viewMinInfoPadding and \
-               self.pt > self.viewMinInfoPadding and \
-               self.pb > self.viewMinInfoPadding and \
-               self.pr > self.viewMinInfoPadding:
+            if self.pl >= self.viewMinInfoPadding and \
+               self.pt >= self.viewMinInfoPadding and \
+               self.pb >= self.viewMinInfoPadding and \
+               self.pr >= self.viewMinInfoPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
                 if self.originTop:
@@ -232,8 +232,9 @@ class PageView(BaseView):
 
         """
         if ((self.showFrame and e.isPage) or e.showFrame) and \
-                self.pl > self.viewMinInfoPadding and self.pr > self.viewMinInfoPadding and \
-                self.pt > self.viewMinInfoPadding and self.pb > self.viewMinInfoPadding:
+                self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
+                self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
+            # TODO: May need to be scaled, as self.drawPadding does.
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))
@@ -257,12 +258,12 @@ class PageView(BaseView):
             context = self.context
 
             p = pointOffset(e.origin, origin)
-            p = e._applyScale(self, p)
-            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+            px, py = point2D(e._applyScale(self, p))
 
             context.fill(noColor)
             context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPaddingStrokeWidth', 0.5))
+            print('xxxxxx', e.originTop, px, py, e.padding, px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
             if e.originTop:
                 context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
                 #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)

@@ -573,6 +573,15 @@ XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
+DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
+
+VIEW_PRINT = 'Print' # View settings flags to True for print (such as crop marks and registration marks)
+VIEW_PRINT2 = 'Print2' # Extended view settings flags to True for print (such as color bars)
+VIEW_DEBUG = 'Debug' # View settings flags to True that are useful for debugging a document
+VIEW_DEBUG2 = 'Debug2' # Extended view settings flags to True that are useful for debugging a document
+VIEW_FLOW = 'Flow' # View settings that show text flow markers.
+VIEW_NONE = None # View settings are all off.
+
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
@@ -584,7 +593,9 @@ FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
+# Movie formates
 FILETYPE_MOV = 'mov'
+FILETYPE_MP4 = 'mp4'
 # Application format
 FILETYPE_APP = 'app'
 # Font formats
@@ -593,10 +604,16 @@ FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
 DEFAULT_FILETYPE = FILETYPE_PDF
 
-# Commonly used groups of files.
+# Text formats
+FILETYPE_TXT = 'txt'
+FILETYPE_MD = 'md' # Markdown file extension
+
+# Commonly used groups of file types.
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF,
     FILETYPE_TIF, FILETYPE_TIFF)
+MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
+TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {

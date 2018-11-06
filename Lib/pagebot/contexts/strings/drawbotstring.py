@@ -746,6 +746,8 @@ class DrawBotString(BabelString):
         elif not isinstance(t, str):
             t = str(t)
 
+        # TODO: This does not work here. It must be set on DrawBot output level,
+        # TODO: Not at the moment of creating the FormattedString.
         # Set the hyphenation flag from style, as in DrawBot this is set by a
         # global function, not as FormattedString attribute.
         language = css('language', e, style)
@@ -772,8 +774,13 @@ class DrawBotString(BabelString):
             # consistent for tracked text. context.textSize will add space to
             # the right of the string.
             fsAttrs = copy(fsAttrs)
-            fittingFontSize = cls._newFitWidthString(newT, context, uFontSize, w, pixelFit)
-            if fittingFontSize is not None: # Chedked on zero division
+            fsAttrs['textFill'] = fsAttrs.get('fill')
+            fsAttrs['textStroke'] = fsAttrs.get('stroke')
+            fsAttrs['textStrokeWidth'] = fsAttrs.get('strokeWidth')
+
+            fittingFontSize = cls._newFitWidthString(newT, context, fsAttrs.get('fontSize', DEFAULT_FONT_SIZE), w, pixelFit)
+            if fittingFontSize is not None: # Checked on zero division
+                # Repair the attrs to style, so it can be reused for new string
                 fsAttrs['fontSize'] = fittingFontSize
                 newS = cls.newString(t, context, style=fsAttrs)
                 # Test the width we got by linear interpolation. Scale back if still too large.
@@ -791,10 +798,15 @@ class DrawBotString(BabelString):
             # more consistent for tracked text. context.textSize will add space
             # to the right of the string.
             fsAttrs = copy(fsAttrs)
-            fittingFontSize = cls._newFitHeightString(newT, context, uFontSize, h, pixelFit)
+            fsAttrs['fontSize'] = fittingFontSize
+            fsAttrs['textFill'] = fsAttrs.get('fill')
+            fsAttrs['textStroke'] = fsAttrs.get('stroke')
+            fsAttrs['textStrokeWidth'] = fsAttrs.get('strokeWidth')
+
+            fittingFontSize = cls._newFitHeightString(newT, context, fsAttrs.get('fontSize', DEFAULT_FONT_SIZE), h, pixelFit)
 
             if fittingFontSize is not None:
-                fsAttrs['fontSize'] = fittingFontSize
+                # Repair the attrs to style, so it can be reused for new string
                 newS = cls.newString(t, context, style=fsAttrs)
                 didFit = True
             else:
