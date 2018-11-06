@@ -141,8 +141,9 @@ class PageView(BaseView):
 
             self.drawPageMetaInfo(page, origin, background=True)
 
-            # Since self already adjust origin, scale, etc. we don't use the page.build here.
-            # Instead we calle the drawing of its elements too.
+            # Since self already adjust origin, scale, etc. we don't use the
+            # page.build here. Instead we calle the drawing of its elements
+            # too.
             page.buildChildElements(self, origin)
 
             self.drawPageMetaInfo(page, origin, background=False)
@@ -150,8 +151,9 @@ class PageView(BaseView):
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
 
-            # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
-            # So the info boxes don't get covered by regular page content.
+            # Self.infoElements now may have collected elements needed info to
+            # be drawn, after all drawing is done. So the info boxes don't get
+            # covered by regular page content.
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo(e)
 

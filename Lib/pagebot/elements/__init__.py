@@ -36,7 +36,7 @@ from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley
 from pagebot.elements.pbpage import Page, Template
 # Placeholder element, typically for Templates. Shows name.
-from pagebot.elements.pbplacer import Placer 
+from pagebot.elements.pbplacer import Placer
 
 # Path and mask elements
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
@@ -142,8 +142,8 @@ def newRuler(**kwargs):
     return Ruler(**kwargs)
 
 def newPaths(paths, **kwargs):
-    """Create a Paths element, holding PageBotPath object(s) in the element frame. 
-    The paths can be a single PageBotPath instance or a list/tuple of instances. 
+    """Create a Paths element, holding PageBotPath object(s) in the element frame.
+    The paths can be a single PageBotPath instance or a list/tuple of instances.
     Not be confused with the filePath in Image."""
     return Paths(paths, **kwargs)
 
@@ -152,7 +152,7 @@ def newImage(path=None, **kwargs):
     h) of which at least one of them should be defined. The path can be None,
     to be filled later. If the image is drawn with an empty or non-existent file path, a
     missingImage cross-frame is shown. The optional imo attribute is an
-    DrawBot-modelled ImageObject() with filters in place. 
+    DrawBot-modelled ImageObject() with filters in place.
     The created Image element is answered as convenience to the caller."""
     return Image(path=path, **kwargs)
 

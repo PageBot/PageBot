@@ -44,6 +44,7 @@ def makeStyle(style=None, **kwargs):
         style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
         for name, v in kwargs.items():
             style[name] = v  # Overwrite value by any arguments, if defined.
+
     return style
 
 def getRootStyle(u=None, w=None, h=None, **kwargs):

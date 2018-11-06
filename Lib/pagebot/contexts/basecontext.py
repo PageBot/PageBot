@@ -707,6 +707,7 @@ class BaseContext(AbstractDrawBotContext):
     def hyphenation(self, onOff):
         """DrawBot needs an overall hyphenation flag set on/off, as it is not
         part of the FormattedString style attributes."""
+        print('setting hyph to %s' % onOff)
         self.b.hyphenation(onOff)
 
     def tabs(self, *tabs):

@@ -4086,7 +4086,7 @@ class Element:
 
     def compose(self, doc, publication):
         """Recusively compose Pubkication, Pages and Elements to compose the document of a publication.
-        Default behavior is to just pass it on to the chidren. 
+        Default behavior is to just pass it on to the chidren.
         """
         for e in self.elements:
             e.compose(doc, publication)
@@ -4121,7 +4121,7 @@ class Element:
         """Draw fill of the rectangular element space. The self.css('fill')
         defines the color of the element background. Instead of the DrawBot
         stroke and strokeWidth attributes, use borders or (borderTop,
-        borderRight, borderBottom, borderLeft) attributes. 
+        borderRight, borderBottom, borderLeft) attributes.
         """
         c = view.context
         eShadow = self.shadow
@@ -6580,7 +6580,7 @@ class Element:
                 self.padding = DEFAULT_MININFOPADDING
 
         if VIEW_PRINT2 in setNames:
-            # Extended show options for printing 
+            # Extended show options for printing
             self.showColorBars = True
 
         if VIEW_DEBUG in setNames:

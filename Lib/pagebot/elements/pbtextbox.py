@@ -154,7 +154,6 @@ class TextBox(Element):
                 self._textLines.append(textLine)
                 self._baselines[upt(textLine.y)] = textLine
 
-        print(self._textLines)
         return self._textLines
 
 
@@ -460,10 +459,12 @@ class TextBox(Element):
 
         # Set the hyphenation flag from style, as in DrawBot this is set by a
         # global function, not as FormattedString attribute.
+        # NOTE: textBox needs it's own style dictionary.
         context.language(self.css('language', DEFAULT_LANGUAGE))
-        context.hyphenation(bool(self.css('hyphenation')))
-
+        h = bool(self.css('hyphenation'))
+        context.hyphenation(h)
         box = clipPath = None
+
         if self.clipPath is not None: # Use the elements as clip path:
             clipPath = self.clipPath
             clipPath.translate((px, py))

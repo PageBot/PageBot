@@ -89,12 +89,12 @@ def testContext(context, path):
     #print(' - Is a DrawBotString: %s' % isinstance(bs, DrawBotString))
     #print(' - Is a FlatString: %s' % isinstance(bs, FlatString))
     #print(' - Is an InDesignString: %s' % isinstance(bs, FlatString))
-    print(bs)
+    #print(bs)
 
     # Adding or appending strings are added to the internal formatted string.
     # Adding plain strings take over the existing style.
     bs += ' and more,'
-    print(bs)
+    #print(bs)
     
     # Reusing the same style different text fill color.
     style['textFill'] = 0.1, 0.5, 0.9
@@ -120,19 +120,28 @@ def testContext(context, path):
     #context.rect(x=M, y=H-4*M, w=pt(400), h=h)
     #context.saveImage(path)
     
-    print(doc.view.context == context)
-    context.b.hyphenation(False)
+    #print(doc.view.context == context)    
+    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=False))
     
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5))
-    print('Context hyphenation: %s'  % context.b.hyphenation(False))
-    
-    for line in tb.textLines:
-        print(line.string)
+    context.hyphenation(False)
+ 
+    #for line in tb.textLines:
+    #    print(line.string)
+
+    context.stroke((1, 0, 0))
+    context.fill(None)
+
+    for baseline in tb.baselines:
+        s = dict(stroke=color(1, 0, 0))
+        l = newLine(x=M, y=baseline, w=W/2, h=0, border=1, style=s)
+
+    #doc.view.drawBaselines()
+    print(doc.view)
     doc.build(new=False)
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
-    style = dict(font=bungee, fontSize=pt(bungeeSize), w=pt(300), hyphenation=False, baseLineShift=20, lineHeight=M)
+    style = dict(font=bungee, fontSize=pt(bungeeSize), baseLineShift=20, lineHeight=M)
     return style
     
 def testAllContexts():
