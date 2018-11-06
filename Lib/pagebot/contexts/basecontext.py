@@ -253,7 +253,10 @@ class BaseContext(AbstractDrawBotContext):
         ppt = upt(point2D(p))
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
-    lineTo = moveTo
+    #lineTo = moveTo
+    def lineTo(self, p):
+        ppt = upt(point2D(p))
+        self.path.lineTo(ppt) # Render units point tuple to tuple of values
 
     '''
     def lineTo(self, p):

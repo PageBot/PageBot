@@ -4338,7 +4338,7 @@ class Element:
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def buildChildElements(self, view, origin=None):
-        """Draw child elements, dispatching depends on the implementation of
+        """Draws child elements, dispatching depends on the implementation of
         context specific build elements.
 
         If no specific builder_<context.b.PB_ID> is implemented, call default
@@ -4347,9 +4347,11 @@ class Element:
 
         """
         hook = 'build_' + view.context.b.PB_ID
+
         for e in self.elements:
             if not e.show:
                 continue
+
             if hasattr(e, hook):
                 getattr(e, hook)(view, origin)
             else: # No implementation for this context, call default building method for this element.

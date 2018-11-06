@@ -90,14 +90,11 @@ class Line(Element):
         (300pt, 3pt, 100pt)
         """
         context = self.context # Get current context and builder.
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         s = self.css('stroke', noColor)
         w = self.css('strokeWidth')
-        print(s)
-        print(w)
 
         context.stroke(s, w)
         context.newPath()

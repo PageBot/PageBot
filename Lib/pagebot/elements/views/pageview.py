@@ -92,17 +92,20 @@ class PageView(BaseView):
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
 
-            # TODO: Add some options for layout of the combined pages,
-            # depending on the spread view option.
-            # self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
+
+            #TODO: Add some options for layout of the combined pages, depending
+            #on the spread view option.
+            #self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
             # page.ml and page.mr define the distance between the spread pages.
 
-            # Create a new DrawBot viewport page to draw template + page, if
-            # not already done. In case the document is oversized, then make
-            # all pages the size of the document, so the pages can draw their
-            # crop-marks. Otherwise make DrawBot pages of the size of each
-            # page. Size depends on the size of the larges pages + optional
-            # decument padding.
+            '''
+            Create a new DrawBot viewport page to draw template + page, if not
+            already done. In case the document is oversized, then make all
+            pages the size of the document, so the pages can draw their
+            crop-marks. Otherwise make DrawBot pages of the size of each page.
+            Size depends on the size of the larges pages + optional document
+            padding.
+            '''
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
@@ -145,7 +148,6 @@ class PageView(BaseView):
             # page.build here. Instead we calle the drawing of its elements
             # too.
             page.buildChildElements(self, origin)
-
             self.drawPageMetaInfo(page, origin, background=False)
 
             if self.drawAfter is not None: # Call if defined

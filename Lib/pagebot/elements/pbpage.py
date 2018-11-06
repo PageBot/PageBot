@@ -288,7 +288,7 @@ class Page(Element):
 
     def compose(self, doc, publication):
         """Recusively compose Page and add it to doc. Note that this will alter the self.parent to doc.
-        The recursively pass the composing on to the page elements, which at that time can use the 
+        The recursively pass the composing on to the page elements, which at that time can use the
         full document style settings by e.css(...).
         """
         doc.appendPage(self)

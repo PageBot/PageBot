@@ -120,8 +120,12 @@ def testContext(context, path):
     #context.rect(x=M, y=H-4*M, w=pt(400), h=h)
     #context.saveImage(path)
     
-    #print(doc.view.context == context)    
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=False))
+    #print(doc.view.context == context)
+    bs.style['baselineShift'] = 20
+    print(bs.style)
+    context.baselineShift(20)
+
+    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=False))
     
     context.hyphenation(False)
  
@@ -133,17 +137,17 @@ def testContext(context, path):
 
     for baseline in tb.baselines:
         s = dict(stroke=color(1, 0, 0))
-        l = newLine(x=M, y=baseline, w=W/2, h=0, border=1, style=s)
-
+        newLine(x=M, y=H-5*M-baseline, w=W/2, h=0, style=s, stroke=color(0), strokeWidth=1, parent=page)
+        
     #doc.view.drawBaselines()
-    print(doc.view.elements)
+    #print(doc.pages[1][0].elements)
     doc.build(new=False)
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
     from pagebot.style import getRootStyle
     rs = getRootStyle()
-    style = dict(font=bungee, fontSize=pt(bungeeSize), baseLineShift=20, lineHeight=M)
+    style = dict(font=bungee, fontSize=pt(bungeeSize))
     return style
     
 def testAllContexts():
