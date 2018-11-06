@@ -36,7 +36,8 @@ from pagebot.constants import *
 H, W = A3
 W = pt(W)
 H = pt(H)
-M = 48
+M = 36
+
 bungeeSize = 48
 
 roboto = findFont('Roboto-Regular')
@@ -120,15 +121,18 @@ def testContext(context, path):
     #context.saveImage(path)
     
     print(doc.view.context == context)
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5))
+    context.b.hyphenation(False)
     
-    print('textlines: %s' % tb._textLines)
+    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, border=1, stroke=color(0.3, 0.2, 0.1, 0.5))
+    print('Context hyphenation: %s'  % context.b.hyphenation(False))
+    
+    for line in tb.textLines:
+        print(line.string)
     doc.build(new=False)
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
-    style = dict()
-    style = dict(font=bungee, fontSize=pt(bungeeSize), w=pt(300), hyphenation=True, baseLineShift=20, lineHeight=M)
+    style = dict(font=bungee, fontSize=pt(bungeeSize), w=pt(300), hyphenation=False, baseLineShift=20, lineHeight=M)
     return style
     
 def testAllContexts():

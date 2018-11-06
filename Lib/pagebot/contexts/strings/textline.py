@@ -30,6 +30,7 @@ except:
     CGPoint = None
 
 class TextLine:
+
     def __init__(self, ctLine, x, y, lineIndex):
         self._ctLine = ctLine
         self.x = x

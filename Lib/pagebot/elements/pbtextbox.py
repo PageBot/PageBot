@@ -37,6 +37,7 @@ class TextBox(Element):
         be ts (tagged str) if output is mainly through build and HTML/CSS.
         Since both strings cannot be converted lossless one into the other, it
         is safer to keep them both if they are available."""
+
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
@@ -47,9 +48,12 @@ class TextBox(Element):
             self.size = size
         else:
             self.size = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
+
         if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
             bs = ''
-        self.bs = self.newString(bs, style=self.style) # Source can be any type: BabelString instance or plain unicode string.
+
+        # Source can be any type: BabelString instance or plain unicode string.
+        self.bs = self.newString(bs, style=self.style)
 
     def _get_w(self): # Width
         """Property for self.w, holding the width of the textbox.
@@ -141,7 +145,6 @@ class TextBox(Element):
 
     def _get_textLines(self):
         if self._textLines is None:
-            print('get Textlines')
             self._textLines = []
             self._baselines = {}
 
@@ -302,22 +305,27 @@ class TextBox(Element):
         return bs.textSize(w=self.w)
 
     def getOverflow(self, w=None, h=None):
-        """Figure out what the overflow of the text is, with the given (w, h) or styled
-        (self.w, self.h) of this text box. If h is None and self.h is None then by
-        definintion overflow will allways be empty, as the box is elastic."""
+        """Figure out what the overflow of the text is, with the given (w, h)
+        or styled (self.w, self.h) of this text box. If h is None and self.h is
+        None then by definintion overflow will allways be empty, as the box is
+        elastic."""
         if self.h is None and h is None: # In case height is undefined, box will always fit the content.
             return ''
-        # Otherwise test if there is overflow of text in the given element size.
+
+        # Otherwise test if there is overflow of text in the given element
+        # size.
         if w is None:
             w = self.pw # Padded width
+
         if h is None:
             h = self.ph # Padded height
+
         return self.bs.textOverflow(w, h, LEFT)
 
     def _findStyle(self, run):
-        """Answers the name and style that desctibes this run best. If there is a doc
-        style, then answer that one with its name. Otherwise answer a new unique style name
-        and the style dict with its parameters."""
+        """Answers the name and style that desctibes this run best. If there is
+        a doc style, then answer that one with its name. Otherwise answer a new
+        unique style name and the style dict with its parameters."""
         print(run.attrs)
         return('ZZZ', run.style)
 
@@ -390,7 +398,7 @@ class TextBox(Element):
 
     def fit2Right(self):
         """Make the right side of self fit the right padding of the parent, without
-        moving the left position. Overwriting the default behavior of Element, as we want 
+        moving the left position. Overwriting the default behavior of Element, as we want
         text to be fiting too.
 
         >>> from pagebot.contexts import getContext
@@ -450,8 +458,8 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
-        # not as FormattedString attribute.
+        # Set the hyphenation flag from style, as in DrawBot this is set by a
+        # global function, not as FormattedString attribute.
         context.language(self.css('language', DEFAULT_LANGUAGE))
         context.hyphenation(bool(self.css('hyphenation')))
 
