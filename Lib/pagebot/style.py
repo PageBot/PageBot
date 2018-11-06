@@ -38,14 +38,29 @@ def makeStyle(style=None, **kwargs):
     that case all the element style values need to be defined by argument. The
     calling element must test if its minimum set (such as self.w and self.h)
     are properly defined."""
-    if style is None:
-        style = newStyle(**kwargs)  # Copy arguments in new style.
-    else:
-        style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
-        for name, v in kwargs.items():
-            style[name] = v  # Overwrite value by any arguments, if defined.
+    rs = getRootStyle()
 
-    return style
+    if style is None:
+        new = newStyle(**kwargs)  # Copy arguments in new style.
+    else:
+        new = dict()
+
+        for key, value in style.items():
+        #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
+            if key not in rs:
+                # TODO: raise error?
+                print('Warning: %s not in root style!' % key)
+            else:
+                new[key] = value
+
+        for name, v in kwargs.items():
+            if name not in rs:
+                # TODO: raise error?
+                print('Warning: %s not in root style!' % name)
+            else:
+                new[name] = v  # Overwrite value by any arguments, if defined.
+
+    return new
 
 def getRootStyle(u=None, w=None, h=None, **kwargs):
     """Answers the main root style tha contains all default style attributes of

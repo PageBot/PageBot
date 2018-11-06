@@ -18,7 +18,7 @@ overflow = textBox(t, (x, y0, w, h), align='right')
 print('Overflow: %d' % len(overflow))
 
 hyphenation(False)
-baselineShift(0)
+baselineShift(s)
 
 overflow = textBox(t, (x, y1, w, h), align='center')
 print('Overflow: %d' % len(overflow))

@@ -800,6 +800,12 @@ class BaseContext(AbstractDrawBotContext):
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
         """
+
+        from pagebot.style import makeStyle
+
+        # Copies style, check keys.
+        style = makeStyle(style=style)
+
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,

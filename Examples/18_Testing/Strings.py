@@ -136,11 +136,13 @@ def testContext(context, path):
         l = newLine(x=M, y=baseline, w=W/2, h=0, border=1, style=s)
 
     #doc.view.drawBaselines()
-    print(doc.view)
+    print(doc.view.elements)
     doc.build(new=False)
     #doc.export('_export/Strings.pdf')
     
 def getFullStyle():
+    from pagebot.style import getRootStyle
+    rs = getRootStyle()
     style = dict(font=bungee, fontSize=pt(bungeeSize), baseLineShift=20, lineHeight=M)
     return style
     
