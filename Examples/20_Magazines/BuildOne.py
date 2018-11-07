@@ -45,7 +45,6 @@ GH = pt(1)
 COLUMNS = 4
 RH = ()
 GRID_X = ((CW, GW), (CW, GW), (CW, GW), (CW, 0))
-print(GRID_X)
 
 context = getContext()
 
