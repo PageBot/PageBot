@@ -59,7 +59,7 @@ testContexts = (
 def drawLines(context):
     context.fill(noColor)
     context.stroke((0.2, 0.7, 0.5, 0.3))
-    context.strokeWidth(2)
+    context.strokeWidth(1)
     context.line((M, 0), (M, H))
     
     # Number of lines.
@@ -125,7 +125,7 @@ def testContext(context, path):
     print(bs.style)
     context.baselineShift(20)
 
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=False))
+    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en'))
     
     context.hyphenation(False)
  
@@ -137,7 +137,7 @@ def testContext(context, path):
 
     for baseline in tb.baselines:
         s = dict(stroke=color(1, 0, 0))
-        newLine(x=M, y=H-5*M-baseline, w=W/2, h=0, style=s, stroke=color(0), strokeWidth=1, parent=page)
+        newLine(x=M, y=H-5*M-baseline, w=W/2, h=0, style=s, stroke=color(0.5), strokeWidth=0.5, parent=page)
         
     #doc.view.drawBaselines()
     #print(doc.pages[1][0].elements)

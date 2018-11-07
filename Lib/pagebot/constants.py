@@ -278,9 +278,12 @@ W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
 DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 
-# Language codes (ISO Language Code Table http://www.lingoes.net/en/translator/langcode.htm)
-# Used with DrawBot-FormattedString hyphenation. Not testes if all codes really work,
-# besides the ones directly.
+# Language codes from ISO Language Code Table:
+#
+#   http://www.lingoes.net/en/translator/langcode.htm
+#
+# Used with DrawBot-FormattedString hyphenation. TODO test if all codes really
+# have an effect.
 LANGUAGE_EN     = 'en'      # English
 LANGUAGE_NL     = 'nl'      # Dutch
 LANGUAGE_NL_BE  = 'nl-BE'   # Belgium
@@ -618,9 +621,9 @@ TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
     FILETYPE_PDF: 1,
-    FILETYPE_JPG: 3, 
-    FILETYPE_PNG: 3, 
-    FILETYPE_SVG: 1, 
+    FILETYPE_JPG: 3,
+    FILETYPE_PNG: 3,
+    FILETYPE_SVG: 1,
     FILETYPE_GIF: 2,
     FILETYPE_TIF: 1,
     FILETYPE_TIFF:1,

@@ -34,8 +34,7 @@ class BaseContext(AbstractDrawBotContext):
     EXPORT_TYPES = None
 
     def __init__(self):
-        #print('base init')
-        # Hold current open DrawBot path.
+        # Holds current open Bézier path.
         self._path = None
 
         self._fill = blackColor
@@ -51,7 +50,6 @@ class BaseContext(AbstractDrawBotContext):
         # Origin set by self.translate()
         self._ox = pt(0)
         self._oy = pt(0)
-
         self._rotationCenter = (0, 0)
         self._rotate = 0
         self._hyphenation = True
@@ -235,7 +233,7 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.BezierPath()
 
     def moveTo(self, p):
-        """Move to point p in the running path. Create a new self._path if none
+        """Move to point `p` in the open path. Create a new self._path if none
         is open.
 
         >>> from pagebot.toolbox.units import pt
@@ -253,14 +251,13 @@ class BaseContext(AbstractDrawBotContext):
         ppt = upt(point2D(p))
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
-    #lineTo = moveTo
     def lineTo(self, p):
         ppt = upt(point2D(p))
         self.path.lineTo(ppt) # Render units point tuple to tuple of values
 
     '''
     def lineTo(self, p):
-        """Line to point p in the running path. Create a new self._path if none
+        """Line to point p in the open path. Create a new self._path if none
         is open.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -281,7 +278,7 @@ class BaseContext(AbstractDrawBotContext):
     '''
 
     def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p i nthe running path. Create a new path if none is
+        """Curve to point p i nthe open path. Create a new path if none is
         open.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -312,7 +309,7 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.arcTo(xy1, xy2, radius)
 
     def closePath(self):
-        """Closes the current path if it exists, otherwise ignore it.
+        """Closes the open path if it exists, otherwise ignore it.
         PageBot function.
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -710,16 +707,18 @@ class BaseContext(AbstractDrawBotContext):
     def hyphenation(self, onOff):
         """DrawBot needs an overall hyphenation flag set on/off, as it is not
         part of the FormattedString style attributes."""
-        print('setting hyph to %s' % onOff)
+        assert isinstance(onOff, bool)
+        self._hyphenation = onOff
         self.b.hyphenation(onOff)
 
     def tabs(self, *tabs):
         return self.b.tabs(*tabs)
 
     def language(self, language):
-        """DrawBot needs an overall language flag set to code, as it is not
-        part of the FormattedString style attributes. For availabel ISO
-        language codes, see pageboy.constants."""
+        """DrawBot needs an overall language flag set to code, it is not
+        a FormattedString style attribute. For available ISO
+        language codes, see pagebot.constants."""
+        # TODO: assert language is correct
         self.b.language(language)
 
     def listLanguages(self):
