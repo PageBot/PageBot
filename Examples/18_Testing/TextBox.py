@@ -4,7 +4,7 @@ lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram,
 
 s = 36
 fontSize(s)
-font('Helvetica')
+font('Verdana')
 hyphenation(True)
 
 p= 10
@@ -19,7 +19,11 @@ print('Overflow: %d' % len(overflow))
 
 hyphenation(False)
 baselineShift(s)
-
+lh = 100
+lineHeight(lh)
+print('Line height: %d' % lh)
+print('Leading: %s' % fontLeading())
+print('Ascender %s' % fontAscender())
 overflow = textBox(t, (x, y1, w, h), align='center')
 print('Overflow: %d' % len(overflow))
 

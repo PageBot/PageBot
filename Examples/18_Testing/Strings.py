@@ -30,6 +30,7 @@ from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor, color
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.constants import *
+from pagebot.style import getRootStyle
 
 # TODO: move to basics when finishedself.
 
@@ -106,7 +107,7 @@ def testContext(context, path):
     bs += context.newString(' even more!', style=style)
     context.text(bs, (M, H-2*M))
 
-    style = getFullStyle()
+    style = dict(font=bungee, fontSize=pt(bungeeSize))
     bs = context.newString(txt, style=style)
 
     # Usage in DrawBot by addressing the embedded FS for drawing.
@@ -121,16 +122,20 @@ def testContext(context, path):
     #context.saveImage(path)
     
     #print(doc.view.context == context)
-    bs.style['baselineShift'] = 20
-    print(bs.style)
-    context.baselineShift(20)
+    #bs.style['baselineShift'] = 20
+    #print(bs.style)
+    #context.baselineShift(20)
 
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en'))
-    
-    context.hyphenation(False)
+    style = dict(font=bungee, fontSize=pt(bungeeSize), baselineShift=6)
+    bs = context.newString(txt, style=style)
+
+    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en', leading=200))
  
     #for line in tb.textLines:
     #    print(line.string)
+    #rs = getRootStyle()
+    #print(rs.keys())
+
 
     context.stroke((1, 0, 0))
     context.fill(None)
@@ -143,13 +148,7 @@ def testContext(context, path):
     #print(doc.pages[1][0].elements)
     doc.build(new=False)
     #doc.export('_export/Strings.pdf')
-    
-def getFullStyle():
-    from pagebot.style import getRootStyle
-    rs = getRootStyle()
-    style = dict(font=bungee, fontSize=pt(bungeeSize))
-    return style
-    
+        
 def testAllContexts():
     for context, path in testContexts:
         testContext(context, path)
