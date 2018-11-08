@@ -36,22 +36,16 @@ page = doc[1]
 page.padding = P
 c = (Right2Right(), Top2Top(), Float2Left())
 r = newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Top2Top()), fill=(0,0,1), stroke=0)
-print(r)
 o = newOval(w=SQ, h=SQ, parent=page, conditions=c, fill=(1, 0, 0), stroke=0)
-print(o)
 tb = newTextBox('Test', parent=page, conditions=c, fill=(1, 1, 0))
-print(tb)
 l = newLine(parent=page, x=0, y=0, w=100, h=100, conditions=c, stroke=0, strokeWidth=10)
-print(l)
 points=[(0,0), (100, 0), (150, 50), (150, 100), (100, 200)]
+q = newQuire(parent=page, conditions=c, fill=1, strokeWidth=5, stroke=0.5)
+r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, strokeWidth=1)
 #p = newPolygon(points=points, parent=page, conditions=c, fill=1, stroke=0)
+points = []
 #p = newPolygon(points=points, w=100)
 #print(p)
-q = newQuire(parent=page, conditions=c, fill=1, strokeWidth=5, stroke=0.5)
-print(q)
-r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, strokeWidth=1)
-print(r)
-
 
 page.solve()
 # Export in _export folder that does not commit in Git. Force to export PDF.

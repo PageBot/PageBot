@@ -114,9 +114,9 @@ class Page(Element):
         <Page #5 default (210mm, 297mm)>
         """
         if self.title:
-            name = ' '+self.title
+            name = ' ' + self.title
         elif self.name:
-            name = ' '+self.name
+            name = ' ' + self.name
         else: # No name
             name = ' Unplaced'
 
@@ -481,6 +481,9 @@ class Page(Element):
             b.writeHtml(path + fileName)
 
 class Template(Page):
+
+    def __repr__(self):
+        return '<Template>'
 
     def _get_parent(self):
         """Answers the parent of the element, if it exists, by weakref

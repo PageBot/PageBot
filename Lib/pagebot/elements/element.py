@@ -132,11 +132,9 @@ class Element:
         # the property will query parent --> root document --> view.
         self.context = context
         self._parent = None
-        print(w)
 
         # Initilialize self._elements and self._eIds
         self.clearElements()
-
         self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
 
@@ -2812,6 +2810,8 @@ class Element:
         return units(self.css('w'), base=base)
 
     def _set_w(self, w):
+        print(self.__class__.__name__)
+        print(self.style)
         self.style['w'] = units(w or DEFAULT_WIDTH)
 
     w = property(_get_w, _set_w)

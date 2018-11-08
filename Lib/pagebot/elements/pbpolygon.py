@@ -23,14 +23,15 @@ class Polygon(Element):
     """The Polygon element is a simple implementation of the polygon DrawBot
     function. More complex path-like elements inherit from the Path element."""
 
-    def __init__(self, points=None, **kwargs):
-        print(points)
-        print(kwargs)
-        Element.__init__(self, **kwargs)
+    def __init__(self, points, **kwargs):
+        #print(points)
+        #print(kwargs)
 
         if points is None:
             points = []
         self.points = points[:] # Force copy, so caller cannot change and not change size cache.
+        Element.__init__(self, **kwargs)
+
     def _get_points(self):
         return self._points
     def _set_points(self, points):

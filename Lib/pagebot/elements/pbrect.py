@@ -58,7 +58,6 @@ class Rect(Element):
 
     # No separate build, default behavior is in Element.build()
 
-
 if __name__ == '__main__':
     import doctest
     import sys

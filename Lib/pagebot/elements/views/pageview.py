@@ -43,6 +43,9 @@ class PageView(BaseView):
 
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
+    def __repr__(self):
+        return '<PageView>'
+
     def build(self, path=None, pageSelection=None, multiPage=True, new=True):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
