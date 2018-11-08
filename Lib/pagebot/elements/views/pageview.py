@@ -76,6 +76,8 @@ class PageView(BaseView):
         # document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
+        #self.context.newDocument(w, h)
+
         if new:
             # Make sure that canvas is empty, there may have been another document
             # building in this context.

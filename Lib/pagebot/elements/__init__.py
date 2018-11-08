@@ -53,18 +53,18 @@ from pagebot.elements.views import viewClasses
 from pagebot.elements.pbquire import Quire
 from pagebot.elements.pbcodeblock import CodeBlock
 
-def elementFromPath(path, **kwargs):
+def elementFromPath(path, name=None, **kwargs):
     """Answer the element that is best suitable to hold the data in the path.
     """
     extension = path2Extension(path).lower()
     if extension in IMAGE_TYPES:
-        e = newImage(path, **kwargs)
+        e = newImage(path, name=name, **kwargs)
     elif extension in FONT_TYPES:
         e = None # TODO: Answer a default specimen element to show the font.
     elif extension in MOVIE_TYPES:
         e = None # TODO: Answer a MovieElement instance (to be developed)
     elif extendion in TEXT_TYPES:
-        e = newTextBox(path, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
+        e = newTextBox(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
     else:
         e = None # If no extension-->element can be found.
 

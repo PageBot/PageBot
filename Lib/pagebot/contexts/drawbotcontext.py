@@ -74,9 +74,9 @@ class DrawBotContext(BaseContext):
     #   D O C U M E N T
 
     def newDocument(self, w, h):
-        """Ignore for DrawBot; document opens automatically if first page
+        """Can be ignored for DrawBot; document opens automatically if first page
         is created."""
-        pass
+        self.b.size(upt(w), upt(h))
 
     def saveDocument(self, path, multiPage=None):
         """Select non-standard DrawBot export builders here. Save the current

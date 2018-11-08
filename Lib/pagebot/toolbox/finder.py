@@ -76,12 +76,12 @@ class Finder:
                 paths.append(filePath)
         return paths
 
-    def find(self, name=None, pattern=None, extension=None):
+    def find(self, name=None, pattern=None, extension=None, **kwargs):
         """Answer the elements that hold the data of matching path extensions.
         """
         elements = []
         for path in self.findPaths(name=name, pattern=pattern, extension=extension):
-            e = elementFromPath(path)
+            e = elementFromPath(path, name=name, **kwargs)
             if e is not None:
                 elements.append(e)
         return elements
