@@ -4512,6 +4512,9 @@ class Element:
     def isLeftOnLeftSide(self, tolerance=0):
         return abs(self.left) <= tolerance
 
+    def isLeftOnLeftBleed(self, tolerance=0):
+        return abs(self.left + self.bleedLeft) <= tolerance
+
     def isLeftOnRight(self, tolerance=0):
         return abs(self.parent.w - self.parent.pr - self.left) <= tolerance
 
@@ -4630,6 +4633,9 @@ class Element:
 
     def isRightOnRightSide(self, tolerance=0):
         return abs(self.parent.w - self.right) <= tolerance
+
+    def isRightOnRightBleed(self, tolerance=0):
+        return abs(self.parent.w + self.bleedLeft) <= tolerance
 
     def isBottomOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
@@ -5112,6 +5118,16 @@ class Element:
         self.left = 0
         return True
 
+    def left2LeftBleed(self):
+        """Move left of self to left bleed position of parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
+        """
+        if self.parent is None:
+            return False
+        self.left = -self.bleedLeft
+        return True
+
     def left2Right(self):
         """Move left of self to padding right position of parent.
         The position of e2 element origin depends on the horizontal
@@ -5318,6 +5334,16 @@ class Element:
         if self.parent is None:
             return False
         self.right = self.parent.w
+        return True
+
+    def right2RightBleed(self):
+        """Move right of self to right bleed width position of parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
+        """
+        if self.parent is None:
+            return False
+        self.right = self.parent.w + self.bleedRight
         return True
 
     def origin2Center(self):
@@ -6292,7 +6318,6 @@ class Element:
             self.top = self.parent.h + self.bleedTop
         return True
 
-
     # Floating parent padding
 
     def float2Top(self):
@@ -6472,6 +6497,13 @@ class Element:
         self.w = self.parent.w - self.x
         return True
 
+    def fit2RightBleed(self):
+        """Make the right side of self fit the right bleed side of the parent, without
+        moving the left position.
+        """
+        self.w = self.parent.w - self.x + self.bleedRight
+        return True
+
     def fit2Top(self):
         """Make the top side of self fit the top padding of the parent, without
         moving the bottom position.
@@ -6644,7 +6676,6 @@ class Element:
 
         if VIEW_DEBUG in setNames:
             # View settings flags to True that are useful for debugging a document
-            self.showOrigin = True
             self.showPadding = True
             self.showFrame = True
             self.showGrid = DEFAULT_GRID
@@ -6652,6 +6683,7 @@ class Element:
             self.showTextLeading = True
 
         if VIEW_DEBUG2 in setNames:
+            self.showOrigin = True
             self.showElementInfo = True
             self.showMissingElement = True
             self.cssVerbose = True
