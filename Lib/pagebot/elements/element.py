@@ -132,6 +132,7 @@ class Element:
         # the property will query parent --> root document --> view.
         self.context = context
         self._parent = None
+        print(w)
 
         # Initilialize self._elements and self._eIds
         self.clearElements()
@@ -2809,8 +2810,10 @@ class Element:
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
+
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
+
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins

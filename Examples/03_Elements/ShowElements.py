@@ -43,10 +43,14 @@ tb = newTextBox('Test', parent=page, conditions=c, fill=(1, 1, 0))
 print(tb)
 l = newLine(parent=page, x=0, y=0, w=100, h=100, conditions=c, stroke=0, strokeWidth=10)
 print(l)
-#p = newPolygon(w=SQ, h=SQ, parent=page, conditions=c, fill=1, stroke=0)
+points=[(0,0), (100, 0), (150, 50), (150, 100), (100, 200)]
+#p = newPolygon(points=points, parent=page, conditions=c, fill=1, stroke=0)
+#p = newPolygon(points=points, w=100)
 #print(p)
-#r = newRuler(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Bottom2Bottom()), fill=noColor, stroke=0)
-#print(r)
+q = newQuire(parent=page, conditions=c, fill=1, strokeWidth=5, stroke=0.5)
+print(q)
+r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, strokeWidth=1)
+print(r)
 
 
 page.solve()

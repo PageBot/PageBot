@@ -116,6 +116,11 @@ def newRect(**kwargs):
     When omitted, a square is drawn."""
     return Rect(**kwargs)
 
+def newQuire(**kwargs):
+    """Create a new Quire element.
+    When omitted, a square is drawn."""
+    return Quire(**kwargs)
+
 def newGroup(**kwargs):
     """Create a new Group element. Note that points can also be defined in the style.
     When omitted, a square is drawn."""

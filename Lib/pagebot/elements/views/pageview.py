@@ -106,7 +106,6 @@ class PageView(BaseView):
             Size depends on the size of the larges pages + optional document
             padding.
             '''
-            print(pn)
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 

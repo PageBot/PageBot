@@ -24,12 +24,13 @@ class Polygon(Element):
     function. More complex path-like elements inherit from the Path element."""
 
     def __init__(self, points=None, **kwargs):
+        print(points)
+        print(kwargs)
         Element.__init__(self, **kwargs)
 
         if points is None:
             points = []
         self.points = points[:] # Force copy, so caller cannot change and not change size cache.
-
     def _get_points(self):
         return self._points
     def _set_points(self, points):
