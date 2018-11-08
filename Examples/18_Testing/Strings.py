@@ -80,7 +80,7 @@ def testContext(context, path):
     #print('Units: %s' % context.units)
     #context.newDocument(W, H)
     print('# Testing strings in %s' % context)
-    context.newPage(W, H)
+    #context.newPage(W, H)
     drawLines(context)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
@@ -106,19 +106,20 @@ def testContext(context, path):
     style['font'] = robotoBold
     bs += context.newString(' even more!', style=style)
     context.text(bs, (M, H-2*M))
+    #tb = newTextBox(bs, context=context, x=M, y=H-M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en', leading=200))
 
     style = dict(font=bungee, fontSize=pt(bungeeSize))
     bs = context.newString(txt, style=style)
 
     # Usage in DrawBot by addressing the embedded FS for drawing.
-    context.text(bs, (M, H- 4*M))
+    #context.text(bs, (M, H- 4*M))
     capHeight = bungee.info.capHeight
     upem = bungee.info.unitsPerEm
     h = capHeight / upem * bungeeSize
     
-    #context.stroke((0, 1, 0))
-    #context.strokeWidth(0.1)
-    #context.rect(x=M, y=H-4*M, w=pt(400), h=h)
+    context.stroke((0, 1, 0))
+    context.strokeWidth(0.1)
+    context.rect(x=M, y=H-4*M, w=pt(400), h=h)
     #context.saveImage(path)
     
     #print(doc.view.context == context)
@@ -129,7 +130,7 @@ def testContext(context, path):
     style = dict(font=bungee, fontSize=pt(bungeeSize), baselineShift=6)
     bs = context.newString(txt, style=style)
 
-    tb = newTextBox(bs, context=context, x=M, y=H-5*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en', leading=200))
+    tb = newTextBox(bs, context=context, x=M, y=H-10*M, w=W/2, h=300, parent=page, stroke=color(0.3, 0.2, 0.1, 0.5), style=dict(hyphenation=True, language='en', leading=200))
  
     #for line in tb.textLines:
     #    print(line.string)
@@ -142,7 +143,7 @@ def testContext(context, path):
 
     for baseline in tb.baselines:
         s = dict(stroke=color(1, 0, 0))
-        newLine(x=M, y=H-5*M-baseline, w=W/2, h=0, style=s, stroke=color(0.5), strokeWidth=0.5, parent=page)
+        newLine(x=M, y=H-10*M-baseline, w=W/2, h=0, style=s, stroke=color(0.5), strokeWidth=0.5, parent=page)
         
     #doc.view.drawBaselines()
     #print(doc.pages[1][0].elements)

@@ -1156,7 +1156,7 @@ class Document:
 
     #   D R A W I N G  &  B U I L D I N G
 
-    def build(self, path=None, pageSelection=None, multiPage=True, new=False):
+    def build(self, path=None, pageSelection=None, multiPage=True, new=True):
         """Builds the document as a website, using the document.view for export.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))

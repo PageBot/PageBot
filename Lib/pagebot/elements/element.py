@@ -2810,8 +2810,6 @@ class Element:
         return units(self.css('w'), base=base)
 
     def _set_w(self, w):
-        print(self.__class__.__name__)
-        print(self.style)
         self.style['w'] = units(w or DEFAULT_WIDTH)
 
     w = property(_get_w, _set_w)
