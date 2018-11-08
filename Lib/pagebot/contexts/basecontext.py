@@ -252,11 +252,6 @@ class BaseContext(AbstractDrawBotContext):
         self.path.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
-        ppt = upt(point2D(p))
-        self.path.lineTo(ppt) # Render units point tuple to tuple of values
-
-    '''
-    def lineTo(self, p):
         """Line to point p in the open path. Create a new self._path if none
         is open.
 
@@ -264,18 +259,17 @@ class BaseContext(AbstractDrawBotContext):
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
-        >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> context.lineTo(pt(100, 200))
         >>> context.closePath()
         >>> # Drawing on a separate path
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.lineTo(pt(100, 200))
         >>> path.closePath()
         >>> context.drawPath(path)
         """
         ppt = upt(point2D(p))
         self.path.lineTo(ppt) # Render units point tuple to tuple of values
-    '''
 
     def curveTo(self, bcp1, bcp2, p):
         """Curve to point p i nthe open path. Create a new path if none is

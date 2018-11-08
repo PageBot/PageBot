@@ -19,6 +19,7 @@ from pagebot.toolbox.units import units, pointOffset
 from pagebot.toolbox.color import noColor
 
 class Line(Element):
+    """Draws a straight line."""
 
     def _get_w(self):
         """Answers the width of the Line element.
@@ -32,8 +33,10 @@ class Line(Element):
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w', 0), base=base)
+
     def _set_w(self, w):
         self.style['w'] = units(w) # Overwrite element local style from here, parent css becomes inaccessable.
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -48,8 +51,10 @@ class Line(Element):
         """
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('h', 0), base=base)
+
     def _set_h(self, h):
         self.style['h'] = units(h) # Overwrite element local style from here, parent css becomes inaccessable.
+
     h = property(_get_h, _set_h)
 
     #   D R A W B O T / F L A T  S U P P O R T
@@ -100,6 +105,7 @@ class Line(Element):
         context.newPath()
         context.moveTo((px, py))
         context.lineTo((px + self.w, py + self.h))
+        context.closePath()
         context.drawPath()
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
