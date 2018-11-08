@@ -36,7 +36,6 @@ H = pt(H)
 W = pt(W)
 M = 100
 s = 36
-print(H)
 
 roboto = findFont('Roboto-Regular')
 robotoBold = findFont('Roboto-Bold')
@@ -56,9 +55,12 @@ testContexts = (
 
 def testContext(context, path):
     
-    doc = Document(w=W, h=H, context=context, autoPages=1)
+    doc = Document(w=W, h=H, context=context)
     page = doc[1]
-
+    print('Current page: %s' % page)
+    nextPage = page.next
+    print('Next page: %s' % nextPage)
+    print(type(page))
     print('Units: %s' % context.units)
     print('# Testing document in %s' % context)
     #context.newPage(W, H)
@@ -67,10 +69,11 @@ def testContext(context, path):
     context.line((M, 0), (M, H))
     context.line((0, M), (W, M))
     context.line((0, 2*M), (W, 2*M))
-    print(doc.view.context == context)
+    #print(doc.view.context == context)
     conditions = [Right2Right(), Float2Top(), Float2Left()]
     doc.view.context.fill((1, 0, 0)) # Auto-converts to noColor
     doc.view.context.rect(x=0, y=0, w=100, h=100)
+    doc.build()
     
     for n in range(32):
         r = newRect(w=40, h=42, mr=4, mt=4, parent=page,

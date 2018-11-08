@@ -106,6 +106,7 @@ class PageView(BaseView):
             Size depends on the size of the larges pages + optional document
             padding.
             '''
+            print(pn)
             page = pages[0] # TODO: make this work for pages that share the same page number
             pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
 
@@ -124,8 +125,7 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            if new:
-                self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+            self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.

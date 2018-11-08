@@ -17,7 +17,6 @@
 #     Holds the (style) constants of PageBot.
 #
 
-
 from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
 
 # General indicators
@@ -244,6 +243,7 @@ COLORBAR_TOP = TOP # Indicate that selection of color bars should run on top
 COLORBAR_BOTTOM = BOTTOM # Indicate that selection of color bars should run on bottom
 COLORBAR_LEFT = LEFT # Indicate that selection of color bars should run on left
 COLORBAR_RIGHT = RIGHT # Indicate that selection of color bars should run on right
+
 # Predefined color bars
 COLORBAR_SOLID_INK = 'SolidInk'
 COLORBAR_TWOCOLOR_OVERPRINT = 'TwoColorOverprint'
@@ -252,6 +252,7 @@ COLORBAR_GRAY_BALANCE = 'GrayBalance'
 COLORBAR_BROWN_BALANCE = 'BrownBalance'
 COLORBAR_DOT_GAIN = 'DotGain'
 COLORBAR_SPOT_COLOR = 'SpotColor'
+
 # Color bar files
 ECI_GrayConL = 'color/ECI_GrayConL_FOGRA52_v3.pdf'
 ECI_GrayConM = 'color/ECI_GrayConM_FOGRA52_v3.pdf'
@@ -267,12 +268,16 @@ DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
 # origin is on bottom-left of the page. Y-positive direction is up.
 ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
-# Min/max values for element sizes. Makes sure that elements dimensions for (w,h) never get 0
+# Min/max values for element sizes. Makes sure that elements dimensions for
+# (w,h) never get 0.
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
+
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
+
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
+
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
@@ -283,7 +288,7 @@ DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 #   http://www.lingoes.net/en/translator/langcode.htm
 #
 # Used with DrawBot-FormattedString hyphenation. TODO test if all codes really
-# have an effect.
+# have an effect, add all to LANGUAGES dictionary.
 LANGUAGE_EN     = 'en'      # English
 LANGUAGE_NL     = 'nl'      # Dutch
 LANGUAGE_NL_BE  = 'nl-BE'   # Belgium
@@ -535,7 +540,6 @@ LANGUAGE_ZH_TW  = 'zh-TW'   # Chinese (T)
 LANGUAGE_ZU     = 'zu'      # Zulu
 LANGUAGE_ZU_ZA  = 'zu-ZA'   # Zulu (South Africa)
 
-
 # Standard external urls for Javascript import and others.
 URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
@@ -637,10 +641,10 @@ CACHE_EXTENSIONS = {
     FILETYPE_TIF: FILETYPE_JPG,
     FILETYPE_TIFF: FILETYPE_JPG,
 }
-# Standard font style names, with the matching abbreviations they can have in font style
-# As reference TYPETR Upgrade is mentioned.
-# In normalized keys, all CamelCase is flattened.
-# Works togehter with toolbox.transformer.path2StyleNameParts()
+# Standard font style names, with the matching abbreviations they can have in
+# font style As reference TYPETR Upgrade is mentioned. In normalized keys, all
+# CamelCase is flattened. Works together with
+# toolbox.transformer.path2StyleNameParts()
 
 DEFAULT_MARKER_FONT = 'Arial'
 
@@ -733,8 +737,9 @@ for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
                 d[value] = values
 # TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
 
-# Note that any conversion between RAL (paint) and RGB can only be a approximation.
-# Material colors by definition have a different range of possible colors than RGB.
+# Note that any conversion between RAL (paint) and RGB can only be a
+# approximation. Material colors by definition have a different range of
+# possible colors than RGB.
 RAL_NAMERGB = {
     # http://rgb.to/ral/1000
     # http://www.pats.ch/formulaire/unites/unites11.aspx

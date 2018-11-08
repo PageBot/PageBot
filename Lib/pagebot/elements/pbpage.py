@@ -298,9 +298,9 @@ class Page(Element):
     #   D R A W B O T  &  F L A T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True):
-        """Draw all elements of this page in DrawBot. Note that this method is only used
-        in case pages are drawn as element on another page. In normal usage, pages
-        get drawn by PageView.build"""
+        """Draws all elements of this page in DrawBot. Note that this method is
+        only used in case pages are drawn as element on another page. In normal
+        usage, pages get drawn by PageView.build"""
         p = pointOffset(self.origin, origin) # Ignoe z-axis for now.
 
         view.drawPageMetaInfo(self, p, background=True)
@@ -318,7 +318,7 @@ class Page(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, path):
-        """Build the HTML/CSS code through WebBuilder (or equivalent) that is
+        """Builds the HTML/CSS code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent.
 
