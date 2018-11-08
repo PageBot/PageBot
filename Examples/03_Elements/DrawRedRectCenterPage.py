@@ -43,7 +43,6 @@ def makeDocument():
     rootStyle = getRootStyle()
 
     doc = Document(rootStyle, originTop=False, w=W, h=H, autoPages=1)
-
     page = doc[1] # Get the first/single page of the document.
     page.padding = 40 # TODO: order if 4 values?
 

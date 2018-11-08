@@ -54,7 +54,6 @@ testContexts = (
 )
 
 def testContext(context, path):
-    
     doc = Document(w=W, h=H, context=context)
     page = doc[1]
     print('Current page: %s' % page)
@@ -63,29 +62,18 @@ def testContext(context, path):
     print(type(page))
     print('Units: %s' % context.units)
     print('# Testing document in %s' % context)
-    #context.newPage(W, H)
-    context.fill((1, 0, 0)) # Auto-converts to noColor
-    context.stroke(0.7) # Auto-converts to pt( )
-    context.line((M, 0), (M, H))
-    context.line((0, M), (W, M))
-    context.line((0, 2*M), (W, 2*M))
-    #print(doc.view.context == context)
     conditions = [Right2Right(), Float2Top(), Float2Left()]
-    doc.view.context.fill((1, 0, 0)) # Auto-converts to noColor
-    doc.view.context.rect(x=0, y=0, w=100, h=100)
-    doc.build()
-    
-    for n in range(32):
-        r = newRect(w=40, h=42, mr=4, mt=4, parent=page,
-                fill=color(random()*0.5 + 0.5, 0, 0.5),
-                conditions=conditions, context=context)
-        #print(r)
-        #print(isinstance(r, Element))
-        #print(r._context == context)
 
-    #doc.view.build_drawBot(doc.view, origin=(0, 0))
-    #doc.view.build()
-    #doc.export('_export/Strings.pdf')
+    for n in range(10):
+        newLine(x=100, y=n*100, parent=page, stroke=0)
+
+    for n in range(10):
+        newRect(w=40, h=42, mr=4, mt=4, parent=nextPage,
+                fill=color(random()*0.5 + 0.5, 0, 0.5),
+                conditions=conditions)
+    score = nextPage.solve()
+    print(score)
+    doc.build() # Export?
     
 def testAllContexts():
     for context, path in testContexts:

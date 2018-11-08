@@ -35,18 +35,14 @@ doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
 page = doc[1]
 page.padding = P
 c = (Right2Right(), Top2Top(), Float2Left())
-'''
 r = newRect(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Top2Top()), fill=(0,0,1), stroke=0)
 print(r)
 o = newOval(w=SQ, h=SQ, parent=page, conditions=c, fill=(1, 0, 0), stroke=0)
 print(o)
 tb = newTextBox('Test', parent=page, conditions=c, fill=(1, 1, 0))
 print(tb)
-'''
-l = newLine(parent=page, x=100, y=100, w=200, h=50, conditions=c, stroke=0, strokeWidth=1, fill=1)
+l = newLine(parent=page, x=0, y=0, w=100, h=100, conditions=c, stroke=0, strokeWidth=10)
 print(l)
-
-
 #p = newPolygon(w=SQ, h=SQ, parent=page, conditions=c, fill=1, stroke=0)
 #print(p)
 #r = newRuler(w=SQ, h=SQ, parent=page, conditions=(Left2Left(), Bottom2Bottom()), fill=noColor, stroke=0)
