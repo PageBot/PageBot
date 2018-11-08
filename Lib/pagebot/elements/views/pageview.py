@@ -46,7 +46,7 @@ class PageView(BaseView):
     def __repr__(self):
         return '<PageView>'
 
-    def build(self, path=None, pageSelection=None, multiPage=True, new=True):
+    def build(self, path=None, pageSelection=None, multiPage=True):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
 
@@ -76,11 +76,10 @@ class PageView(BaseView):
         # document.
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
-        if new:
-            # Make sure that canvas is empty, there may have been another document
-            # building in this context.
-            self.context.newDrawing()
-            self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
+        # Make sure that canvas is empty, there may have been another document
+        # building in this context.
+        self.context.newDrawing()
+        self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
 
         sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
 

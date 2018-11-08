@@ -137,7 +137,6 @@ def testContext(context, path):
     #rs = getRootStyle()
     #print(rs.keys())
 
-
     context.stroke((1, 0, 0))
     context.fill(None)
 
@@ -147,7 +146,7 @@ def testContext(context, path):
         
     #doc.view.drawBaselines()
     #print(doc.pages[1][0].elements)
-    doc.build(new=False)
+    doc.build()
     #doc.export('_export/Strings.pdf')
         
 def testAllContexts():
