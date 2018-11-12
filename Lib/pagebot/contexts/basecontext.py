@@ -140,6 +140,7 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.newPage(100, 100)
         """
         wpt, hpt = upt(w, h)
+        print('context new page')
         self.b.newPage(wpt, hpt)
 
     def pages(self):

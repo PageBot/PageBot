@@ -10,7 +10,7 @@
 #     Supporting DrawBot, www.drawbot.com
 # -----------------------------------------------------------------------------
 #
-#     Strings.py
+#     TextBoxes.py
 #
 #     Tests pagebot text boxes.
 
@@ -35,16 +35,15 @@ bungeeSize = 48
 roboto = findFont('Roboto-Regular')
 robotoBold = findFont('Roboto-Bold')
 bungee = findFont('BungeeHairline-Regular')
-
 blurb = Blurb()
 txt = blurb.getBlurb('news_headline', noTags=True)
 
 def test():
     doc = Document(w=W, h=H)
+    print(doc.pages)
+    print(len(doc))
     page = doc[1]
-
     print('# Testing text boxes in %s' % doc)
-
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
     bs = page.newString('This is a string', style=style)
@@ -72,8 +71,9 @@ def test():
         s = dict(stroke=color(1, 0, 0))
         newLine(x=M, y=H-5*M-baseline, w=W/2, h=0, style=s, stroke=color(0.5), strokeWidth=0.5, parent=page)
     #doc.view.drawBaselines()
-
     #doc.export('_export/Strings.pdf')
+    print(doc.pages)
+    print(len(doc))
     doc.build()
         
 

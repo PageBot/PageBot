@@ -385,6 +385,7 @@ class DrawBotContext(BaseContext):
         if not os.path.exists(cachePath):
             os.makedirs(cachePath)
         cachedFilePath = cachePath + fileName
+
         if force or not os.path.exists(cachedFilePath):
             self.newDrawing() # Clean the drawing stack.
             self.newPage(w, h)

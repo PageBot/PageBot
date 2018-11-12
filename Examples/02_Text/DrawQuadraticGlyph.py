@@ -15,6 +15,7 @@
 #     Shows how to draw quadratic curves with cubic curves.
 #
 #    TODO: test with Flat.
+#    TODO: switch to document level.
 
 import weakref
 from AppKit import NSFont

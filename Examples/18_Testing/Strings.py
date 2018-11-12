@@ -50,8 +50,8 @@ txt = blurb.getBlurb('news_headline', noTags=True)
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    (FlatContext(), '_export/testFlatString.pdf'),
-    (InDesignContext(), '_export/testInDesignString.pdf'),
+    #(FlatContext(), '_export/testFlatString.pdf'),
+    #(InDesignContext(), '_export/testInDesignString.pdf'),
     #(HtmlContext(), '_export/testHtmlString.pdf'),
     #(InDesignContext(), '_export/testInDesignString.pdf'),
     #(IdmlContext(), '_export/testIdmlString.pdf')
@@ -115,7 +115,6 @@ def testContext(context, path):
     capHeight = bungee.info.capHeight
     upem = bungee.info.unitsPerEm
     h = capHeight / upem * bungeeSize
-    
     context.stroke((0, 1, 0))
     context.strokeWidth(0.1)
     context.rect(x=M, y=H-4*M, w=pt(400), h=h)

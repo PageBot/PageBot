@@ -892,7 +892,7 @@ class Document:
         return pages
 
     def isLeft(self):
-        """This is reached for e.isleft() queries, when elements are not placed
+        """This is reached for `e.isleft()` queries, when elements are not placed
         on a page. The Document cannot know the answer then. Always answer
         False.
 
@@ -906,13 +906,14 @@ class Document:
     isRight = isLeft = False
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
-        """Create a new page with size (self.w, self.h) unless defined
-        otherwise. Add the pages in the row of pn, if defined. Otherwise create
-        a new row of pages at pn. If pn is undefined, add a new page row at the
+        """Creates a new page with size `(self.w, self.h)` unless defined
+        otherwise. Add the pages in the row of pn, if defined, otherwise create
+        a new row of pages at pn. If `pn` is undefined, add a new page row at the
         end. If template is undefined, then use self.defaultTemplate to
         initialize the new page."""
         if isinstance(template, str):
             template = self.templates.get(template)
+
         if template is None:
             template = self.defaultTemplate
 
@@ -922,6 +923,7 @@ class Document:
         # If undefined, copy the new page size from the document preset size.
         if w is None:
             w = self.w
+
         if h is None:
             h = self.h
 
@@ -934,7 +936,7 @@ class Document:
 
     def makePages(self, pageCnt, pn=None, template=None, name=None, w=None, h=None, **kwargs):
         """If no "point" is defined as page number `pn`, then we'll continue
-        after the maximum value of page.y origin position. If template is
+        after the maximum value of `page.y` origin position. If template is
         undefined, then `self.newPage` will use `self.defaultTemplate` to
         initialize the new pages.
 
