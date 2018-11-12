@@ -65,9 +65,9 @@ def makeDocument():
         print(score.fails)
 
     doc.export(EXPORT_PATH_SVG)
-    doc.export(EXPORT_PATH_JPG)
-    doc.export(EXPORT_PATH_PNG)
-    doc.export(EXPORT_PATH_PDF)
+    #doc.export(EXPORT_PATH_JPG)
+    #doc.export(EXPORT_PATH_PNG)
+    #doc.export(EXPORT_PATH_PDF)
     print('Done making document %s' % doc)
 
 makeDocument()
