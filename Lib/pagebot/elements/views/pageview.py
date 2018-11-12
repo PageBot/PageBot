@@ -78,8 +78,8 @@ class PageView(BaseView):
 
         # Make sure that canvas is empty, there may have been another document
         # building in this context.
-        self.context.newDrawing()
         self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
+        self.context.newDrawing()
         sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
 
         # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
@@ -125,7 +125,7 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            #self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+            self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.

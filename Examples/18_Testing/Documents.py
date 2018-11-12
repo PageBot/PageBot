@@ -46,8 +46,8 @@ txt = blurb.getBlurb('news_headline', noTags=True)
 
 testContexts = (
     (DrawBotContext(), '_export/testDrawBotString.pdf'),
-    (FlatContext(), '_export/testFlatString.pdf'),
-    (InDesignContext(), '_export/testInDesignString.pdf'),
+    #(FlatContext(), '_export/testFlatString.pdf'),
+    #(InDesignContext(), '_export/testInDesignString.pdf'),
     #(HtmlContext(), '_export/testHtmlString.pdf'),
     #(InDesignContext(), '_export/testInDesignString.pdf'),
     #(IdmlContext(), '_export/testIdmlString.pdf')
@@ -56,12 +56,12 @@ testContexts = (
 def testContext(context, path):
     doc = Document(w=W, h=H, context=context)
     page = doc[1]
-    print('Current page: %s' % page)
+    #print('Current page: %s' % page)
     nextPage = page.next
-    print('Next page: %s' % nextPage)
-    print(type(page))
-    print('Units: %s' % context.units)
-    print('# Testing document in %s' % context)
+    #print('Next page: %s' % nextPage)
+    #print(type(page))
+    #print('Units: %s' % context.units)
+    #print('# Testing document in %s' % context)
     conditions = [Right2Right(), Float2Top(), Float2Left()]
 
     for n in range(10):
@@ -72,7 +72,7 @@ def testContext(context, path):
                 fill=color(random()*0.5 + 0.5, 0, 0.5),
                 conditions=conditions)
     score = nextPage.solve()
-    print(score)
+    #print(score)
     doc.build() # Export?
     
 def testAllContexts():
