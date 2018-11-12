@@ -19,8 +19,8 @@ class PartOfBook(Element):
 
     PAGE_CLASS = Page
 
-    def __init__(self, autoPages=0, elements=None, name=None, compose=None, useInToc=True, 
-            pn=None, **kwargs):
+    def __init__(self, autoPages=0, elements=None, name=None, compose=None, 
+            publication=None, useInToc=True, pn=None, **kwargs):
         """Abstract type of element that contain parts of the book and/or single pages.
 
         >>> elements = (

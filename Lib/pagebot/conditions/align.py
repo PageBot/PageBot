@@ -50,7 +50,7 @@ class Fit(Condition):
 	def evaluate(self, e, score):
 		"""Fit the element on all paddings of the parent. First align left and top,
 		then fit right and bottom. This order to make sure size fitting is based on 
-		the right position on the parent.."""
+		the right position on the parent."""
 		self.evaluateAll(e, self._getConditions(), score)
 
 	def solve(self, e, score):
@@ -68,12 +68,25 @@ class Fit2Sides(Condition):
 	>>> e1.solve() # Solve position and size from conditions on 4 sides
 	Score: 4 Fails: 0
 	>>> e1.x, e1.y, e1.w, e1.h # Position and size, solved by position, fitting parent
-	(0pt, 0pt, 300pt, 350pt)
+	(0pt, 0pt, 300pt, 300pt)
 	"""
 	def _getConditions(self):
 		return [Left2LeftSide, Top2TopSide, Fit2RightSide, Fit2BottomSide]
 
 	def evaluate(self, e, score):
+		self.evaluateAll(e, self._getConditions(), score)
+
+	def solve(self, e, score):
+		self.solveAll(e, self._getConditions(), score)
+
+class Fit2Bleed(Condition):
+	def _getConditions(self):
+		return [Left2LeftBleed, Top2TopBleed, Fit2RightBleed, Fit2BottomBleed]
+
+	def evaluate(self, e, score):
+		"""Fit the element on all bleeds of the parent. First align left and top,
+		then fit right and bottom. This order to make sure size fitting is based on 
+		the right position on the parent."""
 		self.evaluateAll(e, self._getConditions(), score)
 
 	def solve(self, e, score):
@@ -298,6 +311,57 @@ class Fit2BottomBleed(Condition):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.fit2BottomBleed(), e, score)
 
+#   F I T T I N G  B L E E D S
+
+class Fit2WidthBleeds(Condition): # Note the plural in the name!
+	def test(self, e):
+		return e.isLeftOnLeftBleed(self.tolerance) and e.isRightOnRightBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2LeftBleed() and e.fit2RightBleed(), e, score)
+
+class Fit2LeftBleed(Condition):
+	def test(self, e):
+		return e.isLeftOnLeftBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.fit2LeftBleed(), e, score)
+
+class Fit2RightBleed(Condition):
+	def test(self, e):
+		return e.isRightOnRightBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.fit2RightBleed(), e, score)
+
+class Fit2HeightBleeds(Condition):
+	def test(self, e):
+		return e.isTopOnTopBleed(self.tolerance) and e.isBottomOnBottomBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.top2TopBleed() and e.fit2BottomBleed(), e, score)
+
+class Fit2TopBleed(Condition):
+	"""From the current bottom position, until it fits the parent.top and overshooting bleed."""
+	def test(self, e):
+		return e.isTopOnTopBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.fit2TopBleed(), e, score)
+
+class Fit2BottomBleed(Condition):
+	def test(self, e):
+		return e.isBottomOnBottomBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.fit2BottomBleed(), e, score)
+
 #	S H R I N K
 
 #   By shrinking conditions, elements get smaller to match the size of their children.
@@ -459,6 +523,15 @@ class FitBlock2HeightSides(Condition):
 
 #	C E N T E R  H O R I Z O N T A L
 
+class Center(Condition):
+	"""Center and Middle e bounding box horizontal and vertical."""
+	def test(self, e):
+		return e.isCenterOnCenter(self.tolerance) and e.isMiddleOnMiddle(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition text fails.
+			self.addScore(e.center2Center() and e.middle2Middle(), e, score)
+
 #	Center Horizontal Margins
 
 class Center2Center(Condition):
@@ -591,6 +664,15 @@ class Left2LeftSide(Condition):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.left2LeftSide(), e, score)
 
+class Left2LeftBleed(Condition):
+	"""Align left of e bounding box on parent left bleed side."""
+	def test(self, e):
+		return e.isLeftOnLeftBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2LeftBleed(), e, score)
+
 # Missing on purpose: Right2LeftSide(Condition). Element is not visible.
 
 class Origin2LeftSide(Condition):
@@ -668,6 +750,15 @@ class Right2RightSide(Condition):
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.right2RightSide(), e, score)
+
+class Right2RightBleed(Condition):
+	"""Align left of e bounding box on parent right bleed side."""
+	def test(self, e):
+		return e.isRightOnRightBleed(self.tolerance)
+
+	def solve(self, e, score):
+		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.right2RightBleed(), e, score)
 
 class Origin2RightSide(Condition):
 	"""Align origin of e bounding box horizontal between parent right side."""

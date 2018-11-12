@@ -57,11 +57,11 @@ testContexts = (
     #(IdmlContext(), '_export/testIdmlString.pdf')
 )
 
-def drawLines(context):
-    context.fill(noColor)
-    context.stroke((0.2, 0.7, 0.5, 0.3))
-    context.strokeWidth(1)
-    context.line((M, 0), (M, H))
+def drawLines(page):
+    page.context.fill(noColor)
+    page.context.stroke((0.2, 0.7, 0.5, 0.3))
+    page.context.strokeWidth(1)
+    page.context.line((M, 0), (M, H))
     
     # Number of lines.
     
@@ -70,8 +70,8 @@ def drawLines(context):
     for i in range(int(r)):
         y = H - i*M
         if i > 1:
-            context.strokeWidth(0.5)
-        context.line((0, y), (W, y))
+            page.context.strokeWidth(0.5)
+        page.context.line((0, y), (W, y))
 
 def testContext(context, path):
     doc = Document(w=W, h=H, context=context, autoPages=1)
@@ -81,7 +81,6 @@ def testContext(context, path):
     #context.newDocument(W, H)
     print('# Testing strings in %s' % context)
     #context.newPage(W, H)
-    drawLines(context)
     # Create a new BabelString with the DrawBot FormttedString inside.
     style=dict(font=roboto, fontSize=40, textFill=(1, 0, 0))
     bs = context.newString('This is a string', style=style)
@@ -147,6 +146,8 @@ def testContext(context, path):
     #doc.view.drawBaselines()
     #print(doc.pages[1][0].elements)
     doc.build()
+    drawLines(page)
+
     #doc.export('_export/Strings.pdf')
         
 def testAllContexts():

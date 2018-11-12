@@ -40,8 +40,7 @@ class Finder:
     def __init__(self, rootPath):
         self.rootPath = rootPath
 
-    def findPaths(self, name=None, pattern=None, extension=None, 
-            ignorePatterns=None,
+    def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
         """Answer the list of full file paths, that match the parameters.
         """
@@ -76,12 +75,22 @@ class Finder:
                 paths.append(filePath)
         return paths
 
-    def find(self, name=None, pattern=None, extension=None):
+    def findPath(self, name=None, pattern=None, extension=None, ignorePatterns=None,
+            path=None, paths=None):
+        """Answer the first of the list of full file paths, that match the parameters.
+        Answer None if nothing can be found.   
+        """
+        paths = self.findPaths(name, pattern, extension, ignorePatterns, path, paths)
+        if paths: # If anything found, then answer the first one.
+            return paths[0]
+        return None
+
+    def find(self, name=None, pattern=None, extension=None, **kwargs):
         """Answer the elements that hold the data of matching path extensions.
         """
         elements = []
         for path in self.findPaths(name=name, pattern=pattern, extension=extension):
-            e = elementFromPath(path)
+            e = elementFromPath(path, name=name, **kwargs)
             if e is not None:
                 elements.append(e)
         return elements
