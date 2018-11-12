@@ -911,7 +911,6 @@ class Document:
         a new row of pages at pn. If `pn` is undefined, add a new page row at the
         end. If template is undefined, then use self.defaultTemplate to
         initialize the new page."""
-        print('doc new page')
         if isinstance(template, str):
             template = self.templates.get(template)
 

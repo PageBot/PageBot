@@ -20,6 +20,9 @@ from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.toolbox.color import blueColor, darkGrayColor, redColor, Color, noColor, color
 from pagebot.conditions import *
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.elements.paths.pagebotpath import PageBotPath
+
 
 context = getContext()
 
@@ -30,10 +33,11 @@ X0 = 100
 Y0 = 100
 SQ = 150
 P  = 50
+font = findFont('Roboto-Bold')
+
 
 doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
 page = doc[1]
-
 page.padding = P
 
 c = (Right2Right(), Top2Top(), Float2Left())
@@ -52,12 +56,11 @@ r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, stro
 #print(p)
 
 tb = newTextBox('Test', parent=page, conditions=c, stroke=0, strokeWidth=0.5, fill=(1, 1, 0))
-
 page.solve()
-
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/showElements.png'
 doc.export(EXPORT_PATH)
+pbp = PageBotPath(context)
 
 

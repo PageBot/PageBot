@@ -19,8 +19,12 @@ from pagebot.toolbox.units import pt
 from pagebot.contexts import getContext
 from pagebot.elements.paths.pagebotpath import PageBotPath
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.document import Document
+
 
 context = getContext()
+doc = Document(w=100, h=100, originTop=False, autoPages=1, context=context)
+
 context.newPage(1000, 500)
 font = findFont('Roboto-Bold')
 path = PageBotPath(context)
