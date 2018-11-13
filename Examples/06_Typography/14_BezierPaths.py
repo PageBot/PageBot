@@ -273,7 +273,7 @@ context.drawPath(path, (x, y))
 
 x -= CW+G
 path = PageBotPath(context=context)
-path.text('B', style=dict(font=font, fontSize=250))
+path.text('B', style=dict(font='Helvetica', fontSize=250))
 path = path.removeOverlap()
 context.fill(noColor)
 context.stroke(color(1, 0, 0), 0.5)

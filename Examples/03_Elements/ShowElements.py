@@ -54,7 +54,7 @@ r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, stro
 tb = newTextBox('Test', parent=page, conditions=c, stroke=0, strokeWidth=0.5, fill=(1, 1, 0))
 page.solve()
 
-pths = newPaths()
+#pths = newPaths()
 
 # Points should be merged with PageBotPath.
 #points = []

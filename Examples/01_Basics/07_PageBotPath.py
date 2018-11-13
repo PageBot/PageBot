@@ -13,25 +13,39 @@
 #     07_PageBotPath.py
 #
 #     Draw a string outline as PageBotPath.
-#     OSX-bug? --> Outlines of Roboto show with overlap.
 #
 from pagebot.toolbox.units import pt
 from pagebot.contexts import getContext
 from pagebot.elements.paths.pagebotpath import PageBotPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
+from pagebot.elements import *
+from pagebot.conditions import *
 
+from pagebot.constants import *
+H, W = A3
 context = getContext()
-doc = Document(w=100, h=100, originTop=False, autoPages=1, context=context)
+doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
+page = doc[1]
+c = (Right2Right(), Top2Top(), Float2Left())
 
-context.newPage(1000, 500)
-font = findFont('Roboto-Bold')
+# TODO: add to frame?
+bungee = findFont('BungeeOutline-Regular')
+
+t = newText('*PageBot Path*', parent=page, conditions=c, style={'fill': 1, 'fontSize': 32, 'stroke': 0, 'strokeWidth': 2})
+
 path = PageBotPath(context=context)
-path.text('ABC', style=dict(font=font, fontSize=pt(400)))
-path = path.removeOverlap()
-path.translate((100, 100))
+path.text('ABC', style=dict(font=bungee, fontSize=pt(120)))
+newPaths(path, parent=page, fill=(1, 0, 0), conditions=c)
 
-context.fill((1, 0, 0))
-context.stroke(0, 10)
-context.drawPath(path)
-        
+roboto = findFont('Roboto-Bold')
+path = PageBotPath(context=context)
+path.text('CDE', style=dict(font=roboto, fontSize=pt(240)))
+path = path.removeOverlap()
+newPaths(path, parent=page, fill=(1, 1, 0), stroke=0, conditions=c)
+
+# FIXME: y-translation always same direction?
+#path.translate((-60, 200))
+
+page.solve()
+doc.build()
