@@ -495,7 +495,7 @@ class PageBotPath:
         self.bp.oval(ptx-ptr, pty-ptr, ptr*2, ptr*2)
 
     def text(self, bs, x=None, y=None, style=None):
-        """Draws a txt with a font and fontSize at an offset in the bezier
+        """Draws a txt with a font and fontSize at an offset in the Bézier
         path. If a font path is given the font will be installed and used
         directly. Style is normal optional PageBot style dictionary.
         Optionally an alignment can be set. Possible align values are: LEFT,
@@ -511,16 +511,22 @@ class PageBotPath:
             bs = bs.s
         elif not isinstance(bs, str):
             bs = str(bs)
+
         if x is None:
             x = 0
         if y is None:
             y = 0
+
         p = upt(x, y)
+
         if style is None:
             style = {}
+
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
+
         if hasattr(font, 'path'): # In case it is a Font instance, extract the path.
             font = font.path
+
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         align = style.get('align')
         self.bp.text(bs, offset=p, font=font, fontSize=fontSize, align=align)

@@ -48,8 +48,8 @@ context.newPage(W, H)
 # Dummy text, used several times to create the length we need for this example
 text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
 
-font = findFont('Roboto-Bold')
-style = dict(font=font.path, fontSize=pt(24), textFill=1)
+#font = findFont('Roboto-Bold')
+style = dict(font="Helvetica", fontSize=pt(24), textFill=1)
 
 # Create a number of PageBotPath instances that can be drawn in a grid showing multiple functions.
 # Create a new BezierPath as separate entity to talk to. This woe
@@ -58,6 +58,7 @@ x = y = P
 path = PageBotPath(context=context)
 path.rect(0, 0, CW, CW)
 path.text('Rect', x=TP, y=TP, style=style)
+#path = path.removeOverlap()
 context.fill(color(1, 0, 0))
 context.drawPath(path, (x, y))
 
@@ -88,6 +89,7 @@ path2 = path1.copy()
 path2.moveBy((CW/3, CW/3))
 context.fill(color(0.6, 0, 0.6, 0.7))
 context.drawPath(path1.union(path2), (x, y))
+
 
 y += CW+G
 path1 = PageBotPath(context=context)
@@ -271,8 +273,8 @@ context.drawPath(path, (x, y))
 
 x -= CW+G
 path = PageBotPath(context=context)
-path.text('B', style=dict(font=font.path, fontSize=250))
-path.removeOverlap()
+path.text('B', style=dict(font=font, fontSize=250))
+path = path.removeOverlap()
 context.fill(noColor)
 context.stroke(color(1, 0, 0), 0.5)
 context.drawPath(path, (x, y))
