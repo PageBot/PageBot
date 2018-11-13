@@ -19,6 +19,7 @@ from pagebot import getAllContexts, getResourcesPath
 from pagebot.toolbox.color import Color
 from pagebot.constants import A4Rounded
 from pagebot.contexts.strings.babelstring import BabelString
+from pagebot import getContext
 
 H, W = A4Rounded
 f = Color(0, 1, 0)
@@ -73,5 +74,27 @@ def testContext(context):
         context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
     	    print(traceback.format_exc())
+def showContexts():
+	print('Here are some examples of how to retrieve different kinds of contexts:')
+	context = getContext() # Creates a DrawBot context on Mac, Flat on others
+	print(context)
+	context = getContext() # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
+	print(context)
+	context = getContext('DrawBot') # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
+	print(context)
+	context = getContext(contextType='Flat') # Force Flat.
+	print(context)
+	context = getContext(contextType='Flat') # Buffered in DEFAULT_CONTEXT this time.
+	print(context)
+	context = getContext(contextType='HTML')
+	print(context)
+	context = getContext(contextType='InDesign') # To be implemented.
+	print(context)
+	context = getContext(contextType='IDML') # To be implemented.
+	print(context)
+	context = getContext(contextType='SVG') # To be implemented.
+	print(context)
 
+
+showContexts()
 testContexts()

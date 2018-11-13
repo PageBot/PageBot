@@ -16,13 +16,12 @@
 #
 from pagebot.toolbox.units import pt
 from pagebot.contexts import getContext
-from pagebot.elements.paths.pagebotpath import PageBotPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
+from pagebot.constants import A3
 
-from pagebot.constants import *
 H, W = A3
 context = getContext()
 doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
@@ -34,7 +33,7 @@ bungee = findFont('BungeeOutline-Regular')
 
 t = newText('*PageBot Path*', parent=page, conditions=c, style={'fill': 1, 'fontSize': 32, 'stroke': 0, 'strokeWidth': 2})
 
-path = PageBotPath(context=context)
+path = newPageBotPath(context=context)
 path.text('ABC', style=dict(font=bungee, fontSize=pt(120)))
 newPaths(path, parent=page, fill=(1, 0, 0), conditions=c)
 
