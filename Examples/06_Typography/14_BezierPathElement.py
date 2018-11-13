@@ -58,10 +58,11 @@ view.showTextOverflowMarker = False
 page = doc[1]
 
 # Create a number of paths that can be drawn in a grid showing multiple functions.
-# Create a new BezierPath as separate entity to talk to. This woe
+# Create a new BezierPath as separate entity to talk to.
 path = PageBotPath(context, style=dict(fill=color(rgb='yellow'), stroke=color(rgb='red'), strokeWidth=pt(0.5)))
 path.text('B', style=dict(font=font.path, fontSize=400))
-path.removeOverlap()
+path = path.removeOverlap()
+
 e = Paths(path, parent=page, mr=G, mb=G, fill=0.9, h=CW, conditions=[Right2Right(), Float2Top(), Float2Left()])
 #e.xy = page.pl, page.pb
 

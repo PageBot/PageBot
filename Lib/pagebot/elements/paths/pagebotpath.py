@@ -27,7 +27,6 @@ from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_S
 from pagebot.toolbox.units import units, pt, upt, degrees, point2D, Degrees, Radians
 from pagebot.contexts.basecontext import BaseContext
 
-
 class PageBotPoint:
     def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None):
         # http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
@@ -65,8 +64,10 @@ class PageBotPath:
 
         if bezierPath is None:
             bezierPath = context.newPath()
+        else:
+            # FIXME: should be aware of BezierPath type, depending on context.
+            assert not isinstance(bezierPath, PageBotPath)
 
-        assert not isinstance(bezierPath, PageBotPath)
         # Optional fill, stroke and strokeWidth options, hard-coding the
         # drawing. Otherwise take the fill/stroke settings already defined in
         # the context.
@@ -946,8 +947,9 @@ class PageBotPath:
         5
         """
         bp = self.bp.copy()
-        bp.removeOverlap()
-        return self.__class__(self.context, bp)
+        bp = bp.removeOverlap()
+        style = self.style.copy()
+        return PageBotPath(context=self.context, bezierPath=bp, style=style)
 
 def newRectPath(context, w, h):
     pbp = PageBotPath(context=context)

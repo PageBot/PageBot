@@ -172,7 +172,7 @@ class BaseContext(AbstractDrawBotContext):
     # Basic shapes.
 
     def rect(self, x, y, w, h):
-        """Draws a rectangle in the canvas.  This method is using the core
+        """Draws a rectangle in the canvas. This method is using the core
         BezierPath as path to draw on. For a more rich environment use
         PageBotPath(context) instead.
 
