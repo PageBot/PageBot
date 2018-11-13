@@ -33,7 +33,7 @@ X0 = 100
 Y0 = 100
 SQ = 150
 P  = 50
-font = findFont('Roboto-Bold')
+bungee = findFont('BungeeInline-Regular')
 
 
 doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
@@ -51,10 +51,12 @@ q = newQuire(parent=page, conditions=c, fill=1, strokeWidth=5, stroke=0.5)
 r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, strokeWidth=1)
 
 
-tb = newTextBox('Test', parent=page, conditions=c, stroke=0, strokeWidth=0.5, fill=(1, 1, 0))
+newText('Text    ', parent=page, conditions=c, fontSize=60, stroke=(1, 1, 0), strokeWidth=20, textFill=0.5, font=bungee)
+newTextBox('Text Box', parent=page, conditions=c, stroke=0, strokeWidth=0.5, fill=(1, 1, 0), fontSize=30, font=bungee, textFill=(0, 0, 1))
 page.solve()
 
-#pths = newPaths()
+# TODO: add a path.
+#pths = newPaths(path) 
 
 # Points should be merged with PageBotPath.
 #points = []
