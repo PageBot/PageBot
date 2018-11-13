@@ -12,9 +12,9 @@
 #
 #     14_BezierPaths.py
 #
-#     This script shows the behavior and functions of BezierPaths as they exist 
+#     This script shows the behavior and functions of BezierPaths as they exist
 #     the DrawBotContext. Most of the functions are directly defined by the
-#     OSX defintion of BezierPaths. 
+#     OSX defintion of BezierPaths.
 #     (Note that BezierPaths sometimes get referred to as "path", but there is
 #     not relation with the often used "path" in PageBot filepaths.)
 #     In DrawBotContext the BezierPath is an integral part of the API.
@@ -55,14 +55,14 @@ style = dict(font=font.path, fontSize=pt(24), textFill=1)
 # Create a new BezierPath as separate entity to talk to. This woe
 
 x = y = P
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.rect(0, 0, CW, CW)
 path.text('Rect', x=TP, y=TP, style=style)
 context.fill(color(1, 0, 0))
 context.drawPath(path, (x, y))
 
 x += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.rect(0, 0, CW, CW)
 path.text('moveBy', x=TP, y=TP, style=style)
 context.fill(color(1, 0, 0))
@@ -72,7 +72,7 @@ path.moveBy((12, 12))
 context.drawPath(path, (x, y))
 
 x += CW+G
-path1 = PageBotPath(context)
+path1 = PageBotPath(context=context)
 path1.rect(0, 0, CW, CW)
 path1.text('Difference', x=TP, y=TP, style=style)
 path2 = path1.copy()
@@ -81,7 +81,7 @@ context.fill(color(0, 0.2, 0.8, 0.7))
 context.drawPath(path1.difference(path2), (x, y))
 
 x += CW+G
-path1 = PageBotPath(context)
+path1 = PageBotPath(context=context)
 path1.rect(0, 0, CW*2/3, CW*2/3)
 path1.text('Union', x=TP, y=TP, style=style)
 path2 = path1.copy()
@@ -90,7 +90,7 @@ context.fill(color(0.6, 0, 0.6, 0.7))
 context.drawPath(path1.union(path2), (x, y))
 
 y += CW+G
-path1 = PageBotPath(context)
+path1 = PageBotPath(context=context)
 path1.rect(0, 0, CW*2/3, CW*2/3)
 path1.text('Xor', x=TP, y=TP, style=style)
 path2 = path1.copy()
@@ -103,7 +103,7 @@ x -= CW+G
 imagePath = getResourcesPath() + '/images/cookbot1.jpg'
 iw, ih = context.imageSize(imagePath)
 context.image(imagePath, p=(x, y), h=CH)
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.traceImage(imagePath)
 path.scale(CW/iw)
 path1.text('Trace Image', x=TP, y=TP, style=style)
@@ -141,91 +141,91 @@ context.rect(x, y, CW, CW)
 
 x = P
 y += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.circle(CW/2, CW/2, CW/2)
 context.fill(0.8)
 context.drawPath(path, (x, y))
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for point in path.points:
     path2.circle(point[0], point[1], 6)
 context.fill(noColor)
 context.stroke(0, 1)
-context.drawPath(path2, (x, y))    
-path2 = PageBotPath(context)
+context.drawPath(path2, (x, y))
+path2 = PageBotPath(context=context)
 path2.text('Points', x=TP, y=TP, style=style)
 context.stroke(noColor)
 context.fill(0)
 context.drawPath(path2, (x, y))
 
 x += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.circle(CW/2, CW/2, CW/3)
 path.rotate(30, (CW/2, CW/3))
 context.fill(color(0.4, 0.6, 0.3))
 context.drawPath(path, (x, y))
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for point in path.points:
     path2.circle(point[0], point[1], 6)
 context.fill(noColor)
 context.stroke(0, 1)
-context.drawPath(path2, (x, y))    
-path2 = PageBotPath(context)
+context.drawPath(path2, (x, y))
+path2 = PageBotPath(context=context)
 path2.text('Rotate 30°', x=TP, y=TP, style=style)
 context.stroke(noColor)
 context.fill(0)
 context.drawPath(path2, (x, y))
 
 x += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.circle(CW/2, CW/2, CW/3)
 path.skew(30, center=(CW/2, CW/3))
 context.fill(color(0.4, 0.6, 0.3))
 context.drawPath(path, (x, y))
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for point in path.points:
     path2.circle(point[0], point[1], 6)
 context.fill(noColor)
 context.stroke(0, 1)
-context.drawPath(path2, (x, y))    
-path2 = PageBotPath(context)
+context.drawPath(path2, (x, y))
+path2 = PageBotPath(context=context)
 path2.text('Skew 30°', x=TP, y=TP, style=style)
 context.stroke(noColor)
 context.fill(0)
 context.drawPath(path2, (x, y))
 
 x += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.circle(CW/2, CW/2, CW/3)
-path0 = PageBotPath(context)
+path0 = PageBotPath(context=context)
 path0.circle(CW/2, CW/2, CW/5)
 path = path.difference(path0)
 path.skew(30, center=(CW/2, CW/3))
 context.fill(color(0.4, 0.6, 0.3))
 context.drawPath(path, (x, y))
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for point in path.points:
     path2.circle(point[0], point[1], 6)
 context.fill(noColor)
 context.stroke(0, 1)
-context.drawPath(path2, (x, y))    
-path2 = PageBotPath(context)
+context.drawPath(path2, (x, y))
+path2 = PageBotPath(context=context)
 path2.text('Difference\nSkew 30°°', x=TP, y=TP+G, style=style)
 context.stroke(noColor)
 context.fill(0)
 context.drawPath(path2, (x, y))
 
 y += CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.rect(0, 0, CW-G, CW-G)
 path.rect(G, G, CW-G, CW-G)
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for point in path.intersectionPoints():
     path2.circle(point[0], point[1], 6)
 context.fill(noColor)
 context.stroke(0, 0.5)
 context.drawPath(path, (x, y))
 context.drawPath(path2, (x, y))
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('Intersections', x=TP, y=TP+G, style=style)
 context.fill(0)
 context.stroke(noColor)
@@ -234,12 +234,12 @@ context.drawPath(path, (x, y))
 x -= CW+G
 # Get the path of the image from PageBot resources
 # Add yellow background
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.circle(CW/2, CW/2, CW/2)
 context.fill(noColor)
 context.stroke(0, 0.5)
 context.drawPath(path, (x, y))
-path2 = PageBotPath(context)
+path2 = PageBotPath(context=context)
 for xx in range(int(upt(CW/2 - CW/5)), int(upt(CW/2 + CW/5)), int(upt(CW/10))):
     for yy in range(int(upt(CH/2 - CH/5)), int(upt(CH/2 + CH/5)), int(upt(CH/10))):
         if path.pointInside((xx, yy)):
@@ -247,14 +247,14 @@ for xx in range(int(upt(CW/2 - CW/5)), int(upt(CW/2 + CW/5)), int(upt(CW/10))):
 context.stroke(noColor)
 context.fill(color(1, 0, 0))
 context.drawPath(path2, (xx, yy))
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('Point Inside', x=TP, y=TP+G, style=style)
 context.fill(0)
 context.stroke(noColor)
 context.drawPath(path, (x, y))
 
 x -= CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.rect(0, 0, CW-G, CW-G)
 path.rect(G, G, CW-G, CW-G)
 path.rect(G/2, G, CW-G, CW-G)
@@ -263,20 +263,20 @@ path = path.removeOverlap()
 context.fill(noColor)
 context.stroke(0, 0.5)
 context.drawPath(path, (x, y))
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('Remove\nOverlap', x=TP, y=TP+G, style=style)
 context.fill(0)
 context.stroke(noColor)
 context.drawPath(path, (x, y))
 
 x -= CW+G
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('B', style=dict(font=font.path, fontSize=250))
 path.removeOverlap()
 context.fill(noColor)
 context.stroke(color(1, 0, 0), 0.5)
 context.drawPath(path, (x, y))
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('Text', x=TP, y=TP+G, style=style)
 context.fill(0)
 context.stroke(noColor)

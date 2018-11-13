@@ -50,7 +50,7 @@ view.showTextOverflowMarker = False
 # Get the first (and only automatic created) page of the document
 page = doc[1]
 
-# Show the principle of building a dropcap. 
+# Show the principle of building a dropcap.
 # In normal PageBot usage, this is hidden as child elements of TextBox that define the layout
 # of the clipping path. Here is it shown as separate steps.
 
@@ -64,12 +64,12 @@ dropCapStyle = dict(font='Georgia-Bold', fontSize=pt(250))
 PADDING = pt(12)
 
 # Create a new BezierPath object, that contains a rectangle with the size of the text box.
-dropCapPath = PageBotPath(context)
+dropCapPath = PageBotPath(context=context)
 dropCapPath.text(text[0], style=dropCapStyle) # Place the initial letter as drop cap. Path size is calculated around the result.
 minX, minY, maxX, maxY = dropCapPath.bounds() # Get the bounds of the dropcap pixels
 dcw = maxX - minX
 dch = maxY - minY
-dropCapPathFrame = PageBotPath(context)
+dropCapPathFrame = PageBotPath(context=context)
 dropCapPathFrame.rect(0, 0, maxX+PADDING, maxY+PADDING)
 dropCapPathFrame.moveBy((0, page.ph - dch - PADDING))
 
@@ -77,10 +77,10 @@ dropCapPathFrame.moveBy((0, page.ph - dch - PADDING))
 # Normally this would come from the position of a child element inside the main textbox.
 # Note that the core context.newPath() answers a DrawBot.BezierPath, which is contained
 # by a PageBothPath() instance.
-textFramePath = PageBotPath(context)
+textFramePath = PageBotPath(context=context)
 textFramePath.rect(0, 0, page.pw, page.ph) # Make a rectangle path with size of text box.
 # Make a new path for the available text flow, which is the difference between the paths
-textFlowPath = textFramePath.difference(dropCapPathFrame) 
+textFlowPath = textFramePath.difference(dropCapPathFrame)
 newTextBox(bs1, parent=page, yAlign=TOP, showFrame=True, conditions=[Fit()], clipPath=textFlowPath)
 
 newPaths(textFlowPath, parent=page, conditions=(Left2Left(), Top2Top()))

@@ -146,6 +146,9 @@ def newRuler(**kwargs):
     """Create a Ruler element."""
     return Ruler(**kwargs)
 
+def newPageBotPath(**kwargs):
+    return PageBotPath(**kwargs)
+
 def newPaths(paths, **kwargs):
     """Create a Paths element, holding PageBotPath object(s) in the element frame.
     The paths can be a single PageBotPath instance or a list/tuple of instances.

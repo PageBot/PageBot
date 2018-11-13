@@ -25,6 +25,7 @@
 import os
 from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE
 from pagebot.toolbox.units import units, pt, upt, degrees, point2D, Degrees, Radians
+from pagebot.contexts.basecontext import BaseContext
 
 
 class PageBotPoint:
@@ -37,7 +38,8 @@ class PageBotPoint:
         self.start = start
 
 class PageBotContour:
-    def __init__(self, context, bezierContour=None):
+    def __init__(self, context=None, bezierContour=None):
+        assert isinstance(context, BaseContext)
         self.context = context
         self.bc = bezierContour
 
@@ -54,20 +56,24 @@ class PageBotContour:
     points = property(_get_points)
 
 class PageBotPath:
-    """Implements a wrapper around DrawBot.BezierPath with the same API,
-    except adding the awareness of units and some other additions.
+    """Implements a wrapper around DrawBot.BezierPath with the same API, while
+    adding knowledge of units and some other additions."""
 
-    """
-    def __init__(self, context, bezierPath=None, style=None):
+    def __init__(self, context=None, bezierPath=None, style=None):
+        assert isinstance(context, BaseContext)
         self.context = context
+
         if bezierPath is None:
             bezierPath = context.newPath()
+
         assert not isinstance(bezierPath, PageBotPath)
-        # Optional fill, stroke and strokeWidth options, hard-coding the drawing.
-        # Otherwise take the fill/stroke settings already defined in the context.
+        # Optional fill, stroke and strokeWidth options, hard-coding the
+        # drawing. Otherwise take the fill/stroke settings already defined in
+        # the context.
         if style is None:
             style = {} # Make sure that there is at least an empty style dictionary
-        self.style = style 
+
+        self.style = style
         self.bp = bezierPath
         self.isOpenPath = False # self.beginPath() sets to True. self.endPath() sets to False.
 
@@ -80,11 +86,12 @@ class PageBotPath:
     #   Path as pen drawing
 
     def beginPath(self, identifier=None):
-        """Start a new path/polyhon in self.path. Set the self.isOpenPath flag to True
+        """Starts a new path / polygon in self.path. Sets the self.isOpenPath flag
+        to True.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.beginPath('MyPath')
         >>> len(path)
         0
@@ -96,11 +103,12 @@ class PageBotPath:
         self.bp.beginPath(identifier)
 
     def addPoints(self, *args, **kwargs):
-        """Add one or multiple points to the current self.path. Create the path if it does not exist.
+        """Adds one or multiple points to the current self.path. Creates the path
+        if it does not exist.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> len(path)
         0
         >>> path.isOpenPath
@@ -121,7 +129,7 @@ class PageBotPath:
         assert isinstance(point, (list, tuple, PageBotPoint)), ('%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__)
         if isinstance(point, (list, tuple)):
             px, py = upt(point2D(point))
-        else:  
+        else:
             px = point.x
             py = point.y
             segmentType = segmentType or point.segmentType
@@ -130,11 +138,11 @@ class PageBotPath:
         self.bp.addPoint((px, py), segmentType=segmentType, smooth=smooth, name=name, identifier=identifier, **kwargs)
 
     def endPath(self):
-        """End the path, if it is open.
+        """End the path if it is open.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.beginPath('MyPath')
         >>> len(path)
         0
@@ -151,12 +159,12 @@ class PageBotPath:
     #   P A T H  M E T H O D S
 
     def moveTo(self, p):
-        """Move the path to point p.
+        """Moves the path to point `p`.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> point = pt(100), p(5) # Mixing different unit types
         >>> path.moveTo(point)
         >>> point = 100, 50 # Plain values are interpreted as pt
@@ -169,11 +177,11 @@ class PageBotPath:
         self.bp.moveTo(ptp)
 
     def closePath(self):
-        """Close the current open path. 
+        """Closes the current open path.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.moveTo((0, 0))
         >>> path.lineTo((0, 100))
         >>> path.lineTo((100, 100))
@@ -189,12 +197,12 @@ class PageBotPath:
         self.bp.closePath()
 
     def lineTo(self, p):
-        """Move the path to point p.
+        """Makes a line to the path to point `p`.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> p = pt(100), mm(50) # Mixing different unit types
         >>> path.moveTo(p)
         >>> p = 100, 50 # Plain values are interpreted as pt
@@ -206,8 +214,8 @@ class PageBotPath:
         self.bp.lineTo(ptp)
 
     def curveTo(self, bcp1, bcp2, p):
-        """Curve to point p i nthe running path. Create a new path if none is
-        open.
+        """Makes a curve to point `p` in the running path. Creates a new path
+        if none is open.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts import getContext
@@ -225,13 +233,14 @@ class PageBotPath:
         self.bp.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
-        """Arc with center and a given radius, from startAngle to endAngle, going clockwise if clockwise is
-        True and counter clockwise if clockwise is False.
+        """Arc with center and a given radius, from `startAngle` to `endAngle`,
+        going clockwise if clockwise is `True` and counter clockwise if clockwise
+        is `False`.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.beginPath()
         >>> path.arc(center=(pt(100), mm(50)), radius=pt(30))
         >>> path.endPath()
@@ -251,7 +260,7 @@ class PageBotPath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.moveTo((0, 0))
         >>> p1 = pt(100), p(6)
         >>> p2 = p(10), pt(200)
@@ -283,7 +292,7 @@ class PageBotPath:
         ...        self.output.append('endPath()')
         >>> pen = Pen()
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> len(path.points)
@@ -318,7 +327,7 @@ class PageBotPath:
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.beginPath()
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
@@ -339,11 +348,11 @@ class PageBotPath:
     #   P R O P E R T I E S
 
     def _get_points(self):
-        """Property that answers the list of points of the BezierPath.
+        """Property that answers the list of points of the Bézier path.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> len(path.points)
         0
         >>> path.beginPath()
@@ -356,11 +365,12 @@ class PageBotPath:
     points = property(_get_points)
 
     def _get_onCurvePoints(self):
-        """Property that answers the list of on-curve of the BezierPath.
+        """Property that answers the list of on-curve points of the Bézier
+        path.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> len(path.points)
         0
         >>> path.circle(0, 0, 100)
@@ -371,11 +381,12 @@ class PageBotPath:
     onCurvePoints = property(_get_onCurvePoints)
 
     def _get_offCurvePoints(self):
-        """Property that answers the list of off-curve points of the BezierPath.
+        """Property that answers the list of off-curve points of the Bézier
+        path.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> len(path.points)
         0
         >>> path.circle(0, 0, 100)
@@ -386,12 +397,12 @@ class PageBotPath:
     offCurvePoints = property(_get_offCurvePoints)
 
     def _get_contours(self):
-        """Return a list of contours with all point coordinates sorted in segments.
-        A contour object has an open attribute.
+        """Returns a list of contours with all point coordinates sorted in
+        segments. A contour object has an open attribute.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> len(path.contours)
         0
         >>> path.circle(0, 0, 100)
@@ -414,14 +425,14 @@ class PageBotPath:
     contours = property(_get_contours)
 
     def _get_clockWise(self):
-        """Answer the calculated clockwise flag of the path. This method is simple and fast.
+        """Answers if the path is clockwise.
 
         http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         >>> path.clockWise
         False
@@ -430,21 +441,23 @@ class PageBotPath:
         """
         total = 0
         points = self.points
+
         for index, nextP in enumerate(points):
             p = points[index-1] # Takes last point of list if index == 0 :)
             total += (nextP[0] - p[0]) * (nextP[1] + p[1])
+
         return total > 0
     clockWise = property(_get_clockWise)
 
 
     #   Object drawing
-    
+
     def rect(self, x, y, w, h):
-        """Add a rectangle at position x, y with a size of w, h.
+        """Add a rectangle at position `x`, `y` with a size of `w`, `h`.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(10, 10, pt(50), 2*pt(100))
         >>> path.points
         [(10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0)]
@@ -453,11 +466,11 @@ class PageBotPath:
         self.bp.rect(ptx, pty, ptw, pth)
 
     def oval(self, x, y, w, h):
-        """Add a oval at position x, y with a size of w, h
+        """Add an oval at position `x`, `y` with a size of `w`, `h`.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.oval(10, 10, pt(50), 2*pt(100))
         >>> path.points
         [(10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0)]
@@ -466,11 +479,11 @@ class PageBotPath:
         self.bp.rect(ptx, pty, ptw, pth)
 
     def circle(self, x, y, r):
-        """Add with middle points at position x, y with radius r
+        """Adds a circle with middle points at position `x`, `y` with radius `r`.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.circle(10, 10, 2*pt(100))
         >>> len(path.points)
         14
@@ -481,14 +494,16 @@ class PageBotPath:
         self.bp.oval(ptx-ptr, pty-ptr, ptr*2, ptr*2)
 
     def text(self, bs, x=None, y=None, style=None):
-        """Draws a txt with a font and fontSize at an offset in the bezier path. If a font path is given
-        the font will be installed and used directly. Style is normal optional PageBot style dictionary.
-        Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
-        The default alignment is left. Optionally txt can be a context-related BabelString.
+        """Draws a txt with a font and fontSize at an offset in the bezier
+        path. If a font path is given the font will be installed and used
+        directly. Style is normal optional PageBot style dictionary.
+        Optionally an alignment can be set. Possible align values are: LEFT,
+        CENTER, RIGHT. The default alignment is left. Optionally txt can be a
+        context-related BabelString.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.text('ABC', style=dict(fontSize=pt(100)))
         """
         if hasattr(bs, 's'):
@@ -510,16 +525,18 @@ class PageBotPath:
         self.bp.text(bs, offset=p, font=font, fontSize=fontSize, align=align)
 
     def textBox(self, bs, x=None, y=None, w=None, h=None, clipPath=None, style=None):
-        """Draws a txt with a font and fontSize in a box in the bezier path. If a font path is given
-        the font will be installed and used directly. Style is normal optional PageBot style dictionary.
-        Optionally an alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
+        """Draws a txt with a font and fontSize in a box in the bezier path. If
+        a font path is given the font will be installed and used directly.
+        Style is normal optional PageBot style dictionary. Optionally an
+        alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
         The default alignment is left. Optionally hyphenation can be provided.
-        Optionally txt can be a context-based BabelString. Optionally box can be a DrawBotPath.
+        Optionally txt can be a context-based BabelString. Optionally box can
+        be a DrawBotPath.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.textBox('ABC', x=10, y=10, w=400, h=400, style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(100)))
         """
         if hasattr(bs, 's'):
@@ -539,7 +556,7 @@ class PageBotPath:
                 # TODO: condider to re-render the line to see if there is wrapping from w.
                 #if hasattr(bs, 's'):
                 #    h = bs.getSize(w=w)[1]
-                #else: 
+                #else:
                 #    h = 100
             if h is None:
                 h = th - ty
@@ -560,9 +577,10 @@ class PageBotPath:
         hyphenation = style.get('hyphenation', False)
         self.bp.textBox(s, clipPathOrBox, font=font, fontSize=fontSize, align=align, hyphenation=hyphenation)
 
-    def traceImage(self, imagePath, threshold=0.2, blur=None, invert=False, turd=2, tolerance=0.2, offset=None):
-        """Convert a given image to a vector outline.
-        Optionally some tracing options can be provide:
+    def traceImage(self, imagePath, threshold=0.2, blur=None, invert=False,
+            turd=2, tolerance=0.2, offset=None):
+        """Convert a given image to a vector outline. Optionally some tracing
+        options can be provide:
 
         threshold: the threshold used to bitmap an image
         blur: the image can be blurred
@@ -576,10 +594,11 @@ class PageBotPath:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> imagePath = getResourcesPath() + '/images/cookbot10.jpg'
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.traceImage(imagePath)
         """
         assert os.path.exists(imagePath)
+
         if offset is None:
             offset = ORIGIN
         offset = upt(point2D(offset))
@@ -587,7 +606,7 @@ class PageBotPath:
             tolerance=tolerance, offset=offset)
 
     #def getNSBezierPath()
-    #    Return the nsBezierPath.
+    #    Returns the nsBezierPath.
 
     #setNSBezierPath(path)
     #   Set a nsBezierPath.
@@ -598,7 +617,7 @@ class PageBotPath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         >>> p = pt(50, 50)
         >>> path.pointInside(p)
@@ -610,12 +629,12 @@ class PageBotPath:
         return self.bp.pointInside(upt(p))
 
     def bounds(self):
-        """Return the bounding box of the path.
+        """Returns the bounding box of the path.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         >>> path.bounds()
         (0.0, 0.0, 100.0, 100.0)
@@ -629,12 +648,12 @@ class PageBotPath:
     box = property(_get_box)
 
     def _get_w(self):
-        """Return the width of the path.
+        """Returns the width of the path.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(20, 30, 110, 120)
         >>> path.w
         110.0
@@ -644,12 +663,12 @@ class PageBotPath:
     w = property(_get_w)
 
     def _get_h(self):
-        """Return the height the path.
+        """Returns the height the path.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(20, 30, 110, 120)
         >>> path.h
         120.0
@@ -659,12 +678,12 @@ class PageBotPath:
     h = property(_get_h)
 
     def controlPointBounds(self):
-        """Return the bounding box of the path including the offcurve points.
+        """Returns the bounding box of the path including the offcurve points.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.circle(0, 0, 100)
         >>> path.bounds()
         (-100.0, -100.0, 100.0, 100.0)
@@ -674,12 +693,12 @@ class PageBotPath:
         return self.bp.controlPointBounds()
 
     def copy(self):
-        """Copy the bezier path.
+        """Copies the bezier path.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.circle(0, 0, 100)
         >>> id(path) != id(path.copy())
         True
@@ -689,12 +708,12 @@ class PageBotPath:
         return self.__class__(self.context, self.bp.copy())
 
     def reverse(self):
-        """Reverse the path direction and answer the self.clockWise property flag.
+        """Reverses the path direction and answers the `self.clockWise` property flag.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.circle(0, 0, 100)
         >>> path.clockWise
         False
@@ -710,9 +729,9 @@ class PageBotPath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.circle(0, 0, 100)
         >>> len(path1)
         5
@@ -729,7 +748,7 @@ class PageBotPath:
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
@@ -743,12 +762,12 @@ class PageBotPath:
     moveBy = translate
 
     def rotate(self, angle, center=None):
-        """Rotate the path around the center point (which is the origin by default)
-        with a given angle in degrees, Degrees or Radians instance.
+        """Rotates the path around the center point (which is the origin by
+        default) with a given angle in degrees, Degrees or Radians instance.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
@@ -765,13 +784,14 @@ class PageBotPath:
         self.bp.rotate(dgAngle.degrees, center)
 
     def scale(self, sx=1, sy=None, center=None):
-        """Scale the path with a given x (horizontal scale) and y (vertical scale).
-        If only 1 argument is provided a proportional scale is applied.
-        The center of scaling can optionally be set via the center keyword argument. By default this is the origin.
+        """Scale the path with a given x (horizontal scale) and y (vertical
+        scale). If only 1 argument is provided a proportional scale is
+        applied. The center of scaling can optionally be set via the center
+        keyword argument. By default this is the origin.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.scale(0.5)
         >>> path.points
@@ -783,13 +803,14 @@ class PageBotPath:
         self.bp.scale(sx, sy, center)
 
     def skew(self, angle1, angle2=0, center=None):
-        """Skew the path with given angle1 and angle2.
-        If only one argument is provided a proportional skew is applied.
-        The center of skewing can optionally be set via the center keyword argument. By default this is the origin.
+        """Skew the path with given angle1 and angle2. If only one argument is
+        provided a proportional skew is applied. The center of skewing can
+        optionally be set via the center keyword argument. By default this is
+        the origin.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> angle = degrees(45)
         >>> path.skew(angle)
@@ -808,7 +829,7 @@ class PageBotPath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.transform((1, 0, 0, 1, pt(100), p(6)))
         >>> angle = degrees(45)
@@ -826,16 +847,16 @@ class PageBotPath:
     #   B O O L E A N  O P E R A T O R S
 
     def union(self, path):
-        """Return the union between two bezier paths.
+        """Returns the union between two bezier paths.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         >>> path1.union(path2).points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (300.0, 100.0), (300.0, 300.0), (100.0, 300.0), (100.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
@@ -843,14 +864,14 @@ class PageBotPath:
         return self.__class__(self.context, self.bp.union(path.bp))
 
     def difference(self, path):
-        """Return the difference between two bezier paths.
+        """Returns the difference between two bezier paths.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.rect(0, 100, 200, 200)
         >>> path1.difference(path2).points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0)]
@@ -858,14 +879,14 @@ class PageBotPath:
         return self.__class__(self.context, self.bp.difference(path.bp))
 
     def intersection(self, path):
-        """Return the intersection between two bezier paths.
+        """Returns the intersection between two bezier paths.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         >>> path1.intersection(path2).points
         [(100.0, 100.0), (200.0, 100.0), (200.0, 200.0), (100.0, 200.0), (100.0, 100.0)]
@@ -873,16 +894,16 @@ class PageBotPath:
         return self.__class__(self.context, self.bp.intersection(path.bp))
 
     def xor(self, path):
-        """Return the xor between two bezier paths.
+        """Returns the xor between two bezier paths.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> len(path1)
         5
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         >>> len(path1.xor(path2).points)
         13
@@ -890,18 +911,18 @@ class PageBotPath:
         return self.__class__(self.context, self.bp.xor(path.bp))
 
     def intersectionPoints(self, other=None):
-        """Return a list of intersection points as x, y tuples.
-        Optionaly provide an other path object to find intersection points.
+        """Returns a list of intersection points as `x`, `y` tuples. Optionaly
+        provides an other path object to find intersection points.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
+        >>> path1 = PageBotPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.rect(100, 100, 200, 200)
         >>> path1.intersectionPoints()
         [(200, 100), (100, 200)]
-        >>> path2 = PageBotPath(context)
+        >>> path2 = PageBotPath(context=context)
         >>> path2.rect(50, 50, 500, 500)
         >>> path1.intersectionPoints(path2)
         [(50, 200), (200, 50)]
@@ -911,12 +932,12 @@ class PageBotPath:
         return self.bp.intersectionPoints(other)
 
     def removeOverlap(self):
-        """Remove all overlaps in a bezier path.
+        """Remove all overlaps in a Bézier path.
 
         >>> from pagebot.toolbox.units import p
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path = PageBotPath(context)
+        >>> path = PageBotPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.rect(0, 100, 200, 200)
         >>> len(path.points)
@@ -929,10 +950,10 @@ class PageBotPath:
         return self.__class__(self.context, bp)
 
 def newRectPath(context, w, h):
-    pbp = PageBotPath(context)
+    pbp = PageBotPath(context=context)
     pbp.rect(0, 0, w, h)
     return pbp
-    
+
 if __name__ == '__main__':
     import doctest
     import sys

@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     20_PageBotPath_ABC.py
+#     07_PageBotPath.py
 #
 #     Draw a string outline as PageBotPath.
 #     OSX-bug? --> Outlines of Roboto show with overlap.
@@ -27,7 +27,7 @@ doc = Document(w=100, h=100, originTop=False, autoPages=1, context=context)
 
 context.newPage(1000, 500)
 font = findFont('Roboto-Bold')
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 path.text('ABC', style=dict(font=font, fontSize=pt(400)))
 path.translate((100, 100))
 

@@ -50,13 +50,17 @@ points=[(0,0), (100, 0), (150, 50), (150, 100), (100, 200)]
 q = newQuire(parent=page, conditions=c, fill=1, strokeWidth=5, stroke=0.5)
 r = newRuler(w=SQ, h=SQ, parent=page, conditions=c, fill=noColor, stroke=0, strokeWidth=1)
 
-#p = newPolygon(points=points, parent=page, conditions=c, fill=1, stroke=0)
-#points = []
-#p = newPolygon(points=points, w=100)
-#print(p)
 
 tb = newTextBox('Test', parent=page, conditions=c, stroke=0, strokeWidth=0.5, fill=(1, 1, 0))
 page.solve()
+
+pths = newPaths()
+
+# Points should be merged with PageBotPath.
+#points = []
+#p = newPolygon(points=points, parent=page, conditions=c, fill=1, stroke=0)
+#p = newPolygon(points=points, w=100)
+
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/showElements.png'

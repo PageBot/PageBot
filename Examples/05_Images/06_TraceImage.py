@@ -27,9 +27,9 @@ context = getContext()
 imagePath = getResourcesPath() + '/images/cookbot10.jpg'
 
 # Create a PageBotPath wrapper instance, that include a Context.BezierPath
-path = PageBotPath(context)
+path = PageBotPath(context=context)
 
-# Trace the image. 
+# Trace the image.
 # traceImage(path, threshold=0.2, blur=None, invert=False, turd=2, tolerance=0.2, offset=None)
 # Convert a given image to a vector outline.
 # Optionally some tracing options can be provide:

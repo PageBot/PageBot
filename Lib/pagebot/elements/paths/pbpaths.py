@@ -14,7 +14,7 @@
 #
 #     bppaths.py
 #
-#     The Paths element holds an ordered list of PageBotPath elements, where each can 
+#     The Paths element holds an ordered list of PageBotPath elements, where each can
 #     have its own optional style, that overwrites the generic style of self.
 #
 from pagebot.elements.element import Element
@@ -29,12 +29,12 @@ class Paths(Element):
     >>> from pagebot.toolbox.units import pt, inch
     >>> from pagebot.contexts import getContext
     >>> context = getContext()
-    >>> path1 = PageBotPath(context)
+    >>> path1 = PageBotPath(context=context)
     >>> path1.style['fill'] = color(1, 0, 0)
     >>> path1.oval(100, 100, 200, 200)
     >>> context.drawPath(path1)
 
-    >>> path2 = PageBotPath(context) # Leaves current self._path untouched
+    >>> path2 = PageBotPath(context=context) # Leaves current self._path untouched
     >>> path2.style['fill'] = color(rgb='blue') # Add color with the path style.
     >>> len(path2.points)
     0
@@ -67,7 +67,7 @@ class Paths(Element):
     """
 
     PATH_CLASS = PageBotPath
-    
+
     def __init__(self, paths, **kwargs):
         if paths is None:
             paths = []
@@ -80,7 +80,7 @@ class Paths(Element):
 
     def _get_pathsW(self):
         """Read only property that answers the cumulated total width of all paths."""
-        minX = 0 # At least cover the origin of the element, or smaller. 
+        minX = 0 # At least cover the origin of the element, or smaller.
         maxX = 0
         for path in self.paths:
             bounds = path.bounds()
@@ -94,10 +94,10 @@ class Paths(Element):
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
-        >>> path1.oval(100, 100, 200, 200) 
-        >>> path2 = PageBotPath(context)
-        >>> path2.oval(200, 200, 200, 200) 
+        >>> path1 = PageBotPath(context=context)
+        >>> path1.oval(100, 100, 200, 200)
+        >>> path2 = PageBotPath(context=context)
+        >>> path2.oval(200, 200, 200, 200)
         >>> e = Paths([path1, path2])
         >>> e.w
         400.0
@@ -112,7 +112,7 @@ class Paths(Element):
 
     def _get_pathsH(self):
         """Read only property that answers the cumulated total height of all paths."""
-        minY = 0 # At least cover the origin of the element, or smaller. 
+        minY = 0 # At least cover the origin of the element, or smaller.
         maxY = 0
         for path in self.paths:
             bounds = path.bounds()
@@ -126,10 +126,10 @@ class Paths(Element):
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context)
-        >>> path1.oval(100, 100, 200, 300) 
-        >>> path2 = PageBotPath(context)
-        >>> path2.oval(200, 200, 200, 500) 
+        >>> path1 = PageBotPath(context=context)
+        >>> path1.oval(100, 100, 200, 300)
+        >>> path2 = PageBotPath(context=context)
+        >>> path2.oval(200, 200, 200, 500)
         >>> e = Paths([path1, path2])
         >>> e.h
         700.0

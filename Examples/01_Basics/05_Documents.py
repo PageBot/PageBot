@@ -54,7 +54,7 @@ def makeDocument():
 
     for n in range(32):
         newRect(w=40, h=42, mr=4, mt=4, parent=page,
-                fill=color(random()*0.5 + 0.5, 0, 0.5),
+                fill=color(random() * 0.5 + 0.5, 0, 0.5),
                 conditions=conditions)
 
     # Recursively solve the conditions in all pages.
