@@ -49,7 +49,7 @@ class Fit(Condition):
 
 	def evaluate(self, e, score):
 		"""Fit the element on all paddings of the parent. First align left and top,
-		then fit right and bottom. This order to make sure size fitting is based on 
+		then fit right and bottom. This order to make sure size fitting is based on
 		the right position on the parent."""
 		self.evaluateAll(e, self._getConditions(), score)
 
@@ -85,7 +85,7 @@ class Fit2Bleed(Condition):
 
 	def evaluate(self, e, score):
 		"""Fit the element on all bleeds of the parent. First align left and top,
-		then fit right and bottom. This order to make sure size fitting is based on 
+		then fit right and bottom. This order to make sure size fitting is based on
 		the right position on the parent."""
 		self.evaluateAll(e, self._getConditions(), score)
 

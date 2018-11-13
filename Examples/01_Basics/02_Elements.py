@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     showElements.py
+#     01_Basics/02_Elements.py
 #
 
 from pagebot import getContext
