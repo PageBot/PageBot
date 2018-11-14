@@ -51,7 +51,7 @@ def showAll():
     i = 0
 
     for pbFont in sorted(pbFonts.keys()):
-        if 'Bungee' in pbFont or 'Roboto' in pbFont:
+        if 'Bungee' in pbFont or 'PageBot' in pbFont:
             i += 1
             g = newGroup(parent=page, conditions=c1, padding=7)
             newText('%s\n' % pbFont, parent=g, conditions=c2, fontSize=16)
@@ -59,7 +59,7 @@ def showAll():
             path = PageBotPath(context=context)
             path.text(' ABCDEF0123456789', style=dict(font=f, fontSize=pt(42)))
             path = path.removeOverlap()
-            newPaths(path, parent=g, conditions=c3, margin=20, stroke=0)
+            newPaths(path, parent=g, conditions=c3, margin=20, fill=0)
         if i > 10:
             break
 

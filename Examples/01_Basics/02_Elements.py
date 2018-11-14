@@ -22,13 +22,12 @@ from pagebot.toolbox.color import blueColor, darkGrayColor, redColor, Color, noC
 from pagebot.conditions import *
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements.paths.pagebotpath import PageBotPath
-
+from pagebot.constants import A3
 
 context = getContext()
 
 # Landscape A3.
-W = 1189
-H = 842
+H, W = A3
 X0 = 100
 Y0 = 100
 SQ = 150

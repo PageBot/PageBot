@@ -31,7 +31,6 @@ def showAll():
     context = getContext()
     doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
     page = doc[1]
-    print(page.view.margin)
     c1 = (Fit2Right(), Left2Left(), Float2Top())
     c2 = (Left2Left(), Top2Top())
     c3 = (Float2Right(), Top2Top())
@@ -56,7 +55,7 @@ def showAll():
             f = findFont(pbFont)
             path = PageBotPath(context=context)
             path.text('ABCDEFGHIJK0123456789', style=dict(font=f, fontSize=pt(30), fill=(0, 1, 0)))
-            path = path.removeOverlap()
+            #path = path.removeOverlap()
             newPaths(path, parent=g, fill=(0, 1, 1), conditions=c3, stroke=None, margin=20)
 
     page.solve()
