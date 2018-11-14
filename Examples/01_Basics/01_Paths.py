@@ -33,41 +33,34 @@ def showPaths():
     page = doc[1]
 
     c = (Fit2Right(), Left2Left(), Float2Top())
-    f = findFont('BungeeOutline-Regular')
-
-    #g = newGroup(parent=page, stroke=0, fill=(1, 0, 0.5), padding=7)
+    f = findFont('PageBot-Regular')
 
     # FIXME: text disappears with padding.
     #t = newText('bla', font='Helvetica', parent=page, conditions=c, fontSize=200, padding=1)
 
-    #    
-    path = newPageBotPath(context=context)
-    path.text('ABCD', style=dict(font=f, fontSize=30, fill=(0, 1, 0)))
-    newPaths(path, parent=page, fill=(0, 1, 1), conditions=c, stroke=None)
+    # FIXME: causes scaling unit error.
+    #path = newPageBotPath(context=context)
+    #path.text('ABCD', style=dict(font=f, fontSize=30, fill=(0, 1, 0)))
+    #newPaths(path, parent=page, fill=(0, 1, 1), conditions=c, stroke=None)
 
-
-    print(f)
     rootPath = getRootPath()
-    makeText('Root path is %s' % rootPath, page, c)
-
-    '''
-
-    print(rootPath)
+    s = dict(fontSize=24, font=f)
+    msg = 'Root path is %s' % rootPath
+    bs = page.newString(msg, style=s)
+    makeText(bs, page, c)
     resourcesPath = getResourcesPath()
-    print(resourcesPath)
+    msg = 'Resources path is %s' % resourcesPath
+    bs = page.newString(msg, style=s)
+    makeText(bs, page, c)
     print(glob.glob('%s/*' % resourcesPath))
     defaultFontPath = getDefaultFontPath()
-    print(defaultFontPath)
-    context = getContext()
-    print(context)
-    context = getContext('Flat')
-    print(context)
-    '''
+    msg = 'Default font path is %s' % defaultFontPath
+    bs = page.newString(msg, style=s)
+    makeText(bs, page, c)
     page.solve()
     doc.build()
 
 def makeText(t, page, c):
     newText(t, font='Helvetica', parent=page, conditions=c, fontSize=32)
-
 
 showPaths()
