@@ -34,7 +34,7 @@ def showAll():
     print(page.view.margin)
     c1 = (Fit2Right(), Left2Left(), Float2Top())
     c2 = (Left2Left(), Top2Top())
-    c3 = (Float2Right(), Top2Top())
+    c3 = (Float2Left(), Top2Top())
 
     families = getFamilyPaths()
     #print(families['Roboto'])
@@ -48,16 +48,20 @@ def showAll():
     font = findFont('Roboto-Black')
     print('The Font object from the pagebot.fonttoolbox.objects module: %s' % font)
     print('Number of glyphs: %d' % len(font))
-    
+    i = 0
+
     for pbFont in sorted(pbFonts.keys()):
         if 'Bungee' in pbFont or 'Roboto' in pbFont:
-            g = newGroup(parent=page, conditions=c1, stroke=0, fill=(1, 0, 0.5), padding=7)
-            newText('%s\n' % pbFont, parent=g, conditions=c2, fontSize=30, stroke=None, fill=(1, 1, 0), padding=7)
+            i += 1
+            g = newGroup(parent=page, conditions=c1, padding=7)
+            newText('%s\n' % pbFont, parent=g, conditions=c2, fontSize=16)
             f = findFont(pbFont)
             path = PageBotPath(context=context)
-            path.text('ABCDEFGHIJK0123456789', style=dict(font=f, fontSize=pt(30), fill=(0, 1, 0)))
+            path.text(' ABCDEF0123456789', style=dict(font=f, fontSize=pt(42)))
             path = path.removeOverlap()
-            newPaths(path, parent=g, fill=(0, 1, 1), conditions=c3, stroke=None, margin=20)
+            newPaths(path, parent=g, conditions=c3, margin=20, stroke=0)
+        if i > 10:
+            break
 
     page.solve()
     doc.build()
