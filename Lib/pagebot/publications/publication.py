@@ -46,14 +46,38 @@ class Publication(Element):
 		different than the default empty dictionary."""
     	return {}
         
-    def newDocument(self, autoPages=1):
+    def newDocument(self, autoPages=None, w=None, h=None, originTop=None, padding=None,
+            gw=None, gh=None, gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
+            **kwargs):
         u"""Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
+        Optional arguments can overwrite the parameters of the publication.
         """
-        doc = Document(w=self.w, h=self.h, originTop=self.originTop, padding=self.padding,
-            gw=self.gw, gh=self.gh, gridX=self.gridX, gridY=self.gridY, autoPages=autoPages,
-            baseline=self.baselineGrid, baselineStart=self.baselineGridStart)
+        if autoPages is None:
+            autoPages = 0
+        if w is None:
+            w = self.w
+        if h is None:
+            h = self.h
+        if originTop is None:
+            originTop = self.originTop
+        if padding is None:
+            padding = self.padding
+        if gw is None: # Gutter width
+            gw = self.gw
+        if gh is None: # Gutter height
+            gh = self.gh
+        if gridX is None:
+            gridX = self.gridX
+        if gridY is None:
+            gridY = self.gridY
+        if baselineGrid is None: 
+            baselineGrid = self.baselineGrid
+        doc = Document(w=w, h=h, originTop=originTop, padding=padding,
+            gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
+            baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart, 
+            **kwargs)
         view = doc.view
         view.showGrid = self.showGrid
         view.showPadding = self.showPadding

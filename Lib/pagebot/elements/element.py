@@ -384,7 +384,7 @@ class Element:
         >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
         >>> e.applyTemplate(t)
         >>> e.template
-        <Template MyTemplate (100pt, 200pt)>
+        <Template>
         """
         return self._template
     def _set_template(self, template):
@@ -442,7 +442,10 @@ class Element:
     eId = property(_get_eId)
 
     def _get_elements(self):
-        """Property to get/set elements to parent self.
+        """Property to get/set elements to parent self. Answer a copy of the list, 
+        not self._elements itself, to avoid problems if iterations on the children
+        is changing the parent. E.g. if elements of a Typesetter galley are composed
+        on a page.
 
         >>> e = Element()
         >>> len(e), len(e.elements)
@@ -451,7 +454,7 @@ class Element:
         >>> len(e), len(e.elements)
         (3, 3)
         """
-        return self._elements
+        return list(self._elements)
     def _set_elements(self, elements):
         self.clearElements() # Clear all existing child elements of self.
         for e in elements:
@@ -4343,8 +4346,7 @@ class Element:
         context specific build elements.
 
         If no specific builder_<context.b.PB_ID> is implemented, call default
-
-            e.build(view, origin)
+        e.build(view, origin)
 
         """
         hook = 'build_' + view.context.b.PB_ID
@@ -4352,7 +4354,6 @@ class Element:
         for e in self.elements:
             if not e.show:
                 continue
-
             if hasattr(e, hook):
                 getattr(e, hook)(view, origin)
             else: # No implementation for this context, call default building method for this element.
@@ -6832,6 +6833,13 @@ class Element:
     def _set_showMissingElement(self, showMissingElement):
         self.style['showMissingElement'] = bool(showMissingElement)
     showMissingElement = property(_get_showMissingElement, _set_showMissingElement)
+
+    def _get_showSourceCode(self):
+        """Boolean value. If True elements can show their source code on export."""
+        return self.style.get('showSourceCode', False) # Not inherited
+    def _set_showSourceCode(self, showSourceCode):
+        self.style['showSourceCode'] = bool(showSourceCode)
+    showSourceCode = property(_get_showSourceCode, _set_showSourceCode)
 
     #   Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
 

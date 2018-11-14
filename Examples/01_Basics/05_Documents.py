@@ -15,6 +15,7 @@
 #
 #     Shows how to start a document and export it to PNG and PDF in the simplest steps.
 #
+#     TODO: Floating on second line does not seem to work currently
 
 from random import random
 from pagebot.toolbox.color import color

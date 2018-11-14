@@ -13,14 +13,20 @@
 #
 #     codeblock.py
 #
-from pagebot.elements.element import Element
-#from pagebot.constants import ORIGIN
-#from pagebot.toolbox.units import pointOffset
+from pagebot.elements import TextBox
+from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.color import blackColor, noColor, color
 
-class CodeBlock(Element):
+class CodeBlock(TextBox):
 
-    def __init__(self, code, tryExcept=True, **kwargs):
-        Element.__init__(self, **kwargs)
+    DEFAULT_CODE_STYLE = dict(font='Courier', fontSize=9, textFill=0.2, textStroke=noColor)
+
+    def __init__(self, code, tryExcept=True, fill=None, style=None, **kwargs):
+        if fill is None:
+            fill = color(0.9)
+            if style is None:
+                style = self.DEFAULT_CODE_STYLE
+        TextBox.__init__(self, bs=code, fill=fill, style=style, **kwargs)
         assert isinstance(code, str)
         self.code = code
         self.tryExcept = tryExcept
@@ -29,7 +35,12 @@ class CodeBlock(Element):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
     def build(self, view, origin, drawElements=True):
-        self.run()
+        """Run the code block. If the view.showSourceCode is True, then just export the code
+        for debugging."""
+        if not view.showSourceCode:
+            self.run()
+        else:
+            TextBox.build(self, view, origin, drawElements)
         
     def run(self, globals=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
@@ -65,7 +76,7 @@ class CodeBlock(Element):
         ['__code__', 'a', 'doc', 'page', 'view']
         >>> resultPage = result['page']
         >>> resultPage # Running code block changed width of new selected page.
-        <Page:default 4 (300pt, 500pt)>
+        <Page #4 default (300pt, 500pt)>
         >>> resultPage.w, resultPage.pn
         (300pt, (4, 0))
         >>> cb.code = 'aa = 200 * a' # Change code of the code block, using global
@@ -74,8 +85,13 @@ class CodeBlock(Element):
         (['__code__', 'a', 'aa', 'doc', 'page', 'view'], 6000000)
         """
         if globals is None:
-            # If no globals defined, create a new empty dictionary as storage of result.
+            # If no globals defined, create a new empty dictionary as storage of result
+            # and try to fill it in case we are part of a page, e.g. for debugging.
             globals = {}
+            doc = self.doc
+            if doc is not None:
+                globals['doc'] = doc
+            print('fsddfsfds', globals)
         if not self.tryExcept: # For debugging show full error of code block run.
             exec(self.code, globals) # Exectute code block, where result goes dict.
             if '__builtins__' in globals:
