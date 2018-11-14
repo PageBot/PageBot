@@ -31,9 +31,10 @@ def showAll():
     context = getContext()
     doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
     page = doc[1]
-    c1 = (Left2Left(), Float2Top())
+    print(page.view.margin)
+    c1 = (Fit2Right(), Left2Left(), Float2Top())
     c2 = (Left2Left(), Top2Top())
-    c3 = (Right2Right(), Top2Top())
+    c3 = (Float2Right(), Top2Top())
 
     families = getFamilyPaths()
     #print(families['Roboto'])
@@ -48,15 +49,15 @@ def showAll():
     print('The Font object from the pagebot.fonttoolbox.objects module: %s' % font)
     print('Number of glyphs: %d' % len(font))
     
-    for pbFont in list(pbFonts.keys()):
-        if 'Bungee' in pbFont or 'Roboto' in pbFont:
-            g = newGroup(parent=page, conditions=c1)
-            newText('%s\n' % pbFont, parent=g, conditions=c2, fontSize=30)
+    for pbFont in sorted(pbFonts.keys()):
+        if 'Bungee' in pbFont:
+            g = newGroup(parent=page, conditions=c1, stroke=0, fill=(1, 0, 0), padding=7)
+            newText('%s\n' % pbFont, parent=g, conditions=c2, fontSize=30, stroke=None, fill=(1, 1, 0))
             f = findFont(pbFont)
             path = PageBotPath(context=context)
-            path.text('CDE', style=dict(font=f, fontSize=pt(30)))
+            path.text('CDE', style=dict(font=f, fontSize=pt(30), fill=(0, 1, 0)))
             path = path.removeOverlap()
-            newPaths(path, parent=g, fill=0, conditions=c3)
+            newPaths(path, parent=g, fill=(0, 1, 1), conditions=c3, stroke=None, margin=20)
 
     page.solve()
     doc.build()

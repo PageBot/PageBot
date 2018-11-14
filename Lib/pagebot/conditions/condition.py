@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 #
 #     condition.py
-#       
+#
 class Condition:
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False):
         self.value = value # Value to answer if the condition is valid
@@ -21,8 +21,8 @@ class Condition:
         self.verbose = verbose
 
     def evaluate(self, e, score):
-        u"""Answers the value between 0 and 1 to the level where the element
-        is left aligned with the left margin of the parent."""
+        """Answers the value between 0 and 1 to the level where the element is
+        left aligned with the left margin of the parent."""
         parent = e.parent
         self.addScore(parent is not None and self.test(e), e, score)
 

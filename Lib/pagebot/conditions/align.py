@@ -16,7 +16,8 @@
 from pagebot.conditions.condition import Condition
 
 class SolveBlock(Condition):
-	"""Used as a condition in the sequence of conditions, to fix the block of child elements first."""
+        """Used as a condition in the sequence of conditions, to fix the block
+        of child elements first."""
 	def evaluate(self, e, score):
 		for child in e.elements:
 			child.evaluate(score)
