@@ -4622,8 +4622,7 @@ class Element:
         return abs(self.parent.h/2 - self.y) <= tolerance
 
     def isRightOnCenter(self, tolerance=0):
-        """Answers if the right size of self is on the middle
-        of the parent.
+        """Answers if the right size of `self` is on the middle of the parent.
 
         >>> e1 = Element(x=100, w=200) # e1.right == 300
         >>> e2 = Element(w=600, elements=[e1])
@@ -6670,7 +6669,8 @@ class Element:
         self.cssVerbose = False
 
         if VIEW_PRINT in setNames:
-            # View settings flags to True for print (such as crop marks and registration marks)
+            # View settings flags to True for print (such as crop marks and
+            # registration marks).
             self.showSpread = True
             self.viewMinInfoPadding = DEFAULT_MININFOPADDING
             self.showCropMarks = True

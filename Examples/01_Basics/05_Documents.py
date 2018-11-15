@@ -17,7 +17,6 @@
 #
 #     TODO: Floating on second line does not seem to work currently
 
-from random import random
 from pagebot.toolbox.color import color
 
 EXPORT_PATH = '_export/Start'
@@ -57,10 +56,13 @@ def makeDocument():
     conditions = [Right2Right(), Float2Top(), Float2Left()]
     # TODO: Solve this bug, does not mirror.
     #conditions = [Left2Left(), Float2Top(), Float2Right()]
+    numberOfSquares = 88
+    ratio = 1 / numberOfSquares
 
-    for n in range(32):
+    for n in range(numberOfSquares):
+        
         newRect(w=40, h=42, mr=4, mt=4, parent=page,
-                fill=color(random() * 0.5 + 0.5, 0, 0.5),
+                fill=color(1 - n*ratio, 0, 0.5),
                 conditions=conditions, margin=0)
 
     # Recursively solve the conditions in all pages.
