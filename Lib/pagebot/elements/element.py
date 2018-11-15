@@ -1674,12 +1674,12 @@ class Element:
     # Plain coordinates
 
     def _get_x(self):
-        """Answers the x position of self as Unit instance. In case it is a
+        """Answers the `x` position of self as Unit instance. In case it is a
         relative unit (such as Fr, Perc or Em), we just set the current parent
         total and em as reference. By not freezing or rendering the value yet,
         the caller can decide to change parent value, and then render the value
-        as with u.get(optionalTotal). Some situations require the rendered
-        value, by in case of CSS, the relative value should be maintained. Then
+        as with `u.get(optionalTotal)`. Some situations require the rendered
+        value, but in case of CSS, the relative value should be maintained. Then
         the current parent total reference is not important.
 
         >>> from pagebot.toolbox.units import fr, isUnit
@@ -1704,9 +1704,11 @@ class Element:
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('x'), base=base)
+
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
         self.style['x'] = units(x)
+
     x = property(_get_x, _set_x)
 
     def _get_y(self):
@@ -1759,9 +1761,11 @@ class Element:
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('z'), base=base)
+
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
         self.style['z'] = units(z)
+
     z = property(_get_z, _set_z)
 
     def _get_xy(self):
@@ -1821,12 +1825,14 @@ class Element:
         self.x = p[0]
         self.y = p[1]
         self.z = p[2]
+
     xyz = property(_get_xyz, _set_xyz)
 
     def _get_origin(self):
         """Answers the self.xyz, where y can be flipped, depending on the
         self.originTop flag."""
         return self._applyOrigin(self.xyz)
+
     origin = property(_get_origin)
 
     def _get_angle(self):
@@ -1845,10 +1851,12 @@ class Element:
         >>> e.angle = 30 # Degrees is default.
         """
         return self.style.get('angle', degrees(0))
+
     def _set_angle(self, angle):
         if isinstance(angle, (int, float)):
             angle = degrees(angle)
         self.style['angle'] = angle
+
     angle = property(_get_angle, _set_angle)
 
     def _get_rx(self):
@@ -1868,9 +1876,11 @@ class Element:
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('rx', 0), base=base)
+
     def _set_rx(self, rx):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['rx'] = units(rx)
+
     rx = property(_get_rx, _set_rx)
 
     def _get_ry(self):
@@ -1890,9 +1900,11 @@ class Element:
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('ry', 0), base=base)
+
     def _set_ry(self, ry):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['ry'] = units(ry)
+
     ry = property(_get_ry, _set_ry)
 
     def _get_rz(self):
@@ -1912,9 +1924,11 @@ class Element:
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('rz', 0), base=base)
+
     def _set_rz(self, rz):
         """Convert to units, if rx is not already a Unit instance."""
         self.style['rz'] = units(rz)
+
     rz = property(_get_rz, _set_rz)
 
     #   T I M E
@@ -1929,6 +1943,7 @@ class Element:
         >>> #now() - e.t < minutes(1)
         """
         return self._t
+
     def _set_t(self, t):
         if t is None:
             t = now()
@@ -1937,6 +1952,7 @@ class Element:
         #if self._tm0 is None or self._tm1 is None or t < self._tm0.t or self._tm1.t < t:
         #    # If not initialized or t outside cached time span, then create new expanded styles.
         #    self._tm0, self._tm1 = self.getExpandedTimeMarks(t)
+
     t = property(_get_t, _set_t)
 
     def appendTimeMark(self, tm):
@@ -1973,7 +1989,7 @@ class Element:
 
     def _get_left(self):
         """Answers the position of the left side of the element, in relation to
-        self.x and depending on horizontal alignment.
+        `self.x` and depending on horizontal alignment.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(x=100, w=248, xAlign=LEFT)
@@ -1996,6 +2012,7 @@ class Element:
         if xAlign == RIGHT:
             return self.x - self.w
         return self.x
+
     def _set_left(self, x):
         xAlign = self.xAlign
         if xAlign == CENTER:
@@ -2004,17 +2021,20 @@ class Element:
             self.x = x + self.w
         else:
             self.x = x
+
     left = property(_get_left, _set_left)
 
     def _get_mLeft(self): # Left, including left margin
         return self.left - self.css('ml')
+
     def _set_mLeft(self, x):
         self.left = x + self.css('ml')
+
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
-        """Answers the position of the horizontal center of the element, in relation to self.x
-        and depending on horiontal alignment.
+        """Answers the position of the horizontal center of the element, in
+        relation to `self.x` and depending on horizontal alignment.
 
         >>> e = Element(x=100, w=248, xAlign=LEFT)
         >>> e.center
@@ -2134,11 +2154,14 @@ class Element:
                 return self.y - self.h
             return self.y + self.h
         return self.y
+
     def _set_top(self, y):
-        """Shift the element so self.top == y. Where the "top" is, depends on the
-        setting of self.yAlign. If self.isTextBox, then vertical position can also
-        be defined by the top or bottom position of the baseline."""
+        """Shift the element so `self.top == y`. Where the "top" is, depends on
+        the setting of `self.yAlign`. If `self.isTextBox`, then vertical
+        position can also be defined by the top or bottom position of the
+        baseline."""
         yAlign = self.yAlign
+
         if yAlign == MIDDLE:
             if self.originTop:
                 self.y = units(y) + self.h/2
@@ -2151,12 +2174,14 @@ class Element:
                 self.y = units(y) - self.h
         else:
             self.y = y
+
     top = property(_get_top, _set_top)
 
     def _get_mTop(self): # Top, including top margin
         if self.originTop:
             return self.top - self.mt
         return self.top + self.mt
+
     def _set_mTop(self, y):
         if self.originTop:
             self.top = units(y) + self.mt
@@ -3982,15 +4007,18 @@ class Element:
         return y
 
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
-        """Answers the max x that can float to the left, without overlapping
+        """Answers the max `x` that can float to the left, without overlapping
         previous sibling elements. This means we are just looking at the
-        horizontal projection of (self.top, self.bottom). Note that the x may
-        be outside the parent box. Only elements with identical z-value are
-        compared.  Comparison of available space, includes the margins of the
+        horizontal projection of `(self.top, self.bottom)`. Note that the `x`
+        may be outside the parent box. Only elements with identical z-value are
+        compared. Comparison of available space, includes the margins of the
         elements."""
         x = 0
-        for e in self.parent.elements: # All elements that share self.parent, except self.
-            if previousOnly and e is self: # Only look at siblings that are previous in the list.
+
+        # All elements that share self.parent, except self.
+        for e in self.parent.elements:
+            # Only look at siblings that are previous in the list.
+            if previousOnly and e is self:
                 break
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer
@@ -5267,9 +5295,8 @@ class Element:
         return True
 
     def right2LeftSide(self):
-        """Move right of self to left position of parent.
-        The position of e2 element origin depends on the horizontal
-        alignment type.
+        """Move right of self to left position of parent. The position of e2
+        element origin depends on the horizontal alignment type.
 
         >>> e1 = Element(w=500, padding=50)
         >>> e1.right2LeftSide() # Element without parent answers False
@@ -5345,10 +5372,9 @@ class Element:
         return True
 
     def right2RightBleed(self):
-        """Move right of self to right bleed width position of parent.
-        The position of e2 element origin depends on the horizontal
-        alignment type.
-        """
+        """Move right of self to right bleed width position of parent. The
+        position of e2 element origin depends on the horizontal alignment
+        type."""
         if self.parent is None:
             return False
         self.right = self.parent.w + self.bleedRight
@@ -5542,9 +5568,9 @@ class Element:
         return True
 
     def bottom2BottomBleed(self):
-        """Move bottom of the element to the bottom side of the parent, overshooting by bleed.
-        The position of e2 element origin depends on the vertical
-        alignment type.
+        """Move bottom of the element to the bottom side of the parent,
+        overshooting by bleed. The position of e2 element origin depends on
+        the vertical alignment type.
         """
         if self.parent is None:
             return False
@@ -5922,8 +5948,8 @@ class Element:
 
     def top2MiddleSides(self):
         """Move top of the element to the middle between sides of the parent.
-        The position of e2 element origin depends on the vertical
-        alignment type.
+        The position of e2 element origin depends on the vertical alignment
+        type.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.top2MiddleSides() # Element without parent answers False
@@ -6315,9 +6341,8 @@ class Element:
         return True
 
     def top2TopBleed(self):
-        """Move top of the element to the top side of the parent, overshooting by bleed.
-
-        """
+        """Move top of the element to the top side of the parent, overshooting
+        by bleed."""
         if self.parent is None:
             return False
         if self.originTop:
@@ -6329,9 +6354,9 @@ class Element:
     # Floating parent padding
 
     def float2Top(self):
-        """Float the element upward, until top hits the parent top padding or "hooks"
-        into another element at the same z-layer position.
-        Include margin to decide if it fits."""
+        """Float the element upward, until top hits the parent top padding or
+        "hooks" into another element at the same z-layer position. Include
+        margin to decide if it fits."""
         if self.originTop:
             self.top = min(self.getFloatTopSide(), self.parent.pt)
         else:
@@ -6375,7 +6400,8 @@ class Element:
         self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
         return True
 
-    # Floating to parent sides, go as far as there are no other elements in the same z-layer
+    # Floating to parent sides, go as far as there are no other elements in the
+    # same z-layer
 
     def float2TopSide(self):
         self.top = self.getFloatTopSide()
@@ -6409,10 +6435,11 @@ class Element:
         self.mRight = self.getFloatRightSide()
         return True
 
-    # With fitting (and shrinking) we need to change the actual size of the element.
-    # This can have implications on it's content, and we need to take the min/max
-    # sizes into conderantion: setting the self.w and self.h to a value, does not mean
-    # that the size really got that value, if exceeding a min/max limit.
+    # With fitting (and shrinking) we need to change the actual size of the
+    # element. This can have implications on it's content, and we need to take
+    # the min/max sizes into conderantion: setting the self.w and self.h to a
+    # value, does not mean that the size really got that value, if exceeding a
+    # min/max limit.
 
     def fit2Bottom(self):
         if self.originTop:
@@ -6453,9 +6480,9 @@ class Element:
         return True
 
     def fit2Right(self):
-        """Make the right side of self fit the right padding of the parent, without
-        moving the left position.
-        TextBox implements it's own method to make the text fit by adjusting the size.
+        """Make the right side of self fit the right padding of the parent,
+        without moving the left position. TextBox implements it's own method
+        to make the text fit by adjusting the size.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
@@ -6470,8 +6497,9 @@ class Element:
         return True
 
     def scale2Right(self):
-        """Make the right side of self fit the right padding of the parent, without
-        moving the left position. The scale the height according to the original ratio.
+        """Make the right side of self fit the right padding of the parent,
+        without moving the left position. The scale the height according to the
+        original ratio.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
@@ -6490,8 +6518,8 @@ class Element:
         return False # No original width, cannot calculate due to zero division.
 
     def fit2RightSide(self):
-        """Make the right side of self fit the right side of the parent, without
-        moving the left position.
+        """Make the right side of self fit the right side of the parent,
+        without moving the left position.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
@@ -6506,9 +6534,8 @@ class Element:
         return True
 
     def fit2RightBleed(self):
-        """Make the right side of self fit the right bleed side of the parent, without
-        moving the left position.
-        """
+        """Make the right side of self fit the right bleed side of the parent,
+        without moving the left position."""
         self.w = self.parent.w - self.x + self.bleedRight
         return True
 
@@ -6643,10 +6670,8 @@ class Element:
     #   or view.
 
     def setShowings(self, *args):
-        """Set the showing flags of self (often a View instance) to predefined flags, depending
-        on a type of stage of usage.
-
-        """
+        """Set the showing flags of self (often a View instance) to predefined
+        flags, depending on a type of stage of usage."""
         setNames = set(args)
 
         self.showSpread = False

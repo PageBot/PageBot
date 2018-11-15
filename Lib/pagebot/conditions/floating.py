@@ -38,8 +38,8 @@ class Float2Right(Condition):
             self.addScore(e.float2Right(), e, score)
 
 class Float2Top(Condition):
-    """Align the element.top with max of all placed element.bottom or
-    parent.top. Positioning includes the margin of all elements."""
+    """Align the `element.top` with max of all placed `element.bottom` or
+    `parent.top`. Positioning includes the margin of all elements."""
     def test(self, e):
         return e.isFloatOnTop(self.tolerance)
 

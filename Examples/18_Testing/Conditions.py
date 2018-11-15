@@ -40,30 +40,55 @@ W, H = 500, 400
 def makeDocument():
     # Creates the publication/document that holds the pages.
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
+    print(doc.view)
+    print(doc.pages)
+    
+    doc.view.padding = 200 # Don't show cropmarks in this example.
+    #doc.margin = 0
+    doc.view.showPadding = True
 
     # Gets page by pageNumber, first in row (at this point there is only one in
     # this row).
     page = doc[1]
-    page.padding = 28
+    page.padding = 18
     page.showPadding = True
 
     
     conditions = [Right2Right(), Float2Top(), Float2Left()]#, Float2Top()]#, Float2Left()]
     # TODO: Solve this bug, does not mirror.
     #conditions = [Left2Left(), Float2Top(), Float2Right()]
-    numberOfSquares = 88
+    numberOfSquares = 16
     ratio = 1 / numberOfSquares
 
+    rects = []
     for n in range(numberOfSquares):
-        newRect(w=40, h=40, parent=page,
+        r = newRect(w=40, h=42, mr=4, mt=4, parent=page,
                 fill=color(1 - n*ratio, 0, 0.5),
                 conditions=conditions, margin=0)
-
+        rects.append(r)
 
     # Recursively solve the conditions in all pages.
     # If there are failing conditions, then the status
     # is returned in the Score instance.
     score = doc.solve()
     doc.build()
+    
+    from pagebot import getContext
+    context = getContext()
+    
+    for r in rects:
+            x = r.getFloatLeftSide()
+            y = r.getFloatTopSide()
+            print('%d %d' % (x, y))
+            style = dict(fill=0)
+            context.fill(0)
+            context.circle(x, y, 10)
+
+    #print(score)
+    
+    #doc.export(EXPORT_PATH_SVG)
+    #doc.export(EXPORT_PATH_JPG)
+    #doc.export(EXPORT_PATH_PNG)
+    #doc.export(EXPORT_PATH_PDF)
 
 makeDocument()
