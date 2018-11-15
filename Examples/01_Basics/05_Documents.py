@@ -44,14 +44,14 @@ def makeDocument():
     print(doc.view)
     print(doc.pages)
     
-    doc.view.padding = 15 # Don't show cropmarks in this example.
-    doc.margin = 10
+    doc.view.padding = 200 # Don't show cropmarks in this example.
+    #doc.margin = 0
     doc.view.showPadding = True
 
     # Gets page by pageNumber, first in row (at this point there is only one in
     # this row).
     page = doc[1]
-    page.padding = 30
+    page.padding = 18
     page.showPadding = True
 
     conditions = [Right2Right(), Float2Top(), Float2Left()]
@@ -61,7 +61,7 @@ def makeDocument():
     for n in range(32):
         newRect(w=40, h=42, mr=4, mt=4, parent=page,
                 fill=color(random() * 0.5 + 0.5, 0, 0.5),
-                conditions=conditions)
+                conditions=conditions, margin=0)
 
     # Recursively solve the conditions in all pages.
     # If there are failing conditions, then the status

@@ -4389,7 +4389,9 @@ class Element:
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view)
 
-            if drawElements: # Build child elements, dispatch if they implemented generic or context specific build method.
+            # Build child elements, dispatch if they implemented generic or
+            # context specific build method.
+            if drawElements:
                 self.buildChildElements(view, path)
 
             if self.drawAfter is not None: # Call if defined
