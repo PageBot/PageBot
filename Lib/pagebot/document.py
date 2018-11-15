@@ -613,8 +613,10 @@ class Document:
         [(120, 9), (120, 9), (120, 9)]
         """
         return self.rootStyle['gridY']
+
     def _set_gridY(self, gridY):
         self.rootStyle['gridY'] = gridY
+
     gridY = property(_get_gridY, _set_gridY)
 
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
@@ -629,8 +631,11 @@ class Document:
         (11pt, 21pt, 31pt, 41pt, 0pt, 0pt)
         """
         return self.pt, self.pr, self.pb, self.pl
+
     def _set_padding(self, padding):
-        # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        """
+        Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
+        """
         if isUnit(padding) or isinstance(padding, (int, float)):
             padding = [padding]
         if len(padding) == 1: # All same value
@@ -645,12 +650,14 @@ class Document:
             pass
         else:
             raise ValueError
+
         self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
+
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self):
         """Tuple of padding in CSS order + (front, back), direction of clock.
-        Interface is identical to Element.padding3d.
+        Interface is identical to Element.padding3D.
 
         >>> doc = Document(name='TestDoc', padding=(10, 20, 30, 40, 50, 60))
         >>> doc.pt, doc.pr, doc.pb, doc.pl, doc.pzf, doc.pzb
@@ -675,6 +682,7 @@ class Document:
         (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
+
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self): # Padding top
@@ -696,8 +704,10 @@ class Document:
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pt'), base=base)
+
     def _set_pt(self, pt):
         self.rootStyle['pt'] = units(pt)
+
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
@@ -718,13 +728,14 @@ class Document:
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pb'), base=base)
+
     def _set_pb(self, pb):
         self.rootStyle['pb'] = units(pb)
+
     pb = property(_get_pb, _set_pb)
 
     def _get_pl(self): # Padding left
-        """Padding left property
-        Interface is identical to Element.pl.
+        """Padding left property. Interface is identical to Element.pl.
 
         >>> doc = Document(name='Testoc', pl=12)
         >>> doc.pl
@@ -740,13 +751,14 @@ class Document:
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pl'), base=base)
+
     def _set_pl(self, pl):
         self.rootStyle['pl'] = units(pl)
+
     pl = property(_get_pl, _set_pl)
 
     def _get_pr(self): # Margin right
-        """Padding right property
-        Interface is identical to Element.pr.
+        """Padding right property. Interface is identical to Element.pr.
 
         >>> doc = Document(name='Testoc', pr=12)
         >>> doc.pr
@@ -762,13 +774,15 @@ class Document:
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pr', 0), base=base)
+
     def _set_pr(self, pr):
         self.rootStyle['pr'] = units(pr)
+
     pr = property(_get_pr, _set_pr)
 
     def _get_pzf(self): # Padding z-axis front
-        """Padding padding z-front property
-        Interface is identical to Element.pzf.
+        """Padding padding z-front property. Interface is identical to
+        Element.pzf.
 
         >>> doc = Document(name='Testoc', d=100, pzf=12)
         >>> doc.d, doc.pzf # Needs some depth > 1, for padding not to be clipped.
@@ -784,13 +798,15 @@ class Document:
         d = self.d
         base = dict(base=d, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pzf', 0), base=base)
+
     def _set_pzf(self, pzf):
         self.rootStyle['pzf'] = units(pzf)
+
     pzf = property(_get_pzf, _set_pzf)
 
     def _get_pzb(self): # Padding z-axis back
-        """Padding padding z-front property
-        Interface is identical to Element.pzb.
+        """Padding padding z-front property. Interface is identical to
+        Element.pzb.
 
         >>> doc = Document(name='Testoc', d=100, pzb=12)
         >>> doc.d, doc.pzb # Needs some depth > 1, for padding not to be clipped.
@@ -806,8 +822,10 @@ class Document:
         d = self.d
         base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pzb', 0), base=base)
+
     def _set_pzb(self, pzb):
         self.rootStyle['pzb'] = units(pzb)
+
     pzb = property(_get_pzb, _set_pzb)
 
     #   P A G E S
@@ -892,9 +910,9 @@ class Document:
         return pages
 
     def isLeft(self):
-        """This is reached for `e.isleft()` queries, when elements are not placed
-        on a page. The Document cannot know the answer then. Always answer
-        False.
+        """This is reached for `e.isleft()` queries, when elements are not
+        placed on a page. The Document cannot know the answer then. Always
+        answer False.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.isLeft
@@ -903,13 +921,14 @@ class Document:
         False
         """
         return False
+
     isRight = isLeft = False
 
     def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         """Creates a new page with size `(self.w, self.h)` unless defined
         otherwise. Add the pages in the row of pn, if defined, otherwise create
-        a new row of pages at pn. If `pn` is undefined, add a new page row at the
-        end. If template is undefined, then use self.defaultTemplate to
+        a new row of pages at pn. If `pn` is undefined, add a new page row at
+        the end. If template is undefined, then use self.defaultTemplate to
         initialize the new page."""
         if isinstance(template, str):
             template = self.templates.get(template)
@@ -928,13 +947,15 @@ class Document:
             h = self.h
 
         # Don't set parent to self yet, as this will make the page create a #1.
-        # Setting of page.parent is done by self.appendPage, for the right page number.
+        # Setting of page.parent is done by self.appendPage, for the right page
+        # number.
         page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
 
-    def makePages(self, pageCnt, pn=None, template=None, name=None, w=None, h=None, **kwargs):
+    def makePages(self, pageCnt, pn=None, template=None, name=None, w=None,
+            h=None, **kwargs):
         """If no "point" is defined as page number `pn`, then we'll continue
         after the maximum value of `page.y` origin position. If template is
         undefined, then `self.newPage` will use `self.defaultTemplate` to
@@ -993,7 +1014,8 @@ class Document:
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):
-        """Answers the previous page of page. If it does not exist, answer None.
+        """Answers the previous page of page. If it does not exist, answer
+        None.
 
         >>> from pagebot.constants import Tabloid
         >>> doc = Document(autoPages=4, size=Tabloid)
@@ -1018,8 +1040,8 @@ class Document:
         return None # No previous page found.
 
     def getPageNumber(self, page):
-        """Answers a string with the page number (pn, index), if the page can be
-        found and there are multiple.  Pages are organized as dict of lists
+        """Answers a string with the page number (pn, index), if the page can
+        be found and there are multiple. Pages are organized as dict of lists
         (allowing multiple pages on the same page number)
 
         {1:[page, page, ...], 2}
@@ -1034,8 +1056,8 @@ class Document:
         return None # Cannot find this page
 
     def getFirstPage(self):
-        """Answers the list of pages with the lowest sorted page.y. Answer empty
-        list if there are no pages.
+        """Answers the list of pages with the lowest sorted `page.y`. Answer
+        empty list if there are no pages.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=624, autoPages=10)
         >>> doc.getFirstPage()
@@ -1047,7 +1069,7 @@ class Document:
         return None
 
     def getLastPage(self):
-        """Answers last page with the highest sorted page.y. Answer empty list
+        """Answers last page with the highest sorted `page.y`. Answer empty list
         if there are no pages.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, startPage=5, autoPages=10)
@@ -1067,10 +1089,10 @@ class Document:
         return pages
 
     def getMaxPageSizes(self, pageSelection=None):
-        """Answers the (w, h, d) size of all pages together.
-        If the optional pageSelection is defined (set of y-values),
-        then only evaluate the selected pages.
-        Clip the found values against the document min/max proportions.
+        """Answers the (w, h, d) size of all pages together. If the optional
+        pageSelection is defined (set of y-values), then only evaluate the
+        selected pages. Clip the found values against the document min/max
+        proportions.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
         >>> doc.getMaxPageSizes()
@@ -1099,9 +1121,9 @@ class Document:
 
     def solve(self, score=None):
         """Evaluate the content of all pages to return the total sum of
-        conditions solving. If necessary, the builder for solving specific
-        text conditions, such as run length of text and overflow of text boxes,
-        is found by the current self.view.b.
+        conditions solving. If necessary, the builder for solving specific text
+        conditions, such as run length of text and overflow of text boxes, is
+        found by the current self.view.b.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
         >>> score = doc.solve()
@@ -1109,17 +1131,19 @@ class Document:
         Score: 0 Fails: 0
         """
         score = Score()
+
         for pn, pnPages in sorted(self.pages.items()):
             for page in pnPages: # List of pages with identical pn, step through the pages.
                 page.solve(score)
+
         return score
 
     #   V I E W S
 
     def getView(self, viewId=None, create=True):
-        """Answers the view viewId exists. Otherwise if create is True and
-        viewId is a known class of view, then create a new instance and answers
-        it. Otherwise answer self.view.
+        """Answers the view `viewId` exists. Otherwise if create is `True` and
+        `viewId` is a known class of view, then creates a new instance and answers
+        it. Otherwise answer `self.view`.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.getView().isView
@@ -1159,7 +1183,7 @@ class Document:
     #   D R A W I N G  &  B U I L D I N G
 
     def build(self, path=None, pageSelection=None, multiPage=True):
-        """Builds the document as a website, using the document.view for export.
+        """Builds the document, using the `document.view` for export.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
@@ -1172,7 +1196,7 @@ class Document:
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
 
     def export(self, path=None, multiPage=True):
-        """Export the document as website, using the document.view for export.
+        """Export the document, using the `document.view` for export.
 
         >>> from pagebot.elements import newRect
         >>> from pagebot.toolbox.color import redColor, noColor, color

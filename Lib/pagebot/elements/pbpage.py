@@ -26,9 +26,8 @@ class Page(Element):
     """The Page container is typically the root of a tree of Element instances.
     A Document contains a set of pages.
 
-    Since pages an build into fixed media, such as PDF, PNG and animated GIF,
-    as well as HTML pages in a site, there is a mixture of meta data available
-    in a Page."""
+    Because pages are built into fixed media such as PDF, PNG, animated GIF's, or
+    HTML pages, a Page contains a mixture of available meta data."""
 
     isPage = True
 
@@ -39,12 +38,11 @@ class Page(Element):
 
     GALLEY_CLASS = Galley
 
-    def __init__(self, isLeft=None, isRight=None,
-        htmlCode=None, htmlPath=None, headCode=None, headPath=None, bodyCode=None, bodyPath=None,
-        cssCode=None, cssPaths=None, cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
-        viewPort=None, favIconUrl=None, fileName=None, url=None, webFontUrls=None, pn=None,
-        **kwargs):
-
+    def __init__(self, isLeft=None, isRight=None, htmlCode=None, htmlPath=None,
+            headCode=None, headPath=None, bodyCode=None, bodyPath=None,
+            cssCode=None, cssPaths=None, cssUrls=None, jsCode=None,
+            jsPaths=None, jsUrls=None, viewPort=None, favIconUrl=None,
+            fileName=None, url=None, webFontUrls=None, pn=None, **kwargs):
         """Add specific parameters for a page, besides the parameters for standard Elements.
 
         >>> page = Page()
@@ -62,9 +60,10 @@ class Page(Element):
         # Overwrite flag for side of page. Otherwise test on document pagenumber.
         self._isLeft = isLeft
         self._isRight = isRight
-        # Optional storage of page number in the page (normally this is owned by the containing document)
-        # It is used if the pagnumbering of the document with format (1, 0) is different from the
-        # pagnumber that needs to be shown in the page.
+        # Optional storage of page number in the page (normally this is owned
+        # by the containing document). It is used if the pagnumbering of the
+        # document with format (1, 0) is different from the pagnumber that
+        # needs to be shown in the page.
         self.pn = pn
 
         #   F I L E  S T U F F
@@ -80,9 +79,10 @@ class Page(Element):
 
         self.url = url or self.INDEX_HTML_URL # Used for links to home or current page url
 
-        # Optional resources that can be included for web output (HtmlContext)
-        # Define string or file paths where to read content, instead of constructing by the builder.
-        # See also self.htmlCode and self.htmlPath as defined for all Element classes.
+        # Optional resources that can be included for web output (HtmlContext).
+        # Define string or file paths where to read content, instead of
+        # constructing by the builder.  See also self.htmlCode and
+        # self.htmlPath as defined for all Element classes.
 
         self.headCode = headCode # Optional set to string that contains the page <head>...</head>, including the tags.
         self.headPath = headPath # Set to path, if head is available in a single file, including the tags.
@@ -161,8 +161,10 @@ class Page(Element):
         if self.parent is not None:
             return self.parent.getPageNumber(self)[0] % 2 == 0
         return None
+
     def _set_isLeft(self, flag):
         self._isLeft = flag
+
     isLeft = property(_get_isLeft, _set_isLeft)
 
     def _get_isRight(self):
@@ -186,9 +188,12 @@ class Page(Element):
             return self._isRight
         if self.doc is not None:
             return self.parent.getPageNumber(self)[0] % 2 == 1
+
         return None
+
     def _set_isRight(self, flag):
         self._isRight = flag
+
     isRight = property(_get_isRight, _set_isRight)
 
     def _get_next(self):
@@ -208,12 +213,14 @@ class Page(Element):
         """
         if self.parent is None:
             return None
+
         return self.parent.nextPage(self)
+
     next = property(_get_next)
 
     def _get_prev(self):
-        u"""Answers the previous page in the document, relative to self. Answer None
-        if self is the first page.
+        u"""Answers the previous page in the document, relative to self. Answer
+        None if self is the first page.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -228,13 +235,14 @@ class Page(Element):
         if self.parent is None:
             return None
         return self.parent.prevPage(self)
+
     prev = property(_get_prev)
 
     def _get_pn(self):
         """Answers the page number by which self is stored in the parent
-        document. To move or remove pages, use Document.movePage() or Document.removePage()
-        In case the self._pn is set, the page numbering is hard-coded, independent
-        of the pages in the containing document.
+        document. To move or remove pages, use Document.movePage() or
+        Document.removePage() In case the self._pn is set, the page numbering
+        is hard-coded, independent of the pages in the containing document.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', autoPages=8)
@@ -255,23 +263,27 @@ class Page(Element):
         if self.parent is None:
             return None # Not placed directly in a document. No page number known.
         return self.parent.getPageNumber(self)
+
     def _set_pn(self, pn):
-        """Set the optional page numbere, overwriting queries into the containing document."""
+        """Set the optional page numbere, overwriting queries into the
+        containing document."""
         if pn is not None and not isinstance(pn, (list, tuple)):
             pn = pn, 0
         self._pn = pn
+
     pn = property(_get_pn, _set_pn)
 
     #   E L E M E N T S
 
     def getGalley(self, name=None):
-        """Answers the default galley element of a page. This is used in case pages
-        need to be made with content (e.g. to accommodate overflow) without a main
-        sequence of text boxes in stalled or without an applied template that contains them.
-        Usage of the default page galley is mostly for booting a document, without the
-        final layout defined.
-        The reason to add this as function/property in the page is for convenient
-        access in MarkDown content files.
+        """Answers the default galley element of a page. This is used in case
+        pages need to be made with content (e.g. to accommodate overflow)
+        without a main sequence of text boxes in stalled or without an applied
+        template that contains them. Usage of the default page galley is
+        mostly for booting a document, without the final layout defined.
+
+        The reason to add this as function / property in the page is for
+        convenient access in MarkDown content files.
         """
         if name is None:
             name = DEFAULT_GALLEY_NAME
@@ -287,10 +299,10 @@ class Page(Element):
     #   C O M P O S I T I O N  S U P P O R T
 
     def compose(self, doc, publication):
-        """Recusively compose Page and add it to doc. Note that this will alter the self.parent to doc.
-        The recursively pass the composing on to the page elements, which at that time can use the
-        full document style settings by e.css(...).
-        """
+        """Recusively compose Page and add it to doc. Note that this will alter
+        the self.parent to doc. The recursively pass the composing on to the
+        page elements, which at that time can use the full document style
+        settings by e.css(...)."""
         doc.appendPage(self)
         for e in self.elements:
             e.compose(doc, publication)
@@ -309,7 +321,8 @@ class Page(Element):
         if drawElements:
             self.buildChildElements(view, p) # Build child elements, depending in context build implementations.
 
-        # Draw addition page info, such as crop-mark, registration crosses, etc. if parameters are set.
+        # Draw addition page info, such as crop-mark, registration crosses,
+        # etc. if parameters are set.
         view.drawPageMetaInfo(self, p, background=False)
 
         # Check if we are in scaled mode. Then restore.

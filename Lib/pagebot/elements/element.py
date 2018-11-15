@@ -20,17 +20,17 @@ import copy
 
 from pagebot.conditions.score import Score
 from pagebot.style import makeStyle, getRootStyle
-from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM,
-                           LEFT, FRONT, BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE,
-                           DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE,
-                           ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS,
-                           OUTLINE, GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
-                           DEFAULT_COLOR_BARS, DEFAULT_MININFOPADDING,
-                           VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
-
+from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
+        BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE, DEFAULT_WIDTH,
+        DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE, ONLINE, INLINE,
+        DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
+        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
+        DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
+        VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import getContext
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
-from pagebot.toolbox.units import units, rv, pt, point3D, pointOffset, asFormatted, isUnit, degrees
+from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
+        asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.toolbox.timemark import TimeMark
@@ -61,15 +61,14 @@ class Element:
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElementName=None, prevElementName=None,
-            nextPageName=None, prevPageName=None, thumbPath=None,
-            bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
-            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0,
-            scaleX=1, scaleY=1, scaleZ=1, scale=None,
+            nextElementName=None, prevElementName=None, nextPageName=None,
+            prevPageName=None, thumbPath=None, bleed=None, padding=None, pt=0,
+            pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
+            ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            drawAfter=None, htmlCode=None, htmlPaths=None,
-            clipPath=None, **kwargs):
+            drawAfter=None, htmlCode=None, htmlPaths=None, clipPath=None,
+            **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
@@ -442,7 +441,7 @@ class Element:
     eId = property(_get_eId)
 
     def _get_elements(self):
-        """Property to get/set elements to parent self. Answer a copy of the list, 
+        """Property to get/set elements to parent self. Answer a copy of the list,
         not self._elements itself, to avoid problems if iterations on the children
         is changing the parent. E.g. if elements of a Typesetter galley are composed
         on a page.
@@ -4419,12 +4418,19 @@ class Element:
         text boxes."""
         if score is None:
             score = Score()
-        if self.conditions: # Can be None or empty list
-            for condition in self.conditions: # Skip in case there are no conditions in the style.
+
+        # Can be None or empty list. Skip in case there are no conditions in
+        # the style.
+        if self.conditions:
+
+            for condition in self.conditions:
                 condition.solve(self, score)
-        for e in self.elements: # Also works if showing element is not a container.
+
+        # Also works if showing element is not a container.
+        for e in self.elements:
             if e.show:
                 e.solve(score)
+
         return score
 
     #   C O N D I T I O N S

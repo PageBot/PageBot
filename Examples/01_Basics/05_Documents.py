@@ -41,13 +41,18 @@ W, H = 500, 400
 def makeDocument():
     # Creates the publication/document that holds the pages.
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
-    doc.view.padding = 0 # Don't show cropmarks in this example.
+    print(doc.view)
+    print(doc.pages)
+    
+    doc.view.padding = 15 # Don't show cropmarks in this example.
+    doc.margin = 10
     doc.view.showPadding = True
 
     # Gets page by pageNumber, first in row (at this point there is only one in
     # this row).
     page = doc[1]
     page.padding = 30
+    page.showPadding = True
 
     conditions = [Right2Right(), Float2Top(), Float2Left()]
     # TODO: Solve this bug, does not mirror.
@@ -62,8 +67,7 @@ def makeDocument():
     # If there are failing conditions, then the status
     # is returned in the Score instance.
     score = doc.solve()
-    if score.fails:
-        print(score.fails)
+    print(score)
 
     doc.export(EXPORT_PATH_SVG)
     doc.export(EXPORT_PATH_JPG)
