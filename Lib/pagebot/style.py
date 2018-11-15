@@ -49,14 +49,14 @@ def makeStyle(style=None, **kwargs):
         #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
             if key not in rs:
                 # TODO: raise error?
-                print('Warning: %s not in root style!' % key)
+                print('makeStyle warning: %s not allowed in (root) style!' % key)
             else:
                 new[key] = value
 
         for name, v in kwargs.items():
             if name not in rs:
                 # TODO: raise error?
-                print('Warning: %s not in root style!' % name)
+                print('makeStyle warning: %s not allowed in (root) style!' % name)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 
