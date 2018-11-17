@@ -46,6 +46,8 @@ class PageView(BaseView):
     def __repr__(self):
         return '<PageView>'
 
+    def getSortedPages():
+
     def build(self, path=None, pageSelection=None, multiPage=True):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
@@ -80,7 +82,9 @@ class PageView(BaseView):
         # building in this context.
         self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
         self.context.newDrawing()
-        sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
+        
+        # Get dictionary of pages or spreads
+        sortedPages = self.getSortedPages()
 
         # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
         # into cache if that file does not already exists. Note that this is done on a page-by-page
@@ -89,15 +93,10 @@ class PageView(BaseView):
             for page in pages:
                 page.prepare(self)
 
+
         for pn, pages in sortedPages:
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
-
-
-            #TODO: Add some options for layout of the combined pages, depending
-            #on the spread view option.
-            #self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
-            # page.ml and page.mr define the distance between the spread pages.
 
             '''
             Create a new DrawBot viewport page to draw template + page, if not

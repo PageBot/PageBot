@@ -81,11 +81,6 @@ class PageMapView(BaseView):
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
 
-            # TODO: Add some options for layout of the combined pages,
-            # depending on the spread view option.
-            # self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
-            # page.ml and page.mr define the distance between the spread pages.
-
             # Create a new DrawBot viewport page to draw template + page, if
             # not already done. In case the document is oversized, then make
             # all pages the size of the document, so the pages can draw their

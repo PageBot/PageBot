@@ -369,7 +369,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # may overwrite the settings (e.g. TextBot baseline color).
 
         # Paging
-        showSpread = False, # If True, show even pages on left of fold, odd on the right.
+        showSpread = False, # If True, show even pages on left of fold, odd on the right. Page.ml and page.mr combine to gap
         showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
 
         # Document/page stuff
@@ -405,9 +405,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Image stuff
         showImageReference = False,
         showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
-
-        # Spread stuff
-        showSpreadPages = False, # Show even/odd pages as spread, as well as pages that share the same pagenumber.
 
         # CSS flags
         cssVerbose = True, # Adds information comments with original values to CSS export.
