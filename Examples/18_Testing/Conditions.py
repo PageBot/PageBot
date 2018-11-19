@@ -43,19 +43,21 @@ def makeDocument():
     print(doc.view)
     print(doc.pages)
     
-    doc.view.padding = 0 # Don't show cropmarks in this example.
-    #doc.margin = 0
+    doc.view.padding = 100 # Don't show cropmarks in this example.
+    #doc.margin = 
     doc.view.showPadding = True
 
     # Gets page by pageNumber, first in row (at this point there is only one in
     # this row).
     page = doc[1]
-    page.padding = 18
+    page.padding = 1
     page.showPadding = True
 
     
     conditions = [Right2Right(), Float2Top(), Float2Left()]
-    #conditions = [Left2Left(), Float2Top(), Float2Right()]
+    #conditions = [Right2Right(), Float2Top()]
+    #conditions = [Left2Left()]
+    #conditions = [Right2Right()]
     numberOfSquares = 8
     ratio = 1 / numberOfSquares
     rects = []
@@ -73,9 +75,9 @@ def makeDocument():
     context = getContext()
     
     for r in rects:
-            x = r.getFloatLeftSide()
-            y = r.getFloatTopSide()
-            context.fill((0, 1, 0))
-            context.circle(x, y, 2)
+        x = r.getFloatLeftSide() + doc.view.pr
+        y = r.getFloatTopSide() + doc.view.pt
+        context.fill((0, 1, 0))
+        context.circle(x, y, 2)
 
 makeDocument()
