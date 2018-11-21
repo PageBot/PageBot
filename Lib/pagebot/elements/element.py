@@ -209,7 +209,7 @@ class Element:
 
         # Class and #Id attributes for HtmlContext usage.
         self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
-        self.cssId = cssId # Optional id name. Ignored if None.
+        self.cssId = cssId # Optional id name for use in CSS-output. Ignored if None.
 
         # Optional resources that can be included for web output (HtmlContext).
         # Define string or file paths where to read content, instead of

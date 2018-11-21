@@ -369,8 +369,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # may overwrite the settings (e.g. TextBot baseline color).
 
         # Paging
-        showSpread = False, # If True, show even pages on left of fold, odd on the right. Page.ml and page.mr combine to gap
-        showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
+        showSpread = False, # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
 
         # Document/page stuff
         viewMinInfoPadding = DEFAULT_MININFOPADDING, # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.

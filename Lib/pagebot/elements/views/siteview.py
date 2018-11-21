@@ -123,10 +123,11 @@ class SiteView(HtmlView):
                 getattr(page, hook)(self, path) # Typically calling page.build_html
                 
         if self.useScss:
-            # Write all collected SCSS variables into one file
-            b.writeScss(self.SCSS_VARIABLES_PATH)
-            # Compile SCSS to CSS
-            b.compileScss(self.SCSS_PATH)
+            if os.path.exists(self.SCSS_PATH):
+                # Write all collected SCSS variables into one file
+                b.writeScss(self.SCSS_VARIABLES_PATH)
+                # Compile SCSS to CSS if it exists.
+                b.compileScss(self.SCSS_PATH)
 
     def getUrl(self, name):
         """Answers the local URL for Mamp Pro to find the copied website."""

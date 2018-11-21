@@ -620,7 +620,6 @@ table {
         self._head()
         """
         self.tabs()
-        self.tabIn()
         self.write('<head')
         self.getandwrite_attributes('head', args)
         self.write('>')

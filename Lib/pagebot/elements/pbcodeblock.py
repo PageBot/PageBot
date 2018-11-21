@@ -21,6 +21,8 @@ class CodeBlock(TextBox):
 
     DEFAULT_CODE_STYLE = dict(font='Courier', fontSize=9, textFill=0.2, textStroke=noColor)
 
+    isTextBox = False # It's not a normal text box, even while inheriting functionnally from TextBox
+    
     def __init__(self, code, tryExcept=True, fill=None, style=None, **kwargs):
         if fill is None:
             fill = color(0.9)
@@ -42,7 +44,7 @@ class CodeBlock(TextBox):
         else:
             TextBox.build(self, view, origin, drawElements)
         
-    def run(self, globals=None, verbose=False):
+    def run(self, targets=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
         ~~~
@@ -84,24 +86,23 @@ class CodeBlock(TextBox):
         >>> sorted(result.keys()), g['aa'] # Result is added to the globals
         (['__code__', 'a', 'aa', 'doc', 'page', 'view'], 6000000)
         """
-        if globals is None:
+        if targets is None:
             # If no globals defined, create a new empty dictionary as storage of result
             # and try to fill it in case we are part of a page, e.g. for debugging.
-            globals = {}
+            targets = {}
             doc = self.doc
             if doc is not None:
-                globals['doc'] = doc
-            print('fsddfsfds', globals)
+                targets['doc'] = doc
         if not self.tryExcept: # For debugging show full error of code block run.
-            exec(self.code, globals) # Exectute code block, where result goes dict.
-            if '__builtins__' in globals:
-                del globals['__builtins__'] # We don't need this set of globals in the returned results.
+            exec(self.code, targets) # Exectute code block, where result goes dict.
+            if '__builtins__' in targets:
+                del targets['__builtins__'] # We don't need this set of globals in the returned results.
         else:
             error = None
             try:
-                exec(self.code, globals) # Exectute code block, where result goes dict.
-                if '__builtins__' in globals:
-                    del globals['__builtins__'] # We don't need this set of globals in the results.
+                exec(self.code, targets) # Exectute code block, where result goes dict.
+                if '__builtins__' in targets:
+                    del targets['__builtins__'] # We don't need this set of globals in the results.
             except TypeError:
                 error = u'TypeError'
             except NameError:
@@ -110,16 +111,18 @@ class CodeBlock(TextBox):
                 error = 'SyntaxError'
             except AttributeError:
                 error = 'AttributeError'
-            globals['__error__'] = error
+            except:
+                error = 'Unknown Error'
+            targets['__error__'] = error
             if error is not None:
                 print(u'### %s ### %s' % (error, self.code))
             # TODO: insert more possible exec() errors here.
 
         # For convenience, store the last source code of the block in the result dict.
-        if '__code__' not in globals:
-            globals['__code__'] = self.code
+        if '__code__' not in targets:
+            targets['__code__'] = self.code
 
-        return globals # Answer the globals attribute, in case it was created.
+        return targets # Answer the globals attribute, in case it was created.
 
 if __name__ == '__main__':
     import doctest

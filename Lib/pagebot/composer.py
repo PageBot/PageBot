@@ -66,8 +66,8 @@ class Composer:
 
         Targets contains the resources for the composition, such as the doc,
         current page, current box and other info that the MarkDown assumes to
-        be available. If targets is omitted, then it is created by the Composer
-        and answered at the end.
+        be available. If targets is omitted, then a default target dictionary 
+        is created by the Composer and answered at the end.
         """
         if targets is None:
             if page is None:
@@ -81,22 +81,42 @@ class Composer:
             targets['errors'] = []
         errors = targets['errors']
 
+        if 'verbose' not in targets:
+            targets['verbose'] = []
+        verbose = targets['verbose']
+
         if galley is None:
             galley = page.galley
+
+        composerName = self.__class__.__name__
 
         for e in galley.elements:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)
-            elif targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
-                errors.append('%s.compose: No box or image selected. Cannot place element %s' % (self.__class__.__name__, e))
-            elif e.isTextBox and targets['box'] is not None and targets['box'].isTextBox:
-                targets['box'].bs += e.bs
-            elif e.isImage and targets.get('image') is not None and targets['image'].isImage:
-                targets['image'].path = e.path
+                verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
+                #print('AAAAAAA', targets.get('box'))
+            elif e.isTextBox:
+                #print('BBBBBB', targets.get('box'), e)
+                # In case e is a textBox, and the target box is defined, then append the content to the target.
+                if targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
+                    errors.append('%s.compose: No box selected. Cannot place element or copy content of %s' % (composerName, e))
+                else:
+                    e.parent = targets['box']
+                    verbose.append('%s.compose: Add to text element "%s" to text box "%s"' % (composerName, e.bs[:50], targets['box']))
+                    
+            elif e.isImage:
+                # In case e is an image, and the target image is defined, then set the target image path.
+                if targets['image'] is None: # In case no image was selected, mark as error and move on to next element
+                    errors.append('%s.compose: No image selected. Cannot place element or set image path of %s' % (composerName, e))
+                    e.parent = targets['image']
+                    verbose.append('%s.compose: Set image element "%s" to image box' % (composerName, e.path.split('/')[-1], targets['image']))
             else:
-                errors.append('%s.compose: No box defined or box is not a TextBox or Image in "%s - %s"' % (
-                    self.__class__.__name__, targets.get('page'), e))
+                errors.append('%s.compose: No valid box or image selected "%s - %s"' % (composerName, page, e))
+
         return targets
+
+    def debug(self, s):
+        print('%s' % s)
 
 if __name__ == "__main__":
     import doctest

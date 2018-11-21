@@ -222,17 +222,16 @@ SamsungGalaxyTab10 = pt(800, 1280) # 800 x 1280
 ChromebookPixel = pt(1280, 850) # 2560 x 1700
 
 # Types of Quire formats, how to compose pages from folding sheets.
-# Page numbers < 0 indicate to be connected. For > 9
-QUIRE_SINGLE = (1,) # Single page
-QUIRE_SPREAD = (-2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
+# Gutter between the pages is defined by the page.margin values.
+QUIRE_SINGLE = (1, 1) # Single page
+QUIRE_SPREAD = (2, 1) # Spread of 2 connected pages
 QUIRE_2x2 = (2, 2) # is a Quire of 4 pages, e.g. to be cut as separate sheets
 QUIRE_8x4 = (8, 4) # is a Quire of 32 separate pages, e.g. to be cut as 32 business cards.
-QUIRE_LEPARELLO3 = (-3, 1) # is a leparello of 3 connected pages.
-QUIRE_LEPARELLO4 = (-4, 1) # is a leparello of 4 connected pages.
+QUIRE_LEPARELLO3 = (3, 1) # is a leparello of 3 connected pages.
+QUIRE_LEPARELLO4 = (4, 1) # is a leparello of 4 connected pages.
 QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2°, a Quire of 2 spreads
 QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4°
 QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
-QUIRE_GUTTER = pt(40) # Default gutter between non-connecting pages.
 
 # Color bar parameter for view.showColorBars = set()
 # http://the-print-guide.blogspot.com/2010/07/color-bar.html
