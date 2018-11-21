@@ -41,6 +41,8 @@ class TextBox(Element):
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
+        print('------->', self.name, id(self), id(self.parent), self.page, bs)
+        xx = dd
         self._textLines = None
         self._baselines = None # Force initiaize upon first usage.
 
@@ -572,6 +574,7 @@ class TextBox(Element):
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
+        print('2-3-3-3', id(self), len(self.elements), self.bs)
         b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
 
         if self.drawBefore is not None: # Call if defined

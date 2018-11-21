@@ -96,13 +96,13 @@ class Composer:
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
                 #print('AAAAAAA', targets.get('box'))
             elif e.isTextBox:
-                #print('BBBBBB', targets.get('box'), e)
                 # In case e is a textBox, and the target box is defined, then append the content to the target.
                 if targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
                     errors.append('%s.compose: No box selected. Cannot place element or copy content of %s' % (composerName, e))
                 else:
                     e.parent = targets['box']
                     verbose.append('%s.compose: Add to text element "%s" to text box "%s"' % (composerName, e.bs[:50], targets['box']))
+                    print('BBBBBB', targets.get('box'), e.parent)
                     
             elif e.isImage:
                 # In case e is an image, and the target image is defined, then set the target image path.
