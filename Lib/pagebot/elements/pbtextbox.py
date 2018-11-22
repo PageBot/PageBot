@@ -42,7 +42,7 @@ class TextBox(Element):
         # the current style. Note that in case there is potential clash in the
         # double usage of fill and stroke.
         print('------->', self.name, id(self), id(self.parent), self.page, bs)
-        xx = dd
+
         self._textLines = None
         self._baselines = None # Force initiaize upon first usage.
 
