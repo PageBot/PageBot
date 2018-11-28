@@ -37,8 +37,9 @@ class Finder:
     """
     DEFAULT_IGNORE_PATTERNS = ('_scaled', '_export', '_local')
 
-    def __init__(self, rootPath):
-        self.rootPath = rootPath
+    def __init__(self, rootPath=None):
+        """Create a new Finder instance for rootPath. If omitted, then used the current directory."""
+        self.rootPath = rootPath or '.'
 
     def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):

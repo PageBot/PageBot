@@ -333,6 +333,7 @@ table {
     #   J S
 
     def addJs(self, js):
+        assert isinstance(js, str), ('Added Javascript should be of type str "%s"' % js)
         self._jsOut.append(js)
 
     def hasJs(self):
@@ -370,6 +371,7 @@ table {
         """Add the css chunk to self.css, the ordered list of css for output.
         Don't write if empty or None."""
         if css:
+            assert isinstance(css, str), ('Added CSS should be of type str "%s"' % css)
             self._cssOut.append(css)
 
     def getCss(self):
@@ -546,9 +548,11 @@ table {
         #if not isinstance(html, str): # It's something else, test on the kind of BabelString.
         #    assert isinstance(html, HtmlString)
         try:
+            assert isinstance(html.s, str)
             html = html.s # Get the collected html from the BabelString.
         except AttributeError:
-            pass
+            
+            html = str(html) # Make sure it is a string
         self._htmlOut.append(html)
 
     write = addHtml
@@ -620,7 +624,6 @@ table {
         self._head()
         """
         self.tabs()
-        self.tabIn()
         self.write('<head')
         self.getandwrite_attributes('head', args)
         self.write('>')

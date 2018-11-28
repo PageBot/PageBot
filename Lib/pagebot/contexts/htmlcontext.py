@@ -43,6 +43,25 @@ class HtmlContext(BaseContext):
         self.name = self.__class__.__name__
         self._fill = noColor
 
+    def newDocument(self, w, h):
+        """PageBot function. Ignore for now in HTMLContext. """
+        pass
+
+    def newDrawing(self):
+        """Clear output canvas, start new export file. DrawBot function.
+        Ignore for now in HtmlContect
+        """
+        pass
+
+    def endDrawing(self):
+        pass
+
+    def newPage(self, w, h):
+        pass
+
+    def frameDuration(self, value):
+        pass
+
     #   T E X T
 
     def newBulletString(self, bullet, e=None, style=None):

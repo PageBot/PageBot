@@ -46,6 +46,27 @@ class PageView(BaseView):
     def __repr__(self):
         return '<PageView>'
 
+    def newQuire(self, folds=None, startPage=None):
+        """Add a new Quire instance to self.elements. A Quire is a container of pages, capable of grouping
+        then in certains way, depending on the folding schema. The most simple one it a single fold,
+        with spread pages on either side.
+        Quire instances are added as sequence to the """
+        return Quire(folds=folds, startPage=startPage, parent=self)
+
+    def getSortedPages(self):
+        """Get the dictionary of sorted pages from the document. Depending on the self.showSpread
+        flag, the answered dicitionary is the plain self.doc.getSortedPages() result, or wrapped 
+        as Quire instances containing positioned spread pages."""
+        sortedPages = self.doc.getSortedPages() 
+        if self.showSpread:
+            spreads = {} # Key is uneven page number. Value is a Quire, holding spread pages.
+
+            # If flag is set, compose the page dictionary into a dictionary of larger pages, holding 
+            # Quire instances that can compose vairous layouts of the pages, including spreads.
+            # page.ml and page.mr define the distance between the spread pages.
+            sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
+        return sortedPages
+
     def build(self, path=None, pageSelection=None, multiPage=True):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
@@ -54,8 +75,8 @@ class PageView(BaseView):
         >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
         >>> doc = Document(size=A4, autoPages=4) # Make 4 pages to be composed as a Quire of 2 spreads
         >>> view = doc.view
-        >>> view.newQuire(folds=QUIRE_QUARTO)
-        >>> view.newQuire(folds=QUIRE_QUARTO)
+        >>> q = view.newQuire(folds=QUIRE_QUARTO)
+        >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
         2
         >>> len(view.elements[0])
@@ -80,7 +101,9 @@ class PageView(BaseView):
         # building in this context.
         self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
         self.context.newDrawing()
-        sortedPages = self.doc.getSortedPages() # Get the dictionary of sorted pages from the document.
+        
+        # Get dictionary of pages or spreads
+        sortedPages = self.getSortedPages()
 
         # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
         # into cache if that file does not already exists. Note that this is done on a page-by-page
@@ -92,12 +115,6 @@ class PageView(BaseView):
         for pn, pages in sortedPages:
             #if pageSelection is not None and not page.y in pageSelection:
             #    continue
-
-
-            #TODO: Add some options for layout of the combined pages, depending
-            #on the spread view option.
-            #self.showSpreadPages # Show even/odd pages as spread, as well as pages that share the same pagenumber.
-            # page.ml and page.mr define the distance between the spread pages.
 
             '''
             Create a new DrawBot viewport page to draw template + page, if not
@@ -186,10 +203,6 @@ class PageView(BaseView):
         #    frameDuration(frameDuration)
 
         self.context.saveDocument(path, multiPage=multiPage)
-
-    def newQuire(self, folds=None, startPage=None):
-        """Add a new Quire instance to self.elements."""
-        Quire(folds=folds, startPage=startPage, parent=self)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

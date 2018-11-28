@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,10 +12,5 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.elements.web.simplesite.siteelements import *
-
-def newHeader(**kwargs):
-    return Header(++kwargs)
-    
-def newBanner(**kwargs):
-    return Banner(++kwargs)
+#     pagebot/apps/__init__.py
+#

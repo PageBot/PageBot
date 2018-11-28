@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     simpleelements.py
+#     siteelements.py
 #
 
 
@@ -21,7 +21,15 @@ from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.toolbox.units import em
 
-class Header(Element):
+class Site(Publication):
+    u"""Build a website, similar to the original template by Kirsten Langmuur.
+    """
+
+class SiteElement(Element):
+    def __init__(self, cssId=None, **kwargs):
+        Element.__init__(self, cssId=cssId or self.__class__.__name__, **kwargs)
+
+class Header(SiteElement):
     u"""Container for header elements on a page. Using standard
     Element.build for non-Html contexts.
     """
@@ -34,7 +42,7 @@ class Header(Element):
         b._header()
         b.comment('End '+self.__class__.__name__)
 
-class Banner(Element):
+class Banner(SiteElement):
     u"""Container for banner elements on a page.
     Often used inside the Header element.
     Using standard Element.build for non-Html contexts.
@@ -49,7 +57,7 @@ class Banner(Element):
         b.comment('End #banner')
         b.comment('End '+self.__class__.__name__)
 
-class Navigation(Element):
+class Navigation(SiteElement):
     def build(self, view, path):
         pass
 
@@ -62,7 +70,7 @@ class Navigation(Element):
         b._nav()
         b.comment('End '+self.__class__.__name__)
 
-class TopMenu(Element):
+class TopMenu(SiteElement):
     def build(self, view, path):
         pass
 
@@ -79,7 +87,7 @@ class TopMenu(Element):
         b._ul()
         b.comment('End '+self.__class__.__name__)
 
-class Menu(Element):
+class Menu(SiteElement):
     def build(self, view, path):
         pass
 
@@ -90,12 +98,21 @@ class Menu(Element):
             e.build_html(view, path)
         b._ul()
 
-class MenuItem(Element):
-    def __init__(self, href=None, label=None, current=False, **kwargs):
-        Element.__init__(self, **kwargs)
+class MenuItem(SiteElement):
+    def __init__(self, href=None, label=None, current=False, cssId=None, **kwargs):
+        SiteElement.__init__(self, cssId=cssId, **kwargs)
         self.current = current
         self.href = href
         self.label = label
+
+    def copy(self): 
+        """Copy self into a new instance, adding the attributes that the
+        generic SiteElement.copy does not copy."""
+        copiedMenuItem = SiteElement.copy(self)
+        copiedMenuItem.current = self.current
+        copiedMenuItem.href = self.href
+        copiedMenuItem.label = self.label
+        return copiedMenuItem
 
     def build(self, view, path):
         pass
@@ -120,32 +137,32 @@ class MenuItem(Element):
             e.build_html(view, path)
         b._li()
 
-class Logo(Element):
-    def __init__(self, **kwargs):
-        Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='logo', textFill=self.css('textFill', blackColor),
-            fontSize=em(3))
+class Logo(SiteElement):
+    def __init__(self, cssId=None, **kwargs):
+        SiteElement.__init__(self, cssId=cssId, **kwargs)
+        newTextBox('', parent=self, cssId=self.cssId, 
+            textFill=self.css('textFill', blackColor), fontSize=em(3))
 
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
-        b.div(cssId="logoWrapper")
+        b.div(cssId="Logo")
         b.a(href="index.html")
         for e in self.elements:
             e.build_html(view, path)
         b._a()
         b._div()
-        b.comment('End #logoWrapper')
+        b.comment('End #Logo')
         b.comment('End '+self.__class__.__name__)
 
-class Introduction(Element):
+class Introduction(SiteElement):
     def build(self, view, path):
         pass
 
     def build_html(self, view, path):
         b = self.context.b
 
-class SlideShow(Element):
+class SlideShow(SiteElement):
     def newSlide(self):
         return newTextBox('', parent=self)
 
@@ -165,11 +182,11 @@ class SlideShow(Element):
             b.comment('End .slides .fade')
         b.comment('End '+self.__class__.__name__)
 
-class Hero(Element):
-    def __init__(self, **kwargs):
-        Element.__init__(self, **kwargs)
+class Hero(SiteElement):
+    def __init__(self, cssId=None, **kwargs):
+        SiteElement.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='HeroIntroduction')
-        SlideShow(parent=self, cssId='HeroSlides')
+        SlideShow(parent=self, cssId=cssId or 'HeroSlides')
 
     def build(self, view, path):
         pass
@@ -198,10 +215,10 @@ class Hero(Element):
         b.comment('End .wrapper')
         b.comment('End '+self.__class__.__name__)
 
-class Content(Element):
-    def __init__(self, contentId=None, **kwargs):
-        Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId=contentId or 'Content')
+class Content(SiteElement):
+    def __init__(self, cssId=None, **kwargs):
+        SiteElement.__init__(self, cssId=cssId, **kwargs)
+        newTextBox('', parent=self, cssId=self.cssId)
 
     def build(self, view, path):
         pass
@@ -213,18 +230,19 @@ class Content(Element):
         b.section(cssId='content', cssClass='wide-content' )
         # Content here, should come from markdown file.
         for e in self.elements:
-            e.build_html(view, path)
-        b.p()
-        b.a(href='index.html', cssClass='buttonlink')
-        b.addHtml('Use Pagebot')
-        b._a()
-        b._p()
+            if e.__class__.__name__ == 'TextBox':
+                e.build_html(view, path)
+        #b.p()
+        #b.a(href='index.html', cssClass='buttonlink')
+        #b.addHtml('Use Pagebot')
+        #b._a()
+        #b._p()
         b._section() # end content area -->
         b._div() # end div #main .wrapper
         b.comment('End #main .wrapper .clearfix')
         b.comment('End '+self.__class__.__name__)
 
-class ColoredSection(Element):
+class ColoredSection(SiteElement):
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='ColoredSectionHeader')
@@ -255,10 +273,10 @@ class ColoredSection(Element):
         b._section()
         b.comment('End '+self.__class__.__name__)
 
-class Footer(Element):
-    def __init__(self, **kwargs):
+class Footer(SiteElement):
+    def __init__(self, cssId=None, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Footer')
+        newTextBox('', parent=self, cssId=cssId or self.__class__.__name__)
 
     def build(self, view, path):
         pass
@@ -268,17 +286,13 @@ class Footer(Element):
         b.comment('Start '+self.__class__.__name__)
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        self.deepFind('Footer').build_html(view, path)
+        #self.deepFind('Footer').build_html(view, path)
         b._div()
         b.comment('End #colophon .wrapper .clearfix')
         b._footer()
         b.comment('End '+self.__class__.__name__)
 
 
-class Site(Publication):
-    u"""Build a website, similar to the original template by Kirsten Langmuur.
-
-    """
 
 if __name__ == '__main__':
     import doctest

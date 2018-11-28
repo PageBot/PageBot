@@ -73,10 +73,14 @@ class MampView(SiteView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
 
-        # Write all collected SCSS vatiables into one file
-        self.context.b.writeScss(self.SCSS_VARIABLES_PATH)
-        # Compile SCSS to CSS
-        #self.context.b.compileScss(self.SCSS_PATH, self.SCSS_CSS_PATH)
+
+        if self.useScss:
+            # Write all collected SCSS vatiables into one file
+            if os.path.exists(self.SCSS_PATH):
+                # Write all collected SCSS variables into one file
+                b.writeScss(self.SCSS_VARIABLES_PATH)
+                # Compile SCSS to CSS if it exists.
+                b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)

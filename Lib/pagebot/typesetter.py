@@ -25,6 +25,7 @@ try:
     from markdown.extensions.fenced_code import FencedCodeExtension
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
+    from pagebot.contributions.markdown.inline import InlineExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     import sys
@@ -37,7 +38,7 @@ from pagebot.toolbox.color import color, blackColor
 
 
 class Typesetter:
-    u"""Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence
+    """Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence
     of markdown strings and builds a galley, using a dictionary of styles for the formatted string
     attributes. The result of the typesetting is a self.galley, that contains a sequence of Element
     instances, such as formatted images, textboxes (with BabelStrings), ruler elements and other
@@ -66,41 +67,71 @@ class Typesetter:
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
-    MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+    MARKDOWN_EXTENSIONS = [ 
+        # These extension are needed to make PageBot markdown compatible with 
+        # default MacDown behavior.
+        InlineExtension(), 
+        FencedCodeExtension(), 
+        FootnoteExtension(), 
+        LiteratureExtension(), 
+        Nl2BrExtension(),
+    ]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None,
             imageAsElement=False, tryExcept=True):
-        u"""
+        """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> context = HtmlContext()
         >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
         >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
+        >>> h3Style = dict(font='Georgia', fontSize=pt(14), textFill=color(0, 1, 0))
         >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
         >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
         >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this context
-        >>> galley = t.typesetFile(path) # Context indicates hiding of the tags in the output
+        >>> mdText = '''
+        ... ~~~Python
+        ... box = page.select['content']
+        ... ~~~
+        ... # H1 header
+        ... ## H2 header
+        ... ### H3 header
+        ... ~~Delete~~
+        ... _Underline_
+        ... ==Mark==
+        ... *Em*
+        ... "Quote"
+        ... **Strong**
+        ... //Emphasis//
+        ... ^Sup
+        ... !!Sub
+        ... '''
+        >>> galley = t.typesetMarkdown(mdText)
         >>> len(galley.elements)
-        7
-        >>> # First element of test-markdown is a code block or text box
-        >>> galley.elements[0].__class__.__name__
-        'TextBox'
-        >>> galley.elements[1].__class__.__name__ # Second element is code block
-        'CodeBlock'
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
-        >>> context = HtmlContext()
-        >>> t = Typesetter(context, styles=styles) # Create a new typesetter with a HTML context
-        >>> galley = t.typesetFile(path) # Context indicates is to include the HTML tags in output.
-        >>> len(galley.elements)
-        7
-        >>> 'What is PageBot' in galley.elements[2].bs # Skip first code block in test-markdown
-        True
+        3
+        >>> galley.elements[1].bs # Rendered by HtmlContext 
+        box = page.select['content']
+        <BLANKLINE>
+        >>> galley.elements[2].bs # Rendered by HtmlContext
+        <BLANKLINE>
+        <BLANKLINE>
+        <h1>H1 header</h1>
+        <h2>H2 header</h2>
+        <h3>H3 header</h3>
+        <p><del>Delete</del>
+        <u>Underline</u>
+        <mark>Mark</mark>
+        <em>Em</em>
+        <q>Quote</q>
+        <strong>Strong</strong>
+        <emphasis>Emphasis</emphasis>
+        ^Sup
+        !!Sub</p>
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -129,7 +160,7 @@ class Typesetter:
         self.skipTags = skipTags
 
     def node_h1(self, node, e):
-        u"""Handle the <h1> tag."""
+        """Handle the <h1> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h1-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -138,7 +169,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_h2(self, node, e):
-        u"""Handle the <h2> tag."""
+        """Handle the <h2> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h2-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -147,7 +178,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_h3(self, node, e):
-        u"""Handle the <h3> tag."""
+        """Handle the <h3> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h3-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -156,7 +187,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_h4(self, node, e):
-        u"""Handle the <h4> tag."""
+        """Handle the <h4> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -165,7 +196,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_h5(self, node, e):
-        u"""Handle the <h5> tag."""
+        """Handle the <h5> tag."""
         # Add line break to whatever style/content there was before.
         # Add invisible h4-marker in the string, to be retrieved by the composer.
         #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
@@ -173,24 +204,16 @@ class Typesetter:
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
-    def node_em(self, node, e):
-        u"""Handle the <em> tag"""
-        self.typesetNode(node, e)
-
-    def node_p(self, node, e):
-        u"""Handle the <p> tag."""
-        self.typesetNode(node, e)
-
     def node_hr(self, node, e):
-        u"""Add Ruler instance to the Galley."""
+        """Add Ruler instance to the Galley."""
         if self.peekStyle() is None and e is not None:
             # Root of stack is empty style, to force searching on the e.parent line.
             self.pushStyle({}) # Define top level for styles.
         hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
-
+        
     def getStyleValue(self, name, e=None, style=None, default=None):
-        u"""Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
+        """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
         value = None
         
@@ -205,7 +228,7 @@ class Typesetter:
     # Solve <br/> best by simple style with: doc.newStyle(name='br', postfix='\n')
 
     def node_br(self, node, e):
-        u"""Add newline instance to the Galley."""
+        """Add newline instance to the Galley."""
         # For now, just ignore, as <br/> already get a break in MarkDown, as part of the exclosing tag.
         # TODO: now <br/> makes the same vertical spacing as <p>
         """
@@ -218,16 +241,16 @@ class Typesetter:
         self.append(bs) # Add newline in the current setting of FormattedString
         """
     def node_a(self, node, e):
-        u"""Ignore links, but process the block"""
+        """Ignore links, but process the block"""
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
     def node_sup(self, node, e):
-        u"""Collect footnote references on their page number.
+        """Collect footnote references on their page number.
         And typeset the superior footnote index reference."""
         nodeId = node.attrib.get('id')
         # Check if this is a footnote reference
-        if nodeId.startswith('fnref'): # This is a footnote reference.
+        if nodeId is not None and nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.getFootnotes(e)
             if footnotes is not None:
                 nodeId = nodeId.split(':')[1]
@@ -242,7 +265,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_literatureref(self, node, e):
-        u"""Collect literature references."""
+        """Collect literature references."""
         # Typeset the block of the tag.
         # Check if this is a literature reference
         nodeId = node.attrib.get('id')
@@ -261,7 +284,7 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_div(self, node, e):
-        u"""MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
+        """MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
         as output at the end of the HTML export. We will handle them separately by looking them up
         in the XML-tree. So we'll skip them in the regular flow process."""
 
@@ -293,7 +316,7 @@ class Typesetter:
 
 
     def node_li(self, node, e):
-        u"""Generate bullet/Numbered list item."""
+        """Generate bullet/Numbered list item."""
         context = self.galley.context
         bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
         style = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
@@ -304,37 +327,44 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
-        u"""Process the image. adding the img tag or a new image element to the galley."""
+        """Process the image. adding the img tag or a new image element to the galley."""
         # Typeset the empty block of the img, which creates the HTML tag.
         if self.imageAsElement:
             self.galley.appendElement(self.IMAGE_CLASS(path=node.attrib.get('src'), index=0))
         else:
             self.htmlNode_(node)
 
+    def node_pre(self, node, e):
+        """<pre> is part of the code block. Ignore the tag and create a CodeBlock element instance
+        on the <code> node."""
+        self.typesetNode(node, e)
+
     def node_code(self, node, e):
+        """Create a NodeBlock element, that contains the code source, to be executed by
+        the Composer in sequence of composition."""
         self.CODEBLOCK_CLASS(node.text, parent=self.galley)
 
     def pushStyle(self, tag):
-        u"""Push the cascaded style on the gState stack. Make sure that the style is not None and that it
+        """Push the cascaded style on the gState stack. Make sure that the style is not None and that it
         is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
         self.gState.append(tag)
 
     def popStyle(self):
-        u"""Pop the cascaded style from the gState stack and answer the next style that is on top.
+        """Pop the cascaded style from the gState stack and answer the next style that is on top.
         Make sure that there still is a style to pop, otherwise raise an error. """
         assert self.gState
         self.gState.pop()
         return self.peekStyle()
 
     def peekStyle(self):
-        u"""Answers the top cascaded style, without changing the stack."""
+        """Answers the top cascaded style, without changing the stack."""
         if not self.gState: # It's empty, answer None
             return None
         return self.gState[-1]
 
     def addHistory(self, tag):
-        u"""Add the *tag* to the history."""
+        """Add the *tag* to the history."""
         if not self.tagHistory or tag != self.tagHistory[-1]:
             self.tagHistory.append(tag)
 
@@ -342,7 +372,7 @@ class Typesetter:
         return self.tagHistory
 
     def getFootnotes(self, e):
-        u"""Answers the footnotes dictionary from the e.lib (derived from the root document)"""
+        """Answers the footnotes dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -352,7 +382,7 @@ class Typesetter:
         return None
 
     def getLiteratureRefs(self, e):
-        u"""Answers the literature reference dictionary from the e.lib (derived from the root document)"""
+        """Answers the literature reference dictionary from the e.lib (derived from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -362,7 +392,7 @@ class Typesetter:
         return None
 
     def getImageRefs(self, e):
-        u"""Answers the image reference dictionary from the e.lib (derived from the root document)
+        """Answers the image reference dictionary from the e.lib (derived from the root document)
         if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary.
         Answer None if e.lib does not exist."""
         lib = e.lib
@@ -373,7 +403,7 @@ class Typesetter:
         return None
 
     def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
-        u"""Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
+        """Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
         Otherwise answer the untouched *s*."""
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
             s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
@@ -384,7 +414,7 @@ class Typesetter:
         return s
 
     def getMatchingStyleNames(self, tag):
-        u"""Answers the list of matching style, with decreasing relevance."""
+        """Answers the list of matching style, with decreasing relevance."""
         revHistory = self.tagHistory[:]
         revHistory.reverse()
         matches = []
@@ -399,12 +429,12 @@ class Typesetter:
         return matches
 
     def getNamedStyle(self, styleName):
-        u"""Answers the named style and otherwise an empty style dict if the named style
+        """Answers the named style and otherwise an empty style dict if the named style
         does not exist."""
         return self.styles.get(styleName, {})
 
     def getNodeStyle(self, tag):
-        u"""Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
+        """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
             self.pushStyle(self.getNamedStyle('root')) # Happens if calling directly, without check on e
         mergedStyle = copy.copy(self.peekStyle())
@@ -419,7 +449,7 @@ class Typesetter:
         return mergedStyle
 
     def append(self, bs):
-        u"""Append the string (or BabelString instance) to the last textbox in galley,
+        """Append the string (or BabelString instance) to the last textbox in galley,
         if it exists. Otherwise create a new TextBox and add it to self.galley."""
         if self.galley.elements and self.galley.elements[-1].isTextBox:
             self.galley.elements[-1].bs += bs
@@ -427,7 +457,7 @@ class Typesetter:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
 
     def htmlNode(self, node, end=False):
-        u"""Open the tag in HTML output and copy the node attributes if there are any."""
+        """Open the tag in HTML output and copy the node attributes if there are any."""
         htmlTag = u'<%s' % node.tag
         attrs = []
         for name, value in node.items():
@@ -442,15 +472,15 @@ class Typesetter:
         self.append(htmlTag)
 
     def _htmlNode(self, node):
-        u"""Close the html tag of node."""
+        """Close the html tag of node."""
         self.append('</%s>' % node.tag)
 
     def htmlNode_(self, node):
-        u"""Opem+close the html tag of node."""
+        """Opem+close the html tag of node."""
         self.htmlNode(node, end=True)
 
     def typesetString(self, sOrBs, e=None, style=None):
-        u"""If s is a formatted string, then it is placed untouched. If it is a plain string, then
+        """If s is a formatted string, then it is placed untouched. If it is a plain string, then
         use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
         Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
@@ -459,7 +489,7 @@ class Typesetter:
         return bs
 
     def typesetNode(self, node, e=None):
-        u"""Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
+        """Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
@@ -522,7 +552,7 @@ class Typesetter:
         self.popStyle()
 
     def markDown2XmlFile(self, fileName, mdText, mdExtensions=None):
-        u"""Take the markdown source, convert to HTML/XML and save in the file called fileName.
+        """Take the markdown source, convert to HTML/XML and save in the file called fileName.
         If the fileName does not end with ".xml" extension, then add it. Answer the (new) fileName.
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
@@ -552,7 +582,7 @@ class Typesetter:
         return self.galley
 
     def typesetFile(self, fileName, e=None, xPath=None):
-        u"""Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
+        """Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
         start at page pageNumber and find the name of the flow in the page template.
         The optional filter can be a list of tag names that need to be included in the
         composition, ignoring the rest.
@@ -565,7 +595,6 @@ class Typesetter:
             mdText = f.read() # Read the raw MarkDown source
             f.close()
             fileName = self.markDown2XmlFile(fileName, mdText) # Translate MarkDown to HTML and save in file.
-
         tree = ET.parse(fileName)
         self.root = tree.getroot() # Get the root element of the tree and store for later retrieval.
         # If there is XSL filtering defined, they get the filtered nodes.

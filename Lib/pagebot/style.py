@@ -49,14 +49,14 @@ def makeStyle(style=None, **kwargs):
         #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
             if key not in rs:
                 # TODO: raise error?
-                print('Warning: %s not in root style!' % key)
+                print('makeStyle warning: %s not allowed in (root) style!' % key)
             else:
                 new[key] = value
 
         for name, v in kwargs.items():
             if name not in rs:
                 # TODO: raise error?
-                print('Warning: %s not in root style!' % name)
+                print('makeStyle warning: %s not allowed in (root) style!' % name)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 
@@ -369,8 +369,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # may overwrite the settings (e.g. TextBot baseline color).
 
         # Paging
-        showSpread = False, # If True, show even pages on left of fold, odd on the right.
-        showSpreadMiddleAsGap = 0, # If showing as spread, this is the gap between them.
+        showSpread = False, # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
 
         # Document/page stuff
         viewMinInfoPadding = DEFAULT_MININFOPADDING, # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
@@ -405,9 +404,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Image stuff
         showImageReference = False,
         showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
-
-        # Spread stuff
-        showSpreadPages = False, # Show even/odd pages as spread, as well as pages that share the same pagenumber.
 
         # CSS flags
         cssVerbose = True, # Adds information comments with original values to CSS export.

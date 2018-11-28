@@ -35,26 +35,38 @@ class Quire(Element):
     abbreviated as "2o," "4o" and "8o." These format names are derived from the
     number of leaves in a quire produced by folding the sheet of paper."""
 
-    def __init__(self, folds=None, startPage=None, **kwargs):
+    def __init__(self, folds=None, **kwargs):
         Element.__init__(self,  **kwargs)
         if folds is None:
             # Default is single page. E.g. (2, 1) would be a spread, etc.
             # Types of Quire formats, how to compose pages
+            # The gap between the pages is defined by page.margin values
             # QUIRE_SINGLE = (1, 1)
-            # QUIRE_SPREAD = (-2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
+            # QUIRE_SPREAD = (2, 1) # Spread of 2 connected pages, without gutter for crop-marks or bleed
             # QUIRE_2x2 = (2, 2) # is a Quire of 4 pages, e.g. to be cut as separate sheets
             # QUIRE_8x4 = (8, 4) # is a Quire of 32 separate pages, e.g. to be cut as 32 business cards.
-            # QUIRE_LEPARELLO3 = (-3, 1) # is a leparello of 3 connected pages.
-            # QUIRE_LEPARELLO4 = (-4, 1) # is a leparello of 4 connected pages.
-            # QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2o, a Quire of 2 spreads
-            # QUIRE_QUARTO = (2, QUIRE_FOLIO) # 4o
-            # QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8o, folding into 16 pages
+            # QUIRE_LEPARELLO3 = (3, 1) # is a leparello of 3 connected pages.
+            # QUIRE_LEPARELLO4 = (4, 1) # is a leparello of 4 connected pages.
+            # QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2°, a Quire of 2 spreads
+            # QUIRE_QUARTO = (2, QUIRE_FOLIO) # 4°
+            # QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
             folds = QUIRE_SINGLE # 1, 1
-        self.folds = folds
-        self.startPage = startPage or 1
+        self.piw, self.pih = self.folds = folds # Split value of page-index-width and page-index-height
+        self.pages = {}
+
+    def place(self, page, pix, piy):
+        u"""Add the page to the page list at location (pix, piy). If there is no
+        list yet at that location, then first create an empty list.
+        Note that the pages are kept in the self.pages by reference, not changing their
+        parent and no
+        """
+        assert pix in range(self.piw) and piy in range(self, pih) # Check if page is set in range.
+        if not (pix, piy) in self.pages:
+            self.pages[(pix, piy)] = []
+        self.pages[(pix, piy)].append(page)
 
     def __len__(self):
-        """Answers the amount of required pages, based on the `self.folds`
+        """Answers the amount of required pages, based on the `self.wi * self.hi`
         compositions.
 
         >>> from pagebot.constants import *
