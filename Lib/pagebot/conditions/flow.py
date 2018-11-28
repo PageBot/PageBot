@@ -45,9 +45,9 @@ class EqualizeFlow2Height(Condition):
 	# TODO
 
 class Baseline2Top(Condition):
-        """Place the first baseline on the parent top padding position. Use the
-        regular Top2Top() to place the top of the text on the parent top
-        padding position."""
+	"""Place the first baseline on the parent top padding position. Use the
+    regular Top2Top() to place the top of the text on the parent top
+    padding position."""
 	def test(self, e):
 		return e.isBaselineOnTop(self.tolerance)
 
@@ -66,9 +66,9 @@ class Baseline2Bottom(Condition):
 #	Floating
 
 class FloatBaseline2Top(Condition):
-        """Try to do `Baseline2Top()` or position just under – truncated locked
-        on parent baseline – if there are already elements in the same
-        z-layer."""
+	"""Try to do `Baseline2Top()` or position just under – truncated locked
+	on parent baseline – if there are already elements in the same
+	z-layer."""
 	def test(self, e):
 		return e.isBaselineOnTop(self.tolerance)
 
@@ -77,9 +77,9 @@ class FloatBaseline2Top(Condition):
 			self.addScore(e.floatBaseline2Top(), e, score)
 
 class FloatAscender2Top(Condition):
-        """Try to place the ascender of the first line on the parent top
-        padding position. Or just under – truncated locked on parent baseline –
-        if there are already elements in the same z-layer."""
+	"""Try to place the ascender of the first line on the parent top
+	padding position. Or just under – truncated locked on parent baseline –
+	if there are already elements in the same z-layer."""
 	def test(self, e):
 		return e.isAscenderOnTop(self.tolerance)
 
@@ -88,9 +88,9 @@ class FloatAscender2Top(Condition):
 			self.addScore(e.floatAscender2Top(), e, score)
 
 class FloatCapHeight2Top(Condition):
-        """Try to place the CapHeight of the first line on the parent top
-        padding position. Or just under – truncated locked on parent baseline –
-        if there are already elements in the same z-layer."""
+	"""Try to place the CapHeight of the first line on the parent top
+	padding position. Or just under – truncated locked on parent baseline –
+	if there are already elements in the same z-layer."""
 	def test(self, e):
 		return e.isCapHeightOnTop(self.tolerance)
 
@@ -99,9 +99,9 @@ class FloatCapHeight2Top(Condition):
 			self.addScore(e.floatCapHeight2Top(), e, score)
 
 class FloatXHeight2Top(Condition):
-        """Try to place the xHeight of the first line on the parent top padding
-        position. Or just under – truncated locked on parent baseline – if
-        there are already elements in the same z-layer."""
+	"""Try to place the xHeight of the first line on the parent top padding
+	position. Or just under – truncated locked on parent baseline – if
+	there are already elements in the same z-layer."""
 	def test(self, e):
 		return e.isXHeightOnTop(self.tolerance)
 

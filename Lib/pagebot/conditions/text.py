@@ -22,10 +22,10 @@ from pagebot.conditions.condition import Condition
 # Margins
 
 class Overflow2Next(Condition):
-    """If there is overflow in the element, then try to solve it. Note that
-    when used in a Composer-typesetter environment, this will not update the
-    `globals['page']` value. In that case it is better to call the
-    `Element.overflow2Next()` directly at the start of a new chapter."""
+	"""If there is overflow in the element, then try to solve it. Note that
+	when used in a Composer-typesetter environment, this will not update the
+	`globals['page']` value. In that case it is better to call the
+	`Element.overflow2Next()` directly at the start of a new chapter."""
 	def test(self, e):
 		return e.isOverflow(self.tolerance)
 
@@ -36,8 +36,8 @@ class Overflow2Next(Condition):
 # Columns
 
 class EqualizeFlow2Height(Condition):
-        """Test if all elements in the flow the same height and/or same amount
-        text lines."""
+	"""Test if all elements in the flow the same height and/or same amount
+	text lines."""
 	# TODO
 
 class BaselineCondition(Condition):

@@ -18,6 +18,7 @@
 import tornado.ioloop
 import tornado.web
 
+ioloop = None
 counter = 0
 
 PORT = 7777
@@ -25,9 +26,11 @@ PORT = 7777
 class MainHandler(tornado.web.RequestHandler):
 
     def get(self):
-        global counter
-        self.write("Hello, %d world" % counter)
+        global counter, ioloop
+        self.write("Hello, %d worlds" % counter)
         counter += 1
+        if counter > 10:
+            ioloop.stop()
 
 def make_app():
     return tornado.web.Application([
@@ -35,6 +38,10 @@ def make_app():
     ])
 
 if __name__ == "__main__":
+    global loop
     app = make_app()
     app.listen(PORT)
-    tornado.ioloop.IOLoop.current().start()
+    ioloop = tornado.ioloop.IOLoop.current()
+    ioloop.start()
+    print('Done')
+
