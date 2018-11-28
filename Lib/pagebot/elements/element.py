@@ -4019,6 +4019,7 @@ class Element:
         for e in self.parent.elements:
             # Only look at siblings that are previous in the list.
             if previousOnly and e is self:
+                print('break')
                 break
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer

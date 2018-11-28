@@ -18,6 +18,7 @@
 #     TODO: Floating on second line does not seem to work currently
 
 from pagebot.toolbox.color import color
+from pagebot import getContext
 
 EXPORT_PATH = '_export/Start'
 
@@ -43,7 +44,7 @@ def makeDocument():
     print(doc.view)
     print(doc.pages)
     
-    doc.view.padding = 100 # Don't show cropmarks in this example.
+    doc.view.padding = 0 # Don't show cropmarks in this example.
     #doc.margin = 
     doc.view.showPadding = True
 
@@ -54,12 +55,17 @@ def makeDocument():
     c5 = [Right2Right(), Float2TopLeft()]
     c6 = [Left2Left(), Float2TopRight()]
     
-    conditions = [c1, c2, c3, c4, c5, c6]
+    conditions = [c1]#, c2]#, c3, c4, c5, c6]
     page = doc[1]
     
     for c in conditions:
         makePage(doc, page, c)
-        page = page.next
+        #page = page.next
+    
+    testCoordinates()
+        
+
+rectSets = []
     
 def makePage(doc, page, conditions):
 
@@ -77,19 +83,24 @@ def makePage(doc, page, conditions):
                 fill=color(1 - n*ratio, 0, 0.5),
                 conditions=conditions, margin=0)
         rects.append(r)
+    rectSets.append(rects)
 
     score = doc.solve()
     doc.build()
     
-    '''
-    from pagebot import getContext
+def testCoordinates():
     context = getContext()
+    context.fill((0, 1, 0))
+    context.stroke(None)
     
-    for r in rects:
-        x = r.getFloatLeftSide()
-        y = r.getFloatTopSide()
-        print('%d %d' % (x, y))
-        context.fill((0, 1, 0))
-        context.circle(x, y, 2)
-    '''
+    for rects in rectSets:
+        i = 0
+        for r in rects:
+            i +=1
+            x = r.getFloatLeftSide()
+            y = r.getFloatTopSide()
+            #print('%d %d' % (x, y))
+            context.circle(x, y, 2)
+            context.text('%d' % i, (x + 5, y - 5))
+
 makeDocument()
