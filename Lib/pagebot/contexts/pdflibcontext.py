@@ -18,7 +18,7 @@
 #     https://www.pdflib.com/products/pdflib-family/pdflib/
 #
 import os
-import pdflib_py
+import PDFlib 
 
 from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.color import inheritColor, noColor
@@ -40,7 +40,7 @@ class PdfLibContext(BaseContext):
         super().__init__()
         # The context builder "cls.b" is drawBot which executes actual drawing
         # calls, similar to function calls in DrawBot scripts.
-        self.b = pdflib_py #  Builder for this canvas.
+        self.b = PDFlib.PDFlib() #  PDFlib Builder for this canvas.
         self.name = self.__class__.__name__
         # Holds the extension as soon as the export file path is defined.
         self.fileType = DEFAULT_FILETYPE
