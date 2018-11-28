@@ -100,21 +100,31 @@ class Composer:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
                 e.run(targets)
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
-                #print('AAAAAAA', targets.get('box'))
+
             elif e.isTextBox:
                 # In case e is a textBox, and the target box is defined, then append the content to the target.
                 if targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
                     errors.append('%s.compose: No box selected. Cannot place element or copy content of %s' % (composerName, e))
-                else:
+                else: # TODO: Ignore empty string here? str(e.bs).strip():
                     e.parent = targets['box']
-                    verbose.append('%s.compose: Add to text element "%s" to text box "%s"' % (composerName, e.bs[:50], targets['box']))
-                    
+                    verbose.append('%s.compose: Add text element "%s" to text box "%s"' % (composerName, e.bs[:50], targets['box']))
+              
+            elif e.isLine:
+                # In case e is a ruler or line, and the target box is defined, then append the content to the target.
+                if targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
+                    errors.append('%s.compose: No box selected. Cannot place ruler or line %s' % (composerName, e))
+                else:
+                    print('sddsdsadsasda', e)
+                    e.parent = targets['box']
+                    verbose.append('%s.compose: Add ruler or line element to text box "%s"' % (composerName, targets['box']))
+
             elif e.isImage:
                 # In case e is an image, and the target image is defined, then set the target image path.
                 if targets['image'] is None: # In case no image was selected, mark as error and move on to next element
                     errors.append('%s.compose: No image selected. Cannot place element or set image path of %s' % (composerName, e))
                     e.parent = targets['image']
                     verbose.append('%s.compose: Set image element "%s" to image box' % (composerName, e.path.split('/')[-1], targets['image']))
+            
             else:
                 errors.append('%s.compose: No valid box or image selected "%s - %s"' % (composerName, page, e))
 

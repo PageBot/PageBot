@@ -42,7 +42,7 @@ box = page.select('main')
 <li>Text to fit a box and elastic box to fit text</li>
 <li>Tabular setting</li>
 <li>Text Flow from one element to another. </li>
-<li>Variable Font UI access and instance creation, as the whole "fonttools" Python library is available.</li>
+<li>Variable Font UI access and instance creation, as the whole <q>fonttools</q> Python library is available.</li>
 <li>Access to all font metrics.</li>
 <li>Outline Font access modification.</li>
 <li>Space, groups and kerning access and modifcation.</li>

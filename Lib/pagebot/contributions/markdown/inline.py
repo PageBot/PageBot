@@ -6,44 +6,56 @@
 #
 #     Made for usage in PageBot, www.pagebot.pro
 #
-# Copied from <https://github.com/waylan/Python-Markdown>
 """
-Literature Extension for Python-Markdown
+InlineExtension Extension for Python-Markdown
 =======================================
 
-Adds literature handling to Python-Markdown.
+Make PageBot Markdown compatible with default MacDown syntax.
 
-See <https://pythonhosted.org/Markdown/extensions/footnotes.html>
-for documentation.
-
-Copyright The Python Markdown Project
-
-License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
 from markdown.extensions import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-SUP_RE = r'(\^\^)(.*?)\^\^' # <sup>
-DEL_RE = r'(--)(.*?)--' # <del>
+DEL_RE = r'(~~)(.*?)~~' # <del>
 INS_RE = r'(__)(.*?)__' # <ins>
+MARK_RE = r'(\=\=)(.*?)\=\=' # <mark>
+Q_RE = r'(\")(.*?)\"' # <q>
+U_RE = r'(_)(.*?)_' # <u>
+SUP_RE = r'(\^)(^\ )' # <sup>
+SUB_RE = r'(\!\!)(^\ )' # <sub>
 STRONG_RE = r'(\*\*)(.*?)\*\*' # <strong>
+EM_RE = r'(\*)(.*?)\*' # <em>
 EMPH_RE = r'(\/\/)(.*?)\/\/' # <emphasis>
 
-class EmphasisExtension(Extension):
+class InlineExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        # --Delete-- converts to <del>...</del>
+        # ~~Delete~~ converts to <del>..</del>
         del_tag = SimpleTagPattern(DEL_RE, 'del')
         md.inlinePatterns.add('del', del_tag, '>not_strong')
-        # __Underline__ converts to <ins>...</ins>
+        # __Insert__ converts to <ins>..</ins>
         ins_tag = SimpleTagPattern(INS_RE, 'ins')
         md.inlinePatterns.add('ins', ins_tag, '>del')
-        # ^^Sup^^ converts to <sup>...</sup>
+        # "Quote" converts to <q>..</q>
+        q_tag = SimpleTagPattern(Q_RE, 'q')
+        md.inlinePatterns.add('q', q_tag, '>ins')
+        # ==Mark== converts to <mark>..</mark>
+        mark_tag = SimpleTagPattern(MARK_RE, 'mark')
+        md.inlinePatterns.add('mark', mark_tag, '>q')
+        # _Underline_ converts to <u>..</u>
+        u_tag = SimpleTagPattern(U_RE, 'u')
+        md.inlinePatterns.add('ins', u_tag, '>mark')
+        # ^Sup converts to <sup>..</sup>
         sup_tag = SimpleTagPattern(SUP_RE, 'sup')
         md.inlinePatterns.add('sup', sup_tag, '>ins')
+        # !!Sub converts to <sub>..</sub>
+        sub_tag = SimpleTagPattern(SUB_RE, 'sub')
+        md.inlinePatterns.add('sup', sub_tag, '>sup')
 
         strong_tag = SimpleTagPattern(STRONG_RE, 'strong')
         md.inlinePatterns['strong'] = strong_tag
+        em_tag = SimpleTagPattern(EM_RE, 'em')
+        md.inlinePatterns['em'] = em_tag
         emph_tag = SimpleTagPattern(EMPH_RE, 'emphasis')
         md.inlinePatterns['emphasis'] = emph_tag
 

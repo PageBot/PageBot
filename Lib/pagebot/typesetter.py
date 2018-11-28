@@ -25,7 +25,7 @@ try:
     from markdown.extensions.fenced_code import FencedCodeExtension
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
-    from pagebot.contributions.markdown.emphasis import EmphasisExtension
+    from pagebot.contributions.markdown.inline import InlineExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     import sys
@@ -67,8 +67,10 @@ class Typesetter:
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
-    MARKDOWN_EXTENSIONS = [
-        EmphasisExtension(),
+    MARKDOWN_EXTENSIONS = [ 
+        # These extension are needed to make PageBot markdown compatible with 
+        # default MacDown behavior.
+        InlineExtension(), 
         FencedCodeExtension(), 
         FootnoteExtension(), 
         LiteratureExtension(), 
@@ -84,8 +86,8 @@ class Typesetter:
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> context = HtmlContext()
         >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
         >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
         >>> h3Style = dict(font='Georgia', fontSize=pt(14), textFill=color(0, 1, 0))
@@ -99,30 +101,37 @@ class Typesetter:
         ... # H1 header
         ... ## H2 header
         ... ### H3 header
-        ... --Delete--
-        ... __Underline__
+        ... ~~Delete~~
+        ... _Underline_
+        ... ==Mark==
+        ... *Em*
+        ... "Quote"
         ... **Strong**
         ... //Emphasis//
-        ... ^^Sup^^
+        ... ^Sup
+        ... !!Sub
         ... '''
         >>> galley = t.typesetMarkdown(mdText)
         >>> len(galley.elements)
         3
-        >>> galley.elements[1].bs # Rendered by PageBotContext of FlatContext
+        >>> galley.elements[1].bs # Rendered by HtmlContext 
         box = page.select['content']
         <BLANKLINE>
-        >>> galley.elements[2].bs # Rendered by PageBotContext of FlatContext
+        >>> galley.elements[2].bs # Rendered by HtmlContext
         <BLANKLINE>
         <BLANKLINE>
-        H1 header
-        H2 header
-        H3 header
-        Delete
-        Underline
-        Strong
-        Emphasis
-        Sup
-
+        <h1>H1 header</h1>
+        <h2>H2 header</h2>
+        <h3>H3 header</h3>
+        <p><del>Delete</del>
+        <u>Underline</u>
+        <mark>Mark</mark>
+        <em>Em</em>
+        <q>Quote</q>
+        <strong>Strong</strong>
+        <emphasis>Emphasis</emphasis>
+        ^Sup
+        !!Sub</p>
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -195,34 +204,6 @@ class Typesetter:
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
-    def node_em(self, node, e):
-        """Handle the <em> tag"""
-        self.typesetNode(node, e)
-
-    def node_p(self, node, e):
-        """Handle the <p> tag."""
-        self.typesetNode(node, e)
-
-    def node_u(self, node, e):
-        """Handle the <u> tag for underline."""
-        self.typesetNode(node, e)
-
-    def node_ins(self, node, e):
-        """Handle the <ins> tag, made by __Inserted Text__"""
-        self.typesetNode(node, e)
-
-    def node_del(self, node, e):
-        """Handle the <del> tag, made by --Deleted Text--"""
-        self.typesetNode(node, e)
-
-    def node_strong(self, node, e):
-        """Handle the <del> tag, made by **Strong**"""
-        self.typesetNode(node, e)
-
-    def node_emphasis(self, node, e):
-        """Handle the <emphasis> tag, made by //Strong//"""
-        self.typesetNode(node, e)
-
     def node_hr(self, node, e):
         """Add Ruler instance to the Galley."""
         if self.peekStyle() is None and e is not None:
@@ -230,7 +211,7 @@ class Typesetter:
             self.pushStyle({}) # Define top level for styles.
         hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
-
+        
     def getStyleValue(self, name, e=None, style=None, default=None):
         """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
