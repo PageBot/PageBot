@@ -105,6 +105,15 @@ class MenuItem(SiteElement):
         self.href = href
         self.label = label
 
+    def copy(self): 
+        """Copy self into a new instance, adding the attributes that the
+        generic SiteElement.copy does not copy."""
+        copiedMenuItem = SiteElement.copy(self)
+        copiedMenuItem.current = self.current
+        copiedMenuItem.href = self.href
+        copiedMenuItem.label = self.label
+        return copiedMenuItem
+
     def build(self, view, path):
         pass
 
@@ -137,13 +146,13 @@ class Logo(SiteElement):
     def build_html(self, view, path):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
-        b.div(cssId="logoWrapper")
+        b.div(cssId="Logo")
         b.a(href="index.html")
         for e in self.elements:
             e.build_html(view, path)
         b._a()
         b._div()
-        b.comment('End #logoWrapper')
+        b.comment('End #Logo')
         b.comment('End '+self.__class__.__name__)
 
 class Introduction(SiteElement):
@@ -221,12 +230,13 @@ class Content(SiteElement):
         b.section(cssId='content', cssClass='wide-content' )
         # Content here, should come from markdown file.
         for e in self.elements:
-            e.build_html(view, path)
-        b.p()
-        b.a(href='index.html', cssClass='buttonlink')
-        b.addHtml('Use Pagebot')
-        b._a()
-        b._p()
+            if e.__class__.__name__ == 'TextBox':
+                e.build_html(view, path)
+        #b.p()
+        #b.a(href='index.html', cssClass='buttonlink')
+        #b.addHtml('Use Pagebot')
+        #b._a()
+        #b._p()
         b._section() # end content area -->
         b._div() # end div #main .wrapper
         b.comment('End #main .wrapper .clearfix')
@@ -276,7 +286,7 @@ class Footer(SiteElement):
         b.comment('Start '+self.__class__.__name__)
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        self.deepFind('Footer').build_html(view, path)
+        #self.deepFind('Footer').build_html(view, path)
         b._div()
         b.comment('End #colophon .wrapper .clearfix')
         b._footer()

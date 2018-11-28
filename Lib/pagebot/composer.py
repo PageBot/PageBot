@@ -72,8 +72,14 @@ class Composer:
         if targets is None:
             if page is None:
                 page = self.doc[1]
+            
             targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles,
-                image=page.select('image'), box=page.select('main'), newTextBox=newTextBox)
+                newTextBox=newTextBox)
+
+            if page is not None:
+                target['image'] = page.select('image')
+                target['box'] = page.select('main'), 
+
         elif page is not None:
             targets['page'] = page
 
@@ -102,7 +108,6 @@ class Composer:
                 else:
                     e.parent = targets['box']
                     verbose.append('%s.compose: Add to text element "%s" to text box "%s"' % (composerName, e.bs[:50], targets['box']))
-                    print('BBBBBB', targets.get('box'), e.parent)
                     
             elif e.isImage:
                 # In case e is an image, and the target image is defined, then set the target image path.

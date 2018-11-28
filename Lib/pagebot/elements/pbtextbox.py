@@ -38,11 +38,6 @@ class TextBox(Element):
         Since both strings cannot be converted lossless one into the other, it
         is safer to keep them both if they are available."""
 
-        # Make sure that this is a formatted string. Otherwise create it with
-        # the current style. Note that in case there is potential clash in the
-        # double usage of fill and stroke.
-        print('------->', self.name, id(self), id(self.parent), self.page, bs)
-
         self._textLines = None
         self._baselines = None # Force initiaize upon first usage.
 
@@ -50,6 +45,10 @@ class TextBox(Element):
             self.size = size
         else:
             self.size = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
+
+        # Make sure that this is a formatted string. Otherwise create it with
+        # the current style. Note that in case there is potential clash in the
+        # double usage of fill and stroke.
 
         if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
             bs = ''
@@ -564,6 +563,18 @@ class TextBox(Element):
                     c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
             prevY = y
 
+    def _drawOverflowMarker_drawBot(self, view, px, py):
+        """Draw the optional overflow marker, if text doesn't fit in the box."""
+        b = self.b # Get current builder from self.doc.context.b
+        bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=10))
+        tw, _ = bs.size
+        # FIX: Should work work self.bottom
+        #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
+        b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
+
+
+    #   B U I L D  H T M L
+
     def build_html(self, view, origin=None, showElements=True):
         """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
@@ -574,8 +585,9 @@ class TextBox(Element):
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
-        print('2-3-3-3', id(self), len(self.elements), self.bs)
-        b.addHtml(self.bs.s) # Get HTML from BabelString in HtmlString context.
+        html = str(self.bs.s)
+        if html and html.strip(): # Check if there is content, besides white space
+            b.addHtml(html) # Get HTML from BabelString in HtmlString context.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
@@ -589,16 +601,8 @@ class TextBox(Element):
 
         b._div() # self.cssClass or self.__class__.__name__
 
-    def _drawOverflowMarker_drawBot(self, view, px, py):
-        """Draw the optional overflow marker, if text doesn't fit in the box."""
-        b = self.b # Get current builder from self.doc.context.b
-        bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=10))
-        tw, _ = bs.size
-        # FIX: Should work work self.bottom
-        #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
-        b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
 
-    #   C O N D I T I O N
+    #   C O N D I T I O N S
 
     # Text conditions
 

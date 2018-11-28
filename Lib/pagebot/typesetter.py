@@ -25,6 +25,7 @@ try:
     from markdown.extensions.fenced_code import FencedCodeExtension
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
+    from pagebot.contributions.markdown.emphasis import EmphasisExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
     import sys
@@ -66,7 +67,13 @@ class Typesetter:
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
-    MARKDOWN_EXTENSIONS = [FencedCodeExtension(), FootnoteExtension(), LiteratureExtension(), Nl2BrExtension()]
+    MARKDOWN_EXTENSIONS = [
+        EmphasisExtension(),
+        FencedCodeExtension(), 
+        FootnoteExtension(), 
+        LiteratureExtension(), 
+        Nl2BrExtension(),
+    ]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None,
             imageAsElement=False, tryExcept=True):
@@ -92,6 +99,11 @@ class Typesetter:
         ... # H1 header
         ... ## H2 header
         ... ### H3 header
+        ... --Delete--
+        ... __Underline__
+        ... **Strong**
+        ... //Emphasis//
+        ... ^^Sup^^
         ... '''
         >>> galley = t.typesetMarkdown(mdText)
         >>> len(galley.elements)
@@ -105,6 +117,12 @@ class Typesetter:
         H1 header
         H2 header
         H3 header
+        Delete
+        Underline
+        Strong
+        Emphasis
+        Sup
+
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -185,6 +203,26 @@ class Typesetter:
         """Handle the <p> tag."""
         self.typesetNode(node, e)
 
+    def node_u(self, node, e):
+        """Handle the <u> tag for underline."""
+        self.typesetNode(node, e)
+
+    def node_ins(self, node, e):
+        """Handle the <ins> tag, made by __Inserted Text__"""
+        self.typesetNode(node, e)
+
+    def node_del(self, node, e):
+        """Handle the <del> tag, made by --Deleted Text--"""
+        self.typesetNode(node, e)
+
+    def node_strong(self, node, e):
+        """Handle the <del> tag, made by **Strong**"""
+        self.typesetNode(node, e)
+
+    def node_emphasis(self, node, e):
+        """Handle the <emphasis> tag, made by //Strong//"""
+        self.typesetNode(node, e)
+
     def node_hr(self, node, e):
         """Add Ruler instance to the Galley."""
         if self.peekStyle() is None and e is not None:
@@ -231,7 +269,7 @@ class Typesetter:
         And typeset the superior footnote index reference."""
         nodeId = node.attrib.get('id')
         # Check if this is a footnote reference
-        if nodeId.startswith('fnref'): # This is a footnote reference.
+        if nodeId is not None and nodeId.startswith('fnref'): # This is a footnote reference.
             footnotes = self.getFootnotes(e)
             if footnotes is not None:
                 nodeId = nodeId.split(':')[1]

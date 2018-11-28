@@ -909,6 +909,14 @@ class Document:
                     pages.append(page)
         return pages
 
+    def findPage(self, eId=None, name=None, pattern=None, pageSelection=None):
+        """Answer the first page found from the self.findPages(...) call. Answer None
+        if no page can be found matching the parameters."""
+        pages = self.findPages(eId=eId, name=name, pattern=pattern, pageSelection=pageSelection)
+        if pages:
+            return pages[0]
+        return None
+
     def isLeft(self):
         """This is reached for `e.isleft()` queries, when elements are not
         placed on a page. The Document cannot know the answer then. Always
@@ -933,9 +941,11 @@ class Document:
         if isinstance(template, str):
             template = self.templates.get(template)
 
-        if template is None:
+        if isinstance(template, str): # Find the template with this name.
+            template = self.getTemplate(template)
+        if template is None: # Not defined or template not found, then use default
             template = self.defaultTemplate
-
+        
         if not name and template is not None:
             name = template.name
 
