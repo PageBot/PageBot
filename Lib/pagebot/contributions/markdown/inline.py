@@ -22,8 +22,8 @@ INS_RE = r'(__)(.*?)__' # <ins>
 MARK_RE = r'(\=\=)(.*?)\=\=' # <mark>
 Q_RE = r'(\")(.*?)\"' # <q>
 U_RE = r'(_)(.*?)_' # <u>
-SUP_RE = r'(\^)(^\ )' # <sup>
-SUB_RE = r'(\!\!)(^\ )' # <sub>
+SUP_RE = r'(\^)([^ ]*)' # <sup>
+SUB_RE = r'(\!\!)([^ ]*)' # <sub>
 STRONG_RE = r'(\*\*)(.*?)\*\*' # <strong>
 EM_RE = r'(\*)(.*?)\*' # <em>
 EMPH_RE = r'(\/\/)(.*?)\/\/' # <emphasis>
@@ -50,7 +50,7 @@ class InlineExtension(Extension):
         md.inlinePatterns.add('sup', sup_tag, '>ins')
         # !!Sub converts to <sub>..</sub>
         sub_tag = SimpleTagPattern(SUB_RE, 'sub')
-        md.inlinePatterns.add('sup', sub_tag, '>sup')
+        md.inlinePatterns.add('sub', sub_tag, '>sup')
 
         strong_tag = SimpleTagPattern(STRONG_RE, 'strong')
         md.inlinePatterns['strong'] = strong_tag
