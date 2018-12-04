@@ -327,10 +327,12 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_img(self, node, e):
-        """Process the image. adding the img tag or a new image element to the galley."""
+        """Process the image. adding the img tag or a new image element to the galley.
+        The alt attribute can contain additional information for the Image element."""
         # Typeset the empty block of the img, which creates the HTML tag.
         if self.imageAsElement:
-            self.galley.appendElement(self.IMAGE_CLASS(path=node.attrib.get('src'), index=0))
+            self.galley.appendElement(self.IMAGE_CLASS(path=node.attrib.get('src'), 
+                alt=node.attrib.get('alt'), index=0))
         else:
             self.htmlNode_(node)
 

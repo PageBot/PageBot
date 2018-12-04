@@ -63,7 +63,7 @@ class MampView(SiteView):
                     print('[MampView.build] Deleting %s' % path)
                 shutil.rmtree(path)
         else: # Make sure it is not there. Remove manually otherwise.
-            assert path and not os.path.exists(path), '[MampView.build] Export site path "%s" exists: delete manually' % (path)
+            assert path and not os.path.exists(path), '[MampView.build] Export site path "%s" exists. For safety, delete manually' % (path)
             if not path.endswith('/'):
                 path += '/'
 

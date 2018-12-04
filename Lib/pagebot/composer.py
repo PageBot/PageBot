@@ -114,7 +114,6 @@ class Composer:
                 if targets.get('box') is None: # In case no box was selected, mark as error and move on to next element.
                     errors.append('%s.compose: No box selected. Cannot place ruler or line %s' % (composerName, e))
                 else:
-                    print('sddsdsadsasda', e)
                     e.parent = targets['box']
                     verbose.append('%s.compose: Add ruler or line element to text box "%s"' % (composerName, targets['box']))
 
