@@ -50,7 +50,6 @@ class Element:
     isPage = False # Set to True by Page-like elements.
     isView = False
     isImage = False
-    isLine = False
     
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow

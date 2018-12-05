@@ -65,7 +65,7 @@ class Image(Element):
     """
     isImage = True
 
-    def __init__(self, path=None, name=None, w=None, h=None, size=None, z=0, mask=None,
+    def __init__(self, path=None, alt=None, name=None, w=None, h=None, size=None, z=0, mask=None,
         imo=None, index=1, saveScaled=True, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -89,6 +89,7 @@ class Image(Element):
         self.z = z # Make conditions work with captions inside an image frame element.
 
         self.name = name
+        self.alt = alt
         self.mask = mask # Optional mask element.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
@@ -261,8 +262,28 @@ class Image(Element):
         for e in self.elements:
             e.prepare(view, origin, drawElements)
 
-    def build_html(self, view, origin=None, drawElements=True):
-        print('[%s.build_html] Not implemented yet' % self.__class__.__name__)
+    def build_html(self, view, path, drawElements=True):
+        context = view.context # Get current context.
+        b = context.b
+
+        # Use self.cssClass if defined, otherwise self class. #id is ignored if None
+        b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
+
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view)
+
+        b.img(src=self.path, alt=self.alt)
+
+        b.div(cssClass='caption') # Allow CSS to address the captions separately.
+        if drawElements: # Draw captions if they are there.
+            for e in self.elements:
+                e.build_html(view, path)
+        b._div() # .caption
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view)
+
+        b._div() # self.cssClass or self.__class__.__name__
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)

@@ -20,7 +20,6 @@ from pagebot.toolbox.color import noColor
 
 class Line(Element):
     """Draws a straight horizontal ruler."""
-    isLine = True
 
     def _get_w(self):
         """Answers the width of the Line element.

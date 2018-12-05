@@ -22,8 +22,6 @@ from pagebot.constants import DEFAULT_HEIGHT
 
 class Ruler(Element):
 
-    isLine = True
-
     def _get_h(self):
         """Poperty for the self.h height value
 

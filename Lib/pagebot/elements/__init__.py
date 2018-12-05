@@ -33,7 +33,7 @@ from pagebot.elements.pboval import Circle
 
 # Page elements
 from pagebot.elements.pbimage import Image
-from pagebot.elements.pbgalley import Galley
+from pagebot.elements.pbgalley import Galley, Column
 from pagebot.elements.pbpage import Page, Template
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.pbplacer import Placer
@@ -98,6 +98,10 @@ def newPlacer(**kwargs):
     documets."""
     return Placer(**kwargs)
 
+def newColumn(**kwargs):
+    """Answer a new Column instance, offering a squential paste-board for elements."""
+    return Column(**kwargs)
+    
 def newTextBox(bs='', **kwargs):
     """Caller must supply formatted string. Note that w and h can also be
     defined in the style."""

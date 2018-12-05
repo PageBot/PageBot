@@ -575,7 +575,7 @@ class TextBox(Element):
 
     #   B U I L D  H T M L
 
-    def build_html(self, view, origin=None, showElements=True):
+    def build_html(self, view, origin=None, drowElements=True):
         """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent."""
@@ -583,23 +583,26 @@ class TextBox(Element):
         context = view.context # Get current context.
         b = context.b
 
-        # Use self.cssClass if defined, otherwise self class. #id is ignored if None
-        b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
         html = str(self.bs.s)
-        if html and html.strip(): # Check if there is content, besides white space
+        hasContent = html and html.strip() # Check if there is content, besides white space
+
+        # Use self.cssClass if defined, otherwise self class. #id is ignored if None
+        if hasContent:
+            b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
             b.addHtml(html) # Get HTML from BabelString in HtmlString context.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
 
-        if showElements:
+        if drowElements:
             for e in self.elements:
                 e.build_html(view, origin)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)
 
-        b._div() # self.cssClass or self.__class__.__name__
+        if hasContent:
+            b._div() # self.cssClass or self.__class__.__name__
 
 
     #   C O N D I T I O N S

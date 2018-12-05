@@ -27,28 +27,32 @@ SUB_RE = r'(\!\!)([^ ]*)' # <sub>
 STRONG_RE = r'(\*\*)(.*?)\*\*' # <strong>
 EM_RE = r'(\*)(.*?)\*' # <em>
 EMPH_RE = r'(\/\/)(.*?)\/\/' # <emphasis>
+CAPTION_RE = r'(\*\[\[)(.*?)\]\]\*' # <caption>
 
 class InlineExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        # ~~Delete~~ converts to <del>..</del>
+        # *[[Caption]]* converts to <caption>Caption</caption>
+        caption_tag = SimpleTagPattern(CAPTION_RE, 'caption')
+        md.inlinePatterns.add('caption', caption_tag, '>not_strong')
+        # ~~Delete~~ converts to <del>Delete</del>
         del_tag = SimpleTagPattern(DEL_RE, 'del')
-        md.inlinePatterns.add('del', del_tag, '>not_strong')
-        # __Insert__ converts to <ins>..</ins>
+        md.inlinePatterns.add('del', del_tag, '>caption')
+        # __Insert__ converts to <ins>Insert</ins>
         ins_tag = SimpleTagPattern(INS_RE, 'ins')
         md.inlinePatterns.add('ins', ins_tag, '>del')
-        # "Quote" converts to <q>..</q>
+        # "Quote" converts to <q>Quote</q>
         q_tag = SimpleTagPattern(Q_RE, 'q')
         md.inlinePatterns.add('q', q_tag, '>ins')
         # ==Mark== converts to <mark>..</mark>
         mark_tag = SimpleTagPattern(MARK_RE, 'mark')
         md.inlinePatterns.add('mark', mark_tag, '>q')
-        # _Underline_ converts to <u>..</u>
+        # _Underline_ converts to <u>Underline</u>
         u_tag = SimpleTagPattern(U_RE, 'u')
         md.inlinePatterns.add('ins', u_tag, '>mark')
-        # ^Sup converts to <sup>..</sup>
+        # ^Sup converts to <sup>Sup</sup>
         sup_tag = SimpleTagPattern(SUP_RE, 'sup')
         md.inlinePatterns.add('sup', sup_tag, '>ins')
-        # !!Sub converts to <sub>..</sub>
+        # !!Sub converts to <sub>Sub</sub>
         sub_tag = SimpleTagPattern(SUB_RE, 'sub')
         md.inlinePatterns.add('sub', sub_tag, '>sup')
 

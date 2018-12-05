@@ -51,7 +51,10 @@ class Typesetter:
     CODEBLOCK_CLASS = CodeBlock
 
     DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
-    SKIP_TAGS = ('document', 'pre')
+    SKIP_TAGS = ('document',
+        'pre', # Ignore as part of a code block
+        'figure', 'figcaption', # Not implemented by all browsers. Use ![]()*Caption* instead.
+    )
 
     # Default styles for Typesetter, based on the standard markdown HTML-tags
     # Some ugly colors to show that we're in default mode here, for the user to
@@ -77,8 +80,7 @@ class Typesetter:
         Nl2BrExtension(),
     ]
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None,
-            imageAsElement=False, tryExcept=True):
+    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True):
         """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -143,8 +145,6 @@ class Typesetter:
             styles = self.DEFAULT_STYLES
         self.styles = styles # Style used, in case the current text box does not have them.
 
-        self.imageAsElement = imageAsElement # If True, add the image as element. Otherwise embed as tag.
-
         # Stack of graphic state as cascading styles. Last is template for the next.
         self.gState = []
         self.tagHistory = []
@@ -159,50 +159,7 @@ class Typesetter:
             skipTags = self.SKIP_TAGS
         self.skipTags = skipTags
 
-    def node_h1(self, node, e):
-        """Handle the <h1> tag."""
-        # Add line break to whatever style/content there was before.
-        # Add invisible h1-marker in the string, to be retrieved by the composer.
-        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag.
-        self.typesetNode(node, e)
-
-    def node_h2(self, node, e):
-        """Handle the <h2> tag."""
-        # Add line break to whatever style/content there was before.
-        # Add invisible h2-marker in the string, to be retrieved by the composer.
-        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag.
-        self.typesetNode(node, e)
-
-    def node_h3(self, node, e):
-        """Handle the <h3> tag."""
-        # Add line break to whatever style/content there was before.
-        # Add invisible h3-marker in the string, to be retrieved by the composer.
-        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag.
-        self.typesetNode(node, e)
-
-    def node_h4(self, node, e):
-        """Handle the <h4> tag."""
-        # Add line break to whatever style/content there was before.
-        # Add invisible h4-marker in the string, to be retrieved by the composer.
-        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag.
-        self.typesetNode(node, e)
-
-    def node_h5(self, node, e):
-        """Handle the <h5> tag."""
-        # Add line break to whatever style/content there was before.
-        # Add invisible h4-marker in the string, to be retrieved by the composer.
-        #headerId = self.document.addTocNode(node) # Store the node in the self.document.toc for later TOC composition.
-        #self.append(getMarker(node.tag, headerId)) # Link the node tag with the TOC headerId.
-        # Typeset the block of the tag.
-        self.typesetNode(node, e)
+        self.lastImage = None # Keep the last processed image, in case there are captions to add.
 
     def node_hr(self, node, e):
         """Add Ruler instance to the Galley."""
@@ -240,6 +197,7 @@ class Typesetter:
         bs = self.context.newString(s, e=e, style=brStyle)
         self.append(bs) # Add newline in the current setting of FormattedString
         """
+
     def node_a(self, node, e):
         """Ignore links, but process the block"""
         # Typeset the block of the tag.
@@ -326,20 +284,33 @@ class Typesetter:
         # Typeset the block of the tag.
         self.typesetNode(node, e)
 
+    # For now, using the full figure tag as HTML in Markdown does not work, as
+    # <figure> and <figcaption> are not supported by all browsers.
+    # <figure class="inlineImage">
+    #   <img src="images/myImage.png" alt="Alt text here"/>
+    #   <figcaption>Caption here</figcaption>
+    # </figure>
+    #
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the galley.
-        The alt attribute can contain additional information for the Image element."""
-        # Typeset the empty block of the img, which creates the HTML tag.
-        if self.imageAsElement:
-            self.galley.appendElement(self.IMAGE_CLASS(path=node.attrib.get('src'), 
-                alt=node.attrib.get('alt'), index=0))
-        else:
-            self.htmlNode_(node)
+        The alt attribute can contain additional information for the Image element.
+        Keep the Image element in self.currentImage, in case we need to add captions.
+        """
+        self.currentImage = self.IMAGE_CLASS(path=node.attrib.get('src'), parent=self.galley,
+            alt=node.attrib.get('alt'), index=node.attrib.get('index', 0))
 
-    def node_pre(self, node, e):
-        """<pre> is part of the code block. Ignore the tag and create a CodeBlock element instance
-        on the <code> node."""
-        self.typesetNode(node, e)
+    def node_caption(self, node, e):
+        """If there is a self.lastImage set, then redirect output of the caption nodes into the image,
+        instead of the self.galley. Otherwise just output.
+        as plain text, ignoring the caption tag. Multiple captions are added to the the current image,
+        until it is changed."""
+        if self.currentImage is not None: # In case there is a current image, attach caption to it.
+            savedGalley = self.galley # Temporary redirect node parent
+            self.galley = self.currentImage
+            self.typesetNode(node, e)
+            self.galley = savedGalley
+        else:
+            self.typesetNode(node, e)
 
     def node_code(self, node, e):
         """Create a NodeBlock element, that contains the code source, to be executed by
