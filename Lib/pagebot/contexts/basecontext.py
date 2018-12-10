@@ -13,9 +13,10 @@
 #
 #     basecontext.py
 #
+import os
+from math import radians, sin, cos
 
 from pagebot.paths import DEFAULT_FONT_PATH
-import os
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
@@ -1028,44 +1029,77 @@ class BaseContext(AbstractDrawBotContext):
         p = point2D(p)
         return path._path.containsPoint_(p)
 
-    def intersectWithLine(self, glyph, line):
+    def intersectGlyphWithCircle(self, glyph, m, r, spokes=16):
+        mx, my = m
+        lines = []
+        angle = radians(360/spokes)
+        p1 = None
+        for n in range(spokes+1):
+            p = mx + cos(angle*n)*r, my + sin(angle*n)*r
+            if p1 is not None:
+                lines.append((p1, p))
+            p1 = p
+        return self.intersectGlyphWithLines(glyph, lines)
+
+
+    def intersectGlyphWithLines(self, glyph, lines):
+        intersections = set()
+        glyphPath = self.getGlyphPath(glyph)
+        for line in lines:
+            points = self.intersectPathWithLine(glyphPath, line)
+            if points is not None:
+                intersections = intersections.union(points)
+        return intersections
+
+    def intersectGlyphWithLine(self, glyph, line):
         """Answers the sorted set of intersecting points between the straight
         line and the flatteded glyph path."""
+        glyphPath = self.getGlyphPath(glyph)
+        return self.intersectPathWithLine(glyphPath, line)
+
+    def intersectPathWithLine(self, path, line):
         intersections = set() # As set,  make sure to remove any doubles.
 
         def det(a, b):
             return a[0] * b[1] - a[1] * b[0]
 
-        (lx0, ly0), (lx1, ly1) = line
-        maxX = max(lx0, lx1)
-        minX = min(lx0, lx1)
-        maxY = max(ly0, ly1)
-        minY = min(ly0, ly1)
-        glyphPath = self.getGlyphPath(glyph)
-        contours = self.getFlattenedContours(glyphPath)
+        contours = self.getFlattenedContours(path)
 
         if not contours:
             # Could not generate path or flattenedPath. Or there are no
             # contours. Give up.
             return None
 
+        (lx0, ly0), (lx1, ly1) = line
+        maxX = round(max(lx0, lx1))
+        minX = round(min(lx0, lx1))
+        maxY = round(max(ly0, ly1))
+        minY = round(min(ly0, ly1))
+
         for contour in contours:
             for n in range(len(contour)):
                 pLine = contour[n], contour[n-1]
                 (px0, py0), (px1, py1) = pLine
-                if minY > max(py0, py1) or maxY < min(py0, py1) or \
-                        minX > max(px0, px1) or maxX < min(px0, px1):
+                if minY > round(max(py0, py1)) or maxY < round(min(py0, py1)) or \
+                        minX > round(max(px0, px1)) or maxX < round(min(px0, px1)):
                     continue # Skip if boundings boxes don't overlap.
 
-                xdiff = (line[0][0] - line[1][0], pLine[0][0] - pLine[1][0])
-                ydiff = (line[0][1] - line[1][1], pLine[0][1] - pLine[1][1])
+                xdiff = lx0 - lx1, px0 - px1
+                ydiff = ly0 - ly1, py0 - py1
 
                 div = det(xdiff, ydiff)
                 if div == 0:
                    continue # No intersection
 
-                d = (det(*line), det(*pLine))
-                intersections.add((det(d, xdiff) / div, det(d, ydiff) / div))
+                # Calculate the intersection
+                d = det(*line), det(*pLine)
+                ix = det(d, xdiff) / div
+                iy = det(d, ydiff) / div
+
+                # Determine is the intersection points is indeed part of the line segment
+                if (round(lx0) <= round(ix) <= round(lx1) or round(lx1) <= round(ix) <= round(lx0)) and\
+                   (round(ly0) <= round(iy) <= round(ly1) or round(ly1) <= round(iy) <= round(ly0)):
+                    intersections.add((ix, iy))
 
         # Answer the set as sorted list, increasing x, from left to right.
         return sorted(intersections)

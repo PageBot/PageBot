@@ -209,9 +209,10 @@ class DrawBotContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
-    def getFlattenedPath(self, path=None):
+    def bezierPathByFlatteningPath(self, path=None):
         """Use the NSBezier flatten path. Answers None if the flattened path
-        could not be made."""
+        could not be made.
+        """
         if path is None:
             path = self.path
         #return path._path.getNSBezierPath().bezierPathByFlatteningPath()
@@ -219,7 +220,17 @@ class DrawBotContext(BaseContext):
 
     def getFlattenedContours(self, path=None):
         """Answers the flattened Bézier path as  a contour list [contour,
-        contour, ...] where contours are lists of point2D() points."""
+        contour, ...] where contours are lists of point2D() points.
+    
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> context = DrawBotContext()
+        >>> font = findFont('Roboto-Regular')
+        >>> glyph = font['H']
+        >>> contour = glyph.contours[0]
+        >>> line = ((0, 200), (500, 200))
+        >>> context.intersectGlyphWithLine(glyph, line)
+
+        """
         contour = []
         flattenedContours = [contour]
         flatPath = self.bezierPathByFlatteningPath(path) # Use/create self._path if path is None
