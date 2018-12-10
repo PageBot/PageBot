@@ -222,14 +222,6 @@ class DrawBotContext(BaseContext):
         """Answers the flattened Bézier path as  a contour list [contour,
         contour, ...] where contours are lists of point2D() points.
     
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> context = DrawBotContext()
-        >>> font = findFont('Roboto-Regular')
-        >>> glyph = font['H']
-        >>> contour = glyph.contours[0]
-        >>> line = ((0, 200), (500, 200))
-        >>> context.intersectGlyphWithLine(glyph, line)
-
         """
         contour = []
         flattenedContours = [contour]

@@ -90,11 +90,10 @@ rr = glyph.width/3 # Radius of the intersection circle
 drawIntersectingCircle(m, rr, spokes)
 
 # Calculate intersection points with the circle. And draw the point markers
+r = 32
 c.fill(None)
-c.stroke(color(1, 0, 0.6), 2)
+c.stroke(color(1, 0, 0.6), 4)
 for p in c.intersectGlyphWithCircle(glyph, m, rr, spokes):
-    print(p)
-    c.stroke((1, 0, 0.6))
     c.oval(x+p[0]-r/2, y+p[1]-r/2, r, r)
 
 c.saveImage('_export/GlyphCircleIntersection.pdf')

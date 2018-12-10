@@ -1041,7 +1041,6 @@ class BaseContext(AbstractDrawBotContext):
             p1 = p
         return self.intersectGlyphWithLines(glyph, lines)
 
-
     def intersectGlyphWithLines(self, glyph, lines):
         intersections = set()
         glyphPath = self.getGlyphPath(glyph)
