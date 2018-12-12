@@ -140,8 +140,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # yAlign = TOP.
         originTop = False, # TODO: Setting to  default True has currently positioning bugs.
 
-        # Alignment of origin on element. Note that formatted text string are
-        # aligned by the xTextAlign attribute.
+        # Alignment of origin on element. Note that formatted text string flows 
+        # are aligned by the xTextAlign attribute. xAlign is about the position
+        # of the element box.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
         yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.

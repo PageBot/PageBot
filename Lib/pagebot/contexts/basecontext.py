@@ -802,7 +802,6 @@ class BaseContext(AbstractDrawBotContext):
 
         # Copies style, check keys.
         style = makeStyle(style=style)
-
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,

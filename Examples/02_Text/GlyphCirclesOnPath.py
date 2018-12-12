@@ -14,24 +14,24 @@
 #
 #     Draw a number of circles on the contour with equal distance.
 #
-from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot import getContext
 from pagebot.toolbox.color import color, noColor, blackColor
 
-GLYPH_NAME = 'E'
+GLYPH_NAME = 'U'
 
 c = getContext()
 
 c.newPage(1000, 1000)
-c.scale(0.5)
+#c.scale(0.5)
 
-font = findFont('Roboto-Regular')
+#font = findFont('Roboto-Regular')
+font = Font('/Users/petr/Desktop/TYPETR-git/TYPETR-PowerLift/Masters/PowerLift-Tight.ttf')
 glyph = font[GLYPH_NAME]
-glyph.removeOverlap()
+#glyph.removeOverlap()
 
 c.stroke(blackColor, 1)
 c.fill(None)
-print('Left margin:', glyph.leftMargin)
 x = y = 100
 
 # Draw markers on the glyph points
@@ -83,7 +83,25 @@ def drawIntersectingCircle(m, rr, spokes):
             lines.append((p1, p))
             c.line((x+mx, y+my), (x+p[0], y+p[1]))
         p1 = p
-        
+    
+R = 48
+spokes = 64
+for cIndex in range(len(glyph.contours)):
+    contour = glyph.contours[cIndex]
+    m = None
+    for pIndex in range(len(contour)):
+        p = contour[pIndex]
+        if m is None:
+            m = p.x, p.y
+        else:
+            intersections = c.intersectGlyphWithCircle(glyph, m, R, spokes)
+            if intersections:
+                pp = sorted(intersections)[0]
+                c.fill(None)
+                c.stroke((1, 0, 0))
+                c.oval(x+pp[0]-R/4, y+pp[1]-R/4, R/2, R/2)
+                m = pp
+"""
 # Calculate the intersecting circle and draw it
 spokes = 128 # Accuracy of the intersections
 m = (glyph.width/2, font.info.capHeight/2) # Middle point of the intersection circle
@@ -99,3 +117,4 @@ for p in c.intersectGlyphWithCircle(glyph, m, rr, spokes):
     c.oval(x+p[0]-r/2, y+p[1]-r/2, r, r)
 
 c.saveImage('_export/GlyphCircleIntersection.pdf')
+"""

@@ -766,7 +766,7 @@ class DrawBotString(BabelString):
         # Format plain string t onto new formatted fs.
         newT = context.b.FormattedString(t, **fsAttrs)
         isFitting = True
-
+        
         if w is not None:
             # A target width is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds

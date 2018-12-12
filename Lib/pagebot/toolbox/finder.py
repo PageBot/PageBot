@@ -43,7 +43,8 @@ class Finder:
 
     def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
-        """Answer the list of full file paths, that match the parameters.
+        """Answer the list of full file paths, that match the parameters. Matching both
+        name.lower() and pattern.lower() 
         """
         if paths is None:
             paths = []
@@ -66,11 +67,12 @@ class Finder:
                     self.findPaths(name=name, pattern=pattern, extension=extension,
                         path=filePath, paths=paths)
                     continue
-                if name is not None and name != fileName:
+                fileNameLower = fileName.lower()
+                if name is not None and name.lower() != fileNameLower:
                     continue
-                if pattern is not None and not pattern in fileName:
+                if pattern is not None and not pattern.lower() in fileNameLower:
                     continue
-                if extension is not None and not fileName.endswith('.'+extension):
+                if extension is not None and not fileNameLower.endswith('.'+extension.lower()):
                     continue
                 # Now we have a matching path, add it to the list
                 paths.append(filePath)

@@ -851,6 +851,34 @@ class PageBotPath:
         center = upt(point2D(center))
         self.bp.transform((xy, xx, yy, yx, ptx, pty), center)
 
+    #   M A T H  O P E R A T O R S
+
+    def __add__(self, path):
+        """Add path to self and return a new path. 
+        (self + path) is identical to self.union(path)
+        """
+        return self.union(path)
+
+    def __sub__(self, path):
+        """Subtract path to self and return a new path. 
+        (self - path) is identical to self.difference(path)
+        (path - self) is identical to path.difference(self)
+        """
+        return self.difference(path)
+
+    def __and__(self, path):
+        """Intersect self and path and return a new path. 
+        (self & path) is identical to self.xor(path)
+        """
+        return self.intersection(path)
+
+    def __xor__(self, path):
+        """Subtract path to self and return a new path. 
+        (self ^ path) is identical to self.xor(path)
+        """
+        return self.xor(path)
+
+
     #   B O O L E A N  O P E R A T O R S
 
     def union(self, path):
@@ -867,6 +895,8 @@ class PageBotPath:
         >>> path2.rect(100, 100, 200, 200)
         >>> path1.union(path2).points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (300.0, 100.0), (300.0, 300.0), (100.0, 300.0), (100.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
+        >>> (path1 + path2).points # Equivalent to addition.
+        [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (300.0, 100.0), (300.0, 300.0), (100.0, 300.0), (100.0, 200.0), (0.0, 200.0), (0.0, 0.0)]
         """
         return self.__class__(self.context, self.bp.union(path.bp))
 
@@ -882,6 +912,10 @@ class PageBotPath:
         >>> path2.rect(0, 100, 200, 200)
         >>> path1.difference(path2).points
         [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0)]
+        >>> (path1 - path2).points
+        [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0)]
+        >>> (path2 - path1).points
+        [(200.0, 300.0), (0.0, 300.0), (0.0, 200.0), (200.0, 200.0), (200.0, 300.0)]
         """
         return self.__class__(self.context, self.bp.difference(path.bp))
 
@@ -896,6 +930,8 @@ class PageBotPath:
         >>> path2 = PageBotPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         >>> path1.intersection(path2).points
+        [(100.0, 100.0), (200.0, 100.0), (200.0, 200.0), (100.0, 200.0), (100.0, 100.0)]
+        >>> (path1 & path2).points
         [(100.0, 100.0), (200.0, 100.0), (200.0, 200.0), (100.0, 200.0), (100.0, 100.0)]
         """
         return self.__class__(self.context, self.bp.intersection(path.bp))
@@ -913,6 +949,10 @@ class PageBotPath:
         >>> path2 = PageBotPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         >>> len(path1.xor(path2).points)
+        13
+        >>> len((path1 ^ path2).points)
+        13
+        >>> len((path2 ^ path1).points)
         13
         """
         return self.__class__(self.context, self.bp.xor(path.bp))
@@ -957,9 +997,19 @@ class PageBotPath:
         style = self.style.copy()
         return PageBotPath(context=self.context, bezierPath=bp, style=style)
 
-def newRectPath(context, w, h):
-    pbp = PageBotPath(context=context)
+def newRectPath(context, w, h, bezierPath=None, style=None):
+    pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
     pbp.rect(0, 0, w, h)
+    return pbp
+
+def newCirclePath(context, r, bezierPaht=None, style=None):
+    pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
+    pbp.oval(-r, -r, 2*r, 2*r)
+    return pbp
+
+def newOvalPath(context, w, h, bezierPath=None, style=None):
+    pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
+    pbp.oval(0, 0, w, h)
     return pbp
 
 if __name__ == '__main__':

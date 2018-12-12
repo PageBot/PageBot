@@ -4720,6 +4720,11 @@ class Element:
             return abs(self.parent.pt - self.top) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.top) <= tolerance
 
+    def isMarginOnTop(self, tolerance=0):
+        if self.originTop:
+            return abs(self.parent.pt - self.mTop) <= tolerance
+        return abs(self.parent.h - self.parent.pt - self.mTop) <= tolerance
+
     def isTopOnTopSide(self, tolerance=0):
         if self.originTop:
             return abs(self.top) <= tolerance
@@ -6383,6 +6388,16 @@ class Element:
             self.top = self.parent.pt
         else:
             self.top = self.parent.h - self.parent.pt
+        return True
+
+    def margin2Top(self):
+        """Move top margin of the element to the padding top of the element."""
+        if self.parent is None:
+            return False
+        if self.originTop:
+            self.mTop = self.parent.pt
+        else:
+            self.mTop = self.parent.h - self.parent.pt
         return True
 
     def top2TopSide(self):

@@ -910,6 +910,15 @@ class Top2Top(Condition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.top2Top(), e, score)
 
+class Margin2Top(Condition):
+    """Align top margin of e bounding box on parent top margin."""
+    def test(self, e):
+        return e.isMarginOnTop(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.margin2Top(), e, score)
+
 class Top2TopSide(Condition):
     """Align top of e bounding box on parent top side."""
     def test(self, e):
