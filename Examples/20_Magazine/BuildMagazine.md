@@ -1,4 +1,0 @@
-~~~
-newMagazine(A4)
-
-~~~

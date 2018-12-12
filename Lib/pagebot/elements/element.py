@@ -4542,8 +4542,16 @@ class Element:
         center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.left) <= tolerance
 
+    def isMarginLeftOnCenter(self, tolerance=0):
+        pl = self.parent.pl # Get parent padding left
+        center = (self.parent.w - self.parent.pr - pl)/2
+        return abs(pl + center - self.mLeft) <= tolerance
+
     def isLeftOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.left) <= tolerance
+
+    def isMarginLeftOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.mLeft) <= tolerance
 
     def isLeftOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.left) <= tolerance
@@ -4571,8 +4579,19 @@ class Element:
             return abs(pt + middle - self.top) <= tolerance
         return abs(pb + middle - self.top) <= tolerance
 
+    def isMarginTopOnMiddle(self, tolerance=0):
+        pt = self.parent.pt # Get parent padding top
+        pb = self.parent.pb
+        middle = (self.parent.h - pb - pt)/2
+        if self.originTop:
+            return abs(pt + middle - self.mTop) <= tolerance
+        return abs(pb + middle - self.mTop) <= tolerance
+
     def isTopOnMiddleSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.top) <= tolerance
+
+    def isMarginTopOnMiddleSides(self, tolerance=0):
+        return abs(self.parent.h/2 - self.mTop) <= tolerance
 
     def isOriginOnBottom(self, tolerance=0):
         pb = self.parent.pb # Get parent padding left
@@ -4658,10 +4677,16 @@ class Element:
         >>> e2 = Element(w=600, elements=[e1])
 
         """
-        return abs(self.parent.w - self.x) <= tolerance
+        return abs(self.parent.pl + self.parent.pw/2 - self.right) <= tolerance
+
+    def isMarginRightOnCenter(self, tolerance=0):
+        return abs(self.parent.pl + self.parent.pw/2 - self.mRight) <= tolerance
 
     def isRightOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.right) <= tolerance
+
+    def isMarginRightOnCenterSides(self, tolerance=0):
+        return abs(self.parent.w/2 - self.mRight) <= tolerance
 
     def isRightOnLeft(self, tolerance=0):
         return abs(self.parent.pl - self.right) <= tolerance
@@ -5078,6 +5103,12 @@ class Element:
         self.left = self.parent.pl + self.parent.pw/2
         return True
 
+    def marginLeft2Center(self):
+        if self.parent is None:
+            return False
+        self.mLeft = self.parent.pl + self.parent.pw/2
+        return True
+
     def left2CenterSides(self):
         """Move left of self to the sides center of parent.
         The position of e2 element origin depends on the horizontal
@@ -5102,6 +5133,16 @@ class Element:
         if self.parent is None:
             return False
         self.left = self.parent.w/2
+        return True
+
+    def marginLeft2Center(self):
+        """Move left margin of self to the sides center of parent.
+        The position of e2 element origin depends on the horizontal
+        alignment type.
+        """
+        if self.parent is None:
+            return False
+        self.mLeft = self.parent.w/2
         return True
 
     def left2Left(self):
@@ -5244,6 +5285,16 @@ class Element:
         self.right = self.parent.pl + self.parent.pw/2
         return True
 
+    def marginRight2Center(self):
+        """Position the magin right side centered on the padding of the parent.
+        Note that this different from self.right2Center if the left
+        and right padding of parent is not identical.
+        """
+        if self.parent is None:
+            return False
+        self.mRight = self.parent.pl + self.parent.pw/2
+        return True
+
     def right2CenterSides(self):
         """Position the right side centered on the sides of the parent.
         Note that this different from self.right2Center if the left
@@ -5268,6 +5319,16 @@ class Element:
         if self.parent is None:
             return False
         self.right = self.parent.w/2
+        return True
+    
+    def marginRight2CenterSides(self):
+        """Position the margin right side centered on the sides of the parent.
+        Note that this different from self.right2Center if the left
+        and right padding of parent is not identical.
+        """
+        if self.parent is None:
+            return False
+        self.mRight = self.parent.w/2
         return True
 
     def right2Left(self):
@@ -5948,6 +6009,19 @@ class Element:
             self.top = self.parent.pb + self.parent.ph/2
         return True
 
+    def marginTop2Middle(self):
+        """Move top margin of the element to the padding middle of the parent.
+        The position of e2 element origin depends on the vertical
+        alignment type.
+        """
+        if self.parent is None:
+            return False
+        if self.originTop:
+            self.mTop = self.parent.pt + self.parent.ph/2
+        else:
+            self.mTop = self.parent.pb + self.parent.ph/2
+        return True
+
     def top2MiddleSides(self):
         """Move top of the element to the middle between sides of the parent.
         The position of e2 element origin depends on the vertical alignment
@@ -5990,6 +6064,17 @@ class Element:
             return False
         self.top = self.parent.h/2
         return True
+
+    def marginTop2MiddleSides(self):
+        """Move margin top of the element to the middle between sides of the parent.
+        The position of e2 element origin depends on the vertical alignment
+        type.
+        """
+        if self.parent is None:
+            return False
+        self.mTop = self.parent.h/2
+        return True
+
 
     def origin2Bottom(self):
         """Move origin of the element to the padding bottom of the parent.

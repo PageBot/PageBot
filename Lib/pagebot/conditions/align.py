@@ -537,7 +537,7 @@ class Center(Condition):
 #    Center Horizontal Margins
 
 class Center2Center(Condition):
-    """Center e bounding box horizontal between parent margins."""
+    """Center e bounding box horizontal between parent paddings."""
     def test(self, e):
         return e.isCenterOnCenter(self.tolerance)
 
@@ -546,7 +546,7 @@ class Center2Center(Condition):
             self.addScore(e.center2Center(), e, score)
 
 class Left2Center(Condition):
-    """Align left of e bounding box horizontal between parent margins."""
+    """Align left of e bounding box horizontal between parent padding."""
     def test(self, e):
         return e.isLeftOnCenter(self.tolerance)
 
@@ -554,8 +554,17 @@ class Left2Center(Condition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.left2Center(), e, score)
 
+class MarginLeft2Center(Condition):
+    """Align left of e bounding box horizontal between parent paddings."""
+    def test(self, e):
+        return e.isMarginLeftOnCenter(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.marginLeft2Center(), e, score)
+   
 class Right2Center(Condition):
-    """Align right of e bounding box horizontal between parent margins."""
+    """Align right of e bounding box horizontal between parent paddings."""
     def test(self, e):
         return e.isRightOnCenter(self.tolerance)
 
@@ -563,8 +572,17 @@ class Right2Center(Condition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.right2Center(), e, score)
 
+class MarginRight2Center(Condition):
+    """Align right of e bounding box horizontal between parent paddings."""
+    def test(self, e):
+        return e.isMarginRightOnCenter(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.marginRight2Center(), e, score)
+
 class Origin2Center(Condition):
-    """Align left of e bounding box horizontal between parent margins."""
+    """Align left of e bounding box horizontal between parent paddings."""
     def test(self, e):
         return e.isOriginOnCenter(self.tolerance)
 
@@ -801,6 +819,15 @@ class Top2Middle(Condition):
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.top2Middle(), e, score)
+
+class MarginTop2Middle(Condition):
+    """Align top of e bounding box vertical middle between parent margins."""
+    def test(self, e):
+        return e.isMarginTopOnMiddle(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.marginTop2Middle(), e, score)
 
 class Top2MiddleSides(Condition):
     """Align top of e bounding box on vertical middle between parent sides."""

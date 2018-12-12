@@ -65,7 +65,7 @@ doc.solve()
 # Adjust vertical position of the fitting textbox, so that textLines[4] 
 # locks on page baseline. 
 lineIndex = 4
-#print(tb.x, tb.y)
+print(tb.x, tb.y, tb.baselineOffset(lineIndex))
 tb.y += tb.baselineOffset(lineIndex)
 #print(tb.y)
 # Add lines to indicate to position where the text box and grid match up.
