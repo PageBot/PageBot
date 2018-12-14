@@ -2026,7 +2026,6 @@ class Element:
         if xAlign == RIGHT:
             return self.x - self.w
         return self.x
-
     def _set_left(self, x):
         xAlign = self.xAlign
         if xAlign == CENTER:
@@ -2035,15 +2034,12 @@ class Element:
             self.x = x + self.w
         else:
             self.x = x
-
     left = property(_get_left, _set_left)
 
     def _get_mLeft(self): # Left, including left margin
         return self.left - self.css('ml')
-
     def _set_mLeft(self, x):
         self.left = x + self.css('ml')
-
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
@@ -2140,7 +2136,7 @@ class Element:
         """
         return self.right + self.mr
     def _set_mRight(self, x):
-        self.right = x + self.mr
+        self.right = x - self.mr
     mRight = property(_get_mRight, _set_mRight)
 
     # Vertical
@@ -2168,9 +2164,8 @@ class Element:
                 return self.y - self.h
             return self.y + self.h
         return self.y
-
     def _set_top(self, y):
-        """Shift the element so `self.top == y`. Where the "top" is, depends on
+        """Shift the element so `selfmTtop == y`. Where the "top" is, depends on
         the setting of `self.yAlign`. If `self.isTextBox`, then vertical
         position can also be defined by the top or bottom position of the
         baseline."""
@@ -2188,14 +2183,12 @@ class Element:
                 self.y = units(y) - self.h
         else:
             self.y = y
-
     top = property(_get_top, _set_top)
 
     def _get_mTop(self): # Top, including top margin
         if self.originTop:
-            return self.top - self.mt
+            return   - self.mt
         return self.top + self.mt
-
     def _set_mTop(self, y):
         if self.originTop:
             self.top = units(y) + self.mt
@@ -3779,7 +3772,7 @@ class Element:
     # "Block" is here used as bounding box of a group of elements.
 
     def _get_block3D(self):
-        """Answers the vacuum 3D bounding box around all child elements.
+        """Answers the vacuum 3D bounding box around all child elements, including margin.
 
         >>> e1 = Element(x=10, y=52, z=14, w=100, h=110, d=801)
         >>> e2 = Element(x=50, y=12, z=54, w=200, h=210, d=401)
@@ -3801,11 +3794,11 @@ class Element:
             x1 = min(x1, e.left)
             x2 = max(x2, e.right)
             if e.originTop:
-                y1 = min(y1, e.top)
-                y2 = max(y2, e.bottom)
+                y1 = min(y1, e.mTop)
+                y2 = max(y2, e.mBottom)
             else:
-                y1 = min(y1, e.bottom)
-                y2 = max(y2, e.top)
+                y1 = min(y1, e.mBottom)
+                y2 = max(y2, e.mTop)
             z1 = min(z1, e.front)
             z2 = max(z2, e.back)
 
@@ -3813,7 +3806,7 @@ class Element:
     block3D = property(_get_block3D)
 
     def _get_block(self):
-        """Answers the vacuum bounding box around all child elements in 2D
+        """Answers the vacuum bounding box around all child elements in 2D, including margin
 
         >>> e1 = Element(x=10, y=10, w=100, h=100)
         >>> e2 = Element(x=50, y=50, w=200, h=100)
@@ -3825,34 +3818,6 @@ class Element:
         x, y, _, w, h, _ = self._get_block3D()
         return x, y, w, h
     block = property(_get_block)
-
-    def _get_marginBlock3D(self):
-        """Answers the vacuum 3D bounding box around all child elements."""
-        x1 = y1 = z1 = XXXL
-        x2 = y2 = z2 = -XXXL
-        if not self.elements:
-            # No element, answer vacuum block (x, y, z, w, h, d)
-            return pt(0, 0, 0), pt(0, 0, 0)
-        for e in self.elements:
-            x1 = min(x1, e.left - e.ml)
-            x2 = max(x2, e.right + e.mr)
-            if e.originTop:
-                y1 = min(y1, e.top - e.mt)
-                y2 = max(y2, e.bottom + e.mb)
-            else:
-                y1 = min(y1, e.bottom - e.mb)
-                y2 = max(y2, e.top + e.mt)
-            z1 = min(z1, e.front - e.zmf)
-            z2 = max(z2, e.back - e.zmb)
-
-        return (x1, y1, z1), (x2 - x1, y2 - y1, z2 - z1)
-    marginBlock3D = property(_get_marginBlock3D)
-
-    def _get_marginBlock(self):
-        """Answers the vacuum bounding box around all child elements in 2D"""
-        (x, y, _), (w, h, _) = self._get_marginBlock3D()
-        return (x, y), (w, h)
-    marginBlock = property(_get_marginBlock)
 
     def _get_paddedBlock3D(self):
         """Answers the vacuum 3D bounding box around all child elements,
@@ -3979,7 +3944,7 @@ class Element:
     def getFloatTopSide(self, previousOnly=True, tolerance=0):
         """Answers the max y that can float to top, without overlapping previous
         sibling elements. This means we are just looking at the vertical
-        projection between (self.left, self.right). Note that the y may be
+        projection between (self.mLeft, self.mRight). Note that the y may be
         outside the parent box. Only elements with identical z-value are
         compared. Comparison of available space, includes the margins of the
         elements."""
@@ -4001,7 +3966,7 @@ class Element:
     def getFloatBottomSide(self, previousOnly=True, tolerance=0):
         """Answers the max y that can float to bottom, without overlapping
         previous sibling elements. This means we are just looking at the
-        vertical projection of (self.left, self.right). Note that the y may be
+        vertical projection of (self.mLeft, self.mRight). Note that the y may be
         outside the parent box. Only elements with identical z-value are
         compared. Comparison of available space, includes the margins of the
         elements."""
@@ -4023,7 +3988,7 @@ class Element:
     def getFloatLeftSide(self, previousOnly=True, tolerance=0):
         """Answers the max `x` that can float to the left, without overlapping
         previous sibling elements. This means we are just looking at the
-        horizontal projection of `(self.top, self.bottom)`. Note that the `x`
+        horizontal projection of `(self.mTop, self.mBottom)`. Note that the `x`
         may be outside the parent box. Only elements with identical z-value are
         compared. Comparison of available space, includes the margins of the
         elements."""
@@ -4049,7 +4014,7 @@ class Element:
     def getFloatRightSide(self, previousOnly=True, tolerance=0):
         """Answers the max Y that can float to the right, without overlapping
         previous sibling elements.  This means we are just looking at the
-        vertical projection of (self.left, self.right).  Note that the y may be
+        vertical projection of (self.mLeft, self.mRight).  Note that the y may be
         outside the parent box. Only elements with identical z-value are
         compared.  Comparison of available space, includes the margins of the
         elements."""
@@ -4482,23 +4447,23 @@ class Element:
 
     def isBottomOnBottom(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.parent.pb - self.bottom) <= tolerance
-        return abs(self.parent.pb - self.bottom) <= tolerance
+            return abs(self.parent.h - self.parent.pb - self.mBottom) <= tolerance
+        return abs(self.parent.pb - self.mBottom) <= tolerance
 
     def isBottomOnBottomSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.bottom) <= tolerance
-        return abs(self.bottom) <= tolerance
+            return abs(self.parent.h - self.mBottom) <= tolerance
+        return abs(self.mBottom) <= tolerance
 
     def isBottomOnBottomBleed(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.bottom + self.bleedBottom) <= tolerance
-        return abs(self.bottom - self.bleedBottom) <= tolerance
+            return abs(self.parent.h - self.mBottom + self.bleedBottom) <= tolerance
+        return abs(self.mBottom - self.bleedBottom) <= tolerance
 
     def isBottomOnTop(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.pt - self.bottom) <= tolerance
-        return abs(self.parent.h - self.parent.pt - self.bottom) <= tolerance
+            return abs(self.parent.pt - self.mBottom) <= tolerance
+        return abs(self.parent.h - self.parent.pt - self.mBottom) <= tolerance
 
     def isCenterOnCenter(self, tolerance=0):
         pl = self.parent.pl # Get parent padding left
@@ -4553,46 +4518,30 @@ class Element:
     def isLeftOnCenter(self, tolerance=0):
         pl = self.parent.pl # Get parent padding left
         center = (self.parent.w - self.parent.pr - pl)/2
-        return abs(pl + center - self.left) <= tolerance
-
-    def isMarginLeftOnCenter(self, tolerance=0):
-        pl = self.parent.pl # Get parent padding left
-        center = (self.parent.w - self.parent.pr - pl)/2
         return abs(pl + center - self.mLeft) <= tolerance
 
     def isLeftOnCenterSides(self, tolerance=0):
-        return abs(self.parent.w/2 - self.left) <= tolerance
-
-    def isMarginLeftOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.mLeft) <= tolerance
 
     def isLeftOnLeft(self, tolerance=0):
-        return abs(self.parent.pl - self.left) <= tolerance
+        return abs(self.parent.pl - self.mLeft) <= tolerance
 
     def isLeftOnLeftSide(self, tolerance=0):
-        return abs(self.left) <= tolerance
+        return abs(self.mLeft) <= tolerance
 
     def isLeftOnLeftBleed(self, tolerance=0):
-        return abs(self.left + self.bleedLeft) <= tolerance
+        return abs(self.mLeft + self.bleedLeft) <= tolerance
 
     def isLeftOnRight(self, tolerance=0):
-        return abs(self.parent.w - self.parent.pr - self.left) <= tolerance
+        return abs(self.parent.w - self.parent.pr - self.mLeft) <= tolerance
 
     def isLeftOnRightSide(self, tolerance=0):
-        return abs(self.parent.w - self.left) <= tolerance
+        return abs(self.parent.w - self.mLeft) <= tolerance
 
     def isCenterOnLeftSide(self, tolerance=0):
-        return abs(self.parent.left - self.center) <= tolerance
+        return abs(self.parent.mLeft - self.center) <= tolerance
 
     def isTopOnMiddle(self, tolerance=0):
-        pt = self.parent.pt # Get parent padding top
-        pb = self.parent.pb
-        middle = (self.parent.h - pb - pt)/2
-        if self.originTop:
-            return abs(pt + middle - self.top) <= tolerance
-        return abs(pb + middle - self.top) <= tolerance
-
-    def isMarginTopOnMiddle(self, tolerance=0):
         pt = self.parent.pt # Get parent padding top
         pb = self.parent.pb
         middle = (self.parent.h - pb - pt)/2
@@ -4601,9 +4550,6 @@ class Element:
         return abs(pb + middle - self.mTop) <= tolerance
 
     def isTopOnMiddleSides(self, tolerance=0):
-        return abs(self.parent.h/2 - self.top) <= tolerance
-
-    def isMarginTopOnMiddleSides(self, tolerance=0):
         return abs(self.parent.h/2 - self.mTop) <= tolerance
 
     def isOriginOnBottom(self, tolerance=0):
@@ -4690,25 +4636,19 @@ class Element:
         >>> e2 = Element(w=600, elements=[e1])
 
         """
-        return abs(self.parent.pl + self.parent.pw/2 - self.right) <= tolerance
-
-    def isMarginRightOnCenter(self, tolerance=0):
         return abs(self.parent.pl + self.parent.pw/2 - self.mRight) <= tolerance
 
     def isRightOnCenterSides(self, tolerance=0):
-        return abs(self.parent.w/2 - self.right) <= tolerance
-
-    def isMarginRightOnCenterSides(self, tolerance=0):
         return abs(self.parent.w/2 - self.mRight) <= tolerance
 
     def isRightOnLeft(self, tolerance=0):
-        return abs(self.parent.pl - self.right) <= tolerance
+        return abs(self.parent.pl - self.mRight) <= tolerance
 
     def isRightOnRight(self, tolerance=0):
-        return abs(self.parent.w - self.parent.pr - self.right) <= tolerance
+        return abs(self.parent.w - self.parent.pr - self.mRight) <= tolerance
 
     def isRightOnRightSide(self, tolerance=0):
-        return abs(self.parent.w - self.right) <= tolerance
+        return abs(self.parent.w - self.mRight) <= tolerance
 
     def isRightOnRightBleed(self, tolerance=0):
         return abs(self.parent.w + self.bleedLeft) <= tolerance
@@ -4718,52 +4658,47 @@ class Element:
         pb = self.parent.pb
         middle = (self.parent.h - pb - pt)/2
         if self.originTop:
-            return abs(pt + middle - self.bottom) <= tolerance
-        return abs(pb + middle - self.bottom) <= tolerance
+            return abs(pt + middle - self.mBottom) <= tolerance
+        return abs(pb + middle - self.mBottom) <= tolerance
 
     def isBottomOnMiddleSides(self, tolerance=0):
-        return abs(self.parent.h/2 - self.bottom) <= tolerance
+        return abs(self.parent.h/2 - self.mBottom) <= tolerance
 
     def isTopOnBottom(self, tolerance=0):
         if self.originTop:
-            return abs(self.parent.h - self.parent.pb - self.top) <= tolerance
-        return abs(self.parent.pb - self.top) <= tolerance
+            return abs(self.parent.h - self.parent.pb - self.mTop) <= tolerance
+        return abs(self.parent.pb - self.mTop) <= tolerance
 
     def isTopOnTop(self, tolerance=0):
-        if self.originTop:
-            return abs(self.parent.pt - self.top) <= tolerance
-        return abs(self.parent.h - self.parent.pt - self.top) <= tolerance
-
-    def isMarginOnTop(self, tolerance=0):
         if self.originTop:
             return abs(self.parent.pt - self.mTop) <= tolerance
         return abs(self.parent.h - self.parent.pt - self.mTop) <= tolerance
 
     def isTopOnTopSide(self, tolerance=0):
         if self.originTop:
-            return abs(self.top) <= tolerance
-        return abs(self.parent.h - self.top) <= tolerance
+            return abs(self.mTop) <= tolerance
+        return abs(self.parent.h - self.mTop) <= tolerance
 
     def isTopOnTopBleed(self, tolerance=0):
         if self.originTop:
-            return abs(self.top - self.bleedTop) <= tolerance
-        return abs(self.parent.h - self.top + self.bleedTop) <= tolerance
+            return abs(self.mTop - self.bleedTop) <= tolerance
+        return abs(self.parent.h - self.mTop + self.bleedTop) <= tolerance
 
     # Shrink block conditions
 
     def isSchrunkOnBlockLeft(self, tolerance):
         boxX, _, _, _ = self.marginBox
-        return abs(self.left + self.pl - boxX) <= tolerance
+        return abs(self.mLeft + self.pl - boxX) <= tolerance
 
     def isShrunkOnBlockRight(self, tolerance):
         boxX, _, boxW, _ = self.marginBox
-        return abs(self.right - self.pr - (boxX + boxW)) <= tolerance
+        return abs(self.mRight - self.pr - (boxX + boxW)) <= tolerance
 
     def isShrunkOnBlockTop(self, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
-            return abs(self.top + self.pt - boxY) <= tolerance
-        return self.top - self.pt - (boxY + boxH) <= tolerance
+            return abs(self.mTop + self.pt - boxY) <= tolerance
+        return self.mTop - self.pt - (boxY + boxH) <= tolerance
 
     def isShrunkOnBlockBottom(self, tolerance):
         """Test if the bottom of self is shrunk to the bottom position of the block."""
@@ -4774,23 +4709,23 @@ class Element:
 
     def isShrunkOnBlockLeftSide(self, tolerance):
         boxX, _, _, _ = self.box
-        return abs(self.left - boxX) <= tolerance
+        return abs(self.mLeft - boxX) <= tolerance
 
     def isShrunkOnBlockRightSide(self, tolerance):
         boxX, _, boxW, _ = self.mbox
-        return abs(self.right - (boxX + boxW)) <= tolerance
+        return abs(self.mRight - (boxX + boxW)) <= tolerance
 
     def isShrunkOnBlockTopSide(self, tolerance):
         _, boxY, _, boxH = self.box
         if self.originTop:
-            return abs(self.top - boxY) <= tolerance
-        return self.top - (boxY + boxH) <= tolerance
+            return abs(self.mTop - boxY) <= tolerance
+        return self.mTop - (boxY + boxH) <= tolerance
 
     def isShrunkOnBlockBottomSide(self, tolerance):
         _, boxY, _, boxH = self.marginBox
         if self.originTop:
-            return abs(self.bottom - (boxY + boxH)) <= tolerance
-        return abs(self.bottom - boxY) <= tolerance
+            return abs(self.mBottom - (boxY + boxH)) <= tolerance
+        return abs(self.mBottom - boxY) <= tolerance
 
     # Float conditions to page padding
 
@@ -4830,14 +4765,14 @@ class Element:
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            return abs(self.left - gridColumns[col][0]) <= tolerance
+            return abs(self.mLeft - gridColumns[col][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isRightOnCol(self, col, tolerance):
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            return abs(self.right - gridColumns[col][0]) <= tolerance
+            return abs(self.mRight - gridColumns[col][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
@@ -4853,14 +4788,14 @@ class Element:
         """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
-            return abs(self.top - gridRows[row][0]) <= tolerance
+            return abs(self.mTop - gridRows[row][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isBottomOnRow(self, row, tolerance):
         """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
-            return abs(self.bottom - gridRows[row][0]) <= tolerance
+            return abs(self.mBottom - gridRows[row][0]) <= tolerance
         return False # row is not in range of gridColumns
 
     def isFitOnRowSpan(self, row, rowSpan, tolerance):
@@ -4880,7 +4815,7 @@ class Element:
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            self.left = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            self.mLeft = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
             return True
         return False # Row is not in range of available gridColumns
 
@@ -4888,7 +4823,7 @@ class Element:
         """Move right of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            self.right = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            self.mRight = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
             return True
         return False # Row is not in range of available gridColumns
 
@@ -4909,7 +4844,7 @@ class Element:
         """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
-            self.top = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            self.mTop = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
             return True
         return False # row is not in range of gridColumns
 
@@ -4917,7 +4852,7 @@ class Element:
         """Move top of the element to row."""
         gridRows = self.getGridRows()
         if row in range(len(gridRows)):
-            self.bottom = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
+            self.mBottom = self.parent.pb + gridRows[row][0] # @@@ FIX GUTTER
             return True
         return False # row is not in range of gridColumns
 
@@ -5118,12 +5053,6 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = self.parent.pl + self.parent.pw/2
-        return True
-
-    def marginLeft2Center(self):
-        if self.parent is None:
-            return False
         self.mLeft = self.parent.pl + self.parent.pw/2
         return True
 
@@ -5147,16 +5076,6 @@ class Element:
         >>> success = e2.left2CenterSides()
         >>> e2.x, 500/2 + 120
         (370pt, 370.0)
-        """
-        if self.parent is None:
-            return False
-        self.left = self.parent.w/2
-        return True
-
-    def marginLeft2Center(self):
-        """Move left margin of self to the sides center of parent.
-        The position of e2 element origin depends on the horizontal
-        alignment type.
         """
         if self.parent is None:
             return False
@@ -5186,7 +5105,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = self.parent.pl # Padding left
+        self.mLeft = self.parent.pl # Padding left
         return True
 
     def left2LeftSide(self):
@@ -5212,7 +5131,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = 0
+        self.mLeft = 0
         return True
 
     def left2LeftBleed(self):
@@ -5222,7 +5141,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = -self.bleedLeft
+        self.mLeft = -self.bleedLeft
         return True
 
     def left2Right(self):
@@ -5248,7 +5167,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = self.parent.w - self.parent.pr
+        self.mLeft = self.parent.w - self.parent.pr
         return True
 
     def left2RightSide(self):
@@ -5274,7 +5193,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.left = self.parent.w
+        self.mLeft = self.parent.w
         return True
 
     def right2Center(self):
@@ -5297,16 +5216,6 @@ class Element:
         >>> success = e2.right2Center()
         >>> e2.x, 30 + (500 - 30 - 80)/2
         (225pt, 225.0)
-        """
-        if self.parent is None:
-            return False
-        self.right = self.parent.pl + self.parent.pw/2
-        return True
-
-    def marginRight2Center(self):
-        """Position the magin right side centered on the padding of the parent.
-        Note that this different from self.right2Center if the left
-        and right padding of parent is not identical.
         """
         if self.parent is None:
             return False
@@ -5336,19 +5245,9 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.right = self.parent.w/2
-        return True
-    
-    def marginRight2CenterSides(self):
-        """Position the margin right side centered on the sides of the parent.
-        Note that this different from self.right2Center if the left
-        and right padding of parent is not identical.
-        """
-        if self.parent is None:
-            return False
         self.mRight = self.parent.w/2
         return True
-
+    
     def right2Left(self):
         """Move right of self to padding left position of parent.
         The position of e2 element origin depends on the horizontal
@@ -5372,7 +5271,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.right = self.parent.pl # Padding left
+        self.mRight = self.parent.pl # Padding left
         return True
 
     def right2LeftSide(self):
@@ -5397,7 +5296,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.right = 0 # Left side of parent position
+        self.mRight = 0 # Left side of parent position
         return True
 
     def right2Right(self):
@@ -5423,7 +5322,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.right = self.parent.w - self.parent.pr
+        self.mRight = self.parent.w - self.parent.pr
         return True
 
     def right2RightSide(self):
@@ -5449,7 +5348,7 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.right = self.parent.w
+        self.mRight = self.parent.w
         return True
 
     def right2RightBleed(self):
@@ -5458,7 +5357,7 @@ class Element:
         type."""
         if self.parent is None:
             return False
-        self.right = self.parent.w + self.bleedRight
+        self.mRight = self.parent.w + self.bleedRight
         return True
 
     def origin2Center(self):
@@ -5597,9 +5496,9 @@ class Element:
         if self.parent is None:
             return False
         if self.parent.originTop:
-            self.bottom = self.parent.h - self.parent.pb
+            self.mBottom = self.parent.h - self.parent.pb
         else:
-            self.bottom = self.parent.pb
+            self.mBottom = self.parent.pb
         return True
 
     def bottom2BottomSide(self):
@@ -5643,9 +5542,9 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.bottom = self.parent.h
+            self.mBottom = self.parent.h
         else:
-            self.bottom = 0
+            self.mBottom = 0
         return True
 
     def bottom2BottomBleed(self):
@@ -5656,9 +5555,9 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.bottom = self.parent.h + self.bleedBottom
+            self.mBottom = self.parent.h + self.bleedBottom
         else:
-            self.bottom = -self.bleedBottom
+            self.mBottom = -self.bleedBottom
         return True
 
     def bottom2Top(self):
@@ -5702,9 +5601,9 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.bottom = self.parent.pt
+            self.mBottom = self.parent.pt
         else:
-            self.bottom = self.parent.h - self.parent.pt
+            self.mBottom = self.parent.h - self.parent.pt
         return True
 
     def middle2Bottom(self):
@@ -6022,19 +5921,6 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.top = self.parent.pt + self.parent.ph/2
-        else:
-            self.top = self.parent.pb + self.parent.ph/2
-        return True
-
-    def marginTop2Middle(self):
-        """Move top margin of the element to the padding middle of the parent.
-        The position of e2 element origin depends on the vertical
-        alignment type.
-        """
-        if self.parent is None:
-            return False
-        if self.originTop:
             self.mTop = self.parent.pt + self.parent.ph/2
         else:
             self.mTop = self.parent.pb + self.parent.ph/2
@@ -6080,19 +5966,8 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.top = self.parent.h/2
-        return True
-
-    def marginTop2MiddleSides(self):
-        """Move margin top of the element to the middle between sides of the parent.
-        The position of e2 element origin depends on the vertical alignment
-        type.
-        """
-        if self.parent is None:
-            return False
         self.mTop = self.parent.h/2
         return True
-
 
     def origin2Bottom(self):
         """Move origin of the element to the padding bottom of the parent.
@@ -6244,7 +6119,7 @@ class Element:
         return True
 
     def bottom2Middle(self):
-        """Move bottom of the element to the padding middle of the parent.
+        """Move margin bottom of the element to the padding middle of the parent.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.bottom2Middle() # Element without parent answers False
@@ -6279,13 +6154,13 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.bottom = self.parent.pt + self.parent.ph/2
+            self.mBottom = self.parent.pt + self.parent.ph/2
         else:
-            self.bottom = self.parent.pb + self.parent.ph/2
+            self.mBottom = self.parent.pb + self.parent.ph/2
         return True
 
     def bottom2MiddleSides(self):
-        """Move bottom of the element to the sides middle of the parent.
+        """Move margin bottom of the element to the sides middle of the parent.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.bottom2MiddleSides() # Element without parent answers False
@@ -6319,11 +6194,11 @@ class Element:
         """
         if self.parent is None:
             return False
-        self.bottom = self.parent.h/2
+        self.mBottom = self.parent.h/2
         return True
 
     def top2Bottom(self):
-        """Move top of the element to the padding bottom of the parent.
+        """Move margin top of the element to the padding bottom of the parent.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.top2Bottom() # Element without parent answers False
@@ -6358,13 +6233,13 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.top = self.parent.h - self.parent.pb
+            self.mTop = self.parent.h - self.parent.pb
         else:
-            self.top = self.parent.pb
+            self.mTop = self.parent.pb
         return True
 
     def top2Top(self):
-        """Move top of the element to the padding top of the parent.
+        """Move margin top of the element to the padding top of the parent.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.top2Top() # Element without parent answers False
@@ -6399,23 +6274,13 @@ class Element:
         if self.parent is None:
             return False
         if self.originTop:
-            self.top = self.parent.pt
-        else:
-            self.top = self.parent.h - self.parent.pt
-        return True
-
-    def margin2Top(self):
-        """Move top margin of the element to the padding top of the element."""
-        if self.parent is None:
-            return False
-        if self.originTop:
             self.mTop = self.parent.pt
         else:
             self.mTop = self.parent.h - self.parent.pt
         return True
 
     def top2TopSide(self):
-        """Move top of the element to the top side of the parent.
+        """Move margin top of the element to the top side of the parent.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.top2TopSide() # Element without parent answers False
@@ -6456,14 +6321,14 @@ class Element:
         return True
 
     def top2TopBleed(self):
-        """Move top of the element to the top side of the parent, overshooting
+        """Move margin top of the element to the top side of the parent, overshooting
         by bleed."""
         if self.parent is None:
             return False
         if self.originTop:
-            self.top = -self.bleedTop
+            self.mTop = -self.bleedTop
         else:
-            self.top = self.parent.h + self.bleedTop
+            self.mTop = self.parent.h + self.bleedTop
         return True
 
     # Floating parent padding
@@ -6473,13 +6338,6 @@ class Element:
         "hooks" into another element at the same z-layer position. Include
         margin to decide if it fits."""
         if self.originTop:
-            self.top = min(self.getFloatTopSide(), self.parent.pt)
-        else:
-            self.top = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
-        return True
-
-    def floatMargin2Top(self):
-        if self.originTop:
             self.mTop = min(self.getFloatTopSide(), self.parent.pt)
         else:
             self.mTop = min(self.getFloatTopSide(), self.parent.h - self.parent.pt)
@@ -6487,31 +6345,16 @@ class Element:
 
     def float2Bottom(self):
         if self.originTop:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
-        else:
-            self.bottom = min(self.getFloatBottomSide(), self.parent.pb)
-        return True
-
-    def floatMargin2Bottom(self):
-        if self.originTop:
             self.mBottom = min(self.getFloatBottomSide(), self.parent.h - self.parent.pb)
         else:
             self.mBottom = min(self.getFloatBottomSide(), self.parent.pb)
         return True
 
     def float2Left(self):
-        self.left = max(self.getFloatLeftSide(), self.parent.pl) # padding left
-        return True
-
-    def floatMargin2Left(self):
         self.mLeft = max(self.getFloatLeftSide(), self.parent.pl) # padding left
         return True
 
     def float2Right(self):
-        self.right = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
-        return True
-
-    def floatMargin2Right(self):
         self.mRight = min(self.getFloatRightSide(), self.parent.w - self.parent.pr)
         return True
 
@@ -6519,34 +6362,21 @@ class Element:
     # same z-layer
 
     def float2TopSide(self):
-        self.top = self.getFloatTopSide()
-        return True
-
-    def floatMargin2TopSide(self):
         self.mTop = self.getFloatTopSide()
         return True
 
     def float2BottomSide(self):
-        self.bottom = self.getFloatBottomSide()
-        return True
-
-    def floatMargin2BottomSide(self):
+        """Float margin bottom to bottom side."""
         self.mBottom = self.getFloatBottomSide()
         return True
 
     def float2LeftSide(self):
-        self.left = self.getFloatLeftSide()
-        return True
-
-    def floatMargin2LeftSide(self):
+        """Float margin left to left side."""
         self.mLeft = self.getFloatLeftSide()
         return True
 
     def float2RightSide(self):
-        self.right = self.getFloatRightSide()
-        return True
-
-    def floatMargin2RightSide(self):
+        """Float margin right to right side."""
         self.mRight = self.getFloatRightSide()
         return True
 
@@ -6558,40 +6388,42 @@ class Element:
 
     def fit2Bottom(self):
         if self.originTop:
-            self.h += self.parent.h - self.parent.pb - self.bottom
+            self.h += self.parent.h - self.parent.pb - self.mBottom
         else:
-            self.h = self.top - self.parent.pb
-            self.bottom = self.parent.pb
+            self.h = self.mTop - self.parent.pb
+            self.mBottom = self.parent.pb
         return True
 
     def fit2BottomSide(self):
         if self.originTop:
-            self.h += self.parent.h - self.bottom
+            self.h += self.parent.h - self.mBottom
         else:
-            top = self.top
-            self.bottom = 0
+            top = self.mTop
+            self.mBottom = 0
             self.h = top
         return True
 
     def fit2BottomBleed(self):
         if self.originTop:
-            self.h += self.parent.h - self.bottom + self.bleedBottom
+            self.h += self.parent.h - self.mBottom + self.bleedBottom
         else:
-            top = self.top
-            self.bottom = -self.bleedBottom
+            top = self.mTop
+            self.mBottom = -self.bleedBottom
             self.h = top + self.bleedBottom
         return True
 
     def fit2Left(self):
-        right = self.right
-        self.left = self.parent.pl # Padding left
-        self.w += right - self.right
+        u"""Fit to left, inlcuding margin left and margin right."""
+        right = self.mRight
+        self.mLeft = self.parent.pl # Padding left
+        self.w += right - self.mRight
         return True
 
     def fit2LeftSide(self):
-        right = self.right
-        self.left = 0
-        self.w += right - self.right
+        u"""Fit to left, including margin left and margin right."""
+        right = self.mRight
+        self.mLeft = 0
+        self.w += right - self.mRight
         return True
 
     def fit2Right(self):
@@ -6668,29 +6500,29 @@ class Element:
         >>>
         """
         if self.originTop:
-            bottom = self.bottom
-            self.top = self.parent.pt
-            self.h += bottom - self.bottom
+            bottom = self.mBottom
+            self.mTop = self.parent.pt
+            self.h += bottom - self.mBottom
         else:
-            self.h += self.parent.h - self.parent.pt - self.top
+            self.h += self.parent.h - self.parent.pt - self.mTop
         return True
 
     def fit2TopSide(self):
         if self.originTop:
-            bottom = self.bottom
-            self.top = 0
-            self.h += bottom - self.bottom
+            bottom = self.mBottom
+            self.mTop = 0
+            self.h += bottom - self.mBottom
         else:
-            self.h += self.parent.h - self.top
+            self.h += self.parent.h - self.mTop
         return True
 
     def fit2TopBleed(self):
         if self.originTop:
-            bottom = self.bottom
-            self.top = -self.bleedTop
-            self.h += bottom - self.bottom
+            bottom = self.mBottom
+            self.mTop = -self.bleedTop
+            self.h += bottom - self.mBottom
         else:
-            self.h += self.parent.h - self.top + self.bleedTop
+            self.h += self.parent.h - self.mTop + self.bleedTop
         return True
 
     #   Shrinking
@@ -6700,56 +6532,56 @@ class Element:
         if self.originTop:
             self.h = boxH
         else:
-            top = self.top
-            self.bottom = boxY
-            self.h += top - self.top
+            top = self.mTop
+            self.mBottom = boxY
+            self.h += top - self.mTop
         return True
 
     def shrink2BlockBottomSide(self):
         if self.originTop:
-            self.h += self.parent.h - self.bottom
+            self.h += self.parent.h - self.mBottom
         else:
-            top = self.top
-            self.bottom = 0 # Parent botom
-            self.h += top - self.top
+            top = self.mTop
+            self.mBottom = 0 # Parent botom
+            self.h += top - self.mTop
         return True
 
     def shrink2BlockLeft(self):
-        right = self.right
-        self.left = self.parent.pl # Padding left
-        self.w += right - self.right
+        right = self.MRight
+        self.mLeft = self.parent.pl # Padding left
+        self.w += right - self.mRight
         return True
 
     def shrink2BlockLeftSide(self):
-        right = self.right
-        self.left = 0
-        self.w += right - self.right
+        right = self.mRight
+        self.mLeft = 0
+        self.w += right - self.mRight
         return True
 
     def shrink2BlockRight(self):
-        self.w += self.parent.w - self.parent.pr - self.right
+        self.w += self.parent.w - self.parent.pr - self.mRight
         return True
 
     def shrink2BlockRightSide(self):
-        self.w += self.parent.w - self.right
+        self.w += self.parent.w - self.mRight
         return True
 
     def shrink2BlockTop(self):
         if self.originTop:
-            bottom = self.bottom
-            self.top = self.parent.pt
-            self.h += bottom - self.bottom
+            bottom = self.mBottom
+            self.mTop = self.parent.pt
+            self.h += bottom - self.mBottom
         else:
-            self.h += self.parent.h - self.parent.pt - self.top
+            self.h += self.parent.h - self.parent.pt - self.mTop
         return True
 
     def shrink2BlockTopSide(self):
         if self.originTop:
-            bottom = self.bottom
-            self.top = 0
-            self.h += bottom - self.bottom
+            bottom = self.mBottom
+            self.mTop = 0
+            self.h += bottom - self.mBottom
         else:
-            self.h += self.parent.h - self.top
+            self.h += self.parent.h - self.mTop
         return True
 
     #    Text conditions
