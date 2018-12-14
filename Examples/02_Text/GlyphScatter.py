@@ -63,7 +63,7 @@ def drawGlyph(px, py, glyph):
     c.drawPath(glyphPath, (x+12, y-12))
     # Draw flattened path next to it on glyph.width distance.
     c.stroke(color(0.7, 0.7,0.7, 0.6), 6)
-    flattenedPath = c.getFlattenedPath(glyphPath)
+    flattenedPath = c.getFlattenedContours(glyphPath)
     c.drawPath(flattenedPath, (x, y))
 
     tt = 30

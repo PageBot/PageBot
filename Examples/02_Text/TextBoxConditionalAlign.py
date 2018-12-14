@@ -124,7 +124,7 @@ bs = c.newString('Right2Center\nBottom2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P, h=P, padding=G, conditions=(Right2Center(), Bottom2Middle()))
 bs = c.newString('Left2Center\nBottom2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P, h=P, padding=G, conditions=(Left2Center(), Bottom2Middle()))
-bs = c.newString('Right2Center\nBottom2Middle', style=style)
+bs = c.newString('Right2Center\nTop2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P, h=P, padding=G, conditions=(Right2Center(), Top2Middle()))
 bs = c.newString('Left2Center\nTop2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P, h=P, padding=G, conditions=(Left2Center(), Top2Middle()))
@@ -132,6 +132,9 @@ newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P, h=P, padding=G, conditions=
 page = page.next
 page.showPadding = True
 
+# To be finished: Conditions that position including margins.
+# Many of the positioning and element tests still need to be implemented for Element and Conditions
+#
 bs = c.newString('Right2Center\nBottom2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P-G, h=P-G, margin=G/2, padding=G, conditions=(Right2Center(), Bottom2Middle()))
 bs = c.newString('Left2Center\nBottom2Middle', style=style)
@@ -140,6 +143,24 @@ bs = c.newString('MarginRight2Center\nMarginTop2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P-G, h=P-G, margin=G/2, padding=G, conditions=(MarginRight2Center(), MarginTop2Middle()))
 bs = c.newString('MarginLeft2Center\nMarginTop2Middle', style=style)
 newTextBox(bs, parent=page, fill=0.8, stroke=0, w=P-G, h=P-G, margin=G/2, padding=G, conditions=(MarginLeft2Center(), MarginTop2Middle()))
+
+page = page.next
+page.showPadding = True
+
+page.baselineGrid = pt(12)
+page.baselineGridStart = page.pt
+page.showBaselines = [BASE_LINE]
+page.baselineColor = color(0, 1, 0)
+
+style = dict(font=font, fontSize=pt(18), leading=18, textFill=0, fill=(1, 0, 0), xTextAlign=LEFT)
+
+bs = c.newString('Aaaa '*1000, style=style)
+tb = newTextBox(bs, parent=page, padding=G, fill=(1, 1, 0), w=page.pw, h=page.ph, 
+    baselineWidth=pt(3), 
+    baselineColor=color(1, 0, 0), 
+    conditions=[Left2Left(), Baseline2Grid(index=2)])
+tb.showBaselines = True
+tb.baselineGrid=pt(28)
 
 doc.solve()
 

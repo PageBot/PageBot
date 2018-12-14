@@ -1090,6 +1090,20 @@ class Element:
         can have overflow of text."""
         return False
 
+    def _get_baselineColor(self):
+        """Answer the current setting of the baseline color for this element."""
+        return self.css('baselineColor', DEFAULT_BASELINE_COLOR)
+    def _set_baselineColor(self, baselineColor):
+        self.style['baselineColor'] = baselineColor
+    baselineColor = property(_get_baselineColor, _set_baselineColor)
+
+    def _get_baselineWidth(self):
+        """Answer the current setting of the baseline width for this element."""
+        return self.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
+    def _set_baselineWidth(self, baselineWidth):
+        self.style['baselineWidth'] = baselineWidth
+    baselineWidth = property(_get_baselineWidth, _set_baselineWidth)
+
     def _get_baselineGrid(self):
         """Answers the baseline grid distance, as defined in the (parent)style.
 

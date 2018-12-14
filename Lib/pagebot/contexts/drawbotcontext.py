@@ -215,6 +215,8 @@ class DrawBotContext(BaseContext):
         """
         if path is None:
             path = self.path
+        if hasattr(path, 'path'): # In case it is a PageBotPath
+            path = path.path
         #return path._path.getNSBezierPath().bezierPathByFlatteningPath()
         return path._path.bezierPathByFlatteningPath()
 

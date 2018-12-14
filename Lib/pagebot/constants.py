@@ -562,6 +562,9 @@ DEFAULT_GRID = {GRID_COL, GRID_ROW} # If full grid should be shown on top of all
 DEFAULT_GRID_BG = {GRID_COL_BG, GRID_ROW_BG} # If full grid should be shown at the back of all elements.
 GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
 
+DEFAULT_BASELINE_COLOR = 0.7
+DEFAULT_BASELINE_WIDTH = pt(0.5)
+
 BASE_LINE = 'Baseline' # Show baseline grid as lines
 BASE_LINE_BG = 'BaselineBackground' # Show baseline grid as lines on background
 BASE_INDEX_LEFT = 'BaseIndexLeft' # Show baseline grid index numbers on left side

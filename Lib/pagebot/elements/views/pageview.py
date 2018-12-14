@@ -28,7 +28,7 @@ from pagebot.constants import RIGHT
 from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
-    BASE_INSIDE,
+    BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
 from pagebot.toolbox.units import pt, upt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
@@ -749,14 +749,18 @@ class PageView(BaseView):
             oy = e.h - startY # Assumes origin at bottom for context drawing.
 
         line = 0 # Line index
-        baselineColor = e.css('baselineColor', color(0,7))
-        baselineWidth = e.css('baselineWidth', 0.5)
+        baselineColor = e.css('baselineColor', DEFAULT_BASELINE_COLOR)
+        baselineWidth = e.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
 
         # Format of line numbers.
         style = dict(font=e.css('viewMarkerFont'), xTextAlign=RIGHT,
             fontSize=indexFontSize, stroke=noColor, textFill=baselineColor)
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)
+
+        print(style)
+
+        print(oy, e.pb, baselineColor, baselineWidth)
 
         while oy > e.pb: # Run until the padding of the element is reached.
             tl = tr = None
@@ -776,18 +780,19 @@ class PageView(BaseView):
 
             twl, thl = bsl.size
             twr, thr = bsr.size
+
             if BASE_INSIDE in show:
                 if tl:
-                    context.text(bsl, (px + e.pl + indexGutter, py + oy - thl/5))
+                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl))
                 if tr:
-                    context.text(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5))
+                    context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl + 2*indexGutter + twl, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
                 if tl:
-                    context.text(bsl, (px + e.pl - twl - indexGutter, py + oy - thl/5))
+                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl))
                 if tr:
-                    context.text(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5))
+                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             line += 1 # Increment line index.

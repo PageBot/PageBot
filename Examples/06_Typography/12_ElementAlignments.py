@@ -31,7 +31,10 @@ context = getContext() # Get the current context (e.g. DrawBotContext instance)
 
 W = H = pt(500)
 
-doc = Document(W=W, H=H, autoPages=2)
+doc = Document(W=W, H=H, context=context)
+
+view = doc.view
+view.showPadding = True
 
 page = doc[1]
 page.originTop = True

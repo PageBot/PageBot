@@ -23,7 +23,8 @@ import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
-        DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING)
+        DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
+        DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH)
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
@@ -291,8 +292,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
         baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
         baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
-        baselineColor = color(0.7), # Baseline color, drawn by PageView and TextBox
-        baselineWidth = pt(0.5), # Baseline width, drawn by TextBox
+        baselineColor = DEFAULT_BASELINE_COLOR, # Baseline color, drawn by PageView and TextBox
+        baselineWidth = pt(DEFAULT_BASELINE_WIDTH), # Baseline width, drawn by TextBox
         baselineGridFit = False,
         firstLineGridFit = True,
 
