@@ -50,7 +50,7 @@ class Typesetter:
     GALLEY_CLASS = Galley
     CODEBLOCK_CLASS = CodeBlock
 
-    DEFAULT_BULLET = u'•' # Used if no valid bullet string can be found in styles.
+    DEFAULT_BULLET = '•\t' # Used if no valid bullet string can be found in styles.
     SKIP_TAGS = ('document',
         'pre', # Ignore as part of a code block
         'figure', 'figcaption', # Not implemented by all browsers. Use ![]()*Caption* instead.
@@ -67,6 +67,7 @@ class Typesetter:
         h4=dict(font='Georgia', fontSize=pt(12), leading=em(1.2), textFill=color(0, 1, 1)),
         h5=dict(font='Georgia-Bold', fontSize=pt(10), leading=em(1.2), textFill=(1, 0, 1)),
         p=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
+        bullet=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
@@ -80,7 +81,7 @@ class Typesetter:
         Nl2BrExtension(),
     ]
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True):
+    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True, keepTabs=True):
         """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -132,8 +133,8 @@ class Typesetter:
         <q>Quote</q>
         <strong>Strong</strong>
         <emphasis>Emphasis</emphasis>
-        ^Sup
-        !!Sub</p>
+        <sup>Sup
+        <sub>Sub</sub></sup></p>
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -158,8 +159,13 @@ class Typesetter:
         if skipTags is None:
             skipTags = self.SKIP_TAGS
         self.skipTags = skipTags
-
+        self.keepTabs = keepTabs # If True, then \t is preserved into <tab/> and later converted back into '\t
+        
         self.lastImage = None # Keep the last processed image, in case there are captions to add.
+
+    def node_tab(self, node, e):
+        """Non-HTML tag, substituted from \t, now convert back into \t."""
+        self.append('\t')
 
     def node_hr(self, node, e):
         """Add Ruler instance to the Galley."""
@@ -272,14 +278,14 @@ class Typesetter:
         else:
             self.typesetNode(node, e)
 
-
     def node_li(self, node, e):
         """Generate bullet/Numbered list item."""
         context = self.galley.context
-        bullet = self.DEFAULT_BULLET # Default, in case doc or css does not exist.
-        style = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
-        bulletString = context.newBulletString(bullet, e=e, style=style) # Get styled string with bullet.
-        if bulletString is not None: # HtmlContext does not want a bullet character.
+        bulletStyle = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
+        bullet = bulletStyle.get('listBullet', self.DEFAULT_BULLET)
+        # Only defined for non-HTML.
+        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle) # Get styled string with bullet.
+        if bulletString is not None:
             self.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.
         self.typesetNode(node, e)
@@ -537,6 +543,8 @@ class Typesetter:
         """
         if mdExtensions is None:
             mdExtensions = self.MARKDOWN_EXTENSIONS
+        if self.keepTabs:
+            mdText = mdText.replace('\t', '<tab/>') # Keep the tabs, as they get replaced into spaced by MarkDown
         xmlBody = markdown.markdown(mdText, extensions=mdExtensions)
         xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % xmlBody
         xml = xml.replace('&nbsp;', ' ')
@@ -551,7 +559,7 @@ class Typesetter:
         tmpPath = '/tmp/PageBot_Typesetter.xml'
         fileName = self.markDown2XmlFile(tmpPath, mdText, mdExtensions)
         self.typesetFile(fileName, e=e, xPath=xPath)
-        os.remove(tmpPath)
+        #os.remove(tmpPath)
         return self.galley
 
     def typesetFile(self, fileName, e=None, xPath=None):

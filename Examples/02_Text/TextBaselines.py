@@ -17,80 +17,94 @@
 #     Show how alignment of baselines work for
 
 from pagebot.document import Document
-from pagebot.constants import BASE_LINE, BASE_INDEX_LEFT, GRID_COL, GRID_COL_BG, GRID_ROW_BG, GRID_SQR, GRID_ROW, GRID_SQR_BG, LANGUAGE_EN
+from pagebot.constants import *
 from pagebot.toolbox.units import p, pt, em
 from pagebot.toolbox.color import color
 from pagebot.typesetter import Typesetter
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.conditions import *
 
-COL = 26 # Column width
-GUTTER = 2 # Gutter width
 COLS = 3 # Number of columns
-PADDING = 5 # Padding of the page
-PS = 16 # Fontsize of body text
-LEADING = 1.4*PS
+ROWS = 8
+PADDING = pt(50) # Padding of the page
+PS = pt(16) # Fontsize of body text
+LEADING = em(1.4)
+G = pt(12)
+INDENT = pt(40) # Indent, firstline indent and bullet indent
 
 # Calculate the width of the page from the column measures
-W = COLS * COL + (COLS-1) * GUTTER + 2*PADDING
+W = 1000 
 H = 1000 # Fixed height
 
+CW = (W - 2*PADDING - (COLS-1)*G)/COLS
 GRIDX = [] # Construct the column grid measures
 
-for n in range(COLS-1):
-    GRIDX.append((COL, GUTTER))
+CH = (H - 2*PADDING - (ROWS-1)*G)/ROWS
+GRIDY = []
 
-GRIDX.append((COL, p(0))) # Last column does not have gutter
+for n in range(COLS):
+    GRIDX.append((CW, G))
+for n in range(ROWS):
+    GRIDY.append((CH, G))
 
-font = findFont('Verdana')
+font = findFont('Roboto-Regular')
+fontBold = findFont('Roboto-Bold')
 
-h1Style = dict(font=font, fontSize=1.5*PS, textFill=(1, 0, 0), leading=LEADING)
-h2Style = dict(font=font, fontSize=1.2*PS, textFill=(1, 0, 0.5), leading=LEADING,
+tabs = (INDENT, 50, 100, 150, 200)
+
+h1Style = dict(font=fontBold, fontSize=2*PS, textFill=(1, 0, 0), leading=LEADING)
+h2Style = dict(font=fontBold, fontSize=1.2*PS, textFill=(1, 0, 0.5), leading=LEADING,
     paragraphTopSpacing=LEADING)
-pStyle = dict(font=font, fontSize=PS, leading=LEADING)
-liStyle = dict(font=font, fontSize=PS, indent=pt(8), firstLineIndent=0, leading=LEADING)
-styles = dict(font=font, h1=h1Style, h2=h2Style, p=pStyle, li=liStyle, ul=liStyle, bullet=liStyle)
+pStyle = dict(font=font, fontSize=PS, leading=LEADING, tabs=tabs)
+liStyle = dict(font=font, fontSize=PS, indent=INDENT, firstLineIndent=0, textFill=0, leading=LEADING, tabs=tabs)
+
+# Collect all styles for package into Typesetter
+styles = dict(h1=h1Style, h2=h2Style, p=pStyle, li=liStyle, ul=liStyle, bullet=liStyle)
 
 # Create a document with these attributes, single page.
-doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, originTop=False, styles=styles,
+doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, originTop=False, styles=styles,
     baselineGrid=LEADING, language=LANGUAGE_EN)
+
 view = doc.view
 view.showTextBoxY = True
 view.showBaselines = [BASE_LINE, BASE_INDEX_LEFT] # Set the view to show the baseline grid
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set the view to display the grid
+view.showPadding = True
 
 s = """
 
 # What is PageBot?
 
-PageBot is a page layout program that enables designers to create high quality
-documents using code. It is available both as Python library working with
-[DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone
-desktop applications that can be created from it. Other contexts such as
-[Flat](http://xxyxyz.org/flat) (currently under development) allow PageBot to
-run environments other Mac OS X, for example on web servers. Initiated by [Type
-Network](https://typenetwork.com), the aim is to create a system for scriptable
-applications generating professionally designed documents that use high quality
+21\t22\t2\t2\t2
+21\tAA\t2\tXX
+21\t22\t2\t2\t2
+
+PageBot is a page layout program that enables designers to create high quality[S]
+documents using code. It is available both as Python library working with[S]
+[DrawBot](http://www.drawbot.com) and as part of a collection of stand-alone[S]
+desktop applications that can be created from it. Other contexts such as[S]
+[Flat](http://xxyxyz.org/flat) (currently under development) allow PageBot to[S]
+run environments other Mac OS X, for example on web servers. Initiated by [Type[S]
+Network](https://typenetwork.com), the aim is to create a system for scriptable[S]
+applications generating professionally designed documents that use high quality[S]
 typography.
 
 ## Some PageBot attributes
 
-* The core library, tutorial and basic examples for PageBot are available under
-MIT Open Source license from
-[github.com/PageBot/PageBot](https://github.com/PageBot/PageBot).
-* Desktop application examples can be found in the separate a repository,
-available under MIT Open Source license at
-[github.com/PageBot/PageBotApp](https://github.com/PageBot/PageBotApp).
-* A growing library of real document examples are bundled in Examples,
-available under MIT Open Source license from
-[github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
-* A website fully generated with PageBot can be found at
-[designdesign.space](http://designdesign.space). It also includes entry points
+* The core library, tutorial and basic examples for PageBot are available under[S]
+MIT Open Source license from [PageBot](https://github.com/PageBot/PageBot).
+* Desktop application examples can be found in the separate a repository, available[S]
+under MIT Open Source license at [PageBotApp](https://github.com/PageBot/PageBotApp).
+* A growing library of real document examples are bundled in Examples, available[S]
+under MIT Open Source license from [PagebotExamples](https://github.com/PageBot/PageBotExamples)
+* A website fully generated with PageBot can be found at[S]
+[designdesign.space](http://designdesign.space). It also includes entry points[S]
 for studies and workshops on how to work with PageBot.
-* The TYPETR Upgrade website
-[upgrade.typenetwork.com](https://upgrade.typenetwork.com) is an example where
+* The TYPETR Upgrade website[S]
+[upgrade.typenetwork.com](https://upgrade.typenetwork.com) is an example where[S]
 the HTML/CSS code and all illustrations are generated by PageBot scripts.
-"""
+""".replace('[S]\n', ' ')
+
 page = doc[1]
 page.baselineGrid = LEADING
 t = Typesetter(doc.context, styles=styles)
@@ -98,11 +112,12 @@ galley = t.typesetMarkdown(s)
 
 tb1 = galley.elements[0]
 tb1.fill = 0.95
-tb1.padding = p(0.5)
 tb1.parent = page
-tb1.w = COL
+tb1.w = CW+CW+G
 #tb.conditions = (Left2Left(), Top2Top(), Fit2Height(), Baseline2Grid(index=0))
 tb1.conditions = (Left2Left(), Top2Top(), Fit2Height())
+
+"""
 
 for textLine in tb1.textLines:
     print(textLine.y, textLine)
@@ -115,5 +130,29 @@ tb3 = tb2.copy(parent=page)
 tb3.fill = 0.85
 tb3.conditions = (Left2Col(2), Top2Top(), Fit2Height())
 
+"""
+
+"""
+    page.baselineGrid = pt(12)
+    page.baselineGridStart = page.pt
+    page.showBaselines = [BASE_LINE]
+    page.baselineColor = color(0, 1, 0)
+
+
+
+
+style = dict(font=font, fontSize=pt(18), leading=18, textFill=0, fill=(1, 0, 0), xTextAlign=LEFT)
+
+bs = c.newString('Aaaa\nBbbb\nCccc\nDddd', style=style)
+tb = newTextBox(bs, parent=page, padding=G, fill=(1, 1, 0), w=page.pw, h=page.ph, 
+    baselineWidth=pt(3), 
+    baselineColor=color(1, 0, 0), 
+    conditions=[Left2Left(), Baseline2Grid(index=2)])
+tb.showBaselines = True
+tb.baselineGrid=pt(28)
+
+"""
+
 doc.solve()
 doc.export('_export/TextBaselines.pdf')
+print('Done')

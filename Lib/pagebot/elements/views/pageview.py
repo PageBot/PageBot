@@ -712,6 +712,8 @@ class PageView(BaseView):
         In this method is called by an element, instead of self, the show
         attribute is a way to overwrite the setting of self.showBaselines
 
+        == NOTE == TextBox elements have their own baseline drawing method
+
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
@@ -758,10 +760,6 @@ class PageView(BaseView):
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)
 
-        print(style)
-
-        print(oy, e.pb, baselineColor, baselineWidth)
-
         while oy > e.pb: # Run until the padding of the element is reached.
             tl = tr = None
             if not background:
@@ -783,16 +781,16 @@ class PageView(BaseView):
 
             if BASE_INSIDE in show:
                 if tl:
-                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl))
+                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl), fill=(0, 0, 1))
                 if tr:
-                    context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr))
+                    context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr), fill=(1, 1, 0))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
-                    context.line((px + e.pl + 2*indexGutter + twl, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
+                    context.line((px + e.pl + 2*indexGutter + twl*2, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
                 if tl:
-                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl))
+                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl), fill=(1, 0, 0))
                 if tr:
-                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
+                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr), fill=(0, 1, 0))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             line += 1 # Increment line index.

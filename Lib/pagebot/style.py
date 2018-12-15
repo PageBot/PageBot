@@ -278,7 +278,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         listTabs = [(listIndent, LEFT)], # Default indent for bullet lists. Copy onto style.tabs for usage.
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
-        tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...]
+        tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...] or [20, 30, 40] for LEFT
         firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
         firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
         firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)

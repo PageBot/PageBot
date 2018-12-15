@@ -73,8 +73,6 @@ class DrawBotString(BabelString):
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
-        >>> context.isDrawBot
-        True
         >>> style = dict(font='Verdana', fontSize=pt(80))
         >>> bs = context.newString('Example Text', style=style)
         >>> bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
@@ -481,7 +479,6 @@ class DrawBotString(BabelString):
         else:
             axisTag = 'XTRA'
         minValue, defaultValue, maxValue = font.axes[axisTag]
-        #print(0, minValue, defaultValue, maxValue )
 
         if h is not None: # Fitting in heigt, calculate/iterate for the fitting font size.
             bs = cls.newString(t, context, e=e, style=style, h=h, pixelFit=pixelFit)
@@ -492,34 +489,28 @@ class DrawBotString(BabelString):
         # Now we have a formatted string with a given fontSize, guess to fit on the width.
         tx, _, tw, _ = bs.bounds() # Get pixel bounds of the string
         tw = tw - tx # Pixel width of the current string.
-        #print(0, tw, w, h)
         prevW = None # Testing if something changed, for extreme of axes.
         axisValue = defaultValue
 
         for n in range(100): # Limit the maximum amount of iterations as safeguard
             if tw > w: # Too wide, try iterate smaller in ratio of wdth/XTRA axis values
-                #print(1, tw, w)
                 maxValue = axisValue # Clip wide range to current
                 # Guess the new axisvalue from the ratio of tw/w
                 axisValue = (axisValue - minValue)/2 + minValue
                 if roundVariableFitLocation:
                     axisValue = int(round(axisValue))
-                #print(2, axisValue, minValue, defaultValue, maxValue)
                 loc = copy(location)
                 loc[axisTag] = axisValue
                 loc['opsz'] = upt(style['fontSize'])
-                #print(3, loc, font.axes.keys())
                 style['font'] = getInstance(font, loc)
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
                 tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
                 tw = tw - tx # Total width for the current
-                #print(5, tw, w, th-ty, h)
                 if prevW == tw: # Did not change, probably not able to get more condensed
                     break
                 prevW = tw
 
             elif tw < w - cls.FITTING_TOLERANCE: # Too condensed, try to make wider.
-                #print(11, tw, w)
                 minValue = axisValue # Clip narrow range to current
                 axisValue = (maxValue - axisValue)/2 + axisValue
                 if roundVariableFitLocation:
@@ -531,7 +522,6 @@ class DrawBotString(BabelString):
                 bs = cls.newString(t, context, e=e, style=style, pixelFit=pixelFit)
                 tx, ty, tw, th = bs.bounds() # Get pixel bounds of the string
                 tw = tw - tx # Total width for the current
-                #print(15, tw, w, th-ty, h)
                 if prevW == tw: # Did not change, probably not able to get more condensed
                     break
                 prevW = tw
@@ -673,9 +663,14 @@ class DrawBotString(BabelString):
         if openTypeFeatures is not None:
             fsAttrs['openTypeFeatures'] = openTypeFeatures
 
-        tabs = css('tabs', e, style)
-
-        if tabs is not None:
+        tabs = []
+        for tab in (css('tabs', e, style) or []): # Can be [(10, LEFT), ...] or [10, 20, ...]
+            if not isinstance(tab, (list, tuple)):
+                tab = upt(tab), LEFT
+            else: 
+                tab = upt(tab[0]), tab[1]
+            tabs.append(tab)
+        if tabs:
             fsAttrs['tabs'] = tabs
 
         # Set the hyphenation flag from style, as in DrawBot this is set by a

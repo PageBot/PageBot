@@ -521,9 +521,8 @@ class TextBox(Element):
         baselineColor = self.css('baselineColor', color(0, 0, 1))
         baselineWidth = self.css('baselineWidth', pt(0.5))
 
+        font = self.css('viewMarkerFont')
         fontSize = self.css('baseLineMarkerSize')
-        indexStyle = dict(font=self.css('viewMarkerFont'), fontSize=pt(8), textFill=baselineColor)
-        yStyle = dict(font=self.css('viewMarkerFont'), fontSize=fontSize, textFill=baselineColor)
         leadingStyle = dict(font=self.css('viewMarkerFont'), fontSize=fontSize, textFill=color(r=1, g=0, b=0))
 
         c.stroke(baselineColor, baselineWidth)
@@ -539,28 +538,32 @@ class TextBox(Element):
             # available space, only one type of label can be shown at either side.
             if not background:
                 if BASE_Y_LEFT in show:
-                    bs = self.newString('%d' % round(self.h - y), style=yStyle)
+                    yStyleL = dict(font=font, fontSize=fontSize, textFill=baselineColor, xTextAlign=RIGHT)
+                    bs = self.newString('%d' % round(self.h - y), style=yStyleL)
                     tw, th = bs.size
-                    c.text(bs, (px - tw - 3, py + y - th/5))
+                    c.textBox(bs, (px - tw*2 - 3, py + y - th/5, tw*2, th))
                 elif BASE_INDEX_LEFT in show:
-                    bs = self.newString(str(textLine.lineIndex), style=indexStyle)
+                    indexStyleL = dict(font=font, fontSize=pt(8), textFill=baselineColor, xTextAlign=RIGHT)
+                    bs = self.newString(str(textLine.lineIndex), style=indexStyleL)
                     tw, th = bs.size
-                    c.text(bs, (px - tw - 3, py + y - th/5))
+                    c.textBox(bs, (px - tw*2 - 3, py + y - th/5, tw*2, th))
 
                 if BASE_Y_RIGHT in show:
-                    bs = self.newString('%d' % round(self.h - y), style=yStyle)
+                    yStyleR = dict(font=font, fontSize=fontSize, textFill=baselineColor, xTextAlign=LEFT)
+                    bs = self.newString('%d' % round(self.h - y), style=yStyleR)
                     tw, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                    c.textBox(bs, (px + self.w + 3, py + y - th/5, tw*2, th))
                 elif BASE_INDEX_RIGHT in show:
-                    bs = self.newString(str(textLine.lineIndex), style=yStyle)
+                    indexStyleR = dict(font=font, fontSize=pt(8), textFill=baselineColor, xTextAlign=LEFT)
+                    bs = self.newString(str(textLine.lineIndex), style=indexStyleR)
                     tw, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + y - th/5))
+                    c.textBox(bs, (px + self.w + 3, py + y - th/5, tw*2, th))
 
                 if 0: #view.showTextLeading:
                     leading = round(abs(y - prevY))
                     bs = self.newString('%d' % leading, style=leadingStyle)
                     _, th = bs.size
-                    c.text(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+                    c.textBox(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
             prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
