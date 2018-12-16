@@ -265,14 +265,10 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
     >>> instance = makeInstance(vf.path, dict(opsz=8), cached=False)
     >>> instance
     <Font RobotoDelta-VF-opsz8>
-    >>> len(instance)
-    241
+    >>> len(instance) > 100
+    True
     >>> len(instance['H'].points)
     12
-    >>> instance['Egrave']
-    <PageBot Glyph Egrave Pts:0/Cnt:0/Cmp:2>
-    >>> len(instance['Egrave'].components)
-    2
     """
     # make a custom file name from the location e.g.
     # VariableFont-wghtXXX-wdthXXX.ttf
@@ -482,6 +478,16 @@ class Font:
         if 'glyf' in self.ttFont:
             return len(self.ttFont['glyf'])
         return 0
+
+    def __eq__(self, font):
+        if isinstance(font, self.__class__):
+            return self.info.familyName == font.info.familyName and self.info.styleName == font.info.styleName
+        return False
+
+    def __ne__(self, font):
+        if not isinstance(font, self.__class__):
+            return False
+        return self.info.familyName != font.info.familyName or self.info.styleName != font.info.styleName
 
     def nameMatch(self, pattern):
         """Answers level of matching between pattern and the font file name or

@@ -60,7 +60,7 @@ class Typesetter:
     # Some ugly colors to show that we're in default mode here, for the user to
     # supply a better set.
     DEFAULT_STYLES = dict(
-        body=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
+        document=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
         h1=dict(font='Verdana', fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
         h2=dict(font='Verdana', fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
         h3=dict(font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
@@ -81,7 +81,8 @@ class Typesetter:
         Nl2BrExtension(),
     ]
 
-    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True, keepTabs=True):
+    def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True,
+            return2Space=False, tabs2Space=False, br2Return=True):
         """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -117,24 +118,6 @@ class Typesetter:
         >>> galley = t.typesetMarkdown(mdText)
         >>> len(galley.elements)
         3
-        >>> galley.elements[1].bs # Rendered by HtmlContext 
-        box = page.select['content']
-        <BLANKLINE>
-        >>> galley.elements[2].bs # Rendered by HtmlContext
-        <BLANKLINE>
-        <BLANKLINE>
-        <h1>H1 header</h1>
-        <h2>H2 header</h2>
-        <h3>H3 header</h3>
-        <p><del>Delete</del>
-        <u>Underline</u>
-        <mark>Mark</mark>
-        <em>Em</em>
-        <q>Quote</q>
-        <strong>Strong</strong>
-        <emphasis>Emphasis</emphasis>
-        <sup>Sup
-        <sub>Sub</sub></sup></p>
         """
         self.context = context
         # Find the context, in case no doc has be defined yet.
@@ -159,8 +142,12 @@ class Typesetter:
         if skipTags is None:
             skipTags = self.SKIP_TAGS
         self.skipTags = skipTags
-        self.keepTabs = keepTabs # If True, then \t is preserved into <tab/> and later converted back into '\t
-        
+
+        # Flags how to filter white space
+        self.return2Space = return2Space # If True (default), then all \r will be replaced by ' '
+        self.tabs2Space = tabs2Space # If False, then \t is preserved into <tab/> and later converted back into '\t
+        self.br2Return = br2Return # If True, the <br/> will be replaced by '\r'
+
         self.lastImage = None # Keep the last processed image, in case there are captions to add.
 
     def node_tab(self, node, e):
@@ -192,17 +179,13 @@ class Typesetter:
 
     def node_br(self, node, e):
         """Add newline instance to the Galley."""
-        # For now, just ignore, as <br/> already get a break in MarkDown, as part of the exclosing tag.
-        # TODO: now <br/> makes the same vertical spacing as <p>
-        """
-        if self.peekStyle() is None and e is not None:
-            # Root of stack is empty style, to force searching on the e.parent line.
-            self.pushStyle({}) # Define top level for styles.
-        brStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
-        s = self.getStyleValue('prefix', e, brStyle, default='') + '\n' + self.getStyleValue('postfix', e, brStyle, default='')
-        bs = self.context.newString(s, e=e, style=brStyle)
-        self.append(bs) # Add newline in the current setting of FormattedString
-        """
+        if self.br2Return:
+            context = self.context
+            style = self.styles.get('br') or self.styles.get('p')
+            bs = context.newString('\r', style=style)
+            self.append(bs)
+        else:
+            self.typesetNode(node, e)
 
     def node_a(self, node, e):
         """Ignore links, but process the block"""
@@ -277,6 +260,16 @@ class Typesetter:
 
         else:
             self.typesetNode(node, e)
+
+    def node_ul(self, node, e):
+        context = self.galley.context
+        style = self.styles.get('ul')
+        if style is not None:
+            s = context.newString('\n', style=style)
+            self.append(s)
+        self.typesetNode(node, e)
+        if style is not None:
+            self.append(s)
 
     def node_li(self, node, e):
         """Generate bullet/Numbered list item."""
@@ -412,10 +405,17 @@ class Typesetter:
         does not exist."""
         return self.styles.get(styleName, {})
 
+    def getRootStyle(self):
+        for name in ('root', 'document', 'body', 'p'):
+            if name in self.styles:
+                return self.getNamedStyle(name)
+        return {}
+
     def getNodeStyle(self, tag):
         """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
-            self.pushStyle(self.getNamedStyle('root')) # Happens if calling directly, without check on e
+            # Happens if calling directly, without check on e or non-existing style for a node.
+            self.pushStyle(self.getRootStyle()) 
         mergedStyle = copy.copy(self.peekStyle())
         # Find the best matching style for tag on order of relevance,
         # considering the possible HTML tag parents and the history.
@@ -543,11 +543,18 @@ class Typesetter:
         """
         if mdExtensions is None:
             mdExtensions = self.MARKDOWN_EXTENSIONS
-        if self.keepTabs:
+
+        if not self.tabs2Space: # Otherwise MarkDown will auto-convert
             mdText = mdText.replace('\t', '<tab/>') # Keep the tabs, as they get replaced into spaced by MarkDown
+
         xmlBody = markdown.markdown(mdText, extensions=mdExtensions)
         xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % xmlBody
-        xml = xml.replace('&nbsp;', ' ')
+
+        if self.return2Space:
+            for c1, c2 in (('\r', ' '), ('\n', ' '), ('&nbsp;', ' ')): 
+                xml = xml.replace(c1, c2) # Replace all returns by tabs. Paragraphs should be made with <p> and <br/>
+            xml += '\r'
+
         if not fileName.endswith('.xml'):
             fileName = fileName + '.xml' # Make sure file name has xml extension.
         f = codecs.open(fileName, mode="w", encoding="utf-8") # Save the XML as unicode.

@@ -781,16 +781,16 @@ class PageView(BaseView):
 
             if BASE_INSIDE in show:
                 if tl:
-                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl), fill=(0, 0, 1))
+                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl))
                 if tr:
-                    context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr), fill=(1, 1, 0))
+                    context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl + 2*indexGutter + twl*2, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
                 if tl:
-                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl), fill=(1, 0, 0))
+                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl))
                 if tr:
-                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr), fill=(0, 1, 0))
+                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
             line += 1 # Increment line index.

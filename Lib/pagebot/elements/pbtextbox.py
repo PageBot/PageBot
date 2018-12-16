@@ -156,8 +156,6 @@ class TextBox(Element):
                 self._baselines[upt(textLine.y)] = textLine
 
         return self._textLines
-
-
     textLines = property(_get_textLines)
 
     def _get_baselines(self):
@@ -646,69 +644,73 @@ class TextBox(Element):
 
     # Text conditional movers
 
-    def baseline2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in
-        vertical direction, so the baseline of self.textLines[index] matches
-        the parent grid.
-
-        >>> from pagebot.document import Document
-        >>> from pagebot.conditions import *
-        >>> from pagebot.toolbox.units import pt, em
-        >>> doc = Document(w=500, h=1000)
-        >>> page = doc[1]
-        >>> page.padding = pt(20)
-        >>> style = dict(font='Verdana', fontSize=pt(10), leading=em(1.4))
-        >>> conditions = [Baseline2Grid()]
-        >>> tb = TextBox('Test '*100, parent=page, style=style, conditions=conditions)
-        >>> len(tb.textLines)
-        25
-        >>> 150 < tb.textLines[10].y < 160 # Various system give different answers
-        True
-        >>> result = page.solve()
-        >>> 150 < tb.textLines[10].y < 160 # Various system give different answers
-        True
+    def getDistance2Grid(self, y, parent=None):
+        """Answers the value y rounded to the page baseline grid, based on the
+        current position self.
         """
-        if self.textLines:
-            line = self.textLines[index or 0]
-            dy1 = abs(self.getRounded2Grid(line.y) - line.y)
-            dy2 = abs(self.getRounded2Grid(line.y, roundDown=True) - line.y)
-            #print(dy1, dy2, self.getRounded2Grid(line.y), self.getRounded2Grid(line.y, roundDown=True), line.y, )
-            if dy1 < dy2:
-                self.y -= dy1
-            else:
-                self.y += dy2
+        if parent is None:
+            parent = self.parent
+        # Calculate the current position of the line on the page
+        ly = self.top - y
+        # Calculate the distance of line to top of the grid
+        bly = page.h - parent.baselineGridStart - ly
+        # Calculate distance of the line to top of the grid
+        rbly = round(bly/parent.baselineGrid) * parent.baselineGrid
+        # Now we can move the top by difference of the rounded distance
+        return bly - rbly
 
+    def getMatchingStyleLine(self, style, index=0):
+        matchingIndex = 0
+        for line in e.textLines:
+            for textRun in line.textRuns:
+                # If this textRun is matching style, then increment the matchIndex. 
+                # Answer the line if the index matches 
+                if 'font' in style and textRun.font != style['font']:
+                    continue
+                if 'fontSize' in style and upt(textRun.fontSize) != upt(style['fontSize']):
+                    continue
+                if 'textFill' in style and textRun.textFill != style['textFill']:
+                    continue
+                if matchingIndex == index:
+                    return line
+                matchingIndex += 1
+        return None
 
-    def baselineUp2Grid(self, index=None, style=None):
-        """Move the text box down (increasing line.y value, rounding up) in vertical direction,
+    def styledBaselineDown2Grid(self, style, index=0, parent=None):
+        """Move the index-th baseline that fits the style down to match the grid."""
+        if parent is None:
+            parent = e.parent
+        if e.textLines and page is not None:
+            line = getMatchingStyleLine(self, style, index)
+            if line is not None:
+                self.top += getDistance2Grid(self, line.y, parent)
+
+    def baselineUp2Grid(self, index=0, parent=None):
+        """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
-        if self.textLines:
-            line = self.textLines[index or 0]
-            print(self.y, line.y, self.getRounded2Grid(line.y), line.y - self.getRounded2Grid(line.y), self.y + line.y - self.getRounded2Grid(line.y))
-            self.y -= line.y - self.getRounded2Grid(line.y)
+        if parent is None:
+            parent = e.parent
+        if e.textLines and page is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(e.textLines)))
+            line = self.textLines[index]
+            self.top += getDistance2Grid(self, line.y, parent) + parent.baselineGrid
 
-    def baselineDown2Grid(self, index=None, style=None):
-        """Move the text box up (increasing line.y value, rounding down) in vertical direction,
-        so the baseline of self.textLines[index] matches the parent grid.
+    def baselineDown2Grid(self, index=0, parent=None):
+        """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
+        matches the parent grid.
         """
-        if self.textLines:
-            line = self.textLines[index or 0]
-            self.y += line.y - self.getRounded2Grid(line.y, roundDown=True)
+        if parent is None:
+            parent = self.parent
+        if e.textLines and page is not None:
+            assert index in range(len(e.textLines)), \
+                ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(e.textLines)))
+            line = self.textLines[index]
+            self.top += getDistance2Grid(self, line.y, parent)
 
-    def baseline2Top(self, index=None, style=None):
-        """Move the vertical position of the indexed line to match self.top.
-        """
-        if self.textLines:
-            line = self.textLines[index or 0]
-            self.top -= line.y
-
-    def baseline2Bottom(self, index=None, style=None):
-        """Move the vertical position of the indexed line to match self.bottom.
-        """
-        if self.textLines:
-            line = self.textLines[index or 0]
-            self.bottom -= line.y
 
 
 if __name__ == '__main__':

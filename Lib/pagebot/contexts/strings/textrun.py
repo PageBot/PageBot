@@ -14,7 +14,10 @@
 #
 #     textrun.py
 #
-from pagebot.toolbox.units import em
+from pagebot.toolbox.units import em, pt
+from pagebot.toolbox.color import color
+from pagebot.fonttoolbox.objects.font import findFont
+
 
 try:
     from CoreText import (CTRunGetGlyphCount, CTRunGetStringRange,
@@ -47,10 +50,12 @@ class TextRun:
         # Reverse the style from
         attrs = CTRunGetAttributes(ctRun)
         self.nsFont = attrs['NSFont']
+        self._font = None # Initialize by calling the property self.font
         #self.fontDescriptor = f.fontDescriptor()
-        self.fill = attrs['NSColor']
+        self.nsColor = attrs['NSColor']
+        self._fill = None # Initialize by calling the property self.color
         self.nsParagraphStyle = attrs['NSParagraphStyle']
-        self.attrs = attrs # Save, in case the caller want to query run parameters.
+        self.attrs = attrs # Save, in case the caller want to query other run parameters.
 
         self.iStart, self.iEnd = CTRunGetStringRange(ctRun)
         self.string = u''
@@ -95,15 +100,21 @@ class TextRun:
         standard PageBot style."""
         if self._style is None:
             self._style = dict(
-                textFill=self.fill,
+                textFill=self.textFill,
                 pl=self.headIndent,
                 pr=self.tailIndent,
                 fontSize=self.fontSize,
-                font=self.fontPath,
+                font=self.font or self.fontName, # Answer Font object or font name.
                 leading=self.leading
             )
         return self._style
     style = property(_get_style)
+
+    def _get_textFill(self):
+        if self._fill is None:
+            self._fill = color(r=self.nsColor.redComponent(), g=self.nsColor.greenComponent(), b=self.nsColor.blueComponent(), a=self.nsColor.alphaComponent())
+        return self._fill
+    textFill = fill = property(_get_textFill)
 
     # Font stuff
 
@@ -118,6 +129,12 @@ class TextRun:
     def _get_fontName(self):
         return self.nsFont.fontName()
     fontName = font = property(_get_fontName)
+
+    def _get_font(self):
+        if self._font is None:
+            self._font = findFont(self.fontName)
+        return self._font
+    font = property(_get_font)
 
     def _get_isVertical(self):
         return self.nsFont.isVertical()

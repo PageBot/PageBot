@@ -1116,6 +1116,10 @@ class Unit:
         u.v = -self.v
         return u
 
+    def byBase(self, base):
+        """Not implemented for non-relative units"""
+        raise ValueError('Cannot calculate non-relative "%s" unit "%s" by base "%s" ' % (u.__class__.__name__, u, base))
+
 #   Mm
 
 def mm(v, *args, **kwargs):
@@ -1662,6 +1666,19 @@ class RelativeUnit(Unit):
         self._base = base
     base = property(_get_base, _set_base)
 
+    def byBase(self, base):
+        """Answer the rendered value with base instead of self._base)
+
+        >>> u = em(1.4, base=20)
+        >>> u.base
+        20pt
+        >>> u.pt
+        28
+        >>> u.byBase(100)
+        140.0
+        """
+        return base * self.v
+
     def _get_g(self):
         """Optional gutter value as reference for relative units. Save as Unit instance.
 
@@ -2056,6 +2073,19 @@ class Perc(RelativeUnit):
     BASE = 100 # Default "base reference for relative units."
     UNIT = 'perc'
     UNITC = '%'
+
+    def byBase(self, base):
+        """Answer the rendered value with base instead of self._base)
+
+        >>> u = perc(28, base=300)
+        >>> u.base
+        300pt
+        >>> u.pt
+        84
+        >>> u.byBase(200)
+        56.0
+        """
+        return base * self.v / 100
 
     def __repr__(self):
         v = asIntOrFloat(self.v)

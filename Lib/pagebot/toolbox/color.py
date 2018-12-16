@@ -509,6 +509,48 @@ class Color:
         else: # Default is black, if all fails.
             self.r = self.g = self.b = 0
 
+    def __eq__(self, c):
+        """Answer True if self can be considered to be the same color as c.
+
+        >>> color(1, 0, 0) == color(1, 0, 0)
+        True
+        >>> color(r=1, g=0, b=0, a=1) == color(r=1, g=0, b=0)
+        True
+        >>> color(cmyk=(1, 1, 0, 0)) == color(0, 0, 1) # Compare CMYK to same color RGB
+        True
+        >>> color(cmyk=(0, 1, 1, 0)) == color(1, 0, 0)
+        True
+        >>> color('red') == color(1, 0, 0)
+        True
+        >>> color('red') == color(spot=4852)
+        True
+        >>> color('red') == color('blue')
+        False
+        """
+        if not isinstance(c, self.__class__):
+            return False
+        if (self.isRgb or c.isRgb) and self.rgba == c.rgba:
+            return True
+        if (self.isSpot or c.isSpot) and self.spot == c.spot:
+            return True
+        if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk:
+            return True 
+        if (self.isRal or c.isRal) and self.ral == c.ral:
+            return True
+        return False
+
+    def __ne__(self, c):
+        """Answer False if self can be considered to be the same color as c.
+
+        >>> color(1, 0, 0) != color(1, 1, 0)
+        True
+        >>> color(r=1, g=0, b=0, a=1) != color(r=1, g=0, b=1)
+        True
+        """
+        if not isinstance(c, self.__class__):
+            return True
+        return not (self == c)
+
     def __repr__(self):
         if self._name is not None:
             return '%s(name="%s")' % (self.__class__.__name__, self._name)
@@ -751,8 +793,8 @@ class Color:
     def _get_int(self):
         """Answers the unique RGB integer value of self, based on 3 x 8 = 24 bits
 
-        >>> color(0.2, 0.3, 0.4).int
-        3362150
+        >>> color(0.5, 0.5, 0.5).int
+        8421504
         >>> color(0, 0, 0).int
         0
         >>> color(1, 1, 1).int # 2^24
@@ -826,8 +868,8 @@ class Color:
         Color(r=0.19, g=0.2, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreRed(0.8).r
         '0.82'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreRed() # Color changes convert to RGB mode.
-        Color(r=0.77, g=0.48, b=0.42)
+        >>> Color(r=0.5, g=0.75, b=0).moreRed() # Color changes convert to RGB mode.
+        Color(r=0.75, g=0.75, b=0)
         """
         r, g, b = self.rgb
         r = min(1, r + (1 - r) * v)
@@ -843,8 +885,8 @@ class Color:
         Color(r=0.1, g=0.28, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).moreGreen(0.8).g
         '0.84'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).moreGreen() # Color changes convert to RGB mode.
-        Color(r=0.54, g=0.74, b=0.42)
+        >>> Color(r=0.5, g=0.5, b=0).moreGreen() # Color changes convert to RGB mode.
+        Color(r=0.5, g=0.75, b=0)
         """
         r, g, b = self.rgb
         return color(r=r, g=min(1, g + (1 - g)*v), b=b, a=self.a)
@@ -889,8 +931,8 @@ class Color:
         Color(r=0.03, g=0.2, b=0.3)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessRed(0.8).r
         '0.08'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessRed() # Color changes convert to RGB mode.
-        Color(r=0.27, g=0.48, b=0.42)
+        >>> Color(r=1, g=0.5, b=0).lessRed() # Color changes convert to RGB mode.
+        Color(r=0.5, g=0.5, b=0)
         """
         r, g, b = self.rgb
         return color(r=min(1, max(0, r*v)), g=g, b=b, a=self.a)
@@ -905,8 +947,8 @@ class Color:
         Color(r=0.1, g=0.06, b=0.3)
         >>> '%0.2f' %Color(0.1, 0.2, 0.3, 0.4).lessGreen(0.8).g
         '0.16'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessGreen() # Color changes convert to RGB mode.
-        Color(r=0.54, g=0.24, b=0.42)
+        >>> Color(r=0.5, g=1, b=0).lessGreen() # Color changes convert to RGB mode.
+        Color(r=0.5, g=0.5, b=0)
         """
         r, g, b = self.rgb
         return color(r=r, g=min(1, max(0, g*v)), b=b, a=self.a)
@@ -921,8 +963,8 @@ class Color:
         Color(r=0.1, g=0.2, b=0.09)
         >>> '%0.2f' % color(0.1, 0.2, 0.3, 0.4).lessBlue(0.8).b
         '0.24'
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).lessBlue() # Color changes convert to RGB mode.
-        Color(r=0.54, g=0.48, b=0.21)
+        >>> color(c=0.5, m=0, y=1, k=0).lessBlue() # Color changes convert to RGB mode.
+        Color(r=0.5, g=1, b=0)
         """
         r, g, b = self.rgb
         return color(r=r, g=g, b=min(1, max(0, b*v)), a=self.a)
@@ -934,8 +976,8 @@ class Color:
         Color(r=0.5, g=0.5, b=0.5)
         >>> color('black').darker() # Black does not go any darker
         Color(r=0, g=0, b=0)
-        >>> color(c=0.1, m=0.2, y=0.3, k=0.4).darker() # Color changes convert to RGB mode.
-        Color(r=0.27, g=0.24, b=0.21)
+        >>> color(c=0.5, m=0, y=1, k=0).darker() # Color changes convert to RGB mode.
+        Color(r=0.25, g=0.5, b=0)
         """
         c = copy(self)
         rgb = self.lessRed(v).r, self.lessGreen(v).g, self.lessBlue(v).b
