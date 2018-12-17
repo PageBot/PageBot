@@ -42,9 +42,9 @@ ORIGIN_OS2_WEIGHT_CLASS = 400
 GLYPH = 'H'
 
 EXPORT_PATH = '_export/OS2VarFamily.pdf'
-#CSV_PATH = EXPORT_PATH.replace('.pdf', '.csv')
+CSV_PATH = EXPORT_PATH.replace('.pdf', '.csv')
 #BASE_PATH = u"/Volumes/iTunes/Private/FontDevelopment/Fontbureau/TN-admin-2017-10-10T05_34_28.861995/"
-#BASE_PATH = u"/Library/Fonts"
+BASE_PATH = u"/Library/Fonts"
 
 #EXPORT_PATH = '_export/TYPETR-Upgrade.pdf'
 #BASE_PATH = u"/Users/petr/Desktop/TYPETR-git/TYPETR-Upgrade/scripts/export/"
@@ -493,7 +493,7 @@ def drawFamilyOverview(path):
 
     return varFamily
 
-#exportCSV = open(CSV_PATH, 'w')
+exportCSV = open(CSV_PATH, 'w')
 #exportCSV.write('StyleName,em,H-stem,%H-stem,H-width,%H-width,OS/2-width,OS/2-weight,capHeight,%capHeight\n')
 #for path in PATHS:
 index = 0
@@ -509,6 +509,6 @@ for path in os.listdir(BASE_PATH):#[:20]:
         break
 exportCSV.close()
 
-saveImage(EXPORT_PATH)
-#saveImage(EXPORT_GIF)
+
+#c.saveImage(EXPORT_PATH)
 

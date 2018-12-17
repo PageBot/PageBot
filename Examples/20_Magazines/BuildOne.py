@@ -34,17 +34,17 @@ BLEED_RIGHT = p(1, 1, 1, 0)
 BLEED_LEFT = p(1, 0, 1, 1)
 
 PADDING = PT, PR, PB, PL = pt(40, 30, 30, 50)
-GW = pt(12)
+G = pt(12)
 COLUMNS = 4
-CW = (W - PL - PR - GW)/COLUMNS - GW
-CW2 = CW + GW + CW
-CW3 = CW2 + GW + CW
-CW4 = CW3 + GW + CW
+CW = (W - PL - PR - G)/COLUMNS - G
+CW2 = CW + G + CW
+CW3 = CW2 + G + CW
+CW4 = CW3 + G + CW
 
 GH = pt(1)
 COLUMNS = 4
 RH = ()
-GRID_X = ((CW, GW), (CW, GW), (CW, GW), (CW, 0))
+GRID_X = ((CW, G), (CW, G), (CW, G), (CW, 0))
 
 context = getContext()
 
@@ -57,6 +57,8 @@ coverTitleStyle = dict(font=fontBold, textFill=color(1, 0, 0), fontSize=pt(100))
 m = Magazine(RESOURCES_PATH, size=(W, H), padding=PADDING, originTop=False, 
         gridX=GRID_X, gridY=GRID_X, context=context)
 
+doc = m.newDocument(autoPages=1)
+
 # Make a cover Image element with composition conditions
 coverImage = m.find(pattern='pepper')[0]
 coverImage.yAlign = BOTTOM
@@ -65,6 +67,7 @@ coverImage.clipPath = newRectPath(context, 100, 200)
 #coverImage.conditions = [Top2TopBleed(), Fit2BottomBleed()]
 coverImage.conditions = [Bottom2BottomBleed()]#, Fit2TopBleed()]
 
+"""
 #titleBox = newTextBox('Magazine', style=coverTitleStyle, fill=(1, 1, 0), conditions=[Fit2Width(), Bottom2Bottom()])
 #test = newRect(fill=(1, 1, 0, 0.5), stroke=None, h=p(2), conditions=[Fit2Width(), Bottom2BottomBleed()])
 
@@ -93,6 +96,7 @@ print(coverImage.x, coverImage.y, coverImage.w, coverImage.h)
 coverImage.h = cover.h
 coverImage.bottom = 0
 print(coverImage.x, coverImage.y, coverImage.w, coverImage.h)
+"""
 
 # Export the document as PDF.
 doc.export('_export/BuildOne.pdf')

@@ -20,7 +20,7 @@ from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
 
 class TextBox(Element):
 
@@ -653,24 +653,35 @@ class TextBox(Element):
         # Calculate the current position of the line on the page
         ly = self.top - y
         # Calculate the distance of line to top of the grid
-        bly = page.h - parent.baselineGridStart - ly
+        bly = parent.h - parent.baselineGridStart - ly
         # Calculate distance of the line to top of the grid
         rbly = round(bly/parent.baselineGrid) * parent.baselineGrid
         # Now we can move the top by difference of the rounded distance
         return bly - rbly
 
     def getMatchingStyleLine(self, style, index=0):
+        """Scan through the lines. Test the first textRun of each line to
+        match all of the (font, fontSize, textFill) keys of the style.
+        Then answer the line. Otherwise answer None.
+
+        Note that this should be extended to scanning all textRuns,
+        as by conicidence there van be a "Bold" style inside main text
+        at the start of a line. 
+        Also it should be testing on cascading values (what is defined
+        in the style?) instead of testing on all 3 parameters. 
+        Also testing on line parameters, such as leading.
+        """
         matchingIndex = 0
-        for line in e.textLines:
-            for textRun in line.textRuns:
-                # If this textRun is matching style, then increment the matchIndex. 
-                # Answer the line if the index matches 
-                if 'font' in style and textRun.font != style['font']:
-                    continue
-                if 'fontSize' in style and upt(textRun.fontSize) != upt(style['fontSize']):
-                    continue
-                if 'textFill' in style and textRun.textFill != style['textFill']:
-                    continue
+        for line in self.textLines:
+            if not line.textRuns:
+                continue
+            textRun = line.textRuns[0]
+            # If this textRun is matching style, then increment the matchIndex. 
+            # Answer the line if the index matches.
+            if  textRun.font == style.get('font', None) and\
+                upt(textRun.fontSize) == upt(style.get('fontSize', 0)) and\
+                textRun.textFill == style.get('textFill', noColor):
+                # Here there was a match.
                 if matchingIndex == index:
                     return line
                 matchingIndex += 1
@@ -679,24 +690,37 @@ class TextBox(Element):
     def styledBaselineDown2Grid(self, style, index=0, parent=None):
         """Move the index-th baseline that fits the style down to match the grid."""
         if parent is None:
-            parent = e.parent
-        if e.textLines and page is not None:
-            line = getMatchingStyleLine(self, style, index)
+            parent = self.parent
+        if self.textLines and parent is not None:
+            line = self.getMatchingStyleLine(style, index)
             if line is not None:
-                self.top += getDistance2Grid(self, line.y, parent)
+                self.top += self.getDistance2Grid(line.y, parent)
+
+    def baseline2Grid(self, index=0, parent=None):
+        if parent is None:
+            parent = self.parent
+        if self.textLines and parent is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(self.textLines)))
+            line = self.textLines[index]
+            d = self.getDistance2Grid(line.y, parent)
+            self.top += d# Round down
+            if d > parent.baselineGrid/2:
+                self.top += parent.baselineGrid
 
     def baselineUp2Grid(self, index=0, parent=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
         if parent is None:
-            parent = e.parent
-        if e.textLines and page is not None:
+            parent = self.parent
+        if self.textLines and parent is not None:
             assert index in range(len(self.textLines)), \
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
-                (self.__class__.__name__, index, len(e.textLines)))
+                (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            self.top += getDistance2Grid(self, line.y, parent) + parent.baselineGrid
+            self.top += self.getDistance2Grid(line.y, parent) + parent.baselineGrid
 
     def baselineDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
@@ -704,12 +728,87 @@ class TextBox(Element):
         """
         if parent is None:
             parent = self.parent
-        if e.textLines and page is not None:
-            assert index in range(len(e.textLines)), \
+        if self.textLines and page is not None:
+            assert index in range(len(self.textLines)), \
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
-                (self.__class__.__name__, index, len(e.textLines)))
+                (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            self.top += getDistance2Grid(self, line.y, parent)
+            self.top += self.getDistance2Grid(line.y, parent)
+
+    def baseline2Top(self, index=None, style=None):
+        """Move the vertical position of the indexed line to match self.top.
+        """
+        if self.textLines and self.parent:
+            line = self.textLines[index or 0]
+            self.top -= line.y
+
+    def baseline2Bottom(self, index=None, style=None):
+        """Move the vertical position of the indexed line to match the positon of self.parent.bottom.
+        """
+        if self.textLines and self.parent:
+            line = self.textLines[index or 0]
+            self.bottom -= line.y
+
+    def capHeightUp2Grid(self, index=0, parent=None):
+        """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
+        so the baseline of self.textLines[index] matches the parent grid.
+        """
+        if parent is None:
+            parent = self.parent
+        if self.textLines and parent is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.capHeightUp2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(self.textLines)))
+            line = self.textLines[index]
+            if line.textRuns:
+                textRun = line.textRuns[0]
+                self.top += self.getDistance2Grid(line.y + textRun.capHeight, parent) + parent.baselineGrid
+
+    def capHeightDown2Grid(self, index=0, parent=None):
+        """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
+        matches the parent grid.
+        """
+        if parent is None:
+            parent = self.parent
+        if self.textLines and parent is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.capHeightDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(self.textLines)))
+            line = self.textLines[index]
+            if line.textRuns:
+                textRun = line.textRuns[0]
+                self.top += self.getDistance2Grid(line.y + textRun.capHeight, parent)
+
+    def xHeightUp2Grid(self, index=0, parent=None):
+        """Move the text box up, so self.textLines[index].textRuns[0].xHeight 
+        matches the parent grid.
+        """
+        if parent is None:
+            parent = self.parent
+        if self.textLines and parent is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.xHeightUp2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(self.textLines)))
+            line = self.textLines[index]
+            if line.textRuns:
+                textRun = line.textRuns[0]
+                self.top += self.getDistance2Grid(line.y + textRun.xHeight, parent) + parent.baselineGrid
+
+    def xHeightDown2Grid(self, index=0, parent=None):
+        """Move the text box down, so self.textLines[index].textRuns[0].xHeight
+        matches the parent grid.
+        """
+        if parent is None:
+            parent = self.parent
+        if self.textLines and parent is not None:
+            assert index in range(len(self.textLines)), \
+                ('%s.xHeightDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
+                (self.__class__.__name__, index, len(self.textLines)))
+            line = self.textLines[index]
+            if line.textRuns:
+                textRun = line.textRuns[0]
+                self.top += self.getDistance2Grid(line.y + textRun.xHeight, parent)
+
 
 
 

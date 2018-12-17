@@ -353,7 +353,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Text color
         textFill = blackColor, # Separate between the fill of a text box and the color of the text itself.
         textStroke = noColor, # No stroke of color text by default.
-        textStrokeWidth = None,
+        textStrokeWidth = None, # Width of stroke in units
         textShadow = None,
         textGradient = None,
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.

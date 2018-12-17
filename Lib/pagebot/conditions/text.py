@@ -43,7 +43,7 @@ class EqualizeFlow2Height(Condition):
 class BaselineCondition(Condition):
 
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False,
-            index=None, style=None):
+            index=0, style=None):
         self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
         self.error = error
@@ -56,39 +56,39 @@ class BaselineCondition(Condition):
 class Baseline2Grid(BaselineCondition):
 
 	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+		return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
 	def solve(self, e, score):
-		return e.baseline2Grid(index=self.index, style=self.style)
+		return e.baseline2Grid(index=self.index)
 
 class BaselineUp2Grid(BaselineCondition):
 
 	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+		return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
 	def solve(self, e, score):
-		return e.baselineUp2Grid(index=self.index, style=self.style)
+		return e.baselineUp2Grid(index=self.index)
 
 class BaselineDown2Grid(BaselineCondition):
 	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index, style=self.style)
+		return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
 	def solve(self, e, score):
-		return e.baselineDown2Grid(index=self.index, style=self.style)
+		return e.baselineDown2Grid(index=self.index)
 
 class Baseline2Top(BaselineCondition):
 	def test(self, e):
-		return e.isBaselineOnTop(self.tolerance, index=self.index, style=self.style)
+		return e.isBaselineOnTop(self.tolerance, index=self.index)
 
 	def solve(self, e, score):
-		return e.baseline2Top(index=self.index, style=self.style)
+		return e.baseline2Top(index=self.index)
 
 class Baseline2Bottom(BaselineCondition):
 	def test(self, e):
-		return e.isBaselineOnBottom(self.tolerance, index=self.index, style=self.style)
+		return e.isBaselineOnBottom(self.tolerance, index=self.index)
 
 	def solve(self, e, score):
-		return e.baseline2Bottom(index=self.index, style=self.style)
+		return e.baseline2Bottom(index=self.index)
 
 if __name__ == '__main__':
     import doctest
