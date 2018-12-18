@@ -16,17 +16,23 @@
 
 from pagebot import getContext
 from pagebot.toolbox.units import *
-from pagebot.publications.proofing.pagewide import PageWide
+#from pagebot.publications.proofing.pagewide import PageWide
 from pagebot.constants import A3
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 
-print(sorted(getFontPaths().keys()))
+#print(sorted(getFontPaths().keys()))
 font = findFont('BungeeOutline-Regular')
-HEIGHT, WIDTH = A3
+H, W = A3 # Landscape, reverse W, H
+PADDING = p(5)
+S = 'abcdefghijklmnopqrstuvwxyz'
+LEADING = 1
+
 context = getContext()
-context.newPage(pt(WIDTH), pt(HEIGHT))
-proof = PageWide(context)
-SIZE = 54
-context.translate(SIZE, HEIGHT - SIZE)
-proof.draw(font, 'abcdefghijklmnopqrstuvwxyz', SIZE)
+context.newPage(W, H)
+y = 0
+for ps in (10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 28, 32, 36, 40, 46, 54):
+    y += ps*LEADING/2
+    bs = context.newString(S, style=dict(font=font, fontSize=ps))
+    tw, th = bs.size
+    context.textBox(bs, (PADDING, H-PADDING-y, W-2*PADDING, th))

@@ -696,7 +696,11 @@ class TextBox(Element):
             if line is not None:
                 self.top += self.getDistance2Grid(line.y, parent)
 
-    def baseline2Grid(self, index=0, parent=None):
+    def baseline2Grid(self, index=0, gridIndex=None, parent=None):
+        """If gridIndex is defined, then position the index-th line on 
+        gridIndex-th baseline. If gridIndex is None, then round to 
+        nearest grid line position.
+        """
         if parent is None:
             parent = self.parent
         if self.textLines and parent is not None:
