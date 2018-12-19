@@ -850,7 +850,7 @@ class Element:
         if index < 0:
             return None # Don't accept.
         if index < len(self.elements):
-            self.elements[index] = e
+            self._elements[index] = e
             if self.eId:
                 self._eIds[e.eId] = e
             return index
@@ -1148,22 +1148,65 @@ class Element:
 
     # Text conditions, always True for non-text elements.
 
-    def isBaselineOnGrid(self, tolerance):
+    def getDistance2Grid(self, y, parent=None):
+        """Answers the value y rounded to the parent baseline grid.
+
+        >>> e1 = Element(baselineGridStart=17, baselineGrid=19)
+        >>> e2 = Element(h=100, parent=e1)
+        >>> e2.getDistance2Grid(40)
+        9pt
+        """
+        if parent is None:
+            parent = self.parent
+        # Calculate 
+        ly = self.top - y
+        # Calculate the distance of line to top of the grid
+        bly = parent.h - parent.baselineGridStart - ly
+        # Calculate distance of the line to top of the grid
+        rbly = round(bly/parent.baselineGrid) * parent.baselineGrid
+        # Now we can move the top by difference of the rounded distance
+        return bly - rbly
+
+    def isTopOnGrid(self, tolerance=0):
+        """Answer True if self.top is on the parent grid.
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=100, y=0, h=1000, originTop=False)
+        >>> e2 = Element(y=100, h=200, parent=e1)
+        >>> e2.isTopOnGrid(), e2.getDistance2Grid(e2.top), e2.y, e2.bottom, e2.top, e2.h, e2.originTop
+        (True, 0pt)
+        >>> e2.top = 500 - 55
+        >>> e2.isTopOnGrid(), e2.getDistance2Grid(e2.top), e2.top
+        False
+        """
+        return abs(self.getDistance2Grid(self.top)) <= tolerance
+
+    def isBottomOnGrid(self, tolerance=0):
+        """Answer True if selfbottom is on the parent grid.
+        >>> e1 = Element(baselineGridStart=18, baselineGrid=9, h=180)
+        >>> e2 = Element(y=27, h=81, parent=e1)
+        >>> e2.isBottomOnGrid()
+        True
+        >>> e2.y = 32
+        >>> e2.isBottomOnGrid()
+        False
+        """
+        return abs(self.getDistance2Grid(self.bottom)) <= tolerance
+
+    def isBaselineOnGrid(self, tolerance=0):
         return True
 
-    def isBaselineOnBottom(self, tolerance):
+    def isBaselineOnBottom(self, tolerance=0):
         return True
 
-    def isBaselineOnTop(self, tolerance):
+    def isBaselineOnTop(self, tolerance=0):
         return True
 
-    def isAscenderOnTop(self, tolerance):
+    def isAscenderOnTop(self, tolerance=0):
         return True
 
-    def isCapHeightOnTop(self, tolerance):
+    def isCapHeightOnTop(self, tolerance=0):
         return True
 
-    def isXHeightOnTop(self, tolerance):
+    def isXHeightOnTop(self, tolerance=0):
         return True
 
     #   S T Y L E
@@ -2163,6 +2206,7 @@ class Element:
             if self.originTop:
                 return self.y - self.h
             return self.y + self.h
+        # yAlign must be TOP
         return self.y
     def _set_top(self, y):
         """Shift the element so `selfmTtop == y`. Where the "top" is, depends on
@@ -2181,7 +2225,7 @@ class Element:
                 self.y = units(y) + self.h
             else:
                 self.y = units(y) - self.h
-        else:
+        else: # yAlign must be TOP
             self.y = y
     top = property(_get_top, _set_top)
 

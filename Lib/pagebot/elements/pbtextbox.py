@@ -644,21 +644,6 @@ class TextBox(Element):
 
     # Text conditional movers
 
-    def getDistance2Grid(self, y, parent=None):
-        """Answers the value y rounded to the page baseline grid, based on the
-        current position self.
-        """
-        if parent is None:
-            parent = self.parent
-        # Calculate the current position of the line on the page
-        ly = self.top - y
-        # Calculate the distance of line to top of the grid
-        bly = parent.h - parent.baselineGridStart - ly
-        # Calculate distance of the line to top of the grid
-        rbly = round(bly/parent.baselineGrid) * parent.baselineGrid
-        # Now we can move the top by difference of the rounded distance
-        return bly - rbly
-
     def getMatchingStyleLine(self, style, index=0):
         """Scan through the lines. Test the first textRun of each line to
         match all of the (font, fontSize, textFill) keys of the style.

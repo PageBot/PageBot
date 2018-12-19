@@ -997,19 +997,19 @@ class PageBotPath:
         style = self.style.copy()
         return PageBotPath(context=self.context, bezierPath=bp, style=style)
 
-def newRectPath(context, w, h, bezierPath=None, style=None):
+def newRectPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
     pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
-    pbp.rect(0, 0, w, h)
+    pbp.rect(x, y, w, h)
     return pbp
 
-def newCirclePath(context, r, bezierPaht=None, style=None):
+def newCirclePath(context, x=0, y=0, r=100, bezierPaht=None, style=None):
     pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
-    pbp.oval(-r, -r, 2*r, 2*r)
+    pbp.oval(x--r, y--r, 2*r, 2*r)
     return pbp
 
-def newOvalPath(context, w, h, bezierPath=None, style=None):
+def newOvalPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
     pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
-    pbp.oval(0, 0, w, h)
+    pbp.oval(x, y, w, h)
     return pbp
 
 if __name__ == '__main__':
