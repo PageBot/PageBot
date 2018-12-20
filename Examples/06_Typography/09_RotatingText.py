@@ -58,16 +58,16 @@ view.showBaselines = False # Show default setting of baseline grid of the column
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page and the condition that checks on text overflow.
-c1 = newTextBox(t, w=CW, h=CH, name='c1', parent=page, nextElementName='c2',
+c1 = newTextBox(t, w=CW, h=CH, name='c1', parent=page, nextElement='c2',
     conditions=[Left2Left(), Top2Top(), Overflow2Next()],
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT)) # Overwrited view setting.
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.
-c2 = newTextBox(w=CW, h=CH, name='c2', parent=page, nextElementName='c3',
+c2 = newTextBox(w=CW, h=CH, name='c2', parent=page, nextElement='c3',
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT), # Overwrited view setting.
     rx=CW/2, ry=CH/2, angle=-45,
     conditions=[Left2Left(), Bottom2Bottom(), Overflow2Next()])
-c3 = newTextBox(w=CW, h=CH, name='c3', parent=page, nextElementName='c4', 
+c3 = newTextBox(w=CW, h=CH, name='c3', parent=page, nextElement='c4', 
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT), # Overwrited view setting.
     rx=CW/2, ry=CH/2, angle=45,
     conditions=[Right2Right(), Top2Top(), Overflow2Next()])

@@ -87,7 +87,7 @@ def makeDocument():
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name
-        nextElementName='ElasticTextBox3', nextPageName='Page 2',
+        nextElement='ElasticTextBox3', nextPage='Page 2',
         parent=page0, padding=4, x=100, w=BoxWidth, h=200,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,
         fill=whiteColor, stroke=noColor,

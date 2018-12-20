@@ -61,6 +61,7 @@ class Typesetter:
     # supply a better set.
     DEFAULT_STYLES = dict(
         document=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
+        dropcap=dict(font='Verdana', fontSize=pt(64), leading=em(1.2), textFill=color(1, 0, 0)),
         h1=dict(font='Verdana', fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
         h2=dict(font='Verdana', fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
         h3=dict(font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
@@ -161,6 +162,11 @@ class Typesetter:
             self.pushStyle({}) # Define top level for styles.
         hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
         self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
+
+    def dropcap(self, node, e):
+        context = self.context
+        style = self.styles.get('dropcap')
+
         
     def getStyleValue(self, name, e=None, style=None, default=None):
         """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
@@ -420,6 +426,7 @@ class Typesetter:
         # Find the best matching style for tag on order of relevance,
         # considering the possible HTML tag parents and the history.
         for styleName in self.getMatchingStyleNames(tag):
+            print(tag, '--->', styleName)
             nodeStyle = self.getNamedStyle(styleName)
             if nodeStyle: # Not None and not empty
                 for name, value in nodeStyle.items():

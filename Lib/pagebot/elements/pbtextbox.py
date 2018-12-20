@@ -164,21 +164,6 @@ class TextBox(Element):
         return self._baselines
     baselines = property(_get_baselines)
 
-    def getRounded2Grid(self, y, roundDown=False):
-        """Answers the value y rounded to the page baseline grid, based on the
-        current position self.
-
-        FIXME: rounding differences across OS'es. Add doctests here.
-        """
-        start = self.baselineGridStart or self.pt
-        baseline = self.baselineGrid
-        y = round((y - start)/baseline) * baseline + start
-
-        if roundDown:
-            y -= self.baselineGrid
-
-        return y
-
     def __getitem__(self, lineIndex):
         textLines = self.textLines
         if lineIndex in range(len(textLines)):
@@ -360,39 +345,39 @@ class TextBox(Element):
         NOTE: There is currently not a test if text actually went into the next
         element. It's just checking if there is a name defined, not if it
         exists or is already filled by another flow."""
-        return self.nextElementName is None and self.getOverflow()
+        return self.nextElement is None and self.getOverflow()
 
     def overflow2Next(self):
         """Try to fix if there is overflow. If there is overflow outside the
         page, then find the page.next with it's target element to continue,
-        until all text fits or the element has not nextElementName defined.
+        until all text fits or the element has not nextElement defined.
         Answer the page and result, as the page may have been altered."""
         result = True
         overflow = self.getOverflow()
         page = self.getElementPage()
         nextElement = None
 
-        if overflow and self.nextElementName: # If there is text overflow and there is a next element?
+        if overflow and self.nextElement: # If there is text overflow and there is a next element?
             result = False
             # Find the page of self
             if page is not None:
                 # Try next page
-                nextElement = page.getElementByName(self.nextElementName) # Optional search  next page too.
-                if nextElement is None or nextElement.bs and self.nextPageName:
+                nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
+                if nextElement is None or nextElement.bs and self.nextPage:
                     # Not found or not empty, search on next page.
-                    if self.nextPageName == 'next': # Force to next page, relative to current
+                    if self.nextPage == 'next': # Force to next page, relative to current
                         page = page.next
-                    elif isinstance(self.nextPageName, (int, float)): # Offset to next page
-                        page = page.parent.pageNumber(page) + self.nextPageName
+                    elif isinstance(self.nextPage, (int, float)): # Offset to next page
+                        page = page.parent.pageNumber(page) + self.nextPage
                     else:
-                        page = self.doc.getPage(self.nextPageName)
+                        page = self.doc.getPage(self.nextPage)
                     if page is not None:
-                        nextElement =  page.getElementByName(self.nextElementName)
+                        nextElement =  page.getElementByName(self.nextElement)
                 if nextElement is not None and not nextElement.bs:
                     # Finally found one empty box on this page or next page?
                     nextElement.bs = overflow
-                    nextElement.prevPageName = page.name
-                    nextElement.prevElementName = self.name # Remember the back link
+                    nextElement.prevPage = page.name
+                    nextElement.prevElement = self.name # Remember the back link
                     page = nextElement.overflow2Next() # Solve any overflow on the next element.
         # TODO: In case used as condition, returning a tuple instead of boolean flag
         return page
@@ -610,35 +595,13 @@ class TextBox(Element):
 
     # Text conditions
 
-    def baselineOffset(self, index=0):
-        u"""Answers the difference of the indexed line to the parent (page) setting for
-        self.parent.baselineGrid and self.parent.baselineGridStart."""
-        try:
-            line = self.textLines[index or 0]
-            #return min(abs(self.getRounded2Grid(line.y) - line.y), abs(self.getRounded2Grid(line.y, roundDown=True) - line.y))
-            return self.getRounded2Grid(line.y) - line.y
-        except IndexError:
-            return None
-
     def isBaselineOnGrid(self, tolerance, index=None, style=None):
         try:
+            parent = self.parent
+            if parent is None:
+                return False # Cannot test, there is no parent grid
             line = self.textLines[index or 0]
-            return abs(self.getRounded2Grid(line.y) - line.y) <= tolerance or \
-                abs(self.getRounded2Grid(line.y, roundDown=True) - line.y) <= tolerance
-        except IndexError:
-            return False
-
-    def isBaselineOnTop(self, tolerance, index=None, style=None):
-        try:
-            line = self.textLines[index or 0]
-            return abs(self.top - line.y) <= tolerance
-        except IndexError:
-            return False
-
-    def isBaselineOnBottom(self, tolerance, index=None, style=None):
-        try:
-            line = self.textLines[index or 0]
-            return abs(self.bottom - line.y) <= tolerance
+            return abs(self.getDistance2Grid(self.top + line.y)) <= tolerance
         except IndexError:
             return False
 
@@ -679,7 +642,7 @@ class TextBox(Element):
         if self.textLines and parent is not None:
             line = self.getMatchingStyleLine(style, index)
             if line is not None:
-                self.top += self.getDistance2Grid(line.y, parent)
+                self.top += parent.getDistance2Grid(line.y)
 
     def baseline2Grid(self, index=0, gridIndex=None, parent=None):
         """If gridIndex is defined, then position the index-th line on 
@@ -693,8 +656,8 @@ class TextBox(Element):
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            d = self.getDistance2Grid(line.y, parent)
-            self.top += d# Round down
+            d = parent.getDistance2Grid(line.y)
+            self.top -= d# Round down
             if d > parent.baselineGrid/2:
                 self.top += parent.baselineGrid
 
@@ -709,7 +672,7 @@ class TextBox(Element):
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            self.top += self.getDistance2Grid(line.y, parent) + parent.baselineGrid
+            self.top -= parent.getDistance2Grid(line.y)
 
     def baselineDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
@@ -722,7 +685,7 @@ class TextBox(Element):
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            self.top += self.getDistance2Grid(line.y, parent)
+            self.top -= parent.getDistance2Grid(line.y)
 
     def baseline2Top(self, index=None, style=None):
         """Move the vertical position of the indexed line to match self.top.
@@ -751,7 +714,7 @@ class TextBox(Element):
             line = self.textLines[index]
             if line.textRuns:
                 textRun = line.textRuns[0]
-                self.top += self.getDistance2Grid(line.y + textRun.capHeight, parent) + parent.baselineGrid
+                self.top += parent.getDistance2Grid(line.y + textRun.capHeight) + parent.baselineGrid
 
     def capHeightDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
@@ -766,7 +729,7 @@ class TextBox(Element):
             line = self.textLines[index]
             if line.textRuns:
                 textRun = line.textRuns[0]
-                self.top += self.getDistance2Grid(line.y + textRun.capHeight, parent)
+                self.top += parent.getDistance2Grid(line.y + textRun.capHeight)
 
     def xHeightUp2Grid(self, index=0, parent=None):
         """Move the text box up, so self.textLines[index].textRuns[0].xHeight 
@@ -781,7 +744,7 @@ class TextBox(Element):
             line = self.textLines[index]
             if line.textRuns:
                 textRun = line.textRuns[0]
-                self.top += self.getDistance2Grid(line.y + textRun.xHeight, parent) + parent.baselineGrid
+                self.top += parent.getDistance2Grid(line.y + textRun.xHeight) + parent.baselineGrid
 
     def xHeightDown2Grid(self, index=0, parent=None):
         """Move the text box down, so self.textLines[index].textRuns[0].xHeight
@@ -796,7 +759,7 @@ class TextBox(Element):
             line = self.textLines[index]
             if line.textRuns:
                 textRun = line.textRuns[0]
-                self.top += self.getDistance2Grid(line.y + textRun.xHeight, parent)
+                self.top += parent.getDistance2Grid(line.y + textRun.xHeight)
 
 
 

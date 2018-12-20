@@ -77,8 +77,8 @@ class Composer:
                 newTextBox=newTextBox)
 
             if page is not None:
-                target['image'] = page.select('image')
-                target['box'] = page.select('main'), 
+                targets['image'] = page.select('image')
+                targets['box'] = page.select('main'), 
 
         elif page is not None:
             targets['page'] = page
@@ -101,13 +101,17 @@ class Composer:
                 e.run(targets)
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
 
-            elif e.isImage and targets.get('image'):
+            elif e.isImage and targets.get('image') is not None:
                 e.parent = targets['image']
                 verbose.append('%s.compose: Set image element "%s" to image box' % (composerName, e.path.split('/')[-1], targets['image']))
 
-            elif targets.get('box'):
-                    e.parent = targets['box']
-                    verbose.append('%s.compose: Add ruler or line element to text box "%s"' % (composerName, targets['box']))            
+            elif e.isText and targets.get('box') is not None:
+                targets.get('box').append(e.bs)
+                verbose.append('%s.compose: Add text to text box "%s"' % (composerName, targets['box']))            
+
+            elif targets.get('box') is not None:
+                e.parent = targets['box']
+                verbose.append('%s.compose: Add ruler or line element to text box "%s"' % (composerName, targets['box']))            
             else:
                 errors.append('%s.compose: No valid box or image selected "%s - %s"' % (composerName, page, e))
 

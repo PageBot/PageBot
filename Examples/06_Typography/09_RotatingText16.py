@@ -69,7 +69,7 @@ for ix in range(4): # Horizontal index for x-position
         newTextBox(t, x=page.pl+ix*(CW+G), y=page.pt+iy*(CH+G), w=CW, h=CH, 
             rx=CW/2, ry=CH/2, angle=90*n/15, # Local rotation center and contructed angle.
             conditions=[Overflow2Next()], # Just overflow conditions, position is hard-coded.
-            name='c%d' % n, parent=page, nextElementName='c%d' % (n+1),
+            name='c%d' % n, parent=page, nextElement='c%d' % (n+1),
             showOrigin=True, # Show origin cross-hair at top-left of un-rotate text box.
             # Set the baseline flag. Note that the baseline and index rotate nicely.
             showBaselines=(BASE_LINE, BASE_INDEX_RIGHT)) # Overwrite the view setting.

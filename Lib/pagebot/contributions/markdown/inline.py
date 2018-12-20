@@ -28,6 +28,7 @@ STRONG_RE = r'(\*\*)(.*?)\*\*' # <strong>
 EM_RE = r'(\*)(.*?)\*' # <em>
 EMPH_RE = r'(\/\/)(.*?)\/\/' # <emphasis>
 CAPTION_RE = r'(\*\[\[)(.*?)\]\]\*' # <caption>
+DROPCAP_RE = r'(\[\[)(.*?)\]\]' # Dropcap
 
 class InlineExtension(Extension):
     def extendMarkdown(self, md, md_globals):
@@ -56,12 +57,17 @@ class InlineExtension(Extension):
         sub_tag = SimpleTagPattern(SUB_RE, 'sub')
         md.inlinePatterns.add('sub', sub_tag, '>sup')
 
+        # [[Dropcap]] converts to <span class="dropcap">>Sub</span>
+        dropcap_tag = SimpleTagPattern(DROPCAP_RE, 'dropcap')
+        md.inlinePatterns.add('dropcap', dropcap_tag, '>sub')
+
         strong_tag = SimpleTagPattern(STRONG_RE, 'strong')
         md.inlinePatterns['strong'] = strong_tag
         em_tag = SimpleTagPattern(EM_RE, 'em')
         md.inlinePatterns['em'] = em_tag
         emph_tag = SimpleTagPattern(EMPH_RE, 'emphasis')
         md.inlinePatterns['emphasis'] = emph_tag
+
 
         del md.inlinePatterns['strong_em']
         del md.inlinePatterns['em_strong']
