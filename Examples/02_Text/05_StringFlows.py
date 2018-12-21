@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseFormattedStringFlows.py
+#     05_StringFlows.py
 #
 #     If a TextBox as self.nextElementName defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
@@ -50,9 +50,9 @@ def makeDocument():
 
     # Get list of pages with equal y, then equal x.
     #page = doc[1][0] # Get the single page from te document.
-    page0 = doc[1] # Get page on pageNumber, first in row (this is only one now).
-    page0.name = 'Page 1'
-    page0.padding = PagePadding
+    page1 = doc[1] # Get page on pageNumber, first in row (there is only one now).
+    page1.name = 'Page 1'
+    page1.padding = PagePadding
 
     bs = c.newString('')
     for n in range(10):
@@ -68,7 +68,7 @@ def makeDocument():
     e1 = newTextBox(bs,
         name='ElasticTextBox1',
         nextElementName='ElasticTextBox2', # Overflow goes here.
-        parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+        parent=page1, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
         mb=20, mr=10,       # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.
@@ -81,13 +81,13 @@ def makeDocument():
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
         name='ElasticTextBox2', # Flow reference by element.name
         nextElementName='ElasticTextBox3', nextPageName='Page 2',
-        parent=page0, padding=4, x=100, w=BoxWidth, h=200,
+        parent=page1, padding=4, x=100, w=BoxWidth, h=200,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,  fill=whiteColor, stroke=noColor,
     )
     # Get next page, to show flow running over page breaks.
-    page1 = doc[1]
-    page1.name = 'Page 2'
-    page1.padding = PagePadding
+    page2 = page1.next
+    page2.name = 'Page 2'
+    page2.padding = PagePadding
 
     e3 = newTextBox('', # Empty box, will get the overflow from e2, if there is any.
         name='ElasticTextBox3', # Flow reference by element.name

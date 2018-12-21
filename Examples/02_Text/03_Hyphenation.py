@@ -34,16 +34,17 @@ H = 1500
 doc = Document(w=W, h=H, autoPages=1)
 page = doc[1]
 
-style = dict(font=bungee, fontSize=pt(24), hyphenationHead=4, hyphenationTail=3, hyphenation=True)
+# hyphenationHead=4, hyphenationTail=3 currently not supported
+style = dict(font=bungee, fontSize=pt(24), hyphenation=True)
 t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100, w=w, h=h, parent=page, border=1, fill=color(0.3, 0.2, 0.1, 0.5))
+newTextBox(t, x=100, y=H-100, w=w, h=h, parent=page, borders=1, fill=color(0.3, 0.2, 0.1, 0.5))
 
-style['hyphenationTail'] = 400
+#style['hyphenationTail'] = 400
 t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100-h, w=w, h=h, parent=page, border=1, fill=color(1, 1, 0))
+newTextBox(t, x=100, y=H-100-h, w=w, h=h, parent=page, borders=1, fill=color(1, 1, 0))
 
-style['hyphenation'] = False
+#style['hyphenation'] = False
 t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100-2*h, w=w, h=h, parent=page, border=1, fill=color(1, 0, 1))
+newTextBox(t, x=100, y=H-100-2*h, w=w, h=h, parent=page, borders=1, fill=color(1, 0, 1))
 doc.export('_export/Hyphenation.pdf')
 

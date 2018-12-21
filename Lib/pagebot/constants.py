@@ -602,7 +602,8 @@ FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
-# Movie formates
+FILETYPE_SKETCH = 'sketch' # File format of SketchApp
+# Movie formats
 FILETYPE_MOV = 'mov'
 FILETYPE_MP4 = 'mp4'
 # Application format
