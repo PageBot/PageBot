@@ -289,7 +289,7 @@ class Page(Element):
             name = DEFAULT_GALLEY_NAME
         galley = self.select(name)
         if galley is None:
-            galley = Galley(name=name, parent=self, xy=self.xy, size=self.pw, nextElementName=name)
+            galley = Galley(name=name, parent=self, xy=self.xy, size=self.pw, nextElement=name)
         return galley
 
     def _get_galley(self):

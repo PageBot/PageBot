@@ -58,7 +58,7 @@ page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page and the condition that checks on text overflow.
 c1 = newTextBox(t, w=CW, name='c1', parent=page, 
-    showOrigin=True, nextElementName='c2',
+    showOrigin=True, nextElement='c2',
     conditions=[Left2Left(), Top2Top(), Fit2Height(), Overflow2Next()])
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.

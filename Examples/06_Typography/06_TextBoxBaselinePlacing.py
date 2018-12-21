@@ -62,7 +62,7 @@ view.showBaselines = False # Show default setting of baseline grid of the column
 page = doc[1]
 # Make text box as child element of the page and set its layout conditions
 # to fit the padding of the page and the condition that checks on text overflow.
-c1 = newTextBox(t, w=CW, h=CH, y=page.h/2, name='c1', parent=page, nextElementName='c2', 
+c1 = newTextBox(t, w=CW, h=CH, y=page.h/2, name='c1', parent=page, nextElement='c2', 
     yAlign=BASE_TOP, showOrigin=True, 
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
     conditions=[Left2Left(), Overflow2Next()])

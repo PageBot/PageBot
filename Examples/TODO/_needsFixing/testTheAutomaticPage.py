@@ -96,10 +96,10 @@ def makeDocument(rs):
     # Create empty image place holders. To be filled by running content on the page.
     template1.cContainer(4, 0, 2, 4, rs)  # Empty image element, cx, cy, cw, ch
     template1.cContainer(0, 5, 2, 3, rs)
-    # Create linked text boxes. Note the "nextPageName" to keep on the same page or to next.
-    template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBoxName=flowId1, nextPageName=0, fill=BOX_COLOR)
-    template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBoxName=flowId2, nextPageName=0, fill=BOX_COLOR)
-    template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBoxName=flowId0, nextPageName=1, fill=BOX_COLOR)
+    # Create linked text boxes. Note the "nextPage" to keep on the same page or to next.
+    template1.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBoxName=flowId1, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox('', 2, 0, 2, 8, rs, flowId1, nextBoxName=flowId2, nextPage=0, fill=BOX_COLOR)
+    template1.cTextBox('', 4, 4, 2, 4, rs, flowId2, nextBoxName=flowId0, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template1.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 
@@ -114,9 +114,9 @@ def makeDocument(rs):
     template2.cContainer(2, 2, 2, 2, rs)
     template2.cContainer(2, 0, 2, 2, rs)
     template2.cContainer(4, 6, 2, 2, rs)
-    template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBoxName=flowId1, nextPageName=0, fill=BOX_COLOR)
-    template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBoxName=flowId2, nextPageName=0, fill=BOX_COLOR)
-    template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBoxName=flowId0, nextPageName=1, fill=BOX_COLOR)
+    template2.cTextBox('', 0, 0, 2, 5, rs, flowId0, nextBoxName=flowId1, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 2, 4, 2, 4, rs, flowId1, nextBoxName=flowId2, nextPage=0, fill=BOX_COLOR)
+    template2.cTextBox('', 4, 3, 2, 3, rs, flowId2, nextBoxName=flowId0, nextPage=1, fill=BOX_COLOR)
     # Create page number box. Pattern pageNumberMarker is replaced by actual page number.
     template2.cText(rs['pageNumberMarker'], 6, 0, rs, font=BOOK, fontSize=12, fill=BOX_COLOR)
 

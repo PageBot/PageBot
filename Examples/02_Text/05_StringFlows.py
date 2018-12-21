@@ -13,7 +13,7 @@
 #
 #     05_StringFlows.py
 #
-#     If a TextBox as self.nextElementName defined as name for another text box on the
+#     If a TextBox as self.nextElement defined as name for another text box on the
 #     same page, then overflow of self will go into the other text box.
 
 from pagebot.constants import LEFT, BOTTOM, TOP
@@ -67,8 +67,13 @@ def makeDocument():
 
     e1 = newTextBox(bs,
         name='ElasticTextBox1',
+<<<<<<< HEAD
         nextElementName='ElasticTextBox2', # Overflow goes here.
         parent=page1, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+=======
+        nextElement='ElasticTextBox2', # Overflow goes here.
+        parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+>>>>>>> origin/master
         mb=20, mr=10,       # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.

@@ -46,7 +46,7 @@ class Element:
     # TextBox instance can operate as a flow.
     isText = False
     isTextBox = False
-    #isFlow property answers if nextElementName or prevElementName is defined.
+    #isFlow property answers if nextElement or prevElement is defined.
     isPage = False # Set to True by Page-like elements.
     isView = False
     isImage = False
@@ -61,8 +61,8 @@ class Element:
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElementName=None, prevElementName=None, nextPageName=None,
-            prevPageName=None, thumbPath=None, bleed=None, padding=None, pt=0,
+            nextElement=None, prevElement=None, nextPage=None,
+            prevPage=None, thumbPath=None, bleed=None, padding=None, pt=0,
             pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
             ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
@@ -249,10 +249,10 @@ class Element:
         self.keyWords = keyWords # Optional used for web pages
         self.language = language # Optional language code from HTML standard. Otherwise DEFAULT_LANGUAGE.
         # Save flow reference names
-        self.prevElementName = prevElementName # Name of the prev flow element
-        self.nextElementName = nextElementName # Name of the next flow element
-        self.nextPageName = nextPageName # Name, identifier or index of the next page that nextElement refers to,
-        self.prevPageName = prevPageName # if a flow must run over page boundaries.
+        self.prevElement = prevElement # Element itself or name of the prev flow element
+        self.nextElement = nextElement # Element itself or name of the next flow element
+        self.nextPage = nextPage # Page element itself or name, identifier or index of the next page that nextElement refers to,
+        self.prevPage = prevPage # if a flow must run over page boundaries.
         # Optional storage for the a thumbnail image path visualizing this element.
         self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
@@ -396,9 +396,9 @@ class Element:
             self.h = template.h
             self.padding = template.padding
             self.margin = template.margin
-            self.prevElementName = template.prevElementName
-            self.nextElementName = template.nextElementName
-            self.nextPageName = template.nextPageName
+            self.prevElement = template.prevElement
+            self.nextElement = template.nextElement
+            self.nextPage = template.nextPage
             # Copy style items
             for  name, value in template.style.items():
                 self.style[name] = value
@@ -786,10 +786,10 @@ class Element:
             framePath=self.framePath,
             elements=None, # Will be copied separately, if there are child elements
             template=self.template,
-            nextElementName=self.nextElementName,
-            prevElementName=self.prevElementName,
-            nextPageName=self.nextPageName,
-            prevPageName=self.prevPageName,
+            nextElement=self.nextElement,
+            prevElement=self.prevElement,
+            nextPage=self.nextPage,
+            prevPage=self.prevPage,
             padding=self.padding, # Copies all padding values at once
             margin=self.margin, # Copies all margin values at once,
             borders=self.borders, # Copies all borders at once.
@@ -850,7 +850,7 @@ class Element:
         if index < 0:
             return None # Don't accept.
         if index < len(self.elements):
-            self.elements[index] = e
+            self._elements[index] = e
             if self.eId:
                 self._eIds[e.eId] = e
             return index
@@ -979,21 +979,21 @@ class Element:
     # If the element is part of a flow, then answer the squence.
 
     def _get_next(self):
-        """If self if part of a flow, answer the next element, defined by self.nextElementName.
-        If self.nextPageName is defined too, then search on the indicated page.
+        """If self if part of a flow, answer the next element, defined by self.nextElement.
+        If self.nextPage is defined too, then search on the indicated page.
 
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
-        >>> e1_1 = Element(parent=page, name='e1', nextElementName='e2')
-        >>> e1_2 = Element(parent=page, name='e2', nextElementName='e1', nextPageName=2)
+        >>> e1_1 = Element(parent=page, name='e1', nextElement='e2')
+        >>> e1_2 = Element(parent=page, name='e2', nextElement='e1', nextPage=2)
         >>> page = doc[2]
-        >>> e2_1 = Element(parent=page, name='e1', nextElementName='e2')
-        >>> e2_2 = Element(parent=page, name='e2', nextElementName='e3')
-        >>> e2_3 = Element(parent=page, name='e3', nextElementName='e1', nextPageName=3)
+        >>> e2_1 = Element(parent=page, name='e1', nextElement='e2')
+        >>> e2_2 = Element(parent=page, name='e2', nextElement='e3')
+        >>> e2_3 = Element(parent=page, name='e3', nextElement='e1', nextPage=3)
         >>> page = doc[3]
-        >>> e3_1 = Element(parent=page, name='e1', nextElementName='e2')
-        >>> e3_2 = Element(parent=page, name='e2', nextElementName='e3')
+        >>> e3_1 = Element(parent=page, name='e1', nextElement='e2')
+        >>> e3_2 = Element(parent=page, name='e2', nextElement='e3')
         >>> e3_3 = Element(parent=page, name='e3')
         >>> e1_1.next.name
         'e2'
@@ -1003,53 +1003,55 @@ class Element:
         True
         >>> e3_2.next.next is None # End of flow
         True
-        >>> e3_2.prevElementName # Gets repaired by the e3_2.next usage
+        >>> e3_2.prevElement # Gets repaired by the e3_2.next usage
         'e1'
-        >>> e3_1.prevPageName # Get repaired by the e3_1.next usage.
+        >>> e3_1.prevPage # Get repaired by the e3_1.next usage.
         (2, 0)
         """
         nextElement = None
-        if self.nextElementName:
-            if self.nextPageName:
-                page = self.doc[self.nextPageName]
-            else:
-                page = self.page
+        if self.nextElement is not None: # If there is a next element reference defined.
+            if isinstance(self.nextPage, Element):
+                page = self.nextPage
+            elif self.nextPage: # then check if we also make reference to a another page.
+                page = self.doc[self.nextPage]
+            else: # If no next page reference, then refoer to the page of self.
+                page = self.page 
             if page is not None: # Only if a page was found for this element
-                nextElement = page.select(self.nextElementName)
+                nextElement = page.select(self.nextElement)
                 if nextElement is not None:
-                    nextElement.prevElementName = self.name # Repair in case it is broken
-                    if self.nextPageName:
-                        nextElement.prevPageName = self.page.pn
+                    nextElement.prevElement = self.name # Repair in case it is broken
+                    if self.nextPage:
+                        nextElement.prevPage = self.page.pn
 
         return nextElement
     next = property(_get_next)
 
     def _get_isFlow(self):
         """Answers if self is part of a flow, which means that
-        either self.prevElementName or self.nextElementName is not None.
+        either self.prevElement or self.nextElement is not None.
 
         >>> e = Element()
         >>> e.isFlow
         False
-        >>> e.nextElementName = 'e1'
+        >>> e.nextElement = 'e1'
         >>> e.isFlow
         True
         """
-        return bool(self.prevElementName or self.nextElementName)
+        return bool(self.prevElement or self.nextElement)
     isFlow = property(_get_isFlow)
 
     def getFlow(self, flow=None):
-        """Answers the list of flow element sequences starting on self. In case self.nextPageName
+        """Answers the list of flow element sequences starting on self. In case self.nextPage
         is defined, then
 
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
-        >>> e1_1 = Element(parent=page, name='e1', nextElementName='e2')
-        >>> e1_2 = Element(parent=page, name='e2', nextElementName='e1', nextPageName=2)
+        >>> e1_1 = Element(parent=page, name='e1', nextElement='e2')
+        >>> e1_2 = Element(parent=page, name='e2', nextElement='e1', nextPage=2)
         >>> page = doc[2]
-        >>> e2_1 = Element(parent=page, name='e1', nextElementName='e2')
-        >>> e2_2 = Element(parent=page, name='e2', nextElementName='e3')
+        >>> e2_1 = Element(parent=page, name='e1', nextElement='e2')
+        >>> e2_2 = Element(parent=page, name='e2', nextElement='e3')
         >>> e2_3 = Element(parent=page, name='e3')
         >>> flow = e1_1.getFlow() # Identical to e1_1.flow
         >>> len(flow)
@@ -1148,22 +1150,82 @@ class Element:
 
     # Text conditions, always True for non-text elements.
 
-    def isBaselineOnGrid(self, tolerance):
+    def getDistance2Grid(self, y):
+        """Answers the distance between y and y rounded to baseline grid.
+        This can be a negative number showing the direction of rounding
+
+        >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10, originTop=False)
+        >>> e.getDistance2Grid(40)
+        0pt
+        >>> e.getDistance2Grid(45)
+        -5pt
+        >>> e.getDistance2Grid(38)
+        2pt
+        """
+        if self.originTop:
+            dy = y - self.baselineGridStart
+        else:
+            # Calculate the position of top of the grid
+            gridTopY = self.h - self.baselineGridStart
+            # Calculate distance of the line to top of the grid
+            gy = gridTopY - y
+            dy = gy - round(gy/self.baselineGrid) * self.baselineGrid
+
+        # Now we can calculate the difference of y to the nearest grid line
+        return dy
+
+    def isTopOnGrid(self, tolerance=0):
+        """Answer True if self.top is on the parent grid.
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e2 = Element(y=100, h=200, parent=e1)
+        >>> e2.isTopOnGrid()
+        True
+        >>> e2.y = 102
+        >>> e2.isTopOnGrid()
+        False
+        """
+        return abs(self.getDistance2Grid(self.top)) <= tolerance
+
+    def isBottomOnGrid(self, tolerance=0):
+        """Answer True if self.bottom is on the parent grid.
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e2 = Element(y=100, h=200, parent=e1)
+        >>> e2.isBottomOnGrid()
+        True
+        >>> e2.y = 102
+        >>> e2.isBottomOnGrid()
+        False
+        """
+        return abs(self.getDistance2Grid(self.bottom)) <= tolerance
+
+    def isMiddleOnGrid(self, tolerance=0):
+        """Answer True if self.middle is on the parent grid.
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e2 = Element(y=100, h=200, parent=e1)
+        >>> e2.isMiddleOnGrid()
+        True
+        >>> e2.y = 102
+        >>> e2.isMiddleOnGrid()
+        False
+        """
+        return abs(self.getDistance2Grid(self.middle)) <= tolerance
+
+    def isBaselineOnGrid(self, tolerance=0):
         return True
 
-    def isBaselineOnBottom(self, tolerance):
+    def isBaselineOnBottom(self, tolerance=0):
         return True
 
-    def isBaselineOnTop(self, tolerance):
+    def isBaselineOnTop(self, tolerance=0):
         return True
 
-    def isAscenderOnTop(self, tolerance):
+    def isAscenderOnTop(self, tolerance=0):
         return True
 
-    def isCapHeightOnTop(self, tolerance):
+    def isCapHeightOnTop(self, tolerance=0):
         return True
 
-    def isXHeightOnTop(self, tolerance):
+    def isXHeightOnTop(self, tolerance=0):
         return True
 
     #   S T Y L E
@@ -2163,6 +2225,7 @@ class Element:
             if self.originTop:
                 return self.y - self.h
             return self.y + self.h
+        # yAlign must be TOP or None
         return self.y
     def _set_top(self, y):
         """Shift the element so `selfmTtop == y`. Where the "top" is, depends on
@@ -2181,7 +2244,7 @@ class Element:
                 self.y = units(y) + self.h
             else:
                 self.y = units(y) - self.h
-        else:
+        else: # yAlign must be TOP or None
             self.y = y
     top = property(_get_top, _set_top)
 
@@ -4865,6 +4928,48 @@ class Element:
             self.h = r2[0] - r1[0] + r2[1]
             return True
         return False
+
+    def top2Grid(self):
+        """Move the top of self to rounded grid
+
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e2 = Element(y=105, h=200, parent=e1)
+        >>> e2.top
+        105pt
+        >>> e2.top2Grid()
+        >>> e2.y
+        100pt
+        >>> e2.y = 101
+        >>> e2.top2Grid()
+        >>> e2.y
+        100pt
+        >>> e2.y = 106
+        >>> e2.top2Grid()
+        >>> e2.y
+        110pt
+        """
+        self.top += self.getDistance2Grid(self.top)
+
+    def bottom2Grid(self):
+        """Move the top of self to rounded grid
+
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e2 = Element(y=105, h=200, parent=e1)
+        >>> e2.bottom
+        105pt
+        >>> e2.bottom2Grid()
+        >>> e2.y
+        100pt
+        >>> e2.y = 101
+        >>> e2.bottom2Grid()
+        >>> e2.y
+        100pt
+        >>> e2.y = 106
+        >>> e2.bottom2Grid()
+        >>> e2.y
+        110pt
+        """
+        self.bottom += self.getDistance2Grid(self.bottom)
 
     #   Page block and Page side alignments
 

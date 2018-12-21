@@ -72,21 +72,21 @@ for n in range(1, NUM_PAGES+1):
     # Make text box as child element of the page and set its layout conditions
     # to fit the padding of the page and the condition Overflow2Next() that 
     # checks on text overflow.
-    c1 = newTextBox(w=CW, name='c1', parent=page, nextElementName='c2',
+    c1 = newTextBox(w=CW, name='c1', parent=page, nextElement='c2',
         conditions=[Left2Left(), Top2Top(), Fit2Height(), Overflow2Next()])
     # Text without initial content, will be filled by overflow of c1.
     # Not showing the [+] marker, as the overflow text fits in the flows into
     # the third column.
-    c2 = newTextBox(w=CW, name='c2', parent=page, nextElementName='c3',
+    c2 = newTextBox(w=CW, name='c2', parent=page, nextElement='c3',
         conditions=[Left2Col(1), Top2Top(), Fit2Height(), Overflow2Next()])
     # Text without initial content, will be filled by overflow of c2.
     # Showing the [+] marker, as the overflow text does not fit in the third column.
-    c3 = newTextBox(w=CW, name='c3', parent=page, nextElementName='c1', nextPageName=n+1,
+    c3 = newTextBox(w=CW, name='c3', parent=page, nextElement='c1', nextPage=n+1,
         conditions=[Left2Col(2), Top2Top(), Fit2Height()])
 # Solve the page/element conditions. It will test the conditions (in page
 # order, element order and order of the conditions list), adjusting the
 # position and size of the text boxes and checking of the there is text 
-# overflow that needs to be linked to boxes marked by nextElementName.
+# overflow that needs to be linked to boxes marked by nextElement.
 doc.solve()
 
 

@@ -130,15 +130,15 @@ class Table(Element):
             if page is not None:
                 # Try next page
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
-                if nextElement is None or nextElement.fs and self.nextPageName:
+                if nextElement is None or nextElement.fs and self.nextPage:
                     # Not found or not empty, search on next page.
-                    page = self.doc.getPage(self.nextPageName)
-                    nextElement =  page.getElementByName(self.nextElementName)
+                    page = self.doc.getPage(self.nextPage)
+                    nextElement =  page.getElementByName(self.nextElement)
                 if nextElement is not None and not nextElement.bs:
                     # Finally found one empty box on this page or next page?
                     nextElement.fs = overflow
-                    nextElement.prevPageName = page.name
-                    nextElement.prevElementName = self.name # Remember the back link
+                    nextElement.prevPage = page.name
+                    nextElement.prevElement = self.name # Remember the back link
                     score = nextElement.solve() # Solve any overflow on the next element.
                     result = not score.fails # Test if total flow placement succeeded.
         return result

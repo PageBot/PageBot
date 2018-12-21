@@ -251,7 +251,7 @@ class Image(Element):
             exportExtension=exportExtension
         )
 
-    def prepare(self, view, origin=None, drawElements=True):
+    def prepare(self, view):
         """Respond to the top-down element broadcast to prepare for build.
         If the original image needs scaling, then prepare the build by letting the context
         make a new cache file with the scaled images.
@@ -260,7 +260,7 @@ class Image(Element):
         """
         self.saveScaledCache(view)
         for e in self.elements:
-            e.prepare(view, origin, drawElements)
+            e.prepare(view)
 
     def build_html(self, view, path, drawElements=True):
         context = view.context # Get current context.
