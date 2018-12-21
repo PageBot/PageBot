@@ -460,7 +460,7 @@ class TextBox(Element):
             context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
 
         elif clipPath is None:
-            if self.elements: # If there are child elements, then these are used as layout for the clipping path.
+            if 0 and self.elements: # If there are child elements, then these are used as layout for the clipping path.
                 clipPath = self.childClipPath # Construct the clip path, so we don't need to restore translate.
                 if clipPath is not None:
                     clipPath.translate((self.pl, self.pb))

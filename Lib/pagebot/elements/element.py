@@ -56,8 +56,9 @@ class Element:
     PATH_CLASS = PageBotPath
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
-            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, t=None,
-            timeMarks=None, parent=None, context=None, name=None,
+            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, 
+            left=None, top=None, right=None, bottom=None,
+            t=None, timeMarks=None, parent=None, context=None, name=None,
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
@@ -167,6 +168,18 @@ class Element:
 
         if bleed is not None:
             self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
+
+        # In case these specific position sides are defined, let them overwrite any (x,y)
+        # Since top <--> bottom and left <--> right conflict, we only need to test one of them.
+        # to be defined.
+        if top is not None:
+            self.top = top
+        elif bottom is not None:
+            self.bottom = bottom
+        if left is not None:
+            self.left = left
+        elif right is not None:
+            self.right = right
 
         # Border info dict have format:
         # dict(line=ONLINE, dash=None, stroke=blackColor, strokeWidth=borderData)
@@ -2228,7 +2241,7 @@ class Element:
         # yAlign must be TOP or None
         return self.y
     def _set_top(self, y):
-        """Shift the element so `selfmTtop == y`. Where the "top" is, depends on
+        """Shift the element so `self.top == y`. Where the "top" is, depends on
         the setting of `self.yAlign`. If `self.isTextBox`, then vertical
         position can also be defined by the top or bottom position of the
         baseline."""

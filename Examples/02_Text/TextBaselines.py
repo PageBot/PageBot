@@ -162,6 +162,10 @@ tb1.conditions = (Right2Right(), Top2Top(), Baseline2Grid(index=3))
 s = doc.context.newString('Ha', style=titleStyle)
 tb2 = newTextBox(s, parent=page, w=CW, 
     conditions=(Left2Left(), Top2Top(), Baseline2Grid()))
+
+s = doc.context.newString('Ha', style=titleStyle)
+tb3 = newTextBox(s, parent=page, w=CW, top=100,
+    conditions=(Left2Left(), Baseline2Grid()))
 """
 
 

@@ -149,7 +149,7 @@ class Typesetter:
         self.tabs2Space = tabs2Space # If False, then \t is preserved into <tab/> and later converted back into '\t
         self.br2Return = br2Return # If True, the <br/> will be replaced by '\r'
 
-        self.lastImage = None # Keep the last processed image, in case there are captions to add.
+        self.currentImage = None # Keep the last processed image, in case there are captions to add.
 
     def node_tab(self, node, e):
         """Non-HTML tag, substituted from \t, now convert back into \t."""
@@ -305,10 +305,10 @@ class Typesetter:
             alt=node.attrib.get('alt'), index=node.attrib.get('index', 0))
 
     def node_caption(self, node, e):
-        """If there is a self.lastImage set, then redirect output of the caption nodes into the image,
+        """If there is a self.currentImage set, then redirect output of the caption nodes into the image,
         instead of the self.galley. Otherwise just output.
         as plain text, ignoring the caption tag. Multiple captions are added to the the current image,
-        until it is changed."""
+        until it is changed.""" 
         if self.currentImage is not None: # In case there is a current image, attach caption to it.
             savedGalley = self.galley # Temporary redirect node parent
             self.galley = self.currentImage
@@ -418,7 +418,9 @@ class Typesetter:
         return {}
 
     def getNodeStyle(self, tag):
-        """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style."""
+        """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style.
+        This can be used to match custom tag names (such as <dropcap>...</dropcap> to a style with the same name.
+        """
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
             # Happens if calling directly, without check on e or non-existing style for a node.
             self.pushStyle(self.getRootStyle()) 
@@ -426,7 +428,6 @@ class Typesetter:
         # Find the best matching style for tag on order of relevance,
         # considering the possible HTML tag parents and the history.
         for styleName in self.getMatchingStyleNames(tag):
-            print(tag, '--->', styleName)
             nodeStyle = self.getNamedStyle(styleName)
             if nodeStyle: # Not None and not empty
                 for name, value in nodeStyle.items():

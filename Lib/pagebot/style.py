@@ -298,7 +298,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         firstLineGridFit = True,
 
         # Leading and vertical space
-        leading = defaultLeading, # Relative factor to current fontSize.
+        leading = defaultLeading, # Absolute value (pt) or relative factor (em) to current fontSize.
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
 

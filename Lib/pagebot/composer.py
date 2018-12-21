@@ -103,7 +103,7 @@ class Composer:
 
             elif e.isImage and targets.get('image') is not None:
                 e.parent = targets['image']
-                verbose.append('%s.compose: Set image element "%s" to image box' % (composerName, e.path.split('/')[-1], targets['image']))
+                verbose.append('%s.compose: Set image element "%s" to image box %s' % (composerName, e.path.split('/')[-1], targets['image']))
 
             elif e.isText and targets.get('box') is not None:
                 targets.get('box').append(e.bs)

@@ -44,6 +44,8 @@ class EqualizeFlow2Height(Condition):
         amount of text lines."""
 	# TODO
 
+
+''' REMOVE FROM HERE
 class Baseline2Top(Condition):
 	"""Place the first baseline on the parent top padding position. Use the
     regular Top2Top() to place the top of the text on the parent top
@@ -109,6 +111,7 @@ class FloatXHeight2Top(Condition):
 		if not self.test(e): # Only try to solve if condition test fails.
 			self.addScore(e.floatXHeight2Top(), e, score)
 
+'''
 
 if __name__ == '__main__':
     import doctest
