@@ -21,7 +21,7 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
-from pagebot.toolbox.transformer import obj2StyleId
+from pagebot.toolbox.transformer import obj2StyleId, uniqueID
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
@@ -56,8 +56,8 @@ class Document:
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=True, startPage=None,
-            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None,
+            autoPages=1, template=None, templates=None, originTop=True, startPage=None, sId=None, 
+            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None, path=None,
             exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -69,6 +69,7 @@ class Document:
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
+        self.path = path # Optional source file path of the document, e.g. .sketch file.
         self.name = name or title or 'Untitled'
         self.title = title or self.name
         self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
@@ -76,6 +77,8 @@ class Document:
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
         self.d = d # In case depth is 0, keep is as value
+
+        self.sId = sId # Optional system id, used by an external application (e.g. Sketch). Can be None.
 
         if padding is not None:
             self.padding = padding
@@ -295,7 +298,7 @@ class Document:
         >>> from pagebot.constants import A6
         >>> doc = Document(name='TestDoc', size=A6)
         >>> doc.getTemplate()
-        <Template default (105mm, 148mm)>
+        <Template>
         >>> doc.getTemplate() == doc.defaultTemplate
         True
         """
@@ -311,7 +314,7 @@ class Document:
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
         >>> doc.addTemplate('myTemplate', t)
-        <Template TestTemplate (200pt, 300pt)>
+        <Template>
         >>> doc.getTemplate('myTemplate').name == name
         True
         """
@@ -325,7 +328,7 @@ class Document:
         >>> from pagebot.constants import Legal
         >>> doc = Document(name='TestDoc', size=Legal)
         >>> doc.defaultTemplate
-        <Template default (8.50", 14")>
+        <Template>
         """
         return self.templates.get('default')
     def _set_defaultTemplate(self, template):
@@ -386,8 +389,8 @@ class Document:
     # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None, styleId=None):
-        """If optional sId is None or style cannot found, then use the root
-        style. If the style is found from the (cascading) sId, then use that
+        """If optional eId is None or style cannot found, then use the root
+        style. If the style is found from the (cascading) eId, then use that
         to return the requested attribute.  Note that self.css( ) is a generic
         query for a named CSS value, upwards the parent tree.  This is
         different from the CSS functions as self.buildCss( ), that actually
@@ -917,6 +920,39 @@ class Document:
             return pages[0]
         return None
 
+    def findBysId(self, sId):
+        """If defined, the system self.sId can be used to recursively find self or a child.
+        Answer None if nothing can be found that is exactly matching.
+
+        >>> from elements import *
+        >>> doc = Document(sId=1234)
+        >>> doc.view.sId = 7890
+        >>> page = doc[1]
+        >>> e1 = Element(parent=page, name='e1', sId=2345)
+        >>> e2 = Element(parent=e1, name='e2', sId=3456)
+        >>> doc.findBysId(3456)
+        <Element:e2 (0pt, 0pt, 100pt, 100pt)>
+        >>> doc.findBysId(2345)
+        <Element:e1 (0pt, 0pt, 100pt, 100pt) E(1)>
+        >>> doc.findBysId(1234)
+        <Document-Document "Untitled" Pages=1 Templates=1 Views=1>
+        >>> doc.findBysId(7890)
+        <PageView>
+        """
+        if sId is not None:
+            if self.sId == sId:
+                return self
+            for _, pages in self.pages.items():
+                for page in pages:
+                    found = page.findBysId(sId)
+                    if found is not None:
+                        return found
+            for _, view in self.views.items():
+                found = view.findBysId(sId)
+                if found is not None:
+                    return found
+        return None
+
     def isLeft(self):
         """This is reached for `e.isleft()` queries, when elements are not
         placed on a page. The Document cannot know the answer then. Always
@@ -1197,7 +1233,7 @@ class Document:
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
-        <PageView:Page (0pt, 0pt, 300pt, 400pt)>
+        <PageView>
         >>> doc.build('_export/TestBuildDoc.pdf')
         >>> view = doc.newView('Site')
         >>> doc.view
@@ -1216,7 +1252,7 @@ class Document:
         >>> r = newRect(fill=color(1, 0, 0), stroke=noColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
-        <PageView:Page (0pt, 0pt, 400pt, 400pt)>
+        <PageView>
         >>> doc.export('_export/TestExportDoc.pdf')
         """
         self.build(path=path, multiPage=multiPage)

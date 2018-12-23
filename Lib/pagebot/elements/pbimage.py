@@ -165,7 +165,7 @@ class Image(Element):
         return 0
 
     def __repr__(self):
-        return '[%s eId:%s path:%s]' % (self.__class__.__name__, self.eId, self.path)
+        return '<%s eId:%s path:%s>' % (self.__class__.__name__, self.eId, self.path)
 
     def addFilter(self, filters):
         """Add the filter to the self.imo image object. Create the image object

@@ -38,6 +38,9 @@ from pagebot.elements.pbpage import Page, Template
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.pbplacer import Placer
 
+# Artboard (SketchApp compatible, content element on pages.)
+from pagebot.elements.pbartboard import Artboard
+
 # Path and mask elements
 from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 #OLD from pagebot.elements.paths.pbpath import Path
@@ -125,6 +128,10 @@ def newQuire(**kwargs):
     When omitted, a square is drawn."""
     return Quire(**kwargs)
 
+def newArtboard(**kwargs):
+    """Create a new Artboard element."""
+    return Artboard(**kwargs)
+
 def newGroup(**kwargs):
     """Create a new Group element. Note that points can also be defined in the style.
     When omitted, a square is drawn."""
@@ -153,10 +160,10 @@ def newRuler(**kwargs):
 def newPageBotPath(**kwargs):
     return PageBotPath(**kwargs)
 
-def newPaths(paths, **kwargs):
+def newPaths(paths=None, **kwargs):
     """Create a Paths element, holding PageBotPath object(s) in the element frame.
     The paths can be a single PageBotPath instance or a list/tuple of instances.
-    Not be confused with the filePath in Image."""
+    Not be confused with the filePath "path" in Image."""
     return Paths(paths, **kwargs)
 
 def newImage(path=None, **kwargs):

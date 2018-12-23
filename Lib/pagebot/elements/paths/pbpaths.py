@@ -68,7 +68,7 @@ class Paths(Element):
 
     PATH_CLASS = PageBotPath
 
-    def __init__(self, paths, **kwargs):
+    def __init__(self, paths=None, **kwargs):
         if paths is None:
             paths = []
         elif not isinstance(paths, (tuple, list)):

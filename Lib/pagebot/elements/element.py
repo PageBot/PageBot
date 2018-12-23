@@ -27,7 +27,6 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
         VIEW_DEBUG2, VIEW_FLOW)
-from pagebot import getContext
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
 from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
         asFormatted, isUnit, degrees)
@@ -57,7 +56,7 @@ class Element:
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, 
-            left=None, top=None, right=None, bottom=None,
+            left=None, top=None, right=None, bottom=None, sId=None,
             t=None, timeMarks=None, parent=None, context=None, name=None,
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
@@ -74,8 +73,6 @@ class Element:
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
         default values if they aren't assigned by the parent class.
-
-        Ignore setting of eId as attribute, guaranteed to be unique.
 
         >>> import sys
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120, pl=11, pt=22, margin=(33,44,55,66))
@@ -132,6 +129,11 @@ class Element:
         # the property will query parent --> root document --> view.
         self.context = context
         self._parent = None
+
+        # Guaranteed to be unique. Cannot be set.
+        self._eId = uniqueID(self)
+        # Optional systen/user/app id, used by external application, such as SketchContext
+        self.sId = sId # Can be None. If used self.findBysid(sId) works recursively
 
         # Initilialize self._elements and self._eIds
         self.clearElements()
@@ -233,7 +235,6 @@ class Element:
         # Generic naming and title.
         self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
         self.title = title or name # Optional to make difference between title name, style property
-        self._eId = uniqueID(self) # Direct set property with guaranteed unique persistent value.
 
         # Element tree
         self._parent = None # Preset, so it exists for checking when appending parent.
@@ -331,6 +332,12 @@ class Element:
         stroke = d.get('stroke')
         if stroke is not None and not isinstance(stroke, Color):
             d['stroke'] = color(stroke)
+
+    def _get_isLocked(self):
+        return self.css('isLocked', False)
+    def _set_isLocked(self, isLocked):
+        self.style['isLocked'] = isLocked
+    isLocked = property(_get_isLocked, _set_isLocked)
 
     def _get_hyphenation(self):
         return self.css('hypenation', False)
@@ -442,9 +449,8 @@ class Element:
         self._eIds[eId] = e
 
     def _get_eId(self):
-        """Answers the unique element Id. Cannot set self._eId through self.eId property.
-        Set self._eId if really necessary, as hex string.
-
+        """The eId guaranteed to be unique and cannot be set.
+        
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', xy=pt(100, 200), size=pt(100, 120))
         >>> hex2dec(e.eId) > 1000 # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
@@ -752,6 +758,19 @@ class Element:
                 return e
         return None
 
+    def findBysId(self, sId):
+        """If defined, the system self.sId can be used to recursively find self or a child.
+        Answer None if nothing can be found that is exactly matching.
+        """
+        if sId is not None:
+            if self.sId == sId:
+                return self
+            for e in self.elements:
+                found = e.findBysId(sId)
+                if found is not None:
+                    return found
+        return None
+
     def clearElements(self):
         """Properly initializes self._elements and self._eIds. Any existing
         element will get its parent weakrefs become None and will be garbage
@@ -821,11 +840,13 @@ class Element:
         """Answer the clipping context.BezierPath, derived from the layout of child elements.
 
         >>> from pagebot.conditions import *
-        >>> e = Element(w=500, h=500)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> e = Element(w=500, h=500, context=context)
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         >>> e.childClipPath.points
         [(50.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 80.0), (50.0, 80.0), (50.0, 0.0)]
-        >>> e = Element(w=500, h=500)
+        >>> e = Element(w=500, h=500, context=context)
         >>> e1 = Element(parent=e, w=100, h=100, conditions=[Left2Left(), Top2Top()])
         >>> e2 = Element(parent=e, w=100, h=100, conditions=(Left2Left(), Bottom2Bottom()))
         >>> score = e.solve()
@@ -1389,8 +1410,8 @@ class Element:
         # Context not defined for this element, try parent.
         if self.parent is not None:
             return self.parent.context
-        # No context defined and no parent, we cannot do any better now than answering the default context here.
-        return getContext()
+        # No context defined and no parent, we cannot do any better now than answering None here.
+        return None
     def _set_context(self, context):
         self._context = context
     context = property(_get_context, _set_context)
@@ -1427,7 +1448,9 @@ class Element:
         """
         if e is None:
             e = self
-        return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
+        if self.context is not None:
+            return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
+        return None
 
     # Most common properties
 
@@ -6739,6 +6762,7 @@ class Element:
         flags, depending on a type of stage of usage."""
         setNames = set(args)
 
+        self.show = True
         self.showSpread = False
         self.viewMinInfoPadding = 0
         self.showCropMarks = False

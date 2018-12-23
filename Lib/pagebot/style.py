@@ -370,10 +370,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # locally change these values. However, in some cases elements
         # may overwrite the settings (e.g. TextBot baseline color).
 
+        isLocked = False, # If True, elements should not changed (TODO: currently not being checked)
+        isVisible = True, # Flag if current element should be shown.
+
         # Paging
         showSpread = False, # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
 
-        # Document/page stuff
+        # Document/page/element stuff
         viewMinInfoPadding = DEFAULT_MININFOPADDING, # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
         showCropMarks = False,
         showRegistrationMarks = False,
@@ -412,6 +415,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Exporting
         doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
+
+        # Sketch style parameters
+        startMarkerType = 0,
+        endMarkerType =  0,
+        miterLimit = 10,
+        windingRule = 1, # Clockwise?
+        blur = None,
 
         # Grid stuff for showing
 
