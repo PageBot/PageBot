@@ -36,7 +36,7 @@ class Document:
 
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
     >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
-    ('TestDoc', 300pt, 400pt, True, 2)
+    ('TestDoc', 300pt, 400pt, False, 2)
     >>> doc.padding
     (30pt, 40pt, 50pt, 60pt)
     >>> page = doc[1] # First page is on the right
@@ -56,7 +56,7 @@ class Document:
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=True, startPage=None, sId=None, 
+            autoPages=1, template=None, templates=None, originTop=False, startPage=None, sId=None, 
             w=None, h=None, d=None, size=None, padding=None, lib=None, context=None, path=None,
             exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
@@ -72,7 +72,7 @@ class Document:
         self.path = path # Optional source file path of the document, e.g. .sketch file.
         self.name = name or title or 'Untitled'
         self.title = title or self.name
-        self.originTop = originTop # Set as property in rootStyle and also change default rootStyle['yAlign'] to right side.
+        self._originTop = originTop # Set as property. Iy is not supposed to change.
 
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
@@ -480,25 +480,14 @@ class Document:
     #   D E F A U L T  A T T R I B U T E S
 
     def _get_originTop(self):
-        """Answers the document flag if origin is on top.
+        """Answers the document flag if origin is on top. This value is not supposed to change.
 
         >>> doc = Document(name='TestDoc', originTop=True)
         >>> doc.originTop
         True
-        >>> doc.rootStyle.get('originTop')
-        True
-        >>> doc.originTop = False
-        >>> doc.originTop
-        False
-        >>> doc.rootStyle.get('originTop')
-        False
         """
-        return self.rootStyle.get('originTop')
-    def _set_originTop(self, flag):
-        rs = self.rootStyle
-        rs['originTop'] = flag
-        rs['yAlign'] = {True:TOP, False: BOTTOM}[bool(flag)]
-    originTop = property(_get_originTop, _set_originTop)
+        return self._originTop
+    originTop = property(_get_originTop)
 
     def _get_frameDuration(self):
         """Property answer the document frameDuration parameters, used for
@@ -968,12 +957,25 @@ class Document:
 
     isRight = isLeft = False
 
-    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None, 
+            originTop=None, **kwargs):
         """Creates a new page with size `(self.w, self.h)` unless defined
         otherwise. Add the pages in the row of pn, if defined, otherwise create
         a new row of pages at pn. If `pn` is undefined, add a new page row at
         the end. If template is undefined, then use self.defaultTemplate to
-        initialize the new page."""
+        initialize the new page.
+
+        >>> doc = Document(w=80, h=120, originTop=False)
+        >>> page = doc[1]
+        >>> page.size
+        (80pt, 120pt)
+        >>> page.originTop # Value copied into the new page setting
+        False
+        >>> doc = Document(originTop=True)
+        >>> page = doc[1]
+        >>> page.originTop
+        True
+        """
         if isinstance(template, str):
             template = self.templates.get(template)
 
@@ -992,10 +994,14 @@ class Document:
         if h is None:
             h = self.h
 
+        # If not defined, then use the self.origin instead.
+        if originTop is None:
+            originTop = self.originTop
+
         # Don't set parent to self yet, as this will make the page create a #1.
         # Setting of page.parent is done by self.appendPage, for the right page
         # number.
-        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
+        page = self.PAGE_CLASS(w=w, h=h, name=name, originTop=originTop, **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
@@ -1029,7 +1035,7 @@ class Document:
         page.
 
         >>> from pagebot.constants import Tabloid
-        >>> doc = Document(autoPages=4, size=Tabloid)
+        >>> doc = Document(autoPages=4, size=Tabloid, originTop=False)
         >>> len(doc.pages), len(doc)
         (4, 4)
         >>> page = doc[2]
@@ -1046,6 +1052,8 @@ class Document:
         >>> next = doc.nextPage(next) # Creating new page of makeNew is True
         >>> doc.getPageNumber(next)
         (5, 0)
+        >>> next.originTop
+        False
         """
         found = False
         for pn, pnPages in sorted(self.pages.items()):
@@ -1056,7 +1064,7 @@ class Document:
                     found = True # Trigger to select the next page in the loop.
         # Not found, create new one?
         if makeNew:
-            return self.newPage()
+            return self.newPage() # Uses setting of self.originTop as page default.
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):

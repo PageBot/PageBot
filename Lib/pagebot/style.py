@@ -132,15 +132,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # combined as in [(x1, y1), ...]
         folds = None,
 
-        # Position of origin. DrawBot has y on bottom-left. In PageBot it is
-        # optional. Default is top-left. Note that the direcion of display is
-        # always upwards. This means that the position of text and elements
-        # goes downward from the top, they are not flipped vertical. It is up
-        # to the caller to make sure there is enough space for elements to show
-        # themselves on top of a given position. originTop often goes with
-        # yAlign = TOP.
-        originTop = False, # TODO: Setting to  default True has currently positioning bugs.
-
         # Alignment of origin on element. Note that formatted text string flows 
         # are aligned by the xTextAlign attribute. xAlign is about the position
         # of the element box.

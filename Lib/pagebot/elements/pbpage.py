@@ -38,8 +38,9 @@ class Page(Element):
 
     GALLEY_CLASS = Galley
 
-    def __init__(self, isLeft=None, isRight=None, htmlCode=None, htmlPath=None,
-            headCode=None, headPath=None, bodyCode=None, bodyPath=None,
+    def __init__(self, originTop=None, isLeft=None, isRight=None, 
+            htmlCode=None, htmlPath=None, headCode=None, headPath=None, 
+            bodyCode=None, bodyPath=None,
             cssCode=None, cssPaths=None, cssUrls=None, jsCode=None,
             jsPaths=None, jsUrls=None, viewPort=None, favIconUrl=None,
             fileName=None, url=None, webFontUrls=None, pn=None, **kwargs):
@@ -55,6 +56,8 @@ class Page(Element):
         <Page Unplaced (1111pt, 2222pt)>
         """
         Element.__init__(self, **kwargs)
+
+        self.originTop = originTop # Set property, used by all child elements as reference.
 
         self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
         # Overwrite flag for side of page. Otherwise test on document pagenumber.
@@ -138,6 +141,29 @@ class Page(Element):
                     pn = ' #%d' % pn_index[0]
 
         return '<%s%s%s (%s, %s)%s>' % (self.__class__.__name__, pn, name, self.w, self.h, elements)
+
+    def _get_originTop(self):
+        """Answers the style flag if all point y values should measure top-down
+        (typographic page orientation), instead of bottom-up (mathematical
+        orientation). For Y-axis only. The axes in X and Z directions are
+        fixed. The value is stored on page level, so there is no origin top/down
+        switching possible inside the element tree of a page.
+        Note that by changing, the position of existing glyphs does NOT change,
+        so their (x,y) position changes (unless referred to by side positions
+        such as e.top and e.center, etc.).
+
+        Position of origin. DrawBot has y on bottom-left. In PageBot it is
+        optional. Default is top-left. Note that the direcion of display is
+        always upwards. This means that the position of text and elements
+        goes downward from the top, they are not flipped vertical. It is up
+        to the caller to make sure there is enough space for elements to show
+        themselves on top of a given position. originTop often goes with
+
+        """
+        return self._originTop
+    def _set_originTop(self, flag):
+        self._originTop = bool(flag) # Value is stored in the page.
+    originTop = property(_get_originTop, _set_originTop)
 
     def _get_isLeft(self):
         """Answers if this is a left page (even pagenumber), unless the

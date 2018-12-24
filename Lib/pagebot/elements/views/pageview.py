@@ -76,7 +76,6 @@ class PageView(BaseView):
         >>> doc = Document(size=A4, autoPages=4) # Make 4 pages to be composed as a Quire of 2 spreads
         >>> view = doc.view
         >>> q = view.newQuire(folds=QUIRE_QUARTO)
-        >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
         2
         >>> len(view.elements[0])
@@ -281,8 +280,8 @@ class PageView(BaseView):
             context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPaddingStrokeWidth', 0.5))
             if e.originTop:
-                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
+                #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+                context.rect(px+pl, py-e.h+pb, e.w-pl-pr, e.h-pt-pb)
             else:
                 context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
             e._restoreScale(self)

@@ -98,6 +98,7 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# Apple desktop information
 .DS_Store
 
 .idea/*
@@ -106,5 +107,8 @@ _export
 _instances
 _private
 _local
+# Storage of cached images
 _scaled
+_images
+
 
