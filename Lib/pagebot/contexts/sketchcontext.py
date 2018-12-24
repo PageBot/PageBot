@@ -31,7 +31,7 @@ from pagebot.constants import FILETYPE_SKETCH, A4, TOP
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.sketchbuilder import sketchBuilder
 from pagebot.toolbox.color import color
-from pagebot.toolbox.units import asNumber
+from pagebot.toolbox.units import asNumber, pt
 from pagebot.toolbox.transformer import path2Dir, path2Extension
 from pagebot.elements import *
 
@@ -111,14 +111,6 @@ type SketchEncodedAttributes = {
   }
 }
 
-type SketchRect = {
-  _class: 'rect',
-  constrainProportions: bool,
-  height: number,
-  width: number,
-  x: number,
-  y: number
-}
 
 type SketchTextStyle = {
   _class: 'textStyle',
@@ -288,6 +280,49 @@ class SketchContext(BaseContext):
 
     #   R E A D  S K E T C H  F I L E
 
+    def _SketchLayoutGrid2Element(self, sketchLayoutGrid, e):
+        """
+        type GridLayout = {
+          _class: 'layoutGrid',
+          isEnabled: bool,
+          + columnWidth: number, --> cw
+          drawHorizontal: bool,
+          drawHorizontalLinesL bool,
+          drawVertical: bool,
+          + gutterHeight: number, --> gh
+          + gutterWidth: number, --> gw
+          guttersOutside: bool,
+          + horizontalOffset: number, --> e.ml
+          + numberOfColumns: number, --> cols
+          + rowHeightMultiplication: number, --> ch
+          totalWidth: number
+          resizesContent: bool,
+        """
+        if sketchLayoutGrid is None:
+          return [], []
+        e.ml = sketchLayoutGrid.get('horizontalOffset', pt(36))
+        gw = sketchLayoutGrid.get('gutterWidth', pt(12))
+        gh = sketchLayoutGrid.get('gutterHeight', pt(12))
+        cw = sketchLayoutGrid.get('columnWidth', pt(60))
+        ch = sketchLayoutGrid.get('rowHeightMultiplication', 4) * gh
+        cols = sketchLayoutGrid.get('numberOfColumns', 3)
+        gridX = []
+        x = 0
+        for n in range(int(e.w/(cw + gw))):
+          gridX.append((cw, gw))
+        gridY = []
+        return gridX, gridY
+
+    def _SketchRulerData2Element(self, sketchRulerData, e):
+        """
+        type SketchRulerData = {
+          _class: 'rulerData',
+          base: number,
+          guides: [] // TODO
+        }
+        """
+        print(sketchRulerData)
+
     POINT_PATTERN = re.compile('\{([0-9\.\-]*), ([0-9\.\-]*)\}')
 
     def _SketchPoint2Point(self, sketchPoint):
@@ -350,6 +385,16 @@ class SketchContext(BaseContext):
         )
 
     def _SketchFrame2Element(self, sketchFrame, e):
+        """
+        type SketchRect = {
+          _class: 'rect',
+          constrainProportions: bool,
+          height: number,
+          width: number,
+          x: number,
+          y: number
+        }
+        """
         if sketchFrame is not None:
             e.x = sketchFrame.get('x', 0)
             e.y = sketchFrame.get('y', 0)
@@ -520,6 +565,7 @@ class SketchContext(BaseContext):
           + isLocked: bool, --> e.isLocked
           + isVisible: bool, --> e.show
           layerListExpandedType: number,
+          + layout: LayoutGrid --> e.gridX, e.gridY
           + name: string, --> e.name
           nameIsFixed: bool,
           resizingType: number,
@@ -530,21 +576,28 @@ class SketchContext(BaseContext):
           + layers: [SketchLayer], --> e.elements
           + backgroundColor: SketchColor, --> e.style['fill'] Color instance
           hasBackgroundColor: bool,
-          horizontalRulerData: SketchRulerData,
+          + horizontalRulerData: SketchRulerData, --> e.gridX
           includeBackgroundColorInExport: bool,
           includeInCloudUpload: bool,
-          verticalRulerData: SketchRulerData
+          + verticalRulerData: SketchRulerData --> e.gridY
         }
         """
         e = newArtboard(parent=parent, sId=sketchArtboard.get('do_objectID'), yAlign=TOP)
         self._SketchValues2Element(sketchArtboard, e)
         self._SketchFrame2Element(sketchArtboard.get('frame'), e)
         self._SketchStyle2Element(sketchArtboard.get('style'), e)
-        e.y = 0 # Make sure artboard are shifted to origin of the page.
+        e.x = e.y = 0 # Make sure artboard are shifted to origin of the page.
         e.fill = self._SketchColor2Color(sketchArtboard.get('backgroundColor'))
         # Set elements in layers
         for sketchLayer in sketchArtboard.get('layers', []):
             self._SketchLayer2Element(sketchLayer, e)
+        # Rulers and grid
+        hRuler = self._SketchRulerData2Element(sketchArtboard.get('horizontalRulerData'), e)
+        vRuler = self._SketchRulerData2Element(sketchArtboard.get('verticalRulerData'), e)
+        #print(hRuler)
+        #print(vRuler)
+        e.gridX, e.gridY = self._SketchLayoutGrid2Element(sketchArtboard.get('layout'), e)
+        ##print(e.gridX, e.gridY)
         #print(sketchArtboard)
 
     def _SketchSymbolInstance2Element(self, sketchSymbolInstance, parent):
@@ -758,7 +811,7 @@ class SketchContext(BaseContext):
           exportOptions: SketchExportOptions,
           + frame: SketchRect, --> (e.x, e.y, e.w, e.h)
           hasClickThrough: bool,
-          horizontalRulerData: SketchRulerData,
+          + horizontalRulerData: SketchRulerData, --> e.rulerH
           includeInCloudUpload: bool,
           isFlippedHorizontal: bool,
           isFlippedVertical: bool,
@@ -766,13 +819,14 @@ class SketchContext(BaseContext):
           + isVisible: bool, --> e.show
           layerListExpandedType: number,
           + layers: [SketchSymbolMaster], --> e.elements
+          + layout: LayoutGrid --> e.gridX, e.gridY
           + name: string, --> e.name
           nameIsFixed: bool,
           resizingType: number,
           + rotation: number, --> e.angle
           shouldBreakMaskChain: bool,
           + style: SketchStyle,
-          verticalRulerData: SketchRulerData
+          + verticalRulerData: SketchRulerData --> e.rulerV
         }
         """
         page = doc.findBysId(sketchPage.get('do_objectID'))
@@ -787,6 +841,13 @@ class SketchContext(BaseContext):
         # Set elements in layers
         for sketchLayer in sketchPage.get('layers', []):
             self._SketchLayer2Element(sketchLayer, page)
+        # Rulers and grid
+        hRuler = self._SketchRulerData2Element(sketchPage.get('horizontalRulerData'), page)
+        vRuler = self._SketchRulerData2Element(sketchPage.get('verticalRulerData'), page)
+        print(hRuler)
+        print(vRuler)
+        print(sketchPage.get('layout'))
+        page.gridX, page.gridY = self._SketchLayoutGrid2Element(sketchPage.get('layout'), page)
         #print(sketchPage)
 
     def _SketchUser2Document(self, sketchUser, doc):

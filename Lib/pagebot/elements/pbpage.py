@@ -153,12 +153,11 @@ class Page(Element):
         such as e.top and e.center, etc.).
 
         Position of origin. DrawBot has y on bottom-left. In PageBot it is
-        optional. Default is top-left. Note that the direcion of display is
+        optional. Default is bottom-left. Note that the direcion of display is
         always upwards. This means that the position of text and elements
         goes downward from the top, they are not flipped vertical. It is up
         to the caller to make sure there is enough space for elements to show
         themselves on top of a given position. originTop often goes with
-
         """
         return self._originTop
     def _set_originTop(self, flag):
