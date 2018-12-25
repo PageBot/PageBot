@@ -12,7 +12,6 @@
 #
 #     ReadWrite.py
 #
-
 from pagebot import getResourcesPath
 from pagebot.toolbox.finder import Finder
 from pagebot.document import Document
@@ -23,8 +22,8 @@ context = SketchContext()
 
 W, H = inch(8, 10.875)
 
-path = '/Users/petr/Dropbox/Production_TYPE-3/3_Pages_TYPE-3/Sketch/Noordzij_Layout-02_rb_TYPE-3.sketch'
-path = '/Users/petr/Dropbox/Production_TYPE-3/3_Pages_TYPE-3/Sketch/TestImage.sketch'
+path = 'TestImage.sketch'
+
 doc = context.readDocument(path, w=W, h=H, originTop=True)
 
 view = doc.view
@@ -32,6 +31,7 @@ view.padding = 30
 view.showCropMarks = True
 #view.showPadding = True
 view.showOrigin = False
+view.showRegistrationMarks = True
 view.showGrid = [GRID_COL, GRID_ROW]
 view.showCropMarks = True
 view.showFrame = True
@@ -45,7 +45,10 @@ for pn, pages in doc.pages.items():
         print(artboard.xy, artboard.size)
         for e in artboard.elements:
             print(e)
-        print('=====', artboard.gridX, artboard.gridY)
+            for e1 in e.elements:
+                print('\t', e)
+        #print('=====', artboard.gridX, artboard.gridY)
 
 
-doc.export('_export/TestImage.pdf')
+EXPORT_PATH = '_export/TestImage.pdf'
+doc.export(EXPORT_PATH)

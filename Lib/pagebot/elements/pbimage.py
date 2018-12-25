@@ -358,13 +358,15 @@ class Image(Element):
                     b.image(self.path, (0, 0), pn=1, alpha=self._getAlpha())
                 b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             else:
+                #print(self.x, self.y, self.w, self.h, self.iw, self.ih, px, py, sx, sy, px/sx, py/sy)
+                #b.image(self.path, (upt(px)/sx+100, upt(py)/sy+100), pageNumber=self.index, alpha=self._getAlpha())
                 b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
 
             b.clipPath(None)
             context.restore()
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        #self.buildFrame(view, p) # Draw optional frame or borders.
 
         #if drawElements:
         #    self.buildChildElements(view, p)

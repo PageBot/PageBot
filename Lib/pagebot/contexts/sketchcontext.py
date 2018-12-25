@@ -321,7 +321,7 @@ class SketchContext(BaseContext):
           guides: [] // TODO
         }
         """
-        print(sketchRulerData)
+        #print(sketchRulerData)
 
     POINT_PATTERN = re.compile('\{([0-9\.\-]*), ([0-9\.\-]*)\}')
 
@@ -384,7 +384,7 @@ class SketchContext(BaseContext):
             a=sketchColor.get('alpha', 1)
         )
 
-    def _SketchFrame2Element(self, sketchFrame, e):
+    def _SketchFrame2Rect(self, sketchFrame, e=None):
         """
         type SketchRect = {
           _class: 'rect',
@@ -394,17 +394,16 @@ class SketchContext(BaseContext):
           x: number,
           y: number
         }
-        """
+        """ 
+        x = y = w = h = None
         if sketchFrame is not None:
-            e.x = sketchFrame.get('x', 0)
-            e.y = sketchFrame.get('y', 0)
-            w = sketchFrame.get('width', 0)
-            h = sketchFrame.get('height', 0)
-            if w or h:
-                e.w = w
-                e.h = h
-            if not e.originTop:
-                e.y = -e.y + e.doc.h + e.h
+            x = sketchFrame.get('x')
+            y = sketchFrame.get('y')
+            w = sketchFrame.get('width')
+            h = sketchFrame.get('height')
+            if e is not None and not e.originTop:
+                y = -y + e.doc.h + h
+        return x, y, w, h
 
     def _SketchValues2Element(self, sketchPage, e):
         e.angle = sketchPage.get('rotation', 0)
@@ -440,8 +439,9 @@ class SketchContext(BaseContext):
           textBehaviour: number
         }
         """
-        e = newTextBox(parent=parent, sId=sketchText.get('do_objectID'), yAlign=TOP)
-        self._SketchFrame2Element(sketchText.get('frame'), e)
+        x, y, w, h = self._SketchFrame2Rect(sketchText.get('frame'), parent)
+        e = newTextBox(parent=parent, sId=sketchText.get('do_objectID'), 
+          x=x, y=y, h=h, w=w, yAlign=TOP)
         self._SketchValues2Element(sketchText, e)
         self._SketchStyle2Element(sketchText.get('style'), e)
         #print(sketchText)
@@ -472,8 +472,9 @@ class SketchContext(BaseContext):
           windingRule: number
         }
         """
-        e = newGroup(parent=parent, sId=sketchShapeGroup.get('do_objectID'), yAlign=TOP)
-        self._SketchFrame2Element(sketchShapeGroup.get('frame'), e)
+        x, y, w, h = self._SketchFrame2Rect(sketchShapeGroup.get('frame'), parent)
+        e = newGroup(parent=parent, sId=sketchShapeGroup.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(sketchShapeGroup, e)
         self._SketchStyle2Element(sketchShapeGroup.get('style'), e)
         # Set elements in layers
@@ -503,8 +504,9 @@ class SketchContext(BaseContext):
           path: SketchPath
         }
         """
-        e = newPaths(parent=parent, sId=shapePath.get('do_objectID'), yAlign=TOP)
-        self._SketchFrame2Element(shapePath.get('frame'), e)
+        x, y, w, h = self._SketchFrame2Rect(shapePath.get('frame'), parent)
+        e = newPaths(parent=parent, sId=shapePath.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(shapePath, e)
         self._SketchStyle2Element(shapePath.get('style'), e)
         #print(shapePath)
@@ -544,8 +546,10 @@ class SketchContext(BaseContext):
                 # Store the link between sketch image path and PageBot storage path
                 path = '%s%s.%s' % (self.imagesPath, name, path2Extension(ref))
                 self.imagesId2Path[ref] = path
-        e = newImage(path=path, parent=parent, sId=sId, yAlign=TOP)
-        self._SketchFrame2Element(sketchBitmap.get('frame'), e) # (e.x, e.y, e.w, e.h)
+        x, y, w, h = self._SketchFrame2Rect(sketchBitmap.get('frame'), parent)
+        e = newImage(path=path, parent=parent, sId=sId, 
+          x=x, y=y, w=w, yAlign=TOP)
+        print('IMG', x, y, w, h)
         self._SketchValues2Element(sketchBitmap, e)
         self._SketchStyle2Element(sketchBitmap.get('style'), e)
 
@@ -582,11 +586,13 @@ class SketchContext(BaseContext):
           + verticalRulerData: SketchRulerData --> e.gridY
         }
         """
-        e = newArtboard(parent=parent, sId=sketchArtboard.get('do_objectID'), yAlign=TOP)
+        # Ignore position of the artboard on the page.
+        _, _, w, h = self._SketchFrame2Rect(sketchArtboard.get('frame'), parent)
+        x = y = 0 # Make sure artboard are shifted to origin of the page.
+        e = newArtboard(parent=parent, sId=sketchArtboard.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(sketchArtboard, e)
-        self._SketchFrame2Element(sketchArtboard.get('frame'), e)
         self._SketchStyle2Element(sketchArtboard.get('style'), e)
-        e.x = e.y = 0 # Make sure artboard are shifted to origin of the page.
         e.fill = self._SketchColor2Color(sketchArtboard.get('backgroundColor'))
         # Set elements in layers
         for sketchLayer in sketchArtboard.get('layers', []):
@@ -597,7 +603,7 @@ class SketchContext(BaseContext):
         #print(hRuler)
         #print(vRuler)
         e.gridX, e.gridY = self._SketchLayoutGrid2Element(sketchArtboard.get('layout'), e)
-        ##print(e.gridX, e.gridY)
+        #print(e.gridX, e.gridY)
         #print(sketchArtboard)
 
     def _SketchSymbolInstance2Element(self, sketchSymbolInstance, parent):
@@ -630,9 +636,10 @@ class SketchContext(BaseContext):
           }
         }
         """
-        e = newArtboard(parent=parent, sId=sketchSymbolInstance.get('do_objectID'), yAlign=TOP)
+        x, y, w, h = self._SketchFrame2Rect(sketchSymbolInstance.get('frame'), parent)
+        e = newArtboard(parent=parent, sId=sketchSymbolInstance.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(sketchSymbolInstance, e)
-        self._SketchFrame2Element(sketchSymbolInstance.get('frame'), e)
         self._SketchStyle2Element(sketchSymbolInstance.get('style'), e)
         #print(sketchSymbolInstance)
 
@@ -658,9 +665,10 @@ class SketchContext(BaseContext):
           + layers: [SketchLayer] --> e.elements
         }
         """
-        e = newGroup(parent=parent, sId=sketchGroup.get('do_objectID'), yAlign=TOP)
+        x, y, w, h = self._SketchFrame2Rect(sketchGroup.get('frame'), parent)
+        e = newGroup(parent=parent, sId=sketchGroup.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(sketchGroup, e)
-        self._SketchFrame2Element(sketchGroup.get('frame'), e)
         self._SketchStyle2Element(sketchGroup.get('style'), e)
         # Set elements in layers
         for sketchLayer in sketchGroup.get('layers', []):
@@ -693,21 +701,24 @@ class SketchContext(BaseContext):
         }
         """
         # If any of the points are changed, then build a Polygon instead of a Rect element.
+        x, y, w, h = self._SketchFrame2Rect(sketchRectangle.get('frame'), parent)
         sketchPoints = (sketchRectangle.get('points'))
+        return
         if sketchPoints is not None:
-            e = newPolygon(parent=parent, sId=sketchRectangle.get('do_objectID'), yAlign=TOP)
+            e = newPolygon(parent=parent, sId=sketchRectangle.get('do_objectID'), 
+              x=x, y=y, yAlign=TOP)
             for sketchPoint in sketchPoints:
                 for p in self._SketchCurvePoint2Points(sketchPoint):
                     e.append(p)
         else:
-            e = newRect(parent=parent, sId=sketchRectangle.get('do_objectID'))
+            e = newRect(parent=parent, sId=sketchRectangle.get('do_objectID'), 
+              x=x, y=y, w=w, h=h, yAlign=TOP)
             
-        self._SketchFrame2Element(sketchRectangle.get('frame'), e)
         self._SketchValues2Element(sketchRectangle, e)
         self._SketchStyle2Element(sketchRectangle.get('style'), e)
         #print(sketchRectangle)
 
-    def _SketchOval2Element(self, sketchOval, e):
+    def _SketchOval2Element(self, sketchOval, parent):
         """
         type SketchOval = {
           _class: 'oval',
@@ -729,8 +740,9 @@ class SketchContext(BaseContext):
           path: SketchPath  
         }
         """
-        e = newOval(parent=parent, sId=sketchOval.get('do_objectID'), yAlign=TOP)
-        self._SketchFrame2Element(sketchOval.get('frame'), e)
+        x, y, w, h = self._SketchFrame2Rect(sketchOval.get('frame'), parent)
+        e = newOval(parent=parent, sId=sketchOval.get('do_objectID'), 
+          x=x, y=y, w=w, h=h, yAlign=TOP)
         self._SketchValues2Element(sketchOval, e)
         self._SketchStyle2Element(sketchOval.get('style'), e)
         #print(sketchOval)
@@ -831,22 +843,23 @@ class SketchContext(BaseContext):
         """
         page = doc.findBysId(sketchPage.get('do_objectID'))
         assert page is not None # Is should have been created by SketchMeta info.
+        page.w = doc.w
+        page.h = doc.h
         page.name = sketchPage.get('name', page.name) # Set if defined
         # Set generic properties
         self._SketchValues2Element(sketchPage, page)
         # Set style and
         self._SketchStyle2Element(sketchPage.get('style'), page)
         # Set frame if defined
-        self._SketchFrame2Element(sketchPage.get('frame'), page)
         # Set elements in layers
         for sketchLayer in sketchPage.get('layers', []):
             self._SketchLayer2Element(sketchLayer, page)
         # Rulers and grid
         hRuler = self._SketchRulerData2Element(sketchPage.get('horizontalRulerData'), page)
         vRuler = self._SketchRulerData2Element(sketchPage.get('verticalRulerData'), page)
-        print(hRuler)
-        print(vRuler)
-        print(sketchPage.get('layout'))
+        #print(hRuler)
+        #print(vRuler)
+        #print(sketchPage.get('layout'))
         page.gridX, page.gridY = self._SketchLayoutGrid2Element(sketchPage.get('layout'), page)
         #print(sketchPage)
 
@@ -922,6 +935,15 @@ class SketchContext(BaseContext):
         # Pages wiil be created from SketchMeta['pagesAndArtboards']
         return doc
 
+    def makeImagesPath(self, path):
+        imagesDir = path2Dir(path)
+        if imagesDir and not imagesDir.endswith('/'):
+          imagesDir += '/'
+        imagesDir += '_local/'
+        if not os.path.exists(imagesDir):
+            os.mkdir(imagesDir)
+        return imagesDir
+
     def readDocument(self, path, w=None, h=None, originTop=True):
         """Read a sketch file and answer a Document that contains the interpreted data.
 
@@ -939,9 +961,7 @@ class SketchContext(BaseContext):
 
         assert path.endswith('.'+FILETYPE_SKETCH)
         fileName = path.split('/')[-1] # Use file name as document name
-        self.imagesPath = path2Dir(path) + '/_local/'
-        if not os.path.exists(self.imagesPath):
-            os.mkdir(self.imagesPath)
+        self.imagesPath = self.makeImagesPath(path) # Make local images path. Create directory if it does not exist
         # Plain document, most attributes to be filled from the file.
         # Set the document size to the defined size or default (W, H) as 
         # Sketch does have an infinite canvas.
