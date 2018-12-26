@@ -279,25 +279,32 @@ class SketchContext(BaseContext):
     DOCUMENT_CLASS = Document
 
     def __init__(self):
-        """Constructor of Sketch context.
+      """Constructor of Sketch context.
 
-        >>> context = SketchContext()
-        >>> context.newDocument(100, 100)
-        """
-        super().__init__()
-        self.name = self.__class__.__name__
-        self.b = sketchBuilder
-        self.save() # Save current set of values on gState stack.
-        self.shape = None # Current open shape
-        self.fileType = FILETYPE_SKETCH
-        self.imagesId2Path = {} # Key is image.sId, value is path of exported image file.
-        self.imagesPath = None
+      >>> context = SketchContext()
+      >>> context.newDocument(100, 100)
+      """
+      super().__init__()
+      self.name = self.__class__.__name__
+      self.b = sketchBuilder
+      self.save() # Save current set of values on gState stack.
+      self.shape = None # Current open shape
+      self.fileType = FILETYPE_SKETCH
+      self.imagesId2Path = {} # Key is image.sId, value is path of exported image file.
+      self.imagesPath = None
 
     def save(self):
         pass
 
     def newDocument(self, w, h):
-        pass
+      pass
+
+    def newDrawing(self):
+      pass
+
+    def newPage(self, w, h):
+      pass
+
 
     #   R E A D  S K E T C H  F I L E
 
@@ -469,7 +476,7 @@ class SketchContext(BaseContext):
         x, y, w, h = self._SketchFrame2Rect(sketchText.get('frame'), parent)
         e = newTextBox(s, parent=parent, sId=sketchText.get('do_objectID'), 
           x=x, y=y, h=h, w=w, yAlign=TOP)
-        #self._SketchValues2Element(sketchText, e)
+        self._SketchValues2Element(sketchText, e)
         #self._SketchStyle2Element(sketchText.get('style'), e)
 
     def _SketchShapeGroup2Element(self, sketchShapeGroup, parent):
@@ -877,9 +884,10 @@ class SketchContext(BaseContext):
         # Set style and
         self._SketchStyle2Element(sketchPage.get('style'), page)
         # Set frame if defined
-        # Set elements in layers
+        # Set elements in layers, assume these are artboard, create a new page for each of them
         for sketchLayer in sketchPage.get('layers', []):
             self._SketchLayer2Element(sketchLayer, page)
+            page = page.next
         # Rulers and grid
         hRuler = self._SketchRulerData2Element(sketchPage.get('horizontalRulerData'), page)
         vRuler = self._SketchRulerData2Element(sketchPage.get('verticalRulerData'), page)
@@ -970,16 +978,18 @@ class SketchContext(BaseContext):
             os.mkdir(imagesDir)
         return imagesDir
 
-    def readDocument(self, path, w=None, h=None, originTop=True):
+    def readDocument(self, path, w=None, h=None, originTop=True, context=None):
         """Read a sketch file and answer a Document that contains the interpreted data.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.finder import Finder
         >>> from pagebot.document import Document
-        >>> context = SketchContext()
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = SketchContext() # Reading the Sketch file, creating a Document instance.
+        >>> drawBotContext = DrawBotContext() # Export to PDF
         >>> finder = Finder(getResourcesPath())
         >>> filePath = finder.findPath(name='redRect.sketch')
-        >>> doc = context.readDocument(filePath)
+        >>> doc = context.readDocument(filePath, context=drawBotContext)
         >>> doc.name
         'redRect.sketch'
         >>> doc.export(filePath.replace('.sketch', '.pdf'))
@@ -993,7 +1003,7 @@ class SketchContext(BaseContext):
         # Sketch does have an infinite canvas.
         # Start with single page and add more for all extra pages we detect.
         doc = Document(w=w or self.W, h=h or self.H, name=fileName, fileName=path,
-            originTop=originTop
+            originTop=originTop, context=context or self
         ) 
 
         f = zipfile.ZipFile(path, mode='r') # Open the file.sketch as Zip.

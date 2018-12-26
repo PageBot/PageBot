@@ -49,3 +49,10 @@ class BaseBuilder:
             def __init__(self, s):
                 self.s = s
         return FS(s)
+
+    def frameDuration(self, frameDuration):
+        raise NotImplementedError
+
+    def save(self):
+        raise NotImplementedError
+

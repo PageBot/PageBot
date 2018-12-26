@@ -136,7 +136,7 @@ class Element:
         # Optional systen/user/app id, used by external application, such as SketchContext
         self.sId = sId # Can be None. If used self.findBysid(sId) works recursively
 
-        # Initilialize self._elements and self._eIds
+        # Initialize self._elements and self._eIds.
         self.clearElements()
         self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
@@ -796,6 +796,11 @@ class Element:
         """
         self._elements = []
         self._eIds = {}
+
+    def clear(self):
+        """Make inheriting classes define a method to clear their content if appropriate.
+        Default behavior of Element is to do nothing."""
+        pass
 
     def copy(self, parent=None):
         """Answers a full copy of self, where the "unique" fields are set to

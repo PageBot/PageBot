@@ -30,7 +30,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, bs=None, minW=None, w=None, h=None, size=None, **kwargs):
+    def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
@@ -42,19 +42,27 @@ class TextBox(Element):
         self._baselines = None # Force initiaize upon first usage.
 
         if size is not None:
-            self.size = size
-        else:
-            self.size = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
+            w, h = size
+        self.w, self.h = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
 
-        # Make sure that this is a formatted string. Otherwise create it with
-        # the current style. Note that in case there is potential clash in the
-        # double usage of fill and stroke.
+        self.bs = bs # Set as property, to make sure there's always a context based Babelstring
 
-        if bs is None: # If not defined, initialize as empty string (to avoid display of "None")
-            bs = ''
-
+    def _get_bs(self):
+        return self._bs
+    def _set_bs(self, s):
+        """Make sure that this is a formatted string. Otherwise create it with
+        the current style. Note that in case there is potential clash in the
+        double usage of fill and stroke.
+        """
+        if s is None: # If not defined, initialize as empty string (to avoid display of "None")
+            s = ''
         # Source can be any type: BabelString instance or plain unicode string.
-        self.bs = self.newString(bs, style=self.style)
+        self._bs = self.newString(s, style=self.style)
+    bs = property(_get_bs, _set_bs)
+
+    def clear(self):
+        """Clear the current content of the element."""
+        self.bs = ''
 
     def _get_w(self): # Width
         """Property for self.w, holding the width of the textbox.
@@ -192,7 +200,7 @@ class TextBox(Element):
         else: # No naming, show unique self.eId:
             name = ':'+self.eId
 
-        if self.bs.s:
+        if self.bs is not None and self.bs.s:
             s = ' S(%d)' % len(self.bs)
         else:
             s = ''
@@ -288,6 +296,8 @@ class TextBox(Element):
         """
         if bs is None:
             bs = self.bs
+        if bs is None: # Still None?
+            return 0, 0
         if w is None:
             return self.bs.size
         return bs.textSize(w=self.w)

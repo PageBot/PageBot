@@ -16,8 +16,16 @@
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 
 class SketchBuilder(BaseBuilder):
-    pass
+    PB_ID = 'Sketch'
 
+    def frameDuration(self, frameDuration):
+        pass
+
+    def save(self):
+        pass
+
+    def fill(self, e, g, b, alpha=None):
+        pass
 
 sketchBuilder = SketchBuilder()
 
