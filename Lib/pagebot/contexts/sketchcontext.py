@@ -251,6 +251,27 @@ PAGES_JSON = 'pages/'
 IMAGES_JSON = 'images/'
 PREVIEWS_JSON = 'previews/'
 
+def formatted(v, tab=0, s=None):
+  print('=======', v, isinstance(v, dict))
+  if s is None:
+    s = ''
+
+  if isinstance(v, dict):
+    s += ' = {\n'
+    for key, value in v.items():
+      s += '\t'*tab + 'key: ' 
+      #formatted(value, tab+1, s) + 
+      s += '\n'
+    s += '\t'*tab + '}\n'
+  elif isinstance(v, (list, tuple)):
+    s += ' = [\n'
+    for value in v:
+      formatted(value, tab+1, s)
+    s += '\t'*tab + ']\n'
+  else:
+    s += str(v)
+  return s
+
 class SketchContext(BaseContext):
 
     W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
@@ -430,7 +451,7 @@ class SketchContext(BaseContext):
           + rotation: number, --> e.angle
           shouldBreakMaskChain: bool,
           + style: SketchStyle, --> e.style
-          attributedString: SketchMSAttributedString,
+          + attributedString: SketchMSAttributedString, --> e.bs
           automaticallyDrawOnUnderlyingPath: bool,
           dontSynchroniseWithSymbol: bool,
           glyphBounds: SketchNestedPositionString,
@@ -439,12 +460,17 @@ class SketchContext(BaseContext):
           textBehaviour: number
         }
         """
-        x, y, w, h = self._SketchFrame2Rect(sketchText.get('frame'), parent)
-        e = newTextBox(parent=parent, sId=sketchText.get('do_objectID'), 
-          x=x, y=y, h=h, w=w, yAlign=TOP)
-        self._SketchValues2Element(sketchText, e)
-        self._SketchStyle2Element(sketchText.get('style'), e)
         #print(sketchText)
+        sketchMSAttributedString = sketchText.get('attributedString')
+        if sketchMSAttributedString is not None:
+          s = sketchMSAttributedString.get('string')
+        else:
+          s = None
+        x, y, w, h = self._SketchFrame2Rect(sketchText.get('frame'), parent)
+        e = newTextBox(s, parent=parent, sId=sketchText.get('do_objectID'), 
+          x=x, y=y, h=h, w=w, yAlign=TOP)
+        #self._SketchValues2Element(sketchText, e)
+        #self._SketchStyle2Element(sketchText.get('style'), e)
 
     def _SketchShapeGroup2Element(self, sketchShapeGroup, parent):
         """
@@ -472,6 +498,7 @@ class SketchContext(BaseContext):
           windingRule: number
         }
         """
+        #print(sketchShapeGroup)
         x, y, w, h = self._SketchFrame2Rect(sketchShapeGroup.get('frame'), parent)
         e = newGroup(parent=parent, sId=sketchShapeGroup.get('do_objectID'), 
           x=x, y=y, w=w, h=h, yAlign=TOP)
@@ -480,7 +507,6 @@ class SketchContext(BaseContext):
         # Set elements in layers
         for sketchLayer in sketchShapeGroup.get('layers', []):
             self._SketchLayer2Element(sketchLayer, e)
-        #print(sketchShapeGroup)
 
     def _SketchShapePath2Element(self, shapePath, parent):
         """
@@ -549,7 +575,7 @@ class SketchContext(BaseContext):
         x, y, w, h = self._SketchFrame2Rect(sketchBitmap.get('frame'), parent)
         e = newImage(path=path, parent=parent, sId=sId, 
           x=x, y=y, w=w, yAlign=TOP)
-        print('IMG', x, y, w, h)
+        #print('IMG', x, y, w, h)
         self._SketchValues2Element(sketchBitmap, e)
         self._SketchStyle2Element(sketchBitmap.get('style'), e)
 
@@ -703,6 +729,7 @@ class SketchContext(BaseContext):
         # If any of the points are changed, then build a Polygon instead of a Rect element.
         x, y, w, h = self._SketchFrame2Rect(sketchRectangle.get('frame'), parent)
         sketchPoints = (sketchRectangle.get('points'))
+        #print(sketchRectangle)
         return
         if sketchPoints is not None:
             e = newPolygon(parent=parent, sId=sketchRectangle.get('do_objectID'), 
@@ -716,7 +743,6 @@ class SketchContext(BaseContext):
             
         self._SketchValues2Element(sketchRectangle, e)
         self._SketchStyle2Element(sketchRectangle.get('style'), e)
-        #print(sketchRectangle)
 
     def _SketchOval2Element(self, sketchOval, parent):
         """
