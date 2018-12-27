@@ -19,7 +19,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.elements.paths import PageBotPath
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, upt
 
 class Paths(Element):
     """Draw rectangle, default identical to Element itself.
@@ -77,6 +77,11 @@ class Paths(Element):
         for path in paths:
             assert isinstance(path, self.PATH_CLASS)
         Element.__init__(self, **kwargs)
+
+    def rect(self, x, y, w, h):
+        path = PageBotPath(self.context)
+        path.rect(x, y, w, h)
+        self.paths.append(path)
 
     def _get_pathsW(self):
         """Read only property that answers the cumulated total width of all paths."""
@@ -183,6 +188,40 @@ class Paths(Element):
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
+class Mask(Paths):
+
+    def build(self, view, origin, drawElements=True):
+        """Default drawing method just drawing the frame.
+        Probably will be redefined by inheriting element classes."""
+
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(view, p)
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self._applyRotation(view, p)
+
+        self.b.save()
+
+        unifiedPath = None
+        for path in self.paths:
+            if unifiedPath is None:
+                unifiedPath = path
+            else:
+                unifiedPath = unifiedPath.union(path)
+
+        if unifiedPath is not None:
+            self.b.translate(upt(px), upt(py))
+            #self.b.fill(1, 0, 0)
+            #self.b.drawPath(unifiedPath.bp)
+            self.b.clipPath(unifiedPath.bp)
+            self.b.translate(-upt(px), -upt(py))
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            self.buildChildElements(view, p)
+
+        self.b.restore()
+
 
 if __name__ == '__main__':
     import doctest

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<document><pre><code>page = doc[1]
-box = page.deepFind('Article1')
-box.clear()
-</code></pre>
-
-<p>AKSKJKSJSAJAJHASKJSA</p></document>

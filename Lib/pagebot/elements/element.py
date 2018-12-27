@@ -56,7 +56,7 @@ class Element:
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, originTop=False,
-            left=None, top=None, right=None, bottom=None, sId=None,
+            left=None, top=None, right=None, bottom=None, sId=None, lib=None,
             t=None, timeMarks=None, parent=None, context=None, name=None,
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
@@ -67,7 +67,7 @@ class Element:
             ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            drawAfter=None, htmlCode=None, htmlPaths=None, clipPath=None,
+            drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
@@ -130,6 +130,9 @@ class Element:
         # the property will query parent --> root document --> view.
         self.context = context
         self._parent = None
+
+        # Set the local self._lib, validate it is a dictionary, otherwise create new dict.
+        self.lib = lib
 
         # Guaranteed to be unique. Cannot be set.
         self._eId = uniqueID(self)
@@ -258,6 +261,7 @@ class Element:
         # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.conditions = conditions
 
+        """ REMOVE
         # Optional storage of self.context.BezierPath() to clip the content of
         # self.  Also note the possibility of the self.childClipPath property,
         # which returns a PageBotPath instance, constructed from the position
@@ -265,7 +269,8 @@ class Element:
         if clipPath is not None:
             clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
         self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
-
+        """
+        
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description
@@ -827,6 +832,7 @@ class Element:
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
             name=self.name, cssClass=self.cssClass, #cssId is not copied.
             title=self.title, description=self.description, language=self.language,
+            lib=copy.deepcopy(self.lib),
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
             framePath=self.framePath,
@@ -850,7 +856,7 @@ class Element:
             e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
         return e
 
-    def _get_childClipPath(self):
+    def XXXXX_get_childClipPath(self):
         """Answer the clipping context.BezierPath, derived from the layout of child elements.
 
         >>> from pagebot.conditions import *
@@ -875,7 +881,7 @@ class Element:
             path = path.difference(e.childClipPath)
         path.translate(self.xy)
         return path
-    childClipPath = property(_get_childClipPath)
+    #childClipPath = property(_get_childClipPath)
 
     def setElementByIndex(self, e, index):
         """Replace the element, if there is already one at index. Otherwise
@@ -1374,11 +1380,21 @@ class Element:
         self.style['fontSize'] = em
     em = property(_get_em, _set_em)
 
-    #   L I B --> Document.lib
-
     def _get_lib(self):
-        """Answers the shared document.lib dictionary by property, used for
-        share global entry by elements.  Elements query their self.parent.lib
+        """Answer the local element.lib dictionary by property, used for custom
+        application value storage. Always make sure it is a dictionary.
+        """
+        return self._lib
+    def _set_lib(self, lib):
+        if lib  is None:
+            lib = {}
+        assert isinstance(lib, dict)
+        self._lib = lib
+    lib = property(_get_lib, _set_lib)
+
+    def _get_docLib(self):
+        """Answers the shared document.docLib dictionary by property, used for
+        share global entry by elements.  Elements query their self.parent.docLib
         until the root document is reached.
 
         >>> from pagebot.document import Document
@@ -1386,17 +1402,17 @@ class Element:
         >>> e = Element(name='Child')
         >>> page = Page(elements=[e])
         >>> doc = Document(pages=[page])
-        >>> e.lib.get('MyValue') == None # Get undefined value
+        >>> e.docLib.get('MyValue') == None # Get undefined value
         True
-        >>> doc.lib['MyValue'] = (1, 2, 3)
-        >>> e.lib.get('MyValue') # Get defined value, up parent tree.
+        >>> doc.docLib['MyValue'] = (1, 2, 3)
+        >>> e.docLib.get('MyValue') # Get defined value, up parent tree.
         (1, 2, 3)
         """
         parent = self.parent
         if parent is not None:
-            return parent.lib # Either parent element or document.lib.
+            return parent.docLib # Either parent element or document.docLib.
         return None # Document cannot be found, or there is there is no parent defined in the element.
-    lib = property(_get_lib)
+    docLib = property(_get_docLib)
 
     def _get_doc(self):
         """Answers the root Document of this element by property, looking upward

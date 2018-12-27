@@ -57,7 +57,7 @@ class Document:
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
             autoPages=1, template=None, templates=None, originTop=False, startPage=None, sId=None, 
-            w=None, h=None, d=None, size=None, padding=None, lib=None, context=None, path=None,
+            w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, path=None,
             exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -104,13 +104,13 @@ class Document:
         # Template is name or instance default template.
         self.initializeTemplates(templates, template)
 
-        # Property self.lib for storage of collected content while typesetting
+        # Property self.docLib for storage of collected content while typesetting
         # and composing, referring to the pages they where placed on during
         # composition. The lib can optionally be defined when constructing
         # self.
-        if lib is None:
-            lib = {}
-        self._lib = lib
+        if docLib is None:
+            docLib = {}
+        self._docLib = docLib
 
         # Document (w, h) size is default from page, but will modified by the type of display mode.
         if autoPages:
@@ -128,7 +128,7 @@ class Document:
         inheriting Publication documents."""
         pass
 
-    def _get_lib(self):
+    def _get_docLib(self):
         """Answers the global storage dictionary, used by TypeSetter and others
         to keep track of footnotes, table of content, etc. Some common entries
         are predefined. In the future this lib could be saved into JSON, in
@@ -136,12 +136,12 @@ class Document:
         a publication is generated from multiple independents documents, that
         need to exchange information across applications.
 
-        >>> doc = Document(name='TestDoc', lib=dict(a=12, b=34))
-        >>> sorted(doc.lib.items())
+        >>> doc = Document(name='TestDoc', docLib=dict(a=12, b=34))
+        >>> sorted(doc.docLib.items())
         [('a', 12), ('b', 34)]
         """
-        return self._lib
-    lib = property(_get_lib)
+        return self._docLib
+    docLib = property(_get_docLib)
 
     def __len__(self):
         """Answers the amount of pages in the document.
@@ -941,6 +941,16 @@ class Document:
                 if found is not None:
                     return found
         return None
+
+    def deepFind(self, name=None, pattern=None):
+        assert name or pattern
+        for pn, pages in self.pages.items():
+            for page in pages:
+                found = page.deepFind(name=name, pattern=pattern)
+                if found is not None:
+                    return found
+        return None
+    select = deepFind
 
     def isLeft(self):
         """This is reached for `e.isleft()` queries, when elements are not

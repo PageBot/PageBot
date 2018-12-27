@@ -361,11 +361,23 @@ class TextBox(Element):
         """Try to fix if there is overflow. If there is overflow outside the
         page, then find the page.next with it's target element to continue,
         until all text fits or the element has not nextElement defined.
-        Answer the page and result, as the page may have been altered."""
+        Answer the page and result, as the page may have been altered.
+        Overflow is solved by element condition Overflow2Next()
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.contexts import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> doc = Document(w=1000, h=1000, context=context)
+        >>> page = doc[1]
+        >>> TextBox('AAA', parent=page, )
+        >>> 
+
+        """
         result = True
         overflow = self.getOverflow()
         page = self.getElementPage()
         nextElement = None
+        processed = set() # Keep track of what we did, to avoid circular references.
 
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
             result = False
@@ -373,7 +385,7 @@ class TextBox(Element):
             if page is not None:
                 # Try next page
                 nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
-                if nextElement is None or nextElement.bs and self.nextPage:
+                if nextElement is None and self.nextPage:
                     # Not found or not empty, search on next page.
                     if self.nextPage == 'next': # Force to next page, relative to current
                         page = page.next
@@ -383,9 +395,15 @@ class TextBox(Element):
                         page = self.doc.getPage(self.nextPage)
                     if page is not None:
                         nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is not None and not nextElement.bs:
+                if nextElement is None: # Not found any the regular way?
+                    # Now try with deepFind
+                    nextElement = page.parent.deepFind(self.nextElement)
+
+                if nextElement is not None and not nextElement.eId in processed:
                     # Finally found one empty box on this page or next page?
-                    nextElement.bs = overflow
+                    processed.add(nextElement.eId)
+                    prefix = self.context.newString(' ', style=dict(fontSize=0.01, firstLineIndent=0))
+                    nextElement.bs = prefix + overflow
                     nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     page = nextElement.overflow2Next() # Solve any overflow on the next element.
