@@ -480,24 +480,9 @@ class TextBox(Element):
         context.language(self.css('language', DEFAULT_LANGUAGE))
         h = bool(self.css('hyphenation'))
         context.hyphenation(h)
-        box = clipPath = None
 
-        if self.clipPath is not None: # Use the elements as clip path:
-            clipPath = self.clipPath
-            clipPath.translate((px, py))
-            context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
-
-        elif clipPath is None:
-            if 0 and self.elements: # If there are child elements, then these are used as layout for the clipping path.
-                clipPath = self.childClipPath # Construct the clip path, so we don't need to restore translate.
-                if clipPath is not None:
-                    clipPath.translate((self.pl, self.pb))
-                clipPath.translate((self.pl, self.pb))
-                context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
-            else:
-                box = px + self.pl, py + self.pb, self.pw, self.ph
-                # One of box or clipPath are now defined.
-                context.textBox(self.bs, r=box, align=self.css('xTextAlign'))
+        box = px + self.pl, py + self.pb, self.pw, self.ph
+        context.textBox(self.bs, r=box, align=self.css('xTextAlign'))
 
         if textShadow:
             context.restoreGraphicState()

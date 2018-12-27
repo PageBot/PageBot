@@ -624,7 +624,8 @@ class SketchContext(BaseContext):
       mask.rect(0, 0, parent.w, parent.h)
       for ee in masked:
         mask.appendElement(ee)
-      parent.removeElement(groupMask)
+      print('556445399584398345', parent, groupMask)
+      #parent.removeElement(groupMask)
       
       print('parent', parent)
       print('mask', mask)
