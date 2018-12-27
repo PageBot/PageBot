@@ -30,7 +30,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
+    def __init__(self, bs=None, w=None, h=None, size=None, firstColumnIndex=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
@@ -46,6 +46,12 @@ class TextBox(Element):
         self.w, self.h = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
 
         self.bs = bs # Set as property, to make sure there's always a context based Babelstring
+
+        # If False or 0, then ignore first line indent of a column on text overflow.
+        # Otherwise set to a certain unit. This will cause text being indendete by the amount of
+        # self.firstLineIndent, probably in mid-sentence. This option is likely never necessary,
+        # implemented just in case.
+        self.firstColumnIndent = firstColumnIndent or False
 
     def _get_bs(self):
         return self._bs
@@ -402,8 +408,9 @@ class TextBox(Element):
                 if nextElement is not None and not nextElement.eId in processed:
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
-                    prefix = self.context.newString(' ', style=dict(fontSize=0.01, firstLineIndent=0))
-                    nextElement.bs = prefix + overflow
+                    if not self.firstColumnIndent: # Prevent indenting of first overflow text in next column.
+                        overflow = self.context.newString(' ', style=dict(fontSize=0.01, firstLineIndent=0)) + overflow
+                    nextElement.bs = overflow
                     nextElement.prevPage = page.name
                     nextElement.prevElement = self.name # Remember the back link
                     page = nextElement.overflow2Next() # Solve any overflow on the next element.
@@ -480,9 +487,24 @@ class TextBox(Element):
         context.language(self.css('language', DEFAULT_LANGUAGE))
         h = bool(self.css('hyphenation'))
         context.hyphenation(h)
+        box = clipPath = None
 
-        box = px + self.pl, py + self.pb, self.pw, self.ph
-        context.textBox(self.bs, r=box, align=self.css('xTextAlign'))
+        if self.clipPath is not None: # Use the elements as clip path:
+            clipPath = self.clipPath
+            clipPath.translate((px, py))
+            context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
+
+        elif clipPath is None:
+            if 0 and self.elements: # If there are child elements, then these are used as layout for the clipping path.
+                clipPath = self.childClipPath # Construct the clip path, so we don't need to restore translate.
+                if clipPath is not None:
+                    clipPath.translate((self.pl, self.pb))
+                clipPath.translate((self.pl, self.pb))
+                context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
+            else:
+                box = px + self.pl, py + self.pb, self.pw, self.ph
+                # One of box or clipPath are now defined.
+                context.textBox(self.bs, r=box, align=self.css('xTextAlign'))
 
         if textShadow:
             context.restoreGraphicState()

@@ -61,7 +61,7 @@ class Element:
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElement=None, prevElement=None, nextPage=None,
+            nextElement=None, prevElement=None, nextPage=None, clipPath=None, 
             prevPage=None, thumbPath=None, bleed=None, padding=None, pt=0,
             pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
             ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
@@ -261,7 +261,6 @@ class Element:
         # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
         self.conditions = conditions
 
-        """ REMOVE
         # Optional storage of self.context.BezierPath() to clip the content of
         # self.  Also note the possibility of the self.childClipPath property,
         # which returns a PageBotPath instance, constructed from the position
@@ -269,7 +268,6 @@ class Element:
         if clipPath is not None:
             clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
         self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
-        """
         
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
