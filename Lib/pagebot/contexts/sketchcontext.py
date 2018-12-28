@@ -483,7 +483,8 @@ class SketchContext(BaseContext):
     #self._SketchStyle2Element(sketchText.get('style'), e)
 
   SHAPEGROUP_LIBKEYS = (
-    'hasClippingMask', 'windingRule', 'clippingMaskMode', 'hasClickThrough'
+    'hasClippingMask', 'windingRule', 'clippingMaskMode', 'hasClickThrough',
+    'shouldBreakMaskChain',
   )
   def _SketchShapeGroup2Element(self, sketchShapeGroup, parent):
     """
@@ -502,7 +503,7 @@ class SketchContext(BaseContext):
       originalObjectID: UUID,
       resizingType: number,
       + rotation: number, --> e.angle
-      shouldBreakMaskChain: bool,
+      + shouldBreakMaskChain: bool, -->e.lib['SketchApp']
       + style: SketchStyle, --> e.style
       + hasClickThrough: bool, --> e.lib['SketchApp']
       + layers: [SketchLayer], --> e.elements
@@ -1092,6 +1093,7 @@ class SketchContext(BaseContext):
         fh = open(localImagePath, 'wb')
         fh.write(imageBinary)
         fh.close()
+
     """
       elif infoName.startswith(PREVIEWS_JSON):
         doc.previews.append(SketchPreview(fc))
