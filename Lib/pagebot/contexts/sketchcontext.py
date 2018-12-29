@@ -29,7 +29,7 @@ import re
 import io
 
 from pagebot.document import Document
-from pagebot.constants import FILETYPE_SKETCH, A4, TOP
+from pagebot.constants import FILETYPE_SKETCH, A4, TOP, INLINE, ONLINE, OUTLINE
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.sketchbuilder import sketchBuilder
 from pagebot.toolbox.color import color
@@ -484,7 +484,7 @@ class SketchContext(BaseContext):
 
   SHAPEGROUP_LIBKEYS = (
     'hasClippingMask', 'windingRule', 'clippingMaskMode', 'hasClickThrough',
-    'shouldBreakMaskChain',
+    'shouldBreakMaskChain', 'resizingType', 'nameIsFixed',
   )
   def _SketchShapeGroup2Element(self, sketchShapeGroup, parent):
     """
@@ -499,11 +499,11 @@ class SketchContext(BaseContext):
       + isVisible: bool, --> e.show
       layerListExpandedType: number,
       + name: string, --> e.name
-      nameIsFixed: bool,
+      + nameIsFixed: bool, --> 
       originalObjectID: UUID,
-      resizingType: number,
+      + resizingType: number, --> e.lib['SketchApp']
       + rotation: number, --> e.angle
-      + shouldBreakMaskChain: bool, -->e.lib['SketchApp']
+      + shouldBreakMaskChain: bool, --> e.lib['SketchApp']
       + style: SketchStyle, --> e.style
       + hasClickThrough: bool, --> e.lib['SketchApp']
       + layers: [SketchLayer], --> e.elements
@@ -625,13 +625,12 @@ class SketchContext(BaseContext):
       mask.rect(0, 0, parent.w, parent.h)
       for ee in masked:
         mask.appendElement(ee)
-      print('556445399584398345', parent, groupMask)
       #parent.removeElement(groupMask)
       
-      print('parent', parent)
-      print('mask', mask)
-      for eee in parent.elements:
-        print('masked element', eee.elements)
+      #print('parent', parent)
+      #print('mask', mask)
+      #for eee in parent.elements:
+      #  print('masked element', eee.elements)
 
 
   def _SketchArtboard2Element(self, sketchArtboard, parent):
@@ -753,7 +752,6 @@ class SketchContext(BaseContext):
     e = newGroup(parent=parent, sId=sketchGroup.get('do_objectID'), 
       x=x, y=y, w=w, h=h, yAlign=TOP, lib={LIB_SKETCHAPP: lib}
     )
-    print('=3==3=3=3', x, y, w, h)
     self._SketchValues2Element(sketchGroup, e)
     self._SketchStyle2Element(sketchGroup.get('style'), e)
     # Set elements in layers
@@ -889,20 +887,26 @@ class SketchContext(BaseContext):
     if sketchStyle is None:
       return
     style = e.style
+    """
     for name in ('blur', 'borders', 'miterLimit'):
       value = sketchStyle.get(name)
       if value is not None: 
         # Only set if defined, to keep element cascading value available.
         style[name] = value
-
+  
     fills = sketchStyle.get('fills')
     if fills is not None:
       e.fill = self._SketchColor2Color(fills[0].get('color')) # For now, just take the first one.
+    """
 
     borders = sketchStyle.get('borders')
     if borders is not None:
-      #bordergetBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None):
-      pass
+      border = borders[0]
+      linePosition = {None: None, 0: INLINE, 1: ONLINE, 2: OUTLINE}[border.get('position')]
+
+      e.borders = borderDict = e.getBorderDict(stroke=self._SketchColor2Color(border.get('color')), 
+        strokeWidth=border.get('thickness'), line=linePosition, dash=None)
+      print(e, border, borderDict)
 
   def _SketchPage2Document(self, sketchPage, doc):
     """
@@ -1035,7 +1039,7 @@ class SketchContext(BaseContext):
       os.mkdir(imagesDir)
     return imagesDir
 
-  def readDocument(self, path, w=None, h=None, originTop=True, context=None):
+  def readDocument(self, path, w=None, h=None, originTop=True, startPage=1, context=None):
     """Read a sketch file and answer a Document that contains the interpreted data.
 
     >>> from pagebot import getResourcesPath
@@ -1060,7 +1064,7 @@ class SketchContext(BaseContext):
     # Sketch does have an infinite canvas.
     # Start with single page and add more for all extra pages we detect.
     doc = Document(w=w or self.W, h=h or self.H, name=fileName, fileName=path,
-      originTop=originTop, context=context or self
+      startPage=startPage, originTop=originTop, context=context or self
     ) 
 
     f = zipfile.ZipFile(path, mode='r') # Open the file.sketch as Zip.

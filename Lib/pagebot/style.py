@@ -245,9 +245,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         font = DEFAULT_FONT_PATH, # Default is to avoid existing font and fontSize in the graphic state.
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
         fontSize = DEFAULT_FONT_SIZE, # Default font size in points, related to U. If FIT, size is elastic to width.
-        uppercase = False, # All text in upper case
-        lowercase = False, # All text in lower case (only if uppercase is False
-        capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase)
+        uppercase = False, # All text in upper case, using s.upper()
+        lowercase = False, # All text in lower case (only if uppercase is False), using s.lower()
+        capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase), using s.capitalize()
 
         # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
         variableLocation = None,

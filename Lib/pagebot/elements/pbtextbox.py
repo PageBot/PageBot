@@ -30,7 +30,7 @@ class TextBox(Element):
 
     TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
 
-    def __init__(self, bs=None, w=None, h=None, size=None, firstColumnIndex=None, **kwargs):
+    def __init__(self, bs=None, w=None, h=None, size=None, firstColumnIndent=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
