@@ -17,7 +17,7 @@
 #     Holds the (style) constants of PageBot.
 #
 
-from pagebot.toolbox.units import pt, em, mm, inch, EM_FONT_SIZE
+from pagebot.toolbox.units import pt, px, em, mm, inch, EM_FONT_SIZE
 
 # General indicators
 
@@ -158,6 +158,12 @@ BusinessCardZazzleSkinny = inch(3.5, 1)
 Tabloid = inch(11, 16.9)
 Broadsheet = inch(23.5, 29.5)
 Berliner = inch(12.4, 18.5)
+
+# Instagram
+InstagramHires = px(2048, 2048)
+Instagram = px(1080, 1080)
+InstagramLegacy = px(612, 612)
+InstagramLandscape = px(1080, 566)
 
 # Standard size of online printing sites.
 # TODO: Add more online services and adapt other parameters/preferences for these PDF's
