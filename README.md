@@ -28,9 +28,7 @@ Docket/Reference Number: 1538-25
 
 # Status
 
-Although publicly available as Open Source under an MIT license, PageBot is
-still in an alpha phase. More examples are currently being created to fully
-test all functions. Issue reports and contributions are highly appreciated!
+Although publicly available as Open Source under an MIT license, PageBot is still in an alpha phase. More examples are currently being created to fully test all functions. Issue reports and contributions are highly appreciated!
 
 We keep track of known bugs, development and future features in the issue tracker:
 
