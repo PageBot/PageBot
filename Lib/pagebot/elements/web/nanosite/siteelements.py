@@ -30,14 +30,14 @@ class NanoElement(Column):
     def build_html(self, view, path, drawElements=True):
         cssId = self.CSS_ID
         b = self.context.b
-        b.comment('Start %s ' % cssId)
+        b.comment('Start %s\n' % cssId)
         b.div(cssId=cssId, cssClass='%s clearfix' % cssId.lower()) #Header
         if self.TMP_CONTENT:
-            b.addHtml(self.TMP_CONTENT)
+            b.addHtml('<h1>%s</h1>' % self.TMP_CONTENT)
         for e in self.elements:
             e.build_html(view, path)
         b._div()
-        b.comment('End %s' % cssId)
+        b.comment('End %s\n' % cssId)
 
 class Wrapper(NanoElement):
     CSS_ID = 'Wrapper'
