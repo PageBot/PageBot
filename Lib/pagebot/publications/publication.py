@@ -39,7 +39,6 @@ class Publication(Element):
         if not findersOrPaths: # At least make it search in the current directory
             findersOrPaths = ['.']
         self.addFinders(findersOrPaths)
-        self.originTop = True
         
     def getAPI(self):
     	u"""Answers the API dictionary for this class that can be used by calling apps,
@@ -62,8 +61,6 @@ class Publication(Element):
             w = self.w
         if h is None:
             h = self.h
-        if originTop is None:
-            originTop = self.originTop
         if padding is None:
             padding = self.padding
         if gw is None: # Gutter width

@@ -262,7 +262,10 @@ class TextBox(Element):
         based on the style of self."""
         #assert isinstance(bs, (str, self.context.STRING_CLASS))
         #self.bs += self.newString(bs, e=self, style=style)
-        self.bs += bs
+        if self.bs is None:
+            self.bs = bs
+        else:
+            self.bs += bs
         #self.bs = self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
@@ -371,13 +374,13 @@ class TextBox(Element):
         Overflow is solved by element condition Overflow2Next()
 
         >>> from pagebot.document import Document
-        >>> from pagebot.contexts import DrawBotContext
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> doc = Document(w=1000, h=1000, context=context)
         >>> page = doc[1]
-        >>> TextBox('AAA', parent=page, )
-        >>> 
-
+        >>> t = TextBox('AAA', parent=page)
+        >>> str(t.bs.s)
+        'AAA'
         """
         result = True
         overflow = self.getOverflow()
@@ -427,7 +430,7 @@ class TextBox(Element):
         >>> from pagebot.contexts import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
-        >>> e = Element(padding=pt(30), w=1000, h=1000)
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
         >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
         >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
         >>> result = e.solve()
@@ -604,8 +607,11 @@ class TextBox(Element):
         context = view.context # Get current context.
         b = context.b
 
-        html = str(self.bs.s)
-        hasContent = html and html.strip() # Check if there is content, besides white space
+        if self.bs is not None:
+            html = str(self.bs.s)
+            hasContent = html and html.strip() # Check if there is content, besides white space
+        else:
+            hasContent = False
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         if hasContent:

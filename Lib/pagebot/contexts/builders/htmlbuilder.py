@@ -466,8 +466,11 @@ table {
         if upt(e.pr):
             scss[scssId+'-padding-right'] = e.pr
         if e.css('font') is not None:
-            font = Font(e.css('font'))
-            scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
+            if os.path.exists(e.css('font')):
+                font = Font(e.css('font'))
+                scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
+            else:
+                font = e.css('font')
         if e.css('fontSize') is not None:
             scss[scssId+'-font-size'] = e.css('fontSize')
         if e.css('fontStyle') is not None:

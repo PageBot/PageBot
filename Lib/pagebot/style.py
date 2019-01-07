@@ -32,7 +32,7 @@ from pagebot.toolbox.color import color, noColor, blackColor
 def newStyle(**kwargs):
     return dict(**kwargs)
 
-def makeStyle(style=None, **kwargs):
+def makeStyle(style=None, raiseError=True, **kwargs):
     """Make style from a copy of style dict (providing all necessary default
     values for the element to operate) and then overwrite these values with any
     specific arguments. If style is None, then create a new style dict. In
@@ -49,15 +49,21 @@ def makeStyle(style=None, **kwargs):
         for key, value in style.items():
         #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
             if key not in rs:
-                # TODO: raise error?
-                print('makeStyle warning: %s not allowed in (root) style!' % key)
+                warning = '[makeStyle] %s not allowed in (root) style!' % key
+                if raiseError:
+                    raise ValueError(warning)
+                else:
+                    print(warning)
             else:
                 new[key] = value
 
         for name, v in kwargs.items():
             if name not in rs:
-                # TODO: raise error?
-                print('makeStyle warning: %s not allowed in (root) style!' % name)
+                warning = '[makeStyle] %s not allowed in (root) style!' % name
+                if raiseError:
+                    raise ValueError(warning)
+                else:
+                    print(warning)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 
