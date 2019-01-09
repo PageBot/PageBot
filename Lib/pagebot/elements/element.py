@@ -283,6 +283,8 @@ class Element:
         self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
+        # Note that this does not copy the attributes from template to self.
+        # For that self.applyAttributes(template, elements, <attributeName>) should be called.
         self.applyTemplate(template, elements)
         # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
         if solve:
@@ -437,7 +439,7 @@ class Element:
             # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
             for e in template.elements:
-                self.appendElement(e.copy(parent=self))
+                self.appendElement(e.copy(parent=self, attrNames=('cssId',)))
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
@@ -658,7 +660,7 @@ class Element:
             e.deepFindAll(name, pattern, result)
         return result
 
-    def findAll(self, name=None, pattern=None, result=None):
+    def findAll(self, name=None, pattern=None, cls=None, result=None):
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
@@ -682,16 +684,18 @@ class Element:
         >>> len(elements)
         0
         """
-        assert name or pattern
+        assert name or pattern or cls
         result = []
         for e in self.elements:
-            if pattern is not None and pattern in e.name: # Simple pattern match
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                 result.append(e)
+            elif pattern is not None and pattern in e.name: # Simple pattern match
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
         return result
 
-    def deepFind(self, name=None, pattern=None, result=None):
+    def deepFind(self, name=None, pattern=None, cls=None):
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the first matching child
@@ -722,20 +726,22 @@ class Element:
         >>> element is e2
         True
         """
-        assert name or pattern
+        assert name or pattern or cls
         for e in self.elements:
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                 return e
             if pattern is not None and pattern in e.name: # Simple pattern match
                 return e
             if name is not None and name in (e.cssId, e.name):
                 return e
-            found = e.deepFind(name, pattern, result)
+            found = e.deepFind(name, pattern)
             if found is not None:
                 return found
         return None
 
     select = deepFind # Intuitive name with identical result. Can be used in MarkDown.
 
-    def find(self, name=None, pattern=None, result=None):
+    def find(self, name=None, pattern=None, cls=None):
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
@@ -759,8 +765,10 @@ class Element:
         >>> element is None
         True
         """
-        assert name or pattern
+        assert name or pattern or cls
         for e in self.elements:
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                return e
             if pattern is not None and pattern in e.name: # Simple pattern match
                 return e
             if name is not None and name in (e.cssId, e.name):
@@ -802,7 +810,7 @@ class Element:
         Default behavior of Element is to do nothing."""
         pass
 
-    def copy(self, parent=None):
+    def copy(self, parent=None, attrNames=None):
         """Answers a full copy of self, where the "unique" fields are set to
         default. Also perform a deep copy on all child elements.
 
@@ -821,12 +829,22 @@ class Element:
         # self._eId is automatically created, guaranteed unique Id for every element.
         # Ignore original **kwargs, as these values are supposed to be in style now.
         # Inheriting classes are responsible to add their own specific values.
-        e = self.__class__(x=self.x, y=self.y, z=self.z, w=self.w, h=self.h, d=self.d,
+        e = self.__class__(
+            x=self.x, 
+            y=self.y, 
+            z=self.z, 
+            w=self.w, 
+            h=self.h, 
+            d=self.d,
             t=self.t, # Copy type frame.
             parent=parent, # Allow to keep reference to current parent context and style.
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name, cssClass=self.cssClass, #cssId is not copied.
-            title=self.title, description=self.description, language=self.language,
+            name=self.name, 
+            #cssId is copied conditionally by copyCssId flag. E.g. applying template to web page.
+            cssClass=self.cssClass, 
+            title=self.title, 
+            description=self.description, 
+            language=self.language,
             lib=copy.deepcopy(self.lib),
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
@@ -846,9 +864,17 @@ class Element:
             gradient=self.gradient, # Needs to be copied?
             drawBefore=self.drawBefore,
             drawAfter=self.drawAfter)
+        
+        # If any additional attribute names defined, then deepcopy these as well.
+        for attrName in (attrNames or []): # Any additional attributes to copy? :
+            setattr(e, attrName, copy.deepcopy(getattr(self, attrName)))
+
         # Now do the same for each child element and append it to self.
         for child in self.elements:
-            e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
+            # Add the element to child list and update self._eId dictionary
+            # Keep the copyCssIf flag downwards, in case we are applying a template on 
+            # a web page.
+            e.appendElement(child.copy(attrNames=attrNames)) 
         return e
 
     def _get_childClipPath(self):

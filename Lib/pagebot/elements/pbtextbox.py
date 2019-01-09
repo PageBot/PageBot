@@ -217,7 +217,7 @@ class TextBox(Element):
             elements = ''
         return '%s%s (%s, %s)%s%s' % (self.__class__.__name__, name, uRound(self.xy), uRound(self.size), s, elements)
 
-    def copy(self, parent=None):
+    def copy(self, parent=None, attrNames=None):
         """Answers a full copy of `self`, where the "unique" fields are set to
         default. Also performs a deep copy on all child elements.
 
@@ -228,7 +228,7 @@ class TextBox(Element):
         >>> #copyE.bs # TODO: Needs development and testing
         Hello world
         """
-        e = Element.copy(self, parent=parent)
+        e = Element.copy(self, parent=parent, attrNames=attrNames)
         e.bs = self.bs # Copy the string separately.
         return e
 

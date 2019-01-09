@@ -113,7 +113,7 @@ class HtmlBuilder(XmlBuilder):
         'type', 'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
     H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = {
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'onclick'}
 
     FIGURE_ATTRIBUTES = {'accesskey', 'contenteditable', 'contextmenu', 'dir',
         'draggable', 'hidden', 'lang', 'spellcheck', 'tabindex'}
@@ -1560,6 +1560,11 @@ table {
         self._closeTag('script')
         self.newLine() # Optional newline is self.compact is False.
 
+    def script_(self, js, charset='UTF-8', type='text/javascript', **args):
+        self.script(charset='UTF-8', type='text/javascript', **args)
+        self.addHtml(js)
+        self._script()
+
     #
     #     L I S T things
     #
@@ -1771,6 +1776,11 @@ table {
 
     def _button(self):
         self._closeTag('button')
+
+    def button_(self, label, **args):
+        self.button(**args)
+        self.addHtml(label)
+        self._button()
 
     def textarea(self, **args):
         """Defines a text area (a multi-line text input control). A user can

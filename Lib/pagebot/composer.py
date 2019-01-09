@@ -78,7 +78,7 @@ class Composer:
 
             if page is not None:
                 targets['image'] = page.select('image')
-                targets['box'] = page.select('main'), 
+                targets['box'] = page.select('main')
 
         elif page is not None:
             targets['page'] = page
@@ -114,7 +114,7 @@ class Composer:
                 verbose.append('%s.compose: Add ruler or line element to text box "%s"' % (composerName, targets['box']))            
             else:
                 errors.append('%s.compose: No valid box or image selected "%s - %s"' % (composerName, page, e))
-
+        
         return targets
 
     def debug(self, s):

@@ -156,10 +156,10 @@ class MenuItem(SiteColumn):
         self.href = href
         self.label = label
 
-    def copy(self): 
+    def copy(self, parent=None, attrNames=None): 
         """Copy self into a new instance, adding the attributes that the
         generic SiteElement.copy does not copy."""
-        copiedMenuItem = SiteElement.copy(self)
+        copiedMenuItem = SiteElement.copy(self, attrNames=attrNames)
         copiedMenuItem.current = self.current
         copiedMenuItem.href = self.href
         copiedMenuItem.label = self.label
