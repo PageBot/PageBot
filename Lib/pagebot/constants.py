@@ -746,6 +746,44 @@ for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
                 d[value] = values
 # TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
 
+# CSS EASE parameters, defining the CSS transforamtion speed
+# See https://easings.net/
+#   -webkit-transition: all 600ms easing’s Bezier curve;
+#    transition:         all 600ms easing’s Bezier curve; }
+#
+CSS_EASE = 'ease'
+CSS_LINEAR = 'linear'
+CSS_EASE_IN = 'ease-in'
+CSS_EASE_OUT = 'ease-out'
+
+CSS_EASE_INTOUT = 'ease-in-out'
+CSS_EASE_INQUAD = 'easeInQuad'
+CSS_EASE_INCUBIC = 'easeInCubic'
+CSS_EASE_INQUART = 'easeInQuart'
+CSS_EASE_INQUINT = 'easeInQuint'
+CSS_EASE_INSINE = 'easeInSine'
+CSS_EASE_INEXPO = 'easeInExpo'
+CSS_EASE_INCIRC = 'easeInCirc'
+CSS_EASE_INBACK = 'easeInBack'
+
+CSS_EASE_OUTQUAD = 'easeOutQuad'
+CSS_EASE_OUTCUBIC = 'easeOutCubic'
+CSS_EASE_OUTQUART = 'easeOutQuart'
+CSS_EASE_OUTQUINT = 'easeOutQuint'
+CSS_EASE_OUTSINE = 'easeOutSine'
+CSS_EASE_OUTEXPO = 'easeOutExpo'
+CSS_EASE_OUTCIRC = 'easeOutCirc'
+CSS_EASE_OUTBACK = 'easeOutBack'
+
+CSS_EASE_INOUTQUAD = 'easeInOutQuad'
+CSS_EASE_INOUTCUBIC = 'easeInOutCubic'
+CSS_EASE_INOUTQUART = 'easeInOutQuart'
+CSS_EASE_INOUTQUINT = 'easeInOutQuint'
+CSS_EASE_INOUTSINE = 'easeInOutSine'
+CSS_EASE_INOUTEXPO = 'easeInOutExpo'
+CSS_EASE_INOUTCIRC = 'easeInOutCirc'
+CSS_EASE_INOUTBACK= 'easeInOutBack'
+
 # Note that any conversion between RAL (paint) and RGB can only be a
 # approximation. Material colors by definition have a different range of
 # possible colors than RGB.

@@ -439,7 +439,7 @@ class Element:
             # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
             for e in template.elements:
-                self.appendElement(e.copy(parent=self, attrNames=('cssId',)))
+                self.appendElement(e.copy(parent=self))
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
@@ -810,26 +810,39 @@ class Element:
         Default behavior of Element is to do nothing."""
         pass
 
-    def copy(self, parent=None, attrNames=None):
+    def copy(self, parent=None):
         """Answers a full copy of self, where the "unique" fields are set to
         default. Also perform a deep copy on all child elements.
 
         >>> e1 = Element(name='Child', w=100)
         >>> e = Element(name='Parent', elements=[e1], w=200)
         >>> copyE = e.copy()
-        >>> len(copyE) == len(e) == 1
-        True
+        >>> copyE.name == e.name, copyE.eId == e.eId
+        (True, False)
         >>> copyE is e, copyE['Child'] is e['Child'] # Element tree is copied
         (False, False)
         >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
         (True, True, True)
+        >>> e.copy().eId != e.eId
+        True
         """
-        # This also initializes the child element tree as empty list.
-        # Style is supposed to be a deep-copyable dictionary.
-        # self._eId is automatically created, guaranteed unique Id for every element.
-        # Ignore original **kwargs, as these values are supposed to be in style now.
-        # Inheriting classes are responsible to add their own specific values.
-        e = self.__class__(
+        # Deep-copies the element. Set the parent (if defined) and iterate through
+        # the child tree to make a e.eId unique.
+
+        savedElements = self._elements # Avoid deep copy on child elements
+        self._elements = []
+        copied = copy.deepcopy(self)
+        self._elements = savedElements
+        # Set some attributes on the copy
+        copied._eId = uniqueID()
+        if parent is not None:
+            copied.parent = parent
+        for e in self.elements:
+            copied.appendElement(e.copy())
+        return copied
+
+        """" REMOVE THIS
+        self.__class__(
             x=self.x, 
             y=self.y, 
             z=self.z, 
@@ -876,6 +889,7 @@ class Element:
             # a web page.
             e.appendElement(child.copy(attrNames=attrNames)) 
         return e
+        """
 
     def _get_childClipPath(self):
         """Answer the clipping context.BezierPath, derived from the layout of child elements.

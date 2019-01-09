@@ -248,8 +248,11 @@ class Slides(NanoElement):
         cssClass = cssId.lower()
 
         b = self.context.b
+        # See for more options
+        # https://www.bbslider.com/options.php
+        # https://www.bbslider.com/examples.php
         b.addJs("""
-            $('.%(cssClass)s').bbslider({auto: true, timer: %(frameDuration)d, loop: true});\n\n
+            $('.%(cssClass)s').bbslider({auto: true, timer: %(frameDuration)d, loop: true, transition: 'slideVert'});\n\n
         """ % dict(cssClass=cssClass, frameDuration=(self.parent.frameDuration or 3) * 1000)
         )
         b.comment('Start %s' % cssId)
