@@ -157,7 +157,7 @@ class BareBonesSlideShow(Column):
 
 class BareBonesSlideSide(Column):
     CSS_ID = 'BareBonesSlideSide'
-    SHOW_ID = True
+    SHOW_ID = False
 
     def build_html(self, view, path, drawElements=True):
         cssId = self.cssId or self.CSS_ID

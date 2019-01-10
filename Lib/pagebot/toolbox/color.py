@@ -236,8 +236,6 @@ def spot2Rgb(spot, default=None):
     >>> spot2Rgb(10000000) # Non-existend spot colors map to default or black.
     (0, 0, 0)
     """
-    if isinstance(spot, str): # No spot color name defined. Take closest rgb to this name.
-        return name2Rgb(spot)
     return SPOT_RGB.get(spot, default or (0, 0, 0))
 
 def rgb2Spot(rgb):
@@ -657,8 +655,8 @@ class Color:
         (1, 0, 1)
         >>> '%0.2f, %0.2f, %0.2f' % color(c=1, m=0, y=0.5, k=0.2).rgb
         '0.00, 0.80, 0.40'
-        >>> color(spot='red').rgb
-        (1, 0, 0)
+        >>> '%0.2f %0.2f %0.2f' % color(spot='red').rgb
+        '0.94 0.20 0.25'
         >>> '%0.2f, %0.2f, %0.2f' % color(ral='red').rgb
         '0.54, 0.07, 0.08'
         """
@@ -1056,6 +1054,18 @@ yellowColor = color(c=0, m=0, y=1, k=0)
 magentaColor = color(c=0, m=1, y=0, k=0)
 cyanColor = color(c=1, m=0, y=0, k=0)
 registrationColor = color(cmyk=1) # All on, for registration/cropmarks usage
+
+def rgb(r, g=None, b=None, rgb=None, name=None):
+    return color(r=r, g=g, b=b, name=name)
+
+def spot(spot):
+    return color(spot=spot)
+
+def cmyk(c, m=None, y=None, k=None):
+    return color(c=c, m=m, y=y, k=k)
+
+def ral(ral):
+    return color(ral=ral)
 
 if __name__ == "__main__":
     import doctest

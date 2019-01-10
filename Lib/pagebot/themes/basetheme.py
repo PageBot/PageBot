@@ -15,7 +15,7 @@
 #     basetheme.py
 #
 import copy
-from scss import compiler
+#from scss import compiler
 from pagebot.style import getRootStyle
 
 class BaseTheme:

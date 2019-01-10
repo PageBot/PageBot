@@ -58,13 +58,29 @@ class Header(Section):
 
 class Logo(NanoElement):
     CSS_ID = 'Logo'
-    SHOW_ID = True
+    SHOW_ID = False
+
+    def build_html(self, view, path, drawElements=True):
+        cssId = self.cssId or self.CSS_ID
+        b = self.context.b
+        b.comment('Start %s\n' % cssId)
+        b.div(cssId=cssId, cssClass='%s clearfix' % self.__class__.__name__.lower()) #Header
+        if self.SHOW_ID:
+            b.div(cssClass='cssId')
+            b.addHtml(cssId)
+            b._div()
+        b.a(href='index.html')
+        for e in self.elements:
+            e.build_html(view, path)
+        b._a()
+        b._div()
+        b.comment('End %s\n' % cssId)
 
 # Navigation
 
 class Navigation(NanoElement):
     CSS_ID = 'Navigation'
-    SHOW_ID = True
+    SHOW_ID = False
 
     def __init__(self, menuInfo=None, **kwargs):
         NanoElement.__init__(self, **kwargs)
@@ -182,7 +198,11 @@ class MenuItem(NanoElement):
 
 class MobileMenu(NanoElement):
     CSS_ID = 'MobileMenu'
-    SHOW_ID = True
+    SHOW_ID = False
+
+    def __init__(self, menuInfo=None, **kwargs):
+        NanoElement.__init__(self, **kwargs)
+        self.menuInfo = menuInfo or []
 
     def build_html(self, view, path, drawElements=True):
         cssId = self.cssId or self.CSS_ID
@@ -193,8 +213,12 @@ class MobileMenu(NanoElement):
             b.div(cssClass='cssId')
             b.addHtml(cssId)
             b._div()
-        for n in range(5):
-            b.button_('Item %d' % n)
+        for d in self.menuInfo:
+            b.div(cssClass='button')
+            b.a(href=d['href'])
+            b.addHtml(d['label'])
+            b._a()
+            b._div()
         b._div()
         b.comment('End %s\n' % cssId)
 
@@ -227,12 +251,12 @@ class BurgerButton(NanoElement):
 # Banner 
 class Banner(NanoElement):
     CSS_ID = 'Banner'
-    SHOW_ID = True
+    SHOW_ID = False
 
 # Introduction 
 class Introduction(NanoElement):
     CSS_ID = 'Introduction'
-    SHOW_ID = True
+    SHOW_ID = False
 
 # Slide show
 

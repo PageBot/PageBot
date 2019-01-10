@@ -1155,7 +1155,36 @@ CSS_COLOR_NAMES = {
 
 SPOT_RGB = {
     # Numbers are recalculated as 0..1
+    'black': (0, 0, 0),
+    'blacku': (97, 93, 89),
+    'blackc': (45, 41, 38),
+
+    'coolgray11u': (122, 125, 129),
+    'coolgray9u': (137, 139, 142),
+    'coolgray6u': (164, 166, 168),
+
+    'warmgray2c': (203, 196, 188),
+    'warmgray4u': (180, 172, 166),
+    'warmgray8u': (146, 137, 129),
+    'warmgray10c': (121, 110, 101),
+    'warmgray10u': (130, 124, 120),
+    'warmgray11c': (110, 98, 89), 
+    'warmgray11u': (125, 119, 125),
+
+    'processblackc': (39, 37, 31),
+    'processblacku': (78, 74, 71),
+
+    'processblue': (0, 133, 202),
+    'reflexblue': (0, 20, 137),
+    'rubinered': (206, 0, 88),
+    'rhodamineredu': (228, 76, 154),
+    'yellow': (254, 221, 0),
+    
+    'red032c': (239, 51, 64),
+    'red032u': (246, 80, 88),
+
     0: (0, 0, 0), #000000
+
     100: (244, 237, 124), #F4ED7C
     101: (244, 237, 71), #F4ED47
     102: (249, 232, 20), #F9E814
@@ -2252,6 +2281,10 @@ SPOT_RGB = {
     813.2: (209, 0, 132), #D10084
     814: (140, 96, 193), #8C60C1
     814.2: (112, 63, 175), #703FAF
+
+    877: (138, 141, 143),
+    '877c': (138, 141, 143),
+    '877u': (180, 183, 185),
 }
 
 # Replace integers by float numbers.
