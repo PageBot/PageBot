@@ -16,7 +16,7 @@ from pagebot.themes.palette import PALETTES
 from pagebot.constants import A4, CENTER
 from pagebot.toolbox.units import upt
 
-W, H = upt(A4)
+W = H = upt(A4)[0]
 
 CW = 100
 CH = CW*1.5
@@ -28,10 +28,11 @@ G = (W - PADDING*2 - CW*DX)/(DX - 1)
 def drawColor(x, y, clr):
     
     r, g, b = clr.rgb
+    stroke(None)
     fill(r, g, b)
     rect(x, y+CH-CW, CW, CW)
     stroke(0)
-    strokeWidth(0.5)
+    strokeWidth(2)
     fill(None)
     rect(x, y, CW, CH)
 
@@ -45,8 +46,8 @@ for name, palette in sorted(PALETTES.items()):
     newPage(W, H)
     cIndex = 0
     fill(0)
-    fs = FormattedString(palette.name, font='Upgrade-Medium', fontSize=32)
-    text(fs, (PADDING, PADDING))
+    fs = FormattedString(palette.name, font='Upgrade-Medium', fontSize=22)
+    text(fs, (PADDING, H-PADDING*2/3))
     
     for x in range(DX):
         for y in range(DY):
