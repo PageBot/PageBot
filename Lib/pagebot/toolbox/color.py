@@ -559,7 +559,7 @@ class Color:
         if not None in (self.c, self.m, self.y, self.k):
             return '%s(c=%s, m=%s, y=%s, k=%s)' % (self.__class__.__name__, self.c, self.m, self.y, self.k)
         if self._spot is not None:
-            return '%s(spot=%d)' % (self.__class__.__name__, self._spot)
+            return '%s(spot=%s)' % (self.__class__.__name__, self._spot)
         if self._ral is not None:
             return '%s(ral=%d)' % (self.__class__.__name__, self._ral)
         return '%s(rgb=0)' % self.__class__.__name__

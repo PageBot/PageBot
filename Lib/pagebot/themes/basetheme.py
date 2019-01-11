@@ -19,7 +19,7 @@ import copy
 from pagebot.style import getRootStyle
 
 class BaseTheme:
-    u"""The Theme instances combines a number style dictionaries (property
+    u"""The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
     a theme could describe the entire CSS file where the keys are used as CSS
     selector and the connected styles are used as property:value declaration.

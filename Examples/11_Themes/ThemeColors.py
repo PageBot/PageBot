@@ -15,6 +15,9 @@
 from pagebot.themes.palette import PALETTES
 from pagebot.constants import A4, CENTER
 from pagebot.toolbox.units import upt
+from pagebot.contexts.drawbotcontext import DrawBotContext
+
+context = DrawBotContext()
 
 W = H = upt(A4)[0]
 
@@ -27,27 +30,26 @@ G = (W - PADDING*2 - CW*DX)/(DX - 1)
 
 def drawColor(x, y, clr):
     
-    r, g, b = clr.rgb
-    stroke(None)
-    fill(r, g, b)
-    rect(x, y+CH-CW, CW, CW)
-    stroke(0)
-    strokeWidth(2)
-    fill(None)
-    rect(x, y, CW, CH)
+    context.stroke(None)
+    context.fill(clr)
+    context.rect(x, y+CH-CW, CW, CW)
+    context.stroke(0)
+    context.strokeWidth(2)
+    context.fill(None)
+    context.rect(x, y, CW, CH)
 
     textFill = 0
-    fs = FormattedString('SPOT\n%s' % clr.spot, 
-        font='Upgrade-Regular', fontSize=16, lineHeight=18, align=CENTER, fill=textFill)
-    tw, th = textSize(fs)
-    text(fs, (x+CW/2-tw/2, y+30))
+    bs = context.newString('SPOT\n%s' % clr.spot, 
+        style=dict(font='Upgrade-Regular', fontSize=16, leading=18, xTextAlign=CENTER, textFill=textFill))
+    tw, th = bs.size
+    context.text(bs, (x+CW/2-tw/2, y+30))
 
 for name, palette in sorted(PALETTES.items()):
-    newPage(W, H)
+    context.newPage(W, H)
     cIndex = 0
-    fill(0)
-    fs = FormattedString(palette.name, font='Upgrade-Medium', fontSize=22)
-    text(fs, (PADDING, H-PADDING*2/3))
+    context.fill(0)
+    bs = context.newString(palette.name, style=dict(font='Upgrade-Medium', fontSize=22))
+    context.text(bs, (PADDING, H-PADDING*2/3))
     
     for x in range(DX):
         for y in range(DY):
@@ -56,4 +58,4 @@ for name, palette in sorted(PALETTES.items()):
             cIndex += 1
 
 
-saveImage('_export/ThemeColors.pdf')
+context.saveImage('_export/ThemeColors.pdf')

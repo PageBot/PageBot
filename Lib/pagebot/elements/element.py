@@ -4489,9 +4489,10 @@ class Element:
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+        # Draw the actual element content.
+        # Inheriting elements classes can redefine just this method to fill in drawing behavior.
+        # @p is the transformed position to draw in the main canvas.
+        self.buildElement(view, p, drawElements)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -4503,6 +4504,17 @@ class Element:
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
+    def buildElement(self, view, p, drawElement=True):
+        """Main drawing method for elements to draw their content and the content
+        of their children if they exist.
+        @p is the transformed position of the context canvas.
+        To be redefined by inheriting element classes that need to draw more than
+        just their chold elements.
+        """
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            self.buildChildElements(view, p)
 
     def buildChildElements(self, view, origin=None):
         """Draws child elements, dispatching depends on the implementation of

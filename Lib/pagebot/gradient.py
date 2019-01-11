@@ -14,7 +14,7 @@
 #
 #     gradient.py
 #
-from pagebot.toolbox.color import blackColor, whiteColor, color as makeColor
+from pagebot.toolbox.color import blackColor, whiteColor, color as makeColor, Color
 from pagebot.toolbox.units import units
 
 class Gradient:
@@ -64,13 +64,23 @@ class Shadow:
     def __init__(self, offset=None, blur=None, color=None):
         """Set he parameter of the Shadow instance.
         TODO: Make optional to use the z-position of an element really cast the shadow,
-        defining both the offset (from light-source position) and blur from distance."""
+        defining both the offset (from light-source position) and blur from distance.
+
+        >>> shadow = Shadow()
+        >>> shadow
+        <Shadow offset=(6pt, -6pt) blur=6pt Color(r=0, g=0, b=0)>
+        """
         self.offset = units(offset or (6, -6))
         if blur is None: # In case not defined, attach to offset.
             blur = self.offset[0]
         self.blur = units(blur)
-        self.color = makeColor(color or blackColor)
+        if color is None:
+            self.color = blackColor
+        else:
+            self.color = makeColor(color)
 
+    def __repr__(self):
+        return '<%s offset=%s blur=%s %s>' % (self.__class__.__name__, self.offset, self.blur, self.color)
 
 if __name__ == '__main__':
     import doctest

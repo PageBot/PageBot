@@ -41,6 +41,21 @@ class Palette:
     def __getitem__(self, index):
         return getattr(self, 'c%d' % index)
 
+    def __len__(self):
+        return len(self.COLORS)
+        
+    def _get_colors(self):
+        """Answer the colors a index list.
+    
+        >>> BusinessAsUsual().colors[:2] # Only show first 2 for testing.  
+        [Color(spot=blacku), Color(spot=404)]
+        """
+        colors = []
+        for cIndex in range(len(self.COLORS)):
+            colors.append(self[cIndex])
+        return colors
+    colors = property(_get_colors)
+
 class BusinessAsUsual(Palette):
     COLORS = dict(
         c0=spot('blacku'),c1=spot(404),  c2=spot(877),   c3=spot(541),   c4=spot(542),   c5=spot(545),
