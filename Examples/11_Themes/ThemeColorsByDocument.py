@@ -23,7 +23,8 @@ from pagebot.gradient import Shadow
 
 context = DrawBotContext()
 
-W, H = A4
+W, H = A4[0], pt(700)
+
 PADDING = pt(50)
 
 doc = Document(w=W, h=H, context=context, originTop=False)
@@ -73,9 +74,9 @@ class  ColorPalette(Rect):
         c.rect(x, y, cw, ch) # Frame
 
         bs = context.newString('SPOT\n%s' % clr.spot, 
-            style=dict(font='Upgrade-Regular', fontSize=16, leading=18, xTextAlign=CENTER, textFill=0))
+            style=dict(font='Upgrade-Regular', fontSize=15, leading=18, xTextAlign=CENTER, textFill=0))
         tw, th = bs.size
-        c.text(bs, (x+cw/2-tw/2, y+10))
+        c.text(bs, (x+cw/2-tw/2, y+30))
 
 
     def buildElement(self, view, p, drawElements=True):
@@ -99,13 +100,18 @@ class  ColorPalette(Rect):
 page = doc[1]
 for _, palette in sorted(PALETTES.items()):
     page.padding = PADDING
-    bs = context.newString(palette.name, style=dict(font='Upgrade-Medium', fontSize=24, textFill=0))
+    page.pb = 0
+    bs = context.newString('Theme: %s' % palette.name, style=dict(font='Upgrade-Medium', fontSize=24, textFill=0))
+    Rect(parent=page, z=-10, w=W, h=H, fill=0.8)
     TextBox(bs, parent=page, h=48, w=W-2*PADDING, conditions=[Left2Left(), Top2Top()])
     ColorPalette(palette, parent=page, conditions=[Fit2Width(), Float2Top()], 
-        shadow=Shadow(blur=pt(10), color=0.7))
+        shadow=Shadow(blur=pt(10), color=0.4))
     page.solve()
 
     page = page.next
 
 
 doc.export('_export/ThemeColorsByDocument.pdf')
+doc.export('_export/ThemeColorsByDocument.png')
+
+

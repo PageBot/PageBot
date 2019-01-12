@@ -49,14 +49,22 @@ class Section(NanoElement):
     pass
 
 class Wrapper(NanoElement):
+    """Overall page wrapper, mostly used to get the window-padding to work."""
     CSS_ID = 'Wrapper'
 
 # Header
 
 class Header(Section):
+    """Collection of elements in heading of a page, such as logo, navigation, menu
+    and may slideshow, banner, etc.
+    """
     CSS_ID = 'Header'
 
 class Logo(NanoElement):
+    """Logo on top of the page, often used in the Header. Can either a text or an image,
+    depending on what child elements it has (e.g. as defined the MarkDown file.
+    This way logo's can be different per page and per @medua query side.
+    """
     CSS_ID = 'Logo'
     SHOW_ID = False
 
@@ -76,19 +84,27 @@ class Logo(NanoElement):
         b._div()
         b.comment('End %s\n' % cssId)
 
-# Navigation
+#   N A V I G A T I O N
 
 class Navigation(NanoElement):
+    """Navigation is the container that hold several conditional menus. 
+    """
     CSS_ID = 'Navigation'
     SHOW_ID = False
 
-    def __init__(self, menuInfo=None, **kwargs):
-        NanoElement.__init__(self, **kwargs)
-        if menuInfo is not None:
-            menu = TopMenu(parent=self)
-            self.makeMenu(menu, menuInfo)
-
-    def makeMenu(self, parent, menuInfo, showArrow=False):
+    def makeMenu(self, page, parentMenu=None, pageTree=None, showArrow=False):
+        """Run the navigation.makeMenu(page) once all content is filled. This way
+        self will build the TopMenu/Menu/MenuItem elements, according to the current
+        structure of the website, assuming that the main document and all other pages
+        can be reached from the page by page.doc.
+        """
+        if pageTree is None:
+            pageTree = page.doc.getPageTree() # Create a nested list of pages by they urls
+        print(pageTree)
+        return
+        if parentMenu is None:
+            parentMenu = self
+        menu = TopMenu(parent=parentMenu) # Create the top menu.
         for pageInfo in menuInfo:
             pages = pageInfo.get('pages')
             label = pageInfo['label']
@@ -197,6 +213,9 @@ class MenuItem(NanoElement):
             b._li()
 
 class MobileMenu(NanoElement):
+    """MobileMenu lives outside the regular Navigation, made to expand on clicking/tapping
+    on a BurgerButton.
+    """
     CSS_ID = 'MobileMenu'
     SHOW_ID = False
 

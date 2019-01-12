@@ -4505,7 +4505,7 @@ class Element:
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def buildElement(self, view, p, drawElement=True):
+    def buildElement(self, view, p, drawElements=True):
         """Main drawing method for elements to draw their content and the content
         of their children if they exist.
         @p is the transformed position of the context canvas.

@@ -106,7 +106,7 @@ class Document:
 
         # Property self.docLib for storage of collected content while typesetting
         # and composing, referring to the pages they where placed on during
-        # composition. The lib can optionally be defined when constructing
+        # composition. The docLib can optionally be defined when constructing
         # self.
         if docLib is None:
             docLib = {}
@@ -253,7 +253,7 @@ class Document:
         glossary.append('\tPages: %d' % len(self.pages))
         glossary.append('\tTemplates: %s' % ', '.join(sorted(self.templates.keys())))
         glossary.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
-        glossary.append('\tLib: %s' % ', '.join(self._lib.keys()))
+        glossary.append('\tLib: %s' % ', '.join(self.docLib.keys()))
         return '\n'.join(glossary)
 
     def _get_builder(self):
@@ -1151,6 +1151,49 @@ class Document:
                 continue
             pages.append((pn, pnPages))
         return pages
+
+    def getPageTree(self, pageTree=None):
+        """Answer a nested dict/list of pages, interpreting their tree-relation (e.g. as
+        used for a website-navigation-menu structure) from their url-path.
+        The keys in the dictionary are the "folder" names. The pages in each directory
+        are collected in a list at key '@'.
+
+        >>> doc = Document(autoPages=0)
+        >>> p = doc.newPage(name='home', url='index.html')
+        >>> p = doc.newPage(name='c', url='a/b1/c.html')
+        >>> p = doc.newPage(name='d', url='a/b1/d.html')
+        >>> p = doc.newPage(name='d', url='a/b2/d.html')
+        >>> p = doc.newPage(name='e', url='a/b2/e.html')
+        >>> p = doc.newPage(name='f', url='a/b2/f.html')
+        >>> p = doc.newPage(name='zzz', url='a/v/w/x/y/z.html')
+        >>> p = doc.newPage(name='noUrlPage')
+        >>> tree = doc.getPageTree()
+        >>> tree['@']
+        [<Page #1 home (1000pt, 1000pt)>, <Page #8 noUrlPage (1000pt, 1000pt)>]
+        >>> tree['a']['b2']['@']
+        [<Page #4 d (1000pt, 1000pt)>, <Page #5 e (1000pt, 1000pt)>, <Page #6 f (1000pt, 1000pt)>]
+        >>> tree['a']['b2']['@'][0].url
+        'a/b2/d.html'
+        >>> len(tree['a']['b2']['@'])
+        3
+        >>> tree['a']['v']['w']['x']['y']['@'][0]
+        <Page #7 zzz (1000pt, 1000pt)>
+        """
+        pageKey = '@'
+        if pageTree is None:
+            pageTree = {pageKey:[]} # Initialize the root tree. Empty page list, no directories.
+        for pages in self.pages.values(): # For all pages in self
+            for page in pages:
+                node = pageTree # Start the node at the top of the tress
+                urlParts = page.url.split('/') # Split the page url in parts
+                for urlPart in urlParts: # For all parts in the page url
+                    if urlPart == urlParts[-1]: # If at the end, this must be the page "file name"
+                        node[pageKey].append(page) # Add the page to the list of the current node.
+                    else:
+                        if not urlPart in node: # Otherwise, see if this "directory" already exists.
+                            node[urlPart] = {pageKey:[]} # Create a new node at this "directory"
+                        node = node[urlPart] # Get the node of the next "directory" level.
+        return pageTree # Answer the full tree.
 
     def getMaxPageSizes(self, pageSelection=None):
         """Answers the (w, h, d) size of all pages together. If the optional
