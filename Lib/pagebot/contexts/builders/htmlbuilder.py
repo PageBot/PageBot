@@ -16,8 +16,11 @@
 #
 import os
 import codecs
-import sass
-
+try:
+    import sass
+except:
+    pass
+    
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor

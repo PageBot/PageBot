@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     12_ElementALignments.py
+#     12_ElementAlignments.py
 #
 #     Build a square page with a number of circle elements on top of each other.
 #     ALl with the same proportion on the same position, where measures are derived

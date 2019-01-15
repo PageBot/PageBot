@@ -65,7 +65,7 @@ print('Now it is clean. Glyph is dirty:', g.dirty)
 # Draw the changed path.
 context.fill(None)
 context.stroke(0, 1)
-context.drawPath(g.path, (0, 0), s)
+context.drawPath(context.getGlyphPath(g), (0, 0), s)
 
 # Draw the position of the points.
 context.stroke((1, 0, 0), 2)

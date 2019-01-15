@@ -49,7 +49,7 @@ def makeDocument():
     view.showDimensions = False
 
     # Get list of pages with equal y, then equal x.
-    #page = doc[1][0] # Get the single page from te document.
+    #page = doc[1][0] # Get the single page from the document.
     page1 = doc[1] # Get page on pageNumber, first in row (there is only one now).
     page1.name = 'Page 1'
     page1.padding = PagePadding
@@ -67,13 +67,8 @@ def makeDocument():
 
     e1 = newTextBox(bs,
         name='ElasticTextBox1',
-<<<<<<< HEAD
-        nextElementName='ElasticTextBox2', # Overflow goes here.
-        parent=page1, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
-=======
         nextElement='ElasticTextBox2', # Overflow goes here.
         parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
->>>>>>> origin/master
         mb=20, mr=10,       # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.

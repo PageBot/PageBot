@@ -1352,11 +1352,14 @@ class Element:
         they pass the request on to the root, which is normally the document.
 
         >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.color import color
         >>> doc = Document()
+        >>> doc.addStyle('body', dict(name='body', fill=color('red'))) # Add named style to document
         >>> page = doc[1]
         >>> e = Element(parent=page)
-        >>> e.getNamedStyle('body') is not None
-        True
+        >>> 
+        >>> e.getNamedStyle('body')['fill'] 
+        Color(name="red")
         """
         if self.parent:
             return self.parent.getNamedStyle(styleName)
@@ -4154,7 +4157,6 @@ class Element:
         for e in self.parent.elements:
             # Only look at siblings that are previous in the list.
             if previousOnly and e is self:
-                print('break')
                 break
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-
+#
 #     P A G E B O T
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -22,7 +22,7 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
-from pagebot.toolbox.transformer import obj2StyleId, uniqueID
+from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
@@ -1176,6 +1176,9 @@ class Document:
         >>> p = doc.newPage(name='zzz', url='a/v/w/x/y/z.html')
         >>> p = doc.newPage(name='noUrlPage')
         >>> tree = doc.getPageTree()
+        """
+
+        """
         >>> tree['@']
         [<Page #1 home (1000pt, 1000pt)>, <Page #8 noUrlPage (1000pt, 1000pt)>]
         >>> tree['a']['b2']['@']
@@ -1187,27 +1190,27 @@ class Document:
         >>> tree['a']['v']['w']['x']['y']['@'][0]
         <Page #7 zzz (1000pt, 1000pt)>
         """
-        pageKey = '@'
-        if pageTree is None:
-            # Initialize the root tree. Empty page list, no directories.
-            # Value will be tuples of (dirName, page, pageTree) recursively, where
-            # page can be None and pageTree can be an empty list.
-            pageTree = [] 
-        """   
+        class PageNode:
+            def __init__(self, path=None, page=None):
+                self.path = path
+                self.page = page
+                self.children = []
+            def __repr__(self):
+                return '<%s path=%s page=%s %d>' % (self.__class__.__name__, self.path, page.name, len(children))
+
+        def addPageNode(page, node):
+            if page.url:
+                path = path2Dir(page.url)
+                if path == node.path:
+                    node.children.append(PageNode(path, page))
+                found = False
+                #for child in node.chidlre
+
+        root = PageNode()
         for pages in self.pages.values(): # For all pages in self
             for page in pages:
-
-                node = pageTree # Start the node at the top of the tress
-                urlParts = page.url.split('/') # Split the page url in parts
-                for urlPart in urlParts: # For all parts in the page url
-                    if urlPart == urlParts[-1]: # If at the end, this must be the page "file name"
-                        node[pageKey].append(page) # Add the page to the list of the current node.
-                    else:
-                        if not urlPart in node: # Otherwise, see if this "directory" already exists.
-                            node[urlPart] = {pageKey:[]} # Create a new node at this "directory"
-                        node = node[urlPart] # Get the node of the next "directory" level.
-        """
-        return pageTree # Answer the full tree.
+                addPageNode(page, root)
+        return root # Answer the full tree.
 
     def getMaxPageSizes(self, pageSelection=None):
         """Answers the (w, h, d) size of all pages together. If the optional
