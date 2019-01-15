@@ -33,8 +33,6 @@ SITE_NAME = 'D3-Beziers'
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/' + SITE_NAME
 
-USE_SCSS = True
-
 DO_PDF = 'Pdf' # Save as PDF representation of the site.
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 EXPORT_TYPE = DO_FILE
@@ -88,7 +86,6 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
 elif EXPORT_TYPE == DO_FILE:
     doc = makeSite(viewId='Site')
     siteView = doc.view
-    siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
     #print('Site file path: %s' % EXPORT_PATH)
     os.system(u'/usr/bin/open "%s"' % ('%s/index.html' % EXPORT_PATH))

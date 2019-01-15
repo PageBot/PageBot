@@ -411,6 +411,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         cssVerbose = True, # Adds information comments with original values to CSS export.
 
         # Exporting
+        saveUrlAsDirectory = False, # Flag to set self.url save as directories, insteal of file (replacing '/' by '-')
         doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
 
         # Sketch style parameters

@@ -337,27 +337,42 @@ def path2FormatPath(path, format=None):
         return path
     return None
 
-def path2Name(path):
+def path2Name(path, default=None):
     """Answers the file name part of the path.
 
     >>> path2Name('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     'Agency_FB-Compressed.ufo'
+    >>> path2Name('a/b/c')
+    'c'
+    >>> path2Name('a/b/c/')
+    'Untitled'
     >>> path2Name('')
     'Untitled'
     >>> path2Name(None) is None
     True
     """
+    if not default:
+        default = 'Untitled'
     if path is None:
         return None
-    if not path:
-        return 'Untitled'
-    return path.split('/')[-1]
+    if not path: # In case of an empty string or False, answer default.
+        return default
+    name = path.split('/')[-1]
+    if not name: # In case path ended with a slash
+        return default
+    return name
 
 def path2Dir(path):
     """Answers the file name part of the path.
 
     >>> path2Dir('/xxx/yyy/zzz/Agency_FB-Compressed.ufo')
     '/xxx/yyy/zzz'
+    >>> path2Dir('a/b/c.html')
+    'a/b'
+    >>> path2Dir('/a/b/d')
+    '/a/b'
+    >>> path2Dir('/a/b/c/')
+    '/a/b/c'
     >>> path2Dir('') is None
     True
     >>> path2Dir(None) is None
@@ -425,6 +440,11 @@ def path2StyleNameParts(pathOrName, extensions=None):
     NOTE that the family name is also included, as often there is no difference
     between the family name and the style parts.
 
+    """
+
+    """
+    TODO: cons.STYLE_REPLACEMENTS is not longer there. 
+    TODO: Make compatible with pagebot.constants
     >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo', ['ufo']))
     ['Agency', 'Compressed', 'FB']
     >>> sorted(path2StyleNameParts('Agency   FB-&&BoldCondensed.TTF'))
@@ -432,7 +452,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
     ['Condensed', 'Italic', 'Roboto', 'Semibold']
     """
-    from pagebot.cons.style import STYLE_REPLACEMENTS
+    from pagebot.constants import STYLE_REPLACEMENTS
     fontName = path2FontName(pathOrName, extensions)
     if fontName is None:
         return []

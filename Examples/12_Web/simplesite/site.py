@@ -32,8 +32,6 @@ SITE_NAME = 'SimpleSite'
 MD_PATH = 'content.md'
 EXPORT_PATH = '_export/' + SITE_NAME
 
-USE_SCSS = True
-
 DO_PDF = 'Pdf' # Save as PDF representation of the site.
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
@@ -155,10 +153,7 @@ def makeSite(siteDescription, styles, viewId):
     view.resourcePaths = ('css','fonts','images','js')
     view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
     # SiteView will automatic generate css/style.scss.css from assumed css/style.scss
-    if USE_SCSS:
-        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.scss.css')
-    else:
-        view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
+    view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style-org.css')
 
     # Make the all pages and elements of the site as empty containers
     makePages(doc, siteDescription)    
@@ -184,7 +179,6 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
 elif EXPORT_TYPE == DO_FILE:
     doc = makeSite(siteDescription, styles=styles, viewId='Site')
     siteView = doc.view
-    siteView.useScss = USE_SCSS
     doc.export(EXPORT_PATH)
     #print('Site file path: %s' % EXPORT_PATH)
     os.system(u'/usr/bin/open "%s"' % ('%s/index.html' % EXPORT_PATH))
@@ -192,7 +186,6 @@ elif EXPORT_TYPE == DO_FILE:
 elif EXPORT_TYPE == DO_MAMP:
     # Internal CSS file may be switched off for development.
     doc = makeSite(siteDescription, styles=styles, viewId='Mamp')
-    mampView.useScss = USE_SCSS
     mampView.resourcePaths = view.resourcePaths
     mampView.jsUrls = view.jsUrls
     mampView.cssUrls = view.cssUrls

@@ -257,7 +257,6 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
 elif EXPORT_TYPE == DO_FILE:
     doc = makeSite(viewId='Site')
     siteView = doc.view
-    siteView.useScss = False
     doc.export(EXPORT_PATH)
     #print('Site file path: %s' % EXPORT_PATH)
     os.system(u'/usr/bin/open "%s"' % ('%s/index.html' % EXPORT_PATH))

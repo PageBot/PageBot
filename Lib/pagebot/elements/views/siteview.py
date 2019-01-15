@@ -35,7 +35,7 @@ class SiteView(HtmlView):
     SCSS_CSS_PATH = u'css/style.scss.css'
     SCSS_VARIABLES_PATH = u'css/variables.scss'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, useScss=True,
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None,
             cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
             **kwargs):
         """Abstract class for views that build websites."""
@@ -53,7 +53,6 @@ class SiteView(HtmlView):
         self.webFontUrls = webFontUrls
 
         # Default CSS urls to inclide 
-        self.useScss = useScss # If True, then try to compile from SCSS.
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
         self.cssUrls = cssUrls # List of CSS urls, added as links in the page <head>. Could be [self.SCSS_CSS_PATH] 
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
@@ -122,12 +121,14 @@ class SiteView(HtmlView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
                 
-        if self.useScss:
-            if os.path.exists(self.SCSS_PATH):
-                # Write all collected SCSS variables into one file
-                b.writeScss(self.SCSS_VARIABLES_PATH)
-                # Compile SCSS to CSS if it exists.
-                b.compileScss(self.SCSS_PATH)
+        # Depricated
+        # TODO: Make this automatic, depending on extension of CSS file.
+        #if self.useXXXScss:
+        #    if os.path.exists(self.SCSS_PATH):
+        #        # Write all collected SCSS variables into one file
+        #        b.writeScss(self.SCSS_VARIABLES_PATH)
+        #        # Compile SCSS to CSS if it exists.
+        #        b.compileScss(self.SCSS_PATH)
 
     def getUrl(self, name):
         """Answers the local URL for Mamp Pro to find the copied website."""

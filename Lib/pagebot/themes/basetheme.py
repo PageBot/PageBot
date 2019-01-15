@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -12,11 +11,38 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     basetheme.py
-#
+
 import copy
-#from scss import compiler
 from pagebot.style import getRootStyle
+
+class Palette:
+
+    def __init__(self, name, colors):
+        self.name = name
+        self._colors = colors # Store for length and optional reference.
+        for attrName, value in colors.items():
+            setattr(self, attrName, value)
+
+    def __repr__(self):
+        s = self.name
+        for n in range(12):
+            s += ' #%d=%s' % (n, self[n].spot)
+        return '<%s>' % s
+
+    def __getitem__(self, index):
+        return getattr(self, 'c%d' % index)
+
+    def __len__(self):
+        return len(self._colors)
+        
+    def _get_colors(self):
+        """Answer the colors a index list.
+        """
+        colors = []
+        for cIndex in range(len(self._colors)):
+            colors.append(self[cIndex])
+        return colors
+    colors = property(_get_colors)
 
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
@@ -27,29 +53,39 @@ class BaseTheme:
     PageBot will support a growing number of predefined themes, that can be
     copied in a document and then modified. Thet CSS behavior of elements will
     comply to the selected theme of a document, unless they have their own
-    style defined."""
-    SCSS_PATH = None # Needs to be redefined by inheriting theme classes.
+    style defined.
 
+
+
+    >>> from pagebot.themes import BusinessAsUsual
+    >>> theme = BusinessAsUsual()
+    >>> theme.palette.c2
+    Color(spot=877)
+    >>> theme.palette[3]
+    Color(spot=541)
+    """
     # Predefined style names
     ROOT = 'root' # Rootstyle selector of a theme.
     H1, H2, H3, H4, H5, H6, H7, H8 = HEADS = ('h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8')
 
-    def __init__(self, name=None, description=None, srcTheme=None):
-        self.name = name
+    BASE_MOOD = {
+
+    }
+    COLORS = None # To redefined by inheriting Theme classes.
+
+    def __init__(self, name=None, description=None, srcTheme=None, mood=None):
+        self.name = name or self.NAME
         self.description = description
         self.styles = {} # Key is selector, value is a style.
-        self.palette = {} # Dicitionary of named generic style values
+        self.palette = Palette(self.name, self.COLORS)
+        # Mood/function-names --> key to self.styles or self.palette
+        # Make copy, so alterations don't reflect in original
+        self.mood = mood or copy.deepcopy(self.BASE_MOOD) 
 
-        if srcTheme is not None:
-            self.styles = srcTheme.copyStyles()
         self.initialize() # Call in inheriting Theme classes, to define their own valeus.
 
-    def initialize(self, srcTheme):
-        u"""Theme styles are created here by inheriting them classes. If
-        srcTheme is not None, start initialize with a copy of that one."""
-        self[self.ROOT] = getRootStyle()
-        for headName in self.HEADS:
-            self[headName] = getRootStyle # Make sure there is something there.
+    def initialize(self):
+    	pass
 
     def __repr__(self):
         return '<Theme %s styles:%d>' % (self.name, len(self.styles))
@@ -60,20 +96,18 @@ class BaseTheme:
     def __setitem__(self, selector, style):
         self.styles[selector] = style
 
+    def cssPy2Css(self, cssPy):
+        """Takes a cssPy source, inserts all theme parameters and hands it back.
+        """
+        return cssPy % self.mood # Instant translation from cssPy to css file output.
+
     def getStyles(self):
-        u"""Answers the theme as a dictionary of styles."""
+        """Answers the theme as a dictionary of styles."""
         self.applyPalette() # In case it was not executed before, substitute the palette values
         return self.styles
 
-    def getCss(self):
-        u"""Answers the theme as a CSS source, compiled from the available
-        styles, the palette, and the optional file at self.SCSS_PATH.
-        Construct the SCSS variable files, and compile the result into CSS."""
-        if self.SCSS_PATH is not None:
-            compiler(self.CSS_PATH)
-
     def applyPalette(self, palette=None):
-        u"""After setting style values, named typographic values and colors,
+        """After setting style values, named typographic values and colors,
         apply them to the styles, overwriting values that start with "@"."""
         for style in self.styles.values():
             for name, value in style.items():
@@ -85,3 +119,11 @@ class BaseTheme:
 
     def copyStyles(self):
         return copy.deepCopy(self.styles)
+
+
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
+

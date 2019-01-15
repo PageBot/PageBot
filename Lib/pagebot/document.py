@@ -21,6 +21,7 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
+from pagebot.themes import DEFAULT_THEME_CLASS
 from pagebot.toolbox.transformer import obj2StyleId, uniqueID
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
@@ -65,6 +66,13 @@ class Document:
 
         if size is not None: # For convenience of the caller, also accept size tuples.
             w, h, d = point3D(size)
+
+        # If no theme defined, then use the default theme class to create an instance.
+        # Themes hold values and colors, combined in a theme.mood dictionary that matches
+        # functions with parameters.
+        if theme is None:
+            theme = DEFAULT_THEME_CLASS()
+        self.theme = theme
 
         # Apply the theme if defined or create default styles, to make sure they are there.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)

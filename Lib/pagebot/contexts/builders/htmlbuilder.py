@@ -332,6 +332,11 @@ table {
 
     #   J S
 
+    def clearJs(self):
+        """Clearing the JS-output storage in the page. Should be called for every page
+        when exporting a site, or else the JS will cumulate from precious pages.
+        """
+        self._jsOut = [] 
     def addJs(self, js):
         assert isinstance(js, str), ('Added Javascript should be of type str "%s"' % js)
         self._jsOut.append(js)

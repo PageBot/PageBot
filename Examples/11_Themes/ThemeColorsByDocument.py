@@ -12,7 +12,7 @@
 #
 #     UseThemes.py
 #
-from pagebot.themes.palette import PALETTES
+from pagebot.themes import ThemeClasses
 from pagebot.constants import A4, CENTER
 from pagebot.toolbox.units import upt, point2D, pt, units
 from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -29,7 +29,7 @@ PADDING = pt(50)
 
 doc = Document(w=W, h=H, context=context, originTop=False)
 
-class  ColorPalette(Rect):
+class  ThemeColors(Rect):
     """Draw a palette as matrix of spot color samples.
 
     >>> from pagebot.contexts.drawbotcontent import DrawBotContext
@@ -38,17 +38,17 @@ class  ColorPalette(Rect):
     >>> doc = Document(w=500, h=500, context=context)
     >>> page = doc[1]
     >>> page.padding = pt(30)
-    >>> ps = PaletteColors(parent=page, conditions=[Fit2Width(), Top2Top()])
+    >>> tc = ThemeColors(parent=page, conditions=[Fit2Width(), Top2Top()])
     """
-    def __init__(self, palette, colorWidth=None, **kwargs):
+    def __init__(self, theme, colorWidth=None, **kwargs):
         Rect.__init__(self, **kwargs)
-        self.palette = palette
+        self.theme = theme
         self.colorWidth = colorWidth or 100 # Width of color samples (needs to fit text)
 
     def buildFrame(self, view, p):
         pass # Ignore frame and shadow drawing for the whole element.
 
-    def buildColor(self, x, y, cw, ch, clr):
+    def buildColor(self, x, y, cw, ch, clr, cIndex):
 
         c = self.context
 
@@ -73,7 +73,7 @@ class  ColorPalette(Rect):
         c.fill(None)
         c.rect(x, y, cw, ch) # Frame
 
-        bs = context.newString('SPOT\n%s' % clr.spot, 
+        bs = context.newString('SPOT #%d\n%s' % (cIndex, clr.spot), 
             style=dict(font='Upgrade-Regular', fontSize=15, leading=18, xTextAlign=CENTER, textFill=0))
         tw, th = bs.size
         c.text(bs, (x+cw/2-tw/2, y+30))
@@ -86,25 +86,27 @@ class  ColorPalette(Rect):
         cw = units(self.colorWidth) # Fixed color sample widht
         ch = cw*1.5 # w/h ratio of a color sample
         cols = 4 # Color columns
-        rows = int(len(self.palette)/cols) + 1 # Color rows (palette has currently )
+        rows = int(len(self.theme.palette)/cols) + 1 # Color rows (palette has currently )
         gutter = (self.w - cw*cols)/(cols - 1) # Calculate the gutter to fill up fixed color-sample widths
 
         cIndex = 0
+        palette = self.theme.palette
         for iy in range(rows):
             for ix in range(cols):
-                if cIndex < len(self.palette): # Check on "incomplete" last row
-                    if self.palette[cIndex] is not None: # Check if there is a valid color at this attribute index
-                        self.buildColor(px + ix*(cw+gutter), py + self.h - iy*(ch+gutter)-ch, cw, ch, self.palette[cIndex])
+                if cIndex < len(palette): # Check on "incomplete" last row
+                    if palette[cIndex] is not None: # Check if there is a valid color at this attribute index
+                        self.buildColor(px + ix*(cw+gutter), py + self.h - iy*(ch+gutter)-ch, cw, ch, palette[cIndex], cIndex)
                 cIndex += 1 # Color/attribute index
 
 page = doc[1]
-for _, palette in sorted(PALETTES.items()):
+for _, themeClass in sorted(ThemeClasses.items()):
+    doc.theme = theme = themeClass()
     page.padding = PADDING
     page.pb = 0
-    bs = context.newString('Theme: %s' % palette.name, style=dict(font='Upgrade-Medium', fontSize=24, textFill=0))
+    bs = context.newString('Theme: %s' % theme.name, style=dict(font='Upgrade-Medium', fontSize=24, textFill=0))
     Rect(parent=page, z=-10, w=W, h=H, fill=0.8)
     TextBox(bs, parent=page, h=48, w=W-2*PADDING, conditions=[Left2Left(), Top2Top()])
-    ColorPalette(palette, parent=page, conditions=[Fit2Width(), Float2Top()], 
+    ThemeColors(theme, parent=page, conditions=[Fit2Width(), Float2Top()], 
         shadow=Shadow(blur=pt(10), color=0.4))
     page.solve()
 

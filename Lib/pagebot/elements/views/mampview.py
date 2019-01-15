@@ -69,18 +69,21 @@ class MampView(SiteView):
 
         for pn, pages in self.doc.pages.items():
             for page in pages:
+                self.context.b.clearJs()
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
 
-
-        if self.useScss:
-            # Write all collected SCSS vatiables into one file
-            if os.path.exists(self.SCSS_PATH):
-                # Write all collected SCSS variables into one file
-                b.writeScss(self.SCSS_VARIABLES_PATH)
-                # Compile SCSS to CSS if it exists.
-                b.compileScss(self.SCSS_PATH)
+        # Depricated
+        # TODO: Change this, so it will recognize the type of css file, and then decide on conversion
+        # TODO: That also applies for th cssPy % theme.mood conversion.
+        #if self.useXXXXScss:
+        #    # Write all collected SCSS vatiables into one file
+        #    if os.path.exists(self.SCSS_PATH):
+        #        # Write all collected SCSS variables into one file
+        #        b.writeScss(self.SCSS_VARIABLES_PATH)
+        #        # Compile SCSS to CSS if it exists.
+        #        b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)

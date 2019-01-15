@@ -7073,6 +7073,15 @@ class Element:
         self.style['showElementInfo'] = bool(showElementInfo)
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
 
+    def _get_showIdClass(self):
+        """Boolean value. If True show the element.cssId and element.cssClass,
+        if they are defined.
+        """
+        return self.style.get('showIdClass', False) # Not inherited
+    def _set_showIdClass(self, showIdClass):
+        self.style['showIdClass'] = bool(showIdClass)
+    showIdClass = property(_get_showIdClass, _set_showIdClass)
+
     def _get_showDimensions(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the dimensions of the page or other elements."""
@@ -7190,6 +7199,17 @@ class Element:
     cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)
 
     #   Exporting
+
+    def _get_saveUrlAsDirectory(self):
+        """Boolean value. Flag to turn off saving self.url pages as directory. 
+        Instead, all "/" is replaced by "-". This choice is made for exprot .html
+        paths, where a flat directory is less of a problem than adjusting all relative urls
+        for images/CSS/JS
+        """
+        return self.css('saveUrlAsDirectory', False) # Inherited
+    def _set_saveUrlAsDirectory(self, saveUrlAsDirectory):
+        self.style['saveUrlAsDirectory'] = saveUrlAsDirectory
+    saveUrlAsDirectory = property(_get_saveUrlAsDirectory, _set_saveUrlAsDirectory)
 
     def _get_doExport(self):
         """Boolean value. Flag to turn off any export, for view, e.g. in case of testing with docTest."""

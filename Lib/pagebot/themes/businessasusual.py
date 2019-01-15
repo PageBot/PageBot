@@ -11,25 +11,24 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     wood_office.py
+#     businesasusual.py
 #
 from pagebot.style import getRootStyle
 from pagebot.themes.basetheme import BaseTheme
+from pagebot.toolbox.color import spot, rgb
 
-class WoodOffice(BaseTheme):
-    u"""The WoodOffice theme is a generic “woody cool gray” theme, with settings that
+class BusinessAsUsual(BaseTheme):
+    u"""The BusinessAsUsual theme is a generic “woody cool gray” theme, with settings that
     can be used in environments when functionality is more important than “arty”
     appearance."""
 
-    NAME = 'Wood Office'
-    SCSS_PATH = 'scss/office.scss'
+    NAME = 'Business as Usual'
+    COLORS = dict(
+        c0=spot('blacku'),c1=spot(404),  c2=spot(877),   c3=spot(541),   c4=spot(542),   c5=spot(545),
+        c6=spot(506),   c7=spot(111),   c8=spot(459),   c9=spot(568),   c10=spot(3145), c11=spot(139),
+    )
 
-    def initialize(self):
-        u"""Theme styles are created here by inheriting them classes. If srcTheme is not None,
-        start initialize with a copy of that one."""
-        self.name = self.NAME
-        self[self.ROOT] = getRootStyle()
-        for headName in self.HEADS:
-            self[headName] = getRootStyle() # Make sure there is something there for now.
-
-
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

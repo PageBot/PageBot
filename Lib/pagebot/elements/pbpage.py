@@ -20,6 +20,7 @@ import os
 from pagebot.elements.element import Element
 from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.transformer import path2Dir
 from pagebot.constants import DEFAULT_GALLEY_NAME, ORIGIN
 
 class Page(Element):
@@ -533,17 +534,25 @@ class Page(Element):
                 b._body()
             b._html()
 
-        # Construct the file name for this page and save the file.
-        fileName = self.name
-        if not fileName:
-            fileName = self.INDEX_HTML
-        if not fileName.lower().endswith('.html'):
-            fileName += '.html'
         if view.doExport: # View flag to avoid writing, in case of testing.
-            # Make sure that the path folder is there
-            if not os.path.exists(path):
-                os.makedirs(path)
-            b.writeHtml(path + fileName)
+            # Construct the file name for this page and save the file.
+            url = self.url.lower()  
+            if not url.endswith('.html'):
+                url += '.html'
+
+            # Make sure that the root path folder of the site is there
+            if not path.endswith('/'):
+                path += '/'
+            # Decide to save as folders (in which care relative image/CSS/JS paths
+            # also need to be made relative.
+            if not view.saveUrlAsDirectory:
+                url = url.replace('/', '-')
+            filePath = path + url
+            dirPath = path2Dir(filePath)
+            # Then create the folders that this page needs.
+            if not os.path.exists(dirPath):
+                os.makedirs(dirPath)
+            b.writeHtml(filePath)
 
 class Template(Page):
 
