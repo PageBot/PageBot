@@ -22,7 +22,7 @@ import shutil
 
 from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
-from pagebot.constants import URL_JQUERY, URL_MEDIA
+from pagebot.constants import URL_JQUERY
 
 class SiteView(HtmlView):
     
@@ -59,7 +59,7 @@ class SiteView(HtmlView):
 
         # Default JS Urls to include
         self.jsCode = jsCode # Optional JS code to be added to all pages at end of <body>.
-        self.jsUrls = jsUrls or (URL_JQUERY, URL_MEDIA) # Added as <script src="..."> at end of <body>
+        self.jsUrls = jsUrls or [URL_JQUERY] # Added as <script src="..."> at end of <body>
         self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
     def copyResources(self, path):

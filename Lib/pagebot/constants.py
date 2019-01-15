@@ -547,7 +547,7 @@ LANGUAGE_ZU_ZA  = 'zu-ZA'   # Zulu (South Africa)
 
 # Standard external urls for Javascript import and others.
 URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
-URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
+#URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries.js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)

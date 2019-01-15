@@ -63,11 +63,11 @@ class Header(Section):
 
     def build_html(self, view, path, drawElements=True):
         cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId.lower()
+        cssClass = 'wrapper' #self.cssClass or cssId.lower()
 
         b = self.context.b
         b.comment('Start %s\n' % cssId)
-        b.header(cssId=cssId, cssClass='%s clearfix' % self.__class__.__name__.lower()) #Header
+        b.header(cssId=cssId, cssClass='%s clearfix' % cssClass) #Header
         if view.showIdClass or self.showIdClass:
             b.div(cssClass='cssId')
             b.addHtml('%s | %s' % (cssId, cssClass))
@@ -111,7 +111,16 @@ class Navigation(NanoElement):
     """
     CSS_ID = 'Navigation'
 
-    def makeMenu(self, page, parentMenu=None, pageTree=None, showArrow=False):
+    def __init__(self, pageTree=None, **kwargs):
+        """Set the pageTree for the navigation. In practice this will be empty when
+        the page is created, and will be filled afterwards, if all pages are created.
+        """
+        NanoElement.__init__(self, **kwargs)
+        if pageTree is None:
+            pageTree = []
+        self.pageTree = pageTree
+
+    def XXXmakeMenu(self, page, parentMenu=None, pageTree=None, showArrow=False):
         """Run the navigation.makeMenu(page) once all content is filled. This way
         self will build the TopMenu/Menu/MenuItem elements, according to the current
         structure of the website, assuming that the main document and all other pages
@@ -142,146 +151,85 @@ class Navigation(NanoElement):
         cssClass = self.cssClass or cssId.lower()
 
         b = self.context.b
-        b.addHtml("""
-<nav id="Navigation" role="navigation">
-<!-- Start TopMenu --><div id="topnav" class="menu-toggle">
-Menu</div>
-<!-- .menu-toggle -->
-            <ul id="topnav-main-navigation" class="srt-menu">
-<li>
-<a href="index.html">
-Home</a>
-</li>
-<li>
-<a href="program.html">
-Program</a>
-
-                <ul>
-<li>
-<a href="program-2019.html">
-2019 >></a>
-
-                    <ul>
-<li>
-<a href="program-type-design.html">
-Type design</a>
-</li>
-<li>
-<a href="program-graphic-design.html">
-Graphic design</a>
-</li>
-<li>
-<a href="program-design-spaces.html">
-Design spaces</a>
-</li>
-<li>
-<a href="program-design-practice.html">
-Design practice</a>
-</li>
-
-                    </ul>
-</li>
-<li>
-<a href="program-2018.html">
-2018 Review</a>
-</li>
-
-                </ul>
-</li>
-<li>
-<a href="scales.html">
-Scales</a>
-
-                <ul>
-<li>
-<a href="scales-preparing-projects-0.html">
-Preparation</a>
-</li>
-<li>
-<a href="scales-sketching-100.html">
-Sketching</a>
-</li>
-<li>
-<a href="scales-research-200.html">
-Research</a>
-</li>
-<li>
-<a href="scales-programming-coding-400.html">
-Programming</a>
-</li>
-<li>
-<a href="scales-design-education-700.html">
-Education</a>
-</li>
-<li>
-<a href="scales-type-design-1000.html">
-Type design</a>
-</li>
-<li>
-<a href="scales-typography-1100.html">
-Typography</a>
-</li>
-<li>
-<a href="scales-design-identities-1300.html">
-Identities</a>
-</li>
-<li>
-<a href="scales-design-publications-1400.html">
-Publications</a>
-</li>
-
-                </ul>
-</li>
-<li>
-<a href="about.html">
-About</a>
-</li>
-
-            </ul>
-<!-- End TopMenu --></nav>
-
-""")
-        """<nav id="Navigation" role="navigation">
-    <div id="topnac" class="menu-toggle">Menu</div>
-    <!-- .menu-toggle -->
-    <ul id="TopMenu-main-navigation" class="srt-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="Program.html">Program</a>
-            <ul>
-            <li><a href="2019-program.html">2019 >> </a>
-                <ul>
-                    <li><a href="program-type-design.html">Type design</a></li>
-                    <li><a href="program-graphic-design.html">Graphic design</a></li>
-                </ul>
-            </li>
-        </li>
-        <li><a href="2018-reviews.html">2018 Review</a></li>
-        <li><a href="scales.html">Scales</a>
-            <ul>
-                <li><a href="scales-research-200.html">Research</a></li>
-                <li><a href="scales-programming-coding-400.html">Programming</a></li>
-            </ul>
-        </li>
-        <li><a href="about.html">About</a></li>
-
-    </ul>
-</nav>
-        """
-        return
-
         b.comment('Start %s' % cssId)
         if view.showIdClass or self.showIdClass:
             b.div(cssId=cssId, cssClass=cssId.lower())
             b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
             b._div()
         if drawElements:
-            b.nav(cssId=cssId, cssClass=cssId.lower(), role='navigation') # Navigation
-            for e in self.elements:
-                e.build_html(view, path)
+            # <nav id="Navigation" class="topnav" role="navigation">
+            b.nav(cssId=cssId, cssClass=cssClass, role='navigation') # navigation
+            b.ul(cssClass='main-navigation  navmenu')
+            for page in self.pageTree['@']:
+                b.li()
+                b.a(href=page.url)
+                b.addHtml(page.name)
+                b._a()
+
+                b._li()
+            print(self.pageTree)
+            b._ul()
+            b._nav()
+        b.comment('End %s' % cssId)
+       
+    def XXXbuild_html(self, view, path, drawElements=True):
+        cssId = self.cssId or self.CSS_ID
+        cssClass = self.cssClass or cssId.lower()
+
+        b = self.context.b
+        b.comment('Start %s' % cssId)
+        if view.showIdClass or self.showIdClass:
+            b.div(cssId=cssId, cssClass=cssId.lower())
+            b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
+            b._div()
+        if drawElements:
+            # <nav id="Navigation" class="topnav" role="navigation">
+            b.nav(cssId=cssId, cssClass=cssClass, role='navigation') # Navigation
+            b.addHtml("""
+
+<ul class="main-navigation navmenu">
+  <li><a href="#">Home</a></li>
+  <li><a href="#">Front End Design</a>
+    <ul class="navmenu">
+      <li><a href="#">HTML</a></li>
+      <li><a href="#">CSS</a>
+        <ul class="navmenu">
+          <li><a href="#">Resets</a></li>
+          <li><a href="#">Grids</a></li>
+          <li><a href="#">Frameworks</a></li>
+        </ul>
+      </li>
+      <li><a href="#">JavaScript</a>
+        <ul class="navmenu">
+          <li><a href="#">Ajax</a></li>
+          <li><a href="#">jQuery</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#">WordPress Development</a>
+    <ul class="navmenu">
+      <li><a href="#">Themes</a></li>
+      <li><a href="#">Plugins</a></li>
+      <li><a href="#">Custom Post Types</a>
+        <ul class="navmenu">
+          <li><a href="#">Portfolios</a></li>
+          <li><a href="#">Testimonials</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Options</a></li>
+    </ul>
+  </li>
+  <li><a href="#">About Us</a></li>
+</ul>
+
+""")
+            #for e in self.elements:
+            #    e.build_html(view, path)
             b._nav()
         b.comment('End %s' % cssId)
 
-class TopMenu(NanoElement):
+class XxxxTopMenu(NanoElement):
     CSS_ID = 'TopMenu'
     NAME = 'Menu'
 
@@ -305,7 +253,7 @@ class TopMenu(NanoElement):
             b._ul()
         b.comment('End %s' % cssId)
 
-class Menu(NanoElement):
+class Xxxxenu(NanoElement):
 
     def build(self, view, path):
         """Navigation is only supposed to show in interactive web-context."""
@@ -319,7 +267,7 @@ class Menu(NanoElement):
                 e.build_html(view, path)
             b._ul()
 
-class MenuItem(NanoElement):
+class XxxxenuItem(NanoElement):
     def __init__(self, href=None, label=None, current=False, **kwargs):
         NanoElement.__init__(self, **kwargs)
         self.current = current

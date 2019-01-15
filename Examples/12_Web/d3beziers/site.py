@@ -68,7 +68,12 @@ def makeSite(viewId):
     doc = Document(viewId=viewId, autoPages=1)
     view = doc.view
     view.resourcePaths = ('css','fonts','images','js')
-    view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/d3.js', 'js/main.js')
+    view.jsUrls = (
+        URL_JQUERY, 
+        #URL_MEDIA, 
+        'js/d3.js', 
+        'js/main.js'
+    )
     # SiteView will automatic generate css/style.scss.css from assumed css/style.scss
     view.cssUrls = ('css/normalize.css', 'css/style.scss.css')
 

@@ -217,7 +217,11 @@ doc = Site(viewId='Site', autoPages=len(SITE))
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js') # Copy these folders to output.
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
-view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
+view.jsUrls = (
+    URL_JQUERY, 
+    #URL_MEDIA, 
+    'js/main.js'
+)
 
 for pn, (name, title) in enumerate(SITE):
     page = doc[pn+1]

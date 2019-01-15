@@ -1189,9 +1189,14 @@ class Document:
         """
         pageKey = '@'
         if pageTree is None:
-            pageTree = {pageKey:[]} # Initialize the root tree. Empty page list, no directories.
+            # Initialize the root tree. Empty page list, no directories.
+            # Value will be tuples of (dirName, page, pageTree) recursively, where
+            # page can be None and pageTree can be an empty list.
+            pageTree = [] 
+        """   
         for pages in self.pages.values(): # For all pages in self
             for page in pages:
+
                 node = pageTree # Start the node at the top of the tress
                 urlParts = page.url.split('/') # Split the page url in parts
                 for urlPart in urlParts: # For all parts in the page url
@@ -1201,6 +1206,7 @@ class Document:
                         if not urlPart in node: # Otherwise, see if this "directory" already exists.
                             node[urlPart] = {pageKey:[]} # Create a new node at this "directory"
                         node = node[urlPart] # Get the node of the next "directory" level.
+        """
         return pageTree # Answer the full tree.
 
     def getMaxPageSizes(self, pageSelection=None):

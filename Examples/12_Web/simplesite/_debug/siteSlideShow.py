@@ -267,7 +267,11 @@ style = dict(
 doc = Site(viewId='Site', autoPages=len(SITE), style=style)
 view = doc.view
 view.resourcePaths = ('css','fonts','images','js')
-view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/main.js')
+view.jsUrls = (
+    URL_JQUERY, 
+    #URL_MEDIA, 
+    'js/main.js'
+)
 view.cssUrls = ('fonts/webfonts.css', 'css/normalize.css', 'css/style.css')
 
 for pn, (name, title) in enumerate(SITE):
