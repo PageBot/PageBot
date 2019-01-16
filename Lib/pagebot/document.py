@@ -1168,48 +1168,86 @@ class Document:
 
         >>> doc = Document(autoPages=0)
         >>> p = doc.newPage(name='home', url='index.html')
-        >>> p = doc.newPage(name='c', url='a/b1/c.html')
-        >>> p = doc.newPage(name='d', url='a/b1/d.html')
-        >>> p = doc.newPage(name='d', url='a/b2/d.html')
-        >>> p = doc.newPage(name='e', url='a/b2/e.html')
-        >>> p = doc.newPage(name='f', url='a/b2/f.html')
-        >>> p = doc.newPage(name='zzz', url='a/v/w/x/y/z.html')
+        >>> p = doc.newPage(name='c', url='a/aa1/c.html')
+        >>> p = doc.newPage(name='d', url='a/aa1/d.html')
+        >>> p = doc.newPage(name='d', url='a/aa2/d.html')
+        >>> p = doc.newPage(name='e', url='a/aa2/e.html')
+        >>> p = doc.newPage(name='f', url='a/aa3/f.html')
+        >>> p = doc.newPage(name='g', url='b/bb1/g.html')
+        >>> p = doc.newPage(name='h', url='b/bb2/h.html')
+        >>> p = doc.newPage(name='i', url='b/bb3/i.html')
+        >>> p = doc.newPage(name='j', url='c/cc1/j.html')
+        >>> p = doc.newPage(name='zzz', url='r/s/t/u/v/w/x/y/z/zzz.html')
         >>> p = doc.newPage(name='noUrlPage')
         >>> tree = doc.getPageTree()
-        """
-
-        """
-        >>> tree['@']
-        [<Page #1 home (1000pt, 1000pt)>, <Page #8 noUrlPage (1000pt, 1000pt)>]
-        >>> tree['a']['b2']['@']
-        [<Page #4 d (1000pt, 1000pt)>, <Page #5 e (1000pt, 1000pt)>, <Page #6 f (1000pt, 1000pt)>]
-        >>> tree['a']['b2']['@'][0].url
-        'a/b2/d.html'
-        >>> len(tree['a']['b2']['@'])
-        3
-        >>> tree['a']['v']['w']['x']['y']['@'][0]
-        <Page #7 zzz (1000pt, 1000pt)>
+        >>> tree['home']
+        <PageNode path=home page=<Page #1 home (1000pt, 1000pt)> []>
+        >>> tree.children[1]
+        <PageNode path=a page=None ['a/aa1', 'a/aa2', 'a/aa3']>
+        >>> tree['b']
+        <PageNode path=b page=None ['b/bb1', 'b/bb2', 'b/bb3']>
+        >>> tree['b']['bb1'].page is None
+        True
+        >>> tree['b']['bb1']['g'].page
+        <Page #7 g (1000pt, 1000pt)>
+        >>> tree['r']['s']['t']['u']['v']['w']['x'].page is None
+        True
+        >>> tree['r']['s']['t']['u']['v']['w']['x']['y']['z']['zzz'].page 
+        <Page #11 zzz (1000pt, 1000pt)>
         """
         class PageNode:
             def __init__(self, path=None, page=None):
                 self.path = path
                 self.page = page
                 self.children = []
+            def __getitem__(self, name):
+                for child in self.children:
+                    if child.path and child.path.split('/')[-1] == name:
+                        return child
+                return None
+            def __len__(self):
+                return len(self.children)
             def __repr__(self):
-                return '<%s path=%s page=%s %d>' % (self.__class__.__name__, self.path, page.name, len(children))
+                l = []
+                for child in self.children:
+                    l.append(child.path)
+                return '<%s path=%s page=%s %s>' % (self.__class__.__name__, self.path, self.page, l)
+            def show(self, tab=0):
+                print('\t'*tab, id(self), self)
+                for child in self.children:
+                    child.show(tab+1)
+            def getNode(self, path): # Answer the node with this path, oatherwise add it.
+                if path is None:
+                    return None
+                for child in self.children:
+                    if path is not None and path == child.path:
+                        return child
+
+                node = PageNode(path)
+                self.children.append(node)
+                return node
 
         def addPageNode(page, node):
             if page.url:
-                path = path2Dir(page.url)
-                if path == node.path:
-                    node.children.append(PageNode(path, page))
-                found = False
-                #for child in node.chidlre
+                path = None
+                for part in page.url.split('/')[:-1]:
+                    if path is None:
+                        path = part
+                    else:
+                        path += '/' + part
+                    node = node.getNode(path)
+                if not path:
+                    path = page.name
+                else:
+                    path += '/' + page.name
+                pageNode = PageNode(path, page)
+                node.children.append(pageNode)
 
-        root = PageNode()
+        root = PageNode('root')
         for pages in self.pages.values(): # For all pages in self
             for page in pages:
                 addPageNode(page, root)
+        #root.show()
         return root # Answer the full tree.
 
     def getMaxPageSizes(self, pageSelection=None):

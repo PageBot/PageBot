@@ -119,36 +119,73 @@ class Navigation(NanoElement):
         if pageTree is None:
             pageTree = []
         self.pageTree = pageTree
-
-    def XXXmakeMenu(self, page, parentMenu=None, pageTree=None, showArrow=False):
-        """Run the navigation.makeMenu(page) once all content is filled. This way
-        self will build the TopMenu/Menu/MenuItem elements, according to the current
-        structure of the website, assuming that the main document and all other pages
-        can be reached from the page by page.doc.
-        """
-        if pageTree is None:
-            pageTree = page.doc.getPageTree() # Create a nested list of pages by they urls
-
-        if parentMenu is None:
-            parentMenu = self
-        menu = TopMenu(parent=parentMenu) # Create the top menu.
-        for menuPage in pageTree['@']:
-            label = menuPage.name
-            if showArrow and len(pageTree) > 1:
-                label += ' >>' # If there are pages, change label to indicate there is sub menus
-            menuItem = MenuItem(parent=menu, href=menuPage.url, label=menuPage.name, current=page is menuPage)
-            #print(pageTree)
-            #if len(pageTree) > 1:
-            #    menu = Menu(parent=menuItem)
-            #    self.makeMenu(menu, pageInfo['pages'], True) # Second level shows error to submenu
   
     def build(self, view, path):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
+    def _buildMenuNode_html(self, b, pageTree):
+        for node in pageTree.children:
+            if node.page and node.page.url and node.page.name:
+                b.li()
+                b.a(href=node.page.url.replace('/', '-'))
+                label = node.page.name
+                if node.children:
+                    label += ' >>'
+                b.addHtml(label)
+                b._a()
+                if node.children:
+                    b.ul(cssClass='navmenu')
+                    self._buildMenuNode_html(b, node)
+                    b._ul()
+                b._li()
+            else:
+                print('No page or url defined: %s->%s' % (node, node.page))
+
     def build_html(self, view, path, drawElements=True):
+        """Build the recursive nested menu, depending on the structure of the pageTree
+
+            <ul class="main-navigation navmenu">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Front End Design</a>
+                    <ul class="navmenu">
+                        <li><a href="#">HTML</a></li>
+                        <li><a href="#">CSS</a>
+                            <ul class="navmenu">
+                                <li><a href="#">Resets</a></li>
+                                <li><a href="#">Grids</a></li>
+                                <li><a href="#">Frameworks</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">JavaScript</a>
+                            <ul class="navmenu">
+                                <li><a href="#">Ajax</a></li>
+                                <li><a href="#">jQuery</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#">WordPress Development</a>
+                    <ul class="navmenu">
+                        <li><a href="#">Themes</a></li>
+                        <li><a href="#">Plugins</a></li>
+                        <li><a href="#">Custom Post Types</a>
+                            <ul class="navmenu">
+                                <li><a href="#">Portfolios</a></li>
+                                <li><a href="#">Testimonials</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Options</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">About Us</a></li>
+            </ul>
+        """
         cssId = self.cssId or self.CSS_ID
         cssClass = self.cssClass or cssId.lower()
+
+        #print('-'*60)
+        #self.pageTree.show()
 
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -160,153 +197,11 @@ class Navigation(NanoElement):
             # <nav id="Navigation" class="topnav" role="navigation">
             b.nav(cssId=cssId, cssClass=cssClass, role='navigation') # navigation
             b.ul(cssClass='main-navigation  navmenu')
-            for page in self.pageTree['@']:
-                b.li()
-                b.a(href=page.url)
-                b.addHtml(page.name)
-                b._a()
-
-                b._li()
-            print(self.pageTree)
+            self._buildMenuNode_html(b, self.pageTree)
             b._ul()
             b._nav()
         b.comment('End %s' % cssId)
        
-    def XXXbuild_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId.lower()
-
-        b = self.context.b
-        b.comment('Start %s' % cssId)
-        if view.showIdClass or self.showIdClass:
-            b.div(cssId=cssId, cssClass=cssId.lower())
-            b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
-            b._div()
-        if drawElements:
-            # <nav id="Navigation" class="topnav" role="navigation">
-            b.nav(cssId=cssId, cssClass=cssClass, role='navigation') # Navigation
-            b.addHtml("""
-
-<ul class="main-navigation navmenu">
-  <li><a href="#">Home</a></li>
-  <li><a href="#">Front End Design</a>
-    <ul class="navmenu">
-      <li><a href="#">HTML</a></li>
-      <li><a href="#">CSS</a>
-        <ul class="navmenu">
-          <li><a href="#">Resets</a></li>
-          <li><a href="#">Grids</a></li>
-          <li><a href="#">Frameworks</a></li>
-        </ul>
-      </li>
-      <li><a href="#">JavaScript</a>
-        <ul class="navmenu">
-          <li><a href="#">Ajax</a></li>
-          <li><a href="#">jQuery</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><a href="#">WordPress Development</a>
-    <ul class="navmenu">
-      <li><a href="#">Themes</a></li>
-      <li><a href="#">Plugins</a></li>
-      <li><a href="#">Custom Post Types</a>
-        <ul class="navmenu">
-          <li><a href="#">Portfolios</a></li>
-          <li><a href="#">Testimonials</a></li>
-        </ul>
-      </li>
-      <li><a href="#">Options</a></li>
-    </ul>
-  </li>
-  <li><a href="#">About Us</a></li>
-</ul>
-
-""")
-            #for e in self.elements:
-            #    e.build_html(view, path)
-            b._nav()
-        b.comment('End %s' % cssId)
-
-class XxxxTopMenu(NanoElement):
-    CSS_ID = 'TopMenu'
-    NAME = 'Menu'
-
-    def build(self, view, path):
-        """Navigation is only supposed to show in interactive web-context."""
-        pass
-
-    def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-
-        b = self.context.b
-        b.comment('Start %s' % cssId)
-        #b.div(cssId=cssId, cssClass='menu-toggle') #TopMenu
-        #b.addHtml(self.name or self.NAME)
-        #b._div()
-        b.comment('.menu-toggle')
-        if drawElements:
-            b.ul(cssId=cssId + '-main-navigation', cssClass='srt-menu')
-            for e in self.elements:
-                e.build_html(view, path)
-            b._ul()
-        b.comment('End %s' % cssId)
-
-class Xxxxenu(NanoElement):
-
-    def build(self, view, path):
-        """Navigation is only supposed to show in interactive web-context."""
-        pass
-
-    def build_html(self, view, path, drawElements=True):
-        b = self.context.b
-        if drawElements:
-            b.ul()
-            for e in self.elements:
-                e.build_html(view, path)
-            b._ul()
-
-class XxxxenuItem(NanoElement):
-    def __init__(self, href=None, label=None, current=False, **kwargs):
-        NanoElement.__init__(self, **kwargs)
-        self.current = current
-        self.href = href
-        self.label = label
-
-    def copy(self, parent=None, attrNames=None): 
-        """Copy self into a new instance, adding the attributes that the
-        generic SiteElement.copy does not copy."""
-        copiedMenuItem = SiteElement.copy(self, attrNames=attrNames)
-        copiedMenuItem.current = self.current
-        copiedMenuItem.href = self.href
-        copiedMenuItem.label = self.label
-        return copiedMenuItem
-
-    def build(self, view, path):
-        """Navigation is only supposed to show in interactive web-context."""
-        pass
-
-    def build_html(self, view, path, drawElements=True):
-        u"""
-        <li>
-            <a href="index.html">Home</a>
-        </li>
-        """
-        b = self.context.b
-        if self.current:
-            isCurrent = 'current'
-        else:
-            isCurrent = None
-        if drawElements:
-            b.li(cssClass=isCurrent)
-            if self.href and self.label:
-                b.a(href=self.href)
-                b.addHtml(self.label)
-                b._a()
-            for e in self.elements:
-                e.build_html(view, path)
-            b._li()
 
 class MobileMenu(NanoElement):
     """MobileMenu lives outside the regular Navigation, made to expand on clicking/tapping
@@ -332,10 +227,11 @@ class MobileMenu(NanoElement):
             b.div(cssClass='cssId')
             b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
             b._div()
-        for page in pageTree['@']: # These are real Page instances
-            b.button(type='button', cssClass='button', onclick="location.href='%s';" % page.url.replace('/', '-'))
-            b.addHtml(page.name)
-            b._button()
+        for pageNode in pageTree.children: # These are real Page instances
+            if pageNode.page is not None and pageNode.page.url:
+                b.button(type='button', cssClass='button', onclick="location.href='%s';" % pageNode.page.url.replace('/', '-'))
+                b.addHtml(pageNode.page.name)
+                b._button()
         b._div()
         b.comment('End %s\n' % cssId)
 
