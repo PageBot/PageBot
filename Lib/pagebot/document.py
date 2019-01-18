@@ -57,15 +57,19 @@ class Document:
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=False, startPage=None, sId=None, 
-            w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, path=None,
-            exportPaths=None, **kwargs):
+            autoPages=1, template=None, templates=None, originTop=False, startPage=None, 
+            sId=None, w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, 
+            path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
 
         if size is not None: # For convenience of the caller, also accept size tuples.
             w, h, d = point3D(size)
+
+        # Set position of origin and direction of y for self and all inheriting pages
+        # and elements. 
+        self._originTop = originTop # Set as property. Ii is not supposed to change.
 
         # If no theme defined, then use the default theme class to create an instance.
         # Themes hold values and colors, combined in a theme.mood dictionary that matches
@@ -75,12 +79,13 @@ class Document:
         self.theme = theme
 
         # Apply the theme if defined or create default styles, to make sure they are there.
+        # Adjust self.rootStyle['yAlign'] default value, based on self.origin, if not defined
+        # as separate attribute in **kwargs.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
         self.initializeStyles(theme, styles) # May or may not overwrite the root style.
         self.path = path # Optional source file path of the document, e.g. .sketch file.
         self.name = name or title or 'Untitled'
         self.title = title or self.name
-        self._originTop = originTop # Set as property. Iy is not supposed to change.
 
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
@@ -372,11 +377,34 @@ class Document:
         """Creates a rootStyle, then set the arguments from **kwargs, if their
         entry name already exists. This is similar (but not identical) to the
         makeStyle in Elements. There any value entry is copied, even if that is
-        not defined in the root style."""
+        not defined in the root style.
+
+        >>> doc = Document()
+        >>> page = doc[1] # Inheriting from doc
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (False, 'bottom', False, 'bottom')
+        >>> doc = Document(originTop=True)
+        >>> page = doc[1] # Inheriting from doc
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (True, 'top', True, 'top')
+        >>> doc = Document(originTop=True, yAlign=BOTTOM)
+        >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (True, 'bottom', True, 'bottom')
+        >>> doc = Document(yAlign=TOP)
+        >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (False, 'top', False, 'top')
+        """
         rootStyle = getRootStyle()
         for name, v in kwargs.items():
             if name in rootStyle: # Only overwrite existing values.
                 rootStyle[name] = v
+        # Adjust the default vertical origin position from self.origin, if not already defined 
+        # by **kwargs
+        if not 'yAlign' in kwargs:
+            yAlign = {True: TOP, False: BOTTOM}[self.originTop]
+            rootStyle['yAlign'] = yAlign
         return rootStyle
 
     def applyStyle(self, style):

@@ -142,7 +142,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # are aligned by the xTextAlign attribute. xAlign is about the position
         # of the element box.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
-        yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
+        # Default alignment for elements like image, that float in their designated space.
+        # Document will set this value default to BOTTOM, in case the Document.originTop
+        # is set to False.
+        yAlign = TOP, 
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
         # Although it is common to talk about the "margins" on a page, as the
@@ -389,14 +392,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showMissingElement = True,
 
         # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR,
-        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for the
-        # types of grid that can be drawn.
-        showGrid = set(), # If set, display the type of grid elements on foreground and background
+        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for all types of grid
+        # that can be drawn.
+        showGrid = set(), # If defined, display the type of grid elements on foreground and background
 
-        # Types of baseline grid to be drawn using conbination set of
-        # (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT).
-        showBaselines = set(), # If set, display options defined the type of grid to show.
-        showBaselinesBackground = set(), # If set, display options defined the type of grid to show on background.
+        # Types of baseline grid to be drawn using combination set of
+        # set(BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, 
+        # BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE).
+        showBaselines = set(), # If defined, display options defined the type of grid to show.
+        # If set, display options defined the type of grid to show on background.
         showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
 
         # Flow stuff

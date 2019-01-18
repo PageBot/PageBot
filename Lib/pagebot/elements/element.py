@@ -2656,13 +2656,13 @@ class Element:
     # Alignment types, defines where the origin of the element is located.
 
     def _validateXAlign(self, xAlign): # Check and answer value
-        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, sorted(XALIGNS))
+        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
         return xAlign
     def _validateYAlign(self, yAlign): # Check and answer value
-        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, sorted(YALIGNS))
+        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
         return yAlign
     def _validateZAlign(self, zAlign): # Check and answer value
-        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, sorted(ZALIGNS))
+        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, ZALIGNS)
         return zAlign
 
     def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.

@@ -237,7 +237,7 @@ class Image(Element):
         if self.path is None or not self.scaleImage:
             return
         if not self.iw or not self.ih: # Make sure not zero, to avoid division
-            print('Image.saveScaledCache: %dx%d zero image size' % (self.iw, self.ih))
+            print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
         extension = path2Extension(self.path)
         resolutionFactor = self.resolutionFactors.get(extension, 1)
@@ -303,7 +303,7 @@ class Image(Element):
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.saveScaledCache(view)
+        self.scaleImage(view)
         for e in self.elements:
             e.prepare(view)
 
