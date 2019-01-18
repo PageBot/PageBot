@@ -67,14 +67,25 @@ class MampView(SiteView):
             if not path.endswith('/'):
                 path += '/'
 
-        for pn, pages in self.doc.pages.items():
-            for page in pages:
-                self.context.b.clearJs()
-                # Building for HTML, try the hook. Otherwise call by main page.build.
-                hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, path) # Typically calling page.build_html
+        b = self.context.b
+        pageItems = self.doc.pages.items()
 
-        # Depricated
+        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
+        # into cache if that file does not already exists. Note that this is done on a page-by-page
+        # level, not a preparation of all
+        for pn, pages in pageItems:
+            for page in pages:
+                hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
+                getattr(page, hook)(self) # Typically calling page.prepare_html. Pass self as view.
+
+        for pn, pages in pageItems:
+            for page in pages:
+                b.clearJs()
+                # Building for HTML, try the hook. Otherwise call by main page.build.
+                hook = 'build_' + b.PB_ID # E.g. page.build_html()
+                getattr(page, hook)(self, path) # Typically calling page.build_html. Pass self as view
+
+        # Deprecated
         # TODO: Change this, so it will recognize the type of css file, and then decide on conversion
         # TODO: That also applies for th cssPy % theme.mood conversion.
         #if self.useXXXXScss:

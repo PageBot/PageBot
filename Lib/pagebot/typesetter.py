@@ -155,19 +155,10 @@ class Typesetter:
         """Non-HTML tag, substituted from \t, now convert back into \t."""
         self.append('\t')
 
-    def node_hr(self, node, e):
-        """Add Ruler instance to the Galley."""
-        if self.peekStyle() is None and e is not None:
-            # Root of stack is empty style, to force searching on the e.parent line.
-            self.pushStyle({}) # Define top level for styles.
-        hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
-        self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
-
     def dropcap(self, node, e):
         context = self.context
         style = self.styles.get('dropcap')
-
-        
+     
     def getStyleValue(self, name, e=None, style=None, default=None):
         """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""

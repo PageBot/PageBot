@@ -127,8 +127,13 @@ class Navigation(NanoElement):
     def _buildMenuNode_html(self, b, pageTree):
         for node in pageTree.children:
             if node.page and node.page.url and node.page.name:
-                b.li()
-                b.a(href=node.page.url.replace('/', '-'))
+                if self.page is node.page: # Current page?
+                    currentClass = 'current'
+                else:
+                    currentClass = None
+
+                b.li(cssClass=currentClass)
+                b.a(href=node.page.flatUrl, cssClass=currentClass)
                 label = node.page.name
                 if node.children:
                     label += ' >>'

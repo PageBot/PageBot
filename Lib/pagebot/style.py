@@ -406,6 +406,12 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Image stuff
         showImageReference = False,
         showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
+        # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
+        # Do not scale the image, if the cache file already exists, unless forced. If False, then no scaled cache is created.
+        scaleImage = True,
+        scaledImageFactor = 0.8, # If between >=0.8 scale, then don't save cached. Cached images should never enlarge.
+        defaultImageWidth = None, # If set, then use this as default width for scaling images (e.g. when used HTML context)
+        defaultImageHeight = None, # If set, then use this as default height for scaling image (e.g. when used HTML context)
 
         # CSS flags
         cssVerbose = True, # Adds information comments with original values to CSS export.

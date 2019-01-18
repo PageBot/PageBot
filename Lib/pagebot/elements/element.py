@@ -4541,6 +4541,14 @@ class Element:
     # Sass syntax is not supported yet. It does not appear to be standard and cannot be easily
     # converted from existing CSS. Meanwhile, many CSS designers can extend easier to SCSS.
 
+    def prepare_html(self, view):
+        """Respond to the top-down view-->element broadcast in preparation for build_html.
+        Default behavior is to do nothing other than recursively broadcast to all child element. 
+        Inheriting Element classes can redefine.
+        """
+        for e in self.elements:
+            e.prepare_html(view)
+
     def build_scss(self, view):
         """Build the scss variables for this element."""
         b = self.context.b
@@ -7175,11 +7183,43 @@ class Element:
     showImageReference = property(_get_showImageReference, _set_showImageReference)
 
     def _get_showImageLoresMarker(self):
-        """Boolean value. If True, show lorea-cache marker on images. This property inherits cascading. """
+        """Boolean value. If True, show lores-cache marker on images. This property inherits cascading. """
         return self.css('showImageLoresMarker', False) # Inherited
     def _set_showImageLoresMarker(self, showImageLoresMarker):
         self.style['showImageLoresMarker'] = bool(showImageLoresMarker)
     showImageLoresMarker = property(_get_showImageLoresMarker, _set_showImageLoresMarker)
+
+    def _get_scaleImage(self):
+        """Boolean value. If True, save images as cached scaled. """
+        return self.css('scaleImage', True) # Inherited
+    def _set_scaleImage(self, scaleImage):
+        self.style['scaleImage'] = bool(scaleImage)
+    scaleImage = property(_get_scaleImage, _set_scaleImage)
+
+    def _get_scaledImageFactor(self):
+        """If >= (default) 0.8 then don't save cached. Cached images should never enlarge. """
+        return self.css('scaledImageFactor', True) # Inherited
+    def _set_scaledImageFactor(self, scaledImageFactor):
+        self.style['scaledImageFactor'] = bool(scaledImageFactor)
+    scaledImageFactor = property(_get_scaledImageFactor, _set_scaledImageFactor)
+
+    def _get_defaultImageWidth(self):
+        """If set, then use this as default width for scaling images.
+        Used as target for HTML context image scaling.
+        """
+        return self.css('defaultImageWidth') # Inherited. Can be None
+    def _set_defaultImageWidth(self, defaultImageWidth):
+        self.style['defaultImageWidth'] = defaultImageWidth # Can be None. 
+    defaultImageWidth = property(_get_defaultImageWidth, _set_defaultImageWidth)
+
+    def _get_defaultImageHeight(self):
+        """If set, then use this as default height for scaling images.
+        Used as target for HTML context image scaling.
+        """
+        return self.css('defaultImageHeight') # Inherited. Can be None
+    def _set_defaultImageHeight(self, defaultImageHeight):
+        self.style['defaultImageHeight'] = defaultImageHeight # Can be None. 
+    defaultImageHeight = property(_get_defaultImageHeight, _set_defaultImageHeight)
 
     #   Spread stuff
 

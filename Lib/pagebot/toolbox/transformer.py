@@ -323,6 +323,35 @@ def path2ParentPath(path):
     """
     return '/'.join(path.split('/')[:-1])
 
+def path2Url(path):
+    """Convert the path to a valid url, by removing spaces, other inconvenient 
+    characers and set all to lowercase.
+
+    >>> path2Url('a/b/d/e/f/g hhh.html')
+    'a/b/d/e/f/g_hhh.html'
+    >>> path2Url('a/b b/f/g hhh.html')
+    'a/b_b/f/g_hhh.html'
+    >>> path2Url('a/b & b/f/g hhh.html')
+    'a/b_and_b/f/g_hhh.html'
+    """
+    replacing = ((' ','_'), ('&','and'), ('?', '_')) # TODO: Make better conversion here
+    if path is not None:
+        path = path.lower()
+        for s1, s2 in replacing:
+            path = path.replace(s1, s2)
+        return path
+    return None
+
+def path2FlatUrl(path):
+    """Convert the path to a valid url, by removing spaces and all lowercase.
+
+    >>> path2FlatUrl('a/b/d/e/f/g hhh.html')
+    'a-b-d-e-f-g_hhh.html'
+    """
+    if path is not None:
+        return path2Url(path).replace('/', '-')
+    return None
+
 def path2ScriptId(path):
     """Answers the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]

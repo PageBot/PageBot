@@ -603,6 +603,7 @@ INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 
 # Image formats
 FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'
+FILETYPE_JPEG = 'jpeg'
 FILETYPE_PNG = 'png'
 FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
@@ -625,25 +626,27 @@ FILETYPE_TXT = 'txt'
 FILETYPE_MD = 'md' # Markdown file extension
 
 # Commonly used groups of file types.
-IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF,
-    FILETYPE_TIF, FILETYPE_TIFF)
+IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG, 
+    FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF)
 MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
-    FILETYPE_PDF: 1,
-    FILETYPE_JPG: 3,
-    FILETYPE_PNG: 3,
-    FILETYPE_SVG: 1,
+    FILETYPE_PDF: 1, # Not used online, keep size as used.
+    FILETYPE_JPG: 2, # Optional oversize scale factor, e.g. for Retina screens.
+    FILETYPE_JPEG: 2,
+    FILETYPE_PNG: 2,
+    FILETYPE_SVG: 1, # Object-base is in principle resolution independent.
     FILETYPE_GIF: 2,
-    FILETYPE_TIF: 1,
+    FILETYPE_TIF: 1, # Not used online, keep size as used.
     FILETYPE_TIFF:1,
 }
 CACHE_EXTENSIONS = {
     FILETYPE_PDF: FILETYPE_JPG,
     FILETYPE_JPG: FILETYPE_JPG,
+    FILETYPE_JPEG: FILETYPE_JPG,
     FILETYPE_PNG: FILETYPE_PNG,
     FILETYPE_SVG: FILETYPE_JPG,
     FILETYPE_GIF: FILETYPE_JPG,

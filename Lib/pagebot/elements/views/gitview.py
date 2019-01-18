@@ -36,7 +36,17 @@ class GitView(SiteView):
             sitePath += '/'
 
         b = self.b # Get builder from self.doc.context of this view.
-        for pn, pages in doc.pages.items():
+        pages = doc.pages.items()
+        
+        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
+        # into cache if that file does not already exists. Note that this is done on a page-by-page
+        # level, not a preparation of all
+        for pn, pages in pages:
+            for page in pages:
+                hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
+                getattr(page, hook)(self) # Typically calling page.prepare_html
+
+        for pn, pages in pages:
             for page in pages:
                 b.resetHtml()
 

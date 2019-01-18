@@ -121,7 +121,7 @@ class SiteView(HtmlView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
                 
-        # Depricated
+        # Deprecated
         # TODO: Make this automatic, depending on extension of CSS file.
         #if self.useXXXScss:
         #    if os.path.exists(self.SCSS_PATH):

@@ -20,7 +20,7 @@ import os
 from pagebot.elements.element import Element
 from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
-from pagebot.toolbox.transformer import path2Dir
+from pagebot.toolbox.transformer import path2Dir, path2Url, path2FlatUrl
 from pagebot.constants import DEFAULT_GALLEY_NAME, ORIGIN
 
 class Page(Element):
@@ -74,8 +74,8 @@ class Page(Element):
 
         # Used for links to home or current page url. Also used by Document.getPageTree()
         # to answer the nexted dict/list for pages, so Navigation can build a tree of
-        # menu items. 
-        self.url = url or self.INDEX_HTML_URL # Make sure that the url is a default file.
+        # menu items. Url is a property to make sure that spaces are removed and all lower case.
+        self.url = url or self.INDEX_HTML_URL # Property to make sure that the url is a default file.
         self.name = name # Set property. If undefined, takes the file part of self.url
         self.fileName = fileName # Set property. If undefined, takes the file part of self.url
 
@@ -106,6 +106,17 @@ class Page(Element):
         self.jsUrls = jsUrls # Optional Javascript Urls in <head>, if different from what is defined by the view.
 
         self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
+
+    def _get_url(self):
+        return path2Url(self._url)
+    def _set_url(self, path):
+        """Make all lower case and remove spaces."""
+        self._url = path
+    url = property(_get_url, _set_url)
+
+    def _get_flatUrl(self):
+        return path2FlatUrl(self._url)
+    flatUrl = property(_get_flatUrl, _set_url)
 
     def _get_fileName(self):
         if self._fileName is None: # If not defined, try to get it from the url

@@ -93,9 +93,21 @@ class HtmlContext(BaseContext):
         #return cls.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
-        return (0, 0)
-        #return cls.b.imageSize(path)
+        """Answers the (w, h) image size of the image file at path. As we cannot assume
+        that we have DrawBotContext available, we need to use another lib, such as PIL.
+        For now, we use DrawBotContext"""
+        from pagebot.contexts.drawbotcontext import DrawBotContext
+        return DrawBotContext().imageSize(path)
+
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        """Scales the images and save to another file. As we cannot assume
+        that we have DrawBotContext available, we need to use another lib, such as PIL.
+        For now, we use DrawBotContext"""
+        from pagebot.contexts.drawbotcontext import DrawBotContext
+        return DrawBotContext().scaleImage(path, w, h, index=index, 
+            showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
+            force=force)
 
     #   C O L O R
 

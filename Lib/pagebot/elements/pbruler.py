@@ -21,7 +21,7 @@ from pagebot.toolbox.units import units
 from pagebot.constants import DEFAULT_HEIGHT
 
 class Ruler(Element):
-
+    
     def _get_h(self):
         """Poperty for the self.h height value
 

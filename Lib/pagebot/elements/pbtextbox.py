@@ -163,11 +163,12 @@ class TextBox(Element):
             self._textLines = []
             self._baselines = {}
 
-            for textLine in self.bs.getTextLines(self.pw, self.ph):
-                #print('---', textLine.y, self.h - textLine.y)
-                textLine.y = self.h - textLine.y # Make postion relative to text box self.
-                self._textLines.append(textLine)
-                self._baselines[upt(textLine.y)] = textLine
+            if self.bs:
+                for textLine in self.bs.getTextLines(self.pw, self.ph):
+                    #print('---', textLine.y, self.h - textLine.y)
+                    textLine.y = self.h - textLine.y # Make postion relative to text box self.
+                    self._textLines.append(textLine)
+                    self._baselines[upt(textLine.y)] = textLine
 
         return self._textLines
     textLines = property(_get_textLines)
@@ -468,7 +469,11 @@ class TextBox(Element):
         self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
 
         # Draw the text with horizontal and vertical alignment.
-        tw, th = self.bs.size
+        if self.bs:
+            tw, th = self.bs.size
+        else:
+            tw, th = 100, 12 # Some value, otherwise fitting will loop.
+            
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
             yOffset = (self.h - self.pb - self.pt - th)/2

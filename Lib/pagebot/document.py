@@ -22,7 +22,7 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
-from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir
+from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir, path2Url
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
@@ -351,7 +351,7 @@ class Document:
             self.styles = copy.copy(theme.styles)
             # Additional styles defined? Let them overwrite the theme.
             for styleName, style in (styles or {}).items():
-                self.addStyle(name, style)
+                self.addStyle(styleName, style)
 
         else: # No theme defined, use the styles, otherwise use defailt style.
             if styles is None:
@@ -1176,7 +1176,7 @@ class Document:
         >>> p = doc.newPage(name='g', url='b/bb1/g.html')
         >>> p = doc.newPage(name='h', url='b/bb2/h.html')
         >>> p = doc.newPage(name='i', url='b/bb3/i.html')
-        >>> p = doc.newPage(name='j', url='c/cc1/j.html')
+        >>> p = doc.newPage(name='j', url='c/c c1/j.html')
         >>> p = doc.newPage(name='zzz', url='r/s/t/u/v/w/x/y/z/zzz.html')
         >>> p = doc.newPage(name='noUrlPage')
         >>> tree = doc.getPageTree()
@@ -1190,6 +1190,12 @@ class Document:
         True
         >>> tree['b']['bb1']['g'].page
         <Page #7 g (1000pt, 1000pt)>
+        >>> tree['c'] # Show removed space in url
+        <PageNode path=c page=None ['c/c_c1']>
+        >>> tree['c']['c_c1']['j'].page.url # Removed space in the url
+        'c/c_c1/j.html'
+        >>> tree['c']['c_c1']['j'].page.flatUrl
+        'c-c_c1-j.html'
         >>> tree['r']['s']['t']['u']['v']['w']['x'].page is None
         True
         >>> tree['r']['s']['t']['u']['v']['w']['x']['y']['z']['zzz'].page 
@@ -1197,7 +1203,7 @@ class Document:
         """
         class PageNode:
             def __init__(self, path=None, page=None):
-                self.path = path
+                self.path = path2Url(path)
                 self.page = page
                 self.children = []
             def __getitem__(self, name):

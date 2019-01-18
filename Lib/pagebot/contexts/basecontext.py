@@ -854,19 +854,6 @@ class BaseContext(AbstractDrawBotContext):
 
     # Images
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        raise NotImplementedError
-
-    def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
-        return pt(self.b.imageSize(path))
-
-    def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
-
-    def numberOfPages(self, path):
-        return self.b.numberOfPages(path)
-
     def numberOfImages(self, path):
         raise NotImplementedError
 
