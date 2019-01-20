@@ -91,6 +91,32 @@ def getFont(fontOrPath, lazy=True):
     except TTLibError: # Could not open font, due to bad font file.
         return None
 
+def findFonts(pattern, lazy=True):
+    """Answers a list of Font instances where the pattern fits the font path.
+    If pattern is a list, all parts should have a match.
+
+    >>> findFonts('Roboto-Thi')
+    [<Font Roboto-Thin>, <Font Roboto-ThinItalic>]
+    >>> findFonts(('Robo', 'Ita', 'Thi')) # Select on family and name parts
+    [<Font Roboto-ThinItalic>]
+    >>> findFonts(('Ita', 'Bol', 'Con')) # Select on style parts only
+    [<Font RobotoCondensed-BoldItalic>]
+    """
+    from pagebot.fonttoolbox.fontpaths import getFontPaths
+    fontPaths = getFontPaths()
+    fonts = []
+    if not isinstance(pattern, (list, tuple)):
+        pattern = [pattern]
+    for fontPath in fontPaths:
+        found = True
+        for match in pattern:
+             if not match in fontPath:
+                found = False
+                break
+        if found:
+            fonts.append(findFont(fontPath, lazy=lazy))
+    return fonts
+
 def findFont(fontPath, default=None, lazy=True):
     """Answers the font the has name fontName.
 

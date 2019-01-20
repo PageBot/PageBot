@@ -56,7 +56,20 @@ class PageBotContour:
 
 class PageBotPath:
     """Implements a wrapper around DrawBot.BezierPath with the same API, while
-    adding knowledge of units and some other additions."""
+    adding knowledge of units and some other additions.
+
+    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from pagebot.fonttoolbox.objects.font import findFonts
+    >>> font = findFonts(('Robo', 'Con', 'Ita'))[0]
+    >>> font
+    <Font RobotoCondensed-BoldItalic>
+    >>> context = DrawBotContext()
+    >>> style = dict(font=font, fontSize=100)
+    >>> p = PageBotPath(context, style=style)
+    >>> p.text('H')
+    >>> p.bounds()[1] # Baseline position, H has not ascenders
+    0.0
+    """
 
     def __init__(self, context=None, bezierPath=None, style=None):
         assert isinstance(context, BaseContext)
