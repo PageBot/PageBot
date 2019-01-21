@@ -333,6 +333,11 @@ table {
 
             self.write_attribute(key, value)
 
+    #   Compatible component support
+
+    def textBox(self, bs, box, align=None):
+        print('@@@@@@', bs, box, align)
+
     #   J S
 
     def clearJs(self):

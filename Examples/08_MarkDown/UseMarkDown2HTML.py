@@ -10,17 +10,17 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     UseMarkDownText.py
+#     UseMarkDown2HTML.py
 #
 #     This example script shows the sequence how to get from a MarkDown
 #     file with embedded code blocks, using Typesetter and Composer
-#     to create a document, and then fill the  page with the MarkDown text.
+#     to create a HTML site, and then fill the pages with the MarkDown text.
 #     
 #     Also it illustrates how MarkDown code blocks and this calling 
 #     applicatin communicate with each other through a shared "targets"
 #     dictionary. 
 #
-from pagebot.contexts.drawbotcontext import DrawBotContext
+from pagebot.contexts.htmlcontext import HtmlContext
 from pagebot.document import Document
 from pagebot.elements import *
 from pagebot.conditions import *
@@ -33,23 +33,30 @@ from pagebot.toolbox.units import pt, em
 W, H = A4
 PADDING = pt(40) # Simple page padding
 
+# Path to the MarkDown source file
 MARKDOWN_PATH = 'EmbeddedPython.md'
 
-context = DrawBotContext()
+# In this example we'll be using DrawBotContext to write a PDF file of the document.
+context = HtmlContext()
 
+# Define the styles for the Typesetter, matching the tags that are using in the
+# MarkDown file.
 styles = dict(
-    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), paragraphBottomSpacing=pt(12)),
+    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), 
+        paragraphBottomSpacing=pt(12)),
     h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4),
         paragraphTopSpacing=pt(12), paragraphBottomSpacing=pt(12)),
     p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4)),
-    li=dict(textFill=color('green'), tabs=[pt(24)], fontSize=pt(12), leading=em(1.4))
+    li=dict(textFill=color('green'), tabs=pt(8, 16, 24, 36, 48), 
+        fontSize=pt(12), leading=em(1.4), 
+        indent=16, firstLineIndent=0)
 )
 
 # Create the overall document with the defined size.
-doc = Document(originTop=False, name='Demo Markdown', w=W, h=H, context=context)
+doc = Document(originTop=False, name='Demo MarkDown', w=W, h=H, context=context, viewId='Site')
 
 # Set the view parameters for the required output.
-view = doc.getView()
+view = doc.view
 view.padding = pt(40) # Make view padding to show crop marks and frame
 view.showFrame = True # Show frame of the page in blue
 view.showPadding = True
@@ -67,11 +74,12 @@ page = doc[1] # Get the first/single page of the document.
 page.padding = PADDING # Set the padding of this page.
 
 # Make a text box, fitting the page padding on all sides.
+# The name "Box" is used to identiify the box that MarkDown text goes into.
 newTextBox(parent=page, name='Box', conditions=[Fit()])
 
 page.solve() # Solve the fitting condition.
 
-# Create the Composer instance that will interpret the galley.
+# Create the Composer instance that will interpret the Typesetter galley.
 composer = Composer(doc)
 
 # Create the global targets dictionary with objects that can be used during
@@ -87,9 +95,10 @@ composer.compose(galley, targets=targets)
 # Also it contains the latest “box”
 print('Keys in target results:', targets.keys())
 print('No errors:', targets['errors'])
+print('Number of verbose feedback entries:', len(targets['verbose']))
 print('Values created in the code block: aa=%s, bb=%s, cc=%s' % (targets['aa'], targets['bb'], targets['cc']))
 
 # Save the created document as (2 page) PDF.
-doc.export('_export/UseMarkdownText.pdf')
+doc.export('_export/UseMarkdown2HTML')
 
 
