@@ -403,7 +403,7 @@ class Document:
         # Adjust the default vertical origin position from self.origin, if not already defined 
         # by **kwargs
         if not 'yAlign' in kwargs:
-            yAlign = {True: TOP, False: BOTTOM}[self.originTop]
+            yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
             rootStyle['yAlign'] = yAlign
         return rootStyle
 
