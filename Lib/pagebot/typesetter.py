@@ -430,7 +430,11 @@ class Typesetter:
         """Append the string (or BabelString instance) to the last textbox in galley,
         if it exists. Otherwise create a new TextBox and add it to self.galley."""
         if self.galley.elements and self.galley.elements[-1].isTextBox:
-            self.galley.elements[-1].bs += bs
+            box = self.galley.elements[-1]
+            if box.bs is None:
+                box.bs = bs
+            else:
+                box.bs += bs
         else:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
 

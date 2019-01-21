@@ -5,28 +5,32 @@
 <li>PageBot application scripts that create a <strong>Document</strong> instance with templates, elements and typesetters that parse Markdown text.</li>
 <li>MarkDown text files that include Python code to create documents.</li>
 </ul>
+<p>If possible, the interpreting Composer already made set of globals that include the overall Document instance as “doc”.</p>
 <p>For example, you can execute Python code from MarkDown like this:</p>
-<pre><code class="Python">cid = 'Document'
-from pagebot.document import Document
-doc = Document(w=400, h=600, title='TestContent')
-</code></pre>
-
-<p>The <strong>Typesetter</strong>, reading this Markdown file, will generate this dictionary as result:</p>
-<pre><code>{'Document': {'doc': &lt;pagebot.document.Document object at 0x119037c10&gt;,
- 'Document': &lt;class 'pagebot.document.Document'&gt;, 'id': 'Document'},
-  'Views': {'aa': 123, 'cc': ['List', 'of', 'things'], 'id': 'Views',
-   'bb': 234}}
-</code></pre>
-
-<p>The resulting dictionary contains Python code blocks, indicated by a triple “~” tilde. Because there's no “Python” after the triple tilde, the codeblock will be further ignored by the <strong>Typesetter</strong>.<br />
-If the code block contains a <strong>cid = 'NameOfCodeBlock'</strong> (“cid” is short for “codeId”), then this value is taken as name for the result dictionary.</p>
+<h2>The Typesetter</h2>
+<p>The <strong>Typesetter</strong>, reading this Markdown file, will generate a galley (list of elements) including the code blocks. They are just collected by the Typesetter, not interpreted or executed.</p>
+<p>During the process <strong>errors</strong> and <strong>warnings</strong> are collected as part of the global result dictionary.</p>
+<p>The resulting dictionary contains Python code blocks, indicated by a triple <q>~</q> tilde.</p>
 <p>A code block can contain any kind of Python code. Any “globally” created object will become an entry in the resulting dictionary.</p>
-<pre><code class="Python">cid = 'Views' # Defines id for this code block result.
+<h2>The Composer</h2>
+<p>The composer inteprets the code blocks, directing the selection of styles and the target page/box for the sequential text elements.</p>
+<pre><code>
+# It is possible to print from within a code block, to facilitate debugging single lines.
+print('This is the current document:', doc)
+print('This is the current page:', page)
+print('This is the current box:', box)
+
+page = page.next # Creates a new page, from within the code block execution.
+
+# It is also possible to define globals during the processing of code blocks
+# that then answer back into the targets dicionary. The calling applicaiton can
+# then use the collected data for further processing. 
+# This way a bi-direcitonal communication is possible between the applicaiton and
+# the MarkDown document.
+
 aa = 123
 bb = 234
+# The answered data can have any format of Python object.
 cc = ['List', 'of', 'things']
-</code></pre>
 
-<pre><code class="Python">cid = 'Views'
-dd = 567
 </code></pre></document>
