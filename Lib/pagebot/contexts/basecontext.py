@@ -755,8 +755,31 @@ class BaseContext(AbstractDrawBotContext):
         ppt = point2D(upt(p))
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
-    def textOverflow(self, txt, box, align=None):
-        return self.b.textOverflow(txt, box, align=align)
+    def textOverflow(self, sOrBs, box, align=None):
+        """Answer the overflow text if flowing it in the box. The sOrBs can be a
+        plain string or a BabelString instance. In case a plain string is given
+        then the current font/fontSize/etc. settings of the builder are used.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.font('Verdana')
+        >>> context.fontSize(12)
+        >>> box = 0, 0, 100, 100
+        >>> len(context.textOverflow('AAA ' * 200, box))
+        728
+        >>> style = dict(font='Verdana', fontSize=12)
+        >>> bs = context.newString('AAA ' * 200, style=style)
+        >>> len(context.textOverflow(bs, box))
+        740
+        """
+        if isinstance(sOrBs, str):
+            return self.b.textOverflow(sOrBs, box, align=align) # Plain string
+    
+        # Assume here it's a BabelString with a FormattedString inside
+        overflow = self.b.textOverflow(sOrBs.s, box, align=align) 
+        bs = self.newString('')
+        bs.s = overflow
+        return bs
 
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draw the sOrBs text string, can be a str or BabelString, including a

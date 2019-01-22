@@ -101,9 +101,6 @@ class Composer:
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
 
             elif targets.get('box') is not None and targets.get('box').isTextBox and e.isTextBox:
-                box = targets.get('box')
-                if box.bs is None:
-                    box.bs = self.doc.context.newString('')
                 targets.get('box').bs += e.bs
 
             elif targets.get('box') is not None:

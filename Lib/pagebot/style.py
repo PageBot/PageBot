@@ -279,11 +279,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...] or [20, 30, 40] for LEFT
-        firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
-        firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
-        firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
+        # DrawBot-FormattedString compatible
         indent = pt0, # Left indent (for left-right based scripts)
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
+        firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
+        # PageBot additions, used for textOverflow, in combination with columns
+        firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
+        firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
 
         # Vertical spacing of baselines by TextBox. Note that PageView is
         # drawing the baseline grid color as defined by viewGridStrokeX and
