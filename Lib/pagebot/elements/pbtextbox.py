@@ -388,7 +388,7 @@ class TextBox(Element):
         exists or is already filled by another flow."""
         return self.nextElement is None and self.getOverflow()
 
-    def overflow2Next(self):
+    def overflow2Next(self, processed=None):
         """Try to fix if there is overflow. If there is overflow outside the
         page, then find the page.next with it's target element to continue,
         until all text fits or the element has not nextElement defined.
@@ -408,50 +408,49 @@ class TextBox(Element):
         4000
         >>> len(t1.getOverflow())
         3744
-        >>> page = t1.overflow2Next()
-        >>> page is page1 # Still the first page
-        True
-        >>> len(str(t2.bs.s)), len(t2.getOverflow()) # No overflow left in t2
-        (160, 0)
         """
         result = True
         overflow = self.getOverflow()
         page = self.getElementPage()
         nextElement = None
-        processed = set() # Keep track of what we did, to avoid circular references.
+        if processed is None:
+            processed = set() # Keep track of what we did, to avoid circular references.
 
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
-            result = False
-            if page is not None: # Find the page of self
-                # Try next page
-                nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
-                if nextElement is None and self.nextPage:
-                    # Not found or not empty, search on next page.
-                    if self.nextPage == 'next': # Force to next page, relative to current
-                        page = page.next
-                    elif isinstance(self.nextPage, Element):
-                        page = self.nextPage
-                    elif isinstance(self.nextPage, (int, float)): # Offset to next page
-                        page = page.parent.pageNumber(page) + self.nextPage
-                    else:
-                        page = self.doc.getPage(self.nextPage)
-                    if page is not None:
-                        nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is None: # Not found any in the regular way?
-                    # Now try with deepFind
-                    nextElement = page.parent.deepFind(self.nextElement)
 
-                if nextElement is not None and not nextElement.eId in processed:
+            if self.nextPage: # Try to use element on another page?
+                # Try on several types in which the next page can be defined.
+                if page is not None and self.nextPage == 'next': # Force to next page, relative to current
+                    page = page.next
+                elif isinstance(self.nextPage, Element):
+                    page = self.nextPage
+                elif page is not None and isinstance(self.nextPage, (int, float)): # Offset to next page
+                    page = page.parent.pageNumber(page) + self.nextPage
+                else: # Try by name
+                    page = self.doc.getPage(self.nextPage)
+                if page is not None:
+                    nextElement =  page.getElementByName(self.nextElement)
+
+            nextElement = page.getElementByName(self.nextElement) # Find element on this page.
+            if page is not None and nextElement is None: # Not found any in the regular way?
+                # Now try with deepFind
+                nextElement = page.parent.deepFind(self.nextElement)
+
+            if nextElement is not None:
+                if nextElement.eId in processed:
+                    print('### TextBox.overflow2Next: Element %s already processed' % nextElement)
+                else:
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
                     if self.firstColumnIndent or self.firstLineIndent: 
-                        # Prevent indenting of first overflow text in next column.
+                        # Prevent indenting of first overflow text in next column,
+                        # using a tiny-small space to define the new line style.
                         firstLineStyle = dict(fontSize=0.01, firstLineIndent=self.firstColumnIndent)
                         overflow = self.context.newString(' ', style=firstLineStyle) + overflow
                     nextElement.bs = overflow
-                    nextElement.prevPage = page.name
+                    nextElement.prevPage = page # Remember the page we came from, link in both directions.
                     nextElement.prevElement = self.name # Remember the back link
-                    page = nextElement.overflow2Next() # Solve any overflow on the next element.
+                    page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
         # TODO: In case used as condition, returning a tuple instead of boolean flag
         return page
 
