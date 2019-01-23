@@ -233,10 +233,11 @@ class Image(Element):
         the DrawBot context is a fast operation, so always worthwhile to creating PNG from
         large export PDF files.
         In case the source is a PDF, then use self.index to request for the page.
+        # TODO: Add clipPath and filter as parameters.
         """
         if self.path is None or not self.scaleImage:
             return
-        if not self.iw or not self.ih: # Make sure not zero, to avoid division
+        if not self.iw or not self.ih: # Make sure image exists and not zero, to avoid division
             print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
         extension = path2Extension(self.path)
@@ -246,7 +247,7 @@ class Image(Element):
         
         resW = self.w * resolutionFactor
         resH = self.h * resolutionFactor
-
+        
         sx, sy = upt(resW / self.iw, resH / self.ih)
         if not self.scaleImage and self.cacheScaledImageFactor <= sx and self.cacheScaledImageFactor <= sy: 
             # If no real scale reduction, then skip. Never enlarge.

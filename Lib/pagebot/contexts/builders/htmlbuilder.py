@@ -326,6 +326,11 @@ table {
             elif key == 'usemap':
                 if not value.startswith(u'#'):
                     value = '#' + value
+            elif key == 'style': # In case CSS-style attribute, try to translate.
+                if isinstance(value, dict):
+                    value = str(value) # @@@@ TODO: needs more translations
+                elif not isinstance(value, str):
+                    value = str(value)
 
             # Handle Angular.org attributes that contain underscores, translate them to hyphens
             elif key.startswith('ng_'):

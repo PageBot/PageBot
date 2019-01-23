@@ -68,7 +68,7 @@ class Element:
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             drawAfter=None, htmlCode=None, htmlPaths=None,
-            xAlign=None, yAlign=None, zAlign=None,
+            xAlign=None, yAlign=None, zAlign=None, proportional=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -143,7 +143,7 @@ class Element:
         self.clearElements()
         self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
-
+        
         # If undefined yAlign and parent has origin on top, then default yAlign to TOP
         self._originTop = originTop # Local value is overwritten if there is a parent defined.
         if yAlign is None and self.originTop: # Property seeks parent-->page.originTop value.
@@ -176,6 +176,9 @@ class Element:
             self.scaleX = scaleX
             self.scaleY = scaleY
             self.scaleZ = scaleZ
+
+        if proportional is not None: # If defined, set after the sizes and scales are set.
+            self.proportional = proportional # Setting True keeps all size and scales proportional now.
 
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
@@ -2984,6 +2987,32 @@ class Element:
 
     # (w, h, d) size of the element.
 
+    def _get_proportional(self):
+        """Get/set the proportional style flag as property. If True, setting self.w or self.h
+        will keep the original proportions, but setting the other side as well.
+        By default the self.proportional flag is False for most types of elements.
+
+        >>> e = Element(w=100, h=200, proportional=True)
+        >>> e.w = 200
+        >>> e.h # Keeps proportions
+        400pt
+        >>> e.w = 10
+        >>> e.h # Keeps proportions
+        20pt
+        >>> e.proportional = False
+        >>> e.w = 100
+        >>> e.h # Does not change
+        20pt
+        >>> e.proportional = True
+        >>> e.h = 1000
+        >>> e.w # Keeps proportions again
+        5000pt
+        """
+        return self.css('proportional')
+    def _set_proportional(self, proportional):
+        self.style['proportional'] = proportional
+    proportional = property(_get_proportional, _set_proportional)
+
     def _get_w(self):
         """Answers the width of the element.
 
@@ -3009,15 +3038,21 @@ class Element:
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
-
     def _set_w(self, w):
-        self.style['w'] = units(w or DEFAULT_WIDTH)
+        w = units(w or DEFAULT_WIDTH)
+        if self.proportional:
+            if self.w:
+                self.style['h'] = w * self.h.pt/self.w.pt
+                self.style['d'] = w * self.d.pt/self.w.pt
+        self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
 
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
         """Width property for self.mw style. Answers the width of the elements
         with added left/right margins.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(w=10, ml=22, mr=33)
         >>> e.mw
@@ -3059,11 +3094,18 @@ class Element:
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('h', 0), base=base)
     def _set_h(self, h):
-        self.style['h'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
+        h = units(h or DEFAULT_HEIGHT)
+        if self.proportional:
+            if self.h:
+                self.style['w'] = h * self.w.pt/self.h.pt
+                self.style['d'] = h * self.d.pt/self.h.pt
+        self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
         """Height property for self.mh style.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
@@ -3095,10 +3137,18 @@ class Element:
         return units(self.css('d', 0), base=base)
     def _set_d(self, d):
         self.style['d'] = units(d or DEFAULT_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        d = units(d or DEFAULT_DEPTH)
+        if self.proportional:
+            if self.d:
+                self.style['w'] = d * self.w.pt/self.d.pt
+                self.style['h'] = d * self.h/self.d
+        self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
         """Width property for self.md style.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(d=10, mzb=22, mzf=33)
         >>> e.md
@@ -4950,7 +5000,7 @@ class Element:
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            return abs(self.mRight - gridColumns[col][0]) <= tolerance
+            return abs(self.mRight - gridColumns[col][0] - self.gw) <= tolerance
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
@@ -5001,7 +5051,7 @@ class Element:
         """Move right of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            self.mRight = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            self.mRight = self.parent.pl + gridColumns[col][0] - self.gw
             return True
         return False # Row is not in range of available gridColumns
 

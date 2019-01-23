@@ -527,7 +527,9 @@ class Color:
         """
         if not isinstance(c, self.__class__):
             return False
-        if (self.isRgb or c.isRgb) and self.rgba == c.rgba:
+        if (self.isRgba or c.isRgba) and self.rgba == c.rgba:
+            return True
+        if (self.isRgb or c.isRgb) and self.rgb == c.rgb:
             return True
         if (self.isSpot or c.isSpot) and self.spot == c.spot:
             return True
@@ -598,6 +600,24 @@ class Color:
         return self.r is not None or self.g is not None or self.b is not None or self._name is not None
     isRgb = property(_get_isRgb)
 
+    def _get_isRgba(self):
+        """Answers if the base of this color is defined as RGB or if an (RGB)
+        name is defined and if opacity is not 1 (meaning, there is some transparancy).
+
+        >>> color(rgb=0.5, a=0.5).isRgba
+        True
+        >>> color(rgb=0.5, a=1).isRgba
+        False
+        >>> color(name='blue', a=0.1).isRgba
+        True
+        >>> color(name='blue', a=1).isRgba
+        False
+        """
+        if self.a == 1:
+            return False
+        return self.r is not None or self.g is not None or self.b is not None or self._name is not None
+    isRgba = property(_get_isRgba)
+
     def _get_isCmyk(self):
         """Answers if the base of this color is defined as CMYK.
 
@@ -655,8 +675,6 @@ class Color:
         (1, 0, 1)
         >>> '%0.2f, %0.2f, %0.2f' % color(c=1, m=0, y=0.5, k=0.2).rgb
         '0.00, 0.80, 0.40'
-        >>> '%0.2f %0.2f %0.2f' % color(spot='red').rgb
-        '0.94 0.20 0.25'
         >>> '%0.2f, %0.2f, %0.2f' % color(ral='red').rgb
         '0.54, 0.07, 0.08'
         """

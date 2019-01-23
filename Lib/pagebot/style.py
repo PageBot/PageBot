@@ -116,7 +116,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         w = w, # Default page width, basic size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = pt0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-
+        proportional = False, # If True, keep w/h proportional, depending on which of the two is set.
+        
         # For rotation, the point (x+rx, y+ry) is used as rotation center. Default is (x, y).
         rx = pt0,
         ry = pt0,

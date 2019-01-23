@@ -31,6 +31,12 @@ BSS_MASK = 'mask'
 
 class BareBonesSlideShow(Column):
     """The SlideShow class is an Element wrapper around the Bare-Bones SlideShow.
+    If self.w and self.h are both defined, then use that as ratio to unproportionally
+    scale all child images to. If only one of them is defined, then use the ratio
+    of the first image to calculated the ratio for all images.
+    Then cache all images at that size and save them in the _scaled folder.
+    If images don't have the exact proportions, crop them on largest size fitting
+    that ratio. Will remaining area by color refined by self.fill or blackColor.
 
     Usage:
     
@@ -55,13 +61,19 @@ class BareBonesSlideShow(Column):
     """
     CSS_ID = 'BareBonesSlideShow'
 
-    def __init__(self, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
+    def __init__(self, w=None, h=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
         easing=None, transition=None, auto=True, loop=True, pager=False, carousel=False, 
         controls=False, controlsText=None, pauseOnHit=True, touch=False, touchOffset=None,
         dragControls=False, dragOffset=None, randomPlay=False, maskImage=None, 
         jsCallbackStart=None, jsCallbackBefore=None, jsCallbackAfter=None, jsCallbackUpdate=None,
+        useCssBackground=True,
         **kwargs):
         Column.__init__(self, **kwargs)
+        # The (self.w, self.h) combination and ration defines the size and ratio that child 
+        # elements will be scaled/cropped
+        self.w = w # One of them can be None to force proportional scaling.
+        self.h = h
+
         # https://www.bbslider.com/options.php for options
         # @frameDuration in seconds between stransitions
         self.autoHeight = autoHeight # Automatically sets the height to the largest panel. Otherwise set to self.h
@@ -81,7 +93,8 @@ class BareBonesSlideShow(Column):
         self.pauseOnHit = pauseOnHit
         self.randomPlay = randomPlay
         self.maskImage = maskImage
-        
+        self.useCssBackground = useCssBackground # Use the image as CSS background-image
+
         self.jsCallbackStart = jsCallbackStart # Function to call when slider initializes
         self.jsCallbackBefore = jsCallbackBefore # Function to call before every slide
         self.jsCallbackAfter = jsCallbackAfter # Function to call after every slide
@@ -140,6 +153,18 @@ class BareBonesSlideShow(Column):
         options.append("transition: '%s'" % self.transition)
         return js + ', '.join(options) + '});\n\n'
 
+    def prepare_html(self, view):
+        """Respond to the top-down element broadcast to prepare for build.
+        Run through all images and make them the same (w, h) as self, by cropping the scaled cache.
+        """
+        for e in self.elements:
+            if self.w is not None:
+                e.w = self.w
+            elif self.h is not None:
+                e.h = self.h
+                # @@@@@ TODO: Make scaled iamges in right proportions.
+            #e.prepare_html(view)
+
     def build_html(self, view, path):
         cssId = self.cssId or self.CSS_ID
         cssClass = cssId.lower()
@@ -149,9 +174,15 @@ class BareBonesSlideShow(Column):
         b.comment('Start %s' % cssId)
         b.div(cssId=cssId, cssClass=cssClass)
         for image in self.findAll(cls=Image): # Find all child images inside the tree
-            b.div() # Define slide container
-            b.img(src=image.path)
-            b._div()
+            if self.useCssBackground:
+                b.div(style="background-image:url(%s);width:%dpx;height:%dpx;background-position: center;background-size: cover;" % \
+                    (str(image.path), self.w, self.h)) # Define slide container
+            #b.img(src=image.path)
+                b._div()
+            else:
+                b.div(style="width:%dpx;height:%dpx;" % (self.w, self.h)) # Define slide container
+                b.img(src=image.path)
+                b._div()
         b._div()
         b.comment('End %s' % cssId)
 

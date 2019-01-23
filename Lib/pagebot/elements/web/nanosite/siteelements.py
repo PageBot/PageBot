@@ -302,6 +302,30 @@ class RandomSelector(NanoElement):
         b._div()
         b.comment('End %s\n' % cssId)
 
+class Collection(NanoElement):
+    """ Container for a defined group of elements.
+        Behavior depends on the selected layout, defined view-parameters and 
+        amound of available elements.
+    """
+    CSS_ID = 'Collection'
+
+    def build_html(self, view, path, drawElements=True):
+        if not self.elements:
+            return
+        cssId = self.cssId or self.CSS_ID
+        cssClass = cssId.lower()
+        b = self.context.b
+        b.comment('Start %s\n' % cssId)
+        style = 'width: %02f%%; float: left' % (100/len(self.elements))
+        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass, style=style)
+        for e in self.elements:
+            e.h = self.h
+            b.div(cssClass=cssClass+'-select')
+            e.build_html(view, path)
+            b._div()
+        b._div()
+        b.comment('End %s\n' % cssId)
+
 # Content
 
 class Content(Section):

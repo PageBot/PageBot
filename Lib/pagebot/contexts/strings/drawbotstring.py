@@ -598,6 +598,8 @@ class DrawBotString(BabelString):
                 fsAttrs['fill'] = None
             elif cFill.isCmyk:
                 fsAttrs['cmykFill'] = cFill.cmyk
+            elif cFill.isRgba:
+                fsAttrs['fill'] = cFill.rgba
             else:
                 fsAttrs['fill'] = cFill.rgb
 
@@ -622,10 +624,12 @@ class DrawBotString(BabelString):
 
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsAttrs['stroke'] = None
-            elif cFill.isCmyk:
-                fsAttrs['cmykFill'] = cFill.cmyk
+            elif cStroke.isCmyk:
+                fsAttrs['cmykStroke'] = cStroke.cmyk
+            elif cStroke.isRgba:
+                fsAttrs['stroke'] = cStroke.rgba
             else:
-                fsAttrs['fill'] = cFill.rgb
+                fsAttrs['stroke'] = cStroke.rgb
 
         # NOTE: xAlign is used for element alignment, not text.
         sAlign = css('xTextAlign', e, style)
