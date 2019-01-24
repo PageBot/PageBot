@@ -247,8 +247,12 @@ class Image(Element):
         
         resW = self.w * resolutionFactor
         resH = self.h * resolutionFactor
-        
+
         sx, sy = upt(resW / self.iw, resH / self.ih)
+
+        if self.proportional: 
+            sx = sy = max(sx, sy)
+            
         if not self.scaleImage and self.cacheScaledImageFactor <= sx and self.cacheScaledImageFactor <= sy: 
             # If no real scale reduction, then skip. Never enlarge.
             return

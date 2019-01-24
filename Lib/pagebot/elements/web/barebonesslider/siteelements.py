@@ -66,13 +66,16 @@ class BareBonesSlideShow(Column):
         controls=False, controlsText=None, pauseOnHit=True, touch=False, touchOffset=None,
         dragControls=False, dragOffset=None, randomPlay=False, maskImage=None, 
         jsCallbackStart=None, jsCallbackBefore=None, jsCallbackAfter=None, jsCallbackUpdate=None,
-        useCssBackground=True,
+        useCssBackground=True, proportional=True,
         **kwargs):
         Column.__init__(self, **kwargs)
         # The (self.w, self.h) combination and ration defines the size and ratio that child 
         # elements will be scaled/cropped
-        self.w = w # One of them can be None to force proportional scaling.
+
+        self.proportional = False
+        self.w = w
         self.h = h
+        self.proportional = proportional
 
         # https://www.bbslider.com/options.php for options
         # @frameDuration in seconds between stransitions
@@ -158,12 +161,8 @@ class BareBonesSlideShow(Column):
         Run through all images and make them the same (w, h) as self, by cropping the scaled cache.
         """
         for e in self.elements:
-            if self.w is not None:
-                e.w = self.w
-            elif self.h is not None:
-                e.h = self.h
-                # @@@@@ TODO: Make scaled iamges in right proportions.
-            #e.prepare_html(view)
+            e.proportional = self.proportional
+            e.prepare_html(view)
 
     def build_html(self, view, path):
         cssId = self.cssId or self.CSS_ID

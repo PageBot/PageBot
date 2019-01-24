@@ -2008,7 +2008,6 @@ class Element:
         self.x = p[0]
         self.y = p[1]
         self.z = p[2]
-
     xyz = property(_get_xyz, _set_xyz)
 
     def _get_origin(self):
@@ -3788,6 +3787,7 @@ class Element:
     def _get_size(self):
         """Set the size of the element by calling by properties self.w and self.h.
         If set, then overwrite access from style width and height. self.d is optional attribute.
+        Setting size this way, temporarily disables the self.proportional flag.
 
         >>> e = Element()
         >>> e.size = 101, 202, 303
@@ -3816,6 +3816,8 @@ class Element:
         """
         return self.w, self.h
     def _set_size(self, size):
+        saveFlag = self.proportional # Disable the flag, we want to set the values independently
+        self.proportional = False
         if isinstance(size, (tuple, list)):
             assert len(size) in (2,3)
             if len(size) == 2:
@@ -3824,6 +3826,7 @@ class Element:
                 self.w, self.h, self.d = size
         else:
             self.w = self.h = self.d = size
+        self.proportional = saveFlag
     size = property(_get_size, _set_size)
 
     def _get_size3D(self):
@@ -4086,28 +4089,71 @@ class Element:
     # Scale
 
     def _get_scaleX(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleX=0.5, proportional=True)
+        >>> e.scaleY, e.scaleZ
+        (1, 1)
+        >>> e.scaleX = 3
+        >>> e.scaleY, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleX', 1)
     def _set_scaleX(self, scaleX):
         assert scaleX != 0
+        if self.proportional:
+            if self.scaleX:
+                self.style['scaleY'] = scaleX * self.scaleY/self.scaleX
+                self.style['scaleZ'] = scaleX * self.scaleZ/self.scaleX
         self.style['scaleX'] = scaleX # Set on local style, shielding parent self.css value.
     scaleX = property(_get_scaleX, _set_scaleX)
 
     def _get_scaleY(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleY=0.5, proportional=True)
+        >>> e.scaleX, e.scaleZ
+        (1, 1)
+        >>> e.scaleY = 3
+        >>> e.scaleX, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleY', 1)
     def _set_scaleY(self, scaleY):
         assert scaleY != 0
+        if self.proportional:
+            if self.scaleY:
+                self.style['scaleX'] = scaleY * self.scaleX/self.scaleY
+                self.style['scaleZ'] = scaleY * self.scaleZ/self.scaleY
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
 
     def _get_scaleZ(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleY=0.5, proportional=True)
+        >>> e.scaleX, e.scaleZ
+        (1, 1)
+        >>> e.scaleY = 3
+        >>> e.scaleX, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleZ', 1)
     def _set_scaleZ(self, scaleZ):
         assert scaleZ != 0
+        if self.proportional:
+            if self.scaleZ:
+                self.style['scaleX'] = scaleZ * self.scaleX/self.scaleZ
+                self.style['scaleY'] = scaleZ * self.scaleY/self.scaleZ
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
     def _get_scale(self):
         """Answer the 2-tuple of (self.scaleX, self.scaleY)
+        If scale it set this way, self.proportional will reset to False.
 
         >>> e = Element(scale=2)
         >>> e.scaleX, e.scaleY
@@ -4131,6 +4177,8 @@ class Element:
         """
         return self.scaleX, self.scaleY
     def _set_scale(self, scale):
+        savedFlag = self.proportional # If probably setting to disproportional, save flag
+        self.proportional = False # Allow setting of all scales, without changing the others.
         if not scale: # Reset to 1. Scale cannot be 0
             scale = 1
         if not isinstance(scale, (list, tuple)):
@@ -4142,6 +4190,7 @@ class Element:
             self.scaleZ = 1
         else:
             self.scaleZ, self.scaleY, self.scaleZ = scale[:3]
+        self.proportiona = savedFlag # Restore the proportional flag.
     scale = property(_get_scale, _set_scale)
 
     def _get_scale3D(self):
