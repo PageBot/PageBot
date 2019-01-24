@@ -78,11 +78,10 @@ class Document:
             theme = DEFAULT_THEME_CLASS()
         self.theme = theme
 
-        # Apply the theme if defined or create default styles, to make sure they are there.
         # Adjust self.rootStyle['yAlign'] default value, based on self.origin, if not defined
         # as separate attribute in **kwargs.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
-        self.initializeStyles(theme, styles) # May or may not overwrite the root style.
+        self.initializeStyles(styles) # May or may not overwrite the root style.
         self.path = path # Optional source file path of the document, e.g. .sketch file.
         self.name = name or title or 'Untitled'
         self.title = title or self.name
@@ -350,18 +349,13 @@ class Document:
 
     #   S T Y L E
 
-    def initializeStyles(self, theme, styles):
+    def initializeStyles(self, styles):
         """Make sure that the default styles always exist."""
-        if theme is not None:
-            self.styles = copy.copy(theme.styles)
-            # Additional styles defined? Let them overwrite the theme.
-            for styleName, style in (styles or {}).items():
-                self.addStyle(styleName, style)
 
-        else: # No theme defined, use the styles, otherwise use defailt style.
-            if styles is None:
-                styles = copy.copy(styleLib['default'])
-            self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+        if styles is None:
+            styles = copy.copy(styleLib['default'])
+        self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+
         # Make sure that the default styles for document and page are always there.
         name = 'root'
         if name not in self.styles:

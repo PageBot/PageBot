@@ -14,35 +14,117 @@
 
 import copy
 from pagebot.style import getRootStyle
+from pagebot.toolbox.color import spot, rgb
 
 class Palette:
 
-    def __init__(self, name, colors):
-        self.name = name
-        self._colors = colors # Store for length and optional reference.
-        for attrName, value in colors.items():
+    def __init__(self, **kwargs):
+        self.attrNames = kwargs.keys()
+        for attrName, value in kwargs.items():
             setattr(self, attrName, value)
 
     def __repr__(self):
-        s = self.name
-        for n in range(12):
-            s += ' #%d=%s' % (n, self[n].spot)
-        return '<%s>' % s
+        return '<%s attrs=%d>' % (self.__class__.__name__, len(self))
 
-    def __getitem__(self, index):
-        return getattr(self, 'c%d' % index)
+    def __getitem__(self, attrName):
+        return self.get(attrName)
 
     def __len__(self):
-        return len(self._colors)
-        
-    def _get_colors(self):
-        """Answer the colors a index list.
-        """
-        colors = []
-        for cIndex in range(len(self._colors)):
-            colors.append(self[cIndex])
-        return colors
-    colors = property(_get_colors)
+        return len(self.attrNames)
+    
+    def get(self, name, default=None):
+        if name in self.attrNames:
+            return getattr(self, name)
+        return default
+
+class Style:
+    """HOlds CSS-style values, accessable as key and as attrName.
+
+    >>> from pagebot.themes.freshandshiny import FreshAndShiny
+    >>> palette = FreshAndShiny.PALETTE
+    >>> style = Style(palette, fill='c1', stroke='c2')
+    >>> style.fill
+    'c1'
+    >>> style.stroke
+    'c2'
+    """
+    def __init__(self, palette, name=None, **kwargs):
+        #assert isinstance(palette, Palette), 'Palette not right type "%s"' % palette
+        self.palette = palette
+        self.name = name or 'Untitled'
+        for attrName, value in kwargs.items():
+            self[attrName] = value
+
+    def __getitem__(self, name):
+        v = self.get(name)
+        return self.palette.get(v, v) # If reference in self.palette, then translate the value.
+
+    def __setitem__(self, name, value):
+        setattr(self, name, value)
+
+    def get(self, name, default=None):
+        if hasattr(self, name):
+            return getattr(self, name)
+        return default
+
+class Mood:
+    """Mood hold a set of style values. If the value exists as key in the self.palette,
+    then answer that value instead.
+
+    >>> from pagebot.themes.freshandshiny import FreshAndShiny
+    >>> palette = FreshAndShiny.PALETTE
+    >>> styles = dict(h1_0=Style(palette, fill='c1', stroke='c2'))
+    >>> mood = Mood('Dark', styles)
+    >>> mood.h1_0.fill
+    'c1'
+    """
+    # Predefined styles
+    IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 
+        'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu')
+    COLORS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
+        'diapcolor', 'diapbgcolor', 'diaplink', 'diaphover',
+        )
+    UNITS = ('leading', 'fontSize', 'width')
+    NAMES = ('font',)
+    
+    def __init__(self, name, styles):
+        self.name = name
+        for styleName, style in styles.items():
+            self.addStyle(styleName, style)
+
+    def __getitem__(self, styleName):
+        return self.get(styleName)
+
+    def __setitem__(self, styleName, value):
+        self.set(styleName, value)
+
+    def get(self, styleCssName):
+        if not '.' in styleCssName:
+            styleName = styleCssName
+            funcName = 'fill'
+        else:
+            styleName, funcName = styleCssName.split('.')
+        assert styleName.split('_')[0] in self.IDS, 'Style name not valid "%s"' % styleName
+
+        v = self.getStyle(styleName)[funcName]
+        if funcName in self.COLORS:
+            try:
+                v = v.hex
+            except AttributeError:
+                print('Bad color "%s"' % v)
+        return v
+
+    def getStyle(self, styleName):
+        style = getattr(self, styleName)
+        assert isinstance(style, Style)
+        return style
+        v = self.styles.get(styleName)
+        return self.palette.get(v, v)
+
+    def addStyle(self, styleName, style):
+        assert not hasattr(self, styleName) # Prevent overwriting existing attributes.
+        assert isinstance(style, Style)
+        setattr(self, styleName, style)
 
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
@@ -55,71 +137,29 @@ class BaseTheme:
     comply to the selected theme of a document, unless they have their own
     style defined.
 
-
-
-    >>> from pagebot.themes import BusinessAsUsual
-    >>> theme = BusinessAsUsual()
-    >>> theme.palette.c2
-    Color(spot=877)
-    >>> theme.palette[3]
-    Color(spot=541)
+    >>> from pagebot.themes.freshandshiny import FreshAndShiny
+    >>> theme = FreshAndShiny()
+    >>> theme.mood.h1_0.palette.c2
+    Color(spot=coolgray6u)
+    >>> theme.mood.h1_0.palette['c3']
+    Color(spot=165)
     """
-    # Predefined style names
-    ROOT = 'root' # Rootstyle selector of a theme.
-    H1, H2, H3, H4, H5, H6, H7, H8 = HEADS = ('h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8')
-
-    BASE_MOOD = {
-
-    }
+    MOODS = None # To be redefined by inheriting Them classes
     COLORS = None # To redefined by inheriting Theme classes.
 
-    def __init__(self, name=None, description=None, srcTheme=None, mood=None):
-        self.name = name or self.NAME
-        self.description = description
-        self.styles = {} # Key is selector, value is a style.
-        self.palette = Palette(self.name, self.COLORS)
-        # Mood/function-names --> key to self.styles or self.palette
-        # Make copy, so alterations don't reflect in original
-        self.mood = mood or copy.deepcopy(self.BASE_MOOD) 
+    def __init__(self, mood=None):
+        self.name = self.NAME
+        self.moods = self.MOODS
+        self.selectMood(mood)
 
-        self.initialize() # Call in inheriting Theme classes, to define their own valeus.
-
-    def initialize(self):
-    	pass
+    def selectMood(self, name):
+        self.mood = self.moods.get(name) or self.moods['normal']
 
     def __repr__(self):
         return '<Theme %s styles:%d>' % (self.name, len(self.styles))
 
     def __getitem__(self, selector):
-        return self.styles[selector]
-
-    def __setitem__(self, selector, style):
-        self.styles[selector] = style
-
-    def cssPy2Css(self, cssPy):
-        """Takes a cssPy source, inserts all theme parameters and hands it back.
-        """
-        return cssPy % self.mood # Instant translation from cssPy to css file output.
-
-    def getStyles(self):
-        """Answers the theme as a dictionary of styles."""
-        self.applyPalette() # In case it was not executed before, substitute the palette values
-        return self.styles
-
-    def applyPalette(self, palette=None):
-        """After setting style values, named typographic values and colors,
-        apply them to the styles, overwriting values that start with "@"."""
-        for style in self.styles.values():
-            for name, value in style.items():
-                if isinstance(value, str) and value and value[0] == '@':
-                    # Replace this value if it exists by palette value.
-                    orgValue = value[1:]
-                    if orgValue in palette:
-                        style[name] = palette[orgValue]
-
-    def copyStyles(self):
-        return copy.deepCopy(self.styles)
-
+        return self.mood[selector]
 
 
 if __name__ == "__main__":

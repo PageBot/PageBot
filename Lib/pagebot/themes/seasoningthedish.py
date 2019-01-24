@@ -13,17 +13,33 @@
 #
 #     seasoningthedish.py
 #
-from pagebot.style import getRootStyle
-from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb
+from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 
 class SeasoningTheDish(BaseTheme):
     u"""The SeasoningTheDish theme is ..."""
 
     NAME = 'Seasoning the Dish'
-    COLORS = dict(
-        c0=spot(412),   c1=spot(404),   c2=spot(403),   c3=spot(401),   c4=spot(103),   c5=spot(124),
-        c6=spot(158),   c7=spot(200),   c8=spot(314),   c9=spot(3272),  c10=spot(369),  c11=spot(389),
+    PALETTE = Palette(
+        black=spot(403),
+        white=whiteColor,
+        # Colors with gray tone function
+        dark=spot(412),
+        middle=spot(404),
+        light=spot(401),
+        # Temperature
+        warm=spot(103), 
+        cold=spot(314), 
+        # Highlight
+        hilite1=spot(200),
+        hilite2=spot(158), 
+        hilite3=spot(124),
+        hilite4=spot(158),
+        # Supporters
+        supporter1=spot(3272), 
+        supporter2=spot(369), 
+        supporter3=spot(389), 
+        supporter4=spot(369), 
     )
 
 if __name__ == "__main__":

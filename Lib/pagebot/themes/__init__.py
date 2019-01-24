@@ -27,5 +27,5 @@ ThemeClasses = {}
 for themeClass in (BackToTheCity, BusinessAsUsual, FairyTales, FreshAndShiny, IntoTheWoods, SeasoningTheDish, SomethingInTheAir, WordlyWise):
     ThemeClasses[themeClass.NAME] = themeClass
 
-DEFAULT_THEME_CLASS = WordlyWise
+DEFAULT_THEME_CLASS = FreshAndShiny
 

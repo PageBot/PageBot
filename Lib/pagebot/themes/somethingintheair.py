@@ -13,17 +13,33 @@
 #
 #     somethingintheair.py
 #
-from pagebot.style import getRootStyle
-from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb
+from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 
 class SomethingInTheAir(BaseTheme):
     u"""The SomethingInTheAir theme is ..."""
 
     NAME = 'Something in the Air'
-    COLORS = dict(
-        c0=spot(540),   c1=spot(542),   c2=spot(544),   c3=spot(2985),  c4=spot('reflexblue'),c5=spot(307),
-        c6=spot(306),   c7=spot(3005),  c8=spot('yellow'),c9=spot(137),  c10=spot(190),  c11=spot(245),
+    PALETTE = Palette(
+        black=spot(540),
+        white=whiteColor,
+        # Colors with gray tone function
+        dark=spot('reflexblue'),
+        middle=spot(542),
+        light=spot(544),
+        # Temperature
+        warm=spot(245), 
+        cold=spot(2985), 
+        # Highlight
+        hilite1=spot(190),
+        hilite2=spot(137), 
+        hilite3=spot('yellow'),
+        hilite4=spot(190),
+        # Supporters
+        supporter1=spot(307), 
+        supporter2=spot(3005), 
+        supporter3=spot(3005), 
+        supporter4=spot(306), 
     )
 
 if __name__ == "__main__":
