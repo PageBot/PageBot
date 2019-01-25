@@ -409,11 +409,13 @@ table {
         else:
             self.comment('Cannot find CSS file "%s"' % path)
 
-    def writeCss(self, path):
+    def writeCss(self, path, css=None):
         """Write the collected set of CSS chunks to path."""
         try:
+            if css is None:
+                css = self.getCss()
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(self.getCss())
+            f.write(css)
             f.close()
         except IOError:
             print('[HtmlBuilder.writeCss] Cannot write CSS file "%s"' % path)

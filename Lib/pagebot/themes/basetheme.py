@@ -111,7 +111,7 @@ class Mood:
             try:
                 v = v.hex
             except AttributeError:
-                print('Bad color "%s"' % v)
+                print('Bad color "%s" for "%s"' % (v, styleCssName))
         return v
 
     def getStyle(self, styleName):

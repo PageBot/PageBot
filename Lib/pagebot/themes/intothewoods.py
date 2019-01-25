@@ -42,7 +42,8 @@ class IntoTheWoods(BaseTheme):
     STYLES_LIGHT = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='white', bgcolor='black', link='middle', hover='light'),
+        h1=Style(PALETTE, color='white', bgcolor='black', 
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite3', bgcolor='white',
             diapcolor='white', diapbgcolor='hilite3'),
         banner=Style(PALETTE, color='black', bgcolor='hilite1'),
@@ -62,7 +63,8 @@ class IntoTheWoods(BaseTheme):
     STYLES_NORMAL = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='black'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1'),
+        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite3', bgcolor='white',
             diapcolor='white', diapbgcolor='hilite3'),
         banner=Style(PALETTE, color='black', bgcolor='supporter2'),
@@ -82,7 +84,8 @@ class IntoTheWoods(BaseTheme):
     STYLES_DARK = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='light'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1'),
+        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='white', bgcolor='hilite3',
             diapcolor='hilite3', diapbgcolor='white'),
         banner=Style(PALETTE, color='white', bgcolor='black'),
@@ -102,13 +105,17 @@ class IntoTheWoods(BaseTheme):
     STYLES_SMOOTH = dict(
         logo=Style(PALETTE, color='warm', bgcolor='light'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite3', bgcolor='white'),
+        h1=Style(PALETTE, color='hilite3', bgcolor='white',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite4', bgcolor='hilite1',
             diapcolor='hilite1', diapbgcolor='hilite4'),
         banner=Style(PALETTE, color='hilite3', bgcolor='dark'),
         intro=Style(PALETTE, color='hilite2', bgcolor='middle'),
         group=Style(PALETTE, color='light', bgcolor='dark',
             diapcolor='dark', diapbgcolor='light'),
+        menu=Style(PALETTE, color='black', bgcolor='hilite1',
+            link='middle', hover='light',
+            diapcolor='hilite1', diapbgcolor='black'),
         body=Style(PALETTE, color='supporter1', bgcolor='hilite1'),
         p=Style(PALETTE, color='supporter3', bgcolor='black',
             diapcolor='black', diapbgcolor='white',
@@ -120,13 +127,17 @@ class IntoTheWoods(BaseTheme):
     STYLES_CONTRAST = dict(
         logo=Style(PALETTE, color='warm', bgcolor='light'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite1', bgcolor='white'),
+        h1=Style(PALETTE, color='hilite1', bgcolor='white',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite2', bgcolor='hilite2',
             diapcolor='hilite1', diapbgcolor='hilite4'),
         banner=Style(PALETTE, color='hilite3', bgcolor='black'),
         intro=Style(PALETTE, color='light', bgcolor='dark'),
         group=Style(PALETTE, color='black', bgcolor='light',
             diapcolor='light', diapbgcolor='black'),
+        menu=Style(PALETTE, color='black', bgcolor='hilite1',
+            link='middle', hover='light',
+            diapcolor='hilite1', diapbgcolor='black'),
         body=Style(PALETTE, color='white', bgcolor='hilite2'),
         p=Style(PALETTE, color='white', bgcolor='black',
             diapcolor='warm', diapbgcolor='white',

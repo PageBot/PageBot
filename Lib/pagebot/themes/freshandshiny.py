@@ -71,7 +71,8 @@ class FreshAndShiny(BaseTheme):
     STYLES_NORMAL = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='black'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1'),
+        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite3', bgcolor='white',
             diapcolor='white', diapbgcolor='hilite3'),
         banner=Style(PALETTE, color='black', bgcolor='supporter2'),
@@ -91,7 +92,8 @@ class FreshAndShiny(BaseTheme):
     STYLES_DARK = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='light'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1'),
+        h1=Style(PALETTE, color='hilite2', bgcolor='hilite1',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='white', bgcolor='hilite3',
             diapcolor='hilite3', diapbgcolor='white'),
         banner=Style(PALETTE, color='white', bgcolor='black'),
@@ -111,7 +113,8 @@ class FreshAndShiny(BaseTheme):
     STYLES_SMOOTH = dict(
         logo=Style(PALETTE, color='warm', bgcolor='light'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite3', bgcolor='white'),
+        h1=Style(PALETTE, color='hilite3', bgcolor='white',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite4', bgcolor='hilite1',
             diapcolor='hilite1', diapbgcolor='hilite4'),
         banner=Style(PALETTE, color='hilite3', bgcolor='dark'),
@@ -131,7 +134,8 @@ class FreshAndShiny(BaseTheme):
     STYLES_CONTRAST = dict(
         logo=Style(PALETTE, color='warm', bgcolor='light'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='hilite1', bgcolor='white'),
+        h1=Style(PALETTE, color='hilite1', bgcolor='white',
+            link='middle', hover='light'),
         h2=Style(PALETTE, color='hilite2', bgcolor='hilite2',
             diapcolor='hilite1', diapbgcolor='hilite4'),
         banner=Style(PALETTE, color='hilite3', bgcolor='black'),
