@@ -84,17 +84,6 @@ class SiteView(HtmlView):
                 elif self.verbose:
                     print('[%s.build] Resource "%s" does not exist.' % (self.__class__.__name__, resourcePath))
 
-
-    def makeThemeCss(self, path, cssSrc, theme):
-        """Contruct the css from cssSrc+theme and save the file.
-
-        """
-        css = cssSrc % theme.mood
-        f = codecs.open(path, mode="w", encoding="utf-8") # Save the themed CSS
-        f.write(css)
-        f.close()
-        return path
-
     def build(self, path=None, pageSelection=None, multiPage=True):
         """
         Default building to non-website media.
