@@ -1353,11 +1353,12 @@ class Element:
         Typesetter to build a stack of cascading tag style, then query the
         ancestors for the named style. Default behavior of all elements is that
         they pass the request on to the root, which is normally the document.
+        Use force attribute to overwrite an existing style with the same name.
 
         >>> from pagebot.document import Document
         >>> from pagebot.toolbox.color import color
         >>> doc = Document()
-        >>> doc.addStyle('body', dict(name='body', fill=color('red'))) # Add named style to document
+        >>> doc.addStyle('body', force=True, style=dict(name='body', fill=color('red'))) # Add named style to document
         >>> page = doc[1]
         >>> e = Element(parent=page)
         >>> 

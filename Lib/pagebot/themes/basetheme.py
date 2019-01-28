@@ -14,14 +14,58 @@
 
 import copy
 from pagebot.style import getRootStyle
-from pagebot.toolbox.color import spot, rgb
+from pagebot.toolbox.color import spot, rgb, whiteColor, blackColor, grayColor
 
 class Palette:
+    """A theme Palette instance holds a limited set of base colors, and from there
+    is capable to generate others, based on value recipes.
+
+    >>> p = Palette()
+    >>> p.black
+    Color(r=0, g=0, b=0)
+    >>> p.base1
+    Color(r=0.25, g=0.25, b=0.25)
+    >>> p.warm
+    Color(r=0.75, g=0.25, b=0.25)
+    >>> p.dark
+    Color(r=0.25, g=0.25, b=0.25)
+    >>> p.base1  
+    Color(r=0.25, g=0.25, b=0.25)
+    """
+    BASE_COLOR = grayColor
+    DEFAULT_COLORS = DC = dict(
+        black=blackColor,
+        gray=BASE_COLOR,
+        white=whiteColor,
+        back=BASE_COLOR.lighter(0.2), # Safe ligh text and photo background
+        # Base colors
+        base1=BASE_COLOR.darker(),
+        base2=BASE_COLOR,
+        base3=BASE_COLOR.lighter(0.35),
+        base4=BASE_COLOR.lighter(0.2),
+        # Colors with gray tone function
+        supporter1=BASE_COLOR.darker(0.2),
+        supporter2=BASE_COLOR.lighter(0.2),
+        # Generic gray scale
+        dark=BASE_COLOR.darker(),
+        middle=BASE_COLOR,
+        light=BASE_COLOR.lighter(),
+        # Temperature
+        warm=BASE_COLOR.moreRed().lessBlue().lessGreen(),
+        cold=BASE_COLOR.lessRed().moreBlue().moreGreen(),
+    )
 
     def __init__(self, **kwargs):
-        self.attrNames = kwargs.keys()
-        for attrName, value in kwargs.items():
-            setattr(self, attrName, value)
+        self.attrNames = set() # Collect the total set of installed color names.
+        # Install default colors
+        self.addColors(self.DEFAULT_COLORS)
+        self.addColors(kwargs)
+
+    def addColors(self, colors):
+        # Add/overwrite custom base colors and recipes for this palette
+        for name, c in colors.items():
+            self.attrNames.add(name) # Called can overwrite any color recipe.
+            setattr(self, name, c)
 
     def __repr__(self):
         return '<%s attrs=%d>' % (self.__class__.__name__, len(self))
@@ -33,8 +77,18 @@ class Palette:
         return len(self.attrNames)
     
     def get(self, name, default=None):
+        """Interpret the name, and try to match/construct a color based on the recipe.
+
+        >>> p = Palette()
+        >>> p.red
+
+        """
+        if '_' in name:
+            name, recipe = name
+
         if name in self.attrNames:
             return getattr(self, name)
+        if 
         return default
 
 class Style:
@@ -140,6 +194,8 @@ class BaseTheme:
 
     >>> from pagebot.themes.freshandshiny import FreshAndShiny
     >>> theme = FreshAndShiny()
+    """
+    """
     >>> theme.mood.h1_0.palette.c2
     Color(spot=coolgray6u)
     >>> theme.mood.h1_0.palette['c3']

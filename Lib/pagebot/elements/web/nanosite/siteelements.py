@@ -63,7 +63,14 @@ class NanoElement(Column):
 
 
 class Wrapper(NanoElement):
-    """Overall page wrapper, mostly used to get the window-padding to work."""
+    """Overall page wrapper, mostly used to get the window-padding to work.
+
+    >>> from pagebot.document import Document
+    >>> doc = Document(viewId='Site')
+    >>> page = doc[1]
+    >>> wrapper = Wrapper(parent=page)
+    >>> wrapper
+    """
     CSS_ID = 'Wrapper'
 
 class Logo(NanoElement):

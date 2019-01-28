@@ -14,6 +14,10 @@
 #
 #     mampview.py
 #
+#     The MampView generates the website from the current document, and then copies
+#     the files (including images, CSS, JS, etc.) to the getMampPath()+'/htdocs'
+#     folder. Running local Mamp server application then does test the website.
+#
 import os
 import shutil
 

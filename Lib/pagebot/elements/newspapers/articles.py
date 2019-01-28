@@ -28,8 +28,8 @@ class ArticleHCC(Rect):
     >>> from pagebot.toolbox.units import mm
     >>> doc = Document(size=Tabloid, padding=mm(20))
     >>> page = doc[1]
-    >>> ArticleHCC(parent=page)
-    >>> page.solve()
+    >>> a = ArticleHCC(parent=page)
+    >>> score = page.solve()
     >>> page['ArticleHead'].box
     """
     def __init__(self, **kwargs):
