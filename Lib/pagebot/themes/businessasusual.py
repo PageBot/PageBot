@@ -22,27 +22,15 @@ class BusinessAsUsual(BaseTheme):
     appearance."""
 
     NAME = 'Business as Usual'
-    PALETTE = Palette(
-        black=spot(541),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot('blacku'),
-        middle=spot(404),
-        light=spot(877),
-        # Temperature
-        warm=spot(506), 
-        cold=spot(545), 
-        # Highlight
-        hilite1=spot(568),
-        hilite2=spot(542), 
-        hilite3=spot(459),
-        hilite4=spot(542),
-        # Supporters
-        supporter1=spot(3145), 
-        supporter2=spot(111), 
-        supporter3=spot(111), 
-        supporter4=spot(139), 
+    BASE_COLORS = dict(
+        base0=spot('blacku'),
+        base1=spot(404),
+        base2=spot(541),
+        base3=spot(542),
+        base4=spot(139), # Supporter1
+        base5=spot(877),
     )
+    """
     STYLES_LIGHT = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
@@ -160,7 +148,7 @@ class BusinessAsUsual(BaseTheme):
         'smooth': Mood('Smooth', STYLES_SMOOTH),
         'contrast': Mood('Contrast', STYLES_CONTRAST),
     }
-
+    """
 if __name__ == "__main__":
     import doctest
     import sys

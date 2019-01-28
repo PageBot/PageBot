@@ -13,6 +13,7 @@
 #
 #	  themes/__init__.py
 #
+
 from pagebot.themes.backtothecity import BackToTheCity
 from pagebot.themes.businessasusual import BusinessAsUsual
 from pagebot.themes.fairytales import FairyTales
@@ -21,11 +22,21 @@ from pagebot.themes.intothewoods import IntoTheWoods
 from pagebot.themes.seasoningthedish import SeasoningTheDish
 from pagebot.themes.somethingintheair import SomethingInTheAir
 from pagebot.themes.wordlywise import WordlyWise
+from pagebot.themes.happyholidays import HappyHolidays
 
 ThemeClasses = {}
 
-for themeClass in (BackToTheCity, BusinessAsUsual, FairyTales, FreshAndShiny, IntoTheWoods, SeasoningTheDish, SomethingInTheAir, WordlyWise):
-    ThemeClasses[themeClass.NAME] = themeClass
+for themeClass in (
+    BackToTheCity, 
+    BusinessAsUsual, 
+    FairyTales, 
+    FreshAndShiny, 
+    IntoTheWoods, 
+    SeasoningTheDish, 
+    SomethingInTheAir, 
+    WordlyWise,
+    HappyHolidays):
+        ThemeClasses[themeClass.NAME] = themeClass
 
 DEFAULT_THEME_CLASS = FreshAndShiny
 

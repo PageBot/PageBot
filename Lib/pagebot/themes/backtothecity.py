@@ -13,33 +13,20 @@
 #
 #     backtothecity.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 
 class BackToTheCity(BaseTheme):
     u"""The BackToTheCity theme is ..."""
 
     NAME = 'Back to the City'
-    PALETTE = Palette(
-        black=spot(476),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot(1405),
-        middle=spot(500),
-        light=spot(480),
-        # Temperature
-        warm=spot(1815), 
-        cold=spot(423), 
-        # Highlight
-        hilite1=spot(193),
-        hilite2=spot(157), 
-        hilite3=spot(421),
-        hilite4=spot(193),
-        # Supporters
-        supporter1=spot(139), 
-        supporter2=spot(145), 
-        supporter3=spot(478), 
-        supporter4=spot(139), 
+    BASE_COLORS = dict(
+        base0=spot(476),
+        base1=spot(1405),
+        base2=spot(139),
+        base3=spot(480),
+        base4=spot(421), # Supporter1
+        base5=spot(157),
     )
 
 

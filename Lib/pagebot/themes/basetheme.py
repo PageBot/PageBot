@@ -24,83 +24,88 @@ class Palette:
     >>> p.black
     Color(r=0, g=0, b=0)
     >>> p.base1
-    Color(r=0.25, g=0.25, b=0.25)
-    >>> p.warm
-    Color(r=0.75, g=0.25, b=0.25)
-    >>> p.dark
-    Color(r=0.25, g=0.25, b=0.25)
+    Color(r=0.5, g=0.5, b=0.5)
+    >>> p.dark5.hex
+    '595959'
     >>> p.base1  
-    Color(r=0.25, g=0.25, b=0.25)
+    Color(r=0.5, g=0.5, b=0.5)
     """
+    NUM_BASE = 6 # $ base and 2 supporters
     BASE_COLOR = grayColor
-    DEFAULT_COLORS = DC = dict(
+    BASE_COLORS = dict(
         black=blackColor,
         gray=BASE_COLOR,
         white=whiteColor,
-        back=BASE_COLOR.lighter(0.2), # Safe ligh text and photo background
+        background=rgb('yellow'), # Safe light text and photo background
+        logo=spot(165),
         # Base colors
-        base1=BASE_COLOR.darker(),
-        base2=BASE_COLOR,
-        base3=BASE_COLOR.lighter(0.35),
-        base4=BASE_COLOR.lighter(0.2),
-        # Colors with gray tone function
-        supporter1=BASE_COLOR.darker(0.2),
-        supporter2=BASE_COLOR.lighter(0.2),
-        # Generic gray scale
-        dark=BASE_COLOR.darker(),
-        middle=BASE_COLOR,
-        light=BASE_COLOR.lighter(),
-        # Temperature
-        warm=BASE_COLOR.moreRed().lessBlue().lessGreen(),
-        cold=BASE_COLOR.lessRed().moreBlue().moreGreen(),
+        base0=BASE_COLOR.darker(0.75),
+        base1=BASE_COLOR,
+        base2=BASE_COLOR.lighter(0.35),
+        base3=BASE_COLOR.lighter(0.75),
+        base4=BASE_COLOR.darker(0.75), # Supporter 1
+        base5=BASE_COLOR.lighter(0.75), # Supporter 2
     )
 
-    def __init__(self, **kwargs):
-        self.attrNames = set() # Collect the total set of installed color names.
+    def __init__(self, colors=None):
+        self.colorNames = set() # Collect the total set of installed color names.
         # Install default colors
-        self.addColors(self.DEFAULT_COLORS)
-        self.addColors(kwargs)
+        self.addColors(self.BASE_COLORS)
+        if colors is not None:
+            self.addColors(colors)
+        relatedColors = dict(
+            logoLight=self.logo.lighter(),
+            logodark=self.logo.darker(),
+            supporter1=self.base4,
+            supporter2=self.base5
+        )
+        for n in range(self.NUM_BASE):
+            base = self['base%d' % n]
+            relatedColors['darker%d' % n] = base.darker(0.7)
+            relatedColors['dark%d' % n] = base.darker(0.4)
+            relatedColors['darkest%d' % n] = base.darker(0.15)
 
-    def addColors(self, colors):
+            relatedColors['lighter%d' % n] = base.lighter(0.3)
+            relatedColors['light%d' % n] = base.lighter(0.6)
+            relatedColors['lightest%d' % n] = base.lighter(0.85)
+
+            #relatedColors['warmer%d' % n] = base.warmer(self.LEAST)
+            #relatedColors['warm%d' % n] = base.warmer(self.MIDDLE)
+            #relatedColors['warmest%d' % n] = base.warmer(self.MOST)
+
+            #relatedColors['cooler%d' % n] = base.cooler(self.LEAST)
+            #relatedColors['cool%d' % n] = base.cooler(self.MIDDLE)
+            #relatedColors['coolest%d' % n] = base.cooler(self.MOST)
+
+
+        self.addColors(relatedColors, overwrite=False)
+
+    def addColors(self, colors, overwrite=True):
         # Add/overwrite custom base colors and recipes for this palette
-        for name, c in colors.items():
-            self.attrNames.add(name) # Called can overwrite any color recipe.
-            setattr(self, name, c)
+        for colorName, c in colors.items():
+            if overwrite or not hasattr(self, colorName):
+                self.colorNames.add(colorName) # Called can overwrite any color recipe.
+                setattr(self, colorName, c)
 
     def __repr__(self):
-        return '<%s attrs=%d>' % (self.__class__.__name__, len(self))
+        return '<%s colors=%d>' % (self.__class__.__name__, len(self))
 
-    def __getitem__(self, attrName):
-        return self.get(attrName)
+    def __getitem__(self, colorName):
+        return self.get(colorName)
 
     def __len__(self):
-        return len(self.attrNames)
+        return len(self.colorNames)
     
-    def get(self, name, default=None):
+    def get(self, colorName, default=None):
         """Interpret the name, and try to match/construct a color based on the recipe.
-
-        >>> p = Palette()
-        >>> p.red
-
         """
-        if '_' in name:
-            name, recipe = name
-
-        if name in self.attrNames:
-            return getattr(self, name)
-        if 
+        if colorName in self.colorNames:
+            return getattr(self, colorName)
         return default
 
 class Style:
-    """HOlds CSS-style values, accessable as key and as attrName.
+    """Holds CSS-style values, accessable as key and as attrName.
 
-    >>> from pagebot.themes.freshandshiny import FreshAndShiny
-    >>> palette = FreshAndShiny.PALETTE
-    >>> style = Style(palette, fill='c1', stroke='c2')
-    >>> style.fill
-    'c1'
-    >>> style.stroke
-    'c2'
     """
     def __init__(self, palette, name=None, **kwargs):
         #assert isinstance(palette, Palette), 'Palette not right type "%s"' % palette
@@ -125,12 +130,6 @@ class Mood:
     """Mood hold a set of style values. If the value exists as key in the self.palette,
     then answer that value instead.
 
-    >>> from pagebot.themes.freshandshiny import FreshAndShiny
-    >>> palette = FreshAndShiny.PALETTE
-    >>> styles = dict(h1_0=Style(palette, fill='c1', stroke='c2'))
-    >>> mood = Mood('Dark', styles)
-    >>> mood.h1_0.fill
-    'c1'
     """
     # Predefined styles
     IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 'page',
@@ -192,8 +191,6 @@ class BaseTheme:
     comply to the selected theme of a document, unless they have their own
     style defined.
 
-    >>> from pagebot.themes.freshandshiny import FreshAndShiny
-    >>> theme = FreshAndShiny()
     """
     """
     >>> theme.mood.h1_0.palette.c2
@@ -201,13 +198,16 @@ class BaseTheme:
     >>> theme.mood.h1_0.palette['c3']
     Color(spot=165)
     """
+    NAME = "BaseTheme"
     MOODS = None # To be redefined by inheriting Them classes
     COLORS = None # To redefined by inheriting Theme classes.
+    BASE_COLORS = {}
 
     def __init__(self, mood=None):
+        self.palette = Palette(self.BASE_COLORS)
         self.name = self.NAME
         self.moods = self.MOODS
-        self.selectMood(mood)
+        #self.selectMood(mood)
 
     def selectMood(self, name):
         self.mood = self.moods.get(name) or self.moods['normal']

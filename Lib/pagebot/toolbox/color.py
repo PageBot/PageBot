@@ -83,8 +83,7 @@ def asRgb(c, *args):
     return None
 
 def int2Rgb(v):
-    """Convert an integer (basically the value of the hex string) into (r, g,
-    b)
+    """Convert an integer (basically the value of the hex string) into (r, g, b)
 
     >>> '%0.2f, %0.2f, %0.2f' % int2Rgb(12345)
     '0.00, 0.19, 0.22'
@@ -199,8 +198,6 @@ def ral2Rgb(ral, default=None):
     False
     >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('red')
     '0.54, 0.07, 0.08'
-    >>> ral2NameRgb('red')[0]
-    'winered'
     """
     return ral2NameRgb(ral, default)[1]
 
@@ -874,7 +871,18 @@ class Color:
         >>> color('blue').warmer()
         Color(r=0.5, g=0, b=0.5)
         """
-        return self.moreRed(v).lessBlue(v).lessGreen(v)
+        return self.moreRed(v).lessBlue(v)
+
+    def cooler(self, v=0.5):
+        """Answers cooler version of self. This convert to internal RGB storage.
+        The value (0..1) is the relative position between self and coolest.
+
+        >>> color('red').cooler()
+        Color(r=0.5, g=0, b=0.5)
+        >>> color('orange').cooler(0.25)
+        Color(r=0.25, g=0.6470588235294118, b=0.25)
+        """
+        return self.moreBlue(v).lessRed(v)
 
     def moreRed(self, v=0.5):
         """Answers the color more red than self. This converts to internal RGB

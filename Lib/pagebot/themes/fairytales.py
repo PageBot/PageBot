@@ -20,27 +20,15 @@ class FairyTales(BaseTheme):
     u"""The FairyTales theme is ..."""
 
     NAME = 'Fairy Tales'
-    PALETTE = Palette(
-        black=spot(422),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot(425),
-        middle=spot(451),
-        light=spot(420),
-        # Temperature
-        warm=spot(197), 
-        cold=spot(305), 
-        # Highlight
-        hilite1=spot(237),
-        hilite2=spot(278), 
-        hilite3=spot(373),
-        hilite4=spot(373),
-        # Supporters
-        supporter1=spot(473), 
-        supporter2=spot(465), 
-        supporter3=spot(453), 
-        supporter4=spot(473), 
+    BASE_COLORS = dict(
+        base0=spot(425),
+        base1=spot(237),
+        base2=spot(278),
+        base3=spot(373),
+        base4=spot(422), # Supporter1
+        base5=spot(473),
     )
+    """
     STYLES_LIGHT = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
@@ -153,7 +141,7 @@ class FairyTales(BaseTheme):
         'smooth': Mood('Smooth', STYLES_SMOOTH),
         'contrast': Mood('Contrast', STYLES_CONTRAST),
     }
-
+    """
 if __name__ == "__main__":
     import doctest
     import sys

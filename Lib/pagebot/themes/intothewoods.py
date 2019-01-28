@@ -13,37 +13,26 @@
 #
 #     intothewoods.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 from pagebot.toolbox.units import px
 
 class IntoTheWoods(BaseTheme):
-    u"""The IntoTheWoods theme is ..."""
+    u"""The IntoTheWoods theme is ...
+
+    >>> theme = IntoTheWoods
+    """
 
     NAME = 'Into the Woods'
-    PALETTE = Palette(
-        black=spot(350),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot('warmgray10u'),
-        middle=spot('warmgray8u'),
-        light=spot('warmgray4u'),
-        # Temperature
-        warm=spot(348),  
-        cold=spot('processblue'),
-        # Highlight
-        hilite1=spot(305),
-        hilite2=spot(2975),
-        hilite3=spot(381),   
-        # Supporters
-        supporter1=spot(392),   
-        supporter2=spot(398),   
-        supporter3=spot(376),
-        supporter3_light=spot(376).lighter(0.6),
-        # Logo/corporate identity color 
-        logo1=spot(165), # DesignDesign.Space logo color
-        logo2=spot(286),
+    BASE_COLORS = dict(
+        base0=spot('gray10u'),
+        base1=spot(348),
+        base2=spot(376),
+        base3=spot(381),
+        base4=spot(392), # Supporter1
+        base5=spot(398),
     )
+    """
     STYLES_LIGHT = dict(
         body=Style(PALETTE, color='black', bgcolor='black'),
         page=Style(PALETTE, color='black', bgcolor='white'),
@@ -138,7 +127,7 @@ class IntoTheWoods(BaseTheme):
         #'smooth': Mood('Smooth', STYLES_SMOOTH),
         #'contrast': Mood('Contrast', STYLES_CONTRAST),
     }
-
+    """
 if __name__ == "__main__":
     import doctest
     import sys

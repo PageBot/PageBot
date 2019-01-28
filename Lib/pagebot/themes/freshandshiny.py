@@ -27,29 +27,15 @@ class FreshAndShiny(BaseTheme):
     'hilite2'
     """
     NAME = 'Fresh and Shiny'
-    
-    PALETTE = Palette(
-        black=rgb(0.1),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot('coolgray11u'),
-        middle=spot('coolgray9u'),
-        light=spot('coolgray6u'),
-        # Temperature
-        warm=spot('rhodamineredu'), 
-        cold=spot(2995), 
-        # Highlight
-        hilite1=spot('yellow'),
-        hilite2=spot(165), 
-        hilite3=spot('red032u'),
-        # Supporters
-        supporter1=spot(375), 
-        supporter2=spot(265), 
-        supporter3=spot(265), 
-        # Logo/corporate identity color 
-        logo1=spot(165), # Slots for corporate colors
-        logo2=spot(286),
+    BASE_COLORS = dict(
+        base0=spot('coolgray11u'),
+        base1=spot('rhodamineredu'),
+        base2=spot(265),
+        base3=spot(3005),
+        base4=spot(375), # Supporter1
+        base5=rgb('red'),#spot('red032u'),
     )
+    """
     STYLES_LIGHT = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),
         hr=Style(PALETTE, color='dark'), # <hr> Horizontal ruler
@@ -162,7 +148,7 @@ class FreshAndShiny(BaseTheme):
         'smooth': Mood('Smooth', STYLES_SMOOTH),
         'contrast': Mood('Contrast', STYLES_CONTRAST),
     }
-
+    """
 if __name__ == "__main__":
     import doctest
     import sys

@@ -11,24 +11,20 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     seasoningthedish.py
+#     happyholidays.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.themes.basetheme import BaseTheme
+from pagebot.toolbox.color import color
 
-class SeasoningTheDish(BaseTheme):
-    u"""The SeasoningTheDish theme is ..."""
-
-    NAME = 'Seasoning the Dish'
+class HappyHolidays(BaseTheme):
+    NAME = 'Happy Holidays'
     BASE_COLORS = dict(
-        base0=spot(412),
-        base1=spot(214),
-        base2=spot(369),
-        base3=spot(389),
-        base4=spot(401), # Supporter1
-        base5=spot(103),
+        base0=color(1, 0, 0.2),
+        base1=color(0.7, 0.1, 0.2),
+        base2=color(0.9, 0, 0.3),
+        base3=color(0.5, 0.96, 0.2),
+        base4=color(0, 1, 0),
     )
-
 if __name__ == "__main__":
     import doctest
     import sys

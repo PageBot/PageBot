@@ -13,7 +13,7 @@
 #
 #     wordlywise.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 
 class WordlyWise(BaseTheme):
@@ -27,26 +27,13 @@ class WordlyWise(BaseTheme):
     """
 
     NAME = 'Wordly Wise'
-    PALETTE = Palette(
-        black=spot('blacku'),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot(280),
-        middle=spot(265),
-        light=spot(270),
-        # Temperature
-        warm=spot(187), 
-        cold=spot(278), 
-        # Highlight
-        hilite1=spot(286),
-        hilite2=spot(258), 
-        hilite3=spot(214),
-        hilite4=spot(258),
-        # Supporters
-        supporter1=spot(195), 
-        supporter2=spot(429), 
-        supporter3=spot(430), 
-        supporter4=spot(195), 
+    BASE_COLORS = dict(
+        base0=spot('warmgray8u'),
+        base1=spot(286),
+        base2=spot(265),
+        base3=spot(258),
+        base4=spot(278), # Supporter1
+        base5=spot(270),
     )
 
 if __name__ == "__main__":

@@ -20,28 +20,14 @@ class SomethingInTheAir(BaseTheme):
     u"""The SomethingInTheAir theme is ..."""
 
     NAME = 'Something in the Air'
-    PALETTE = Palette(
-        black=spot(540),
-        white=whiteColor,
-        # Colors with gray tone function
-        dark=spot('reflexblue'),
-        middle=spot(542),
-        light=spot(544),
-        # Temperature
-        warm=spot(245), 
-        cold=spot(2985), 
-        # Highlight
-        hilite1=spot(190),
-        hilite2=spot(137), 
-        hilite3=spot('yellow'),
-        hilite4=spot(190),
-        # Supporters
-        supporter1=spot(307), 
-        supporter2=spot(3005), 
-        supporter3=spot(3005), 
-        supporter4=spot(306), 
+    BASE_COLORS = dict(
+        base0=spot('reflexblueu'),
+        base1=spot(540),
+        base2=spot(542),
+        base3=spot(306),
+        base4=spot(245), # Supporter1
+        base5=spot(190),
     )
-
 if __name__ == "__main__":
     import doctest
     import sys
