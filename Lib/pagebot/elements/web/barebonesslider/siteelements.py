@@ -29,7 +29,29 @@ BSS_MASK = 'mask'
 
 # Slide show
 
-class BareBonesSlideShow(Column):
+class SlideShowBase(Column):
+    CSS_ID = None
+
+    def _get_cssId(self):
+        return self._cssId or self.CSS_ID or self.__class__.__name__
+    def _set_cssId(self, cssId):
+        self._cssId = cssId
+    cssId = property(_get_cssId, _set_cssId)
+
+    def _get_cssClass(self):
+        return self._cssClass or self.cssId.lower()
+    def _set_cssClass(self, cssClass):
+        self._cssClass = cssClass
+    cssClass = property(_get_cssClass, _set_cssClass)
+
+    def showCssIdClass(self, view):
+        if view.showIdClass or self.showIdClass:
+            b = self.context.b
+            b.div(cssClass='cssId')
+            b.addHtml('%s | %s' % (self.cssId, self.cssClass))
+            b._div()
+
+class SlideShow(SlideShowBase):
     """The SlideShow class is an Element wrapper around the Bare-Bones SlideShow.
     If self.w and self.h are both defined, then use that as ratio to unproportionally
     scale all child images to. If only one of them is defined, then use the ratio
@@ -59,7 +81,6 @@ class BareBonesSlideShow(Column):
 
     SlideShow(parent=page, <SlideShow options>)
     """
-    CSS_ID = 'BareBonesSlideShow'
 
     def __init__(self, w=None, h=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
         easing=None, transition=None, auto=True, loop=True, pager=False, carousel=False, 
@@ -68,7 +89,7 @@ class BareBonesSlideShow(Column):
         jsCallbackStart=None, jsCallbackBefore=None, jsCallbackAfter=None, jsCallbackUpdate=None,
         useCssBackground=True, proportional=True,
         **kwargs):
-        Column.__init__(self, **kwargs)
+        SlideShowBase.__init__(self, **kwargs)
         # The (self.w, self.h) combination and ration defines the size and ratio that child 
         # elements will be scaled/cropped
 
@@ -165,13 +186,11 @@ class BareBonesSlideShow(Column):
             e.prepare_html(view)
 
     def build_html(self, view, path):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = cssId.lower()
 
         b = self.context.b
-        b.addJs(self._makeJs(cssId, cssClass))
-        b.comment('Start %s' % cssId)
-        b.div(cssId=cssId, cssClass=cssClass)
+        b.addJs(self._makeJs(self.cssId, self.cssClass))
+        b.comment('Start %s.%s' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass=self.cssClass)
         for image in self.findAll(cls=Image): # Find all child images inside the tree
             if self.useCssBackground:
                 b.div(style="background-image:url(%s);width:%dpx;height:%dpx;background-position: center;background-size: cover;" % \
@@ -183,27 +202,19 @@ class BareBonesSlideShow(Column):
                 b.img(src=image.path)
                 b._div()
         b._div()
-        b.comment('End %s' % cssId)
+        b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
-class BareBonesSlideSide(Column):
-    CSS_ID = 'BareBonesSlideSide'
-    SHOW_ID = False
+class SlideSide(SlideShowBase):
 
     def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = cssId.lower()
-
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
-        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass) 
-        if self.SHOW_ID:
-            b.div(cssClass='cssId')
-            b.addHtml(cssId)
-            b._div()
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path)
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 if __name__ == '__main__':
     import doctest

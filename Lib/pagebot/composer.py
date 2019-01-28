@@ -97,13 +97,15 @@ class Composer:
 
         for e in galley.elements:
             if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
-                e.run(targets)
+                e.run(targets) # Keep same targets, so code blocks share sequence of altered globals.
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
 
             elif targets.get('box') is not None and targets.get('box').isTextBox and e.isTextBox:
+                # If new content and last content are both text boxes, then merge the string.
                 targets.get('box').bs += e.bs
 
             elif targets.get('box') is not None:
+                # Otherwise just paste the galley-element onto the target box.
                 e.parent = targets.get('box')
             else:
                 errors.append('%s.compose: No valid box or image selected "%s - %s"' % (composerName, page, e))

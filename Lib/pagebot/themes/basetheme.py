@@ -79,12 +79,13 @@ class Mood:
     'c1'
     """
     # Predefined styles
-    IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 
-        'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu')
+    IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 'page',
+        'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu', 
+        'main', 'side')
     COLORS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
         'diapcolor', 'diapbgcolor', 'diaplink', 'diaphover',
         )
-    UNITS = ('leading', 'fontSize', 'width')
+    UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin')
     NAMES = ('font',)
     
     def __init__(self, name, styles):

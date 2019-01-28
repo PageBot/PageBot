@@ -20,89 +20,77 @@ from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.toolbox.units import em
+from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide
 
 class Site(Publication):
     u"""Build a website, simplest responsive structure, using CSS Grid.
     """
 
 class NanoElement(Column):
-    
     CSS_ID = None
+    CSS_CLASS = None
     CONTENT = None
 
+    def _get_cssId(self):
+        return self._cssId or self.CSS_ID or self.__class__.__name__
+    def _set_cssId(self, cssId):
+        self._cssId = cssId
+    cssId = property(_get_cssId, _set_cssId)
+
+    def _get_cssClass(self):
+        return self._cssClass or self.CSS_CLASS or self.cssId.lower()
+    def _set_cssClass(self, cssClass):
+        self._cssClass = cssClass
+    cssClass = property(_get_cssClass, _set_cssClass)
+
+    def showCssIdClass(self, view):
+        if view.showIdClass or self.showIdClass:
+            b = self.context.b
+            b.div(cssClass='cssId')
+            b.addHtml('%s | %s' % (self.cssId, self.cssClass))
+            b._div()
+
     def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId.lower()
 
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
-        b.div(cssId=cssId, cssClass='%s clearfix' % self.__class__.__name__.lower()) #Header
-        if view.showIdClass or self.showIdClass:
-            b.div(cssClass='cssId')
-            b.addHtml('%s | %s' % (cssId, cssClass))
-            b._div()
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path)
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
-class Section(NanoElement):
-    pass
 
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work."""
     CSS_ID = 'Wrapper'
-
-# Header
-
-class Header(Section):
-    """Collection of elements in heading of a page, such as logo, navigation, menu
-    and may slideshow, banner, etc.
-    """
-    CSS_ID = 'Header'
-
-    def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = 'wrapper' #self.cssClass or cssId.lower()
-
-        b = self.context.b
-        b.comment('Start %s\n' % cssId)
-        b.header(cssId=cssId, cssClass='%s clearfix' % cssClass) #Header
-        if view.showIdClass or self.showIdClass:
-            b.div(cssClass='cssId')
-            b.addHtml('%s | %s' % (cssId, cssClass))
-            b._div()
-        for e in self.elements:
-            e.build_html(view, path)
-        b._header()
-        b.comment('End %s\n' % cssId)
-
 
 class Logo(NanoElement):
     """Logo on top of the page, often used in the Header. Can either a text or an image,
     depending on what child elements it has (e.g. as defined the MarkDown file.
     This way logo's can be different per page and per @medua query side.
     """
-    CSS_ID = 'Logo'
     SHOW_ID = False
 
+    def __init__(self, logo=None, **kwargs):
+        NanoElement.__init__(self, **kwargs)
+        if logo is None:
+            logo = 'Name Here'
+        TextBox(logo, parent=self)
+
     def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId
 
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
-        b.div(cssId=cssId, cssClass='%s clearfix' % self.__class__.__name__.lower()) #Header
-        if view.showIdClass or self.showIdClass:
-            b.div(cssClass='cssId')
-            b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
-            b._div()
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        self.showCssIdClass(view)
         b.a(href='index.html')
         for e in self.elements:
             e.build_html(view, path)
         b._a()
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 #   N A V I G A T I O N
 
@@ -186,34 +174,28 @@ class Navigation(NanoElement):
                 <li><a href="#">About Us</a></li>
             </ul>
         """
-        cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId.lower()
-
         #print('-'*60)
         #self.pageTree.show()
 
         b = self.context.b
-        b.comment('Start %s' % cssId)
+        b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         if view.showIdClass or self.showIdClass:
-            b.div(cssId=cssId, cssClass=cssId.lower())
-            b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
+            b.div(cssId=self.cssId, cssClass=self.cssClass)
+            b.addHtml('cssId=%s | cssClass=%s' % (self.cssId, self.cssClass))
             b._div()
         if drawElements:
             # <nav id="Navigation" class="topnav" role="navigation">
-            b.nav(cssId=cssId, cssClass=cssClass, role='navigation') # navigation
+            b.nav(cssId=self.cssId, cssClass=self.cssClass, role='navigation') # navigation
             b.ul(cssClass='main-navigation  navmenu')
             self._buildMenuNode_html(b, self.pageTree)
             b._ul()
             b._nav()
-        b.comment('End %s' % cssId)
+        b.comment('End %s.%s' % (self.cssId, self.cssClass))
        
-
 class MobileMenu(NanoElement):
     """MobileMenu lives outside the regular Navigation, made to expand on clicking/tapping
     on a BurgerButton.
     """
-    CSS_ID = 'MobileMenu'
-
     def __init__(self, menuInfo=None, **kwargs):
         NanoElement.__init__(self, **kwargs)
         self.menuInfo = menuInfo or []
@@ -222,34 +204,26 @@ class MobileMenu(NanoElement):
         """Build the (hidden) menu for th mobile navigation)
         """
         pageTree = self.doc.getPageTree() # Create a nested list of pages by they urls
-        cssId = self.cssId or self.CSS_ID
-        cssClass = self.cssClass or cssId.lower()
 
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
-        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass) #Header
-        if view.showIdClass or self.showIdClass:
-            b.div(cssClass='cssId')
-            b.addHtml('cssId=%s | cssClass=%s' % (cssId, cssClass))
-            b._div()
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) #Header
+        self.showCssIdClass(view)
         for pageNode in pageTree.children: # These are real Page instances
             if pageNode.page is not None and pageNode.page.url:
                 b.button(type='button', cssClass='button', onclick="location.href='%s';" % pageNode.page.url.replace('/', '-'))
                 b.addHtml(pageNode.page.name)
                 b._button()
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class BurgerButton(NanoElement):
-    CSS_ID = 'BurgerButton'
     TARGET_CSSID = 'MobileMenu'
     BURGER = '☰'
 
     def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = cssId.lower()
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function toggleVisible(){
             var x = document.getElementById("%(cssId)s");  
             if (x.style.display != "block") {
@@ -258,32 +232,21 @@ class BurgerButton(NanoElement):
                 x.style.display = "none";
             }
         }\n\n""" % dict(cssId=self.TARGET_CSSID))
-        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass) #Header
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) #Header
         b.h1(onclick='toggleVisible()')
         b.addHtml(self.BURGER)
         b._h1()
         for e in self.elements:
             e.build_html(view, path)
         b._div()
-        b.comment('End %s\n' % cssId)
-
-# Banner 
-class Banner(NanoElement):
-    CSS_ID = 'Banner'
-
-# Introduction 
-class Introduction(NanoElement):
-    CSS_ID = 'Introduction'
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 # Random selector
 class RandomSelector(NanoElement):
-    CSS_ID = 'RandomSelector'
 
     def build_html(self, view, path, drawElements=True):
-        cssId = self.cssId or self.CSS_ID
-        cssClass = cssId.lower()
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function randomSelect(){
             var x = document.getElementById("%(cssId)s");  
             var children = x.getElementsByClassName('%(cssClass)s-select');
@@ -293,55 +256,86 @@ class RandomSelector(NanoElement):
                     x.removeChild(children[i]);
                 }
             }
-        }\n\n""" % dict(cssId=cssId, cssClass=cssClass))
-        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass) #Header
+        }\n\n""" % dict(cssId=self.cssId, cssClass=self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        self.showCssIdClass(view)
         for e in self.elements:
-            b.div(cssClass=cssClass+'-select')
+            b.div(cssClass=self.cssClass+'-select')
             e.build_html(view, path)
             b._div()
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class Collection(NanoElement):
     """ Container for a defined group of elements.
         Behavior depends on the selected layout, defined view-parameters and 
         amound of available elements.
     """
-    CSS_ID = 'Collection'
 
     def build_html(self, view, path, drawElements=True):
         if not self.elements:
             return
-        cssId = self.cssId or self.CSS_ID
-        cssClass = cssId.lower()
         b = self.context.b
-        b.comment('Start %s\n' % cssId)
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         style = 'width: %02f%%; float: left' % (100/len(self.elements))
-        b.div(cssId=cssId, cssClass='%s clearfix' % cssClass, style=style)
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style=style)
+        self.showCssIdClass(view)
         for e in self.elements:
             e.h = self.h
-            b.div(cssClass=cssClass+'-select')
+            b.div(cssClass=self.cssClass+'-select')
             e.build_html(view, path)
             b._div()
         b._div()
-        b.comment('End %s\n' % cssId)
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 # Content
 
-class Content(Section):
-    CSS_ID = 'Content'
+class Content(NanoElement):
+
+    def newSection(self, parent=None, **kwargs):
+        return Section(parent=self, **kwargs)
+
+    def newBanner(self, parent=None, **kwargs):
+        return Banner(parent=self, **kwargs)
+
+    def newSlideShow(self, parent=None, w=None, h=None, **kwargs):
+        return SlideShow(parent=self, **kwargs)
+
+    def newSlideSide(self, parent=None, **kwargs):
+        return SlideSide(parent=self, **kwargs)
+
+# Banner
+
+class Banner(NanoElement):
+    pass
+
+# Section
+
+class Section(NanoElement):
+
+    def newIntroduction(self, parent=None, **kwargs):
+        return Introduction(parent=self, **kwargs)
+
+    def newMain(self, parent=None, **kwargs):
+        return Main(parent=self, **kwargs)
+
+    def newSide(self, parent=None, **kwargs):
+        return Side(parent=self, **kwargs)
+
+class Introduction(NanoElement):
+    pass
 
 class Main(NanoElement):
-    CSS_ID = 'Main'
-    
+    pass
+
 class Side(NanoElement):
-    CSS_ID = 'Side'
+    pass
 
 # Footer
 
-class Footer(Section):
-    CSS_ID = 'Footer'
-    
+class Footer(NanoElement):
+    pass
+
 if __name__ == '__main__':
     import doctest
     import sys

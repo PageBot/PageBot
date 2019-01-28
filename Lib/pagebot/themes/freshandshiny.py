@@ -46,6 +46,9 @@ class FreshAndShiny(BaseTheme):
         supporter1=spot(375), 
         supporter2=spot(265), 
         supporter3=spot(265), 
+        # Logo/corporate identity color 
+        logo1=spot(165), # Slots for corporate colors
+        logo2=spot(286),
     )
     STYLES_LIGHT = dict(
         logo=Style(PALETTE, color='supporter2', bgcolor='supporter1'),

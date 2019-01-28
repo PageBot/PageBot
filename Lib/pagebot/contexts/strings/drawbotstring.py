@@ -90,6 +90,9 @@ class DrawBotString(BabelString):
         >>> run = line.textRuns[0]
         >>> run.xHeight, run.capHeight
         (0.55em, 0.73em)
+        >>> bs = DrawBotString('    \t\tABC', context=context)
+        >>> bs.s
+        ABC
         """
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a
@@ -111,24 +114,23 @@ class DrawBotString(BabelString):
 
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
-        super().__init__(s, context, style=style)
+        super().__init__(self.s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded FormattedString by property, to enforce checking
         type of the string."""
         return self._s
-
     def _set_s(self, s):
         """ Check on the type of s. Three types are supported here: plain
         strings, DrawBot FormattedString and the class of self."""
         assert isinstance(s, (DrawBotString, str)) or s.__class__.__name__ == 'FormattedString'
+        while s and s[0] in ' \t\r\n':
+            s = s[1:]
         if isinstance(s, str):
             s = self.context.b.FormattedString(s)
         elif isinstance(s, DrawBotString):
             s = s.s
-
         self._s = s
-
     s = property(_get_s, _set_s)
 
     def _get_font(self):
