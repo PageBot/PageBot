@@ -335,7 +335,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # newline(s) "\n" or empty string, if tags need to glue together.  Make
         # None for no stripping.
         prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = '', # Default is to strip white space from tail of XML tag block into a single space.
+        postfix = None, # Set to replacement string to strip white space from tail of XML tag block into a single space.
 
         # Paging
         pageIdMarker = '#??#', # The text pattern will be replaced by current page id.
