@@ -29,6 +29,7 @@ from pagebot.toolbox.units import pt, em
 
 W, H = A4
 PADDING = pt(40) # Simple page padding
+G = pt(6)
 
 # Path to the MarkDown source file
 MARKDOWN_PATH = 'EmbeddedPython.md'
@@ -40,11 +41,11 @@ styles = dict(
     h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), paragraphBottomSpacing=pt(12)),
     h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4),
         paragraphTopSpacing=pt(12), paragraphBottomSpacing=pt(12)),
-    p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4)),
+    p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4), firstLineIndent=pt(24), firstColumnIndent=0),
     li=dict(textFill=color('green'), tabs=pt(8, 16, 24, 36, 48), fontSize=pt(12), leading=em(1.4), 
         indent=16, firstLineIndent=0),
-    strong=dict(textFill=color('red')),
-    em=dict(textFill=color('blue')),
+    strong=dict(textFill=color('red'), firstLineIndent=0),
+    em=dict(textFill=color('blue'), firstLineIndent=0),
 )
 
 # Create the overall documents, side by side for the two contexts.
@@ -78,8 +79,12 @@ for doc in (pdfDoc, htmlDoc):
     page = page.next
     page.padding = PADDING # Set the padding of this page.
     # Make a text box, fitting the page padding on all sides.
-    newTextBox(parent=page, name='Box', conditions=[Fit()], prefix='AAA')
-    page.solve() # Solve the fitting condition.
+    newTextBox(parent=page, name='Box', w=(page.pw-G)/2, fill=0.9,
+        conditions=[Left2Left(), Top2Top(), Fit2Bottom(), Overflow2Next()], 
+        nextElement='Box2', prefix='AAA')
+    newTextBox(parent=page, name='Box2', w=(page.pw-G)/2, fill=0.9,
+        conditions=[Right2Right(), Top2Top(), Fit2Bottom()],
+        prefix='AAA')
 
     # Create the Composer instance that will interpret the galley.
     composer = Composer(doc)
@@ -100,6 +105,8 @@ for doc in (pdfDoc, htmlDoc):
     print('Errors:', targets['errors'])
     print('Number of verbose feedback entries:', len(targets['verbose']))
     print('Values created in the code block: aa=%s, bb=%s, cc=%s' % (targets['aa'], targets['bb'], targets['cc']))
+
+    doc.solve()
 
 # Save the created document as (2 page) PDF.
 pdfDoc.export('_export/ContextBehavior.pdf')

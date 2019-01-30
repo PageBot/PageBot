@@ -461,11 +461,11 @@ class TextBox(Element):
                 else:
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
-                    if self.firstColumnIndent or self.firstLineIndent: 
-                        # Prevent indenting of first overflow text in next column,
-                        # using a tiny-small space to define the new line style.
-                        firstLineStyle = dict(fontSize=0.01, firstLineIndent=self.firstColumnIndent)
-                        overflow = self.context.newString(' ', style=firstLineStyle) + overflow
+                    # Prevent indenting of first overflow text in next column,
+                    # using a tiny-small space to define the new line style.
+                    firstLineStyle = dict(fontSize=0.00001, firstLineIndent=self.firstLineIndent or self.firstColumnIndent)
+                    overflow = self.context.newString('.', style=firstLineStyle) + overflow
+
                     nextElement.bs = overflow
                     nextElement.prevPage = page # Remember the page we came from, link in both directions.
                     nextElement.prevElement = self.name # Remember the back link
