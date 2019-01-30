@@ -59,7 +59,7 @@ cc = ['List', 'of', 'things']
 # all text after this code block flows into there.
 ~~~
 
-Blocks of text [p] are glued together here possible. 
+Blocks of text [p] are glued together here if possible. 
 
 **This is another block in a different [strong] style.**
 

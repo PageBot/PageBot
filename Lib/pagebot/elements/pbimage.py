@@ -389,7 +389,7 @@ class Image(Element):
 
             context.restore()
 
-        #self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         #if drawElements:
         #    self.buildChildElements(view, p)
