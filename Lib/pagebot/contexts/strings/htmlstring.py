@@ -100,6 +100,12 @@ class HtmlString(BabelString):
             sOrBs = sOrBs.s
         self.s += sOrBs
 
+    def getStyleAtIndex(self, index):
+        """Answer the constructed style of the string a position index of chars.
+        TODO: Try to find CSS status?
+        """
+        return {}
+
     MARKER_PATTERN = '<!-- ==%s@%s== -->'
 
     def appendMarker(self, markerId, arg):

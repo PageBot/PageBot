@@ -29,7 +29,7 @@ from pagebot.toolbox.units import pt, em
 
 W, H = A4
 PADDING = pt(40) # Simple page padding
-G = pt(6)
+G = pt(12)
 
 # Path to the MarkDown source file
 MARKDOWN_PATH = 'EmbeddedPython.md'
@@ -38,10 +38,11 @@ pdfContext = DrawBotContext()
 htmlContext = HtmlContext()
 
 styles = dict(
-    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), paragraphBottomSpacing=pt(12)),
-    h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4),
+    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), firstLineIndent=0,
+        paragraphBottomSpacing=pt(12)),
+    h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4), firstLineIndent=0, 
         paragraphTopSpacing=pt(12), paragraphBottomSpacing=pt(12)),
-    p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4), firstLineIndent=pt(24), firstColumnIndent=0),
+    p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4), firstLineIndent=pt(24)),
     li=dict(textFill=color('green'), tabs=pt(8, 16, 24, 36, 48), fontSize=pt(12), leading=em(1.4), 
         indent=16, firstLineIndent=0),
     strong=dict(textFill=color('red'), firstLineIndent=0),
@@ -81,10 +82,10 @@ for doc in (pdfDoc, htmlDoc):
     # Make a text box, fitting the page padding on all sides.
     newTextBox(parent=page, name='Box', w=(page.pw-G)/2, fill=0.9,
         conditions=[Left2Left(), Top2Top(), Fit2Bottom(), Overflow2Next()], 
-        nextElement='Box2', prefix='AAA')
-    newTextBox(parent=page, name='Box2', w=(page.pw-G)/2, fill=0.9,
+        nextElement='Box2', prefix='AA33')
+    newTextBox(parent=page, name='Box2', w=(page.pw-G)/2, fill=0.9, firstColumnIndent=0,
         conditions=[Right2Right(), Top2Top(), Fit2Bottom()],
-        prefix='AAA')
+        prefix='BB33')
 
     # Create the Composer instance that will interpret the galley.
     composer = Composer(doc)

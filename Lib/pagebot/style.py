@@ -285,8 +285,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
         firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
         # PageBot additions, used for textOverflow, in combination with columns
-        firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
+        firstParagraphIndent = pt0, # Indent of first line of paragraph in a text tag, where style is different from previous tag.
         firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
+
+        # Strip pre/post white space from e.text and e.tail and substitute by
+        # respectively prefix and postfix if they are not None. Set to e.g.
+        # newline(s) "\n" or empty string, if tags need to glue together.  Make
+        # None for no stripping.
+        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
+        postfix = None, # Set to replacement string to strip white space from tail of XML tag block into a single space.
 
         # Vertical spacing of baselines by TextBox. Note that PageView is
         # drawing the baseline grid color as defined by viewGridStrokeX and
@@ -329,13 +336,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         language = DEFAULT_LANGUAGE, # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'utf-8',
         hyphenation = True,
-
-        # Strip pre/post white space from e.text and e.tail and substitute by
-        # respectively prefix and postfix if they are not None. Set to e.g.
-        # newline(s) "\n" or empty string, if tags need to glue together.  Make
-        # None for no stripping.
-        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = None, # Set to replacement string to strip white space from tail of XML tag block into a single space.
 
         # Paging
         pageIdMarker = '#??#', # The text pattern will be replaced by current page id.

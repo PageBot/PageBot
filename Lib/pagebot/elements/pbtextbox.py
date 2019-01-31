@@ -45,43 +45,28 @@ class TextBox(Element):
             w, h = size
         self.w, self.h = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
 
-        self.bs = bs # Set as property, to make sure there's always a context based Babelstring
-
-        if self.prefix is not None: # Now we know it is a BabelString, it can take care of prefix  
-            self.bs.setPrefix(self.prefix) 
+        self.bs = bs # Set as property, to make sure there's always a context based Babelstring or None
 
     def _get_bs(self):
+        """If still unitnialized None, then answer an empty formatted string
+        with self.style as style.
+        """
         return self._bs
-    def _set_bs(self, s):
-        """Make sure that this is a formatted string. Otherwise create it with
+    def _set_bs(self, bs):
+        """If not None, make sure that this is a formatted string. Otherwise create it with
         the current style. Note that in case there is potential clash in the
         double usage of fill and stroke.
         """
-        if s is None: # If not defined, initialize as empty string (to avoid display of "None")
-            s = ''
-        # Source can be any type: BabelString instance or plain unicode string.
-        self._bs = self.newString(s, style=self.style)
+        if bs is not None:
+            # Source can be any type: BabelString instance or plain unicode string.
+            bs = self.newString(bs, style=self.style)
+
+        self._bs = bs
     bs = property(_get_bs, _set_bs)
 
-    def _get_prefix(self):
-        """Undefined or None will skip stripping and replacing by prefix.
-        """
-        return self.style.get('prefix') 
-    def _set_prefix(self, prefix):
-        self.style['prefix'] = prefix
-    prefix = property(_get_prefix, _set_prefix)
-
-    def _get_postfix(self):
-        """Undefined or None will skip stripping and replacing by prefix.
-        """
-        return self.style.get('postfix') 
-    def _set_postfix(self, prefix):
-        self.style['postfix'] = postfix
-    postfix = property(_get_postfix, _set_postfix)
-
     def clear(self):
-        """Clear the current content of the element."""
-        self.bs = ''
+        """Clear the current content of the element. Make a new formatted string with self.style"""
+        self.bs = None
 
     def _get_w(self): # Width
         """Property for self.w, holding the width of the textbox.
@@ -171,7 +156,7 @@ class TextBox(Element):
 
     y = property(_get_y, _set_y)
 
-    def _get_firstColumnIndex(self):
+    def _get_firstColumnIndent(self):
         """If False or 0, then ignore first line indent of a column on text overflow.
         Otherwise set to a certain unit. This will cause text being indented by the amount of
         self.firstLineIndent, probably in mid-sentence. This option is likely never necessary,
@@ -180,7 +165,7 @@ class TextBox(Element):
         return self.css('firstColumnIndent')
     def _set_firstColumnIndent(self, indent):
         self.style['firstColumnIndent'] = units(indent)
-    firstColumnIndent = property(_get_firstColumnIndex, _set_firstColumnIndent)
+    firstColumnIndent = property(_get_firstColumnIndent, _set_firstColumnIndent)
 
     def _get_firstLineIndent(self):
         """DrawBot-compatible indent of first line of a paragraph.
@@ -374,8 +359,7 @@ class TextBox(Element):
         """Answers the name and style that desctibes this run best. If there is
         a doc style, then answer that one with its name. Otherwise answer a new
         unique style name and the style dict with its parameters."""
-        print(run.attrs)
-        return('ZZZ', run.style)
+        return self.bs.getStyleAtIndex(0)
 
     def _get_styledLines(self):
         """Answers the list with (styleName, style, textRun) tuples, reverse
@@ -464,17 +448,19 @@ class TextBox(Element):
                     # Prevent indenting of first overflow text in next column,
                     # using a tiny-small space to define the new line style,
                     # with rest of style copied from first character of the overflow string.
-                    firstLineStyle = overflow.getStyleAtIndex(0)
-                    firstLineStyle['firstLineIndent'] = self.firstLineIndent or self.firstColumnIndent
-                    firstLineStyle['fontSize'] = pt(0.0001)
-                    overflow = self.context.newString('.', style=firstLineStyle) + overflow
+
+                    flStyle = overflow.getStyleAtIndex(0)
+                    if flStyle.get('firstLineIndent') or self.firstColumnIndent: # Something going on at start?
+                        flStyle['fontSize'] = pt(0.0001) # Really really small place holder period.
+                        flStyle['textFill'] = color(1, 1, 1, 1) # Transparant, so it will never show.
+                        flStyle['firstLineIndent'] = self.firstColumnIndent or 0 # Then make this one work
+                        overflow = self.context.newString('.', style=flStyle) + overflow
 
                     nextElement.bs = overflow
                     nextElement.prevPage = page # Remember the page we came from, link in both directions.
                     nextElement.prevElement = self.name # Remember the back link
                     page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
-        # TODO: In case used as condition, returning a tuple instead of boolean flag
-        return page
+        return overflow
 
     #   C O N D I T I O N S
 

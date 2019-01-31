@@ -193,33 +193,37 @@ class DrawBotString(BabelString):
         attrString = self.s.getNSObject()
         cIndex = 0
         style = {}
-        for nsObject in attrString.attributesAtIndex_effectiveRange_(index, None):
-            if isinstance(nsObject, NSAttributeDictionary):
-                nsColor = nsObject.get('NSColor')
-                if nsColor is not None:
-                    style['textFill'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
-                nsColor = nsObject.get('NSStrokeColor')
-                if nsColor is not None:
-                    style['textStroke'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
-                strokeWidth = nsObject.get('NSStrokeWidth')
-                if strokeWidth is not None:
-                    style['strokeWidth'] = pt(strokeWidth)
-                nsFont = nsObject.get('NSFont')
-                if nsFont is not None:
-                    style['font'] = nsFont.fontName()
-                    style['fontSize'] = pt(nsFont.pointSize())
-                pgStyle = nsObject.get('NSParagraphStyle')
-                style['tabs'] = tabs = {}
-                #for tab in pgStyle.tabStops:
-                #    tabe[tab] = 'a'
-                style['leading'] = pt(pgStyle.minimumLineHeight())
-                # MORE FROM: Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, 
-                # FirstLineHeadIndent 0, LineHeight 21/21, LineHeightMultiple 0, LineBreakMode 0, Tabs (), DefaultTabInterval 0, 
-                # Blocks (), Lists (), BaseWritingDirection -1, HyphenationFactor 0, TighteningForTruncation NO, HeaderLevel 0
-            elif isinstance(nsObject, NSRange):
-                if cIndex >= index:
-                    break
-                cIndex += nsObject.length
+        if len(attrString):
+            for nsObject in attrString.attributesAtIndex_effectiveRange_(index, None):
+                if isinstance(nsObject, NSAttributeDictionary):
+                    nsColor = nsObject.get('NSColor')
+                    if nsColor is not None:
+                        style['textFill'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+                    nsColor = nsObject.get('NSStrokeColor')
+                    if nsColor is not None:
+                        style['textStroke'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+                    strokeWidth = nsObject.get('NSStrokeWidth')
+                    if strokeWidth is not None:
+                        style['strokeWidth'] = pt(strokeWidth)
+                    nsFont = nsObject.get('NSFont')
+                    if nsFont is not None:
+                        style['font'] = nsFont.fontName()
+                        style['fontSize'] = pt(nsFont.pointSize())
+                    pgStyle = nsObject.get('NSParagraphStyle')
+                    style['tabs'] = tabs = {}
+                    #for tab in pgStyle.tabStops:
+                    #    tabe[tab] = 'a'
+                    style['leading'] = pt(pgStyle.minimumLineHeight())
+                    style['firstLineIndent'] = pt(pgStyle.firstLineHeadIndent())
+                    style['indent'] = pt(pgStyle.headIndent())
+                    style['tailIndent'] = pt(pgStyle.tailIndent())
+                    # MORE FROM: Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, 
+                    #  0, LineHeight 21/21, LineHeightMultiple 0, LineBreakMode 0, Tabs (), DefaultTabInterval 0, 
+                    # Blocks (), Lists (), BaseWritingDirection -1, HyphenationFactor 0, TighteningForTruncation NO, HeaderLevel 0
+                elif isinstance(nsObject, NSRange):
+                    if cIndex >= index: # Run through until matching index, so the style cumulates.
+                        break
+                    cIndex += nsObject.length
         return style
 
     def asText(self):
@@ -819,7 +823,7 @@ class DrawBotString(BabelString):
         isFitting = True
         
         # @@@@ Disable string fitting here. Use fitString(...) instead.
-
+        """
         if False and w is not None:
             # A target width is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds
@@ -866,8 +870,9 @@ class DrawBotString(BabelString):
                 newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         else:
-            newS = cls(newT, context, fsAttrs)
-            fittingStyle = {}
+        """    
+        newS = cls(newT, context, fsAttrs)
+        fittingStyle = {}
 
         # Store any adjust fitting parameters in the string, in case the caller
         # wants to know.
