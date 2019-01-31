@@ -137,6 +137,11 @@ class BabelString:
 
     size = property(_get_size)
 
+    def getStyleAtIndex(self, index):
+        """Answer the constructed style of the string a position index of chars.
+        """
+        raise NotImplementedError
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
             pixelFit=True):

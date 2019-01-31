@@ -462,8 +462,11 @@ class TextBox(Element):
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
                     # Prevent indenting of first overflow text in next column,
-                    # using a tiny-small space to define the new line style.
-                    firstLineStyle = dict(fontSize=0.00001, firstLineIndent=self.firstLineIndent or self.firstColumnIndent)
+                    # using a tiny-small space to define the new line style,
+                    # with rest of style copied from first character of the overflow string.
+                    firstLineStyle = overflow.getStyleAtIndex(0)
+                    firstLineStyle['firstLineIndent'] = self.firstLineIndent or self.firstColumnIndent
+                    firstLineStyle['fontSize'] = pt(0.0001)
                     overflow = self.context.newString('.', style=firstLineStyle) + overflow
 
                     nextElement.bs = overflow
