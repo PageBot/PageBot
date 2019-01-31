@@ -133,6 +133,16 @@ class DrawBotString(BabelString):
         self._s = s
     s = property(_get_s, _set_s)
 
+    def columnStart(self, firstColumnIndent):
+        bs = self
+        style = self.getStyleAtIndex(0)
+        if style.get('firstLineIndent') or firstColumnIndent: # Something going on at start?
+            style['fontSize'] = pt(0.0001) # Really really small place holder period.
+            style['textFill'] = color(1, 1, 1, 1) # Transparant, so it will never show.
+            style['firstLineIndent'] = firstColumnIndent or 0 # Then make this one work
+            bs = self.context.newString('.', style=style) + bs
+        return bs
+
     def _get_font(self):
         """Answers the current state of fontName."""
         return self.style.get('font')

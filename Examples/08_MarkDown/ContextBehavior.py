@@ -70,22 +70,21 @@ for doc in (pdfDoc, htmlDoc):
     galley = t.typesetFile(MARKDOWN_PATH)
 
     # Make a simple template: one page with one column.
-    page = doc[1] # Get the first/single page of the document.
-    page.padding = PADDING # Set the padding of this page.
+    page1 = doc[1] # Get the first/single page of the document.
+    page1.padding = PADDING # Set the padding of this page.
     # Make a text box, fitting the page padding on all sides.
-    newTextBox(parent=page, name='Box', conditions=[Fit()])
-    page.solve() # Solve the fitting condition.
+    newTextBox(parent=page1, name='Box', conditions=[Fit()])
+    page1.solve() # Solve the fitting condition.
     
     # Create a new page after the current one
-    page = page.next
-    page.padding = PADDING # Set the padding of this page.
+    page2 = page1.next
+    page2.padding = PADDING # Set the padding of this page.
     # Make a text box, fitting the page padding on all sides.
-    newTextBox(parent=page, name='Box', w=(page.pw-G)/2, fill=0.9,
+    newTextBox(parent=page2, name='Box', w=(page2.pw-G)/2, fill=0.9,
         conditions=[Left2Left(), Top2Top(), Fit2Bottom(), Overflow2Next()], 
-        nextElement='Box2', prefix='AA33')
-    newTextBox(parent=page, name='Box2', w=(page.pw-G)/2, fill=0.9, firstColumnIndent=0,
-        conditions=[Right2Right(), Top2Top(), Fit2Bottom()],
-        prefix='BB33')
+        nextElement='Box2')
+    newTextBox(parent=page2, name='Box2', w=(page2.pw-G)/2, fill=0.9, firstColumnIndent=30,
+        conditions=[Right2Right(), Top2Top(), Fit2Bottom()])
 
     # Create the Composer instance that will interpret the galley.
     composer = Composer(doc)
@@ -95,7 +94,6 @@ for doc in (pdfDoc, htmlDoc):
     # will run sequentially through the elements, executing the code blocks. 
     # This may cause the shifting of target for the text elements to another block
     # or another page.
-    page1 = doc[1]
     targets = dict(doc=doc, page=page1, box=page1.select('Box'), composer=composer)
     composer.compose(galley, targets=targets)
 

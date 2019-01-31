@@ -28,7 +28,7 @@ class TextBox(Element):
     isText = True  # This element is capable of handling text.
     isTextBox = True
 
-    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
+    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box. Avoid endless elastic height.
 
     def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
@@ -48,14 +48,21 @@ class TextBox(Element):
         self.bs = bs # Set as property, to make sure there's always a context based Babelstring or None
 
     def _get_bs(self):
-        """If still unitnialized None, then answer an empty formatted string
-        with self.style as style.
+        """Answer the stored formatted string. The value can be None.
         """
         return self._bs
     def _set_bs(self, bs):
         """If not None, make sure that this is a formatted string. Otherwise create it with
         the current style. Note that in case there is potential clash in the
         double usage of fill and stroke.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[1]
+        >>> tb = TextBox(parent=page, w=125)
+        >>> tb.bs = 'AAA' # String converts to DrawBotString.
+        >>> tb.bs, tb.bs.s, tb.bs.__class__.__name__
+        (AAA, AAA, 'DrawBotString')
         """
         if bs is not None:
             # Source can be any type: BabelString instance or plain unicode string.
@@ -65,7 +72,18 @@ class TextBox(Element):
     bs = property(_get_bs, _set_bs)
 
     def clear(self):
-        """Clear the current content of the element. Make a new formatted string with self.style"""
+        """Clear the current content of the element. Make a new formatted string with self.style.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[1]
+        >>> tb = TextBox('AAA', parent=page, w=125)
+        >>> tb.bs
+        AAA
+        >>> tb.clear()
+        >>> tb.bs is None
+        True
+        """
         self.bs = None
 
     def _get_w(self): # Width
@@ -83,12 +101,10 @@ class TextBox(Element):
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
-
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
         # Note choice for difference in camelCase
         #self._textLines = self._baselines = None # Force reset if being called
-
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -153,7 +169,6 @@ class TextBox(Element):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
         #self._textLines = None # Force recalculation of y values.
-
     y = property(_get_y, _set_y)
 
     def _get_firstColumnIndent(self):
@@ -406,6 +421,8 @@ class TextBox(Element):
         >>> s = context.newString('AAA ' * 1000, style=dict(font='Verdana', fontSize=10, leading=12))
         >>> # Fix h to lock elastic height. Overflow now is defined.
         >>> t1 = TextBox(s, name="T1", w=100, h=200, nextElement='T2', parent=page1)
+        >>> t1.bs.getStyleAtIndex(0)['fontSize']
+        10pt
         >>> t2 = TextBox(name="T2", w=100, h=200, nextElement='T1', nextPage=page1.next, parent=page1)
         >>> len(str(t1.bs.s))
         4000
@@ -448,13 +465,7 @@ class TextBox(Element):
                     # Prevent indenting of first overflow text in next column,
                     # using a tiny-small space to define the new line style,
                     # with rest of style copied from first character of the overflow string.
-
-                    flStyle = overflow.getStyleAtIndex(0)
-                    if flStyle.get('firstLineIndent') or self.firstColumnIndent: # Something going on at start?
-                        flStyle['fontSize'] = pt(0.0001) # Really really small place holder period.
-                        flStyle['textFill'] = color(1, 1, 1, 1) # Transparant, so it will never show.
-                        flStyle['firstLineIndent'] = self.firstColumnIndent or 0 # Then make this one work
-                        overflow = self.context.newString('.', style=flStyle) + overflow
+                    overflow = overflow.columnStart(self.firstColumnIndent)
 
                     nextElement.bs = overflow
                     nextElement.prevPage = page # Remember the page we came from, link in both directions.
