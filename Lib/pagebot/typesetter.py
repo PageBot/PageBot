@@ -83,7 +83,8 @@ class Typesetter:
     ]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True,
-            return2Space=False, tabs2Space=False, br2Return=True):
+            return2Space=False, tabs2Space=False, br2Return=True, stripHead=False,
+            stripTail=False):
         """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -148,6 +149,8 @@ class Typesetter:
         self.return2Space = return2Space # If True (default), then all \r will be replaced by ' '
         self.tabs2Space = tabs2Space # If False, then \t is preserved into <tab/> and later converted back into '\t
         self.br2Return = br2Return # If True, the <br/> will be replaced by '\r'
+        self.stripHead = stripHead # If there is trailing white space a string, then strip it.
+        self.stripTail = stripTail # If there is tail white space in a string, then strip it
 
         self.currentImage = None # Keep the last processed image, in case there are captions to add.
 
@@ -371,15 +374,18 @@ class Typesetter:
             return lib['imageRefs']
         return None
 
-    def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
+    def _strip(self, s, prefix=None, postfix=None):
         """Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
         Otherwise answer the untouched *s*."""
+        s = s or ''
+        if self.stripHead:
+            s = s.lstrip()
+        if self.stripTail:
+            s = s.rstrip() 
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
-            s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
-        elif forceRightStrip:
-            s = (s or '').rstrip() # Force s to empty string in case it is None.
-        elif postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
-            s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
+            s = str(prefix or '') + s
+        if postfix is not None:
+            s += str(postfix or '')
         return s
 
     def getMatchingStyleNames(self, tag):
@@ -436,6 +442,8 @@ class Typesetter:
             else:
                 box.bs += bs
         else:
+            while bs.s and bs.s[0] in ' \t\n\r':
+                bs.s = bs.s[1:]
             self.TEXTBOX_CLASS(bs, parent=self.galley)
 
     def htmlNode(self, node, end=False):
@@ -475,7 +483,7 @@ class Typesetter:
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
-        # Ignore <pre> tag output, as it is part of a ~~~Pyhton code block
+        # Ignore <pre> tag output, as it is part of a ~~~Pyhton ... ~~~ code block
         if self.writeTags and not node.tag in self.skipTags:
             # Open the node in HTML export for this node
             self.htmlNode(node)
@@ -517,7 +525,8 @@ class Typesetter:
             # If there is no text or if the node does not have tail text, these are None.
             # Still we want to be able to add the postfix to the tail, so then the tail is changed
             # to empty string?
-            childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
+            childTail = self._strip(child.tail)
+            #childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
                 # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
                 bs = self.context.newString(childTail, e=e, style=nodeStyle)
