@@ -600,7 +600,8 @@ VIEW_NONE = None # View settings are all off.
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
-# Image formats
+# Image formats (standard in DrawBot)
+# See also http://www.drawbot.com/content/canvas/saveImage.html
 FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'
 FILETYPE_JPEG = 'jpeg'
@@ -609,10 +610,13 @@ FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
-FILETYPE_SKETCH = 'sketch' # File format of SketchApp
+FILETYPE_BMP = 'bmp'
+FILETYPE_ICNS = 'icns'
 # Movie formats
 FILETYPE_MOV = 'mov'
 FILETYPE_MP4 = 'mp4'
+# Other formats
+FILETYPE_SKETCH = 'sketch' # File format of SketchApp
 # Application format
 FILETYPE_APP = 'app'
 # Font formats
@@ -627,7 +631,7 @@ FILETYPE_MD = 'md' # Markdown file extension
 
 # Commonly used groups of file types.
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG, 
-    FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF)
+    FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF, FILETYPE_BMP, FILETYPE_ICNS)
 MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
