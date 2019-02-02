@@ -67,7 +67,6 @@ class TextBox(Element):
         if bs is not None:
             # Source can be any type: BabelString instance or plain unicode string.
             bs = self.newString(bs, style=self.style)
-
         self._bs = bs
     bs = property(_get_bs, _set_bs)
 

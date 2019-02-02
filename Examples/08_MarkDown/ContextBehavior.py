@@ -38,15 +38,16 @@ pdfContext = DrawBotContext()
 htmlContext = HtmlContext()
 
 styles = dict(
-    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), firstLineIndent=0,
-        paragraphBottomSpacing=pt(12)),
-    h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4), firstLineIndent=0, 
-        paragraphTopSpacing=pt(12), paragraphBottomSpacing=pt(12)),
-    p=dict(textFill=blackColor, fontSize=pt(12), leading=em(1.4), firstLineIndent=pt(24)),
+    h1=dict(textFill=color('red'), fontSize=pt(24), leading=em(1.4), firstTagIndent=pt(0),
+        firstLineIndent=0, paragraphBottomSpacing=pt(12)),
+    h2=dict(textFill=color(0.3), fontSize=pt(18), leading=em(1.4), firstTagIndent=pt(0), 
+        firstLineIndent=0, paragraphTopSpacing=pt(12), paragraphBottomSpacing=pt(12)),
+    p=dict(textFill=blackColor, fontSize=pt(10), leading=em(1.4), firstLineIndent=pt(24), 
+        firstTagIndent=0, firstColumnIndent=0),
     li=dict(textFill=color('green'), tabs=pt(8, 16, 24, 36, 48), fontSize=pt(12), leading=em(1.4), 
         indent=16, firstLineIndent=0),
-    strong=dict(textFill=color('red'), firstLineIndent=0),
-    em=dict(textFill=color('blue'), firstLineIndent=0),
+    strong=dict(textFill=color('red'), firstLineIndent=0, firstTagIndent=0),
+    em=dict(textFill=color('blue'), firstLineIndent=0, firstTagIndent=0),
 )
 
 # Create the overall documents, side by side for the two contexts.
@@ -94,7 +95,8 @@ for doc in (pdfDoc, htmlDoc):
     # will run sequentially through the elements, executing the code blocks. 
     # This may cause the shifting of target for the text elements to another block
     # or another page.
-    targets = dict(doc=doc, page=page1, box=page1.select('Box'), composer=composer)
+    targets = dict(doc=doc, page=page1, box=page1.select('Box'), 
+        composer=composer, styles=styles, context=doc.context)
     composer.compose(galley, targets=targets)
 
     # Now the targets dictionary is filled with results that were created during

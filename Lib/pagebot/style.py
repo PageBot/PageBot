@@ -281,11 +281,11 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...] or [20, 30, 40] for LEFT
         # DrawBot-FormattedString compatible
-        indent = pt0, # Left indent (for left-right based scripts)
+        indent = pt0, # Left indent (for left-right based scripts).
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
         firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
         # PageBot additions, used for textOverflow, in combination with columns
-        firstParagraphIndent = pt0, # Indent of first line of paragraph in a text tag, where style is different from previous tag.
+        firstTagIndent = pt0, # Indent of first line of paragraph in a <p> text tag, where style is different from previous tag.
         firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
 
         # Strip pre/post white space from e.text and e.tail and substitute by

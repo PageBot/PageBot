@@ -136,7 +136,7 @@ class DrawBotString(BabelString):
     def columnStart(self, firstColumnIndent):
         bs = self
         style = self.getStyleAtIndex(0)
-        if style.get('firstLineIndent') or firstColumnIndent: # Something going on at start?
+        if style.get('firstLineIndent') is not None or firstColumnIndent is not None: # Something going on at start?
             style['fontSize'] = pt(0.0001) # Really really small place holder period.
             style['textFill'] = color(1, 1, 1, 1) # Transparant, so it will never show.
             style['firstLineIndent'] = firstColumnIndent or 0 # Then make this one work
@@ -752,7 +752,7 @@ class DrawBotString(BabelString):
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from
         # previous tag. How to get this info?
-        # sFirstParagraphIndent = style.get('firstParagraphIndent')
+        # firstTagIndent = style.get('firstTagIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
             fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
