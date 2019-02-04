@@ -87,7 +87,7 @@ def testFlat():
     entity.frame(100, 100, 380, 80)
 
     # Pagebot.
-    style = dict(font=pagebotFont, fontSize=FONTSIZE, color=pagebotStroke,
+    style = dict(font=pagebotFont, fontSize=FONTSIZE, textFill=pagebotStroke,
             leading=LEADING)
     bs = context.newString(msg, style=style)
     context.text('bla', (50, 100)) # TODO: also for native flat.

@@ -61,7 +61,6 @@ class BaseContext(AbstractDrawBotContext):
         self._gState = []
 
         self.doc = None
-        self.pages = []
 
         self.page = None
         self.style = None
@@ -427,7 +426,7 @@ class BaseContext(AbstractDrawBotContext):
     def polygon(self, *points, **kwargs):
         return self.b.polygon(*points, **kwargs)
 
-    def quadTo(bcp, p):
+    def quadTo(self, bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         # What's difference with qCurveTo()?
         return self.b.quadTo(bcp, p)
@@ -646,18 +645,18 @@ class BaseContext(AbstractDrawBotContext):
         # Otherwise assume the value to be a degrees number.
         self.b.rotate(angle, center=center)
 
-    def scale(self, x=1, y=None, center=(0, 0)):
+    def scale(self, sx=1, sy=None, center=(0, 0)):
         """Sets the drawing scale."""
-        if isinstance(x, (tuple, list)):
-            assert len(x) in (2, 3)
-            x, y = sz[0], s[1] # FIXME: where are sz and s?
+        if isinstance(sx, (tuple, list)):
+            assert len(sx) in (2, 3)
+            sx, sy = sx[0], sx[1] # FIXME: where are sz and s?
 
-        if y is None:
-            y = x
+        if sy is None:
+            sy = sx
 
         msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
-        assert isinstance(x, (int, float)) and isinstance(y, (int, float)), (msg % (x, y))
-        self.b.scale(x, y, center=center)
+        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
+        self.b.scale(sx, sy, center=center)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         return self.b.skew(angle1, angle2=angle2, center=center)

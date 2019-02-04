@@ -341,7 +341,12 @@ table {
     #   Compatible component support
 
     def textBox(self, bs, box, align=None):
-        print('@@@@@@', bs, box, align)
+        """Just add the text, ignore position for now."""
+        self.div()
+        self.addHtml(str(bs))
+        self._div()
+
+    text = textBox
 
     #   J S
 

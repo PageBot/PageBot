@@ -14,7 +14,6 @@
 #
 #     typesetter.py
 #
-import os
 import copy
 import codecs
 import xml.etree.ElementTree as ET

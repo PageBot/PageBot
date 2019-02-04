@@ -19,7 +19,6 @@
 #     used local in an element or string.
 #
 
-import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
