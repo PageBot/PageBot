@@ -77,7 +77,7 @@ class PageView(BaseView):
         >>> view = doc.view
         >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
-        2
+        1
         >>> len(view.elements[0])
         8
         """
@@ -739,17 +739,19 @@ class PageView(BaseView):
         indexFontSize = max(9, min(16, baselineGrid*0.5)) # Index size depends on baseline.
         indexGutter = baselineGrid/4 # Gutter between index marker and element padding
 
-        startY = e.baselineGridStart
+        baselineYs = [] # Collect all baseline positions on e
         if e.originTop:
-            if startY is None:
-                startY = e.pt # Otherwise use the top padding as start Y.
-            oy = startY # Assumes origin at top for context drawing
+            oy = yy = startY = (e.baselineGridStart or e.pt) # Assumes origin at top for context drawing
+            while yy < e.h - e.pb:
+                baselineYs.append(yy)
+                yy += baselineGrid
         else: # Page origin is at the bottom
-            if startY is None:
-                startY = e.h - e.pt # Otherwise use the top padding as start Y.
-            oy = e.h - startY # Assumes origin at bottom for context drawing.
+            startY = e.h - (e.baselineGridStart or e.pt)
+            oy = yy = startY # Assumes origin at bottom for context drawing.
+            while yy > e.pb:
+                baselineYs.append(yy)
+                yy -= baselineGrid
 
-        line = 0 # Line index
         baselineColor = e.css('baselineColor', DEFAULT_BASELINE_COLOR)
         baselineWidth = e.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
 
@@ -759,16 +761,16 @@ class PageView(BaseView):
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)
 
-        while oy > e.pb: # Run until the padding of the element is reached.
+        for lineIndex, oy in enumerate(baselineYs): 
             tl = tr = None
             if not background:
                 if BASE_INDEX_LEFT in show: # Shows line baseline index
-                    tl = repr(line)
+                    tl = repr(lineIndex)
                 elif BASE_Y_LEFT in show: # Show vertical position marker
                     tl = repr(e.h - oy)
 
                 if BASE_INDEX_RIGHT in show: # Shows line baseline index
-                    tr = repr(line)
+                    tr = repr(lineIndex)
                 elif BASE_Y_RIGHT in show: # Show vertical position marker
                     tr = repr(e.h - oy)
 
@@ -792,9 +794,6 @@ class PageView(BaseView):
                     context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
-            line += 1 # Increment line index.
-
-            oy -= baselineGrid # Next vertical line position of baseline grid.
 
     #    M A R K E R S
 

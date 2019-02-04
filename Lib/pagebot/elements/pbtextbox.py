@@ -775,7 +775,7 @@ class TextBox(Element):
         """
         if parent is None:
             parent = self.parent
-        if self.textLines and page is not None:
+        if self.textLines:
             assert index in range(len(self.textLines)), \
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))

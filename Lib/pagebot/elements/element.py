@@ -1258,7 +1258,7 @@ class Element:
             dy = y - self.baselineGridStart
         else:
             # Calculate the position of top of the grid
-            gridTopY = self.h - self.baselineGridStart
+            gridTopY = self.h - (self.baselineGridStart or self.pt)
             # Calculate distance of the line to top of the grid
             gy = gridTopY - y
             dy = gy - round(gy/self.baselineGrid) * self.baselineGrid
