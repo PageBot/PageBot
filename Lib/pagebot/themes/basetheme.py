@@ -215,7 +215,7 @@ class BaseTheme:
         li=dict(color='black', bgcolor='white',
             diapcolor='white', diapbgcolor='black',
             link='dark2', hover='darker2',
-            diaplink='light2', hover='lightest2'),
+            diaplink='light2', hoverlink='lightest2'),
         # Base 3
         side=dict(color='black', bgcolor='white',
             padding=12, 
