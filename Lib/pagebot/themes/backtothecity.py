@@ -29,7 +29,6 @@ class BackToTheCity(BaseTheme):
         base5=spot(157),
     )
 
-
 if __name__ == "__main__":
     import doctest
     import sys

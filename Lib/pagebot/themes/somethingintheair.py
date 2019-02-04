@@ -28,6 +28,7 @@ class SomethingInTheAir(BaseTheme):
         base4=spot(245), # Supporter1
         base5=spot(190),
     )
+    
 if __name__ == "__main__":
     import doctest
     import sys

@@ -46,103 +46,6 @@ class Palette:
         base4=BASE_COLOR.darker(0.75), # Supporter 1
         base5=BASE_COLOR.lighter(0.75), # Supporter 2
     )
-    """    
-
-    STYLES_LIGHT = dict(
-        body=Style(PALETTE, color='black', bgcolor='black'),
-        page=Style(PALETTE, color='black', bgcolor='white'),
-        logo=Style(PALETTE, color='logo1', bgcolor='supporter1'),
-        hr=Style(PALETTE, color='supporter3'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='white', bgcolor='black', 
-            link='middle', hover='light'),
-        h2=Style(PALETTE, color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        h3=Style(PALETTE, color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        banner=Style(PALETTE, color='middle', bgcolor='white'),
-        intro=Style(PALETTE, color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=Style(PALETTE, color='black', bgcolor='hilite1',
-            diapcolor='white', diapbgcolor='dark'),
-        menu=Style(PALETTE, color='black', bgcolor='hilite1',
-            diapcolor='hilite1', diapbgcolor='black',
-            link='hilite2', hover='supporter2'),
-        p=Style(PALETTE, color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        li=Style(PALETTE, color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        side=Style(PALETTE, color='black', bgcolor='hilite3',
-            padding=12, 
-            link='middle', hover='black'),
-    )
-    STYLES_NORMAL = dict(
-        body=Style(PALETTE, color='black', bgcolor='black'),
-        page=Style(PALETTE, color='black', bgcolor='white'),
-        logo=Style(PALETTE, color='logo1', bgcolor='supporter1'),
-        hr=Style(PALETTE, color='supporter3'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='white', bgcolor='black', 
-            link='middle', hover='light'),
-        h2=Style(PALETTE, color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        h3=Style(PALETTE, color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        banner=Style(PALETTE, color='middle', bgcolor='white'),
-        intro=Style(PALETTE, color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=Style(PALETTE, color='black', bgcolor='hilite1',
-            diapcolor='white', diapbgcolor='dark'),
-        menu=Style(PALETTE, color='black', bgcolor='hilite1',
-            diapcolor='hilite1', diapbgcolor='black',
-            link='hilite2', hover='supporter2'),
-        p=Style(PALETTE, color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        li=Style(PALETTE, color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        side=Style(PALETTE, color='black', bgcolor='hilite3',
-            padding=12, 
-            link='middle', hover='black'),
-    )
-    STYLES_DARK = dict(
-        body=Style(PALETTE, color='white', bgcolor='black'),
-        page=Style(PALETTE, color='white', bgcolor='black'),
-        logo=Style(PALETTE, color='logo1', bgcolor='supporter1'),
-        hr=Style(PALETTE, color='supporter3'), # <hr> Horizontal ruler
-        h1=Style(PALETTE, color='black', bgcolor='white', 
-            link='middle', hover='dark'),
-        h2=Style(PALETTE, color='white', bgcolor='hilite3',
-            diapcolor='hilite3', diapbgcolor='white'),
-        h3=Style(PALETTE, color='white', bgcolor='hilite3',
-            diapcolor='hilite3', diapbgcolor='white'),
-        banner=Style(PALETTE, color='white', bgcolor='middle'),
-        intro=Style(PALETTE, color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=Style(PALETTE, color='hilite1', bgcolor='black',
-            diapcolor='dark', diapbgcolor='white'),
-        menu=Style(PALETTE, color='hilite1', bgcolor='black',
-            diapcolor='black', diapbgcolor='hilite1',
-            link='hilite2', hover='supporter2'),
-        p=Style(PALETTE, color='white', bgcolor='black',
-            diapcolor='black', diapbgcolor='white',
-            link='cold', hover='warm'),
-        li=Style(PALETTE, color='white', bgcolor='black',
-            diapcolor='black', diapbgcolor='white',
-            link='warm', hover='cold'),
-        side=Style(PALETTE, color='hilite3', bgcolor='black',
-            padding=12, 
-            link='middle', hover='light'),
-    )
-    MOODS = {
-        'light': Mood('Light', STYLES_LIGHT),
-        'normal': Mood('Normal', STYLES_NORMAL),
-        'dark': Mood('Dark', STYLES_DARK),
-        #'smooth': Mood('Smooth', STYLES_SMOOTH),
-        #'contrast': Mood('Contrast', STYLES_CONTRAST),
-    }
-    """
     def __init__(self, colors=None):
         self.colorNames = set() # Collect the total set of installed color names.
         # Install default colors
@@ -203,16 +106,15 @@ class Style:
     """Holds CSS-style values, accessable as key and as attrName.
 
     """
-    def __init__(self, palette, name=None, **kwargs):
+    def __init__(self, name, palette, styleDict):
         #assert isinstance(palette, Palette), 'Palette not right type "%s"' % palette
-        self.palette = palette
         self.name = name or 'Untitled'
-        for attrName, value in kwargs.items():
-            self[attrName] = value
+        self.palette = palette
+        for attrName, value in styleDict.items():
+            self[attrName] = palette[value]
 
     def __getitem__(self, name):
-        v = self.get(name)
-        return self.palette.get(v, v) # If reference in self.palette, then translate the value.
+        return getattr(self, name)
 
     def __setitem__(self, name, value):
         setattr(self, name, value)
@@ -237,42 +139,16 @@ class Mood:
     UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin')
     NAMES = ('font',)
     
-    def __init__(self, name, styles):
+    def __init__(self, name, styles, palette):
         self.name = name
-        for styleName, style in styles.items():
-            self.addStyle(styleName, style)
+        self.palette = palette
+        for styleName, styleDict in styles.items():
+            self[styleName] = Style(styleName, palette, styleDict)
 
     def __getitem__(self, styleName):
-        return self.get(styleName)
+        return getattr(self, styleName)
 
-    def __setitem__(self, styleName, value):
-        self.set(styleName, value)
-
-    def get(self, styleCssName):
-        if not '.' in styleCssName:
-            styleName = styleCssName
-            funcName = 'fill'
-        else:
-            styleName, funcName = styleCssName.split('.')
-        assert styleName.split('_')[0] in self.IDS, 'Style name not valid "%s"' % styleName
-
-        v = self.getStyle(styleName)[funcName]
-        if funcName in self.COLORS:
-            try:
-                v = v.hex
-            except AttributeError:
-                print('Bad color "%s" for "%s"' % (v, styleCssName))
-        return v
-
-    def getStyle(self, styleName):
-        style = getattr(self, styleName)
-        assert isinstance(style, Style)
-        return style
-        v = self.styles.get(styleName)
-        return self.palette.get(v, v)
-
-    def addStyle(self, styleName, style):
-        assert not hasattr(self, styleName) # Prevent overwriting existing attributes.
+    def __setitem__(self, styleName, style):
         assert isinstance(style, Style)
         setattr(self, styleName, style)
 
@@ -287,17 +163,134 @@ class BaseTheme:
     comply to the selected theme of a document, unless they have their own
     style defined.
 
+    >>> theme = BaseTheme() # Using default mood and default palette
+    >>> theme.mood.page.color, theme.mood.page.bgcolor # Access by attribute
+    (Color(r=0, g=0, b=0), Color(r=1, g=1, b=1))
+    >>> theme.mood.h1.color, theme.mood.h1.bgcolor
+    (Color(r=1, g=1, b=1), Color(r=0, g=0, b=0))
+    >>> theme.mood['li']['color'], theme.mood['li']['bgcolor'] # Access by key
+    (Color(r=0, g=0, b=0), Color(r=1, g=1, b=1))
     """
-    """
-    >>> theme.mood.h1_0.palette.c2
-    Color(spot=coolgray6u)
-    >>> theme.mood.h1_0.palette['c3']
-    Color(spot=165)
-    """
+
+    STYLES_LIGHT = dict(
+        # Base 0
+        body=dict(color='dark0', bgcolor='lighest0'),
+        page=dict(color='dark0', bgcolor='white'),
+        logo=dict(color='logo', bgcolor='white'),
+        hr=dict(color='darker0'), # <hr> Horizontal ruler
+        h1=dict(color='darker0', bgcolor='white', 
+            diapcolor='light0', diapbgcolor='dark0',
+            link='base0', hover='dark0',
+            diaplink='lightest0', diaphover='lighter0'),
+        h2=dict(color='darker0', bgcolor='white', 
+            diapcolor='light0', diapbgcolor='dark0',
+            link='base0', hover='dark0',
+            diaplink='lightest0', diaphover='lighter0'),
+        h3=dict(color='darker0', bgcolor='white', 
+            diapcolor='light0', diapbgcolor='dark0',
+            link='base0', hover='dark0',
+            diaplink='lightest0', diaphover='lighter0'),
+        h4=dict(color='darker0', bgcolor='white', 
+            diapcolor='light0', diapbgcolor='dark0',
+            link='base0', hover='dark0',
+            diaplink='lightest0', diaphover='lighter0'),
+        h5=dict(color='darker0', bgcolor='white', 
+            diapcolor='light0', diapbgcolor='dark0',
+            link='base0', hover='dark0',
+            diaplink='lightest0', diaphover='lighter0'),
+        # Base 1
+        banner=dict(color='base1', bgcolor='white'),
+        intro=dict(color='white', bgcolor='supporter2',
+            link='white', hover='warm'),
+        group=dict(color='black', bgcolor='hilite1',
+            diapcolor='white', diapbgcolor='dark'),
+        menu=dict(color='black', bgcolor='hilite1',
+            diapcolor='hilite1', diapbgcolor='black',
+            link='hilite2', hover='supporter2'),
+        # Base 2
+        p=dict(color='darkest2', bgcolor='white',
+            diapcolor='lightest2', diapbgcolor='dark2',
+            link='darker2', hover='dark2',
+            diaplink='light2', diaphover='lighter2'),
+        li=dict(color='black', bgcolor='white',
+            diapcolor='white', diapbgcolor='black',
+            link='dark2', hover='darker2',
+            diaplink='light2', hover='lightest2'),
+        # Base 3
+        side=dict(color='black', bgcolor='white',
+            padding=12, 
+            link='dark3', hover='darkest3'),
+    )
+    STYLES_NORMAL = dict(
+        body=dict(color='black', bgcolor='black'),
+        page=dict(color='black', bgcolor='white'),
+        logo=dict(color='logo1', bgcolor='supporter1'),
+        hr=dict(color='supporter3'), # <hr> Horizontal ruler
+        h1=dict(color='white', bgcolor='black', 
+            link='middle', hover='light'),
+        h2=dict(color='hilite3', bgcolor='white',
+            diapcolor='white', diapbgcolor='hilite3'),
+        h3=dict(color='hilite3', bgcolor='white',
+            diapcolor='white', diapbgcolor='hilite3'),
+        banner=dict(color='middle', bgcolor='white'),
+        intro=dict(color='white', bgcolor='supporter2',
+            link='white', hover='warm'),
+        group=dict(color='black', bgcolor='hilite1',
+            diapcolor='white', diapbgcolor='dark'),
+        menu=dict(color='black', bgcolor='hilite1',
+            diapcolor='hilite1', diapbgcolor='black',
+            link='hilite2', hover='supporter2'),
+        p=dict(color='black', bgcolor='white',
+            diapcolor='white', diapbgcolor='black',
+            link='warm', hover='cold'),
+        li=dict(color='black', bgcolor='white',
+            diapcolor='white', diapbgcolor='black',
+            link='warm', hover='cold'),
+        side=dict(color='black', bgcolor='hilite3',
+            padding=12, 
+            link='middle', hover='black'),
+    )
+    STYLES_DARK = dict(
+        body=dict(color='white', bgcolor='black'),
+        page=dict(color='white', bgcolor='black'),
+        logo=dict(color='logo1', bgcolor='supporter1'),
+        hr=dict(color='supporter3'), # <hr> Horizontal ruler
+        h1=dict(color='black', bgcolor='white', 
+            link='middle', hover='dark'),
+        h2=dict(color='white', bgcolor='hilite3',
+            diapcolor='hilite3', diapbgcolor='white'),
+        h3=dict(color='white', bgcolor='hilite3',
+            diapcolor='hilite3', diapbgcolor='white'),
+        banner=dict(color='white', bgcolor='middle'),
+        intro=dict(color='white', bgcolor='supporter2',
+            link='white', hover='warm'),
+        group=dict(color='hilite1', bgcolor='black',
+            diapcolor='dark', diapbgcolor='white'),
+        menu=dict(color='hilite1', bgcolor='black',
+            diapcolor='black', diapbgcolor='hilite1',
+            link='hilite2', hover='supporter2'),
+        p=dict(color='white', bgcolor='black',
+            diapcolor='black', diapbgcolor='white',
+            link='cold', hover='warm'),
+        li=dict(color='white', bgcolor='black',
+            diapcolor='black', diapbgcolor='white',
+            link='warm', hover='cold'),
+        side=dict(color='hilite3', bgcolor='black',
+            padding=12, 
+            link='middle', hover='light'),
+    )
+    # To be redefined by inheriting Them classes if necessary
+    MOODS = {
+        'light': STYLES_LIGHT,
+        'normal': STYLES_NORMAL,
+        'dark': STYLES_DARK,
+        #'smooth': Mood('Smooth', STYLES_SMOOTH),
+        #'contrast': Mood('Contrast', STYLES_CONTRAST),
+    }
     NAME = "BaseTheme"
-    MOODS = None # To be redefined by inheriting Them classes
     COLORS = None # To redefined by inheriting Theme classes.
     BASE_COLORS = {}
+
 
     def __init__(self, mood=None):
         self.palette = Palette(self.BASE_COLORS)
@@ -305,7 +298,8 @@ class BaseTheme:
         self.selectMood(mood)
 
     def selectMood(self, name):
-        self.mood = Mood(name or 'normal', self.palette)
+        name = name or 'normal'
+        self.mood = Mood(name, self.MOODS[name], self.palette)
         return self.mood
 
     def __repr__(self):
