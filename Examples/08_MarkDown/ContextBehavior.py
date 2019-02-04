@@ -46,8 +46,8 @@ styles = dict(
         firstTagIndent=0, firstColumnIndent=0),
     li=dict(textFill=color('green'), tabs=pt(8, 16, 24, 36, 48), fontSize=pt(12), leading=em(1.4), 
         indent=16, firstLineIndent=0),
-    strong=dict(textFill=color('red'), firstLineIndent=0, firstTagIndent=0),
-    em=dict(textFill=color('blue'), firstLineIndent=0, firstTagIndent=0),
+    strong=dict(textFill=color('red'), firstLineIndent=pt(24), firstTagIndent=0),
+    em=dict(textFill=color('blue'), firstLineIndent=pt(24), firstTagIndent=0),
 )
 
 # Create the overall documents, side by side for the two contexts.

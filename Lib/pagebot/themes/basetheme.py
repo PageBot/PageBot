@@ -46,7 +46,8 @@ class Palette:
         base4=BASE_COLOR.darker(0.75), # Supporter 1
         base5=BASE_COLOR.lighter(0.75), # Supporter 2
     )
-    """
+    """    
+
     STYLES_LIGHT = dict(
         body=Style(PALETTE, color='black', bgcolor='black'),
         page=Style(PALETTE, color='black', bgcolor='white'),
@@ -301,17 +302,17 @@ class BaseTheme:
     def __init__(self, mood=None):
         self.palette = Palette(self.BASE_COLORS)
         self.name = self.NAME
-        self.moods = self.MOODS
-        #self.selectMood(mood)
+        self.selectMood(mood)
 
     def selectMood(self, name):
-        self.mood = self.moods.get(name) or self.moods['normal']
+        self.mood = Mood(name or 'normal', self.palette)
+        return self.mood
 
     def __repr__(self):
         return '<Theme %s styles:%d>' % (self.name, len(self.styles))
 
     def __getitem__(self, selector):
-        return self.mood[selector]
+        return self.selectMood(selector)
 
 
 if __name__ == "__main__":
