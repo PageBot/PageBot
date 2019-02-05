@@ -441,11 +441,13 @@ class Typesetter:
                 box.bs = bs
             else:
                 box.bs += bs
-        else:
+        elif hasattr(bs, 's'):
             while bs.s and bs.s[0] in ' \t\n\r':
                 bs.s = bs.s[1:]
             self.TEXTBOX_CLASS(bs, parent=self.galley)
-
+        else:
+            self.TEXTBOX_CLASS(bs, parent=self.galley)
+            
     def htmlNode(self, node, end=False):
         """Open the tag in HTML output and copy the node attributes if there are any."""
         htmlTag = u'<%s' % node.tag

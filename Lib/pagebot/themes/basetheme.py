@@ -14,6 +14,7 @@
 
 import copy
 from pagebot.style import getRootStyle
+from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spot, rgb, whiteColor, blackColor, grayColor
 
 class Palette:
@@ -54,7 +55,7 @@ class Palette:
             self.addColors(colors)
         relatedColors = dict(
             logoLight=self.logo.lighter(),
-            logodark=self.logo.darker(),
+            logoDark=self.logo.darker(),
             supporter1=self.base4,
             supporter2=self.base5
         )
@@ -95,34 +96,11 @@ class Palette:
     def __len__(self):
         return len(self.colorNames)
     
-    def get(self, colorName, default=None):
+    def get(self, colorName):
         """Interpret the name, and try to match/construct a color based on the recipe.
         """
-        if colorName in self.colorNames:
-            return getattr(self, colorName)
-        return default
-
-class Style:
-    """Holds CSS-style values, accessable as key and as attrName.
-
-    """
-    def __init__(self, name, palette, styleDict):
-        #assert isinstance(palette, Palette), 'Palette not right type "%s"' % palette
-        self.name = name or 'Untitled'
-        self.palette = palette
-        for attrName, value in styleDict.items():
-            self[attrName] = palette[value]
-
-    def __getitem__(self, name):
-        return getattr(self, name)
-
-    def __setitem__(self, name, value):
-        setattr(self, name, value)
-
-    def get(self, name, default=None):
-        if hasattr(self, name):
-            return getattr(self, name)
-        return default
+        assert colorName in self.colorNames, ('%s.get: Unknown color  name "%s"' % (self.__class__.__name__, colorName))
+        return getattr(self, colorName)
 
 class Mood:
     """Mood hold a set of style values. If the value exists as key in the self.palette,
@@ -133,7 +111,15 @@ class Mood:
     IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 'page',
         'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu', 
         'main', 'side')
-    COLORS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
+    COLORS = ('black', 'gray', 'white', 'background', 'logoLight', 'logo', 'logoDark',
+        'lightest0', 'light0', 'lighter0', 'base0', 'darker0', 'dark0', 'darkest0',
+        'lightest1', 'light1', 'lighter1', 'base1', 'darker1', 'dark1', 'darkest1',
+        'lightest2', 'light2', 'lighter2', 'base2', 'darker2', 'dark2', 'darkest2',
+        'lightest3', 'light3', 'lighter3', 'base3', 'darker3', 'dark3', 'darkest3',
+        'lightest4', 'light4', 'lighter4', 'base4', 'darker4', 'dark4', 'darkest4',
+        'lightest5', 'light5', 'lighter5', 'base5', 'darker5', 'dark5', 'darkest5',
+    )
+    ATTRS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
         'diapcolor', 'diapbgcolor', 'diaplink', 'diaphover',
         )
     UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin')
@@ -142,15 +128,15 @@ class Mood:
     def __init__(self, name, styles, palette):
         self.name = name
         self.palette = palette
+        self.attributes = {}
         for styleName, styleDict in styles.items():
-            self[styleName] = Style(styleName, palette, styleDict)
+            for attrName, value in styleDict.items():
+                if value in self.COLORS:
+                    value = palette.get(value)
+                self.attributes['%s.%s' % (styleName, attrName)] = value
 
-    def __getitem__(self, styleName):
-        return getattr(self, styleName)
-
-    def __setitem__(self, styleName, style):
-        assert isinstance(style, Style)
-        setattr(self, styleName, style)
+    def __getitem__(self, attrName):
+        return self.attributes[attrName]
 
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
@@ -164,17 +150,17 @@ class BaseTheme:
     style defined.
 
     >>> theme = BaseTheme() # Using default mood and default palette
-    >>> theme.mood.page.color, theme.mood.page.bgcolor # Access by attribute
-    (Color(r=0, g=0, b=0), Color(r=1, g=1, b=1))
-    >>> theme.mood.h1.color, theme.mood.h1.bgcolor
-    (Color(r=1, g=1, b=1), Color(r=0, g=0, b=0))
-    >>> theme.mood['li']['color'], theme.mood['li']['bgcolor'] # Access by key
-    (Color(r=0, g=0, b=0), Color(r=1, g=1, b=1))
+    >>> theme.mood['page.bgcolor'] # Access by attribute
+    Color(r=1, g=1, b=1)
+    >>> theme.mood['h1.bgcolor']
+    Color(r=1, g=1, b=1)
+    >>> theme.mood['body.bgcolor']
+    Color(r=0.90625, g=0.90625, b=0.90625)
     """
 
-    STYLES_LIGHT = dict(
+    STYLES_NORMAL = dict(
         # Base 0
-        body=dict(color='dark0', bgcolor='lighest0'),
+        body=dict(color='dark0', bgcolor='lightest0'),
         page=dict(color='dark0', bgcolor='white'),
         logo=dict(color='logo', bgcolor='white'),
         hr=dict(color='darker0'), # <hr> Horizontal ruler
@@ -200,13 +186,13 @@ class BaseTheme:
             diaplink='lightest0', diaphover='lighter0'),
         # Base 1
         banner=dict(color='base1', bgcolor='white'),
-        intro=dict(color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=dict(color='black', bgcolor='hilite1',
-            diapcolor='white', diapbgcolor='dark'),
-        menu=dict(color='black', bgcolor='hilite1',
-            diapcolor='hilite1', diapbgcolor='black',
-            link='hilite2', hover='supporter2'),
+        intro=dict(color='white', bgcolor='dark1',
+            link='white', hover='darker1'),
+        group=dict(color='black', bgcolor='light1',
+            diapcolor='white', diapbgcolor='dark1'),
+        menu=dict(color='black', bgcolor='lighter1',
+            diapcolor='light1', diapbgcolor='black',
+            link='lighter1', hover='lightest1'),
         # Base 2
         p=dict(color='darkest2', bgcolor='white',
             diapcolor='lightest2', diapbgcolor='dark2',
@@ -218,84 +204,30 @@ class BaseTheme:
             diaplink='light2', hoverlink='lightest2'),
         # Base 3
         side=dict(color='black', bgcolor='white',
-            padding=12, 
+            padding=pt(12), 
             link='dark3', hover='darkest3'),
     )
-    STYLES_NORMAL = dict(
-        body=dict(color='black', bgcolor='black'),
-        page=dict(color='black', bgcolor='white'),
-        logo=dict(color='logo1', bgcolor='supporter1'),
-        hr=dict(color='supporter3'), # <hr> Horizontal ruler
-        h1=dict(color='white', bgcolor='black', 
-            link='middle', hover='light'),
-        h2=dict(color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        h3=dict(color='hilite3', bgcolor='white',
-            diapcolor='white', diapbgcolor='hilite3'),
-        banner=dict(color='middle', bgcolor='white'),
-        intro=dict(color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=dict(color='black', bgcolor='hilite1',
-            diapcolor='white', diapbgcolor='dark'),
-        menu=dict(color='black', bgcolor='hilite1',
-            diapcolor='hilite1', diapbgcolor='black',
-            link='hilite2', hover='supporter2'),
-        p=dict(color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        li=dict(color='black', bgcolor='white',
-            diapcolor='white', diapbgcolor='black',
-            link='warm', hover='cold'),
-        side=dict(color='black', bgcolor='hilite3',
-            padding=12, 
-            link='middle', hover='black'),
-    )
-    STYLES_DARK = dict(
-        body=dict(color='white', bgcolor='black'),
-        page=dict(color='white', bgcolor='black'),
-        logo=dict(color='logo1', bgcolor='supporter1'),
-        hr=dict(color='supporter3'), # <hr> Horizontal ruler
-        h1=dict(color='black', bgcolor='white', 
-            link='middle', hover='dark'),
-        h2=dict(color='white', bgcolor='hilite3',
-            diapcolor='hilite3', diapbgcolor='white'),
-        h3=dict(color='white', bgcolor='hilite3',
-            diapcolor='hilite3', diapbgcolor='white'),
-        banner=dict(color='white', bgcolor='middle'),
-        intro=dict(color='white', bgcolor='supporter2',
-            link='white', hover='warm'),
-        group=dict(color='hilite1', bgcolor='black',
-            diapcolor='dark', diapbgcolor='white'),
-        menu=dict(color='hilite1', bgcolor='black',
-            diapcolor='black', diapbgcolor='hilite1',
-            link='hilite2', hover='supporter2'),
-        p=dict(color='white', bgcolor='black',
-            diapcolor='black', diapbgcolor='white',
-            link='cold', hover='warm'),
-        li=dict(color='white', bgcolor='black',
-            diapcolor='black', diapbgcolor='white',
-            link='warm', hover='cold'),
-        side=dict(color='hilite3', bgcolor='black',
-            padding=12, 
-            link='middle', hover='light'),
-    )
+    STYLES_LIGHT = STYLES_NORMAL
+    STYLES_DARK = STYLES_NORMAL
+    STYLES_SMOOTH = STYLES_NORMAL
+    STYLES_CONTRAST = STYLES_NORMAL
     # To be redefined by inheriting Them classes if necessary
     MOODS = {
         'light': STYLES_LIGHT,
         'normal': STYLES_NORMAL,
         'dark': STYLES_DARK,
-        #'smooth': Mood('Smooth', STYLES_SMOOTH),
-        #'contrast': Mood('Contrast', STYLES_CONTRAST),
+        'smooth': STYLES_SMOOTH,
+        'contrast': STYLES_CONTRAST,
     }
     NAME = "BaseTheme"
     COLORS = None # To redefined by inheriting Theme classes.
     BASE_COLORS = {}
 
 
-    def __init__(self, mood=None):
+    def __init__(self, name=None, moodName=None):
         self.palette = Palette(self.BASE_COLORS)
-        self.name = self.NAME
-        self.selectMood(mood)
+        self.name = name or self.NAME
+        self.selectMood(moodName)
 
     def selectMood(self, name):
         name = name or 'normal'
@@ -303,7 +235,7 @@ class BaseTheme:
         return self.mood
 
     def __repr__(self):
-        return '<Theme %s styles:%d>' % (self.name, len(self.styles))
+        return '<Theme %s styles:%d>' % (self.name, len(self.mood.styles))
 
     def __getitem__(self, selector):
         return self.selectMood(selector)

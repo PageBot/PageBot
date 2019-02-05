@@ -13,8 +13,8 @@
 #
 #     seasoningthedish.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.themes.basetheme import BaseTheme
+from pagebot.toolbox.color import spot
 
 class SeasoningTheDish(BaseTheme):
     u"""The SeasoningTheDish theme is ..."""

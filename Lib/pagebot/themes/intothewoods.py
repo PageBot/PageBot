@@ -15,7 +15,6 @@
 #
 from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
-from pagebot.toolbox.units import px
 
 class IntoTheWoods(BaseTheme):
     u"""The IntoTheWoods theme is ...

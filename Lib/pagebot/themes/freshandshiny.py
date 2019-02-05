@@ -13,17 +13,17 @@
 #
 #     freshandshiny.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.themes.basetheme import BaseTheme
+from pagebot.toolbox.color import spot, rgb
 
 class FreshAndShiny(BaseTheme):
     u"""The FreshAndShiny theme is ...
 
     >>> theme = FreshAndShiny()
-    >>> theme.mood.h1.color
+    >>> theme.mood['h1.color']
     'hilite2'
     >>> theme.selectMood('dark') # Select another mode
-    >>> theme.mood.h1.color
+    >>> theme.mood['h1.color']
     'hilite2'
     """
     NAME = 'Fresh and Shiny'

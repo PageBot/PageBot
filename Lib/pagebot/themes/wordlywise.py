@@ -14,16 +14,15 @@
 #     wordlywise.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.toolbox.color import spot
 
 class WordlyWise(BaseTheme):
     u"""The WordlyWise theme is ...
 
     >>> theme = WordlyWise()
     >>> theme.palette
-    <Wordly Wise #0=195 #1=187 #2=214 #3=258 #4=270 #5=265 #6=280 #7=278 #8=286 #9=427 #10=429 #11=430>
+    <Palette colors=51>
     >>> from pagebot.elements.web.nanosite.nanostyle_css import cssPy
-    >>> theme.cssPy2Css(cssPy)
     """
 
     NAME = 'Wordly Wise'

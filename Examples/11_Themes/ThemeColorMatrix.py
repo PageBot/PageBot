@@ -77,7 +77,7 @@ def makeThemePage(themeClass):
         y += 1
 
 colorMatrix = (
-    ('black', 'gray', 'white', 'background', 'logoLight', 'logo', 'logodark'),
+    ('black', 'gray', 'white', 'background', 'logoLight', 'logo', 'logoDark'),
     ('lightest0', 'light0', 'lighter0', 'base0', 'darker0', 'dark0', 'darkest0'),
     ('lightest1', 'light1', 'lighter1', 'base1', 'darker1', 'dark1', 'darkest1'),
     ('lightest2', 'light2', 'lighter2', 'base2', 'darker2', 'dark2', 'darkest2'),

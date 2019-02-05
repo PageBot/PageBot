@@ -13,7 +13,7 @@
 #
 #     businesasusual.py
 #
-from pagebot.themes.basetheme import BaseTheme, Palette, Style, Mood
+from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
 
 class BusinessAsUsual(BaseTheme):
