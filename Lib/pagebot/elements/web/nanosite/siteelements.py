@@ -20,7 +20,7 @@ from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.toolbox.units import em
-from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide
+from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
 
 class Site(Publication):
     u"""Build a website, simplest responsive structure, using CSS Grid.
@@ -61,6 +61,32 @@ class NanoElement(Column):
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
+    def newCollection(self, parent=None, **kwargs):
+        return Collection(parent=self, **kwargs)
+
+    def newSection(self, parent=None, **kwargs):
+        return Section(parent=self, **kwargs)
+
+    def newBanner(self, parent=None, **kwargs):
+        return Banner(parent=self, **kwargs)
+
+    def newSlideShow(self, parent=None, w=None, h=None,**kwargs):
+        group = SlideShowGroup(parent=self, w=w, h=h, **kwargs)
+        slides = SlideShow(parent=group, **kwargs)
+        side = SlideSide(parent=group, **kwargs)
+        group.slides = slides
+        group.side = side
+        return group
+
+    def newIntroduction(self, parent=None, **kwargs):
+        return Introduction(parent=self, **kwargs)
+
+    def newMain(self, parent=None, **kwargs):
+        return Main(parent=self, **kwargs)
+
+    def newSide(self, parent=None, **kwargs):
+        return Side(parent=self, **kwargs)
+
 
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work.
@@ -84,7 +110,7 @@ class Logo(NanoElement):
         NanoElement.__init__(self, **kwargs)
         if logo is None:
             logo = 'Name Here'
-        TextBox(logo, parent=self)
+        t = TextBox(logo, parent=self)
 
     def build_html(self, view, path, drawElements=True):
 
@@ -93,8 +119,10 @@ class Logo(NanoElement):
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         self.showCssIdClass(view)
         b.a(href='index.html')
+        b.h1()
         for e in self.elements:
             e.build_html(view, path)
+        b._h1()
         b._a()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
@@ -278,18 +306,25 @@ class Collection(NanoElement):
         Behavior depends on the selected layout, defined view-parameters and 
         amound of available elements.
     """
+    def prepare_html(self, view):
+        """Respond to the top-down element broadcast to prepare for build.
+        Run through all images and make them the same (w, h) as self, by cropping the scaled cache.
+        """
+        for e in self.elements:
+            e.proportional = self.proportional
+            e.prepare_html(view)
 
     def build_html(self, view, path, drawElements=True):
         if not self.elements:
             return
         b = self.context.b
+        elements = self.findAll(cls=Image)
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        style = 'width: %02f%%; float: left' % (100/len(self.elements))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style=style)
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
-        for e in self.elements:
-            e.h = self.h
-            b.div(cssClass=self.cssClass+'-select')
+        style = 'width:%02f%%;' % ((100-len(elements))/len(elements))
+        for e in elements: # Find all child images inside the tree
+            b.div(cssClass=self.cssClass+'element clearfix', style=style)
             e.build_html(view, path)
             b._div()
         b._div()
@@ -298,36 +333,15 @@ class Collection(NanoElement):
 # Content
 
 class Content(NanoElement):
+    pass
 
-    def newSection(self, parent=None, **kwargs):
-        return Section(parent=self, **kwargs)
+class Section(NanoElement):
+    pass
 
-    def newBanner(self, parent=None, **kwargs):
-        return Banner(parent=self, **kwargs)
-
-    def newSlideShow(self, parent=None, w=None, h=None, **kwargs):
-        return SlideShow(parent=self, **kwargs)
-
-    def newSlideSide(self, parent=None, **kwargs):
-        return SlideSide(parent=self, **kwargs)
-
-# Banner
+# Content elements
 
 class Banner(NanoElement):
     pass
-
-# Section
-
-class Section(NanoElement):
-
-    def newIntroduction(self, parent=None, **kwargs):
-        return Introduction(parent=self, **kwargs)
-
-    def newMain(self, parent=None, **kwargs):
-        return Main(parent=self, **kwargs)
-
-    def newSide(self, parent=None, **kwargs):
-        return Side(parent=self, **kwargs)
 
 class Introduction(NanoElement):
     pass

@@ -63,10 +63,14 @@ class TextBox(Element):
         >>> tb.bs = 'AAA' # String converts to DrawBotString.
         >>> tb.bs, tb.bs.s, tb.bs.__class__.__name__
         (AAA, AAA, 'DrawBotString')
+        >>> tb = TextBox('BBB')
+        >>> tb.bs
+
         """
         if bs is not None:
             # Source can be any type: BabelString instance or plain unicode string.
             bs = self.newString(bs, style=self.style)
+            #assert bs is not None
         self._bs = bs
     bs = property(_get_bs, _set_bs)
 

@@ -132,7 +132,7 @@ class Mood:
         for styleName, styleDict in styles.items():
             for attrName, value in styleDict.items():
                 if value in self.COLORS:
-                    value = palette.get(value)
+                    value = palette.get(value).hex
                 self.attributes['%s.%s' % (styleName, attrName)] = value
 
     def __getitem__(self, attrName):
@@ -151,11 +151,13 @@ class BaseTheme:
 
     >>> theme = BaseTheme() # Using default mood and default palette
     >>> theme.mood['page.bgcolor'] # Access by attribute
-    Color(r=1, g=1, b=1)
+    'FFFFFF'
     >>> theme.mood['h1.bgcolor']
-    Color(r=1, g=1, b=1)
+    'FFFFFF'
     >>> theme.mood['body.bgcolor']
-    Color(r=0.90625, g=0.90625, b=0.90625)
+    'E7E7E7'
+    >>> theme.mood['p.hover']
+    '454545'
     """
 
     STYLES_NORMAL = dict(
@@ -163,7 +165,6 @@ class BaseTheme:
         body=dict(color='dark0', bgcolor='lightest0'),
         page=dict(color='dark0', bgcolor='white'),
         logo=dict(color='logo', bgcolor='white'),
-        hr=dict(color='darker0'), # <hr> Horizontal ruler
         h1=dict(color='darker0', bgcolor='white', 
             diapcolor='light0', diapbgcolor='dark0',
             link='base0', hover='dark0',
@@ -185,14 +186,17 @@ class BaseTheme:
             link='base0', hover='dark0',
             diaplink='lightest0', diaphover='lighter0'),
         # Base 1
+        menu=dict(color='black', bgcolor='lighter1',
+            diapcolor='light1', diapbgcolor='black',
+            link='lighter1', hover='lightest1'),
+        hr=dict(color='light1'), # <hr> Horizontal ruler
         banner=dict(color='base1', bgcolor='white'),
         intro=dict(color='white', bgcolor='dark1',
             link='white', hover='darker1'),
         group=dict(color='black', bgcolor='light1',
             diapcolor='white', diapbgcolor='dark1'),
-        menu=dict(color='black', bgcolor='lighter1',
-            diapcolor='light1', diapbgcolor='black',
-            link='lighter1', hover='lightest1'),
+        collection=dict(color='black', bgcolor='white',
+            diapcolor='white', diapbgcolor='dark1'),
         # Base 2
         p=dict(color='darkest2', bgcolor='white',
             diapcolor='lightest2', diapbgcolor='dark2',
@@ -208,7 +212,58 @@ class BaseTheme:
             link='dark3', hover='darkest3'),
     )
     STYLES_LIGHT = STYLES_NORMAL
-    STYLES_DARK = STYLES_NORMAL
+    STYLES_DARK = dict(
+        # Base 0
+        body=dict(color='lightest0', bgcolor='dark0'),
+        page=dict(color='white', bgcolor='dark0'),
+        logo=dict(color='logo', bgcolor='black'),
+        h1=dict(color='lighter0', bgcolor='white', 
+            diapcolor='dark0', diapbgcolor='light0',
+            link='base0', hover='light0',
+            diaplink='lighter0', diaphover='lightest0'),
+        h2=dict(color='white', bgcolor='darker0', 
+            diapcolor='dark0', diapbgcolor='light0',
+            link='dark0', hover='base0',
+            diaplink='lighter0', diaphover='lightest0'),
+        h3=dict(color='white', bgcolor='darker0', 
+            diapcolor='dark0', diapbgcolor='light0',
+            link='dark0', hover='base0',
+            diaplink='lighter0', diaphover='lightest0'),
+        h4=dict(color='white', bgcolor='darker0', 
+            diapcolor='dark0', diapbgcolor='light0',
+            link='dark0', hover='base0',
+            diaplink='lighter0', diaphover='lightest0'),
+        h5=dict(color='white', bgcolor='darker0', 
+            diapcolor='dark0', diapbgcolor='light0',
+            link='dark0', hover='base0',
+            diaplink='lighter0', diaphover='lightest0'),
+        # Base 1
+        menu=dict(color='lighter1', bgcolor='black',
+            diapcolor='black', diapbgcolor='light1',
+            link='lightest1', hover='lighter1'),
+        hr=dict(color='darker1'), # <hr> Horizontal ruler
+        banner=dict(color='white', bgcolor='dark0'),
+        intro=dict(color='dark1', bgcolor='white',
+            link='darker1', hover='white'),
+        group=dict(color='light1', bgcolor='black',
+            diapcolor='dark1', diapbgcolor='white'),
+        collection=dict(color='black', bgcolor='white',
+            diapcolor='white', diapbgcolor='dark1'),
+        # Base 2
+        p=dict(color='white', bgcolor='darkest2',
+            diapcolor='dark2', diapbgcolor='lightest2',
+            link='dark2', hover='darker2',
+            diaplink='lighter2', diaphover='light2'),
+        li=dict(color='white', bgcolor='black',
+            diapcolor='black', diapbgcolor='white',
+            link='darker2', hover='dark2',
+            diaplink='lightest2', hoverlink='light2'),
+        # Base 3
+        side=dict(color='white', bgcolor='black',
+            padding=pt(12), 
+            link='darkest3', hover='dark3'),
+    )
+
     STYLES_SMOOTH = STYLES_NORMAL
     STYLES_CONTRAST = STYLES_NORMAL
     # To be redefined by inheriting Them classes if necessary
@@ -224,10 +279,10 @@ class BaseTheme:
     BASE_COLORS = {}
 
 
-    def __init__(self, name=None, moodName=None):
+    def __init__(self, name=None):
         self.palette = Palette(self.BASE_COLORS)
-        self.name = name or self.NAME
-        self.selectMood(moodName)
+        self.name = self.NAME
+        self.selectMood(name)
 
     def selectMood(self, name):
         name = name or 'normal'

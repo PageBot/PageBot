@@ -17,6 +17,7 @@
 
 from pagebot.constants import *
 from pagebot.elements import *
+from pagebot.toolbox.units import upt, perc, units
 
 # CSS_EASE paramters imported from constants
 
@@ -69,20 +70,27 @@ class SlideShow(SlideShowBase):
     Add: doc.view.jsUrls = <Other JS files>, js/jquery.bbslider.min.js')
 
     Fill in MarkDown file with image references as:
+
     ~~~
-    box = page.select('SlideShow')
+    content = page.select('Content')
+    slideshow = content.newSlideShow(h=300, slideW=300, slideH=300, startIndex=2, 
+        autoHeight=True, dynamicHeight=True, transition='slide', easing=CSS_EASE, 
+        frameDuration=4, duration=0.7, pauseOnHit=True, randomPlay=False)
+    box = slideshow.slides
     ~~~
 
     ![](images/DesignModels2.072.png)
     ![](images/DesignModels2.073.png)
     ![](images/DesignModels2.074.png)
 
-    Add element to page:
+    ~~~ 
+    box = slideshow.side
+    ~~~
+    Slide show side caption here.
 
-    SlideShow(parent=page, <SlideShow options>)
     """
 
-    def __init__(self, w=None, h=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
+    def __init__(self, slideW=None, slideH=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
         easing=None, transition=None, auto=True, loop=True, pager=False, carousel=False, 
         controls=False, controlsText=None, pauseOnHit=True, touch=False, touchOffset=None,
         dragControls=False, dragOffset=None, randomPlay=False, maskImage=None, 
@@ -93,9 +101,8 @@ class SlideShow(SlideShowBase):
         # The (self.w, self.h) combination and ration defines the size and ratio that child 
         # elements will be scaled/cropped
 
-        self.proportional = False
-        self.w = w
-        self.h = h
+        self.slideW = units(slideW)
+        self.slideH = units(slideH)
         self.proportional = proportional
 
         # https://www.bbslider.com/options.php for options
@@ -190,19 +197,31 @@ class SlideShow(SlideShowBase):
         b = self.context.b
         b.addJs(self._makeJs(self.cssId, self.cssClass))
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass=self.cssClass)
+        b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix')
         for image in self.findAll(cls=Image): # Find all child images inside the tree
             if self.useCssBackground:
-                b.div(style="background-image:url(%s);width:%dpx;height:%dpx;background-position: center;background-size: cover;" % \
-                    (str(image.path), self.w, self.h)) # Define slide container
-            #b.img(src=image.path)
+                b.div(style="background-image:url(%s);width:%s;height:%s;background-position: center;background-size: cover;" % \
+                    (str(image.path), str(self.slideW), str(self.slideH))) # Define slide container
+                #b.img(src=image.path)
                 b._div()
             else:
-                b.div(style="width:%dpx;height:%dpx;" % (self.w, self.h)) # Define slide container
+                b.div(style="width:%s;height:%s;" % (w, h)) # Define slide container
                 b.img(src=image.path)
                 b._div()
         b._div()
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
+
+class SlideShowGroup(SlideShowBase):
+    def build_html(self, view, path, drawElements=True):
+        
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        self.showCssIdClass(view)
+        for e in self.elements:
+            e.build_html(view, path)
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class SlideSide(SlideShowBase):
 
