@@ -25,7 +25,7 @@ class FantasyTheme(BaseTheme):
     NAME = 'Fantasy Red'
     BASE_COLORS = dict(
         base2=color(1, 0, 0.2), # Filling 2 base colors as source for range.
-        dark3=color(0, 0, 0.5), # Overwriting single slot in the matrix.
+        dark3=color(1, 0, 0.5), # Overwriting single slot in the matrix.
         logo=spot(300)
     )
 

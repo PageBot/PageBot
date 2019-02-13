@@ -132,8 +132,12 @@ class Mood:
         for styleName, styleDict in styles.items():
             for attrName, value in styleDict.items():
                 if value in self.COLORS:
-                    value = palette.get(value).hex
-                self.attributes['%s.%s' % (styleName, attrName)] = value
+                    value = palette.get(value)
+                    keyValue = value.hex
+                else:
+                    keyValue = value 
+                self.attributes['%s.%s' % (styleName, attrName)] = keyValue # Key value is hex color
+                setattr(self, '%s_%s' % (styleName, attrName), value) # Attr value is origina value object
 
     def __getitem__(self, attrName):
         return self.attributes[attrName]
@@ -150,14 +154,16 @@ class BaseTheme:
     style defined.
 
     >>> theme = BaseTheme() # Using default mood and default palette
-    >>> theme.mood['page.bgcolor'] # Access by attribute
+    >>> theme.mood['page.bgcolor'] # Access by key
     'FFFFFF'
+    >>> theme.mood.page_bgcolor # Access by attribute
+    Color(r=1, g=1, b=1)
     >>> theme.mood['h1.bgcolor']
     'FFFFFF'
-    >>> theme.mood['body.bgcolor']
-    'E7E7E7'
-    >>> theme.mood['p.hover']
-    '454545'
+    >>> theme.mood['body.bgcolor'], theme.mood.body_bgcolor
+    ('E7E7E7', Color(r=0.90625, g=0.90625, b=0.90625))
+    >>> theme.mood['p.hover'], theme.mood.p_hover # Both access by key and by attribute syntax work
+    ('454545', Color(r=0.27, g=0.27, b=0.27))
     """
 
     STYLES_NORMAL = dict(
@@ -210,6 +216,12 @@ class BaseTheme:
         side=dict(color='black', bgcolor='white',
             padding=pt(12), 
             link='dark3', hover='darkest3'),
+        # Functional
+        feature=dict(hed='base0', deck='base1', 
+            subhead='base2', byline='base3', 
+            text='base4', support='base5',
+            shadow='black',
+            front='black', middle='gray', back='white'),
     )
     STYLES_LIGHT = STYLES_NORMAL
     STYLES_DARK = dict(
@@ -262,6 +274,12 @@ class BaseTheme:
         side=dict(color='white', bgcolor='black',
             padding=pt(12), 
             link='darkest3', hover='dark3'),
+        # Functional
+        feature=dict(hed='base0', deck='base1', 
+            subhead='base2', byline='base3', 
+            text='base4', support='base5',
+            shadow='black',
+            front='white', middle='gray', back='black'),
     )
 
     STYLES_SMOOTH = STYLES_NORMAL

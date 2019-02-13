@@ -33,8 +33,11 @@ class Publication(Element):
     """
     FINDER_CLASS = Finder
 
-    def __init__(self, findersOrPaths=None, **kwargs):
+    def __init__(self, findersOrPaths=None, api=None, **kwargs):
         Element.__init__(self, **kwargs)
+        if api is None:
+            api = {} # All values will be default.
+        self.api = api
         self.finders = {} # Key is finder root, so we keep unique finders.
         if not findersOrPaths: # At least make it search in the current directory
             findersOrPaths = ['.']
