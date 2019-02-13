@@ -1,4 +1,4 @@
-imlanguage: python3
+language: python3
 os: osx
 branches:
   only:
