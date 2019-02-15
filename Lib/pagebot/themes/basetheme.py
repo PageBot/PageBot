@@ -13,6 +13,8 @@
 #
 
 import copy
+from random import choice
+
 from pagebot.style import getRootStyle
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spot, rgb, whiteColor, blackColor, grayColor
@@ -86,6 +88,10 @@ class Palette:
             if overwrite or not hasattr(self, colorName):
                 self.colorNames.add(colorName) # Called can overwrite any color recipe.
                 setattr(self, colorName, c)
+
+    def _get_random(self):
+        return self.get(choice(list(self.colorNames)))
+    random = property(_get_random)
 
     def __repr__(self):
         return '<%s colors=%d>' % (self.__class__.__name__, len(self))
