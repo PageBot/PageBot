@@ -13,8 +13,3 @@
 #
 from pagebot.elements.web.nanosite.siteelements import *
 
-def newHeader(**kwargs):
-    return Header(++kwargs)
-    
-def newBanner(**kwargs):
-    return Banner(++kwargs)

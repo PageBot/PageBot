@@ -81,9 +81,15 @@ class NanoElement(Column):
     def newIntroduction(self, parent=None, **kwargs):
         return Introduction(parent=self, **kwargs)
 
+    def newMains(self, parent=None, **kwargs):
+        return Mains(parent=self, **kwargs)
+
     def newMain(self, parent=None, **kwargs):
         return Main(parent=self, **kwargs)
 
+    def newSides(self, parent=None, **kwargs):
+        return Sides(parent=self, **kwargs)
+        
     def newSide(self, parent=None, **kwargs):
         return Side(parent=self, **kwargs)
 
@@ -346,7 +352,19 @@ class Banner(NanoElement):
 class Introduction(NanoElement):
     pass
 
+class Mains(NanoElement):
+    """Grouping Main elements together, so CSS grid can define the
+    behavior of multiple, occupying a single main grid slot.
+    """
+    pass
+
 class Main(NanoElement):
+    pass
+
+class Sides(NanoElement):
+    """Grouping Side elements together, so CSS grid can define the
+    behavior of multiple, occupying a single side grid slot.
+    """
     pass
 
 class Side(NanoElement):
