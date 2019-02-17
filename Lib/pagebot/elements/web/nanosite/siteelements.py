@@ -101,9 +101,23 @@ class Wrapper(NanoElement):
     >>> doc = Document(viewId='Site')
     >>> page = doc[1]
     >>> wrapper = Wrapper(parent=page)
-    >>> wrapper
+    >>> wrapper.size
+    (100pt, 100pt)
     """
     CSS_ID = 'Wrapper'
+
+class Header(NanoElement):
+    """Header on top of the page. Typical container of logo and navigation."""
+
+    def build_html(self, view, path, drawElements=True):
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.header(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        self.showCssIdClass(view)
+        for e in self.elements:
+            e.build_html(view, path)
+        b._header()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class Logo(NanoElement):
     """Logo on top of the page, often used in the Header. Can either a text or an image,
@@ -119,7 +133,6 @@ class Logo(NanoElement):
         t = TextBox(logo, parent=self)
 
     def build_html(self, view, path, drawElements=True):
-
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
@@ -227,9 +240,11 @@ class Navigation(NanoElement):
         if drawElements:
             # <nav id="Navigation" class="topnav" role="navigation">
             b.nav(cssId=self.cssId, cssClass=self.cssClass, role='navigation') # navigation
+            b.div(cssClass=self.cssClass+'-menu') # Allow shrinked container to be positioned in CSS-grid cell.
             b.ul(cssClass='main-navigation  navmenu')
             self._buildMenuNode_html(b, self.pageTree)
             b._ul()
+            b._div()
             b._nav()
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
        

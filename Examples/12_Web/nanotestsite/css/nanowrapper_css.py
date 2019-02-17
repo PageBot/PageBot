@@ -34,7 +34,7 @@ body {
     font-weight: normal; 
     letter-spacing: 0.02em;
 
-    margin: 12px; /* Overall window-wrapper margin */
+    margin: 10px; /* Overall window-wrapper margin */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -44,24 +44,40 @@ h1, h2, h3, h4, h5, h6 {
     margin: .45em 0;
     padding: 0; 
 }
+h1, p {
+    color: #%(base0.frontest)s;
+}
+h2 {
+    color: #%(base1.frontest)s;
+}
+h3 {
+    color: #%(base2.frontest)s;
+}
+h5, h6 {
+    color: #%(base3.frontest)s;
+}
+
 .wrapper, .content{
     display: grid;
     grid-template-columns: 1fr;
     column-gap: 10px;
     row-gap: 10px;
-    background-color: #444;
+    background-color: #%(base0.backer)s;
+}
+.content {
+    background-color: #%(base1.backer)s;
 }
 .section {
     display: grid;
     grid-template-columns: 2fr 1fr;
     column-gap: 10px;
     row-gap: 10px;
-    background-color: #555;
+    background-color: #%(base2.backer)s;
 }
 .introduction {
     grid-column-start: 1; 
     grid-column-end: 3; 
-    background-color: #666;
+    background-color: #%(base3.backer)s;
 }
 .mains {
     display: grid;
@@ -70,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
     row-gap: 10px;    
 }
 .main {
-    background-color: #777;
+    background-color: #%(base4.backer)s;
 }
 .sides {
     display: grid;
@@ -79,7 +95,7 @@ h1, h2, h3, h4, h5, h6 {
     row-gap: 10px;    
 }
 .side {
-    background-color: #888;
+    background-color: #%(base5.backer)s;
 }
 .clearfix {
   /* overflow: auto; */ /* CSS hack to grow div including all child content. */
@@ -93,65 +109,68 @@ MEDIAQUERIES
 
 
 @media only screen and (max-width: 800px) {
-    body {
-        margin: 8px; /* Overall window-wrapper margin */
-    }
     .wrapper {
-        background-color: #440;
+        background-color: #%(base0)s;
     }
     .content {
-        background-color: #550;
+        background-color: #%(base1)s;
     }
     .section {
-        background-color: #550;
+        background-color: #%(base2)s;
         grid-template-columns: 1fr;
     }
     .introduction {
         grid-column-start: 1; 
         grid-column-end: 1; 
-        background-color: #660;
+        background-color: #%(base3)s;
     }
     .main {
-        background-color: #770;
+        background-color: #%(base4)s;
     }
     .side {
-        background-color: #880;
+        background-color: #%(base5)s;
     }
 }
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 1000px) {
     .wrapper {
-        background-color: #404;
+        background-color: #%(base0.back)s;
     }
     .content {
-        background-color: #505;
+        background-color: #%(base1.back)s;
+    }
+    .section {
+        background-color: #%(base2.back)s;
     }
     .introduction {
-        background-color: #606;
+        background-color: #%(base3.back)s;
     }
     .main {
-        background-color: #707;
+        background-color: #%(base4.back)s;
     }
     .side {
-        background-color: #808;
+        background-color: #%(base5.back)s;
     }
 }
 @media only screen and (min-width: 1200px) {
     .wrapper {
         width: 1200px;
         margin: auto;
-        background-color: #044;
+        background-color: #%(base0.backest)s;
     } 
     .content {
-        background-color: #055;
+        background-color: #%(base1.backest)s;
+    }
+    .section {
+        background-color: #%(base2.backest)s;
     }
     .introduction {
-        background-color: #066;
+        background-color: #%(base3.backest)s;
     }
     .main {
-        background-color: #077;
+        background-color: #%(base4.backest)s;
     }
     .side {
-        background-color: #088;
+        background-color: #%(base5.backest)s;
     }
 }
 

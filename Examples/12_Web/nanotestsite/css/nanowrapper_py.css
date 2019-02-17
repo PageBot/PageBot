@@ -1,14 +1,14 @@
 
 body {
-    background-color: #000000;
-    color: #D9D9D9;
+    background-color: #E2E0DF;
+    color: #181310;
     font-family: 'Upgrade-Regular', sans-serif;
     font-size: 13pt;
     line-height: 1.4em;
     font-weight: normal; 
     letter-spacing: 0.02em;
 
-    margin: 12px; /* Overall window-wrapper margin */
+    margin: 10px; /* Overall window-wrapper margin */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -18,24 +18,40 @@ h1, h2, h3, h4, h5, h6 {
     margin: .45em 0;
     padding: 0; 
 }
+h1, p {
+    color: #090706;
+}
+h2 {
+    color: #1F000D;
+}
+h3 {
+    color: #0D1904;
+}
+h5, h6 {
+    color: #1F2201;
+}
+
 .wrapper, .content{
     display: grid;
     grid-template-columns: 1fr;
     column-gap: 10px;
     row-gap: 10px;
-    background-color: #444;
+    background-color: #776E68;
+}
+.content {
+    background-color: #DB4E89;
 }
 .section {
     display: grid;
     grid-template-columns: 2fr 1fr;
     column-gap: 10px;
     row-gap: 10px;
-    background-color: #555;
+    background-color: #89C360;
 }
 .introduction {
     grid-column-start: 1; 
     grid-column-end: 3; 
-    background-color: #666;
+    background-color: #DDE951;
 }
 .mains {
     display: grid;
@@ -44,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
     row-gap: 10px;    
 }
 .main {
-    background-color: #777;
+    background-color: #D4CBC0;
 }
 .sides {
     display: grid;
@@ -53,7 +69,7 @@ h1, h2, h3, h4, h5, h6 {
     row-gap: 10px;    
 }
 .side {
-    background-color: #888;
+    background-color: #D7C657;
 }
 .clearfix {
   /* overflow: auto; */ /* CSS hack to grow div including all child content. */
@@ -67,65 +83,68 @@ MEDIAQUERIES
 
 
 @media only screen and (max-width: 800px) {
-    body {
-        margin: 8px; /* Overall window-wrapper margin */
-    }
     .wrapper {
-        background-color: #440;
+        background-color: #3D3028;
     }
     .content {
-        background-color: #550;
+        background-color: #CC0256;
     }
     .section {
-        background-color: #550;
+        background-color: #56AA1C;
         grid-template-columns: 1fr;
     }
     .introduction {
         grid-column-start: 1; 
         grid-column-end: 1; 
-        background-color: #660;
+        background-color: #CEE007;
     }
     .main {
-        background-color: #770;
+        background-color: #C1B5A5;
     }
     .side {
-        background-color: #880;
+        background-color: #C6AD0F;
     }
 }
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 1000px) {
     .wrapper {
-        background-color: #404;
+        background-color: #B1ACA9;
     }
     .content {
-        background-color: #505;
+        background-color: #EB9ABB;
+    }
+    .section {
+        background-color: #BBDDA4;
     }
     .introduction {
-        background-color: #606;
+        background-color: #EBF39C;
     }
     .main {
-        background-color: #707;
+        background-color: #E6E1DB;
     }
     .side {
-        background-color: #808;
+        background-color: #E8DE9F;
     }
 }
 @media only screen and (min-width: 1200px) {
     .wrapper {
         width: 1200px;
         margin: auto;
-        background-color: #044;
+        background-color: #E2E0DF;
     } 
     .content {
-        background-color: #055;
+        background-color: #F7D9E6;
+    }
+    .section {
+        background-color: #E6F2DD;
     }
     .introduction {
-        background-color: #066;
+        background-color: #F8FADA;
     }
     .main {
-        background-color: #077;
+        background-color: #F6F4F2;
     }
     .side {
-        background-color: #088;
+        background-color: #F6F3DB;
     }
 }
 

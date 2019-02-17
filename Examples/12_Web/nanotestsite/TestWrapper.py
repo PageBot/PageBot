@@ -41,10 +41,10 @@ from pagebot.themes import *
 #   WordlyWise
 #   HappyHolidays
 
-Theme = IntoTheWoods
+Theme = SeasoningTheDish
 
 theme = Theme('dark')
-#theme = Theme('normal')
+theme = Theme('light')
 
 SITE_NAME = 'Nano-Wrapper-Test-Site' # Also used as logo
 
@@ -96,21 +96,12 @@ def makeTemplate(doc):
     default = Template('Default', context=doc.context)
     wrapper = Wrapper(parent=default) # Create main page wrapper
     
-    # Relatively "flat" set of header elements in the wrapper, so we can move them around.
-    #logoString = doc.context.newString(SITE_NAME)
-    #Logo(parent=wrapper, logo=SITE_NAME)
-    #BurgerButton(parent=wrapper)
-
-    # Responsive conditional menus
-    #Navigation(parent=wrapper)
-    #MobileMenu(parent=wrapper)
-
     # Just make a simple content container in this template.
     # Rest of content is created upon request in MarkDown
     Content(parent=wrapper) 
 
-    # Default Footer at bottom of every page.
-    #Footer(parent=wrapper)
+    # Elements inside Content are defined in the MarkDown file.
+    # This allows the layout of pages easily be adapted to the available content.
 
     doc.addTemplate('default', default)
     return default
@@ -122,8 +113,8 @@ def makeSite(styles, viewId):
     doc.theme = theme
 
     view = doc.view
-    view.resourcePaths = ('css',)
-    view.jsUrls = []
+    view.resourcePaths = ('css',) # Copy CSS resource to the site export directory
+    view.jsUrls = [] # No Javascript for this example site.  
     
     # Generate css by mapping theme.mood on cssPy 
     doc.context.b.writeCss(CSS_PATH, cssPy % theme.mood)

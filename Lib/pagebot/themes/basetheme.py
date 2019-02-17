@@ -49,12 +49,31 @@ class Palette:
         base4=BASE_COLOR.darker(0.75), # Supporter 1
         base5=BASE_COLOR.lighter(0.75), # Supporter 2
     )
-    def __init__(self, colors=None):
+    FACTOR_DARKEST = 0.15
+    FACTOR_DARK = 0.4
+    FACTOR_DARKER = 0.7
+
+    FACTOR_LIGHTER = 0.3
+    FACTOR_LIGHT = 0.6
+    FACTOR_LIGHTEST = 0.85
+
+    def __init__(self, colors=None, **kwargs):
         self.colorNames = set() # Collect the total set of installed color names.
+
+        # Set lighter/darker factors from arguments or default
+        self.factorDarkest = kwargs.get('darkest', self.FACTOR_DARKEST)
+        self.factorDark = kwargs.get('dark', self.FACTOR_DARK)
+        self.factorDarker = kwargs.get('darker', self.FACTOR_DARKER)
+
+        self.factorLightest = kwargs.get('lightest', self.FACTOR_LIGHTEST)
+        self.factorLight = kwargs.get('light', self.FACTOR_LIGHT)
+        self.factorLighter = kwargs.get('lighter', self.FACTOR_LIGHTER)
+
         # Install default colors
         self.addColors(self.BASE_COLORS)
         if colors is not None:
             self.addColors(colors)
+
         relatedColors = dict(
             logoLight=self.logo.lighter(),
             logoDark=self.logo.darker(),
@@ -63,13 +82,13 @@ class Palette:
         )
         for n in range(self.NUM_BASE):
             base = self['base%d' % n]
-            relatedColors['darker%d' % n] = base.darker(0.7)
-            relatedColors['dark%d' % n] = base.darker(0.4)
-            relatedColors['darkest%d' % n] = base.darker(0.15)
+            relatedColors['darker%d' % n] = base.darker(self.factorDarker)
+            relatedColors['dark%d' % n] = base.darker(self.factorDark)
+            relatedColors['darkest%d' % n] = base.darker(self.factorDarkest)
 
-            relatedColors['lighter%d' % n] = base.lighter(0.3)
-            relatedColors['light%d' % n] = base.lighter(0.6)
-            relatedColors['lightest%d' % n] = base.lighter(0.85)
+            relatedColors['lighter%d' % n] = base.lighter(self.factorLighter)
+            relatedColors['light%d' % n] = base.lighter(self.factorLight)
+            relatedColors['lightest%d' % n] = base.lighter(self.factorLightest)
 
             #relatedColors['warmer%d' % n] = base.warmer(self.LEAST)
             #relatedColors['warm%d' % n] = base.warmer(self.MIDDLE)
@@ -111,7 +130,6 @@ class Palette:
 class Mood:
     """Mood hold a set of style values. If the value exists as key in the self.palette,
     then answer that value instead.
-
     """
     # Predefined styles
     IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 'page',
@@ -135,6 +153,7 @@ class Mood:
         self.name = name
         self.palette = palette
         self.attributes = {}
+        # Set colors from combined "IDS.COLOR" names
         for styleName, styleDict in styles.items():
             for attrName, value in styleDict.items():
                 if value in self.COLORS:
@@ -144,10 +163,18 @@ class Mood:
                     keyValue = value 
                 self.attributes['%s.%s' % (styleName, attrName)] = keyValue # Key value is hex color
                 setattr(self, '%s_%s' % (styleName, attrName), value) # Attr value is origina value object
-
+        # Set all colors as separate entries too, do they can be referred to, ignoring the mood.
+        for colorName in self.COLORS:
+            value = palette.get(colorName)
+            keyValue = value.hex
+            self.attributes[colorName] = keyValue # E.g. mood['light0'] answers "0E0D0F"
+            setattr(self, colorName, value) # E.g. mood.light0 answers Color instsance.
+    
     def __getitem__(self, attrName):
         return self.attributes[attrName]
 
+    def __repr__(self):
+        return '<%s %s>' % (self.__class__.__name__, self.name)
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
@@ -159,7 +186,12 @@ class BaseTheme:
     comply to the selected theme of a document, unless they have their own
     style defined.
 
-    >>> theme = BaseTheme() # Using default mood and default palette
+    >>> theme = BaseTheme('dark') # Using default mood and default palette
+    >>> theme.mood
+    <Mood dark>
+    >>> theme = BaseTheme()
+    >>> theme.mood
+    <Mood normal>
     >>> theme.mood['page.bgcolor'] # Access by key
     'FFFFFF'
     >>> theme.mood.page_bgcolor # Access by attribute
@@ -220,14 +252,39 @@ class BaseTheme:
             diaplink='light2', hoverlink='lightest2'),
         # Base 3
         side=dict(color='black', bgcolor='white',
-            padding=pt(12), 
-            link='dark3', hover='darkest3'),
+            padding=pt(12), link='dark3', hover='darkest3'),
         # Functional
         feature=dict(hed='base0', deck='base1', 
             subhead='base2', byline='base3', 
             text='base4', support='base5',
             shadow='black',
-            front='black', middle='gray', back='white'),
+            front='darkest0', middle='base0', back='lightest0'),
+        # Relative to base
+        # Plain base0, base1, base2, base3, base4, base5 are available too
+        base0=dict(
+            backer='lighter0', back='light0', backest='lightest0',
+            fronter='darker0', front='dark0', frontest='darkest0',
+        ),
+        base1=dict(
+            backer='lighter1', back='light1', backest='lightest1',
+            fronter='darker1', front='dark1', frontest='darkest1',
+        ),
+        base2=dict(
+            backer='lighter2', back='light2', backest='lightest2',
+            fronter='darker2', front='dark2', frontest='darkest2',
+        ),
+        base3=dict(
+            backer='lighter3', back='light3', backest='lightest3',
+            fronter='darker3', front='dark3', frontest='darkest3',
+        ),
+        base4=dict(
+            backer='lighter4', back='light4', backest='lightest4',
+            fronter='darker4', front='dark4', frontest='darkest4',
+        ),
+        base5=dict(
+            backer='lighter5', back='light5', backest='lightest5',
+            fronter='darker5', front='dark5', frontest='darkest5',
+        ),
     )
     STYLES_LIGHT = STYLES_NORMAL
     STYLES_DARK = dict(
@@ -278,14 +335,39 @@ class BaseTheme:
             diaplink='lightest2', hoverlink='light2'),
         # Base 3
         side=dict(color='white', bgcolor='black',
-            padding=pt(12), 
-            link='darkest3', hover='dark3'),
+            padding=pt(12), link='darkest3', hover='dark3'),
         # Functional
         feature=dict(hed='base0', deck='base1', 
             subhead='base2', byline='base3', 
             text='base4', support='base5',
             shadow='black',
-            front='white', middle='gray', back='black'),
+            front='lightest0', middle='base0', back='darkest0'),
+        # Relative to base
+        # Plain base0, base1, base2, base3, base4, base5 are available too
+        base0=dict(
+            fronter='lighter0', front='light0', frontest='lightest0',
+            backer='darker0', back='dark0', backest='darkest0',
+        ),
+        base1=dict(
+            fronter='lighter1', front='light1', frontest='lightest1',
+            backer='darker1', back='dark1', backest='darkest1',
+        ),
+        base2=dict(
+            fronter='lighter2', front='light2', frontest='lightest2',
+            backer='darker2', back='dark2', backest='darkest2',
+        ),
+        base3=dict(
+            fronter='lighter3', front='light3', frontest='lightest3',
+            backer='darker3', back='dark3', backest='darkest3',
+        ),
+        base4=dict(
+            fronter='lighter4', front='light4', frontest='lightest4',
+            backer='darker4', back='dark4', backest='darkest4',
+        ),
+        base5=dict(
+            fronter='lighter5', front='light5', frontest='lightest5',
+            backer='darker5', back='dark5', backest='darkest5',
+        ),
     )
 
     STYLES_SMOOTH = STYLES_NORMAL
