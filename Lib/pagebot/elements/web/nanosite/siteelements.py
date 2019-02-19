@@ -93,6 +93,8 @@ class NanoElement(Column):
     def newSide(self, parent=None, **kwargs):
         return Side(parent=self, **kwargs)
 
+    def newMovie(self, url, parent=None, **kwargs):
+        return Movie(url, parent=self, **kwargs)
 
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work.
@@ -384,6 +386,39 @@ class Sides(NanoElement):
 
 class Side(NanoElement):
     pass
+
+class Movie(NanoElement):
+    def __init__(self, url, autoPlay=True, loop=False, controls=False, w=None, h=None, **kwargs):
+        NanoElement.__init__(self, w=w, h=h, **kwargs)
+        self.url = url
+        self.frameW = w # Keep original value values, so we know if <iframe> should get them
+        self.frameH = h
+        self.autoPlay = autoPlay
+        self.loop = loop
+        self.controls = controls
+
+    def build_html(self, view, path, drawElements=True):
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        self.showCssIdClass(view)
+        url = self.url
+        params = []
+        if self.autoPlay:
+            params.append('autoplay')
+        if self.loop:
+            params.append('loop')
+        if self.controls:
+            params.append('controls')
+        if params:
+            url += '?' + '&'.join(params)
+
+        b.addHtml("""<iframe width="100%" src="https://www.youtube.com/embed/d9s0-HzOsYo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>""")
+
+
+        #b.iframe_(src=url, width_html=self.frameW or '100%', height_html=self.frameH)
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 # Footer
 

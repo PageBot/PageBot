@@ -1535,11 +1535,18 @@ table {
         """The iframe tag creates an inline frame that contains another document.
         <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
         """
-        r = self.result
-        r.write('<iframe src="%s"' % src)
+        self.write('<iframe src="%s"' % src)
         self.getandwrite_attributes('iframe', args)
-        self.write('></iframe>')
+        self.write('>')
 
+    def _iframe(self):
+        self.write('</iframe>')
+
+    def iframe_(self, src, **args):
+        self.iframe(src, **args)
+        self._iframe()
+
+        
     def embed(self, **args):
         """FIXME: Does not seem to be defined in w3schools??
         self.embed(src='./_images/amovie.qt')
