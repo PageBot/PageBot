@@ -168,7 +168,7 @@ class Navigation(NanoElement):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
-    def _buildMenuNode_html(self, b, pageTree):
+    def _buildMenuNode_html(self, b, pageTree, navIndex=0):
         for node in pageTree.children:
             if node.page and node.page.url and node.page.name:
                 if self.page is node.page: # Current page?
@@ -176,7 +176,7 @@ class Navigation(NanoElement):
                 else:
                     currentClass = None
 
-                b.li(cssClass=currentClass)
+                b.li(cssClass=currentClass, script='onHover();')
                 b.a(href=node.page.flatUrl, cssClass=currentClass)
                 label = node.page.name
                 if node.children:
@@ -185,7 +185,7 @@ class Navigation(NanoElement):
                 b._a()
                 if node.children:
                     b.ul(cssClass='navmenu')
-                    self._buildMenuNode_html(b, node)
+                    self._buildMenuNode_html(b, node, navIndex+1)
                     b._ul()
                 b._li()
             else:

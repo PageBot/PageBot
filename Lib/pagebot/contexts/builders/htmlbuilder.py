@@ -163,7 +163,9 @@ class HtmlBuilder(XmlBuilder):
     OL_ATTRIBUTES = {'compact', 'start', 'type'}
 
     I_ATTRIBUTES = TT_ATTRIBUTES = SMALL_ATTRIBUTES = BIG_ATTRIBUTES = LI_ATTRIBUTES = DT_ATTRIBUTES = DD_ATTRIBUTES = {
-        'dir', 'lang', 'xmllang'}
+        'dir', 'lang', 'xmllang', 'script', 'ondblclick',
+        'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
+        'onkeydown', 'onkeypress', 'onkeyup'}
 
     DIV_ATTRIBUTES = {
         'onmouseout', 'relation', 'name', 'disabled', 'onmouseover',

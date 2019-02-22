@@ -222,7 +222,9 @@ class BaseTheme:
             diapsublink='lightest%d'%c, diapsubhover='lighter%d'%c)
 
     STYLES_NORMAL = dict(
-        # Base 0
+        # white <-- lighest <-- light <-- lighter <-- base
+        # base --> darker --> dark --> darkest --> black
+        # Normal.Base 0
         body=dict(color='dark0', bgcolor='lightest0'),
         page=dict(color='dark0', bgcolor='white'),
         logo=dict(color='logo', bgcolor='white'),
@@ -233,22 +235,31 @@ class BaseTheme:
         h5=DEFAULT_H_COLORS_NORMAL(0),
         # Default menu and navigation with base0
         menu=DEFAULT_MENU_NORMAL(0), # Default base0 if no index used
-        mmobilemenu=DEFAULT_MENU_NORMAL(0), # Default base0 if no index used
+        mobilemenu=DEFAULT_MENU_NORMAL(0), # Default base0 if no index used
         menu0=DEFAULT_MENU_NORMAL(0),
         mobilemenu0=DEFAULT_MENU_NORMAL(0),
         hr0=dict(color='darker0'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro0=dict(color='light0', bgcolor='dark0', # .introduction h1 
+            link='light0', hover='darker0'), # .introduciton h1 a
+        
         # Base 1
         menu1=DEFAULT_MENU_NORMAL(1),
         mobilemenu1=DEFAULT_MENU_NORMAL(1),
         hr=dict(color='darker1'), # Default ruler color
         hr1=dict(color='darker1'), # <hr> Horizontal ruler color by index
         banner=dict(color='base1', bgcolor='white'),
-        intro=dict(color='white', bgcolor='dark1',
-            link='white', hover='darker1'),
+        # Introduction default is base1
+        intro=dict(color='lightest1', bgcolor='dark1', # .introduction h1 
+            link='light1', hover='lighter1'), # .introduciton h1 a
+        intro1=dict(color='lightest1', bgcolor='dark1', # .introduction h1 
+            link='light1', hover='lighter1'), # .introduciton h1 a
+
         group=dict(color='black', bgcolor='light1',
             diapcolor='white', diapbgcolor='dark1'),
         collection=dict(color='black', bgcolor='white',
             diapcolor='white', diapbgcolor='dark1'),
+
         # Base 2
         menu2=DEFAULT_MENU_NORMAL(2),
         mobilemenu2=DEFAULT_MENU_NORMAL(2),
@@ -261,16 +272,36 @@ class BaseTheme:
             diapcolor='white', diapbgcolor='black',
             link='dark2', hover='darker2',
             diaplink='light2', hoverlink='lightest2'),
+        # Introduction default is base1
+        intro2=dict(color='lightest2', bgcolor='dark2', # .introduction h1 
+            link='light2', hover='lighter2'), # .introduciton h1 a
+
         # Base 3
         menu3=DEFAULT_MENU_NORMAL(3),
         mobilemenu3=DEFAULT_MENU_NORMAL(3),
         hr3=dict(color='darker3'), # <hr> Horizontal ruler color by index
         side=dict(color='black', bgcolor='white',
             padding=pt(12), link='dark3', hover='darkest3'),
+        # Introduction default is base1
+        intro3=dict(color='lightest3', bgcolor='dark3', # .introduction h1 
+            link='light3', hover='lighter3'), # .introduciton h1 a
+
         # Base 4 (supporting color)
+        menu4=DEFAULT_MENU_NORMAL(4),
+        mobilemenu4=DEFAULT_MENU_NORMAL(4),
         hr4=dict(color='darker4'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro4=dict(color='lightest4', bgcolor='dark4', # .introduction h1 
+            link='light4', hover='lighter4'), # .introduciton h1 a
+
         # Base 5 (supporting color)
+        menu5=DEFAULT_MENU_NORMAL(5),
+        mobilemenu5=DEFAULT_MENU_NORMAL(5),
         hr5=dict(color='darker5'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro5=dict(color='lightest5', bgcolor='dark5', # .introduction h1 
+            link='light5', hover='lighter5'), # .introduciton h1 a
+
         # Functional
         feature=dict(hed='darkest0', deck='darker1', 
             subhead='dark2', byline='darkest0', 
@@ -325,6 +356,8 @@ class BaseTheme:
             diapsublink='darkest%d'%c, diapsubhover='darker%d'%c)
 
     STYLES_DARK = dict(
+        # white <-- lighest <-- light <-- lighter <-- base
+        # base --> darker --> dark --> darkest --> black
         # Base 0
         body=dict(color='lightest0', bgcolor='dark0'),
         page=dict(color='white', bgcolor='dark0'),
@@ -339,23 +372,32 @@ class BaseTheme:
         mobilemenu=DEFAULT_MENU_DARK(0), # Default base0 if no index used
         menu0=DEFAULT_MENU_DARK(0),
         mobilemenu0=DEFAULT_MENU_DARK(0),
-        hr0=dict(color='lighter0'), # <hr> Horizontal ruler color by index
+        hr=dict(color='base0'), # Default ruler color
+        hr0=dict(color='base0'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro0=dict(color='darkest0', bgcolor='lightest0', # .introduction h1
+            link='dark0', hover='darker0'), # .introduction h1 a
+
         # Base 1
         menu1=DEFAULT_MENU_DARK(1),
         mobilemenu1=DEFAULT_MENU_DARK(1),
-        hr=dict(color='lighter0'), # Default ruler color
-        hr1=dict(color='lighter0'), # <hr> Horizontal ruler color by index
+        hr1=dict(color='base1'), # <hr> Horizontal ruler color by index
         banner=dict(color='white', bgcolor='dark0'),
-        intro=dict(color='dark1', bgcolor='white',
-            link='darker1', hover='white'),
+        # Introduction default is base1
+        intro=dict(color='darkest1', bgcolor='lightest1', # .introduction h1
+            link='dark1', hover='darker1'), # .introduction h1 a
+        intro1=dict(color='darkest1', bgcolor='lightest1', # .introduction h1
+            link='dark1', hover='darker1'), # .introduction h1 a
+
         group=dict(color='light1', bgcolor='black',
             diapcolor='dark1', diapbgcolor='white'),
         collection=dict(color='black', bgcolor='white',
             diapcolor='white', diapbgcolor='dark1'),
+        
         # Base 2
         menu2=DEFAULT_MENU_DARK(2),
         mobilemenu2=DEFAULT_MENU_DARK(2),
-        hr2=dict(color='lighter2'), # <hr> Horizontal ruler color by index
+        hr2=dict(color='base2'), # <hr> Horizontal ruler color by index
         p=dict(color='white', bgcolor='darkest2',
             diapcolor='dark2', diapbgcolor='lightest2',
             link='dark2', hover='darker2',
@@ -364,16 +406,36 @@ class BaseTheme:
             diapcolor='black', diapbgcolor='white',
             link='darker2', hover='dark2',
             diaplink='lightest2', hoverlink='light2'),
+        # Introduction default is base1
+        intro2=dict(color='darkest2', bgcolor='lightest2', # .introduction h1
+            link='dark2', hover='darker2'), # .introduction h1 a
+
         # Base 3
         menu3=DEFAULT_MENU_DARK(3),
         mobilemenu3=DEFAULT_MENU_DARK(3),
-        hr3=dict(color='lighter3'), # <hr> Horizontal ruler color by index
+        hr3=dict(color='base3'), # <hr> Horizontal ruler color by index
         side=dict(color='white', bgcolor='black',
             padding=pt(12), link='darkest3', hover='dark3'),
+        # Introduction default is base1
+        intro3=dict(color='darkest3', bgcolor='lightest3', # .introduction h1
+            link='dark3', hover='darker3'), # .introduction h1 a
+
         # Base 4 (supporting color)
-        hr4=dict(color='lighter4'), # <hr> Horizontal ruler color by index
+        menu4=DEFAULT_MENU_DARK(4),
+        mobilemenu4=DEFAULT_MENU_DARK(4),
+        hr4=dict(color='base4'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro4=dict(color='darkest4', bgcolor='lightest4', # .introduction h1
+            link='dark4', hover='darker4'), # .introduction h1 a
+
         # Base 5 (supporting color)
-        hr5=dict(color='lighter5'), # <hr> Horizontal ruler color by index
+        menu5=DEFAULT_MENU_DARK(5),
+        mobilemenu5=DEFAULT_MENU_DARK(5),
+        hr5=dict(color='base5'), # <hr> Horizontal ruler color by index
+        # Introduction default is base1
+        intro5=dict(color='darkest5', bgcolor='lightest5', # .introduction h1
+            link='dark5', hover='darker5'), # .introduction h1 a
+
         # Functional
         feature=dict(hed='lightest0', deck='lighter1', 
             subhead='light2', byline='lightest0', 
@@ -398,11 +460,11 @@ class BaseTheme:
             fronter='lighter3', front='light3', frontest='lightest3',
             backer='darker3', back='dark3', backest='darkest3',
         ),
-        base4=dict(
+        base4=dict( # Supporting color
             fronter='lighter4', front='light4', frontest='lightest4',
             backer='darker4', back='dark4', backest='darkest4',
         ),
-        base5=dict(
+        base5=dict( # Supporting color
             fronter='lighter5', front='light5', frontest='lightest5',
             backer='darker5', back='dark5', backest='darkest5',
         ),
