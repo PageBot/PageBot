@@ -168,7 +168,7 @@ class HtmlBuilder(XmlBuilder):
         'onkeydown', 'onkeypress', 'onkeyup'}
 
     DIV_ATTRIBUTES = {
-        'onmouseout', 'relation', 'name', 'disabled', 'onmouseover',
+        'onmouseout', 'relation', 'name', 'disabled', 'onmouseover', 'onclick',
         'onmousedown', 'onmouseup', 'ondblclick', 'onfocus', 'onblur',
         'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'role',
         'default', 'width_html', 'contenteditable'}
@@ -357,9 +357,17 @@ table {
         when exporting a site, or else the JS will cumulate from precious pages.
         """
         self._jsOut = [] 
-    def addJs(self, js):
+        self._jsNames = set() # Keep optional js chunck names, so avoid double output.
+
+    def addJs(self, js, name=None):
+        """Add js to output, if name is None or optional name is not already in self._jsNames.
+        Otherwise skip export, to avoid JS chunks to double in the output. This is used
+        to avoid doubling JS chunks if multiple elements of the same type are in one page.""" 
         assert isinstance(js, str), ('Added Javascript should be of type str "%s"' % js)
-        self._jsOut.append(js)
+        if name is None or not name in self._jsNames:
+            self._jsOut.append(js)
+        if name is not None:
+            self._jsNames.add(name)
 
     def hasJs(self):
         return len(self._jsOut)

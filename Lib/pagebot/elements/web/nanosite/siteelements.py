@@ -93,6 +93,9 @@ class NanoElement(Column):
     def newSide(self, parent=None, **kwargs):
         return Side(parent=self, **kwargs)
 
+    def newInfo(self, parent=None, **kwargs):
+        return Info(parent=self, **kwargs)
+
     def newMovie(self, url, parent=None, **kwargs):
         return Movie(url, parent=self, **kwargs)
 
@@ -386,6 +389,60 @@ class Sides(NanoElement):
 
 class Side(NanoElement):
     pass
+
+# ELements floating in main/side text
+
+class Info(NanoElement):
+    """An Info element has content that can be hidden under a button.
+    """
+    INFO_OPEN = '?'
+    INFO_CLOSE = 'x'
+
+    def __init__(self, infoOpen=None, infoClose=None, **kwargs):
+        NanoElement.__init__(self, **kwargs)
+        self.infoOpen = infoOpen or self.INFO_OPEN
+        self.infoClose = infoClose or self.INFO_CLOSE
+
+    def build_html(self, view, path, drawElements=True):
+        if not self.elements:
+            return
+
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        # Add JS for this element. Add self.cssId as name to avoid double export
+        # in case there are multiple of these element on the same page.
+        b.addJs("""function toggleInfo(eId1, eId2){
+            var e1 = document.getElementById(eId2).style.display = "block";  
+            var e2 = document.getElementById(eId1).style.display = "none"; 
+        }\n\n""", name=self.cssId)
+
+        # Overall container
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        self.showCssIdClass(view)
+
+        closedId = self.eId+'-closed' # Use unique eId for inline JS reference. 
+        openedId = self.eId+'-opened' # Use unique eId for inline JS reference. 
+
+        # Container with open button
+        b.div(cssId=closedId, cssClass='%s-closed clearfix' % self.cssClass)
+        b.div(cssClass='%s-doopen' % self.cssClass,
+            onclick="toggleInfo('%s', '%s');" % (closedId, openedId)) 
+        b.addHtml(self.infoOpen)
+        b._div()
+        b._div()
+
+        # Container with content en close button
+        b.div(cssId=openedId, cssClass='%s-opened clearfix' % self.cssClass)
+        b.div(cssClass='%s-doclose' % self.cssClass,
+            onclick="toggleInfo('%s', '%s');" % (openedId, closedId)) 
+        b.addHtml(self.infoClose)
+        b._div()
+        for e in self.elements: # Find all child images inside the tree
+            e.build_html(view, path)
+        b._div()
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
+
 
 class Movie(NanoElement):
     def __init__(self, url, autoPlay=True, loop=False, controls=False, w=None, h=None, **kwargs):
