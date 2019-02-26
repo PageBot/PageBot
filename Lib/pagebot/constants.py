@@ -547,7 +547,7 @@ LANGUAGE_ZU_ZA  = 'zu-ZA'   # Zulu (South Africa)
 
 # Standard external urls for Javascript import and others.
 URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
-URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries-js'
+#URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries.js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
@@ -600,18 +600,23 @@ VIEW_NONE = None # View settings are all off.
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
-# Image formats
+# Image formats (standard in DrawBot)
+# See also http://www.drawbot.com/content/canvas/saveImage.html
 FILETYPE_PDF = 'pdf'
 FILETYPE_JPG = 'jpg'
+FILETYPE_JPEG = 'jpeg'
 FILETYPE_PNG = 'png'
 FILETYPE_SVG = 'svg'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
-FILETYPE_SKETCH = 'sketch' # File format of SketchApp
+FILETYPE_BMP = 'bmp'
+FILETYPE_ICNS = 'icns'
 # Movie formats
 FILETYPE_MOV = 'mov'
 FILETYPE_MP4 = 'mp4'
+# Other formats
+FILETYPE_SKETCH = 'sketch' # File format of SketchApp
 # Application format
 FILETYPE_APP = 'app'
 # Font formats
@@ -625,25 +630,27 @@ FILETYPE_TXT = 'txt'
 FILETYPE_MD = 'md' # Markdown file extension
 
 # Commonly used groups of file types.
-IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_SVG, FILETYPE_GIF,
-    FILETYPE_TIF, FILETYPE_TIFF)
+IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG, 
+    FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF, FILETYPE_BMP, FILETYPE_ICNS)
 MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
-    FILETYPE_PDF: 1,
-    FILETYPE_JPG: 3,
-    FILETYPE_PNG: 3,
-    FILETYPE_SVG: 1,
+    FILETYPE_PDF: 1, # Not used online, keep size as used.
+    FILETYPE_JPG: 2, # Optional oversize scale factor, e.g. for Retina screens.
+    FILETYPE_JPEG: 2,
+    FILETYPE_PNG: 2,
+    FILETYPE_SVG: 1, # Object-base is in principle resolution independent.
     FILETYPE_GIF: 2,
-    FILETYPE_TIF: 1,
+    FILETYPE_TIF: 1, # Not used online, keep size as used.
     FILETYPE_TIFF:1,
 }
 CACHE_EXTENSIONS = {
     FILETYPE_PDF: FILETYPE_JPG,
     FILETYPE_JPG: FILETYPE_JPG,
+    FILETYPE_JPEG: FILETYPE_JPG,
     FILETYPE_PNG: FILETYPE_PNG,
     FILETYPE_SVG: FILETYPE_JPG,
     FILETYPE_GIF: FILETYPE_JPG,
@@ -745,6 +752,44 @@ for d in (FONT_SIZE_MATCHES, FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES):
             if isinstance(value, int):
                 d[value] = values
 # TODO: Add FONT_WEIGHT_RANGES and FONT_WIDTH_RANGES as keys
+
+# CSS EASE parameters, defining the CSS transforamtion speed
+# See https://easings.net/
+#   -webkit-transition: all 600ms easing’s Bezier curve;
+#    transition:         all 600ms easing’s Bezier curve; }
+#
+CSS_EASE = 'ease'
+CSS_LINEAR = 'linear'
+CSS_EASE_IN = 'ease-in'
+CSS_EASE_OUT = 'ease-out'
+
+CSS_EASE_INTOUT = 'ease-in-out'
+CSS_EASE_INQUAD = 'easeInQuad'
+CSS_EASE_INCUBIC = 'easeInCubic'
+CSS_EASE_INQUART = 'easeInQuart'
+CSS_EASE_INQUINT = 'easeInQuint'
+CSS_EASE_INSINE = 'easeInSine'
+CSS_EASE_INEXPO = 'easeInExpo'
+CSS_EASE_INCIRC = 'easeInCirc'
+CSS_EASE_INBACK = 'easeInBack'
+
+CSS_EASE_OUTQUAD = 'easeOutQuad'
+CSS_EASE_OUTCUBIC = 'easeOutCubic'
+CSS_EASE_OUTQUART = 'easeOutQuart'
+CSS_EASE_OUTQUINT = 'easeOutQuint'
+CSS_EASE_OUTSINE = 'easeOutSine'
+CSS_EASE_OUTEXPO = 'easeOutExpo'
+CSS_EASE_OUTCIRC = 'easeOutCirc'
+CSS_EASE_OUTBACK = 'easeOutBack'
+
+CSS_EASE_INOUTQUAD = 'easeInOutQuad'
+CSS_EASE_INOUTCUBIC = 'easeInOutCubic'
+CSS_EASE_INOUTQUART = 'easeInOutQuart'
+CSS_EASE_INOUTQUINT = 'easeInOutQuint'
+CSS_EASE_INOUTSINE = 'easeInOutSine'
+CSS_EASE_INOUTEXPO = 'easeInOutExpo'
+CSS_EASE_INOUTCIRC = 'easeInOutCirc'
+CSS_EASE_INOUTBACK= 'easeInOutBack'
 
 # Note that any conversion between RAL (paint) and RGB can only be a
 # approximation. Material colors by definition have a different range of
@@ -1117,7 +1162,36 @@ CSS_COLOR_NAMES = {
 
 SPOT_RGB = {
     # Numbers are recalculated as 0..1
+    'black': (0, 0, 0),
+    'blacku': (97, 93, 89),
+    'blackc': (45, 41, 38),
+
+    'coolgray11u': (122, 125, 129),
+    'coolgray9u': (137, 139, 142),
+    'coolgray6u': (164, 166, 168),
+
+    'warmgray2c': (203, 196, 188),
+    'warmgray4u': (180, 172, 166),
+    'warmgray8u': (146, 137, 129),
+    'warmgray10c': (121, 110, 101),
+    'warmgray10u': (130, 124, 120),
+    'warmgray11c': (110, 98, 89), 
+    'warmgray11u': (125, 119, 125),
+
+    'processblackc': (39, 37, 31),
+    'processblacku': (78, 74, 71),
+
+    'processblue': (0, 133, 202),
+    'reflexblue': (0, 20, 137),
+    'rubinered': (206, 0, 88),
+    'rhodamineredu': (228, 76, 154),
+    'yellow': (254, 221, 0),
+    
+    'red032c': (239, 51, 64),
+    'red032u': (246, 80, 88),
+
     0: (0, 0, 0), #000000
+
     100: (244, 237, 124), #F4ED7C
     101: (244, 237, 71), #F4ED47
     102: (249, 232, 20), #F9E814
@@ -1272,6 +1346,7 @@ SPOT_RGB = {
     181: (124, 45, 35), #7C2D23
 
     1810: (124, 33, 30), #7C211E
+    1815: (143, 86, 82), #8F5652
     1817: (91, 45, 40), #5B2D28
     182: (249, 191, 193), #F9BFC1
     183: (252, 140, 153), #FC8C99
@@ -1297,6 +1372,7 @@ SPOT_RGB = {
     194: (153, 33, 53), #992135
     1945: (168, 12, 53), #A80C35
     1955: (147, 22, 56), #931638
+    195: (117, 41, 54), #752936
     196: (250, 213, 225), #FAD5E1
 
     197: (246, 165, 190), #F6A5BE
@@ -2214,6 +2290,10 @@ SPOT_RGB = {
     813.2: (209, 0, 132), #D10084
     814: (140, 96, 193), #8C60C1
     814.2: (112, 63, 175), #703FAF
+
+    877: (138, 141, 143),
+    '877c': (138, 141, 143),
+    '877u': (180, 183, 185),
 }
 
 # Replace integers by float numbers.

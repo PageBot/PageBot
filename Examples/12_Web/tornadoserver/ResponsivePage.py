@@ -11,9 +11,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     baseserver.py
+#     ResponsivePage.py
 #
 #     https://www.tornadoweb.org
+#     http://localhost:7778
 #
 import tornado.ioloop
 import tornado.web
@@ -21,16 +22,17 @@ import tornado.web
 ioloop = None
 counter = 0
 
-PORT = 7777
+PORT = 7778
+HTML = '<html><head><title>Responsive Page</title></head><body>Hello World</body></html>'
 
 class MainHandler(tornado.web.RequestHandler):
-
+    """Run the web server, answer on url http://localhost:7778 
+    for MAX_QUERIES, then the server stops.
+    """
     def get(self):
-        global counter, ioloop
-        self.write("Hello, %d worlds" % counter)
-        counter += 1
-        if counter > 10:
-            ioloop.stop()
+        global ioloop
+        self.write(HTML)
+        #ioloop.stop()
 
 def make_app():
     return tornado.web.Application([

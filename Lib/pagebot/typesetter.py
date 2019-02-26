@@ -14,7 +14,6 @@
 #
 #     typesetter.py
 #
-import os
 import copy
 import codecs
 import xml.etree.ElementTree as ET
@@ -83,7 +82,8 @@ class Typesetter:
     ]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True,
-            return2Space=False, tabs2Space=False, br2Return=True):
+            return2Space=False, tabs2Space=False, br2Return=True, stripHead=False,
+            stripTail=False):
         """
         The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
         a Galley instance, with formatted string depending on the current context.
@@ -131,8 +131,9 @@ class Typesetter:
         self.styles = styles # Style used, in case the current text box does not have them.
 
         # Stack of graphic state as cascading styles. Last is template for the next.
-        self.gState = []
-        self.tagHistory = []
+        self.gState = [] 
+        self.tagHistory = [] # Sequential list of all tags that passed parsing
+        self.tagStack = [] # Stack of currently active tag names.
         # Save some flags in case the typesetter is running in Python try-except mode.
         self.tryExcept = tryExcept
         # If True add tags to the output, otherwise ignore. Can be overwritten by caller for debugging.
@@ -148,6 +149,8 @@ class Typesetter:
         self.return2Space = return2Space # If True (default), then all \r will be replaced by ' '
         self.tabs2Space = tabs2Space # If False, then \t is preserved into <tab/> and later converted back into '\t
         self.br2Return = br2Return # If True, the <br/> will be replaced by '\r'
+        self.stripHead = stripHead # If there is trailing white space a string, then strip it.
+        self.stripTail = stripTail # If there is tail white space in a string, then strip it
 
         self.currentImage = None # Keep the last processed image, in case there are captions to add.
 
@@ -155,19 +158,10 @@ class Typesetter:
         """Non-HTML tag, substituted from \t, now convert back into \t."""
         self.append('\t')
 
-    def node_hr(self, node, e):
-        """Add Ruler instance to the Galley."""
-        if self.peekStyle() is None and e is not None:
-            # Root of stack is empty style, to force searching on the e.parent line.
-            self.pushStyle({}) # Define top level for styles.
-        hrStyle = self.getNodeStyle(node.tag) # Merge found tag style with current top of stack
-        self.RULER_CLASS(e, style=hrStyle, parent=self.galley) # Make a new Ruler instance in the Galley
-
     def dropcap(self, node, e):
         context = self.context
         style = self.styles.get('dropcap')
-
-        
+     
     def getStyleValue(self, name, e=None, style=None, default=None):
         """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
         on that order. Answer None if everything failes."""
@@ -322,11 +316,11 @@ class Typesetter:
         the Composer in sequence of composition."""
         self.CODEBLOCK_CLASS(node.text, parent=self.galley)
 
-    def pushStyle(self, tag):
+    def pushStyle(self, style):
         """Push the cascaded style on the gState stack. Make sure that the style is not None and that it
         is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
         style as convenience for the caller. """
-        self.gState.append(tag)
+        self.gState.append(style)
 
     def popStyle(self):
         """Pop the cascaded style from the gState stack and answer the next style that is on top.
@@ -380,15 +374,18 @@ class Typesetter:
             return lib['imageRefs']
         return None
 
-    def _strip(self, s, prefix=None, postfix=None, forceRightStrip=False):
+    def _strip(self, s, prefix=None, postfix=None):
         """Strip the white space from string *s* if *prefix* and/or *postfix* are not None.
         Otherwise answer the untouched *s*."""
+        s = s or ''
+        if self.stripHead:
+            s = s.lstrip()
+        if self.stripTail:
+            s = s.rstrip() 
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
-            s = prefix + (s or '').lstrip() # Force s to empty string in case it is None, to add prefix.
-        elif forceRightStrip:
-            s = (s or '').rstrip() # Force s to empty string in case it is None.
-        elif postfix is not None: # Strip if postfix is not None. Otherwise don't touch.
-            s = (s or '').rstrip() + postfix # Force s to empty string in case it is None, to add postfix.
+            s = str(prefix or '') + s
+        if postfix is not None:
+            s += str(postfix or '')
         return s
 
     def getMatchingStyleNames(self, tag):
@@ -439,10 +436,18 @@ class Typesetter:
         """Append the string (or BabelString instance) to the last textbox in galley,
         if it exists. Otherwise create a new TextBox and add it to self.galley."""
         if self.galley.elements and self.galley.elements[-1].isTextBox:
-            self.galley.elements[-1].bs += bs
+            box = self.galley.elements[-1]
+            if box.bs is None:
+                box.bs = bs
+            else:
+                box.bs += bs
+        elif hasattr(bs, 's'):
+            while bs.s and bs.s[0] in ' \t\n\r':
+                bs.s = bs.s[1:]
+            self.TEXTBOX_CLASS(bs, parent=self.galley)
         else:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
-
+            
     def htmlNode(self, node, end=False):
         """Open the tag in HTML output and copy the node attributes if there are any."""
         htmlTag = u'<%s' % node.tag
@@ -480,10 +485,11 @@ class Typesetter:
         If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
         rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
 
-        # Ignore <pre> tag output, as it is part of a ~~~Pyhton code block
+        # Ignore <pre> tag output, as it is part of a ~~~Pyhton ... ~~~ code block
         if self.writeTags and not node.tag in self.skipTags:
             # Open the node in HTML export for this node
             self.htmlNode(node)
+
         # Add this tag to the tag-history line. It is used to connect to the right style in case
         # we are rendering towards a FormattedString or another context-equivalent.
         self.addHistory(node.tag)
@@ -504,8 +510,13 @@ class Typesetter:
         if nodeText: # Not None and still has content after stripping?
             # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
             # The galley context will define the type of BabelStrings generated by the Typesetter.
+            firstTagIndent = nodeStyle.get('firstTagIndent')
+            if firstTagIndent is not None and len(self.tagHistory) > 2 and self.tagHistory[-2] != '_'+node.tag:
+                nodeStyle['firstLineIndent'] = firstTagIndent
             bs = self.context.newString(nodeText, e=e, style=nodeStyle)
             self.append(bs)
+
+        self.tagStack.append(node.tag) # Add current node to the stack
 
         # Type set all child node in the current node, by recursive call.
         for child in node:
@@ -522,11 +533,18 @@ class Typesetter:
             # If there is no text or if the node does not have tail text, these are None.
             # Still we want to be able to add the postfix to the tail, so then the tail is changed
             # to empty string?
-            childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
+            childTail = self._strip(child.tail)
+            #childTail = child.tail #self._strip(child.tail, postfix=self.getStyleValue('postfix', e, nodeStyle, ''))
             if childTail: # Any tail left after stripping, then append to the galley.
                 # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
                 bs = self.context.newString(childTail, e=e, style=nodeStyle)
                 self.append(bs)
+
+        self.tagStack.pop() # Pop current node from the list.
+
+        # Add this closing tag to the tag-history line. It is used to test on difference between the
+        # last closed tag and the current tag, e.g. to control the firstTagIndent --> firtLineIndent.
+        self.addHistory('_'+node.tag)
 
         # Ignore </pre> tag output, as it is part of a ~~~Pyhton code block
         if self.writeTags and not node.tag in self.skipTags:

@@ -56,6 +56,9 @@ from pagebot.elements.views import viewClasses
 from pagebot.elements.pbquire import Quire
 from pagebot.elements.pbcodeblock import CodeBlock
 
+# Variable Font elements
+from pagebot.elements.variablefonts.variablecircle import VariableCircle
+
 def elementFromPath(path, name=None, **kwargs):
     """Answer the element that is best suitable to hold the data in the path.
     """

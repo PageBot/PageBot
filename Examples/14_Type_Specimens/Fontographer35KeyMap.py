@@ -29,7 +29,7 @@ from pagebot.constants import A4, ONLINE, CENTER, XXXL
 from pagebot.document import Document
 from pagebot.conditions import *
 from pagebot.toolbox.color import color, whiteColor, blackColor,  noColor
-from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.font import findFont, findFonts
 from pagebot.toolbox.dating import now
 from pagebot import getContext
 context = getContext()
@@ -47,13 +47,14 @@ SQSIZE = pt(36) # Standard size of the Fontographer grid glyph squares
 SQMR = 14.5 # Margins to position element identical to origina layout.
 SQMB = 46
 SQML = 12
-MAX_PAGES = None # For debugging, set to the amount of pages to export
+MAX_PAGES = 2 # For debugging, set to the amount of pages to export
 SHADOW = pt(2) # Thicknes of "shadow" lines in header.
 
 # Substitute the name or file name of the font to show.
 f = findFont('Roboto-Regular')
 #f = findFont('Upgrade-UltraBlack')
-labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
+#f = findFont('Upgrade-UltraBlack')
+labelFont = findFont('Upgrade-Regular') # Keep this as label font (or change it)
 # Make the styles for the strings on the page.
 labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
 glyphStyle = dict(font=f, fontSize=SQSIZE, textFill=0)
@@ -127,7 +128,7 @@ def makeHeader(page, font):
         borderBottom=dict(stroke=blackColor, strokeWidth=SHADOW),
         conditions=[Left2Left(), Fit2Height()])
     t = 'Size: %s  Font: %s\nNotice: © %s\nPrinted by PageBot on %s' % \
-        (pt(SQSIZE), font.path.split('/')[-1], font.info.copyright, now())
+        (pt(SQSIZE), font.path.split('/')[-1], font.info.copyright, now().datetime)
     fontInfo = context.newString(t, style=fontInfoStyle)
     newTextBox(fontInfo, fill=1, parent=header, margin=0, 
         padding=pt(4),

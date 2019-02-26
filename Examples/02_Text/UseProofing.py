@@ -23,6 +23,7 @@ from pagebot.fonttoolbox.fontpaths import getFontPaths
 
 #print(sorted(getFontPaths().keys()))
 font = findFont('BungeeOutline-Regular')
+font = findFont('Roboto-Regular')
 H, W = A3 # Landscape, reverse W, H
 PADDING = p(5)
 S = 'abcdefghijklmnopqrstuvwxyz'

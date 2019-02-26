@@ -68,7 +68,7 @@ class Element:
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             drawAfter=None, htmlCode=None, htmlPaths=None,
-            xAlign=None, yAlign=None, zAlign=None,
+            xAlign=None, yAlign=None, zAlign=None, proportional=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -143,7 +143,7 @@ class Element:
         self.clearElements()
         self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
-
+        
         # If undefined yAlign and parent has origin on top, then default yAlign to TOP
         self._originTop = originTop # Local value is overwritten if there is a parent defined.
         if yAlign is None and self.originTop: # Property seeks parent-->page.originTop value.
@@ -176,6 +176,9 @@ class Element:
             self.scaleX = scaleX
             self.scaleY = scaleY
             self.scaleZ = scaleZ
+
+        if proportional is not None: # If defined, set after the sizes and scales are set.
+            self.proportional = proportional # Setting True keeps all size and scales proportional now.
 
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
@@ -283,6 +286,8 @@ class Element:
         self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
         # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
         # Initialze self.elements, add template elements and values, copy elements if defined.
+        # Note that this does not copy the attributes from template to self.
+        # For that self.applyAttributes(template, elements, <attributeName>) should be called.
         self.applyTemplate(template, elements)
         # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
         if solve:
@@ -658,7 +663,7 @@ class Element:
             e.deepFindAll(name, pattern, result)
         return result
 
-    def findAll(self, name=None, pattern=None, result=None):
+    def findAll(self, name=None, pattern=None, cls=None, result=None):
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
@@ -682,16 +687,18 @@ class Element:
         >>> len(elements)
         0
         """
-        assert name or pattern
+        assert name or pattern or cls
         result = []
         for e in self.elements:
-            if pattern is not None and pattern in e.name: # Simple pattern match
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                 result.append(e)
+            elif pattern is not None and pattern in e.name: # Simple pattern match
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
         return result
 
-    def deepFind(self, name=None, pattern=None, result=None):
+    def deepFind(self, name=None, pattern=None, cls=None):
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the first matching child
@@ -722,20 +729,22 @@ class Element:
         >>> element is e2
         True
         """
-        assert name or pattern
+        assert name or pattern or cls
         for e in self.elements:
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                 return e
             if pattern is not None and pattern in e.name: # Simple pattern match
                 return e
             if name is not None and name in (e.cssId, e.name):
                 return e
-            found = e.deepFind(name, pattern, result)
+            found = e.deepFind(name, pattern)
             if found is not None:
                 return found
         return None
 
     select = deepFind # Intuitive name with identical result. Can be used in MarkDown.
 
-    def find(self, name=None, pattern=None, result=None):
+    def find(self, name=None, pattern=None, cls=None):
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
@@ -759,8 +768,10 @@ class Element:
         >>> element is None
         True
         """
-        assert name or pattern
+        assert name or pattern or cls
         for e in self.elements:
+            if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
+                return e
             if pattern is not None and pattern in e.name: # Simple pattern match
                 return e
             if name is not None and name in (e.cssId, e.name):
@@ -809,24 +820,47 @@ class Element:
         >>> e1 = Element(name='Child', w=100)
         >>> e = Element(name='Parent', elements=[e1], w=200)
         >>> copyE = e.copy()
-        >>> len(copyE) == len(e) == 1
-        True
+        >>> copyE.name == e.name, copyE.eId == e.eId
+        (True, False)
         >>> copyE is e, copyE['Child'] is e['Child'] # Element tree is copied
         (False, False)
         >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
         (True, True, True)
+        >>> e.copy().eId != e.eId
+        True
         """
-        # This also initializes the child element tree as empty list.
-        # Style is supposed to be a deep-copyable dictionary.
-        # self._eId is automatically created, guaranteed unique Id for every element.
-        # Ignore original **kwargs, as these values are supposed to be in style now.
-        # Inheriting classes are responsible to add their own specific values.
-        e = self.__class__(x=self.x, y=self.y, z=self.z, w=self.w, h=self.h, d=self.d,
+        # Deep-copies the element. Set the parent (if defined) and iterate through
+        # the child tree to make a e.eId unique.
+
+        savedElements = self._elements # Avoid deep copy on child elements
+        self._elements = []
+        copied = copy.deepcopy(self)
+        self._elements = savedElements
+        # Set some attributes on the copy
+        copied._eId = uniqueID()
+        if parent is not None:
+            copied.parent = parent
+        for e in self.elements:
+            copied.appendElement(e.copy())
+        return copied
+
+        """" REMOVE THIS
+        self.__class__(
+            x=self.x, 
+            y=self.y, 
+            z=self.z, 
+            w=self.w, 
+            h=self.h, 
+            d=self.d,
             t=self.t, # Copy type frame.
             parent=parent, # Allow to keep reference to current parent context and style.
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name, cssClass=self.cssClass, #cssId is not copied.
-            title=self.title, description=self.description, language=self.language,
+            name=self.name, 
+            #cssId is copied conditionally by copyCssId flag. E.g. applying template to web page.
+            cssClass=self.cssClass, 
+            title=self.title, 
+            description=self.description, 
+            language=self.language,
             lib=copy.deepcopy(self.lib),
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
             conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
@@ -846,10 +880,19 @@ class Element:
             gradient=self.gradient, # Needs to be copied?
             drawBefore=self.drawBefore,
             drawAfter=self.drawAfter)
+        
+        # If any additional attribute names defined, then deepcopy these as well.
+        for attrName in (attrNames or []): # Any additional attributes to copy? :
+            setattr(e, attrName, copy.deepcopy(getattr(self, attrName)))
+
         # Now do the same for each child element and append it to self.
         for child in self.elements:
-            e.appendElement(child.copy()) # Add the element to child list and update self._eId dictionary
+            # Add the element to child list and update self._eId dictionary
+            # Keep the copyCssIf flag downwards, in case we are applying a template on 
+            # a web page.
+            e.appendElement(child.copy(attrNames=attrNames)) 
         return e
+        """
 
     def _get_childClipPath(self):
         """Answer the clipping context.BezierPath, derived from the layout of child elements.
@@ -1215,7 +1258,7 @@ class Element:
             dy = y - self.baselineGridStart
         else:
             # Calculate the position of top of the grid
-            gridTopY = self.h - self.baselineGridStart
+            gridTopY = self.h - (self.baselineGridStart or self.pt)
             # Calculate distance of the line to top of the grid
             gy = gridTopY - y
             dy = gy - round(gy/self.baselineGrid) * self.baselineGrid
@@ -1310,13 +1353,17 @@ class Element:
         Typesetter to build a stack of cascading tag style, then query the
         ancestors for the named style. Default behavior of all elements is that
         they pass the request on to the root, which is normally the document.
+        Use force attribute to overwrite an existing style with the same name.
 
         >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.color import color
         >>> doc = Document()
+        >>> doc.addStyle('body', force=True, style=dict(name='body', fill=color('red'))) # Add named style to document
         >>> page = doc[1]
         >>> e = Element(parent=page)
-        >>> e.getNamedStyle('body') is not None
-        True
+        >>> 
+        >>> e.getNamedStyle('body')['fill'] 
+        Color(name="red")
         """
         if self.parent:
             return self.parent.getNamedStyle(styleName)
@@ -1962,7 +2009,6 @@ class Element:
         self.x = p[0]
         self.y = p[1]
         self.z = p[2]
-
     xyz = property(_get_xyz, _set_xyz)
 
     def _get_origin(self):
@@ -2613,13 +2659,13 @@ class Element:
     # Alignment types, defines where the origin of the element is located.
 
     def _validateXAlign(self, xAlign): # Check and answer value
-        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, sorted(XALIGNS))
+        assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
         return xAlign
     def _validateYAlign(self, yAlign): # Check and answer value
-        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, sorted(YALIGNS))
+        assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
         return yAlign
     def _validateZAlign(self, zAlign): # Check and answer value
-        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, sorted(ZALIGNS))
+        assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, ZALIGNS)
         return zAlign
 
     def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
@@ -2941,6 +2987,32 @@ class Element:
 
     # (w, h, d) size of the element.
 
+    def _get_proportional(self):
+        """Get/set the proportional style flag as property. If True, setting self.w or self.h
+        will keep the original proportions, but setting the other side as well.
+        By default the self.proportional flag is False for most types of elements.
+
+        >>> e = Element(w=100, h=200, proportional=True)
+        >>> e.w = 200
+        >>> e.h # Keeps proportions
+        400pt
+        >>> e.w = 10
+        >>> e.h # Keeps proportions
+        20pt
+        >>> e.proportional = False
+        >>> e.w = 100
+        >>> e.h # Does not change
+        20pt
+        >>> e.proportional = True
+        >>> e.h = 1000
+        >>> e.w # Keeps proportions again
+        5000pt
+        """
+        return self.css('proportional')
+    def _set_proportional(self, proportional):
+        self.style['proportional'] = proportional
+    proportional = property(_get_proportional, _set_proportional)
+
     def _get_w(self):
         """Answers the width of the element.
 
@@ -2966,15 +3038,21 @@ class Element:
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
-
     def _set_w(self, w):
-        self.style['w'] = units(w or DEFAULT_WIDTH)
+        w = units(w or DEFAULT_WIDTH)
+        if self.proportional:
+            if self.w:
+                self.style['h'] = w * self.h.pt/self.w.pt
+                self.style['d'] = w * self.d.pt/self.w.pt
+        self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
 
     w = property(_get_w, _set_w)
 
     def _get_mw(self): # Width, including margins
         """Width property for self.mw style. Answers the width of the elements
         with added left/right margins.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(w=10, ml=22, mr=33)
         >>> e.mw
@@ -3016,11 +3094,18 @@ class Element:
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.css('h', 0), base=base)
     def _set_h(self, h):
-        self.style['h'] = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
+        h = units(h or DEFAULT_HEIGHT)
+        if self.proportional:
+            if self.h:
+                self.style['w'] = h * self.w.pt/self.h.pt
+                self.style['d'] = h * self.d.pt/self.h.pt
+        self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
     h = property(_get_h, _set_h)
 
     def _get_mh(self): # Height, including margins
         """Height property for self.mh style.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
@@ -3052,10 +3137,18 @@ class Element:
         return units(self.css('d', 0), base=base)
     def _set_d(self, d):
         self.style['d'] = units(d or DEFAULT_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        d = units(d or DEFAULT_DEPTH)
+        if self.proportional:
+            if self.d:
+                self.style['w'] = d * self.w.pt/self.d.pt
+                self.style['h'] = d * self.h/self.d
+        self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
         """Width property for self.md style.
+        Note that since the margins are not considered by the self.proportional flag,
+        changed in self.mw, self.mh and self.md may not stay proportional.
 
         >>> e = Element(d=10, mzb=22, mzf=33)
         >>> e.md
@@ -3695,6 +3788,7 @@ class Element:
     def _get_size(self):
         """Set the size of the element by calling by properties self.w and self.h.
         If set, then overwrite access from style width and height. self.d is optional attribute.
+        Setting size this way, temporarily disables the self.proportional flag.
 
         >>> e = Element()
         >>> e.size = 101, 202, 303
@@ -3723,6 +3817,8 @@ class Element:
         """
         return self.w, self.h
     def _set_size(self, size):
+        saveFlag = self.proportional # Disable the flag, we want to set the values independently
+        self.proportional = False
         if isinstance(size, (tuple, list)):
             assert len(size) in (2,3)
             if len(size) == 2:
@@ -3731,6 +3827,7 @@ class Element:
                 self.w, self.h, self.d = size
         else:
             self.w = self.h = self.d = size
+        self.proportional = saveFlag
     size = property(_get_size, _set_size)
 
     def _get_size3D(self):
@@ -3993,28 +4090,71 @@ class Element:
     # Scale
 
     def _get_scaleX(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleX=0.5, proportional=True)
+        >>> e.scaleY, e.scaleZ
+        (1, 1)
+        >>> e.scaleX = 3
+        >>> e.scaleY, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleX', 1)
     def _set_scaleX(self, scaleX):
         assert scaleX != 0
+        if self.proportional:
+            if self.scaleX:
+                self.style['scaleY'] = scaleX * self.scaleY/self.scaleX
+                self.style['scaleZ'] = scaleX * self.scaleZ/self.scaleX
         self.style['scaleX'] = scaleX # Set on local style, shielding parent self.css value.
     scaleX = property(_get_scaleX, _set_scaleX)
 
     def _get_scaleY(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleY=0.5, proportional=True)
+        >>> e.scaleX, e.scaleZ
+        (1, 1)
+        >>> e.scaleY = 3
+        >>> e.scaleX, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleY', 1)
     def _set_scaleY(self, scaleY):
         assert scaleY != 0
+        if self.proportional:
+            if self.scaleY:
+                self.style['scaleX'] = scaleY * self.scaleX/self.scaleY
+                self.style['scaleZ'] = scaleY * self.scaleZ/self.scaleY
         self.style['scaleY'] = scaleY # Set on local style, shielding parent self.css value.
     scaleY = property(_get_scaleY, _set_scaleY)
 
     def _get_scaleZ(self):
+        """Get/set the scale from the style. If the self.proportional flag is set,
+        then also alter the other scales propotionally.
+
+        >>> e = Element(scaleY=0.5, proportional=True)
+        >>> e.scaleX, e.scaleZ
+        (1, 1)
+        >>> e.scaleY = 3
+        >>> e.scaleX, e.scaleZ # Keeps proportion
+        (6.0, 6.0)
+        """
         return self.css('scaleZ', 1)
     def _set_scaleZ(self, scaleZ):
         assert scaleZ != 0
+        if self.proportional:
+            if self.scaleZ:
+                self.style['scaleX'] = scaleZ * self.scaleX/self.scaleZ
+                self.style['scaleY'] = scaleZ * self.scaleY/self.scaleZ
         self.style['scaleZ'] = scaleZ # Set on local style, shielding parent self.css value.
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
     def _get_scale(self):
         """Answer the 2-tuple of (self.scaleX, self.scaleY)
+        If scale it set this way, self.proportional will reset to False.
 
         >>> e = Element(scale=2)
         >>> e.scaleX, e.scaleY
@@ -4038,6 +4178,8 @@ class Element:
         """
         return self.scaleX, self.scaleY
     def _set_scale(self, scale):
+        savedFlag = self.proportional # If probably setting to disproportional, save flag
+        self.proportional = False # Allow setting of all scales, without changing the others.
         if not scale: # Reset to 1. Scale cannot be 0
             scale = 1
         if not isinstance(scale, (list, tuple)):
@@ -4049,6 +4191,7 @@ class Element:
             self.scaleZ = 1
         else:
             self.scaleZ, self.scaleY, self.scaleZ = scale[:3]
+        self.proportiona = savedFlag # Restore the proportional flag.
     scale = property(_get_scale, _set_scale)
 
     def _get_scale3D(self):
@@ -4114,7 +4257,6 @@ class Element:
         for e in self.parent.elements:
             # Only look at siblings that are previous in the list.
             if previousOnly and e is self:
-                print('break')
                 break
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer
@@ -4449,9 +4591,10 @@ class Element:
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+        # Draw the actual element content.
+        # Inheriting elements classes can redefine just this method to fill in drawing behavior.
+        # @p is the transformed position to draw in the main canvas.
+        self.buildElement(view, p, drawElements)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -4463,6 +4606,17 @@ class Element:
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
+    def buildElement(self, view, p, drawElements=True):
+        """Main drawing method for elements to draw their content and the content
+        of their children if they exist.
+        @p is the transformed position of the context canvas.
+        To be redefined by inheriting element classes that need to draw more than
+        just their chold elements.
+        """
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel image.
+            self.buildChildElements(view, p)
 
     def buildChildElements(self, view, origin=None):
         """Draws child elements, dispatching depends on the implementation of
@@ -4486,6 +4640,14 @@ class Element:
 
     # Sass syntax is not supported yet. It does not appear to be standard and cannot be easily
     # converted from existing CSS. Meanwhile, many CSS designers can extend easier to SCSS.
+
+    def prepare_html(self, view):
+        """Respond to the top-down view-->element broadcast in preparation for build_html.
+        Default behavior is to do nothing other than recursively broadcast to all child element. 
+        Inheriting Element classes can redefine.
+        """
+        for e in self.elements:
+            e.prepare_html(view)
 
     def build_scss(self, view):
         """Build the scss variables for this element."""
@@ -4888,7 +5050,7 @@ class Element:
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            return abs(self.mRight - gridColumns[col][0]) <= tolerance
+            return abs(self.mRight - gridColumns[col][0] - self.gw) <= tolerance
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
@@ -4939,7 +5101,7 @@ class Element:
         """Move right of the element to col index position."""
         gridColumns = self.getGridColumns()
         if col in range(len(gridColumns)):
-            self.mRight = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
+            self.mRight = self.parent.pl + gridColumns[col][0] - self.gw
             return True
         return False # Row is not in range of available gridColumns
 
@@ -7021,6 +7183,15 @@ class Element:
         self.style['showElementInfo'] = bool(showElementInfo)
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
 
+    def _get_showIdClass(self):
+        """Boolean value. If True show the element.cssId and element.cssClass,
+        if they are defined.
+        """
+        return self.style.get('showIdClass', False) # Not inherited
+    def _set_showIdClass(self, showIdClass):
+        self.style['showIdClass'] = bool(showIdClass)
+    showIdClass = property(_get_showIdClass, _set_showIdClass)
+
     def _get_showDimensions(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the dimensions of the page or other elements."""
@@ -7112,11 +7283,43 @@ class Element:
     showImageReference = property(_get_showImageReference, _set_showImageReference)
 
     def _get_showImageLoresMarker(self):
-        """Boolean value. If True, show lorea-cache marker on images. This property inherits cascading. """
+        """Boolean value. If True, show lores-cache marker on images. This property inherits cascading. """
         return self.css('showImageLoresMarker', False) # Inherited
     def _set_showImageLoresMarker(self, showImageLoresMarker):
         self.style['showImageLoresMarker'] = bool(showImageLoresMarker)
     showImageLoresMarker = property(_get_showImageLoresMarker, _set_showImageLoresMarker)
+
+    def _get_scaleImage(self):
+        """Boolean value. If True, save images as cached scaled. """
+        return self.css('scaleImage', True) # Inherited
+    def _set_scaleImage(self, scaleImage):
+        self.style['scaleImage'] = bool(scaleImage)
+    scaleImage = property(_get_scaleImage, _set_scaleImage)
+
+    def _get_scaledImageFactor(self):
+        """If >= (default) 0.8 then don't save cached. Cached images should never enlarge. """
+        return self.css('scaledImageFactor', True) # Inherited
+    def _set_scaledImageFactor(self, scaledImageFactor):
+        self.style['scaledImageFactor'] = bool(scaledImageFactor)
+    scaledImageFactor = property(_get_scaledImageFactor, _set_scaledImageFactor)
+
+    def _get_defaultImageWidth(self):
+        """If set, then use this as default width for scaling images.
+        Used as target for HTML context image scaling.
+        """
+        return self.css('defaultImageWidth') # Inherited. Can be None
+    def _set_defaultImageWidth(self, defaultImageWidth):
+        self.style['defaultImageWidth'] = defaultImageWidth # Can be None. 
+    defaultImageWidth = property(_get_defaultImageWidth, _set_defaultImageWidth)
+
+    def _get_defaultImageHeight(self):
+        """If set, then use this as default height for scaling images.
+        Used as target for HTML context image scaling.
+        """
+        return self.css('defaultImageHeight') # Inherited. Can be None
+    def _set_defaultImageHeight(self, defaultImageHeight):
+        self.style['defaultImageHeight'] = defaultImageHeight # Can be None. 
+    defaultImageHeight = property(_get_defaultImageHeight, _set_defaultImageHeight)
 
     #   Spread stuff
 
@@ -7138,6 +7341,17 @@ class Element:
     cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)
 
     #   Exporting
+
+    def _get_saveUrlAsDirectory(self):
+        """Boolean value. Flag to turn off saving self.url pages as directory. 
+        Instead, all "/" is replaced by "-". This choice is made for exprot .html
+        paths, where a flat directory is less of a problem than adjusting all relative urls
+        for images/CSS/JS
+        """
+        return self.css('saveUrlAsDirectory', False) # Inherited
+    def _set_saveUrlAsDirectory(self, saveUrlAsDirectory):
+        self.style['saveUrlAsDirectory'] = saveUrlAsDirectory
+    saveUrlAsDirectory = property(_get_saveUrlAsDirectory, _set_saveUrlAsDirectory)
 
     def _get_doExport(self):
         """Boolean value. Flag to turn off any export, for view, e.g. in case of testing with docTest."""

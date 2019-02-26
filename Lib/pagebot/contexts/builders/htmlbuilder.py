@@ -16,8 +16,11 @@
 #
 import os
 import codecs
-import sass
-
+try:
+    import sass
+except:
+    pass
+    
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
@@ -113,7 +116,7 @@ class HtmlBuilder(XmlBuilder):
         'type', 'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
     H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = {
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
+        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'onclick'}
 
     FIGURE_ATTRIBUTES = {'accesskey', 'contenteditable', 'contextmenu', 'dir',
         'draggable', 'hidden', 'lang', 'spellcheck', 'tabindex'}
@@ -160,10 +163,12 @@ class HtmlBuilder(XmlBuilder):
     OL_ATTRIBUTES = {'compact', 'start', 'type'}
 
     I_ATTRIBUTES = TT_ATTRIBUTES = SMALL_ATTRIBUTES = BIG_ATTRIBUTES = LI_ATTRIBUTES = DT_ATTRIBUTES = DD_ATTRIBUTES = {
-        'dir', 'lang', 'xmllang'}
+        'dir', 'lang', 'xmllang', 'script', 'ondblclick',
+        'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
+        'onkeydown', 'onkeypress', 'onkeyup'}
 
     DIV_ATTRIBUTES = {
-        'onmouseout', 'relation', 'name', 'disabled', 'onmouseover',
+        'onmouseout', 'relation', 'name', 'disabled', 'onmouseover', 'onclick',
         'onmousedown', 'onmouseup', 'ondblclick', 'onfocus', 'onblur',
         'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'role',
         'default', 'width_html', 'contenteditable'}
@@ -323,6 +328,11 @@ table {
             elif key == 'usemap':
                 if not value.startswith(u'#'):
                     value = '#' + value
+            elif key == 'style': # In case CSS-style attribute, try to translate.
+                if isinstance(value, dict):
+                    value = str(value) # @@@@ TODO: needs more translations
+                elif not isinstance(value, str):
+                    value = str(value)
 
             # Handle Angular.org attributes that contain underscores, translate them to hyphens
             elif key.startswith('ng_'):
@@ -330,11 +340,34 @@ table {
 
             self.write_attribute(key, value)
 
+    #   Compatible component support
+
+    def textBox(self, bs, box, align=None):
+        """Just add the text, ignore position for now."""
+        self.div()
+        self.addHtml(str(bs))
+        self._div()
+
+    text = textBox
+
     #   J S
 
-    def addJs(self, js):
+    def clearJs(self):
+        """Clearing the JS-output storage in the page. Should be called for every page
+        when exporting a site, or else the JS will cumulate from precious pages.
+        """
+        self._jsOut = [] 
+        self._jsNames = set() # Keep optional js chunck names, so avoid double output.
+
+    def addJs(self, js, name=None):
+        """Add js to output, if name is None or optional name is not already in self._jsNames.
+        Otherwise skip export, to avoid JS chunks to double in the output. This is used
+        to avoid doubling JS chunks if multiple elements of the same type are in one page.""" 
         assert isinstance(js, str), ('Added Javascript should be of type str "%s"' % js)
-        self._jsOut.append(js)
+        if name is None or not name in self._jsNames:
+            self._jsOut.append(js)
+        if name is not None:
+            self._jsNames.add(name)
 
     def hasJs(self):
         return len(self._jsOut)
@@ -391,11 +424,13 @@ table {
         else:
             self.comment('Cannot find CSS file "%s"' % path)
 
-    def writeCss(self, path):
+    def writeCss(self, path, css=None):
         """Write the collected set of CSS chunks to path."""
         try:
+            if css is None:
+                css = self.getCss()
             f = codecs.open(path, 'w', 'utf-8')
-            f.write(self.getCss())
+            f.write(css)
             f.close()
         except IOError:
             print('[HtmlBuilder.writeCss] Cannot write CSS file "%s"' % path)
@@ -466,8 +501,11 @@ table {
         if upt(e.pr):
             scss[scssId+'-padding-right'] = e.pr
         if e.css('font') is not None:
-            font = Font(e.css('font'))
-            scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
+            if os.path.exists(e.css('font')):
+                font = Font(e.css('font'))
+                scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
+            else:
+                font = e.css('font')
         if e.css('fontSize') is not None:
             scss[scssId+'-font-size'] = e.css('fontSize')
         if e.css('fontStyle') is not None:
@@ -1507,11 +1545,18 @@ table {
         """The iframe tag creates an inline frame that contains another document.
         <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
         """
-        r = self.result
-        r.write('<iframe src="%s"' % src)
+        self.write('<iframe src="%s"' % src)
         self.getandwrite_attributes('iframe', args)
-        self.write('></iframe>')
+        self.write('>')
 
+    def _iframe(self):
+        self.write('</iframe>')
+
+    def iframe_(self, src, **args):
+        self.iframe(src, **args)
+        self._iframe()
+
+        
     def embed(self, **args):
         """FIXME: Does not seem to be defined in w3schools??
         self.embed(src='./_images/amovie.qt')
@@ -1556,6 +1601,11 @@ table {
         self.write('\n')
         self._closeTag('script')
         self.newLine() # Optional newline is self.compact is False.
+
+    def script_(self, js, charset='UTF-8', type='text/javascript', **args):
+        self.script(charset='UTF-8', type='text/javascript', **args)
+        self.addHtml(js)
+        self._script()
 
     #
     #     L I S T things
@@ -1768,6 +1818,11 @@ table {
 
     def _button(self):
         self._closeTag('button')
+
+    def button_(self, label, **args):
+        self.button(**args)
+        self.addHtml(label)
+        self._button()
 
     def textarea(self, **args):
         """Defines a text area (a multi-line text input control). A user can

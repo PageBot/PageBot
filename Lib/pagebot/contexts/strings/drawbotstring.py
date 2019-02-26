@@ -30,13 +30,17 @@ from pagebot.contexts.strings.textline import TextLine
 
 try:
     import drawBot as drawBotBuilder
+    from AppKit import NSAttributeDictionary, NSRange
     from CoreText import (CTFramesetterCreateWithAttributedString,
+            CTFontDescriptorCreateWithNameAndSize,
+            CTFontDescriptorCopyAttribute,
             CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins)
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
 except (AttributeError, ImportError):
     from pagebot.contexts.builders.nonebuilder import NoneDrawBotBuilder as drawBotBuilder
     # When importing doesn't work because not on OS X, set variables to None.
     NSFont = None
+    NSAttributeDictionary = NSRange = None
     CGPathAddRect = CGPathCreateMutable = CGRectMake = None
     CTFramesetterCreateWithAttributedString = None
     CTFrameGetLines = None
@@ -94,6 +98,7 @@ class DrawBotString(BabelString):
         self.context = context # Store context, in case we need more of its functions.
         # Store the DrawBot FormattedString, as property to make sure it is a
         # FormattedString, otherwise create it.
+
         self.s = s
         # In case defined, store current status here as property and set the
         # current FormattedString for future additions. Also the answered
@@ -111,13 +116,12 @@ class DrawBotString(BabelString):
 
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
-        super().__init__(s, context, style=style)
+        super().__init__(self.s, context, style=style)
 
     def _get_s(self):
         """Answers the embedded FormattedString by property, to enforce checking
         type of the string."""
         return self._s
-
     def _set_s(self, s):
         """ Check on the type of s. Three types are supported here: plain
         strings, DrawBot FormattedString and the class of self."""
@@ -126,10 +130,18 @@ class DrawBotString(BabelString):
             s = self.context.b.FormattedString(s)
         elif isinstance(s, DrawBotString):
             s = s.s
-
         self._s = s
-
     s = property(_get_s, _set_s)
+
+    def columnStart(self, firstColumnIndent):
+        bs = self
+        style = self.getStyleAtIndex(0)
+        if style.get('firstLineIndent') is not None or firstColumnIndent is not None: # Something going on at start?
+            style['fontSize'] = pt(0.0001) # Really really small place holder period.
+            style['textFill'] = color(1, 1, 1, 1) # Transparant, so it will never show.
+            style['firstLineIndent'] = firstColumnIndent or 0 # Then make this one work
+            bs = self.context.newString('.', style=style) + bs
+        return bs
 
     def _get_font(self):
         """Answers the current state of fontName."""
@@ -169,6 +181,60 @@ class DrawBotString(BabelString):
         self.style['fontSize'] = fontSize
 
     fontSize = property(_get_fontSize, _set_fontSize)
+
+    def getStyleAtIndex(self, index):
+        """Answer the style dictionary with values at position index of the string.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> c1 = color(0.2, 0.3, 0.4)
+        >>> c2 = color(1, 0, 0.22)
+        >>> style = style=dict(font='Verdana', fontSize=17, leading=21, textFill=c1, textStroke=c2, textStrokeWidth=pt(3))
+        >>> bs = context.newString('Example Text1', style=style)
+        >>> bs.getStyleAtIndex(3)['fontSize']
+        17pt
+        >>> style = dict(font='Georgia', fontSize=20, leading=25, textFill=c2, textStroke=c1, textStrokeWidth=pt(2))
+        >>> bs += context.newString('Another Text', style=style)
+        >>> bs.getStyleAtIndex(20)['leading']
+        25pt
+        >>> bs.getStyleAtIndex(20)['textFill']
+        Color(r=1.0, g=0, b=0.22)
+        """
+        attrString = self.s.getNSObject()
+        cIndex = 0
+        style = {}
+        if len(attrString):
+            for nsObject in attrString.attributesAtIndex_effectiveRange_(index, None):
+                if isinstance(nsObject, NSAttributeDictionary):
+                    nsColor = nsObject.get('NSColor')
+                    if nsColor is not None:
+                        style['textFill'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+                    nsColor = nsObject.get('NSStrokeColor')
+                    if nsColor is not None:
+                        style['textStroke'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+                    strokeWidth = nsObject.get('NSStrokeWidth')
+                    if strokeWidth is not None:
+                        style['strokeWidth'] = pt(strokeWidth)
+                    nsFont = nsObject.get('NSFont')
+                    if nsFont is not None:
+                        style['font'] = nsFont.fontName()
+                        style['fontSize'] = pt(nsFont.pointSize())
+                    pgStyle = nsObject.get('NSParagraphStyle')
+                    style['tabs'] = tabs = {}
+                    #for tab in pgStyle.tabStops:
+                    #    tabe[tab] = 'a'
+                    style['leading'] = pt(pgStyle.minimumLineHeight())
+                    style['firstLineIndent'] = pt(pgStyle.firstLineHeadIndent())
+                    style['indent'] = pt(pgStyle.headIndent())
+                    style['tailIndent'] = pt(pgStyle.tailIndent())
+                    # MORE FROM: Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, 
+                    #  0, LineHeight 21/21, LineHeightMultiple 0, LineBreakMode 0, Tabs (), DefaultTabInterval 0, 
+                    # Blocks (), Lists (), BaseWritingDirection -1, HyphenationFactor 0, TighteningForTruncation NO, HeaderLevel 0
+                elif isinstance(nsObject, NSRange):
+                    if cIndex >= index: # Run through until matching index, so the style cumulates.
+                        break
+                    cIndex += nsObject.length
+        return style
 
     def asText(self):
         """Answers the text string.
@@ -598,6 +664,8 @@ class DrawBotString(BabelString):
                 fsAttrs['fill'] = None
             elif cFill.isCmyk:
                 fsAttrs['cmykFill'] = cFill.cmyk
+            elif cFill.isRgba:
+                fsAttrs['fill'] = cFill.rgba
             else:
                 fsAttrs['fill'] = cFill.rgb
 
@@ -622,10 +690,12 @@ class DrawBotString(BabelString):
 
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsAttrs['stroke'] = None
-            elif cFill.isCmyk:
-                fsAttrs['cmykFill'] = cFill.cmyk
+            elif cStroke.isCmyk:
+                fsAttrs['cmykStroke'] = cStroke.cmyk
+            elif cStroke.isRgba:
+                fsAttrs['stroke'] = cStroke.rgba
             else:
-                fsAttrs['fill'] = cFill.rgb
+                fsAttrs['stroke'] = cStroke.rgb
 
         # NOTE: xAlign is used for element alignment, not text.
         sAlign = css('xTextAlign', e, style)
@@ -682,7 +752,7 @@ class DrawBotString(BabelString):
         uFirstLineIndent = css('firstLineIndent', e, style)
         # TODO: Use this value instead, if current tag is different from
         # previous tag. How to get this info?
-        # sFirstParagraphIndent = style.get('firstParagraphIndent')
+        # firstTagIndent = style.get('firstTagIndent')
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
             fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) # Base for em or perc
@@ -762,7 +832,9 @@ class DrawBotString(BabelString):
         newT = context.b.FormattedString(t, **fsAttrs)
         isFitting = True
         
-        if w is not None:
+        # @@@@ Disable string fitting here. Use fitString(...) instead.
+        """
+        if False and w is not None:
             # A target width is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds
             # instead of the context.textSide(newT) here, because it is more
@@ -786,7 +858,7 @@ class DrawBotString(BabelString):
             else:
                 newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
-        elif h is not None:
+        elif False and h is not None:
             # A target height is already defined, calculate again with the
             # fontSize ratio correction. We use the enclosing pixel bounds
             # instead of the context.textSide(newT) here, because it is
@@ -808,8 +880,9 @@ class DrawBotString(BabelString):
                 newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         else:
-            newS = cls(newT, context, fsAttrs)
-            fittingStyle = {}
+        """    
+        newS = cls(newT, context, fsAttrs)
+        fittingStyle = {}
 
         # Store any adjust fitting parameters in the string, in case the caller
         # wants to know.

@@ -11,28 +11,32 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-from pagebot.themes.metallic_office import MetallicOffice
-from pagebot.themes.glass_office import GlassOffice
-from pagebot.themes.wood_office import WoodOffice
+#	  themes/__init__.py
+#
 
-Themes = {}
+from pagebot.themes.backtothecity import BackToTheCity
+from pagebot.themes.businessasusual import BusinessAsUsual
+from pagebot.themes.fairytales import FairyTales
+from pagebot.themes.freshandshiny import FreshAndShiny
+from pagebot.themes.intothewoods import IntoTheWoods
+from pagebot.themes.seasoningthedish import SeasoningTheDish
+from pagebot.themes.somethingintheair import SomethingInTheAir
+from pagebot.themes.wordlywise import WordlyWise
+from pagebot.themes.happyholidays import HappyHolidays
 
-def addTheme(theme):
-	u"""Add the theme, making sure its name is define and unique."""
-	n = 0
-	while True:
-		name = theme.name
-		if name is None:
-			name = 'Untitled'
-		if name in Themes:
-			name = '%s%d' % (name, n)
-		if name not in Themes:
-			Themes[name] = theme
-			theme.name = name
-			return
+ThemeClasses = {}
 
-addTheme(MetallicOffice())
-addTheme(GlassOffice())
-addTheme(WoodOffice())
+for themeClass in (
+    BackToTheCity, 
+    BusinessAsUsual, 
+    FairyTales, 
+    FreshAndShiny, 
+    IntoTheWoods, 
+    SeasoningTheDish, 
+    SomethingInTheAir, 
+    WordlyWise,
+    HappyHolidays):
+        ThemeClasses[themeClass.NAME] = themeClass
 
+DEFAULT_THEME_CLASS = FreshAndShiny
 

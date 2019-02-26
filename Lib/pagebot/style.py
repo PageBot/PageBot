@@ -19,7 +19,6 @@
 #     used local in an element or string.
 #
 
-import copy
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
@@ -32,7 +31,7 @@ from pagebot.toolbox.color import color, noColor, blackColor
 def newStyle(**kwargs):
     return dict(**kwargs)
 
-def makeStyle(style=None, **kwargs):
+def makeStyle(style=None, raiseError=True, **kwargs):
     """Make style from a copy of style dict (providing all necessary default
     values for the element to operate) and then overwrite these values with any
     specific arguments. If style is None, then create a new style dict. In
@@ -49,15 +48,21 @@ def makeStyle(style=None, **kwargs):
         for key, value in style.items():
         #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
             if key not in rs:
-                # TODO: raise error?
-                print('makeStyle warning: %s not allowed in (root) style!' % key)
+                warning = '[makeStyle] %s not allowed in (root) style!' % key
+                if raiseError:
+                    raise ValueError(warning)
+                else:
+                    print(warning)
             else:
                 new[key] = value
 
         for name, v in kwargs.items():
             if name not in rs:
-                # TODO: raise error?
-                print('makeStyle warning: %s not allowed in (root) style!' % name)
+                warning = '[makeStyle] %s not allowed in (root) style!' % name
+                if raiseError:
+                    raise ValueError(warning)
+                else:
+                    print(warning)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 
@@ -110,7 +115,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         w = w, # Default page width, basic size of the document. Point rounding of 210mm, international generic fit.
         h = h, # Default page height, basic size of the document. 11", international generic fit.
         d = pt0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-
+        proportional = False, # If True, keep w/h proportional, depending on which of the two is set.
+        
         # For rotation, the point (x+rx, y+ry) is used as rotation center. Default is (x, y).
         rx = pt0,
         ry = pt0,
@@ -136,7 +142,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # are aligned by the xTextAlign attribute. xAlign is about the position
         # of the element box.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
-        yAlign = TOP, # Default alignment for elements like image, that float in their designated space.
+        # Default alignment for elements like image, that float in their designated space.
+        # Document will set this value default to BOTTOM, in case the Document.originTop
+        # is set to False.
+        yAlign = TOP, 
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
         # Although it is common to talk about the "margins" on a page, as the
@@ -270,11 +279,20 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
         listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
         tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...] or [20, 30, 40] for LEFT
-        firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
-        firstParagraphIndent = pt0, # Indent of first line of first paragraph in a text tag.
-        firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
-        indent = pt0, # Left indent (for left-right based scripts)
+        # DrawBot-FormattedString compatible
+        indent = pt0, # Left indent (for left-right based scripts).
         tailIndent = pt0, # Tail/right indent (for left-right based scripts)
+        firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
+        # PageBot additions, used for textOverflow, in combination with columns
+        firstTagIndent = pt0, # Indent of first line of paragraph in a <p> text tag, where style is different from previous tag.
+        firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
+
+        # Strip pre/post white space from e.text and e.tail and substitute by
+        # respectively prefix and postfix if they are not None. Set to e.g.
+        # newline(s) "\n" or empty string, if tags need to glue together.  Make
+        # None for no stripping.
+        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
+        postfix = None, # Set to replacement string to strip white space from tail of XML tag block into a single space.
 
         # Vertical spacing of baselines by TextBox. Note that PageView is
         # drawing the baseline grid color as defined by viewGridStrokeX and
@@ -317,13 +335,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         language = DEFAULT_LANGUAGE, # Language for hyphenation and spelling. Can be altered per style in FormattedString.
         encoding  = 'utf-8',
         hyphenation = True,
-
-        # Strip pre/post white space from e.text and e.tail and substitute by
-        # respectively prefix and postfix if they are not None. Set to e.g.
-        # newline(s) "\n" or empty string, if tags need to glue together.  Make
-        # None for no stripping.
-        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = '', # Default is to strip white space from tail of XML tag block into a single space.
 
         # Paging
         pageIdMarker = '#??#', # The text pattern will be replaced by current page id.
@@ -383,14 +394,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showMissingElement = True,
 
         # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR,
-        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for the
-        # types of grid that can be drawn.
-        showGrid = set(), # If set, display the type of grid elements on foreground and background
+        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for all types of grid
+        # that can be drawn.
+        showGrid = set(), # If defined, display the type of grid elements on foreground and background
 
-        # Types of baseline grid to be drawn using conbination set of
-        # (BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT).
-        showBaselines = set(), # If set, display options defined the type of grid to show.
-        showBaselinesBackground = set(), # If set, display options defined the type of grid to show on background.
+        # Types of baseline grid to be drawn using combination set of
+        # set(BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, 
+        # BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE).
+        showBaselines = set(), # If defined, display options defined the type of grid to show.
+        # If set, display options defined the type of grid to show on background.
         showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
 
         # Flow stuff
@@ -400,11 +412,18 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Image stuff
         showImageReference = False,
         showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
+        # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
+        # Do not scale the image, if the cache file already exists, unless forced. If False, then no scaled cache is created.
+        scaleImage = True,
+        scaledImageFactor = 0.8, # If between >=0.8 scale, then don't save cached. Cached images should never enlarge.
+        defaultImageWidth = None, # If set, then use this as default width for scaling images (e.g. when used HTML context)
+        defaultImageHeight = None, # If set, then use this as default height for scaling image (e.g. when used HTML context)
 
         # CSS flags
         cssVerbose = True, # Adds information comments with original values to CSS export.
 
         # Exporting
+        saveUrlAsDirectory = False, # Flag to set self.url save as directories, insteal of file (replacing '/' by '-')
         doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
 
         # Sketch style parameters

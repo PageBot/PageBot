@@ -61,7 +61,6 @@ class BaseContext(AbstractDrawBotContext):
         self._gState = []
 
         self.doc = None
-        self.pages = []
 
         self.page = None
         self.style = None
@@ -427,7 +426,7 @@ class BaseContext(AbstractDrawBotContext):
     def polygon(self, *points, **kwargs):
         return self.b.polygon(*points, **kwargs)
 
-    def quadTo(bcp, p):
+    def quadTo(self, bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
         # What's difference with qCurveTo()?
         return self.b.quadTo(bcp, p)
@@ -646,18 +645,18 @@ class BaseContext(AbstractDrawBotContext):
         # Otherwise assume the value to be a degrees number.
         self.b.rotate(angle, center=center)
 
-    def scale(self, x=1, y=None, center=(0, 0)):
+    def scale(self, sx=1, sy=None, center=(0, 0)):
         """Sets the drawing scale."""
-        if isinstance(x, (tuple, list)):
-            assert len(x) in (2, 3)
-            x, y = sz[0], s[1] # FIXME: where are sz and s?
+        if isinstance(sx, (tuple, list)):
+            assert len(sx) in (2, 3)
+            sx, sy = sx[0], sx[1] # FIXME: where are sz and s?
 
-        if y is None:
-            y = x
+        if sy is None:
+            sy = sx
 
         msg = 'DrawBotContext.scale: Values (%s, %s) must all be of numbers'
-        assert isinstance(x, (int, float)) and isinstance(y, (int, float)), (msg % (x, y))
-        self.b.scale(x, y, center=center)
+        assert isinstance(sx, (int, float)) and isinstance(sy, (int, float)), (msg % (sx, sy))
+        self.b.scale(sx, sy, center=center)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         return self.b.skew(angle1, angle2=angle2, center=center)
@@ -755,8 +754,31 @@ class BaseContext(AbstractDrawBotContext):
         ppt = point2D(upt(p))
         self.b.text(sOrBs, ppt) # Render point units to value tuple
 
-    def textOverflow(self, txt, box, align=None):
-        return self.b.textOverflow(txt, box, align=align)
+    def textOverflow(self, sOrBs, box, align=None):
+        """Answer the overflow text if flowing it in the box. The sOrBs can be a
+        plain string or a BabelString instance. In case a plain string is given
+        then the current font/fontSize/etc. settings of the builder are used.
+
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> context = DrawBotContext()
+        >>> context.font('Verdana')
+        >>> context.fontSize(12)
+        >>> box = 0, 0, 100, 100
+        >>> len(context.textOverflow('AAA ' * 200, box))
+        728
+        >>> style = dict(font='Verdana', fontSize=12)
+        >>> bs = context.newString('AAA ' * 200, style=style)
+        >>> len(context.textOverflow(bs, box))
+        740
+        """
+        if isinstance(sOrBs, str):
+            return self.b.textOverflow(sOrBs, box, align=align) # Plain string
+    
+        # Assume here it's a BabelString with a FormattedString inside
+        overflow = self.b.textOverflow(sOrBs.s, box, align=align) 
+        bs = self.newString('')
+        bs.s = overflow
+        return bs
 
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draw the sOrBs text string, can be a str or BabelString, including a
@@ -853,19 +875,6 @@ class BaseContext(AbstractDrawBotContext):
         return s
 
     # Images
-
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
-        raise NotImplementedError
-
-    def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
-        return pt(self.b.imageSize(path))
-
-    def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
-
-    def numberOfPages(self, path):
-        return self.b.numberOfPages(path)
 
     def numberOfImages(self, path):
         raise NotImplementedError

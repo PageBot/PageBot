@@ -28,9 +28,9 @@ class TextBox(Element):
     isText = True  # This element is capable of handling text.
     isTextBox = True
 
-    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box.
+    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box. Avoid endless elastic height.
 
-    def __init__(self, bs=None, w=None, h=None, size=None, firstColumnIndent=None, **kwargs):
+    def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
         (DrawBot FormattedString or Flat equivalent), but optional it can also
@@ -45,30 +45,49 @@ class TextBox(Element):
             w, h = size
         self.w, self.h = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
 
-        self.bs = bs # Set as property, to make sure there's always a context based Babelstring
-
-        # If False or 0, then ignore first line indent of a column on text overflow.
-        # Otherwise set to a certain unit. This will cause text being indendete by the amount of
-        # self.firstLineIndent, probably in mid-sentence. This option is likely never necessary,
-        # implemented just in case.
-        self.firstColumnIndent = firstColumnIndent or False
+        self.bs = bs # Set as property, to make sure there's always a context based Babelstring or None
 
     def _get_bs(self):
+        """Answer the stored formatted string. The value can be None.
+        """
         return self._bs
-    def _set_bs(self, s):
-        """Make sure that this is a formatted string. Otherwise create it with
+    def _set_bs(self, bs):
+        """If not None, make sure that this is a formatted string. Otherwise create it with
         the current style. Note that in case there is potential clash in the
         double usage of fill and stroke.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[1]
+        >>> tb = TextBox(parent=page, w=125)
+        >>> tb.bs = 'AAA' # String converts to DrawBotString.
+        >>> tb.bs, tb.bs.s, tb.bs.__class__.__name__
+        (AAA, AAA, 'DrawBotString')
+        >>> tb = TextBox('BBB')
+        >>> tb.bs
+
         """
-        if s is None: # If not defined, initialize as empty string (to avoid display of "None")
-            s = ''
-        # Source can be any type: BabelString instance or plain unicode string.
-        self._bs = self.newString(s, style=self.style)
+        if bs is not None:
+            # Source can be any type: BabelString instance or plain unicode string.
+            bs = self.newString(bs, style=self.style)
+            #assert bs is not None
+        self._bs = bs
     bs = property(_get_bs, _set_bs)
 
     def clear(self):
-        """Clear the current content of the element."""
-        self.bs = ''
+        """Clear the current content of the element. Make a new formatted string with self.style.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> page = doc[1]
+        >>> tb = TextBox('AAA', parent=page, w=125)
+        >>> tb.bs
+        AAA
+        >>> tb.clear()
+        >>> tb.bs is None
+        True
+        """
+        self.bs = None
 
     def _get_w(self): # Width
         """Property for self.w, holding the width of the textbox.
@@ -85,12 +104,10 @@ class TextBox(Element):
         """
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
         return units(self.css('w'), base=base)
-
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
         # Note choice for difference in camelCase
         #self._textLines = self._baselines = None # Force reset if being called
-
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -155,19 +172,46 @@ class TextBox(Element):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
         #self._textLines = None # Force recalculation of y values.
-
     y = property(_get_y, _set_y)
+
+    def _get_firstColumnIndent(self):
+        """If False or 0, then ignore first line indent of a column on text overflow.
+        Otherwise set to a certain unit. This will cause text being indented by the amount of
+        self.firstLineIndent, probably in mid-sentence. This option is likely never necessary,
+        implemented just in case.
+        """
+        return self.css('firstColumnIndent')
+    def _set_firstColumnIndent(self, indent):
+        self.style['firstColumnIndent'] = units(indent)
+    firstColumnIndent = property(_get_firstColumnIndent, _set_firstColumnIndent)
+
+    def _get_firstLineIndent(self):
+        """DrawBot-compatible indent of first line of a paragraph.
+        """
+        return self.css('firstLineIndent')
+    def _set_firstLineIndent(self, indent):
+        self.style['firstLineIndent'] = units(indent)
+    firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
+
+    def _get_indent(self):
+        """DrawBot-compatible indent of text.
+        """
+        return self.css('indent')
+    def _set_indent(self, indent):
+        self.style['indent'] = units(indent)
+    indent = property(_get_indent, _set_indent)
 
     def _get_textLines(self):
         if self._textLines is None:
             self._textLines = []
             self._baselines = {}
 
-            for textLine in self.bs.getTextLines(self.pw, self.ph):
-                #print('---', textLine.y, self.h - textLine.y)
-                textLine.y = self.h - textLine.y # Make postion relative to text box self.
-                self._textLines.append(textLine)
-                self._baselines[upt(textLine.y)] = textLine
+            if self.bs:
+                for textLine in self.bs.getTextLines(self.pw, self.ph):
+                    #print('---', textLine.y, self.h - textLine.y)
+                    textLine.y = self.h - textLine.y # Make postion relative to text box self.
+                    self._textLines.append(textLine)
+                    self._baselines[upt(textLine.y)] = textLine
 
         return self._textLines
     textLines = property(_get_textLines)
@@ -262,7 +306,10 @@ class TextBox(Element):
         based on the style of self."""
         #assert isinstance(bs, (str, self.context.STRING_CLASS))
         #self.bs += self.newString(bs, e=self, style=style)
-        self.bs += bs
+        if self.bs is None:
+            self.bs = bs
+        else:
+            self.bs += bs
         #self.bs = self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
@@ -330,8 +377,7 @@ class TextBox(Element):
         """Answers the name and style that desctibes this run best. If there is
         a doc style, then answer that one with its name. Otherwise answer a new
         unique style name and the style dict with its parameters."""
-        print(run.attrs)
-        return('ZZZ', run.style)
+        return self.bs.getStyleAtIndex(0)
 
     def _get_styledLines(self):
         """Answers the list with (styleName, style, textRun) tuples, reverse
@@ -363,7 +409,7 @@ class TextBox(Element):
         exists or is already filled by another flow."""
         return self.nextElement is None and self.getOverflow()
 
-    def overflow2Next(self):
+    def overflow2Next(self, processed=None):
         """Try to fix if there is overflow. If there is overflow outside the
         page, then find the page.next with it's target element to continue,
         until all text fits or the element has not nextElement defined.
@@ -371,51 +417,64 @@ class TextBox(Element):
         Overflow is solved by element condition Overflow2Next()
 
         >>> from pagebot.document import Document
-        >>> from pagebot.contexts import DrawBotContext
+        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> doc = Document(w=1000, h=1000, context=context)
-        >>> page = doc[1]
-        >>> TextBox('AAA', parent=page, )
-        >>> 
-
+        >>> page1 = doc[1]
+        >>> s = context.newString('AAA ' * 1000, style=dict(font='Verdana', fontSize=10, leading=12))
+        >>> # Fix h to lock elastic height. Overflow now is defined.
+        >>> t1 = TextBox(s, name="T1", w=100, h=200, nextElement='T2', parent=page1)
+        >>> t1.bs.getStyleAtIndex(0)['fontSize']
+        10pt
+        >>> t2 = TextBox(name="T2", w=100, h=200, nextElement='T1', nextPage=page1.next, parent=page1)
+        >>> len(str(t1.bs.s))
+        4000
+        >>> len(t1.getOverflow())
+        3744
         """
         result = True
         overflow = self.getOverflow()
         page = self.getElementPage()
         nextElement = None
-        processed = set() # Keep track of what we did, to avoid circular references.
+        if processed is None:
+            processed = set() # Keep track of what we did, to avoid circular references.
 
         if overflow and self.nextElement: # If there is text overflow and there is a next element?
-            result = False
-            # Find the page of self
-            if page is not None:
-                # Try next page
-                nextElement = page.getElementByName(self.nextElement) # Optional search  next page too.
-                if nextElement is None and self.nextPage:
-                    # Not found or not empty, search on next page.
-                    if self.nextPage == 'next': # Force to next page, relative to current
-                        page = page.next
-                    elif isinstance(self.nextPage, (int, float)): # Offset to next page
-                        page = page.parent.pageNumber(page) + self.nextPage
-                    else:
-                        page = self.doc.getPage(self.nextPage)
-                    if page is not None:
-                        nextElement =  page.getElementByName(self.nextElement)
-                if nextElement is None: # Not found any the regular way?
-                    # Now try with deepFind
-                    nextElement = page.parent.deepFind(self.nextElement)
 
-                if nextElement is not None and not nextElement.eId in processed:
+            if self.nextPage: # Try to use element on another page?
+                # Try on several types in which the next page can be defined.
+                if page is not None and self.nextPage == 'next': # Force to next page, relative to current
+                    page = page.next
+                elif isinstance(self.nextPage, Element):
+                    page = self.nextPage
+                elif page is not None and isinstance(self.nextPage, (int, float)): # Offset to next page
+                    page = page.parent.pageNumber(page) + self.nextPage
+                else: # Try by name
+                    page = self.doc.getPage(self.nextPage)
+                if page is not None:
+                    nextElement =  page.getElementByName(self.nextElement)
+
+            nextElement = page.getElementByName(self.nextElement) # Find element on this page.
+            if page is not None and nextElement is None: # Not found any in the regular way?
+                # Now try with deepFind
+                nextElement = page.parent.deepFind(self.nextElement)
+
+            if nextElement is not None:
+                if nextElement.eId in processed:
+                    print('### TextBox.overflow2Next: Element %s already processed' % nextElement)
+                else:
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
-                    if not self.firstColumnIndent: # Prevent indenting of first overflow text in next column.
-                        overflow = self.context.newString(' ', style=dict(fontSize=0.01, firstLineIndent=0)) + overflow
+                    # Prevent indenting of first overflow text in next column,
+                    # using a tiny-small space to define the new line style,
+                    # with rest of style copied from first character of the overflow string.
+                    overflow = overflow.columnStart(self.firstColumnIndent)
+
                     nextElement.bs = overflow
-                    nextElement.prevPage = page.name
+                    nextElement.prevPage = page # Remember the page we came from, link in both directions.
                     nextElement.prevElement = self.name # Remember the back link
-                    page = nextElement.overflow2Next() # Solve any overflow on the next element.
-        # TODO: In case used as condition, returning a tuple instead of boolean flag
-        return page
+                    page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
+        return overflow
 
     #   C O N D I T I O N S
 
@@ -427,14 +486,12 @@ class TextBox(Element):
         >>> from pagebot.contexts import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
-        >>> e = Element(padding=pt(30), w=1000, h=1000)
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
         >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
         >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
         >>> result = e.solve()
         >>> tb.w
         940pt
-        >>> tb.bs.fittingFontSize > 400 # Enlarge beyond this size (can differ between platforms)
-        True
         """
         self.w = self.parent.w - self.parent.pr - self.x
         self.bs = self.context.newString(self.bs.s, style=self.style, w=self.pw)
@@ -465,7 +522,11 @@ class TextBox(Element):
         self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
 
         # Draw the text with horizontal and vertical alignment.
-        tw, th = self.bs.size
+        if self.bs:
+            tw, th = self.bs.size
+        else:
+            tw, th = 100, 12 # Some value, otherwise fitting will loop.
+            
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
             yOffset = (self.h - self.pb - self.pt - th)/2
@@ -604,8 +665,11 @@ class TextBox(Element):
         context = view.context # Get current context.
         b = context.b
 
-        html = str(self.bs.s)
-        hasContent = html and html.strip() # Check if there is content, besides white space
+        if self.bs is not None:
+            html = str(self.bs.s)
+            hasContent = html and html.strip() # Check if there is content, besides white space
+        else:
+            hasContent = False
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         if hasContent:
@@ -715,7 +779,7 @@ class TextBox(Element):
         """
         if parent is None:
             parent = self.parent
-        if self.textLines and page is not None:
+        if self.textLines:
             assert index in range(len(self.textLines)), \
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))

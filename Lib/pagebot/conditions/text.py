@@ -43,12 +43,13 @@ class EqualizeFlow2Height(Condition):
 class BaselineCondition(Condition):
 
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False,
-            index=0, style=None):
+            index=0, index2=0, style=None):
         self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
         self.error = error
         self.verbose = verbose
         self.index = index
+        self.index2 = index2
         self.style = style
 
 # Baseline alignmenets

@@ -1,0 +1,150 @@
+
+body {
+    background-color: #E2E0DF;
+    color: #181310;
+    font-family: 'Upgrade-Regular', sans-serif;
+    font-size: 13pt;
+    line-height: 1.4em;
+    font-weight: normal; 
+    letter-spacing: 0.02em;
+
+    margin: 10px; /* Overall window-wrapper margin */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-family: 'Upgrade-Regular', sans-serif;
+    line-height: 1.5em;
+    margin: .45em 0;
+    padding: 0; 
+}
+h1, p {
+    color: #090706;
+}
+h2 {
+    color: #1F000D;
+}
+h3 {
+    color: #0D1904;
+}
+h5, h6 {
+    color: #1F2201;
+}
+
+.wrapper, .content{
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    background-color: #776E68;
+}
+.content {
+    background-color: #DB4E89;
+}
+.section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    background-color: #89C360;
+}
+.introduction {
+    grid-column-start: 1; 
+    grid-column-end: 3; 
+    background-color: #DDE951;
+}
+.mains {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;    
+}
+.main {
+    background-color: #D4CBC0;
+}
+.sides {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;    
+}
+.side {
+    background-color: #D7C657;
+}
+.clearfix {
+  /* overflow: auto; */ /* CSS hack to grow div including all child content. */
+}
+
+/****************************************
+*****************************************
+MEDIAQUERIES
+*****************************************
+****************************************/
+
+
+@media only screen and (max-width: 800px) {
+    .wrapper {
+        background-color: #3D3028;
+    }
+    .content {
+        background-color: #CC0256;
+    }
+    .section {
+        background-color: #56AA1C;
+        grid-template-columns: 1fr;
+    }
+    .introduction {
+        grid-column-start: 1; 
+        grid-column-end: 1; 
+        background-color: #CEE007;
+    }
+    .main {
+        background-color: #C1B5A5;
+    }
+    .side {
+        background-color: #C6AD0F;
+    }
+}
+@media only screen and (min-width: 1000px) {
+    .wrapper {
+        background-color: #B1ACA9;
+    }
+    .content {
+        background-color: #EB9ABB;
+    }
+    .section {
+        background-color: #BBDDA4;
+    }
+    .introduction {
+        background-color: #EBF39C;
+    }
+    .main {
+        background-color: #E6E1DB;
+    }
+    .side {
+        background-color: #E8DE9F;
+    }
+}
+@media only screen and (min-width: 1200px) {
+    .wrapper {
+        width: 1200px;
+        margin: auto;
+        background-color: #E2E0DF;
+    } 
+    .content {
+        background-color: #F7D9E6;
+    }
+    .section {
+        background-color: #E6F2DD;
+    }
+    .introduction {
+        background-color: #F8FADA;
+    }
+    .main {
+        background-color: #F6F4F2;
+    }
+    .side {
+        background-color: #F6F3DB;
+    }
+}
+

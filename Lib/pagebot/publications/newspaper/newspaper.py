@@ -127,8 +127,7 @@ class Newspaper(Publication):
         h1Style = dict(font=h1Font, fontSize=pt(90), leading=pt(90), textFill=color(0))
         h2Style = dict(font=h1Font, fontSize=pt(60), leading=pt(60), textFill=color(0))
         bodyStyle = dict(font=bodyFont, fontSize=pt(14), hyphenation=True,
-                leading=pt(18), textFill=color(0),
-                firstParagraphIndent=2*gutter, firstLineIndent=pt(gutter))
+                leading=pt(18), textFill=color(0), firstTagIndent=2*gutter, firstLineIndent=pt(gutter))
         h1IntroStyle = dict(font=bodyFont, fontSize=pt(45), hyphenation=True, leading=pt(52), textFill=color(0))
         h2IntroStyle = dict(font=bodyFont, fontSize=pt(30), hyphenation=True, leading=pt(36), textFill=color(0))
 

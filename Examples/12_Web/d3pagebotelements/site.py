@@ -242,7 +242,11 @@ def makeSite(viewId):
     doc = Document(viewId=viewId, autoPages=1)
     view = doc.view
     view.resourcePaths = ['js']
-    view.jsUrls = (URL_JQUERY, URL_MEDIA, 'js/d3.js')
+    view.jsUrls = (
+      URL_JQUERY, 
+      #URL_MEDIA, 
+      'js/d3.js'
+    )
     # SiteView will automatically generate css/style.scss.css from assumed css/style.scss
     view.cssUrls = None#('css/normalize.css', 'css/style.scss.css')
 
@@ -260,7 +264,6 @@ if EXPORT_TYPE == DO_PDF: # PDF representation of the site
 elif EXPORT_TYPE == DO_FILE:
     doc = makeSite(viewId='Site')
     siteView = doc.view
-    siteView.useScss = False
     doc.export(EXPORT_PATH)
     #print('Site file path: %s' % EXPORT_PATH)
     os.system(u'/usr/bin/open "%s"' % ('%s/index.html' % EXPORT_PATH))

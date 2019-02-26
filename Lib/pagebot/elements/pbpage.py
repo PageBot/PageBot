@@ -20,6 +20,7 @@ import os
 from pagebot.elements.element import Element
 from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.transformer import path2Dir, path2Url, path2FlatUrl
 from pagebot.constants import DEFAULT_GALLEY_NAME, ORIGIN
 
 class Page(Element):
@@ -38,7 +39,7 @@ class Page(Element):
 
     GALLEY_CLASS = Galley
 
-    def __init__(self, originTop=None, isLeft=None, isRight=None, 
+    def __init__(self, originTop=None, isLeft=None, isRight=None, name=None,
             htmlCode=None, htmlPath=None, headCode=None, headPath=None, 
             bodyCode=None, bodyPath=None,
             cssCode=None, cssPaths=None, cssUrls=None, jsCode=None,
@@ -46,14 +47,14 @@ class Page(Element):
             fileName=None, url=None, webFontUrls=None, pn=None, **kwargs):
         """Add specific parameters for a page, besides the parameters for standard Elements.
 
-        >>> page = Page()
+        >>> page = Page(name='MyPage')
         >>> page.w, page.h
         (100pt, 100pt)
         >>> page.size = 1111, 2222
         >>> page.size
         (1111pt, 2222pt)
         >>> page
-        <Page Unplaced (1111pt, 2222pt)>
+        <Page MyPage (1111pt, 2222pt)>
         """
         Element.__init__(self, **kwargs)
 
@@ -71,7 +72,12 @@ class Page(Element):
 
         #   F I L E  S T U F F
 
-        self.fileName = fileName or self.INDEX_HTML
+        # Used for links to home or current page url. Also used by Document.getPageTree()
+        # to answer the nexted dict/list for pages, so Navigation can build a tree of
+        # menu items. Url is a property to make sure that spaces are removed and all lower case.
+        self.url = url or self.INDEX_HTML_URL # Property to make sure that the url is a default file.
+        self.name = name # Set property. If undefined, takes the file part of self.url
+        self.fileName = fileName # Set property. If undefined, takes the file part of self.url
 
         #   H T M L  S T U F F
 
@@ -79,8 +85,6 @@ class Page(Element):
         self.viewPort = viewPort or self.VIEW_PORT
         self.appleTouchIconUrl = None
         self.favIconUrl = favIconUrl or self.FAVICON_PATH
-
-        self.url = url or self.INDEX_HTML_URL # Used for links to home or current page url
 
         # Optional resources that can be included for web output (HtmlContext).
         # Define string or file paths where to read content, instead of
@@ -102,6 +106,41 @@ class Page(Element):
         self.jsUrls = jsUrls # Optional Javascript Urls in <head>, if different from what is defined by the view.
 
         self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
+
+    def _get_url(self):
+        return path2Url(self._url)
+    def _set_url(self, path):
+        """Make all lower case and remove spaces."""
+        self._url = path
+    url = property(_get_url, _set_url)
+
+    def _get_flatUrl(self):
+        return path2FlatUrl(self._url)
+    flatUrl = property(_get_flatUrl, _set_url)
+
+    def _get_fileName(self):
+        if self._fileName is None: # If not defined, try to get it from the url
+            return self.url.split('/')[-1]
+        return self._fileName
+    def _set_fileName(self, fileName):
+        self._fileName = fileName
+    fileName = property(_get_fileName, _set_fileName)
+
+    def _get_name(self):
+        if self._name is None: # If not defined, try to get it from the url/fileName
+            return self.fileName
+        return self._name
+    def _set_name(self, name):
+        self._name = name
+    name = property(_get_name, _set_name)
+
+    def _get_title(self):
+        if self._title is None: # If not defined, try to get the name/fileName/url
+            return self.name
+        return self._title
+    def _set_title(self, title):
+        self._title = title
+    title = property(_get_title, _set_title)
 
     def __repr__(self):
         """Page as string. Similar to general Element.__repr__, except showing
@@ -311,7 +350,7 @@ class Page(Element):
         convenient access in MarkDown content files.
         """
         if name is None:
-            name = DEFAULT_GALLEY_NAME
+            name = INDEX_HTML
         galley = self.select(name)
         if galley is None:
             galley = Galley(name=name, parent=self, xy=self.xy, size=self.pw, nextElement=name)
@@ -401,7 +440,7 @@ class Page(Element):
                 b.head()
                 b.meta(charset=self.css('encoding')) # Default utf-8
                 # Try to find the page name, in sequence order of importance.
-                b.title_(self.title or self.name)
+                b.title_(self.title or self.name or self.url.split('/')[-1])
 
                 b.meta(httpequiv='X-UA-Compatible', content='IE=edge,chrome=1')
 
@@ -506,17 +545,25 @@ class Page(Element):
                 b._body()
             b._html()
 
-        # Construct the file name for this page and save the file.
-        fileName = self.name
-        if not fileName:
-            fileName = self.DEFAULT_HTML_FILE
-        if not fileName.lower().endswith('.html'):
-            fileName += '.html'
         if view.doExport: # View flag to avoid writing, in case of testing.
-            # Make sure that the path folder is there
-            if not os.path.exists(path):
-                os.makedirs(path)
-            b.writeHtml(path + fileName)
+            # Construct the file name for this page and save the file.
+            url = self.url.lower()  
+            if not url.endswith('.html'):
+                url += '.html'
+
+            # Make sure that the root path folder of the site is there
+            if not path.endswith('/'):
+                path += '/'
+            # Decide to save as folders (in which care relative image/CSS/JS paths
+            # also need to be made relative.
+            if not view.saveUrlAsDirectory:
+                url = url.replace('/', '-')
+            filePath = path + url
+            dirPath = path2Dir(filePath)
+            # Then create the folders that this page needs.
+            if not os.path.exists(dirPath):
+                os.makedirs(dirPath)
+            b.writeHtml(filePath)
 
 class Template(Page):
 

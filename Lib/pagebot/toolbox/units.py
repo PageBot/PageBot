@@ -2629,7 +2629,7 @@ class Angle:
         See also atan2(v1, v2) above, that answers an Angle instance.
 
         >>> degrees(0).tan
-        0.0
+        0.01
         >>> degrees(90).tan == radians(0.5).tan # Large number, instead of infinity?
         True
         >>> degrees(45).tan == radians(0.25).tan

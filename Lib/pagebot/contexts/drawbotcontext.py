@@ -88,7 +88,10 @@ class DrawBotContext(BaseContext):
 
         """
         self.checkExportPath(path)
-        self.b.saveImage(path, multipage=multiPage)
+        if path.lower().endswith('.mov'):
+            self.b.saveImage(path)
+        else:
+            self.b.saveImage(path, multipage=multiPage)
 
     saveImage = saveDocument
 

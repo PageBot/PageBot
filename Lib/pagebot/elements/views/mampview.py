@@ -14,6 +14,10 @@
 #
 #     mampview.py
 #
+#     The MampView generates the website from the current document, and then copies
+#     the files (including images, CSS, JS, etc.) to the getMampPath()+'/htdocs'
+#     folder. Running local Mamp server application then does test the website.
+#
 import os
 import shutil
 
@@ -67,20 +71,34 @@ class MampView(SiteView):
             if not path.endswith('/'):
                 path += '/'
 
-        for pn, pages in self.doc.pages.items():
+        b = self.context.b
+        pageItems = self.doc.pages.items()
+
+        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
+        # into cache if that file does not already exists. Note that this is done on a page-by-page
+        # level, not a preparation of all
+        for pn, pages in pageItems:
             for page in pages:
+                hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
+                getattr(page, hook)(self) # Typically calling page.prepare_html. Pass self as view.
+
+        for pn, pages in pageItems:
+            for page in pages:
+                b.clearJs()
                 # Building for HTML, try the hook. Otherwise call by main page.build.
-                hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, path) # Typically calling page.build_html
+                hook = 'build_' + b.PB_ID # E.g. page.build_html()
+                getattr(page, hook)(self, path) # Typically calling page.build_html. Pass self as view
 
-
-        if self.useScss:
-            # Write all collected SCSS vatiables into one file
-            if os.path.exists(self.SCSS_PATH):
-                # Write all collected SCSS variables into one file
-                b.writeScss(self.SCSS_VARIABLES_PATH)
-                # Compile SCSS to CSS if it exists.
-                b.compileScss(self.SCSS_PATH)
+        # Deprecated
+        # TODO: Change this, so it will recognize the type of css file, and then decide on conversion
+        # TODO: That also applies for th cssPy % theme.mood conversion.
+        #if self.useXXXXScss:
+        #    # Write all collected SCSS vatiables into one file
+        #    if os.path.exists(self.SCSS_PATH):
+        #        # Write all collected SCSS variables into one file
+        #        b.writeScss(self.SCSS_VARIABLES_PATH)
+        #        # Compile SCSS to CSS if it exists.
+        #        b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)

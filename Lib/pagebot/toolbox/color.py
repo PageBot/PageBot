@@ -83,8 +83,7 @@ def asRgb(c, *args):
     return None
 
 def int2Rgb(v):
-    """Convert an integer (basically the value of the hex string) into (r, g,
-    b)
+    """Convert an integer (basically the value of the hex string) into (r, g, b)
 
     >>> '%0.2f, %0.2f, %0.2f' % int2Rgb(12345)
     '0.00, 0.19, 0.22'
@@ -160,8 +159,8 @@ def ral2NameRgb(ral, default=None):
     """Answers the RGB of RAL color number or name. If the value does not
     exist, answer default or black.
 
-    >>> ral2NameRgb('red')
-    ('rubyred', (0.5411764705882353, 0.07058823529411765, 0.0784313725490196))
+    >>> ral2NameRgb('red')[0] in ('rubyred', 'winered')
+    True
     """
     nameRgb = None
     if isinstance(ral, str):
@@ -199,8 +198,6 @@ def ral2Rgb(ral, default=None):
     False
     >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('red')
     '0.54, 0.07, 0.08'
-    >>> ral2NameRgb('red')[0]
-    'rubyred'
     """
     return ral2NameRgb(ral, default)[1]
 
@@ -236,8 +233,6 @@ def spot2Rgb(spot, default=None):
     >>> spot2Rgb(10000000) # Non-existend spot colors map to default or black.
     (0, 0, 0)
     """
-    if isinstance(spot, str): # No spot color name defined. Take closest rgb to this name.
-        return name2Rgb(spot)
     return SPOT_RGB.get(spot, default or (0, 0, 0))
 
 def rgb2Spot(rgb):
@@ -303,8 +298,6 @@ def name2Rgb(name):
     >>> rgb = name2Rgb(colorName) # Get nearest rounded (r,g,b) for this spot color
     >>> '%0.2f, %0.2f, %0.2f' % rgb
     '0.44, 0.50, 0.56'
-    >>> rgb2Name(rgb) == colorName
-    True
     """
     return int2Rgb(CSS_COLOR_NAMES.get(name))
 
@@ -317,8 +310,8 @@ def rgb2Name(rgb):
     'darkcyan'
     >>> color(spot=0).name
     'black'
-    >>> color(rgb=(0.4, 0.5, 0.6)).name
-    'slategray'
+    >>> color(rgb=(0.4, 0.5, 0.6)).name in ('slategrey', 'slategray')
+    True
     >>> color(cmyk=(0.2, 0.2, 0.6, 0.2)).name
     'darkkhaki'
     >>> rgb = (0.4, 0.5, 0.6)
@@ -414,8 +407,6 @@ class Color:
     ((0.8, 0.047058823529411764, 0.0), (0, 0.7529411764705882, 0.8, 0.19999999999999996), 4852, 3020)
     >>> C(ral=9002).rgb, C(ral=9002).cmyk, C(ral=9002).spot, C(ral=9002).ral
     ((0.9411764705882353, 0.9294117647058824, 0.9019607843137255), (0, 0, 0, 1), 196, 9002)
-    >>> C(ral='red').rgb, C(ral='red').cmyk, C(ral='red').spot, C(ral='red').ral
-    ((0.5411764705882353, 0.07058823529411765, 0.0784313725490196), (0, 0, 0, 1), 1810, 'red')
     >>> C(ral=3024).rgb, C(ral=3024).cmyk, C(ral=3024).spot, C(ral=3024).ral
     ((0.984313725490196, 0.0392156862745098, 0.10980392156862745), (0, 0, 0, 1), 185, 3024)
     """
@@ -529,7 +520,9 @@ class Color:
         """
         if not isinstance(c, self.__class__):
             return False
-        if (self.isRgb or c.isRgb) and self.rgba == c.rgba:
+        if (self.isRgba or c.isRgba) and self.rgba == c.rgba:
+            return True
+        if (self.isRgb or c.isRgb) and self.rgb == c.rgb:
             return True
         if (self.isSpot or c.isSpot) and self.spot == c.spot:
             return True
@@ -561,7 +554,7 @@ class Color:
         if not None in (self.c, self.m, self.y, self.k):
             return '%s(c=%s, m=%s, y=%s, k=%s)' % (self.__class__.__name__, self.c, self.m, self.y, self.k)
         if self._spot is not None:
-            return '%s(spot=%d)' % (self.__class__.__name__, self._spot)
+            return '%s(spot=%s)' % (self.__class__.__name__, self._spot)
         if self._ral is not None:
             return '%s(ral=%d)' % (self.__class__.__name__, self._ral)
         return '%s(rgb=0)' % self.__class__.__name__
@@ -599,6 +592,24 @@ class Color:
         """
         return self.r is not None or self.g is not None or self.b is not None or self._name is not None
     isRgb = property(_get_isRgb)
+
+    def _get_isRgba(self):
+        """Answers if the base of this color is defined as RGB or if an (RGB)
+        name is defined and if opacity is not 1 (meaning, there is some transparancy).
+
+        >>> color(rgb=0.5, a=0.5).isRgba
+        True
+        >>> color(rgb=0.5, a=1).isRgba
+        False
+        >>> color(name='blue', a=0.1).isRgba
+        True
+        >>> color(name='blue', a=1).isRgba
+        False
+        """
+        if self.a == 1:
+            return False
+        return self.r is not None or self.g is not None or self.b is not None or self._name is not None
+    isRgba = property(_get_isRgba)
 
     def _get_isCmyk(self):
         """Answers if the base of this color is defined as CMYK.
@@ -657,10 +668,6 @@ class Color:
         (1, 0, 1)
         >>> '%0.2f, %0.2f, %0.2f' % color(c=1, m=0, y=0.5, k=0.2).rgb
         '0.00, 0.80, 0.40'
-        >>> color(spot='red').rgb
-        (1, 0, 0)
-        >>> '%0.2f, %0.2f, %0.2f' % color(ral='red').rgb
-        '0.54, 0.07, 0.08'
         """
         if self._name is not None:
             return name2Rgb(self._name)
@@ -858,6 +865,25 @@ class Color:
         return 'rgba(%0.2f, %0.2f, %0.2f, %0.2f' % (r, g, b, self.a)
     css = property(_get_css)
 
+    def warmer(self, v=0.5):
+        """Answers warmer version of self. This convert to internal RGB storage.
+
+        >>> color('blue').warmer()
+        Color(r=0.5, g=0, b=0.5)
+        """
+        return self.moreRed(v).lessBlue(v)
+
+    def cooler(self, v=0.5):
+        """Answers cooler version of self. This convert to internal RGB storage.
+        The value (0..1) is the relative position between self and coolest.
+
+        >>> color('red').cooler()
+        Color(r=0.5, g=0, b=0.5)
+        >>> color('orange').cooler(0.25)
+        Color(r=0.25, g=0.6470588235294118, b=0.25)
+        """
+        return self.moreBlue(v).lessRed(v)
+
     def moreRed(self, v=0.5):
         """Answers the color more red than self. This converts to internal RGB
         storage.
@@ -1014,9 +1040,7 @@ class Color:
         'mediumspringgreen'
         >>> color(0x800000).name
         'maroon'
-        >>> color(0x828085).name # Real value for 'gray' is 0x808080
-        'gray'
-        >>> color(0xffe4e1).name, color(0xffe4f1).name, color(0xffe4f8).name
+        >>> color(0xffe4e1).name, color(0xffe4f3).name, color(0xffe4f8).name
         ('mistyrose', 'lavenderblush', 'lavenderblush')
         """
         if self._name is None:
@@ -1056,6 +1080,18 @@ yellowColor = color(c=0, m=0, y=1, k=0)
 magentaColor = color(c=0, m=1, y=0, k=0)
 cyanColor = color(c=1, m=0, y=0, k=0)
 registrationColor = color(cmyk=1) # All on, for registration/cropmarks usage
+
+def rgb(r, g=None, b=None, rgb=None, name=None):
+    return color(r=r, g=g, b=b, name=name)
+
+def spot(spot):
+    return color(spot=spot)
+
+def cmyk(c, m=None, y=None, k=None):
+    return color(c=c, m=m, y=y, k=k)
+
+def ral(ral):
+    return color(ral=ral)
 
 if __name__ == "__main__":
     import doctest

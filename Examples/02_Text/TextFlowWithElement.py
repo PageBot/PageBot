@@ -23,13 +23,19 @@ from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.toolbox.color import color, blackColor, whiteColor, noColor
 from pagebot.toolbox.units import pt, em
+from pagebot.contexts.drawbotcontext import DrawBotContext
+from pagebot.fonttoolbox.objects.font import findFont
 
 # Document is the main instance holding all information about the document
 # togethers (pages, styles, etc.)
 
+context = DrawBotContext()
+
+font = findFont('Roboto-Regular')
+
 DoTextFlow = True
 PagePadding = 30
-PageSize = 500
+PageSize = 600
 BoxWidth = PageSize - 2*PagePadding
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
@@ -38,10 +44,10 @@ EXPORT_PATH = '_export/UseTextFlows.png'
 def makeDocument():
     """Make a new document."""
 
-    W = H = PageSize
+    W, H = PageSize, PageSize/2
 
     # Create a new document, default to the defined page size.
-    doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2)
+    doc = Document(w=W, h=H, originTop=False, title='Text Flow', autoPages=2, context=context)
 
     view = doc.getView()
     print(view.viewId, doc.views)
@@ -56,26 +62,27 @@ def makeDocument():
 
     # Get list of pages with equal y, then equal x.
     #page = doc[1][0] # Get the single page from te document.
-    page0 = doc.getPage(1) # Get page on pageNumber, first in row (this is only one now).
-    page0.name = 'Page 1'
-    page0.padding = PagePadding
+    page1 = doc[1] # Get page on pageNumber, first in row (this is only one now).
+    page1.name = 'Page 1'
+    page1.padding = PagePadding
+
+
 
     s = ''
-    for n in range(10):
-        s += '(Line %d) Volume of text defines the box height. Volume of text defines the box height. \n' % (n+1)
-    if DoTextFlow:
-        h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
-    else:
-        h1 = None
+    for n in range(30):
+        s += '(Line %d) %s\n' % (n+1, 'AAA ' * 40)
+    style = dict(font=font, fontSize=12, textFill=color('red'), leading=14, firstLineIndent=20)
+    bs = context.newString(s, style=style)
+    h1 = 120 # Fox on a given height, to show the text flowing to the e2 element.
 
-    e1 = newTextBox(s,
-        name='ElasticTextBox1',
-        nextElement='ElasticTextBox2', # Overflow goes here.
-        parent=page0, padding=4, x=100, w=BoxWidth, font='Verdana', h=h1,
+    e1 = newTextBox(bs,
+        name='TextBox1',
+        nextElement='TextBox2', # Overflow goes here.
+        parent=page1, padding=4, x=100, w=BoxWidth, h=h1,
         mb=20, mr=10, # Conditions make the element move to top-left of the page.
         # And the condition that there should be no overflow, otherwise the text box
         # will try to solve it.
-        conditions=[Left2Left(), Float2Top(), Overflow2Next()],
+        conditions=[Left2Left(), Top2Top(), Overflow2Next()],
         # Position of the origin of the element. Just to show where it is.
         # Has no effect on the position conditions.
         yAlign=BOTTOM, xAlign=LEFT,
@@ -86,20 +93,20 @@ def makeDocument():
         strokeWidth=pt(0.5)
     )
     e2 = newTextBox('', # Empty box, will get the overflow from e1, if there is any.
-        name='ElasticTextBox2', # Flow reference by element.name
-        nextElement='ElasticTextBox3', nextPage='Page 2',
-        parent=page0, padding=4, x=100, w=BoxWidth, h=200,
+        name='TextBox2', # Flow reference by element.name
+        nextElement='ElasticTextBox3', nextPage='Page 1',
+        parent=page1, padding=4, x=100, w=BoxWidth, h=200,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom(), Overflow2Next()], yAlign=TOP,
         fill=whiteColor, stroke=noColor,
     )
     # Get next page, to show flow running over page breaks.
-    page1 = doc[1]
-    page1.name = 'Page 2'
-    page1.padding = PagePadding
+    page2 = page1.next
+    page2.name = 'Page 2'
+    page2.padding = PagePadding
 
     e3 = newTextBox('', # Empty box, will get the overflow from e2, if there is any.
         name='ElasticTextBox3', # Flow reference by element.name
-        parent=page1, padding=4, w=BoxWidth,
+        parent=page2, padding=4, w=BoxWidth,
         conditions=[Right2Right(), Float2Top(), Fit2Bottom()],
         yAlign=TOP,
         fill=whiteColor, stroke=noColor)
@@ -110,14 +117,15 @@ def makeDocument():
 
     return doc # Answer the doc for further doing.
 
-if __name__ == '__main__':
-    d = makeDocument()
-    d.context.Variable(
-        [dict(name='DoTextFlow', ui='CheckBox', args=dict(value=True)),
-         dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=500, maxValue=PageSize)),
-         dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
-         dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
-        #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
-        ], globals())
-    d.export(EXPORT_PATH)
+d = makeDocument()
+"""
+d.context.Variable(
+    [dict(name='DoTextFlow', ui='CheckBox', args=dict(value=True)),
+     dict(name='BoxWidth', ui='Slider', args=dict(minValue=100, value=500, maxValue=PageSize)),
+     dict(name='PagePadding', ui='Slider', args=dict(minValue=0, value=30, maxValue=100)),
+     dict(name='PageSize', ui='Slider', args=dict(minValue=200, value=500, maxValue=PageSize)),
+    #dict(name='ElementOrigin', ui='CheckBox', args=dict(value=False)),
+    ], globals())
+"""
+d.export(EXPORT_PATH)
 

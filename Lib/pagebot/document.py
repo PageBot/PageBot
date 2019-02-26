@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-
+#
 #     P A G E B O T
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -21,7 +21,8 @@ from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
-from pagebot.toolbox.transformer import obj2StyleId, uniqueID
+from pagebot.themes import DEFAULT_THEME_CLASS
+from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir, path2Url
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
@@ -56,9 +57,9 @@ class Document:
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=False, startPage=None, sId=None, 
-            w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, path=None,
-            exportPaths=None, **kwargs):
+            autoPages=1, template=None, templates=None, originTop=False, startPage=None, 
+            sId=None, w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, 
+            path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
@@ -66,13 +67,24 @@ class Document:
         if size is not None: # For convenience of the caller, also accept size tuples.
             w, h, d = point3D(size)
 
-        # Apply the theme if defined or create default styles, to make sure they are there.
+        # Set position of origin and direction of y for self and all inheriting pages
+        # and elements. 
+        self._originTop = originTop # Set as property. Ii is not supposed to change.
+
+        # If no theme defined, then use the default theme class to create an instance.
+        # Themes hold values and colors, combined in a theme.mood dictionary that matches
+        # functions with parameters.
+        if theme is None:
+            theme = DEFAULT_THEME_CLASS()
+        self.theme = theme
+
+        # Adjust self.rootStyle['yAlign'] default value, based on self.origin, if not defined
+        # as separate attribute in **kwargs.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
-        self.initializeStyles(theme, styles) # May or may not overwrite the root style.
+        self.initializeStyles(styles) # May or may not overwrite the root style.
         self.path = path # Optional source file path of the document, e.g. .sketch file.
         self.name = name or title or 'Untitled'
         self.title = title or self.name
-        self._originTop = originTop # Set as property. Iy is not supposed to change.
 
         self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
         self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
@@ -106,7 +118,7 @@ class Document:
 
         # Property self.docLib for storage of collected content while typesetting
         # and composing, referring to the pages they where placed on during
-        # composition. The lib can optionally be defined when constructing
+        # composition. The docLib can optionally be defined when constructing
         # self.
         if docLib is None:
             docLib = {}
@@ -253,7 +265,7 @@ class Document:
         glossary.append('\tPages: %d' % len(self.pages))
         glossary.append('\tTemplates: %s' % ', '.join(sorted(self.templates.keys())))
         glossary.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
-        glossary.append('\tLib: %s' % ', '.join(self._lib.keys()))
+        glossary.append('\tLib: %s' % ', '.join(self.docLib.keys()))
         return '\n'.join(glossary)
 
     def _get_builder(self):
@@ -337,18 +349,13 @@ class Document:
 
     #   S T Y L E
 
-    def initializeStyles(self, theme, styles):
+    def initializeStyles(self, styles):
         """Make sure that the default styles always exist."""
-        if theme is not None:
-            self.styles = copy.copy(theme.styles)
-            # Additional styles defined? Let them overwrite the theme.
-            for styleName, style in (styles or {}).items():
-                self.addStyle(name, style)
 
-        else: # No theme defined, use the styles, otherwise use defailt style.
-            if styles is None:
-                styles = copy.copy(styleLib['default'])
-            self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+        if styles is None:
+            styles = copy.copy(styleLib['default'])
+        self.styles = styles # Dictionary of styles. Key is XML tag name value is Style instance.
+
         # Make sure that the default styles for document and page are always there.
         name = 'root'
         if name not in self.styles:
@@ -364,11 +371,34 @@ class Document:
         """Creates a rootStyle, then set the arguments from **kwargs, if their
         entry name already exists. This is similar (but not identical) to the
         makeStyle in Elements. There any value entry is copied, even if that is
-        not defined in the root style."""
+        not defined in the root style.
+
+        >>> doc = Document()
+        >>> page = doc[1] # Inheriting from doc
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (False, 'bottom', False, 'bottom')
+        >>> doc = Document(originTop=True)
+        >>> page = doc[1] # Inheriting from doc
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (True, 'top', True, 'top')
+        >>> doc = Document(originTop=True, yAlign=BOTTOM)
+        >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (True, 'bottom', True, 'bottom')
+        >>> doc = Document(yAlign=TOP)
+        >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
+        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        (False, 'top', False, 'top')
+        """
         rootStyle = getRootStyle()
         for name, v in kwargs.items():
             if name in rootStyle: # Only overwrite existing values.
                 rootStyle[name] = v
+        # Adjust the default vertical origin position from self.origin, if not already defined 
+        # by **kwargs
+        if not 'yAlign' in kwargs:
+            yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
+            rootStyle['yAlign'] = yAlign
         return rootStyle
 
     def applyStyle(self, style):
@@ -1151,6 +1181,102 @@ class Document:
                 continue
             pages.append((pn, pnPages))
         return pages
+
+    def getPageTree(self, pageTree=None):
+        """Answer a nested dict/list of pages, interpreting their tree-relation (e.g. as
+        used for a website-navigation-menu structure) from their url-path.
+        The keys in the dictionary are the "folder" names. The pages in each directory
+        are collected in a list at key '@'.
+
+        >>> doc = Document(autoPages=0)
+        >>> p = doc.newPage(name='home', url='index.html')
+        >>> p = doc.newPage(name='c', url='a/aa1/c.html')
+        >>> p = doc.newPage(name='d', url='a/aa1/d.html')
+        >>> p = doc.newPage(name='d', url='a/aa2/d.html')
+        >>> p = doc.newPage(name='e', url='a/aa2/e.html')
+        >>> p = doc.newPage(name='f', url='a/aa3/f.html')
+        >>> p = doc.newPage(name='g', url='b/bb1/g.html')
+        >>> p = doc.newPage(name='h', url='b/bb2/h.html')
+        >>> p = doc.newPage(name='i', url='b/bb3/i.html')
+        >>> p = doc.newPage(name='j', url='c/c c1/j.html')
+        >>> p = doc.newPage(name='zzz', url='r/s/t/u/v/w/x/y/z/zzz.html')
+        >>> p = doc.newPage(name='noUrlPage')
+        >>> tree = doc.getPageTree()
+        >>> tree['home']
+        <PageNode path=home page=<Page #1 home (1000pt, 1000pt)> []>
+        >>> tree.children[1]
+        <PageNode path=a page=None ['a/aa1', 'a/aa2', 'a/aa3']>
+        >>> tree['b']
+        <PageNode path=b page=None ['b/bb1', 'b/bb2', 'b/bb3']>
+        >>> tree['b']['bb1'].page is None
+        True
+        >>> tree['b']['bb1']['g'].page
+        <Page #7 g (1000pt, 1000pt)>
+        >>> tree['c'] # Show removed space in url
+        <PageNode path=c page=None ['c/c_c1']>
+        >>> tree['c']['c_c1']['j'].page.url # Removed space in the url
+        'c/c_c1/j.html'
+        >>> tree['c']['c_c1']['j'].page.flatUrl
+        'c-c_c1-j.html'
+        >>> tree['r']['s']['t']['u']['v']['w']['x'].page is None
+        True
+        >>> tree['r']['s']['t']['u']['v']['w']['x']['y']['z']['zzz'].page 
+        <Page #11 zzz (1000pt, 1000pt)>
+        """
+        class PageNode:
+            def __init__(self, path=None, page=None):
+                self.path = path2Url(path)
+                self.page = page
+                self.children = []
+            def __getitem__(self, name):
+                for child in self.children:
+                    if child.path and child.path.split('/')[-1] == name:
+                        return child
+                return None
+            def __len__(self):
+                return len(self.children)
+            def __repr__(self):
+                l = []
+                for child in self.children:
+                    l.append(child.path)
+                return '<%s path=%s page=%s %s>' % (self.__class__.__name__, self.path, self.page, l)
+            def show(self, tab=0):
+                print('\t'*tab, id(self), self)
+                for child in self.children:
+                    child.show(tab+1)
+            def getNode(self, path): # Answer the node with this path, oatherwise add it.
+                if path is None:
+                    return None
+                for child in self.children:
+                    if path is not None and path == child.path:
+                        return child
+
+                node = PageNode(path)
+                self.children.append(node)
+                return node
+
+        def addPageNode(page, node):
+            if page.url:
+                path = None
+                for part in page.url.split('/')[:-1]:
+                    if path is None:
+                        path = part
+                    else:
+                        path += '/' + part
+                    node = node.getNode(path)
+                if not path:
+                    path = page.name
+                else:
+                    path += '/' + page.name
+                pageNode = PageNode(path, page)
+                node.children.append(pageNode)
+
+        root = PageNode('root')
+        for pages in self.pages.values(): # For all pages in self
+            for page in pages:
+                addPageNode(page, root)
+        #root.show()
+        return root # Answer the full tree.
 
     def getMaxPageSizes(self, pageSelection=None):
         """Answers the (w, h, d) size of all pages together. If the optional

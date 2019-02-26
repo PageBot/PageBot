@@ -33,13 +33,15 @@ class Publication(Element):
     """
     FINDER_CLASS = Finder
 
-    def __init__(self, findersOrPaths=None, **kwargs):
+    def __init__(self, findersOrPaths=None, api=None, **kwargs):
         Element.__init__(self, **kwargs)
+        if api is None:
+            api = {} # All values will be default.
+        self.api = api
         self.finders = {} # Key is finder root, so we keep unique finders.
         if not findersOrPaths: # At least make it search in the current directory
             findersOrPaths = ['.']
         self.addFinders(findersOrPaths)
-        self.originTop = True
         
     def getAPI(self):
     	u"""Answers the API dictionary for this class that can be used by calling apps,
@@ -62,8 +64,6 @@ class Publication(Element):
             w = self.w
         if h is None:
             h = self.h
-        if originTop is None:
-            originTop = self.originTop
         if padding is None:
             padding = self.padding
         if gw is None: # Gutter width

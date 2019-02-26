@@ -61,12 +61,12 @@ class Image(Element):
     >>> doc.solve()
     Score: 2 Fails: 0
     >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc
-    ((30pt, 99.44mm), (128.83mm, 486.32pt))
+    ((30pt, 286.42mm), (128.83mm, 486.32pt))
     """
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None, size=None, z=0, mask=None,
-        imo=None, index=1, saveScaled=True, **kwargs):
+        imo=None, index=1, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
@@ -93,9 +93,6 @@ class Image(Element):
         self.mask = mask # Optional mask element.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
-        # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
-        # Do not scale the image, if the cache file already exists. If False, then not scaled cache is created.
-        self.saveScaled = saveScaled
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values
@@ -120,8 +117,12 @@ class Image(Element):
         depending on the ratio of the image."""
         u = None
         if not self._w: # Width is undefined
-            ihpt = upt(self.ih)
-            if self._h and ihpt:
+            iwpt, ihpt = upt(self.iw, self.ih)
+            if self.defaultImageWidth and iwpt:
+                u = min(self.defaultImageWidth, iwpt)  # Width overrules, avoid enlargements
+            elif self.defaultImageHeight and ihpt:
+                u = self.iw * upt(min(self.defaultImageHeight, ihpt) / ihpt)  # Height is lead, calculate width.
+            elif self._h and ihpt:
                 u = self.iw * upt(self._h / ihpt)  # Height is lead, calculate width.
             else:
                 u = self.iw # Undefined and without parent, answer original image width.
@@ -140,8 +141,12 @@ class Image(Element):
     def _get_h(self):
         u = None
         if not self._h: # Height is undefined
-            iwpt = upt(self.iw)
-            if self._w and iwpt:
+            iwpt, ihpt = upt(self.iw, self.ih)
+            if self.defaultImageHeight and ihpt:
+                u = min(self.defaultImageHeight, ihpt)  # Height overrules, avoid enlargements
+            elif self.defaultImageWidth and iwpt:
+                u = self.ih * upt(min(self.defaultImageWidth, iwpt) / iwpt)  # Height is lead, calculate width.
+            elif self._w and iwpt:
                 u = self.ih * upt(self._w / iwpt)  # Width is lead, calculate height.
             else:
                 u = self.ih # Undefined and without parent, answer original image width.
@@ -222,45 +227,53 @@ class Image(Element):
             alpha = 1
         return alpha
 
-    def saveScaledCache(self, view):
+    def scaleImage(self, view):
         """If the self.saveScaled is True and the reduction scale is inside the range,
         then create a new cached image file, if it does not already exist. Scaling images in
         the DrawBot context is a fast operation, so always worthwhile to creating PNG from
         large export PDF files.
         In case the source is a PDF, then use self.index to request for the page.
+        # TODO: Add clipPath and filter as parameters.
         """
-        if self.path is None or not self.saveScaled:
+        if self.path is None or not self.scaleImage:
             return
-        if not self.iw or not self.ih: # Make sure not zero, to avoid division
-            print('Image.saveScaledCache: %dx%d zero image size' % (self.iw, self.ih))
+        if not self.iw or not self.ih: # Make sure image exists and not zero, to avoid division
+            print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
         extension = path2Extension(self.path)
         resolutionFactor = self.resolutionFactors.get(extension, 1)
         # Translate the extension to the related type of output.
         exportExtension = CACHE_EXTENSIONS.get(extension, extension)
+        
         resW = self.w * resolutionFactor
         resH = self.h * resolutionFactor
+
         sx, sy = upt(resW / self.iw, resH / self.ih)
-        if not self.saveScaled and 0.8 <= sx and 0.8 <= sy: # If no real scale reduction, then skip. Never enlarge.
+
+        if self.proportional: 
+            sx = sy = max(sx, sy)
+            
+        if not self.scaleImage and self.cacheScaledImageFactor <= sx and self.cacheScaledImageFactor <= sy: 
+            # If no real scale reduction, then skip. Never enlarge.
             return
         # Scale the image the cache does not exist already.
-        # A new path is answers for the scaled image file. Reset the (self.iw, self.ih)
+        # A new path is saved for the scaled image file. Reset the (self.iw, self.ih)
         self.path = self.context.scaleImage(
             path=self.path, w=resW, h=resH, index=self.index,
             showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker,
             exportExtension=exportExtension
         )
 
-    def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.
+    def prepare_html(self, view):
+        """Respond to the top-down element broadcast to prepare for build_html.
         If the original image needs scaling, then prepare the build by letting the context
         make a new cache file with the scaled images.
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.saveScaledCache(view)
+        self.scaleImage(view)
         for e in self.elements:
-            e.prepare(view)
+            e.prepare_html(view)
 
     def build_html(self, view, path, drawElements=True):
         context = view.context # Get current context.
@@ -288,6 +301,17 @@ class Image(Element):
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
+    def prepare(self, view):
+        """Respond to the top-down element broadcast to prepare for build.
+        If the original image needs scaling, then prepare the build by letting the context
+        make a new cache file with the scaled images.
+        If the cache file already exists, then ignore, just continue the broadcast
+        towards the child elements.
+        """
+        self.scaleImage(view)
+        for e in self.elements:
+            e.prepare(view)
+
     def build(self, view, origin=ORIGIN, drawElements=True):
         """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
@@ -307,7 +331,7 @@ class Image(Element):
         self._applyRotation(view, p)
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
-            # TODO: Also show error, in case the image does not exist, to differ from empty box.
+            # TODO: Also show error, in case the image does not exist, to differentiate from empty box.
             if self.path is not None and not os.path.exists(self.path):
                 print('Warning: cannot find image file %s' % self.path)
             # Draw missing element as cross
@@ -365,7 +389,7 @@ class Image(Element):
 
             context.restore()
 
-        #self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         #if drawElements:
         #    self.buildChildElements(view, p)

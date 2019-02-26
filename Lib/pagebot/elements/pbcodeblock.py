@@ -28,10 +28,11 @@ class CodeBlock(TextBox):
             fill = color(0.9)
             if style is None:
                 style = self.DEFAULT_CODE_STYLE
+        # Use a TextBox to store the code on the parent galley.
         TextBox.__init__(self, bs=code, fill=fill, style=style, **kwargs)
         assert isinstance(code, str)
         self.code = code
-        self.tryExcept = tryExcept
+        self.tryExcept = False# tryExcept
 
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])

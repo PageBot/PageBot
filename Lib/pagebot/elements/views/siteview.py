@@ -19,10 +19,11 @@
 #
 import os
 import shutil
+import codecs
 
 from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
-from pagebot.constants import URL_JQUERY, URL_MEDIA
+from pagebot.constants import URL_JQUERY
 
 class SiteView(HtmlView):
     
@@ -35,7 +36,7 @@ class SiteView(HtmlView):
     SCSS_CSS_PATH = u'css/style.scss.css'
     SCSS_VARIABLES_PATH = u'css/variables.scss'
 
-    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None, useScss=True,
+    def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None,
             cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
             **kwargs):
         """Abstract class for views that build websites."""
@@ -53,14 +54,13 @@ class SiteView(HtmlView):
         self.webFontUrls = webFontUrls
 
         # Default CSS urls to inclide 
-        self.useScss = useScss # If True, then try to compile from SCSS.
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
         self.cssUrls = cssUrls # List of CSS urls, added as links in the page <head>. Could be [self.SCSS_CSS_PATH] 
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
         self.jsCode = jsCode # Optional JS code to be added to all pages at end of <body>.
-        self.jsUrls = jsUrls or (URL_JQUERY, URL_MEDIA) # Added as <script src="..."> at end of <body>
+        self.jsUrls = jsUrls or [URL_JQUERY] # Added as <script src="..."> at end of <body>
         self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
     def copyResources(self, path):
@@ -83,7 +83,6 @@ class SiteView(HtmlView):
                     shutil.copytree(resourcePath, dstPath)
                 elif self.verbose:
                     print('[%s.build] Resource "%s" does not exist.' % (self.__class__.__name__, resourcePath))
-
 
     def build(self, path=None, pageSelection=None, multiPage=True):
         """
@@ -122,12 +121,14 @@ class SiteView(HtmlView):
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
                 
-        if self.useScss:
-            if os.path.exists(self.SCSS_PATH):
-                # Write all collected SCSS variables into one file
-                b.writeScss(self.SCSS_VARIABLES_PATH)
-                # Compile SCSS to CSS if it exists.
-                b.compileScss(self.SCSS_PATH)
+        # Deprecated
+        # TODO: Make this automatic, depending on extension of CSS file.
+        #if self.useXXXScss:
+        #    if os.path.exists(self.SCSS_PATH):
+        #        # Write all collected SCSS variables into one file
+        #        b.writeScss(self.SCSS_VARIABLES_PATH)
+        #        # Compile SCSS to CSS if it exists.
+        #        b.compileScss(self.SCSS_PATH)
 
     def getUrl(self, name):
         """Answers the local URL for Mamp Pro to find the copied website."""
