@@ -708,6 +708,8 @@ class Element:
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
 
+        The name, pattern and cls values are case-sensitive in the search.
+
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child', parent=e)
         >>> e2 = Element(name='DeeperChild', parent=e1)
@@ -718,6 +720,8 @@ class Element:
         True
         >>> element = e.deepFind(pattern='Child') # Get first child elements matching pattern
         >>> element is e1
+        True
+        >>> e.select(name='child') is None # Search is case-sensitive
         True
         >>> element = e.deepFind(pattern='Deepest') # Get first child elements matching pattern
         >>> element is e4
@@ -735,7 +739,7 @@ class Element:
                  return e
             if pattern is not None and pattern in e.name: # Simple pattern match
                 return e
-            if name is not None and name in (e.cssId, e.name):
+            if name is not None and name in (e.__class__.__name__, e.cssId, e.name):
                 return e
             found = e.deepFind(name, pattern)
             if found is not None:

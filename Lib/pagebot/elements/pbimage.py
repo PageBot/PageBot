@@ -42,8 +42,8 @@ class Image(Element):
     >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
     >>> e.xy # Position of the image
     (220pt, 330pt)
-    >>> (e.w, e.h), e.size # Identical result, width is the lead.
-    ((512pt, 681.81pt), (512pt, 681.81pt))
+    >>> (e.w, e.h), e.size, (e.iw, e.ih) # Identical result, width is the lead.
+    ((512pt, 681.81pt), (512pt, 681.81pt), (398pt, 530pt))
     >>> e.h = 800 # Width is proportionally calculated, height is the lead.
     >>> e.size
     (600.75pt, 800pt)
@@ -60,33 +60,41 @@ class Image(Element):
     >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt
     >>> doc.solve()
     Score: 2 Fails: 0
+    """
+    """
     >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc
     ((30pt, 286.42mm), (128.83mm, 486.32pt))
     """
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None, size=None, z=0, mask=None,
-        imo=None, index=1, **kwargs):
+        imo=None, proportional=True, index=1, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
         # If the path does not exist, then self.im = self.ih = pt(0)
+        # This is calling self.initImageSize() to set self.im and slef.ih from the image file size.
         self.path = path # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
-        self.initImageSize()
 
-        # One of the two needs to be defined, the other can be None.
-        # If both are set, then the image scales disproportional.
-        if size is None and w is None and h is None: # Set size to original proportions in the file
-            self.size = None
-        elif size is not None: # Disproportional scaling if both are not None or reset to 100% with (None, None)
-            self.size = size
-        elif w is not None and h is not None: # Disproportional scaling
-            self.size = w, h
-        elif w is not None: # Separate settings, to keep proportions if only one it set.
-            self.w = w # Sets self._h to None to indicate that width is the lead.
-        elif h is not None:
-            self.h = h # Sets self._w to None to indicate that height is the lead.
-        self.z = z # Make conditions work with captions inside an image frame element.
+        #print(size, w, h, units(w, self.ih/self.iw * (w or 0)), units(self.iw/self.ih * (h or 0), h))
+        if proportional:
+            if size is not None:
+                w, h = point2D(size)
+            if w is not None:
+                self.size = w, w * upt(self.ih)/upt(self.iw)
+            elif h is not None:
+                self.size = h * upt(self.iw)/upt(self.ih, h)
+            else: 
+                self.size = units(w, h)
+        else: # No proportional flag, try to figure out from the supplied propotions
+            if size is not None:
+                w, h = point2D(size)
+                self.size = w, h       
+            # One of the two needs to be defined, the other can be None.
+            # If both are set, then the image scales disproportional.
+            if size is None and w is not None and h is not None: # Disproportional scaling
+                self.size = units(w, h)
+        #print('#@@##@@#', self._w, self._h, self.iw, self.ih, w, h, size, self.w, self.h, self.size, self.path)
 
         self.name = name
         self.alt = alt
@@ -103,7 +111,7 @@ class Image(Element):
     def _set_size(self, size):
         if size is None: # Reset to original size by single None value.
             size = None, None, None
-        self._w, self._h, self.d = point3D(size)
+        self._w, self._h, self.d = units(point3D(size))
     size = property(_get_size, _set_size)
 
     def _get_size3D(self):

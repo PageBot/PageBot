@@ -195,7 +195,7 @@ class SlideShow(SlideShowBase):
     def build_html(self, view, path):
 
         b = self.context.b
-        b.addJs(self._makeJs(self.cssId, self.cssClass))
+        b.addJs(self._makeJs(self.cssId, self.cssClass), name='SlideShow')
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix')
         for image in self.findAll(cls=Image): # Find all child images inside the tree

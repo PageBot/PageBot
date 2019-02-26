@@ -32,13 +32,13 @@ class NanoElement(Column):
     CONTENT = None
 
     def _get_cssId(self):
-        return self._cssId or self.CSS_ID or self.__class__.__name__
+        return self._cssId or self.CSS_ID or self.eId
     def _set_cssId(self, cssId):
         self._cssId = cssId
     cssId = property(_get_cssId, _set_cssId)
 
     def _get_cssClass(self):
-        return self._cssClass or self.CSS_CLASS or self.cssId.lower()
+        return self._cssClass or self.CSS_CLASS or self.__class__.__name__.lower()
     def _set_cssClass(self, cssClass):
         self._cssClass = cssClass
     cssClass = property(_get_cssClass, _set_cssClass)
@@ -51,7 +51,6 @@ class NanoElement(Column):
             b._div()
 
     def build_html(self, view, path, drawElements=True):
-
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
@@ -117,7 +116,7 @@ class Header(NanoElement):
     def build_html(self, view, path, drawElements=True):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.header(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        b.header(cssId=self.cssId, cssClass=self.cssClass)
         self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path)
@@ -179,7 +178,9 @@ class Navigation(NanoElement):
                 else:
                     currentClass = None
 
-                b.li(cssClass=currentClass, script='onHover();')
+                #b.li(cssClass=currentClass, onmouseover="toggleMenu('%s', true);" % navChildId, 
+                #    onmouseout="toggleMenu('%s', false);")
+                b.li(cssClass=currentClass)
                 b.a(href=node.page.flatUrl, cssClass=currentClass)
                 label = node.page.name
                 if node.children:
@@ -257,8 +258,10 @@ class MobileMenu(NanoElement):
     """MobileMenu lives outside the regular Navigation, made to expand on clicking/tapping
     on a BurgerButton.
     """
-    def __init__(self, menuInfo=None, **kwargs):
-        NanoElement.__init__(self, **kwargs)
+    TARGET_CSSID = 'MobileMenu'
+
+    def __init__(self, menuInfo=None, cssId=None, **kwargs):
+        NanoElement.__init__(self, cssId=self.TARGET_CSSID, **kwargs)
         self.menuInfo = menuInfo or []
 
     def build_html(self, view, path, drawElements=True):
@@ -279,22 +282,21 @@ class MobileMenu(NanoElement):
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class BurgerButton(NanoElement):
-    TARGET_CSSID = 'MobileMenu'
     BURGER = '☰'
 
     def build_html(self, view, path, drawElements=True):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.addJs("""function toggleVisible(){
-            var x = document.getElementById("%(cssId)s");  
+        b.addJs("""function toggleMobileMenu(eId){
+            var x = document.getElementById(eId);  
             if (x.style.display != "block") {
                 x.style.display = "block";
             } else {
                 x.style.display = "none";
             }
-        }\n\n""" % dict(cssId=self.TARGET_CSSID))
+        }\n\n""", name=MobileMenu.TARGET_CSSID)
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) #Header
-        b.h1(onclick='toggleVisible()')
+        b.h1(onclick="toggleMobileMenu('%s')" % MobileMenu.TARGET_CSSID)
         b.addHtml(self.BURGER)
         b._h1()
         for e in self.elements:
@@ -395,8 +397,8 @@ class Side(NanoElement):
 class Info(NanoElement):
     """An Info element has content that can be hidden under a button.
     """
-    INFO_OPEN = '?'
-    INFO_CLOSE = 'x'
+    INFO_OPEN = '▾' # '˅', '▼', '◄', '▶', 'More', '...', #'?'
+    INFO_CLOSE = '×' #'x'
 
     def __init__(self, infoOpen=None, infoClose=None, **kwargs):
         NanoElement.__init__(self, **kwargs)

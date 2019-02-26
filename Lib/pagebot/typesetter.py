@@ -14,6 +14,8 @@
 #
 #     typesetter.py
 #
+import re
+import os
 import copy
 import codecs
 import xml.etree.ElementTree as ET
@@ -32,8 +34,9 @@ except ImportError:
 
 #from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
-from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
+from pagebot.toolbox.transformer import asIntOrNone
 
 
 class Typesetter:
@@ -290,13 +293,31 @@ class Typesetter:
     #   <figcaption>Caption here</figcaption>
     # </figure>
     #
+    IMAGE_CACHE_WIDTH = re.compile('w=([012345679]*)')
+    IMAGE_CACHE_HEIGHT = re.compile('h=([012345679]*)')
+
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the galley.
         The alt attribute can contain additional information for the Image element.
         Keep the Image element in self.currentImage, in case we need to add captions.
+        
+        If there is a "w=<number>" pattern in the alt-attribute, then use it as width
+        measurement for creating a cached image. This way an author can control
+        the required size from witing the content.
+        Markdown the could use code such as ![MyImage w=450](images/myImage.jpg)
         """
+        w = ww = h = hh = None
+        alt = node.attrib.get('alt')
+        if alt:
+            ww = self.IMAGE_CACHE_WIDTH.findall(alt) 
+            if ww:
+                w = asIntOrNone(ww[0])
+            hh = self.IMAGE_CACHE_HEIGHT.findall(alt) 
+            if hh:
+                h = asIntOrNone(hh[0])
+        proportional = not (w is not None and h is not None) # Not proportional if both are defined.
         self.currentImage = self.IMAGE_CLASS(path=node.attrib.get('src'), parent=self.galley,
-            alt=node.attrib.get('alt'), index=node.attrib.get('index', 0))
+            w=w, h=h, alt=alt, proportional=proportional, index=node.attrib.get('index', 0))
 
     def node_caption(self, node, e):
         """If there is a self.currentImage set, then redirect output of the caption nodes into the image,

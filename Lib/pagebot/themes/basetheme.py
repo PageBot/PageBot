@@ -175,6 +175,7 @@ class Mood:
 
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__, self.name)
+        
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
@@ -214,7 +215,7 @@ class BaseTheme:
     def DEFAULT_MENU_NORMAL(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
-            color='darkest%d'%c, bgcolor='white', 
+            color='darkest%d'%c, bgcolor='lightest%d'%c, 
             diapcolor='lightest%d'%c, diapbgcolor='dark%d'%c,
             link='darkest%d'%c, hover='dark%d'%c, bghover='lightest%d'%c,
             diaplink='lightest%d'%c, diaphover='lighter%d'%c,

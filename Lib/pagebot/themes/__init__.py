@@ -14,6 +14,7 @@
 #	  themes/__init__.py
 #
 
+from pagebot.themes.basetheme import BaseTheme
 from pagebot.themes.backtothecity import BackToTheCity
 from pagebot.themes.businessasusual import BusinessAsUsual
 from pagebot.themes.fairytales import FairyTales
@@ -27,6 +28,7 @@ from pagebot.themes.happyholidays import HappyHolidays
 ThemeClasses = {}
 
 for themeClass in (
+    BaseTheme,
     BackToTheCity, 
     BusinessAsUsual, 
     FairyTales, 
