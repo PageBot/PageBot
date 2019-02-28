@@ -39,85 +39,72 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import *
 
 
+# Default Axes Descriptions.
+axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
+
+W, H = pt(1920, 1080)
+padheight = pt(70)
+padside = pt(466)
+PADDING = padheight, padside, padheight, padside
+G = mm(4)
+PW = W - 2 * padside
+PH = H - 2 * padheight
+CW = (PW - (G * 2)) / 3
+CH = PH
+GRIDX = ((CW, G), (CW, 0))
+GRIDY = ((CH, 0),)
+
+t0 = "Amstelvar"
+t1 = "Series by David Berlow"
+t2 = "ABCDEFG HIJKLMN OPQRSTU VWXYZ&! abcdefghij klmnopqrs tuvwxyzĸ¢ 1234567890"
+text4 = """Betreed de wereld van de invloedrijke familie Plantin en Moretus.\
+    Christophe Plantin bracht zijn leven door in boeken. Samen met zijn vrouw\
+    en vijf dochters woonde hij in een imposant pand aan de Vrijdagmarkt.\
+    Plantin en Jan Moretus hebben een indrukwekkende drukkerij opgebouwd.\
+    Tegenwoordig is dit het enige museum ter wereld dat ..."""
+t5 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus.\
+    Christophe Plantin e kaloi jetën mes librave. Së bashku me gruan\
+    dhe pesë bijat e tij, ai jetonte në një pronë imponuese në\
+    Vrijdagmarkt.  Plantin dhe Jan Moretus krijuan një biznes shtypës\
+    mbresëlënës. Sot, ky është muze i vetëm në botë që mbresëlënës do\
+    gruan ... \n """
+t6 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus.\
+    Christophe Plantin e kaloi jetën mes librave. Së bashku me gruan\
+    dhe pesë bijat e tij, ai jetonte në një pronë imponuese në\
+    Vrijdagmarkt.  Plantin dhe Jan Moretus krijuan një biznes shtypës\
+    mbresëlënës. Sot, ky është muze i vetëm në botë që mbresëlënës do\
+    ... \n """
 
 class SpecimenApp:
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
-
 
     def __init__(self):
         """
         Connects main window and output window for errors.
         """
 
-        '''
-        for path in getFontPaths():
-            name = path.split('/')[-1]
-            self.FONTS.append(name)
-        '''
-
-        self.amstelVarRoman = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf'
-        self.amstelVarItalic = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf'
-        #TODO: get from app resources.
-        #self.amstelVarRoman = tnTestFonts.getFontPath("Amstelvar-Roman-VF.ttf")
+        self.setFonts()
         self.context = getContext()
-        self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
-        self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
+        print(self.context)
+        #self.context.newDrawing()
+        #self.context.newPage(W, H)
+        self.doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
+                context=self.context)
+        view = self.doc.view
+        print(self.doc)
+
+        #self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
+        #self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.window.drawView = DrawView((0, 32, -0, -0))
         self.scriptPath = None
         self.scriptFileName = None
         self.scriptName = None
-        self.initialize()
-        self.window.open()
-        self.outputWindow.open()
-        self.specimen()
-
-    def specimen(self):
-        f2 = Font(self.FONT_PATH2)
-        pagePaddings = (50, 50, 50, 50)
-        W, H = pt(1920, 1080)
-        padheight = pt(70)
-        padside = pt(466)
-        PADDING = padheight, padside, padheight, padside
-        G = mm(4)
-        PW = W - 2*padside
-        PH = H - 2*padheight
-        CW = (PW - (G*2))/3
-        CH = PH
-        GRIDX = ((CW, G), (CW, 0))
-        GRIDY = ((CH, 0),)
-        fontSizeH1 = 144
-        points =' / ' + str(fontSizeH1)
-
-        doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
-                context=context)
-        view = doc.view
-        page = doc[1]
-        subtitle = dict(font=self.amstelVarRoman, fontSize=pt(18), leading=pt(28))
-        pagePaddings = (50, 50, 50, 50)
-        fontStyle1 = H2OPTICAL.path
-        fontStyle2 = f.path
-        defaultfont = f.path
-        pageNumber = '1'
-        self.mainPage(fontStyle1, fontStyle2, pageNumber, defaultfont)
-        self.context.saveDocument('~/Desktop/tmp.pdf')
-        pdfDocument = self.context.getDocument()
-        self.window.drawView.setPDFDocument(pdfDocument)
-
-    def getPath(self):
-        """
-        TODO: store in preferences.
-        TODO: add example scripts to menu.
-        TODO: remember name.
-        """
-        if self.scriptPath is not None:
-            return self.scriptPath
-
-    def initialize(self):
-        """Sets up GUI contents."""
         self.buildTop()
-        self.run()
+        self.window.open()
+        #self.outputWindow.open()
+        self.specimen()
 
     def buildTop(self):
         """Builds buttons at top.
@@ -128,87 +115,171 @@ class SpecimenApp:
         y = 4
         w = 100
         h = 24
-        self.window.openFile = Button((x, y, w, h), 'Open',
-                                sizeStyle='small', callback=self.openCallback)
-        x += 110
-        self.window.saveButton = Button((x, y, w, h), 'Save', sizeStyle='small',
-                callback=self.saveCallback)
-        x += 110
-        self.window.path = TextBox((x, y + 2, -40, h), '', sizeStyle='small')
+        s = 'small'
 
-    def run(self):
-        """
-        Runs the script code and writes PDF contents to drawView.
-        """
-        self.runCode()
-        pdfDocument = self.getPageBotDocument()
+        pos = (x, y, w, h)
+        options = ['Regular', 'Italic']
+        self.window.fontPopUp = PopUp(pos, options, sizeStyle=s, callback=self.fontCallback)
+        x += 110
+
+        pos = (x, y, w, h)
+        self.window.saveButton = Button(pos, 'Save', sizeStyle=s, callback=self.saveCallback)
+        x += 110
+
+    def fontCallback(self, sender):
+        i = sender.get()
+        print(i)
+        print(type(i))
+
+    def setFonts(self):
+        #TODO: get from app resources.
+        self.setAmstelVar()
+        #self.amstelVarRoman = tnTestFonts.getFontPath("Amstelvar-Roman-VF.ttf")
+        f = self.amstelVarRoman
+        self.MAXOPTICAL = getVarFontInstance(f.path, dict(opsz=144.0))
+        self.MINOPTICAL = getVarFontInstance(f.path, dict(opsz=8.0))
+        self.H2OPTICAL = getVarFontInstance(f.path, dict(opsz=100))
+
+    def setAmstelVar(self):
+        self.amstelVarRoman = Font('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf')
+
+    def specimen(self):
+        fontStyle1 = self.H2OPTICAL.path
+        fontStyle2 = self.amstelVarRoman.path
+        defaultfont = self.amstelVarRoman.path
+        pageNumber = 1
+        page = self.doc[pageNumber]
+        self.mainPage(page, fontStyle1, fontStyle2, pageNumber, defaultfont)
+
+        # TODO: select output folder.
+        self.doc.export('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/tmp.pdf')
+        pdfDocument = self.context.getDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
 
-    def runCode(self):
-        """
-        Runs a PageBot script.
-        """
-        path = self.getPath()
+    def mainPage(self, page, fontStyle1, fontStyle2, pageNumber, defaultfont):
+        # New text box for the Title
+        maintitle = self.context.newString(t0, style=dict(font=fontStyle1,
+            xTextAlign=CENTER, fontSize=pt(96), leading=pt(115)))
+        newTextBox(maintitle, w=PW, h=PH, parent=page, columnAlignY = TOP,
+                xTextAlign=CENTER, conditions=(Center2Center(), Top2Top()))
 
-        if path is None:
-            return
+        subtitle = dict(font=fontStyle2, fontSize=pt(18), leading=pt(28))
+        subtitle2 = dict(font=defaultfont, fontSize=pt(18), leading=pt(28))
 
-        _drawBotDrawingTool.newDrawing()
-        namespace = {}
-        _drawBotDrawingTool._addToNamespace(namespace)
+        newTextBox(pageNumber, w=W-100, pt=-20, h=PH+100, parent=page,
+                xAlign=RIGHT, xTextAlign=RIGHT, style=subtitle2,
+                conditions=(Center2Center(), Top2Top()))
+        newTextBox(t1, style=subtitle, pt = pt(100),
+                w=PW, h=PH, parent=page, columnAlignY = BOTTOM,
+                xTextAlign=CENTER, conditions=(Center2Center(),
+                    Bottom2Bottom()))
 
-        # Creates a new standard output, catching all print statements and tracebacks.
-        self.output = []
-        self.stdout = StdOutput(self.output,
-                outputView=self.outputWindow.outputView)
-        self.stderr = StdOutput(self.output, isError=True,
-                outputView=self.outputWindow.outputView)
+        # 3 columns
+        heightCol = pt(700)
+        textString = t2
+        centertext = self.context.newString(textString, style=dict(font=fontStyle1,
+            xTextAlign=CENTER, fontSize=pt(60), leading=pt(69)))
 
-        # Calls DrawBot's ScriptRunner with above parameters.
-        ScriptRunner(None, path, namespace=namespace, stdout=self.stdout,
-                stderr=self.stderr)
-        self.printErrors()
+        CW2 = (PW - (G*2)) # Column width
+        style3 = dict(font=fontStyle2, fontSize=pt(60), leading=pt(69),
+                hyphenation=None, prefix= None, postfix=None)
+        newTextBox(centertext, style=style3, w=CW, h=heightCol, pt = pt(158),
+                xTextAlign=CENTER, parent=page, conditions=[Center2Center(),
+                    Top2Top()])
 
-    def printErrors(self):
-        for output in self.output:
-            print(output[0])
+        style4 = dict(font=fontStyle2, fontSize=pt(28), leading=pt(34))
+        newTextBox(text4, style=style4, xTextAlign=JUSTIFIED, w=CW2+26,
+                h=pt(380), parent=page, pt=pt(174), conditions=[Right2Right(),
+                    Bottom2Bottom()])
 
-    def getPageBotDocument(self):
-        """Converts template drawn in memory to a PDF document."""
-        context = getContextForFileExt('pdf')
-        _drawBotDrawingTool._drawInContext(context)
-        pdfDocument = _drawBotDrawingTool.pdfImage()
-        return pdfDocument
+        style5 = dict(font=defaultfont, fontSize=pt(10))
+        b = (t5)
+        c = (t6)
+        newTextBox('60pt/72pt' ,fontSize=pt(10), parent=page, w=CW-60,
+                h=heightCol, font=fontStyle2,
+                pt=pt(146),conditions=[Center2Center(),Top2Top()])
+        newTextBox('28pt/34pt' ,fontSize=pt(10), parent=page, w=CW2,
+                h=pt(380),font=fontStyle2,
+                pt=pt(160),conditions=[Left2Left(),Bottom2Bottom()])
+
+        self.firstColumnWaterfall(page, b, fontStyle2)
+        self.secondColumnWaterfall(page, c, fontStyle2)
+        self.doc.solve()
+
+    def firstColumnWaterfall(self, page, b, fontStyle):
+        f = self.amstelVarRoman
+        s = self.context.newString('', style=dict(font=f))
+        s2 = self.context.newString('', style=dict(font=f))
+        CW2 = (PW - (G * 2)) / 3
+
+        for n in range(4):
+            fontSize = pt(12 + n * 1)
+            leading = pt((12 + n * 1) + 3)
+
+            if n < 3:
+                    leading2 = pt(((12 + n * 1) * n) + 90 + n * 4)
+            else:
+                    leading2 = ((12 + n * 1) * n) + 86 + n
+
+            s += self.context.newString(b + '\n', style=dict(font=fontStyle,
+                fontSize=fontSize, leading=leading))
+
+            s2 += self.context.newString('%s/%s\n' % (str(fontSize), str(leading)),
+                    style=dict(font=fontStyle, fontSize=10, leading=leading2))
+
+        newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
+                nextElement='e2', conditions=[Left2Left(), Top2Top(),
+                    Overflow2Next()])
+
+        newTextBox(s2, parent=page, w=CW2, h=pt(700), font=f, pt=(pt(70)),
+                nextElement='e2', conditions=[Left2Left(), Top2Top(),
+                    Overflow2Next()])
+        self.doc.solve()
+
+    def secondColumnWaterfall(self, page, b, fontStyle):
+        f = self.amstelVarRoman
+        s = self.context.newString('', style=dict(font=f))
+        s2 = self.context.newString('', style=dict(font=f))
+        CW2 = (PW - (G * 2)) / 3 # Column width
+
+        for n in range(3):
+            fontSize=pt(16+n*2)
+            leading=pt((12+n*2)+6)
+
+            if n < 1:
+                    leading2 = (((12 +n * 2) + 6) * n * 2) + 90 + n * 10
+            elif n < 2:
+                    leading2 = (((12 + n * 2) + 6) * n * 2) + 110 + n * 10
+            else:
+                    leading2 = ((((12 + n * 2) + 6) * n * 2) + 76 + n * 10) + n * 6
+
+            s += self.context.newString(b + '\n', style=dict(font=fontStyle,
+                fontSize=fontSize, leading=leading))
+            msg = '%s/%s\n' % (str(fontSize), str(leading))
+            s2 += self.context.newString(msg, style=dict(font=fontStyle,
+                fontSize=10, leading=leading2))
+
+        newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
+                conditions=[Right2Right(), Top2Top()])
+        newTextBox(s2, parent=page, w=CW2, h=pt(700), font=f, pt=(pt(70)),
+                conditions=[Right2Right(), Top2Top()])
+        self.doc.solve()
+
+    # Callbacks.
 
     def saveCallback(self, sender):
         """Saves current template to a PDF file."""
         self.saveAs()
 
     def saveDoCallback(self, path):
-        _drawBotDrawingTool.saveImage(path)
-
-    def openCallback(self, sender):
-        self.open()
+        #_drawBotDrawingTool.saveImage(path)
+        pass
 
     def terminate(self):
         pass
 
     def new(self):
         print('something new')
-
-    def open(self):
-        """Opens a different script by calling up the get file dialog."""
-        paths = getFile(messageText='Please select your script',
-                        title='Select a script.',
-                        allowsMultipleSelection=False,
-                        fileTypes=('py',))
-
-        if paths is not None:
-            self.scriptPath = paths[0]
-            self.scriptFileName = self.scriptPath.split('/')[-1]
-            self.scriptName = self.scriptFileName.split('.')[0]
-            self.window.path.set(self.scriptPath)
-            self.run()
 
     def close(self):
         print('close something')

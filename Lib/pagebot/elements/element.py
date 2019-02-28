@@ -49,7 +49,7 @@ class Element:
     isPage = False # Set to True by Page-like elements.
     isView = False
     isImage = False
-    
+
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow
     PATH_CLASS = PageBotPath
@@ -61,7 +61,7 @@ class Element:
             cssClass=None, cssId=None, title=None, description=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
-            nextElement=None, prevElement=None, nextPage=None, clipPath=None, 
+            nextElement=None, prevElement=None, nextPage=None, clipPath=None,
             prevPage=None, thumbPath=None, bleed=None, padding=None, pt=0,
             pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
             ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
@@ -143,7 +143,7 @@ class Element:
         self.clearElements()
         self.checkStyleArgs(kwargs)
         self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
-        
+
         # If undefined yAlign and parent has origin on top, then default yAlign to TOP
         self._originTop = originTop # Local value is overwritten if there is a parent defined.
         if yAlign is None and self.originTop: # Property seeks parent-->page.originTop value.
@@ -271,7 +271,7 @@ class Element:
         if clipPath is not None:
             clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
         self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
-        
+
         self.report = [] # Area for conditions and drawing methods to report errors and warnings.
         # Optional description of this element or its content. Otherwise None. Can be string or BabelString
         self.description = description
@@ -467,7 +467,7 @@ class Element:
 
     def _get_eId(self):
         """The eId guaranteed to be unique and cannot be set.
-        
+
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', xy=pt(100, 200), size=pt(100, 120))
         >>> hex2dec(e.eId) > 1000 # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
@@ -846,20 +846,20 @@ class Element:
 
         """" REMOVE THIS
         self.__class__(
-            x=self.x, 
-            y=self.y, 
-            z=self.z, 
-            w=self.w, 
-            h=self.h, 
+            x=self.x,
+            y=self.y,
+            z=self.z,
+            w=self.w,
+            h=self.h,
             d=self.d,
             t=self.t, # Copy type frame.
             parent=parent, # Allow to keep reference to current parent context and style.
             context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name, 
+            name=self.name,
             #cssId is copied conditionally by copyCssId flag. E.g. applying template to web page.
-            cssClass=self.cssClass, 
-            title=self.title, 
-            description=self.description, 
+            cssClass=self.cssClass,
+            title=self.title,
+            description=self.description,
             language=self.language,
             lib=copy.deepcopy(self.lib),
             style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
@@ -880,7 +880,7 @@ class Element:
             gradient=self.gradient, # Needs to be copied?
             drawBefore=self.drawBefore,
             drawAfter=self.drawAfter)
-        
+
         # If any additional attribute names defined, then deepcopy these as well.
         for attrName in (attrNames or []): # Any additional attributes to copy? :
             setattr(e, attrName, copy.deepcopy(getattr(self, attrName)))
@@ -888,9 +888,9 @@ class Element:
         # Now do the same for each child element and append it to self.
         for child in self.elements:
             # Add the element to child list and update self._eId dictionary
-            # Keep the copyCssIf flag downwards, in case we are applying a template on 
+            # Keep the copyCssIf flag downwards, in case we are applying a template on
             # a web page.
-            e.appendElement(child.copy(attrNames=attrNames)) 
+            e.appendElement(child.copy(attrNames=attrNames))
         return e
         """
 
@@ -1107,7 +1107,7 @@ class Element:
             elif self.nextPage: # then check if we also make reference to a another page.
                 page = self.doc[self.nextPage]
             else: # If no next page reference, then refoer to the page of self.
-                page = self.page 
+                page = self.page
             if page is not None: # Only if a page was found for this element
                 nextElement = page.select(self.nextElement)
                 if nextElement is not None:
@@ -1361,8 +1361,8 @@ class Element:
         >>> doc.addStyle('body', force=True, style=dict(name='body', fill=color('red'))) # Add named style to document
         >>> page = doc[1]
         >>> e = Element(parent=page)
-        >>> 
-        >>> e.getNamedStyle('body')['fill'] 
+        >>>
+        >>> e.getNamedStyle('body')['fill']
         Color(name="red")
         """
         if self.parent:
@@ -4643,7 +4643,7 @@ class Element:
 
     def prepare_html(self, view):
         """Respond to the top-down view-->element broadcast in preparation for build_html.
-        Default behavior is to do nothing other than recursively broadcast to all child element. 
+        Default behavior is to do nothing other than recursively broadcast to all child element.
         Inheriting Element classes can redefine.
         """
         for e in self.elements:
@@ -4714,11 +4714,14 @@ class Element:
             for condition in self.conditions:
                 condition.solve(self, score)
 
+        print('Elements: %s' % len(self.elements))
+
         # Also works if showing element is not a container.
         for e in self.elements:
             if e.show:
                 e.solve(score)
 
+        print(score)
         return score
 
     #   C O N D I T I O N S
@@ -5567,7 +5570,7 @@ class Element:
             return False
         self.mRight = self.parent.w/2
         return True
-    
+
     def right2Left(self):
         """Move right of self to padding left position of parent.
         The position of e2 element origin depends on the horizontal
@@ -7309,7 +7312,7 @@ class Element:
         """
         return self.css('defaultImageWidth') # Inherited. Can be None
     def _set_defaultImageWidth(self, defaultImageWidth):
-        self.style['defaultImageWidth'] = defaultImageWidth # Can be None. 
+        self.style['defaultImageWidth'] = defaultImageWidth # Can be None.
     defaultImageWidth = property(_get_defaultImageWidth, _set_defaultImageWidth)
 
     def _get_defaultImageHeight(self):
@@ -7318,7 +7321,7 @@ class Element:
         """
         return self.css('defaultImageHeight') # Inherited. Can be None
     def _set_defaultImageHeight(self, defaultImageHeight):
-        self.style['defaultImageHeight'] = defaultImageHeight # Can be None. 
+        self.style['defaultImageHeight'] = defaultImageHeight # Can be None.
     defaultImageHeight = property(_get_defaultImageHeight, _set_defaultImageHeight)
 
     #   Spread stuff
@@ -7343,7 +7346,7 @@ class Element:
     #   Exporting
 
     def _get_saveUrlAsDirectory(self):
-        """Boolean value. Flag to turn off saving self.url pages as directory. 
+        """Boolean value. Flag to turn off saving self.url pages as directory.
         Instead, all "/" is replaced by "-". This choice is made for exprot .html
         paths, where a flat directory is less of a problem than adjusting all relative urls
         for images/CSS/JS

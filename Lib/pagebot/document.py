@@ -57,8 +57,8 @@ class Document:
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=False, startPage=None, 
-            sId=None, w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None, 
+            autoPages=1, template=None, templates=None, originTop=False, startPage=None,
+            sId=None, w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None,
             path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -68,7 +68,7 @@ class Document:
             w, h, d = point3D(size)
 
         # Set position of origin and direction of y for self and all inheriting pages
-        # and elements. 
+        # and elements.
         self._originTop = originTop # Set as property. Ii is not supposed to change.
 
         # If no theme defined, then use the default theme class to create an instance.
@@ -394,7 +394,7 @@ class Document:
         for name, v in kwargs.items():
             if name in rootStyle: # Only overwrite existing values.
                 rootStyle[name] = v
-        # Adjust the default vertical origin position from self.origin, if not already defined 
+        # Adjust the default vertical origin position from self.origin, if not already defined
         # by **kwargs
         if not 'yAlign' in kwargs:
             yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
@@ -997,7 +997,7 @@ class Document:
 
     isRight = isLeft = False
 
-    def newPage(self, pn=None, template=None, w=None, h=None, name=None, 
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None,
             originTop=None, **kwargs):
         """Creates a new page with size `(self.w, self.h)` unless defined
         otherwise. Add the pages in the row of pn, if defined, otherwise create
@@ -1023,7 +1023,7 @@ class Document:
             template = self.getTemplate(template)
         if template is None: # Not defined or template not found, then use default
             template = self.defaultTemplate
-        
+
         if not name and template is not None:
             name = template.name
 
@@ -1220,7 +1220,7 @@ class Document:
         'c-c_c1-j.html'
         >>> tree['r']['s']['t']['u']['v']['w']['x'].page is None
         True
-        >>> tree['r']['s']['t']['u']['v']['w']['x']['y']['z']['zzz'].page 
+        >>> tree['r']['s']['t']['u']['v']['w']['x']['y']['z']['zzz'].page
         <Page #11 zzz (1000pt, 1000pt)>
         """
         class PageNode:

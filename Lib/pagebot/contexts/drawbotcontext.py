@@ -226,7 +226,7 @@ class DrawBotContext(BaseContext):
     def getFlattenedContours(self, path=None):
         """Answers the flattened Bézier path as  a contour list [contour,
         contour, ...] where contours are lists of point2D() points.
-    
+
         """
         contour = []
         flattenedContours = [contour]

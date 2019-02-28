@@ -20,7 +20,6 @@
 import pagebot
 from pagebot import getContext
 from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.document import Document
 from pagebot.style import *
 from pagebot.elements import * # Import all types of page-child elements for convenience
@@ -29,6 +28,7 @@ from pagebot.toolbox.units import em, p, pt, mm, inch, px
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
+from pagebot.fonttoolbox.objects.font import findFont, Font
 
 c = getContext()
 EXPORT_PATH = '_export/FontContent.pdf'
