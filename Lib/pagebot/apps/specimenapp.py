@@ -39,23 +39,27 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import *
 
 
+
 class SpecimenApp:
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
-    FONTS = []
-    FONT_PATH = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf'
-    FONT_PATH2= '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf'
 
     def __init__(self):
         """
         Connects main window and output window for errors.
         """
+
+        '''
         for path in getFontPaths():
             name = path.split('/')[-1]
             self.FONTS.append(name)
+        '''
 
-        self.font = findFont(self.FONTS[0])
+        self.amstelVarRoman = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf'
+        self.amstelVarItalic = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf'
+        #TODO: get from app resources.
+        #self.amstelVarRoman = tnTestFonts.getFontPath("Amstelvar-Roman-VF.ttf")
         self.context = getContext()
         self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
         self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
@@ -70,7 +74,6 @@ class SpecimenApp:
         self.specimen()
 
     def specimen(self):
-        f = Font(self.FONT_PATH)
         f2 = Font(self.FONT_PATH2)
         pagePaddings = (50, 50, 50, 50)
         W, H = pt(1920, 1080)
@@ -91,8 +94,13 @@ class SpecimenApp:
                 context=context)
         view = doc.view
         page = doc[1]
-        subtitle = dict(font=f, fontSize=pt(18), leading=pt(28))
-        doc.solve()
+        subtitle = dict(font=self.amstelVarRoman, fontSize=pt(18), leading=pt(28))
+        pagePaddings = (50, 50, 50, 50)
+        fontStyle1 = H2OPTICAL.path
+        fontStyle2 = f.path
+        defaultfont = f.path
+        pageNumber = '1'
+        self.mainPage(fontStyle1, fontStyle2, pageNumber, defaultfont)
         self.context.saveDocument('~/Desktop/tmp.pdf')
         pdfDocument = self.context.getDocument()
         self.window.drawView.setPDFDocument(pdfDocument)
