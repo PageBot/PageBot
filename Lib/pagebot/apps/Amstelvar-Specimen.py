@@ -225,7 +225,6 @@ def makeDocument():
     pageNumber = '1'
     mainPage(fontStyle1, fontStyle2, pageNumber, defaultfont)
 
-    '''
     # Page2
     # Function to make the one column layout
     page = page.next
@@ -425,7 +424,6 @@ def makeDocument():
     typeWaterfall(x, fontStyle, PageDescription, pageNumber)
 
     page.solve()
-    '''
     return doc
 
 # Export the document to this PDF file.

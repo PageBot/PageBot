@@ -11,10 +11,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     scriptrunnerapp.py
+#     specimenapp.py
 #
 
-from vanilla import Button, TextBox, Window
+from vanilla import Button, TextBox, Window, PopUpButton
 from vanilla.dialogs import getFile, putFile
 
 from drawBot import *
@@ -37,10 +37,8 @@ from pagebot.publications.proofing.pagewide import PageWide
 from pagebot.style import *
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import *
+from pagebot.templates.specimens import Specimens
 
-
-# Default Axes Descriptions.
-axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
 
 W, H = pt(1920, 1080)
 padheight = pt(70)
@@ -62,18 +60,19 @@ text4 = """Betreed de wereld van de invloedrijke familie Plantin en Moretus.\
     en vijf dochters woonde hij in een imposant pand aan de Vrijdagmarkt.\
     Plantin en Jan Moretus hebben een indrukwekkende drukkerij opgebouwd.\
     Tegenwoordig is dit het enige museum ter wereld dat ..."""
-t5 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus.\
-    Christophe Plantin e kaloi jetën mes librave. Së bashku me gruan\
-    dhe pesë bijat e tij, ai jetonte në një pronë imponuese në\
-    Vrijdagmarkt.  Plantin dhe Jan Moretus krijuan një biznes shtypës\
-    mbresëlënës. Sot, ky është muze i vetëm në botë që mbresëlënës do\
-    gruan ... \n """
-t6 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus.\
-    Christophe Plantin e kaloi jetën mes librave. Së bashku me gruan\
-    dhe pesë bijat e tij, ai jetonte në një pronë imponuese në\
-    Vrijdagmarkt.  Plantin dhe Jan Moretus krijuan një biznes shtypës\
-    mbresëlënës. Sot, ky është muze i vetëm në botë që mbresëlënës do\
-    ... \n """
+t5 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus. Christophe\
+    Plantin e kaloi jetën mes librave. Së bashku me gruan dhe pesë bijat e tij,\
+    ai jetonte në një pronë imponuese në Vrijdagmarkt.  Plantin dhe Jan Moretus\
+    krijuan një biznes shtypës mbresëlënës. Sot, ky është muze i vetëm në botë\
+    që mbresëlënës do gruan ..."""
+t6 = """Hyni në botën e familjes me ndikim Plantin dhe Moretus.  Christophe\
+    Plantin e kaloi jetën mes librave. Së bashku me gruan dhe pesë bijat e tij,\
+    ai jetonte në një pronë imponuese në Vrijdagmarkt.  Plantin dhe Jan Moretus\
+    krijuan një biznes shtypës mbresëlënës. Sot, ky është muze i vetëm në botë\
+    që mbresëlënës do ..."""
+
+# Default Axes Descriptions.
+axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
 
 class SpecimenApp:
     """Wrapper class to bundle all document page typesetter and composition
@@ -83,27 +82,14 @@ class SpecimenApp:
         """
         Connects main window and output window for errors.
         """
-
+        self.context = None
+        self.doc = None
         self.setFonts()
-        self.context = getContext()
-        print(self.context)
-        #self.context.newDrawing()
-        #self.context.newPage(W, H)
-        self.doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
-                context=self.context)
-        view = self.doc.view
-        print(self.doc)
-
-        #self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
-        #self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.window.drawView = DrawView((0, 32, -0, -0))
-        self.scriptPath = None
-        self.scriptFileName = None
-        self.scriptName = None
         self.buildTop()
         self.window.open()
-        #self.outputWindow.open()
+        self.specimens = Specimens()
         self.specimen()
 
     def buildTop(self):
@@ -119,34 +105,36 @@ class SpecimenApp:
 
         pos = (x, y, w, h)
         options = ['Regular', 'Italic']
-        self.window.fontPopUp = PopUp(pos, options, sizeStyle=s, callback=self.fontCallback)
+        self.window.fontPopUp = PopUpButton(pos, options, sizeStyle=s, callback=self.fontCallback)
         x += 110
 
         pos = (x, y, w, h)
         self.window.saveButton = Button(pos, 'Save', sizeStyle=s, callback=self.saveCallback)
         x += 110
 
-    def fontCallback(self, sender):
-        i = sender.get()
-        print(i)
-        print(type(i))
-
     def setFonts(self):
-        #TODO: get from app resources.
         self.setAmstelVar()
-        #self.amstelVarRoman = tnTestFonts.getFontPath("Amstelvar-Roman-VF.ttf")
-        f = self.amstelVarRoman
-        self.MAXOPTICAL = getVarFontInstance(f.path, dict(opsz=144.0))
-        self.MINOPTICAL = getVarFontInstance(f.path, dict(opsz=8.0))
-        self.H2OPTICAL = getVarFontInstance(f.path, dict(opsz=100))
+        self.font = self.amstelVarRoman
+        self.setVarSizes()
+
+    def setVarSizes(self):
+        p = self.font.path
+        self.MAXOPTICAL = getVarFontInstance(p, dict(opsz=144.0))
+        self.MINOPTICAL = getVarFontInstance(p, dict(opsz=8.0))
+        self.H2OPTICAL = getVarFontInstance(p, dict(opsz=100))
 
     def setAmstelVar(self):
+        #TODO: get from app resources.
         self.amstelVarRoman = Font('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf')
+        self.amstelVarItalic = Font('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf')
 
     def specimen(self):
+        self.context = getContext()
+        self.doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
+                context=self.context)
         fontStyle1 = self.H2OPTICAL.path
-        fontStyle2 = self.amstelVarRoman.path
-        defaultfont = self.amstelVarRoman.path
+        fontStyle2 = self.font.path
+        defaultfont = self.font.path
         pageNumber = 1
         page = self.doc[pageNumber]
         self.mainPage(page, fontStyle1, fontStyle2, pageNumber, defaultfont)
@@ -207,9 +195,8 @@ class SpecimenApp:
         self.doc.solve()
 
     def firstColumnWaterfall(self, page, b, fontStyle):
-        f = self.amstelVarRoman
+        f = self.font
         s = self.context.newString('', style=dict(font=f))
-        s2 = self.context.newString('', style=dict(font=f))
         CW2 = (PW - (G * 2)) / 3
 
         for n in range(4):
@@ -223,23 +210,18 @@ class SpecimenApp:
 
             s += self.context.newString(b + '\n', style=dict(font=fontStyle,
                 fontSize=fontSize, leading=leading))
-
-            s2 += self.context.newString('%s/%s\n' % (str(fontSize), str(leading)),
+            s += self.context.newString('%s/%s\n' % (str(fontSize), str(leading)),
                     style=dict(font=fontStyle, fontSize=10, leading=leading2))
 
         newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
                 nextElement='e2', conditions=[Left2Left(), Top2Top(),
                     Overflow2Next()])
 
-        newTextBox(s2, parent=page, w=CW2, h=pt(700), font=f, pt=(pt(70)),
-                nextElement='e2', conditions=[Left2Left(), Top2Top(),
-                    Overflow2Next()])
-        self.doc.solve()
+        #self.doc.solve()
 
     def secondColumnWaterfall(self, page, b, fontStyle):
-        f = self.amstelVarRoman
+        f = self.font
         s = self.context.newString('', style=dict(font=f))
-        s2 = self.context.newString('', style=dict(font=f))
         CW2 = (PW - (G * 2)) / 3 # Column width
 
         for n in range(3):
@@ -256,16 +238,24 @@ class SpecimenApp:
             s += self.context.newString(b + '\n', style=dict(font=fontStyle,
                 fontSize=fontSize, leading=leading))
             msg = '%s/%s\n' % (str(fontSize), str(leading))
-            s2 += self.context.newString(msg, style=dict(font=fontStyle,
+            s += self.context.newString(msg, style=dict(font=fontStyle,
                 fontSize=10, leading=leading2))
 
         newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
                 conditions=[Right2Right(), Top2Top()])
-        newTextBox(s2, parent=page, w=CW2, h=pt(700), font=f, pt=(pt(70)),
-                conditions=[Right2Right(), Top2Top()])
-        self.doc.solve()
+        #self.doc.solve()
 
     # Callbacks.
+
+    def fontCallback(self, sender):
+        i = sender.get()
+        if i == 0:
+            self.font = self.amstelVarRoman
+        elif i == 1:
+            self.font = self.amstelVarItalic
+
+        self.setVarSizes()
+        self.specimen()
 
     def saveCallback(self, sender):
         """Saves current template to a PDF file."""
@@ -285,11 +275,7 @@ class SpecimenApp:
         print('close something')
 
     def saveAs(self):
-        if self.scriptPath is not None:
-            doc = self.getPageBotDocument()
-            putFile(messageText='Save PDF', title='Save PDF as...',
-            fileName='%s.pdf' % self.scriptName, parentWindow=self.window,
-            resultCallback=self.saveDoCallback)
+        pass
 
     def save(self):
         print('save something')

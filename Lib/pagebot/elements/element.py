@@ -4714,14 +4714,11 @@ class Element:
             for condition in self.conditions:
                 condition.solve(self, score)
 
-        print('Elements: %s' % len(self.elements))
-
         # Also works if showing element is not a container.
         for e in self.elements:
             if e.show:
                 e.solve(score)
 
-        print(score)
         return score
 
     #   C O N D I T I O N S
