@@ -27,7 +27,6 @@ class SpecimenApp:
         Connects main window and output window for errors.
         """
         self.resourcePath = resourcePath
-        print(resourcePath)
         romanPath = resourcePath + '/' + 'Amstelvar-Roman-VF.ttf'
         italicPath = resourcePath + '/' + 'Amstelvar-italic-VF.ttf'
         self.window = Window((800, 600), minSize=(1, 1), closable=True)

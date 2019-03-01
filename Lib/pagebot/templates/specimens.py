@@ -71,11 +71,10 @@ class Specimens():
         self.setFonts(romanPath, italicPath)
 
     def setFonts(self, romanPath, italicPath):
-        #TODO: get from app resources.
         self.roman = Font(romanPath)
         self.italic = Font(italicPath)
         self.font = self.roman
-        self.printAxisValues()
+        #self.printAxisValues()
         self.setVarSizes()
 
     def setFont(self, i):
