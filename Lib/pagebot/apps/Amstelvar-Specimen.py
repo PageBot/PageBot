@@ -57,6 +57,7 @@ axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
 # Get the axis of the font that is loaded
 for axisName, (minValue, defaultValue, maxValue) in f.axes.items():
     print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
+
 for axisName, (minValue, defaultValue, maxValue) in f2.axes.items():
     print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
 

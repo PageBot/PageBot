@@ -14,5 +14,5 @@
 #
 #     __init__.py
 #
-from stackedtypography import StackedTypography
+from .stackedtypography import StackedTypography
 
