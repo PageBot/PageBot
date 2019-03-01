@@ -62,25 +62,27 @@ që mbresëlënës do ..."""
 
 class Specimens():
 
-    def __init__(self):
+    def __init__(self, romanPath, italicPath):
         self.context = None
         self.doc = None
         self.opzBody = 144.0
         self.opz2 = 8.0
         self.opzHeader = 100
-        self.setFonts()
+        self.setFonts(romanPath, italicPath)
 
-    def setFonts(self):
-        self.setAmstelVar()
-        self.font = self.amstelVarRoman
+    def setFonts(self, romanPath, italicPath):
+        #TODO: get from app resources.
+        self.roman = Font(romanPath)
+        self.italic = Font(italicPath)
+        self.font = self.roman
         self.printAxisValues()
         self.setVarSizes()
 
     def setFont(self, i):
         if i == 0:
-            self.font = self.amstelVarRoman
+            self.font = self.roman
         elif i == 1:
-            self.font = self.amstelVarItalic
+            self.font = self.italic
         self.setVarSizes()
 
     def printAxisValues(self):
@@ -97,29 +99,24 @@ class Specimens():
         #self.MAXOPTICAL = getVarFontInstance(p, dict(opsz=self.opzBody))
 
 
-    def setAmstelVar(self):
-        #TODO: get from app resources.
-        self.amstelVarRoman = Font('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Roman-VF.ttf')
-        self.amstelVarItalic = Font('/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf')
-
     def specimen(self, templateName):
         self.context = getContext()
         self.doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
                 context=self.context)
         headerStyle = self.H2OPTICAL.path
         bodyStyle = self.BODYOPTICAL.path
-        defaultfont = self.font.path
+        defaultFont = self.font.path
         pageNumber = 1
         page = self.doc[pageNumber]
         if templateName == 'mainPage':
-            self.mainPage(page, headerStyle, bodyStyle, pageNumber, defaultfont)
+            self.mainPage(page, headerStyle, bodyStyle, pageNumber, defaultFont)
         self.doc.solve()
         # TODO: select output folder.
         self.doc.export('~/tmp.pdf')
         pdfDocument = self.context.getDocument()
         return pdfDocument
 
-    def mainPage(self, page, headerStyle, bodyStyle, pageNumber, defaultfont):
+    def mainPage(self, page, headerStyle, bodyStyle, pageNumber, defaultFont):
         # New text box for the Title
         maintitle = self.context.newString(t0, style=dict(font=headerStyle,
             xTextAlign=CENTER, fontSize=pt(96), leading=pt(115)))
@@ -127,7 +124,7 @@ class Specimens():
                 xTextAlign=CENTER, conditions=(Center2Center(), Top2Top()))
 
         subtitle = dict(font=bodyStyle, fontSize=pt(18), leading=pt(28))
-        subtitle2 = dict(font=defaultfont, fontSize=pt(18), leading=pt(28))
+        subtitle2 = dict(font=defaultFont, fontSize=pt(18), leading=pt(28))
 
         newTextBox(pageNumber, w=W-100, pt=-20, h=PH+100, parent=page,
                 xAlign=RIGHT, xTextAlign=RIGHT, style=subtitle2,
@@ -155,23 +152,24 @@ class Specimens():
                 h=pt(380), parent=page, pt=pt(174), conditions=[Right2Right(),
                     Bottom2Bottom()])
 
-        style5 = dict(font=defaultfont, fontSize=pt(10))
+        style5 = dict(font=defaultFont, fontSize=pt(10))
         b = (t5)
         c = (t6)
+
         newTextBox('60pt/72pt' ,fontSize=pt(10), parent=page, w=CW-60,
                 h=heightCol, font=bodyStyle,
                 pt=pt(146),conditions=[Center2Center(),Top2Top()])
+
         newTextBox('28pt/34pt' ,fontSize=pt(10), parent=page, w=CW2,
                 h=pt(380),font=bodyStyle,
                 pt=pt(160),conditions=[Left2Left(),Bottom2Bottom()])
 
-        self.firstColumnWaterfall(page, b, bodyStyle)
-        self.secondColumnWaterfall(page, c, bodyStyle)
+        self.firstColumnWaterfall(page, b, bodyStyle, defaultFont)
+        self.secondColumnWaterfall(page, c, bodyStyle, defaultFont)
         self.doc.solve()
 
-    def firstColumnWaterfall(self, page, b, fontStyle):
-        f = self.font
-        s = self.context.newString('', style=dict(font=f))
+    def firstColumnWaterfall(self, page, b, fontStyle, defaultFont):
+        s = self.context.newString('', style=dict(font=fontStyle))
         CW2 = (PW - (G * 2)) / 3
 
         for n in range(4):
@@ -186,15 +184,14 @@ class Specimens():
             s += self.context.newString(b + '\n', style=dict(font=fontStyle,
                 fontSize=fontSize, leading=leading))
             s += self.context.newString('%s/%s\n' % (str(fontSize), str(leading)),
-                    style=dict(font=fontStyle, fontSize=10, leading=leading2))
+                    style=dict(font=defaultFont, fontSize=10, leading=leading2))
 
-        newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
+        newTextBox(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
                 nextElement='e2', conditions=[Left2Left(), Top2Top(),
                     Overflow2Next()])
 
-    def secondColumnWaterfall(self, page, b, fontStyle):
-        f = self.font
-        s = self.context.newString('', style=dict(font=f))
+    def secondColumnWaterfall(self, page, b, fontStyle, defaultFont):
+        s = self.context.newString('', style=dict(font=fontStyle))
         CW2 = (PW - (G * 2)) / 3 # Column width
 
         for n in range(3):
@@ -211,8 +208,8 @@ class Specimens():
             s += self.context.newString(b + '\n', style=dict(font=fontStyle,
                 fontSize=fontSize, leading=leading))
             msg = '%s/%s\n' % (str(fontSize), str(leading))
-            s += self.context.newString(msg, style=dict(font=fontStyle,
+            s += self.context.newString(msg, style=dict(font=defaultFont,
                 fontSize=10, leading=leading2))
 
-        newTextBox(s, parent=page, w=CW2, h=pt(700), font=f, pt=pt(160),
+        newTextBox(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
                 conditions=[Right2Right(), Top2Top()])

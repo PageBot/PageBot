@@ -22,14 +22,18 @@ class SpecimenApp:
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
-    def __init__(self):
+    def __init__(self, resourcePath):
         """
         Connects main window and output window for errors.
         """
+        self.resourcePath = resourcePath
+        print(resourcePath)
+        romanPath = resourcePath + '/' + 'Amstelvar-Roman-VF.ttf'
+        italicPath = resourcePath + '/' + 'Amstelvar-italic-VF.ttf'
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.window.drawView = DrawView((0, 32, -0, -0))
         self.currentTemplate = 'mainPage'
-        self.specimens = Specimens()
+        self.specimens = Specimens(romanPath, italicPath)
         self.buildTop()
         self.window.open()
         self.makeSpecimen()
@@ -50,7 +54,7 @@ class SpecimenApp:
         s = 'small'
 
         pos = (x, y, w, h)
-        options = ['Regular', 'Italic']
+        options = ['Roman', 'Italic']
         self.window.fontPopUp = PopUpButton(pos, options, sizeStyle=s, callback=self.fontCallback)
         x += 110
 
