@@ -1047,6 +1047,8 @@ class Unit:
         '14.11'
         >>> u / units('120pt') # Unit / Unit create a float ratio number.
         0.5
+        >>> pt(10)/pt(5)
+        2.0
         """
         u0 = copy(self) # Keep values of self
         if isinstance(u, (int, float)): # One is a scalar, just divide
@@ -2629,7 +2631,7 @@ class Angle:
         See also atan2(v1, v2) above, that answers an Angle instance.
 
         >>> degrees(0).tan
-        0.01
+        0.0
         >>> degrees(90).tan == radians(0.5).tan # Large number, instead of infinity?
         True
         >>> degrees(45).tan == radians(0.25).tan

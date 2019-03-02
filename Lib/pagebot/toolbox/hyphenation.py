@@ -74,7 +74,7 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     >>> # Single English words
     >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN) # English is default
     ('Tut-ankh-a-mun', 'Tut-ankh-a-mun')
-    >>> # D U T C H Typically testing the hypenation of combined Dutch words
+    >>> # D U T C H Typically testing the hyphenation of combined Dutch words
     >>> hyphenate('marmerplaatjes', LANGUAGE_NL)
     'mar-mer-plaat-jes'
     >>> # Hyphenates as plaat-staal (sheet of steel) where plaats-taal (regional language) also would have been valid

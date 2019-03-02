@@ -363,14 +363,13 @@ class TextBox(Element):
         if self.h is None and h is None: # In case height is undefined, box will always fit the content.
             return ''
 
-        # Otherwise test if there is overflow of text in the given element
-        # size.
+        # Otherwise test if there is overflow of text in the given element size.
         if w is None:
             w = self.pw # Padded width
 
         if h is None:
             h = self.ph # Padded height
-
+      
         return self.bs.textOverflow(w, h, LEFT)
 
     def _findStyle(self, run):
@@ -542,13 +541,11 @@ class TextBox(Element):
             context.saveGraphicState()
             context.setShadow(textShadow)
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a
-        # global function, not as FormattedString attribute. NOTE: textBox
-        # needs it's own style dictionary FIXME: take from babel string?
-        context.language(self.css('language', DEFAULT_LANGUAGE))
-        h = bool(self.css('hyphenation'))
-        context.hyphenation(h)
         box = clipPath = None
+
+        # DrawBotContext wants the language and hyphenation set per block when drawing.
+        context.language(self.bs.language)
+        context.hyphenation(self.bs.hyphenation)
 
         if self.clipPath is not None: # Use the elements as clip path:
             clipPath = self.clipPath

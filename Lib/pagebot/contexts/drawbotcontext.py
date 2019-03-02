@@ -52,6 +52,8 @@ class DrawBotContext(BaseContext):
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG,
             FILETYPE_GIF, FILETYPE_MOV)
 
+    SCALED_PATH = 'scaled' # /scaled with upload on Git. /_scaled will be ignored.
+
     def __init__(self):
         """Constructor of DrawBotContext if drawBot import exists.
 
@@ -165,6 +167,15 @@ class DrawBotContext(BaseContext):
         path.curveTo((xPt, yPt), (xPt, yPt), (xPt+offsetPt, yPt))
         self.closePath()
         self.drawPath(path)
+
+    #   T E X T
+    #
+
+    def hyphenation(self, onOff):
+        self.b.hyphenation(onOff)
+
+    def language(self, language):
+        self.b.language(language)
 
     #   P A T H
     #
@@ -357,7 +368,7 @@ class DrawBotContext(BaseContext):
         >>> context.path2ScaledImagePath('/xxx/yyy/zzz/This.Is.An.Image.jpg', 110, 120)
         ('/xxx/yyy/zzz/_scaled/', 'This.Is.An.Image.110x120.0.jpg')
         """
-        cachePath = '%s/_scaled/' % path2Dir(path)
+        cachePath = '%s/%s/' % (path2Dir(path), self.SCALED_PATH) # /scaled with upload on Git. /_scaled will be ignored.
         fileNameParts = path2Name(path).split('.')
         if not exportExtension: # If undefined, take the original extension for exporting the cache.
             exportExtension = fileNameParts[-1].lower()

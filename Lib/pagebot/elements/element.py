@@ -356,18 +356,6 @@ class Element:
         self.style['isLocked'] = isLocked
     isLocked = property(_get_isLocked, _set_isLocked)
 
-    def _get_hyphenation(self):
-        return self.css('hypenation', False)
-    def _set_hyphenation(self, hyphenation):
-        self.style['hyphenation'] = bool(hyphenation)
-    hyphenation = property(_get_hyphenation, _set_hyphenation)
-
-    def _get_language(self):
-        return self.css('language', DEFAULT_LANGUAGE)
-    def _set_language(self, language):
-        self.style['language'] = language
-    language = property(_get_language, _set_language)
-
     #   I M A G I N G
 
     def _get_resolution(self):
@@ -1243,6 +1231,21 @@ class Element:
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
     baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
+
+    def baseY(self, lineIndex=0):
+        """Answer the vertical position of line by lineIndex, starting at the top of the element.
+        Note that this top-down measure is independent from the overall doc.originTop settings,
+        as the baseline grid always runs from top of the element or page.
+
+        >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))
+        >>> e.baselineGrid, e.baselineGridStart
+        (12pt, 22pt)
+        >>> e.baseY()
+        22pt
+        >>> e.baseY(23)
+        298pt
+        """
+        return self.h - self.baselineGrid * lineIndex + self.baselineGridStart
 
     # Text conditions, always True for non-text elements.
 

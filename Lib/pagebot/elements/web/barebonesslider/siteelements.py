@@ -193,15 +193,14 @@ class SlideShow(SlideShowBase):
             e.prepare_html(view)
 
     def build_html(self, view, path):
-
         b = self.context.b
         b.addJs(self._makeJs(self.cssId, self.cssClass), name='SlideShow')
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix')
         for image in self.findAll(cls=Image): # Find all child images inside the tree
             if self.useCssBackground:
-                b.div(style="background-image:url(%s);width:%s;height:%s;background-position: center;background-size: cover;" % \
-                    (str(image.path), str(self.slideW), str(self.slideH))) # Define slide container
+                b.div(style="background-image:url('%s');width:%s;height:%s;background-position:center;background-size:cover;" % \
+                    (str(image.path).lower(), str(self.slideW), str(self.slideH))) # Define slide container
                 #b.img(src=image.path)
                 b._div()
             else:

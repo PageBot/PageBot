@@ -112,6 +112,14 @@ class SiteView(HtmlView):
         if not os.path.exists(path):
             os.makedirs(path)
 
+        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
+        # into cache if that file does not already exists. Note that this is done on a page-by-page
+        # level, not a preparation of all
+        for pn, pages in doc.pages.items():
+            for page in pages:
+                hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
+                getattr(page, hook)(self) # Typically calling page.prepare_html
+
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
 

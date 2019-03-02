@@ -118,7 +118,7 @@ def makeDocument():
         authorName += '\n' + blurb.getBlurb('name')
 
     titleStyle = dict(font=fontBold.path, fontSize=40, leading=em(1.2),
-        xTextAlign=CENTER, textFill=whiteColor, hyphenate=False)
+        xTextAlign=CENTER, textFill=whiteColor, hyphenation=False)
     subTitleStyle = dict(font=fontRegular.path, fontSize=32,
         xTextAlign=CENTER, textFill=(1, 1, 1, 0.5), hyphenation=False)
     authorStyle = dict(font=fontItalic.path, fontSize=24, tracking=em(0.025),

@@ -290,7 +290,7 @@ table {
         self.resetHtml() # Initialize the HTML output stream.
         self._cssOut = [] # Keep the collected CSS and JS from elements here.
         self._scssVariables = {}
-        self._jsOut = []
+        self.clearJs() # Keep optional js chunck names, so avoid double output.
         self._copyPaths = []
         self._initialize()
 

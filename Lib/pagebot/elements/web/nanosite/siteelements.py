@@ -19,7 +19,7 @@
 from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
-from pagebot.toolbox.units import em
+from pagebot.toolbox.units import em, upt
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
 
 class Site(Publication):
@@ -94,6 +94,12 @@ class NanoElement(Column):
 
     def newInfo(self, parent=None, **kwargs):
         return Info(parent=self, **kwargs)
+
+    def newCropped(self, parent=None, **kwargs):
+        """ First image in the element list will be used as cropped background for the element.
+        All other elements will be used for content, skipping the first image.
+        """
+        return Cropped(parent=self, **kwargs)
 
     def newMovie(self, url, parent=None, **kwargs):
         return Movie(url, parent=self, **kwargs)
@@ -416,7 +422,7 @@ class Info(NanoElement):
         b.addJs("""function toggleInfo(eId1, eId2){
             var e1 = document.getElementById(eId2).style.display = "block";  
             var e2 = document.getElementById(eId1).style.display = "none"; 
-        }\n\n""", name=self.cssId)
+        }\n\n""", name=self.__class__.__name__)
 
         # Overall container
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
@@ -445,6 +451,32 @@ class Info(NanoElement):
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
+
+class Cropped(NanoElement):
+    """The Cropped element takes any amount of content elements. The first Image element in the 
+    list of child elements will be used as background for the Cropped element. 
+    And then that image will be skipped while processing the other child elements. 
+    This way the Picture element can be used as growing background container. But is also can
+    be used for normal content, that should be positions on a background image.
+    """
+    def build_html(self, view, path, drawElements=True):
+        b = self.context.b
+        b.comment('Start %s.%s' % (self.cssId, self.cssClass))
+        images = self.findAll(cls=Image) # Find all child images inside the tree
+        if images:
+            position = 'center top' # Fixed for now. Make this depend on the alignment settings of the image elenent.
+            # TODO: Make size and position of the background image come from parsed values in the alt of the Typesetter image
+            # such as ![y=top w=450](images/myImage.png) etc.
+            # https://www.w3schools.com/cssref/pr_background-position.asp
+            style = "background-image:url('%s');background-position:%s;background-size:cover;" % (images[0].path.lower(), position)
+        else:
+            style = None
+        b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style) 
+        for e in self.elements: # Add all elements to the content.
+            if images and images[0].eId != e.eId: # Skip the first image, as it was used as background.
+                e.build_html(view, path)
+        b._div()
+        b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
 class Movie(NanoElement):
     def __init__(self, url, autoPlay=True, loop=False, controls=False, w=None, h=None, **kwargs):

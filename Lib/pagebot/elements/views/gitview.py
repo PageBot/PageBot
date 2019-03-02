@@ -14,6 +14,8 @@
 #
 #     gitview.py
 #
+import os
+
 from pagebot.elements.views.siteview import SiteView
 from pagebot.constants import ORIGIN
 
@@ -28,41 +30,36 @@ class GitView(SiteView):
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True):
+        """
+        Default building to non-website media.
+        """
+        doc = self.doc 
+        b = self.context.b
 
-        doc = self.doc
+        if path is None:
+            path = self.SITE_PATH
+        if not path.endswith('/'):
+            path += '/'
+        if not os.path.exists(path):
+            os.makedirs(path)
 
-        sitePath = self.GIT_PATH
-        if not sitePath.endswith('/'):
-            sitePath += '/'
-
-        b = self.b # Get builder from self.doc.context of this view.
-        pages = doc.pages.items()
-        
         # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
         # into cache if that file does not already exists. Note that this is done on a page-by-page
         # level, not a preparation of all
-        for pn, pages in pages:
+        for pn, pages in doc.pages.items():
             for page in pages:
                 hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
                 getattr(page, hook)(self) # Typically calling page.prepare_html
 
-        for pn, pages in pages:
+        # If resources defined, copy them to the export folder.
+        self.copyResources(path)
+
+        for pn, pages in doc.pages.items():
             for page in pages:
-                b.resetHtml()
-
-                hook = 'build_' + b.PB_ID
-                getattr(page, hook)(self, ORIGIN) # Typically calling page.build_drawBot or page.build_flat
-
-                fileName = page.name
-                if not fileName:
-                    fileName = self.DEFAULT_HTML_FILE
-                if not fileName.lower().endswith('.html'):
-                    fileName += '.html'
-
-                b.writeHtml(sitePath + fileName)
-        # Write all collected CSS into one file
-        #b.writeCss(self.DEFAULT_CSS_PATH)
-
+                # Building for HTML, try the hook. Otherwise call by main page.build.
+                hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
+                getattr(page, hook)(self, path) # Typically calling page.build_html
+                
     def getUrl(self, name):
         return 'http://%s/%s' % (name, self.DEFAULT_HTML_FILE)
 

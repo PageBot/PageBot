@@ -271,7 +271,7 @@ class DrawBotString(BabelString):
             return b.textSize(self.s, height=hpt)
         return b.textSize(self.s)
 
-    def bounds(self, language=None, hyphenation=None):
+    def bounds(self):
         """Answers the pixel-bounds rectangle of the text, if formatted by the
         option (w, h).
 
@@ -281,16 +281,10 @@ class DrawBotString(BabelString):
         For the total height of the pixel-map, calculate @ph - @py.
         For the total width of the pixel-map, calculate @pw - @px."""
 
-        # Set the hyphenation flag and language from style, as in DrawBot this
+        # Set the hyphenation flag and language from self, as in DrawBot this
         # is set by a global function, not as FormattedString attribute.
-        if language is None:
-            language = self.language
-
-        if hyphenation is None:
-            hyphenation = self.hyphenation
-
-        self.context.language(language)
-        self.context.hyphenation(hyphenation)
+        self.context.language(self.language)
+        self.context.hyphenation(self.hyphenation)
         return pixelBounds(self.s)
 
     def fontContainsCharacters(self, characters):
@@ -392,10 +386,12 @@ class DrawBotString(BabelString):
         wpt, hpt = upt(w, h)
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
-        self.context.language(self.language)
-        self.context.hyphenation(bool(self.hyphenation))
+        b.language(self.language)
+        b.hyphenation(self.hyphenation)
         overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self.context)
-        self.context.hyphenation(False)
+        # Pass on these parameters to the new constructed DrawBotString.
+        overflow.language = self.language
+        overflow.hyphenation = self.hyphenation
         return overflow
 
     def getBaselines(self, w, h=None):
@@ -811,14 +807,6 @@ class DrawBotString(BabelString):
         elif not isinstance(t, str):
             t = str(t)
 
-        # TODO: This does not work here. It must be set on DrawBot output level,
-        # TODO: Not at the moment of creating the FormattedString.
-        # Set the hyphenation flag from style, as in DrawBot this is set by a
-        # global function, not as FormattedString attribute.
-        language = css('language', e, style)
-        hyphenation = bool(css('hyphenation', e, style))
-        context.b.language(language)
-        context.b.hyphenation(hyphenation)
         fsAttrs = cls.getFSAttrs(t, context, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
         if css('uppercase', e, style):
@@ -890,8 +878,8 @@ class DrawBotString(BabelString):
         newS.fittingFont = fsAttrs.get('font') # In case we are sampling with a Variable Font.
         newS.fittingLocation = fsAttrs.get('location')
         newS.isFitting = isFitting
-        newS.language = language
-        newS.hyphenation = hyphenation
+        newS.language = css('language', e, style)
+        newS.hyphenation = css('hyphenation', e, style)
         return newS
 
 class FoundPattern:

@@ -76,25 +76,28 @@ class Image(Element):
         # This is calling self.initImageSize() to set self.im and slef.ih from the image file size.
         self.path = path # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
 
-        #print(size, w, h, units(w, self.ih/self.iw * (w or 0)), units(self.iw/self.ih * (h or 0), h))
-        if proportional:
-            if size is not None:
-                w, h = point2D(size)
-            if w is not None:
-                self.size = w, w * upt(self.ih)/upt(self.iw)
-            elif h is not None:
-                self.size = h * upt(self.iw)/upt(self.ih, h)
-            else: 
-                self.size = units(w, h)
-        else: # No proportional flag, try to figure out from the supplied propotions
-            if size is not None:
-                w, h = point2D(size)
-                self.size = w, h       
-            # One of the two needs to be defined, the other can be None.
-            # If both are set, then the image scales disproportional.
-            if size is None and w is not None and h is not None: # Disproportional scaling
-                self.size = units(w, h)
-        #print('#@@##@@#', self._w, self._h, self.iw, self.ih, w, h, size, self.w, self.h, self.size, self.path)
+        if self.iw and self.ih:
+            #print(size, w, h, units(w, self.ih/self.iw * (w or 0)), units(self.iw/self.ih * (h or 0), h))
+            if proportional:
+                if size is not None:
+                    w, h = point2D(size)
+                if w is not None:
+                    self.size = w, w * (self.ih/self.iw) # Brackets: Divide into ratio number before multiplying
+                elif h is not None:
+                    self.size = h * (self.iw/self.ih), h # Brackets: Divide into ratio number before multiplying 
+                else: 
+                    self.size = units(w, h)
+            else: # No proportional flag, try to figure out from the supplied propotions
+                if size is not None:
+                    w, h = point2D(size)
+                    self.size = w, h       
+                # One of the two needs to be defined, the other can be None.
+                # If both are set, then the image scales disproportional.
+                if size is None and w is not None and h is not None: # Disproportional scaling
+                    self.size = units(w, h)
+            #print('#@@##@@#', self._w, self._h, self.iw, self.ih, w, h, size, self.w, self.h, self.size, self.path)
+        else:
+            print('Image: Missing image at path "%s"' % path)
 
         self.name = name
         self.alt = alt
@@ -267,7 +270,7 @@ class Image(Element):
         # Scale the image the cache does not exist already.
         # A new path is saved for the scaled image file. Reset the (self.iw, self.ih)
         self.path = self.context.scaleImage(
-            path=self.path, w=resW, h=resH, index=self.index,
+            path=self.path.lower(), w=resW, h=resH, index=self.index,
             showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker,
             exportExtension=exportExtension
         )

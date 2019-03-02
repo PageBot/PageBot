@@ -36,15 +36,21 @@ page = doc[1]
 
 # hyphenationHead=4, hyphenationTail=3 currently not supported
 style = dict(font=bungee, fontSize=pt(24), hyphenation=True)
-t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100, w=w, h=h, parent=page, borders=1, fill=color(0.3, 0.2, 0.1, 0.5))
+bs = context.newString(txt, style=style)
+newTextBox(bs, x=100, y=H-h-100, w=w, h=h, parent=page, borders=1, fill=color(0.3, 0.2, 0.1, 0.5))
+print(bs.language, bs.hyphenation)
 
 #style['hyphenationTail'] = 400
-t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100-h, w=w, h=h, parent=page, borders=1, fill=color(1, 1, 0))
+style = dict(font=bungee, fontSize=pt(24), hyphenation=False)
+bs = context.newString(txt, style=style)
+newTextBox(bs, x=100, y=H-100-2*h, w=w, h=h, parent=page, borders=1, fill=color(1, 1, 0))
+print(bs.language, bs.hyphenation)
 
 #style['hyphenation'] = False
-t = context.newString(txt, style=style)
-newTextBox(t, x=100, y=H-100-2*h, w=w, h=h, parent=page, borders=1, fill=color(1, 0, 1))
+style = dict(font=bungee, fontSize=pt(24), hyphenation=True)
+bs = context.newString(txt, style=style)
+newTextBox(bs, x=100, y=H-100-3*h, w=w, h=h, parent=page, borders=1, fill=color(1, 0, 1))
+print(bs.language, bs.hyphenation)
+    
 doc.export('_export/Hyphenation.pdf')
 
