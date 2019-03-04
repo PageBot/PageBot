@@ -199,9 +199,9 @@ class SlideShow(SlideShowBase):
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix')
         for image in self.findAll(cls=Image): # Find all child images inside the tree
             if self.useCssBackground:
-                b.div(style="background-image:url('%s');width:%s;height:%s;background-position:center;background-size:cover;" % \
-                    (str(image.path).lower(), str(self.slideW), str(self.slideH))) # Define slide container
-                #b.img(src=image.path)
+                b.div(style="background-image:url('%s');width:%s;height:%s;background-position:%s %s;background-size:cover;" % \
+                    (str(image.path).lower(), str(self.slideW), str(self.slideH), \
+                    image.xAlign or 'center', image.yAlign or 'top')) # Define slide container
                 b._div()
             else:
                 b.div(style="width:%s;height:%s;" % (w, h)) # Define slide container

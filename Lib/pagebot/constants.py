@@ -585,7 +585,7 @@ BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of o
 BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, MIDDLE, BASE_TOP, BASE_BOTTOM}
+YALIGNS = {None, TOP, BOTTOM, MIDDLE, CENTER, BASE_TOP, BASE_BOTTOM} # "middle" is PageBot. "center" is CSS.
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
@@ -639,11 +639,11 @@ TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
     FILETYPE_PDF: 1, # Not used online, keep size as used.
-    FILETYPE_JPG: 2, # Optional oversize scale factor, e.g. for Retina screens.
-    FILETYPE_JPEG: 2,
-    FILETYPE_PNG: 2,
+    FILETYPE_JPG: 1, # Optional 2 oversize scale factor, e.g. for Retina screens?
+    FILETYPE_JPEG: 1, # Optional 2 oversize scale factor, e.g. for Retina screens?
+    FILETYPE_PNG: 1, # Optional 2 oversize scale factor, e.g. for Retina screens?
     FILETYPE_SVG: 1, # Object-base is in principle resolution independent.
-    FILETYPE_GIF: 2,
+    FILETYPE_GIF: 1, # Optional 2 oversize scale factor, e.g. for Retina screens?
     FILETYPE_TIF: 1, # Not used online, keep size as used.
     FILETYPE_TIFF:1,
 }

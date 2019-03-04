@@ -366,7 +366,7 @@ class DrawBotContext(BaseContext):
 
         >>> context = DrawBotContext()
         >>> context.path2ScaledImagePath('/xxx/yyy/zzz/This.Is.An.Image.jpg', 110, 120)
-        ('/xxx/yyy/zzz/_scaled/', 'This.Is.An.Image.110x120.0.jpg')
+        ('/xxx/yyy/zzz/scaled/', 'This.Is.An.Image.110x120.0.jpg')
         """
         cachePath = '%s/%s/' % (path2Dir(path), self.SCALED_PATH) # /scaled with upload on Git. /_scaled will be ignored.
         fileNameParts = path2Name(path).split('.')

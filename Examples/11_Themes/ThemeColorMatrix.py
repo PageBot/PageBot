@@ -29,6 +29,16 @@ class FantasyTheme(BaseTheme):
         logo=spot(300)
     )
 
+DDS_LOGO = spot(165)
+class DDSTheme(BaseTheme):
+    NAME = 'DesignDesign.Space'
+    BASE_COLORS = dict(
+        #base1=color('#8080A0'),
+        base2=color('#ACACB8'),
+        base3=DDS_LOGO,
+        logo=DDS_LOGO,
+    )
+
 CW = 100
 CH = CW*1.5
 PADDING = 60
@@ -89,6 +99,7 @@ colorMatrix = (
 for themeName, themeClass in ThemeClasses.items():
     makeThemePage(themeClass)
 makeThemePage(FantasyTheme)
+makeThemePage(DDSTheme)
         
 #context.b.frameDuration(10)
 context.saveImage('_export/ThemeColorMatrix.pdf')

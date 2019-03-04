@@ -277,7 +277,7 @@ class MobileMenu(NanoElement):
 
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) #Header
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         self.showCssIdClass(view)
         for pageNode in pageTree.children: # These are real Page instances
             if pageNode.page is not None and pageNode.page.url:
@@ -301,7 +301,7 @@ class BurgerButton(NanoElement):
                 x.style.display = "none";
             }
         }\n\n""", name=MobileMenu.TARGET_CSSID)
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) #Header
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         b.h1(onclick="toggleMobileMenu('%s')" % MobileMenu.TARGET_CSSID)
         b.addHtml(self.BURGER)
         b._h1()
@@ -464,11 +464,12 @@ class Cropped(NanoElement):
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         images = self.findAll(cls=Image) # Find all child images inside the tree
         if images:
-            position = 'center top' # Fixed for now. Make this depend on the alignment settings of the image elenent.
-            # TODO: Make size and position of the background image come from parsed values in the alt of the Typesetter image
+            image = images[0]
+            # Make size and position of the background image come from parsed values in the alt of the Typesetter image
             # such as ![y=top w=450](images/myImage.png) etc.
             # https://www.w3schools.com/cssref/pr_background-position.asp
-            style = "background-image:url('%s');background-position:%s;background-size:cover;" % (images[0].path.lower(), position)
+            style = "background-image:url('%s');background-position:%s %s;background-size:cover;" % \
+                (image.path.lower(), image.xAlign or 'center', image.yAlign or 'top')
         else:
             style = None
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style) 

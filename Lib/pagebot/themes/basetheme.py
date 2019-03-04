@@ -267,7 +267,7 @@ class BaseTheme:
         hr2=dict(color='darker2'), # <hr> Horizontal ruler color by index
         p=dict(color='darkest2', bgcolor='white',
             diapcolor='lightest2', diapbgcolor='dark2',
-            link='darker2', hover='dark2',
+            link='dark2', hover='base3', # Hover uses base3
             diaplink='light2', diaphover='lighter2'),
         li=dict(color='black', bgcolor='white',
             diapcolor='white', diapbgcolor='black',

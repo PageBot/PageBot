@@ -295,6 +295,8 @@ class Typesetter:
     #
     IMAGE_CACHE_WIDTH = re.compile('w=([012345679]*)')
     IMAGE_CACHE_HEIGHT = re.compile('h=([012345679]*)')
+    IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)')
+    IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)')
 
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the galley.
@@ -306,24 +308,26 @@ class Typesetter:
         the required size from witing the content.
         Markdown the could use code such as ![MyImage w=450](images/myImage.jpg)
         """
-        w = ww = h = hh = None
+        w = ww = h = hh = xAlign = yAlign = None # Values are optional set by alt content.
         alt = node.attrib.get('alt')
         if alt:
-            ww = self.IMAGE_CACHE_WIDTH.findall(alt) 
-            if ww:
-                w = asIntOrNone(ww[0])
-            hh = self.IMAGE_CACHE_HEIGHT.findall(alt) 
-            if hh:
-                h = asIntOrNone(hh[0])
+            xAlign = (self.IMAGE_CACHE_XALIGN.findall(alt) or [None])[0]
+            yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0]
+            w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0])
+            h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0])
         proportional = not (w is not None and h is not None) # Not proportional if both are defined.
-        self.currentImage = self.IMAGE_CLASS(path=node.attrib.get('src'), parent=self.galley,
-            w=w, h=h, alt=alt, proportional=proportional, index=node.attrib.get('index', 0))
+        path = node.attrib.get('src')
+        self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
+            xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional, 
+            index=node.attrib.get('index', 0))
 
     def node_caption(self, node, e):
         """If there is a self.currentImage set, then redirect output of the caption nodes into the image,
         instead of the self.galley. Otherwise just output.
         as plain text, ignoring the caption tag. Multiple captions are added to the the current image,
-        until it is changed.""" 
+        until it is changed.
+        The caption tag is triggered u *[[...]]* in MarkDown.
+        """ 
         if self.currentImage is not None: # In case there is a current image, attach caption to it.
             savedGalley = self.galley # Temporary redirect node parent
             self.galley = self.currentImage
