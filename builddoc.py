@@ -37,7 +37,7 @@ except ImportError:
     db = None
 
 SKIP = ('app', '_export', 'resources', 'pagebotapp', 'contributions', 'OLD',
-        'scripts-in-progress', 'examples-in-progress',
+        'scripts-in-progress', 'examples-in-progress', 'Examples',
         'pagebotdoc.py')
 ALLOWED_BUILTINS = ('init', 'repr', 'len', 'getitem', 'setitem')
 SKIP_DOCGEN = ['TMP_Xierpa3_builders', 'builders', 'contributions']

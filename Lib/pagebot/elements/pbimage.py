@@ -238,7 +238,7 @@ class Image(Element):
             alpha = 1
         return alpha
 
-    def scaleImage(self, view):
+    def _scaleImage(self, view):
         """If the self.saveScaled is True and the reduction scale is inside the range,
         then create a new cached image file, if it does not already exist. Scaling images in
         the DrawBot context is a fast operation, so always worthwhile to creating PNG from
@@ -282,7 +282,7 @@ class Image(Element):
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.scaleImage(view)
+        self._scaleImage(view)
         for e in self.elements:
             e.prepare_html(view)
 
@@ -319,7 +319,7 @@ class Image(Element):
         If the cache file already exists, then ignore, just continue the broadcast
         towards the child elements.
         """
-        self.scaleImage(view)
+        self._scaleImage(view)
         for e in self.elements:
             e.prepare(view)
 

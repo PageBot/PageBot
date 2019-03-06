@@ -307,17 +307,20 @@ class Typesetter:
         measurement for creating a cached image. This way an author can control
         the required size from witing the content.
         Markdown the could use code such as ![MyImage w=450](images/myImage.jpg)
+
+        If one or both if (w, h) are defined, then set the imageScale flag accordingly.
         """
         w = ww = h = hh = xAlign = yAlign = None # Values are optional set by alt content.
-        alt = node.attrib.get('alt')
-        if alt:
-            xAlign = (self.IMAGE_CACHE_XALIGN.findall(alt) or [None])[0]
-            yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0]
-            w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0])
-            h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0])
         proportional = not (w is not None and h is not None) # Not proportional if both are defined.
         path = node.attrib.get('src')
-        self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
+        alt = node.attrib.get('alt')
+        if alt:
+            xAlign = (self.IMAGE_CACHE_XALIGN.findall(alt) or [None])[0] # x=center
+            yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
+            w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0]) # w=800
+            h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0]) # h=800
+        self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley, 
+            scaleImage=1 or w is not None or h is not None, # Scale the image if one or both (w, h) is defined.
             xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional, 
             index=node.attrib.get('index', 0))
 
