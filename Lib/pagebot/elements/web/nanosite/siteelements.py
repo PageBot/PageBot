@@ -284,6 +284,15 @@ class MobileMenu(NanoElement):
                 b.button(type='button', cssClass='button', onclick="location.href='%s';" % pageNode.page.url.replace('/', '-'))
                 b.addHtml(pageNode.page.name)
                 b._button()
+            # Expand submenu in smaller buttons.
+            # TODO: Make this respond to an arrow down button, same with the Info element expand.
+            # TODO: Make this recursive, in case there is more than levels.
+            for childNode in pageNode.children: # These are child Page instances
+                if childNode.page is not None and childNode.page.url:
+                    b.button(type='button', cssClass='button2', onclick="location.href='%s';" % childNode.page.url.replace('/', '-'))
+                    b.addHtml(childNode.page.name)
+                    b._button()
+
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 

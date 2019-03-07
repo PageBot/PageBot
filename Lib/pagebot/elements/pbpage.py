@@ -515,20 +515,17 @@ class Page(Element):
                 #
                 #   J A V A S C R I P T
                 #
-                # Build the JS body. There are 3 option (all not including the <script>...</script>)
-                # 1 As html/javascript string (view.jsCode and/or self.jsCode are defined as not None)
-                # 2 As path a html file, containing the string between <script>...</script>, including the tags.
-                # 3 Constructed from info context, page attributes and styles.
+                # Build the JS body. There are 4 option (all not including the <script>...</script>)
+                # 1 As path a html file, containing the string between <script>...</script>, including the tags.
+                # 2 Constructed from info context, page attributes and styles.
+                # 3 As cumulated inside builders (from b.getJs())
+                # 4 As html/javascript string (view.jsCode and/or self.jsCode are defined as not None)
                 #
-                for jsCode in (view.jsCode, self.jsCode):
-                    if jsCode is not None:
-                        b.script(type="text/javascript")
-                        b.addHtml(self.jsCode)
-                        b._script()
                 for jsUrls in (view.jsUrls, self.jsUrls):
                     if jsUrls is not None:
                         for jsUrl in jsUrls:
                             b.script(type="text/javascript", src=jsUrl)
+
                 for jsPaths in (view.jsPaths, self.jsPaths):
                     if jsPaths:
                         for jsPath in jsPaths:
@@ -537,10 +534,16 @@ class Page(Element):
                             b._script()
 
                 if b.hasJs():
-                    b.script()
+                    b.script(type="text/javascript")
                     b.addHtml(b.getJs())
                     b._script()
-                #else no default JS. To be added by the calling application.
+
+                for jsCode in (view.jsCode, self.jsCode):
+                    if jsCode is not None:
+                        b.script(type="text/javascript")
+                        b.addHtml(jsCode)
+                        b._script()
+
                 # Close the page body
                 b._body()
             b._html()
