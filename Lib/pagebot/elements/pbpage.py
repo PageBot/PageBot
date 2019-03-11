@@ -335,7 +335,7 @@ class Page(Element):
             pn = pn, 0
         self._pn = pn
 
-    pn = property(_get_pn, _set_pn)
+    pn = pageNumber = property(_get_pn, _set_pn)
 
     #   E L E M E N T S
 

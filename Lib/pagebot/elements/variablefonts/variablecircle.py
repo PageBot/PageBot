@@ -26,7 +26,8 @@ from pagebot.toolbox.units import pointOffset
 from pagebot.elements import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.color import blackColor
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, upt
+from pagebot.constants import CENTER
 
 context = getContext()
 
@@ -47,14 +48,22 @@ class VariableCircle(Element):
 
     MARKER_RADIUS = pt(5)
     INTERPOLATION = 0.5
-    DEFAULT_FONT_SIZE = 64
+    DEFAULT_FONT_SIZE = pt(64)
     R = 1#2/3 # Fontsize factor to draw glyph markers.
 
     def __init__(self, font, s=None, draw3D=True, location=None, showAxisNames=True, 
-        markerRadius=None, **kwargs):
+        markerRadius=None, labelFont=None, labelFontSize=None, axisNameFontSize=None, **kwargs):
         Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
         self.font = font
+        if labelFont is None:
+            labelFont = font
+        self.labelFont = labelFont
+        if axisNameFontSize is None:
+            axisNameFontSize = self.fontSize
+        self.axisNameFontSize = axisNameFontSize
+
+        self.labelFontSize = labelFontSize or pt(12)
         self.glyphNames = s or 'e'
         self.draw3D = draw3D # TODO: Draw as 3D structure of spheres and needles/spikes.
         self.location = location # Use to visualize a specific location, otherwise all needles are at min value.
@@ -106,15 +115,6 @@ class VariableCircle(Element):
         glyphPathScale = fontSize/self.font.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
-
-    def _get_labelFont(self):
-        return self.style.get('labelFont', self.font)
-    labelFont = property(_get_labelFont)
-
-    def _get_axisNameFontSize(self):
-        return self.style.get('axisNameFontSize', self.style.get('fontSize'))
-    axisNameFontSize = property(_get_axisNameFontSize)
-
     def makeAxisName(self, axisName):
         return self.context.newString(axisName, style=dict(font=self.font, fontSize=7))
 
@@ -146,7 +146,7 @@ class VariableCircle(Element):
         #self._drawGlyphIcon(mx, my, self.glyphName, fontSize, defaultLocation, strokeW=3)
 
         # Draw DeltaLocation circles.
-        for axisName, (minValue, defaultValue, maxValue) in axes.items():
+        for axisName, (minValue, defaultValue, maxValue) in sorted(axes.items()):
             angle1, angle2 = self.angles[axisName]
             """
             # Outside maxValue
@@ -159,30 +159,53 @@ class VariableCircle(Element):
             location = {axisName: minValue + (maxValue - minValue)*self.INTERPOLATION}
             context.fill(1)
             context.stroke(0)
-            context.strokeWidth(1)
+            context.strokeWidth(self.strokeWidth)
             #self._drawGlyphIcon(mx+markerX*self.INTERPOLATION*2, my+markerY*self.INTERPOLATION*2, self.glyphName, fontSize/2, location)
-            if angle1 is not None:
+
+            style = dict(font=self.labelFont, fontSize=self.axisNameFontSize, textFill=blackColor)
+            if angle1 is not None and minValue != defaultValue:
                 markerX, markerY = self._angle2XY(angle1, r)
                 context.circle(mx+markerX, my+markerY, self.markerRadius)
-            if angle2 is not None:
+                
+                bs = context.newString(axisName, style=style)
+                tw, th = bs.size
+                context.text(bs, (mx + markerX + upt(markerX)/upt(r) * tw * 1.25 - tw/2, my + markerY + upt(markerY)/upt(r) * th * 1.6 - th/4))
+
+                bs = context.newString('%d' % minValue, style=style)
+                tw, th = bs.size
+                context.text(bs, (mx + markerX - tw/2, my + markerY - th/4))
+
+            if angle2 is not None and maxValue != defaultValue:
                 markerX, markerY = self._angle2XY(angle2, r)
                 context.circle(mx+markerX, my+markerY, self.markerRadius)
+
+                bs = context.newString(axisName, style=style)
+                tw, th = bs.size
+                context.text(bs, (mx + markerX + upt(markerX)/upt(r) * tw * 1.25 - tw/2, my + markerY + upt(markerY)/upt(r) * th * 1.6 - th/4))
+
+                bs = context.newString('%d' % maxValue, style=style)
+                tw, th = bs.size
+                context.text(bs, (mx + markerX - tw/2, my + markerY - th/4))
+
 
         # Draw spokes
         context.fill(None)
         context.stroke(0)
-        context.strokeWidth(0.5)
-        context.newPath()
-        for axisName, (angle1, angle2) in self.angles.items():
-            if angle1 is not None:
+        context.strokeWidth(self.strokeWidth)
+        for axisName, (minValue, defaultValue, maxValue) in sorted(axes.items()):
+            angle1, angle2 = self.angles[axisName]
+            if angle1 is not None and minValue != defaultValue:
                 markerX, markerY = self._angle2XY(angle1, r-self.markerRadius)
-                context.moveTo((mx, my))
-                context.lineTo((mx+markerX, my+markerY))
-            if angle2 is not None:
+                context.line((mx, my), (mx+markerX, my+markerY))
+            if angle2 is not None and maxValue != defaultValue:
                 markerX, markerY = self._angle2XY(angle2, r-self.markerRadius)
-                context.moveTo((mx, my))
-                context.lineTo((mx+markerX, my+markerY))
-        context.drawPath()
+                context.line((mx, my), (mx+markerX, my+markerY))
+
+        # Draw Middle circle
+        context.fill(1)
+        context.stroke(0)
+        context.strokeWidth(self.strokeWidth)
+        context.circle(mx, my, self.markerRadius)
 
         """
         # Draw axis names and DeltaLocation values
@@ -271,7 +294,7 @@ class VariableCircle(Element):
 
         if drawElements:
             for e in self.elements:
-                e.build_flat(view, p)
+                e.build(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

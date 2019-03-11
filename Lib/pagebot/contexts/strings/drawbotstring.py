@@ -386,12 +386,16 @@ class DrawBotString(BabelString):
         wpt, hpt = upt(w, h)
         # Set the hyphenation flag from style, as in DrawBot this is set by a global function,
         # not as FormattedString attribute.
-        b.language(self.language)
-        b.hyphenation(self.hyphenation)
+        # TODO: Attributes don't seem to maintain in the string or overfill copy.
+        language = self.language or 'en'
+        hyphenation = self.hyphenation or True
+        b.language(language)
+        b.hyphenation(hyphenation)
         overflow = self.__class__(b.textOverflow(self.s, (0, 0, wpt, hpt), align), self.context)
         # Pass on these parameters to the new constructed DrawBotString.
-        overflow.language = self.language
-        overflow.hyphenation = self.hyphenation
+        overflow.language = language
+        overflow.hyphenation = hyphenation
+        #print('OVERFLOW', overflow.language, overflow.hyphenation, overflow[:30])
         return overflow
 
     def getBaselines(self, w, h=None):

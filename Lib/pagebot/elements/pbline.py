@@ -98,15 +98,11 @@ class Line(Element):
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        s = self.css('stroke', noColor)
-        w = self.css('strokeWidth')
+        s = self.stroke
+        w = self.strokeWidth
 
         context.stroke(s, w)
-        context.newPath()
-        context.moveTo((px, py))
-        context.lineTo((px + self.w, py + self.h))
-        context.closePath()
-        context.drawPath()
+        context.line((px, py), (px + self.w, py + self.h))
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
