@@ -14,6 +14,7 @@
 #
 #     textbox.py
 #
+import re
 from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
                             BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,
@@ -396,6 +397,34 @@ class TextBox(Element):
         return styledLines
     styledLines = property(_get_styledLines)
 
+    #   S P E L L  C H E C K
+
+    WORDS = re.compile('([A-Za-z]*)')
+
+    def _spellCheckWords(self, languages, unknown, minLength):
+        """Spellcheck the words of self for the defined list of languages.
+        Unknown words are appended to the unknown list.
+    
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> e = TextBox('This is an English text', context=context)
+        >>> e.spellCheck()
+        []
+        >>> e = TextBox('Thisx is an english textxxx', context=context)
+        >>> e.spellCheck() # Note that the spell checking is case-sensitive, e.g. English names.
+        ['Thisx', 'english', 'textxxx']
+        >>> e = TextBox('This is an English text', context=context)
+        >>> e.spellCheck(languages=['nl'])
+        ['This', 'text']
+        """
+        from pagebot.toolbox.hyphenation import hyphenatedWords
+        for word in self.WORDS.findall(str(self.bs)):
+            for language in languages:
+                languageWords = hyphenatedWords(language)
+                assert languageWords is not None
+                if word and len(word) >= minLength and word not in languageWords and word.lower() not in languageWords:
+                    unknown.append(word)
+
     #   F L O W
 
     def isOverflow(self, tolerance=0):
@@ -546,7 +575,7 @@ class TextBox(Element):
         # DrawBotContext wants the language and hyphenation set per block when drawing.
         context.language(self.bs.language or 'en')
         context.hyphenation(self.bs.hyphenation or True)
-        print('Set language and hyphenation', self.bs.language, self.bs.hyphenation, self.page.pageNumber)
+        #print('Set language and hyphenation', self.bs.language, self.bs.hyphenation, self.page.pageNumber)
 
         if self.clipPath is not None: # Use the elements as clip path:
             clipPath = self.clipPath

@@ -1307,6 +1307,25 @@ class Document:
                 d = max(page.d, d)
         return w, h, d
 
+    #   S P E L L  C H E C K
+
+    def spellCheck(self, languages=None):
+        """Recursively spellcheck all pages for the given languages. Answer a list with
+        unknown words. Default is to do nothing and just pass the call on to child elements.
+        Inheriting classes can redefine _spellCheckWords to check on their on text content."""
+        unknownByPage = {}
+        if isinstance(languages, str):
+            languages = [languages]
+        elif languages is None:
+            languages = [self.language or DEFAULT_LANGUAGE]
+        for pn, pnPages in sorted(self.pages.items()):
+            unknown = []
+            for page in pnPages:
+                page.spellCheck(languages, unknown)
+            if unknown:
+                unknownByPage[pn] = unknown # Only add if there was somethning found
+        return unknownByPage
+
     #   C O N D I T I O N S
 
     def solve(self, score=None):

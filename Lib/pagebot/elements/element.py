@@ -1240,6 +1240,9 @@ class Element:
         >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))
         >>> e.baselineGrid, e.baselineGridStart
         (12pt, 22pt)
+        """
+
+        """
         >>> e.baseY()
         22pt
         >>> e.baseY(23)
@@ -4358,10 +4361,34 @@ class Element:
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
             self.context.restoreGraphicState()
 
+    #   S P E L L  C H E C K
+
+    def _spellCheckWords(self, languages, unknown, minLength):
+        """Spellcheck the words of self. Default behavior is to do nothing.
+        Inheriting classes can redefined this method.
+        """
+        pass
+
+    def spellCheck(self, languages=None, unknown=None, minLength=3):
+        """Recursively spellcheck all child elements for the given languages. Answer a list with
+        unknown words. Default is to do nothing and just pass the call on to child elements.
+        Inheriting classes can redefine _spellCheckWords to check on their on text content.
+        Words with a length smaller than minLength are skipped."""
+        if unknown is None:
+            unknown = []
+        if isinstance(languages, str):
+            languages = [languages]
+        elif languages is None:
+            languages = [self.language or DEFAULT_LANGUAGE]
+        self._spellCheckWords(languages, unknown, minLength)
+        for e in self.elements:
+            e.spellCheck(languages, unknown, minLength)
+        return unknown
+
     #   C O M P O S I T I O N  S U P P O R T
 
     def compose(self, doc, publication):
-        """Recusively compose Pubkication, Pages and Elements to compose the document of a publication.
+        """Recursively compose Publication, Pages and Elements to compose the document of a publication.
         Default behavior is to just pass it on to the chidren.
         """
         for e in self.elements:
