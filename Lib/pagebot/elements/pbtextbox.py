@@ -17,6 +17,7 @@
 import re
 from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
+                            DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
                             BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,
                             BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
@@ -624,8 +625,9 @@ class TextBox(Element):
 
         c = self.context # Get current context and builder
 
-        baselineColor = self.css('baselineColor', color(0, 0, 1))
-        baselineWidth = self.css('baselineWidth', pt(0.5))
+        # Take baseline color and width if defined in local self. Otherwise use view.css
+        baselineColor = self.style.get('baselineColor', view.css('baselineColor', DEFAULT_BASELINE_COLOR))
+        baselineWidth = self.style.get('baselineWidth', view.css('baselineWidth', DEFAULT_BASELINE_WIDTH))
 
         font = self.css('viewMarkerFont')
         fontSize = self.css('baseLineMarkerSize')

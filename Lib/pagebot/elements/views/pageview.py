@@ -635,8 +635,9 @@ class PageView(BaseView):
         if (background and GRID_COL_BG in showGrid) or (not background and GRID_COL in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
-            gridStrokeColor = e.css('viewGridStrokeY', noColor)
-            gridStrokeWidth = e.css('viewGridStrokeWidthY', blackColor)
+            # Use local element color setting, otherwise find by view.css
+            gridStrokeColor = e.style.get('viewGridStrokeY', self.css('viewGridStrokeY', noColor))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthY', self.css('viewGridStrokeWidthY', pt(0.5)))
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             gridX = e.gridX
@@ -658,8 +659,9 @@ class PageView(BaseView):
         if (background and GRID_ROW_BG in showGrid) or (not background and GRID_ROW in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
-            gridStrokeColor = e.css('viewGridStrokeX', noColor)
-            gridStrokeWidth = e.css('viewGridStrokeWidthX', blackColor)
+            # Use local element color setting, otherwise find by view.css
+            gridStrokeColor = e.style.get('viewGridStrokeX', self.css('viewGridStrokeX', noColor))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', pt(0.5)))
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             gridY = e.gridY
@@ -680,8 +682,12 @@ class PageView(BaseView):
         # Drawing the grid as rectangles. Check on foreground/background flags.
         if (background and GRID_SQR_BG in showGrid) or (not background and GRID_SQR in showGrid):
             # Set color for grid rectangles
-            context.fill(e.css('viewGridFill', noColor))
-            context.stroke(e.css('viewGridStroke', noColor))
+            # Use local element color setting, otherwise find by view.css
+            gridFillColor = e.style.get('gridFillColor', self.css('gridFillColor', noColor))
+            gridStrokeColor = e.style.get('viewGridStrokeX', self.css('viewGridStrokeX', noColor))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', pt(0.5)))
+            context.fill(gridFillColor)
+            context.stroke(gridStrokeColor, gridStrokeWidth)
 
             gridX = e.gridX
             gridY = e.gridY
@@ -752,8 +758,8 @@ class PageView(BaseView):
                 baselineYs.append(yy)
                 yy -= baselineGrid
 
-        baselineColor = e.css('baselineColor', DEFAULT_BASELINE_COLOR)
-        baselineWidth = e.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
+        baselineColor = e.style.get('baselineColor', self.css('baselineColor', DEFAULT_BASELINE_COLOR))
+        baselineWidth = e.style.get('baselineWidth', self.css('baselineWidth', DEFAULT_BASELINE_WIDTH))
 
         # Format of line numbers.
         style = dict(font=e.css('viewMarkerFont'), xTextAlign=RIGHT,
