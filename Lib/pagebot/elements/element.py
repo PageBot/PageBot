@@ -58,7 +58,7 @@ class Element:
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, originTop=False,
             left=None, top=None, right=None, bottom=None, sId=None, lib=None,
             t=None, timeMarks=None, parent=None, context=None, name=None,
-            cssClass=None, cssId=None, title=None, description=None,
+            cssClass=None, cssId=None, title=None, description=None, theme=None,
             keyWords=None, language=None, style=None, conditions=None,
             solve=False, framePath=None, elements=None, template=None,
             nextElement=None, prevElement=None, nextPage=None, clipPath=None,
@@ -151,6 +151,10 @@ class Element:
         self.xAlign = xAlign
         self.yAlign = yAlign
         self.zAlign = zAlign
+
+        # An element can have it's own theme (e.g. color palette). Set as property
+        # If not defined, then use the parent theme
+        self.theme = theme
 
         # Initialize style values that are not supposed to inherite from parent
         # styles. Always store point in style as separate (x, y, z) values.
@@ -331,6 +335,32 @@ class Element:
         (0, 1, 2)
         """
         return len(self.elements)
+
+    def _get_theme(self):
+        """Answer the theme of this element. If undefined answer the theme of self.parent.
+        If not parent defined, then answer None.
+
+        >>> from pagebot.themes import BaseTheme, BackToTheCity
+        >>> theme1 = BaseTheme()
+        >>> theme2 = BackToTheCity()
+        >>> e1 = Element(theme=theme1)
+        >>> e1.theme
+        <Theme BaseTheme mood=normal>
+        >>> e2 = Element(parent=e1) 
+        >>> e2.theme # Inheriting theme from e1
+        <Theme BaseTheme mood=normal>
+        >>> e2.theme = theme2
+        >>> e2.theme # Now e2 has it's own theme
+        <Theme Back to the City mood=normal>
+        """
+        if self._theme is not None:
+            return self._theme
+        if self.parent is not None:
+            return self.parent.theme
+        return None # No theme of parent defined.
+    def _set_theme(self, theme):
+        self._theme = theme
+    theme = property(_get_theme, _set_theme)
 
     def checkStyleArgs(self, d):
         """Fix style values where necessary.

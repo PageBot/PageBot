@@ -129,20 +129,14 @@ class HtmlBuilder(XmlBuilder):
         'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
         'width_html', 'height_html'}
 
-    THEAD_ATTRIBUTES = {
-        'dir', 'lang', 'xmllang', 'align', 'char', 'charoff', 'valign',
-        'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout',
-        'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup'}
-
-    TFOOT_ATTRIBUTES = {
+    THEAD_ATTRIBUTES = TFOOT_ATTRIBUTES = {
         'dir', 'lang', 'xmllang', 'align', 'char', 'charoff', 'valign',
         'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout',
         'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup'}
 
     TBODY_ATTRIBUTES = {
         'dir', 'lang',
-        'xmllang', 'align', 'char', 'charoff',
-        'valign', 'ondblclick', 'onmousedown',
+        'xmllang', 'align', 'char', 'charoff', 'valign', 'ondblclick', 'onmousedown',
         'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousedown',
         'onkeydown', 'onkeypress', 'onkeyup'}
 

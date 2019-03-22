@@ -11,6 +11,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
+#     D E P R E C A T E D
+#     Will be removed from repo soon.
+#     Use website.py example instead.
+#
 #     website.py
 #
 #     I N   P R O G R E S S

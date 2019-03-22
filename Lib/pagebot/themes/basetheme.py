@@ -497,7 +497,7 @@ class BaseTheme:
         return self.mood
 
     def __repr__(self):
-        return '<Theme %s styles:%d>' % (self.name, len(self.mood.styles))
+        return '<Theme %s mood=%s>' % (self.name, self.mood.name)
 
     def __getitem__(self, selector):
         return self.selectMood(selector)

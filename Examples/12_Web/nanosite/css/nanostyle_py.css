@@ -1,0 +1,642 @@
+
+body {
+    background-color: #E7E7E7;
+    color: #262626;
+    font-family: 'Upgrade-Regular', sans-serif;
+    font-size: 17px;
+    line-height: 1.4em;
+    font-weight: normal; 
+    letter-spacing: 0.025em;
+
+    margin: 8px; /* Margin between all page content and window */
+}
+img {
+    width: 100%;
+}
+p {
+    font-size: 1em;
+    font-family: 'Upgrade-Regular';
+}
+p em {
+    font-style: normal;
+    font-family: 'Upgrade-RegularItalic';
+}
+p strong, li strong {
+    font-weight: normal;
+    font-family: 'Upgrade-Semibold';    
+}
+a {
+    text-decoration: none;
+    color: #45454A;
+}
+a:hover {
+    text-decoration: none;
+    color: #F96302;
+    background-color: #FFFFFF;
+}
+ul {
+    padding: 0 0 0 20px;
+}
+
+/* Heading */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-family: 'Upgrade-Regular', sans-serif;
+    margin: .45em 0;
+    padding: 0; 
+}
+h1 {font-size: 2em; line-height: 1.2em;}
+h2 {font-size: 1.75em; line-height: 1.2em;}
+h3 {font-size: 1.5em; line-height: 1.2em;}
+h4 {font-size: 1.25em; line-height: 1.2em;}
+h5 {font-size: 1em; line-height: 1.2em;}
+p {font-size: 1em; line-height: 1.4em;}
+
+h1 {
+    font-family: 'Upgrade-Semibold', sans-serif;
+    margin: 0;
+    color: #0E0E0E;
+}
+h1 a {
+    color: #434343;
+}
+h1 a:hover {
+    color: #262626;
+    background-color: none;
+}
+
+h2 a {
+    color: #434343;
+    background-color: none;
+}
+h2 a:hover {
+    color: #262626;
+    background-color: none;
+}
+
+h3 a {
+    color: #434343;
+    background-color: none;
+}
+h3 a:hover {
+    color: #262626;
+    background-color: none;
+}
+
+h4 a {
+    color: #434343;
+    background-color: none;
+}
+h4 a:hover {
+    color: #262626;
+    background-color: none;
+}
+
+h5 a {
+    color: #434343;
+    background-color: none;
+}
+h5 a:hover {
+    color: #262626;
+    background-color: none;
+}
+
+/* Debugging */
+.cssId { /* Debug showing e.cssId */
+    font-size: 1em;
+    color: yellow;
+    background-color: red;
+}
+
+/* Overall layout */
+.wrapper, .content, .footer {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    background-color: #FFFFFF;    
+}
+.header {
+    display: block;
+    background-color: #FFFFFF;    
+}
+.clearfix {
+  overflow: auto; /* CSS hack to grow div including all child content. */
+}
+.textbox {
+    width: 100%;
+}
+
+/* Logo */
+.logo {
+    float: left;
+    width: 30%;
+    padding: 0.5em 0 0 1em;
+}
+.logo h1 {
+    font-size: 2em;
+    font-family: 'Upgrade-Medium';
+    letter-spacing: 0.015em;
+    color: #F96302;
+}
+
+/* Rulers */
+
+.main hr {
+    border: 8px solid #787881;
+}
+.side hr {
+    border: 1px solid #787881;
+}
+
+/* Desktop navigation/menu */
+
+nav.navigation {
+    float: right;
+    width: 60å%;
+    padding: 0.75em 1em 0 0;
+    z-index: 1000;
+}
+
+.navigation-menu {
+    float: right;
+    /* overflow: auto; CSS hack to grow div including all child content. */
+}
+ul.navmenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #E7E7E7;
+}
+
+ul.navmenu li {
+    display: block;
+    position: relative;
+    float: left;
+    background: #E7E7E7;
+}
+
+li ul.navmenu { 
+    display: none; 
+    z-index: 1000;
+}
+
+li:hover > ul.navmenu { 
+    display: block;
+    position: absolute; 
+}
+
+ul.navmenu li a {
+    display: block;
+    padding: 6px 12px;
+    text-decoration: none;
+    white-space: nowrap;
+    color: #0E0E0E;
+    margin-right: 0px;
+}
+
+ul.navmenu li a:hover { 
+    color: #ccc;
+    background-color: #262626;
+}
+
+li:hover ul.navmenu {
+    display: block;
+    position: absolute;
+}
+
+/*
+li:hover li { 
+    float: none; 
+}
+*/
+li:hover a { 
+    background-color: #E7E7E7; 
+}
+
+li:hover li a:hover { 
+    background-color: #E7E7E7; 
+    color: #787881;
+}
+
+.main-navigation li ul.navmenu li { 
+    border-top: 0; 
+}
+
+/* 80% to prevent menu's running off from the right side? */
+ul.navmenu ul.navmenu ul.navmenu {
+    left: 100%;
+    top: 0;
+    margin-right: 
+}
+
+ul.navmenu:before,
+ul.navmenu:after {
+  content: " "; /* 1 */
+  display: table; /* 2 */
+}
+
+ul.navmenu:after { 
+    clear: both; 
+}
+
+/* Mobile menu and BurgerButton */
+
+.menu {
+}
+.burgerbutton {
+    float: right;
+    display: none;
+    padding-top: 0.5em;
+}
+.mobilemenu {
+    display: none;
+}
+.mobilemenu .button, .mobilemenu .button2 {
+    color: #0E0E0E;
+    background-color: #E7E7E7;
+    border: none;
+    width: 100%;
+    margin: 2px 0;
+    padding: 6px;
+    text-align: center;
+    text-decoration: none
+    display: inline-block;
+    font-size: 3em;
+    font-family: 'Upgrade-Medium', sans-serif;
+}
+.mobilemenu .button2 {
+    color: #F96302;
+    font-size: 2em;
+    padding: 5px;
+    font-family: 'Upgrade-MediumItalic', sans-serif;
+}
+
+
+/* Banner on full width */
+.banner {
+    padding: 6pt 0;
+    margin: 6pt 0 6pt 0;
+    background-color: #FFFFFF;
+}
+.banner .textbox h1 {
+    font-size: 3em;
+    line-height: 1.3em;
+    font-family: 'Upgrade-Regular', sans-serif;
+    color: #808080;
+}
+
+/* Collection */
+
+.collection {
+    background-color: #FFFFFF;
+}
+.collectionelement{
+    margin: 6px 2px 0 0;
+    /* Width is defined by collection container
+    depending on the amount of child elements. */
+}
+
+.introduction {
+    background-color: #333333;
+    padding: 1em;
+}
+.introduction .textbox h1 {
+    font-size: 3em;
+    line-height: 1.2em;
+    font-family: 'Upgrade-Light', sans-serif;
+    color: #ECECEC;
+}
+.introduction .textbox h1 a {
+    font-family: 'Upgrade-Book', sans-serif;
+    color: #CCCCCC;
+}
+.introduction .textbox h1 a:hover {
+    color: #A6A6A6;
+}
+
+/* Slide show */
+
+.slideshowgroup {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 10px;
+    row-gap: 10px;    
+    background-color: #333333;
+}
+.slideshow {
+    background-color: #333333;
+}
+.slideside {
+    background-color: #333333;
+    padding: 0 1em 1em 0;
+}
+.slideside .textbox h1 {
+    color: #E7E7E7;
+    letter-spacing: 0.025em;
+    font-size: 1.4em;
+    line-height: 1.2em;
+    font-family: 'Upgrade-Regular';
+}
+.slideside .textbox h1 a {
+    color: #F96302;
+}
+.slideside .textbox h1 a:hover {
+    color: #642801;
+}
+.slideside .textbox h2 {
+    color: #E7E7E7;
+    letter-spacing: 0.025em;
+    font-size: 1.4em;
+    line-height: 1.2em;
+    font-family: 'Upgrade-Regular';
+}
+.slideside .textbox h3 {
+    color: #E7E7E7;
+    letter-spacing: 0.025em;
+    font-size: 1.1em;
+    line-height: 1.2em;
+    font-family: 'Upgrade-Medium';
+}
+.slideside .textbox p {
+    color: #F3F3F4;
+    letter-spacing: 0.025em;
+    font-size: 1em;
+    line-height: 1.4em;
+    font-family: 'Upgrade-Regular';
+}
+.slideside .textbox p em {
+    fony-style: normal;
+    font-family: 'Upgrade-RegularItalic';
+}
+
+sup { /* Superior number <sup> by Upgrade OT-feature */
+    top: 0em;
+    color: #1A1A1C;
+    font-size: inherit;
+    vertical-align: inherit;
+    -moz-font-feature-settings:"sups=1";
+    -moz-font-feature-settings:"sups";
+    -ms-font-feature-settings:"sups";
+    -webkit-font-feature-settings:"sups";
+    font-feature-settings:"sups";
+}
+h1 sup { /* Superior Scale number in h1 */
+    color: #0E0E0E;
+}
+li sup { /* Superior Scale number in Menu */
+    color: #000000;
+}
+
+/* Content */
+
+.content {
+    padding:1em;
+}
+.caption .textbox {
+    font-family: 'Upgrade-RegularItalic';
+    font-size: 1em;
+    line-height: 1.4em;
+}
+.section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    background-color: #DEDEE3;
+}
+.mains {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;    
+}
+.main {
+    padding: 0 12pt;
+    border-top: 15px solid #595959;
+}
+.sides {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 10px;
+    row-gap: 10px;    
+}
+.side {
+    padding: 0 12pt;
+    border-top: 15px solid #595959;
+}
+
+/* Cropped has attribute background-image and optional
+floating elements inside.*/
+.cropped {
+    padding: 0;
+    border-top: 15px solid #595959;
+}
+/* Solve Cropped empty <p> first.
+.cropped .textbox {
+    padding: 0.5em 1em;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+*/
+
+/* Info area, open/clode by button */
+.info {
+    margin: 0;
+    padding: 0;
+}
+.info-opened{
+    display: none;    
+}
+.info-closed{
+    display: block;   
+}
+.info-doopen, .info-doclose { /* [?] button, [x] button */
+    float: right;
+    margin: 0;
+    text-align: center;
+    padding: 0.2em 0.5em;
+    height: 1em;
+    width: 1em;
+    font-size: 1.5em;
+    background-color: #F96302; /* Buttons in logo color */
+    color: #FEE8D9;
+}
+
+
+.footer {
+    
+}
+
+/****************************************
+*****************************************
+MEDIAQUERIES
+*****************************************
+****************************************/
+
+@media only screen and (max-width: 800px) {
+    body {
+        /*background-color: red;*/
+        margin: 0;
+    }
+    h1 {font-size: 2.4em; line-height: 1.15em;}
+    h2 {font-size: 2.2em; line-height: 1.15em;}
+    h3 {font-size: 1.8em; line-height: 1.15em;}
+    h4 {font-size: 1.4em; line-height: 1.15em;}
+    h5 {font-size: 1.25em; line-height: 1.15em;}
+    p, li {font-size: 1.25em; line-height: 1.3em;}
+
+    .logo {
+        width: 80%;
+    }
+    .logo h1 {
+        font-size: 1.5em;
+    }
+
+    .burgerbutton {
+        float: right;
+        display: block;
+        margin-right: 12pt;
+    }
+
+    nav.navigation {
+        display: none;
+    }     
+    .menu {
+        display: none;
+    }
+    .mobilemenu {
+        float: left;
+        width: 100%;
+        display: none;
+    }
+    .mobilemenu .button {
+        font-size: 2em;
+    }
+    .mobilemenu .button2 {
+        font-size: 1.5em;
+    }
+    .banner .textbox h1 {
+        font-size: 2.4em;
+        line-height: 1.15em;
+    }
+    .banner .textbox h2 {
+        font-size: 2.2em;
+        line-height: 1.15em;
+    }
+    .banner .textbox p {
+        font-size: 1.25em;
+        line-height: 1.3em;
+    }
+    .slideshowgroup {
+        grid-template-columns: 1fr;
+    }
+    .slideside {
+        padding-left: 12pt;
+        padding-right: 12pt;
+    }
+    .slideside .textbox p {
+        font-size: 1.25em;
+        line-height: 1.3em;
+    }
+    .introduction .textbox h1 {
+        font-size: 2.25em;
+        line-height: 1.2em;
+    }
+    .caption .textbox {
+        font-family: 'Upgrade-RegularItalic';
+        font-size: 1.25em;
+        line-height: 1.3em;
+    }
+    .section {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    .cropped {
+        height: 60vw; /* 60% of view-port width. */
+        border-top: none;
+
+    }
+}
+@media only screen and (min-width: 800px) {
+    body {
+        /*background-color: cyan;*/
+    }
+    h1 {font-size: 3em; line-height: 1.2em;}
+    h2 {font-size: 2em; line-height: 1.2em;}
+    h3 {font-size: 1.6em; line-height: 1.2em;}
+    h4 {font-size: 1.25em; line-height: 1.2em;}
+    h5 {font-size: 1em; line-height: 1.2em;}
+    p, li {font-size: 1em; line-height: 1.4em;}
+
+    .header {
+        grid-template-columns: 1fr 2fr;
+    } 
+    .logo h1 {
+        font-size: 1.6em;
+    }
+    .navigation {
+        display: block;
+    }
+    .burgerbutton, .mobilemenu {
+        display: none;
+    }
+
+    .banner .textbox h1 {
+        font-size: 3em;
+        line-height: 1em;
+    }
+}
+@media only screen and (min-width: 1000px) {
+    body {
+        /*background-color: orange;*/
+    }
+    .header {
+        grid-template-columns: 2fr 3fr;
+    } 
+    .logo h1 {
+        font-size: 2em;
+    }
+ 
+    .navigation {
+        display: block;
+    }
+    .burgerbutton, .mobilemenu {
+        display: none;
+    }
+
+    .banner .textbox h1 {
+        font-size: 2.5em;
+        line-height: 1.1em;
+    }
+}
+@media only screen and (min-width: 1200px) {
+    body {
+        /*background-color: blue;*/
+    }
+    .wrapper {
+        width: 1200px;
+        margin: auto;
+    } 
+    .navigation {
+        display: block;
+    }
+    .burgerbutton, .mobilemenu {
+        display: none;
+    }
+}
+
+/* PRINT STYLESHEET */
+@media print {
+  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } /* Black prints faster: h5bp.com/s */
+  a, a:visited { text-decoration: underline; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }  /* Don't show links for images, or javascript/internal links */
+  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  thead { display: table-header-group; } /* h5bp.com/t */
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page { margin: 0.5cm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
