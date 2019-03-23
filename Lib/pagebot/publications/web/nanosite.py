@@ -16,8 +16,16 @@
 #
 #     NanoSite is a simple basix website generator.
 #
+import os, shutil
+
 from pagebot.publications.web.basesite import BaseSite
 from pagebot.toolbox.units import pt
+from pagebot.elements.views import MampView
+from pagebot.constants import *
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
+from pagebot.elements import *
+from pagebot.elements.web.nanosite.siteelements import *
 
 class NanoSite(BaseSite):
     """NanoSite implements a bacic website generator class, that can be used
@@ -26,22 +34,122 @@ class NanoSite(BaseSite):
     >>> import os
     >>> from pagebot import getResourcesPath
     >>> from pagebot.themes import BackToTheCity
-    >>> name = 'Demo Site'
-    >>> theme = BackToTheCity
-    >>> mdPath = getResourcesPath() + '/texts/SITE.md'
-    >>> os.path.exists(mdPath)
+    >>> from css.nanostyle_css import cssPy
+    >>> name = 'PageBot NanoSite'
+    >>> theme = BackToTheCity() # Pick a theme for this site.
+    >>> srcPath = getResourcesPath() + '/texts/SITE.md' # Get example markDown file from resources.
+    >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
-    >>> ns.buildMamp(mdPath)
+    >>> doc = ns.produce(srcPath, cssPy=cssPy)
+    >>> doc
+    <Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
     """
-    MAX_IMAGE_WIDTH = pt(600)
+    DEFAULT_VIEW_ID = MampView.viewId
 
-    def buildMamp(self, mdPath, viewId=None, defaultImageWidth=None):
+    def makeNavigation(self, doc):
+        """After all pages of the site are generated, we can use the compiled page tree
+        from doc to let all Navigation elements build the menu for each page.
+        """
+        for pages in doc.pages.values():
+            for page in pages:  
+                navigation = page.select('Navigation')
+                if navigation is not None:
+                    navigation.pageTree = doc.getPageTree() # Get a fresh one for each page
+
+    def makeTemplate(self, doc):
+        """Make a default template that is the typical base for a NanoSite.
+        More details can be filled by the source markDown file.
+        """
+
+        default = Template('Default', context=doc.context)
+        wrapper = Wrapper(parent=default) # Create main page wrapper
+        
+        header = Header(parent=wrapper) # Header to hold logo and navigation elements
+
+        #logoString = doc.context.newString(SITE_NAME)
+        Logo(parent=header, logo=doc.title)
+        BurgerButton(parent=header)
+
+        # Responsive conditional menus
+        Navigation(parent=header)
+        MobileMenu(parent=header)
+
+        # Just make a simple content container in this template.
+        # Rest of content is created upon request in MarkDown
+        Content(parent=wrapper) 
+
+        # Default Footer at bottom of every page.
+        Footer(parent=wrapper)
+
+        doc.addTemplate('default', default)
+        return default
+
+    def produce(self, srcPath, viewId=None, cssPy=None, defaultImageWidth=None, name=None, title=None,
+        theme=None, verbose=False, spellCheck=False, **kwargs):
+        """Create a Document with the current settings of self. Then build the document using
+        the defined view (detault is MampView.viewId) to make the Mamp site.
+        Finally answer the created Document instance.
+        """
         if defaultImageWidth is None:
-            defaultImageWidth = self.MAX_IMAGE_WIDTH
+            defaultImageWidth = MAX_IMAGE_WIDTH
 
-        doc = self.newDocument(viewId=viewId or 'Mamp', autoPages=1, defaultImageWidth=defaultImageWidth)
-        print(doc)
+        doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID, autoPages=1, defaultImageWidth=defaultImageWidth,
+            name=name or self.name, title=title or self.title, theme=theme or self.theme, **kwargs)
+        
+        # Write the CSS, set the view css paths and translate cssPy into css source file.
+        self.makeCss(doc, cssPy)
+
+        # Make the all pages and elements of the site as empty containers, that then can
+        # be selected and filled by the composer, using the galley content.
+        # Of the MarkDown text can decide to create new elements inside selected elements.
+        template = self.makeTemplate(doc)    
+
+        page = doc[1]
+        page.applyTemplate(template) # Copy element tree to page.
+
+        # By default, the typesetter produces a single Galley with content and code blocks.    
+        t = Typesetter(doc.context)
+        galley = t.typesetFile(srcPath)
+        
+        # Create a Composer for this document, then create pages and fill content. 
+        composer = Composer(doc)
+
+        # The composer executes the embedded Python code blocks that indicate where content should go.
+        # by the HtmlContext. Feedback by the code blocks is added to verbose and errors list
+        targets = dict(doc=doc, page=page, template=template)
+        composer.compose(galley, targets=targets)
+
+        if verbose:
+            if targets['verbose']:
+                print('Verbose\n', '\n'.join(targets['verbose']))
+            # In case there are any errors, show them.
+            if targets['errors']:
+                print('Errors\n', '\n'.join(targets['errors']))
+        
+        # Find the navigation elements and fill them, now we know all the pages.
+        self.makeNavigation(doc)
+
+        if spellCheck:
+            # https://www.hyphenator.net/en/word/...
+            unknownWords = doc.spellCheck(LANGUAGE_EN)
+            if unknownWords:
+                print(unknownWords)
+
+        view = doc.view
+        MAMP_PATH = '/Applications/MAMP/htdocs/'
+        siteName =  doc.name.replace(' ', '_')  
+        filePath = MAMP_PATH + siteName
+        if verbose:
+            print('Site path: %s' % MAMP_PATH)
+        if os.path.exists(filePath):
+            shutil.rmtree(filePath) # Comment this line, if more safety is required. In that case manually delete.
+        doc.export(filePath)
+
+        url = view.getUrl(siteName)
+        os.system(u'/usr/bin/open "%s"' % url)
+
+        return doc
 '''
 import os
 import shutil
@@ -49,13 +157,9 @@ import webbrowser
 
 from pagebot.publications.publication import Publication
 from pagebot.constants import URL_JQUERY, LANGUAGE_EN
-from pagebot.composer import Composer
-from pagebot.typesetter import Typesetter
-from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.color import color, whiteColor, blackColor, spot
 from pagebot.toolbox.units import em, pt
-from pagebot.elements.web.nanosite.siteelements import *
 
 from css.nanostyle_css import cssPy
 
@@ -100,10 +204,6 @@ CLEAR_MAMP = False # If True, make a clean copy by removing all old files first.
 NUM_CONTENT = 2 # Number of content elements on a page.
 NUM_SIDES = 1 # Number of side elements next to a main content element,
 
-# Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
-MAX_IMAGE_WIDTH = 800 
-
-
 styles = dict(
     body=dict(
         fill=whiteColor,
@@ -116,42 +216,6 @@ styles = dict(
     ),
 )
 
-def makeNavigation(doc):
-    """After all pages of the site are generated, we can use the compiled page tree
-    from doc to let all Navigation elements build the menu for each page.
-    """
-    for pages in doc.pages.values():
-        for page in pages:  
-            navigation = page.select('Navigation')
-            if navigation is not None:
-                navigation.pageTree = doc.getPageTree() # Get a fresh one for each page
-
-def makeTemplate(doc):
-
-    # D E F A U L T
-
-    default = Template('Default', context=doc.context)
-    wrapper = Wrapper(parent=default) # Create main page wrapper
-    
-    header = Header(parent=wrapper) # Header to hold logo and navigation elements
-
-    #logoString = doc.context.newString(SITE_NAME)
-    Logo(parent=header, logo=SITE_NAME)
-    BurgerButton(parent=header)
-
-    # Responsive conditional menus
-    Navigation(parent=header)
-    MobileMenu(parent=header)
-
-    # Just make a simple content container in this template.
-    # Rest of content is created upon request in MarkDown
-    Content(parent=wrapper) 
-
-    # Default Footer at bottom of every page.
-    Footer(parent=wrapper)
-
-    doc.addTemplate('default', default)
-    return default
 
 def makeSite(styles, viewId):
     site = Site(styles=styles)

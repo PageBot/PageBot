@@ -636,6 +636,9 @@ MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
+# Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
+MAX_IMAGE_WIDTH = pt(800)
+
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
     FILETYPE_PDF: 1, # Not used online, keep size as used.

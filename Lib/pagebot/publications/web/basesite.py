@@ -35,6 +35,17 @@ class BaseSite(Publication):
             name = ':'+self.eId
         return '<%s%s>' % (self.__class__.__name__, name)
 
+    def makeCss(self, doc, cssPy=None):
+        view = doc.view
+        view.resourcePaths = ['css']
+        view.cssUrls = ['css/normalized.css']
+
+        if cssPy is not None:
+            # Generate css by mapping theme.mood on cssPy 
+            cssPath = 'css/nanostyle_py.css'
+            view.cssUrls.append(cssPath)
+            doc.context.b.writeCss(cssPath, cssPy % doc.theme.mood)
+
 if __name__ == '__main__':
     import doctest
     import sys

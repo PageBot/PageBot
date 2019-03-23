@@ -171,9 +171,9 @@ class Document:
         >>> t = doc.addTemplate('Template1', Template())
         >>> v = doc.getView('Mamp') # Creating the view if it does not exist.
         >>> str(doc)
-        '<Document-Document "TestDoc" Pages=41 Templates=2 Views=1>'
+        '<Document "TestDoc" Pages=41 Templates=2 Views=1>'
         """
-        s = '<Document-%s "%s"' % (self.__class__.__name__, self.name)
+        s = '<%s "%s"' % (self.__class__.__name__, self.name)
         if self.pages:
             s += ' Pages=%d' % len(self.pages)
         if self.templates:
@@ -275,7 +275,7 @@ class Document:
         >>> context = DrawBotContext()
         >>> doc = Document(context=context, title='MySite')
         >>> doc, doc.context, doc.title
-        (<Document-Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
+        (<Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
         """
 
         """>>> from pagebot.contexts.flatcontext import FlatContext
@@ -954,7 +954,7 @@ class Document:
         >>> doc.findBysId(2345)
         <Element:e1 (0pt, 0pt, 100pt, 100pt) E(1)>
         >>> doc.findBysId(1234)
-        <Document-Document "Untitled" Pages=1 Templates=1 Views=1>
+        <Document "Untitled" Pages=1 Templates=1 Views=1>
         >>> doc.findBysId(7890)
         <PageView>
         """

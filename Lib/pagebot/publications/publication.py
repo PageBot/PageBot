@@ -44,16 +44,22 @@ class Publication(Element):
         self.addFinders(findersOrPaths)
         
     def getAPI(self):
-    	u"""Answers the API dictionary for this class that can be used by calling apps,
+    	"""Answers the API dictionary for this class that can be used by calling apps,
     	e.g. for construction and behavior of the scope of app UI parameter controls.
 		This method needs to be redefined by inheriting publications classes to answer
 		different than the default empty dictionary."""
     	return {}
         
+
+    def produce(self, viewId=None, **kwargs):
+        """Produce the publication, using the viewId as target. To be implemented by
+        inheriting pbulications classes."""
+        raise NotImplementedError
+
     def newDocument(self, autoPages=None, w=None, h=None, originTop=None, padding=None,
             gw=None, gh=None, gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
             **kwargs):
-        u"""Answer a new Document instance for this publication, to be filled by the 
+        """Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
         Optional arguments can overwrite the parameters of the publication.
@@ -99,7 +105,7 @@ class Publication(Element):
         return partNames
     partNames = property(_get_partNames)
 
-    #   F I N D I N G  R E S O U R C E S
+    #   F I N D I N G  I N T E R N A L  R E S O U R C E S
 
     def find(self, name=None, pattern=None, extension=None):
         """Answer elements created by fitting the name, pattern and/or extension."""
@@ -109,6 +115,8 @@ class Publication(Element):
             if elements:
                 break
         return elements
+
+    #   F I N D I N G  E X T E R N A L  R E S O U R C E S
 
     def addFinders(self, findersOrPaths):
         """Add finders to the self.finders dictionary. If it is a file path, then create a Finder instance."""

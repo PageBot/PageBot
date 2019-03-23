@@ -29,7 +29,7 @@ from pagebot.conditions import *
 from pagebot.typesetter import Typesetter
 from pagebot.composer import Composer
 from pagebot.toolbox.color import color, blackColor, whiteColor
-from pagebot.constants import A4, URL_JQUERY
+from pagebot.constants import *
 from pagebot.toolbox.units import pt, em
 from pagebot.elements.web.nanosite.siteelements import *
 
@@ -42,9 +42,6 @@ EXPORT_PATH = '_export/UseMarkdown2HTML'
 MAMP_PATH = '/Applications/MAMP/htdocs/' 
 SITE_NAME = 'UseMarkDown'
 SITE_PATH = MAMP_PATH + SITE_NAME 
-
-# Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
-MAX_IMAGE_WIDTH = 800 
 
 # In this example we'll be using DrawBotContext to write a PDF file of the document.
 context = HtmlContext()

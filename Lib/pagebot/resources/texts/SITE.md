@@ -1,16 +1,59 @@
 ~~~
+# This markDown file is an example of how website build
+# from a single source documents. Instructions for new pages
+# and the direciton of targets for the text.
+
 # Code blocks in the markdown content file, direct
 # the building of page elements to be filled.
 # Start at the first page in the document
-page = doc[1]
-box = page.select('main')
+
+# Uncomment to see cssId/cssClass markers in the page
+#doc.view.showIdClass = True
+
+# Page (Home)
+#	Wrapper
+#		Header 
+#			Logo (+BurgerButton)
+#			Navigation/TopMenu/MenuItem(s)
+#      Content
+#  			Banner
+#  			SlideShow (on Home)
+#      		Slides
+#      		SlideSide
+#			Section(s)
+#				Introduction
+#				Main
+#				Mains
+#					Main
+#				Side
+#				Sides
+#					Side
+#		Footer
+#
+# ----------------------------------------
+# index.html
+# ----------------------------------------
+page.name = 'Home'
+page.url = 'index.html'
+content = page.select('Content')
+box = content.newBanner()
 ~~~
 
-# PageBot Version 0.7
+# PageBot Library
 
-## What is PageBot?
+~~~
+box = content.newIntroduction()
+~~~
 
-PageBot is a page layout program, that enables designers to create high quality documents using code. 
+# What is PageBot?
+
+~~~
+section = content.newSection()
+box = section.newMain()
+~~~
+
+PageBot is library of Python classes that contain all knowledge to create high quality publications using code, such as PDF documents, images, animations and websites.
+ 
 It is available both as Python library context for [DrawBot](https://www.drawbot.com) and as part of a collection of stand-alone desktop applications that can be created from it. 
 
 Initiated by [TYPETR](https://typetr.typenetwork.com), the aim is to create a system for scriptable applications generating high quality typographic documents for a variety of output media, that support high quality fonts.
@@ -30,11 +73,54 @@ Although publicly available as Open Source under an MIT license, PageBot is stil
 More examples need to be created to fully test all functions.
 
 ~~~
-page = page.next # Go to the next page and select the box
-box = page.select('main')
+# ----------------------------------------
+# tour
+# ----------------------------------------
+page = page.next
+page.applyTemplate(template)  
+page.name = 'Tour'
+page.url = 'tour.html'
+
+content = page.select('Content')
+box = content.newBanner()
 ~~~
 
-## Functionality
+## PageBot tour
+
+~~~
+# ----------------------------------------
+# reference
+# ----------------------------------------
+page = page.next
+page.applyTemplate(template)  
+page.name = 'Reference'
+page.url = 'reference.html'
+
+content = page.select('Content')
+box = content.newBanner()
+~~~
+
+## PageBot reference
+
+~~~
+# ----------------------------------------
+# functions
+# ----------------------------------------
+page = page.next
+page.applyTemplate(template)  
+page.name = 'Functions'
+page.url = 'functions.html'
+
+content = page.select('Content')
+box = content.newBanner()
+~~~
+
+## PageBot functions
+
+~~~
+section = content.newSection()
+box = section.newMain()
+~~~
 
 An overview of PageBot functions reads like this:
 
@@ -75,11 +161,43 @@ However, some other separate works are aggregated in this repository for conveni
 See LICENSE files for details. 
 
 ~~~
-page = page.next # Go to the next page and select the box
-box = page.select('main')
+# ----------------------------------------
+# examples.html
+# ----------------------------------------
+page = page.next
+page.applyTemplate(template)  
+page.name = 'Examples'
+page.url = 'examples.html'
+
+content = page.select('Content')
+box = content.newBanner()
 ~~~
 
-## Future developments
+# Examples
+
+~~~
+section = content.newSection()
+box = section.newMain()
+~~~
+
+~~~
+# ----------------------------------------
+# future.html
+# ----------------------------------------
+page = page.next
+page.applyTemplate(template)  
+page.name = 'Future'
+page.url = 'future.html'
+
+content = page.select('Content')
+box = content.newBanner()
+~~~
+
+# Future developments
+~~~
+section = content.newSection()
+box = section.newMain()
+~~~
 
 * Element classes supporting various types of graphs, info-graphics, maps, PageBot document layout, Variable Font axes layout, font metrics.
 * Views for thumbnail page overview, combined booklet-sheets for print, site-maps, etc.

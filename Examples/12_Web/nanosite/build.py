@@ -19,7 +19,7 @@ import shutil
 import webbrowser
 
 from pagebot.publications.publication import Publication
-from pagebot.constants import URL_JQUERY, LANGUAGE_EN
+from pagebot.constants import *
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
 from pagebot.elements import *
@@ -70,9 +70,6 @@ CLEAR_MAMP = False # If True, make a clean copy by removing all old files first.
 
 NUM_CONTENT = 2 # Number of content elements on a page.
 NUM_SIDES = 1 # Number of side elements next to a main content element,
-
-# Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
-MAX_IMAGE_WIDTH = 800 
 
 
 styles = dict(
