@@ -41,7 +41,7 @@ class NanoSite(BaseSite):
     >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
-    >>> doc = ns.produce(srcPath, cssPy=cssPy)
+    >>> doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
     >>> doc
     <Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
     """
@@ -85,20 +85,32 @@ class NanoSite(BaseSite):
         doc.addTemplate('default', default)
         return default
 
-    def produce(self, srcPath, viewId=None, cssPy=None, defaultImageWidth=None, name=None, title=None,
-        theme=None, verbose=False, spellCheck=False, **kwargs):
+    def produce(self, srcPaths, viewId=None, cssPy=None, resourcePaths=None, cssUrls=None,
+            defaultImageWidth=None, name=None, title=None, theme=None, verbose=False, spellCheck=False, **kwargs):
         """Create a Document with the current settings of self. Then build the document using
         the defined view (detault is MampView.viewId) to make the Mamp site.
         Finally answer the created Document instance.
         """
         if defaultImageWidth is None:
             defaultImageWidth = MAX_IMAGE_WIDTH
+        if theme is None:
+            theme = self.theme
+        if not isinstance(srcPaths, (list, tuple)):
+            srcPaths = [srcPaths]
 
         doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID, autoPages=1, defaultImageWidth=defaultImageWidth,
-            name=name or self.name, title=title or self.title, theme=theme or self.theme, **kwargs)
+            name=name or self.name, title=title or self.title, theme=theme, **kwargs)
         
         # Write the CSS, set the view css paths and translate cssPy into css source file.
-        self.makeCss(doc, cssPy)
+        view = doc.view
+        view.resourcePaths = resourcePaths or ['css']
+        view.cssUrls = cssUrls or ['css/normalized.css']
+
+        if cssPy is not None:
+            # Generate css by mapping theme.mood on cssPy 
+            cssPath = 'css/nanostyle_py.css'
+            view.cssUrls.append(cssPath)
+            doc.context.b.writeCss(cssPath, cssPy % doc.theme.mood)
 
         # Make the all pages and elements of the site as empty containers, that then can
         # be selected and filled by the composer, using the galley content.
@@ -110,7 +122,8 @@ class NanoSite(BaseSite):
 
         # By default, the typesetter produces a single Galley with content and code blocks.    
         t = Typesetter(doc.context)
-        galley = t.typesetFile(srcPath)
+        for srcPath in srcPaths:
+            galley = t.typesetFile(srcPath)
         
         # Create a Composer for this document, then create pages and fill content. 
         composer = Composer(doc)
@@ -150,196 +163,7 @@ class NanoSite(BaseSite):
         os.system(u'/usr/bin/open "%s"' % url)
 
         return doc
-'''
-import os
-import shutil
-import webbrowser
 
-from pagebot.publications.publication import Publication
-from pagebot.constants import URL_JQUERY, LANGUAGE_EN
-from pagebot.conditions import *
-from pagebot.toolbox.color import color, whiteColor, blackColor, spot
-from pagebot.toolbox.units import em, pt
-
-from css.nanostyle_css import cssPy
-
-from pagebot.themes import *
-#   BackToTheCity
-#   BusinessAsUsual 
-#   FairyTales 
-#   FreshAndShiny 
-#   IntoTheWoods 
-#   SeasoningTheDish 
-#   SomethingInTheAir 
-#   WordlyWise
-#   HappyHolidays
-
-DDS_LOGO = spot(165)
-
-class DDSTheme(BaseTheme):
-    NAME = 'DesignDesign.Space'
-    BASE_COLORS = dict(
-        base2=color('#ACACB8'),
-        base3=DDS_LOGO,
-        logo=DDS_LOGO,
-    )
-
-theme = DDSTheme('light')
-
-SITE_NAME = 'DesignDesign.Space' # Also used as logo
-
-MD_PATH = 'Program2019-03-10-Scales.md'
-EXPORT_PATH = '_export/' + SITE_NAME # Export path for DO_FILE
-
-VERBOSE = False
-
-DO_PDF = 'Pdf' # Save as PDF representation of the site.
-DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
-DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
-DO_GIT = 'Git' # Generate website and commit to git (so site is published in git docs folder.
-EXPORT_TYPE = DO_GIT
-
-CLEAR_MAMP = False # If True, make a clean copy by removing all old files first.
-
-NUM_CONTENT = 2 # Number of content elements on a page.
-NUM_SIDES = 1 # Number of side elements next to a main content element,
-
-styles = dict(
-    body=dict(
-        fill=whiteColor,
-        ml=9, mr=0, mt=0, mb=0,
-        pl=em(3), pr=em(3), pt=em(3), pb=em(3),
-        fontSize=pt(12),
-        leading=em(1.4),
-    ),
-    br=dict(leading=em(1.4)
-    ),
-)
-
-
-def makeSite(styles, viewId):
-    site = Site(styles=styles)
-    doc = site.newDocument(viewId=viewId, autoPages=1, defaultImageWidth=MAX_IMAGE_WIDTH)
-    
-    doc.theme = theme
-
-    view = doc.view
-    view.resourcePaths = ('css','fonts','images','js')
-    view.jsUrls = (
-        URL_JQUERY, 
-        'js/jquery.bbslider.min.js',
-        #URL_MEDIA, 
-        #'js/sitemain.js', 
-    )
-    
-    # Generate css by mapping theme.mood on cssPy 
-    cssPath = 'css/nanostyle_py.css'
-    doc.context.b.writeCss(cssPath, cssPy % theme.mood)
-
-    view.cssUrls = (
-        'css/jquery.bbslider.css',
-        'fonts/webfonts.css', 
-        'css/normalized.css', 
-        cssPath,
-    )
-    BASE_FONT_SIZE = 16
-    view.jsCode = """
-    function setBaseFontSize(){
-        /*document.getElementsByTagName('body')[0].style['font-size'] = %d * window.devicePixelRatio + 'px';*/
-    }
-    window.onload = setBaseFontSize;
-    """ % BASE_FONT_SIZE
-
-    # Make the all pages and elements of the site as empty containers, that then can
-    # be selected and filled by the composer, using the galley content.
-    # Of the MarkDown text can decide to create new elements inside selected elements.
-    template = makeTemplate(doc)    
-
-    page = doc[1]
-    page.applyTemplate(template) # Copy element tree to page.
-
-    # By default, the typesetter produces a single Galley with content and code blocks.    
-    t = Typesetter(doc.context)
-    galley = t.typesetFile(MD_PATH)
-    
-    # Create a Composer for this document, then create pages and fill content. 
-    composer = Composer(doc)
-
-    # The composer executes the embedded Python code blocks that indicate where content should go.
-    # by the HtmlContext. Feedback by the code blocks is added to verbose and errors list
-    targets = dict(doc=doc, page=page, template=template)
-    composer.compose(galley, targets=targets)
-
-    if VERBOSE:
-        if targets['verbose']:
-            print('Verbose\n', '\n'.join(targets['verbose']))
-        # In case there are any errors, show them.
-        if targets['errors']:
-            print('Errors\n', '\n'.join(targets['errors']))
-    
-    # Find the navigation elements and fill them, now we know all the pages.
-    makeNavigation(doc)
-
-    # https://www.hyphenator.net/en/word/...
-    unknownWords = doc.spellCheck(LANGUAGE_EN)
-    if unknownWords:
-        print(unknownWords)
-
-    return doc
-
-if EXPORT_TYPE == DO_PDF: # PDF representation of the site
-    doc = makeSite(styles=styles, viewId='Page')
-    doc.solve() # Solve all layout and float conditions for pages and elements.
-    doc.export(EXPORT_PATH + '.pdf')
-
-elif EXPORT_TYPE == DO_FILE:
-    doc = makeSite(styles=styles, viewId='Site')
-    doc.export(EXPORT_PATH)
-    openingPage = 'program-2019.html'
-    os.system(u'/usr/bin/open "%s/%s"' % (EXPORT_PATH, openingPage))
-
-elif EXPORT_TYPE == DO_MAMP:
-    # Internal CSS file may be switched off for development.
-    doc = makeSite(styles=styles, viewId='Mamp')
-    mampView = doc.view
-    MAMP_PATH = '/Applications/MAMP/htdocs/' 
-    filePath = MAMP_PATH + SITE_NAME 
-    if VERBOSE:
-        print('Site path: %s' % MAMP_PATH)
-    if os.path.exists(filePath):
-        shutil.rmtree(filePath) # Comment this line, if more safety is required. In that case manually delete.
-    doc.export(filePath)
-
-    if not os.path.exists(filePath):
-        print('The local MAMP server application does not exist. Download and install from %s.' % view.MAMP_SHOP_URL)
-        os.system(u'/usr/bin/open %s' % view.MAMP_SHOP_URL)
-    else:
-        #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
-        os.system(u'/usr/bin/open "%s"' % mampView.getUrl(SITE_NAME))
-
-elif EXPORT_TYPE == DO_GIT: # Not supported for SimpleSite, only one per repository?
-    # Make sure outside always has the right generated CSS
-    doc = makeSite(styles=styles, viewId='Git')
-    gitView = doc.view
-    GIT_PATH = 'docs/' 
-    if VERBOSE:
-        print('Site path: %s' % MAMP_PATH)
-    #if os.path.exists(filePath):
-    #    shutil.rmtree(filePath) # Comment this line, if more safety is required. In that case manually delete.
-    doc.export(GIT_PATH)
-
-    # Open the css file in the default editor of your local system.
-    if 0:
-        os.system('/usr/bin/git pull')
-        os.system('/usr/bin/git add *')
-        os.system('/usr/bin/git commit -m "Updating website changes."')
-        os.system('/usr/bin/git pull')
-        os.system('/usr/bin/git push')
-        #os.system(u'/usr/bin/open "%s"' % gitView.getUrl(DOMAIN))
-
-else: # No output view defined
-    print('Set EXPORTTYPE to DO_FILE or DO_MAMP or DO_GIT')
-'''
 
 if __name__ == '__main__':
     import doctest

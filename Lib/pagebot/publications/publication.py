@@ -56,7 +56,7 @@ class Publication(Element):
         inheriting pbulications classes."""
         raise NotImplementedError
 
-    def newDocument(self, autoPages=None, w=None, h=None, originTop=None, padding=None,
+    def newDocument(self, autoPages=None, w=None, h=None, originTop=None, padding=None, theme=None,
             gw=None, gh=None, gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
             **kwargs):
         """Answer a new Document instance for this publication, to be filled by the 
@@ -82,7 +82,7 @@ class Publication(Element):
             gridY = self.gridY
         if baselineGrid is None: 
             baselineGrid = self.baselineGrid
-        doc = Document(w=w, h=h, originTop=originTop, padding=padding,
+        doc = Document(w=w, h=h, originTop=originTop, padding=padding, theme=theme,
             gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
             baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart, 
             **kwargs)

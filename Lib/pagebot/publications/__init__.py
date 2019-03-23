@@ -32,3 +32,5 @@
 #     fm = FashionMagazine('myDataMarkDown.md')
 #     fm.export('MySpeciment.pdf')
 #
+from pagebot.publications.web.nanosite import BaseSite
+from pagebot.publications.web.nanosite import NanoSite

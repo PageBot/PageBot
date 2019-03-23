@@ -26,6 +26,9 @@
 #     "dk"      Danish                  Contributed by Torben Wilhemsem
 #     For other ISO language codes, see pagebot.constants
 #
+#     For English hyphenation words: 
+#     https://www.hyphenation24.com/?term=xxxx
+#
 import os, codecs
 from pagebot import getResourcesPath
 from pagebot.constants import DEFAULT_LANGUAGE
