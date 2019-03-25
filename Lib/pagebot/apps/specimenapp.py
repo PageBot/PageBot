@@ -17,8 +17,9 @@
 from vanilla import Button, Window, PopUpButton, TextBox, EditText
 from drawBot.ui.drawView import DrawView
 from pagebot.templates.specimens import Specimens
+from pagebot.apps.baseapp import BaseApp
 
-class SpecimenApp:
+class SpecimenApp(BaseApp):
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
@@ -26,6 +27,7 @@ class SpecimenApp:
         """
         Connects main window and output window for errors.
         """
+        super(SpecimenApp, self).__init__()
         self.resourcePath = resourcePath
         romanPath = resourcePath + '/' + 'Amstelvar-Roman-VF.ttf'
         italicPath = resourcePath + '/' + 'Amstelvar-italic-VF.ttf'
@@ -92,43 +94,3 @@ class SpecimenApp:
         i = sender.get()
         self.specimens.setFont(i)
         self.makeSpecimen()
-
-    def saveCallback(self, sender):
-        """Saves current template to a PDF file."""
-        self.saveAs()
-
-    def saveDoCallback(self, path):
-        pass
-
-    def terminate(self):
-        pass
-
-    def new(self):
-        print('something new')
-
-    def close(self):
-        print('close something')
-
-    def saveAs(self):
-        pass
-
-    def save(self):
-        print('save something')
-
-    def cut(self):
-        print('cut something')
-
-    def copy(self):
-        print('copy something')
-
-    def paste(self):
-        print('paste something')
-
-    def delete(self):
-        print('delete something')
-
-    def undo(self):
-        print('undo something')
-
-    def redo(self):
-        print('redo something')
