@@ -23,15 +23,15 @@ from drawBot.scriptTools import ScriptRunner, StdOutput
 from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
+from pagebot.apps.baseapp import BaseApp
 
-class ScriptRunnerApp:
+class ScriptRunnerApp(BaseApp):
     """Wrapper class to bundle all document page typesetter and composition
     functions, generating export document."""
 
     def __init__(self):
-        """
-        Connects main window and output window for errors.
-        """
+        """Connects main window and output window for errors."""
+        super(ScriptRunnerApp, self).__init__()
         self.outputWindow = Window((400, 300), minSize=(1, 1), closable=True)
         self.outputWindow.outputView = OutPutEditor((0, 0, -0, -0), readOnly=True)
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
@@ -130,12 +130,6 @@ class ScriptRunnerApp:
     def openCallback(self, sender):
         self.open()
 
-    def terminate(self):
-        pass
-
-    def new(self):
-        print('something new')
-
     def open(self):
         """Opens a different script by calling up the get file dialog."""
         paths = getFile(messageText='Please select your script',
@@ -150,33 +144,9 @@ class ScriptRunnerApp:
             self.window.path.set(self.scriptPath)
             self.run()
 
-    def close(self):
-        print('close something')
-
     def saveAs(self):
         if self.scriptPath is not None:
             doc = self.getPageBotDocument()
             putFile(messageText='Save PDF', title='Save PDF as...',
             fileName='%s.pdf' % self.scriptName, parentWindow=self.window,
             resultCallback=self.saveDoCallback)
-
-    def save(self):
-        print('save something')
-
-    def cut(self):
-        print('cut something')
-
-    def copy(self):
-        print('copy something')
-
-    def paste(self):
-        print('paste something')
-
-    def delete(self):
-        print('delete something')
-
-    def undo(self):
-        print('undo something')
-
-    def redo(self):
-        print('redo something')

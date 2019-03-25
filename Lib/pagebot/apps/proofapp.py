@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     scriptrunnerapp.py
+#     proofapp.py
 #
 
 import traceback
@@ -26,18 +26,18 @@ from drawBot.ui.drawView import DrawView
 from drawBot.ui.codeEditor import OutPutEditor
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.apps.baseapp import BaseApp
 
-
-#FONTS = ['Roboto-Regular', 'BungeeInline-Regular']
 HEIGHT, WIDTH = A3
 
-class ProofApp:
+class ProofApp(BaseApp):
     """Example of a proofing application."""
 
     FONTS = []
 
     def __init__(self):
         """Connects main window and output window for errors."""
+        super(ProofApp, self).__init__()
 
         for path in getFontPaths():
             name = path.split('/')[-1]
@@ -115,43 +115,9 @@ class ProofApp:
     def openCallback(self, sender):
         self.open()
 
-    def terminate(self):
-        pass
-
-    def new(self):
-        print('something new')
-
-    def open(self):
-        """Opens a different script by calling up the get file dialog."""
-        print('open something')
-
-    def close(self):
-        print('close something')
-
     def saveAs(self):
         if self.scriptPath is not None:
             doc = self.getPageBotDocument()
             putFile(messageText='Save PDF', title='Save PDF as...',
             fileName='%s.pdf' % self.scriptName, parentWindow=self.window,
             resultCallback=self.saveDoCallback)
-
-    def save(self):
-        print('save something')
-
-    def cut(self):
-        print('cut something')
-
-    def copy(self):
-        print('copy something')
-
-    def paste(self):
-        print('paste something')
-
-    def delete(self):
-        print('delete something')
-
-    def undo(self):
-        print('undo something')
-
-    def redo(self):
-        print('redo something')
