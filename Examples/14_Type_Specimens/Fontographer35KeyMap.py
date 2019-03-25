@@ -34,35 +34,33 @@ from pagebot.toolbox.dating import now
 from pagebot import getContext
 context = getContext()
 
-if 0:
-    for fontName in installedFonts():
-        if 'Upgrade' in fontName:
-            print(fontName)
-
 # Standard page size for now.
 W, H = A4
 SQUARES = 8*8
 PADDING = 36, 42, 60, 56 # Padding page "margins"
 SQSIZE = pt(36) # Standard size of the Fontographer grid glyph squares
-SQMR = 14.5 # Margins to position element identical to origina layout.
+SQMR = 14 # Margins to position element identical to origina layout.
 SQMB = 46
 SQML = 12
-MAX_PAGES = 2 # For debugging, set to the amount of pages to export
+MAX_PAGES = XXXL # For debugging, set to the amount of pages to export
 SHADOW = pt(2) # Thicknes of "shadow" lines in header.
 
-# Substitute the name or file name of the font to show.
-f = findFont('Roboto-Regular')
-#f = findFont('Upgrade-UltraBlack')
-#f = findFont('Upgrade-UltraBlack')
-labelFont = findFont('Upgrade-Regular') # Keep this as label font (or change it)
+# Substitute the name or file name of the font to show if locally installed.
+# In this example we use the font that come with PageBot.
+f = findFont('Bungee-Regular')
+labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
 # Make the styles for the strings on the page.
 labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
 glyphStyle = dict(font=f, fontSize=SQSIZE, textFill=0)
 titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER) 
-fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2), textFill=0)
+fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2), 
+    textFill=blackColor)
 
 # The GlyphSquare element is the self-contained "info-graphic" showing each glyph
-# in the origina Fontographer 3.5 style.
+# in the original Fontographer 3.5 style.
+# Element float towards a position on the page, defined by conditions.
+# When page.solve() is executed, the elements find their positions,
+# comparable to the CSS float parameters.
 class GlyphSquare(Element):
     def __init__(self, glyph, uCode, **kwargs):
         Element.__init__(self,  **kwargs)
@@ -80,7 +78,8 @@ class GlyphSquare(Element):
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         # Use the standard frame drawing of Element, using the border settings of self.
         self.buildFrame(view, p) # Draw optional frame or borders.
-        # Calculate the scaled width for self.glyph, depending on the em-square of fonts.
+        # Calculate the scaled width for self.glyph, depending on the em-square 
+        # of fonts.
         width = self.glyph.width/f.info.unitsPerEm * SQSIZE
         # Draw the vertical width line. Not dashed for now.
         context.fill(None)
@@ -91,22 +90,27 @@ class GlyphSquare(Element):
         baseline = py - f.info.descender/f.info.unitsPerEm * SQSIZE
         # Create the string in size SQSIZE showing the glyph.
         t = context.newString(chr(self.uCode), style=glyphStyle)
-        # Set stroke color for baseline and draw it.
+        # Set stroke color and stroke width for baseline and draw it.
         context.stroke(color(0, 0, 0.5), w=0.5)
         context.line((px, baseline), (px+SQSIZE, baseline))
         # Draw the glyph. 
         context.text(t, (px, baseline))
-        # Construct the label from the original glyph, unicode and glyph name (if available)
-        label = context.newString('%s (%d) %s' % (chr(self.uCode), self.uCode, self.glyph.name),
-            style=labelStyle)
-        # Get the size of the generated formatted string to center it. Draw the label.
+        # Construct the label from the original glyph, unicode and glyph name 
+        # (if available)
+        label = context.newString('%s (%d) %s' % (chr(self.uCode), 
+            self.uCode, self.glyph.name), style=labelStyle)
+        # Get the size of the generated formatted string to center it. 
+        # Draw the label.
         tw,th = label.size
         context.text(label, (px + SQSIZE/2 - tw/2, py-pt(7)))
         # Construct the rotated width string on left and right side.
-        widthLabel = context.newString('Width: %d' % self.glyph.width, style=labelStyle)
-        leftLabel = context.newString('Offset: %d' % self.glyph.leftMargin, style=labelStyle)
+        widthLabel = context.newString('Width: %d' % self.glyph.width, 
+            style=labelStyle)
+        leftLabel = context.newString('Offset: %d' % self.glyph.leftMargin, 
+            style=labelStyle)
         context.save() # Save the graphics state
-        context.translate(px, py) # Translate the origin to the current position of self, so we can rotate.
+        # Translate the origin to the current position of self, so we can rotate.
+        context.translate(px, py) 
         context.rotate(90) # Rotate clockwise vertical
         context.text(widthLabel, (0, -SQSIZE-pt(7))) # Draw labels on these positions
         context.text(leftLabel, (0, pt(3)))
@@ -116,12 +120,13 @@ class GlyphSquare(Element):
 
 def makeHeader(page, font):
     page.padding = PADDING
-    #newImage('gallery/Fog35KeyMap.png', parent=page, z=100, conditions=[Fit2WidthSides(), Top2TopSide()])
-    header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page, fill=0.4, 
-        conditions=[Fit2Width(), Top2Top()])
+    header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page, 
+        fill=0.4, conditions=[Fit2Width(), Top2Top()])
     title = context.newString('Key map', style=titleStyle)
-    newTextBox(title, w=page.pw/3, fill=0.5, parent=header, 
-        pt=12, mr=8,   
+    mr = pt(8)
+    newTextBox(title, w=page.pw*0.35, fill=0.5, parent=header, 
+        pt=pt(12), # Padding top
+        mr=mr, # Margin right of the "Key map" text box element   
         borderTop=dict(stroke=whiteColor, strokeWidth=SHADOW),
         borderLeft=dict(stroke=whiteColor, strokeWidth=SHADOW),
         borderRight=dict(stroke=blackColor, strokeWidth=SHADOW),
@@ -130,12 +135,14 @@ def makeHeader(page, font):
     t = 'Size: %s  Font: %s\nNotice: © %s\nPrinted by PageBot on %s' % \
         (pt(SQSIZE), font.path.split('/')[-1], font.info.copyright, now().datetime)
     fontInfo = context.newString(t, style=fontInfoStyle)
-    newTextBox(fontInfo, fill=1, parent=header, margin=0, 
+    newTextBox(fontInfo, fill=1, parent=header, margin=0, w=page.pw*0.65-3*mr,
         padding=pt(4),
         borderTop=dict(stroke=blackColor, strokeWidth=SHADOW),
         borderLeft=dict(stroke=blackColor, strokeWidth=SHADOW),
-        conditions=[Right2Right(), Float2Left(), Fit2Right(), Fit2Height()]
+        conditions=[Right2Right(), Top2Top(), Fit2Height()]
     )
+    page.solve()
+    
 def makePages(doc, font):
     u"""Create the elements (header and a grid of GlyphSquares) for each page.
     Add as many pages as needed to accommodate all glyphs in the font.
@@ -147,10 +154,10 @@ def makePages(doc, font):
     # TODO: Make this responsive to the size of the page.
     squareIndex = 0 
     for uCode, glyphName in sorted(font.cmap.items()):
-        if uCode < 32:
+        if uCode < 32: # Skip control characters
             continue
         if squareIndex >= SQUARES: 
-            if len(doc) > (MAX_PAGES or XXXL):
+            if len(doc) >= (MAX_PAGES or XXXL):
                 return
             squareIndex = 0
             page = doc.newPage()
@@ -158,22 +165,30 @@ def makePages(doc, font):
 
         squareIndex += 1
         glyph = f[glyphName]
+        # Create an element for this glyph. Note the conditions that will
+        # later be checked for the position status by doc.solve()-->page.solve()
         GlyphSquare(glyph, uCode, name='square-%s' % glyphName, w=SQSIZE, h=SQSIZE,
             ml=SQML, mr=SQMR, mb=SQMB,
             borders=dict(strokeWidth=pt(0.5), line=ONLINE, stroke=0, dash=(1,1)),
             parent=page, fill=color(0.95, a=0.8), stroke=noColor,
             conditions=[Right2Right(), Float2Top(), Float2Left()],
         )
-
+# Actual building of the proof pages. 
 # Create a new doc, with the right amount of frames/pages.
 doc = Document(w=W, h=H, originTop=False, context=context)
-# Get the current default view (maker of PDF page documents) and set the flag to show padding.
+# Get the current default view (maker of PDF page documents) and set 
+# the flag to show padding.
 view = doc.view
 view.showPadding = True
 # Make all specimen pages for this font.
 makePages(doc, f)
-# Solve the layout conditions recursively for all elements.
+# Solve the layout conditions recursively for all elements. 
+# This will make the fit on the grid of the page.
+# In this case it would not be too complex to position directly by
+# (x, y) grid cells. But using conditions it more sustainable, as it
+# adapts naturally to a changing page size.
 doc.solve()
 # Export the generated pages to the PDF document.
 # The changed content of the _export folder is committed into Git.
-doc.export('_export/%s_Fog35-KeyMap.pdf' % (f.info.fullName))
+doc.export('_export/%s_Fog35-KeyMap.pdf' % f.info.fullName)
+doc.export('_export/%s_Fog35-KeyMap.png' % f.info.fullName)

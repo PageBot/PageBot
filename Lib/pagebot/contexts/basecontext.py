@@ -18,7 +18,7 @@ from math import radians, sin, cos
 
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
 from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
@@ -883,7 +883,14 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w, h=h)
 
     def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
+        """Answers the (w, h) image size of the image file at path. If the path is an SVG
+        image, then determine by parsing the SVG-XML."""
+        if path.lower().endswith('.'+FILETYPE_SVG):
+            import xml.etree.ElementTree as ET
+            svgTree = ET.parse(path)
+            print(svgTree)
+            return pt(1000, 1000)
+
         return pt(self.b.imageSize(path))
 
     def imagePixelColor(self, path, p):

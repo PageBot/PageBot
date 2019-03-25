@@ -31,7 +31,6 @@ def showAll():
     context = getContext()
     doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
     page = doc[1]
-    print(page.view.margin)
     c1 = (Fit2Right(), Left2Left(), Float2Top())
     c2 = (Left2Left(), Top2Top())
     c3 = (Float2Left(), Top2Top())

@@ -36,6 +36,7 @@ except ImportError:
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
+from pagebot.constants import *
 from pagebot.toolbox.transformer import asIntOrNone
 
 
@@ -319,8 +320,10 @@ class Typesetter:
             yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
             w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0]) # w=800
             h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0]) # h=800
+        doScale = not path.endswith('.'+FILETYPE_SVG)
+        # doScale = doScale or w is not None or h is not None
         self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley, 
-            scaleImage=1 or w is not None or h is not None, # Scale the image if one or both (w, h) is defined.
+            scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
             xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional, 
             index=node.attrib.get('index', 0))
 
