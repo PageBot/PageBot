@@ -13,6 +13,8 @@
 #
 #     01_SpecimenApp.py
 #
+from pagebot import getResourcesPath
 from pagebot.apps.specimenapp import SpecimenApp
 
-app = SpecimenApp('/Users/michiel/Code/PublicationsApp/specimenapp')
+fontPath = getResourcesPath() + '/testfonts/fontbureau'
+app = SpecimenApp(fontPath)
