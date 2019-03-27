@@ -15,7 +15,7 @@
 #
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css
-from pagebot.constants import LEFT
+from pagebot.constants import LEFT, DEFAULT_LANGUAGE
 from pagebot.toolbox.units import upt
 from pagebot.constants import XXXL
 
@@ -24,12 +24,13 @@ class HtmlString(BabelString):
     BABEL_STRING_TYPE = 'html'
 
     """HtmlString is a wrapper around an HTML tagged string."""
-    def __init__(self, s, context, style=None):
+    def __init__(self, s, context, language=None, style=None):
         self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the HTML string
         if style is None:
             style = {}
         self.style = style
+        self.language = language or DEFAULT_LANGUAGE
         super().__init__(s, context, style=style)
 
     def _get_font(self):

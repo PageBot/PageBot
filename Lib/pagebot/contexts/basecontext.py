@@ -69,6 +69,12 @@ class BaseContext(AbstractDrawBotContext):
     def __repr__(self):
         return '<%s>' % self.name
 
+    def _get_language(self):
+        return self._language
+    def _set_language(self, languge):
+        self._language = language or DEFAULT_LANGUAGE
+    language = property(_get_language, _set_language)
+
     def _get_path(self):
         """Answers the open drawing self._path. Creates one if it does not
         exist.

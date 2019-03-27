@@ -21,7 +21,7 @@ from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.svgbuilder import svgBuilder
 from pagebot.contexts.strings.htmlstring import HtmlString
-from pagebot.constants import DEFAULT_FONT_SIZE
+from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import upt, point2D
 from pagebot.toolbox.dating import seconds
@@ -53,6 +53,7 @@ class SvgContext(BaseContext):
         """
         self.b = svgBuilder
         self.name = self.__class__.__name__
+        self._language = DEFAULT_LANGUAGE
         self._filePath = self.TMP_PATH % uniqueID()
         self.fill(noColor) # Sets self._svgFill
         self.stroke(noColor) # Sets self._svgStroke
