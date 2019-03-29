@@ -1391,7 +1391,7 @@ class Document:
 
     #   D R A W I N G  &  B U I L D I N G
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """Builds the document, using the `document.view` for export.
 
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
@@ -1402,7 +1402,7 @@ class Document:
         >>> doc.view
         <SiteView:Site (0pt, 0pt, 300pt, 400pt)>
         """
-        self.view.build(path, pageSelection=pageSelection, multiPage=multiPage)
+        self.view.build(path, pageSelection=pageSelection, multiPage=multiPage, **kwargs)
 
     def export(self, path=None, multiPage=True):
         """Export the document, using the `document.view` for export.
@@ -1418,7 +1418,7 @@ class Document:
         <PageView>
         >>> doc.export('_export/TestExportDoc.pdf')
         """
-        self.build(path=path, multiPage=multiPage)
+        self.build(path=path, multiPage=multiPage, **kwargs)
 
 if __name__ == "__main__":
     import doctest

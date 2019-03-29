@@ -27,6 +27,7 @@ from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION, ORIGIN,
 
 try:
     import drawBot
+    from vanilla import *
     from pagebot.contexts.strings.drawbotstring import DrawBotString as stringClass
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
@@ -419,6 +420,52 @@ class DrawBotContext(BaseContext):
             self.saveImage(cachedFilePath)
             self.newDrawing() # Clean the drawing stack.
         return cachedFilePath
+
+        #   U I  components based on Vanilla API
+
+    def window(self, name=None, x=None, y=None, w=None, h=None, style=None, 
+        minW=None, maxW=None, minH=None, maxH=None, closable=None, **kwargs):
+        """Create and opening a window, using Vanilla. 
+
+        >>> context = DrawBotContext()
+        >>> from pagebot.toolbox.units import pt, mm
+        >>> window = context.window('My Window', 50, 50, pt(200), mm(50))
+        >>> window.open()
+        """
+        if x is None:
+            x = DEFAULT_WINX
+        if y is None:
+            y = DEFAULT_WINY
+        if w is None:
+            w = DEFAULT_WINW
+        if h is None:
+            h = DEFAULT_WINH
+        posSize = upt(x), upt(y), upt(w), upt(h)
+        if minW is None and minH is None:
+            minSize = None
+        else:
+            minSize = minW or w, minH or h
+        if maxW is None and maxH is None:
+            maxSize = None
+        else: 
+            maxSize = maxW or w, maxH or h 
+        if closable is None:
+            closable = True
+
+        return Window(posSize, title=name, minSize=minSize, maxSize=maxSize, closable=closable)
+
+    def group(self, x=None, y=None, w=None, h=None, **kwargs):
+        return Group((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0))
+
+    def button(self, title=None, x=None, y=None, w=None, h=None, style=None, 
+            callback=None, **kwargs):
+        """Create a Vanilla button"""
+        return Button((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0), 
+            title or 'Button', callback=callback)
+
+    def canvas(self, x=None, y=None, w=None, h=None):
+        """Answer an instance of the DrawBot drawing canvas."""
+        return drawBot.DrawView((upt(x or 0), upt(y or 0), upt(w or 0), upt(h or 0)))
 
 if __name__ == '__main__':
     import doctest

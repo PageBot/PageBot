@@ -4637,7 +4637,7 @@ class Element:
         for e in self.elements:
             e.prepare(view)
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
@@ -4658,7 +4658,7 @@ class Element:
         # Draw the actual element content.
         # Inheriting elements classes can redefine just this method to fill in drawing behavior.
         # @p is the transformed position to draw in the main canvas.
-        self.buildElement(view, p, drawElements)
+        self.buildElement(view, p, drawElements, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -4671,7 +4671,7 @@ class Element:
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def buildElement(self, view, p, drawElements=True):
+    def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the content
         of their children if they exist.
         @p is the transformed position of the context canvas.
@@ -4680,9 +4680,9 @@ class Element:
         """
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
-    def buildChildElements(self, view, origin=None):
+    def buildChildElements(self, view, origin=None, **kwargs):
         """Draws child elements, dispatching depends on the implementation of
         context specific build elements.
 
@@ -4696,9 +4696,9 @@ class Element:
             if not e.show:
                 continue
             if hasattr(e, hook):
-                getattr(e, hook)(view, origin)
+                getattr(e, hook)(view, origin, **kwargs)
             else: # No implementation for this context, call default building method for this element.
-                e.build(view, origin)
+                e.build(view, origin, **kwargs)
 
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
@@ -4721,7 +4721,7 @@ class Element:
             if e.show:
                 e.build_scss(view)
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent. For
@@ -4742,7 +4742,7 @@ class Element:
             # Build child elements, dispatch if they implemented generic or
             # context specific build method.
             if drawElements:
-                self.buildChildElements(view, path)
+                self.buildChildElements(view, path, **kwargs)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(self, view)

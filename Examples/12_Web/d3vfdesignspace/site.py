@@ -90,11 +90,11 @@ class D3VFDesignSpace(D3BaseElement):
       text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
     }
     """
-    def build_scss(self, view):
+    def build_scss(self, view, **kwargs):
         b = self.context.b
         b.addCss(self.SCSS)
         for e in self.elements:
-            e.build_scss(view)
+            e.build_scss(view, **kwargs)
 
     def build_html(self, view, path):
         b = self.context.b

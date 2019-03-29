@@ -277,7 +277,7 @@ class VariableCircle(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -294,7 +294,7 @@ class VariableCircle(Element):
 
         if drawElements:
             for e in self.elements:
-                e.build(view, p)
+                e.build(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

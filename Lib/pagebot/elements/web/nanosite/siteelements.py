@@ -50,13 +50,13 @@ class NanoElement(Column):
             b.addHtml('%s | %s' % (self.cssId, self.cssClass))
             b._div()
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
@@ -119,13 +119,13 @@ class Wrapper(NanoElement):
 class Header(NanoElement):
     """Header on top of the page. Typical container of logo and navigation."""
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.header(cssId=self.cssId, cssClass=self.cssClass)
         self.showCssIdClass(view)
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._header()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
@@ -142,7 +142,7 @@ class Logo(NanoElement):
             logo = 'Name Here'
         t = TextBox(logo, parent=self)
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
@@ -150,7 +150,7 @@ class Logo(NanoElement):
         b.a(href='index.html')
         b.h1()
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._h1()
         b._a()
         b._div()
@@ -172,7 +172,7 @@ class Navigation(NanoElement):
             pageTree = []
         self.pageTree = pageTree
   
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
@@ -201,7 +201,7 @@ class Navigation(NanoElement):
             else:
                 print('No page or url defined: %s->%s' % (node, node.page))
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the recursive nested menu, depending on the structure of the pageTree
 
             <ul class="main-navigation navmenu">
@@ -270,7 +270,7 @@ class MobileMenu(NanoElement):
         NanoElement.__init__(self, cssId=self.TARGET_CSSID, **kwargs)
         self.menuInfo = menuInfo or []
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the (hidden) menu for th mobile navigation)
         """
         pageTree = self.doc.getPageTree() # Create a nested list of pages by they urls
@@ -299,7 +299,7 @@ class MobileMenu(NanoElement):
 class BurgerButton(NanoElement):
     BURGER = '☰'
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function toggleMobileMenu(eId){
@@ -315,14 +315,14 @@ class BurgerButton(NanoElement):
         b.addHtml(self.BURGER)
         b._h1()
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 # Random selector
 class RandomSelector(NanoElement):
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function randomSelect(){
@@ -339,7 +339,7 @@ class RandomSelector(NanoElement):
         self.showCssIdClass(view)
         for e in self.elements:
             b.div(cssClass=self.cssClass+'-select')
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
             b._div()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
@@ -357,7 +357,7 @@ class Collection(NanoElement):
             e.proportional = self.proportional
             e.prepare_html(view)
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         if not self.elements:
             return
         b = self.context.b
@@ -368,7 +368,7 @@ class Collection(NanoElement):
         style = 'width:%02f%%;' % ((100-len(elements))/len(elements))
         for e in elements: # Find all child images inside the tree
             b.div(cssClass=self.cssClass+'element clearfix', style=style)
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
             b._div()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
@@ -420,7 +420,7 @@ class Info(NanoElement):
         self.infoOpen = infoOpen or self.INFO_OPEN
         self.infoClose = infoClose or self.INFO_CLOSE
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         if not self.elements:
             return
 
@@ -455,7 +455,7 @@ class Info(NanoElement):
         b.addHtml(self.infoClose)
         b._div()
         for e in self.elements: # Find all child images inside the tree
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
@@ -468,7 +468,7 @@ class Cropped(NanoElement):
     This way the Picture element can be used as growing background container. But is also can
     be used for normal content, that should be positions on a background image.
     """
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         images = self.findAll(cls=Image) # Find all child images inside the tree
@@ -484,7 +484,7 @@ class Cropped(NanoElement):
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style) 
         for e in self.elements: # Add all elements to the content.
             if images and images[0].eId != e.eId: # Skip the first image, as it was used as background.
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
@@ -498,7 +498,7 @@ class Movie(NanoElement):
         self.loop = loop
         self.controls = controls
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)

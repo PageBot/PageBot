@@ -25,7 +25,7 @@ class Oval(Element):
 
     #   G E N E R I C  C O N T E X T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draw the oval in the current context canvas.
 
         >>> e = Oval(x=0, y=20, w=500, h=3)
@@ -54,7 +54,7 @@ class Oval(Element):
         context.oval(px, py, self.w, self.h)
 
         if drawElements:
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

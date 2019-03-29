@@ -47,7 +47,7 @@ class Ruler(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin):
+    def build(self, view, origin, **kwargs):
         """Build the Ruler in the current context
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
@@ -100,7 +100,7 @@ class Ruler(Element):
         context.line((px + sIndent, py), (px + w, py))
 
         # If there are child elements, recursively draw them over the pixel image.
-        self.buildChildElements(view, origin)
+        self.buildChildElements(view, origin, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -110,7 +110,7 @@ class Ruler(Element):
 
     #   H T M L  /  S A S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         """Build the Ruler in the current context
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
@@ -141,7 +141,7 @@ class Ruler(Element):
         b.hr(cssClass=self.cssClass) # Use self.cssClass if defined. Ignore if None.
 
         if drawElements:
-            self.buildChildElements(view)
+            self.buildChildElements(view, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

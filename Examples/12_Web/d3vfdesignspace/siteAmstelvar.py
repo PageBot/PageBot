@@ -111,15 +111,15 @@ class D3VFDesignSpace(D3BaseElement):
             jsAxes='[' + ','.join(jsAxes) + ']',
         )
 
-    def build_scss(self, view):
+    def build_scss(self, view, **kwargs):
             b = self.context.b
             b.addCss(self.SCSS)
             for axis, (minValue, defaultValue, maxValue) in self.variableFont.axes.items():
                 b.addCss(".%s {font-family: 'Amstelvar'; font-size=23; font-variation-settings: '%s' %d;}\n" % (axis, axis, maxValue))
             for e in self.elements:
-                    e.build_scss(view)
+                    e.build_scss(view, **kwargs)
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
             b = self.context.b
             b.comment('Start '+self.__class__.__name__)
             b.addJs("""

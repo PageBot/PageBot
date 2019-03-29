@@ -68,7 +68,7 @@ class Paragraphs(BaseFontShow):
         self.textTag = 'da_text' # Default label where to find (or create) random body text.
         self.labelSize = labelSize # If undefined, then don't draw labels.
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
@@ -85,7 +85,7 @@ class Paragraphs(BaseFontShow):
             self.drawBefore(self, view, p)
 
         # Draw that actual content of the element by stacked specimen rectangles.
-        self.drawStacked(view, p)
+        self.drawStacked(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -105,7 +105,7 @@ class Paragraphs(BaseFontShow):
         self.usedText.add(text)
         return text
 
-    def drawStacked(self, view, origin):
+    def drawStacked(self, view, origin, **kwargs):
         """Draw the content of the element, responding to size, styles, font and content.
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.

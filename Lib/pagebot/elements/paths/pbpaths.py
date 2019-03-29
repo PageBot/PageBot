@@ -147,7 +147,7 @@ class Paths(Element):
             self.scaleX = self.scaleY = h/bph # Default is proportional scaling
     h = property(_get_h, _set_h)
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
 
@@ -176,7 +176,7 @@ class Paths(Element):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -191,7 +191,7 @@ class Paths(Element):
 
 class Mask(Paths):
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
 
@@ -218,7 +218,7 @@ class Mask(Paths):
             self.b.translate(-upt(px), -upt(py))
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         self.b.restore()
 

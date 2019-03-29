@@ -33,38 +33,38 @@ DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and 
 EXPORT_TYPE = DO_FILE
 
 class Header(Element):
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.header(cssClass='wrapper clearfix')
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path. **kwargs)
         b._header()
         b.comment('End '+self.__class__.__name__)
 
 class Banner(Element):
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.div(cssId='banner')
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End #banner')
         b.comment('End '+self.__class__.__name__)
 
 class Navigation(Element):            
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.nav(cssId='topnav', role='navigation')
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._nav()
         b.comment('End '+self.__class__.__name__)
         
 class TopMenu(Element):        
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b        
         b.comment('Start '+self.__class__.__name__)
         b.div(cssClass='menu-toggle')
@@ -73,16 +73,16 @@ class TopMenu(Element):
         b.comment('.menu-toggle')
         b.ul(cssClass='srt-menu', cssId='menu-main-navigation')
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._ul()
         b.comment('End '+self.__class__.__name__)
         
 class Menu(Element):        
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b        
         b.ul()
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, , **kwargs)
         b._ul()
         
 class MenuItem(Element):
@@ -92,7 +92,7 @@ class MenuItem(Element):
         self.href = href
         self.label = label
         
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         u"""
         <li>
             <a href="index.html">Home</a>
@@ -109,7 +109,7 @@ class MenuItem(Element):
             b.addHtml(self.label)
             b._a()
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._li()
         
 class Logo(Element):
@@ -117,16 +117,16 @@ class Logo(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='Logo')
     
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
         
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.div(cssId="logo")
         b.a(href="index.html")
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._a()
         b._div() 
         b.comment('End #logo')
@@ -136,7 +136,7 @@ class SlideShow(Element):
     def newSlide(self):
         return newTextBox('', parent=self)
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         for i, e in enumerate(self.elements):
@@ -155,7 +155,7 @@ class Hero(Element):
         newTextBox('', parent=self, cssId='HeroIntroduction')
         SlideShow(parent=self, cssId='HeroSlides')
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.section(cssId='hero', cssClass='clearFix')
@@ -184,14 +184,14 @@ class Content(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='Content')
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.div(cssId='main', cssClass='wrapper clearfix')
         b.section(cssId='content', cssClass='wide-content' )
         # Content here, should come from markdown file.
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b.p()
         b.a(href='index.html', cssClass='buttonlink')
         b.addHtml('Use Pagebot')
@@ -210,17 +210,17 @@ class ColoredSection(Element):
         newTextBox('', parent=self, cssId='ColoredSection1')
         newTextBox('', parent=self, cssId='ColoredSection2')
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.section(cssId='features', cssClass='blueelement vertical-padding')
         b.div(cssClass='wrapper clearfix')
-        self.deepFind('ColoredSectionHeader').build_html(view, path) 
+        self.deepFind('ColoredSectionHeader').build_html(view, path, **kwargs) 
         b.div(cssClass='row vertical-padding')
         
         for n in range(0, 3):
             b.div(cssClass='grid_4')
-            self.deepFind('ColoredSection%d' % n).build_html(view, path) 
+            self.deepFind('ColoredSection%d' % n).build_html(view, path, **kwargs) 
             b._div() # grid_4
         
         b._div() # row vertical padding
@@ -235,12 +235,12 @@ class Footer(Element):
         Element.__init__(self, **kwargs)
         newTextBox('', parent=self, cssId='Footer')
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.footer()
         b.div(cssId='colophon', cssClass='wrapper clearfix')
-        self.deepFind('Footer').build_html(view, path) 
+        self.deepFind('Footer').build_html(view, path, **kwargs) 
         b._div()
         b.comment('End #colophon .wrapper .clearfix')
         b._footer()

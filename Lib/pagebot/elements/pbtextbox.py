@@ -528,7 +528,7 @@ class TextBox(Element):
 
     #   B U I L D
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
         context = view.context # Get current context
@@ -539,7 +539,7 @@ class TextBox(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True.
-        view.drawElementFrame(self, p)
+        view.drawElementFrame(self, p, **kwargs)
 
         self.buildFrame(view, p) # Draw optional background, frame or borders.
 
@@ -686,7 +686,7 @@ class TextBox(Element):
 
     #   B U I L D  H T M L
 
-    def build_html(self, view, origin=None, drowElements=True):
+    def build_html(self, view, origin=None, drowElements=True, **kwargs):
         """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent."""
@@ -710,7 +710,7 @@ class TextBox(Element):
 
         if drowElements:
             for e in self.elements:
-                e.build_html(view, origin)
+                e.build_html(view, origin, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

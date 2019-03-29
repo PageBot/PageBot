@@ -67,7 +67,7 @@ class GlyphSquare(Element):
         self.glyph = glyph # Glyph object. Can be used for additional information later.
         self.uCode = uCode # Unicode from cmap
          
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
         context = view.context # Get current context

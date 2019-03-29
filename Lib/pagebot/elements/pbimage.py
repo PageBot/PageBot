@@ -286,7 +286,7 @@ class Image(Element):
         for e in self.elements:
             e.prepare_html(view)
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         context = view.context # Get current context.
         b = context.b
 
@@ -301,7 +301,7 @@ class Image(Element):
         b.div(cssClass='caption') # Allow CSS to address the captions separately.
         if drawElements: # Draw captions if they are there.
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
         b._div() # .caption
 
         if self.drawAfter is not None: # Call if defined
@@ -323,7 +323,7 @@ class Image(Element):
         for e in self.elements:
             e.prepare(view)
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.

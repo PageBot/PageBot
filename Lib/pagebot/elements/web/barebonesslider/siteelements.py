@@ -192,7 +192,7 @@ class SlideShow(SlideShowBase):
             e.proportional = self.proportional
             e.prepare_html(view)
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.addJs(self._makeJs(self.cssId, self.cssClass), name='SlideShow')
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
@@ -211,26 +211,26 @@ class SlideShow(SlideShowBase):
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
 class SlideShowGroup(SlideShowBase):
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         self.showCssIdClass(view)
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
 class SlideSide(SlideShowBase):
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         self.showCssIdClass(view)
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 

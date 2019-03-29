@@ -51,7 +51,7 @@ class GlyphSet(BaseFontShow):
         self.f = f # Font instance
 
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
@@ -66,7 +66,7 @@ class GlyphSet(BaseFontShow):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        self.drawMatrix(view, p)
+        self.drawMatrix(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -75,7 +75,7 @@ class GlyphSet(BaseFontShow):
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
 
-    def drawMatrix(self, view, origin):
+    def drawMatrix(self, view, origin, **kwargs):
         """Draw the matrix of available glyphs in the font, in font.cmap order and
         starting at the first sorted glyph after the space.
 

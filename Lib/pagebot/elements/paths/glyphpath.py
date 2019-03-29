@@ -73,7 +73,7 @@ class GlyphPath(Path):
         self._h = units(h or DEFAULT_HEIGHT) # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
     h = property(_get_h, _set_h)
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
 
         context = self.context # Get current context
 
@@ -96,7 +96,7 @@ class GlyphPath(Path):
 
         if drawElements:
             for e in self.elements:
-                e.build(view, p)
+                e.build(view, p, **kwargs)
 
         # Draw optional bounding box if view.showFrame = True
         self.buildFrame(view, p) # Draw optional frame, shadow or borders.

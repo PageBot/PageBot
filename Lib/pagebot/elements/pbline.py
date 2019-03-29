@@ -59,7 +59,7 @@ class Line(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draw a line on the current context canvas.
 
         >>> from pagebot.toolbox.units import pt
@@ -112,7 +112,7 @@ class Line(Element):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -122,13 +122,13 @@ class Line(Element):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
 
         if drawElements:
-            self.drawChildElements(view)
+            self.drawChildElements(view, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

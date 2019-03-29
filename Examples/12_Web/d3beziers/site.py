@@ -41,12 +41,12 @@ class D3Bezier(Element):
     u"""Container for header elements on a page. Using standard
     Element.build for non-Html contexts.
     """
-    def build_html(self, view, path):
+    def build_html(self, view, path. **kwargs):
         b = self.context.b
         b.comment('Start '+self.__class__.__name__)
         b.header(cssClass='wrapper clearfix')
         for e in self.elements:
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
         b._header()
         b.comment('End '+self.__class__.__name__)
 

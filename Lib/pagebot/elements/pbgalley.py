@@ -118,7 +118,7 @@ class Galley(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Like "rolled pasteboard" galleys can draw themselves, if the
         Composer decides to keep them in tact, instead of select, pick & choose
         elements, until the are all part of a page. In that case the w/h must
@@ -148,11 +148,11 @@ class Galley(Element):
                     continue
                 # @@@ Find space and do more composition
                 if hasattr(e, hook):
-                    getattr(e, hook)(view, (px, py + gy))
+                    getattr(e, hook)(view, (px, py + gy), **kwargs)
                 else:
                     # No implementation for this context, call default building
                     # method for this element.
-                    e.build(view, (px, py + gy))
+                    e.build(view, (px, py + gy), **kwargs)
                 gy += e.h
 
         if self.drawAfter is not None:
@@ -163,12 +163,12 @@ class Galley(Element):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
 
         if drawElements:
-            self.buildElements(self, view)
+            self.buildElements(self, view, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)
@@ -180,7 +180,7 @@ class Column(Galley):
     on a pages, etc.
     """
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
 
         context = view.context # Get current context.
         b = context.b
@@ -193,7 +193,7 @@ class Column(Galley):
 
         if drawElements:
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

@@ -67,7 +67,7 @@ class PageView(BaseView):
             sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
         return sortedPages
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
 
@@ -163,7 +163,7 @@ class PageView(BaseView):
             # Since self already adjust origin, scale, etc. we don't use the
             # page.build here. Instead we calle the drawing of its elements
             # too.
-            page.buildChildElements(self, origin)
+            page.buildChildElements(self, origin, **kwargs)
             self.drawPageMetaInfo(page, origin, background=False)
 
             if self.drawAfter is not None: # Call if defined
@@ -917,7 +917,7 @@ class PageView(BaseView):
 
     # The context-methods are used, in case the view itself is placed in a layout.
 
-    def build_drawBot(self, view, origin):
+    def build_drawBot(self, view, origin, **kwargs):
         """This method is called if the view is used as a placable element
         inside another element, such as a Page or Template. """
         p = pointOffset(self.origin, origin)
@@ -929,7 +929,7 @@ class PageView(BaseView):
 
         self.drawElementFrame(view, p) # In case the view itself is used on a page.
         for page in self.elements:
-            page.build(view, p)
+            page.build(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -939,7 +939,7 @@ class PageView(BaseView):
 
     build_flat = build_drawBot
 
-    def build_html(self, view, origin):
+    def build_html(self, view, origin, **kwargs):
         """HTML page view to be implemented. Ignore for now."""
         pass
 

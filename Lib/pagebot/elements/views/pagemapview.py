@@ -41,7 +41,7 @@ class PageMapView(BaseView):
 
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """Draw the selected pages. pageSelection is an optional set of
         y-pageNumbers to draw.
 
@@ -861,7 +861,7 @@ class PageMapView(BaseView):
 
     # The context-methods are used, in case the view itself is placed in a layout.
 
-    def build_drawBot(self, view, origin):
+    def build_drawBot(self, view, origin, **kwargs):
         """This method is called if the view is used as a placable element
         inside another element, such as a Page or Template. """
         p = pointOffset(self.origin, origin)
@@ -873,7 +873,7 @@ class PageMapView(BaseView):
 
         self.drawElementFrame(view, p) # In case the view itself is used on a page.
         for page in self.elements:
-            page.build(view, p)
+            page.build(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -883,7 +883,7 @@ class PageMapView(BaseView):
 
     build_flat = build_drawBot
 
-    def build_html(self, view, origin):
+    def build_html(self, view, origin, **kwargs):
         """HTML page view to be implemented. Ignore for now."""
         pass
 

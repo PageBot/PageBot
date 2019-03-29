@@ -72,7 +72,7 @@ class GlyphDimensions(BaseFontShow):
         self.f = f # Font instance
         self.glyphName = glyphName or 'H'
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
@@ -87,7 +87,7 @@ class GlyphDimensions(BaseFontShow):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        self.drawGlyphDimensions(view, p)
+        self.drawGlyphDimensions(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -96,7 +96,7 @@ class GlyphDimensions(BaseFontShow):
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
 
-    def drawGlyphDimensions(self, view, origin):
+    def drawGlyphDimensions(self, view, origin, **kwargs):
         """Draw the the indicated glyph(s), with dimensions and other indicator.
         """
         c = self.context

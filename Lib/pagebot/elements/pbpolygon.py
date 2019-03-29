@@ -65,7 +65,7 @@ class Polygon(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
 
@@ -98,7 +98,7 @@ class Polygon(Element):
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

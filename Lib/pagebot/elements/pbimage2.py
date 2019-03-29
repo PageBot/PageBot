@@ -110,7 +110,7 @@ class ImageData(Element):
             alpha = 1
         return alpha
 
-    def build(self, view, origin=ORIGIN, drawElements=True):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
@@ -147,7 +147,7 @@ class ImageData(Element):
             # TODO: Draw optional (transparant) forground color?
 
         if drawElements:
-            self.buildChildElements(view, p)
+            self.buildChildElements(view, p, **kwargs)
 
         self._restoreRotation(view, p)
 
@@ -207,7 +207,7 @@ class Image(Element):
     imageData = property(_get_imageData, _set_imageData)
 
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)

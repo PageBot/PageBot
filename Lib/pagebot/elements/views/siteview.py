@@ -84,7 +84,7 @@ class SiteView(HtmlView):
                 elif self.verbose:
                     print('[%s.build] Resource "%s" does not exist.' % (self.__class__.__name__, resourcePath))
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """
         Default building to non-website media.
 
@@ -127,7 +127,7 @@ class SiteView(HtmlView):
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, path) # Typically calling page.build_html
+                getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
                 
         # Deprecated
         # TODO: Make this automatic, depending on extension of CSS file.

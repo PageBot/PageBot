@@ -279,9 +279,10 @@ XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.ma
 
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
-
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
+# Default size for windows, e.g. created with VanillaContext
+DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH

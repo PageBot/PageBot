@@ -52,14 +52,14 @@ class Header(SiteColumn):
     u"""Container for header elements on a page. Using standard
     Element.build for non-Html contexts.
     """
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s ' % cssId)
         if drawElements:
             b.header(cssId=cssId, cssClass='wrapper clearfix') #Header
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._header()
         b.comment('End %s' % cssId)
 
@@ -68,14 +68,14 @@ class Banner(SiteColumn):
     Often used inside the Header element.
     Using standard Element.build for non-Html contexts.
     """
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
         if drawElements:
             b.div(cssId=cssId) #Banner
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._div()
         b.comment('End %s' % cssId)
 
@@ -97,18 +97,18 @@ class Navigation(SiteColumn):
                 menu = Menu(parent=menuItem)
                 self.makeMenu(menu, pageInfo['pages'], True) # Second level shows error to submenu
   
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
         if drawElements:
             b.nav(cssId=cssId, role='navigation') #Navigation
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._nav()
         b.comment('End %s' % cssId)
 
@@ -120,7 +120,7 @@ class TopMenu(SiteColumn):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -131,13 +131,13 @@ class TopMenu(SiteColumn):
         if drawElements:
             b.ul(cssId=self.getCssId('-main-navigation'), cssClass='srt-menu')
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._ul()
         b.comment('End %s' % cssId)
 
 class Menu(SiteColumn):
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
@@ -146,7 +146,7 @@ class Menu(SiteColumn):
         if drawElements:
             b.ul()
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._ul()
 
 class MenuItem(SiteColumn):
@@ -165,11 +165,11 @@ class MenuItem(SiteColumn):
         copiedMenuItem.label = self.label
         return copiedMenuItem
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         u"""
         <li>
             <a href="index.html">Home</a>
@@ -187,7 +187,7 @@ class MenuItem(SiteColumn):
                 b.addHtml(self.label)
                 b._a()
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
             b._li()
 
 class Logo(SiteColumn):
@@ -199,7 +199,7 @@ class Logo(SiteColumn):
         SiteColumn.__init__(self, **kwargs)
         self.url = url
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -207,26 +207,26 @@ class Logo(SiteColumn):
         b.a(href=self.url or self.HOME_URL) # Default is linking to home (index.html)
         if drawElements:
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
         b._a()
         b._div()
         b.comment('End %s' % cssId)
 
 class Introduction(SiteColumn):
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
 
-    def build_html(self, view, path):
-        b = self.context.b
+    def build_html(self, view, path, **kwargs):
+        pass
 
 class SlideShow(SiteColumn):
     def newSlide(self):
         return newColumn(parent=self)
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -235,7 +235,7 @@ class SlideShow(SiteColumn):
             if i == 0:
                 cssClass += ' firstSlide'
             b.div(cssClass=cssClass)
-            e.build_html(view, path)
+            e.build_html(view, path, **kwargs)
             b._div()
             b.comment('End .slides .fade')
         b.comment('End %s' % cssId)
@@ -248,10 +248,10 @@ class Hero(SiteColumn):
         self.introduction = newColumn(parent=self, cssId=cssIdIntroduction)
         self.slideShow = SlideShow(parent=self, cssId=cssIdSlideShow)
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -261,13 +261,13 @@ class Hero(SiteColumn):
 
         b.div(cssClass='grid_4')
         b.addHtml('(Introduction)')
-        self.introduction.build_html(view, path)
+        self.introduction.build_html(view, path, **kwargs)
         b._div()
         b.comment('End .grid_4')
 
         b.div(cssClass="grid_8")
         b.addHtml('(Slideshow)')
-        self.slideShow.build_html(view, path)
+        self.slideShow.build_html(view, path, **kwargs)
         b._div()
         b.comment('End .grid_8')
 
@@ -280,10 +280,10 @@ class Hero(SiteColumn):
 
 class Content(SiteColumn):
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         cssIdMain = self.getCssId('_main')
         cssIdSection = self.getCssId('_section')
@@ -294,7 +294,7 @@ class Content(SiteColumn):
         # Content here, should come from markdown file.
         if drawElements:
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
         #b.p()
         #b.a(href='index.html', cssClass='buttonlink')
         #b.addHtml('Use Pagebot')
@@ -336,21 +336,21 @@ class ColoredSection(SiteColumn):
         for n in range(sectionCount):
             self.columns.append(newColumn(parent=self, cssId='%s%d' % (cssId, n)))
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         pass
 
-    def build_html(self, view, path):
+    def build_html(self, view, path, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
         b.section(cssId='features', cssClass='coloredSection vertical-padding')
         b.div(cssClass='wrapper clearfix')
-        self.header.build_html(view, path)
+        self.header.build_html(view, path, **kwargs)
         b.div(cssClass='row vertical-padding')
 
         for column in self.columns:
             b.div(cssClass='grid_4')
-            column.build_html(view, path)
+            column.build_html(view, path, **kwargs)
             b._div() # grid_4
 
         b._div() # row vertical padding
@@ -362,11 +362,11 @@ class ColoredSection(SiteColumn):
 
 class Footer(SiteColumn):
 
-    def build(self, view, path):
+    def build(self, view, path, **kwargs):
         """Footer is only supposed to show in interactive web-context."""
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
         b = self.context.b
         b.comment('Start %s' % cssId)
@@ -374,7 +374,7 @@ class Footer(SiteColumn):
         b.div(cssId=cssId, cssClass='wrapper clearfix')
         if drawElements:
             for e in self.elements:
-                e.build_html(view, path)
+                e.build_html(view, path, **kwargs)
         b._div()
         b._footer()
         b.comment('End %s' % cssId)

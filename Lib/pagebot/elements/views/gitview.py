@@ -29,7 +29,7 @@ class GitView(SiteView):
 
     #   B U I L D  H T M L  /  C S S
 
-    def build(self, path=None, pageSelection=None, multiPage=True):
+    def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """
         Default building to non-website media.
         """

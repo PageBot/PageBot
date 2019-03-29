@@ -69,7 +69,7 @@ class Cube(BaseFontShow):
             axes = {LEFT: 'wght', RIGHT: 'wdth', TOP: 'opsz'}
         self.axes = axes
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
@@ -86,7 +86,7 @@ class Cube(BaseFontShow):
             self.drawBefore(self, view, p)
 
         # Draw that actual content of the element by stacked specimen rectangles.
-        self.drawCube(view, p)
+        self.drawCube(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -94,7 +94,7 @@ class Cube(BaseFontShow):
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-    def drawCube(self, view, origin):
+    def drawCube(self, view, origin, **kwargs):
         """Draw the content of the element, responding to size, styles, font and content.
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.

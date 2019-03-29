@@ -13,12 +13,21 @@
 #
 #     baseapp.py
 #
+from pagebot.elements.element import Element
 
-class BaseApp:
+class BaseApp(Element):
+    """The BaseApp class implements generic functions for more specialize App classes.
+    The main function of apps is to create applications (with window UI) that
+    offer an interface to PageBot publication building scripts. Without scripting.
+    This way apps can be stored as standalone desktop applications, offering more
+    interactive feedback to non-scripting users.
+    Also it hides code form the user, just presenting a coherent set of choices,
+    that then build into PDF documents, websites, InDesign documents or identity stationary.
 
-    def __init__(self):
-        print('BaseApp init()')
-
+    Note that the BaseApp inherits from Elements, so UI elements can be used
+    to define the inteface layout at it can be used present itself inside other
+    elements, such as a page.
+    """
     # NsApp callbacks.
 
     def terminate(self):

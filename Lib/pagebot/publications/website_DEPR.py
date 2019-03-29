@@ -32,7 +32,7 @@ from pagebot.toolbox.units import fr, px
 
 class MobileNavigation(TextBox):
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         b = self.context.b
         self.build_css(view)
         b.div(cssClass='container %s' % (self.cssClass or 'mobilenavigation'))
@@ -44,7 +44,7 @@ class MobileNavigation(TextBox):
             for page in pages:
                 b.li()
                 b.a(href=page.name)
-                b.addHtml(page.title)
+                b.addHtml(page.title, **kwargs)
                 b._a()
                 b._li()
         b._ul()
@@ -60,7 +60,7 @@ class MobileNavigation(TextBox):
 
 class Navigation(TextBox):
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         b = self.context.b
         b.div(cssClass='container top')
         b.div(cssClass='row')
@@ -91,7 +91,7 @@ class Navigation(TextBox):
 
 class Introduction(TextBox):
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         """Build a page wide in intoduction box for large type, if there is any
         content."""
         if not self.bs.s:
@@ -103,7 +103,7 @@ class Introduction(TextBox):
         b.div(cssClass='twelvecol last')
         b.addHtml(self.bs.s)
         for e in self.elements:
-            e.build_html(view, origin)
+            e.build_html(view, origin, **kwargs)
         b._div() # .twelvecol last
         b._div() # .row
         b._div() # .container .introduction
@@ -117,7 +117,7 @@ class Featured(Rect):
         TextBox('', parent=self, name='Image')
         TextBox('', parent=self, name='Side')
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         """Build the featured topic, image on the left and side column on the right."""
         image = self['Image']
         side = self['Side']
@@ -128,10 +128,10 @@ class Featured(Rect):
         b.div(cssClass='container %s' % (self.cssClass or 'featured'))
         b.div(cssClass='row')
         b.div(cssClass='eightcol')
-        image.build_html(view, origin)
+        image.build_html(view, origin, **kwargs)
         b._div() # .eightcol
         b.div(cssClass="fourcol last")
-        side.build_html(view, origin)
+        side.build_html(view, origin, **kwargs)
         b._div() # .fourcol last
         b._div() # .row
         b._div() # .container .featured
@@ -148,7 +148,7 @@ class Main(Rect):
         """Add FormattedString to main content."""
         self['Content'].append(bs)
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         content = self['Content']
         side = self['Side']
         if not content.bs.s: # If there is nothing in the main part, then also ignore the side.
@@ -158,11 +158,11 @@ class Main(Rect):
         b.div(cssClass='container %s' % (self.cssClass or 'mainContent'))
         b.div(cssClass='row')
         b.div(cssClass='eightcol')
-        content.build_html(view, origin)
+        content.build_html(view, origin, **kwargs)
         b._div() # .eightcol
         b.div(cssClass='fourcol')
         # TODO: We could do something to fill here, if there is not side content.
-        side.build_html(view, origin)
+        side.build_html(view, origin, **kwargs)
         b._div() # .fourcol
         b._div() # .row
         b._div() # .container .mainContnet
@@ -181,7 +181,7 @@ class Section(Rect):
             TextBox('', parent=self, name=repr(row*2))
             TextBox('', parent=self, name=repr(row*2+1))
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         b = self.context.b
         title = self['Title']
         hasContent = bool(title.bs.s)
@@ -216,7 +216,7 @@ class Section(Rect):
 
 class Footer(TextBox):
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         b = self.context.b
         self.build_css(view)
         b.div(cssClass="container %s" % (self.cssClass or 'footer'))
@@ -248,7 +248,7 @@ class JS(TextBox):
     def __init__(self, **kwargs):
         TextBox.__init__(self, '', **kwargs)
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         b = self.context.b
         b.script(type="text/javascript")
         b.addHtml("""

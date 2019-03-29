@@ -46,7 +46,7 @@ class VariableGlyphs(Element):
             location = {}
         self.location = copy(location)
 
-    def build(self, view, origin, drawElements=True):
+    def build(self, view, origin, drawElements=True, **kwargs):
 
         c = self.context
 
@@ -55,7 +55,7 @@ class VariableGlyphs(Element):
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p)
+        view.drawElementFrame(self, p, **kwargs)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
