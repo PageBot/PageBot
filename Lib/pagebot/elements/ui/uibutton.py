@@ -11,11 +11,11 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     button.py
+#     uibutton.py
 #
 from pagebot.elements.element import Element
 
-class Button(Element):
+class UIButton(Element):
     """
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
@@ -24,25 +24,20 @@ class Button(Element):
         >>> e = Button(w=100, h=24, name='My Button', callback=buttonCallback, context=context)
         >>> e
         <Button:My Button (0pt, 0pt, 100pt, 24pt)>
-        >>> e.mouseDown('aSender')
-        Callback of aSender
     """
     def __init__(self, callback=None, **kwargs):
         Element.__init__(self, **kwargs)
         self.callback = callback
 
-    def mouseDown(self, sender=None):
-        if self.callback is not None:
-            self.callback(sender)
-
     def build(self, view, nsParent=None, **kwargs):
         """Draw a button and connect it to a callback function.
         """
-        setattr(nsParent, self.name, buttong)
-        button = self.context.button(title=self.title, x=self.x, y=self.y, w=self.w, h=self.h, 
-            style=self.style, callback=self.callback)
-        
+        assert nsParent is not None
+        button = self.context.button(title=self.title, x=self.x, y=self.y, 
+            w=self.w, h=self.h, style=self.style, callback=self.callback)
+        print('dsdadas', button, self.callback)
+        setattr(nsParent, self.name or 'untitledButton', button)
+
 if __name__ == '__main__':
     import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])
+    doctest.testmod()[0]

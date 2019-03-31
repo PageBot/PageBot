@@ -1404,7 +1404,7 @@ class Document:
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage, **kwargs)
 
-    def export(self, path=None, multiPage=True):
+    def export(self, path=None, multiPage=True, **kwargs):
         """Export the document, using the `document.view` for export.
 
         >>> from pagebot.elements import newRect

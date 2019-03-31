@@ -21,9 +21,7 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.toolbox.color import color, Color, noColor, inheritColor
 from pagebot.toolbox.units import pt, upt, point2D, Angle
 from pagebot.toolbox.transformer import path2Name, path2Dir
-from pagebot.constants import (CENTER, RIGHT, DEFAULT_FRAME_DURATION, ORIGIN,
-        FILETYPE_PDF, FILETYPE_SVG, FILETYPE_JPG, FILETYPE_PNG, FILETYPE_GIF,
-        FILETYPE_MOV, DEFAULT_FILETYPE, DEFAULT_FALLBACK_FONT_PATH)
+from pagebot.constants import *
 
 try:
     import drawBot
@@ -423,7 +421,7 @@ class DrawBotContext(BaseContext):
 
         #   U I  components based on Vanilla API
 
-    def window(self, name=None, x=None, y=None, w=None, h=None, style=None, 
+    def window(self, title=None, x=None, y=None, w=None, h=None, style=None, 
         minW=None, maxW=None, minH=None, maxH=None, closable=None, **kwargs):
         """Create and opening a window, using Vanilla. 
 
@@ -452,7 +450,8 @@ class DrawBotContext(BaseContext):
         if closable is None:
             closable = True
 
-        return Window(posSize, title=name, minSize=minSize, maxSize=maxSize, closable=closable)
+        return Window(posSize, title=title or 'Untitled', 
+            minSize=minSize, maxSize=maxSize, closable=closable)
 
     def group(self, x=None, y=None, w=None, h=None, **kwargs):
         return Group((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0))
@@ -465,7 +464,7 @@ class DrawBotContext(BaseContext):
 
     def canvas(self, x=None, y=None, w=None, h=None):
         """Answer an instance of the DrawBot drawing canvas."""
-        return drawBot.DrawView((upt(x or 0), upt(y or 0), upt(w or 0), upt(h or 0)))
+        return drawBot.ui.drawView.DrawView((upt(x or 0), upt(y or 0), upt(w or 0), upt(h or 0)))
 
 if __name__ == '__main__':
     import doctest

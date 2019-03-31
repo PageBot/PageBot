@@ -16,20 +16,11 @@
 from pagebot.elements.element import Element
 from pagebot.constants import *
 
-class Window(Element):
+class UIWindow(Element):
     """
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> def buttonCallback(sender):
-        ...     print('Callback of', sender)
-        >>> e = Button(w=100, h=24, name='My Button', callback=buttonCallback, context=context)
-        >>> e
-        <Button:My Button (0pt, 0pt, 100pt, 24pt)>
-        >>> e.mouseDown('aSender')
-        Callback of aSender
     """
-    def __init__(self, callback=None, minX=None, maxX=None, minH=None, maxH=None,
-        **kwargs):
+    def __init__(self, callback=None, minW=None, maxW=None, minH=None, maxH=None, 
+            closable=None, **kwargs):
         Element.__init__(self, closable=None, **kwargs)
         self.callback = callback
         self.minW = minW or 1
@@ -40,22 +31,22 @@ class Window(Element):
             closable = True
         self.closable = closable
 
-    def mouseDown(self, sender=None):
-        if self.callback is not None:
-            self.callback(sender)
-
     def build(self, view, drawElements=True, nsParent=None, **kwargs):
         """Draw a button and connect it to a callback function.
         """
-        self.window = self.context.window() = Window((800, 600), minSize=(self.minX, self.minH), 
-            maxSize=(self.maxX, self.maxH), closable=self.closable)
+        assert nsParent is not None
+        self.window = self.context.window(title=self.title, x=self.x, y=self.y, 
+            w=self.w, h=self.h,
+            minW=self.minW, maxW=self.maxW, minH=self.minH, maxH=self.maxH,
+            closable=self.closable)
+        setattr(nsParent, self.name or 'untitledWindow', self.window)
         if drawElements:
             for e in self.elements:
                 e.build(view, nsParent=self.window)
         
-
+    def open(self):
+        self.window.open()
 
 if __name__ == '__main__':
     import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])
+    doctest.testmod()[0]

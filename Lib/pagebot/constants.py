@@ -100,6 +100,7 @@ Folio = pt(612, 936)
 Quarto = pt(610, 780)
 Size10x14 = pt(720, 1008)
 
+
 # Hybrid sizes
 # International generic fit for stationary
 A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
@@ -286,6 +287,32 @@ DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDT
 
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
+
+# Default paper sizes that are likely to be used for magazines in portrait ratio
+MAGAZINE_SIZES = {
+	'A3': A3,
+	'A4': A4,
+	'A5': A5,
+	'B4': B4,
+	'B5': B5,
+	'HalfLetter': HalfLetter,
+	'Letter': Letter,
+	'Legal': Legal,
+	'JuniorLegal': JuniorLegal,
+	'Tabloid': Tabloid,
+	'Ledger': Ledger,
+	'Statement': Statement,
+	'Executive': Executive,
+	'Folio': Folio,
+	'Quarto': Quarto,
+	'Size10x14': Size10x14,
+	'A4Letter': A4Letter,
+	'A4Oversized': A4Oversized,
+	'A3Oversized': A3Oversized,
+}
+PAGE_SIZES = {
+	'Magazine': MAGAZINE_SIZES,
+}
 
 DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 

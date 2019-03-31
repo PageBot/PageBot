@@ -56,6 +56,12 @@ from pagebot.elements.views import viewClasses
 from pagebot.elements.pbquire import Quire
 from pagebot.elements.pbcodeblock import CodeBlock
 
+# Vanilla based UI elements
+from pagebot.elements.ui.uiwindow import UIWindow
+from pagebot.elements.ui.uibutton import UIButton
+from pagebot.elements.ui.uigroup import UIGroup
+from pagebot.elements.ui.uicanvas import UICanvas
+
 # Variable Font elements
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
 

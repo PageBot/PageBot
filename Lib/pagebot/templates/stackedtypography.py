@@ -13,6 +13,11 @@
 #
 #     stackedtypography.py
 #
+#     D E P R E C A T E D
+#     Don't use or develop here.
+#     
+#     Templates will be defined in Publications
+
 from random import random
 from pagebot.elements import *
 from pagebot.toolbox.color import color

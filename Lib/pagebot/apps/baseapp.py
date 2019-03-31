@@ -13,9 +13,9 @@
 #
 #     baseapp.py
 #
-from pagebot.elements.element import Element
+from pagebot.publications.publication import Publication
 
-class BaseApp(Element):
+class BaseApp(Publication):
     """The BaseApp class implements generic functions for more specialize App classes.
     The main function of apps is to create applications (with window UI) that
     offer an interface to PageBot publication building scripts. Without scripting.
