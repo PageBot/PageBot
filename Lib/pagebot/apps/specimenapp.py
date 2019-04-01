@@ -14,6 +14,7 @@
 #     specimenapp.py
 #
 
+from pagebot import getResourcesPath
 from vanilla import Button, Window, PopUpButton, TextBox, EditText
 from drawBot.ui.drawView import DrawView
 from pagebot.templates.specimens import Specimens
@@ -94,3 +95,7 @@ class SpecimenApp(BaseApp):
         i = sender.get()
         self.specimens.setFont(i)
         self.makeSpecimen()
+
+path = getResourcesPath() + '/testfonts/fontbureau'
+sp = SpecimenApp(path)
+sp.build()

@@ -202,7 +202,7 @@ class BaseTheme:
     >>> theme.mood['body.bgcolor'], theme.mood.body_bgcolor
     ('E7E7E7', Color(r=0.90625, g=0.90625, b=0.90625))
     >>> theme.mood['p.hover'], theme.mood.p_hover # Both access by key and by attribute syntax work
-    ('454545', Color(r=0.27, g=0.27, b=0.27))
+    ('DFDFDF', Color(r=0.875, g=0.875, b=0.875))
     """
     def DEFAULT_H_COLORS_NORMAL(c): 
         """Make new dictionary, in case the caller wants to change value."""
@@ -474,13 +474,28 @@ class BaseTheme:
     STYLES_SMOOTH = STYLES_NORMAL
     STYLES_CONTRAST = STYLES_NORMAL
     # To be redefined by inheriting Them classes if necessary
+    MOOD_NAME_LIGHT = 'light'
+    MOOD_NAME_NORMAL = 'normal'
+    MOOD_NAME_DARK = 'dark'
+    MOOD_NAME_SMOOTH = 'smooth'
+    MOOD_NAME_CONTRAST = 'contrast'
+
     MOODS = {
-        'light': STYLES_LIGHT,
-        'normal': STYLES_NORMAL,
-        'dark': STYLES_DARK,
-        'smooth': STYLES_SMOOTH,
-        'contrast': STYLES_CONTRAST,
+        MOOD_NAME_LIGHT: STYLES_LIGHT,
+        MOOD_NAME_NORMAL: STYLES_NORMAL,
+        MOOD_NAME_DARK: STYLES_DARK,
+        MOOD_NAME_SMOOTH: STYLES_SMOOTH,
+        MOOD_NAME_CONTRAST: STYLES_CONTRAST,
     }
+    # Keep them in order for popups
+    MOOD_NAMES = (
+        MOOD_NAME_LIGHT,
+        MOOD_NAME_NORMAL,
+        MOOD_NAME_DARK,
+        MOOD_NAME_SMOOTH,
+        MOOD_NAME_CONTRAST,
+    )
+    DEFAULT_MOOD_NAME = MOOD_NAME_NORMAL
     NAME = "BaseTheme"
     COLORS = None # To redefined by inheriting Theme classes.
     BASE_COLORS = {}

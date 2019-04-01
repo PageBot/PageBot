@@ -419,8 +419,13 @@ class DrawBotContext(BaseContext):
             self.newDrawing() # Clean the drawing stack.
         return cachedFilePath
 
-        #   U I  components based on Vanilla API
 
+    ''' 
+    # TODO
+    # Future experiment, making UI/Vanilla layout for apps by PageBot
+    # Needs some additional conceptual thinking.
+
+    #   U I  components based on Vanilla API
     def window(self, title=None, x=None, y=None, w=None, h=None, style=None, 
         minW=None, maxW=None, minH=None, maxH=None, closable=None, **kwargs):
         """Create and opening a window, using Vanilla. 
@@ -465,6 +470,7 @@ class DrawBotContext(BaseContext):
     def canvas(self, x=None, y=None, w=None, h=None):
         """Answer an instance of the DrawBot drawing canvas."""
         return drawBot.ui.drawView.DrawView((upt(x or 0), upt(y or 0), upt(w or 0), upt(h or 0)))
+    '''
 
 if __name__ == '__main__':
     import doctest
