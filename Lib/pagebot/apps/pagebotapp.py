@@ -54,7 +54,7 @@ class PageBotApp(BaseApp):
     def buildUI(self, uiWidth):
         dy = pad = pt(8)
         y = pad + dy
-        uiWidth = pt(220)
+        uiWidth = pt(230)
         uiH = pt(24)
         uiL = uiH + 6
         uiLS = pt(18)
@@ -74,7 +74,10 @@ class PageBotApp(BaseApp):
         
         y += uiL-2 
         tab.publicationLabel = TextBox((pad, y-8, -pad, uiLS), 'Type of publication', sizeStyle='mini')
-        options = sorted(('Magazine', 'Newspaper', 'Poster', 'Identity', 'Specimen', 'Website', 'Test'))
+        options = sorted((
+            'Magazine', 'Book', 'Newletter', 'Newspaper', 'Poster', 
+            'Identity', 'Specimen', 'Website', 'Test'
+        ))
         tab.publication = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,  
             sizeStyle='small')
         tab.publication.set(options.index('Magazine'))
@@ -120,19 +123,19 @@ class PageBotApp(BaseApp):
         tab.symmetric.set(0)
         
         y += uiL+8
-        tbW = 32 # Padding text box width
-        tw = 12
+        tbW = 40 # Padding text box width
+        tw = 10
         x = pad
         tab.paddingLabel = TextBox((pad, y-14, -pad, uiLS), 'Padding', sizeStyle='mini')
         tab.paddingTopLabel = TextBox((x, y, tw, uiLS), 'T', sizeStyle='small')
         tab.paddingTop = TextEditor((x+tw, y, tbW, uiLS), '48', callback=self.makeSample,)
-        x += tw + tbW
+        x += tw + tbW + 2
         tab.paddingRightLabel = TextBox((x, y, 12, uiLS), 'R', sizeStyle='small')
         tab.paddingRight = TextEditor((x+tw, y, tbW, uiLS), '48', callback=self.makeSample,)
-        x += tw + tbW
+        x += tw + tbW + 2
         tab.paddingBottomLabel = TextBox((x, y, 12, uiLS), 'B', sizeStyle='small')
         tab.paddingBottom = TextEditor((x+tw, y, tbW, uiLS), '60', callback=self.makeSample,)
-        x += tw + tbW
+        x += tw + tbW + 2
         tab.paddingLeftLabel = TextBox((x, y, 12, uiLS), 'L', sizeStyle='small')
         tab.paddingLeft = TextEditor((x+tw, y, tbW, uiLS), '72', callback=self.makeSample,)
         y += uiL 
@@ -163,7 +166,7 @@ class PageBotApp(BaseApp):
         y += uiL
         tab.showBaselines = CheckBox((pad, y, -pad, uiH), 'Show baselines', callback=self.makeSample,
             sizeStyle='small') 
-        tab.showBaselines.set(1)
+        tab.showBaselines.set(True)
         y += uiLS
         tab.showGrid = CheckBox((pad, y, -pad, uiH), 'Show grid', callback=self.makeSample, 
             sizeStyle='small') 
@@ -171,15 +174,15 @@ class PageBotApp(BaseApp):
         y += uiLS
         tab.showPagePadding = CheckBox((pad, y, -pad, uiH), 'Show page padding', callback=self.makeSample, 
             sizeStyle='small') 
-        tab.showPagePadding.set(1)
+        tab.showPagePadding.set(True)
         y += uiLS
         tab.showPageFrame = CheckBox((pad, y, -pad, uiH), 'Show page frame', callback=self.makeSample, 
             sizeStyle='small') 
-        tab.showPageFrame.set(1)
+        tab.showPageFrame.set(True)
         y += uiLS
         tab.showCropMarks = CheckBox((pad, y, -pad, uiH), 'Show cropmarks', callback=self.makeSample, 
             sizeStyle='small') 
-        tab.showCropMarks.set(1)
+        tab.showCropMarks.set(True)
  
         # C O N T E N T  U I
         y = pad + dy
@@ -259,7 +262,10 @@ class PageBotApp(BaseApp):
         view.showNameInfo = showMarks
         #view.showColorBars = True
         #view.showBaselines = bool(self.window.group.showBaselines.get())
-        view.showGrid = bool(self.uiDesign.showGrid.get())
+        if bool(self.uiDesign.showGrid.get()):
+            view.showGrid = GRID_COL
+        else:
+            view.showGrid = False
         view.showPadding = bool(self.uiDesign.showPagePadding.get())
         view.showFrame = bool(self.uiDesign.showPageFrame.get())
         if showMarks: # Needs padding outside the page?
@@ -275,13 +281,26 @@ class PageBotApp(BaseApp):
                
     def buildSample(self, doc):
         page = doc[1]
-        grp = newGroup(parent=page, conditions=[Fit()])
-        # Theme showing
+        theme = self.getTheme()
+        if doc.view.showFrame:
+            newRect(parent=page, fill=theme.mood['body.bgcolor'], conditions=[Fit2Sides()])
+        if doc.view.showGrid:
+            for n in range(len(doc.gridX)):
+                colWidth = doc.gridX[n][0]
+                if n:
+                    conditions = [Left2Col(n), Fit2Height()]
+                else:
+                    conditions = [Left2Left(), Fit2Height()]
+                newRect(parent=page, fill=theme.mood['body.color'], w=colWidth, 
+                    conditions=conditions)
+        
+        """
         theme = self.getTheme()
         newTextBox(str(theme.mood.name), style=headStyle, parent=grp, conditions=[Fit2Width(), Top2Top()])
         for colorName in sorted(theme.mood.palette.colorNames):
             color = theme.mood.palette[colorName]
-            newRect(parent=grp, w=20, h=20, fill=color, conditions=[Right2Right(), Float2Top(), Float2Left()])
+            newRect(parent=grp, w=32, h=32, fill=color, conditions=[Right2Right(), Float2Top(), Float2Left()])
+        """
         page.solve()
         
     def makeSample(self, sender):
