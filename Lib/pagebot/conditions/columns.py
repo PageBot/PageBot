@@ -18,7 +18,7 @@ from pagebot.conditions.condition import Condition
 #	F I T T I N G  C O L U M N S
 
 class ColCondition(Condition):
-    def __init__(self, col=0, row=0, colSpan=1, rowSpan=1, value=1, tolerance=1, error=-10, verbose=False):
+    def __init__(self, col=0, colSpan=1, row=0, rowSpan=1, value=1, tolerance=1, error=-10, verbose=False):
     	Condition.__init__(self, value=value, tolerance=tolerance, error=-error, verbose=verbose)
     	self.col = col
     	self.row = row
@@ -26,7 +26,7 @@ class ColCondition(Condition):
     	self.rowSpan = rowSpan
 
 class RowCondition(Condition):
-    def __init__(self, col=0, row=0, colSpan=1, rowSpan=1, value=1, tolerance=1, error=-10, verbose=False):
+    def __init__(self, row=0, rowSpan=1, col=0, colSpan=1, value=1, tolerance=1, error=-10, verbose=False):
     	Condition.__init__(self, value=value, tolerance=tolerance, error=-error, verbose=verbose)
     	self.col = col
     	self.row = row
@@ -102,6 +102,7 @@ class Fit2ColSpan(ColCondition):
 
 	def solve(self, e, score):
 		if not self.test(e): # Only try to solve if condition test fails.
+			self.addScore(e.left2Col(self.col), e, score)
 			self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):

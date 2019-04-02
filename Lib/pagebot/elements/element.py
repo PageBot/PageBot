@@ -5118,11 +5118,31 @@ class Element:
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
+        """Answer the boolean flag if the self.w is the same as the total of
+        column widths between col and col+colSpan
+
+        >>> from pagebot.toolbox.units import pt
+        >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
+        >>> e1 = Element(padding=30, w=600, gridX=gridX)
+        >>> e1.getGridColumns()
+        [(0, 100pt), (110pt, 200pt), (330pt, 300pt), (660pt, 400pt), (1100pt, 500pt)]
+        >>> e2 = Element(w=100, parent=e1)
+        >>> e1.getGridColumns()
+        [(0, 100pt), (110pt, 200pt), (330pt, 300pt), (660pt, 400pt), (1100pt, 500pt)]
+        >>> e2.isFitOnColSpan(0, 1, 0)
+        True
+        >>> e2.w = 310
+        >>> e2.isFitOnColSpan(0, 2, 0)
+        True
+        >>> e2.w = 950
+        >>> e2.isFitOnColSpan(1, 3, 0)
+        True
+        """
         gridColumns = self.getGridColumns()
-        indices = range(len(gridColumns))
-        if col in indices and col + colSpan in indices:
+        if 0 <= col and col+colSpan <= len(gridColumns):
             c1 = gridColumns[col]
             c2 = gridColumns[col + colSpan - 1]
+            #print(self.w, c2[0] - c1[0] + c2[1])
             return abs(self.w - (c2[0] - c1[0] + c2[1])) <= tolerance
         return False
 
@@ -5142,8 +5162,7 @@ class Element:
 
     def isFitOnRowSpan(self, row, rowSpan, tolerance):
         gridRows = self.getGridRows()
-        indices = range(len(gridRows))
-        if row in indices and row + rowSpan in indices:
+        if 0 <= row and row+rowSpan < len(gridRows):
             r1 = gridRows[row]
             r2 = gridRows[row + rowSpan - 1]
             return abs(self.h - (r2[0] - r1[0] + r2[1])) <= tolerance
@@ -5172,10 +5191,21 @@ class Element:
     def fit2ColSpan(self, col, colSpan):
         """Fit the width of self to colSpan (can run over several columns),
         starting at column index col.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
+        >>> e1 = Element(padding=30, w=600, gridX=gridX)
+        >>> e1.getGridColumns()
+        [(0, 100pt), (110pt, 200pt), (330pt, 300pt), (660pt, 400pt), (1100pt, 500pt)]
+        >>> e2 = Element(w=100, parent=e1)
+        >>> e2.isFitOnColSpan(1, 3, 0), e2.w
+        (False, 100pt)
+        >>> e2.fit2ColSpan(1, 3)
+        >>> e2.isFitOnColSpan(1, 3, 0), e2.w
+        (True, 950pt)        
         """
         gridColumns = self.getGridColumns()
-        indices = range(len(gridColumns))
-        if col in indices and col + colSpan in indices:
+        if 0 <= col and col+colSpan <= len(gridColumns):
             c1 = gridColumns[col]
             c2 = gridColumns[col + colSpan - 1]
             self.w = c2[0] - c1[0] + c2[1]

@@ -14,10 +14,13 @@
 #     pagebotapp.py
 #
 from vanilla import *
+from pagebot import getResourcesPath
 from pagebot.apps.baseapp import BaseApp
 from pagebot.publications.magazine import Magazine
 from pagebot.elements import newGroup, newTextBox, newRect
 from pagebot.constants import *
+from pagebot.composer import Composer
+from pagebot.typesetter import Typesetter
 from pagebot.themes import ThemeClasses, BaseTheme, DEFAULT_THEME_CLASS
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.fonttoolbox.objects.font import findFont
@@ -38,7 +41,9 @@ fontBold = findFont('PageBot-Bold')
 
 redColor = color('red')
 headStyle = dict(font=fontRegular, fontSize=pt(4))
-   
+
+MD_SAMPLE_PATH = getResourcesPath() + '/texts/SAMPLE.md'
+
 class PageBotApp(BaseApp):
     
     def __init__(self, publication, w=None, h=None, 
@@ -292,6 +297,20 @@ class PageBotApp(BaseApp):
         if doc.view.showFrame:
             c = theme.mood.body_bgcolor.lessOpaque()
             newRect(parent=page, fill=c, conditions=[Fit2Sides()])
+
+        # By default, the typesetter produces a single Galley with content and code blocks.    
+        t = Typesetter(doc.context)
+        t.typesetFile(MD_SAMPLE_PATH)
+    
+        # Create a Composer for this document, then create pages and fill content. 
+        composer = Composer(doc)
+
+        # The composer executes the embedded Python code blocks that indicate where content should go.
+        # by the HtmlContext. Feedback by the code blocks is added to verbose and errors list
+        targets = dict(pub=self, doc=doc, page=page)
+        composer.compose(t.galley, targets=targets)
+
+        """
         if doc.view.showGrid:
             c = theme.mood.body_color.lessOpaque()
             for n in range(len(doc.gridX)):
@@ -301,6 +320,7 @@ class PageBotApp(BaseApp):
                 else:
                     conditions = [Left2Left(), Fit2Height()]
                 newRect(parent=page, fill=c, w=colWidth, conditions=conditions)
+        """
         
         """
         theme = self.getTheme()
