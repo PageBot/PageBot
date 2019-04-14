@@ -136,6 +136,10 @@ class FontInfo:
     styleName = property(_get_styleName, _set_styleName)
 
     @cached_property
+    def cssName(self):
+        return self.familyName + '-' + self.styleName
+
+    @cached_property
     def copyright(self):
         return self.ttFont['name'].getDebugName(0)
 

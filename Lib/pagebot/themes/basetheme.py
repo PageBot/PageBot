@@ -343,7 +343,7 @@ class BaseTheme:
         return dict(
             color='lightest%d'%c, bgcolor='black', 
             diapcolor='darkest%d'%c, diapbgcolor='white',
-            link='lighter%d'%c, hover='light0',
+            link='lighter%d'%c, hover='light%d'%c,
             diaplink='darkest%d'%c, diaphover='dark%d'%c)
 
     def DEFAULT_MENU_DARK(c):

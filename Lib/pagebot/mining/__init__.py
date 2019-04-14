@@ -14,6 +14,8 @@
 #
 #     mining/__init__.py
 #
+#     To be developed here: functions that do data mining from external sources.
+#
 
 if __name__ == '__main__':
     import doctest

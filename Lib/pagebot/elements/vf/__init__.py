@@ -14,8 +14,16 @@
 #
 #     Special elements to show Variable Font info-graphics
 #
-#     D E P R E C A T E D
-# 
-#     Elements are moved to elements/vf after testing.
+#     Flexible matrix
+#     https://bl.ocks.org/mbostock/1b64ec067fcfc51e7471d944f51f1611
+#
+#   
+#     https://github.com/d3/d3-force
+#
+#     Force directed graph
+#     https://observablehq.com/@d3/force-directed-graph
+#     https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 (With labels)
+#
+#     https://ialab.it.monash.edu/webcola/examples/3dLayout.html
 #
 from pagebot.elements.variablefonts.variablecircle import VariableCircle

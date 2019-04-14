@@ -27,6 +27,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
         VIEW_DEBUG2, VIEW_FLOW)
+from pagebot import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
 from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
         asFormatted, isUnit, degrees)
@@ -67,7 +69,7 @@ class Element:
             ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
             borders=None, borderTop=None, borderRight=None, borderBottom=None,
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            drawAfter=None, htmlCode=None, htmlPaths=None,
+            radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
@@ -1461,6 +1463,27 @@ class Element:
         """Store the em size (as fontSize) in the local style."""
         self.style['fontSize'] = em
     em = property(_get_em, _set_em)
+
+    fontSize = em
+
+    def _get_font(self):
+        """Answers the current font instance as defined in style. Text based inheriting
+        elements may want to implement as the font of the last added text.
+
+        >>> e = Element(style=dict(font='Roboto-Regular'))
+        >>> e.font
+        <Font Roboto-Regular>
+        >>> e.font.info.cssName
+        'Roboto-Regular'
+        """
+        font = self.css('font', DEFAULT_FONT_PATH)
+        if isinstance(font, str):
+            font = findFont(font)
+        return font
+    def _set_font(self, font):
+        """Store the font in the local style. This can be a path, name or Font instance"""
+        self.style['font'] = font
+    font = property(_get_font, _set_font)
 
     def _get_lib(self):
         """Answer the local element.lib dictionary by property, used for custom
@@ -3785,6 +3808,15 @@ class Element:
         return self.d - self.pzf - self.pzb
     pd = property(_get_pd)
 
+    def _get_radius(self):
+        """Property answers the element generic radius value. It is up to specific
+        types of elements to decide that “radius” is used for. It can be the rounding
+        of corners or the radius of a circle node in a network drawing."""
+        return self.css('radius')
+    def _set_radius(self, radius):
+        self.style['radius'] = radius # Overwrite as local value.
+    radius = property(_get_radius, _set_radius)
+
     def _get_frameDuration(self):
         """Property answer the element frameDuration parameters, used for speed
         when exporting animated gifs. Normally only set in page or document."""
@@ -5201,8 +5233,9 @@ class Element:
         >>> e2.isFitOnColSpan(1, 3, 0), e2.w
         (False, 100pt)
         >>> e2.fit2ColSpan(1, 3)
+        True
         >>> e2.isFitOnColSpan(1, 3, 0), e2.w
-        (True, 950pt)        
+        (True, 950pt)
         """
         gridColumns = self.getGridColumns()
         if 0 <= col and col+colSpan <= len(gridColumns):

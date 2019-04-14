@@ -412,7 +412,8 @@ class Page(Element):
         """
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
-        b.resetHtml()
+        b.clearHtml()
+        #b.clearCss()
 
         self.build_scss(view)
 
@@ -438,6 +439,20 @@ class Page(Element):
                 b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.head()
+                
+                # Add Google Analytics if accounts numbers are defined.
+                if view.googleAdsAccount is not None and view.googleAnalyticsId is not None:
+                    b.addHtml("""<!-- Global Site Tag (gtag.js) - Google Analytics -->
+                        <script async src="https://www.googletagmanager.com/gtag/js?id=%(googleAnalyticsId)s"></script>
+                        <script>
+                          window.dataLayer = window.dataLayer || [];
+                          function gtag(){dataLayer.push(arguments);}
+                          gtag('js', new Date());
+
+                          gtag('config', '%(googleAnalyticsId)s');
+                        </script>
+                """ % dict(googleAnalyticsId=view.googleAnalyticsId)) 
+
                 b.meta(charset=self.css('encoding')) # Default utf-8
                 # Try to find the page name, in sequence order of importance.
                 b.title_(self.title or self.name or self.url.split('/')[-1])
@@ -455,7 +470,8 @@ class Page(Element):
                         for webFontUrl in webFontUrls:
                             b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
 
-                # If there is cumulated CSS in the builder, then add that inside the page
+                # If there is cumulated CSS in the builder, e.g. by individual elements for this page
+                # only, then add that directly inside the page
                 if b.hasCss():
                     b.style()
                     b.addHtml(b.getCss())

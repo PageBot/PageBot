@@ -122,6 +122,10 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         ry = pt0,
         angle = degrees(0), # Angle in degrees or radians units.
 
+        # For roundings or circle diameters, there is a generic radius value.
+        # It can be altered on local style settings for an element.
+        radius = pt(10),
+
         # In "time-dimension" this is an overall value for export. This works
         # independent from the time-marks of element attributes.
         # In case saving as .mov or .gif, this value defines 1/frames_per_second

@@ -63,6 +63,10 @@ class SiteView(HtmlView):
         self.jsUrls = jsUrls or [URL_JQUERY] # Added as <script src="..."> at end of <body>
         self.jsPaths = jsPaths # File content added as <script>...</script> at end of <body>
 
+        # Attributes to fill Google data, when pages need to included Google Analytics
+        self.googleAdsAccount = None
+        self.googleAnalyticsId = None
+    
     def copyResources(self, path):
         """If self.resourcePaths are defined, then copy them into the destiation path.
         If the resources already exist, then delete them before copy.

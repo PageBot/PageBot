@@ -225,6 +225,8 @@ class HtmlBuilder(XmlBuilder):
     # A_ATTRIBUTES_DEFAULTS = {'alt': '='}
     NAV_ATTRIBUTES = {'accesskey', 'role'}
 
+    SVG_ATTRIBUTES = {'width', 'height'}
+
     BOOLEAN_ATTRIBUTES = {'checked': 'checked', 'selected': 'selected', 'disabled': 'disabled'}
 
     USE_JQUERY = True
@@ -281,7 +283,7 @@ table {
 """
 
     def __init__(self):
-        self.resetHtml() # Initialize the HTML output stream.
+        self.clearHtml() # Initialize the HTML output stream.
         self._cssOut = [] # Keep the collected CSS and JS from elements here.
         self._scssVariables = {}
         self.clearJs() # Keep optional js chunck names, so avoid double output.
@@ -611,11 +613,19 @@ table {
         """Answers the accumulated HTML as single string."""
         return ''.join(self._htmlOut)
 
-    def resetHtml(self):
-        """Reset the output stream, as should be done after each page export.
-        It is likely not to reset the CSS, because we want to collect all and
-        write to the single CSS file for the entire site."""
+    def clearHtml(self):
+        """Clear the output stream, as should be done after each page export.
+        This is likely to be done by Page elements, starting to render a new page.
+        The content of previous pages then should be cleared."""
         self._htmlOut = []
+
+    def clearCss(self):
+        """
+        We can safely clear the CSS, because the local CSS is not intended to 
+        collect all for the entire site. THis is just for local additions in the
+        page. This is likely to be done by Page elements, starting to render a new page.
+        The content of previous pages then should be cleared."""
+        self._cssOut = []
 
     def docType(self, s=None):
         self.write('<!DOCTYPE %s>\n' % (s or 'html'))
@@ -1405,6 +1415,12 @@ table {
         if comment is not None:
             self.comment(comment)
 
+    def svg(self, **args):
+        self.write_tag('svg', True, args)
+
+    def _svg(self):
+        self._closeTag('svg')
+
     def canvas(self, **args):
         """The canvas tag defines a canvas in a document.
         """
@@ -1454,7 +1470,7 @@ table {
         >>> b.hr()
         >>> b.getHtml()
         '<hr/>'
-        >>> b.resetHtml()
+        >>> b.clearHtml()
         >>> b.hr(cssClass='wide')
         >>> b.getHtml()
         '<hr class="wide"/>'
@@ -1475,7 +1491,7 @@ table {
         >>> b._a()
         >>> b.getHtml()
         '<a href="mypage.html" target="external" class="myClass">Hello</a>'
-        >>> b.resetHtml()
+        >>> b.clearHtml()
         >>> b.a(name="marker")
         >>> b.getHtml()
         '<a name="marker">'

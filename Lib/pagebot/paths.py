@@ -22,4 +22,5 @@
 #
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
-DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/google/roboto/Roboto-Regular.ttf'
+DEFAULT_FONT_NAME = 'Roboto-Regular'
+DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/google/roboto/%s.ttf' % DEFAULT_FONT_NAME
