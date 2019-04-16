@@ -442,7 +442,7 @@ class Page(Element):
                 
                 # Add Google Analytics if accounts numbers are defined.
                 if view.googleAdsAccount is not None and view.googleAnalyticsId is not None:
-                    b.addHtml("""<!-- Global Site Tag (gtag.js) - Google Analytics -->
+                    gaScript_XXX = """<!-- Global Site Tag (gtag.js) - Google Analytics -->
                         <script async src="https://www.googletagmanager.com/gtag/js?id=%(googleAnalyticsId)s"></script>
                         <script>
                           window.dataLayer = window.dataLayer || [];
@@ -451,7 +451,24 @@ class Page(Element):
 
                           gtag('config', '%(googleAnalyticsId)s');
                         </script>
-                """ % dict(googleAnalyticsId=view.googleAnalyticsId)) 
+                    """ % dict(googleAnalyticsId=view.googleAnalyticsId)
+                    gaScript = """
+                    <script>
+                    (function(i,s,o,g,r,a,m){
+                      i['GoogleAnalyticsObject']=r;
+                      i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},
+                      i[r].l=1*new Date();
+                      a=s.createElement(o),m=s.getElementsByTagName(o)[0];
+                      a.async=1;
+                      a.src=g;
+                      m.parentNode.insertBefore(a,m)
+                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                    ga('create', '%(googleAnalyticsId)s', 'auto');
+                    ga('send', 'pageview');
+                    </script>
+                    """ % dict(googleAnalyticsId=view.googleAnalyticsId)
+                    b.addHtml(gaScript)
 
                 b.meta(charset=self.css('encoding')) # Default utf-8
                 # Try to find the page name, in sequence order of importance.
