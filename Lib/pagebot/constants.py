@@ -310,7 +310,15 @@ MAGAZINE_SIZES = {
 	'A4Oversized': A4Oversized,
 	'A3Oversized': A3Oversized,
 }
+AD_SIZES = {
+	'A3': A3,
+	'A4': A4,
+	'A5': A5,
+	'B4': B4,
+	'B5': B5,
+}
 PAGE_SIZES = {
+	'Ad': AD_SIZES,
 	'Magazine': MAGAZINE_SIZES,
 }
 

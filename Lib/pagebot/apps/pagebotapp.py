@@ -33,7 +33,8 @@ from drawBot.ui.drawView import DrawView
 context = DrawBotContext()
 
 magazineSizes = {}
-for pageName, pageSize in MAGAZINE_SIZES.items():
+#for pageName, pageSize in MAGAZINE_SIZES.items():
+for pageName, pageSize in AD_SIZES.items():
     magazineSizes['%s %s' % (pageName, pageSize)] = pageSize
 
 fontRegular = findFont('PageBot-Regular')
@@ -73,7 +74,7 @@ class PageBotApp(BaseApp):
         self.window.uiGroup.makeButton = Button((pad, -pad-uiH, -pad, uiH), 
             'Make', callback=self.makePublication)
         
-        self.window.uiGroup.tabs = Tabs((0, 0, -0, -uiH-pad), ["Design", "Content"], sizeStyle='mini')
+        self.window.uiGroup.tabs = Tabs((0, 0, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
 
         # D E S I G N  U I
         tab = self.uiDesign = self.window.uiGroup.tabs[0]
@@ -84,7 +85,7 @@ class PageBotApp(BaseApp):
         y += uiL-2 
         tab.publicationLabel = TextBox((pad, y-8, -pad, uiLS), 'Type of publication', sizeStyle='mini')
         options = sorted((
-            'Magazine', 'Book', 'Newletter', 'Newspaper', 'Poster', 
+            'Ad', 'Magazine', 'Catalog', 'Book', 'Newletter', 'Newspaper', 'Poster', 
             'Identity', 'Specimen', 'Website', 'Test'
         ))
         tab.publication = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,  
@@ -93,7 +94,7 @@ class PageBotApp(BaseApp):
         
         y += uiL 
         tab.templateLabel = TextBox((pad, y-8, -pad, uiLS), 'Template type', sizeStyle='mini')
-        templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 'Generic'))
+        templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 'Generic', 'Creative'))
         tab.templateType = PopUpButton((pad, y, -pad, uiH), templateTypes, callback=self.makeSample,  
             sizeStyle='small')
         tab.templateType.set(templateTypes.index('Generic'))
