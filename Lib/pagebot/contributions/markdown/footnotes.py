@@ -27,7 +27,7 @@ from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
 from markdown.util import etree, text_type
-from markdown.odict import OrderedDict
+from collections import OrderedDict
 import re
 
 FN_BACKLINK_TEXT = "zz1337820767766393qq"

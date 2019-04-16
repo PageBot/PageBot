@@ -28,7 +28,7 @@ from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
 from markdown.util import etree
-from markdown.odict import OrderedDict
+from collections import OrderedDict
 import re
 
 LIT_BACKLINK_TEXT = "AAzz1337820767766393qq"
