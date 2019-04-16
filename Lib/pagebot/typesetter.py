@@ -18,19 +18,22 @@ import re
 import os
 import copy
 import codecs
+import traceback
 import xml.etree.ElementTree as ET
 
 try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
     from markdown.extensions.fenced_code import FencedCodeExtension
-    from pagebot.contributions.markdown.literature import LiteratureExtension
-    from pagebot.contributions.markdown.footnotes import FootnoteExtension
-    from pagebot.contributions.markdown.inline import InlineExtension
 except ImportError:
     print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    print(traceback.format_exc())
     import sys
     sys.exit()
+
+from pagebot.contributions.markdown.literature import LiteratureExtension
+from pagebot.contributions.markdown.footnotes import FootnoteExtension
+from pagebot.contributions.markdown.inline import InlineExtension
 
 #from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
@@ -41,12 +44,12 @@ from pagebot.toolbox.transformer import asIntOrNone
 
 
 class Typesetter:
-    """Mostly used by the Composer, fhe Typesetter takes one or more markdown files or a sequence
-    of markdown strings and builds a galley, using a dictionary of styles for the formatted string
-    attributes. The result of the typesetting is a self.galley, that contains a sequence of Element
-    instances, such as formatted images, textboxes (with BabelStrings), ruler elements and other
-    nested galleys.
-    """
+    """Mostly used by the Composer, fhe Typesetter takes one or more markdown
+    files or a sequence of markdown strings and builds a galley, using a
+    dictionary of styles for the formatted string attributes. The result of the
+    typesetting is a self.galley, that contains a sequence of Element
+    instances, such as formatted images, textboxes (with BabelStrings), ruler
+    elements and other nested galleys."""
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
@@ -75,22 +78,22 @@ class Typesetter:
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
-    MARKDOWN_EXTENSIONS = [ 
-        # These extension are needed to make PageBot markdown compatible with 
+    MARKDOWN_EXTENSIONS = [
+        # These extension are needed to make PageBot markdown compatible with
         # default MacDown behavior.
-        InlineExtension(), 
-        FencedCodeExtension(), 
-        FootnoteExtension(), 
-        LiteratureExtension(), 
+        InlineExtension(),
+        FencedCodeExtension(),
+        FootnoteExtension(),
+        LiteratureExtension(),
         Nl2BrExtension(),
     ]
 
     def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True,
             return2Space=False, tabs2Space=False, br2Return=True, stripHead=False,
             stripTail=False):
-        """
-        The Typesetter instance interprets an XML or Markdown file (.md) and converts it into
-        a Galley instance, with formatted string depending on the current context.
+        """The Typesetter instance interprets an XML or Markdown file (.md) and
+        converts it into a Galley instance with formatted string depending on
+        the current context.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
@@ -135,7 +138,7 @@ class Typesetter:
         self.styles = styles # Style used, in case the current text box does not have them.
 
         # Stack of graphic state as cascading styles. Last is template for the next.
-        self.gState = [] 
+        self.gState = []
         self.tagHistory = [] # Sequential list of all tags that passed parsing
         self.tagStack = [] # Stack of currently active tag names.
         # Save some flags in case the typesetter is running in Python try-except mode.
@@ -144,7 +147,8 @@ class Typesetter:
         self.writeTags = context.useTags
         self.root = None # Will contain the root node after executing typesetFile.
 
-        # Some MarkDown generated tags need to be skipped on output, while their content still is processed.
+        # Some MarkDown generated tags need to be skipped on output, while
+        # their content still is processed.
         if skipTags is None:
             skipTags = self.SKIP_TAGS
         self.skipTags = skipTags
@@ -165,12 +169,13 @@ class Typesetter:
     def dropcap(self, node, e):
         context = self.context
         style = self.styles.get('dropcap')
-     
+
     def getStyleValue(self, name, e=None, style=None, default=None):
-        """Answers the best style value match for *name*, depending on the status of *style*, *e* and *default*,
-        on that order. Answer None if everything failes."""
+        """Answers the best style value match for *name*, depending on the
+        status of *style*, *e* and *default*, in that order. Answer None if
+        everything fails."""
         value = None
-        
+
         if style is not None:
             value = style.get(name)
         if value is None and e is not None:
@@ -235,9 +240,10 @@ class Typesetter:
         self.typesetNode(node, e)
 
     def node_div(self, node, e):
-        """MarkDown generates <div class="footnote">...</div> and <div class="literature">...</div>
-        as output at the end of the HTML export. We will handle them separately by looking them up
-        in the XML-tree. So we'll skip them in the regular flow process."""
+        """MarkDown generates <div class="footnote">...</div> and <div
+        class="literature">...</div> as output at the end of the HTML export.
+        We will handle them separately by looking them up in the XML-tree. So
+        we'll skip them in the regular flow process."""
 
         if node.attrib.get('class') == 'footnote':
             # Find the content of the footnotes. Store the content and add marker.
@@ -300,14 +306,16 @@ class Typesetter:
     IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)')
 
     def node_img(self, node, e):
-        """Process the image. adding the img tag or a new image element to the galley.
-        The alt attribute can contain additional information for the Image element.
-        Keep the Image element in self.currentImage, in case we need to add captions.
-        
-        If there is a "w=<number>" pattern in the alt-attribute, then use it as width
-        measurement for creating a cached image. This way an author can control
-        the required size from witing the content.
-        Markdown the could use code such as ![MyImage w=450](images/myImage.jpg)
+        """Process the image. adding the img tag or a new image element to the
+        galley.  The alt attribute can contain additional information for the
+        Image element.  Keep the Image element in self.currentImage, in case we
+        need to add captions.
+
+        If there is a "w=<number>" pattern in the alt-attribute, then use it as
+        width measurement for creating a cached image. This way an author can
+        control the required size from within the content.
+
+        Markdown could use code such as ![MyImage w=450](images/myImage.jpg)
 
         If one or both if (w, h) are defined, then set the imageScale flag accordingly.
         """
@@ -322,18 +330,18 @@ class Typesetter:
             h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0]) # h=800
         doScale = not path.endswith('.'+FILETYPE_SVG)
         # doScale = doScale or w is not None or h is not None
-        self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley, 
+        self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
-            xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional, 
+            xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional,
             index=node.attrib.get('index', 0))
 
     def node_caption(self, node, e):
-        """If there is a self.currentImage set, then redirect output of the caption nodes into the image,
-        instead of the self.galley. Otherwise just output.
-        as plain text, ignoring the caption tag. Multiple captions are added to the the current image,
-        until it is changed.
-        The caption tag is triggered u *[[...]]* in MarkDown.
-        """ 
+        """If there is a self.currentImage set, then redirect output of the
+        caption nodes into the image, instead of the self.galley. Otherwise
+        just output as plain text, ignoring the caption tag. Multiple captions
+        are added to the the current image until it is changed. The caption
+        tag is triggered by *[[...]]* in MarkDown.
+        """
         if self.currentImage is not None: # In case there is a current image, attach caption to it.
             savedGalley = self.galley # Temporary redirect node parent
             self.galley = self.currentImage
@@ -343,19 +351,20 @@ class Typesetter:
             self.typesetNode(node, e)
 
     def node_code(self, node, e):
-        """Create a NodeBlock element, that contains the code source, to be executed by
-        the Composer in sequence of composition."""
+        """Creates a NodeBlock element that contains the code source, to be
+        executed by the Composer in sequence of composition."""
         self.CODEBLOCK_CLASS(node.text, parent=self.galley)
 
     def pushStyle(self, style):
-        """Push the cascaded style on the gState stack. Make sure that the style is not None and that it
-        is a cascaded style, otherwise it cannot be used as source for child styles. Answer the cascaded
-        style as convenience for the caller. """
+        """Pushes the cascaded style on the gState stack. Makes sure that the
+        style is not None and that it is a cascaded style, otherwise it cannot
+        be used as source for child styles. Answers the cascaded style."""
         self.gState.append(style)
 
     def popStyle(self):
-        """Pop the cascaded style from the gState stack and answer the next style that is on top.
-        Make sure that there still is a style to pop, otherwise raise an error. """
+        """Pop the cascaded style from the gState stack and answer the next
+        style that is on top. Make sure that there still is a style to pop,
+        otherwise raise an error. """
         assert self.gState
         self.gState.pop()
         return self.peekStyle()
@@ -385,7 +394,8 @@ class Typesetter:
         return None
 
     def getLiteratureRefs(self, e):
-        """Answers the literature reference dictionary from the e.lib (derived from the root document)"""
+        """Answers the literature reference dictionary from the e.lib (derived
+        from the root document)"""
         if self.doc is not None:
             lib = self.doc.lib
             if lib is not None:
@@ -395,9 +405,10 @@ class Typesetter:
         return None
 
     def getImageRefs(self, e):
-        """Answers the image reference dictionary from the e.lib (derived from the root document)
-        if it exists. Otherwise create an empty e.lib['imageRefs'] and answer it as empty dictionary.
-        Answer None if e.lib does not exist."""
+        """Answers the image reference dictionary from the e.lib (derived from
+        the root document) if it exists. Otherwise create an empty
+        e.lib['imageRefs'] and answer it as empty dictionary. Answer None if
+        e.lib does not exist."""
         lib = e.lib
         if lib is not None:
             if not 'imageRefs' in lib:
@@ -412,7 +423,7 @@ class Typesetter:
         if self.stripHead:
             s = s.lstrip()
         if self.stripTail:
-            s = s.rstrip() 
+            s = s.rstrip()
         if prefix is not None: # Strip if prefix is not None. Otherwise don't touch.
             s = str(prefix or '') + s
         if postfix is not None:
@@ -435,8 +446,8 @@ class Typesetter:
         return matches
 
     def getNamedStyle(self, styleName):
-        """Answers the named style and otherwise an empty style dict if the named style
-        does not exist."""
+        """Answers the named style and otherwise an empty style dict if the
+        named style does not exist."""
         return self.styles.get(styleName, {})
 
     def getRootStyle(self):
@@ -446,12 +457,13 @@ class Typesetter:
         return {}
 
     def getNodeStyle(self, tag):
-        """Make a copy of the top of the style graphics state and mew *style* into it. Answer the new style.
-        This can be used to match custom tag names (such as <dropcap>...</dropcap> to a style with the same name.
+        """Makes a copy of the top of the style graphics state and mew *style*
+        into it. Answer the new style. This can be used to match custom tag
+        names (such as <dropcap>...</dropcap> to a style with the same name.
         """
         if self.peekStyle() is None: # Not an initialized stack, use doc.rootStyle as default.
             # Happens if calling directly, without check on e or non-existing style for a node.
-            self.pushStyle(self.getRootStyle()) 
+            self.pushStyle(self.getRootStyle())
         mergedStyle = copy.copy(self.peekStyle())
         # Find the best matching style for tag on order of relevance,
         # considering the possible HTML tag parents and the history.
@@ -464,8 +476,9 @@ class Typesetter:
         return mergedStyle
 
     def append(self, bs):
-        """Append the string (or BabelString instance) to the last textbox in galley,
-        if it exists. Otherwise create a new TextBox and add it to self.galley."""
+        """Append the string (or BabelString instance) to the last textbox in
+        galley, if it exists. Otherwise create a new TextBox and add it to
+        self.galley."""
         if self.galley.elements and self.galley.elements[-1].isTextBox:
             box = self.galley.elements[-1]
             if box.bs is None:
@@ -478,7 +491,7 @@ class Typesetter:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
         else:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
-            
+
     def htmlNode(self, node, end=False):
         """Open the tag in HTML output and copy the node attributes if there are any."""
         htmlTag = u'<%s' % node.tag
@@ -503,18 +516,22 @@ class Typesetter:
         self.htmlNode(node, end=True)
 
     def typesetString(self, sOrBs, e=None, style=None):
-        """If s is a formatted string, then it is placed untouched. If it is a plain string, then
-        use the optional *style* or element *e* (using *e.css(name)*) for searching style parameters.
-        Answer the new formatted string for convenience of the caller. e.g. to measure its size."""
+        """If s is a formatted string, then it is placed untouched. If it is a
+        plain string, then use the optional *style* or element *e* (using
+        *e.css(name)*) for searching style parameters.  Answer the new
+        formatted string for convenience of the caller. e.g. to measure its
+        size."""
         # Only convert if not yet BabelString instance.
         bs = self.context.newString(sOrBs, e=e, style=style)
         self.append(bs)
         return bs
 
     def typesetNode(self, node, e=None):
-        """Recursively typeset the etree *node*, using a reference to element *e* or the cascading *style*.
-        If *e* is None, then the tag style is merged on top of the doc.rootStyle. If *e* is defined, then
-        rootstyle of the stack starts with an empty dictionary, leaving root searching for the e.parent path."""
+        """Recursively typeset the etree *node*, using a reference to element
+        *e* or the cascading *style*. If *e* is None, then the tag style is
+        merged on top of the doc.rootStyle. If *e* is defined, then rootstyle
+        of the stack starts with an empty dictionary, leaving root searching
+        for the e.parent path."""
 
         # Ignore <pre> tag output, as it is part of a ~~~Pyhton ... ~~~ code block
         if self.writeTags and not node.tag in self.skipTags:
@@ -588,8 +605,9 @@ class Typesetter:
         self.popStyle()
 
     def markDown2XmlFile(self, fileName, mdText, mdExtensions=None):
-        """Take the markdown source, convert to HTML/XML and save in the file called fileName.
-        If the fileName does not end with ".xml" extension, then add it. Answer the (new) fileName.
+        """Take the markdown source, convert to HTML/XML and save in the file
+        called fileName. If the fileName does not end with ".xml" extension,
+        then add it. Answer the (new) fileName.
 
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
@@ -608,7 +626,7 @@ class Typesetter:
         xml = u'<?xml version="1.0" encoding="utf-8"?>\n<document>%s</document>' % xmlBody
 
         if self.return2Space:
-            for c1, c2 in (('\r', ' '), ('\n', ' '), ('&nbsp;', ' ')): 
+            for c1, c2 in (('\r', ' '), ('\n', ' '), ('&nbsp;', ' ')):
                 xml = xml.replace(c1, c2) # Replace all returns by tabs. Paragraphs should be made with <p> and <br/>
             xml += '\r'
 
@@ -627,12 +645,15 @@ class Typesetter:
         return self.galley
 
     def typesetFile(self, fileName, e=None, xPath=None):
-        """Read the XML document and parse it into a tree of document-chapter nodes. Make the typesetter
-        start at page pageNumber and find the name of the flow in the page template.
-        The optional filter can be a list of tag names that need to be included in the
-        composition, ignoring the rest.
-        The optional rootStyle can be defined as style for the root tag, cascading force all
-        child elements. Answer the root node for convenience of the caller."""
+        """Read the XML document and parse it into a tree of document-chapter
+        nodes. Make the typesetter start at page pageNumber and find the name
+        of the flow in the page template.  The optional filter can be a list of
+        tag names that need to be included in the composition, ignoring the
+        rest.
+
+        The optional rootStyle can be defined as style for the root tag,
+        cascading force all child elements. Answer the root node for
+        convenience of the caller."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension == 'md':
             # If we have MarkDown content, convert to XML (XHTML)
@@ -642,6 +663,7 @@ class Typesetter:
             fileName = self.markDown2XmlFile(fileName, mdText) # Translate MarkDown to HTML and save in file.
         tree = ET.parse(fileName)
         self.root = tree.getroot() # Get the root element of the tree and store for later retrieval.
+
         # If there is XSL filtering defined, they get the filtered nodes.
         if xPath is not None:
             filteredNodes = self.root.findall(xPath)
@@ -649,8 +671,9 @@ class Typesetter:
                 # How to handle if we got multiple result nodes?
                 self.typesetNode(filteredNodes[0], e)
         else:
-            # Collect all flowing text in one formatted string, while simulating the page/flow, because
-            # we need to keep track on which page/flow nodes results get positioned (e.g. for toc-head
+            # Collect all flowing text in one formatted string, while
+            # simulating the page/flow, because we need to keep track on which
+            # page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(self.root, e)
 
