@@ -46,14 +46,14 @@ headStyle = dict(font=fontRegular, fontSize=pt(4))
 MD_SAMPLE_PATH = getResourcesPath() + '/texts/SAMPLE.md'
 
 class PageBotApp(BaseApp):
-    
-    def __init__(self, publication, w=None, h=None, 
+
+    def __init__(self, publication, w=None, h=None,
             minW=None, maxW=None, minH=None, maxH=None, **kwargs):
         uiWidth = pt(200)
         w, h = w or B5[0]+uiWidth, h or B5[1]
         BaseApp.__init__(self, w=w, h=h, **kwargs)
         self.publication = publication
-        self.window = Window((24, 24, w, h), 'PageBot App', 
+        self.window = Window((24, 24, w, h), 'PageBot App',
             minSize=(minW or 200, minH or 200),
             maxSize=(maxW or XXXL, maxH or XXXL))
         self.buildUI(uiWidth)
@@ -69,69 +69,69 @@ class PageBotApp(BaseApp):
 
         # Store the Magazine instance.
         self.publication = publication
- 
+
         self.window.uiGroup = Group((0, 0, uiWidth, -0))
-        self.window.uiGroup.makeButton = Button((pad, -pad-uiH, -pad, uiH), 
+        self.window.uiGroup.makeButton = Button((pad, -pad-uiH, -pad, uiH),
             'Make', callback=self.makePublication)
-        
+
         self.window.uiGroup.tabs = Tabs((0, 0, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
 
         # D E S I G N  U I
         tab = self.uiDesign = self.window.uiGroup.tabs[0]
-      
+
         tab.documentNameLabel = TextBox((pad, y-13, -pad, uiLS), 'Document name', sizeStyle='mini')
         tab.documentName = TextEditor((pad, y, -pad, uiLS), self.publication.__class__.__name__)
-        
-        y += uiL-2 
+
+        y += uiL-2
         tab.publicationLabel = TextBox((pad, y-8, -pad, uiLS), 'Type of publication', sizeStyle='mini')
         options = sorted((
-            'Ad', 'Magazine', 'Catalog', 'Book', 'Newletter', 'Newspaper', 'Poster', 
+            'Ad', 'Magazine', 'Catalog', 'Book', 'Newletter', 'Newspaper', 'Poster',
             'Identity', 'Specimen', 'Website', 'Test'
         ))
-        tab.publication = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,  
+        tab.publication = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.publication.set(options.index(self.publication.__class__.__name__))
-        
-        y += uiL 
+
+        y += uiL
         tab.templateLabel = TextBox((pad, y-8, -pad, uiLS), 'Template type', sizeStyle='mini')
         templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 'Generic', 'Creative'))
-        tab.templateType = PopUpButton((pad, y, -pad, uiH), templateTypes, callback=self.makeSample,  
+        tab.templateType = PopUpButton((pad, y, -pad, uiH), templateTypes, callback=self.makeSample,
             sizeStyle='small')
         tab.templateType.set(templateTypes.index('Generic'))
-        
-        y += uiL 
+
+        y += uiL
         tab.themeLabel = TextBox((pad, y-8, (uiWidth-pad)*2/3, uiLS), 'Theme', sizeStyle='mini')
         themeNames = sorted(ThemeClasses.keys())
-        tab.theme = PopUpButton((pad, y, (uiWidth-pad*2)*2/3-6, uiH), themeNames, callback=self.makeSample, 
+        tab.theme = PopUpButton((pad, y, (uiWidth-pad*2)*2/3-6, uiH), themeNames, callback=self.makeSample,
             sizeStyle='small')
         tab.theme.set(themeNames.index(DEFAULT_THEME_CLASS.NAME))
         tab.themeMoodLabel = TextBox(((uiWidth-pad)*2/3, y-8, -pad, uiLS), 'Mood', sizeStyle='mini')
         themeMoods = BaseTheme.MOOD_NAMES
-        tab.themeMood = PopUpButton(((uiWidth-pad)*2/3, y, -pad, uiH), themeMoods, 
+        tab.themeMood = PopUpButton(((uiWidth-pad)*2/3, y, -pad, uiH), themeMoods,
             callback=self.makeSample, sizeStyle='small')
         tab.themeMood.set(themeMoods.index(BaseTheme.DEFAULT_MOOD_NAME))
-        
-        y += uiL 
+
+        y += uiL
         tab.pageSizeLabel = TextBox((pad, y-8, -pad, uiLS), 'Page size', sizeStyle='mini')
         options = sorted(magazineSizes.keys())
-        tab.pageSize = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,  
+        tab.pageSize = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.pageSize.set(2)
-        
+
         y += uiL-4
         orientation = ('Portrait', 'Landscape')
         tab.orientation = RadioGroup((pad, y, -pad, 32), orientation, callback=self.makeSample,
-            sizeStyle='small', isVertical=True) 
+            sizeStyle='small', isVertical=True)
         tab.orientation.set(0)
-        tab.spread = CheckBox((uiWidth/2, y-4, -pad, uiH), 'Spread', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.spread = CheckBox((uiWidth/2, y-4, -pad, uiH), 'Spread', callback=self.makeSample,
+            sizeStyle='small')
         tab.spread.set(0)
-        
+
         y += uiLS-6
-        tab.symmetric = CheckBox((uiWidth/2, y, -pad, uiH), 'Symmetry', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.symmetric = CheckBox((uiWidth/2, y, -pad, uiH), 'Symmetry', callback=self.makeSample,
+            sizeStyle='small')
         tab.symmetric.set(0)
-        
+
         y += uiL+8
         tbW = 40 # Padding text box width
         tw = 10
@@ -148,107 +148,107 @@ class PageBotApp(BaseApp):
         x += tw + tbW + 2
         tab.paddingLeftLabel = TextBox((x, y, 12, uiLS), 'L', sizeStyle='small')
         tab.paddingLeft = TextEditor((x+tw, y, tbW, uiLS), '72', callback=self.makeSample,)
-        
-        y += uiL 
+
+        y += uiL
         tab.gridLabel = TextBox((pad, y-8, -pad, uiLS), 'Grid', sizeStyle='mini')
         columnOptions = []
         for columns in range(1, 17):
             columnOptions.append(str(columns))
         tab.columnsLabel = TextBox((pad, y+5, 36, uiLS), 'Cols', sizeStyle='small')
-        tab.columns = PopUpButton((pad+36, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,  
+        tab.columns = PopUpButton((pad+36, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.columns.set(3) # 4 columns
         tab.hGutterLabel = TextBox((uiWidth/2, y+5, 60, uiLS), 'HGutter', sizeStyle='small')
-        tab.hGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,  
+        tab.hGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.hGutter.set(11) # pt(12)
-        
-        y += uiLS 
+
+        y += uiLS
         rowsOptions = []
         for rows in range(1, 25):
             rowsOptions.append(str(rows))
         tab.rowssLabel = TextBox((pad, y+5, 36, uiLS), 'Rows', sizeStyle='small')
-        tab.rows = PopUpButton((pad+36, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,  
+        tab.rows = PopUpButton((pad+36, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.rows.set(0) # 1 row
         tab.vGutterLabel = TextBox((uiWidth/2, y+5, 60, uiLS), 'VGutter', sizeStyle='small')
-        tab.vGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,  
+        tab.vGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.vGutter.set(11) # pt(12)
-        
+
         y += uiL
         tab.showBaselines = CheckBox((pad, y, uiWidth/2, uiH), 'Baselines', callback=self.makeSample,
-            sizeStyle='small') 
+            sizeStyle='small')
         tab.showBaselines.set(True)
-        tab.showColorBars = CheckBox((uiWidth/2, y, -pad, uiH), 'Color bars', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.showColorBars = CheckBox((uiWidth/2, y, -pad, uiH), 'Color bars', callback=self.makeSample,
+            sizeStyle='small')
         tab.showColorBars.set(1)
-        
+
         y += uiLS
-        tab.showGrid = CheckBox((pad, y, uiWidth/2, uiH), 'Grid', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.showGrid = CheckBox((pad, y, uiWidth/2, uiH), 'Grid', callback=self.makeSample,
+            sizeStyle='small')
         tab.showGrid.set(1)
-        tab.showPagePadding = CheckBox((uiWidth/2, y, -pad, uiH), 'Page padding', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.showPagePadding = CheckBox((uiWidth/2, y, -pad, uiH), 'Page padding', callback=self.makeSample,
+            sizeStyle='small')
         tab.showPagePadding.set(True)
-        
+
         y += uiLS
-        tab.showPageFrame = CheckBox((pad, y, uiWidth/2, uiH), 'Page frame', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.showPageFrame = CheckBox((pad, y, uiWidth/2, uiH), 'Page frame', callback=self.makeSample,
+            sizeStyle='small')
         tab.showPageFrame.set(True)
-        tab.showCropMarks = CheckBox((uiWidth/2, y, -pad, uiH), 'Cropmarks', callback=self.makeSample, 
-            sizeStyle='small') 
+        tab.showCropMarks = CheckBox((uiWidth/2, y, -pad, uiH), 'Cropmarks', callback=self.makeSample,
+            sizeStyle='small')
         tab.showCropMarks.set(True)
- 
+
         # C O N T E N T  U I
         y = pad + dy
         tab = self.uiContent = self.window.uiGroup.tabs[1]
 
         tab.contentSelectionLabel = TextBox((pad, y-8, -pad, uiLS), 'Content selection', sizeStyle='mini')
         options = sorted(('Default content', 'Open...'))
-        tab.contentSelection = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,  
+        tab.contentSelection = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.contentSelection.set(0)
-        y += uiL 
-     
+        y += uiL
+
         self.window.canvas = DrawView((uiWidth, 0, -0, -0))
-       
+
     def build(self, view=None, **kwargs):
         #view = self.ui.view
         #for e in self.elements:
         #    e.build(view, nsParent=page, **kwargs)
         self.window.open()
         #self.makePublication('aa')
-    
+
     def getPadding(self):
         """Answer the document padding."""
         return pt(
-            int(self.uiDesign.paddingTop.get()), 
-            int(self.uiDesign.paddingRight.get()), 
-            int(self.uiDesign.paddingBottom.get()), 
+            int(self.uiDesign.paddingTop.get()),
+            int(self.uiDesign.paddingRight.get()),
+            int(self.uiDesign.paddingBottom.get()),
             int(self.uiDesign.paddingLeft.get())
         )
-        
+
     def getDocumentName(self):
         return self.uiDesign.documentName.get()
-        
+
     def getPaperSize(self):
         w, h = magazineSizes[self.uiDesign.pageSize.getItem()]
         if self.uiDesign.orientation.get():
             w, h = h, w # Flip the page
         return pt(w, h)
-     
+
     def getGrid(self, w, h, padding):
         padT, padR, padB, padL = padding
 
-        columns = int(self.uiDesign.columns.getItem())  
+        columns = int(self.uiDesign.columns.getItem())
         hGutter = pt(int(self.uiDesign.hGutter.getItem()))
         gridX = []
         cw = (w - padR - padL - (columns-1) * hGutter)/columns
         for n in range(columns):
             gridX.append(pt(cw, hGutter))
 
-        rows = int(self.uiDesign.rows.getItem())  
+        rows = int(self.uiDesign.rows.getItem())
         vGutter = pt(int(self.uiDesign.vGutter.getItem()))
         gridY = []
         ch = (h - padT - padB - (rows-1) * vGutter)/rows
@@ -256,7 +256,7 @@ class PageBotApp(BaseApp):
             gridY.append(pt(ch, vGutter))
 
         return gridX, gridY
-         
+
     def pageSizesCallback(self, sender):
         pass
 
@@ -288,10 +288,10 @@ class PageBotApp(BaseApp):
         return doc
 
     def getTheme(self):
-        themeName = self.uiDesign.theme.getItem()           
-        themeMood = self.uiDesign.themeMood.getItem()  
-        return ThemeClasses[themeName](themeMood)  
-               
+        themeName = self.uiDesign.theme.getItem()
+        themeMood = self.uiDesign.themeMood.getItem()
+        return ThemeClasses[themeName](themeMood)
+
     def buildSample(self, doc):
         page = doc[1]
         theme = self.getTheme()
@@ -299,11 +299,11 @@ class PageBotApp(BaseApp):
             c = theme.mood.body_bgcolor.lessOpaque()
             newRect(parent=page, fill=c, conditions=[Fit2Sides()])
 
-        # By default, the typesetter produces a single Galley with content and code blocks.    
+        # By default, the typesetter produces a single Galley with content and code blocks.
         t = Typesetter(doc.context)
         t.typesetFile(MD_SAMPLE_PATH)
-    
-        # Create a Composer for this document, then create pages and fill content. 
+
+        # Create a Composer for this document, then create pages and fill content.
         composer = Composer(doc)
 
         # The composer executes the embedded Python code blocks that indicate where content should go.
@@ -322,7 +322,7 @@ class PageBotApp(BaseApp):
                     conditions = [Left2Left(), Fit2Height()]
                 newRect(parent=page, fill=c, w=colWidth, conditions=conditions)
         """
-        
+
         """
         theme = self.getTheme()
         newTextBox(str(theme.mood.name), style=headStyle, parent=grp, conditions=[Fit2Width(), Top2Top()])
@@ -331,7 +331,7 @@ class PageBotApp(BaseApp):
             newRect(parent=grp, w=32, h=32, fill=color, conditions=[Right2Right(), Float2Top(), Float2Left()])
         """
         page.solve()
-        
+
     def makeSample(self, sender):
         """Make a fast sample page as PDF as example of the current UI settings."""
         doc = self.getDocument()
@@ -340,15 +340,27 @@ class PageBotApp(BaseApp):
         doc.export(path)
         pdfDocument = doc.context.getDocument()
         self.window.canvas.setPDFDocument(pdfDocument)
-                           
+
     def makePublication(self, sender):
+        self.make()
+        
+    def make(self):
         doc = self.getDocument()
         path = '_export/%s.pdf' % name
         doc.export(path)
         pdfDocument = doc.context.getDocument()
         self.window.canvas.setPDFDocument(pdfDocument)
         
+        pdfView = self.window.canvas.getNSView()
+        pdfView.selectAll_('')
+        print(pdfView.currentSelection())
+        pdfView.clearSelection()
+
+
 W, H = A4
 publication = Magazine(w=W, h=H, context=context)
 app = PageBotApp(publication, title='Magazine App', padding=12, context=context)
 app.build()
+app.make()
+
+
