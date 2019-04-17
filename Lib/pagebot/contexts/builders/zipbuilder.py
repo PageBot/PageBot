@@ -9,28 +9,22 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     idmlbuilder.py
+#     zipbuilder.py
 #
 
 import os
 from pagebot.toolbox.transformer import path2Name
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.bezierpaths.commandbezierpath import CommandBezierPath as BezierPath
 
-try:
-    import simple_idml
-except:
-    print('Cannot find simple_idml library')
-
-class IdmlBuilder(BaseBuilder):
+class ZipBuilder(BaseBuilder):
     """
-    >>> b = IdmlBuilder()
+    >>> b = ZipBuilder()
     >>> b.newDrawing()
     >>> b.newPage()
     """
+    PB_ID = 'zip'
 
     def newPage(self, w=None, h=None):
         pass

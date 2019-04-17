@@ -14,17 +14,15 @@
 #     Supporting usage of InDesign API-scripting
 # -----------------------------------------------------------------------------
 #
-#     idmlcontext.py
+#     filecontext.py
 
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.idmlbuilder import IdmlBuilder
-from pagebot.contexts.strings.idmlstring import IdmlString
 
-class IdmlContext(BaseContext):
+class ZipContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = IdmlString
-    EXPORT_TYPES = ('idml',)
+    #STRING_CLASS = ZipString
+    EXPORT_TYPES = ('zip',)
 
     def __init__(self):
         """Constructor of InDesignContext.
@@ -32,7 +30,7 @@ class IdmlContext(BaseContext):
         >>> context = IdmlContext()
         """
         super().__init__()
-        self.b = IdmlBuilder() # cls.b builder for this context.
+        self.b = ZipBuilder() # cls.b builder for this context.
         self.name = self.__class__.__name__
 
     def newDrawing(self, path=None):

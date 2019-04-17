@@ -1453,10 +1453,10 @@ class Element:
 
         >>> e = Element(style=dict(fontSize=pt(12)))
         >>> e.em
-
+        12pt
         >>> e.em = pt(21)
         >>> e.em, e.style['fontSize']
-
+        (21pt, 21pt)
         """
         return self.css('fontSize', DEFAULT_FONT_SIZE)
     def _set_em(self, em):
@@ -1906,17 +1906,6 @@ class Element:
             return DEFAULT_DEPTH
         return self.parent.d # Answer total depth as reference for relative units.
     parentD = property(_get_parentD)
-
-    def _get_em(self):
-        """Answers the current value for fontSize, used as reference for the
-        relative Em Unit.
-
-        >>> e = Element(fontSize=pt(13))
-        >>> e.em
-        13pt
-        """
-        return self.css('fontSize', DEFAULT_FONT_SIZE)
-    em = property(_get_em)
 
     # Plain coordinates
 
@@ -4745,6 +4734,14 @@ class Element:
         for e in self.elements:
             e.prepare_html(view)
 
+    def prepare_zip(self, view):
+        """Respond to the top-down view-->element broadcast in preparation for build_zip.
+        Default behavior is to do nothing other than recursively broadcast to all child element.
+        Inheriting Element classes can redefine.
+        """
+        for e in self.elements:
+            e.prepare_zip(view)
+
     def build_scss(self, view):
         """Build the scss variables for this element."""
         b = self.context.b
@@ -4752,6 +4749,27 @@ class Element:
         for e in self.elements:
             if e.show:
                 e.build_scss(view)
+
+    def build_zip(self, view, path, siblings=None, **kwargs):
+        """Build self and all child elements as regular dict and add
+        it to the list of siblings. Path points to the folder where
+        elements can copy additional files, such as images, fonts,
+        CSS, JS, etc.). This path will later be converted to zip file,
+        as main storage of the current document.
+
+        >>> import os
+        >>> e = Element()
+        >>> zipPath = '/tmp/pagebot-zip'
+        >>> if not os.path.exists(zipPath):
+        ...     os.makedirs(zipPath)
+        >>> e.build_zip(None, zipPath)
+        [{'class_': 'Element'}]
+        """
+        if siblings is None:
+            siblings = []
+        d = dict(class_=self.__class__.__name__)
+        siblings.append(d)
+        return siblings
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
