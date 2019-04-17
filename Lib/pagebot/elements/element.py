@@ -4750,7 +4750,7 @@ class Element:
             if e.show:
                 e.build_scss(view)
 
-    def build_zip(self, view, path, siblings=None, **kwargs):
+    def build_zip(self, view, path, parentDict=None, **kwargs):
         """Build self and all child elements as regular dict and add
         it to the list of siblings. Path points to the folder where
         elements can copy additional files, such as images, fonts,
@@ -4758,18 +4758,27 @@ class Element:
         as main storage of the current document.
 
         >>> import os
-        >>> e = Element()
+        >>> e = Element(x=50, y=60)
         >>> zipPath = '/tmp/pagebot-zip'
         >>> if not os.path.exists(zipPath):
         ...     os.makedirs(zipPath)
-        >>> e.build_zip(None, zipPath)
-        [{'class_': 'Element'}]
+        >>> d = e.build_zip(None, zipPath)
+        >>> eZip = d['elements'][0]
+        >>> eZip['class_']
+        'Element'
+        >>> eZip['style']
         """
-        if siblings is None:
-            siblings = []
-        d = dict(class_=self.__class__.__name__)
-        siblings.append(d)
-        return siblings
+        if parentDict is None:
+            parentDict = dict(class_=None, elements=[])
+        d = dict(class_=self.__class__.__name__, elements=[])
+        for e in self.elements:
+            e.build_zip(view, path, d, **kwargs)
+        parentDict['elements'].append(d)
+        d['style'] = s = {}
+        for name, value in self.style.items():
+            if value is not None:
+                s[name] = str(value)
+        return parentDict
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
