@@ -15,6 +15,7 @@
 #     document.py
 #
 import copy
+import codecs
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -22,7 +23,8 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
-from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir, path2Url
+from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir, path2Url, json2Dict, \
+    dict2Json, asNormalizedJSON
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
 class Document:
@@ -1389,6 +1391,48 @@ class Document:
         view.setParent(self) # Just set parent, without all functionality of self.addElement()
         return view
 
+    #   S A V E  .  P B T
+
+    
+    @classmethod
+    def open(cls, path):
+        """Save the document in native json source code file, represenrinf all of the current
+        settings, including the current dociment.view.
+
+        >>> doc1 = Document(name='MyDoc', w=300, h=400)
+        >>> path = '/tmp/pagebot.document.json'
+        >>> doc1.save(path) # Save document as PageBot-native zip file.
+        >>> doc2 = Document.open(path)
+        >>> doc2
+
+        """
+        f = codecs.open(path, mode="r", encoding="utf-8") # Save the XML as unicode.
+        json = f.read()
+        f.close()
+        d = json2Dict(json)
+        doc = cls()
+        return doc
+
+    def save(self, path, **kwargs):
+        """Save the document in native json source code file, represenrinf all of the current
+        settings, including the current dociment.view.
+
+        >>> doc = Document(w=300, h=400)
+        >>> doc.save('/tmp/pagebot.document.json') # Save document as PageBot-native zip file.
+        """
+        normalizedPages = {}
+        d = dict(
+            class_=self.__class__.__name__,
+            name=self.name,
+            rootStyle=asNormalizedJSON(self.rootStyle),
+            pages=asNormalizedJSON(self.pages),
+            view=asNormalizedJSON(self.view),
+        )
+        json = dict2Json(d)
+        f = codecs.open(path, mode="w", encoding="utf-8") # Save the XML as unicode.
+        f.write(json)
+        f.close()
+
     #   D R A W I N G  &  B U I L D I N G
 
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
@@ -1397,7 +1441,7 @@ class Document:
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
         >>> doc.view # PageView is default.
         <PageView>
-        >>> doc.build('_export/TestBuildDoc.pdf')
+        >>> doc.build('/tmp/TestBuildDoc.pdf')
         >>> view = doc.newView('Site')
         >>> doc.view
         <SiteView:Site (0pt, 0pt, 300pt, 400pt)>

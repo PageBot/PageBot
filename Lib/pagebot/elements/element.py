@@ -33,7 +33,7 @@ from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equ
 from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
-from pagebot.toolbox.transformer import uniqueID
+from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now
 from pagebot.gradient import Gradient, Shadow
@@ -4750,7 +4750,8 @@ class Element:
             if e.show:
                 e.build_scss(view)
 
-    def build_zip(self, view, path, parentDict=None, **kwargs):
+    
+    def asNormalizedJSON(self):
         """Build self and all child elements as regular dict and add
         it to the list of siblings. Path points to the folder where
         elements can copy additional files, such as images, fonts,
@@ -4759,26 +4760,20 @@ class Element:
 
         >>> import os
         >>> e = Element(x=50, y=60)
-        >>> zipPath = '/tmp/pagebot-zip'
-        >>> if not os.path.exists(zipPath):
-        ...     os.makedirs(zipPath)
-        >>> d = e.build_zip(None, zipPath)
-        >>> eZip = d['elements'][0]
-        >>> eZip['class_']
-        'Element'
-        >>> eZip['style']
+        >>> d = e.asNormalizedJSON()
+        >>> d['style']['x']['v']
+        50
+        >>> d['style']['h']['v'], d['style']['h']['class_']
+        (100, 'Pt')
         """
-        if parentDict is None:
-            parentDict = dict(class_=None, elements=[])
-        d = dict(class_=self.__class__.__name__, elements=[])
-        for e in self.elements:
-            e.build_zip(view, path, d, **kwargs)
-        parentDict['elements'].append(d)
-        d['style'] = s = {}
-        for name, value in self.style.items():
-            if value is not None:
-                s[name] = str(value)
-        return parentDict
+        elements = []
+        d = dict(
+            name=self.name,
+            class_=self.__class__.__name__, 
+            elements=asNormalizedJSON(self.elements),
+            style=asNormalizedJSON(self.style)
+        )
+        return d
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is

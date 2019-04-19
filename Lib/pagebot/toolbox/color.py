@@ -197,7 +197,7 @@ def ral2Rgb(ral, default=None):
     >>> ral2Rgb('grey') == ral2Rgb('gray') # Partial name finds other result
     False
     >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('red')
-    '0.54, 0.07, 0.08'
+    '0.31, 0.07, 0.10'
     """
     return ral2NameRgb(ral, default)[1]
 
@@ -304,10 +304,10 @@ def name2Rgb(name):
 def rgb2Name(rgb):
     """Method to convert rgb to a name. Answer None if no name can be found.
 
-    >>> rgb2Name((0.2, 0.3, 0.4))
-    'darkslategray'
-    >>> color(spot=300).name
-    'darkcyan'
+    >>> rgb2Name((0.2, 0.3, 0.4)) in ('darkslategray', 'darkslategrey')
+    True
+    >>> color(spot=300).name in ('teal', 'darkcyan')
+    True
     >>> color(spot=0).name
     'black'
     >>> color(rgb=(0.4, 0.5, 0.6)).name in ('slategrey', 'slategray')
@@ -499,6 +499,36 @@ class Color:
 
         else: # Default is black, if all fails.
             self.r = self.g = self.b = 0
+
+    def asNormalizedJSON(self):
+        """Answer self as normalized JSON-compatible dict.
+
+        >>> d = Color(1, 0, 0.5).asNormalizedJSON()
+        >>> d['class_']
+        'Color'
+        >>> d['b']
+        0.5
+        """
+        d = dict(class_=self.__class__.__name__)
+        if self.a is not None:
+            d['a'] = self.a
+        if not None in (self.r, self.g, self.b):
+            d['r'] = self.r or 0
+            d['g'] = self.g or 0
+            d['b'] = self.b or 0
+        elif not None in (self.c, self,m, self.y, self.k):
+            d['c'] = self.c or 0
+            d['m'] = self.m or 0
+            d['y'] = self.y or 0
+            d['k'] = self.k or 0
+        elif self._spot is not None:
+            d['spot'] = self._spot
+        elif self._ral is not None:
+            d['ral'] = self._ral
+        d['overPrint'] = str(self.overPrint)
+        if self._name is not None:
+            d['name'] = self._name
+        return d
 
     def __eq__(self, c):
         """Answer True if self can be considered to be the same color as c.

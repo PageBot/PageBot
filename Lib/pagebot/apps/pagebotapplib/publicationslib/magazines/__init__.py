@@ -11,3 +11,6 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
+#
+#     pagebot/apps/__init__.py
+#

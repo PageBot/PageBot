@@ -644,6 +644,19 @@ class Unit:
             return '%d%s' % (v, self.name.lower())
         return '%s%s' % (asFormatted(v), self.name.lower())
 
+    def asNormalizedJSON(self):
+        """Answer self as normalized JSON-compatible dict.
+
+        >>> d = pt(200).asNormalizedJSON()
+        >>> d['class_'], d['v'], d['base']
+        ('Pt', 200, 'None')
+        >>> d = em(200, base=24).asNormalizedJSON()
+        >>> d['class_'], d['v'], d['base']['v']
+        ('Pt', 200, )
+        """
+        from pagebot.toolbox.transformer import asNormalizedJSON
+        return dict(class_=self.__class__.__name__, v=self.v, base=asNormalizedJSON(self.base), g=self.g)
+
     def _get_pt(self):
         """Answers the value in *pt*. Base value for absolute unit
         values is ignored.
@@ -2319,6 +2332,18 @@ class Angle:
             if angle == round(angle):
                 angle = int(angle)
         self.angle = angle
+
+    def asNormalizedJSON(self):
+        """Answer self as normalized JSON-compatible dict.
+
+        >>> d = pt(200).asNormalizedJSON()
+        >>> d['class_'], d['v'], d['base']
+        ('Pt', 200, 'None')
+        >>> d = em(200, base=24).asNormalizedJSON()
+        >>> d['class_'], d['v'], d['base']['v']
+        ('Pt', 200, )
+        """
+        return dict(class_=self.__class__.__name__, angle=self.angle or 0)
 
     def __add__(self, angle):
         """Add two angles, using degrees as intermedia value.

@@ -11,3 +11,9 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
+#
+#     pagebotappliib/themeslib/__init__.py
+#
+class Themes:
+	pass
+	

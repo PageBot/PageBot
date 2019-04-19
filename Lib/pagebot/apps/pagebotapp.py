@@ -15,6 +15,7 @@
 #
 from vanilla import *
 from pagebot import getResourcesPath
+from pagebot.apps.pagebotapplib import PageBotAppLib
 from pagebot.apps.baseapp import BaseApp
 from pagebot.publications.magazine import Magazine
 from pagebot.elements import newGroup, newTextBox, newRect
@@ -29,6 +30,8 @@ from pagebot.document import Document
 from pagebot.toolbox.units import inch, pt
 from pagebot.toolbox.color import color
 from drawBot.ui.drawView import DrawView
+
+ADD_MENU = True
 
 context = DrawBotContext()
 
@@ -70,11 +73,49 @@ class PageBotApp(BaseApp):
         # Store the Magazine instance.
         self.publication = publication
 
-        self.window.uiGroup = Group((0, 0, uiWidth, -0))
+        if ADD_MENU:
+            menus = (
+                ('File', 100, self.fileMenu, (
+                    ('New', 'newPublication'),
+                    ('Open...', 'openPublication'),
+                    ('Close', self.closePublication),
+                    ('Save', self.savePublication),
+                    ('Save as...', self.saveAsPublication),
+                    ('Print...', self.printPublication),
+                    ('Export...', self.exportPublication),
+                    ('Quit', self.quitApp),
+                )),
+                ('Edit', 100, self.editMenu, (
+                    ('Undo', self.undoEdit),
+                    ('Cut', self.cutEdit),
+                    ('Copy', self.copyEdit),
+                    ('Paste', self.pasteEdit),
+                    ('Delete', self.deleteEdit),
+                    ('Select all', self.selectAllEdit),
+                    ('Find...', self.findEdit),
+                )),
+                ('Window', 100, self.windowMenu, (
+                    ('WINDOW', self.selectWindow),
+                )),
+            )
+            menuHeight = 18 + 2*pad
+            menuX = pad
+            self.window.menu = Group((0, 0, -0, menuHeight))
+            for menuTitle, menuW, menuCallback, menuAttributes in menus:
+                menuItems = [menuTitle]
+                for menuItemTitle, menuItemCallback in menuAttributes:
+                    menuItems.append(menuItemTitle)
+                setattr(self.window.menu, menuTitle, PopUpButton((menuX, pad, menuW, menuHeight - 2*pad), 
+                    menuItems, callback=menuCallback, sizeStyle='small'))
+                menuX += menuW + 16 
+        else:
+            menuHeight = 0
+
+        self.window.uiGroup = Group((0, menuHeight, uiWidth, -0))
         self.window.uiGroup.makeButton = Button((pad, -pad-uiH, -pad, uiH),
             'Make', callback=self.makePublication)
 
-        self.window.uiGroup.tabs = Tabs((0, 0, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
+        self.window.uiGroup.tabs = Tabs((0, menuHeight, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
 
         # D E S I G N  U I
         tab = self.uiDesign = self.window.uiGroup.tabs[0]
@@ -211,7 +252,7 @@ class PageBotApp(BaseApp):
         tab.contentSelection.set(0)
         y += uiL
 
-        self.window.canvas = DrawView((uiWidth, 0, -0, -0))
+        self.window.canvas = DrawView((uiWidth, menuHeight, -0, -0))
 
     def build(self, view=None, **kwargs):
         #view = self.ui.view
@@ -356,7 +397,73 @@ class PageBotApp(BaseApp):
         print(pdfView.currentSelection())
         pdfView.clearSelection()
 
+    # Menu callbacks
+    
+    def fileMenu(self, info):
+        info.set(0)
+    
+    def newPublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+        
+    def openPublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+        
+    def closePublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+        
+    def savePublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
 
+    def saveAsPublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+        
+    def printPublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+        
+    def exportPublication(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+
+    def quitApp(self, info):
+        print(info)
+        self.window.menu.fileMenu.set(0)
+
+    def editMenu(self, info):
+        info.set(0)
+        
+    def undoEdit(self, info):
+        pass
+
+    def cutEdit(self, info):
+        pass
+
+    def copyEdit(self, info):
+        pass
+
+    def pasteEdit(self, info):
+        pass
+
+    def deleteEdit(self, info):
+        pass
+
+    def selectAllEdit(self, info):
+        pass
+
+    def findEdit(self, info):
+        pass
+
+    def windowMenu(self, info):
+        info.set(0)
+        
+    def selectWindow(self, info):
+        info.set(0)
+      
 W, H = A4
 publication = Magazine(w=W, h=H, context=context)
 app = PageBotApp(publication, title='Magazine App', padding=12, context=context)

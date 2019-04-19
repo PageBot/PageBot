@@ -637,6 +637,10 @@ VIEW_NONE = None # View settings are all off.
 INTERPOLATING_TIME_KEYS = ('x', 'y', 'z', 'w', 'h', 'd', 'g', 'fill', 'stroke', 'strokeWidth',
     'textFill', 'location')
 
+# Native PageBot data files.
+FILETYPE_JSON = 'json'
+FILETYPE_PAGEBOT = 'pbt'
+FILETYPE_ZIP = 'zip'
 # Image formats (standard in DrawBot)
 # See also http://www.drawbot.com/content/canvas/saveImage.html
 FILETYPE_PDF = 'pdf'

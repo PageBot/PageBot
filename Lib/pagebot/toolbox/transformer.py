@@ -22,7 +22,8 @@ import json, re
 from time import time
 import datetime
 from random import randint
-from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone
+from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone, Unit, Degrees
+from pagebot.toolbox.color import Color
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
@@ -644,6 +645,32 @@ def json2List(src):
 def list2Json(d):
     return json.dumps(d, indent=4)
 
+def asNormalizedJSON(value):
+    """Answer the value as normalized object, where all values are converted into 
+    base objects, dict, list and string.
+
+    >>> src = dict(aa='bb', cc=[1,2,3,4], dd=dict(ee=123, ff='ABC'), gg={3,4,5,5,6,6,7,7})
+    >>> result = asNormalizedJSON(src)
+    >>> sorted(result.keys())
+    ['aa', 'cc', 'dd', 'gg']
+    >>> sorted(result['gg'])
+    [3, 4, 5, 6, 7]
+    """
+    if value is None:
+        result = 'None'
+    elif isinstance(value, (set, list, tuple)):
+        result = []
+        for v in value:
+            result.append(asNormalizedJSON(v))
+    elif isinstance(value, (float, int, str)):
+            result = value
+    elif isinstance(value, dict):
+            result = {}
+            for name, v in value.items():
+                result[name] = asNormalizedJSON(v)
+    else:
+        result = value.asNormalizedJSON()
+    return result
 
 # ---------------------------------------------------------------------------------------------------------
 #    R O M A N  N U M E R A L S
