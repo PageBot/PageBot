@@ -10,18 +10,15 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     brochure.py
+#     ad.py
 #
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.constants import *
 
-class Brochure(Publication):
-    """Create a default brochure, with cover/home page, article pages in different 
-    template layouts, table of content, navigation. Layout and content options defined 
-    by external parameters.
-    The brochure should be optimized to export as PDF as well as website.
+class Ad(Publication):
+    """Create a default ad, optimized to export as PDF as well as website.
 
     Subclassed from Element-->Publication with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
@@ -56,8 +53,6 @@ class Brochure(Publication):
         'A4Oversized': A4Oversized,
         'A3Oversized': A3Oversized,
     }
-    DEFAULT_PAGE_SIZE_NAME = 'A4'
-    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
         u"""Initialize the generic brochure templates. """
@@ -68,32 +63,6 @@ class Brochure(Publication):
 
         if coverBackgroundFill is None:
             coverBackgroundFill = self.DEFAULT_COVERBACKGROUND
-
-        t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY)
-        newRect(parent=t, conditions=[Fit2Sides()], name='Cover', fill=coverBackgroundFill)
-        newTextBox(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200)
-        self.addTemplate(t.name, t)
-        score = t.solve()
-
-        t = Template(w=w, h=h, name='Title Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Left2Col(1), Bottom2Row(0)], name='Title', h=200)
-        self.addTemplate(t.name, t)
-        t.solve(score)
-
-        t = Template(w=w, h=h, name='Table Of Content', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='TOC', w=200)
-        self.addTemplate(t.name, t)
-        t.solve(score)
-
-        t = Template(w=w, h=h, name='Main Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='Main Column', w=200)
-        self.addTemplate('default', t)
-        t.solve(score)
-
-        t = Template(w=w, h=h, name='Register Page', padding=padding, gridY=gridY)
-        newPlacer(parent=t, conditions=[Right2Right(), Top2Top(), Fit2Height()], name='Register', w=200)
-        self.addTemplate(t.name, t)
-        t.solve(score)
 
         if score.fails:
             print('Score', score)

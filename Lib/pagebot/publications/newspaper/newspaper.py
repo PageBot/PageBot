@@ -16,7 +16,7 @@
 from pagebot.publications.publication import Publication
 from pagebot.publications.newspaper.title import Title
 from pagebot.publications.newspaper.article import Article
-from pagebot.constants import CENTER
+from pagebot.constants import *
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
@@ -63,6 +63,33 @@ class Newspaper(Publication):
     COLUMNS = 7
     GUTTER = 18
     PADDING = 48
+
+    # Default paper sizes that are likely to be used for 
+    # newspapers in portrait ratio.
+    PAGE_SIZES = {
+        'A2': A2,
+        'A3': A3,
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+        'HalfLetter': HalfLetter,
+        'Letter': Letter,
+        'Legal': Legal,
+        'JuniorLegal': JuniorLegal,
+        'Tabloid': Tabloid,
+        'Ledger': Ledger,
+        'Statement': Statement,
+        'Executive': Executive,
+        'Folio': Folio,
+        'Quarto': Quarto,
+        'Size10x14': Size10x14,
+        'A4Letter': A4Letter,
+        'A4Oversized': A4Oversized,
+        'A3Oversized': A3Oversized,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A3'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def getHeadline(self, s, style, cnt=None, w=None):
         u"""Answers a styled BabelString instance, with some checking on the

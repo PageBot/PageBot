@@ -18,5 +18,5 @@
 #     they are not placed in a layout. Instead they contain a set of pages,
 #     that get transfered to a new created Document during composition.
 #
-from pagebot.publications.portfolio.portfolio import PortFolio
+from pagebot.publications.portfolio.portfolio import Portfolio
 

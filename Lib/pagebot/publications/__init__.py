@@ -34,3 +34,26 @@
 #
 from pagebot.publications.web.nanosite import BaseSite
 from pagebot.publications.web.nanosite import NanoSite
+from pagebot.publications.ad.ad import Ad
+from pagebot.publications.book import Book
+from pagebot.publications.poster import Poster
+from pagebot.publications.catalog import Catalog
+from pagebot.publications.identity import Identity
+from pagebot.publications.portfolio.portfolio import Portfolio
+from pagebot.publications.brochure.brochure import Brochure
+from pagebot.publications.magazine.magazine import Magazine
+from pagebot.publications.typespecimen import TypeSpecimen
+
+PublicationClasses = dict(
+	Ad=Ad,
+	Specimen=TypeSpecimen,
+	Magazine=Magazine,
+	Book=Book,
+	Site=NanoSite,
+	Identity=Identity,
+	Portfolio=Portfolio,
+	#Manual=Manual,
+	Catalog=Catalog,
+	Brochure=Brochure,
+	Poster=Poster,
+)

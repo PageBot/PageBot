@@ -18,6 +18,7 @@ import os
 from pagebot.elements import Element
 from pagebot.document import Document
 from pagebot.toolbox.finder import Finder
+from pagebot.constants import *
 
 class Publication(Element):
     u"""Implementing data and templates for generic publications.
@@ -33,6 +34,18 @@ class Publication(Element):
     """
     FINDER_CLASS = Finder
 
+    # Default values for a publication. To be redefined by 
+    # inheriting publication classes.
+    PAGE_SIZES = { 
+        'A3': A3,
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A4'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
+ 
     def __init__(self, findersOrPaths=None, api=None, **kwargs):
         Element.__init__(self, **kwargs)
         if api is None:

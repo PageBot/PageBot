@@ -22,14 +22,42 @@ from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.dating import now
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.constants import LEFT, RIGHT, IMAGE_TYPES
+from pagebot.constants import *
 
-class PortFolio(Publication):
+class Portfolio(Publication):
     """Create a default portfolio, with cover, front-of-book and automatic composed
     pages from a recursive search in child folders. By defaul the name of the folders
     is used as chapter headers.
     Subclassed from Element-->Publication-->Magazine.
     """
+
+    # Default paper sizes that are likely to be used for 
+    # portfolios in portrait ratio.
+    PAGE_SIZES = {
+        'A2': A2,
+        'A3': A3,
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+        'HalfLetter': HalfLetter,
+        'Letter': Letter,
+        'Legal': Legal,
+        'JuniorLegal': JuniorLegal,
+        'Tabloid': Tabloid,
+        'Ledger': Ledger,
+        'Statement': Statement,
+        'Executive': Executive,
+        'Folio': Folio,
+        'Quarto': Quarto,
+        'Size10x14': Size10x14,
+        'A4Letter': A4Letter,
+        'A4Oversized': A4Oversized,
+        'A3Oversized': A3Oversized,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A3'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
+
     def __init__(self, path=None, cols=None, rows=None, imageTypes=None, styles=None, 
             resolution=1, **kwargs):
         Publication.__init__(self, **kwargs)

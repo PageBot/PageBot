@@ -15,9 +15,8 @@
 #
 from vanilla import *
 from pagebot import getResourcesPath
-from pagebot.apps.pagebotapplib import PageBotAppLib
 from pagebot.apps.baseapp import BaseApp
-from pagebot.publications.magazine import Magazine
+from pagebot.publications import PublicationClasses
 from pagebot.elements import newGroup, newTextBox, newRect
 from pagebot.constants import *
 from pagebot.composer import Composer
@@ -35,11 +34,6 @@ ADD_MENU = True
 
 context = DrawBotContext()
 
-magazineSizes = {}
-#for pageName, pageSize in MAGAZINE_SIZES.items():
-for pageName, pageSize in AD_SIZES.items():
-    magazineSizes['%s %s' % (pageName, pageSize)] = pageSize
-
 fontRegular = findFont('PageBot-Regular')
 fontBold = findFont('PageBot-Bold')
 
@@ -47,22 +41,63 @@ redColor = color('red')
 headStyle = dict(font=fontRegular, fontSize=pt(4))
 
 MD_SAMPLE_PATH = getResourcesPath() + '/texts/SAMPLE.md'
+UNTITLED_PUBLICATION = 'Untitled Publication #%d'
+
+MENUS = (
+    ('File', 100, 'fileMenu', (
+        ('New publication', 'newPublication'),
+        ('New page', 'newPage'),
+        ('Open...', 'openPublication'),
+        ('Close', 'closePublication'),
+        ('Save', 'savePublication'),
+        ('Save as...', 'saveAsPublication'),
+        ('Print...', 'printPublication'),
+        ('Export...', 'exportPublication'),
+        ('Quit', 'quitApp'),
+    )),
+    ('Edit', 100, 'editMenu', (
+        ('Undo', 'undoEdit'),
+        ('Cut', 'cutEdit'),
+        ('Copy', 'copyEdit'),
+        ('Paste', 'pasteEdit'),
+        ('Delete', 'deleteEdit'),
+        ('Select all', 'selectAllEdit'),
+        ('Find...', 'findEdit'),
+    )),
+    ('Style', 100, 'styleMenu', (
+        ('Publication...', 'stylePublication'),
+        ('Metrics...', 'styleMetrics'),
+        ('Templates...', 'styleTemplates'),
+        ('Themes...', 'styleTheme'),
+    )),
+    ('Window', 100, 'windowMenu', (
+        ('WINDOW', 'selectWindow'),
+    )),
+)
 
 class PageBotApp(BaseApp):
+
+    APPS = {} # Key application.eId, value is PageBotApp instance.
 
     def __init__(self, publication, w=None, h=None,
             minW=None, maxW=None, minH=None, maxH=None, **kwargs):
         uiWidth = pt(200)
         w, h = w or B5[0]+uiWidth, h or B5[1]
         BaseApp.__init__(self, w=w, h=h, **kwargs)
-        self.publication = publication
-        self.window = Window((24, 24, w, h), 'PageBot App',
+        self.APPS[self.eId] = self
+        # Key is publication type, values are UI settings
+        self.preferenceUI = {} 
+        self.menuCallbacks = {}
+        if not publication.name:
+            publication.name = (UNTITLED_PUBLICATION % len(self.APPS))
+        self.publication = publication # Store the Magazine instance.
+        self.window = Window((24, 24, w, h), self.publication.name,
             minSize=(minW or 200, minH or 200),
             maxSize=(maxW or XXXL, maxH or XXXL))
         self.buildUI(uiWidth)
 
     def buildUI(self, uiWidth):
-        dy = pad = pt(8)
+        dy = pad = pt(6)
         y = pad + dy
         uiWidth = pt(230)
         uiH = pt(24)
@@ -70,80 +105,52 @@ class PageBotApp(BaseApp):
         uiLS = pt(18)
         uiLS2 = pt(23)
 
-        # Store the Magazine instance.
-        self.publication = publication
-
         if ADD_MENU:
-            menus = (
-                ('File', 100, self.fileMenu, (
-                    ('New', 'newPublication'),
-                    ('Open...', 'openPublication'),
-                    ('Close', self.closePublication),
-                    ('Save', self.savePublication),
-                    ('Save as...', self.saveAsPublication),
-                    ('Print...', self.printPublication),
-                    ('Export...', self.exportPublication),
-                    ('Quit', self.quitApp),
-                )),
-                ('Edit', 100, self.editMenu, (
-                    ('Undo', self.undoEdit),
-                    ('Cut', self.cutEdit),
-                    ('Copy', self.copyEdit),
-                    ('Paste', self.pasteEdit),
-                    ('Delete', self.deleteEdit),
-                    ('Select all', self.selectAllEdit),
-                    ('Find...', self.findEdit),
-                )),
-                ('Window', 100, self.windowMenu, (
-                    ('WINDOW', self.selectWindow),
-                )),
-            )
             menuHeight = 18 + 2*pad
             menuX = pad
             self.window.menu = Group((0, 0, -0, menuHeight))
-            for menuTitle, menuW, menuCallback, menuAttributes in menus:
+            for menuTitle, menuW, menuCallbackName, menuAttributes in MENUS:
                 menuItems = [menuTitle]
                 for menuItemTitle, menuItemCallback in menuAttributes:
+                    self.menuCallbacks[menuItemTitle] = getattr(self, menuItemCallback)
                     menuItems.append(menuItemTitle)
-                setattr(self.window.menu, menuTitle, PopUpButton((menuX, pad, menuW, menuHeight - 2*pad), 
-                    menuItems, callback=menuCallback, sizeStyle='small'))
-                menuX += menuW + 16 
+                setattr(self.window.menu, menuTitle, 
+                    PopUpButton((menuX, pad, menuW, menuHeight - 2*pad), 
+                    menuItems, callback=getattr(self, menuCallbackName), sizeStyle='small'))
+                menuX += menuW + pad 
         else:
             menuHeight = 0
 
         self.window.uiGroup = Group((0, menuHeight, uiWidth, -0))
-        self.window.uiGroup.makeButton = Button((pad, -pad-uiH, -pad, uiH),
-            'Make', callback=self.makePublication)
-
-        self.window.uiGroup.tabs = Tabs((0, menuHeight, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
+        self.window.uiGroup.tabs = Tabs((0, pad, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
 
         # D E S I G N  U I
         tab = self.uiDesign = self.window.uiGroup.tabs[0]
 
-        tab.documentNameLabel = TextBox((pad, y-13, -pad, uiLS), 'Document name', sizeStyle='mini')
-        tab.documentName = TextEditor((pad, y, -pad, uiLS), self.publication.__class__.__name__)
+        tab.documentNameLabel = TextBox((pad, y-12, -pad, uiLS), 'Document name', sizeStyle='mini')
+        tab.documentName = TextEditor((pad, y, -pad, uiLS), self.publication.name)
 
         y += uiL-2
-        tab.publicationLabel = TextBox((pad, y-8, -pad, uiLS), 'Type of publication', sizeStyle='mini')
-        options = sorted((
-            'Ad', 'Magazine', 'Catalog', 'Book', 'Newletter', 'Newspaper', 'Poster',
-            'Identity', 'Specimen', 'Website', 'Test'
-        ))
-        tab.publication = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
-            sizeStyle='small')
-        tab.publication.set(options.index(self.publication.__class__.__name__))
+        tab.publicationLabel = TextBox((pad, y-8, (uiWidth-pad)/2, uiLS), 
+            'Publication type', sizeStyle='mini')
+        tab.templateLabel = TextBox(((uiWidth-pad)/2+pad, y-8, -pad, uiLS), 
+            'Template type', sizeStyle='mini')
+            
+        publicationTypes = sorted(PublicationClasses.keys())
+        tab.publication = PopUpButton((pad, y, (uiWidth-pad)/2-pad, uiH),
+            publicationTypes, callback=self.makeSample, sizeStyle='small')
+        tab.publication.set(publicationTypes.index(self.publication.__class__.__name__))
 
-        y += uiL
-        tab.templateLabel = TextBox((pad, y-8, -pad, uiLS), 'Template type', sizeStyle='mini')
-        templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 'Generic', 'Creative'))
-        tab.templateType = PopUpButton((pad, y, -pad, uiH), templateTypes, callback=self.makeSample,
-            sizeStyle='small')
+        templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 
+            'Generic', 'Creative'))
+        tab.templateType = PopUpButton(((uiWidth-pad)/2+pad, y, -pad, uiH), templateTypes, 
+            callback=self.makeSample, sizeStyle='small')
         tab.templateType.set(templateTypes.index('Generic'))
 
         y += uiL
         tab.themeLabel = TextBox((pad, y-8, (uiWidth-pad)*2/3, uiLS), 'Theme', sizeStyle='mini')
         themeNames = sorted(ThemeClasses.keys())
-        tab.theme = PopUpButton((pad, y, (uiWidth-pad*2)*2/3-6, uiH), themeNames, callback=self.makeSample,
+        tab.theme = PopUpButton((pad, y, (uiWidth-pad*2)*2/3-pad, uiH), themeNames, callback=self.makeSample,
             sizeStyle='small')
         tab.theme.set(themeNames.index(DEFAULT_THEME_CLASS.NAME))
         tab.themeMoodLabel = TextBox(((uiWidth-pad)*2/3, y-8, -pad, uiLS), 'Mood', sizeStyle='mini')
@@ -154,7 +161,7 @@ class PageBotApp(BaseApp):
 
         y += uiL
         tab.pageSizeLabel = TextBox((pad, y-8, -pad, uiLS), 'Page size', sizeStyle='mini')
-        options = sorted(magazineSizes.keys())
+        options = sorted(self.publication.PAGE_SIZES.keys())
         tab.pageSize = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.pageSize.set(2)
@@ -241,12 +248,15 @@ class PageBotApp(BaseApp):
             sizeStyle='small')
         tab.showCropMarks.set(True)
 
+        tab.errors = EditText((pad, -50, -pad, -pad))
+        
         # C O N T E N T  U I
         y = pad + dy
         tab = self.uiContent = self.window.uiGroup.tabs[1]
 
-        tab.contentSelectionLabel = TextBox((pad, y-8, -pad, uiLS), 'Content selection', sizeStyle='mini')
-        options = sorted(('Default content', 'Open...'))
+        tab.contentSelectionLabel = TextBox((pad, y-8, -pad, uiLS), 
+            'Content selection', sizeStyle='mini')
+        options = sorted(('Random content', 'Open...'))
         tab.contentSelection = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.contentSelection.set(0)
@@ -274,7 +284,7 @@ class PageBotApp(BaseApp):
         return self.uiDesign.documentName.get()
 
     def getPaperSize(self):
-        w, h = magazineSizes[self.uiDesign.pageSize.getItem()]
+        w, h = self.publication.PAGE_SIZES[self.uiDesign.pageSize.getItem()]
         if self.uiDesign.orientation.get():
             w, h = h, w # Flip the page
         return pt(w, h)
@@ -302,7 +312,7 @@ class PageBotApp(BaseApp):
         pass
 
     def getDocument(self):
-        """Answer the document the fits the current UI settings."""
+        """Answer the document that fits the current UI settings."""
         w, h = self.getPaperSize()
         name = self.getDocumentName()
         padding = self.getPadding()
@@ -377,7 +387,7 @@ class PageBotApp(BaseApp):
         """Make a fast sample page as PDF as example of the current UI settings."""
         doc = self.getDocument()
         self.buildSample(doc)
-        path = '_export/sample.pdf'
+        path = '_export/%s_Sample.pdf' % self.publication.__class__.__name__
         doc.export(path)
         pdfDocument = doc.context.getDocument()
         self.window.canvas.setPDFDocument(pdfDocument)
@@ -400,74 +410,99 @@ class PageBotApp(BaseApp):
     # Menu callbacks
     
     def fileMenu(self, info):
+        self.menuCallbacks[info.getItem()](self)
+        info.set(0)
+
+    def editMenu(self, info):
+        self.menuCallbacks[info.getItem()](self)
+        info.set(0)
+
+    def styleMenu(self, info):
+        self.menuCallbacks[info.getItem()](self)
+        info.set(0)
+
+    def windowMenu(self, info):
+        self.menuCallbacks[info.getItem()](self)
         info.set(0)
     
+    # File menu
+     
     def newPublication(self, info):
+        newApp()
+        
+    def newPage(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
         
     def openPublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
         
     def closePublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
         
     def savePublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
 
     def saveAsPublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
         
     def printPublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
         
     def exportPublication(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
 
     def quitApp(self, info):
         print(info)
-        self.window.menu.fileMenu.set(0)
 
-    def editMenu(self, info):
-        info.set(0)
-        
+    # Edit menu
+          
     def undoEdit(self, info):
-        pass
+        print(info)
 
     def cutEdit(self, info):
-        pass
+        print(info)
 
     def copyEdit(self, info):
-        pass
+        print(info)
 
     def pasteEdit(self, info):
-        pass
+        print(info)
 
     def deleteEdit(self, info):
-        pass
+        print(info)
 
     def selectAllEdit(self, info):
-        pass
+        print(info)
 
     def findEdit(self, info):
-        pass
+        print(info)
 
-    def windowMenu(self, info):
-        info.set(0)
+    # Style menu
         
+    def stylePublication(self, info):
+        print(info)
+        
+    def styleMetrics(self, info):
+        print(info)
+        
+    def styleTemplates(self, info):
+        print(info)
+        
+    def styleTheme(self, info):
+        print(info)
+
+    # Window menu
+         
     def selectWindow(self, info):
-        info.set(0)
-      
-W, H = A4
-publication = Magazine(w=W, h=H, context=context)
-app = PageBotApp(publication, title='Magazine App', padding=12, context=context)
-app.build()
-app.make()
+        print(info)
+
+def newApp():
+    W, H = A4
+    publicationClass = PublicationClasses['Magazine']
+    publication = publicationClass(w=W, h=H, context=context)
+    app = PageBotApp(publication, title='Magazine App', padding=12, context=context)
+    app.build()
+    app.make()
+newApp()   
 
 

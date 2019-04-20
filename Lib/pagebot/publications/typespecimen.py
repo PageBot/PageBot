@@ -20,6 +20,7 @@
 # Publication (inheriting from Document) is the main instance holding all information 
 # about the document together (pages, styles, etc.)
 from pagebot.publications.publication import Publication 
+from pagebot.constants import *
 
 # Page and Template instances are holding all elements of a page together.
 # And import all other element constructors.
@@ -29,7 +30,18 @@ from pagebot.publications.publication import Publication
 #from pagebot.conditions import *
  
 class TypeSpecimen(Publication):
-    pass
+
+    # Default paper sizes that are likely to be used for 
+    # type specimens in portrait ratio.
+    PAGE_SIZES = { 
+        'A3': A3,
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A4'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
     
 if __name__ == '__main__':
     import doctest

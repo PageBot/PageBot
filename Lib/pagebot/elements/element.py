@@ -339,8 +339,8 @@ class Element:
         return len(self.elements)
 
     def _get_theme(self):
-        """Answer the theme of this element. If undefined answer the theme of self.parent.
-        If not parent defined, then answer None.
+        """Answer the theme of this element. If undefined, answer the theme of self.parent.
+        If no parent is defined, then answer None.
 
         >>> from pagebot.themes import BaseTheme, BackToTheCity
         >>> theme1 = BaseTheme()

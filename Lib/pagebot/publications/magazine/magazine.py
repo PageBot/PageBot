@@ -22,7 +22,7 @@ from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.dating import now
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.constants import LEFT, RIGHT
+from pagebot.constants import *
 
 class ThumbPage(Element):
     """Contains a single page thumbnail. Either as page object or a path to a thumbnail file."""
@@ -69,6 +69,32 @@ class Magazine(Publication):
     Subclassed from Element-->Publication-->Magazine.
 
     """
+    # Default paper sizes that are likely to be used for magazines 
+    # in portrait ratio.
+    PAGE_SIZES = {
+        'A3': A3,
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+        'HalfLetter': HalfLetter,
+        'Letter': Letter,
+        'Legal': Legal,
+        'JuniorLegal': JuniorLegal,
+        'Tabloid': Tabloid,
+        'Ledger': Ledger,
+        'Statement': Statement,
+        'Executive': Executive,
+        'Folio': Folio,
+        'Quarto': Quarto,
+        'Size10x14': Size10x14,
+        'A4Letter': A4Letter,
+        'A4Oversized': A4Oversized,
+        'A3Oversized': A3Oversized,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A4'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
+
     def __len__(self):
         length = 0
         for e in self.elements:

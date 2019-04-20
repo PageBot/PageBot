@@ -288,40 +288,6 @@ DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDT
 # Default page size: Rounded A4 width, Letter 11" height, and pt(100) deep.
 W, H, D = A4Letter[0], A4Letter[1], DEFAULT_DEPTH
 
-# Default paper sizes that are likely to be used for magazines in portrait ratio
-MAGAZINE_SIZES = {
-	'A3': A3,
-	'A4': A4,
-	'A5': A5,
-	'B4': B4,
-	'B5': B5,
-	'HalfLetter': HalfLetter,
-	'Letter': Letter,
-	'Legal': Legal,
-	'JuniorLegal': JuniorLegal,
-	'Tabloid': Tabloid,
-	'Ledger': Ledger,
-	'Statement': Statement,
-	'Executive': Executive,
-	'Folio': Folio,
-	'Quarto': Quarto,
-	'Size10x14': Size10x14,
-	'A4Letter': A4Letter,
-	'A4Oversized': A4Oversized,
-	'A3Oversized': A3Oversized,
-}
-AD_SIZES = {
-	'A3': A3,
-	'A4': A4,
-	'A5': A5,
-	'B4': B4,
-	'B5': B5,
-}
-PAGE_SIZES = {
-	'Ad': AD_SIZES,
-	'Magazine': MAGAZINE_SIZES,
-}
-
 DEFAULT_FRAME_DURATION = 1 # Default duration of a gif frame.
 
 # Language codes from ISO Language Code Table:

@@ -15,7 +15,7 @@
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
-
+from pagebot.constants import *
 
 class Book(Publication):
     """Create a default book, with cover, title pages, table of content,
@@ -26,6 +26,30 @@ class Book(Publication):
     w=None, h=None, exportPaths=None, **kwargs)"""
 
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
+
+    # Default paper sizes that are likely to be used for 
+    # books in portrait ratio.
+    PAGE_SIZES = {
+        'A4': A4,
+        'A5': A5,
+        'B4': B4,
+        'B5': B5,
+        'HalfLetter': HalfLetter,
+        'Letter': Letter,
+        'Legal': Legal,
+        'JuniorLegal': JuniorLegal,
+        'Tabloid': Tabloid,
+        'Ledger': Ledger,
+        'Statement': Statement,
+        'Executive': Executive,
+        'Folio': Folio,
+        'Quarto': Quarto,
+        'Size10x14': Size10x14,
+        'A4Letter': A4Letter,
+        'A4Oversized': A4Oversized,
+    }
+    DEFAULT_PAGE_SIZE_NAME = 'A5'
+    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
         u"""Initialize the generic book templates. """
