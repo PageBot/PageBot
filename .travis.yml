@@ -64,18 +64,16 @@ script:
 - python3 Examples/01_Basics/04_Units.py
 - python3 Examples/01_Basics/05_Documents.py
 - python3 Examples/01_Basics/06_ClipPath.py
-- python3 Examples/02a_Text/AdvancedHyphenation.py
-- python3 Examples/02a_Text/ElasticTextBox.py
-- python3 Examples/02a_Text/HangulKanjiFormattedStrings.py
-- python3 Examples/02a_Text/FormattedStringMetrics.py
-- python3 Examples/02a_Text/TextBoxLinesRuns.py
-- python3 Examples/02a_Text/TextFlows.py
-- python3 Examples/02a_Text/TextLineTextRun.py
-  python3 Examples/02a_Text/BabelStrings.py
-  python3 Examples/02a_Text/FittingTextWidthWithVar.py
-  python3 Examples/02b_Fonts/AlterGlyphCoordinates.py
-  python3 Examples/02b_Fonts/DrawQuadraticGlyph.py
-  python3 Examples/02b_Fonts/UseProofing.py
+- python3 Examples/02_Text/ElasticTextBox.py
+- python3 Examples/02_Text/FormattedStringMetrics.py
+- python3 Examples/02_Text/TextBoxLinesRuns.py
+- python3 Examples/02_Text/TextFlows.py
+- python3 Examples/02_Text/TextLineTextRun.py
+  python3 Examples/02_Text/BabelStrings.py
+  python3 Examples/02_Text/FittingTextWidthWithVar.py
+  python3 Examples/02_Text/AlterGlyphCoordinates.py
+  python3 Examples/02_Text/DrawQuadraticGlyph.py
+  python3 Examples/02_Text/UseProofing.py
   python3 Examples/03_Elements/AlignFloatElements.py
   python3 Examples/03_Elements/DrawRedRectCenterPage.py
   python3 Examples/03_Elements/ShowElements.py
