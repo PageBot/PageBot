@@ -15,7 +15,7 @@
 #
 import os
 
-from pagebot.elements import Element
+from pagebot.elements import Element, Template
 from pagebot.document import Document
 from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
@@ -34,8 +34,7 @@ class Publication(Element):
     """
     FINDER_CLASS = Finder
 
-    # Default values for a publication. To be redefined by 
-    # inheriting publication classes.
+    # Default values for a publication. To be redefined by inheriting publication classes.
     PAGE_SIZES = { 
         'A3': A3,
         'A4': A4,
@@ -45,8 +44,10 @@ class Publication(Element):
     }
     DEFAULT_PAGE_SIZE_NAME = 'A4'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
- 
-    def __init__(self, findersOrPaths=None, api=None, **kwargs):
+
+    TEMPLATES = {} # To be redefined by inheriting publication classes
+
+    def __init__(self, findersOrPaths=None, api=None, templates=None, **kwargs):
         Element.__init__(self, **kwargs)
         if api is None:
             api = {} # All values will be default.
@@ -55,7 +56,10 @@ class Publication(Element):
         if not findersOrPaths: # At least make it search in the current directory
             findersOrPaths = ['.']
         self.addFinders(findersOrPaths)
-        
+        if templates is None:
+            templates = self.TEMPLATES
+        self.templates= templates
+
     def getAPI(self):
     	"""Answers the API dictionary for this class that can be used by calling apps,
     	e.g. for construction and behavior of the scope of app UI parameter controls.

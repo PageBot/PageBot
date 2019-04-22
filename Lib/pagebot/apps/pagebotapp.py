@@ -141,11 +141,10 @@ class PageBotApp(BaseApp):
             publicationTypes, callback=self.makeSample, sizeStyle='small')
         tab.publication.set(publicationTypes.index(self.publication.__class__.__name__))
 
-        templateTypes = sorted(('Corporate', 'Sport', 'Food', 'Education', 
-            'Generic', 'Creative'))
+        templateTypes = sorted(self.publication.templates.keys())
         tab.templateType = PopUpButton(((uiWidth-pad)/2+pad, y, -pad, uiH), templateTypes, 
             callback=self.makeSample, sizeStyle='small')
-        tab.templateType.set(templateTypes.index('Generic'))
+        tab.templateType.set(templateTypes.index(self.publication.DEFAULT_TEMPLATE_NAME))
 
         y += uiL
         tab.themeLabel = TextBox((pad, y-8, (uiWidth-pad)*2/3, uiLS), 'Theme', sizeStyle='mini')

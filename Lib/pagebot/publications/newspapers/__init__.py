@@ -11,11 +11,8 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     __init__.py
+#     newspapers/__init__.py
 #
-#     Parts of publications, e.g. PartOfBook
-#     These are technically elements, with all their behavior, but typically
-#     they are not placed in a layout. Instead they contain a set of pages,
-#     that get transfered to a new created Document during composition.
-#
-from pagebot.publications.magazine.magazine import Magazine
+NEWSPAPER_CLASSES = {
+	
+}

@@ -24,7 +24,7 @@ from pagebot.toolbox.dating import now
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import *
 
-class Portfolio(Publication):
+class BasePortfolio(Publication):
     """Create a default portfolio, with cover, front-of-book and automatic composed
     pages from a recursive search in child folders. By defaul the name of the folders
     is used as chapter headers.

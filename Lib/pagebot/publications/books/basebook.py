@@ -10,33 +10,26 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     brochure.py
+#     book.py
 #
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.constants import *
 
-class Brochure(Publication):
-    """Create a default brochure, with cover/home page, article pages in different 
-    template layouts, table of content, navigation. Layout and content options defined 
-    by external parameters.
-    The brochure should be optimized to export as PDF as well as website.
-
-    Subclassed from Element-->Publication with the following optional attributes:
+class BaseBook(Publication):
+    """Create a default book, with cover, title pages, table of content,
+    chapters and index. Layout and content options defined by external parameters.
+    Subclassed from Document with the following optional attributes:
     rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
     autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
-    w=None, h=None, exportPaths=None, **kwargs)
-
-    >>> from pagebot.constants import A4
-    >>> br = Brochure()
-    >>> br.export('_export/Brochure.pdf')
-    """
+    w=None, h=None, exportPaths=None, **kwargs)"""
 
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
-    # Default paper sizes that are likely to be used for magazines in portrait ratio
+
+    # Default paper sizes that are likely to be used for 
+    # books in portrait ratio.
     PAGE_SIZES = {
-        'A3': A3,
         'A4': A4,
         'A5': A5,
         'B4': B4,
@@ -54,13 +47,14 @@ class Brochure(Publication):
         'Size10x14': Size10x14,
         'A4Letter': A4Letter,
         'A4Oversized': A4Oversized,
-        'A3Oversized': A3Oversized,
     }
-    DEFAULT_PAGE_SIZE_NAME = 'A4'
+    DEFAULT_PAGE_SIZE_NAME = 'A5'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic brochure templates. """
+        u"""Initialize the generic book templates. """
+
+        # TODO: Solve for left/right templates.
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h

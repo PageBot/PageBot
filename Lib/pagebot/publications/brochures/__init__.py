@@ -11,4 +11,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     __init__.py
+#     brochures/__init__.py
+#
+from pagebot.publications.brochures.basebrochure import BaseBrochure
+
+BROCHURE_CLASSES = {
+	
+}

@@ -15,7 +15,6 @@
 from copy import copy
 
 from pagebot.publications.publication import Publication
-from pagebot.publications.magazine.parts import * # Import al specific Magazine Part element classes.
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.units import pt
@@ -63,7 +62,7 @@ class PageSpread(Element):
         if len(spread) > 1 and spread[1] is not None:
             ThumbPage(spread[1], pageNumber+1, x=self.w/2, w=self.w/2, h=self.h, padding=0, parent=self, style=self.style)
 
-class Magazine(Publication):
+class BaseMagazine(Publication):
     """Create a default magazine, with cover, front-of-book, articles on different template
     layouts, table of content, layout and content options defined by external parameters.
     Subclassed from Element-->Publication-->Magazine.

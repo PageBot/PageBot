@@ -50,6 +50,7 @@ A2 = mm(420, 594)
 A3 = mm(297, 420)
 A4 = mm(210, 297)
 A4Rounded = pt(595, 842) # Rounded to points pt(595, 842) to fit exact column measures
+A4Square = mm(210, 210) # Square of A4 (portrait, short side)
 A5 = mm(148, 210)
 A6 = mm(105, 148)
 A7 = mm(74,  105)

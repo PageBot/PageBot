@@ -32,3 +32,7 @@
 #     fm = FashionMagazine('myDataMarkDown.md')
 #     fm.export('MySpeciment.pdf')
 #
+
+WEBSITE_CLASSES = {
+	
+}

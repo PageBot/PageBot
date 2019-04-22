@@ -32,28 +32,36 @@
 #     fm = FashionMagazine('myDataMarkDown.md')
 #     fm.export('MySpeciment.pdf')
 #
-from pagebot.publications.web.nanosite import BaseSite
-from pagebot.publications.web.nanosite import NanoSite
-from pagebot.publications.ad.ad import Ad
-from pagebot.publications.book import Book
-from pagebot.publications.poster import Poster
-from pagebot.publications.catalog import Catalog
-from pagebot.publications.identity import Identity
-from pagebot.publications.portfolio.portfolio import Portfolio
-from pagebot.publications.brochure.brochure import Brochure
-from pagebot.publications.magazine.magazine import Magazine
-from pagebot.publications.typespecimen import TypeSpecimen
+from pagebot.publications.ads import AD_CLASSES
+from pagebot.publications.books import BOOK_CLASSES
+from pagebot.publications.brochures import BROCHURE_CLASSES
+from pagebot.publications.catalogs import CATALOG_CLASSES
+from pagebot.publications.identities import IDENTITY_CLASSES
+from pagebot.publications.magazines import MAGAZINE_CLASSES
+from pagebot.publications.manuals import MANUAL_CLASSES
+from pagebot.publications.newspapers import NEWSPAPER_CLASSES
+from pagebot.publications.portfolios import PORTFOLIO_CLASSES
+from pagebot.publications.posters import POSTER_CLASSES
+from pagebot.publications.typespecimens import TYPE_SPECIMEN_CLASSES
+from pagebot.publications.websites import WEBSITE_CLASSES
 
-PublicationClasses = dict(
-	Ad=Ad,
-	Specimen=TypeSpecimen,
-	Magazine=Magazine,
-	Book=Book,
-	Site=NanoSite,
-	Identity=Identity,
-	Portfolio=Portfolio,
-	#Manual=Manual,
-	Catalog=Catalog,
-	Brochure=Brochure,
-	Poster=Poster,
+PublicationCategories = dict(
+	Ad=AD_CLASSES,
+	Book=BOOK_CLASSES,
+	Brochure=BROCHURE_CLASSES,
+	#Calendars=CALENDARCLASSES,
+	Catalog=CATALOG_CLASSES,
+	#Collection=COLLEDCTION_CLASSES,
+	Identity=IDENTITY_CLASSES,
+	Magazine=MAGAZINE_CLASSES,
+	Manual=MANUAL_CLASSES,
+	Newspaper=NEWSPAPER_CLASSES,
+	#Newsletter=NEWSLETTER_CLASSES,
+	#Paper=SCIENTIFIC_PAPER
+	Portfolio=PORTFOLIO_CLASSES,
+	Poster=POSTER_CLASSES,
+	#Report=ANNUAL_REPORT_CLASSES,
+	#Thesis=THESIS_CLASSES,
+	TypeSpecimen=TYPE_SPECIMEN_CLASSES,
+	Website=WEBSITE_CLASSES,
 )

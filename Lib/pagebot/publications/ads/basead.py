@@ -10,22 +10,20 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     catalog.py
+#     ad.py
 #
+from pagebot.conditions import *
 from pagebot.publications.publication import Publication
+from pagebot.elements import *
 from pagebot.constants import *
 
-class Catalog(Publication):
-    """Create a default catalogue, with layout and content options defined by external parameters.
-    Inheriting from Document with the following optional attribures:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None, 
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
-    exportPaths=None, **kwargs)"""
-
-    # Default paper sizes that are likely to be used for 
-    # catalogs in portrait ratio.
+class BaseAd(Publication):
+    """Create a default base publication of this type, optimized to be exported
+    in most PageBot formats, such as PDF or website.
+    
+    """
+    # Default paper sizes that are likely to be used for magazines in portrait ratio
     PAGE_SIZES = {
-        'A2': A2,
         'A3': A3,
         'A4': A4,
         'A5': A5,
@@ -46,8 +44,3 @@ class Catalog(Publication):
         'A4Oversized': A4Oversized,
         'A3Oversized': A3Oversized,
     }
-    DEFAULT_PAGE_SIZE_NAME = 'A3'
-    DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
-
-    def initialize(self, **kwargs):
-        pass

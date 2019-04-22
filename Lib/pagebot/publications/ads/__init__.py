@@ -11,4 +11,14 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     __init__.py
+#     ads/__init__.py
+#
+from pagebot.publications.ads.basead import BaseAd
+
+AD_CLASSES = {
+}
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
