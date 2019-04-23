@@ -17,9 +17,9 @@
 #     and templates are good enough. Inherit the redefine functions and templates
 #     otherwise. Example of an inherited publications is FBFamilySpecimen.py
 #
-# Publication (inheriting from Document) is the main instance holding all information 
+# Publication (inheriting from Document) is the main instance holding all information
 # about the document together (pages, styles, etc.)
-from pagebot.publications.publication import Publication 
+from pagebot.publications.publication import Publication
 from pagebot.constants import *
 
 # Page and Template instances are holding all elements of a page together.
@@ -28,12 +28,12 @@ from pagebot.constants import *
 
 # Import conditions for layout placements and other element status.
 #from pagebot.conditions import *
- 
+
 class TypeSpecimen(Publication):
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # type specimens in portrait ratio.
-    PAGE_SIZES = { 
+    PAGE_SIZES = {
         'A3': A3,
         'A4': A4,
         'A5': A5,
@@ -42,7 +42,7 @@ class TypeSpecimen(Publication):
     }
     DEFAULT_PAGE_SIZE_NAME = 'A4'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
-    
+
 if __name__ == '__main__':
     import doctest
     import sys

@@ -101,7 +101,6 @@ class Specimens():
         #self.MINOPTICAL = getVarFontInstance(p, dict(opsz=self.opz2))
         #self.MAXOPTICAL = getVarFontInstance(p, dict(opsz=self.opzBody))
 
-
     def specimen(self, templateName):
         self.context = getContext()
         self.doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY,
