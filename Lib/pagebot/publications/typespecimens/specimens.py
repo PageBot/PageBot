@@ -13,11 +13,7 @@
 #
 #     specimens.py
 #
-#     D E P R E C A T E D
-#     Don't use or develop here.
-#
-#     Templates will be defined in Publications
-#
+
 from pagebot import getContext
 from pagebot.conditions import *
 from pagebot.constants import *
@@ -110,8 +106,10 @@ class Specimens():
         defaultFont = self.font.path
         pageNumber = 1
         page = self.doc[pageNumber]
+
         if templateName == 'mainPage':
             self.mainPage(page, headerStyle, bodyStyle, pageNumber, defaultFont)
+
         self.doc.solve()
         # TODO: select output folder.
         self.doc.export('~/tmp.pdf')
@@ -136,7 +134,8 @@ class Specimens():
                 xTextAlign=CENTER, conditions=(Center2Center(),
                     Bottom2Bottom()))
 
-        # 3 columns
+        # 3 columns.
+
         heightCol = pt(700)
         textString = t2
         centertext = self.context.newString(textString, style=dict(font=headerStyle,

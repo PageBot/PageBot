@@ -44,6 +44,8 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
+            elif contextType == 'Canvas':
+                DEFAULT_CONTEXT = getCanvasContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'InDesign':
@@ -84,6 +86,10 @@ def getFlatContext():
 def getDrawBotContext():
     from pagebot.contexts.drawbotcontext import DrawBotContext
     return DrawBotContext()
+
+def getCanvasContext():
+    from pagebot.contexts.canvascontext import CanvasContext
+    return CanvasContext()
 
 def getHtmlContext():
     from pagebot.contexts.htmlcontext import HtmlContext

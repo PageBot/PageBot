@@ -779,9 +779,9 @@ class BaseContext(AbstractDrawBotContext):
         """
         if isinstance(sOrBs, str):
             return self.b.textOverflow(sOrBs, box, align=align) # Plain string
-    
+
         # Assume here it's a BabelString with a FormattedString inside
-        overflow = self.b.textOverflow(sOrBs.s, box, align=align) 
+        overflow = self.b.textOverflow(sOrBs.s, box, align=align)
         bs = self.newString('')
         bs.s = overflow
         return bs
