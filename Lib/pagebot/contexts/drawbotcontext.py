@@ -302,13 +302,16 @@ class DrawBotContext(BaseContext):
         """Draw the font[glyphName] at the defined position with the defined
         fontSize."""
         font = glyph.font
+
         if fontSize is None:
             fontSize = font.info.unitsPerEm
         s = fontSize/font.info.unitsPerEm
+
         if xAlign == CENTER:
             x -= (glyph.width or 0)/2*s
         elif xAlign == RIGHT:
             x -= glyph.width*s
+
         self.save()
         self.fill(fill)
         self.stroke(stroke, w=strokeWidth)
@@ -420,15 +423,15 @@ class DrawBotContext(BaseContext):
         return cachedFilePath
 
 
-    ''' 
+    '''
     # TODO
     # Future experiment, making UI/Vanilla layout for apps by PageBot
     # Needs some additional conceptual thinking.
 
     #   U I  components based on Vanilla API
-    def window(self, title=None, x=None, y=None, w=None, h=None, style=None, 
+    def window(self, title=None, x=None, y=None, w=None, h=None, style=None,
         minW=None, maxW=None, minH=None, maxH=None, closable=None, **kwargs):
-        """Create and opening a window, using Vanilla. 
+        """Create and opening a window, using Vanilla.
 
         >>> context = DrawBotContext()
         >>> from pagebot.toolbox.units import pt, mm
@@ -450,21 +453,21 @@ class DrawBotContext(BaseContext):
             minSize = minW or w, minH or h
         if maxW is None and maxH is None:
             maxSize = None
-        else: 
-            maxSize = maxW or w, maxH or h 
+        else:
+            maxSize = maxW or w, maxH or h
         if closable is None:
             closable = True
 
-        return Window(posSize, title=title or 'Untitled', 
+        return Window(posSize, title=title or 'Untitled',
             minSize=minSize, maxSize=maxSize, closable=closable)
 
     def group(self, x=None, y=None, w=None, h=None, **kwargs):
         return Group((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0))
 
-    def button(self, title=None, x=None, y=None, w=None, h=None, style=None, 
+    def button(self, title=None, x=None, y=None, w=None, h=None, style=None,
             callback=None, **kwargs):
         """Create a Vanilla button"""
-        return Button((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0), 
+        return Button((upt(x) or 0, upt(y) or 0, upt(w) or 0, upt(h) or 0),
             title or 'Button', callback=callback)
 
     def canvas(self, x=None, y=None, w=None, h=None):

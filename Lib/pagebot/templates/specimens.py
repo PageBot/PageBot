@@ -15,7 +15,7 @@
 #
 #     D E P R E C A T E D
 #     Don't use or develop here.
-#     
+#
 #     Templates will be defined in Publications
 #
 from pagebot import getContext
@@ -27,7 +27,7 @@ from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.document import Document
 from pagebot.elements import *
-from pagebot.publications.proofing.pagewide import PageWide
+from pagebot.publications.typespecimens.proofing.pagewide import PageWide
 from pagebot.style import *
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import *

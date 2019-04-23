@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     scriptrunnerapp.py
+#     sketchapp.py
 #
 
 from vanilla import Button, TextBox, Window
