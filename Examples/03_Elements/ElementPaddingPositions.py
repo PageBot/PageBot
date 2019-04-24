@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     ElementSides.py
+#     ElementPaddingPositions.py
 #
 #     Position elements by their sides
 #
@@ -57,7 +57,7 @@ e.bottom = page.pb
 e.right = page.w - page.pr
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
-EXPORT_PATH = '_export/ELementSides.pdf'
+EXPORT_PATH = '_export/ElementPaddingPositions.pdf'
 doc.export(EXPORT_PATH)
 
 
