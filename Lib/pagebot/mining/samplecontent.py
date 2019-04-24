@@ -27,7 +27,10 @@ class SampleContent:
 	True
 	>>> len(sc.articles[0]) > 100
 	True
-	>>> sc.shortHeadlines
+	>>> len(sc.shortHeadlines) == len(sc.MAX_ARTICLE_LENGTHS)
+	True
+	>>> sc.imagePaths[0].endswith('.jpg')
+	True
 	"""
 	MAX_ARTICLE_LENGTHS = (100, 200, 500, 1000, 2000, 5000, 10000)
 
@@ -36,6 +39,7 @@ class SampleContent:
 		self.imagePaths = (
         	resourcesPath + '/images/cookbot1.jpg',
         	resourcesPath + '/images/cookbot10.jpg',
+        	resourcesPath + '/images/peppertom_lowres_398x530.png',
 		)
 		self.longTitles = []
 		self.titles = []

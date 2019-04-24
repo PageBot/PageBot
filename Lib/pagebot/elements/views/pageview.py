@@ -119,7 +119,7 @@ class PageView(BaseView):
             Create a new DrawBot viewport page to draw template + page, if not
             already done. In case the document is oversized, then make all
             pages the size of the document, so the pages can draw their
-            crop-marks. Otherwise make DrawBot pages of the size of each page.
+            crop marks. Otherwise make DrawBot pages of the size of each page.
             Size depends on the size of the larges pages + optional document
             padding.
             '''
@@ -141,11 +141,13 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            self.context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
+            #  Make page in context, actual page may be smaller if showing cropmarks.
+            self.context.newPage(pw, ph) 
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
-            self.context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
+            # Set the duration of this page, in case exporting GIF
+            self.context.frameDuration(page.frameDuration) 
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)
@@ -836,7 +838,8 @@ class PageView(BaseView):
         >>> view.drawRegistrationMarks(e, pt(0, 0))
         """
         if (self.showRegistrationMarks and e.isPage) or e.showRegistrationMarks:
-            cmSize = min(self.pl/2, self.css('viewCropMarkSize')) # TODO: Make cropmark go closer to page edge and disappear if too small.
+            # TODO: Make crop mark go closer to page edge and disappear if too small.
+            cmSize = min(self.pl/2, self.css('viewCropMarkSize')) 
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
             x, y = point2D(origin)
             w, h = e.size
@@ -846,7 +849,7 @@ class PageView(BaseView):
             self._drawRegistrationMark(e, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
     def drawCropMarks(self, e, origin):
-        """If the show flag is set, then draw the cropmarks or page frame.
+        """If the show flag is set, then draw the crop marks or page frame.
 
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot import getContext
@@ -866,33 +869,40 @@ class PageView(BaseView):
             x, y = point2D(origin) # Ignore z-axus for now.
             w, h = e.size
             folds = self.css('folds')
-            cmDistance = self.css('viewCropMarkDistance') # From the side
+            cmDistance = self.css('viewCropMarkDistance') # From the side, compare with bleed.
             cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
 
             context.fill(noColor)
             context.stroke(registrationColor, w=cmStrokeWidth) # For CMYK, draw all colors color(cmyk=1))
+
+            # Calculate distances, comparing to bleeds
+            cmLeft = max(e.bleedLeft, self.bleedLeft, cmDistance)
+            cmRight = max(e.bleedRight, self.bleedRight, cmDistance)
+            cmBottom = max(e.bleedBottom, self.bleedBottom, cmDistance)
+            cmTop = max(e.bleedTop, self.bleedTop, cmDistance)
+
             # Bottom left
-            context.line((x - cmDistance, y), (x - cmSize, y))
-            context.line((x, y - cmDistance), (x, y - cmSize))
+            context.line((x - cmLeft, y), (x - cmLeft - cmSize, y))
+            context.line((x, y - cmBottom), (x, y - cmBottom - cmSize))
             # Bottom right
-            context.line((x + w + cmDistance, y), (x + w + cmSize, y))
-            context.line((x + w, y - cmDistance), (x + w, y - cmSize))
+            context.line((x + w + cmRight, y), (x + w + cmRight + cmSize, y))
+            context.line((x + w, y - cmBottom), (x + w, y - cmBottom - cmSize))
             # Top left
-            context.line((x - cmDistance, y + h), (x - cmSize, y + h))
-            context.line((x, y + h + cmDistance), (x, y + h + cmSize))
+            context.line((x - cmLeft, y + h), (x - cmLeft - cmSize, y + h))
+            context.line((x, y + h + cmTop), (x, y + h + cmTop + cmSize))
             # Top right
-            context.line((x + w + cmDistance, y + h), (x + w + cmSize, y + h))
-            context.line((x + w, y + h + cmDistance), (x + w, y + h + cmSize))
+            context.line((x + w + cmRight, y + h), (x + w + cmRight + cmSize, y + h))
+            context.line((x + w, y + h + cmTop), (x + w, y + h + cmTop + cmSize))
             # Any fold lines to draw on the page?
             if folds is not None:
                 for fx, fy in folds:
                     if fx is not None:
-                        context.line((x + fx, y - cmDistance), (x + fx, y - cmSize))
-                        context.line((x + fx, y + h + cmDistance), (x + fx, y + h + cmSize))
+                        context.line((x + fx, y - cmBottom), (x + fx, y - cmBottom - cmSize))
+                        context.line((x + fx, y + h + cmTop), (x + fx, y + h + cmTop + cmSize))
                     if fy is not None:
-                        context.line((x - cmDistance, y + fy), (x - cmSize, y + fy))
-                        context.line((x + w + cmDistance, y + fy), (x + w + cmSize, y + fy))
+                        context.line((x - cmLeft, y + fy), (x - cmLeft - cmSize, y + fy))
+                        context.line((x + w + cmRight, y + fy), (x + w + cmRight + cmSize, y + fy))
 
     def drawColorBars(self, e, origin):
         """Draw the color bars for offset printing color calibration

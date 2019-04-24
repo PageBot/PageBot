@@ -462,7 +462,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         bleedBottom = pt0,
         bleedRight = pt0,
         bleedLeft = pt0,
-        viewCropMarkDistance = pt(8),  # Distance of crop-marks from page frame
+        viewCropMarkDistance = pt(8),  # Distance of crop-marks from page frame, unless bleed is larger
         viewCropMarkSize = pt(40), # Length of crop marks, including bleed distance.
         viewCropMarkStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
 
