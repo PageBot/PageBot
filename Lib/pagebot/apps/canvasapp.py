@@ -31,6 +31,7 @@ class CanvasApp(BaseApp):
         super(CanvasApp, self).__init__()
         self.window = Window((800, 600), minSize=(1, 1), closable=True)
         self.context = getContext('Canvas')
+        self.context.rect(100, 100, 100, 100)
         self.window.canvas = self.context.getCanvas()
         self.window.open()
 

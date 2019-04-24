@@ -109,10 +109,8 @@ class CanvasBuilder(BaseBuilder):
         self.hasPage = False
         self.reset()
 
-    # overwrite by a subclass
-
     def _newPage(self, width, height):
-        pass
+        self.size(width, height)
 
     def _save(self):
         pass
@@ -124,7 +122,10 @@ class CanvasBuilder(BaseBuilder):
         pass
 
     def _drawPath(self):
-        pass
+        if self._state.path:
+            self._save()
+            print(self._state.path)
+            self._restore()
 
     def _clipPath(self):
         pass
