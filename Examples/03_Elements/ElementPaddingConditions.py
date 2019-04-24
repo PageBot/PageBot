@@ -13,7 +13,7 @@
 #
 #     ElementConditions.py
 #
-#     Position elements by their sides with conditions
+#     Position elements by their page padding position with conditions
 #
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
