@@ -14,16 +14,19 @@
 #
 #     canvasbuilder.py
 #
+
 from pagebot.contexts.builders.basebuilder import BaseBuilder
+from pagebot.contexts.graphicsstate.graphicsstate import GraphicsState
+from pagebot.contexts.strings.formattedstring import FormattedString
+from pagebot.contexts.bezierpaths.bezierpath import BezierPath
+from pagebot.contexts.color.color import *
 import AppKit
 import CoreText
 import Quartz
 import math
 import os
-from fontTools.pens.basePen import BasePen
 
-_FALLBACKFONT = "LucidaGrande"
-
+# FIXME: using drawBot for now.
 def _tryInstallFontFromFontName(fontName):
     from drawBot.drawBotDrawingTools import _drawBotDrawingTool
     return _drawBotDrawingTool._tryInstallFontFromFontName(fontName)
