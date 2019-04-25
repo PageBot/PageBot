@@ -17,6 +17,7 @@
 
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.canvasbuilder import CanvasBuilder
+from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 
 class CanvasContext(BaseContext):
 
@@ -31,4 +32,29 @@ class CanvasContext(BaseContext):
     def update(self):
         self.b.update()
 
+    def newPath(self):
+        self.b.newPath()
 
+    def moveTo(self, pt):
+        ppt = upt(point2D(pt))
+        self.b.moveTo(ppt)
+
+    def lineTo(self, pt):
+        ppt = upt(point2D(pt))
+        self.b.lineTo(ppt)
+
+    def curveTo(self, bcp1, bcp2, pt):
+        b1pt = upt(point2D(bcp1))
+        b2pt = upt(point2D(bcp2))
+        ppt = upt(point2D(pt))
+        self.b.curveTo(b1pt, b2pt, ppt)
+
+    def stroke(self, c):
+        r, g, b = c.rgb
+        self.b.stroke(r, g, b, a=c.a)
+        self.strokeWidth(0.5)
+
+    def strokeWidth(self, w):
+        wpt = upt(w)
+        print(wpt)
+        #self.b.strokeWidth(wpt)

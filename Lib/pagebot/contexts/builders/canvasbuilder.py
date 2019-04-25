@@ -101,11 +101,16 @@ class CanvasBuilder(BaseBuilder):
         self.width = None
         self.height = None
         self.hasPage = False
+
+        # Color values.
         self.fillColor = None
         self.cmykFillColor = None
         self.cmykStrokeColor = None
         self.strokeColor = None
         self.gradient = None
+        self.shadow = None
+        self.cmykShadow = None
+        self.strokeWidth = None
         self.reset()
 
     def _newPage(self, width, height):
@@ -194,6 +199,8 @@ class CanvasBuilder(BaseBuilder):
                 if graphic.path:
                     if graphic.fillColor:
                         graphic.fillColor.set()
+                    if graphic.strokeColor:
+                        graphic.strokeColor.set()
 
                     graphic.path._path.fill()
 
@@ -239,7 +246,7 @@ class CanvasBuilder(BaseBuilder):
         path = BezierPath()
         path.rect(x, y, w, h)
         graphic.setPath(path)
-        self.setFill(graphic)
+        self.setColor(graphic)
         self._state.append(graphic)
 
     def oval(self, x, y, w, h):
@@ -247,11 +254,13 @@ class CanvasBuilder(BaseBuilder):
         path = BezierPath()
         path.oval(x, y, w, h)
         graphic.setPath(path)
+        self.setColor(graphic)
         self._state.append(graphic)
 
     def newPath(self):
         graphic = Graphic()
         graphic.newPath()
+        self.setColor(graphic)
         self._state.append(graphic)
 
     def getGraphic(self):
@@ -316,57 +325,59 @@ class CanvasBuilder(BaseBuilder):
 
     def fill(self, r, g=None, b=None, alpha=1):
         if r is None:
+            self.fillColor = None
             return
 
         self.cmykFillColor = None
         self.fillColor = Color(r, g, b, alpha)
-        #graphic.text.fill(r, g, b, a)
         self.gradient = None
 
-    def setFill(self, graphic):
+    def setColor(self, graphic):
         graphic.fillColor = self.fillColor
+        graphic.cmykFillColor = self.cmykFillColor
+        graphic.strokeColor = self.strokeColor
+        graphic.cmykStrokeColor = self.cmykStrokeColor
+        graphic.gradient = self.gradient
+        graphic.strokeWidth = self.strokeWidth
+        #self._state.text.strokeWidth(value)
+        #graphic.text.fill(r, g, b, a)
+        #graphic.text.cmykFill(c, m, y, k, a)
+        #graphic.text.cmykStroke(c, m, y, k, a)
+        #graphic.text.stroke(r, g, b, a)
 
     def cmykFill(self, c, m, y, k, a=1):
-        graphic = self.getGraphic()
-        graphic.text.cmykFill(c, m, y, k, a)
 
         if c is None:
             self.fill(None)
         else:
-            graphic.cmykFillColor = self.CMYKColor(c, m, y, k, a)
+            self.cmykFillColor = CMYKColor(c, m, y, k, a)
             r, g, b = cmyk2rgb(c, m, y, k)
-            graphic.fillColor = Color(r, g, b, a)
-            graphic.gradient = None
+            self.fillColor = Color(r, g, b, a)
+            self.gradient = None
 
     def stroke(self, r, g=None, b=None, a=1):
-        graphic = self.getGraphic()
-        graphic.text.stroke(r, g, b, a)
-        graphic.cmykStrokeColor = None
+        self.cmykStrokeColor = None
 
         if r is None:
-            graphic.strokeColor = None
+            self.strokeColor = None
             return
 
-        graphic.strokeColor = Color(r, g, b, a)
+        self.strokeColor = Color(r, g, b, a)
 
     def cmykStroke(self, c, m, y, k, a=1):
-        graphic = self.getGraphic()
-        graphic.text.cmykStroke(c, m, y, k, a)
 
         if c is None:
             self.stroke(None)
         else:
-            graphic.cmykStrokeColor = self.CMYKColor(c, m, y, k, a)
+            self.cmykStrokeColor = CMYKColor(c, m, y, k, a)
             r, g, b = cmyk2rgb(c, m, y, k)
-            graphic.strokeColor = Color(r, g, b, a)
+            self.strokeColor = Color(r, g, b, a)
 
     def shadow(self, offset, blur, color):
-        graphic = self.getGraphic()
-
         if offset is None:
-            graphic.shadow = None
+            self.shadow = None
             return
-        graphic.shadow = Shadow(offset, blur, color)
+        self.shadow = Shadow(offset, blur, color)
 
     def cmykShadow(self, offset, blur, color):
         if offset is None:
@@ -413,8 +424,7 @@ class CanvasBuilder(BaseBuilder):
         self.fill(None)
 
     def strokeWidth(self, value):
-        self._state.text.strokeWidth(value)
-        self._state.strokeWidth = value
+        self.strokeWidth = value
 
     def miterLimit(self, value):
         self._state.miterLimit = value

@@ -58,7 +58,7 @@ def drawSpiral():
     runs = False
     c.newPath()
     c.moveTo((pt(mx), pt(my)))
-    
+
     for n in range(0, int(N), 4):
         dx1 = n*Sx*D
         dy1 = n*Sy*D
