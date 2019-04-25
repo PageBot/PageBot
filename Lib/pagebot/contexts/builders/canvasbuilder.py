@@ -15,16 +15,18 @@
 #     canvasbuilder.py
 #
 
-from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.graphicsstate.graphicsstate import GraphicsState
-from pagebot.contexts.strings.formattedstring import FormattedString
-from pagebot.contexts.bezierpaths.bezierpath import BezierPath
-from pagebot.contexts.color.color import *
 import AppKit
 import CoreText
 import Quartz
 import math
 import os
+from pagebot.contexts.builders.basebuilder import BaseBuilder
+from pagebot.contexts.graphicsstate.graphicsstate import GraphicsState
+from pagebot.contexts.strings.formattedstring import FormattedString
+from pagebot.contexts.bezierpaths.bezierpath import BezierPath
+from pagebot.contexts.color.color import *
+from pagebot.errors import PageBotError
+from pagebot.canvas.canvas import Canvas
 
 # FIXME: using drawBot for now.
 def _tryInstallFontFromFontName(fontName):
@@ -172,16 +174,34 @@ class CanvasBuilder(BaseBuilder):
             self.height = height
 
     def newPage(self, width=None, height=None):
-        if self.width is None and width is None:
-            raise DrawBotError("A page must have a width")
-        if self.height is None and height is None:
-            raise DrawBotError("A page must have a height")
+        if self.width is None:
+            if width is None:
+                raise PageBotError("A page must have a width")
+            else:
+                self.width = width
+
+        if self.height is None:
+            if height is None:
+                raise PageBotError("A page must have a height")
+            else:
+                self.height = height
+
         self.hasPage = True
+
+        self.page = Canvas((0, 0, -0, -0), delegate=self,
+            canvasSize=(self.width, self.height), acceptsMouseMoved=True,
+            hasHorizontalScroller=True, hasVerticalScroller=True,
+            autohidesScrollers=False, backgroundColor=None,
+            drawsBackground=True, flipped=True)
         self._newPage(width, height)
+        return self.page
+
+    def draw(self, rect):
+        print(rect)
 
     def saveImage(self, path, options):
         if not self.hasPage:
-            raise DrawBotError("can't save image when no page is set")
+            raise PageBotError("can't save image when no page is set")
         self._saveImage(path, options)
 
     def printImage(self, pdf=None):
@@ -196,7 +216,7 @@ class CanvasBuilder(BaseBuilder):
 
     def restore(self):
         if not self._stack:
-            raise DrawBotError("can't restore graphics state: no matching save()")
+            raise PageBotError("can't restore graphics state: no matching save()")
         self._state = self._stack.pop()
         self._state.update(self)
         self._restore()
@@ -216,7 +236,7 @@ class CanvasBuilder(BaseBuilder):
 
     def moveTo(self, pt):
         if self._state.path is None:
-            raise DrawBotError("Create a new path first")
+            raise PageBotError("Create a new path first")
         self._state.path.moveTo(pt)
 
     def lineTo(self, pt):
@@ -251,7 +271,7 @@ class CanvasBuilder(BaseBuilder):
         if colorSpace is None:
             colorSpace = 'genericRGB'
         if colorSpace not in self._colorSpaceMap:
-            raise DrawBotError("'%s' is not a valid colorSpace, argument must be '%s'" % (colorSpace, "', '".join(self._colorSpaceMap.keys())))
+            raise PageBotError("'%s' is not a valid colorSpace, argument must be '%s'" % (colorSpace, "', '".join(self._colorSpaceMap.keys())))
         colorSpace = self._colorSpaceMap[colorSpace]
         self._state.setColorSpace(colorSpace)
 
@@ -356,14 +376,14 @@ class CanvasBuilder(BaseBuilder):
         if join is None:
             self._state.lineJoin = None
         if join not in self._lineJoinStylesMap:
-            raise DrawBotError("lineJoin() argument must be 'bevel', 'miter' or 'round'")
+            raise PageBotError("lineJoin() argument must be 'bevel', 'miter' or 'round'")
         self._state.lineJoin = self._lineJoinStylesMap[join]
 
     def lineCap(self, cap):
         if cap is None:
             self._state.lineCap = None
         if cap not in self._lineCapStylesMap:
-            raise DrawBotError("lineCap() argument must be 'butt', 'square' or 'round'")
+            raise PageBotError("lineCap() argument must be 'butt', 'square' or 'round'")
         self._state.lineCap = self._lineCapStylesMap[cap]
 
     def lineDash(self, dash):
@@ -596,9 +616,9 @@ class CanvasBuilder(BaseBuilder):
                 psName = font["name"].getName(6, 3, 1)
             font.close()
         except IOError:
-            raise DrawBotError("Font '%s' does not exist." % path)
+            raise PageBotError("Font '%s' does not exist." % path)
         except TTLibError:
-            raise DrawBotError("Font '%s' is not a valid font." % path)
+            raise PageBotError("Font '%s' is not a valid font." % path)
         if psName is not None:
             psName = psName.toUnicode()
         return psName

@@ -20,6 +20,7 @@
 #    PageBotPath and DrawBotContext.BezierPath, which are "recorded"
 #    drawing instructions.
 #
+
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 DEFAULT_FONT_NAME = 'Roboto-Regular'

@@ -78,7 +78,7 @@ class Canvas(Group):
         # TODO: placement clip view (center).
 
         if backgroundColor is None:
-            backgroundColor = lightGreyColor
+            backgroundColor = whiteColor
 
         self.canvasView = CanvasView(canvasSize, delegate,
                 acceptsMouseMoved, liveResize, flipped)
