@@ -17,6 +17,7 @@
 from pagebot import getContext
 from vanilla import Button, Window, PopUpButton, TextBox, EditText
 from pagebot.apps.baseapp import BaseApp
+from pagebot.toolbox.color import *
 
 class CanvasApp(BaseApp):
     """Wrapper class to bundle all document page typesetter and composition
@@ -34,8 +35,10 @@ class CanvasApp(BaseApp):
 
     def run(self):
         self.window.page = self.context.newPage(1000, 800)
-        #self.context.fill(0)
+        self.context.fill(blueColor)
         self.context.rect(100, 100, 100, 100)
+        self.context.fill(color('red'))
+        self.context.oval(200, 100, 100, 100)
         self.context.update()
 
 app = CanvasApp()

@@ -22,7 +22,7 @@ import math
 import os
 import traceback
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.contexts.graphicsstate.graphicsstate import GraphicsState
+from pagebot.contexts.graphics.graphic import Graphic
 from pagebot.contexts.strings.formattedstring import FormattedString
 from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 from pagebot.contexts.color.color import *
@@ -35,15 +35,6 @@ def _tryInstallFontFromFontName(fontName):
     return _drawBotDrawingTool._tryInstallFontFromFontName(fontName)
 
 class CanvasBuilder(BaseBuilder):
-
-    _graphicsStateClass = GraphicsState
-
-    _cmykColorClass = CMYKColor
-    _colorClass = Color
-    _textClass = FormattedString
-    _shadowClass = Shadow
-    _bezierPathClass = BezierPath
-    _gradientClass = Gradient
 
     fileExtensions = []
     saveImageOptions = []
@@ -110,6 +101,11 @@ class CanvasBuilder(BaseBuilder):
         self.width = None
         self.height = None
         self.hasPage = False
+        self.fillColor = None
+        self.cmykFillColor = None
+        self.cmykStrokeColor = None
+        self.strokeColor = None
+        self.gradient = None
         self.reset()
 
     def _newPage(self, width, height):
@@ -123,12 +119,6 @@ class CanvasBuilder(BaseBuilder):
 
     def _blendMode(self, operation):
         pass
-
-    def _drawPath(self):
-        if self._state.path:
-            self._save()
-            print(self._state.path)
-            self._restore()
 
     def _clipPath(self):
         pass
@@ -164,8 +154,9 @@ class CanvasBuilder(BaseBuilder):
 
     def reset(self):
         self._stack = []
-        self._state = self._graphicsStateClass()
-        self._colorClass.colorSpace = self._colorSpaceMap['genericRGB']
+        self._state = []
+        self._graphic = Graphic()
+        Color.colorSpace = self._colorSpaceMap['genericRGB']
         self._reset()
 
     def size(self, width=None, height=None):
@@ -199,18 +190,17 @@ class CanvasBuilder(BaseBuilder):
 
     def draw(self, rect):
         try:
-            if self._state.path:
-                AppKit.NSColor.blackColor().set()
-                #rect = AppKit.NSMakeRect(0, 0, 100, 100)
-                #path = AppKit.NSBezierPath.bezierPathWithOvalInRect_(rect)
-                self._state.path._path.fill()
+            for graphic in self._state:
+                if graphic.path:
+                    if graphic.fillColor:
+                        graphic.fillColor.set()
+
+                    graphic.path._path.fill()
 
         except Exception as e:
             print(traceback.format_exc())
 
     def update(self):
-        print('update')
-        print(self._state.path)
         self.page.update()
 
     def saveImage(self, path, options):
@@ -224,58 +214,88 @@ class CanvasBuilder(BaseBuilder):
     def frameDuration(self, seconds):
         self._frameDuration(seconds)
 
+    def copyState(self):
+        copiedState = []
+
+        for graphic in self._state:
+            copiedState.append(graphic.copy())
+
+        return copiedState
+
     def save(self):
-        self._stack.append(self._state.copy())
+        copiedState = self.copyState()
+        self._stack.append(copiedState)
         self._save()
 
     def restore(self):
         if not self._stack:
             raise PageBotError("can't restore graphics state: no matching save()")
         self._state = self._stack.pop()
-        self._state.update(self)
+        #self._state.update(self)
         self._restore()
 
     def rect(self, x, y, w, h):
-        path = self._bezierPathClass()
+        graphic = Graphic()
+        path = BezierPath()
         path.rect(x, y, w, h)
-        self._state.path = path
-        #self.drawPath(path)
+        graphic.setPath(path)
+        self.setFill(graphic)
+        self._state.append(graphic)
 
     def oval(self, x, y, w, h):
-        path = self._bezierPathClass()
+        graphic = Graphic()
+        path = BezierPath()
         path.oval(x, y, w, h)
-        self.drawPath(path)
+        graphic.setPath(path)
+        self._state.append(graphic)
 
     def newPath(self):
-        self._state.path = self._bezierPathClass()
+        graphic = Graphic()
+        graphic.newPath()
+        self._state.append(graphic)
+
+    def getGraphic(self):
+        return self._state[-1]
+
+    def getPath(self):
+        graphic = self.getGraphic()
+
+        if graphic.path is None:
+            raise PageBotError("Create a new path first")
+
+        return graphic.path
 
     def moveTo(self, pt):
-        if self._state.path is None:
-            raise PageBotError("Create a new path first")
-        self._state.path.moveTo(pt)
+        path = self.getPath()
+        path.moveTo(pt)
 
     def lineTo(self, pt):
-        self._state.path.lineTo(pt)
+        path = self.getPath()
+        path.lineTo(pt)
 
     def curveTo(self, pt1, pt2, pt):
-        self._state.path.curveTo(pt1, pt2, pt)
+        path = self.getPath()
+        path.curveTo(pt1, pt2, pt)
 
     def qCurveTo(self, points):
-        self._state.path.qCurveTo(*points)
+        path = self.getPath()
+        path.qCurveTo(*points)
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
-        self._state.path.arc(center, radius, startAngle, endAngle, clockwise)
+        path = self.getPath()
+        path.arc(center, radius, startAngle, endAngle, clockwise)
 
     def arcTo(self, pt1, pt2, radius):
-        self._state.path.arcTo(pt1, pt2, radius)
+        path = self.getPath()
+        path.arcTo(pt1, pt2, radius)
 
     def closePath(self):
-        self._state.path.closePath()
+        path = self.getPath()
+        path.closePath()
 
     def drawPath(self, path):
-        if path is not None:
-            self._state.path = path
-        self._drawPath()
+        # deprecated.
+        pass
 
     def clipPath(self, path):
         if path is not None:
@@ -294,62 +314,74 @@ class CanvasBuilder(BaseBuilder):
         self._state.blendMode = operation
         self._blendMode(operation)
 
-    def fill(self, r, g=None, b=None, a=1):
-        self._state.text.fill(r, g, b, a)
-        self._state.cmykFillColor = None
+    def fill(self, r, g=None, b=None, alpha=1):
         if r is None:
-            self._state.fillColor = None
             return
-        self._state.fillColor = self._colorClass(r, g, b, a)
-        self._state.gradient = None
+
+        self.cmykFillColor = None
+        self.fillColor = Color(r, g, b, alpha)
+        #graphic.text.fill(r, g, b, a)
+        self.gradient = None
+
+    def setFill(self, graphic):
+        graphic.fillColor = self.fillColor
 
     def cmykFill(self, c, m, y, k, a=1):
-        self._state.text.cmykFill(c, m, y, k, a)
+        graphic = self.getGraphic()
+        graphic.text.cmykFill(c, m, y, k, a)
+
         if c is None:
             self.fill(None)
         else:
-            self._state.cmykFillColor = self._cmykColorClass(c, m, y, k, a)
+            graphic.cmykFillColor = self.CMYKColor(c, m, y, k, a)
             r, g, b = cmyk2rgb(c, m, y, k)
-            self._state.fillColor = self._colorClass(r, g, b, a)
-            self._state.gradient = None
+            graphic.fillColor = Color(r, g, b, a)
+            graphic.gradient = None
 
     def stroke(self, r, g=None, b=None, a=1):
-        self._state.text.stroke(r, g, b, a)
-        self._state.cmykStrokeColor = None
+        graphic = self.getGraphic()
+        graphic.text.stroke(r, g, b, a)
+        graphic.cmykStrokeColor = None
+
         if r is None:
-            self._state.strokeColor = None
+            graphic.strokeColor = None
             return
-        self._state.strokeColor = self._colorClass(r, g, b, a)
+
+        graphic.strokeColor = Color(r, g, b, a)
 
     def cmykStroke(self, c, m, y, k, a=1):
-        self._state.text.cmykStroke(c, m, y, k, a)
+        graphic = self.getGraphic()
+        graphic.text.cmykStroke(c, m, y, k, a)
+
         if c is None:
             self.stroke(None)
         else:
-            self._state.cmykStrokeColor = self._cmykColorClass(c, m, y, k, a)
+            graphic.cmykStrokeColor = self.CMYKColor(c, m, y, k, a)
             r, g, b = cmyk2rgb(c, m, y, k)
-            self._state.strokeColor = self._colorClass(r, g, b, a)
+            graphic.strokeColor = Color(r, g, b, a)
 
     def shadow(self, offset, blur, color):
+        graphic = self.getGraphic()
+
         if offset is None:
-            self._state.shadow = None
+            graphic.shadow = None
             return
-        self._state.shadow = self._shadowClass(offset, blur, color)
+        graphic.shadow = Shadow(offset, blur, color)
 
     def cmykShadow(self, offset, blur, color):
         if offset is None:
             self._state.shadow = None
             return
         rgbColor = cmyk2rgb(color[0], color[1], color[2], color[3])
-        self._state.shadow = self._shadowClass(offset, blur, rgbColor)
-        self._state.shadow.cmykColor = self._cmykColorClass(*color)
+        self._state.shadow = Shadow(offset, blur, rgbColor)
+        self._state.shadow.cmykColor = self.CMYKColor(*color)
 
     def linearGradient(self, startPoint=None, endPoint=None, colors=None, locations=None):
         if startPoint is None:
             self._state.gradient = None
             self.fill(0)
             return
-        self._state.gradient = self._gradientClass("linear", startPoint, endPoint, colors, locations)
+        self._state.gradient = Gradient("linear", startPoint, endPoint, colors, locations)
         self.fill(None)
 
     def cmykLinearGradient(self, startPoint=None, endPoint=None, colors=None, locations=None):
@@ -358,8 +390,8 @@ class CanvasBuilder(BaseBuilder):
             self.fill(0)
             return
         rgbColors = [cmyk2rgb(color[0], color[1], color[2], color[3]) for color in colors]
-        self._state.gradient = self._gradientClass("linear", startPoint, endPoint, rgbColors, locations)
-        self._state.gradient.cmykColors = [self._cmykColorClass(*color) for color in colors]
+        self._state.gradient = Gradient("linear", startPoint, endPoint, rgbColors, locations)
+        self._state.gradient.cmykColors = [self.CMYKColor(*color) for color in colors]
         self.fill(None)
 
     def radialGradient(self, startPoint=None, endPoint=None, colors=None, locations=None, startRadius=0, endRadius=100):
@@ -367,7 +399,7 @@ class CanvasBuilder(BaseBuilder):
             self._state.gradient = None
             self.fill(0)
             return
-        self._state.gradient = self._gradientClass("radial", startPoint, endPoint, colors, locations, startRadius, endRadius)
+        self._state.gradient = Gradient("radial", startPoint, endPoint, colors, locations, startRadius, endRadius)
         self.fill(None)
 
     def cmykRadialGradient(self, startPoint=None, endPoint=None, colors=None, locations=None, startRadius=0, endRadius=100):
@@ -376,8 +408,8 @@ class CanvasBuilder(BaseBuilder):
             self.fill(0)
             return
         rgbColors = [cmyk2rgb(color[0], color[1], color[2], color[3]) for color in colors]
-        self._state.gradient = self._gradientClass("radial", startPoint, endPoint, rgbColors, locations, startRadius, endRadius)
-        self._state.gradient.cmykColors = [self._cmykColorClass(*color) for color in colors]
+        self._state.gradient = Gradient("radial", startPoint, endPoint, rgbColors, locations, startRadius, endRadius)
+        self._state.gradient.cmykColors = [self.CMYKColor(*color) for color in colors]
         self.fill(None)
 
     def strokeWidth(self, value):
@@ -574,7 +606,7 @@ class CanvasBuilder(BaseBuilder):
         return CoreText.CTFrameGetLines(frame)
 
     def _getPathForFrameSetter(self, box):
-        if isinstance(box, self._bezierPathClass):
+        if isinstance(box, BezierPath):
             path = box._getCGPath()
             (x, y), (w, h) = CoreText.CGPathGetPathBoundingBox(path)
         else:

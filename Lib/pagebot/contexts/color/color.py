@@ -8,6 +8,12 @@ class Color(object):
         self._color = None
         if r is None:
             return
+
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
+
         if isinstance(r, AppKit.NSColor):
             self._color = r
         elif g is None and b is None:
@@ -16,6 +22,7 @@ class Color(object):
             self._color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(r, r, r, g)
         else:
             self._color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, a)
+
         self._color = self._color.colorUsingColorSpace_(self.colorSpace())
 
     def set(self):

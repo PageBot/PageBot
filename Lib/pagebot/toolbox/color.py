@@ -557,7 +557,7 @@ class Color:
         if (self.isSpot or c.isSpot) and self.spot == c.spot:
             return True
         if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk:
-            return True 
+            return True
         if (self.isRal or c.isRal) and self.ral == c.ral:
             return True
         return False

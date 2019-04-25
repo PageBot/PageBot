@@ -12,20 +12,19 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     graphicsstate.py
+#     graphic.py
 #
 from pagebot.contexts.strings.formattedstring import FormattedString
 from pagebot.contexts.color.color import *
+from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 
-class GraphicsState(object):
-
-    _textClass = FormattedString
-    _colorClass = Color
+class Graphic(object):
+    """A graphical object to be drawn."""
 
     def __init__(self):
-        self.colorSpace = self._colorClass.colorSpace
+        self.colorSpace = Color.colorSpace
         self.blendMode = None
-        self.fillColor = self._colorClass(0)
+        self.fillColor = Color(0)
         self.strokeColor = None
         self.cmykFillColor = None
         self.cmykStrokeColor = None
@@ -36,9 +35,15 @@ class GraphicsState(object):
         self.lineCap = None
         self.lineJoin = None
         self.miterLimit = 10
-        self.text = self._textClass()
+        self.text = FormattedString()
         self.hyphenation = None
         self.path = None
+
+    def newPath(self):
+        self.path = BezierPath()
+
+    def setPath(self, path):
+        self.path = path
 
     def copy(self):
         new = self.__class__()
@@ -60,6 +65,7 @@ class GraphicsState(object):
             new.gradient = self.gradient.copy()
         if self.path is not None:
             new.path = self.path.copy()
+
         new.text = self.text.copy()
         new.hyphenation = self.hyphenation
         new.strokeWidth = self.strokeWidth
@@ -80,4 +86,4 @@ class GraphicsState(object):
         self.updateColorSpace(None)
 
     def updateColorSpace(self, context):
-        self._colorClass.colorSpace = self.colorSpace
+        Color.colorSpace = self.colorSpace
