@@ -13,7 +13,7 @@
 #
 #     ElementBleedConditions.py
 #
-#     Position elements by their sides with conditions
+#     Position elements by their bleed sides with conditions
 #
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)

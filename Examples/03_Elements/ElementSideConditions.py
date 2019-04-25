@@ -13,7 +13,7 @@
 #
 #     ElementSideConditions.py
 #
-#     Position elements by their sides with conditions
+#     Position elements by their page sides with conditions
 #
 # Document is the main instance holding all information about
 # the document togethers (pages, styles, etc.)
@@ -24,8 +24,7 @@ from pagebot.toolbox.color import color
 from pagebot.conditions import *
 
 W = H = pt(500)
-PADDING = p(5)
-w = p(8)
+PADDING = w = p(10) # Make square will the page padding
 
 doc = Document(w=W, h=H, originTop=False)
 page = doc[1] # Get the single page from te document.
@@ -43,7 +42,7 @@ newRect(parent=page, w=w, h=w, fill=color('violet'), conditions=[Right2RightSide
 newRect(parent=page, w=w, h=w, fill=color('cyan'), conditions=[Center2Center(), Bottom2BottomSide()])
 newRect(parent=page, w=w, h=w, fill=color('black'), conditions=[Center2Center(), Middle2Middle()])
 
-page.solve()
+page.solve() # Solve conditions of the page child elements
 
 # Export in _export folder that does not commit in Git. Force to export PDF.
 EXPORT_PATH = '_export/ElementSideConditions.pdf'

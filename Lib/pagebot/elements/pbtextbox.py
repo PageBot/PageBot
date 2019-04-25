@@ -125,19 +125,15 @@ class TextBox(Element):
         >>> tb = TextBox('This is content', parent=page, style=style, w=100, h=220)
         >>> page[tb.eId].h
         220pt
-        """
-
-        """
-        TODO: Get the tests to work properly
         >>> tb.h = 220
         >>> tb.h, tb.h == page[tb.eId].h
-        (220, True)
+        (220pt, True)
         >>> tb.h = None
         >>> tb.h, tb.style['h'] is None
-        (37.0, True)
+        (20pt, True)
         """
         if self.style['h'] is None: # Elastic height
-            h = self.getTextSize(w=self.w)[1]
+            h = units(self.getTextSize(w=self.w)[1])
         else:
             base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
             h = units(self.css('h', 0), base=base)
@@ -211,7 +207,7 @@ class TextBox(Element):
             if self.bs:
                 for textLine in self.bs.getTextLines(self.pw, self.ph):
                     #print('---', textLine.y, self.h - textLine.y)
-                    textLine.y = self.h - textLine.y # Make postion relative to text box self.
+                    textLine.y = units(self.h - textLine.y) # Make postion relative to text box self.
                     self._textLines.append(textLine)
                     self._baselines[upt(textLine.y)] = textLine
 
@@ -558,13 +554,13 @@ class TextBox(Element):
             
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
-            yOffset = (self.h - self.pb - self.pt - th)/2
+            yOffset = units(self.h - self.pb - self.pt - th)/2
         elif self.css('yTextAlign') == BOTTOM:
-            yOffset = self.h - self.pb - self.pt - th
+            yOffset = units(self.h - self.pb - self.pt - th)
         if self.css('xTextAlign') == CENTER:
-            xOffset = (self.w - self.pl - self.pr - tw)/2
+            xOffset = units(self.w - self.pl - self.pr - tw)/2
         elif self.css('xTextAlign') == RIGHT:
-            xOffset = self.w - self.pl - self.pr - tw
+            xOffset = units(self.w - self.pl - self.pr - tw)
 
         textShadow = self.textShadow
         if textShadow:
