@@ -16,8 +16,6 @@
 
 from pagebot import getContext
 from vanilla import Button, Window, PopUpButton, TextBox, EditText
-#from drawBot.ui.drawView import DrawView
-#from pagebot.templates.specimens import Specimens
 from pagebot.apps.baseapp import BaseApp
 
 class CanvasApp(BaseApp):
@@ -36,7 +34,8 @@ class CanvasApp(BaseApp):
 
     def run(self):
         self.window.page = self.context.newPage(1000, 800)
+        #self.context.fill(0)
         self.context.rect(100, 100, 100, 100)
+        self.context.update()
 
 app = CanvasApp()
-#app.build()

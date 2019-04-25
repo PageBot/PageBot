@@ -20,6 +20,7 @@ import CoreText
 import Quartz
 import math
 import os
+import traceback
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.contexts.graphicsstate.graphicsstate import GraphicsState
 from pagebot.contexts.strings.formattedstring import FormattedString
@@ -197,7 +198,20 @@ class CanvasBuilder(BaseBuilder):
         return self.page
 
     def draw(self, rect):
-        print(rect)
+        try:
+            if self._state.path:
+                AppKit.NSColor.blackColor().set()
+                #rect = AppKit.NSMakeRect(0, 0, 100, 100)
+                #path = AppKit.NSBezierPath.bezierPathWithOvalInRect_(rect)
+                self._state.path._path.fill()
+
+        except Exception as e:
+            print(traceback.format_exc())
+
+    def update(self):
+        print('update')
+        print(self._state.path)
+        self.page.update()
 
     def saveImage(self, path, options):
         if not self.hasPage:
@@ -224,7 +238,8 @@ class CanvasBuilder(BaseBuilder):
     def rect(self, x, y, w, h):
         path = self._bezierPathClass()
         path.rect(x, y, w, h)
-        self.drawPath(path)
+        self._state.path = path
+        #self.drawPath(path)
 
     def oval(self, x, y, w, h):
         path = self._bezierPathClass()

@@ -28,4 +28,7 @@ class CanvasContext(BaseContext):
     def newPage(self, width, height):
         return self.b.newPage(width, height)
 
+    def update(self):
+        self.b.update()
+
 
