@@ -50,11 +50,14 @@ class CanvasContext(BaseContext):
         self.b.curveTo(b1pt, b2pt, ppt)
 
     def stroke(self, c):
-        r, g, b = c.rgb
-        self.b.stroke(r, g, b, a=c.a)
+        if c is None:
+            self.b.stroke(None)
+        else:
+            r, g, b = c.rgb
+            self.b.stroke(r, g, b, a=c.a)
+
         self.strokeWidth(0.5)
 
     def strokeWidth(self, w):
         wpt = upt(w)
-        print(wpt)
-        #self.b.strokeWidth(wpt)
+        self.b.strokeWidth(wpt)

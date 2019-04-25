@@ -28,6 +28,7 @@ from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
 from pagebot.canvas.canvas import Canvas
+from pagebot.toolbox.color import noColor
 
 # FIXME: using drawBot for now.
 def _tryInstallFontFromFontName(fontName):
@@ -110,7 +111,7 @@ class CanvasBuilder(BaseBuilder):
         self.gradient = None
         self.shadow = None
         self.cmykShadow = None
-        self.strokeWidth = None
+        self.strokeWidthValue = None
         self.reset()
 
     def _newPage(self, width, height):
@@ -199,10 +200,11 @@ class CanvasBuilder(BaseBuilder):
                 if graphic.path:
                     if graphic.fillColor:
                         graphic.fillColor.set()
+                        graphic.path._path.fill()
                     if graphic.strokeColor:
                         graphic.strokeColor.set()
+                        graphic.path._path.stroke()
 
-                    graphic.path._path.fill()
 
         except Exception as e:
             print(traceback.format_exc())
@@ -324,8 +326,9 @@ class CanvasBuilder(BaseBuilder):
         self._blendMode(operation)
 
     def fill(self, r, g=None, b=None, alpha=1):
-        if r is None:
+        if r is None or r is noColor:
             self.fillColor = None
+            print('nonoe')
             return
 
         self.cmykFillColor = None
@@ -333,12 +336,14 @@ class CanvasBuilder(BaseBuilder):
         self.gradient = None
 
     def setColor(self, graphic):
-        graphic.fillColor = self.fillColor
-        graphic.cmykFillColor = self.cmykFillColor
-        graphic.strokeColor = self.strokeColor
-        graphic.cmykStrokeColor = self.cmykStrokeColor
-        graphic.gradient = self.gradient
-        graphic.strokeWidth = self.strokeWidth
+        if self.fillColor:
+            graphic.fillColor = self.fillColor.copy()
+        if self.strokeColor:
+            graphic.strokeColor = self.strokeColor.copy()
+        #graphic.cmykFillColor = self.cmykFillColor
+        #graphic.cmykStrokeColor = self.cmykStrokeColor
+        #graphic.gradient = self.gradient
+        graphic.strokeWidth = self.strokeWidthValue
         #self._state.text.strokeWidth(value)
         #graphic.text.fill(r, g, b, a)
         #graphic.text.cmykFill(c, m, y, k, a)
@@ -424,7 +429,7 @@ class CanvasBuilder(BaseBuilder):
         self.fill(None)
 
     def strokeWidth(self, value):
-        self.strokeWidth = value
+        self.strokeWidthValue = value
 
     def miterLimit(self, value):
         self._state.miterLimit = value

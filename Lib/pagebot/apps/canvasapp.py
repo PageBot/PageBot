@@ -46,12 +46,12 @@ class CanvasApp(BaseApp):
 
     def run(self):
         self.window.page = self.context.newPage(1000, 800)
+        self.context.stroke(None)
         self.context.fill(blueColor)
         self.context.rect(100, 100, 100, 100)
         self.context.fill(color('red'))
         self.context.oval(200, 100, 100, 100)
         self.drawSpiral()
-
         self.context.update()
 
     def drawSpiral(self):
@@ -59,7 +59,11 @@ class CanvasApp(BaseApp):
         mx = W/2+X
         my = H/2+Y
         runs = False
-        c.b.newPath() # FIXME
+        c.fill(noColor)
+        c.strokeWidth(0.5)
+        c.stroke(blackColor)
+
+        c.newPath()
         c.moveTo((pt(mx), pt(my)))
 
         for n in range(0, int(N), 4):
@@ -71,8 +75,10 @@ class CanvasApp(BaseApp):
             dy3 = (n+2)*Sy*D
             dx4 = (n+3)*Sx*D
             dy4 = (n+3)*Sy*D
+
             #dx5 = (n+4)*Sx*D
             #dy5 = (n+4)*Sy*D
+
             if not runs:
                 c.moveTo((pt(mx), pt(my)))
             else:
@@ -84,10 +90,7 @@ class CanvasApp(BaseApp):
                     (pt(mx+dx3), pt(my+dy3*Exy)), (pt(mx+dx3), pt(my)))
                 c.curveTo((pt(mx+dx4), pt(my-dy4*Exy)), (pt(mx+dx4*Exy), pt(my-dy4)),
                     (pt(mx), pt(my-dy4)))
-            runs = True
 
-        c.fill(noColor)
-        c.strokeWidth(0.5)
-        c.stroke(blackColor)
+            runs = True
 
 app = CanvasApp()
