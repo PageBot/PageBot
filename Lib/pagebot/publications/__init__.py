@@ -35,6 +35,7 @@
 from pagebot.publications.ads import AD_CLASSES
 from pagebot.publications.books import BOOK_CLASSES
 from pagebot.publications.brochures import BROCHURE_CLASSES
+from pagebot.publications.calendars import CALENDAR_CLASSES
 from pagebot.publications.catalogs import CATALOG_CLASSES
 from pagebot.publications.identities import IDENTITY_CLASSES
 from pagebot.publications.magazines import MAGAZINE_CLASSES
@@ -49,7 +50,7 @@ PublicationCategories = dict(
 	Ad=AD_CLASSES,
 	Book=BOOK_CLASSES,
 	Brochure=BROCHURE_CLASSES,
-	#Calendars=CALENDARCLASSES,
+	Calendars=CALENDAR_CLASSES,
 	Catalog=CATALOG_CLASSES,
 	#Collection=COLLEDCTION_CLASSES,
 	Identity=IDENTITY_CLASSES,

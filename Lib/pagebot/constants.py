@@ -49,14 +49,20 @@ A1 = mm(594, 841)
 A2 = mm(420, 594)
 A3 = mm(297, 420)
 A4 = mm(210, 297)
-A4Rounded = pt(595, 842) # Rounded to points pt(595, 842) to fit exact column measures
-A4Square = mm(210, 210) # Square of A4 (portrait, short side)
 A5 = mm(148, 210)
 A6 = mm(105, 148)
 A7 = mm(74,  105)
 A8 = mm(52,  74)
 A9 = mm(37,  52)
 A10 = mm(26, 37)
+
+A2Square = A2[0], A2[0] # Square of A2 (portrait, short side)
+A3Square = A3[0], A3[0] # Square of A3 (portrait, short side)
+A4Square = A4[0], A4[0] # Square of A4 (portrait, short side)
+A5Square = A5[0], A5[0] # Square of A5 (portrait, short side)
+
+A4Rounded = pt(595, 842) # Rounded to points pt(595, 842) to fit exact column measures
+
 #
 # ISO B Sizes
 #

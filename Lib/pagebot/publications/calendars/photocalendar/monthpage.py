@@ -11,19 +11,18 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     books/photobook/titlepage.py
+#     calendars/photocalendar/monthpage.py
 #
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.constants import *
+from pagebot.toolbox.dating import Dating, now
 
-def makeTitlePage(page, title=None, text=None):
+def makeMonthPage(page, month, year=None):
     """Cover template for photo books.
     """
-    if title is not None:
-    	tw, th = title.size
-    	newTextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
-    if text is not None:
-    	tw, th = text.size
-    	newTextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
-            conditions=[Center2Center(), Bottom2Bottom()])
+    if year is None:
+    	year = now().year
+    d = Dating(year=year, month=month)
+    print(d, d.week, (d+7).week)
+    newTextBox(month, parent=page, fill=0.5, conditions=[Left2Left(), Top2Top(), Fit2Width(), Fit2Bottom()])

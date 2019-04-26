@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     books/photobook/coverpage.py
+#     calendar/photocalendar/coverpage.py
 #
 from pagebot.conditions import *
 from pagebot.elements import *
