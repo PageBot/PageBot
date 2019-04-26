@@ -11,17 +11,5 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     calendars/photocalendar/monthpage.py
+# 	  Elements to show dates, calendars and time graphs.
 #
-from pagebot.conditions import *
-from pagebot.elements import *
-from pagebot.constants import *
-from pagebot.toolbox.dating import Dating, now
-
-def makeMonthPage(page, month, year=None):
-    """Cover template for photo books.
-    """
-    if year is None:
-    	year = now().year
-    CalendarMonth(Dating(month=month, year=year), parent=page, fill=0.5, conditions=[Fit()])
-

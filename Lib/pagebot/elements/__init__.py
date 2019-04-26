@@ -38,6 +38,9 @@ from pagebot.elements.pbpage import Page, Template
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.pbplacer import Placer
 
+# Dating elements
+from pagebot.elements.dating.calendarmonth import CalendarMonth
+
 # Artboard (SketchApp compatible, content element on pages.)
 from pagebot.elements.pbartboard import Artboard
 
