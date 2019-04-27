@@ -107,7 +107,7 @@ class DrawBotString(BabelString):
             style = {}
         self.style = style
 
-        # Filled in case w or h are defined, end depending if the font is a
+        # Filled in case w or h are defined and depending if the font is a
         # variable font.
         self.fittingFontSize = pt(0) # Set to fitting font size, in case the size iterates to find width.
         self.fittingFont = None # In case we are sampling with a Variable Font.

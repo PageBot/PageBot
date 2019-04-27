@@ -1345,22 +1345,49 @@ class Element:
         return abs(self.getDistance2Grid(self.middle)) <= tolerance
 
     def isBaselineOnGrid(self, tolerance=0):
-        return True
-
-    def isBaselineOnBottom(self, tolerance=0):
-        return True
+        raise NotImplementedError
 
     def isBaselineOnTop(self, tolerance=0):
-        return True
+        raise NotImplementedError
+
+    def isBaselineOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isAscenderOnGrid(self, tolerance=0):
+        raise NotImplementedError
 
     def isAscenderOnTop(self, tolerance=0):
-        return True
+        raise NotImplementedError
+
+    def isAscenderOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isCapHeightOnGrid(self, tolerance=0):
+        raise NotImplementedError
 
     def isCapHeightOnTop(self, tolerance=0):
-        return True
+        raise NotImplementedError
+
+    def isCapHeightOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isXHeightOnGrid(self, tolerance=0):
+        raise NotImplementedError
 
     def isXHeightOnTop(self, tolerance=0):
-        return True
+        raise NotImplementedError
+
+    def isXHeightOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnBottom(self, tolerance=0):
+        raise NotImplementedError
 
     #   S T Y L E
 
@@ -5123,6 +5150,14 @@ class Element:
             return abs(self.mBottom - (boxY + boxH)) <= tolerance
         return abs(self.mBottom - boxY) <= tolerance
 
+    # Unimplemented here for text operations
+
+    def isShrunkOnTextHeight(self, tolerance=0):
+        raise NotImplementedError
+
+    def shrink2TextHeight(self, tolerance=0):
+        raise NotImplementedError
+    
     # Float conditions to page padding
 
     def isFloatOnTop(self, tolerance=0):
@@ -7120,28 +7155,32 @@ class Element:
     #    Text conditions
 
     def baseline2Top(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     def baseline2Bottom(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     def floatBaseline2Top(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     def floatAscender2Top(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     def floatCapHeight2Top(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     def floatXHeight2Top(self):
-        # ...
-        return True
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def capHeight2Top(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
 
     #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
 

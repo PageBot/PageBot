@@ -52,6 +52,15 @@ class BaselineCondition(Condition):
         self.index2 = index2
         self.style = style
 
+# Fitting text
+
+class Shrink2TextHeight(Condition):
+	def text(self, e):
+		return e.isShrunkOnTextHeight(self.tolerance)
+
+	def solve(self, e, score):
+		return e.shrink2TextHeight()
+		
 # Baseline alignmenets
 
 class Baseline2Grid(BaselineCondition):
@@ -90,6 +99,16 @@ class Baseline2Bottom(BaselineCondition):
 
 	def solve(self, e, score):
 		return e.baseline2Bottom(index=self.index)
+
+# Capheight alignments
+
+class CapHeight2Top(BaselineCondition):
+	def test(self, e):
+		return e.isCapHeightOnTop(self.tolerance, index=self.index)
+
+	def solve(self, e, score):
+		return e.capHeight2Top(index=self.index)
+
 
 if __name__ == '__main__':
     import doctest

@@ -10,7 +10,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     060_TextBoxBaselinePlacing.py
+#     06_TextBoxBaselinePlacing.py
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
@@ -26,6 +26,12 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
+from pagebot.mining.samplecontent import SampleContent
+
+sampleContent = SampleContent()
+# Uncomment to show the attribute names of
+# available sample content.
+#print(sampleContent.info)
 
 context = getContext()
 
@@ -40,14 +46,15 @@ CH = PH
 GRIDX = ((CW, G), (CW, G))
 GRIDY = ((CH, 0),)
 
-# Dummy text, used several times to create the length we need for this example
-text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
+# Dummy text, combining some articles to create the length we need for this example
+text = ' '.join(sampleContent.articles[:2])
 
-font = findFont('Roboto-Regular')
+font = findFont('PageBot-Regular')
+print(font)
 
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=True)
 # Make long text to force box overflow
-t = context.newString(text * 7, style=style)
+t = context.newString(text, style=style)
 # Create a new document with 1 page. Set overall size and padding.
 # TODO: View drawing for OriginTop=True does not work properly 
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originTop=False)
@@ -65,18 +72,18 @@ page = doc[1]
 c1 = newTextBox(t, w=CW, h=CH, y=page.h/2, name='c1', parent=page, nextElement='c2', 
     yAlign=BASE_TOP, showOrigin=True, 
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
-    conditions=[Left2Left(), Overflow2Next()])
+    conditions=[Left2Left(), Bottom2Bottom(), Baseline2Grid(), Overflow2Next()])
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.
 c2 = newTextBox(w=CW, h=CH, y=page.h/2, name='c2', parent=page, 
-    yAlign=BASE_BOTTOM, showOrigin=True, 
+    yAlign=BASE_TOP, showOrigin=True, 
     showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
-    conditions=[Right2Right()])
+    conditions=[Right2Right(), Bottom2Bottom(), Baseline2Grid()])
 
 newLine(x=page.pl, y=page.h/2, w=page.pw, h=0, parent=page, stroke=(1, 0, 0))
 
 # Solve the page/element conditions
-doc.solve()
+page.solve()
 
 # Export the document to this PDF file.
 doc.export('_export/TextBoxBaselinePlacing.pdf')

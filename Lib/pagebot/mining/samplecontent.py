@@ -71,6 +71,15 @@ class SampleContent:
 			self.decks.append(self.getBlurb('decks', cnt))
 			self.articles.append(self.getBlurb('article', cnt))
 
+	def _get_info(self):
+		"""Answer a list of attribute names that are available."""
+		attrNames = []
+		for attrName, value in self.__dict__.items():
+			if isinstance(value, (list, tuple)):
+				attrNames.append(attrName)
+		return attrNames
+	info = property(_get_info)
+
 	def getBlurb(self, topic, cnt=None, addPeriod=True):
 		"""Answer a generated article text with the estimated cnt length."""
 		txt = Blurb().getBlurb(topic, cnt=cnt)
@@ -80,7 +89,8 @@ class SampleContent:
 			txt += '.'
 		elif txt.endswith('.'):
 			txt = txt[:-1]
-		return txt.capitalize()
+		#txt = txt.capitalize()
+		return txt
 
 if __name__ == '__main__':
     import doctest

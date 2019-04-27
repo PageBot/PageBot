@@ -503,8 +503,8 @@ class TextBox(Element):
 
     #   C O N D I T I O N S
 
-    def fit2Right(self):
-        """Make the right side of self fit the right padding of the parent, without
+    def fitFontSize2Right(self):
+        """Make the right padding of the parent, without
         moving the left position. Overwriting the default behavior of Element, as we want
         text to be fiting too.
 
@@ -521,6 +521,62 @@ class TextBox(Element):
         self.w = self.parent.w - self.parent.pr - self.x
         self.bs = self.context.newString(self.bs.s, style=self.style, w=self.pw)
         return True
+
+    def isShrunkOnTextHeight(self, tolerance=0):
+        if self.bs is not None:
+            return abs(self.bs.size[1] - self.h) <= tolerance
+        return not self.h
+
+    def shrink2TextHeight(self, tolerance=0):
+        if self.bs is not None:
+            self.h = self.bs.size[1]
+        else:
+            self.h = 0
+        
+    def isBaselineOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isBaselineOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isBaselineOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isAscenderOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isAscenderOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isAscenderOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isCapHeightOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isCapHeightOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isCapHeightOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isXHeightOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isXHeightOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isXHeightOnBottom(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnGrid(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnTop(self, tolerance=0):
+        raise NotImplementedError
+
+    def isDescenderOnBottom(self, tolerance=0):
+        raise NotImplementedError
 
     #   B U I L D
 
@@ -816,7 +872,7 @@ class TextBox(Element):
         """
         if self.textLines and self.parent:
             line = self.textLines[index or 0]
-            self.top -= line.y
+            self.top = self.parent.h - self.parent.pt + line.y
 
     def baseline2Bottom(self, index=None, style=None):
         """Move the vertical position of the indexed line to match the positon of self.parent.bottom.
@@ -825,7 +881,16 @@ class TextBox(Element):
             line = self.textLines[index or 0]
             self.bottom -= line.y
 
-    def capHeightUp2Grid(self, index=0, parent=None):
+    def capHeight2Top(self, index=None, style=None):
+        """Move the vertical position of the indexed line to match self.top.
+        """
+        if self.textLines and self.parent:
+            line = self.textLines[index or 0]
+            if line.textRuns:
+                textRun = line.textRuns[0]
+                self.top = self.parent.h - self.parent.pt + textRun.capHeight
+
+    def capHeightUp2Grid(self, index=None, style=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
@@ -839,6 +904,42 @@ class TextBox(Element):
             if line.textRuns:
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight) + parent.baselineGrid
+
+    def ascender2Grid(self, index=None, style=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Top(self, index=None, style=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Bottom(self, index=None, style=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def capHeight2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def xHeight2Top(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def xHeight2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def descender2Grid(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def descender2Top(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def descender2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
 
     def capHeightDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 

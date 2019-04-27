@@ -24,6 +24,14 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT
+from pagebot.mining.samplecontent import SampleContent
+
+sampleContent = SampleContent()
+# Uncomment to show the attribute names of
+# available sample content.
+#print(sampleContent.info)
+# Dummy text
+text = sampleContent.articles[0]
 
 context = getContext()
 
@@ -31,11 +39,9 @@ W = H = pt(1000) # Document size optionally defined as units
 PADDING = pt(120) # Page padding on all sides
 BASELINE = em(1.4)
 
-text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
-
 # Get the Font instances, so they can be queried for metrics.
-font = findFont('Roboto-Regular')
-bold = findFont('Roboto-Bold')
+font = findFont('PageBot-Regular')
+bold = findFont('PageBot-Bold')
 
 # Defined styles
 headStyle = dict(font=bold, fontSize=36, leading=BASELINE, textFill=0.1, hyphenation=False,
@@ -48,12 +54,12 @@ footNoteStyle = dict(font=font, fontSize=14, leading=BASELINE, textFill=0.6, par
 
 # Make BabelString from adding multiple cascading styles
 t = context.newString('Headline of this example page\n', style=headStyle) # Start with headline
-t += context.newString(text * 3, style=style) # Body text
+t += context.newString(text, style=style) # Body text
 t += context.newString('Reference for a footnote.', style=style) # Body text
 t += context.newString('12', style=footNoteRefStyle) # Body text
 t += context.newString('\n', style=style) # Footnote referece
 t += context.newString('Subhead in a column\n', style=subHeadStyle) # Subhead
-t += context.newString(text * 2 + '\n', style=style) # Body text
+t += context.newString(text + '\n', style=style) # Body text
 t += context.newString('12 '+text, style=footNoteStyle) # Footnote on new line
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE)

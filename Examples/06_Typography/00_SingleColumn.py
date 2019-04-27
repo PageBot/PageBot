@@ -24,22 +24,29 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import * # Import all constants for convenience
+from pagebot.mining.samplecontent import SampleContent
+
+sampleContent = SampleContent()
+# Uncomment to show the attribute names of
+# available sample content.
+#print(sampleContent.info)
+# Dummy text
+text = sampleContent.articles[0]
 
 context = getContext()
+print(context)
 
 W = H = 1000 # Document size
 PADDING = 100 # Page padding on all sides. Select value and cmd-drag to change interactive.
 
-# Dummy text, used several times to create the length we need for this example
-text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
-
-font = findFont('Roboto-Regular')
+font = findFont('PageBot-Bold')
+#print(font)
 
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3)
 # Make long text to force box overflow
-t = context.newString(text * 10, style=style)
+t = context.newString(text, style=style)
 # Create a new document with 1 page. Set overall size and padding.
-doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=True)
+doc = Document(w=W, h=H, padding=PADDING, context=context, originTop=False)
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 # Show the usable space (=page.padding) of the page, which the same as the box after fitting

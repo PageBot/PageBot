@@ -816,7 +816,7 @@ class BaseContext(AbstractDrawBotContext):
         return self.b.textBoxBaselines(txt, box, align=align)
 
     def FormattedString(self, *args, **kwargs):
-        # refer to BabelString?
+        # Refer to BabelString?
         return self.b.FormattedString(*args, **kwargs)
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
@@ -825,13 +825,13 @@ class BaseContext(AbstractDrawBotContext):
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
         """
-
         from pagebot.style import makeStyle
 
         # Copies style, check keys.
         style = makeStyle(style=style)
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
+            #print('@#@##@@#', self, s, style, w, h)
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,
                     style=style, w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)

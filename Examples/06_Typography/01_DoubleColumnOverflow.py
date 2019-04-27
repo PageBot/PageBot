@@ -24,6 +24,14 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
+from pagebot.mining.samplecontent import SampleContent
+
+sampleContent = SampleContent()
+# Uncomment to show the attribute names of
+# available sample content.
+#print(sampleContent.info)
+# Dummy text
+text = ' '.join(sampleContent.articles[:3])
 
 context = getContext()
 
@@ -38,13 +46,11 @@ CH = PH
 GRIDX = ((CW, G), (CW, G))
 GRIDY = ((CH, 0),)
 
-text = """Considering the fact that the application allows individuals to call a phone number and leave a voice mail, which is automatically translated into a tweet with a hashtag from the country of origin. """
-
-font = findFont('Roboto-Regular')
+font = findFont('PageBot-Regular')
 
 style = dict(font=font, fontSize=24, leading=em(1.4), textFill=0.3, hyphenation=True)
 # Make long text to force box overflow
-t = context.newString(text * 9, style=style)
+t = context.newString(text, style=style)
 # Create a new document with 1 page. Set overall size and padding.
 doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=context, originTop=True)
 # Get the default page view of the document and set viewing parameters

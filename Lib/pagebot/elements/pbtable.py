@@ -65,13 +65,20 @@ class Table(Element):
         # Make the column/row/cell dictionary
         self.initCells(colNames, cols, rows, fillHeader)
 
+    def _get_colNames(self):
+        return self._colNames
+    def _set_colNames(self, colName):
+        self._colNames = colNames or self.COLNAMES
+    colNames = property(_get_colNames, _set_colNames)
+
     def initCells(self, colNames, cols, rows, fillHeader):
+        self.colNames = colNames
         cellConditions = [Float2Left(), Top2Top(), Fit2Bottom()]
         rowConditions = [Fit2Width(), Float2Top()]
 
         header = self.HEADER_CLASS(parent=self, h=self.DEFAULT_H, fill=fillHeader, conditions=rowConditions) # Header as first row element.
         for colIndex, col in enumerate(range(cols)):
-            bs = self.newString(self.COLNAMES[colIndex], style=dict(font='Verdana-Bold', textFill=whiteColor, fontSize=10))
+            bs = self.newString(self.colNames[colIndex], style=dict(font='Verdana-Bold', textFill=whiteColor, fontSize=10))
             if colNames is not None:
                 colName = colNames[colIndex]
             else:

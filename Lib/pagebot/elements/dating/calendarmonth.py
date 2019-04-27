@@ -14,19 +14,22 @@
 #	  calendarmonth.py
 #
 from pagebot.elements import Element
+from pagebot.elements.pbtable import Table
 
 class CalendarMonth(Element):
 
-	def __init__(self, date=None, **kwargs):
-		Element.__init__(self, **kwargs)
-		if date is None:
-			date = now()
-		self.date = date
+    def __init__(self, date=None, **kwargs):
+        if date is None:
+            date = now()
+        self.date = date
+        self.calendarMonth = date.calendarMonth
 
-	def build(self, view, origin, **kwargs):
-	    print(self.date, self.date.monthName)
-	    for week in self.date.calendarMonth:
-	    	w = []
-	    	for day in week:
-	    		w.append((day.dayName, day.day))
-	    	print(w)
+        Element.__init__(self, **kwargs)
+    """
+    def _get_colNames(self):
+
+    	colNames = []
+    	for day in self.calendarMonth[0]:
+    		colNames.append(day.dayName)
+    colNames = property(_get_colNames)
+	"""
