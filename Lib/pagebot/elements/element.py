@@ -1344,49 +1344,49 @@ class Element:
         """
         return abs(self.getDistance2Grid(self.middle)) <= tolerance
 
-    def isBaselineOnGrid(self, tolerance=0):
+    def isBaselineOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isBaselineOnTop(self, tolerance=0):
+    def isBaselineOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isBaselineOnBottom(self, tolerance=0):
+    def isBaselineOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnGrid(self, tolerance=0):
+    def isAscenderOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnTop(self, tolerance=0):
+    def isAscenderOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnBottom(self, tolerance=0):
+    def isAscenderOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isCapHeightOnGrid(self, tolerance=0):
+    def isCapHeightOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isCapHeightOnTop(self, tolerance=0):
+    def isCapHeightOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isCapHeightOnBottom(self, tolerance=0):
+    def isCapHeightOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isXHeightOnGrid(self, tolerance=0):
+    def isXHeightOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isXHeightOnTop(self, tolerance=0):
+    def isXHeightOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isXHeightOnBottom(self, tolerance=0):
+    def isXHeightOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnGrid(self, tolerance=0):
+    def isDescenderOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnTop(self, tolerance=0):
+    def isDescenderOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnBottom(self, tolerance=0):
+    def isDescenderOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
     #   S T Y L E

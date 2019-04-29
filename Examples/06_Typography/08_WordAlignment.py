@@ -44,26 +44,30 @@ page.padding = PADDING
 
 t = 'Hkpx'
 
-style = dict(font=f, fontSize=100, textFill=color(name='green'))
-bs = context.newString(t, style=style)
-newTextBox(bs, parent=page, fill=(0.5, 0.5, 0.5, 0.5),
-	 conditions=[ 
+for c, conditions in (
+	('green', [ 
 	    Shrink2TextHeight(), Shrink2TextWidth(), 
-	    Left2Left(), CapHeight2Top()])
+	    Left2Left(), CapHeight2Top()]),
+	('red', [ 
+	    Shrink2TextHeight(), Shrink2TextWidth(), 
+	    Center2Center(), Baseline2Top()]),
+	('blue', [ 
+	    Shrink2TextHeight(), Shrink2TextWidth(), 
+	    Right2Right(), XHeight2Top()]),
+	#('green', [ 
+	#    Shrink2TextHeight(), Shrink2TextWidth(), 
+	#    Left2Left(), CapHeight2Bottom()]),
+	('red', [ 
+	    Shrink2TextHeight(), Shrink2TextWidth(), 
+	    Center2Center(), Baseline2Bottom()]),
+	#('blue', [ 
+	#    Shrink2TextHeight(), Shrink2TextWidth(), 
+	#    Right2Right(), XHeight2Bottom()]),
 
-style = dict(font=f, fontSize=100, textFill=color(name='red'))
-bs = context.newString(t, style=style)
-newTextBox(bs, parent=page, fill=(0.5, 0.5, 0.5, 0.5),
-	 conditions=[ 
-	    Shrink2TextHeight(), Shrink2TextWidth(), 
-	    Center2Center(), Baseline2Top()])
-
-style = dict(font=f, fontSize=100, textFill=color(name='blue'))
-bs = context.newString(t, style=style)
-newTextBox(bs, parent=page, fill=(0.5, 0.5, 0.5, 0.5),
-	 conditions=[ 
-	    Shrink2TextHeight(), Shrink2TextWidth(), 
-	    Right2Right(), XHeight2Top()])
+):
+	style = dict(font=f, fontSize=100, textFill=color(name=c))
+	bs = context.newString(t, style=style)
+	newTextBox(bs, parent=page, fill=(0.5, 0.5, 0.5, 0.5), conditions=conditions)
 
 page.solve()
 

@@ -533,7 +533,7 @@ class TextBox(Element):
         else:
             self.h = 0
         
-    def isShrunkOnTextWdith(self, tolerance=0):
+    def isShrunkOnTextWidth(self, tolerance=0):
         if self.bs is not None:
             return abs(self.bs.size[0] - self.w) <= tolerance
         return not self.w
@@ -544,49 +544,43 @@ class TextBox(Element):
         else:
             self.w = 0
         
-    def isBaselineOnGrid(self, tolerance=0):
+    def isBaselineOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isBaselineOnTop(self, tolerance=0):
+    def isAscenderOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isBaselineOnBottom(self, tolerance=0):
+    def isAscenderOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnGrid(self, tolerance=0):
+    def isAscenderOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnTop(self, tolerance=0):
+    def isCapHeightOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isAscenderOnBottom(self, tolerance=0):
-        raise NotImplementedError
-
-    def isCapHeightOnGrid(self, tolerance=0):
-        raise NotImplementedError
-
-    def isCapHeightOnTop(self, tolerance=0):
+    def isCapHeightOnTop(self, tolerance=0, index=0):
         return False # Make sure that is always calcuiates
 
-    def isCapHeightOnBottom(self, tolerance=0):
+    def isCapHeightOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isXHeightOnGrid(self, tolerance=0):
+    def isXHeightOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isXHeightOnTop(self, tolerance=0):
+    def isXHeightOnTop(self, tolerance=0, index=0):
         return False # Make sure that is always calcuiates
 
-    def isXHeightOnBottom(self, tolerance=0):
+    def isXHeightOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnGrid(self, tolerance=0):
+    def isDescenderOnGrid(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnTop(self, tolerance=0):
+    def isDescenderOnTop(self, tolerance=0, index=0):
         raise NotImplementedError
 
-    def isDescenderOnBottom(self, tolerance=0):
+    def isDescenderOnBottom(self, tolerance=0, index=0):
         raise NotImplementedError
 
     #   B U I L D
@@ -878,19 +872,45 @@ class TextBox(Element):
             line = self.textLines[index]
             self.top -= parent.getDistance2Grid(line.y)
 
+    def getBaselineY(self, index=0, parent=None):
+        """Answer the vertical baseline position of the indexed line."""
+        if parent is None:
+            parent = self.parent
+        textLines = self.textLines # Calculate or get as cached list.
+        if textLines and index in range(len(textLines)):
+            line = self.textLines[index]
+            return parent.h - parent.pt + line.y
+        return None
+
+    def isBaselineOnTop(self, tolerance=0, index=0, parent=None):
+        if parent is None:
+            parent = self.parent
+        baselineY = self.getBaselineY(index, parent)
+        if baselineY is not None:
+            return abs(self.top - baselineY) <= tolerance
+        return False
+
     def baseline2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
         """
-        if self.textLines and self.parent:
-            line = self.textLines[index or 0]
-            self.top = self.parent.h - self.parent.pt + line.y
+        baselineY = self.getBaselineY(index, parent)
+        if baselineY is not None:
+            self.top = baselineY
+
+    def isBaselineOnBottom(self, tolerance=0, index=0, parent=None):
+        if parent is None:
+            parent = self.parent
+        baselineY = self.getBaselineY(index, parent)
+        if baselineY is not None:
+            return abs(self.bottom - baselineY) <= tolerance
+        return False
 
     def baseline2Bottom(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match the positon of self.parent.bottom.
         """
-        if self.textLines and self.parent:
-            line = self.textLines[index or 0]
-            self.bottom -= line.y
+        baselineY = self.getBaselineY(index, parent)
+        if baselineY is not None:
+            self.bottom = baselineY
 
     def ascender2Grid(self, index=None, parent=None):
         # TODO:Implement
@@ -907,6 +927,8 @@ class TextBox(Element):
     def capHeight2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
         """
+        if parent is None:
+            parent = self.parent
         textLines = self.textLines
         if textLines and parent is not None:
             line = self.textLines[0]

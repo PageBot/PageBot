@@ -59,53 +59,63 @@ class Shrink2TextHeight(Condition):
         return e.isShrunkOnTextHeight(self.tolerance)
 
     def solve(self, e, score):
-        return e.shrink2TextHeight()
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.shrink2TextHeight(), e, score)
         
 class Shrink2TextWidth(Condition):
     def test(self, e):
         return e.isShrunkOnTextWidth(self.tolerance)
 
     def solve(self, e, score):
-        return e.shrink2TextWidth()
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.shrink2TextWidth(), e, score)
         
 # Baseline alignmenets
 
 class Baseline2Grid(BaselineCondition):
 
-	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index)
+    def test(self, e):
+        return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.baseline2Grid(index=self.index)
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baseline2Grid(index=self.index), e, score)
 
 class BaselineUp2Grid(BaselineCondition):
 
-	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index)
+    def test(self, e):
+        return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.baselineUp2Grid(index=self.index)
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baselineUp2Grid(index=self.index), e, score)
 
 class BaselineDown2Grid(BaselineCondition):
-	def test(self, e):
-		return e.isBaselineOnGrid(self.tolerance, index=self.index)
+    def test(self, e):
+        return e.isBaselineOnGrid(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.baselineDown2Grid(index=self.index)
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baselineDown2Grid(index=self.index), e, score)
 
 class Baseline2Top(BaselineCondition):
-	def test(self, e):
-		return e.isBaselineOnTop(self.tolerance, index=self.index)
+    """Place the first baseline on the parent top padding position. Use the
+    regular Top2Top() to place the top of the text on the parent top
+    padding position."""
+    def test(self, e):
+        return e.isBaselineOnTop(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.baseline2Top(index=self.index)
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baseline2Top(index=self.index), e, score)
 
 class Baseline2Bottom(BaselineCondition):
-	def test(self, e):
-		return e.isBaselineOnBottom(self.tolerance, index=self.index)
+    def test(self, e):
+        return e.isBaselineOnBottom(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.baseline2Bottom(index=self.index)
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baseline2Bottom(index=self.index), e, score)
 
 # Capheight alignments
 
@@ -114,14 +124,94 @@ class CapHeight2Top(BaselineCondition):
         return e.isCapHeightOnTop(self.tolerance, index=self.index)
 
     def solve(self, e, score):
-        return e.capHeight2Top(index=self.index)
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.capHeight2Top(index=self.index), e, score)
+
+class CapHeight2Bottom(BaselineCondition):
+    def test(self, e):
+        return e.isCapHeightOnBottom(self.tolerance, index=self.index)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.capHeight2Bottom(index=self.index), e, score)
+
+# xHeight alignments
 
 class XHeight2Top(BaselineCondition):
     def test(self, e):
         return e.isXHeightOnTop(self.tolerance, index=self.index)
 
     def solve(self, e, score):
-        return e.xHeight2Top(index=self.index)
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.xHeight2Top(index=self.index), e, score)
+
+class XHeight2Bottom(BaselineCondition):
+    def test(self, e):
+        self.addScore(e.isXHeightOnBottom(self.tolerance, index=self.index))
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.xHeight2Bottom(index=self.index), e, score)
+
+
+
+''' 
+
+class Baseline2Bottom(Condition):
+    def test(self, e):
+        return e.isBaselineOnBottom(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.baseline2Bottom(), e, score)
+
+#   Floating
+
+class FloatBaseline2Top(Condition):
+    """Try to do `Baseline2Top()` or position just under – truncated locked
+    on parent baseline – if there are already elements in the same
+    z-layer."""
+    def test(self, e):
+        return e.isBaselineOnTop(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.floatBaseline2Top(), e, score)
+
+class FloatAscender2Top(Condition):
+    """Try to place the ascender of the first line on the parent top
+    padding position. Or just under – truncated locked on parent baseline –
+    if there are already elements in the same z-layer."""
+    def test(self, e):
+        return e.isAscenderOnTop(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.floatAscender2Top(), e, score)
+
+class FloatCapHeight2Top(Condition):
+    """Try to place the CapHeight of the first line on the parent top
+    padding position. Or just under – truncated locked on parent baseline –
+    if there are already elements in the same z-layer."""
+    def test(self, e):
+        return e.isCapHeightOnTop(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.floatCapHeight2Top(), e, score)
+
+class FloatXHeight2Top(Condition):
+    """Try to place the xHeight of the first line on the parent top padding
+    position. Or just under – truncated locked on parent baseline – if
+    there are already elements in the same z-layer."""
+    def test(self, e):
+        return e.isXHeightOnTop(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.floatXHeight2Top(), e, score)
+
+'''
 
 if __name__ == '__main__':
     import doctest
