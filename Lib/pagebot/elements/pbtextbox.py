@@ -533,6 +533,17 @@ class TextBox(Element):
         else:
             self.h = 0
         
+    def isShrunkOnTextWdith(self, tolerance=0):
+        if self.bs is not None:
+            return abs(self.bs.size[0] - self.w) <= tolerance
+        return not self.w
+
+    def shrink2TextWidth(self, tolerance=0):
+        if self.bs is not None:
+            self.w = self.bs.size[0]
+        else:
+            self.w = 0
+        
     def isBaselineOnGrid(self, tolerance=0):
         raise NotImplementedError
 
@@ -555,7 +566,7 @@ class TextBox(Element):
         raise NotImplementedError
 
     def isCapHeightOnTop(self, tolerance=0):
-        raise NotImplementedError
+        return False # Make sure that is always calcuiates
 
     def isCapHeightOnBottom(self, tolerance=0):
         raise NotImplementedError
@@ -564,7 +575,7 @@ class TextBox(Element):
         raise NotImplementedError
 
     def isXHeightOnTop(self, tolerance=0):
-        raise NotImplementedError
+        return False # Make sure that is always calcuiates
 
     def isXHeightOnBottom(self, tolerance=0):
         raise NotImplementedError
@@ -867,35 +878,52 @@ class TextBox(Element):
             line = self.textLines[index]
             self.top -= parent.getDistance2Grid(line.y)
 
-    def baseline2Top(self, index=None, style=None):
+    def baseline2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
         """
         if self.textLines and self.parent:
             line = self.textLines[index or 0]
             self.top = self.parent.h - self.parent.pt + line.y
 
-    def baseline2Bottom(self, index=None, style=None):
+    def baseline2Bottom(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match the positon of self.parent.bottom.
         """
         if self.textLines and self.parent:
             line = self.textLines[index or 0]
             self.bottom -= line.y
 
-    def capHeight2Top(self, index=None, style=None):
+    def ascender2Grid(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Top(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def capHeight2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
         """
-        if self.textLines and self.parent:
-            line = self.textLines[index or 0]
-            if line.textRuns:
-                textRun = line.textRuns[0]
-                self.top = self.parent.h - self.parent.pt + textRun.capHeight
+        textLines = self.textLines
+        if textLines and parent is not None:
+            line = self.textLines[0]
+            capHeight = 0
+            for textRun in line.textRuns:
+                capHeight = max(capHeight, textRun.capHeight) # Take the max capHeight of the first line. 
+            print('capHeight2Top', self.parent.h, self.parent.pt, line.y, capHeight)    
+            self.top = self.parent.h - self.parent.pt + line.y - capHeight
 
-    def capHeightUp2Grid(self, index=None, style=None):
+    def capHeight2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def capHeightUp2Grid(self, index=None, parent=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
         """
-        if parent is None:
-            parent = self.parent
         if self.textLines and parent is not None:
             assert index in range(len(self.textLines)), \
                 ('%s.capHeightUp2Grid: Index "%d" is not in range of available textLines "%d"' % \
@@ -904,42 +932,6 @@ class TextBox(Element):
             if line.textRuns:
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight) + parent.baselineGrid
-
-    def ascender2Grid(self, index=None, style=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def ascender2Top(self, index=None, style=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def ascender2Bottom(self, index=None, style=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def capHeight2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def xHeight2Top(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def xHeight2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def descender2Grid(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def descender2Top(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def descender2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
 
     def capHeightDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
@@ -955,6 +947,24 @@ class TextBox(Element):
             if line.textRuns:
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight)
+
+    def xHeight2Top(self, index=None, parent=None):
+        """Move the xHeight of the text at padding-top position.
+        """
+        if parent is None:
+            parent = self.parent
+        textLines = self.textLines
+        if textLines and parent is not None:
+            line = self.textLines[0]
+            xHeight = 0
+            for textRun in line.textRuns:
+                xHeight = max(xHeight, textRun.xHeight) # Take the max xHeight of the first line.     
+            print('xHeight2Top', self.parent.h, self.parent.pt, line.y, xHeight)    
+            self.top = self.parent.h - self.parent.pt + line.y - xHeight
+
+    def xHeight2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
 
     def xHeightUp2Grid(self, index=0, parent=None):
         """Move the text box up, so self.textLines[index].textRuns[0].xHeight 
@@ -986,7 +996,17 @@ class TextBox(Element):
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.xHeight)
 
+    def descender2Grid(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
 
+    def descender2Top(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def descender2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
 
 
 if __name__ == '__main__':

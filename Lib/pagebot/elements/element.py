@@ -5157,6 +5157,12 @@ class Element:
 
     def shrink2TextHeight(self, tolerance=0):
         raise NotImplementedError
+
+    def isShrunkOnTextWidth(self, tolerance=0):
+        raise NotImplementedError
+
+    def shrink2TextWidth(self, tolerance=0):
+        raise NotImplementedError
     
     # Float conditions to page padding
 

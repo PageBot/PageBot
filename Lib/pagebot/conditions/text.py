@@ -55,12 +55,19 @@ class BaselineCondition(Condition):
 # Fitting text
 
 class Shrink2TextHeight(Condition):
-	def text(self, e):
-		return e.isShrunkOnTextHeight(self.tolerance)
+    def test(self, e):
+        return e.isShrunkOnTextHeight(self.tolerance)
 
-	def solve(self, e, score):
-		return e.shrink2TextHeight()
-		
+    def solve(self, e, score):
+        return e.shrink2TextHeight()
+        
+class Shrink2TextWidth(Condition):
+    def test(self, e):
+        return e.isShrunkOnTextWidth(self.tolerance)
+
+    def solve(self, e, score):
+        return e.shrink2TextWidth()
+        
 # Baseline alignmenets
 
 class Baseline2Grid(BaselineCondition):
@@ -103,12 +110,18 @@ class Baseline2Bottom(BaselineCondition):
 # Capheight alignments
 
 class CapHeight2Top(BaselineCondition):
-	def test(self, e):
-		return e.isCapHeightOnTop(self.tolerance, index=self.index)
+    def test(self, e):
+        return e.isCapHeightOnTop(self.tolerance, index=self.index)
 
-	def solve(self, e, score):
-		return e.capHeight2Top(index=self.index)
+    def solve(self, e, score):
+        return e.capHeight2Top(index=self.index)
 
+class XHeight2Top(BaselineCondition):
+    def test(self, e):
+        return e.isXHeightOnTop(self.tolerance, index=self.index)
+
+    def solve(self, e, score):
+        return e.xHeight2Top(index=self.index)
 
 if __name__ == '__main__':
     import doctest

@@ -35,7 +35,7 @@ GRIDX = ((CW, G), (CW, G), (CW, G))
 GRIDY = ((CH, 0),) # No division in vertical grid.
 BASELINE = G
 
-NUM_PAGES = 3
+NUM_PAGES = 1
 
 # Get the font object, from te Roboto file that is included in PageBot resources for testing.
 f = findFont('PageBot-Regular')
