@@ -14,7 +14,7 @@
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
-#     Use view.showBaselines = True to show the default baselines of the text.
+#     Use view.showBaselineGrid = True to show the default baselines of the text.
 
 from pagebot import getContext
 
@@ -53,7 +53,7 @@ view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
 # Set types of grid lines to show on foreground/background
 view.showGrid = [GRID_COL, GRID_ROW_BG, GRID_SQR_BG]
-view.showBaselines = False # Show default setting of baseline grid of the column lines.
+view.showBaselineGrid = False # Show default setting of baseline grid of the column lines.
 #view.padding = inch(1)
 #view.showFrame = True
 #view.showCropMarks = True
@@ -72,7 +72,7 @@ for ix in range(4): # Horizontal index for x-position
             name='c%d' % n, parent=page, nextElement='c%d' % (n+1),
             showOrigin=True, # Show origin cross-hair at top-left of un-rotate text box.
             # Set the baseline flag. Note that the baseline and index rotate nicely.
-            showBaselines=(BASE_LINE, BASE_INDEX_RIGHT)) # Overwrite the view setting.
+            showBaselineGrid=(BASE_LINE, BASE_INDEX_RIGHT)) # Overwrite the view setting.
         t = '' # Just text in the first textbox, to it will flow into the others.
         n += 1 # Next counter that controls the textbox name and rotation angle.
 doc.solve() # Solve the overflowing conditions.

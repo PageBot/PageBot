@@ -37,8 +37,8 @@ doc = Document(size=B5, padding=PADDING, originTop=False,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Default is PageView.
-view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
-#view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
+view.showBaselineGrid = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
+#view.showBaselineGrid = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 # The page has no child elements, just showing the metrics of the padding and baseline.
 

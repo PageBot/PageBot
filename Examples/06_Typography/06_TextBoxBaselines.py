@@ -43,7 +43,7 @@ doc = Document(w=W, h=H, padding=PADDING, originTop=True,
     baselineGrid=BASELINE, baselineGridStart=BASELINE_START)
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
-view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Draw baselines at background.
+view.showBaselineGrid = [BASE_LINE_BG, BASE_INDEX_LEFT] # Draw baselines at background.
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 view.showOrigin = False # No origin showing
 
@@ -57,7 +57,7 @@ conditions = [Fit()] # Fitting conditions for the text box on (page.pw, page.ph)
 tb = newTextBox(text * 5, parent=page, stroke=0.5, strokeWidth=0.5,
     style=style, conditions=conditions, 
     baselineColor=color(1, 0, 0), # Show baselines and indices in red.
-    showBaselines=[BASE_LINE_BG, BASE_INDEX_RIGHT]) # Define type of baseline view.
+    showBaselineGrid=[BASE_LINE_BG, BASE_INDEX_RIGHT]) # Define type of baseline view.
    
 # Make the text box fit to the page padding, solving position and size.
 doc.solve()

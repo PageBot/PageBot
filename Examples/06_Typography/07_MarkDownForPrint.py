@@ -62,7 +62,7 @@ view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page
 view.showFlowConnections = False # Draw arrows between elements of there is a flow.
 view.showOrigin = True # Show position of elements as cross-hair
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set types of grid lines to show for background
-view.showBaselines = True # Show default baseline grid of the column lines.
+view.showBaselineGrid = True # Show default baseline grid of the column lines.
 
 # Keeping it simple in this example, making 3 linked text boxes on all pages.
 # In normal usage rhis probably can be better done by templates applied to pages. 

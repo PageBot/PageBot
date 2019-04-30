@@ -71,6 +71,7 @@ class Element:
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
+            showBaselineGrid=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -298,6 +299,9 @@ class Element:
         # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
         if solve:
             self.solve()
+
+        # View flags
+        self.showBaselineGrid = showBaselineGrid # Initialize to defaul values by property.
 
     def __repr__(self):
         """Object as string.
@@ -1289,7 +1293,7 @@ class Element:
         This can be a negative number showing the direction of rounding
 
         >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10, originTop=False)
-        >>> e.getDistance2Grid(40)
+        >>> e.getDistance2Grid(pt(40))
         0pt
         >>> e.getDistance2Grid(45)
         -5pt
@@ -1305,8 +1309,9 @@ class Element:
             gy = gridTopY - y
             dy = gy - round(gy/self.baselineGrid) * self.baselineGrid
 
-        # Now we can calculate the difference of y to the nearest grid line
+        # Now we can answer the difference of y to the nearest grid line
         return dy
+
 
     def isTopOnGrid(self, tolerance=0):
         """Answer True if self.top is on the parent grid.
@@ -5376,6 +5381,23 @@ class Element:
         """
         self.bottom += self.getDistance2Grid(self.bottom)
 
+    def _get_distance2Grid(self):
+        """Answer the distance to the parent grid, where vertical alignment decides where is measured.
+
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=50, h=1000, originTop=False)
+        >>> e2 = Element(y=130, h=200, parent=e1)
+        >>> e2.distance2Grid
+        20pt
+        >>> e2.y = pt(140)
+        >>> e2.distance2Grid
+        10pt
+        >>> e2.y = pt(150)
+        >>> e2.distance2Grid
+        0pt
+        """
+        return self.parent.getDistance2Grid(self.y)
+    distance2Grid = property(_get_distance2Grid)
+
     #   Page block and Page side alignments
 
     #   Horizontal alignments
@@ -7212,7 +7234,7 @@ class Element:
         self.showElementInfo = False
         self.showMissingElement = False
         self.showGrid = False
-        self.showBaselines = False
+        self.showBaselineGrid = False
         self.showTextLeading = False
         self.showFlowConnections = False
         self.showTextOverflowMarker = False
@@ -7239,7 +7261,7 @@ class Element:
             self.showPadding = True
             self.showFrame = True
             self.showGrid = DEFAULT_GRID
-            self.showBaselines = DEFAULT_BASELINE
+            self.showBaselineGrid = DEFAULT_BASELINE
             self.showTextLeading = True
 
         if VIEW_DEBUG2 in setNames:
@@ -7428,20 +7450,20 @@ class Element:
 
     #   Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT)
 
-    def _get_showBaselines(self):
+    def _get_showBaselineGrid(self):
         """Set value, containing the parts of baseline that should be shown. See pagebot.constants
         for the names of the options."""
-        return set(self.style.get('showBaselines') or []) # Not inherited
-    def _set_showBaselines(self, showBaselines):
-        if not showBaselines:
-            showBaselines = []
-        elif not isinstance(showBaselines, (set, tuple, list)):
-            if showBaselines in BASE_OPTIONS: # In case of single valid option, make into set
-                showBaselines = set([showBaselines])
+        return set(self.style.get('showBaselineGrid') or []) # Not inherited
+    def _set_showBaselineGrid(self, showBaselineGrid):
+        if not showBaselineGrid:
+            showBaselineGrid = []
+        elif not isinstance(showBaselineGrid, (set, tuple, list)):
+            if showBaselineGrid in BASE_OPTIONS: # In case of single valid option, make into set
+                showBaselineGrid = set([showBaselineGrid])
             else:
-                showBaselines = DEFAULT_BASELINE
-        self.style['showBaselines'] = set(showBaselines)
-    showBaselines = property(_get_showBaselines, _set_showBaselines)
+                showBaselineGrid = DEFAULT_BASELINE
+        self.style['showBaselineGrid'] = set(showBaselineGrid)
+    showBaselineGrid = property(_get_showBaselineGrid, _set_showBaselineGrid)
 
     def _get_showTextLeading(self):
         """Boolean value. If True show the vertical distance between text lines."""

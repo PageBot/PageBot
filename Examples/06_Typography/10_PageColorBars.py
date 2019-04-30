@@ -38,8 +38,8 @@ doc = Document(size=B5, padding=PADDING, originTop=True,
 
 view = doc.view # Get the current view of this document. Defaulse it PageView.
 view.padding = inch(0.5) # Define padding of the view, so there is space for crop marks
-view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
-#view.showBaselines = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
+view.showBaselineGrid = [BASE_LINE_BG, BASE_INDEX_LEFT] # Set to True to show baseline index
+#view.showBaselineGrid = [BASE_LINE_BG, BASE_Y_LEFT] # Use this line to show vertical positions
 view.showPadding = True # Show the padding of the page. The size is then (page.pw, page.ph)
 view.showCropMarks = True
 view.showRegistrationMarks = True

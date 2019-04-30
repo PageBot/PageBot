@@ -60,7 +60,7 @@ doc = Document(w=W, h=H, originTop=False, padding=PADDING,  gridX=GRIDX, gridY=G
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT]
+view.showBaselineGrid = [BASE_LINE_BG, BASE_INDEX_LEFT]
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set types of grid lines to show
 
 # Get the page

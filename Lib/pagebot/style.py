@@ -405,7 +405,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Types of baseline grid to be drawn using combination set of
         # set(BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, 
         # BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE).
-        showBaselines = set(), # If defined, display options defined the type of grid to show.
+        showBaselineGrid = set(), # If defined, display options defined the type of grid to show.
         # If set, display options defined the type of grid to show on background.
         showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
 

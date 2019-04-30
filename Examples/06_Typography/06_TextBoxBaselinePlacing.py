@@ -14,7 +14,7 @@
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
-#     Use view.showBaselines = True to show the default baselines of the text.
+#     Use view.showBaselineGrid = True to show the default baselines of the text.
 #     Then use BASE_TOP and BASE_BOTTOM to place the top and bottom baseline
 #     on vertical position page.h/2
 
@@ -63,7 +63,7 @@ view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
 # Set types of grid lines to show on foreground/background
 view.showGrid = [GRID_COL, GRID_ROW_BG, GRID_SQR_BG]
-view.showBaselines = False # Show default setting of baseline grid of the column lines.
+view.showBaselineGrid = False # Show default setting of baseline grid of the column lines.
 
 # Get the page
 page = doc[1]
@@ -71,13 +71,13 @@ page = doc[1]
 # to fit the padding of the page and the condition that checks on text overflow.
 c1 = newTextBox(t, w=CW, h=CH, y=page.h/2, name='c1', parent=page, nextElement='c2', 
     yAlign=BASE_TOP, showOrigin=True, 
-    showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
+    showBaselineGrid=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
     conditions=[Left2Left(), Bottom2Bottom(), Baseline2Grid(), Overflow2Next()])
 # Text without initial content, will be filled by overflow of c1.
 # Not showing the [+] marker, as the overflow text fits in the second column.
 c2 = newTextBox(w=CW, h=CH, y=page.h/2, name='c2', parent=page, 
     yAlign=BASE_TOP, showOrigin=True, 
-    showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
+    showBaselineGrid=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrite view setting.
     conditions=[Right2Right(), Bottom2Bottom(), Baseline2Grid()])
 
 newLine(x=page.pl, y=page.h/2, w=page.pw, h=0, parent=page, stroke=(1, 0, 0))

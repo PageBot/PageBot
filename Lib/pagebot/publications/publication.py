@@ -107,7 +107,7 @@ class Publication(Element):
         view.showGrid = self.showGrid
         view.showPadding = self.showPadding
         view.showImageLoresMarker = self.showImageLoresMarker
-        view.showBaselines = self.showBaselines
+        view.showBaselineGrid = self.showBaselineGrid
         
         return doc
 

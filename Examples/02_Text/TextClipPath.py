@@ -80,7 +80,7 @@ doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, originTop=Fa
 
 view = doc.view
 view.showTextBoxY = True
-view.showBaselines = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT] # Set the view to show the baseline grid
+view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT] # Set the view to show the baseline grid
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set the view to display the grid
 view.showPadding = True
 
@@ -143,7 +143,7 @@ Above some highlights of the current state of PageBot.
 page = doc[1]
 page.baselineGrid = LEADING
 page.baselineGridStart = page.pt
-page.showBaselines = [BASE_LINE_BG, BASE_INDEX_LEFT]
+page.showBaselineGrid = [BASE_LINE_BG, BASE_INDEX_LEFT]
 page.baselineColor = color(1, 0, 0)
 
 t = Typesetter(doc.context, styles=styles)

@@ -13,7 +13,7 @@
 #     04_SingleColumnYPositions.py
 #
 #     Draw a single columns with various typographic styles inside and show the
-#     baselines, using the view.showBaselines = True display option.
+#     baselines, using the view.showBaselineGrid = True display option.
 #     The text column includes a footnote reference with baseline shift.
 #
 
@@ -51,7 +51,7 @@ doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = False # Show default baseline grid of the column lines.
+view.showBaselineGrid = False # Show default baseline grid of the column lines.
 view.showPadding = True
 # Get the first (and only) page
 page = doc[1]
@@ -61,7 +61,7 @@ page = doc[1]
 # Default behavior of the textbox is to align the text at "top of the em-square".
 c1 = newTextBox(t, parent=page, w=500, stroke=(1, 0, 0), yAlign=TOP,
     showOrigin=True,
-    showBaselines=False, 
+    showBaselineGrid=False, 
     conditions=[Left2Left(), Top2Top(), Fit2Height(), Fit2Width()])
 # Solve the page/element conditions, so the text box as it's position and size.
 doc.solve()

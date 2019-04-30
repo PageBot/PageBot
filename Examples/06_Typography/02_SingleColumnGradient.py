@@ -13,7 +13,7 @@
 #     030_SingleColumnYPositions.py
 #
 #     Draw a single columns with various typographic styles inside and show the
-#     baselines, using the view.showBaselines = True display option.
+#     baselines, using the view.showBaselineGrid = True display option.
 #     The text column includes a footnote reference with baseline shift.
 #
 #from pagebot.contexts.flatcontext import FlatContext
@@ -60,7 +60,7 @@ doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = False # Show default baseline grid of the column lines.
+view.showBaselineGrid = False # Show default baseline grid of the column lines.
 view.showPadding = False # Make True to see the gray frame of the padding box.
 # Get the first (and only) page
 page = doc[1]
@@ -76,7 +76,7 @@ textShadow = Shadow(offset=pt(8, -8), blur=pt(16), color=color(spot=300).darker(
 # Red frame to show position and dimensions of the text box element.
 # Default behavior of the textbox is to align the text at "top of the em-square".
 c1 = newTextBox(t, parent=page, w=500, yAlign=TOP,
-    showOrigin=True, showBaselines=False, gradient=gradient, 
+    showOrigin=True, showBaselineGrid=False, gradient=gradient, 
     textShadow=textShadow, shadow=shadow,
     padding=pt(24), # Padding inside gradient rect
     conditions=[Left2Left(), Top2Top(), Fit2Height(), Fit2Width()])

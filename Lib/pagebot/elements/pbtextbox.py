@@ -501,88 +501,6 @@ class TextBox(Element):
                     page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
         return overflow
 
-    #   C O N D I T I O N S
-
-    def fitFontSize2Right(self):
-        """Make the right padding of the parent, without
-        moving the left position. Overwriting the default behavior of Element, as we want
-        text to be fiting too.
-
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.conditions import *
-        >>> context = getContext()
-        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
-        >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
-        >>> result = e.solve()
-        >>> tb.w
-        940pt
-        """
-        self.w = self.parent.w - self.parent.pr - self.x
-        self.bs = self.context.newString(self.bs.s, style=self.style, w=self.pw)
-        return True
-
-    def isShrunkOnTextHeight(self, tolerance=0):
-        if self.bs is not None:
-            return abs(self.bs.size[1] - self.h) <= tolerance
-        return not self.h
-
-    def shrink2TextHeight(self, tolerance=0):
-        if self.bs is not None:
-            self.h = self.bs.size[1]
-        else:
-            self.h = 0
-        
-    def isShrunkOnTextWidth(self, tolerance=0):
-        if self.bs is not None:
-            return abs(self.bs.size[0] - self.w) <= tolerance
-        return not self.w
-
-    def shrink2TextWidth(self, tolerance=0):
-        if self.bs is not None:
-            self.w = self.bs.size[0]
-        else:
-            self.w = 0
-        
-    def isBaselineOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isAscenderOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isAscenderOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isAscenderOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isCapHeightOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isCapHeightOnTop(self, tolerance=0, index=0):
-        return False # Make sure that is always calcuiates
-
-    def isCapHeightOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isXHeightOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isXHeightOnTop(self, tolerance=0, index=0):
-        return False # Make sure that is always calcuiates
-
-    def isXHeightOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isDescenderOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isDescenderOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
-
-    def isDescenderOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
-
     #   B U I L D
 
     def build(self, view, origin, drawElements=True, **kwargs):
@@ -678,7 +596,7 @@ class TextBox(Element):
     def drawBaselines(self, view, px, py, background=False):
         # Let's see if we can draw over them in exactly the same position.
 
-        show = self.showBaselines or view.showBaselines
+        show = self.showBaselineGrid or view.showBaselineGrid
 
         c = self.context # Get current context and builder
 
@@ -778,19 +696,76 @@ class TextBox(Element):
 
     #   C O N D I T I O N S
 
-    # Text conditions
+    def fitFontSize2Right(self):
+        """Make the right padding of the parent, without
+        moving the left position. Overwriting the default behavior of Element, as we want
+        text to be fiting too.
 
-    def isBaselineOnGrid(self, tolerance, index=None, style=None):
-        try:
-            parent = self.parent
-            if parent is None:
-                return False # Cannot test, there is no parent grid
-            line = self.textLines[index or 0]
-            return abs(self.getDistance2Grid(self.top + line.y)) <= tolerance
-        except IndexError:
-            return False
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> context = getContext()
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
+        >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
+        >>> result = e.solve()
+        >>> tb.w
+        940pt
+        """
+        self.w = self.parent.w - self.parent.pr - self.x
+        self.bs = self.context.newString(self.bs.s, style=self.style, w=self.pw)
+        return True
 
-    # Text conditional movers
+    # Shrinking box sizes, conditional testers and movers
+
+    def isShrunkOnTextHeight(self, tolerance=0):
+        if self.bs is not None:
+            return abs(self.bs.size[1] - self.h) <= tolerance
+        return not self.h
+
+    def shrink2TextHeight(self, tolerance=0):
+        """Shrink the box vertical to fit the vertical bounding box of the current text.
+        This also tests by e.isShrunkOnTextHeight()
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> context = getContext()
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(50)))
+        >>> tb = TextBox(bs, parent=e, conditions=[Shrink2TextHeight()])
+        >>> result = e.solve()
+        >>> tb.h
+        70pt
+        """
+        if self.bs is not None:
+            self.h = self.bs.size[1]
+        else:
+            self.h = 0
+        
+    def isShrunkOnTextWidth(self, tolerance=0):
+        if self.bs is not None:
+            return abs(self.bs.size[0] - self.w) <= tolerance
+        return not self.w
+
+    def shrink2TextWidth(self, tolerance=0):
+        """Shrink the box horizontal to fit the horizontal bounding box of the current text.
+        This also tests by e.isShrunkOnTextWidth()
+        
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> context = getContext()
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(100)))
+        >>> tb = TextBox(bs, parent=e, conditions=[Shrink2TextWidth()])
+        >>> result = e.solve()
+        >>> round(tb.w)
+        202pt
+        """
+        if self.bs is not None:
+            self.w = self.bs.size[0]
+        else:
+            self.w = 0
+ 
+     # Text conditional testers and movers
 
     def getMatchingStyleLine(self, style, index=0):
         """Scan through the lines. Test the first textRun of each line to
@@ -820,6 +795,18 @@ class TextBox(Element):
                 matchingIndex += 1
         return None
 
+    # Baseline matching, conditional testers and movers
+
+    def isBaselineOnGrid(self, tolerance, index=None, style=None):
+        try:
+            parent = self.parent
+            if parent is None:
+                return False # Cannot test, there is no parent grid
+            line = self.textLines[index or 0]
+            return abs(self.getDistance2Grid(self.top + line.y)) <= tolerance
+        except IndexError:
+            return False
+
     def styledBaselineDown2Grid(self, style, index=0, parent=None):
         """Move the index-th baseline that fits the style down to match the grid."""
         if parent is None:
@@ -833,18 +820,35 @@ class TextBox(Element):
         """If gridIndex is defined, then position the index-th line on 
         gridIndex-th baseline. If gridIndex is None, then round to 
         nearest grid line position.
+   
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> context = getContext()
+        >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
+        >>> e.baselineGrid = pt(24)
+        >>> e.baselineStart = pt(44)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
+        >>> tb = TextBox(bs, parent=e)
+        >>> tb.baseline2Grid()
+        >>> tb.y
+
+        >>> result = tb.solve()
+        >>> tb.y 
+        
         """
         if parent is None:
             parent = self.parent
-        if self.textLines and parent is not None:
+        textLines = self.textLines
+        if textLines and parent is not None:
             assert index in range(len(self.textLines)), \
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))
-            line = self.textLines[index]
+            line = textLines[index]
             d = parent.getDistance2Grid(line.y)
-            self.top -= d# Round down
+            print(line.y, d, self.y)
+            self.y += d # Round down
             if d > parent.baselineGrid/2:
-                self.top += parent.baselineGrid
+                self.y += parent.baselineGrid
 
     def baselineUp2Grid(self, index=0, parent=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
@@ -912,17 +916,10 @@ class TextBox(Element):
         if baselineY is not None:
             self.bottom = baselineY
 
-    def ascender2Grid(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+    # Cap height conditional testers and movers
 
-    def ascender2Top(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
-    def ascender2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+    def isCapHeightOnTop(self, tolerance=0, index=0, parent=None):
+        return False
 
     def capHeight2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
@@ -935,7 +932,6 @@ class TextBox(Element):
             capHeight = 0
             for textRun in line.textRuns:
                 capHeight = max(capHeight, textRun.capHeight) # Take the max capHeight of the first line. 
-            print('capHeight2Top', self.parent.h, self.parent.pt, line.y, capHeight)    
             self.top = self.parent.h - self.parent.pt + line.y - capHeight
 
     def capHeight2Bottom(self, index=None, parent=None):
@@ -969,6 +965,11 @@ class TextBox(Element):
             if line.textRuns:
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight)
+
+    # xHeight conditional testers and movers
+
+    def isXHeightOnTop(self, tolerance=0, index=0, parent=None):
+        return False
 
     def xHeight2Top(self, index=None, parent=None):
         """Move the xHeight of the text at padding-top position.
@@ -1017,6 +1018,22 @@ class TextBox(Element):
             if line.textRuns:
                 textRun = line.textRuns[0]
                 self.top += parent.getDistance2Grid(line.y + textRun.xHeight)
+
+    # Ascenders conditional testers and movers
+
+    def ascender2Grid(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Top(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    def ascender2Bottom(self, index=None, parent=None):
+        # TODO:Implement
+        raise NotImplementedError
+
+    # Descender conditional testers and movers
 
     def descender2Grid(self, index=None, parent=None):
         # TODO:Implement

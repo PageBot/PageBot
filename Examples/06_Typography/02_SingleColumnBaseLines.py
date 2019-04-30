@@ -66,7 +66,7 @@ doc = Document(w=W, h=H, padding=PADDING, context=context, baselineGrid=BASELINE
 # Get the default page view of the document and set viewing parameters
 view = doc.view
 view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page.
-view.showBaselines = False # No baselines shown in grid. Element shows its own.
+view.showBaselineGrid = False # No baselines shown in grid. Element shows its own.
 
 # Get the page
 page = doc[1]
@@ -77,7 +77,7 @@ page = doc[1]
 # Show index of baselines on left and vertical position of baselines on the right.
 c1 = newTextBox(t, parent=page, stroke=(1, 0, 0), conditions=[Fit()],
     showOrigin=True,
-    showBaselines=[BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT])
+    showBaselineGrid=[BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT])
 
 # Solve the page/element conditions
 doc.solve()

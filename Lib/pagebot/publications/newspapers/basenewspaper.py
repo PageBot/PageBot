@@ -49,7 +49,7 @@ class Newspaper(Publication):
     >>> #view.showFrame = True
     >>> view.showNameInfo = True
     >>> #view.showGrid = GRID_SQR
-    >>> #view.showBaselines = [BASE_LINE]
+    >>> #view.showBaselineGrid = [BASE_LINE]
     >>> #view.showFrame = True
     >>> templateFront = np.getTemplate('Front')
     >>> templateMainPage = np.getTemplate('MainPage')

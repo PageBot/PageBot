@@ -14,7 +14,7 @@
 #
 #     Draw a two columns with a single text, showing overflow from one column
 #     into the other. Use some view.showGrid options to show the grid.
-#     Use view.showBaselines = True to show the default baselines of the text.
+#     Use view.showBaselineGrid = True to show the default baselines of the text.
 
 from pagebot import getContext
 from pagebot.fonttoolbox.objects.font import findFont
@@ -57,7 +57,7 @@ doc = Document(w=W, h=H, padding=PADDING, gridX=GRIDX, gridY=GRIDY, context=cont
 view = doc.view
 # Set types of grid lines to show on foreground/background
 view.showGrid = [GRID_COL, GRID_ROW_BG, GRID_SQR_BG]
-view.showBaselines = False # Show default setting of baseline grid of the column lines.
+view.showBaselineGrid = False # Show default setting of baseline grid of the column lines.
 
 # Get the page
 page = doc[1]
@@ -70,7 +70,7 @@ c1 = newTextBox(t, w=CW, name='c1', parent=page,
 # Not showing the [+] marker, as the overflow text fits in the second column.
 c2 = newTextBox(w=CW, name='c2', parent=page, 
     showOrigin=True, 
-    showBaselines=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrited view setting.
+    showBaselineGrid=(BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT), # Overwrited view setting.
     conditions=[Right2Right(), Top2Top(), Fit2Height()])
 
 # Solve the page/element conditions

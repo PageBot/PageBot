@@ -711,13 +711,13 @@ class PageView(BaseView):
                     x += cw + gx
 
     def drawBaselines(self, e, origin, background=False):
-        """Draw baseline grid if self.showBaselines is True and there is a
+        """Draw baseline grid if self.showBaselineGrid is True and there is a
         baseline defined > 0. Use the color from style values viewGridStrokeX
         and viewGridStrokeWidthX to make a difference with the baselines drawn
         by TextBox with style values baselineColor and baselineWidth.
 
         In this method is called by an element, instead of self, the show
-        attribute is a way to overwrite the setting of self.showBaselines
+        attribute is a way to overwrite the setting of self.showBaselineGrid
 
         == NOTE == TextBox elements have their own baseline drawing method
 
@@ -728,10 +728,10 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showBaselines = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
+        >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
         >>> view.drawBaselines(e, pt(0, 0))
         """
-        show = e.showBaselines or self.showBaselines
+        show = e.showBaselineGrid or self.showBaselineGrid
 
         # Sets the default, in case not drawing or show is True
         if not show:

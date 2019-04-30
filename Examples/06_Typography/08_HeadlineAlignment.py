@@ -53,7 +53,7 @@ view.showTextOverflowMarker = True # Shows as [+] marker on bottom-right of page
 view.showFlowConnections = False # Draw arrows between elements of there is a flow.
 view.showOrigin = True # Show position of elements as cross-hair
 view.showGrid = [GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG] # Set types of grid lines to show for background
-view.showBaselines = True # Show default baseline grid of the column lines.
+view.showBaselineGrid = True # Show default baseline grid of the column lines.
 
 page = doc[1]
 

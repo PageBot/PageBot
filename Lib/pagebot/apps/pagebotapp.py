@@ -224,9 +224,9 @@ class PageBotApp(BaseApp):
         tab.vGutter.set(11) # pt(12)
 
         y += uiL
-        tab.showBaselines = CheckBox((pad, y, uiWidth/2, uiH), 'Baselines', callback=self.makeSample,
+        tab.showBaselineGrid = CheckBox((pad, y, uiWidth/2, uiH), 'Baselines', callback=self.makeSample,
             sizeStyle='small')
-        tab.showBaselines.set(True)
+        tab.showBaselineGrid.set(True)
         tab.showColorBars = CheckBox((uiWidth/2, y, -pad, uiH), 'Color bars', callback=self.makeSample,
             sizeStyle='small')
         tab.showColorBars.set(1)
@@ -324,7 +324,7 @@ class PageBotApp(BaseApp):
         view.showRegistrationMarks = showMarks
         view.showNameInfo = showMarks
         view.showColorBars = bool(self.uiDesign.showColorBars.get())
-        #view.showBaselines = bool(self.window.group.showBaselines.get())
+        #view.showBaselineGrid = bool(self.window.group.showBaselineGrid.get())
         if bool(self.uiDesign.showGrid.get()):
             view.showGrid = GRID_COL
         else:
