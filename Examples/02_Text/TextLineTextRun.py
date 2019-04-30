@@ -199,21 +199,21 @@ class TextRun:
         return self.nsParagraphStyle.firstLineHeadIndent()
     firstLineHeadIndent = property(_get_firstLineHeadIndent)
 
-    def _get_lineHeightMultiple(self):
-        return self.nsParagraphStyle.lineHeightMultiple()
-    lineHeightMultiple = property(_get_lineHeightMultiple)
+    def _get_leadingMultiple(self):
+        return self.nsParagraphStyle.leadingMultiple()
+    leadingMultiple = property(_get_leadingMultiple)
 
     def _get_lineSpacing(self):
         return self.nsParagraphStyle.lineSpacing()
     lineSpacing = property(_get_lineSpacing)
 
-    def _get_maximumLineHeight(self):
-        return self.nsParagraphStyle.maximumLineHeight()
-    maximumLineHeight = property(_get_maximumLineHeight)
+    def _get_maximumLeading(self):
+        return self.nsParagraphStyle.maximumLeading()
+    maximumLeading = property(_get_maximumLeading)
 
-    def _get_minimumLineHeight(self):
-        return self.nsParagraphStyle.minimumLineHeight()
-    minimumLineHeight = property(_get_minimumLineHeight)
+    def _get_minimumLeading(self):
+        return self.nsParagraphStyle.minimumLeading()
+    minimumLeading = property(_get_minimumLeading)
 
 
 class TextLine:
@@ -352,7 +352,7 @@ class TextBox:
         # Let's see if we can draw over them in exactly the same position.
         fontSize = 8
         if showY:
-            context.text(context.newString('0', style=dict(align='left',
+            context.text(context.newString('0', style=dict(xAlign='left',
                                                font='Verdana',
                                                fontSize=8,
                                                fill=color(0, 0, 1))),
@@ -364,14 +364,14 @@ class TextBox:
             context.line((self.x, self.y + self.h - y),
                    (self.x + self.w, self.y + self.h - y))
             if showIndex:
-                context.text(context.newString('index', style=dict(align='right',
+                context.text(context.newString('index', style=dict(xAlign='right',
                                                        font='Verdana',
                                                        fontSize=fontSize,
                                                        fill=color(0, 0, 1))),
                        (self.x-8, self.y + self.h - y - fontSize/3))
             if showY:
                 context.text(context.newString('%d' % round(y),
-                                   style=dict(align='left',
+                                   style=dict(xAlign='left',
                                               font='Verdana',
                                               fontSize=fontSize,
                                               fill=color(0, 0, 1))),
@@ -379,7 +379,7 @@ class TextBox:
             if showLeading:
                 leading = round(abs(y - prevY))
                 context.text(context.newString('%d' % leading,
-                                   style=dict(align='left',
+                                   style=dict(xAlign='left',
                                               font='Verdana',
                                               fontSize=fontSize,
                                               fill=color(1, 0, 0))),
@@ -403,48 +403,48 @@ context.Variable([
 
 
 fs = context.newString(u'This åéöøa hêädliñe rúns over one or more lines.\n',
-                 style=dict(align='left',
+                 style=dict(xAlign='left',
                             font='BitcountMonoDouble-RegularCircleItalic',
                             fontSize=24,
                             openTypeFeatures=dict(ss01=True,
                                                   ss02=True,
                                                   ss06=True),
-                            lineHeight=26,
+                            leading=26,
                             tracking=1.2))
 fs += context.newString(('This an example of TextLines and TextRuns'
                    ' and more and more. '),
-                  style=dict(font='Verdana', fontSize=14, lineHeight=22))
+                  style=dict(font='Verdana', fontSize=14, leading=22))
 fs += context.newString('=== Find this. === ',
-                  style=dict(font='Georgia-Bold', fontSize=16, lineHeight=22))
+                  style=dict(font='Georgia-Bold', fontSize=16, leading=22))
 fs += context.newString('This an example of larger TextLines and TextRuns. ',
-                  style=dict(font='Georgia', fontSize=16, lineHeight=22))
+                  style=dict(font='Georgia', fontSize=16, leading=22))
 fs += context.newString('=== Find this. === ',
-                  style=dict(font='Georgia-Bold', fontSize=16, lineHeight=22))
+                  style=dict(font='Georgia-Bold', fontSize=16, leading=22))
 fs += context.newString('This an example of TextLines and TextRuns. ',
-                  style=dict(font='Verdana', fontSize=14, lineHeight=22))
+                  style=dict(font='Verdana', fontSize=14, leading=22))
 
 fittingWord = context.newString('Word\n', style=dict(font='Georgia',
-                                               align='left',
+                                               xAlign='left',
                                                fontSize=500))
 w, _ = fittingWord.size
 fittingSize = W/w*500
 fittingWord = context.newString('Word\n', style=dict(font='Georgia',
-                                               align='left',
+                                               xAlign='left',
                                                fontSize=fittingSize,
-                                               lineHeight=fittingSize*1.2))
+                                               leading=fittingSize*1.2))
 fs += fittingWord
 
 fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',
-                                     align='left',
+                                     xAlign='left',
                                      fontSize=500))
 w, _ = fittingWord.size
 fittingSize = W/w*500
 fittingWord = context.newString('ABC\n',
                           style=dict(font='BitcountMonoDouble-RegularCircle',
-                                     align='left',
+                                     xAlign='left',
                                      fontSize=fittingSize,
-                                     lineHeight=fittingSize))
+                                     leading=fittingSize))
 fs += fittingWord
 
 doc = Document(w=W+G*2, h=H + G*2, autoPages=1)

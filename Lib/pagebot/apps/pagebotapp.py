@@ -16,7 +16,7 @@
 from vanilla import *
 from pagebot import getResourcesPath
 from pagebot.apps.baseapp import BaseApp
-from pagebot.publications import PublicationClasses
+from pagebot.publications import PublicationCategories
 from pagebot.elements import newGroup, newTextBox, newRect
 from pagebot.constants import *
 from pagebot.composer import Composer
@@ -83,8 +83,8 @@ class PageBotApp(BaseApp):
             minW=None, maxW=None, minH=None, maxH=None, **kwargs):
         uiWidth = pt(200)
         w, h = w or B5[0]+uiWidth, h or B5[1]
-        BaseApp.__init__(self, w=w, h=h, **kwargs)
-        self.APPS[self.eId] = self
+        BaseApp.__init__(self)
+        self.APPS[0] = self
         # Key is publication type, values are UI settings
         self.preferenceUI = {} 
         self.menuCallbacks = {}
@@ -132,19 +132,20 @@ class PageBotApp(BaseApp):
 
         y += uiL-2
         tab.publicationLabel = TextBox((pad, y-8, (uiWidth-pad)/2, uiLS), 
-            'Publication type', sizeStyle='mini')
+            'Publication category', sizeStyle='mini')
         tab.templateLabel = TextBox(((uiWidth-pad)/2+pad, y-8, -pad, uiLS), 
-            'Template type', sizeStyle='mini')
+            'Publication type', sizeStyle='mini')
             
-        publicationTypes = sorted(PublicationClasses.keys())
+        publicationCategories = sorted(PublicationCategories.keys())
         tab.publication = PopUpButton((pad, y, (uiWidth-pad)/2-pad, uiH),
-            publicationTypes, callback=self.makeSample, sizeStyle='small')
-        tab.publication.set(publicationTypes.index(self.publication.__class__.__name__))
+            publicationCategories, callback=self.selectCategory, sizeStyle='small')
+        tab.publication.set(publicationCategories.index('Magazine'))
 
-        templateTypes = sorted(self.publication.templates.keys())
+
+        templateTypes = sorted(PublicationCategories[tab.publication.getItem()])
         tab.templateType = PopUpButton(((uiWidth-pad)/2+pad, y, -pad, uiH), templateTypes, 
             callback=self.makeSample, sizeStyle='small')
-        tab.templateType.set(templateTypes.index(self.publication.DEFAULT_TEMPLATE_NAME))
+        tab.templateType.set(0)
 
         y += uiL
         tab.themeLabel = TextBox((pad, y-8, (uiWidth-pad)*2/3, uiLS), 'Theme', sizeStyle='mini')
@@ -382,6 +383,13 @@ class PageBotApp(BaseApp):
         """
         page.solve()
 
+    def selectCategory(self, sender):
+        """Select a new category and update the popup of publication types."""
+        templateTypes = sorted(PublicationCategories[tab.publication.getItem()])
+        self.templateType.setItems(templateTypes)
+        self.templateType.set(0)
+        self.makeSample(sender) # Create a new sample for this selection.
+        
     def makeSample(self, sender):
         """Make a fast sample page as PDF as example of the current UI settings."""
         doc = self.getDocument()
@@ -497,8 +505,9 @@ class PageBotApp(BaseApp):
 
 def newApp():
     W, H = A4
-    publicationClass = PublicationClasses['Magazine']
-    publication = publicationClass(w=W, h=H, context=context)
+    magazineClasses = PublicationCategories['Magazine']
+    magazineClass = magazineClasses['Glossy']
+    publication = magazineClass(w=W, h=H, context=context)
     app = PageBotApp(publication, title='Magazine App', padding=12, context=context)
     app.build()
     app.make()
