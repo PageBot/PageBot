@@ -3251,15 +3251,14 @@ class Element:
 
     def _get_folds(self):
         """List if [(x, y), ...] (one of them can be None) that indicate the position of folding lines
-        on a page. In general this is a view parameters (applying to all pages), but it can
-        be overwritten by individual pages or other elements.
+        on a page. In general this is a view parameter (applying to all pages), but it can
+        be overwritten by individual pages or other elements, if their folding pattern is different.
         The position of folds is ignored by self.w and self.h. It is mostly to show folding markers
-        by PageView. The fold property is stored instyle and not inherited."""
+        by PageView. The fold property is stored ins tyle and not inherited."""
         return self.style.get('folds', []) # Not inherited
     def _set_folds(self, folds):
         self.style['folds'] = folds
     folds = property(_get_folds, _set_folds)
-
 
     # Margin properties
 

@@ -54,6 +54,15 @@ class BaselineCondition(Condition):
 
 # Fitting text
 
+class Shrink2TextBounds(Condition):
+    def test(self, e):
+        return e.isShrunkOnTextHeight(self.tolerance) and e.isShrunkOnTextWidth(self.tolerance)
+
+    def solve(self, e, score):
+        if not self.test(e): # Only try to solve if condition test fails.
+            self.addScore(e.shrink2TextHeight(), e, score)
+            self.addScore(e.shrink2TextWidth(), e, score)
+        
 class Shrink2TextHeight(Condition):
     def test(self, e):
         return e.isShrunkOnTextHeight(self.tolerance)

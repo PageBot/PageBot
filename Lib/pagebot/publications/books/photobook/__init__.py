@@ -20,7 +20,7 @@ from pagebot.constants import *
 from pagebot.publications.books.basebook import BaseBook
 from pagebot.publications.books.photobook.coverpage import makeCoverPage
 from pagebot.publications.books.photobook.titlepage import makeTitlePage
-from pagebot.mining.samplecontent import SampleContent
+from pagebot.mining.filibuster.samplecontent import SampleContent
 from pagebot.toolbox.units import mm
 from pagebot.toolbox.color import Color, blackColor, whiteColor
 from pagebot.fonttoolbox.objects.font import findFont

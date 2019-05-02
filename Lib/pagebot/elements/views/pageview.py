@@ -253,10 +253,20 @@ class PageView(BaseView):
                 self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
                 self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
             # TODO: May need to be scaled, as self.drawPadding does.
+            ox, oy = point2D(origin)
             context = self.context
             context.fill(noColor)
             context.stroke(color(0, 0, 1), pt(0.5))
-            context.rect(origin[0], origin[1], e.w, e.h)
+            context.rect(ox, oy, e.w, e.h)
+            # If there are folds, draw them too in the same color.
+            folds = e.folds or self.folds
+            if folds:
+                for (x, y) in folds:
+                    if x is not None:
+                        context.line((ox+x, oy), (ox+x, oy+e.h))
+                    if y is not None:
+                        context.line((ox, ox+y), (ox+e.w, ox+y))
+
 
     def drawPadding(self, e, origin):
         """Draw the page frame of its current padding.
@@ -860,7 +870,7 @@ class PageView(BaseView):
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
         >>> view.showCropMarks = True
-        >>> view.folds = [(mm(40), mm(60)),]
+        >>> view.folds = [(mm(40), mm(60))]
         >>> view.drawCropMarks(e, pt(0, 0))
         """
         if (self.showCropMarks and e.isPage) or e.showCropMarks:
@@ -868,7 +878,7 @@ class PageView(BaseView):
 
             x, y = point2D(origin) # Ignore z-axus for now.
             w, h = e.size
-            folds = self.css('folds')
+            folds = e.folds or self.css('folds')
             cmDistance = self.css('viewCropMarkDistance') # From the side, compare with bleed.
             cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
             cmStrokeWidth = self.css('viewCropMarkStrokeWidth')

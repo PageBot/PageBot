@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     mining/__init__.py
+#     mining/filibuster/samplecontent.py
 #
 #     To be developed here: functions that do data mining from external sources.
 #

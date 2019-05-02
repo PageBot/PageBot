@@ -24,7 +24,7 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, p, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, LANGUAGE_EN
-from pagebot.mining.samplecontent import SampleContent
+from pagebot.mining.filibuster.samplecontent import SampleContent
 
 sampleContent = SampleContent()
 # Uncomment to show the attribute names of

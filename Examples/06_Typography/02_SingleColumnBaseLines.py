@@ -24,7 +24,7 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.units import em, pt
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import BASE_LINE, BASE_INDEX_LEFT, BASE_Y_RIGHT
-from pagebot.mining.samplecontent import SampleContent
+from pagebot.mining.filibuster.samplecontent import SampleContent
 
 sampleContent = SampleContent()
 # Uncomment to show the attribute names of

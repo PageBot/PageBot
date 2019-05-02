@@ -20,7 +20,7 @@ from pagebot.constants import *
 from pagebot.publications.calendars.basecalendar import BaseCalendar
 from pagebot.publications.calendars.photocalendar.coverpage import makeCoverPage
 from pagebot.publications.calendars.photocalendar.monthpage import makeMonthPage
-from pagebot.mining.samplecontent import SampleContent
+from pagebot.mining.filibuster.samplecontent import SampleContent
 from pagebot.toolbox.units import mm
 from pagebot.toolbox.color import Color, blackColor, whiteColor
 from pagebot.fonttoolbox.objects.font import findFont

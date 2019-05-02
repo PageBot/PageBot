@@ -12,8 +12,5 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     mining/__init__.py
+#     mining/filibuster/__init__.py
 #
-#     To be developed here: functions that do data mining from external sources.
-#
-
