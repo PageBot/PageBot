@@ -190,14 +190,14 @@ BlurbMagazine = inch(8.5, 11) # Premium & economy
 
 # https://www.newspaperclub.com/create/artwork-guidelines
 # Recommended minimum margins: mm(10)
-NEWSPAPERCLUB_BROADSHEET = mm(350, 500) 
-NEWSPAPERCLUB_BROADSHEET_SPREAD = mm(2*350, 500)
+NewsPaperClub_BroadSheet = mm(350, 500) 
+NewsPaperClub_BroadSheet_Spread = mm(2*350, 500)
 # Recommended minimum margins: mm(15)
-NEWSPAPERCLUB_TABLOID = mm(289, 380) 
-NEWSPAPERCLUB_TABLOID_SPREAD = mm(2*289, 380)
+NewsPaperClub_Tabloid = mm(289, 380) 
+NewsPaperClub_Tabloid_Spread = mm(2*289, 380)
 # Recommended bleed: mm(5)
-NEWSPAPERCLUB_MINI = mm(180, 260) 
-NEWSPAPERCLUB_MINI_SPREAD = mm(2*180, 260)
+NewsPaperClub_Mini = mm(180, 260) 
+NewsPaperClub_Mini_Spread = mm(2*180, 260)
 
 # www.overnightprints.com
 OpBookletSmall = inch(5.5, 8.5)
