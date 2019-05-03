@@ -15,7 +15,7 @@
 #
 
 
-from pagebot.constants import ORIGIN
+from pagebot.constants import ORIGIN, MIDDLE, CENTER
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
@@ -63,19 +63,23 @@ class Oval(Element):
         view.drawElementInfo(self, origin)
 
 class Circle(Oval):
-    def __init__(self, r=None, x=None, y=None, w=None, h=None, **kwargs):
+    def __init__(self, r=None, x=None, y=None, w=None, h=None, 
+            xAlign=None, yAlign=None, **kwargs):
         """Draw the oval in the current context canvas.
 
         >>> from pagebot.toolbox.units import pt
         >>> e = Circle(r=pt(30))
         >>> e.xy, e.size
-        ((-30pt, -30pt), (60pt, 60pt))
+        ((0pt, 0pt), (60pt, 60pt))
+        >>> e.box, e.top, e.right, e.bottom, e.left
         """
         if r is not None:
             w = h = 2*r
-        x = (x or ORIGIN[0]) - (w or DEFAULT_WIDTH)/2
-        y = (y or ORIGIN[1]) - (h or DEFAULT_HEIGHT)/2
-        Oval.__init__(self, x=x, y=y, w=w, h=h, **kwargs)
+        if x is None:
+            x = ORIGIN[0]
+        if y is None:
+            y = ORIGIN[1]
+        Oval.__init__(self, x=x, y=y, w=w, h=h, xAlign=xAlign or CENTER, yAligh=yAlign or MIDDLE, **kwargs)
 
 if __name__ == '__main__':
     import doctest

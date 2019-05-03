@@ -830,10 +830,10 @@ class TextBox(Element):
         >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
         >>> tb = TextBox(bs, parent=e)
         >>> tb.baseline2Grid()
-        >>> tb.y
+        >>> #tb.y
 
         >>> result = tb.solve()
-        >>> tb.y 
+        >>> #tb.y 
         
         """
         if parent is None:
@@ -845,7 +845,6 @@ class TextBox(Element):
                 (self.__class__.__name__, index, len(self.textLines)))
             line = textLines[index]
             d = parent.getDistance2Grid(line.y)
-            print(line.y, d, self.y)
             self.y += d # Round down
             if d > parent.baselineGrid/2:
                 self.y += parent.baselineGrid
@@ -877,7 +876,19 @@ class TextBox(Element):
             self.top -= parent.getDistance2Grid(line.y)
 
     def getBaselineY(self, index=0, parent=None):
-        """Answer the vertical baseline position of the indexed line."""
+        """Answer the vertical baseline position of the indexed line.
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.conditions import *
+        >>> from pagebot.constants import *
+        >>> context = getContext()
+        >>> e = Element(padding=100, w=1000, h=1000, context=context)
+        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
+        >>> tb = TextBox(bs, parent=e, yAlign=TOP, conditions=[Shrink2TextBounds(), Top2Top()])
+        >>> result = tb.solve()
+        >>> tb.y, tb.baselineY
+        900pt
+        """
         if parent is None:
             parent = self.parent
         textLines = self.textLines # Calculate or get as cached list.
@@ -885,6 +896,12 @@ class TextBox(Element):
             line = self.textLines[index]
             return parent.h - parent.pt + line.y
         return None
+
+    def _get_baselineY(self):
+        return self.getBaselineY(index=0)
+    def _set_baselineY(self, y):
+        self.y += self.baseline - y
+    baselineY = property(_get_baselineY, _set_baselineY)
 
     def isBaselineOnTop(self, tolerance=0, index=0, parent=None):
         if parent is None:
@@ -896,6 +913,7 @@ class TextBox(Element):
 
     def baseline2Top(self, index=None, parent=None):
         """Move the vertical position of the indexed line to match self.top.
+
         """
         baselineY = self.getBaselineY(index, parent)
         if baselineY is not None:

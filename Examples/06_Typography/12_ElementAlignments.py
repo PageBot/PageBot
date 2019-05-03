@@ -31,25 +31,35 @@ context = getContext() # Get the current context (e.g. DrawBotContext instance)
 
 W = H = pt(500)
 
-doc = Document(W=W, H=H, context=context)
+doc = Document(w=W, h=H, context=context)
 
 view = doc.view
 view.showPadding = True
 
 page = doc[1]
-page.originTop = True
-page.padding = pt(40)
-page.originTop = True # Origin on top of bottom should make not difference
+page.padding = pt(30) # Make page area to fit the circles
+page.originTop = False # Origin on top of bottom should make not difference
+page.showOrigin = True
+# Fitting by condition on page sides
+newCircle(parent=page, fill=noColor, stroke=color(rgb='violet'), 
+    strokeWidth=pt(4), conditions=[Fit2Sides()]) 
 # Fitting by condition on the page padding
-newCircle(parent=page, fill=noColor, stroke=color(rgb='green'), strokeWidth=pt(0.5), conditions=[Fit()]) 
+newCircle(parent=page, fill=noColor, stroke=color(rgb='blue'), 
+    strokeWidth=pt(4), conditions=[Fit()]) 
 # Fit (x, y) on middle of page.
-newCircle(parent=page, x=page.w/2, y=page.h/2, r=page.pw/2, fill=noColor, stroke=color(rgb='red'), strokeWidth=pt(0.5)) 
-# Fit with origin in (CENTER, MiDDLE)
-newCircle(parent=page, xAlign=CENTER, yAlign=MIDDLE, x=page.w/2, y=page.h/2, r=page.pw/2, fill=noColor, stroke=color(rgb='orange'), strokeWidth=pt(0.5)) 
-# Fit with origin in (CENTER, MiDDLE)
-c = newCircle(parent=page, r=page.pw/2, fill=noColor, stroke=color(rgb='blue'), strokeWidth=pt(10.5)) 
-c.left = page.pl
-c.bottom = page.pb
+newCircle(parent=page, r=page.pw/2-30, fill=noColor, 
+    stroke=color(rgb='red'), strokeWidth=pt(4), 
+    conditions=[Center2Center(), Middle2Middle()]) 
+# Direct position with origin on bottom left
+c = newCircle(parent=page, r=page.pw/2-60, fill=noColor, 
+    stroke=color(rgb='orange'), strokeWidth=pt(4)) 
+c.left = page.pl+60
+c.bottom = page.pb+60
+# Direct position with origin on (center, middle)
+newCircle(parent=page, xAlign=CENTER, yAlign=MIDDLE,
+    r=page.pw/2-90, stroke=noColor, x=page.w/2, y=page.h/2,
+    fill=color(rgb='yellow'), strokeWidth=pt(4)) 
+
 page.solve()
 
 doc.export('_export/ElemenAlignments.pdf')

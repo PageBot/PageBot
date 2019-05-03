@@ -301,7 +301,7 @@ class Element:
             self.solve()
 
         # View flags
-        self.showBaselineGrid = showBaselineGrid # Initialize to defaul values by property.
+        self.showBaselineGrid = showBaselineGrid # Initialize to default values by property.
 
     def __repr__(self):
         """Object as string.
@@ -2269,9 +2269,15 @@ class Element:
         >>> e.xAlign = CENTER
         >>> e.left
         40mm
+        >>> e.x = mm(0)
+        >>> e.left
+        -60mm
         >>> e.xAlign = RIGHT
         >>> e.left
-        -20mm
+        -120mm
+        >>> e.left = mm(0)
+        >>> e.x
+        120mm
         """
         xAlign = self.xAlign
         if xAlign == CENTER:
@@ -2289,10 +2295,23 @@ class Element:
             self.x = x
     left = property(_get_left, _set_left)
 
-    def _get_mLeft(self): # Left, including left margin
-        return self.left - self.css('ml')
+    def _get_mLeft(self): 
+        """Answer left position, including left margin of self
+
+        >>> from pagebot.toolbox.units import mm
+        >>> e = Element(x=mm(100), w=248, xAlign=LEFT, margin=mm(15))
+        >>> e.mLeft
+        85mm
+        >>> e.mLeft = mm(50)
+        >>> e.x, e.mLeft
+        (65mm, 50mm)
+        >>> e.ml = mm(25) # x does not change, 
+        >>> e.x, e.mLeft # but margin increases, so e.mLeft decreases.
+        (65mm, 40mm)
+        """
+        return self.left - self.ml
     def _set_mLeft(self, x):
-        self.left = x + self.css('ml')
+        self.left = x + self.ml
     mLeft = property(_get_mLeft, _set_mLeft)
 
     def _get_center(self):
@@ -2439,7 +2458,19 @@ class Element:
             self.y = y
     top = property(_get_top, _set_top)
 
-    def _get_mTop(self): # Top, including top margin
+    def _get_mTop(self):
+        """Answers the top position, including top margin.
+
+        >>> e = Element(y=100, h=248, yAlign=TOP, mt=20)
+        >>> e.mTop
+        120pt
+        >>> e.yAlign = BOTTOM
+        >>> e.top
+        348pt
+        >>> e.yAlign = MIDDLE
+        >>> e.top
+        224pt
+        """
         if self.originTop:
             return   - self.mt
         return self.top + self.mt
@@ -7185,27 +7216,59 @@ class Element:
         # Implemented for elements that support text boxes.
         raise NotImplementedError
 
+    def baseline2Middle(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
     def baseline2Bottom(self):
         # Implemented for elements that support text boxes.
         raise NotImplementedError
 
-    def floatBaseline2Top(self):
-        # Implemented for elements that support text boxes.
-        raise NotImplementedError
-
-    def floatAscender2Top(self):
-        # Implemented for elements that support text boxes.
-        raise NotImplementedError
-
-    def floatCapHeight2Top(self):
-        # Implemented for elements that support text boxes.
-        raise NotImplementedError
-
-    def floatXHeight2Top(self):
-        # Implemented for elements that support text boxes.
-        raise NotImplementedError
-
     def capHeight2Top(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def capHeight2Middle(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def capHeight2Bottom(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def xHeight2Top(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def xHeight2Middle(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def xHeight2Bottom(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def ascender2Top(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def ascender2Middle(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def ascender2Bottom(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def descender2Top(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def descender2Middle(self):
+        # Implemented for elements that support text boxes.
+        raise NotImplementedError
+
+    def descender2Bottom(self):
         # Implemented for elements that support text boxes.
         raise NotImplementedError
 
