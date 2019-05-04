@@ -92,8 +92,8 @@ def showContexts():
 	print(context)
 	context = getContext(contextType='IDML') # To be implemented.
 	print(context)
-	context = getContext(contextType='SVG') # To be implemented.
-	print(context)
+	#context = getContext(contextType='SVG') # To be implemented. # Missing valid valid import svgwrite
+	#print(context)
 
 
 showContexts()

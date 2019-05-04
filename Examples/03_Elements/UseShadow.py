@@ -70,7 +70,9 @@ def makeDocument():
     return doc
 
 if __name__ == '__main__':
+    try:
     d = makeDocument()
+    """ TODO: We need to find another way to implement Variable window UI, for travis to work.
     d.context.Variable(
         [dict(name='ShadowOffset', ui='Slider',
               args=dict(minValue=-50, value=6, maxValue=50)),
@@ -80,5 +82,6 @@ if __name__ == '__main__':
          dict(name='ShadowTextBlur', ui='Slider', args=dict(minValue=0, value=4, maxValue=10)),
          dict(name='RectSize', ui='Slider', args=dict(minValue=10, value=W/2, maxValue=W)),
         ], globals())
+    """
     d.export('_export/DrawRedRectCenterPage.png')
 

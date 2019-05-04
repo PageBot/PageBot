@@ -59,15 +59,11 @@ script:
 - python3 Examples/00_Installing/01_Dependencies.py
 - python3 Examples/00_Installing/02_Sass.py
 - python3 Examples/01_Basics/01_Paths.py
-- python3 Examples/01_Basics/02_Context.py
 - python3 Examples/01_Basics/03_Fonts.py
 - python3 Examples/01_Basics/04_Units.py
 - python3 Examples/01_Basics/05_Documents.py
 - python3 Examples/01_Basics/06_ClipPath.py
-- python3 Examples/02_Text/ElasticTextBox.py
-- python3 Examples/02_Text/FormattedStringMetrics.py
 - python3 Examples/02_Text/TextBoxLinesRuns.py
-- python3 Examples/02_Text/TextFlows.py
 - python3 Examples/02_Text/TextLineTextRun.py
   python3 Examples/02_Text/BabelStrings.py
   python3 Examples/02_Text/FittingTextWidthWithVar.py
