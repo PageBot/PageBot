@@ -387,7 +387,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showCropMarks = False,
         showRegistrationMarks = False,
         showOrigin = False, # Show page origin crosshair marker
-        showPadding = False,
+        showPadding = False, # Show padding rectangle of the element.
+        showMargin = False, # Show margin rectangle of the element.
         showFrame = False, # Draw frame on page.size
         showNameInfo = False, # Show file/name/pagenumber ourside cropping area
         showPageMetaInfo = False,
@@ -438,7 +439,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         blur = None,
 
         # Grid stuff for showing
-
         viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), # Fill color for column/row squares.
         viewGridStrokeX = color(0.7), # Stroke of page grid lines in horizontal direction.
         viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
@@ -448,6 +448,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Page padding grid
         viewPaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
         viewPaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
+        viewMarginStroke = color(r=0.7, g=0.4, b=0.4), # Stroke of page margin lines, if view.showMargin is True
+        viewMarginStrokeWidth = pt(0.5), # Line thickness of the page margin lines.
 
         # Draw connection arrows between the flow boxes on a page.
         viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,

@@ -223,6 +223,7 @@ class PageView(BaseView):
         """
         if not background:
             self.drawFrame(page, origin)
+            self.drawMargin(page, origin)
             self.drawPadding(page, origin)
             self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
             self.drawColorBars(page, origin) # Color bars under registration marks?
@@ -278,14 +279,17 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showFrame = True
-        >>> view.drawFrame(e, (0, 0))
+        >>> view.showPadding = True
+        >>> view.drawPadding(e, (0, 0))
         """
         pt, pr, pb, pl = e.padding
         if ((self.showPadding and e.isPage) or e.showPadding) and (pt or pr or pb or pl):
             context = self.context
 
-            p = pointOffset(e.origin, origin)
+            if e.isPage:
+                p = pointOffset(e.origin, origin)
+            else:
+                p = origin
             px, py = point2D(e._applyScale(self, p))
 
             context.fill(noColor)
@@ -296,6 +300,39 @@ class PageView(BaseView):
                 context.rect(px+pl, py-e.h+pb, e.w-pl-pr, e.h-pt-pb)
             else:
                 context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+            e._restoreScale(self)
+
+    def drawMargin(self, e, origin):
+        """Draw the page frame of its current margin.
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.style import getRootStyle
+        >>> style = getRootStyle() # Get default values
+        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> view = PageView(context=context, style=style)
+        >>> view.showMargin = True
+        >>> view.drawMargin(e, (0, 0))
+        """
+        mt, mr, mb, ml = e.margin
+        if ((self.showMargin and e.isPage) or e.showMargin) and (mt or mr or mb or ml):
+            context = self.context
+
+            if e.isPage:
+                p = pointOffset(e.origin, origin)
+            else:
+                p = origin
+            px, py = point2D(e._applyScale(self, p))
+
+            context.fill(noColor)
+            context.stroke(self.css('viewMarginStroke', color(0.2, 0.2, 1)),
+                                   self.css('viewMarginStrokeWidth', 0.5))
+            if e.originTop:
+                #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+                context.rect(px-ml, py-e.h-mb, e.w+ml+mr, e.h+mt+mb)
+            else:
+                context.rect(px-ml, py-mb, e.w+ml+mr, e.h+mt+mb)
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):

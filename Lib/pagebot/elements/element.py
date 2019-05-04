@@ -7290,8 +7290,9 @@ class Element:
         self.showRegistrationMarks = False
         self.showColorBars = False
         self.showOrigin = False
-        self.showPadding = False
-        self.showFrame = False
+        self.showPadding = False # Show the (inside) frame of padding
+        self.showFrame = False # Showing the element boundaries.
+        self.showMargin = False # Showing the (outside) frame of margin.
         self.showNameInfo = False
         self.showElementInfo = False
         self.showMissingElement = False
@@ -7321,6 +7322,7 @@ class Element:
         if VIEW_DEBUG in setNames:
             # View settings flags to True that are useful for debugging a document
             self.showPadding = True
+            self.showMargin = True
             self.showFrame = True
             self.showGrid = DEFAULT_GRID
             self.showBaselineGrid = DEFAULT_BASELINE
