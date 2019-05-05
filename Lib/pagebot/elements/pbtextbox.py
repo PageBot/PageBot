@@ -860,7 +860,7 @@ class TextBox(Element):
                 ('%s.baselineDown2Grid: Index "%d" is not in range of available textLines "%d"' % \
                 (self.__class__.__name__, index, len(self.textLines)))
             line = self.textLines[index]
-            self.top -= parent.getDistance2Grid(line.y)
+            self.top -= parent.getDistance2Grid(line.y) - parent.baselineGrid
 
     def baselineDown2Grid(self, index=0, parent=None):
         """Move the text box down in vertical direction, so the baseline of self.textLines[index] 

@@ -132,16 +132,10 @@ def makeDocument(context):
 
 if __name__ == '__main__':
 
-    context = DrawBotContext() # May contain NoneDrawBotBuilder if not running on a DrawBot platform
+    # May contain NoneDrawBotBuilder if not running on a DrawBot platform
+    context = DrawBotContext() 
     d = makeDocument(context)
-    # Make interactive global controls. Only works in DrawBot context. Otherwise ignored.
-    d.context.Variable([
-        dict(name='ShowMeasures', ui='CheckBox', args=dict(value=True)),
-        dict(name='ShowDimensions', ui='CheckBox', args=dict(value=False)),
-        dict(name='ShowElementInfo', ui='CheckBox', args=dict(value=False)),
-        dict(name='PageSize', ui='Slider', args=dict(minValue=100, value=400, maxValue=800)),
-    ], globals())
-
+    # Make interactive global controls. Only works in DrawBot context. Otherwise 
     # Export in _export folder that does not commit in Git. Force to export PDF.
     EXPORT_PATH = '_export/AlignElements.png'
     d.export(EXPORT_PATH)

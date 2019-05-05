@@ -42,39 +42,41 @@ page.showOrigin = True
 font = findFont('PageBot Regular')
 
 def getText(s):
-    style1 = dict(font=font, fontSize=36, textFill=whiteColor, xTextAlign=CENTER)
-    style2 = dict(font=font, fontSize=10, textFill=blackColor, xTextAlign=CENTER)
+    style1 = dict(font=font, fontSize=36, leading=pt(40),
+        textFill=whiteColor, xTextAlign=CENTER)
+    style2 = dict(font=font, fontSize=10, leading=pt(12),
+        textFill=blackColor, xTextAlign=CENTER)
     t = doc.context.newString('TEXT', style=style1)
     t += doc.context.newString('\n'+s, style=style2)
     return t
     
-e1 = newTextBox(getText('Bottom2Bottom'), 
+e1 = newTextBox(getText('e1 Bottom2Bottom'), 
     parent=page, fill=color('red'), 
     showOrigin=True, conditions=[Left2Left(), Bottom2Bottom()])
-e2 = newTextBox(getText('Middle2Middle'), 
+e2 = newTextBox(getText('e2 Middle2Middle'), 
     parent=page, fill=color('orange'), 
     showOrigin=True, conditions=[Left2Left(), Middle2Middle()])
-e3 = newTextBox(getText('Top2Top'), parent=page, 
+e3 = newTextBox(getText('e3 Top2Top'), parent=page, 
     fill=color('yellow').darker(0.8), 
     showOrigin=True, conditions=[Left2Left(), Top2Top()])
 
-e4 = newTextBox(getText('Bottom y on grid'), 
+e4 = newTextBox(getText('e4 Bottom y on grid'), 
     parent=page, fill=color('red'), 
     showOrigin=True, conditions=[Center2Center(), Bottom2Bottom()])
-e5 = newTextBox(getText('Bottom y on grid'), 
+e5 = newTextBox(getText('e5 Bottom y on grid'), 
     parent=page, fill=color('orange'), 
     showOrigin=True, conditions=[Center2Center(), Middle2Middle()])
-e6 = newTextBox(getText('Bottom y on grid'), 
+e6 = newTextBox(getText('e6 Bottom y on grid'), 
     parent=page, fill=color('yellow').darker(0.8), 
     showOrigin=True, conditions=[Center2Center(), Top2Top()])
 
-e7 = newTextBox(getText('Top y on grid'), 
+e7 = newTextBox(getText('e7 Top y on grid'), 
     parent=page, fill=color('red'), yAlign=TOP,
     showOrigin=True, conditions=[Right2Right(), Bottom2Bottom()])
-e8 = newTextBox(getText('Top y on grid'), 
+e8 = newTextBox(getText('e8 Top y on grid'), 
     parent=page, fill=color('orange'), yAlign=TOP,
     showOrigin=True, conditions=[Right2Right(), Middle2Middle()])
-e9 = newTextBox(getText('Top y on grid'), 
+e9 = newTextBox(getText('e9 Top y on grid'), 
     parent=page, fill=color('yellow').darker(0.8), yAlign=TOP,
     showOrigin=True, conditions=[Right2Right(), Top2Top()])
 

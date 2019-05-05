@@ -26,7 +26,7 @@ e.y = 100
 e.w = 400
 e.h = 500
 print('New position and size:', (e.x, e.y, e.w, e.h))
-print('Uniek element Id (eId) for this element:', e.eId)
+print('Unique element Id (eId) for this element:', e.eId)
 
 # Get the element info string, as used in meta info boxes
 print('-'*20)

@@ -11,56 +11,71 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     01_Paths.py
+#     01_FilePaths.py
 #
 #     Shows how get pagebot file paths.
 #     Not to be confused with BezierPaths and PageBotPath, which are a different things.
 #
-from pagebot import *
 import glob
+from pagebot import * # Import all top-level values, such as the getContext, function
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.units import pt
-from pagebot.constants import A3
-from pagebot.conditions import *
+# Import a standard page size tuple with format (w, h)
+from pagebot.constants import A3 
+from pagebot.conditions import * 
 from pagebot.elements import *
 from pagebot.document import Document
+from pagebot.toolbox.units import pt
 
-H, W = A3
+H, W = A3 # Unpack one of the standard page sizes 
+GUTTER = pt(12)
 
-def showPaths():
-    context = getContext()
+def showFilePaths():
+    # Get the context that this script runs in, e.g. DrawBotApp.
+    context = getContext() 
+    # Make a Document instance for this size and context, intializing one page.
     doc = Document(w=W, h=H, originTop=False, autoPages=1, context=context)
+    # Get the page.
     page = doc[1]
-
-    c = (Fit2Right(), Left2Left(), Float2Top())
-    f = findFont('PageBot-Regular')
-
-    # FIXME: text disappears with padding.
-    #t = newText('bla', font='Helvetica', parent=page, conditions=c, fontSize=200, padding=1)
-
-    # FIXME: causes scaling unit error.
-    #path = newPageBotPath(context=context)
-    #path.text('ABCD', style=dict(font=f, fontSize=30, fill=(0, 1, 0)))
-    #newPaths(path, parent=page, fill=(0, 1, 1), conditions=c, stroke=None)
-
-    rootPath = getRootPath()
-    s = dict(fontSize=24, font=f)
+    # Make a set of conditions for the element positions of this page.
+    c = (Left2Left(), Fit2Right(), Float2Top())
+    # Find the demo font, as supplied with the PageBot library installation.
+    # This is a subset of TYPETR Upgrade Regular.
+    f = findFont('PageBot-Regular') 
+ 
+    rootPath = getRootPath() # Location of this PageBot library
+    style = dict(fontSize=14, font=f)
     msg = 'Root path is %s' % rootPath
-    bs = page.newString(msg, style=s)
-    makeText(bs, page, c)
+    bs = page.newString(msg, style=style)
+    makeText(bs, page, f, c)
+    
     resourcesPath = getResourcesPath()
     msg = 'Resources path is %s' % resourcesPath
-    bs = page.newString(msg, style=s)
-    makeText(bs, page, c)
-    print(glob.glob('%s/*' % resourcesPath))
+    bs = page.newString(msg, style=style)
+    makeText(bs, page, f, c)
+    #print(glob.glob('%s/*' % resourcesPath))
+    
     defaultFontPath = getDefaultFontPath()
     msg = 'Default font path is %s' % defaultFontPath
-    bs = page.newString(msg, style=s)
-    makeText(bs, page, c)
+    msg = '\n\t'.join(msg.split('/'))
+    bs = page.newString(msg, style=style)
+    c = (Right2Right(), Float2Top())
+    e = makeText(bs, page, f, c)
+    e.w = page.pw/2 - 2*GUTTER
+    e.mr = 0
+    
+    msg = 'PageBot font path is %s' % f.path
+    msg = '\n\t'.join(msg.split('/'))
+    bs = page.newString(msg, style=style)
+    c = (Left2Left(), Float2Top())
+    e = makeText(bs, page, f, c)
+    e.w = page.pw/2 - 2*GUTTER
+    # Let the page solve all of its child element layout conditions
     page.solve()
     doc.build()
 
-def makeText(t, page, c):
-    newText(t, font='Helvetica', parent=page, conditions=c, fontSize=32)
+def makeText(t, page, f, c):
+    return newTextBox(t, font=f, parent=page, conditions=c, fill=0.8, 
+        margin=GUTTER)
 
-showPaths()
+showFilePaths()

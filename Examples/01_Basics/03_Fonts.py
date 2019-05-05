@@ -26,6 +26,7 @@ from pagebot.fonttoolbox.fontpaths import *
 from pagebot.fonttoolbox.objects.family import getFamilyPaths
 
 W, H = A3
+MAX_PAGES = 20
 
 def showAll():
     context = getContext()
@@ -61,8 +62,8 @@ def showAll():
             newPaths(path, parent=g, conditions=c3, margin=20, fill=0)
         if i > 10:
             break
-
+                
     page.solve()
-    doc.build()
+    doc.export('_export/Fonts.pdf')
 
 showAll()

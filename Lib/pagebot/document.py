@@ -1048,6 +1048,18 @@ class Document:
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
 
+    def removePage(self, pn):
+        """Remove the page with index pn, keeping the page numbers of the remaining pages unchanged.
+
+        >>> doc = Document(autoPages=3)
+        >>> len(doc.pages), sorted(doc.pages.keys())
+        (3, [1, 2, 3])
+        >>> doc.removePage(2)
+        >>> len(doc.pages), sorted(doc.pages.keys())
+        (2, [1, 3])
+        """
+        del self.pages[pn]
+
     def makePages(self, pageCnt, pn=None, template=None, name=None, w=None,
             h=None, **kwargs):
         """If no "point" is defined as page number `pn`, then we'll continue
@@ -1398,7 +1410,9 @@ class Document:
     def open(cls, path):
         """Save the document in native json source code file, represenrinf all of the current
         settings, including the current dociment.view.
+        """
 
+        """
         >>> doc1 = Document(name='MyDoc', w=300, h=400)
         >>> path = '/tmp/pagebot.document.json'
         >>> doc1.save(path) # Save document as PageBot-native zip file.
@@ -1416,7 +1430,9 @@ class Document:
     def save(self, path, **kwargs):
         """Save the document in native json source code file, represenrinf all of the current
         settings, including the current dociment.view.
+        """
 
+        """
         >>> doc = Document(w=300, h=400)
         >>> doc.save('/tmp/pagebot.document.json') # Save document as PageBot-native zip file.
         """

@@ -70,7 +70,6 @@ def makeDocument():
     return doc
 
 if __name__ == '__main__':
-    try:
     d = makeDocument()
     """ TODO: We need to find another way to implement Variable window UI, for travis to work.
     d.context.Variable(

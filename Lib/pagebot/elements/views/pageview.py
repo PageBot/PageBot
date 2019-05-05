@@ -797,13 +797,13 @@ class PageView(BaseView):
         baselineYs = [] # Collect all baseline positions on e
         if e.originTop:
             oy = yy = startY = (e.baselineGridStart or e.pt) # Assumes origin at top for context drawing
-            while yy < e.h - e.pb:
+            while yy < e.h: # Run over the the padding bottom until page side
                 baselineYs.append(yy)
                 yy += baselineGrid
         else: # Page origin is at the bottom
             startY = e.h - (e.baselineGridStart or e.pt)
             oy = yy = startY # Assumes origin at bottom for context drawing.
-            while yy > e.pb:
+            while yy > 0: # Run over the the padding bottom until page side
                 baselineYs.append(yy)
                 yy -= baselineGrid
 
