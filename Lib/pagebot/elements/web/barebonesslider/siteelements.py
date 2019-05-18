@@ -95,7 +95,7 @@ class SlideShow(SlideShowBase):
         controls=False, controlsText=None, pauseOnHit=True, touch=False, touchOffset=None,
         dragControls=False, dragOffset=None, randomPlay=False, maskImage=None, 
         jsCallbackStart=None, jsCallbackBefore=None, jsCallbackAfter=None, jsCallbackUpdate=None,
-        useCssBackground=True, proportional=True,
+        useCssBackground=True, proportional=True, 
         **kwargs):
         SlideShowBase.__init__(self, **kwargs)
         # The (self.w, self.h) combination and ration defines the size and ratio that child 

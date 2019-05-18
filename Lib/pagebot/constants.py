@@ -708,13 +708,15 @@ FONT_SIZE_MATCHES = {
 FONT_WEIGHT_MATCHES = { # Alternative names
     'Hairline': ('Hairline', 'HairLine', 'Hair', 'Hl'),
     'Thin': ('Thin', 'Thn', 'Thi'),
-    'Ultralight':  ('Ultralight', 'ULight', 'ULght', 'ULt'),
+    'Ultralight':  ('Ultralight', 'UltraLight', 'ULight', 'ULght', 'ULt'),
     'Light': ('Light', 'Lght', 'Lig', 'Lt'),
-    'Semilight': ('Semilight', 'SLight', 'SLght', 'SLt'),
+    'Semilight': ('Semilight', 'SemiLight', 'SLight', 'SLght', 'SLt'),
     'Book': ('Book', 'Bk'),
+    'Semibook': ('Semibook', 'SemiBook', 'SBook', 'SBk'),
     'Regular': ('Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'),
+    'Semimedium': ('Semimedium', 'SemiMedium', 'SMedium', 'SMed', 'SMd' ),
     'Medium': ('Medium', 'Med', 'Md'),
-    'Semibold': ('Semibold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'),
+    'Semibold': ('Semibold', 'SemiBold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'),
     'Bold': ('Bold', 'Bol', 'Bd'),
     'Extrabold': ('Extrabold', 'XBold', 'XBd'),
     'Heavy': ('Heavy', 'Hvy'),
@@ -722,14 +724,16 @@ FONT_WEIGHT_MATCHES = { # Alternative names
     'Extrablack': ('Extrablack', 'XBlack', 'XBlck', 'XBlk'),
     'Ultrablack': ('Ultrablack', 'UBlack', 'UBlck', 'UBlk'),
 }
-FONT_WEIGHT_RANGES = { # Alternative values
+FONT_WEIGHT_RANGES = { # OS/2 standard values and alternative ranges
     'Hairline': range(0, 261), # Upgrade 260
     'Thin': range(260, 275), # Upgrade 270 + list(range(275, 295)), # Upgrade 280
     'Ultralight': range(275, 295),
     'Light': range(295, 320), # Upgrade 300
-    'Semilight': range(320, 350),
+    'Semilight': range(320, 350), # Upgrade 350
     'Book': range(350, 395), # Upgrade 390
-    'Regular': range(396, 450), # Upgrade 400
+    'Semibook': range(395, 400), # Upgrade 395
+    'Regular': range(400, 450), # Upgrade 400
+    'Semimedium': range(450, 550), # Upgrade 450
     'Medium': range(450, 550), # Upgrade 500
     'Semibold': range(550, 650), # Upgrade 600
     'Bold': range(650, 725), # Upgrade 700

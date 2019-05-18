@@ -545,6 +545,9 @@ class BaseContext(AbstractDrawBotContext):
 
     setShadow = shadow
 
+    def resetShadow(self):
+        pass
+        
     def gradient(self, gradient, origin, w, h):
         """Define the gradient call to match the size of element e., Gradient
         position is from the origin of the page, so we need the current origin

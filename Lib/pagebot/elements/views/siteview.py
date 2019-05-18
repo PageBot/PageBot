@@ -81,7 +81,7 @@ class SiteView(HtmlView):
                     print('[%s.build] Copy %s --> %s' % (self.__class__.__name__, resourcePath, dstPath))
                 if os.path.exists(dstPath):
                     # Safety check, only run on relative paths
-                    assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
+                    #assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
                     shutil.rmtree(dstPath)
                 if os.path.exists(resourcePath):
                     shutil.copytree(resourcePath, dstPath)

@@ -69,10 +69,14 @@ class NanoElement(Column):
     def newBanner(self, parent=None, **kwargs):
         return Banner(parent=self, **kwargs)
 
-    def newSlideShow(self, parent=None, w=None, h=None,**kwargs):
+    def newSlideShow(self, parent=None, w=None, h=None, slidesLeft=True, **kwargs):
         group = SlideShowGroup(parent=self, w=w, h=h, **kwargs)
-        slides = SlideShow(parent=group, **kwargs)
-        side = SlideSide(parent=group, **kwargs)
+        if slidesLeft:
+            slides = SlideShow(parent=group, **kwargs)
+            side = SlideSide(parent=group, **kwargs)
+        else:
+            side = SlideSide(parent=group, **kwargs)
+            slides = SlideShow(parent=group, **kwargs)
         group.slides = slides
         group.side = side
         return group
