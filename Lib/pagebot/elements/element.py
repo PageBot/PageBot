@@ -57,7 +57,8 @@ class Element:
     PATH_CLASS = PageBotPath
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
-            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, originTop=False,
+            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
+            originTop=False,
             left=None, top=None, right=None, bottom=None, sId=None, lib=None,
             t=None, timeMarks=None, parent=None, context=None, name=None,
             cssClass=None, cssId=None, title=None, description=None, theme=None,
@@ -170,9 +171,13 @@ class Element:
         else:
             self.xyz = x, y, z
 
+        if whd is not None: # Alternative attributes, to make it intuitive for the caller.
+            size = whd
+        elif wh is not None:
+            size = wh
         if size is not None: # Convenience attribute, setting self.w, self.h, self.d
             self.size = size # Works for (w, h) and (w, h, d)
-        else:
+        else: # Otherwise it is assumed that the values are set separately, still default if None.
             self.w = w
             self.h = h
             self.d = d

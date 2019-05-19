@@ -392,6 +392,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showFrame = False, # Draw frame on page.size
         showNameInfo = False, # Show file/name/pagenumber ourside cropping area
         showPageMetaInfo = False,
+        showColorBars = False, # Show color bar on the side for print
 
         # Element info showing
         showElementInfo = False,

@@ -60,14 +60,18 @@ class Document:
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
             autoPages=1, template=None, templates=None, originTop=False, startPage=None,
-            sId=None, w=None, h=None, d=None, size=None, padding=None, docLib=None, context=None,
-            path=None, exportPaths=None, **kwargs):
+            sId=None, w=None, h=None, d=None, size=None, wh=None, whd=None, padding=None, 
+            docLib=None, context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
 
+        if whd is not None:
+            size = whd
+        elif wh is not None:
+            size = wh # Alternative ways to define size, making it intuitive to the caller.
         if size is not None: # For convenience of the caller, also accept size tuples.
-            w, h, d = point3D(size)
+            w, h, d = point3D(size) # Set 
 
         # Set position of origin and direction of y for self and all inheriting pages
         # and elements.
