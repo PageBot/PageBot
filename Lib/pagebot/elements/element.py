@@ -25,6 +25,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE, ONLINE, INLINE,
         DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
         DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
+        DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
         VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
@@ -3056,6 +3057,43 @@ class Element:
                 oy -= self.bleedBottom
         return ox, oy
     bleedOrigin = property(_get_bleedOrigin)
+
+    def _get_viewCropMarkDistance(self):
+        return self.css('viewCropMarkDistance', 0) 
+    def _set_viewCropMarkDistance(self, d):
+        self.style['viewCropMarkDistance'] = units(d)
+    viewCropMarkDistance = property(_get_viewCropMarkDistance, _set_viewCropMarkDistance)
+
+    def _get_viewCropMarkSize(self):
+        return self.css('viewCropMarkSize', pt(40)) 
+    def _set_viewCropMarkSize(self, d):
+        self.style['viewCropMarkSize'] = units(d)
+    viewCropMarkSize = property(_get_viewCropMarkSize, _set_viewCropMarkSize)
+
+    def _get_viewCropMarkStrokeWidth(self):
+        return self.css('viewCropMarkStrokeWidth', pt(0.25)) 
+    def _set_viewCropMarkStrokeWidth(self, d):
+        self.style['viewCropMarkStrokeWidth'] = units(d)
+    viewCropMarkStrokeWidth = property(_get_viewCropMarkStrokeWidth, _set_viewCropMarkStrokeWidth)
+
+
+    def _get_viewRegistrationMarkDistance(self):
+        return self.css('viewRegistrationMarkDistance', 0) 
+    def _set_viewRegistrationMarkDistance(self, d):
+        self.style['viewRegistrationMarkDistance'] = units(d)
+    viewRegistrationMarkDistance = property(_get_viewRegistrationMarkDistance, _set_viewRegistrationMarkDistance)
+
+    def _get_viewRegistrationMarkSize(self):
+        return self.css('viewRegistrationMarkSize', pt(40)) 
+    def _set_viewRegistrationMarkSize(self, d):
+        self.style['viewRegistrationMarkSize'] = units(d)
+    viewRegistrationMarkSize = property(_get_viewRegistrationMarkSize, _set_viewRegistrationMarkSize)
+
+    def _get_viewRegistrationMarkStrokeWidth(self):
+        return self.css('viewRegistrationMarkStrokeWidth', pt(0.25)) 
+    def _set_viewRegistrationMarkStrokeWidth(self, d):
+        self.style['viewRegistrationMarkStrokeWidth'] = units(d)
+    viewRegistrationMarkStrokeWidth = property(_get_viewRegistrationMarkStrokeWidth, _set_viewRegistrationMarkStrokeWidth)
 
     def _get_rootX(self):
         """Answers the read-only property root value of local self.x,
@@ -7320,8 +7358,8 @@ class Element:
             # registration marks).
             self.showSpread = True
             self.viewMinInfoPadding = DEFAULT_MININFOPADDING
-            self.showCropMarks = True
-            self.showRegistrationMarks = True
+            self.showCropMarks = DEFAULT_CROPMARKS
+            self.showRegistrationMarks = DEFAULT_REGISTRATIONMARKS
             self.showNameInfo = True
             if self.isView:
                 self.padding = DEFAULT_MININFOPADDING
@@ -7397,17 +7435,27 @@ class Element:
     def _get_showCropMarks(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks
         around the elemment."""
-        return self.style.get('showCropMarks', False) # Not inherited
+        return self.style.get('showCropMarks') or {} # Not inherited
     def _set_showCropMarks(self, showCropMarks):
-        self.style['showCropMarks'] = bool(showCropMarks)
+        if not showCropMarks:
+            showCropMarks = {}
+        elif not isinstance(showCropMarks, (set, list, tuple, dict)):
+            showCropMarks = DEFAULT_CROPMARKS
+        assert isinstance(showCropMarks, (set, list, tuple, dict))
+        self.style['showCropMarks'] = showCropMarks
     showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
 
     def _get_showRegistrationMarks(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         registration  marks around the elemment."""
-        return self.style.get('showRegistrationMarks', False) # Not inherited
+        return self.style.get('showRegistrationMarks') or {} # Not inherited
     def _set_showRegistrationMarks(self, showRegistrationMarks):
-        self.style['showRegistrationMarks'] = bool(showRegistrationMarks)
+        if not showRegistrationMarks:
+            showRegistrationMarks = {}
+        elif not isinstance(showRegistrationMarks, (set, list, dict, tuple)):
+            showRegistrationMarks = DEFAULT_REGISTRATIONMARKS
+        assert isinstance(showRegistrationMarks, (set, list, tuple, dict))
+        self.style['showRegistrationMarks'] = showRegistrationMarks
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_showColorBars(self):

@@ -609,6 +609,18 @@ XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, MIDDLE, CENTER, BASE_TOP, BASE_BOTTOM} # "middle" is PageBot. "center" is CSS.
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
+# Flags where to draw crop marks on folds.
+TOP_FOLD = TOP+'Fold'
+BOTTOM_FOLD = BOTTOM+'Fold'
+LEFT_FOLD = LEFT+'Fold'
+RIGHT_FOLD = RIGHT+'Fold'
+# Flags to indicate where crop marks and registration marks should be placed, their size and position
+# e.showCropMarks = False
+DEFAULT_CROPMARKS = {TOP, RIGHT, BOTTOM, LEFT, TOP_FOLD, BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD} 
+# See constants for the options to direct the side, position and size of the registration marks.
+# e.showRegistrationMarks = False
+DEFAULT_REGISTRATIONMARKS = {TOP, RIGHT, BOTTOM, LEFT}  
+
 DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
 
 VIEW_PRINT = 'Print' # View settings flags to True for print (such as crop marks and registration marks)

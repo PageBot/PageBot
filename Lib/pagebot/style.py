@@ -380,12 +380,16 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         isVisible = True, # Flag if current element should be shown.
 
         # Paging
-        showSpread = False, # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
+        showSpread = False, 
+        # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
 
         # Document/page/element stuff
-        viewMinInfoPadding = DEFAULT_MININFOPADDING, # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
-        showCropMarks = False,
-        showRegistrationMarks = False,
+        # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+        viewMinInfoPadding = DEFAULT_MININFOPADDING, 
+        # See constants for the options to direct the side, postion and size of crop marks.
+        showCropMarks = False, 
+        # See constants for the options to direct the side, position and size of the registration marks.
+        showRegistrationMarks = False, 
         showOrigin = False, # Show page origin crosshair marker
         showPadding = False, # Show padding rectangle of the element.
         showMargin = False, # Show margin rectangle of the element.
@@ -468,6 +472,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewCropMarkDistance = pt(8),  # Distance of crop-marks from page frame, unless bleed is larger
         viewCropMarkSize = pt(40), # Length of crop marks, including bleed distance.
         viewCropMarkStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
+        viewRegistrationMarkDistance = pt(8),  # Distance of crop-marks from page frame, unless bleed is larger
+        viewRegistrationMarkSize = pt(40), # Length of crop marks, including bleed distance.
+        viewCropRegistrationStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
 
         viewNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
         viewNameFontSize = pt(6),

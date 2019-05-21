@@ -24,8 +24,9 @@ from pagebot import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
-from pagebot.constants import RIGHT
-from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
+from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, ORIGIN, 
+    BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD,
+    GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
     BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
@@ -884,16 +885,25 @@ class PageView(BaseView):
         >>> view.showRegistrationMarks = True
         >>> view.drawRegistrationMarks(e, pt(0, 0))
         """
-        if (self.showRegistrationMarks and e.isPage) or e.showRegistrationMarks:
+        # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags
+        if e.isPage and self.showRegistrationMarks:
+            showRegistrationMarks = self.showRegistrationMarks
+        else:
+            showRegistrationMarks = e.showRegistrationMarks 
+        if showRegistrationMarks:
             # TODO: Make crop mark go closer to page edge and disappear if too small.
-            cmSize = min(self.pl/2, self.css('viewCropMarkSize')) 
-            cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
+            cmSize = min(self.pl/2, self.css('viewRegistrationMarkSize')) 
+            cmStrokeWidth = self.css('viewRegistrationMarkStrokeWidth')
             x, y = point2D(origin)
             w, h = e.size
-            self._drawRegistrationMark(e, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
-            self._drawRegistrationMark(e, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
-            self._drawRegistrationMark(e, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
-            self._drawRegistrationMark(e, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
+            if BOTTOM in showRegistrationMarks:
+                self._drawRegistrationMark(e, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
+            if LEFT in showRegistrationMarks:
+                self._drawRegistrationMark(e, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
+            if RIGHT in showRegistrationMarks:
+                self._drawRegistrationMark(e, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
+            if TOP in showRegistrationMarks:
+                self._drawRegistrationMark(e, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
     def drawCropMarks(self, e, origin):
         """If the show flag is set, then draw the crop marks or page frame.
@@ -910,7 +920,12 @@ class PageView(BaseView):
         >>> view.folds = [(mm(40), mm(60))]
         >>> view.drawCropMarks(e, pt(0, 0))
         """
-        if (self.showCropMarks and e.isPage) or e.showCropMarks:
+        # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags
+        if e.isPage and self.showCropMarks:
+            showCropMarks = self.showCropMarks
+        else:
+            showCropMarks = e.showCropMarks 
+        if showCropMarks:
             context = self.context
 
             x, y = point2D(origin) # Ignore z-axus for now.
@@ -929,27 +944,36 @@ class PageView(BaseView):
             cmBottom = max(e.bleedBottom, self.bleedBottom, cmDistance)
             cmTop = max(e.bleedTop, self.bleedTop, cmDistance)
 
-            # Bottom left
-            context.line((x - cmLeft, y), (x - cmLeft - cmSize, y))
-            context.line((x, y - cmBottom), (x, y - cmBottom - cmSize))
-            # Bottom right
-            context.line((x + w + cmRight, y), (x + w + cmRight + cmSize, y))
-            context.line((x + w, y - cmBottom), (x + w, y - cmBottom - cmSize))
-            # Top left
-            context.line((x - cmLeft, y + h), (x - cmLeft - cmSize, y + h))
-            context.line((x, y + h + cmTop), (x, y + h + cmTop + cmSize))
-            # Top right
-            context.line((x + w + cmRight, y + h), (x + w + cmRight + cmSize, y + h))
-            context.line((x + w, y + h + cmTop), (x + w, y + h + cmTop + cmSize))
+            # Left
+            if LEFT in showCropMarks:
+                context.line((x - cmLeft, y), (x - cmLeft - cmSize, y))
+                context.line((x - cmLeft, y + h), (x - cmLeft - cmSize, y + h))
+            # Bottom
+            if BOTTOM in showCropMarks:
+                context.line((x, y - cmBottom), (x, y - cmBottom - cmSize))
+                context.line((x + w, y - cmBottom), (x + w, y - cmBottom - cmSize))
+            # Right
+            if RIGHT in showCropMarks:
+                context.line((x + w + cmRight, y), (x + w + cmRight + cmSize, y))
+                context.line((x + w + cmRight, y + h), (x + w + cmRight + cmSize, y + h))
+            # Top
+            if TOP in showCropMarks:
+                context.line((x, y + h + cmTop), (x, y + h + cmTop + cmSize))
+                context.line((x + w, y + h + cmTop), (x + w, y + h + cmTop + cmSize))
+
             # Any fold lines to draw on the page?
             if folds is not None:
                 for fx, fy in folds:
                     if fx is not None:
-                        context.line((x + fx, y - cmBottom), (x + fx, y - cmBottom - cmSize))
-                        context.line((x + fx, y + h + cmTop), (x + fx, y + h + cmTop + cmSize))
+                        if BOTTOM_FOLD in showCropMarks:
+                            context.line((x + fx, y - cmBottom), (x + fx, y - cmBottom - cmSize))
+                        if TOP_FOLD in showCropMarks:
+                            context.line((x + fx, y + h + cmTop), (x + fx, y + h + cmTop + cmSize))
                     if fy is not None:
-                        context.line((x - cmLeft, y + fy), (x - cmLeft - cmSize, y + fy))
-                        context.line((x + w + cmRight, y + fy), (x + w + cmRight + cmSize, y + fy))
+                        if LEFT_FOLD in showCropMarks:
+                            context.line((x - cmLeft, y + fy), (x - cmLeft - cmSize, y + fy))
+                        if RIGHT_FOLD in showCropMarks:
+                            context.line((x + w + cmRight, y + fy), (x + w + cmRight + cmSize, y + fy))
 
     def drawColorBars(self, e, origin):
         """Draw the color bars for offset printing color calibration
