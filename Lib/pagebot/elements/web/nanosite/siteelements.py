@@ -140,8 +140,9 @@ class Logo(NanoElement):
     """
     SHOW_ID = False
 
-    def __init__(self, logo=None, **kwargs):
+    def __init__(self, logo=None, url=None, **kwargs):
         NanoElement.__init__(self, **kwargs)
+        self.url = url
         if logo is None:
             logo = 'Name Here'
         t = TextBox(logo, parent=self)
@@ -152,10 +153,13 @@ class Logo(NanoElement):
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
         self.showCssIdClass(view)
         b.a(href='index.html')
-        b.h1()
-        for e in self.elements:
-            e.build_html(view, path, **kwargs)
-        b._h1()
+        if self.url is not None:
+            b.img(src=self.url)
+        else:
+            b.h1()
+            for e in self.elements:
+                e.build_html(view, path, **kwargs)
+            b._h1()
         b._a()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))

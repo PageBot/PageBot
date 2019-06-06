@@ -68,7 +68,7 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None, size=None, z=0, mask=None,
-        imo=None, proportional=True, index=1, **kwargs):
+        imo=None, proportional=True, index=1, scaleImage=True, resolutionFactor=None, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initialize the self.im and self.ih sizes of the image file, defined by path.
@@ -104,6 +104,8 @@ class Image(Element):
         self.mask = mask # Optional mask element.
         self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
         self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
+        self.scaleImage = scaleImage
+        self.resolutionFactor = resolutionFactor # If defined, overwrites the automatic factor of image type.
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values
@@ -252,7 +254,7 @@ class Image(Element):
             print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
         extension = path2Extension(self.path)
-        resolutionFactor = self.resolutionFactors.get(extension, 1)
+        resolutionFactor = self.resolutionFactor or self.resolutionFactors.get(extension, 1)
         # Translate the extension to the related type of output.
         exportExtension = CACHE_EXTENSIONS.get(extension, extension)
         

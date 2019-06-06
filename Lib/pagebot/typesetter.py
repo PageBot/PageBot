@@ -304,6 +304,7 @@ class Typesetter:
     IMAGE_CACHE_HEIGHT = re.compile('h=([012345679]*)')
     IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)')
     IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)')
+    # TODO: Add parameter ro prevent scaling
 
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the
@@ -328,7 +329,7 @@ class Typesetter:
             yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
             w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0]) # w=800
             h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0]) # h=800
-        doScale = not path.endswith('.'+FILETYPE_SVG)
+        doScale = not path.endswith('.'+FILETYPE_SVG) and not path.endswith('.'+FILETYPE_GIF)
         # doScale = doScale or w is not None or h is not None
         self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
