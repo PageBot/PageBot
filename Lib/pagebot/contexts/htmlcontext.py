@@ -109,6 +109,10 @@ class HtmlContext(BaseContext):
             showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
             force=force)
 
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
+        """Make an HTML image tag by calling the builder"""
+        self.b.img(path, width=w, height=h)
+
     #   C O L O R
 
     def fill(self, c):
