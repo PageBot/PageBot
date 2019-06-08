@@ -51,8 +51,10 @@ class AbstractDrawBotContext:
     def newPage(self, w, h):
         raise NotImplementedError
 
-    def pages(self):
+    def _get_pages(self):
+        """To be implemented as property for get"""
         raise NotImplementedError
+    pages = property(_get_pages)
 
     def saveImage(self, path, *args, **options):
         raise NotImplementedError

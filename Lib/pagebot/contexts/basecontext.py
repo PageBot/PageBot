@@ -63,11 +63,16 @@ class BaseContext(AbstractDrawBotContext):
         self.doc = None
 
         self.page = None
+        self._pages = []
         self.style = None
         self.units = Pt.UNIT
 
     def __repr__(self):
         return '<%s>' % self.name
+
+    def _get_pages(self):
+        return self._pages
+    pages = property(_get_pages)
 
     def _get_language(self):
         return self._language
@@ -147,9 +152,6 @@ class BaseContext(AbstractDrawBotContext):
         """
         wpt, hpt = upt(w, h)
         self.b.newPage(wpt, hpt)
-
-    def pages(self):
-        return self.b.pages()
 
     def saveImage(self, path, *args, **options):
         return self.b.saveImage(path, *args, **options)

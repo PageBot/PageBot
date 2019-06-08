@@ -30,7 +30,7 @@ try:
     drawBotBuilder = drawBot
     # Id to make builder hook name. Views will try to call e.build_html()
     drawBotBuilder.PB_ID = 'drawBot'
-except (AttributeError, ImportError):
+except (AttributeError, ImportError, ModuleNotFoundError):
     print(traceback.format_exc())
     NSFont = None
     CTFontDescriptorCreateWithNameAndSize = None

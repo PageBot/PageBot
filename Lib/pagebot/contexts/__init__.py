@@ -52,8 +52,8 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getInDesignContext()
             elif contextType == 'IDML':
                 DEFAULT_CONTEXT = getIdmlContext()
-            elif contextType == 'SVG':
-                DEFAULT_CONTEXT = getSvgContext()
+            #elif contextType == 'SVG':
+            #    DEFAULT_CONTEXT = getSvgContext()
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:

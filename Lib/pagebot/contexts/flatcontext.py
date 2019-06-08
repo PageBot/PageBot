@@ -79,6 +79,7 @@ class FlatContext(BaseContext):
         self.shape = None # Current open shape
         self.flatString = None
         self.fileType = DEFAULT_FILETYPE
+        self._pages = []
 
     #   D O C U M E N T
 
@@ -197,7 +198,7 @@ class FlatContext(BaseContext):
     def newDrawing(self):
         """Clear output canvas, start new export file.
 
-        >>> context = FlatContext()
+        >>> context = FlatContext() 
         >>> w = h = pt(100)
         >>> context.newDocument(w, h)
         """
