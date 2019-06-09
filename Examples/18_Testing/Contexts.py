@@ -20,6 +20,7 @@ from pagebot.toolbox.color import Color
 from pagebot.constants import A4Rounded
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot import getContext
+from pagebot.toolbox.units import pt
 
 H, W = A4Rounded
 f = Color(0, 1, 0)
@@ -35,8 +36,11 @@ def getRandom():
     return x, y
 
 def testContext(context):
-    print(context)
-    print(context.__dict__['b'])
+    if context is None:
+        print('Context is None')
+        return
+    print('Context', context)
+    print('Context builder', context.b)
     #for key, value in context.__dict__.items():
     #    print(' * %s: %s' % (key, value))
 
@@ -47,54 +51,54 @@ def testContext(context):
         context.fill(f)
         context.stroke(s)
         x, y = getRandom()
-        context.rect(x, y, 100, 100)
+        context.rect(x, y, pt(100), pt(100))
         x, y = getRandom()
-        context.oval(x, y, 100, 100)
+        context.oval(x, y, pt(100), pt(100))
         x, y = getRandom()
-        context.circle(x, y, 100)
+        context.circle(x, y, pt(100))
         bla = context.newString('BabelString No Style')
-        print(isinstance(bla, BabelString))
+        print('String is BabelString', isinstance(bla, BabelString))
         x, y = getRandom()
-        context.text(bla, (x, y))
+        context.text(bla, pt(x, y))
         x, y = getRandom()
-        context.text('plain string', (x, y))
+        context.text('plain string', pt(x, y))
         style = {'font': 'Helvetica', 'textFill': f}
         bla = context.newString('Babel String with Style', style=style)
         x, y = getRandom()
-        context.text('bla2', (x, y))
+        context.text('bla2', pt(x, y))
         x, y = getRandom()
-        context.text(bla, (x, y))
+        context.text(bla, pt(x, y))
         x, y = getRandom()
         path = getResourcesPath() + "/images/cookbot1.jpg"
-        context.image(path, (x, y), w=100, h=100)
+        context.image(path, p=pt(x, y), w=pt(100), h=pt(100))
         # TODO:
         # - test Bézier path
         # - test glyph path
         # ...
         context.saveImage('_export/%s.pdf' % context.name)
     except Exception as e:
-    	    print(traceback.format_exc())
+    	    print('Context errors', traceback.format_exc())
 def showContexts():
 	print('Here are some examples of how to retrieve different kinds of contexts:')
 	context = getContext() # Creates a DrawBot context on Mac, Flat on others
-	print(context)
+	print('Context on Mac', context)
 	context = getContext() # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
-	print(context)
+	print('DrawBot context?', context)
 	context = getContext('DrawBot') # Still DrawBot, takes the buffered DEFAULT_CONTEXT.
-	print(context)
+	print('DrawBot context?', context)
 	context = getContext(contextType='Flat') # Force Flat.
-	print(context)
+	print('Flat context?', context)
 	context = getContext(contextType='Flat') # Buffered in DEFAULT_CONTEXT this time.
-	print(context)
+	print('Flat context?', context)
 	context = getContext(contextType='HTML')
-	print(context)
+	print('HTML context?', context)
 	context = getContext(contextType='InDesign') # To be implemented.
-	print(context)
+	print('InDesign context?', context)
 	context = getContext(contextType='IDML') # To be implemented.
-	print(context)
+	print('IDML context?', context)
 	#context = getContext(contextType='SVG') # To be implemented. # Missing valid valid import svgwrite
 	#print(context)
 
-
 showContexts()
 testContexts()
+

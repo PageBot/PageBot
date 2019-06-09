@@ -454,17 +454,21 @@ class FlatContext(BaseContext):
         # Answer units of the same time as the document.w was defined.
         return pt(img.width), pt(img.height)
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to fit."""
         if w is None or h is None:
             w, h = self.imageSize(path)
-
+        if p is None:
+            p = 0, 0
         xpt, ypt = point2D(upt(p))
         self.save()
-        img = self.b.image(path)
+        # TODO Skip for now. 
+        """
+        img = self.b.image(path, height=h, width=w)
         img.resize(width=w.pt, height=h.pt)
         placed = self.page.place(img)
         placed.position(xpt, ypt)
+        """
         self.restore()
 
     #   D R A W I N G

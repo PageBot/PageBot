@@ -111,7 +111,10 @@ class HtmlContext(BaseContext):
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
         """Make an HTML image tag by calling the builder"""
-        self.b.img(path, width=w, height=h)
+        self.b.img(path=path) # TODO: add other attributes here, width=w, height=h)
+
+    def saveImage(self, path):
+        """Ignore for now in this context."""
 
     #   C O L O R
 

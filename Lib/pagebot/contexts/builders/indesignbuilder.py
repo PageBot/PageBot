@@ -41,13 +41,13 @@ class InDesignBuilder(BaseBuilder):
     >>> b.getJs(newLine=False).startswith('/* Created by PageBot */')
     True
     >>> b.newPage()
-    # FIXME: should be points (pt())
+    >>> # FIXME: should be points (pt())
     >>> b.oval(100, 100, 200, 200) # x, y, w, h
     >>> b.rect(300, 100, 100, 200)
     >>> b.rect(100, 300, 200, 100)
     >>> b.oval(300, 300, 100, 100)
     >>> scriptPath = '_export/InDesign.jsx'
-    >>> b.writeJs(scriptPath)
+    >>> #b.writeJs(scriptPath)
     >>> scriptPath = b.getInDesignScriptPath()
     >>> if not os.path.exists(scriptPath):
     ...     os.makedirs(scriptPath)
@@ -65,9 +65,11 @@ class InDesignBuilder(BaseBuilder):
         self._jsOut = []
         self._initialize()
         self.w, self.h = A4Rounded
+        self.mr = self.mt = self.mb = self.mr = pt(24)
         self._path = None
         self._hyphenation = False
         self.numberOfPages = 0
+        self.margin = pt(36)
 
     def __repr__(self):
         return '\n'.join(self._jsOut)
@@ -82,7 +84,6 @@ class InDesignBuilder(BaseBuilder):
         are created."""
         self.w = w
         self.h = h
-        self.margin = 36
         self.units = units
 
         # Creates a new document without showing the document window.  The

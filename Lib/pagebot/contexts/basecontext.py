@@ -216,8 +216,7 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
         """
-        xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, rpt*2, rpt*2) # Render the unit values
+        self.oval(x, y, r*2, r*2)
 
     def roundedRect(self, x, y, w, h, offset=25):
         return self.b.roundedRect(x, y, w, h, offset=offset)
@@ -836,7 +835,6 @@ class BaseContext(AbstractDrawBotContext):
         style = makeStyle(style=style)
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            #print('@#@##@@#', self, s, style, w, h)
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,
                     style=style, w=w, h=h, pixelFit=pixelFit)
         assert isinstance(s, self.STRING_CLASS)

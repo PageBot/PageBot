@@ -25,7 +25,7 @@ from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.indesignstring import InDesignString
 from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_SIZE
 from pagebot.paths import DEFAULT_FONT_PATH
-from pagebot.toolbox.units import Pt, upt
+from pagebot.toolbox.units import Pt, upt, pt
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.color import noColor, blackColor, Color, inheritColor, color
 
@@ -621,8 +621,21 @@ class InDesignContext(BaseContext):
         return self.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path."""
-        return self.b.imageSize(path)
+        """Answers the (w, h) image size of the image file at path. If the path is an SVG
+        image, then determine by parsing the SVG-XML.
+
+        if path.lower().endswith('.'+FILETYPE_SVG):
+            import xml.etree.ElementTree as ET
+            svgTree = ET.parse(path)
+            print(svgTree)
+            return pt(1000, 1000)
+
+        return pt(self.b.imageSize(path))
+        """
+        return pt(1000, 1000)
+
+    def saveImage(self, path):
+        """Ignore for now in this context."""
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Draw the image. If w or h is defined, then scale the image to
@@ -643,7 +656,7 @@ class InDesignContext(BaseContext):
         self.b.image(path, (x*sx, y*sy), alpha=alpha, pageNumber=pageNumber)
         self.restore()
 
-    def ImageObject(self, path):
+    def getImageObject(self, path):
         """Answers the ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
@@ -653,7 +666,16 @@ class InDesignContext(BaseContext):
         >>> imo = context.getImageObject(path)
 
         """
+        """Ignore for now in this context."""
+        return None
         #return self.b.ImageObject(path)
+
+    def scale(self, sx=1, sy=None, center=(0, 0)):
+        """Ignore for now in this context."""
+
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+        """Ignore for now in this context."""
+
 
 if __name__ == '__main__':
     import doctest
