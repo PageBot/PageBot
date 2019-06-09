@@ -953,9 +953,9 @@ class TextBox(Element):
             self.top = self.parent.h - self.parent.pt + line.y - capHeight
 
     def capHeight2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
-
+        # TODO: Implement
+        pass
+        
     def capHeightUp2Grid(self, index=None, parent=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.

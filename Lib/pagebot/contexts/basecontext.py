@@ -76,7 +76,7 @@ class BaseContext(AbstractDrawBotContext):
 
     def _get_language(self):
         return self._language
-    def _set_language(self, languge):
+    def _set_language(self, language):
         self._language = language or DEFAULT_LANGUAGE
     language = property(_get_language, _set_language)
 
