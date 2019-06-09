@@ -1,5 +1,0 @@
-size(400, 400)
-newDrawing()
-newPage(100, 100)
-text('bla', (10, 10))
-endDrawing()

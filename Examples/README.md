@@ -1,10 +1,5 @@
 # PageBot Examples
 
-The examples in this folder are very basic, explaining the usage principles of PageBot. 
+The examples in this folder moved to a separate repository to keep the libary small generic.
 
-More practicle examples, templates and application can be found in a separate GitHub repository, https://github.com/PageBot/PageBotExamples
-
-
-# Running PageBot on Google Cloud, start here:
-
-https://developers.google.com/sheets/api/quickstart/python
+https://github.com/PageBot/PageBotExamples
