@@ -15,7 +15,6 @@
 #     typesetter.py
 #
 import re
-import os
 import copy
 import codecs
 import traceback
@@ -37,7 +36,7 @@ from pagebot.contributions.markdown.inline import InlineExtension
 
 #from pagebot import getMarker
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
-from pagebot.toolbox.units import pt, em, units
+from pagebot.toolbox.units import pt, em
 from pagebot.toolbox.color import color, blackColor
 from pagebot.constants import *
 from pagebot.toolbox.transformer import asIntOrNone

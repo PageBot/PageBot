@@ -9,6 +9,9 @@
 #
 #     canvasview.py
 #
+# TODO: PageBot should be kept abstract.
+# Put this in DrawBotContext instead.
+
 from AppKit import NSView, NSMakeRect, NSClipView, NSTrackingArea, \
     NSTrackingMouseEnteredAndExited , NSTrackingActiveWhenFirstResponder, \
     NSTrackingMouseMoved, NSTrackingInVisibleRect, NSTrackingActiveAlways

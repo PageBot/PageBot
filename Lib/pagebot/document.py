@@ -23,7 +23,7 @@ from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
-from pagebot.toolbox.transformer import obj2StyleId, uniqueID, path2Dir, path2Url, json2Dict, \
+from pagebot.toolbox.transformer import obj2StyleId, path2Url, json2Dict, \
     dict2Json, asNormalizedJSON
 from pagebot.toolbox.units import pt, units, isUnit, point3D
 
@@ -402,7 +402,7 @@ class Document:
                 rootStyle[name] = v
         # Adjust the default vertical origin position from self.origin, if not already defined
         # by **kwargs
-        if not 'yAlign' in kwargs:
+        if 'yAlign' not in kwargs:
             yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
             rootStyle['yAlign'] = yAlign
         return rootStyle

@@ -15,10 +15,6 @@
 #
 
 from pagebot import getContext
-from vanilla import Button, Window, PopUpButton, TextBox, EditText
-from pagebot.apps.baseapp import BaseApp
-from pagebot.toolbox.color import *
-from pagebot.toolbox.units import *
 
 W = H = 1000
 M = 20

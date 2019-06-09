@@ -45,11 +45,7 @@ class IdmlContext(BaseContext):
         """Ignore for now in this context."""
 
     def fill(self, c):
-        """
-        FIXME: signature differs from DrawBot.
-        def fill(self, r, g=None, b=None, a=None, alpha=None):
-        
-        Ignore for now in this context."""
+        """Ignore for now in this context."""
 
     def stroke(self, c, w=None):
         """Ignore for now in this context."""

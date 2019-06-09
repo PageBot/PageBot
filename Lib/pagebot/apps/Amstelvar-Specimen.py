@@ -17,18 +17,18 @@
 #     This is the simple demo version of the FontSpecimen.py that will generate
 #     a full specimen of the font.
 #
-import pagebot
+import os
+
 from pagebot import getContext
-from pagebot.fonttoolbox.fontpaths import getTestFontsPath
 from pagebot.document import Document
 from pagebot.style import *
 from pagebot.elements import * # Import all types of page-child elements for convenience
 from pagebot.toolbox.color import color
-from pagebot.toolbox.units import em, p, pt, mm, inch, px
+from pagebot.toolbox.units import em, pt, mm
 from pagebot.conditions import * # Import all conditions for convenience.
 from pagebot.constants import *
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.fonttoolbox.objects.font import findFont, Font
+from pagebot.fonttoolbox.objects.font import Font
 
 c = getContext()
 EXPORT_PATH = '_export/FontContent.pdf'
@@ -39,36 +39,20 @@ FONT_PATH = '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelva
 FONT_PATH2= '/Users/michiel/Fonts/TnTestFonts/fontFiles/AmstelVarGoogle/Amstelvar-Italic-VF.ttf'
 
 # Function to know if the fonts is loading
-f = Font(FONT_PATH)
+f = f2 = None
+if os.path.exists(FONT_PATH):
+    f = Font(FONT_PATH)
 if f is None:
     print('%s cannot be found' % FONT_PATH)
 else:
-    print('Done')
+    print('Done loading', FONT_PATH)
 
-f2 = Font(FONT_PATH2)
+if os.path.exists(FONT_PATH2):
+    f2 = Font(FONT_PATH2)
 if f2 is None:
     print('%s cannot be found' % FONT_PATH2)
 else:
-    print('Done')
-
-#Default Axes Descriptions
-axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
-
-# Get the axis of the font that is loaded
-for axisName, (minValue, defaultValue, maxValue) in f.axes.items():
-    print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
-
-for axisName, (minValue, defaultValue, maxValue) in f2.axes.items():
-    print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
-
-#ROMAN FONTS
-MAXOPTICAL = getVarFontInstance(f.path, dict(opsz=144.0))
-MINOPTICAL = getVarFontInstance(f.path, dict(opsz=8.0))
-H2OPTICAL = getVarFontInstance(f.path, dict(opsz=100))
-#ITALICFONTS
-MAXOPTICALIT = getVarFontInstance(f2.path, dict(opsz=144.0))
-MINOPTICALIT = getVarFontInstance(f2.path, dict(opsz=8.0))
-H2OPTICALIT = getVarFontInstance(f2.path, dict(opsz=100))
+    print('Done loading', FONT_PATH2)
 
 
 #Function to make the docuemnt
@@ -427,6 +411,27 @@ def makeDocument():
     page.solve()
     return doc
 
-# Export the document to this PDF file.
-doc = makeDocument()
-doc.export('_export/Amstelvar-Specimen.pdf')
+if f is not None and f2 is not None:
+
+    #Default Axes Descriptions
+    axesDescriptions = { 'wght': 'Weight', 'wdth': 'Width', 'opsz': 'Optical size',}
+
+    # Get the axis of the font that is loaded
+    for axisName, (minValue, defaultValue, maxValue) in f.axes.items():
+        print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
+
+    for axisName, (minValue, defaultValue, maxValue) in f2.axes.items():
+        print(axisName, minValue, defaultValue, maxValue, axesDescriptions.get(axisName, 'unknown axis'))
+
+    #ROMAN FONTS
+    MAXOPTICAL = getVarFontInstance(f.path, dict(opsz=144.0))
+    MINOPTICAL = getVarFontInstance(f.path, dict(opsz=8.0))
+    H2OPTICAL = getVarFontInstance(f.path, dict(opsz=100))
+    #ITALICFONTS
+    MAXOPTICALIT = getVarFontInstance(f2.path, dict(opsz=144.0))
+    MINOPTICALIT = getVarFontInstance(f2.path, dict(opsz=8.0))
+    H2OPTICALIT = getVarFontInstance(f2.path, dict(opsz=100))
+
+    # Export the document to this PDF file.
+    doc = makeDocument()
+    doc.export('_export/Amstelvar-Specimen.pdf')

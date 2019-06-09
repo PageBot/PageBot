@@ -51,8 +51,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
                 warning = '[makeStyle] %s not allowed in (root) style!' % key
                 if raiseError:
                     raise ValueError(warning)
-                else:
-                    print(warning)
+                print(warning)
             else:
                 new[key] = value
 
@@ -61,8 +60,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
                 warning = '[makeStyle] %s not allowed in (root) style!' % name
                 if raiseError:
                     raise ValueError(warning)
-                else:
-                    print(warning)
+                print(warning)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 

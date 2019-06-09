@@ -1356,49 +1356,79 @@ class Element:
         return abs(self.getDistance2Grid(self.middle)) <= tolerance
 
     def isBaselineOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isBaselineOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isBaselineOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isAscenderOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isAscenderOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isAscenderOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isCapHeightOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isCapHeightOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isCapHeightOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isXHeightOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isXHeightOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isXHeightOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isDescenderOnGrid(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isDescenderOnTop(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     def isDescenderOnBottom(self, tolerance=0, index=0):
-        raise NotImplementedError
+        # Implemented for elements that support text boxes.
+        # Default is True for non-text elements, so the calling condition is satisfied.
+        return True
 
     #   S T Y L E
 
@@ -7263,63 +7293,78 @@ class Element:
 
     def baseline2Top(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def baseline2Middle(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def baseline2Bottom(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def capHeight2Top(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def capHeight2Middle(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def capHeight2Bottom(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def xHeight2Top(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def xHeight2Middle(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def xHeight2Bottom(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def ascender2Top(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def ascender2Middle(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def ascender2Bottom(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def descender2Top(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def descender2Middle(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     def descender2Bottom(self):
         # Implemented for elements that support text boxes.
-        raise NotImplementedError
+        # Default is to do nothing for non-text elements
+        pass
 
     #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
 

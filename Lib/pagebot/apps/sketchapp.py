@@ -18,9 +18,8 @@ from vanilla import Button, TextBox, Window
 from vanilla.dialogs import getFile, putFile
 
 from drawBot import *
-from drawBot.context import getContextForFileExt
 from drawBot.ui.drawView import DrawView
-from drawBot.ui.codeEditor import OutPutEditor
+#from drawBot.ui.codeEditor import OutPutEditor
 from pagebot.apps.baseapp import BaseApp
 
 class SketchApp(BaseApp):

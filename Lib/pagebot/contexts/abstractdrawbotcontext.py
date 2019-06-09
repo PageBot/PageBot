@@ -136,40 +136,25 @@ class AbstractDrawBotContext:
 
     def fill(self, c):
         """
-        FIXME: signature differs from DrawBot.
+        Note: signature differs from DrawBot.
         def fill(self, r, g=None, b=None, a=None, alpha=None):
-        """
-        raise NotImplementedError
-
-    def cmykFill(self, c):
-        """
-        FIXME: signature differs from DrawBot.
-        def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
+        Inplementing method needs to check on rgb or cmyk nature of the color.
         """
         raise NotImplementedError
 
     def stroke(self, c, w=None):
-        # NOTE: signature differs from DrawBot.
-        raise NotImplementedError
-
-    def cmykStroke(self, c):
-        # FIXME: signature differs from DrawBot.
+        """
+        Note: signature differs from DrawBot.
+        def stroke(self, r, g=None, b=None, a=None, alpha=None):
+        Inplementing method needs to check on rgb or cmyk nature of the color.
+        """
         raise NotImplementedError
 
     def shadow(self, offset, blur=None, color=None):
         raise NotImplementedError
 
-    def cmykShadow(self, offset, blur=None, color=None):
-        # FIXME: signature differs from DrawBot.
-        raise NotImplementedError
-
     def linearGradient(self, startPoint=None, endPoint=None, colors=None,
             locations=None):
-        raise NotImplementedError
-
-    def cmykLinearGradient(self, startPoint=None, endPoint=None, colors=None,
-            locations=None):
-        # FIXME: signature differs from DrawBot.
         raise NotImplementedError
 
     def radialGradient(self, startPoint=None, endPoint=None, colors=None,

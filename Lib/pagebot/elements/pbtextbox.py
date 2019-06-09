@@ -887,7 +887,7 @@ class TextBox(Element):
         >>> tb = TextBox(bs, parent=e, yAlign=TOP, conditions=[Shrink2TextBounds(), Top2Top()])
         >>> result = tb.solve()
         >>> tb.y, tb.baselineY
-        900pt
+        (900pt, 1079pt)
         """
         if parent is None:
             parent = self.parent
@@ -1040,30 +1040,36 @@ class TextBox(Element):
     # Ascenders conditional testers and movers
 
     def ascender2Grid(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so ascender height of index-line is at grid of parent."""
+        #TODO:Implement
+        pass
 
     def ascender2Top(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so ascender height of index-line is at top of parent."""
+        #TODO:Implement
+        pass
 
     def ascender2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so ascender height of index-line is at bottom of parent."""
+        #TODO:Implement
+        pass
 
     # Descender conditional testers and movers
 
     def descender2Grid(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so descender of index-line is on grid of parent."""
+        #TODO:Implement
+        pass
 
     def descender2Top(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so descender of index-line is on top of parent."""
+        #TODO:Implement
+        pass
 
     def descender2Bottom(self, index=None, parent=None):
-        # TODO:Implement
-        raise NotImplementedError
+        # Move the element, so descender of index-line is on bottom of parent."""
+        #TODO:Implement
+        pass
 
 
 if __name__ == '__main__':

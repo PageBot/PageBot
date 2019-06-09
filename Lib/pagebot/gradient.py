@@ -14,7 +14,7 @@
 #
 #     gradient.py
 #
-from pagebot.toolbox.color import blackColor, whiteColor, color as makeColor, Color
+from pagebot.toolbox.color import blackColor, whiteColor, color as makeColor
 from pagebot.toolbox.units import units
 
 class Gradient:
