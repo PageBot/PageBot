@@ -5267,16 +5267,20 @@ class Element:
     # Unimplemented here for text operations
 
     def isShrunkOnTextHeight(self, tolerance=0):
-        raise NotImplementedError
+        """For non-text elements, this is always True to satisfy the calling condition."""
+        return True
 
     def shrink2TextHeight(self, tolerance=0):
-        raise NotImplementedError
+        """For non-text elements, this is always True to satisfy the calling condition."""
+        return True
 
     def isShrunkOnTextWidth(self, tolerance=0):
-        raise NotImplementedError
+        """For non-text elements, this is always True to satisfy the calling condition."""
+        return True
 
     def shrink2TextWidth(self, tolerance=0):
-        raise NotImplementedError
+        """For non-text elements, this is always True to satisfy the calling condition."""
+        return True
     
     # Float conditions to page padding
 
