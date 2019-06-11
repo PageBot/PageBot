@@ -216,7 +216,8 @@ class BaseContext(AbstractDrawBotContext):
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
         """
-        self.oval(x, y, r*2, r*2)
+        xpt, ypt, rpt = upt(x, y, r)
+        self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points for DrawBot.
 
     def roundedRect(self, x, y, w, h, offset=25):
         return self.b.roundedRect(x, y, w, h, offset=offset)
