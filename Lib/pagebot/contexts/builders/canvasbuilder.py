@@ -27,7 +27,7 @@ from pagebot.contexts.strings.formattedstring import FormattedString
 from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
-from pagebot.canvas.canvas import Canvas
+from pagebot.apps.canvas.canvas import Canvas
 from pagebot.toolbox.color import noColor
 
 # FIXME: using drawBot for now.

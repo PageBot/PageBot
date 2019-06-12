@@ -9,8 +9,13 @@
 #
 #     canvasview.py
 #
-# TODO: PageBot should be kept abstract.
-# Put this in DrawBotContext instead.
+#     TODO: To be fixed.
+#
+#   Traceback (most recent call last):
+#     File "/Users/petr/Desktop/git/PageBot/Lib/pagebot/apps/canvas/canvasview.py", line 18, in <module>
+#       class CanvasView(NSView):
+#   objc.BadPrototypeError: Objective-C expects 1 arguments, Python argument has 3 arguments for <unbound selector setSize of CanvasView at 0x1109def38>
+#
 
 from AppKit import NSView, NSMakeRect, NSClipView, NSTrackingArea, \
     NSTrackingMouseEnteredAndExited , NSTrackingActiveWhenFirstResponder, \

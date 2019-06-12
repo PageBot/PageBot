@@ -11,3 +11,6 @@
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
+#
+#     The apps directory contains MacOS specific application and AppKit stuff.
+#
