@@ -13,6 +13,8 @@
 #
 #     __init__.py
 #
+from pagebot.publications.posters.baseposter import Poster
+
 POSTER_CLASSES = {
-	
+    'Standard': Poster,
 }

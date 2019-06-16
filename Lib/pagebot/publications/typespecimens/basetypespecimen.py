@@ -29,7 +29,7 @@ from pagebot.constants import *
 # Import conditions for layout placements and other element status.
 #from pagebot.conditions import *
 
-class TypeSpecimen(Publication):
+class BaseTypeSpecimen(Publication):
 
     # Default paper sizes that are likely to be used for
     # type specimens in portrait ratio.

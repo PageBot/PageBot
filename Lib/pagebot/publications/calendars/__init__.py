@@ -16,7 +16,7 @@
 from pagebot.publications.calendars.photocalendar import PhotoCalendar
 
 CALENDAR_CLASSES = {
-	'Photo calendar': PhotoCalendar, # Eanch month a photo and a table of month days
+	'Photo': PhotoCalendar, # Eanch month a photo and a table of month days
 }
 
 if __name__ == "__main__":

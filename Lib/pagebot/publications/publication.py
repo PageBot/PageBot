@@ -15,7 +15,7 @@
 #
 import os
 
-from pagebot.elements import Element, Template
+from pagebot.elements import *  
 from pagebot.document import Document
 from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
@@ -73,16 +73,18 @@ class Publication(Element):
         inheriting pbulications classes."""
         raise NotImplementedError
 
-    def newDocument(self, autoPages=None, w=None, h=None, originTop=None, padding=None, theme=None,
-            gw=None, gh=None, gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
-            **kwargs):
+    def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None, 
+            padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None, 
+            baselineGrid=None, baselineGridStart=None, **kwargs):
         """Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
         Optional arguments can overwrite the parameters of the publication.
         """
+        if name is None:
+            name = self.name
         if autoPages is None:
-            autoPages = 0
+            autoPages = 1
         if w is None:
             w = self.w
         if h is None:
@@ -99,8 +101,10 @@ class Publication(Element):
             gridY = self.gridY
         if baselineGrid is None: 
             baselineGrid = self.baselineGrid
-        doc = Document(w=w, h=h, originTop=originTop, padding=padding, theme=theme,
-            gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
+        if theme is None:
+            theme = self.theme
+        doc = Document(name=name, w=w, h=h, originTop=originTop, padding=padding, 
+            theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
             baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart, 
             **kwargs)
         view = doc.view
@@ -108,8 +112,10 @@ class Publication(Element):
         view.showPadding = self.showPadding
         view.showImageLoresMarker = self.showImageLoresMarker
         view.showBaselineGrid = self.showBaselineGrid
-        
+ 
         return doc
+
+    newSampleDocument = newDocument # To be redefined by inheriting publication classes.
 
     #   P A R T S
 

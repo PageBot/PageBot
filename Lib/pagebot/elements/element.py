@@ -2730,14 +2730,22 @@ class Element:
 
     # Borders (equivalent for element stroke and strokWidth)
 
-    def getBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None):
+    def getBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None, border=None):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
+        
+        if border is False:
+            return {}
+        if isinstance(border, dict):
+            return border
+        if isinstance(border, (int, float)): # If number, assume it is strokeWidth
+            strokeWidth = units(border)
+
         if stroke is None:
             stroke = self.css('stroke', blackColor)
-        if strokeWidth is None:
-            strokeWidth = self.strokeWidth # Take current stroke width setting in css
+        #if strokeWidth is None:
+        #    strokeWidth = self.strokeWidth # Take current stroke width setting in css
         if line is None:
             line = ONLINE
         # Dash can be None
@@ -2783,28 +2791,30 @@ class Element:
         >>> e.borderTop = e.getBorderDict(strokeWidth=pt(5), stroke=blackColor)
         >>> sorted(e.borderTop.items())
         [('dash', None), ('line', 'online'), ('stroke', Color(r=0, g=0, b=0)), ('strokeWidth', 5pt)]
+        >>> e.borderTop = 2
+
         """
         return self.css('borderTop')
     def _set_borderTop(self, border):
-        self.style['borderTop'] = border
+        self.style['borderTop'] = self.getBorderDict(border=border)
     borderTop = property(_get_borderTop, _set_borderTop)
 
     def _get_borderRight(self):
         return self.css('borderRight')
     def _set_borderRight(self, border):
-        self.style['borderRight'] = border
+        self.style['borderRight'] = self.getBorderDict(border=border)
     borderRight = property(_get_borderRight, _set_borderRight)
 
     def _get_borderBottom(self):
         return self.css('borderBottom')
     def _set_borderBottom(self, border):
-        self.style['borderBottom'] = border
+        self.style['borderBottom'] = self.getBorderDict(border=border)
     borderBottom = property(_get_borderBottom, _set_borderBottom)
 
     def _get_borderLeft(self):
         return self.css('borderLeft')
     def _set_borderLeft(self, border):
-        self.style['borderLeft'] = border
+        self.style['borderLeft'] = self.getBorderDict(border=border)
     borderLeft = property(_get_borderLeft, _set_borderLeft)
 
     # Alignment types, defines where the origin of the element is located.

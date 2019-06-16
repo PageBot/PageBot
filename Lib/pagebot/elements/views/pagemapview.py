@@ -413,9 +413,10 @@ class PageMapView(BaseView):
         b = self.b
         context = self.context
         for e, origin in self.elementsNeedingInfo.values():
-            p = pointOffset(e.origin, origin)
-            p = e._applyScale(self, p)
-            px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+            #p = pointOffset(e.origin, origin)
+            #p = e._applyScale(self, p)
+            #px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+            px, py, _ = pointOffset(e.origin, origin)
             if (self.showElementInfo or e.isPage) or e.showElementInfo:
                 # Draw box with element info.
                 bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
@@ -442,6 +443,11 @@ class PageMapView(BaseView):
                 context.stroke(blackColor, w=pt(0.25))
                 S = self.css('viewInfoOriginMarkerSize', pt(5))
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
+
+                contect.circle(x1, y1, 20)
+                contect.circle(x1, y2, 20)
+                contect.circle(x2, y1, 20)
+                contect.circle(x2, y2, 20)
 
                 # Horizontal measure
                 context.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
