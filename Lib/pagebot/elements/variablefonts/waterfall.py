@@ -16,7 +16,7 @@
 #
 from pagebot.elements import TextBox
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.toolbox.units import em, asFormatted
+from pagebot.toolbox.units import em, asFormatted, pt
 
 class Waterfall(TextBox):
     """Showing the specified (variable) font as waterfall.
@@ -73,7 +73,7 @@ class Waterfall(TextBox):
         style['font'] = self.getInstance(self.f, self.getLocation(self.f, location)).path
         sampleText = sampleText or self.SAMPLE
         matchingLine = c.newString(sampleText+'\n', style=style, w=w)
-        style['fontSize'] = fontSize = matchingLine.fittingFontSize // 8 * 8
+        style['fontSize'] = fontSize = pt(int(matchingLine.fittingFontSize / 8)) * 8
 
         bs = c.newString('', style=style)
         while fontSize >= 12:

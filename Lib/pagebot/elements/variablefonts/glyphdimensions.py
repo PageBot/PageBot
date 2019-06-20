@@ -110,8 +110,7 @@ class GlyphDimensions(BaseFontShow):
             # FIXME: no self.pw
             #s = (self.pw/glyph.width)
             #c.scale(s)
-            #c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/3)/s))
-            c.drawPath(glyph.path, ((ox+self.pl), (oy+self.ph/3)))
+            c.drawPath(c.getGlyphPath(glyph), ((ox+self.pl), (oy+self.ph/3)))
             c.restore()
 
 if __name__ == '__main__':

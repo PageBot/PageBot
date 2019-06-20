@@ -133,7 +133,7 @@ class Cube(BaseFontShow):
                 location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
                 instance = getInstance(self.f, location)
                 #print(instance.location)
-                style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
                 bs = c.newString(self.label, style=style)
                 tw, th = bs.size
                 c.text(bs, (x-tw/2, y))
@@ -143,7 +143,7 @@ class Cube(BaseFontShow):
                     x = ox + mx - xzStep * dx 
                     location = self.getLocation(wght=1, wdth=-xzStep/2+1, opsz=opsz)
                     instance = getInstance(self.f, location)
-                    style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                    style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
                     bs = c.newString(self.label, style=style)
                     tw, th = bs.size
                     c.text(bs, (x-tw/2, y))
@@ -156,7 +156,7 @@ class Cube(BaseFontShow):
                     
                     location = self.getLocation(wght=-xStep/2+1, wdth=-zStep/2+1, opsz=opsz)
                     instance = getInstance(self.f, location)
-                    style = dict(font=instance.path, fontSize=fontSize, xTextAligh=CENTER)
+                    style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
                     bs = c.newString(self.label, style=style)
                     tw, th = bs.size
                     c.text(bs, (x-tw/2, y))

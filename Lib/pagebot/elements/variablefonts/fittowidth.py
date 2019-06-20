@@ -18,7 +18,7 @@
 #
 from pagebot.elements import Element
 from pagebot.toolbox.units import pointOffset, em, upt
-from pagebot.toolbox.color import noColor, blackColor
+from pagebot.toolbox.color import noColor, blackColor, whiteColor, color
 
 class FontIcon(Element): 
     """Showing the specified font(sub variable font) in the form of an icon 
@@ -32,7 +32,7 @@ class FontIcon(Element):
     >>> fi.title
     'Roboto Regular'
     >>> fi.size
-    (120, 160, 1)
+    (120pt, 160pt)
 
     """
     LABEL_RTRACKING = em(0.02)

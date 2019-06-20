@@ -121,7 +121,7 @@ class AnimationFrame(Rect):
         c.fill(color(gray, gray, 1-gray, 0.6))
         s = 0.4
         c.scale(s)
-        c.drawPath(glyph.path, ((ox+self.pl)/s, (oy+self.ph/4)/s))
+        c.drawPath(c.getGlyphPath(glyph)), ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
         # FIXME: should get local path using findFont(), but axis seem to be specific to
@@ -156,7 +156,7 @@ class AnimationFrame(Rect):
         c.fill(color(gray, gray, gray, 0.8))
         s = 1
         c.scale(s)
-        c.drawPath(glyph.path, ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
+        c.drawPath(c.getGlyphPath(glyph)), ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
 

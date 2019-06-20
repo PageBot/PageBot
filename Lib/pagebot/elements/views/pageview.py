@@ -886,23 +886,39 @@ class PageView(BaseView):
         >>> view.drawRegistrationMarks(e, pt(0, 0))
         """
         # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags
+        rms = self.css('viewRegistrationMarkSize')
         if e.isPage and self.showRegistrationMarks:
             showRegistrationMarks = self.showRegistrationMarks
+            cmSizes = {
+                LEFT: min(self.pl/2, rms), 
+                BOTTOM: min(self.pb/2, rms), 
+                RIGHT: min(self.pr/2, rms), 
+                TOP: min(self.pt/2, rms)
+            } 
         else:
             showRegistrationMarks = e.showRegistrationMarks 
+            cmSizes = {
+                LEFT: min(self.ml/2, rms), 
+                BOTTOM: min(self.mb/2, rms), 
+                RIGHT: min(self.mr/2, rms), 
+                TOP: min(self.mt/2, rms)
+            } 
         if showRegistrationMarks:
             # TODO: Make crop mark go closer to page edge and disappear if too small.
-            cmSize = min(self.pl/2, self.css('viewRegistrationMarkSize')) 
             cmStrokeWidth = self.css('viewRegistrationMarkStrokeWidth')
             x, y = point2D(origin)
             w, h = e.size
             if BOTTOM in showRegistrationMarks:
+                cmSize = cmSizes[BOTTOM]
                 self._drawRegistrationMark(e, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
             if LEFT in showRegistrationMarks:
+                cmSize = cmSizes[LEFT]
                 self._drawRegistrationMark(e, (x - cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Left registration mark
             if RIGHT in showRegistrationMarks:
+                cmSize = cmSizes[RIGHT]
                 self._drawRegistrationMark(e, (x + w + cmSize, y + h/2), cmSize, cmStrokeWidth, True) # Right registration mark
             if TOP in showRegistrationMarks:
+                cmSize = cmSizes[TOP]
                 self._drawRegistrationMark(e, (x + w/2, y + h + cmSize), cmSize, cmStrokeWidth, False) # Top registration mark
 
     def drawCropMarks(self, e, origin):
