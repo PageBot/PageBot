@@ -49,13 +49,25 @@ class VariableCircle(Element):
     MARKER_RADIUS = pt(5)
     INTERPOLATION = 0.5
     DEFAULT_FONT_SIZE = pt(64)
+    """
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> from pagebot.document import Document
+    >>> vfFont = findFont('RobotoDelta_v2-VF')
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> page = doc[1]
+    >>> page.padding = 40
+    >>> vc = VariableCircle(vfFont, parent=page, x=40, y=40, w=page.pw)
+    >>> doc.export('_export/testVFCircle.pdf')
+    """
+ 
     R = 1#2/3 # Fontsize factor to draw glyph markers.
 
     def __init__(self, font, s=None, draw3D=True, location=None, showAxisNames=True, 
         markerRadius=None, labelFont=None, labelFontSize=None, axisNameFontSize=None, **kwargs):
         Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
-        self.font = font
+        self.vfFont = font
         if labelFont is None:
             labelFont = font
         self.labelFont = labelFont
@@ -71,10 +83,10 @@ class VariableCircle(Element):
         self.markerRadius = markerRadius or self.MARKER_RADIUS
 
         self.angles = {}
-        if self.font.axes:
+        if self.vfFont.axes:
             aIndex = 0
-            da = 180/len(self.font.axes)
-            for axis, (minValue, defaultValue, maxValue) in sorted(self.font.axes.items()):
+            da = 180/len(self.vfFont.axes)
+            for axis, (minValue, defaultValue, maxValue) in sorted(self.vfFont.axes.items()):
                 minAngle = maxAngle = None
                 if minValue != defaultValue:
                     minAngle = aIndex * da
@@ -112,7 +124,7 @@ class VariableCircle(Element):
                                               textFill=blackColor))
             tw, th = bs.size
             context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
-        glyphPathScale = fontSize/self.font.info.unitsPerEm
+        glyphPathScale = fontSize/self.vfFont.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
 
     def makeAxisName(self, axisName):
@@ -130,12 +142,12 @@ class VariableCircle(Element):
         context.circle(mx, my, r)
 
         # Draw axis spikes first, so we can cover them by the circle markers.
-        axes = self.font.axes
+        axes = self.vfFont.axes
         fontSize = self.style.get('fontSize', self.DEFAULT_FONT_SIZE)
 
         # Draw name of the font
         """
-        bs = context.newString(self.font.info.familyName,
+        bs = context.newString(self.vfFont.info.familyName,
                                 style=dict(font=self.labelFont,
                                 fontSize=self.axisNameFontSize, textFill=blackColor))
         context.text(bs, (px-fontSize/2, py+self.h+fontSize/2))
@@ -207,9 +219,9 @@ class VariableCircle(Element):
         context.strokeWidth(self.strokeWidth)
         context.circle(mx, my, self.markerRadius)
 
-        """
+        
         # Draw axis names and DeltaLocation values
-        if self.showAxisNames:
+        if 1: #self.showAxisNames:
             for axisName, (minValue, defaultValue, maxValue) in axes.items():
                 angle = self.angles[axisName]
                 location = {axisName: maxValue}
@@ -273,7 +285,7 @@ class VariableCircle(Element):
                 context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
                 context.text(bs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5))
 
-        """
+        
 
     #   D R A W B O T  S U P P O R T
 

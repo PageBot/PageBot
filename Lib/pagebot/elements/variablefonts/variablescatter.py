@@ -23,10 +23,20 @@ from pagebot.toolbox.color import blackColor
 
 
 class VariableScatter(Element):
-    # Initialize the default behavior tags as different from Element.
+   """
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> from pagebot.document import Document
+    >>> vfFont = findFont('RobotoDelta_v2-VF')
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> page = doc[1]
+    >>> page.padding = 40
+    >>> vc = VariableScatter(vfFont, parent=page, x=40, y=40, w=page.pw)
+    """
+     # Initialize the default behavior tags as different from Element.
 
     def __init__(self, font, s=None, parent=None, name=None, style=None,
-                 eId=None, fontSize=72, sizeX=5, sizeY=5, recipeAxes=None,
+                 fontSize=72, sizeX=5, sizeY=5, recipeAxes=None,
                  designSpace=None, locations=None, **kwargs):
         self.font = font
         self.eId = eId

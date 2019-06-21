@@ -28,7 +28,7 @@ class AnimationFrame(Rect):
     """
     SAMPLE = 'Sample'
 
-    def __init__(self, s, f, frames, frameIndex, phases=None, **kwargs):
+    def __init__(self, s, font, frames, frameIndex, phases=None, **kwargs):
         """
         >>> from random import random
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -44,17 +44,17 @@ class AnimationFrame(Rect):
         >>> frames = duration * framesPerSecond
         >>> doc = Document(w=w, h=h, padding=10, originTop=False, glyphName='Agrave', frameDuration=1/framesPerSecond, autoPages=frames, context=c)
         >>> font = findFont('RobotoDelta-VF')
-        >>> sample = 'Bitcount'
+        >>> sample = 'PageBot'
         >>> for pn in range(1, frames+1):
         ...     page = doc[pn]
         ...     style = dict(leading=em(1.4), fontSize=400, xTextAlign=RIGHT, fill=color(0))
-        ...     gs = AnimationFrame('Claire', font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
+        ...     gs = AnimationFrame(sample, font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
         >>> doc.export('_export/%sAnimation.gif' % font.info.familyName)
 
         TODO: Make self.css('xTextAlign') work for CENTER
         """
         Rect.__init__(self, **kwargs)
-        self.f = f
+        self.vfFont = font
         self.frames = frames # Total amount of expected frames in the animation part
         self.frameIndex = frameIndex
         self.sampleText = s or self.SAMPLE
@@ -91,14 +91,14 @@ class AnimationFrame(Rect):
         if the axis exists.
 
         """
-        wdthMin, wdthDefault, wdthMax = self.f.axes['wdth']
-        wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+        wdthMin, wdthDefault, wdthMax = self.vfFont.axes['wdth']
+        wghtMin, wghtDefault, wghtMax = self.vfFont.axes['wght']
 
         ox, oy, _ = origin
         c = self.context
         style = self.style.copy()
         #location = getScaledLocation(self.f, dict(wght=self.frameIndex/self.frames))
-        #instance = getInstance(self.f, location)
+        #instance = getInstance(self.vfFont, location)
         phisin = sin(radians(self.frameIndex/self.frames * 360))
         phicos = cos(radians(self.frameIndex/self.frames * 360))
 
@@ -107,7 +107,7 @@ class AnimationFrame(Rect):
         wdthRange = wdthMax - wdthMin
         wghtRange = wghtMax - wghtMin
         location = dict(wdth=phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
-        instance = self.f.getInstance(location)#instance.path
+        instance = self.vfFont.getInstance(location)#instance.path
         style['font'] = instance.path
         #print(self.frameIndex, style['font'])
         #style['fontSize'] = self.h/3
@@ -121,7 +121,7 @@ class AnimationFrame(Rect):
         c.fill(color(gray, gray, 1-gray, 0.6))
         s = 0.4
         c.scale(s)
-        c.drawPath(c.getGlyphPath(glyph)), ((ox+self.pl)/s, (oy+self.ph/4)/s))
+        c.drawPath(c.getGlyphPath(glyph), ((ox+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
         # FIXME: should get local path using findFont(), but axis seem to be specific to
@@ -133,7 +133,7 @@ class AnimationFrame(Rect):
         if 'SHPE' in f.axes:
             SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
             SHPERange = SHPEMax - SHPEMin
-            wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+            wghtMin, wghtDefault, wghtMax = self.vfFont.axes['wght']
             wghtRange = wghtMax - wghtMin
             location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
             instance = f.getInstance(location)#instance.path
@@ -144,7 +144,7 @@ class AnimationFrame(Rect):
         f = Font(path)
         SHPEMin, SHPEDefault, SHPEMax = f.axes['SHPE']
         SHPERange = SHPEMax - SHPEMin
-        wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
+        wghtMin, wghtDefault, wghtMax = self.vfFont.axes['wght']
         wghtRange = wghtMax - wghtMin
         location = dict(SHPE=phisin*SHPERange/2+SHPERange/2+SHPEMin, wght=phicos*wghtRange/2+wghtRange/2+wghtMin)
         instance = f.getInstance(location)#instance.path
@@ -156,7 +156,7 @@ class AnimationFrame(Rect):
         c.fill(color(gray, gray, gray, 0.8))
         s = 1
         c.scale(s)
-        c.drawPath(c.getGlyphPath(glyph)), ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
+        c.drawPath(c.getGlyphPath(glyph), ((ox+self.w/2+self.pl)/s, (oy+self.ph/4)/s))
         c.restore()
 
 

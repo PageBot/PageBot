@@ -21,17 +21,27 @@ from pagebot.style import makeStyle
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import blackColor
 
-class VariableCube(Element):
+class VariableCube2(Element):
+    """
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> from pagebot.document import Document
+    >>> vfFont = findFont('RobotoDelta_v2-VF')
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> page = doc[1]
+    >>> page.padding = 40
+    >>> vc = VariableCube2(vfFont, parent=page, x=40, y=40, w=page.pw)
+    """
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, fontpath, point=None, parent=None, style=None,
-                 name=None, eId=None, captionStyle=None, caption=None,
+    def __init__(self, font, point=None, parent=None, style=None,
+                 name=None, captionStyle=None, caption=None, 
+                 location=None, dimensions=None, 
                  clipRect=None, mask=None, imo=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style,
-                         name=name, eId=eId, **kwargs)
+                         name=name, **kwargs)
 
-        self.font = fontpath
-        self.eId = eId
+        self.vfFont = font
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         # Try to figure out the requested dimensions if the element display per axes.
         if dimensions is None:
@@ -89,7 +99,7 @@ class VariableCube(Element):
                 self.location[axisY] = indexY * RANGE / sizeY
                 glyphPathScale = self.fontSize/self.font.info.unitsPerEm
 
-                c.drawGlyphPath(c, self.font.ttFont, self.glyphNames[0],
+                c.drawGlyphPath(c, self.vfFont.ttFont, self.glyphNames[0],
                               ppx, ppy, self.location, s=glyphPathScale,
                               fillColor=(0, 0, 0))
 
