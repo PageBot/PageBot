@@ -15,12 +15,12 @@
 #     glyphpath.py
 #
 
-from pagebot.elements.paths.pbpath import Path
+from pagebot.elements.paths.pbpaths import Paths
 from pagebot.toolbox.units import pointOffset, units
 from pagebot.toolbox.color import noColor
 from pagebot.constants import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
-class GlyphPath(Path):
+class GlyphPath(Paths):
     """GlyphPath is an element to show show the path of a glyph with additional features.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -41,7 +41,7 @@ class GlyphPath(Path):
 
     """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
-        Path.__init__(self, **kwargs)
+        Paths.__init__(self, **kwargs)
         self.font = glyph.font # Store separate, to avoid disappearing weakref.
         self.glyph = glyph
         # One of the two needs to be defined, the other should be None to scale proportional.
