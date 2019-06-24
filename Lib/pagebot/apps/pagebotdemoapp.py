@@ -17,7 +17,7 @@ from vanilla import *
 from pagebot import getResourcesPath
 from pagebot.apps.baseapp import BaseApp
 from pagebot.publications import PublicationCategories
-from pagebot.elements import newGroup, newTextBox, newRect
+from pagebot.elements import newRect
 from pagebot.constants import *
 from pagebot.composer import Composer
 from pagebot.typesetter import Typesetter
@@ -385,7 +385,7 @@ class PageBotApp(BaseApp):
 
     def selectCategory(self, sender):
         """Select a new category and update the popup of publication types."""
-        templateTypes = sorted(PublicationCategories[tab.publication.getItem()])
+        templateTypes = sorted(PublicationCategories[self.uiDesign.publication.getItem()])
         self.templateType.setItems(templateTypes)
         self.templateType.set(0)
         self.makeSample(sender) # Create a new sample for this selection.

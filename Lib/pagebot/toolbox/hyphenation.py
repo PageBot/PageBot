@@ -64,9 +64,9 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
 
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
     >>> len(hyphenatedWords(LANGUAGE_EN)) # English hyphenated words in the library
-    171942
+    172365
     >>> len(hyphenatedWords(LANGUAGE_NL)) # Dutch hyphenated words in the library
-    235916
+    235900
     >>> len(hyphenatedWords(LANGUAGE_PT_BR)) # Brazil-Portugeese hyphenated words in the library
     27437
     >>> len(hyphenatedWords(LANGUAGE_DK)) # Danish hyphenated words in the library

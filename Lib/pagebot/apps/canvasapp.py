@@ -16,6 +16,8 @@
 from vanilla import Window
 from pagebot.apps.baseapp import BaseApp
 from pagebot import getContext
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.color import blueColor, blackColor, color, noColor 
 
 W = H = 1000
 M = 20
@@ -90,4 +92,5 @@ class CanvasApp(BaseApp):
 
             runs = True
 
-app = CanvasApp()
+if __file__ == '__main__':
+    app = CanvasApp()

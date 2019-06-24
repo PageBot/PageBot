@@ -652,7 +652,7 @@ class Unit:
         ('Pt', 200, 'None')
         >>> d = em(200, base=24).asNormalizedJSON()
         >>> d['class_'], d['v'], d['base']['v']
-        ('Pt', 200, )
+        ('Em', 200, 24)
         """
         from pagebot.toolbox.transformer import asNormalizedJSON
         return dict(class_=self.__class__.__name__, v=self.v, base=asNormalizedJSON(self.base), g=self.g)
@@ -2341,7 +2341,7 @@ class Angle:
         ('Pt', 200, 'None')
         >>> d = em(200, base=24).asNormalizedJSON()
         >>> d['class_'], d['v'], d['base']['v']
-        ('Pt', 200, )
+        ('Em', 200, 24)
         """
         return dict(class_=self.__class__.__name__, angle=self.angle or 0)
 

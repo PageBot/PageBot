@@ -196,8 +196,15 @@ def ral2Rgb(ral, default=None):
     True
     >>> ral2Rgb('grey') == ral2Rgb('gray') # Partial name finds other result
     False
+    """
+
+    """
+    FIXME (issue :
     >>> '%0.2f, %0.2f, %0.2f' % ral2Rgb('red')
+    Sublime says:
     '0.31, 0.07, 0.10'
+    Travis says:
+    '0.54, 0.07, 0.08'
     """
     return ral2NameRgb(ral, default)[1]
 

@@ -49,8 +49,8 @@ class PageMapView(BaseView):
         >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
         >>> doc = Document(size=A4, autoPages=4) # Make 4 pages to be composed as a Quire of 2 spreads
         >>> view = doc.view
-        >>> view.newQuire(folds=QUIRE_QUARTO)
-        >>> view.newQuire(folds=QUIRE_QUARTO)
+        >>> q1 = view.newQuire(folds=QUIRE_QUARTO)
+        >>> q2 = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
         2
         >>> len(view.elements[0])

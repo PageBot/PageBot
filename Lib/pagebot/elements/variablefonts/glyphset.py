@@ -50,7 +50,7 @@ class GlyphSet(BaseFontShow):
         >>> doc.export('_export/%sGlyphSet.pdf' % font1.info.familyName)
         """
         BaseFontShow.__init__(self, **kwargs)
-        self.f = f # Font instance
+        self.f = f # (Variable) font instance
 
 
     def build(self, view, origin, drawElements=True, **kwargs):

@@ -17,7 +17,7 @@
 #   objc.BadPrototypeError: Objective-C expects 1 arguments, Python argument has 3 arguments for <unbound selector setSize of CanvasView at 0x1109def38>
 #
 
-from AppKit import NSView, NSMakeRect, NSClipView, NSTrackingArea, \
+from AppKit import NSView, NSSize, NSMakeRect, NSClipView, NSTrackingArea, \
     NSTrackingMouseEnteredAndExited , NSTrackingActiveWhenFirstResponder, \
     NSTrackingMouseMoved, NSTrackingInVisibleRect, NSTrackingActiveAlways
 
