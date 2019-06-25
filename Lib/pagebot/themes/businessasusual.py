@@ -14,7 +14,7 @@
 #     businesasusual.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.toolbox.color import spot
 
 class BusinessAsUsual(BaseTheme):
     u"""The BusinessAsUsual theme is a generic “woody cool gray” theme, with settings that

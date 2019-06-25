@@ -1,5 +1,12 @@
 import AppKit
 
+#
+#
+#   @@@ FIXME
+#   @@@ This should not be here.
+#   @@@ Make AppKit colors part of DrawBotContext, 
+#   @@@ and for the rest use pagebot.toolbox.color functions
+#
 class Color(object):
 
     colorSpace = AppKit.NSColorSpace.genericRGBColorSpace

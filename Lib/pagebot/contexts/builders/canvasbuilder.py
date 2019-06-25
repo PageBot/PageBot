@@ -18,8 +18,6 @@
 import AppKit
 import CoreText
 import Quartz
-import math
-import os
 import traceback
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.contexts.graphics.graphic import Graphic
@@ -175,14 +173,12 @@ class CanvasBuilder(BaseBuilder):
         if self.width is None:
             if width is None:
                 raise PageBotError("A page must have a width")
-            else:
-                self.width = width
+            self.width = width
 
         if self.height is None:
             if height is None:
                 raise PageBotError("A page must have a height")
-            else:
-                self.height = height
+            self.height = height
 
         self.hasPage = True
 
@@ -511,7 +507,7 @@ class CanvasBuilder(BaseBuilder):
             while hyphenIndex != AppKit.NSNotFound:
                 hyphenIndex = attrString.lineBreakByHyphenatingBeforeIndex_withinRange_(hyphenIndex, wordRange)
                 if hyphenIndex != AppKit.NSNotFound:
-                    mutString.insertString_atIndex_(unichr(self._softHypen), hyphenIndex)
+                    mutString.insertString_atIndex_(chr(self._softHypen), hyphenIndex)
 
         # get the lines
         lines = self._getTypesetterLinesWithPath(attrString, path)
@@ -530,7 +526,7 @@ class CanvasBuilder(BaseBuilder):
             # get the string
             subStringText = subString.string()
             # check if the line ends with a softhypen
-            if len(subStringText) and subStringText[-1] == unichr(self._softHypen):
+            if subStringText and subStringText[-1] == chr(self._softHypen):
                 # here we go
                 # get the justified line and get the max line width
                 maxLineWidth, a, d, l = CoreText.CTLineGetTypographicBounds(justifiedLines[i], None, None, None)
@@ -556,19 +552,19 @@ class CanvasBuilder(BaseBuilder):
                     # get the width
                     stringWidth = breakString.size().width
                     # add hyphen width if required
-                    if breakString.string()[-1] == unichr(self._softHypen):
+                    if breakString.string()[-1] == chr(self._softHypen):
                         stringWidth += hyphenWidth
                     # found a break
                     if stringWidth <= maxLineWidth:
                         breakFound = True
                         break
 
-                if breakFound and len(breakString.string()) > 2 and breakString.string()[-1] == unichr(self._softHypen):
+                if breakFound and len(breakString.string()) > 2 and breakString.string()[-1] == chr(self._softHypen):
                     # if the break line ends with a soft hyphen
                     # add a hyphen
                     attrString.replaceCharactersInRange_withString_((rng.location + lineBreak, 0), "-")
                 # remove all soft hyphens for the range of that line
-                mutString.replaceOccurrencesOfString_withString_options_range_(unichr(self._softHypen), "", AppKit.NSLiteralSearch, rng)
+                mutString.replaceOccurrencesOfString_withString_options_range_(chr(self._softHypen), "", AppKit.NSLiteralSearch, rng)
                 # reset the lines, from the adjusted attribute string
                 lines = self._getTypesetterLinesWithPath(attrString, path)
                 # reset the justifed lines form the adjusted attributed string
@@ -576,7 +572,7 @@ class CanvasBuilder(BaseBuilder):
             # next line
             i += 1
         # remove all soft hyphen
-        mutString.replaceOccurrencesOfString_withString_options_range_(unichr(self._softHypen), "", AppKit.NSLiteralSearch, (0, mutString.length()))
+        mutString.replaceOccurrencesOfString_withString_options_range_(chr(self._softHypen), "", AppKit.NSLiteralSearch, (0, mutString.length()))
         # done!
         return attrString
 

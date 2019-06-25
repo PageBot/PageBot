@@ -19,7 +19,7 @@ from pagebot.constants import ORIGIN, MIDDLE, CENTER
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
-from pagebot.constants import DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
+from pagebot.constants import ORIGIN
 
 class Oval(Element):
 
@@ -72,6 +72,7 @@ class Circle(Oval):
         >>> e.xy, e.size
         ((0pt, 0pt), (60pt, 60pt))
         >>> e.box, e.top, e.right, e.bottom, e.left
+        ((0pt, 0pt, 60pt, 60pt), 0pt, 30pt, 0pt, -30pt)
         """
         if r is not None:
             w = h = 2*r

@@ -50,8 +50,10 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'InDesign':
                 DEFAULT_CONTEXT = getInDesignContext()
-            elif contextType == 'IDML':
+            elif contextType == 'idml':
                 DEFAULT_CONTEXT = getIdmlContext()
+            elif contextType == 'svg':
+                DEFAULT_CONTEXT = getSvgContext()
             #elif contextType == 'SVG':
             #    DEFAULT_CONTEXT = getSvgContext()
 
@@ -65,12 +67,12 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
-            elif contextType == 'SVG':
-                DEFAULT_CONTEXT = getSvgContext()
             elif contextType == 'InDesign':
                 DEFAULT_CONTEXT = getInDesignContext()
-            elif contextType == 'IDML':
+            elif contextType == 'idml':
                 DEFAULT_CONTEXT = getIdmlContext()
+            elif contextType == 'svg':
+                DEFAULT_CONTEXT = getSvgContext()
 
             # TODO: What's the actual path on Linux?
             MAMP_PATH = '/tmp/MAMP_PATH/'

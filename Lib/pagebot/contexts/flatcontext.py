@@ -333,7 +333,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.paths import DEFAULT_FONT_PATH
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
-        57
+        59
         >>> font = findFont('Roboto-Regular')
         >>> print(font)
         <Font Roboto-Regular>

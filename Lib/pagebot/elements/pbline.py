@@ -16,7 +16,6 @@
 from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import units, pointOffset
-from pagebot.toolbox.color import noColor
 
 class Line(Element):
     """Draws a straight horizontal ruler."""

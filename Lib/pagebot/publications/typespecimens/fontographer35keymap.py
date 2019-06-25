@@ -27,7 +27,7 @@ from pagebot.toolbox.units import pointOffset, inch, pt, upt, em
 from pagebot.constants import A4, ONLINE, CENTER, XXXL
 from pagebot.document import Document
 from pagebot.toolbox.color import color, whiteColor, blackColor,  noColor
-from pagebot.fonttoolbox.objects.font import findFont, findFonts
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
 
 from pagebot.publications.typespecimens.basetypespecimen import BaseTypeSpecimen
@@ -103,7 +103,6 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     >>> specimen = Fontographer35KeyMap(w=500, h=1000, originTop=False, autoPages=1)
     >>> doc = specimen.newDocument()
     >>> page = doc[1]
-    >>> 
 
     """
     # Standard page size for now.
@@ -176,7 +175,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         # Create an element for this glyph. Note the conditions that will
         # later be checked for the position status by doc.solve()-->page.solve()
         GlyphSquare(glyph, uCode, name='square-%s' % glyphName, w=SQSIZE, h=SQSIZE,
-            ml=SQML, mr=SQMR, mb=SQMB,
+            ml=self.SQML, mr=self.SQMR, mb=self.SQMB,
             borders=dict(strokeWidth=pt(0.5), line=ONLINE, stroke=0, dash=(1,1)),
             parent=page, fill=color(0.95, a=0.8), stroke=noColor,
             conditions=[Right2Right(), Float2Top(), Float2Left()],

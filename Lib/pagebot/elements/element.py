@@ -26,6 +26,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
         DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
         DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
+        DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
         VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
@@ -5362,7 +5363,7 @@ class Element:
         True
         """
         gridColumns = self.getGridColumns()
-        if 0 <= col and col+colSpan <= len(gridColumns):
+        if col >= 0 and col+colSpan <= len(gridColumns):
             c1 = gridColumns[col]
             c2 = gridColumns[col + colSpan - 1]
             #print(self.w, c2[0] - c1[0] + c2[1])

@@ -19,12 +19,13 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.idmlbuilder import IdmlBuilder
 from pagebot.contexts.strings.idmlstring import IdmlString
+from pagebot.constants import FILETYPE_IDML
 
 class IdmlContext(BaseContext):
 
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = IdmlString
-    EXPORT_TYPES = ('idml',)
+    EXPORT_TYPES = (FILETYPE_IDML,)
 
     def __init__(self):
         """Constructor of InDesignContext.

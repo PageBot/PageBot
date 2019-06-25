@@ -14,7 +14,7 @@
 #     placer.py
 #
 from pagebot.elements.element import Element
-from pagebot.toolbox.color import color, noColor, whiteColor
+from pagebot.toolbox.color import color
 from pagebot.toolbox.units import point2D, pt
 
 class Placer(Element):

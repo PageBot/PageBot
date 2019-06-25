@@ -60,7 +60,7 @@ class Quire(Element):
         Note that the pages are kept in the self.pages by reference, not changing their
         parent and no
         """
-        assert pix in range(self.piw) and piy in range(self, pih) # Check if page is set in range.
+        assert pix in range(self.piw) and piy in range(self.pih) # Check if page is set in range.
         if not (pix, piy) in self.pages:
             self.pages[(pix, piy)] = []
         self.pages[(pix, piy)].append(page)

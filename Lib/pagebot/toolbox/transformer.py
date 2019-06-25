@@ -22,8 +22,7 @@ import json, re
 from time import time
 import datetime
 from random import randint
-from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone, Unit, Degrees
-from pagebot.toolbox.color import Color
+from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}

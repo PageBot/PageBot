@@ -15,7 +15,7 @@
 #     textbox.py
 #
 import re
-from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, DEFAULT_LANGUAGE,
+from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE,
                             BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
                             DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
                             BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,

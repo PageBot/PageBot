@@ -10,14 +10,14 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     ad.py
+#     basemanual.py
 #
 from pagebot.conditions import *
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.constants import *
 
-class Ad(Publication):
+class BaseManual(Publication):
     """Create a default ad, optimized to export as PDF as well as website.
 
     Subclassed from Element-->Publication with the following optional attributes:

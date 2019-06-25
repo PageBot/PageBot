@@ -589,6 +589,9 @@ DEFAULT_GRID = {GRID_COL, GRID_ROW} # If full grid should be shown on top of all
 DEFAULT_GRID_BG = {GRID_COL_BG, GRID_ROW_BG} # If full grid should be shown at the back of all elements.
 GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
 
+DEFAULT_ROWS = 2 # Default amount of columns if underfined.
+DEFAULT_COLS = 2
+
 DEFAULT_BASELINE_COLOR = 0.7
 DEFAULT_BASELINE_WIDTH = pt(0.5)
 
@@ -644,6 +647,7 @@ FILETYPE_JPG = 'jpg'
 FILETYPE_JPEG = 'jpeg'
 FILETYPE_PNG = 'png'
 FILETYPE_SVG = 'svg'
+FILETYPE_IDML = 'idml'
 FILETYPE_TIF = 'tif'
 FILETYPE_TIFF = 'tiff'
 FILETYPE_GIF = 'gif'
@@ -660,11 +664,11 @@ FILETYPE_APP = 'app'
 FILETYPE_UFO = 'ufo'
 FILETYPE_TTF = 'ttf'
 FILETYPE_OTF = 'otf'
-DEFAULT_FILETYPE = FILETYPE_PDF
-
 # Text formats
 FILETYPE_TXT = 'txt'
 FILETYPE_MD = 'md' # Markdown file extension
+
+DEFAULT_FILETYPE = FILETYPE_PDF
 
 # Commonly used groups of file types.
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG, 

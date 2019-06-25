@@ -17,9 +17,7 @@
 from pagebot import getContext
 from pagebot.conditions import *
 from pagebot.constants import *
-from pagebot.fonttoolbox.fontpaths import getFontPaths
-from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-from pagebot.fonttoolbox.objects.font import findFont, Font
+from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.document import Document
 from pagebot.elements import *

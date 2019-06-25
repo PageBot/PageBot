@@ -176,7 +176,7 @@ class BaseMagazine(Publication):
 
     def compose(self, names=None, doc=None, publication=None):
         """Compose the magazine in a document. If name is defined, then only compose the part with that name."""
-        if names is not None and not ininstance(names, (list, tuple)):
+        if names is not None and not isinstance(names, (list, tuple)):
             names = [names]
         elif names is None:
             names = self.partNames # Property collecting the names of all self.elements

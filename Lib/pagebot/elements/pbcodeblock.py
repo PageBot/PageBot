@@ -14,8 +14,7 @@
 #     codeblock.py
 #
 from pagebot.elements import TextBox
-from pagebot.toolbox.units import pointOffset
-from pagebot.toolbox.color import blackColor, noColor, color
+from pagebot.toolbox.color import noColor, color
 
 class CodeBlock(TextBox):
 

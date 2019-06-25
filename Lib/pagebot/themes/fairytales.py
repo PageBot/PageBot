@@ -14,7 +14,7 @@
 #     fairytales.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb, blackColor, whiteColor
+from pagebot.toolbox.color import spot
 
 class FairyTales(BaseTheme):
     u"""The FairyTales theme is ..."""

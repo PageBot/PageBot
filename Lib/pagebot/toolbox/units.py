@@ -1133,7 +1133,7 @@ class Unit:
 
     def byBase(self, base):
         """Not implemented for non-relative units"""
-        raise ValueError('Cannot calculate non-relative "%s" unit "%s" by base "%s" ' % (u.__class__.__name__, u, base))
+        raise ValueError('Cannot calculate non-relative "%s" unit "%s" by base "%s" ' % (self.__class__.__name__, self.v, base))
 
 #   Mm
 

@@ -98,7 +98,7 @@ class PartOfBook(Element):
         """
         return self.pages[index]
     def __setitem__(self, index, page):
-        self.pages[pn] = page
+        self.pages[index] = page
 
     def __len__(self):
         return len(self.pages)
