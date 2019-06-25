@@ -7,7 +7,7 @@ import AppKit
 #   @@@ Make AppKit colors part of DrawBotContext, 
 #   @@@ and for the rest use pagebot.toolbox.color functions
 #
-class Color(object):
+class Color:
 
     colorSpace = AppKit.NSColorSpace.genericRGBColorSpace
 
@@ -80,7 +80,7 @@ class CMYKColor(Color):
         self._cmyka = c, m, y, k, a
 
 
-class Shadow(object):
+class Shadow:
 
     _colorClass = Color
 
@@ -103,7 +103,7 @@ class Shadow(object):
         return new
 
 
-class Gradient(object):
+class Gradient:
 
     _colorClass = Color
 

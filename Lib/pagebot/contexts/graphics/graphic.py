@@ -18,7 +18,7 @@ from pagebot.contexts.strings.formattedstring import FormattedString
 from pagebot.contexts.color.color import *
 from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 
-class Graphic(object):
+class Graphic:
     """A graphical object to be drawn."""
 
     def __init__(self):
