@@ -17,7 +17,7 @@
 
 from pagebot.constants import *
 from pagebot.elements import *
-from pagebot.toolbox.units import upt, perc, units
+from pagebot.toolbox.units import upt, units
 
 # CSS_EASE paramters imported from constants
 

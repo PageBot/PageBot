@@ -26,8 +26,6 @@
 #       Add more names (e.g. the Spot color table)
 #       Add profiles for printers, paper, printing methods.
 #
-
-
 from copy import copy
 from pagebot.constants import CSS_COLOR_NAMES, SPOT_RGB, RAL_NAMERGB, NAME_RALRGB
 

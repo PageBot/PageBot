@@ -60,7 +60,6 @@ class Sampler(TextBox):
         self.bs = sampleText
         self.f = f # Save font instance for later usage.
 
-
 if __name__ == '__main__':
     import doctest
     import sys

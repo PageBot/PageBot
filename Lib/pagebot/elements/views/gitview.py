@@ -17,7 +17,6 @@
 import os
 
 from pagebot.elements.views.siteview import SiteView
-from pagebot.constants import ORIGIN
 
 class GitView(SiteView):
     viewId = 'Git'

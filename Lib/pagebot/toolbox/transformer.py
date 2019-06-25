@@ -16,16 +16,192 @@
 #
 #     Implements a range of common transforms.
 #
-
-
 import json, re
 from time import time
 import datetime
 from random import randint
-from pagebot.toolbox.units import isInt, asInt, asFloat, asIntOrNone
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
+
+
+# Generic number transforms
+
+def asNumber(v):
+    """Answers v converted to a float or int. Answer 0 if the conversion raised an error.
+
+    >>> asNumber(1234)
+    1234
+    >>> asNumber(1234.2)
+    1234.2
+    >>> asNumber('1234.2')
+    1234.2
+    >>> asNumber('1234.2a')
+    0
+    >>> asNumber('1234')
+    1234
+    >>> asNumber('1234a')
+    0
+    """
+    return asNumberOrNone(v) or 0
+
+def asNumberOrNone(v):
+    """
+
+    >>> asNumberOrNone('1234.5')
+    1234.5
+    >>> asNumberOrNone('1234.0')
+    1234
+    >>> asNumberOrNone('1234')
+    1234
+    >>> asNumberOrNone('1234ab') is None
+    True
+
+    """
+    try:
+        iValue = asIntOrNone(v)
+        fValue = asFloatOrNone(v)
+        if iValue == fValue:
+            return iValue
+        return fValue
+    except (ValueError, TypeError):
+        pass
+    return None
+
+def asFloatOrNone(value):
+    """Answers a float if it can be converted. Answer None otherwise.
+
+    >>> asFloatOrNone(123)
+    123.0
+    >>> asFloatOrNone('123')
+    123.0
+    >>> asFloatOrNone('123a') is None
+    True
+    """
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return None
+
+def asIntOrNone(v):
+    """Answers v converted to int. Answer None if the conversion raised an error.
+
+    >>> asIntOrNone(1234)
+    1234
+    >>> asIntOrNone('1234')
+    1234
+    >>> asIntOrNone('1234.2')
+    1234
+    >>> asIntOrNone('1234a') is None
+    True
+    """
+    return asIntOrDefault(v)
+
+def asIntOrDefault(v, default=None):
+    """Answers v converted to int. Answer None if the conversion raised an error.
+
+    >>> asIntOrNone(1234)
+    1234
+    >>> asIntOrNone('1234')
+    1234
+    >>> asIntOrNone('1234.2')
+    1234
+    >>> asIntOrNone('1234a') is None
+    True
+    """
+    try:
+        return int(round(float(v)))
+    except (ValueError, TypeError):
+        return default
+
+def asInt(value, default=None):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default or 0
+
+def isInt(value):
+    return asIntOrNone(value) is not None
+
+def asIntOrValue(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return value
+
+def asRoundedInt(value, default=None):
+    value = asIntOrNone(value)
+    if value is None:
+        value = default
+    try:
+        return int(round(value))
+    except (ValueError, TypeError):
+        return int(round(default or 0))
+
+def asFloat(value, default=None):
+    value = asFloatOrNone(value)
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return default
+
+def asIntOrFloat(value):
+    u"""Answers value converted to int if same value, otherwise answer float.
+
+    >>> asIntOrFloat(100.00)
+    100
+    >>> asIntOrFloat(100)
+    100
+    >>> asIntOrFloat(100.12)
+    100.12
+    """
+    iValue = int(value)
+    if iValue == value:
+        return iValue
+    return value
+
+def asFormatted(value, default=None, format=None):
+    u"""Answers the formatted string of value. Use the format string if defined.
+    Otherwise answer the cleanest representation, eating all 0 and /. from the
+    right side.
+
+    >>> asFormatted(100)
+    '100'
+    >>> asFormatted(100.00)
+    '100'
+    >>> asFormatted(100.100000) # Eats trailing zero, until non-zero decimal
+    '100.1'
+    >>> asFormatted(100.12789) # Round to 2 digits
+    '100.13'
+    >>> asFormatted(100.99) # Round to 2 digits, then eats zeros
+    '100.99'
+    >>> asFormatted(100.999) # Round to 2 digits, then eats zeros
+    '101'
+    >>> asFormatted(100.100002345) # Round to 2 digits, then eats zeros
+    '100.1'
+    >>> asFormatted(100.000001) # Eats the decimal point, not the integer zeros
+    '100'
+    >>> asFormatted(None, 100.00) # Use formatted default
+    '100'
+    >>> asFormatted(200/3) # Default rounds to 2 digits.
+    '66.67'
+    >>> asFormatted(200/3, format='%0.10f') # Overwrite behavior by supplied format string
+    '66.6666666667'
+    """
+    if value is None:
+        value = default
+    if format is None:
+        iNumber = asNumber(value)
+        if isinstance(iNumber, int): # Check on rounded by 0.00
+            return '%d' % iNumber
+        value = '%0.2f' % value # Round to 2 digits
+        # Then remove any trailing zeros (there there is a decimal point)
+        while value and '.' in value and value.endswith('0'):
+            value = value[:-1]
+        if value and value.endswith('.'):
+            value = value[:-1] # Eat remaining period on the right.
+        return value or '0' # Answer value. If all eaten, then just answer 0
+    return format % value # Otherwise show as float with 2 digits.
 
 def value2Tuple4(v):
     """Answers a tuple of 4 values. Can be used for colors and rectangles.

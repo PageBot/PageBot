@@ -19,7 +19,7 @@ import CoreText
 from pagebot.contexts.color.color import *
 _FALLBACKFONT = "LucidaGrande"
 
-class FormattedString(object):
+class FormattedString:
     """FormattedString is a reusable object, if you want to draw the same over
     and over again. FormattedString objects can be drawn with the `text(txt,
     (x, y))` and `textBox(txt, (x, y, w, h))` methods."""

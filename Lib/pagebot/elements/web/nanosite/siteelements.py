@@ -14,9 +14,6 @@
 #
 #     siteelements.py
 #
-
-
-from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup

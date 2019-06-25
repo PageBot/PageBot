@@ -20,12 +20,6 @@ class BezierAnimation(Rect):
     """Parse the design space file and show it as a D3 network.
     """
 
-    def __init__(self, **kwargs):
-        """
-        """
-        assert font is not None or path is not None
-        Rect.__init__(self, **kwargs)        
-
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
