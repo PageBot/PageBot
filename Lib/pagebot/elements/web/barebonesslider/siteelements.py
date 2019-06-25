@@ -204,7 +204,7 @@ class SlideShow(SlideShowBase):
                     image.xAlign or 'center', image.yAlign or 'top')) # Define slide container
                 b._div()
             else:
-                b.div(style="width:%s;height:%s;" % (w, h)) # Define slide container
+                b.div(style="width:%s;height:%s;" % upt(self.w, self.h)) # Define slide container
                 b.img(src=image.path)
                 b._div()
         b._div()

@@ -24,14 +24,14 @@ from pagebot import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
-from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, ORIGIN, 
+from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, ORIGIN, QUIRE_SPREAD,
     BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD,
     GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
     BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
-from pagebot.toolbox.units import pt, upt, inch, pointOffset, point2D, asFormatted
+from pagebot.toolbox.units import pt, upt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):

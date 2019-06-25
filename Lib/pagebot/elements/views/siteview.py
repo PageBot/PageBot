@@ -17,9 +17,7 @@
 #     The SiteView exports the site into a local docs/ folders. This way the
 #     the generated site can be copied by GitView to their own paths.
 #
-import os
-import shutil
-import codecs
+import os, shutil
 
 from pagebot import getRootPath
 from pagebot.elements.views.htmlview import HtmlView

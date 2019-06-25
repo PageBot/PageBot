@@ -16,9 +16,8 @@
 #
 from pagebot.elements import Rect
 from pagebot.toolbox.units import pt, upt
-from pagebot.toolbox.color import color, blackColor
+from pagebot.toolbox.color import blackColor
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot import DEFAULT_FONT_NAME
 
 DATA_PATH = 'code/2-masters-1-axis.json'
 #DATA_PATH = 'code/miserables.json'

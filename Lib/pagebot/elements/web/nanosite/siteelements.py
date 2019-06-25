@@ -19,7 +19,6 @@
 from pagebot.toolbox.color import blackColor
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
-from pagebot.toolbox.units import em, upt
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
 
 class Site(Publication):

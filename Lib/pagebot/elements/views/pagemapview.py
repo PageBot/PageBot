@@ -444,10 +444,10 @@ class PageMapView(BaseView):
                 S = self.css('viewInfoOriginMarkerSize', pt(5))
                 x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
-                contect.circle(x1, y1, 20)
-                contect.circle(x1, y2, 20)
-                contect.circle(x2, y1, 20)
-                contect.circle(x2, y2, 20)
+                context.circle(x1, y1, 20)
+                context.circle(x1, y2, 20)
+                context.circle(x2, y1, 20)
+                context.circle(x2, y2, 20)
 
                 # Horizontal measure
                 context.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))

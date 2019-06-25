@@ -23,12 +23,13 @@
 #     with an identical API.
 #
 import os
-from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE
-from pagebot.toolbox.units import units, pt, upt, degrees, point2D, Degrees, Radians
+from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, \
+    DEFAULT_WIDTH
+from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext import BaseContext
 
 class PageBotPoint:
-    def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None):
+    def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None, start=False):
         # http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
         self.x = x
         self.y = y
@@ -60,7 +61,7 @@ class PageBotPath:
 
     >>> from pagebot.contexts.drawbotcontext import DrawBotContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts
-    >>> font = findFonts(('Robo', 'Con', 'Ita'))[0]
+    >>> font = findFonts(('Robo', 'Con', 'Bol', 'Ita'))[0]
     >>> font
     <Font RobotoCondensed-BoldItalic>
     >>> context = DrawBotContext()

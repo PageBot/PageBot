@@ -17,8 +17,6 @@
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 from pagebot.toolbox.future import chr
-from pagebot.toolbox.color import color, blackColor
-from pagebot.toolbox.units import em
 
 class GlyphSet(BaseFontShow):
     """Showing the specified (variable) font as full page with a matrix
@@ -32,6 +30,8 @@ class GlyphSet(BaseFontShow):
         >>> from pagebot.constants import Letter
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
+        >>> from pagebot.toolbox.color import color, blackColor
+        >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)

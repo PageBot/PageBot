@@ -69,7 +69,7 @@ def elementFromPath(path, name=None, **kwargs):
         e = None # TODO: Answer a default specimen element to show the font.
     elif extension in MOVIE_TYPES:
         e = None # TODO: Answer a MovieElement instance (to be developed)
-    elif extendion in TEXT_TYPES:
+    elif extension in TEXT_TYPES:
         e = newTextBox(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
     else:
         e = None # If no extension-->element can be found.

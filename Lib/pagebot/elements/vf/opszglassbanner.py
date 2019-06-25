@@ -11,13 +11,12 @@
 # -----------------------------------------------------------------------------
 #
 
-from random import random
-from math import sin, cos, radians
+from math import sin, radians
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements import *
 from pagebot.elements.vf.animationframe import AnimationFrame
 from pagebot.document import Document
-from pagebot.constants import Letter, RIGHT
+from pagebot.constants import RIGHT
 from pagebot.contexts.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
 from pagebot.toolbox.color import color, blackColor
