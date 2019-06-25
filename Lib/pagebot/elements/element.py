@@ -5430,7 +5430,7 @@ class Element:
         (True, 950pt)
         """
         gridColumns = self.getGridColumns()
-        if 0 <= col and col+colSpan <= len(gridColumns):
+        if col >= 0 and col+colSpan <= len(gridColumns):
             c1 = gridColumns[col]
             c2 = gridColumns[col + colSpan - 1]
             self.w = c2[0] - c1[0] + c2[1]

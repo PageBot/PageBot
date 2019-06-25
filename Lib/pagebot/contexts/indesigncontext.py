@@ -675,6 +675,26 @@ class InDesignContext(BaseContext):
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Ignore for now in this context."""
 
+    def endDrawing(self):
+        pass
+
+    def getFlattenedContours(self, glyph):
+        return None
+
+    def getFlattenedPath(self, glyph):
+        return None
+
+    def getGlyphPath(self, glyph):
+        return None
+
+    def newDocument(self):
+        return None
+
+    def numberOfImages(self):
+        return 0
+
+    def saveDocument(self, path):
+        pass
 
 if __name__ == '__main__':
     import doctest

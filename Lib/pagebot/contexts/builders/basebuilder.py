@@ -51,8 +51,8 @@ class BaseBuilder:
         return FS(s)
 
     def frameDuration(self, frameDuration):
-        raise NotImplementedError
+        pass
 
     def save(self):
-        raise NotImplementedError
-
+        pass
+        

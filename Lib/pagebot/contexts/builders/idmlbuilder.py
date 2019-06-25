@@ -15,11 +15,7 @@
 #
 #     idmlbuilder.py
 #
-import os
-import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
-from pagebot.toolbox.transformer import object2SpacedString
-from pagebot.toolbox.units import asFormatted
 
 class IdmlBuilder(BaseBuilder):
     """TODO: Implement functions to make it work.

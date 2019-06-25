@@ -138,7 +138,7 @@ class BabelString:
     def getStyleAtIndex(self, index):
         """Answer the constructed style of the string a position index of chars.
         """
-        raise NotImplementedError
+        return {}
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,

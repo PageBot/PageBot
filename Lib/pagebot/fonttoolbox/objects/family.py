@@ -196,7 +196,7 @@ class Family:
         """
         if isinstance(fontsOrPaths, dict):
             fontsOrPaths = fontsOrPaths.values()
-        if not isinstance(fontsOrPaths, (tuple, list)): # Only if not None and not empty.
+        elif not isinstance(fontsOrPaths, (tuple, list)): # Only if not None and not empty.
             fontsOrPaths = [fontsOrPaths]
         for fontOrPath in fontsOrPaths:
             self.addFont(fontOrPath)

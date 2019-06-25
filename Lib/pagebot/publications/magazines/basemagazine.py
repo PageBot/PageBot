@@ -180,7 +180,7 @@ class BaseMagazine(Publication):
             names = [names]
         elif names is None:
             names = self.partNames # Property collecting the names of all self.elements
-        elif insinstance(names, str):
+        elif isinstance(names, str):
             names = [names]
         if names:
             parts = []

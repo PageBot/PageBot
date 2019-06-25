@@ -17,7 +17,7 @@
 
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.canvasbuilder import CanvasBuilder
-from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
+from pagebot.toolbox.units import upt, point2D
 
 class CanvasContext(BaseContext):
 

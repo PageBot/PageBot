@@ -57,7 +57,9 @@ class PreVarFamily(Family):
     GRAD = 'GRAD' # Grades
     RNDS = 'RNDS' # Rounded corners and terminals
     STNC = 'STNC' # Stencil
-    PARAMETRIC_AXES = [XTRA, XOPQ, YTRA, YTLC, YTUC, YTDE, YTAS, GRAD, RNDS, STNC]
+    CATL = 'CATL' # Catalog of compatubke designs
+
+    PARAMETRIC_AXES = [CATL, XTRA, XOPQ, YTRA, YTLC, YTUC, YTDE, YTAS, GRAD, RNDS, STNC]
 
     # Composite (registered) axes
     wght, wdth, opsz, ital, slnt = COMPOSITE_AXES = ['wght', 'wdth', 'opsz', 'ital', 'slnt']
@@ -76,7 +78,7 @@ class PreVarFamily(Family):
         for source in ds.sources:
             fonts[source.path] = Font(source.path)
 
-        print(fonts)
+        #print(fonts)
 
         Family.__init__(self, name=name, fonts=fonts)
         self._parametricAxisFonts = {} # Key is parametric axis name

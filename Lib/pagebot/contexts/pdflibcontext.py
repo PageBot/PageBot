@@ -19,9 +19,10 @@
 #
 import os
 import PDFlib 
+import traceback
 
 from pagebot.toolbox.units import pt, upt, point2D
-from pagebot.toolbox.color import inheritColor, noColor, color
+from pagebot.toolbox.color import noColor, color
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.constants import *
 from pagebot.contexts.strings.pdflibstring import PdfLibString as stringClass
@@ -243,11 +244,13 @@ class PdfLibContext(BaseContext):
         if os.path.exists(fontName): #
             return fontName
         # Otherwise try OSX for the conversion.
-        nsFont = NSFont.fontWithName_size_(fontName, 25)
-        if nsFont is not None:
-            fontRef = CTFontDescriptorCreateWithNameAndSize(nsFont.fontName(), nsFont.pointSize())
-            url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
-            return url.path()
+        # FIXME
+        # Change to PageBot font code.
+        #nsFont = NSFont.fontWithName_size_(fontName, 25)
+        #if nsFont is not None:
+        #    fontRef = CTFontDescriptorCreateWithNameAndSize(nsFont.fontName(), nsFont.pointSize())
+        #    url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute)
+        #    return url.path()
         return None
 
     #   G L Y P H
@@ -376,6 +379,9 @@ class PdfLibContext(BaseContext):
             self.saveImage(cachedFilePath)
             self.newDrawing() # Clean the drawing stack.
         return cachedFilePath
+
+    def endDrawing(self):
+        pass
 
 if __name__ == '__main__':
     import doctest

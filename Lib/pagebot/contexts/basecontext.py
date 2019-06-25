@@ -1039,8 +1039,9 @@ class BaseContext(AbstractDrawBotContext):
     # Glyphs.
 
     def drawGlyphPath(self, glyph):
-        """PageBot function."""
-        raise NotImplementedError
+        """Converts the cubic commands to a drawable path."""
+        path = self.getGlyphPath(glyph)
+        self.drawPath(path)
 
     def getGlyphPath(self, glyph, p=None, path=None):
         """PageBot function."""

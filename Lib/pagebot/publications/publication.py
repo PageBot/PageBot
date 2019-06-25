@@ -71,7 +71,7 @@ class Publication(Element):
     def produce(self, viewId=None, **kwargs):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting pbulications classes."""
-        raise NotImplementedError
+        pass
 
     def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None, 
             padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None, 

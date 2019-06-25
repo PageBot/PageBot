@@ -14,7 +14,7 @@
 #
 #     typesetter.py
 #
-import re, os, copy, codecs, traceback
+import re, copy, codecs, traceback
 import xml.etree.ElementTree as ET
 
 try:
@@ -606,6 +606,7 @@ class Typesetter:
         called fileName. If the fileName does not end with ".xml" extension,
         then add it. Answer the (new) fileName.
 
+        >>> import os
         >>> from pagebot.contexts.htmlcontext import HtmlContext
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
         >>> context = HtmlContext()
