@@ -18,8 +18,8 @@
 import os
 import traceback
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.toolbox.color import color, Color, noColor, inheritColor
-from pagebot.toolbox.units import pt, upt, point2D, Angle
+from pagebot.toolbox.color import color, noColor
+from pagebot.toolbox.units import pt, upt, point2D
 from pagebot.toolbox.transformer import path2Name, path2Dir
 from pagebot.constants import *
 

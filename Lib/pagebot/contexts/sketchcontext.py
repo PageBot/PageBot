@@ -22,14 +22,8 @@
 #  This description is not complete. 
 #  Additions made where found in the Reading specification of this context.
 #
-import os
-import zipfile
-import json
-import re
-import io
-
 from pagebot.document import Document
-from pagebot.constants import FILETYPE_SKETCH, A4, TOP, INLINE, ONLINE, OUTLINE
+from pagebot.constants import FILETYPE_SKETCH, A4
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.sketchbuilder import sketchBuilder
 from pagebot.toolbox.color import color

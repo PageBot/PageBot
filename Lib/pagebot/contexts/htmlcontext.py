@@ -133,6 +133,24 @@ class HtmlContext(BaseContext):
     def strokeWidth(self, w):
         self._strokeWidth = w
 
+    def drawGlyphPath(self, glyph):
+        pass
+
+    def getFlattenedContours(self, glyph):
+        return None
+ 
+    def getFlattenedPath(self, glyph):
+        return None
+        
+    def getGlyphPath(self, glyph):
+        return None
+        
+    def numberOfImages(self):
+        return 0
+        
+    def saveDocument(self, path):
+        pass
+
 if __name__ == '__main__':
     import doctest
     import sys
