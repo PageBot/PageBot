@@ -20,3 +20,5 @@ class SiteBuilder(HtmlBuilder):
     include paths and other data needed to export the website, e.g. by the
     GitView or MampView."""
 
+    def frameDuration(self, frameDurection):
+    	pass

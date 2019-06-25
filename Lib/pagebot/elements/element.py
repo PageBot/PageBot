@@ -5386,7 +5386,7 @@ class Element:
 
     def isFitOnRowSpan(self, row, rowSpan, tolerance):
         gridRows = self.getGridRows()
-        if 0 <= row and row+rowSpan < len(gridRows):
+        if row >= 0 and row+rowSpan < len(gridRows):
             r1 = gridRows[row]
             r2 = gridRows[row + rowSpan - 1]
             return abs(self.h - (r2[0] - r1[0] + r2[1])) <= tolerance

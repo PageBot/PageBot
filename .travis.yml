@@ -137,7 +137,7 @@ script:
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
 - python3 Lib/pagebot/publications/typespecimen.py
-- python3 Lib/pagebot/publications/website.py
+- python3 Lib/pagebot/publications/websites/nanosite/nanosite.py
 - python3 Lib/pagebot/style.py
 - python3 Lib/pagebot/stylelib.py
 - python3 Lib/pagebot/toolbox/color.py

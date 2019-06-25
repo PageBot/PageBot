@@ -12,10 +12,8 @@
 # -----------------------------------------------------------------------------
 #
 
-import copy
 from random import choice
 
-from pagebot.style import getRootStyle
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spot, rgb, whiteColor, blackColor, grayColor
 

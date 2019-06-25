@@ -23,9 +23,8 @@
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.indesignbuilder import InDesignBuilder
 from pagebot.contexts.strings.indesignstring import InDesignString
-from pagebot.constants import CENTER, RIGHT, DEFAULT_FONT_SIZE
-from pagebot.paths import DEFAULT_FONT_PATH
-from pagebot.toolbox.units import Pt, upt, pt
+from pagebot.constants import CENTER, RIGHT
+from pagebot.toolbox.units import upt, pt
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.color import noColor, blackColor, Color, inheritColor, color
 

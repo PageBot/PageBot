@@ -55,7 +55,7 @@ class BaseManual(Publication):
     }
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic brochure templates. """
+        u"""Initialize the generic manual templates. """
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h
@@ -63,8 +63,9 @@ class BaseManual(Publication):
 
         if coverBackgroundFill is None:
             coverBackgroundFill = self.DEFAULT_COVERBACKGROUND
-
+        """
         if score.fails:
             print('Score', score)
             for failed in score.fails:
                 print('\t', failed)
+        """

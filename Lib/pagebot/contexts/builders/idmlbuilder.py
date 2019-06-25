@@ -19,9 +19,7 @@ import os
 import codecs
 from pagebot.contexts.builders.basebuilder import BaseBuilder
 from pagebot.toolbox.transformer import object2SpacedString
-from pagebot.toolbox.units import asFormatted, pt
-from pagebot.constants import A4Rounded
-from pagebot.contexts.bezierpaths.commandbezierpath import CommandBezierPath as BezierPath
+from pagebot.toolbox.units import asFormatted
 
 class IdmlBuilder(BaseBuilder):
     """TODO: Implement functions to make it work.

@@ -20,6 +20,7 @@ from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.idmlbuilder import IdmlBuilder
 from pagebot.contexts.strings.idmlstring import IdmlString
 from pagebot.constants import FILETYPE_IDML
+from pagebot.toolbox.units import pt
 
 class IdmlContext(BaseContext):
 
@@ -41,23 +42,29 @@ class IdmlContext(BaseContext):
 
     def newPage(self, w, h):
         """Ignore for now in this context."""
+        pass
 
     def frameDuration(self, frameDuration):
         """Ignore for now in this context."""
+        pass
 
     def fill(self, c):
         """Ignore for now in this context."""
+        pass
 
     def stroke(self, c, w=None):
         """Ignore for now in this context."""
+        pass
 
     # Basic shapes.
 
     def rect(self, x, y, w, h):
         """Ignore for now in this context."""
+        pass
 
     def oval(self, x, y, w, h):
         """Ignore for now in this context."""
+        pass
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
@@ -70,9 +77,11 @@ class IdmlContext(BaseContext):
 
     def text(self, sOrBs, p):
         """Ignore for now in this context."""
+        pass
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         """Ignore for now in this context."""
+        pass
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path. If the path is an SVG

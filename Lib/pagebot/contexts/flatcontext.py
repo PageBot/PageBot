@@ -23,8 +23,7 @@ from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.strings.flatstring import FlatString
 from pagebot.toolbox.mathematics import *
 from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
-    FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, \
-    DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_FILETYPE
+    FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -315,7 +314,7 @@ class FlatContext(BaseContext):
             if isinstance(bs, str):
                 bs = self.newString(bs)
             else:
-                print('wrong type %s' % type(s))
+                print('wrong type %s' % type(bs))
                 # TODO: raise error.
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'

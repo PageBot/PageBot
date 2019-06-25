@@ -18,7 +18,6 @@ from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.dating import now
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import *
 

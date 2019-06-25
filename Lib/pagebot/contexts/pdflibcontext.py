@@ -20,8 +20,8 @@
 import os
 import PDFlib 
 
-from pagebot.toolbox.units import pt, upt
-from pagebot.toolbox.color import inheritColor, noColor
+from pagebot.toolbox.units import pt, upt, point2D
+from pagebot.toolbox.color import inheritColor, noColor, color
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.constants import *
 from pagebot.contexts.strings.pdflibstring import PdfLibString as stringClass
@@ -31,7 +31,7 @@ class PdfLibContext(BaseContext):
 
     STRING_CLASS = stringClass
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG,
-            FILETYPE_GIF, FILETYPE_MOV)
+        FILETYPE_GIF, FILETYPE_MOV)
 
     def __init__(self):
         """Constructor of PdfLibContext if drawBot import exists.

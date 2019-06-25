@@ -26,7 +26,7 @@ from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
 from pagebot.apps.canvas.canvas import Canvas
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import noColor, cmyk2Rgb
 
 # FIXME: using drawBot for now.
 def _tryInstallFontFromFontName(fontName):
