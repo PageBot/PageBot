@@ -472,7 +472,7 @@ class InDesignContext(BaseContext):
 
     #   F O N T S
 
-    def listOpenTypeFeatures(self, fontName):
+    def listOpenTypeFeatures(self, fontName=None):
         """Answers the list of opentype features available in the named font."""
         return [] #self.b.listOpenTypeFeatures(fontName)
 

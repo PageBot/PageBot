@@ -29,6 +29,9 @@ class MainHandler(tornado.web.RequestHandler):
         self.write("Hello, %d world" % counter)
         counter += 1
 
+    def data_received(self):
+        pass
+        
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),

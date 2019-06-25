@@ -16,9 +16,8 @@
 #
 #     Implements a range of common transforms.
 #
-import json, re
+import json, re, datetime
 from time import time
-import datetime
 from random import randint
 
 WHITESPACE = ' \t\r\n'

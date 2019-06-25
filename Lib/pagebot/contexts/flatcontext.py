@@ -262,7 +262,7 @@ class FlatContext(BaseContext):
 
     #   F O N T S
 
-    def listOpenTypeFeatures(self, fontName):
+    def listOpenTypeFeatures(self, fontName=None):
         """Answers the list of opentype features available in the named font.
         TODO: To be implemented."""
         #return self.b.listOpenTypeFeatures(fontName)

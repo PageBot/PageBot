@@ -21,7 +21,6 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.document import Document
 from pagebot.elements import *
-from pagebot.publications.typespecimens.proofing.pagewide import PageWide
 from pagebot.style import *
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import *
