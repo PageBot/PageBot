@@ -14,10 +14,34 @@
 #
 #     formattedstring.py
 #
+import sys
 import AppKit
 import CoreText
 from pagebot.contexts.color.color import *
+from pagebot.errors import PageBotError
+
 _FALLBACKFONT = "LucidaGrande"
+
+class Warnings(object):
+    # NOTE: Temporary solution for now, might switch to logging.
+
+    def __init__(self):
+        self._warnMessages = set()
+        self.shouldShowWarnings = False
+
+    def resetWarnings(self):
+        self._warnMessages = set()
+
+    def warn(self, message):
+        if not self.shouldShowWarnings:
+            return
+        if message in self._warnMessages:
+            return
+        sys.stderr.write("*** DrawBot warning: %s ***\n" % message)
+        self._warnMessages.add(message)
+
+
+warnings = Warnings()
 
 class FormattedString:
     """FormattedString is a reusable object, if you want to draw the same over
@@ -418,7 +442,7 @@ class FormattedString:
             font = str(font)
             testFont = AppKit.NSFont.fontWithName_size_(font, self._fontSize)
             if testFont is None:
-                raise DrawBotError("Fallback font '%s' is not available" % font)
+                raise PageBotError("Fallback font '%s' is not available" % font)
         self._fallbackFont = font
         return font
 
@@ -534,12 +558,12 @@ class FormattedString:
             text(t, (10, 80))
         """
         if args and features:
-            raise DrawBotError("Can't combine positional arguments and keyword arguments")
+            raise PageBotError("Can't combine positional arguments and keyword arguments")
         if args:
             if len(args) != 1:
-                raise DrawBotError("There can only be one positional argument")
+                raise PageBotError("There can only be one positional argument")
             if args[0] is not None:
-                raise DrawBotError("First positional argument can only be None")
+                raise PageBotError("First positional argument can only be None")
             warnings.warn("openTypeFeatures(None) is deprecated, use openTypeFeatures(resetFeatures=True) instead.")
             self._openTypeFeatures.clear()
         else:
@@ -569,12 +593,12 @@ class FormattedString:
         If no arguments are given `fontVariations()` will just return the current font variations settings.
         """
         if args and axes:
-            raise DrawBotError("Can't combine positional arguments and keyword arguments")
+            raise PageBotError("Can't combine positional arguments and keyword arguments")
         if args:
             if len(args) != 1:
-                raise DrawBotError("There can only be one positional argument")
+                raise PageBotError("There can only be one positional argument")
             if args[0] is not None:
-                raise DrawBotError("First positional argument can only be None")
+                raise PageBotError("First positional argument can only be None")
             warnings.warn("fontVariations(None) is deprecated, use fontVariations(resetVariations=True) instead.")
             self._fontVariations.clear()
         else:

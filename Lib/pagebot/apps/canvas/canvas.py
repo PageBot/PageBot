@@ -11,7 +11,7 @@
 #
 from vanilla import Group, ScrollView
 from pagebot.apps.canvas.canvasview import *
-#from AppKit import NSColor
+from AppKit import NSSize
 from pagebot.toolbox.color import whiteColor
 
 class Canvas(Group):
