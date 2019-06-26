@@ -18,11 +18,41 @@ import math
 import AppKit
 import Quartz
 import CoreText
+from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.bezierpaths.beziercontour import BezierContour
 from fontTools.pens.basePen import BasePen
 from pagebot.errors import PageBotError
 
 _FALLBACKFONT = "LucidaGrande"
+
+from fontTools.misc.transform import Transform
+
+def transformationAtCenter(matrix, centerPoint):
+    """Helper function for rotate(), scale() and skew() to apply a transformation
+    with a specified center point.
+
+        >>> transformationAtCenter((2, 0, 0, 2, 0, 0), (0, 0))
+        (2, 0, 0, 2, 0, 0)
+        >>> transformationAtCenter((2, 0, 0, 2, 0, 0), (100, 200))
+        (2, 0, 0, 2, -100, -200)
+        >>> transformationAtCenter((-2, 0, 0, 2, 0, 0), (100, 200))
+        (-2, 0, 0, 2, 300, -200)
+        >>> t = Transform(*transformationAtCenter((0, 1, 1, 0, 0, 0), (100, 200)))
+        >>> t.transformPoint((100, 200))
+        (100, 200)
+        >>> t.transformPoint((0, 0))
+        (-100, 100)
+    """
+    if centerPoint == (0, 0):
+        return matrix
+    t = Transform()
+    cx, cy = centerPoint
+    t = t.translate(cx, cy)
+    t = t.transform(matrix)
+    t = t.translate(-cx, -cy)
+    return tuple(t)
+
+
 
 class BezierPath(BasePen):
     """A Bézier path object, if you want to draw the same over and over

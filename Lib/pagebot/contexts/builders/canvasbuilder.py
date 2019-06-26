@@ -107,8 +107,8 @@ class CanvasBuilder(BaseBuilder):
         self.cmykStrokeColor = None
         self.strokeColor = None
         self.gradient = None
-        self.shadow = None
-        self.cmykShadow = None
+        self._shadow = None
+        #self._cmykShadow = None
         self.strokeWidthValue = None
         self.reset()
 
@@ -376,9 +376,9 @@ class CanvasBuilder(BaseBuilder):
 
     def shadow(self, offset, blur, color):
         if offset is None:
-            self.shadow = None
+            self._shadow = None
             return
-        self.shadow = Shadow(offset, blur, color)
+        self._shadow = Shadow(offset, blur, color)
 
     def cmykShadow(self, offset, blur, color):
         if offset is None:
