@@ -20,9 +20,7 @@ from copy import copy
 from pagebot.contexts.strings.babelstring import BabelString
 from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.constants import DEFAULT_FALLBACK_FONT_PATH, XXXL, DEFAULT_LANGUAGE
-from pagebot.toolbox.future import chr
 from pagebot.fonttoolbox.objects.font import Font, getFont, getInstance
 from pagebot.toolbox.color import color, Color, noColor, inheritColor, blackColor
 from pagebot.toolbox.units import pt, upt, isUnit, units, em
@@ -32,8 +30,6 @@ try:
     import drawBot as drawBotBuilder
     from AppKit import NSAttributeDictionary, NSRange
     from CoreText import (CTFramesetterCreateWithAttributedString,
-            CTFontDescriptorCreateWithNameAndSize,
-            CTFontDescriptorCopyAttribute,
             CTFramesetterCreateFrame, CTFrameGetLines, CTFrameGetLineOrigins)
     from Quartz import CGPathAddRect, CGPathCreateMutable, CGRectMake
 except (AttributeError, ImportError):
@@ -203,22 +199,30 @@ class DrawBotString(BabelString):
         attrString = self.s.getNSObject()
         cIndex = 0
         style = {}
-        if len(attrString):
+
+        if attrString:
             for nsObject in attrString.attributesAtIndex_effectiveRange_(index, None):
                 if isinstance(nsObject, NSAttributeDictionary):
                     nsColor = nsObject.get('NSColor')
                     if nsColor is not None:
                         style['textFill'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+
                     nsColor = nsObject.get('NSStrokeColor')
+
                     if nsColor is not None:
                         style['textStroke'] = color(nsColor.redComponent(), nsColor.greenComponent(), nsColor.blueComponent())
+
                     strokeWidth = nsObject.get('NSStrokeWidth')
+
                     if strokeWidth is not None:
                         style['strokeWidth'] = pt(strokeWidth)
+
                     nsFont = nsObject.get('NSFont')
+
                     if nsFont is not None:
                         style['font'] = nsFont.fontName()
                         style['fontSize'] = pt(nsFont.pointSize())
+
                     pgStyle = nsObject.get('NSParagraphStyle')
                     style['tabs'] = tabs = {}
                     #for tab in pgStyle.tabStops:
@@ -227,8 +231,8 @@ class DrawBotString(BabelString):
                     style['firstLineIndent'] = pt(pgStyle.firstLineHeadIndent())
                     style['indent'] = pt(pgStyle.headIndent())
                     style['tailIndent'] = pt(pgStyle.tailIndent())
-                    # MORE FROM: Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, 
-                    #  0, LineHeight 21/21, LineHeightMultiple 0, LineBreakMode 0, Tabs (), DefaultTabInterval 0, 
+                    # MORE FROM: Alignment 4, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0,
+                    #  0, LineHeight 21/21, LineHeightMultiple 0, LineBreakMode 0, Tabs (), DefaultTabInterval 0,
                     # Blocks (), Lists (), BaseWritingDirection -1, HyphenationFactor 0, TighteningForTruncation NO, HeaderLevel 0
                 elif isinstance(nsObject, NSRange):
                     if cIndex >= index: # Run through until matching index, so the style cumulates.
@@ -737,7 +741,7 @@ class DrawBotString(BabelString):
         for tab in (css('tabs', e, style) or []): # Can be [(10, LEFT), ...] or [10, 20, ...]
             if not isinstance(tab, (list, tuple)):
                 tab = upt(tab), LEFT
-            else: 
+            else:
                 tab = upt(tab[0]), tab[1]
             tabs.append(tab)
         if tabs:
@@ -823,7 +827,7 @@ class DrawBotString(BabelString):
         # Format plain string t onto new formatted fs.
         newT = context.b.FormattedString(t, **fsAttrs)
         isFitting = True
-        
+
         # @@@@ Disable string fitting here. Use fitString(...) instead.
         """
         if False and w is not None:
@@ -872,7 +876,7 @@ class DrawBotString(BabelString):
                 newS = cls(newT, context, fsAttrs) # Cannot fit, answer untouched.
                 isFitting = False
         else:
-        """    
+        """
         newS = cls(newT, context, fsAttrs)
         fittingStyle = {}
 
@@ -885,35 +889,6 @@ class DrawBotString(BabelString):
         newS.language = css('language', e, style)
         newS.hyphenation = css('hyphenation', e, style)
         return newS
-
-class FoundPattern:
-
-    def __init__(self, s, x, ix, y=None, w=None, h=None, line=None, run=None):
-        self.s = s # Actual found string
-        self.x = x
-        self.ix = ix
-        self.y = y
-        self.w = w
-        self.h = h
-        self.line = line # TextLine instance that this was found in
-        self.run = run # List of  of this strin,g
-
-    def __repr__(self):
-        return '[Found "%s" @ %d,%d]' % (self.s, self.x, self.y)
-
-    #   F I N D
-
-def findPattern(textLines, pattern):
-    """Answers the point locations where this pattern occures in the Formatted
-    String."""
-    foundPatterns = [] # List of FoundPattern instances.
-    for lineIndex, textLine in enumerate(textLines):
-        for foundPattern in textLine.findPattern(pattern):
-            foundPattern.y = textLine.y
-            foundPattern.z = 0
-            foundPatterns.append(foundPattern)
-    return foundPatterns
-
 
 if __name__ == '__main__':
     import doctest
