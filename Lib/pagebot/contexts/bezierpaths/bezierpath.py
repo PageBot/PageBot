@@ -30,6 +30,13 @@ class BezierPath(BasePen):
 
     contourClass = BezierContour
 
+    _textAlignMap = dict(
+        center=AppKit.NSCenterTextAlignment,
+        left=AppKit.NSLeftTextAlignment,
+        right=AppKit.NSRightTextAlignment,
+        justified=AppKit.NSJustifiedTextAlignment,
+    )
+
     _instructionSegmentTypeMap = {
         AppKit.NSMoveToBezierPathElement: "move",
         AppKit.NSLineToBezierPathElement: "line",
@@ -201,9 +208,9 @@ class BezierPath(BasePen):
         - The default alignment is `left`.
         - Optionally `txt` can be a `FormattedString`.
         """
-        if align and align not in BaseContext._textAlignMap.keys():
-            raise PageBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
         context = BaseContext()
+        if align and align not in self._textAlignMap.keys():
+            raise PageBotError("align must be %s" % (", ".join(self._textAlignMap.keys())))
         context.font(font, fontSize)
 
         attributedString = context.attributedString(txt, align)
@@ -240,12 +247,11 @@ class BezierPath(BasePen):
         - Optionally `txt` can be a `FormattedString`.
         - Optionally `box` can be a `BezierPath`.
         """
-        if align and align not in BaseContext._textAlignMap.keys():
-            raise PageBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
+        if align and align not in self._textAlignMap.keys():
+            raise PageBotError("align must be %s" % (", ".join(self._textAlignMap.keys())))
         context = BaseContext()
         context.font(font, fontSize)
         context.hyphenation(hyphenation)
-
         path, (x, y) = context._getPathForFrameSetter(box)
         attributedString = context.attributedString(txt, align)
 
