@@ -71,7 +71,6 @@ script:
 - python3 Lib/pagebot/contexts/basecontext.py
 - python3 Lib/pagebot/contexts/drawbotcontext.py
 - python3 Lib/pagebot/contexts/flatcontext.py
-- python3 Lib/pagebot/contexts/flat/conversion.py
 - python3 Lib/pagebot/contexts/htmlcontext.py
 - python3 Lib/pagebot/contexts/indesigncontext.py
 - python3 Lib/pagebot/contexts/svgcontext.py

@@ -23,7 +23,7 @@ from pagebot.toolbox.color import blackColor
 
 
 class VariableScatter(Element):
-   """
+    """
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> from pagebot.document import Document
     >>> vfFont = findFont('RobotoDelta_v2-VF')
@@ -33,20 +33,16 @@ class VariableScatter(Element):
     >>> page.padding = 40
     >>> vc = VariableScatter(vfFont, parent=page, x=40, y=40, w=page.pw)
     """
-     # Initialize the default behavior tags as different from Element.
+    # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, parent=None, name=None, style=None,
-                 fontSize=72, sizeX=5, sizeY=5, recipeAxes=None,
+    def __init__(self, s=None, style=None,
+                 sizeX=5, sizeY=5, recipeAxes=None,
                  designSpace=None, locations=None, **kwargs):
-        self.font = font
-        self.eId = eId
-        self.name =  name
-        self.parent = parent
+        Element.__init__(self, **kwargs)
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.recipeAxes = recipeAxes # Ordered name list of axes to show in legenda. Ignore if None.
-        self.fontSize = fontSize
         self.designSpace = designSpace or {}
         self.locations = locations
         # Each element should check at this point if the minimum set of style values
