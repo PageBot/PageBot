@@ -37,7 +37,7 @@ class Warnings(object):
             return
         if message in self._warnMessages:
             return
-        sys.stderr.write("*** DrawBot warning: %s ***\n" % message)
+        sys.stderr.write("*** warning: %s ***\n" % message)
         self._warnMessages.add(message)
 
 

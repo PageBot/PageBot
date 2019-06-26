@@ -1,12 +1,27 @@
-import AppKit
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
+#
+#     color.py
+#
 
-#
-#
-#   @@@ FIXME
-#   @@@ This should not be here.
-#   @@@ Make AppKit colors part of DrawBotContext, 
-#   @@@ and for the rest use pagebot.toolbox.color functions
-#
+import AppKit
+from pagebot.errors import PageBotError
+
+# FIXME: solved?
+# This should not be here. Make AppKit colors part of DrawBotContext, and for
+# the rest use pagebot.toolbox.color functions
+
 class Color:
 
     colorSpace = AppKit.NSColorSpace.genericRGBColorSpace
@@ -62,7 +77,7 @@ class Color:
             return cls(*color)
         elif isinstance(color, AppKit.NSColor):
             return cls(color)
-        raise DrawBotError("Not a valid color: %s" % color)
+        raise PageBotError("Not a valid color: %s" % color)
 
 
 class CMYKColor(Color):
@@ -111,13 +126,13 @@ class Gradient:
         if gradientType is None:
             return
         if gradientType not in ("linear", "radial"):
-            raise DrawBotError("Gradient type must be either 'linear' or 'radial'")
+            raise PageBotError("Gradient type must be either 'linear' or 'radial'")
         if not colors or len(colors) < 2:
-            raise DrawBotError("Gradient needs at least 2 colors")
+            raise PageBotError("Gradient needs at least 2 colors")
         if positions is None:
             positions = [i / float(len(colors) - 1) for i in range(len(colors))]
         if len(colors) != len(positions):
-            raise DrawBotError("Gradient needs a correct position for each color")
+            raise PageBotError("Gradient needs a correct position for each color")
         self.gradientType = gradientType
         self.colors = self._colorClass.getColorsFromList(colors)
         self.cmykColors = None
@@ -140,5 +155,3 @@ class Gradient:
         new.startRadius = self.startRadius
         new.endRadius = self.endRadius
         return new
-
-

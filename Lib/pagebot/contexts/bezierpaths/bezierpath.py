@@ -20,13 +20,13 @@ import Quartz
 import CoreText
 from pagebot.contexts.bezierpaths.beziercontour import BezierContour
 from fontTools.pens.basePen import BasePen
+from pagebot.errors import PageBotError
+
 _FALLBACKFONT = "LucidaGrande"
 
 class BezierPath(BasePen):
-
-    """
-    A bezier path object, if you want to draw the same over and over again.
-    """
+    """A Bézier path object, if you want to draw the same over and over
+    again."""
 
     contourClass = BezierContour
 
@@ -91,33 +91,28 @@ class BezierPath(BasePen):
     '''
 
     def _curveToOne(self, pt1, pt2, pt3):
-        """
-        Curve to a point `x3`, `y3`.
-        With given bezier handles `x1`, `y1` and `x2`, `y2`.
-        """
+        """Curve to a point `x3`, `y3`. With given bezier handles `x1`, `y1`
+        and `x2`, `y2`."""
         self._path.curveToPoint_controlPoint1_controlPoint2_(pt3, pt1, pt2)
 
     def closePath(self):
-        """
-        Close the path.
-        """
+        """Close the path."""
         self._path.closePath()
 
     def beginPath(self, identifier=None):
-        """
-        Begin using the path as a so called point pen and start a new subpath.
-        """
+        """Begin using the path as a so called point pen and start a new
+        subpath."""
         from fontTools.pens.pointPen import PointToSegmentPen
         self._pointToSegmentPen = PointToSegmentPen(self)
         self._pointToSegmentPen.beginPath()
 
-    def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
-        """
-        Use the path as a point pen and add a point to the current subpath. `beginPath` must
-        have been called prior to adding points with `addPoint` calls.
-        """
+    def addPoint(self, point, segmentType=None, smooth=False, name=None,
+            identifier=None, **kwargs):
+        """Use the path as a point pen and add a point to the current subpath.
+        `beginPath` must have been called prior to adding points with
+        `addPoint` calls."""
         if not hasattr(self, "_pointToSegmentPen"):
-            raise DrawBotError("path.beginPath() must be called before the path can be used as a point pen")
+            raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
         self._pointToSegmentPen.addPoint(
             point,
             segmentType=segmentType,
@@ -128,17 +123,16 @@ class BezierPath(BasePen):
         )
 
     def endPath(self):
-        """
-        End the current subpath. Calling this method has two distinct meanings depending
-        on the context:
+        """End the current subpath. Calling this method has two distinct
+        meanings depending on the context:
 
-        When the bezier path is used as a segment pen (using `moveTo`, `lineTo`, etc.),
-        the current subpath will be finished as an open contour.
+        When the bezier path is used as a segment pen (using `moveTo`,
+        `lineTo`, etc.), the current subpath will be finished as an open
+        contour.
 
-        When the bezier path is used as a point pen (using `beginPath`, `addPoint` and
-        `endPath`), the path will process all the points added with `addPoint`, finishing
-        the current subpath.
-        """
+        When the bezier path is used as a point pen (using `beginPath`,
+        `addPoint` and `endPath`), the path will process all the points added
+        with `addPoint`, finishing the current subpath."""
         if hasattr(self, "_pointToSegmentPen"):
             # its been uses in a point pen world
             pointToSegmentPen = self._pointToSegmentPen
@@ -169,54 +163,46 @@ class BezierPath(BasePen):
             contour.drawToPen(pen)
 
     def drawToPointPen(self, pointPen):
-        """
-        Draw the bezier path into a point pen.
-        """
+        """Draw the bezier path into a point pen."""
         contours = self.contours
         for contour in contours:
             contour.drawToPointPen(pointPen)
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
-        """
-        Arc with `center` and a given `radius`, from `startAngle` to `endAngle`, going clockwise if `clockwise` is True and counter clockwise if `clockwise` is False.
-        """
+        """Arc with `center` and a given `radius`, from `startAngle` to
+        `endAngle`, going clockwise if `clockwise` is True and counter
+        clockwise if `clockwise` is False."""
         self._path.appendBezierPathWithArcWithCenter_radius_startAngle_endAngle_clockwise_(
             center, radius, startAngle, endAngle, clockwise)
 
     def arcTo(self, point1, point2, radius):
-        """
-        Arc  defined by a circle inscribed inside the angle specified by three points:
-        the current point, `point1`, and `point2`. The arc is drawn between the two points of the circle that are tangent to the two legs of the angle.
-        """
+        """Arc defined by a circle inscribed inside the angle specified by
+        three points: the current point, `point1`, and `point2`. The arc is
+        drawn between the two points of the circle that are tangent to the two
+        legs of the angle. """
         self._path.appendBezierPathWithArcFromPoint_toPoint_radius_(point1, point2, radius)
 
     def rect(self, x, y, w, h):
-        """
-        Add a rectangle at possition `x`, `y` with a size of `w`, `h`
-        """
+        """Add a rectangle at possition `x`, `y` with a size of `w`, `h`."""
         self._path.appendBezierPathWithRect_(((x, y), (w, h)))
 
     def oval(self, x, y, w, h):
-        """
-        Add a oval at possition `x`, `y` with a size of `w`, `h`
-        """
+        """Add a oval at possition `x`, `y` with a size of `w`, `h`."""
         self._path.appendBezierPathWithOvalInRect_(((x, y), (w, h)))
         self.closePath()
 
     def text(self, txt, offset=None, font=_FALLBACKFONT, fontSize=10, align=None):
-        """
-        Draws a `txt` with a `font` and `fontSize` at an `offset` in the bezier path.
-        If a font path is given the font will be installed and used directly.
+        """Draws a `txt` with a `font` and `fontSize` at an `offset` in the
+        bezier path.  If a font path is given the font will be installed and
+        used directly.
 
-        Optionally an alignment can be set.
-        Possible `align` values are: `"left"`, `"center"` and `"right"`.
-
-        The default alignment is `left`.
-
-        Optionally `txt` can be a `FormattedString`.
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `txt` can be a `FormattedString`.
         """
         if align and align not in BaseContext._textAlignMap.keys():
-            raise DrawBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
+            raise PageBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
         context = BaseContext()
         context.font(font, fontSize)
 
@@ -241,23 +227,21 @@ class BezierPath(BasePen):
             y -= origins[0][1]
         self.textBox(txt, box=(x, y, w, h * 2), font=font, fontSize=fontSize, align=align)
 
-    def textBox(self, txt, box, font=_FALLBACKFONT, fontSize=10, align=None, hyphenation=None):
-        """
-        Draws a `txt` with a `font` and `fontSize` in a `box` in the bezier path.
-        If a font path is given the font will be installed and used directly.
+    def textBox(self, txt, box, font=_FALLBACKFONT, fontSize=10, align=None,
+            hyphenation=None):
+        """Draws a `txt` with a `font` and `fontSize` in a `box` in the bezier
+        path. If a font path is given the font will be installed and used
+        directly.
 
-        Optionally an alignment can be set.
-        Possible `align` values are: `"left"`, `"center"` and `"right"`.
-
-        The default alignment is `left`.
-
-        Optionally `hyphenation` can be provided.
-
-        Optionally `txt` can be a `FormattedString`.
-        Optionally `box` can be a `BezierPath`.
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `hyphenation` can be provided.
+        - Optionally `txt` can be a `FormattedString`.
+        - Optionally `box` can be a `BezierPath`.
         """
         if align and align not in BaseContext._textAlignMap.keys():
-            raise DrawBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
+            raise PageBotError("align must be %s" % (", ".join(BaseContext._textAlignMap.keys())))
         context = BaseContext()
         context.font(font, fontSize)
         context.hyphenation(hyphenation)
@@ -471,7 +455,7 @@ class BezierPath(BasePen):
         for contour in contours:
             contour.drawPoints = contour.drawToPointPen
             if contour.open:
-                raise DrawBotError("open contours are not supported during boolean operations")
+                raise PageBotError("open contours are not supported during boolean operations")
         return contours
 
     def union(self, other):
@@ -497,9 +481,7 @@ class BezierPath(BasePen):
         return self
 
     def difference(self, other):
-        """
-        Return the difference between two bezier paths.
-        """
+        """Return the difference between two bezier paths."""
         assert isinstance(other, self.__class__)
         import booleanOperations
         subjectContours = self._contoursForBooleanOperations()
@@ -509,9 +491,7 @@ class BezierPath(BasePen):
         return result
 
     def intersection(self, other):
-        """
-        Return the intersection between two bezier paths.
-        """
+        """Return the intersection between two bezier paths."""
         assert isinstance(other, self.__class__)
         import booleanOperations
         subjectContours = self._contoursForBooleanOperations()
