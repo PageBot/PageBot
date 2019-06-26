@@ -208,20 +208,19 @@ class FormattedString:
 
         Text can also be added with `formattedString += "hello"`. It will append the text with the current settings of the formatted string.
         """
-        if PY2 and isinstance(txt, basestring):
-            try:
-                txt = txt.decode("utf-8")
-            except UnicodeEncodeError:
-                pass
         attributes = self._validateAttributes(kwargs, addDefaults=False)
+
         for key, value in attributes.items():
             self._setAttribute(key, value)
+
         self._setColorAttributes(attributes)
 
         if isinstance(txt, FormattedString):
             self._attributedString.appendAttributedString_(txt.getNSObject())
             return
+
         attributes = {}
+
         if self._font:
             font = AppKit.NSFont.fontWithName_size_(self._font, self._fontSize)
             if font is None:
@@ -231,6 +230,7 @@ class FormattedString:
                 warnings.warn("font: '%s' is not installed, back to the fallback font: '%s'" % (self._font, ff))
                 font = AppKit.NSFont.fontWithName_size_(ff, self._fontSize)
             coreTextfeatures = []
+
             if self._openTypeFeatures:
                 existingOpenTypeFeatures = openType.getFeatureTagsForFontName(self._font)
                 # sort features by their on/off state
@@ -283,23 +283,29 @@ class FormattedString:
                 fillColor = self._cmykColorClass.getColor(self._cmykFill).getNSObject()
             attributes[AppKit.NSForegroundColorAttributeName] = fillColor
         else:
-            # seems like the default foreground color is black
-            # set clear color when the fill is None
+            # Seems like the default foreground color is black. Set clear
+            # color when the fill is None.
             attributes[AppKit.NSForegroundColorAttributeName] = AppKit.NSColor.clearColor()
+
         if self._stroke or self._cmykStroke:
             if self._stroke:
                 strokeColor = self._colorClass.getColor(self._stroke).getNSObject()
             elif self._cmykStroke:
                 strokeColor = self._cmykColorClass.getColor(self._cmykStroke).getNSObject()
+
             attributes[AppKit.NSStrokeColorAttributeName] = strokeColor
+
             # stroke width must be negative
             # Supply a negative value for NSStrokeWidthAttributeName
             # when you wish to draw a string that is both filled and stroked.
             # see https://developer.apple.com/library/content/qa/qa1531/_index.html
             attributes[AppKit.NSStrokeWidthAttributeName] = -abs(self._strokeWidth)
+
         para = AppKit.NSMutableParagraphStyle.alloc().init()
+
         if self._align:
             para.setAlignment_(self._textAlignMap[self._align])
+
         if self._tabs:
             for tabStop in para.tabStops():
                 para.removeTabStop_(tabStop)

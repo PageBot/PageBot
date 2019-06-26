@@ -15,9 +15,16 @@ Run `sudo python3 setup.py install` to start installing PageBot. If all goes wel
 
 ## Site-packages
 
-You should see the files created in one of your `site-packages` or `dist-packages` locations now. Note: The default version of Python 3 may not be the same one that DrawBotApp uses. On some macOS systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. In that case DrawBot cannot only find the installed PageBot if it has been installed in the shared `site-packages` folder.
+The PageBot package should be located in `site-packages` or `dist-packages`
+now. Note: The default version of Python 3 may not be the same one that
+DrawBot uses. On some Mac OS systems, multiple versions of Python are
+installed, in which case PageBot may have been installed with a different one;
+DrawBot will only be able to locate P ageBot if it has been installed in a
+shared `site-packages` folder.
 
-The `getsitepackages()` function can be used to get more information on installation paths. DrawBot has an internal packages folder containing it's own dependencies. The packages path might differ across platforms. An example:
+The `getsitepackages()` function can be used to get more information on
+installation paths. DrawBot has an internal packages folder containing it's own
+dependencies. The packages path might differ across platforms. An example:
 
     import site
     
@@ -26,22 +33,25 @@ The `getsitepackages()` function can be used to get more information on installa
     for p in packages:
         print(' - %s' % p)
 
-On the command line, this might give:
+On the command line, you should see something like this:
 
  - /Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages
  - /Library/Python/3.6/site-packages
 
-And inside DrawBot:
+And in DrawBot:
 
  - /Applications/DrawBotPy3.app/Contents/Resources/lib/python3.6/site-packages
  - /Library/Python/3.6/site-packages
 
-NOTE: the `site.py` file in `/Applications/DrawBotPy3.app/Contents/Resource` needs to be renamed to something else before the `import site` line gives the correct results.
+NOTE: the `site.py` file in `/Applications/DrawBotPy3.app/Contents/Resource`
+needs to be renamed to something else before the `import site` line gives the
+correct results.
 
 
 ## Dependencies
 
-PageBot needs other Open Source libraries. Some may already be included in DrawBot, but need to be installed separately for system-wide use.
+PageBot uses some external open source libraries. Some may already be included
+in DrawBot, but need to be installed separately for system-wide use.
 
 * https://github.com/fonttools/fonttools
 * https://pypi.org/project/pyobjc/ (OS X only, included in DrawBot)
@@ -49,18 +59,25 @@ PageBot needs other Open Source libraries. Some may already be included in DrawB
 * https://github.com/PageBot/flat (not needed when using DrawBot only)
 * https://sass.github.io/libsass-python
 
-To install them, you can use a package manager such as `pip`, `easy_install` or `homebrew` or you can do it manually by downloading them from the Python Index and running the setup scripts.
+Use a package manager such as `pip`, `easy_install` or `homebrew` to install
+them, or do it manually by downloading them from the Python Index and running
+the setup scripts.
 
 ## Notes
 
-* PageBot now runs entirely on Python 3 and DrawBotApp 3. Python 2.7 is no longer supported. We have ported the flat library to Python 3 and are currently maintaining it at https://github.com/PageBot/flat.
+* PageBot now runs entirely on Python 3 and DrawBot 3. Python 2 is no
+  longer supported. We have ported the flat library to Python 3 and are
+  currently maintaining it at https://github.com/PageBot/flat.
+* The default `Python` may not be the same one that DrawBot uses. On some
+  OSX systems, there are multiple versions of Python installed, in which case
+  PageBot may be installed with a different one. DrawBot then cannot find the
+  installed PageBot.
+* Note: DrawBot should be restarted after installation because libraries are
+  scanned at startup.
 
-* The default `Python` may not be the same one that DrawBotApp uses. On some OSX systems, there are multiple versions of Python installed, in which case PageBot may be installed with a different one. DrawBot then cannot find the installed PageBot.
+Go to `/Library/Python/3.6/site-packages` in the Finder.  Is there a PageBot
+reference here, either as `.pth` file or a Python egg file?
 
-* DrawBotApp should be restarted after installation because libraries are scanned at startup.
-
-Go to `/Library/Python/2.7/site-packages` in the Finder.
-Is there a PageBot reference here, either as `.pth` file or a Python egg file?
 * If not, then try to reinstall, there may have been (another) error during installation.
 * If there is a `.pth` file, look into it (click-space on the icon) and verify that the path is pointing to your PageBot folder path.
 * Don't move the git-repository to another location after it is installed. Python builds a reference to the libary where it is located during installation. After moving, make sure to run the initializer again.
@@ -69,33 +86,28 @@ Is there a PageBot reference here, either as `.pth` file or a Python egg file?
 
 ### On the Terminal
 
-Open a terminal, and run the python command
+Open a terminal, and run the `python` command. You should see the python
+command prompt:
 
 ~~~Python3
 ++ python3
 Python 3.6.4 (v3.6.4:d48ecebad5, Dec 18 2017, 21:07:28) 
 [GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+~~~
+
+After that run the `import pagebot` command. If no error occurs, PageBot has
+been installed correctly:
+	
+~~~Python3
 >>> import pagebot
 >>> 
 ~~~
 
-You should see the python command prompt:
+### In DrawBot
 
-    Python 2.7.10 (default, Feb  7 2017, 00:08:15) 
-    [GCC 4.2.1 Compatible Apple LLVM 8.0.0 	(clang-800.0.34)] on darwin
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>>
-
-Then run the `import pagebot` command.
-If there is no error, PageBot is installed properly for this Python, and it will look like this:
-	
-    >>> import pagebot
-    >>> 
-
-### In DrawBotApp
-
-* Open DrawBotApp
+* Open DrawBot
 * Open a new editor window.
 * Type `import pagebot`
 * Press cmd-R to run the script
