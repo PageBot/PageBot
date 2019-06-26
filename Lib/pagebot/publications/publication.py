@@ -124,7 +124,7 @@ class Publication(Element):
         partNames = []
         for e in self.elements:
             if e.name:
-                partName.append(e.name)
+                partNames.append(e.name)
         return partNames
     partNames = property(_get_partNames)
 

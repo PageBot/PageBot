@@ -16,7 +16,6 @@
 #
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
-from pagebot.toolbox.units import em
 
 class Site(Publication):
     u"""Build a website, similar to the original template by Kirsten Langmuur.
@@ -138,7 +137,7 @@ class Menu(SiteColumn):
         """Navigation is only supposed to show in interactive web-context."""
         pass
 
-    def build_html(self, view, path, drawElements=True):
+    def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         if drawElements:
             b.ul()

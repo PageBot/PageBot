@@ -21,7 +21,7 @@ from pagebot.elements.element import Element
 from pagebot.elements.pbgalley import Galley
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.transformer import path2Dir, path2Url, path2FlatUrl
-from pagebot.constants import DEFAULT_GALLEY_NAME, ORIGIN
+from pagebot.constants import ORIGIN
 
 class Page(Element):
     """The Page container is typically the root of a tree of Element instances.
@@ -350,7 +350,7 @@ class Page(Element):
         convenient access in MarkDown content files.
         """
         if name is None:
-            name = INDEX_HTML
+            name = self.INDEX_HTML
         galley = self.select(name)
         if galley is None:
             galley = Galley(name=name, parent=self, xy=self.xy, size=self.pw, nextElement=name)

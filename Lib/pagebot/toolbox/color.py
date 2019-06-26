@@ -521,7 +521,7 @@ class Color:
             d['r'] = self.r or 0
             d['g'] = self.g or 0
             d['b'] = self.b or 0
-        elif not None in (self.c, self,m, self.y, self.k):
+        elif not None in (self.c, self.m, self.y, self.k):
             d['c'] = self.c or 0
             d['m'] = self.m or 0
             d['y'] = self.y or 0

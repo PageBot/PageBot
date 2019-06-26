@@ -1005,7 +1005,7 @@ class TextBox(Element):
 
     def xHeight2Bottom(self, index=None, parent=None):
         # TODO:Implement
-        raise NotImplementedError
+        pass
 
     def xHeightUp2Grid(self, index=0, parent=None):
         """Move the text box up, so self.textLines[index].textRuns[0].xHeight 

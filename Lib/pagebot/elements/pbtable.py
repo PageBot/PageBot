@@ -67,7 +67,7 @@ class Table(Element):
 
     def _get_colNames(self):
         return self._colNames
-    def _set_colNames(self, colName):
+    def _set_colNames(self, colNames):
         self._colNames = colNames or self.COLNAMES
     colNames = property(_get_colNames, _set_colNames)
 

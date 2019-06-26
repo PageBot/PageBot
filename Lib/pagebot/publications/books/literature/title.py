@@ -25,9 +25,8 @@ from pagebot.toolbox.color import color, noColor, whiteColor
 # PageBot repository).
 from pagebot.fonttoolbox.objects.family import getFamily
 from pagebot.fonttoolbox.objects.font import findFont
-# Creation of the RootStyle (dictionary) with all
-# available default style parameters filled.
-from pagebot.style import getRootStyle
+
+# Get the constants that we need
 from pagebot.constants import B4, CENTER, MIDDLE, TOP
 
 # Document is the main instance holding all information

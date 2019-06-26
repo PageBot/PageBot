@@ -22,7 +22,6 @@
 #     as Variable axis location in design space, changed from latest git,
 #     Option using this layout with UFO.
 #
-
 from pagebot.toolbox.units import pointOffset, inch, pt, upt, em
 from pagebot.constants import A4, ONLINE, CENTER, XXXL
 from pagebot.document import Document
@@ -33,7 +32,6 @@ from pagebot.toolbox.dating import now
 from pagebot.publications.typespecimens.basetypespecimen import BaseTypeSpecimen
 from pagebot.elements import *
 from pagebot.conditions import *
-
 
 # The GlyphSquare element is the self-contained "info-graphic" showing each glyph
 # in the original Fontographer 3.5 style.
