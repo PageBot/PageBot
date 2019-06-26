@@ -104,11 +104,11 @@ class BaseContext(AbstractDrawBotContext):
 
     def newDocument(self, w, h):
         """PageBot function."""
-        raise NotImplementedError
+        pass
 
     def saveDocument(self, path, multiPage=None):
         """PageBot function."""
-        raise NotImplementedError
+        pass
 
     def newDrawing(self):
         """Clear output canvas, start new export file. DrawBot function.
@@ -120,7 +120,7 @@ class BaseContext(AbstractDrawBotContext):
         self.b.newDrawing()
 
     def endDrawing(self):
-        raise NotImplementedError
+        pass
 
     # Magic variables.
 
@@ -887,7 +887,7 @@ class BaseContext(AbstractDrawBotContext):
     # Images
 
     def numberOfImages(self, path):
-        raise NotImplementedError
+        pass
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w, h=h)
@@ -1045,7 +1045,7 @@ class BaseContext(AbstractDrawBotContext):
 
     def getGlyphPath(self, glyph, p=None, path=None):
         """PageBot function."""
-        raise NotImplementedError
+        return None
 
     def onBlack(self, p, path=None):
         """Answers if the single point (x, y) is on black. For now this only
@@ -1130,10 +1130,10 @@ class BaseContext(AbstractDrawBotContext):
         return sorted(intersections)
 
     def getFlattenedPath(self, path=None):
-        raise NotImplementedError
+        pass
 
     def getFlattenedContours(self, path=None):
-        raise NotImplementedError
+        pass
 
     # Export.
 

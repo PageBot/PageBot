@@ -61,7 +61,7 @@ class Quire(Element):
         parent and no
         """
         assert pix in range(self.piw) and piy in range(self.pih) # Check if page is set in range.
-        if not (pix, piy) in self.pages:
+        if (pix, piy) not in self.pages:
             self.pages[(pix, piy)] = []
         self.pages[(pix, piy)].append(page)
 

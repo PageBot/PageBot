@@ -14,6 +14,7 @@
 #
 #     bezierpath.py
 #
+import math
 import AppKit
 import Quartz
 import CoreText
@@ -47,24 +48,29 @@ class BezierPath(BasePen):
 
     # pen support
 
+    '''
     def moveTo(self, point):
         """
         Move to a point `x`, `y`.
         """
         super(BezierPath, self).moveTo(point)
+    '''
 
     def _moveTo(self, pt):
         self._path.moveToPoint_(pt)
 
+    '''
     def lineTo(self, point):
         """
         Line to a point `x`, `y`.
         """
         super(BezierPath, self).lineTo(point)
+    '''
 
     def _lineTo(self, pt):
         self._path.lineToPoint_(pt)
 
+    '''
     def curveTo(self, *points):
         """
         Draw a cubic bezier with an arbitrary number of control points.
@@ -82,6 +88,7 @@ class BezierPath(BasePen):
         (control) points.
         """
         super(BezierPath, self).qCurveTo(*points)
+    '''
 
     def _curveToOne(self, pt1, pt2, pt3):
         """
@@ -141,6 +148,7 @@ class BezierPath(BasePen):
             # with NSBezierPath, nothing special needs to be done for an open subpath.
             pass
 
+    '''
     def addComponent(self, glyphName, transformation):
         """
         Add a sub glyph. The 'transformation' argument must be a 6-tuple
@@ -151,7 +159,7 @@ class BezierPath(BasePen):
         A `glyphSet` is required during initialization of the BezierPath object.
         """
         super(BezierPath, self).addComponent(glyphName, transformation)
-
+    '''
     def drawToPen(self, pen):
         """
         Draw the bezier path into a pen

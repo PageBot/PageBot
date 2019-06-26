@@ -352,7 +352,7 @@ class CanvasBuilder(BaseBuilder):
             self.fill(None)
         else:
             self.cmykFillColor = CMYKColor(c, m, y, k, a)
-            r, g, b = cmyk2rgb(c, m, y, k)
+            r, g, b = cmyk2Rgb(c, m, y, k)
             self.fillColor = Color(r, g, b, a)
             self.gradient = None
 
@@ -371,7 +371,7 @@ class CanvasBuilder(BaseBuilder):
             self.stroke(None)
         else:
             self.cmykStrokeColor = CMYKColor(c, m, y, k, a)
-            r, g, b = cmyk2rgb(c, m, y, k)
+            r, g, b = cmyk2Rgb(c, m, y, k)
             self.strokeColor = Color(r, g, b, a)
 
     def shadow(self, offset, blur, color):
@@ -384,7 +384,7 @@ class CanvasBuilder(BaseBuilder):
         if offset is None:
             self._state.shadow = None
             return
-        rgbColor = cmyk2rgb(color[0], color[1], color[2], color[3])
+        rgbColor = cmyk2Rgb(color[0], color[1], color[2], color[3])
         self._state.shadow = Shadow(offset, blur, rgbColor)
         self._state.shadow.cmykColor = self.CMYKColor(*color)
 
@@ -401,7 +401,7 @@ class CanvasBuilder(BaseBuilder):
             self._state.gradient = None
             self.fill(0)
             return
-        rgbColors = [cmyk2rgb(color[0], color[1], color[2], color[3]) for color in colors]
+        rgbColors = [cmyk2Rgb(color[0], color[1], color[2], color[3]) for color in colors]
         self._state.gradient = Gradient("linear", startPoint, endPoint, rgbColors, locations)
         self._state.gradient.cmykColors = [self.CMYKColor(*color) for color in colors]
         self.fill(None)
@@ -419,7 +419,7 @@ class CanvasBuilder(BaseBuilder):
             self._state.gradient = None
             self.fill(0)
             return
-        rgbColors = [cmyk2rgb(color[0], color[1], color[2], color[3]) for color in colors]
+        rgbColors = [cmyk2Rgb(color[0], color[1], color[2], color[3]) for color in colors]
         self._state.gradient = Gradient("radial", startPoint, endPoint, rgbColors, locations, startRadius, endRadius)
         self._state.gradient.cmykColors = [self.CMYKColor(*color) for color in colors]
         self.fill(None)

@@ -21,7 +21,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation # VariableModel
 from fontTools.varLib import _GetCoordinates
-from pagebot.fonttoolbox.designspacemodel import DesignSpaceBase, Axis
+from pagebot.fonttoolbox.dsmodel import DesignSpaceBase, Axis
 from pagebot.fonttoolbox.ttftools import getBestCmap
 
 
@@ -43,7 +43,7 @@ def setCoordinates(glyph, coord, glyfTable):
         for p,comp in zip(coord, glyph.components):
             if hasattr(comp, 'x'):
                 comp.x,comp.y = p
-    elif glyph.numberOfContours is 0:
+    elif glyph.numberOfContours == 0:
         assert not coord
     else:
         assert len(coord) == len(glyph.coordinates)

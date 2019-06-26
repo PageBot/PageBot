@@ -17,7 +17,7 @@
 #   objc.BadPrototypeError: Objective-C expects 1 arguments, Python argument has 3 arguments for <unbound selector setSize of CanvasView at 0x1109def38>
 #
 
-from AppKit import NSView, NSSize, NSMakeRect, NSClipView, NSTrackingArea, \
+from AppKit import NSView, NSMakeRect, NSClipView, NSTrackingArea, \
     NSTrackingMouseEnteredAndExited , NSTrackingActiveWhenFirstResponder, \
     NSTrackingMouseMoved, NSTrackingInVisibleRect, NSTrackingActiveAlways
 
@@ -194,11 +194,13 @@ class CanvasView(NSView):
         #NSCursor.arrowCursor().set()
         pass
 
+    '''
     def scrollWheel_(self, event):
         """Passes NSScrollWheel events to NSView. NOTE: disabling this
         significantly increases reaction times.
         """
         super(CanvasView, self).scrollWheel_(event)
+    '''
 
     def rightMouseDown_(self, event):
         self.becomeFirstResponder()
@@ -244,9 +246,11 @@ class CanvasClipView(NSClipView):
         print('bounds changed')
         super(CanvasClipView, self).viewBoundsChanged_(notification)
 
+    '''
     def viewFrameChanged_(self, notification):
         super(CanvasClipView, self).viewFrameChanged_(notification)
         #self.centerDocument()
-
+    '''
+    
     def getSize(self):
         return self.frame().size

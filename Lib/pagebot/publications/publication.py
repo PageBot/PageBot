@@ -13,8 +13,6 @@
 #
 #     publication.py
 #
-import os
-
 from pagebot.elements import *  
 from pagebot.document import Document
 from pagebot.toolbox.finder import Finder

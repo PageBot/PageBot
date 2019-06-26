@@ -118,12 +118,12 @@ class Axis:
     def _get_masterLocations(self):
         """Answers the dictionary of required master locations for this axis.
 
-        >>> Axis('wght', minimum=100, default=400, maximum=1000).masterLocations
-        {'default': <Location wght=400>, 'minimum': <Location wght=100>, 'maximum': <Location wght=1000>}
-        >>> Axis('wdth', minimum=100, default=100, maximum=1000).masterLocations
-        {'default': <Location wdth=100>, 'maximum': <Location wdth=1000>}
-        >>> Axis('wght', minimum=100, default=1000, maximum=1000).masterLocations
-        {'default': <Location wght=1000>, 'minimum': <Location wght=100>}
+        >>> sorted(Axis('wght', minimum=100, default=400, maximum=1000).masterLocations.items())
+        [('default', <Location wght=400>), ('maximum', <Location wght=1000>), ('minimum', <Location wght=100>)]
+        >>> sorted(Axis('wdth', minimum=100, default=100, maximum=1000).masterLocations.items())
+        [('default', <Location wdth=100>), ('maximum', <Location wdth=1000>)]
+        >>> sorted(Axis('wght', minimum=100, default=1000, maximum=1000).masterLocations.items())
+        [('default', <Location wght=1000>), ('minimum', <Location wght=100>)]
         """
         masterLocations = dict(default=Location({self.tag: self.default}))
         if self.minimum < self.default:
@@ -357,8 +357,8 @@ class DesignSpace:
     <DesignSpace TestFont axes:2 masters:4>
     >>> ds.familyName
     'TestFont'
-    >>> ds.asTagLocation(dict(Weight=10, Rounds=1)) # Used to translate design space file location with name keys.
-    {'wght': 10, 'RNDS': 1}
+    >>> sorted(ds.asTagLocation(dict(Weight=10, Rounds=1)).items()) # Used to translate design space file location with name keys.
+    [('RNDS', 1), ('wght', 10)]
     >>> ds.validate()
     []
     >>> ds.save('/tmp/%s' % fName) # Save as .designspace and .csv file.
@@ -1050,7 +1050,7 @@ class DesignSpace:
         >>> a = ds.newAxis('wght')
         >>> b = ds.newAxis('XTRA')
         >>> ds.defaultLocation
-        <Location wght=500 XTRA=500>
+        <Location XTRA=500 wght=500>
         >>> c = ds.newAxis('XOPQ')
         >>> b.default = 504
         >>> ds.defaultLocation

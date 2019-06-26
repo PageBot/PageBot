@@ -143,7 +143,8 @@ class BabelString:
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
             pixelFit=True):
-        raise NotImplementedError
+        return None
+
 
     #def textSize(self, w=None, h=None):
     #def _get_fontSize(self):
