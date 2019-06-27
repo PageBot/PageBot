@@ -15,6 +15,7 @@
 from copy import copy
 
 from pagebot.publications.publication import Publication
+from pagebot.publications.magazines.glossy.parts import *
 from pagebot.elements import *
 from pagebot.conditions import *
 from pagebot.toolbox.units import pt
@@ -22,6 +23,7 @@ from pagebot.toolbox.color import noColor
 from pagebot.toolbox.dating import now
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.constants import *
+
 
 class ThumbPage(Element):
     """Contains a single page thumbnail. Either as page object or a path to a thumbnail file."""
@@ -68,7 +70,7 @@ class BaseMagazine(Publication):
     Subclassed from Element-->Publication-->Magazine.
 
     """
-    # Default paper sizes that are likely to be used for magazines 
+    # Default paper sizes that are likely to be used for magazines
     # in portrait ratio.
     PAGE_SIZES = {
         'A3': A3,
@@ -197,7 +199,7 @@ class BaseMagazine(Publication):
 
         for part in parts:
             part.compose(doc=doc, publication=publication)
-        
+
         # Not solving conditions here yet.
         return doc
 

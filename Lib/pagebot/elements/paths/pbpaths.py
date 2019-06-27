@@ -215,7 +215,9 @@ class Mask(Paths):
             #self.b.fill(1, 0, 0)
             #self.b.drawPath(unifiedPath.bp)
             self.b.clipPath(unifiedPath.bp)
-            self.b.translate(-upt(px), -upt(py))
+
+            self.b.translate(upt(-px), upt(-py))
+
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, p, **kwargs)

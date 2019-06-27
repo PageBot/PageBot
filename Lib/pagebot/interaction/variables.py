@@ -13,7 +13,7 @@
 #
 #     variables.py
 #
-#     Only works in DrwaBotContext.
+#     Only works in DrawBotContext.
 #
 from pagebot import getContext
 

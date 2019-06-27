@@ -549,7 +549,7 @@ class BaseContext(AbstractDrawBotContext):
 
     def resetShadow(self):
         pass
-        
+
     def gradient(self, gradient, origin, w, h):
         """Define the gradient call to match the size of element e., Gradient
         position is from the origin of the page, so we need the current origin
@@ -1045,7 +1045,8 @@ class BaseContext(AbstractDrawBotContext):
 
     def getGlyphPath(self, glyph, p=None, path=None):
         """PageBot function."""
-        return None
+        raise NotImplementedError
+        #return None
 
     def onBlack(self, p, path=None):
         """Answers if the single point (x, y) is on black. For now this only

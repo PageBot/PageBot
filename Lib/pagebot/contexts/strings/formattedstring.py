@@ -26,7 +26,7 @@ from drawBot.context.tools.variation import *
 logger = logging.getLogger(__name__)
 _FALLBACKFONT = "LucidaGrande"
 
-class Warnings(object):
+class Warnings():
     # NOTE: Temporary solution for now, need to switch to logging.
 
     def __init__(self):

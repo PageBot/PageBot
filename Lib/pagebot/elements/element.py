@@ -359,7 +359,7 @@ class Element:
         >>> e1 = Element(theme=theme1)
         >>> e1.theme
         <Theme BaseTheme mood=normal>
-        >>> e2 = Element(parent=e1) 
+        >>> e2 = Element(parent=e1)
         >>> e2.theme # Inheriting theme from e1
         <Theme BaseTheme mood=normal>
         >>> e2.theme = theme2
@@ -2332,7 +2332,7 @@ class Element:
             self.x = x
     left = property(_get_left, _set_left)
 
-    def _get_mLeft(self): 
+    def _get_mLeft(self):
         """Answer left position, including left margin of self
 
         >>> from pagebot.toolbox.units import mm
@@ -2342,7 +2342,7 @@ class Element:
         >>> e.mLeft = mm(50)
         >>> e.x, e.mLeft
         (65mm, 50mm)
-        >>> e.ml = mm(25) # x does not change, 
+        >>> e.ml = mm(25) # x does not change,
         >>> e.x, e.mLeft # but margin increases, so e.mLeft decreases.
         (65mm, 40mm)
         """
@@ -2735,7 +2735,7 @@ class Element:
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-        
+
         if border is False:
             return {}
         if isinstance(border, dict):
@@ -3100,38 +3100,38 @@ class Element:
     bleedOrigin = property(_get_bleedOrigin)
 
     def _get_viewCropMarkDistance(self):
-        return self.css('viewCropMarkDistance', 0) 
+        return self.css('viewCropMarkDistance', 0)
     def _set_viewCropMarkDistance(self, d):
         self.style['viewCropMarkDistance'] = units(d)
     viewCropMarkDistance = property(_get_viewCropMarkDistance, _set_viewCropMarkDistance)
 
     def _get_viewCropMarkSize(self):
-        return self.css('viewCropMarkSize', pt(40)) 
+        return self.css('viewCropMarkSize', pt(40))
     def _set_viewCropMarkSize(self, d):
         self.style['viewCropMarkSize'] = units(d)
     viewCropMarkSize = property(_get_viewCropMarkSize, _set_viewCropMarkSize)
 
     def _get_viewCropMarkStrokeWidth(self):
-        return self.css('viewCropMarkStrokeWidth', pt(0.25)) 
+        return self.css('viewCropMarkStrokeWidth', pt(0.25))
     def _set_viewCropMarkStrokeWidth(self, d):
         self.style['viewCropMarkStrokeWidth'] = units(d)
     viewCropMarkStrokeWidth = property(_get_viewCropMarkStrokeWidth, _set_viewCropMarkStrokeWidth)
 
 
     def _get_viewRegistrationMarkDistance(self):
-        return self.css('viewRegistrationMarkDistance', 0) 
+        return self.css('viewRegistrationMarkDistance', 0)
     def _set_viewRegistrationMarkDistance(self, d):
         self.style['viewRegistrationMarkDistance'] = units(d)
     viewRegistrationMarkDistance = property(_get_viewRegistrationMarkDistance, _set_viewRegistrationMarkDistance)
 
     def _get_viewRegistrationMarkSize(self):
-        return self.css('viewRegistrationMarkSize', pt(40)) 
+        return self.css('viewRegistrationMarkSize', pt(40))
     def _set_viewRegistrationMarkSize(self, d):
         self.style['viewRegistrationMarkSize'] = units(d)
     viewRegistrationMarkSize = property(_get_viewRegistrationMarkSize, _set_viewRegistrationMarkSize)
 
     def _get_viewRegistrationMarkStrokeWidth(self):
-        return self.css('viewRegistrationMarkStrokeWidth', pt(0.25)) 
+        return self.css('viewRegistrationMarkStrokeWidth', pt(0.25))
     def _set_viewRegistrationMarkStrokeWidth(self, d):
         self.style['viewRegistrationMarkStrokeWidth'] = units(d)
     viewRegistrationMarkStrokeWidth = property(_get_viewRegistrationMarkStrokeWidth, _set_viewRegistrationMarkStrokeWidth)
@@ -4548,10 +4548,13 @@ class Element:
         sy = self.scaleY
         sz = self.scaleZ
         p = point3D(p)
-        if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
+
+        # Make sure these are value scale values.
+        if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
             self.context.saveGraphicState()
             view.scale = sx, sy
-            p = (p[0] / sx, p[1] / sy, p[2] / sz) # Scale point in 3 dimensions.
+            # Scale point in 3 dimensions.
+            p = (p[0] / sx, p[1] / sy, p[2] / sz)
         return p
 
     def _restoreScale(self, view):
@@ -4902,7 +4905,7 @@ class Element:
             if e.show:
                 e.build_scss(view)
 
-    
+
     def asNormalizedJSON(self):
         """Build self and all child elements as regular dict and add
         it to the list of siblings. Path points to the folder where
@@ -4921,7 +4924,7 @@ class Element:
         elements = []
         d = dict(
             name=self.name,
-            class_=self.__class__.__name__, 
+            class_=self.__class__.__name__,
             elements=asNormalizedJSON(self.elements),
             style=asNormalizedJSON(self.style)
         )
@@ -5292,7 +5295,7 @@ class Element:
     def shrink2TextWidth(self, tolerance=0):
         """For non-text elements, this is always True to satisfy the calling condition."""
         return True
-    
+
     # Float conditions to page padding
 
     def isFloatOnTop(self, tolerance=0):
