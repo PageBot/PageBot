@@ -14,16 +14,18 @@
 #
 #     formattedstring.py
 #
-import sys
+import sys, os
 import AppKit
 import CoreText
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
+import logging
 
+logger = logging.getLogger(__name__)
 _FALLBACKFONT = "LucidaGrande"
 
 class Warnings(object):
-    # NOTE: Temporary solution for now, might switch to logging.
+    # NOTE: Temporary solution for now, need to switch to logging.
 
     def __init__(self):
         self._warnMessages = set()
@@ -40,8 +42,15 @@ class Warnings(object):
         sys.stderr.write("*** warning: %s ***\n" % message)
         self._warnMessages.add(message)
 
-
 warnings = Warnings()
+
+def _tryInstallFontFromFontName(fontName):
+    # TODO: too much drawBot, need to port.
+    try:
+        from drawBot.drawBotDrawingTools import _drawBotDrawingTool
+        return _drawBotDrawingTool._tryInstallFontFromFontName(fontName)
+    except Exception as e:
+        logger.error('_tryInstallFontFromFontName: %s' % e)
 
 class FormattedString:
     """FormattedString is a reusable object, if you want to draw the same over
@@ -950,7 +959,7 @@ class FormattedString:
             text(t, (100, 100))
         """
         # use a non breaking space as replacement character
-        baseString = unichr(0xFFFD)
+        baseString = chr(0xFFFD)
         font = None
         if self._font:
             font = AppKit.NSFont.fontWithName_size_(self._font, self._fontSize)
