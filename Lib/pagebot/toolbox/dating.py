@@ -216,7 +216,7 @@ class Duration:
         millennia to match SQL's INTERVAL type Note that by itself, a duration
         of months is meaningless due to diffing month lengths. But when doing
         date arithmetic, we can figure it out."""
-        if td is not None:
+        if td:
             self.timedelta = td
         else:
             self.timedelta = datetime.timedelta(days, seconds, microSeconds, milliSeconds, minutes, hours, weeks)
@@ -224,26 +224,32 @@ class Duration:
 
     def _get_weeks(self):
         return self.timedelta.days // 7
+
     weeks = property(_get_weeks)
 
     def _get_days(self):
         return self.timedelta.days
+
     days = property(_get_days)
 
     def _get_hours(self):
         return self.timedelta.second // (60 * 60)
+
     hours = property(_get_hours)
 
     def _get_minutes(self):
         return self.timedelta.seconds // 60
+
     minutes = property(_get_minutes)
 
     def _get_seconds(self):
         return self.timedelta.seconds
+
     seconds = property(_get_seconds)
 
     def _get_microSeconds(self):
         return self.timedelta.microseconds
+
     microSeconds = property(_get_microSeconds)
 
     def __len__(self):
@@ -283,6 +289,8 @@ class Duration:
     __truediv__ = __div__
     __itruediv__ = __rtruediv__ = __rdiv__ = __div__
 
+    # FIXME: gives a pylint error:
+    # E:287,27: bad operand type for unary -: NoneType (invalid-unary-operand-type)
     def __neg__(self):
         return Duration(td=-self.timedelta)
 
@@ -828,10 +836,14 @@ class Dating:
         """
         if self.datetime.tzinfo is None or not usetz:
             tz = ""
-        elif self.tz < 0:
-            tz = "-%02d" % -self.datetime.tzinfo
         else:
             tz = "+%02d" % self.datetime.tzinfo
+
+        # FIXME: gives a pylint error:
+        # E:287,27: bad operand type for unary -: NoneType (invalid-unary-operand-type)
+        #elif self.tz < 0:
+        #    tz = "-%02d" % -self.datetime.tzinfo
+
         return  "%s %s%s" % (self.date, self.time, tz)
 
     def _get_date(self):

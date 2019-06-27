@@ -868,26 +868,26 @@ class PageBotPath:
     #   M A T H  O P E R A T O R S
 
     def __add__(self, path):
-        """Add path to self and return a new path. 
+        """Add path to self and return a new path.
         (self + path) is identical to self.union(path)
         """
         return self.union(path)
 
     def __sub__(self, path):
-        """Subtract path to self and return a new path. 
+        """Subtract path to self and return a new path.
         (self - path) is identical to self.difference(path)
         (path - self) is identical to path.difference(self)
         """
         return self.difference(path)
 
     def __and__(self, path):
-        """Intersect self and path and return a new path. 
+        """Intersect self and path and return a new path.
         (self & path) is identical to self.xor(path)
         """
         return self.intersection(path)
 
     def __xor__(self, path):
-        """Subtract path to self and return a new path. 
+        """Subtract path to self and return a new path.
         (self ^ path) is identical to self.xor(path)
         """
         return self.xor(path)
@@ -1016,7 +1016,7 @@ def newRectPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
     pbp.rect(x, y, w, h)
     return pbp
 
-def newCirclePath(context, x=0, y=0, r=100, bezierPaht=None, style=None):
+def newCirclePath(context, x=0, y=0, r=100, bezierPath=None, style=None):
     pbp = PageBotPath(context=context, bezierPath=bezierPath, style=style)
     pbp.oval(x--r, y--r, 2*r, 2*r)
     return pbp
@@ -1026,7 +1026,7 @@ def newOvalPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
     pbp.oval(x, y, w, h)
     return pbp
 
-    
+
 if __name__ == '__main__':
     import doctest
     import sys

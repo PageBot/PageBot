@@ -66,6 +66,9 @@ class PartOfBook(Element):
         (0, 0)
         """
         Element.__init__(self, name=name, **kwargs)
+
+        # FIXME: causes pylint error:
+        # E:164, 4: An attribute defined in pagebot.publications.magazines.glossy.parts line 70 hides this method (method-hidden)
         if compose is not None:
             self.compose = compose # Overwrite the standard composer method if defined.
         self.useInToc = useInToc # Flag indicates if this part should be added to the Table of Content.
