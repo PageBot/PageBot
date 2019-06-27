@@ -21,6 +21,7 @@ from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
 import logging
 from drawBot.context.tools.openType import getFeatureTagsForFontName, featureMap
+from drawBot.context.tools.variation import *
 
 logger = logging.getLogger(__name__)
 _FALLBACKFONT = "LucidaGrande"
@@ -260,7 +261,7 @@ class FormattedString:
                         warnings.warn("OpenType feature '%s' not available" % (featureTag))
             coreTextFontVariations = dict()
             if self._fontVariations:
-                existingAxes = variation.getVariationAxesForFontName(self._font)
+                existingAxes = getVariationAxesForFontName(self._font)
                 for axis, value in self._fontVariations.items():
                     if axis in existingAxes:
                         existinsAxis = existingAxes[axis]
@@ -269,7 +270,7 @@ class FormattedString:
                             value = existinsAxis["minValue"]
                         if value > existinsAxis["maxValue"]:
                             value = existinsAxis["maxValue"]
-                        coreTextFontVariations[variation.convertVariationTagToInt(axis)] = value
+                        coreTextFontVariations[convertVariationTagToInt(axis)] = value
                     else:
                         warnings.warn("variation axis '%s' not available for '%s'" % (axis, self._font))
             fontAttributes = {}
@@ -374,8 +375,8 @@ class FormattedString:
         if isinstance(txt, self.__class__):
             new.getNSObject().appendAttributedString_(txt.getNSObject())
         else:
-            if not isinstance(txt, basestring):
-                raise TypeError("FormattedString requires a str or unicode, got '%s'" % type(txt))
+            if not isinstance(txt, str):
+                raise TypeError("FormattedString requires a string, got '%s'" % type(txt))
             new.append(txt)
         return new
 
@@ -636,7 +637,7 @@ class FormattedString:
             fontName = _tryInstallFontFromFontName(fontName)
         else:
             fontName = self._font
-        return variation.getVariationAxesForFontName(fontName)
+        return getVariationAxesForFontName(fontName)
 
     def tabs(self, *tabs):
         """
