@@ -20,6 +20,7 @@ import CoreText
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
 import logging
+from drawBot.context.tools.openType import getFeatureTagsForFontName, featureMap
 
 logger = logging.getLogger(__name__)
 _FALLBACKFONT = "LucidaGrande"
@@ -50,7 +51,7 @@ def _tryInstallFontFromFontName(fontName):
         from drawBot.drawBotDrawingTools import _drawBotDrawingTool
         return _drawBotDrawingTool._tryInstallFontFromFontName(fontName)
     except Exception as e:
-        logger.error('_tryInstallFontFromFontName: %s' % e)
+        logger.error('_tryInstallFontFromFontName: %s', e)
 
 class FormattedString:
     """FormattedString is a reusable object, if you want to draw the same over
@@ -241,7 +242,7 @@ class FormattedString:
             coreTextfeatures = []
 
             if self._openTypeFeatures:
-                existingOpenTypeFeatures = openType.getFeatureTagsForFontName(self._font)
+                existingOpenTypeFeatures = getFeatureTagsForFontName(self._font)
                 # sort features by their on/off state
                 # set all disabled features first
                 orderedOpenTypeFeatures = sorted(self._openTypeFeatures.items(), key=lambda kv: kv[1])
@@ -249,11 +250,11 @@ class FormattedString:
                     coreTextFeatureTag = featureTag
                     if not value:
                         coreTextFeatureTag = "%s_off" % featureTag
-                    if coreTextFeatureTag in openType.featureMap:
+                    if coreTextFeatureTag in featureMap:
                         if value and featureTag not in existingOpenTypeFeatures:
                             # only warn when the feature is on and not existing for the current font
                             warnings.warn("OpenType feature '%s' not available for '%s'" % (featureTag, self._font))
-                        feature = openType.featureMap[coreTextFeatureTag]
+                        feature = featureMap[coreTextFeatureTag]
                         coreTextfeatures.append(feature)
                     else:
                         warnings.warn("OpenType feature '%s' not available" % (featureTag))
@@ -599,7 +600,7 @@ class FormattedString:
             fontName = _tryInstallFontFromFontName(fontName)
         else:
             fontName = self._font
-        return openType.getFeatureTagsForFontName(fontName)
+        return getFeatureTagsForFontName(fontName)
 
     def fontVariations(self, *args, **axes):
         """
@@ -970,7 +971,7 @@ class FormattedString:
         # disable calt features, as this seems to be on by default
         # for both the font stored in the nsGlyphInfo as in the replacement character
         fontAttributes = {}
-        fontAttributes[CoreText.NSFontFeatureSettingsAttribute] = [openType.featureMap["calt_off"]]
+        fontAttributes[CoreText.NSFontFeatureSettingsAttribute] = [featureMap["calt_off"]]
         fontDescriptor = font.fontDescriptor()
         fontDescriptor = fontDescriptor.fontDescriptorByAddingAttributes_(fontAttributes)
         font = AppKit.NSFont.fontWithDescriptor_size_(fontDescriptor, self._fontSize)
