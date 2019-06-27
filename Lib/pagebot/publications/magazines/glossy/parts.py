@@ -19,7 +19,7 @@ class PartOfBook(Element):
 
     PAGE_CLASS = Page
 
-    def __init__(self, autoPages=0, elements=None, name=None, compose=None, 
+    def __init__(self, autoPages=0, elements=None, name=None, compose=None,
             publication=None, useInToc=True, pn=None, **kwargs):
         """Abstract type of element that contain parts of the book and/or single pages.
 
@@ -87,7 +87,7 @@ class PartOfBook(Element):
             thumbPath = self.thumbPath % (len(self.pages)+1)
         else:
             thumbPath = None
-        page = self.PAGE_CLASS(name=name or self.__class__.__name__, 
+        page = self.PAGE_CLASS(name=name or self.__class__.__name__,
             pn=pn, w=self.w, h=self.h, thumbPath=thumbPath)
         self.pages.append(page)
 
@@ -104,10 +104,9 @@ class PartOfBook(Element):
         return len(self.pages)
 
     def append(self, e):
-        """If e is a PartOfBook, then add it to self.elements.
-        If e is a page, then add it to self.pages
-        Otherwise it is supposed to be page element, append it to self.pages[-1]
-        """
+        """If e is a PartOfBook, then add it to self.elements. If e is a page,
+        then add it to self.pages. Otherwise it is supposed to be page element,
+        append it to self.pages[-1]."""
         if isinstance(e, PartOfBook):
             print('Append part', self, e)
             self.appendElement(e)
@@ -122,17 +121,20 @@ class PartOfBook(Element):
             print(self.pages[-1].elements)
 
     def getSpreads(self, spreads=None, pn=None):
-        """Compose a list of spreads from self.pages. Nothing changes to the page.parent,
-        pages remain unplaced. Recursively collect from al self.elements parts."""
+        """Compose a list of spreads from self.pages. Nothing changes to the
+        page.parent, pages remain unplaced. Recursively collect from all
+        self.elements parts."""
         if spreads is None:
             spreads = [[]]
 
         for page in self.pages:
             if len(spreads[-1]) == 2:
                 spreads.append([])
-                spreads[-1].append(pages)
+                spreads[-1].append(page)
+
         for part in self.elements:
             part.getSpreads(spreads)
+
         return spreads
 
     def _get_spreads(self):
@@ -160,12 +162,12 @@ class PartOfBook(Element):
         return (0, 0)
 
     def compose(self, doc, publication):
-        """Compose the part into doc. For every element in self.elements that is a page, 
+        """Compose the part into doc. For every element in self.elements that is a page,
         add it to the document. Note that this will alter the e.parent to page.
-        It practice it is safer to move the Page instance to become part of the document 
-        that to make a copy of it (with all dependencies. Also by making a copy, any 
+        It practice it is safer to move the Page instance to become part of the document
+        that to make a copy of it (with all dependencies. Also by making a copy, any
         high-level will loose control over the page instances.
-        All element part that are not pages are call recusively to compose themselves 
+        All element part that are not pages are call recusively to compose themselves
         into the document.
         """
         for page in self.pages:
@@ -179,7 +181,7 @@ class PartOfBook(Element):
 class CoverFront(PartOfBook):
     def __init__(self, elements=None, **kwargs):
         if elements is None:
-            elements = [Cover(1, name='Cover')]                
+            elements = [Cover(1, name='Cover')]
         PartOfBook.__init__(self, elements=elements, **kwargs)
 
     def _get_cover(self):
@@ -204,13 +206,13 @@ class Cover(PartOfBook):
 
 class Back(PartOfBook):
     pass
-    
+
 class TableOfContent(PartOfBook):
     pass
 
 class MastHead(PartOfBook):
     pass
-    
+
 class Ad(PartOfBook):
     pass
 

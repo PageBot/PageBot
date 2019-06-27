@@ -1099,13 +1099,16 @@ class Cm(Unit):
 
 def pt(v, *args, **kwargs):
     u = None
+
     if args: # If there are more arguments, bind them together in a list.
         v = [v]+list(args)
+
     if isinstance(v, (tuple, list)):
         u = []
         for uv in v:
             u.append(pt(uv))
         u = tuple(u)
+
     elif isinstance(v, (int, float)): # Simple value as input, use class
         u = Pt(v)
     elif isUnit(v): # It's already a Unit instance, convert via points.
@@ -1118,6 +1121,7 @@ def pt(v, *args, **kwargs):
                 u = Pt(asIntOrFloat(v))
         else: # Something else, recursively try again, force to pt.
             u = pt(units(v))
+
     return u
 
 class Pt(Unit):

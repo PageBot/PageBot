@@ -98,9 +98,11 @@ class PageBotApp(BaseApp):
 
     def buildUI(self, uiWidth):
         dy = pad = pt(6)
+        negPad = pt(-6)
         y = pad + dy
         uiWidth = pt(230)
         uiH = pt(24)
+        negUiH = pt(-24)
         uiL = uiH + 6
         uiLS = pt(18)
         uiLS2 = pt(23)
@@ -122,18 +124,18 @@ class PageBotApp(BaseApp):
             menuHeight = 0
 
         self.window.uiGroup = Group((0, menuHeight, uiWidth, -0))
-        self.window.uiGroup.tabs = Tabs((0, pad, -0, -uiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
+        self.window.uiGroup.tabs = Tabs((0, pad, -0, negUiH-pad), ["Document", "Content", "Hints"], sizeStyle='mini')
 
         # D E S I G N  U I
         tab = self.uiDesign = self.window.uiGroup.tabs[0]
 
-        tab.documentNameLabel = TextBox((pad, y-12, -pad, uiLS), 'Document name', sizeStyle='mini')
-        tab.documentName = TextEditor((pad, y, -pad, uiLS), self.publication.name)
+        tab.documentNameLabel = TextBox((pad, y-12, negPad, uiLS), 'Document name', sizeStyle='mini')
+        tab.documentName = TextEditor((pad, y, negPad, uiLS), self.publication.name)
 
         y += uiL-2
         tab.publicationLabel = TextBox((pad, y-8, (uiWidth-pad)/2, uiLS),
             'Publication category', sizeStyle='mini')
-        tab.templateLabel = TextBox(((uiWidth-pad)/2+pad, y-8, -pad, uiLS),
+        tab.templateLabel = TextBox(((uiWidth-pad)/2+pad, y-8, negPad, uiLS),
             'Publication type', sizeStyle='mini')
 
         publicationCategories = sorted(PublicationCategories.keys())
@@ -143,7 +145,7 @@ class PageBotApp(BaseApp):
 
 
         templateTypes = sorted(PublicationCategories[tab.publication.getItem()])
-        tab.templateType = PopUpButton(((uiWidth-pad)/2+pad, y, -pad, uiH), templateTypes,
+        tab.templateType = PopUpButton(((uiWidth-pad)/2+pad, y, negPad, uiH), templateTypes,
             callback=self.makeSample, sizeStyle='small')
         tab.templateType.set(0)
 
@@ -153,30 +155,30 @@ class PageBotApp(BaseApp):
         tab.theme = PopUpButton((pad, y, (uiWidth-pad*2)*2/3-pad, uiH), themeNames, callback=self.makeSample,
             sizeStyle='small')
         tab.theme.set(themeNames.index(DEFAULT_THEME_CLASS.NAME))
-        tab.themeMoodLabel = TextBox(((uiWidth-pad)*2/3, y-8, -pad, uiLS), 'Mood', sizeStyle='mini')
+        tab.themeMoodLabel = TextBox(((uiWidth-pad)*2/3, y-8, negPad, uiLS), 'Mood', sizeStyle='mini')
         themeMoods = BaseTheme.MOOD_NAMES
-        tab.themeMood = PopUpButton(((uiWidth-pad)*2/3, y, -pad, uiH), themeMoods,
+        tab.themeMood = PopUpButton(((uiWidth-pad)*2/3, y, negPad, uiH), themeMoods,
             callback=self.makeSample, sizeStyle='small')
         tab.themeMood.set(themeMoods.index(BaseTheme.DEFAULT_MOOD_NAME))
 
         y += uiL
-        tab.pageSizeLabel = TextBox((pad, y-8, -pad, uiLS), 'Page size', sizeStyle='mini')
+        tab.pageSizeLabel = TextBox((pad, y-8, negPad, uiLS), 'Page size', sizeStyle='mini')
         options = sorted(self.publication.PAGE_SIZES.keys())
-        tab.pageSize = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
+        tab.pageSize = PopUpButton((pad, y, negPad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.pageSize.set(2)
 
         y += uiL-4
         orientation = ('Portrait', 'Landscape')
-        tab.orientation = RadioGroup((pad, y, -pad, 32), orientation, callback=self.makeSample,
+        tab.orientation = RadioGroup((pad, y, negPad, 32), orientation, callback=self.makeSample,
             sizeStyle='small', isVertical=True)
         tab.orientation.set(0)
-        tab.spread = CheckBox((uiWidth/2, y-4, -pad, uiH), 'Spread', callback=self.makeSample,
+        tab.spread = CheckBox((uiWidth/2, y-4, negPad, uiH), 'Spread', callback=self.makeSample,
             sizeStyle='small')
         tab.spread.set(0)
 
         y += uiLS-6
-        tab.symmetric = CheckBox((uiWidth/2, y, -pad, uiH), 'Symmetry', callback=self.makeSample,
+        tab.symmetric = CheckBox((uiWidth/2, y, negPad, uiH), 'Symmetry', callback=self.makeSample,
             sizeStyle='small')
         tab.symmetric.set(0)
 
@@ -184,7 +186,7 @@ class PageBotApp(BaseApp):
         tbW = 40 # Padding text box width
         tw = 10
         x = pad
-        tab.paddingLabel = TextBox((pad, y-14, -pad, uiLS), 'Padding', sizeStyle='mini')
+        tab.paddingLabel = TextBox((pad, y-14, negPad, uiLS), 'Padding', sizeStyle='mini')
         tab.paddingTopLabel = TextBox((x, y, tw, uiLS), 'T', sizeStyle='small')
         tab.paddingTop = TextEditor((x+tw, y, tbW, uiLS), '48', callback=self.makeSample,)
         x += tw + tbW + 2
@@ -198,7 +200,7 @@ class PageBotApp(BaseApp):
         tab.paddingLeft = TextEditor((x+tw, y, tbW, uiLS), '72', callback=self.makeSample,)
 
         y += uiL
-        tab.gridLabel = TextBox((pad, y-8, -pad, uiLS), 'Grid', sizeStyle='mini')
+        tab.gridLabel = TextBox((pad, y-8, negPad, uiLS), 'Grid', sizeStyle='mini')
         columnOptions = []
         for columns in range(1, 17):
             columnOptions.append(str(columns))
@@ -207,7 +209,7 @@ class PageBotApp(BaseApp):
             sizeStyle='small')
         tab.columns.set(3) # 4 columns
         tab.hGutterLabel = TextBox((uiWidth/2, y+5, 60, uiLS), 'HGutter', sizeStyle='small')
-        tab.hGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
+        tab.hGutter = PopUpButton((negPad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.hGutter.set(11) # pt(12)
 
@@ -220,7 +222,7 @@ class PageBotApp(BaseApp):
             sizeStyle='small')
         tab.rows.set(0) # 1 row
         tab.vGutterLabel = TextBox((uiWidth/2, y+5, 60, uiLS), 'VGutter', sizeStyle='small')
-        tab.vGutter = PopUpButton((-pad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
+        tab.vGutter = PopUpButton((negPad-uiWidth/5, y, uiWidth/5, uiH), columnOptions, callback=self.makeSample,
             sizeStyle='small')
         tab.vGutter.set(11) # pt(12)
 
@@ -228,7 +230,7 @@ class PageBotApp(BaseApp):
         tab.showBaselineGrid = CheckBox((pad, y, uiWidth/2, uiH), 'Baselines', callback=self.makeSample,
             sizeStyle='small')
         tab.showBaselineGrid.set(True)
-        tab.showColorBars = CheckBox((uiWidth/2, y, -pad, uiH), 'Color bars', callback=self.makeSample,
+        tab.showColorBars = CheckBox((uiWidth/2, y, negPad, uiH), 'Color bars', callback=self.makeSample,
             sizeStyle='small')
         tab.showColorBars.set(1)
 
@@ -236,7 +238,7 @@ class PageBotApp(BaseApp):
         tab.showGrid = CheckBox((pad, y, uiWidth/2, uiH), 'Grid', callback=self.makeSample,
             sizeStyle='small')
         tab.showGrid.set(1)
-        tab.showPagePadding = CheckBox((uiWidth/2, y, -pad, uiH), 'Page padding', callback=self.makeSample,
+        tab.showPagePadding = CheckBox((uiWidth/2, y, negPad, uiH), 'Page padding', callback=self.makeSample,
             sizeStyle='small')
         tab.showPagePadding.set(True)
 
@@ -244,20 +246,20 @@ class PageBotApp(BaseApp):
         tab.showPageFrame = CheckBox((pad, y, uiWidth/2, uiH), 'Page frame', callback=self.makeSample,
             sizeStyle='small')
         tab.showPageFrame.set(True)
-        tab.showCropMarks = CheckBox((uiWidth/2, y, -pad, uiH), 'Cropmarks', callback=self.makeSample,
+        tab.showCropMarks = CheckBox((uiWidth/2, y, negPad, uiH), 'Cropmarks', callback=self.makeSample,
             sizeStyle='small')
         tab.showCropMarks.set(True)
 
-        tab.errors = EditText((pad, -50, -pad, -pad))
+        tab.errors = EditText((pad, -50, negPad, negPad))
 
         # C O N T E N T  U I
         y = pad + dy
         tab = self.uiContent = self.window.uiGroup.tabs[1]
 
-        tab.contentSelectionLabel = TextBox((pad, y-8, -pad, uiLS),
+        tab.contentSelectionLabel = TextBox((pad, y-8, negPad, uiLS),
             'Content selection', sizeStyle='mini')
         options = sorted(('Random content', 'Open...'))
-        tab.contentSelection = PopUpButton((pad, y, -pad, uiH), options, callback=self.makeSample,
+        tab.contentSelection = PopUpButton((pad, y, negPad, uiH), options, callback=self.makeSample,
             sizeStyle='small')
         tab.contentSelection.set(0)
         y += uiL
