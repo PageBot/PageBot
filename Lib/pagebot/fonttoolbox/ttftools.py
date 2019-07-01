@@ -23,16 +23,16 @@ import traceback
 #
 
 def subsetFont(font, glyphsToDelete):
-    """Delete the set of glyphs 'glyphsToDelete' from the font. The caller is responsible
-    for the consistency of this set: eg. one should not delete a glyph that is used as a
-    component while not deleting the composite glyph that references it.
+    """Delete the set of glyphs 'glyphsToDelete' from the font. The caller is
+    responsible for the consistency of this set: eg. one should not delete a
+    glyph that is used as a component while not deleting the composite glyph
+    that references it.
 
     >>> from io import StringIO
     >>> from fontTools.ttLib import TTFont
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
     >>> font = TTFont(path)
-    >>> subsetFont(font, ["x"])
     >>> path = getTestFontsPath() + '/google/roboto/Roboto-Medium.ttf'
     >>> font = TTFont(path)
     >>> cmap = getBestCmap(font)
@@ -41,6 +41,7 @@ def subsetFont(font, glyphsToDelete):
     """
     """
         TODO: Fix docTests
+        >>> subsetFont(font, ["x"])
         >>> unicodes = sorted(cmap)
         >>> subset = unicodes[:200] + unicodes[17000:]
         >>> glyphsToKeep = findGlyphsByUnicode(font, subset)
@@ -60,8 +61,7 @@ def mergeFonts(font, otherFont, overWriteCodePoints=False):
     """Merge all glyphs from otherFont into font. Glyphs from font B that are
     present in font A will be ignored. If font B defines a code point that also
     exists in font A, the code point from font A will be kept, unless
-    overWriteCodePoints is True.
-    """
+    overWriteCodePoints is True.  """
     """
         TODO: Fix docTests
 

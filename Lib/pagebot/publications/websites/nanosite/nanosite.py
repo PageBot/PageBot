@@ -18,7 +18,7 @@
 #
 import os, shutil
 
-from pagebot.publications.website.basesite import BaseSite
+from pagebot.publications.websites.basesite import BaseSite
 from pagebot.toolbox.units import pt
 from pagebot.elements.views import MampView
 from pagebot.constants import *
