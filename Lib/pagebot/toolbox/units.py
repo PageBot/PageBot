@@ -48,7 +48,7 @@ U = 6 # Some basic unit grid to use as default.
 EM_FONT_SIZE = U*2 # 12pt
 BASELINE_GRID = U*2+3 # 2.5U = 15pt
 
-from pagebot.toolbox.transformer import *
+from pagebot.toolbox.transformer import asNumberOrNone
 
 # P O I N T
 

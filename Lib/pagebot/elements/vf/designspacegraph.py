@@ -14,7 +14,7 @@
 #
 #     designspacegraph.py
 #
-from pagebot.elements import Rect
+from pagebot.elements.pbrect import Rect
 from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.color import blackColor
 from pagebot.fonttoolbox.objects.font import findFont
@@ -23,8 +23,8 @@ DATA_PATH = 'code/2-masters-1-axis.json'
 #DATA_PATH = 'code/miserables.json'
 
 class DesignSpace(Rect):
-    """Generic base DesignSpace Element class to show the content and topology of a 
-    VF-designspace. Reading can be done from a standard design space file of from 
+    """Generic base DesignSpace Element class to show the content and topology of a
+    VF-designspace. Reading can be done from a standard design space file of from
     a Variable Font.
     """
 
@@ -37,7 +37,7 @@ class DesignSpaceGraph(DesignSpace):
     DEFAULT_H = pt(400)
 
     def __init__(self, font=None, path=None, w=None, h=None, charge=None, radius=None,
-          labelX=None, labelY=None, distanceMin=None, distanceMax=None, 
+          labelX=None, labelY=None, distanceMin=None, distanceMax=None,
           stroke=None, strokeWidth=None, textFill=None,
           strokeNode=None, strokeWidthNode=None, labelSize=None, labelFont=None, **kwargs):
         """
@@ -51,7 +51,7 @@ class DesignSpaceGraph(DesignSpace):
         self.vfFont = font
         self.vfPath = path
 
-        # Try to guess the charge, distanceMin and distanceMax fom the size of 
+        # Try to guess the charge, distanceMin and distanceMax fom the size of
         # the element and the amount of axes and masters (if the values are
         # not supplied as element attributes.)
         # TODO, make some calculations on the charge (negative)
@@ -60,7 +60,7 @@ class DesignSpaceGraph(DesignSpace):
         self.distanceMin = self.distanceMax/2
 
         # Radius property of the master circles, make sure it exists.
-        self.radius = self.radius or radius or pt(10) 
+        self.radius = self.radius or radius or pt(10)
         self.labelX = labelX or self.radius + 3 # Distance of label to side of the circle
         self.labelY = labelY or pt(3) # Vertical offset of labels to match circle position middle
 
@@ -110,11 +110,11 @@ text {
   font-size: %(labelSize)spx;
   color: #%(labelColor)s;
 }
-        """ % dict(stroke=self.stroke.hex, strokeOpacity=1-self.stroke.a, strokeWidth=upt(self.strokeWidth), 
-          strokeNode=self.strokeNode.hex, strokeOpacityNode=1-self.strokeNode.a, 
-          strokeWidthNode=upt(self.strokeWidthNode), labelFontName=self.labelFontName, 
+        """ % dict(stroke=self.stroke.hex, strokeOpacity=1-self.stroke.a, strokeWidth=upt(self.strokeWidth),
+          strokeNode=self.strokeNode.hex, strokeOpacityNode=1-self.strokeNode.a,
+          strokeWidthNode=upt(self.strokeWidthNode), labelFontName=self.labelFontName,
           labelColor=self.labelColor, labelSize=upt(self.labelSize)))
-        
+
         b.addJs("""
 
 var svg = d3.select("svg"),
@@ -146,7 +146,7 @@ d3.json("%(path)s", function(error, graph) {
     .selectAll("g")
     .data(graph.nodes)
     .enter().append("g")
-    
+
   var circles = node.append("circle")
       .attr("r", %(radius)d)
       .attr("fill", function(d) { return color(d.group); }) /* TODO: Connect to PageBot theme colors */
@@ -205,8 +205,8 @@ function dragended(d) {
 
 
         """ % dict(path=self.vfPath or DATA_PATH, charge=self.charge, radius=self.radius,
-          labelX=upt(self.labelX), labelY=upt(self.labelY), 
-          distanceMin=round(upt(self.distanceMin)), 
+          labelX=upt(self.labelX), labelY=upt(self.labelY),
+          distanceMin=round(upt(self.distanceMin)),
           distanceMax=round(upt(self.distanceMax))))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style="width:100%; height=400px; padding:auto")
         b.svg(width=upt(self.w), height=upt(self.h))

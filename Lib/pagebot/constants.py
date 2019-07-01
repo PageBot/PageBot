@@ -190,13 +190,13 @@ BlurbMagazine = inch(8.5, 11) # Premium & economy
 
 # https://www.newspaperclub.com/create/artwork-guidelines
 # Recommended minimum margins: mm(10)
-NewsPaperClub_BroadSheet = mm(350, 500) 
+NewsPaperClub_BroadSheet = mm(350, 500)
 NewsPaperClub_BroadSheet_Spread = mm(2*350, 500)
 # Recommended minimum margins: mm(15)
-NewsPaperClub_Tabloid = mm(289, 380) 
+NewsPaperClub_Tabloid = mm(289, 380)
 NewsPaperClub_Tabloid_Spread = mm(2*289, 380)
 # Recommended bleed: mm(5)
-NewsPaperClub_Mini = mm(180, 260) 
+NewsPaperClub_Mini = mm(180, 260)
 NewsPaperClub_Mini_Spread = mm(2*180, 260)
 
 # www.overnightprints.com
@@ -619,10 +619,10 @@ LEFT_FOLD = LEFT+'Fold'
 RIGHT_FOLD = RIGHT+'Fold'
 # Flags to indicate where crop marks and registration marks should be placed, their size and position
 # e.showCropMarks = False
-DEFAULT_CROPMARKS = {TOP, RIGHT, BOTTOM, LEFT, TOP_FOLD, BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD} 
+DEFAULT_CROPMARKS = {TOP, RIGHT, BOTTOM, LEFT, TOP_FOLD, BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD}
 # See constants for the options to direct the side, position and size of the registration marks.
 # e.showRegistrationMarks = False
-DEFAULT_REGISTRATIONMARKS = {TOP, RIGHT, BOTTOM, LEFT}  
+DEFAULT_REGISTRATIONMARKS = {TOP, RIGHT, BOTTOM, LEFT}
 
 DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
 
@@ -671,7 +671,7 @@ FILETYPE_MD = 'md' # Markdown file extension
 DEFAULT_FILETYPE = FILETYPE_PDF
 
 # Commonly used groups of file types.
-IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG, 
+IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG,
     FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF, FILETYPE_BMP, FILETYPE_ICNS)
 MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
@@ -1223,7 +1223,7 @@ SPOT_RGB = {
     'warmgray8u': (146, 137, 129),
     'warmgray10c': (121, 110, 101),
     'warmgray10u': (130, 124, 120),
-    'warmgray11c': (110, 98, 89), 
+    'warmgray11c': (110, 98, 89),
     'warmgray11u': (125, 119, 125),
 
     'processblackc': (39, 37, 31),
@@ -1234,7 +1234,7 @@ SPOT_RGB = {
     'rubinered': (206, 0, 88),
     'rhodamineredu': (228, 76, 154),
     'yellow': (254, 221, 0),
-    
+
     'red032c': (239, 51, 64),
     'red032u': (246, 80, 88),
 

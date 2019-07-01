@@ -13,7 +13,7 @@
 #
 #     codeblock.py
 #
-from pagebot.elements import TextBox
+from pagebot.elements.pbtextbox import TextBox
 from pagebot.toolbox.color import noColor, color
 
 class CodeBlock(TextBox):
@@ -21,7 +21,7 @@ class CodeBlock(TextBox):
     DEFAULT_CODE_STYLE = dict(font='Courier', fontSize=9, textFill=0.2, textStroke=noColor)
 
     isTextBox = False # It's not a normal text box, even while inheriting functionnally from TextBox
-    
+
     def __init__(self, code, tryExcept=True, fill=None, style=None, **kwargs):
         if fill is None:
             fill = color(0.9)
@@ -43,7 +43,7 @@ class CodeBlock(TextBox):
             self.run()
         else:
             TextBox.build(self, view, origin, drawElements, **kwargs)
-        
+
     def run(self, targets=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,
         made by Markdown with
