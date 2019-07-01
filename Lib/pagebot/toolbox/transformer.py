@@ -499,7 +499,7 @@ def path2ParentPath(path):
     return '/'.join(path.split('/')[:-1])
 
 def path2Url(path):
-    """Convert the path to a valid url, by removing spaces, other inconvenient 
+    """Convert the path to a valid url, by removing spaces, other inconvenient
     characers and set all to lowercase.
 
     >>> path2Url('a/b/d/e/f/g hhh.html')
@@ -636,6 +636,7 @@ path2GlyphIdName = path2FontName
 
 styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
 
+'''
 def path2StyleNameParts(pathOrName, extensions=None):
     """Answers the fileName or name as set of unique parts that can be checked
     for as style e.g. by the abbreviated style names in style.py.
@@ -647,7 +648,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     """
 
     """
-    TODO: cons.STYLE_REPLACEMENTS is not longer there. 
+    TODO: cons.STYLE_REPLACEMENTS is not longer there.
     TODO: Make compatible with pagebot.constants
     >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo', ['ufo']))
     ['Agency', 'Compressed', 'FB']
@@ -666,6 +667,7 @@ def path2StyleNameParts(pathOrName, extensions=None):
     parts = set(styleNameParts.findall(fontName))
     parts.remove('')
     return parts
+'''
 
 def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
@@ -820,7 +822,7 @@ def list2Json(d):
     return json.dumps(d, indent=4)
 
 def asNormalizedJSON(value):
-    """Answer the value as normalized object, where all values are converted into 
+    """Answer the value as normalized object, where all values are converted into
     base objects, dict, list and string.
 
     >>> src = dict(aa='bb', cc=[1,2,3,4], dd=dict(ee=123, ff='ABC'), gg={3,4,5,5,6,6,7,7})
