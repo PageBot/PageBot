@@ -18,7 +18,7 @@
 #
 import os, shutil
 
-from pagebot.publications.web.basesite import BaseSite
+from pagebot.publications.website.basesite import BaseSite
 from pagebot.toolbox.units import pt
 from pagebot.elements.views import MampView
 from pagebot.constants import *
@@ -52,7 +52,7 @@ class NanoSite(BaseSite):
         from doc to let all Navigation elements build the menu for each page.
         """
         for pages in doc.pages.values():
-            for page in pages:  
+            for page in pages:
                 navigation = page.select('Navigation')
                 if navigation is not None:
                     navigation.pageTree = doc.getPageTree() # Get a fresh one for each page
@@ -64,7 +64,7 @@ class NanoSite(BaseSite):
 
         default = Template('Default', context=doc.context)
         wrapper = Wrapper(parent=default) # Create main page wrapper
-        
+
         header = Header(parent=wrapper) # Header to hold logo and navigation elements
 
         #logoString = doc.context.newString(SITE_NAME)
@@ -77,7 +77,7 @@ class NanoSite(BaseSite):
 
         # Just make a simple content container in this template.
         # Rest of content is created upon request in MarkDown
-        Content(parent=wrapper) 
+        Content(parent=wrapper)
 
         # Default Footer at bottom of every page.
         Footer(parent=wrapper)
@@ -100,14 +100,14 @@ class NanoSite(BaseSite):
 
         doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID, autoPages=1, defaultImageWidth=defaultImageWidth,
             name=name or self.name, title=title or self.title, theme=theme, **kwargs)
-        
+
         # Write the CSS, set the view css paths and translate cssPy into css source file.
         view = doc.view
         view.resourcePaths = resourcePaths or ['css']
         view.cssUrls = cssUrls or ['css/normalized.css']
 
         if cssPy is not None:
-            # Generate css by mapping theme.mood on cssPy 
+            # Generate css by mapping theme.mood on cssPy
             cssPath = 'css/nanostyle_py.css'
             view.cssUrls.append(cssPath)
             doc.context.b.writeCss(cssPath, cssPy % doc.theme.mood)
@@ -115,17 +115,17 @@ class NanoSite(BaseSite):
         # Make the all pages and elements of the site as empty containers, that then can
         # be selected and filled by the composer, using the galley content.
         # Of the MarkDown text can decide to create new elements inside selected elements.
-        template = self.makeTemplate(doc)    
+        template = self.makeTemplate(doc)
 
         page = doc[1]
         page.applyTemplate(template) # Copy element tree to page.
 
-        # By default, the typesetter produces a single Galley with content and code blocks.    
+        # By default, the typesetter produces a single Galley with content and code blocks.
         t = Typesetter(doc.context)
         for srcPath in srcPaths:
             galley = t.typesetFile(srcPath)
-        
-        # Create a Composer for this document, then create pages and fill content. 
+
+        # Create a Composer for this document, then create pages and fill content.
         composer = Composer(doc)
 
         # The composer executes the embedded Python code blocks that indicate where content should go.
@@ -139,7 +139,7 @@ class NanoSite(BaseSite):
             # In case there are any errors, show them.
             if targets['errors']:
                 print('Errors\n', '\n'.join(targets['errors']))
-        
+
         # Find the navigation elements and fill them, now we know all the pages.
         self.makeNavigation(doc)
 
@@ -151,7 +151,7 @@ class NanoSite(BaseSite):
 
         view = doc.view
         MAMP_PATH = '/Applications/MAMP/htdocs/'
-        siteName =  doc.name.replace(' ', '_')  
+        siteName =  doc.name.replace(' ', '_')
         filePath = MAMP_PATH + siteName
         if verbose:
             print('Site path: %s' % MAMP_PATH)

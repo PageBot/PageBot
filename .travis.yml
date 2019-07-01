@@ -135,7 +135,15 @@ script:
 - python3 Lib/pagebot/fonttoolbox/otlTools.py
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
-- python3 Lib/pagebot/publications/typespecimen.py
+- python3 Lib/pagebot/publications/typespecimens/__init__.py
+- python3 Lib/pagebot/publications/typespecimens/basetypespecimen.py
+- python3 Lib/pagebot/publications/typespecimens/simplespecimen.py
+- python3 Lib/pagebot/publications/typespecimens/specimens.py
+- python3 Lib/pagebot/publications/typespecimens/typespecimen.py
+- python3 Lib/pagebot/publications/typespecimens/proofing/__init__.py
+- python3 Lib/pagebot/publications/typespecimens/proofing/pagewide.py
+- python3 Lib/pagebot/publications/typespecimens/proofing/proof.py
+- python3 Lib/pagebot/publications/typespecimens/proofing/tx.py
 - python3 Lib/pagebot/publications/websites/nanosite/nanosite.py
 - python3 Lib/pagebot/style.py
 - python3 Lib/pagebot/stylelib.py
