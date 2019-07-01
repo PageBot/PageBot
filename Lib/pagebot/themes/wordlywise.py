@@ -14,7 +14,7 @@
 #     wordlywise.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot
+from pagebot.toolbox.color import spotColor
 
 class WordlyWise(BaseTheme):
     u"""The WordlyWise theme is ...
@@ -27,12 +27,12 @@ class WordlyWise(BaseTheme):
 
     NAME = 'Wordly Wise'
     BASE_COLORS = dict(
-        base0=spot('warmgray8u'),
-        base1=spot(286),
-        base2=spot(265),
-        base3=spot(258),
-        base4=spot(278), # Supporter1
-        base5=spot(270),
+        base0=spotColor('warmgray8u'),
+        base1=spotColor(286),
+        base2=spotColor(265),
+        base3=spotColor(258),
+        base4=spotColor(278), # Supporter1
+        base5=spotColor(270),
     )
 
 if __name__ == "__main__":

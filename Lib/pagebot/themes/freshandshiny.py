@@ -14,7 +14,7 @@
 #     freshandshiny.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot, rgb
+from pagebot.toolbox.color import spotColor, rgbColor
 
 class FreshAndShiny(BaseTheme):
     u"""The FreshAndShiny theme is ...
@@ -28,12 +28,12 @@ class FreshAndShiny(BaseTheme):
     """
     NAME = 'Fresh and Shiny'
     BASE_COLORS = dict(
-        base0=spot('coolgray11u'),
-        base1=spot('rhodamineredu'),
-        base2=spot(265),
-        base3=spot(3005),
-        base4=spot(375), # Supporter1
-        base5=rgb('red'),#spot('red032u'),
+        base0=spotColor('coolgray11u'),
+        base1=spotColor('rhodamineredu'),
+        base2=spotColor(265),
+        base3=spotColor(3005),
+        base4=spotColor(375), # Supporter1
+        base5=rgbColor('red'),#spotColor('red032u'),
     )
 
 if __name__ == "__main__":

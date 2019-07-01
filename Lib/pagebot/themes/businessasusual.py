@@ -14,7 +14,7 @@
 #     businesasusual.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot
+from pagebot.toolbox.color import spotColor
 
 class BusinessAsUsual(BaseTheme):
     u"""The BusinessAsUsual theme is a generic “woody cool gray” theme, with settings that
@@ -23,12 +23,12 @@ class BusinessAsUsual(BaseTheme):
 
     NAME = 'Business as Usual'
     BASE_COLORS = dict(
-        base0=spot('blacku'),
-        base1=spot(404),
-        base2=spot(541),
-        base3=spot(542),
-        base4=spot(139), # Supporter1
-        base5=spot(877),
+        base0=spotColor('blacku'),
+        base1=spotColor(404),
+        base2=spotColor(541),
+        base3=spotColor(542),
+        base4=spotColor(139), # Supporter1
+        base5=spotColor(877),
     )
 
 if __name__ == "__main__":

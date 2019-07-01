@@ -14,7 +14,7 @@
 #     intothewoods.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot
+from pagebot.toolbox.color import spotColor
 
 class IntoTheWoods(BaseTheme):
     u"""The IntoTheWoods theme is ...
@@ -24,14 +24,14 @@ class IntoTheWoods(BaseTheme):
 
     NAME = 'Into the Woods'
     BASE_COLORS = dict(
-        base0=spot('gray10u'),
-        base1=spot(348),
-        base2=spot(376),
-        base3=spot(381),
-        base4=spot(392), # Supporter1
-        base5=spot(398),
+        base0=spotColor('gray10u'),
+        base1=spotColor(348),
+        base2=spotColor(376),
+        base3=spotColor(381),
+        base4=spotColor(392), # Supporter1
+        base5=spotColor(398),
     )
-    
+
 if __name__ == "__main__":
     import doctest
     import sys

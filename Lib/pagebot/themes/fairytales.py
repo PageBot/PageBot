@@ -14,19 +14,19 @@
 #     fairytales.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot
+from pagebot.toolbox.color import spotColor
 
 class FairyTales(BaseTheme):
     u"""The FairyTales theme is ..."""
 
     NAME = 'Fairy Tales'
     BASE_COLORS = dict(
-        base0=spot(425),
-        base1=spot(237),
-        base2=spot(278),
-        base3=spot(373),
-        base4=spot(422), # Supporter1
-        base5=spot(473),
+        base0=spotColor(425),
+        base1=spotColor(237),
+        base2=spotColor(278),
+        base3=spotColor(373),
+        base4=spotColor(422), # Supporter1
+        base5=spotColor(473),
     )
 
 if __name__ == "__main__":

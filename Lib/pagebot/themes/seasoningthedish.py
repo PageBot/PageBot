@@ -14,19 +14,19 @@
 #     seasoningthedish.py
 #
 from pagebot.themes.basetheme import BaseTheme
-from pagebot.toolbox.color import spot
+from pagebot.toolbox.color import spotColor
 
 class SeasoningTheDish(BaseTheme):
     u"""The SeasoningTheDish theme is ..."""
 
     NAME = 'Seasoning the Dish'
     BASE_COLORS = dict(
-        base0=spot(412),
-        base1=spot(214),
-        base2=spot(369),
-        base3=spot(389),
-        base4=spot(401), # Supporter1
-        base5=spot(103),
+        base0=spotColor(412),
+        base1=spotColor(214),
+        base2=spotColor(369),
+        base3=spotColor(389),
+        base4=spotColor(401), # Supporter1
+        base5=spotColor(103),
     )
 
 if __name__ == "__main__":
