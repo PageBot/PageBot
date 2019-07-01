@@ -15,7 +15,7 @@
 from random import choice
 
 from pagebot.toolbox.units import pt
-from pagebot.toolbox.color import spot, rgb, whiteColor, blackColor, grayColor
+from pagebot.toolbox.color import spotColor, rgbColor, whiteColor, blackColor, grayColor
 
 class Palette:
     """A theme Palette instance holds a limited set of base colors, and from there
@@ -28,7 +28,7 @@ class Palette:
     Color(r=0.5, g=0.5, b=0.5)
     >>> p.dark5.hex
     '595959'
-    >>> p.base1  
+    >>> p.base1
     Color(r=0.5, g=0.5, b=0.5)
     """
     NUM_BASE = 6 # $ base and 2 supporters
@@ -37,8 +37,8 @@ class Palette:
         black=blackColor,
         gray=BASE_COLOR,
         white=whiteColor,
-        background=rgb('yellow'), # Safe light text and photo background
-        logo=spot(165),
+        background=rgbColor('yellow'), # Safe light text and photo background
+        logo=spotColor(165),
         # Base colors
         base0=BASE_COLOR.darker(0.75),
         base1=BASE_COLOR,
@@ -118,7 +118,7 @@ class Palette:
 
     def __len__(self):
         return len(self.colorNames)
-    
+
     def get(self, colorName):
         """Interpret the name, and try to match/construct a color based on the recipe.
         """
@@ -131,7 +131,7 @@ class Mood:
     """
     # Predefined styles
     IDS = ('body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'a', 'body', 'page',
-        'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu', 
+        'p', 'li', 'div', 'banner', 'intro', 'logo', 'hr', 'group', 'menu',
         'main', 'side')
     COLORS = ('black', 'gray', 'white', 'background', 'logoLight', 'logo', 'logoDark',
         'lightest0', 'light0', 'lighter0', 'base0', 'darker0', 'dark0', 'darkest0',
@@ -146,7 +146,7 @@ class Mood:
         )
     UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin')
     NAMES = ('font',)
-    
+
     def __init__(self, name, styles, palette):
         self.name = name
         self.palette = palette
@@ -158,7 +158,7 @@ class Mood:
                     value = palette.get(value)
                     keyValue = value.hex
                 else:
-                    keyValue = value 
+                    keyValue = value
                 self.attributes['%s.%s' % (styleName, attrName)] = keyValue # Key value is hex color
                 setattr(self, '%s_%s' % (styleName, attrName), value) # Attr value is origina value object
         # Set all colors as separate entries too, do they can be referred to, ignoring the mood.
@@ -167,13 +167,13 @@ class Mood:
             keyValue = value.hex
             self.attributes[colorName] = keyValue # E.g. mood['light0'] answers "0E0D0F"
             setattr(self, colorName, value) # E.g. mood.light0 answers Color instsance.
-    
+
     def __getitem__(self, attrName):
         return self.attributes[attrName]
 
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__, self.name)
-        
+
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
@@ -202,18 +202,18 @@ class BaseTheme:
     >>> theme.mood['p.hover'], theme.mood.p_hover # Both access by key and by attribute syntax work
     ('DFDFDF', Color(r=0.875, g=0.875, b=0.875))
     """
-    def DEFAULT_H_COLORS_NORMAL(c): 
+    def DEFAULT_H_COLORS_NORMAL(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
-            color='darkest%d'%c, bgcolor='white', 
+            color='darkest%d'%c, bgcolor='white',
             diapcolor='lightest%d'%c, diapbgcolor='black',
             link='darker%d'%c, hover='dark%d'%c,
             diaplink='lightest%d'%c, diaphover='lighter%d'%c)
-    
+
     def DEFAULT_MENU_NORMAL(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
-            color='darkest%d'%c, bgcolor='lightest%d'%c, 
+            color='darkest%d'%c, bgcolor='lightest%d'%c,
             diapcolor='lightest%d'%c, diapbgcolor='dark%d'%c,
             link='darkest%d'%c, hover='dark%d'%c, bghover='lightest%d'%c,
             diaplink='lightest%d'%c, diaphover='lighter%d'%c,
@@ -239,9 +239,9 @@ class BaseTheme:
         mobilemenu0=DEFAULT_MENU_NORMAL(0),
         hr0=dict(color='darker0'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
-        intro0=dict(color='light0', bgcolor='dark0', # .introduction h1 
+        intro0=dict(color='light0', bgcolor='dark0', # .introduction h1
             link='light0', hover='darker0'), # .introduciton h1 a
-        
+
         # Base 1
         menu1=DEFAULT_MENU_NORMAL(1),
         mobilemenu1=DEFAULT_MENU_NORMAL(1),
@@ -249,9 +249,9 @@ class BaseTheme:
         hr1=dict(color='darker1'), # <hr> Horizontal ruler color by index
         banner=dict(color='base1', bgcolor='white'),
         # Introduction default is base1
-        intro=dict(color='lightest1', bgcolor='dark1', # .introduction h1 
+        intro=dict(color='lightest1', bgcolor='dark1', # .introduction h1
             link='light1', hover='lighter1'), # .introduciton h1 a
-        intro1=dict(color='lightest1', bgcolor='dark1', # .introduction h1 
+        intro1=dict(color='lightest1', bgcolor='dark1', # .introduction h1
             link='light1', hover='lighter1'), # .introduciton h1 a
 
         group=dict(color='black', bgcolor='light1',
@@ -272,7 +272,7 @@ class BaseTheme:
             link='dark2', hover='darker2',
             diaplink='light2', hoverlink='lightest2'),
         # Introduction default is base1
-        intro2=dict(color='lightest2', bgcolor='dark2', # .introduction h1 
+        intro2=dict(color='lightest2', bgcolor='dark2', # .introduction h1
             link='light2', hover='lighter2'), # .introduciton h1 a
 
         # Base 3
@@ -282,7 +282,7 @@ class BaseTheme:
         side=dict(color='black', bgcolor='white',
             padding=pt(12), link='dark3', hover='darkest3'),
         # Introduction default is base1
-        intro3=dict(color='lightest3', bgcolor='dark3', # .introduction h1 
+        intro3=dict(color='lightest3', bgcolor='dark3', # .introduction h1
             link='light3', hover='lighter3'), # .introduciton h1 a
 
         # Base 4 (supporting color)
@@ -290,7 +290,7 @@ class BaseTheme:
         mobilemenu4=DEFAULT_MENU_NORMAL(4),
         hr4=dict(color='darker4'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
-        intro4=dict(color='lightest4', bgcolor='dark4', # .introduction h1 
+        intro4=dict(color='lightest4', bgcolor='dark4', # .introduction h1
             link='light4', hover='lighter4'), # .introduciton h1 a
 
         # Base 5 (supporting color)
@@ -298,12 +298,12 @@ class BaseTheme:
         mobilemenu5=DEFAULT_MENU_NORMAL(5),
         hr5=dict(color='darker5'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
-        intro5=dict(color='lightest5', bgcolor='dark5', # .introduction h1 
+        intro5=dict(color='lightest5', bgcolor='dark5', # .introduction h1
             link='light5', hover='lighter5'), # .introduciton h1 a
 
         # Functional
-        feature=dict(hed='darkest0', deck='darker1', 
-            subhead='dark2', byline='darkest0', 
+        feature=dict(hed='darkest0', deck='darker1',
+            subhead='dark2', byline='darkest0',
             text='darkest0', support='darkest4',
             shadow='black',
             front='lightest0', middle='base0', back='darkest0'),
@@ -339,7 +339,7 @@ class BaseTheme:
     def DEFAULT_H_COLORS_DARK(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
-            color='lightest%d'%c, bgcolor='black', 
+            color='lightest%d'%c, bgcolor='black',
             diapcolor='darkest%d'%c, diapbgcolor='white',
             link='lighter%d'%c, hover='light%d'%c,
             diaplink='darkest%d'%c, diaphover='dark%d'%c)
@@ -347,7 +347,7 @@ class BaseTheme:
     def DEFAULT_MENU_DARK(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
-            color='lightest%d'%c, bgcolor='black', 
+            color='lightest%d'%c, bgcolor='black',
             diapcolor='darkest%d'%c, diapbgcolor='white',
             link='lightest%d'%c, hover='lighter%d'%c, bghover='darkest%d'%c,
             diaplink='darkest%d'%c, diaphover='dark%d'%c,
@@ -392,7 +392,7 @@ class BaseTheme:
             diapcolor='dark1', diapbgcolor='white'),
         collection=dict(color='black', bgcolor='white',
             diapcolor='white', diapbgcolor='dark1'),
-        
+
         # Base 2
         menu2=DEFAULT_MENU_DARK(2),
         mobilemenu2=DEFAULT_MENU_DARK(2),
@@ -436,8 +436,8 @@ class BaseTheme:
             link='dark5', hover='darker5'), # .introduction h1 a
 
         # Functional
-        feature=dict(hed='lightest0', deck='lighter1', 
-            subhead='light2', byline='lightest0', 
+        feature=dict(hed='lightest0', deck='lighter1',
+            subhead='light2', byline='lightest0',
             text='lightest0', support='lightest4',
             shadow='black',
             front='darkest0', middle='base0', back='lightest0'),
