@@ -1131,10 +1131,10 @@ class BaseContext(AbstractDrawBotContext):
         return sorted(intersections)
 
     def getFlattenedPath(self, path=None):
-        pass
+        raise NotImplementedError
 
     def getFlattenedContours(self, path=None):
-        pass
+        raise NotImplementedError
 
     # Export.
 

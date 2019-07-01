@@ -666,7 +666,7 @@ class InDesignContext(BaseContext):
 
         """
         """Ignore for now in this context."""
-        return None
+        pass
         #return self.b.ImageObject(path)
 
     def scale(self, sx=1, sy=None, center=(0, 0)):

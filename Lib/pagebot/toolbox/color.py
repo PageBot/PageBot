@@ -1116,16 +1116,20 @@ magentaColor = color(c=0, m=1, y=0, k=0)
 cyanColor = color(c=1, m=0, y=0, k=0)
 registrationColor = color(cmyk=1) # All on, for registration/cropmarks usage
 
-def rgb(r, g=None, b=None, rgb=None, name=None):
+# NOTE: Needed to be renamed, else Color class has a naming conflict:
+#
+# W0143: Comparing against a callable, did you omit the parenthesis? (comparison-with-callable)
+
+def rgbColor(r, g=None, b=None, rgb=None, name=None):
     return color(r=r, g=g, b=b, name=name)
 
-def spot(spot):
+def spotColor(spot):
     return color(spot=spot)
 
-def cmyk(c, m=None, y=None, k=None):
+def cmykColor(c, m=None, y=None, k=None):
     return color(c=c, m=m, y=y, k=k)
 
-def ral(ral):
+def ralColor(ral):
     return color(ral=ral)
 
 if __name__ == "__main__":
