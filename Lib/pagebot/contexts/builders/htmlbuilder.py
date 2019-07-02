@@ -20,7 +20,7 @@ try:
     import sass
 except:
     pass
-    
+
 from pagebot.contexts.builders.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
@@ -352,13 +352,13 @@ table {
         """Clearing the JS-output storage in the page. Should be called for every page
         when exporting a site, or else the JS will cumulate from precious pages.
         """
-        self._jsOut = [] 
+        self._jsOut = []
         self._jsNames = set() # Keep optional js chunck names, so avoid double output.
 
     def addJs(self, js, name=None):
         """Add js to output, if name is None or optional name is not already in self._jsNames.
         Otherwise skip export, to avoid JS chunks to double in the output. This is used
-        to avoid doubling JS chunks if multiple elements of the same type are in one page.""" 
+        to avoid doubling JS chunks if multiple elements of the same type are in one page."""
         assert isinstance(js, str), ('Added Javascript should be of type str "%s"' % js)
         if name is None or not name in self._jsNames:
             self._jsOut.append(js)
@@ -585,7 +585,7 @@ table {
             assert isinstance(html.s, str)
             html = html.s # Get the collected html from the BabelString.
         except AttributeError:
-            
+
             html = str(html) # Make sure it is a string
         self._htmlOut.append(html)
 
@@ -621,7 +621,7 @@ table {
 
     def clearCss(self):
         """
-        We can safely clear the CSS, because the local CSS is not intended to 
+        We can safely clear the CSS, because the local CSS is not intended to
         collect all for the entire site. THis is just for local additions in the
         page. This is likely to be done by Page elements, starting to render a new page.
         The content of previous pages then should be cleared."""
@@ -1566,7 +1566,7 @@ table {
         self.iframe(src, **args)
         self._iframe()
 
-        
+
     def embed(self, **args):
         """FIXME: Does not seem to be defined in w3schools??
         self.embed(src='./_images/amovie.qt')

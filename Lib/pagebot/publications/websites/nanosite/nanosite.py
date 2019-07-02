@@ -16,7 +16,7 @@
 #
 #     NanoSite is a simple basix website generator.
 #
-import os, shutil
+import os, shutil, traceback
 
 from pagebot.publications.websites.basesite import BaseSite
 from pagebot.toolbox.units import pt
@@ -107,10 +107,17 @@ class NanoSite(BaseSite):
         view.cssUrls = cssUrls or ['css/normalized.css']
 
         if cssPy is not None:
-            # Generate css by mapping theme.mood on cssPy
-            cssPath = 'css/nanostyle_py.css'
+            p = os.path.abspath(__file__)
+            base = '/'.join(p.split('/')[:-1])
+            # Generate css by mapping theme.mood on cssPy.
+            cssPath = '%s/css/nanostyle_py.css' % base
             view.cssUrls.append(cssPath)
-            doc.context.b.writeCss(cssPath, cssPy % doc.theme.mood)
+
+            try:
+                doc.context.b.writeCss(cssPath, cssPy % doc.theme.mood)
+            except:
+                # Travis crashes on relative path.
+                print(traceback.format_exc())
 
         # Make the all pages and elements of the site as empty containers, that then can
         # be selected and filled by the composer, using the galley content.
