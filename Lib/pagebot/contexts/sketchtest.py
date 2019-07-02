@@ -26,7 +26,7 @@ import os
 import zipfile
 import json
 import re
-import io
+#import io
 
 from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4, TOP, INLINE, ONLINE, OUTLINE
@@ -352,6 +352,7 @@ class SketchContext(BaseContext):
         }
         """
         #print(sketchRulerData)
+        # TODO: return element.
 
     POINT_PATTERN = re.compile('\{([0-9\.\-]*), ([0-9\.\-]*)\}')
     # type SketchPositionString = string // '{0.5, 0.67135115527602085}'
@@ -686,8 +687,8 @@ class SketchContext(BaseContext):
         for sketchLayer in sketchArtboard.get('layers', []):
             self._SketchLayer2Element(sketchLayer, e)
         # Rulers and grid
-        hRuler = self._SketchRulerData2Element(sketchArtboard.get('horizontalRulerData'), e)
-        vRuler = self._SketchRulerData2Element(sketchArtboard.get('verticalRulerData'), e)
+        #hRuler = self._SketchRulerData2Element(sketchArtboard.get('horizontalRulerData'), e)
+        #vRuler = self._SketchRulerData2Element(sketchArtboard.get('verticalRulerData'), e)
         #print(hRuler)
         #print(vRuler)
         e.gridX, e.gridY = self._SketchLayoutGrid2Element(sketchArtboard.get('layout'), e)
@@ -958,8 +959,8 @@ class SketchContext(BaseContext):
             self._SketchLayer2Element(sketchLayer, page)
             page = page.next
         # Rulers and grid
-        hRuler = self._SketchRulerData2Element(sketchPage.get('horizontalRulerData'), page)
-        vRuler = self._SketchRulerData2Element(sketchPage.get('verticalRulerData'), page)
+        #hRuler = self._SketchRulerData2Element(sketchPage.get('horizontalRulerData'), page)
+        #vRuler = self._SketchRulerData2Element(sketchPage.get('verticalRulerData'), page)
         #print(hRuler)
         #print(vRuler)
         #print(sketchPage.get('layout'))
