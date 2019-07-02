@@ -233,6 +233,9 @@ class DrawBotContext(BaseContext):
         #return path._path.getNSBezierPath().bezierPathByFlatteningPath()
         return path._path.bezierPathByFlatteningPath()
 
+    def getFlattenedPath(self, path=None):
+        pass
+
     def getFlattenedContours(self, path=None):
         """Answers the flattened Bézier path as  a contour list [contour,
         contour, ...] where contours are lists of point2D() points.

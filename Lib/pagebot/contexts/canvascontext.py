@@ -61,3 +61,12 @@ class CanvasContext(BaseContext):
     def strokeWidth(self, w):
         wpt = upt(w)
         self.b.strokeWidth(wpt)
+
+    def getFlattenedPath(self, path=None):
+        pass
+
+    def getFlattenedContours(self, path=None):
+        pass
+
+    def getGlyphPath(self, glyph, p=None, path=None):
+        pass

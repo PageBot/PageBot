@@ -71,6 +71,8 @@ class PartOfBook(Element):
         # E:164, 4: An attribute defined in pagebot.publications.magazines.glossy.parts line 70 hides this method (method-hidden)
         if compose is not None:
             self.compose = compose # Overwrite the standard composer method if defined.
+        else:
+            self.compose = self.composeFunction
         self.useInToc = useInToc # Flag indicates if this part should be added to the Table of Content.
         self.pages = []
 
@@ -164,7 +166,7 @@ class PartOfBook(Element):
     def getPageNumber(self, page):
         return (0, 0)
 
-    def compose(self, doc, publication):
+    def composeFunction(self, doc, publication):
         """Compose the part into doc. For every element in self.elements that is a page,
         add it to the document. Note that this will alter the e.parent to page.
         It practice it is safer to move the Page instance to become part of the document

@@ -128,7 +128,8 @@ class SvgContext(BaseContext):
         self._drawing.add(rect)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom-left and size (w,h).
+        """Draw an oval in rectangle, where (x, y) is the bottom-left and size
+        (w, h).
 
         >>> from pagebot.toolbox.color import color, blackColor
         >>> path = '_export/SvgContext_oval.svg'
@@ -316,6 +317,15 @@ class SvgContext(BaseContext):
         """Set the frame duration for animated gifs to a number of seconds per
         frame."""
         self._frameDuration = secondsPerFrame
+
+    def getFlattenedPath(self, path=None):
+        pass
+
+    def getFlattenedContours(self, path=None):
+        pass
+
+    def getGlyphPath(self, glyph, p=None, path=None):
+        pass
 
 if __name__ == '__main__':
     import doctest

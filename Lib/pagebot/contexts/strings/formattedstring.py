@@ -187,6 +187,7 @@ class FormattedString:
 
     def clear(self):
         self._attributedString = AppKit.NSMutableAttributedString.alloc().init()
+        self._openTypeFeatures = None
 
     def append(self, txt, **kwargs):
         """

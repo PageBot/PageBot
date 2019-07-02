@@ -71,7 +71,7 @@ class IdmlContext(BaseContext):
         `s` (converted to plain unicode string), using e or style as
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
-        
+
         Ignore for now in this context."""
         return ''
 
@@ -100,5 +100,11 @@ class IdmlContext(BaseContext):
     def saveImage(self, path):
         """Ignore for now in this context."""
 
+    def getFlattenedPath(self, path=None):
+        pass
 
+    def getFlattenedContours(self, path=None):
+        pass
 
+    def getGlyphPath(self, glyph, p=None, path=None):
+        pass

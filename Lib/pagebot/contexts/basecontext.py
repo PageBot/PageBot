@@ -1046,7 +1046,6 @@ class BaseContext(AbstractDrawBotContext):
     def getGlyphPath(self, glyph, p=None, path=None):
         """PageBot function."""
         raise NotImplementedError
-        #return None
 
     def onBlack(self, p, path=None):
         """Answers if the single point (x, y) is on black. For now this only
