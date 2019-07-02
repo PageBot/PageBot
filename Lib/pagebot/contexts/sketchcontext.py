@@ -25,7 +25,7 @@
 from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4
 from pagebot.contexts.basecontext import BaseContext
-#from pagebot.contexts.builders.sketchbuilder import sketchBuilder
+from pagebot.contexts.builders.sketchbuilder import SketchBuilder
 #from pagebot.toolbox.color import color
 #from pagebot.toolbox.units import asNumber, pt
 #from pagebot.toolbox.transformer import path2Dir, path2Extension
@@ -62,6 +62,8 @@ class SketchContext(BaseContext):
         necessary.
 
         """
+        pass
+        '''
         if isinstance(sketchLayer, (SketchArtboard, SketchPage)):
             e.w = artboard.width
             e.h = artboard.height
@@ -75,6 +77,7 @@ class SketchContext(BaseContext):
             for layer in sketchLayer.layers:
                 if isinstance(SketchShapeGroup):
                     self._createElements(layer, newGroup(parent=e))
+        '''
 
     def getDocument(self):
         """Create a new tree of Document/Page/Element instances, interpreting
