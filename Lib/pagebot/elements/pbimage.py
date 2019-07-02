@@ -474,7 +474,6 @@ class Image(Element):
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
         >>> e = Image(path, context=context)
         >>> e.gaussianBlur(12)
-        #>>> e.imo
         """
         if self.imo is None:
             self.imo = self.context.getImageObject(self.path)

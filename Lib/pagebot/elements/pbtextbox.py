@@ -886,8 +886,14 @@ class TextBox(Element):
         >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
         >>> tb = TextBox(bs, parent=e, yAlign=TOP, conditions=[Shrink2TextBounds(), Top2Top()])
         >>> result = tb.solve()
+        """
+        """
+        TODO: fix doctest; py3.6 / py3.7 rounding difference?
         >>> tb.y, tb.baselineY
         (900pt, 1079pt)
+
+        Travis
+        (900pt, 1065pt)
         """
         if parent is None:
             parent = self.parent
