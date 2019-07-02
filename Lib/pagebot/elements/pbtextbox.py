@@ -367,7 +367,7 @@ class TextBox(Element):
 
         if h is None:
             h = self.ph # Padded height
-      
+
         return self.bs.textOverflow(w, h, LEFT)
 
     def _findStyle(self, run):
@@ -401,7 +401,7 @@ class TextBox(Element):
     def _spellCheckWords(self, languages, unknown, minLength):
         """Spellcheck the words of self for the defined list of languages.
         Unknown words are appended to the unknown list.
-    
+
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> e = TextBox('This is an English text', context=context)
@@ -530,7 +530,7 @@ class TextBox(Element):
             tw, th = self.bs.size
         else:
             tw, th = 100, 12 # Some value, otherwise fitting will loop.
-            
+
         xOffset = yOffset = 0
         if self.css('yTextAlign') == MIDDLE:
             yOffset = units(self.h - self.pb - self.pt - th)/2
@@ -740,7 +740,7 @@ class TextBox(Element):
             self.h = self.bs.size[1]
         else:
             self.h = 0
-        
+
     def isShrunkOnTextWidth(self, tolerance=0):
         if self.bs is not None:
             return abs(self.bs.size[0] - self.w) <= tolerance
@@ -749,7 +749,7 @@ class TextBox(Element):
     def shrink2TextWidth(self, tolerance=0):
         """Shrink the box horizontal to fit the horizontal bounding box of the current text.
         This also tests by e.isShrunkOnTextWidth()
-        
+
         >>> from pagebot.contexts import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
@@ -764,7 +764,7 @@ class TextBox(Element):
             self.w = self.bs.size[0]
         else:
             self.w = 0
- 
+
      # Text conditional testers and movers
 
     def getMatchingStyleLine(self, style, index=0):
@@ -774,9 +774,9 @@ class TextBox(Element):
 
         Note that this should be extended to scanning all textRuns,
         as by conicidence there van be a "Bold" style inside main text
-        at the start of a line. 
+        at the start of a line.
         Also it should be testing on cascading values (what is defined
-        in the style?) instead of testing on all 3 parameters. 
+        in the style?) instead of testing on all 3 parameters.
         Also testing on line parameters, such as leading.
         """
         matchingIndex = 0
@@ -784,7 +784,7 @@ class TextBox(Element):
             if not line.textRuns:
                 continue
             textRun = line.textRuns[0]
-            # If this textRun is matching style, then increment the matchIndex. 
+            # If this textRun is matching style, then increment the matchIndex.
             # Answer the line if the index matches.
             if  textRun.font == style.get('font', None) and\
                 upt(textRun.fontSize) == upt(style.get('fontSize', 0)) and\
@@ -817,10 +817,10 @@ class TextBox(Element):
                 self.top += parent.getDistance2Grid(line.y)
 
     def baseline2Grid(self, index=0, gridIndex=None, parent=None):
-        """If gridIndex is defined, then position the index-th line on 
-        gridIndex-th baseline. If gridIndex is None, then round to 
+        """If gridIndex is defined, then position the index-th line on
+        gridIndex-th baseline. If gridIndex is None, then round to
         nearest grid line position.
-   
+
         >>> from pagebot.contexts import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
@@ -833,8 +833,8 @@ class TextBox(Element):
         >>> #tb.y
 
         >>> result = tb.solve()
-        >>> #tb.y 
-        
+        >>> #tb.y
+
         """
         if parent is None:
             parent = self.parent
@@ -863,7 +863,7 @@ class TextBox(Element):
             self.top -= parent.getDistance2Grid(line.y) - parent.baselineGrid
 
     def baselineDown2Grid(self, index=0, parent=None):
-        """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
+        """Move the text box down in vertical direction, so the baseline of self.textLines[index]
         matches the parent grid.
         """
         if parent is None:
@@ -899,14 +899,18 @@ class TextBox(Element):
 
     def _get_baselineY(self):
         return self.getBaselineY(index=0)
+
     def _set_baselineY(self, y):
         self.y += self.baseline - y
+
     baselineY = property(_get_baselineY, _set_baselineY)
 
     def isBaselineOnTop(self, tolerance=0, index=0, parent=None):
         if parent is None:
             parent = self.parent
+
         baselineY = self.getBaselineY(index, parent)
+
         if baselineY is not None:
             return abs(self.top - baselineY) <= tolerance
         return False
@@ -949,13 +953,13 @@ class TextBox(Element):
             line = self.textLines[0]
             capHeight = 0
             for textRun in line.textRuns:
-                capHeight = max(capHeight, textRun.capHeight) # Take the max capHeight of the first line. 
+                capHeight = max(capHeight, textRun.capHeight) # Take the max capHeight of the first line.
             self.top = self.parent.h - self.parent.pt + line.y - capHeight
 
     def capHeight2Bottom(self, index=None, parent=None):
         # TODO: Implement
         pass
-        
+
     def capHeightUp2Grid(self, index=None, parent=None):
         """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
         so the baseline of self.textLines[index] matches the parent grid.
@@ -970,7 +974,7 @@ class TextBox(Element):
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight) + parent.baselineGrid
 
     def capHeightDown2Grid(self, index=0, parent=None):
-        """Move the text box down in vertical direction, so the baseline of self.textLines[index] 
+        """Move the text box down in vertical direction, so the baseline of self.textLines[index]
         matches the parent grid.
         """
         if parent is None:
@@ -999,8 +1003,8 @@ class TextBox(Element):
             line = self.textLines[0]
             xHeight = 0
             for textRun in line.textRuns:
-                xHeight = max(xHeight, textRun.xHeight) # Take the max xHeight of the first line.     
-            print('xHeight2Top', self.parent.h, self.parent.pt, line.y, xHeight)    
+                xHeight = max(xHeight, textRun.xHeight) # Take the max xHeight of the first line.
+            print('xHeight2Top', self.parent.h, self.parent.pt, line.y, xHeight)
             self.top = self.parent.h - self.parent.pt + line.y - xHeight
 
     def xHeight2Bottom(self, index=None, parent=None):
@@ -1008,7 +1012,7 @@ class TextBox(Element):
         pass
 
     def xHeightUp2Grid(self, index=0, parent=None):
-        """Move the text box up, so self.textLines[index].textRuns[0].xHeight 
+        """Move the text box up, so self.textLines[index].textRuns[0].xHeight
         matches the parent grid.
         """
         if parent is None:

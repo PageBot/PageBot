@@ -70,7 +70,8 @@ class PdfLibString(BabelString):
 
     def _set_s(self, s):
         if isinstance(s, str):
-            s = s # TODO: Change to Flat equivalent of FormattedString.
+            # TODO: Change to Flat equivalent of FormattedString.
+            s = s
         self._s = s
 
     s = property(_get_s, _set_s)

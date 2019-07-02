@@ -97,7 +97,7 @@ script:
 - python3 Lib/pagebot/contexts/imageobjects/__init__.py
 - python3 Lib/pagebot/contexts/imageobjects/noneimageobject.py
 - python3 Lib/pagebot/contexts/indesigncontext.py
-- python3 Lib/pagebot/contexts/pdflibcontext.py
+  #- python3 Lib/pagebot/contexts/pdflibcontext.py
   #- python3 Lib/pagebot/contexts/sketchcontext.py
 - python3 Lib/pagebot/contexts/strings/drawbotstring.py
 - python3 Lib/pagebot/contexts/strings/nonedrawbotstring.py

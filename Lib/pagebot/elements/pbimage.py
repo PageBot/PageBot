@@ -477,7 +477,7 @@ class Image(Element):
         >>> e.imo
         """
         if self.imo is None:
-            self.imo = self.context.imageObject(self.path)
+            self.imo = self.context.getImageObject(self.path)
 
         """with im:
     # set a size for the image

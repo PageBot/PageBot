@@ -61,7 +61,7 @@ class FlatString(BabelString):
         #    for span in p.spans:
         #        s += span.string
 
-        return str(s)
+        return str(self.s)
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by
