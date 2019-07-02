@@ -55,13 +55,13 @@ class FlatString(BabelString):
         super().__init__(s, context, style=style)
 
     def __repr__(self):
-        s = ''
+        #s = ''
 
-        for  p in self.s.paragraphs:
-            for span in p.spans:
-                s += span.string
+        #for  p in self.s.paragraphs:
+        #    for span in p.spans:
+        #        s += span.string
 
-        return s
+        return str(s)
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by

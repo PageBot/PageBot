@@ -67,45 +67,63 @@ class Image(Element):
     """
     isImage = True
 
-    def __init__(self, path=None, alt=None, name=None, w=None, h=None, size=None, z=0, mask=None,
-        imo=None, proportional=True, index=1, scaleImage=True, resolutionFactor=None, **kwargs):
+    def __init__(self, path=None, alt=None, name=None, w=None, h=None,
+            size=None, z=0, mask=None, imo=None, proportional=True, index=1,
+            scaleImage=True, resolutionFactor=None, **kwargs):
         Element.__init__(self, **kwargs)
 
-        # Initialize the self.im and self.ih sizes of the image file, defined by path.
-        # If the path does not exist, then self.im = self.ih = pt(0)
-        # This is calling self.initImageSize() to set self.im and slef.ih from the image file size.
-        self.path = path # If path is omitted or file does not exist, a gray/crossed rectangle will be drawn.
+        # Initializes the self.im and self.ih sizes of the image file, defined
+        # by path. If the path does not exist, then self.im = self.ih = pt(0)
+        # This calls self.initImageSize() to set self.im and slef.ih from
+        # the image file size.
+        # If path is omitted or file does not exist, a gray/crossed rectangle
+        # will be drawn.
+        self.path = path
 
         if self.iw and self.ih:
-            #print(size, w, h, units(w, self.ih/self.iw * (w or 0)), units(self.iw/self.ih * (h or 0), h))
             if proportional:
                 if size is not None:
                     w, h = point2D(size)
                 if w is not None:
-                    self.size = w, w * (self.ih/self.iw) # Brackets: Divide into ratio number before multiplying
+                    # Brackets: Divide into ratio number before multiplying.
+                    self.size = w, w * (self.ih/self.iw)
                 elif h is not None:
-                    self.size = h * (self.iw/self.ih), h # Brackets: Divide into ratio number before multiplying 
-                else: 
+                    # Brackets: Divide into ratio number before multiplying.
+                    self.size = h * (self.iw/self.ih), h
+                else:
                     self.size = units(w, h)
-            else: # No proportional flag, try to figure out from the supplied propotions
+            else:
+                # No proportional flag, try to figure out from the supplied
+                # proportions.
                 if size is not None:
                     w, h = point2D(size)
-                    self.size = w, h       
+                    self.size = w, h
+
                 # One of the two needs to be defined, the other can be None.
                 # If both are set, then the image scales disproportional.
-                if size is None and w is not None and h is not None: # Disproportional scaling
+                # Disproportional scaling.
+                if size is None and w is not None and h is not None:
                     self.size = units(w, h)
-            #print('#@@##@@#', self._w, self._h, self.iw, self.ih, w, h, size, self.w, self.h, self.size, self.path)
+
         else:
             print('Image: Missing image at path "%s"' % path)
 
         self.name = name
         self.alt = alt
-        self.mask = mask # Optional mask element.
-        self.imo = imo # Optional ImageObject with filters defined. See http://www.drawbot.com/content/image/imageObject.html
-        self.index = index # In case there are multiple images in the file (e.g. PDF), use this index. Default is first = 1
+        # Optional mask element..
+        self.mask = mask
+        # Optional ImageObject with filters defined. See
+        #
+        # http://www.drawbot.com/content/image/imageObject.html
+        #
+        self.imo = imo
+        # In case there are multiple images in the file (e.g. PDF), use this
+        # index. Default is first = 1.
+        self.index = index
         self.scaleImage = scaleImage
-        self.resolutionFactor = resolutionFactor # If defined, overwrites the automatic factor of image type.
+
+        # If defined, overwrites the automatic factor of image type.
+        self.resolutionFactor = resolutionFactor
 
     def _get_size(self):
         """Get/Set the size of the image. If one of (self._w, self._h) values
@@ -113,14 +131,18 @@ class Image(Element):
         original size of the image is returned. If both are not None, then that
         size is answered disproportionally."""
         return self.w, self.h
+
     def _set_size(self, size):
-        if size is None: # Reset to original size by single None value.
+        # Reset to original size by single None value.
+        if size is None:
             size = None, None, None
         self._w, self._h, self.d = units(point3D(size))
+
     size = property(_get_size, _set_size)
 
     def _get_size3D(self):
         return self.w, self.h, self.d
+
     size3D = property(_get_size3D, _set_size)
 
     def _get_w(self):
@@ -153,22 +175,31 @@ class Image(Element):
 
     def _get_h(self):
         u = None
-        if not self._h: # Height is undefined
+        # Height is undefined.
+        if not self._h:
             iwpt, ihpt = upt(self.iw, self.ih)
             if self.defaultImageHeight and ihpt:
-                u = min(self.defaultImageHeight, ihpt)  # Height overrules, avoid enlargements
+                # Height overrules, avoid enlargements.
+                u = min(self.defaultImageHeight, ihpt)
             elif self.defaultImageWidth and iwpt:
-                u = self.ih * upt(min(self.defaultImageWidth, iwpt) / iwpt)  # Height is lead, calculate width.
+                # Height is lead, calculate width.
+                u = self.ih * upt(min(self.defaultImageWidth, iwpt) / iwpt)
             elif self._w and iwpt:
-                u = self.ih * upt(self._w / iwpt)  # Width is lead, calculate height.
+                # Width is lead, calculate height.
+                u = self.ih * upt(self._w / iwpt)
             else:
-                u = self.ih # Undefined and without parent, answer original image width.
+                # Undefined and without parent, answer original image width.
+                u = self.ih
         else:
-            base = dict(base=self.parentH, em=self.em) # In case relative units, use the right kind of base.
-            u = units(self._h, base=base) # Height is lead and defined as not 0 or None.
+            # In case relative units, use the right kind of base.
+            base = dict(base=self.parentH, em=self.em)
+            # Height is lead and defined as not 0 or None.
+            u = units(self._h, base=base)
         return u
+
     def _set_h(self, h):
-        # If self._w is set too, do disproportional sizing. Otherwise set to 0 or None.
+        # If self._w is set too, do disproportional sizing. Otherwise set to 0
+        # or None.
         if h:
             h = units(h)
         self._w = None # Height is lead, width is undefined.
@@ -199,7 +230,8 @@ class Image(Element):
         """Set the path of the image. If the path exists, the get the real
         image size and store as self.iw, self.ih."""
         self._path = path
-        self.initImageSize() # Get real size from the file.
+        # Get real size from the file.
+        self.initImageSize()
 
     def _get_path(self):
         return self._path
@@ -213,7 +245,8 @@ class Image(Element):
         if self.path is not None and os.path.exists(self.path):
             self.iw, self.ih = self.context.imageSize(self.path)
         else:
-            self.iw = self.ih = pt(0) # Undefined or non-existing, there is no image file.
+            # Undefined or non-existing, there is no image file.
+            self.iw = self.ih = pt(0)
 
     def _get_imageSize(self):
         """Answers the Point2D image size in pixels."""
@@ -250,27 +283,31 @@ class Image(Element):
         """
         if self.path is None or not self.scaleImage:
             return
-        if not self.iw or not self.ih: # Make sure image exists and not zero, to avoid division
+
+        # Make sure image exists and not zero, to avoid division.
+        if not self.iw or not self.ih:
             print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
+
         extension = path2Extension(self.path)
         resolutionFactor = self.resolutionFactor or self.resolutionFactors.get(extension, 1)
         # Translate the extension to the related type of output.
         exportExtension = CACHE_EXTENSIONS.get(extension, extension)
-        
+
         resW = self.w * resolutionFactor
         resH = self.h * resolutionFactor
 
         sx, sy = upt(resW / self.iw, resH / self.ih)
 
-        if self.proportional: 
+        if self.proportional:
             sx = sy = max(sx, sy)
-            
-        if not self.scaleImage and self.cacheScaledImageFactor <= sx and self.cacheScaledImageFactor <= sy: 
+
+        if not self.scaleImage and self.cacheScaledImageFactor <= sx and self.cacheScaledImageFactor <= sy:
             # If no real scale reduction, then skip. Never enlarge.
             return
-        # Scale the image the cache does not exist already.
-        # A new path is saved for the scaled image file. Reset the (self.iw, self.ih)
+
+        # Scales the image the cache does not exist already. A new path is
+        # saved for the scaled image file. Resets (self.iw, self.ih).
         self.path = self.context.scaleImage(
             path=self.path.lower(), w=resW, h=resH, index=self.index,
             showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker,
@@ -278,49 +315,56 @@ class Image(Element):
         )
 
     def prepare_html(self, view):
-        """Respond to the top-down element broadcast to prepare for build_html.
-        If the original image needs scaling, then prepare the build by letting the context
-        make a new cache file with the scaled images.
-        If the cache file already exists, then ignore, just continue the broadcast
-        towards the child elements.
-        """
+        """Responds to the top-down element broadcast to prepare for build_html.
+        If the original image needs scaling, then prepares the build by letting
+        the context make a new cache file with the scaled images. If the cache
+        file already exists, then ignore -- just continue the broadcast to the
+        child elements."""
         self._scaleImage(view)
+
         for e in self.elements:
             e.prepare_html(view)
 
     def build_html(self, view, path, drawElements=True, **kwargs):
-        context = view.context # Get current context.
+        # Gets current context.
+        context = view.context
         b = context.b
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
 
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None:
+            # Call if defined.
             self.drawBefore(self, view)
 
         b.img(src=self.path, alt=self.alt)
 
-        b.div(cssClass='caption') # Allow CSS to address the captions separately.
-        if drawElements: # Draw captions if they are there.
+        # Allow CSS to address the captions separately.
+        b.div(cssClass='caption')
+
+        # Draw captions if there are any.
+        if drawElements:
             for e in self.elements:
                 e.build_html(view, path, **kwargs)
-        b._div() # .caption
+        # .caption
+        b._div()
 
-        if self.drawAfter is not None: # Call if defined
+        # Call if defined
+        if self.drawAfter is not None:
             self.drawAfter(self, view)
 
-        b._div() # self.cssClass or self.__class__.__name__
+        # self.cssClass or self.__class__.__name__
+        b._div()
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
     def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.
-        If the original image needs scaling, then prepare the build by letting the context
-        make a new cache file with the scaled images.
-        If the cache file already exists, then ignore, just continue the broadcast
-        towards the child elements.
-        """
+        """Respond to the top-down element broadcast to prepare for build.  If
+        the original image needs scaling, then prepare the build by letting the
+        context make a new cache file with the scaled images. If the cache
+        file already exists, then ignore, just continue the broadcast towards
+        the child elements."""
         self._scaleImage(view)
         for e in self.elements:
             e.prepare(view)
@@ -334,17 +378,23 @@ class Image(Element):
         Note that the (sx, sy) is already scaled to fit the padding position
         and size."""
 
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
+        # Get current context and builder.
+        context = self.context
+
+        # This is a bit more efficient than self.b once we got context
+        b = context.b
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p)
 
         self._applyRotation(view, p)
 
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
-            # TODO: Also show error, in case the image does not exist, to differentiate from empty box.
+            # TODO: Also show error, in case the image does not exist, to
+            # differentiate from empty box.
+
             if self.path is not None and not os.path.exists(self.path):
                 print('Warning: cannot find image file %s' % self.path)
             # Draw missing element as cross
@@ -357,14 +407,14 @@ class Image(Element):
             context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
         else:
             context.save()
-            # Check if scaling exceeds limit, then generate a cached file and update the path
-            # and (self.iw, self.ih) accordingly.
+            # Check if scaling exceeds limit, then generate a cached file and
+            # update the path and (self.iw, self.ih) accordingly.
 
             sx = self.w / self.iw
             sy = self.h / self.ih
             context.scale(sx, sy)
 
-            # If there is a clipRect defined, create the bezier path
+            # If a clipRect is defined, create the Bézier path.
             """
             if self.clipPath is not None:
                 clipRect = context.newPath()
@@ -393,16 +443,17 @@ class Image(Element):
             if self.imo is not None:
                 with self.imo:
                     b.image(self.path, (0, 0), pn=1, alpha=self._getAlpha())
-                b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
+                b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index,
+                        alpha=self._getAlpha())
             else:
-                #print(self.x, self.y, self.w, self.h, self.iw, self.ih, px, py, sx, sy, px/sx, py/sy)
-                #b.image(self.path, (upt(px)/sx+100, upt(py)/sy+100), pageNumber=self.index, alpha=self._getAlpha())
-                b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index, alpha=self._getAlpha())
-            # TODO: Draw optional (transparant) forground color?
+                b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index,
+                        alpha=self._getAlpha())
 
+            # TODO: Draw optional (transparant) forground color?
             context.restore()
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        # Draw optional frame or borders.
+        self.buildFrame(view, p)
 
         #if drawElements:
         #    self.buildChildElements(view, p)
@@ -423,7 +474,7 @@ class Image(Element):
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
         >>> e = Image(path, context=context)
         >>> e.gaussianBlur(12)
-        >>> e.im
+        >>> e.imo
         """
         if self.imo is None:
             self.imo = self.context.imageObject(self.path)
@@ -1270,7 +1321,7 @@ Attributes: targetImage an Image object, shadingImage an Image object, center a 
 swipeTransition(targetImage=None, extent=None, color=None, time=None, angle=None, width=None, opacity=None)
 Transitions from one image to another by simulating a swiping action.
 
-Attributes: targetImage an Image object, extent a tuple (x, y, w, h), color RGBA tuple Color (r, g, b, a), time a float, angle a float in degrees, width a float, opacity a float.  
+Attributes: targetImage an Image object, extent a tuple (x, y, w, h), color RGBA tuple Color (r, g, b, a), time a float, angle a float in degrees, width a float, opacity a float.
         """
 if __name__ == '__main__':
     import doctest
