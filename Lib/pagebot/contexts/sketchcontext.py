@@ -26,9 +26,9 @@ from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.sketchbuilder import sketchBuilder
-from pagebot.toolbox.color import color
-from pagebot.toolbox.units import asNumber, pt
-from pagebot.toolbox.transformer import path2Dir, path2Extension
+#from pagebot.toolbox.color import color
+#from pagebot.toolbox.units import asNumber, pt
+#from pagebot.toolbox.transformer import path2Dir, path2Extension
 from pagebot.elements import *
 
 from sketchapi import *
@@ -49,12 +49,12 @@ class SketchContext(BaseContext):
         """
         super().__init__()
         self.name = self.__class__.__name__
-        self.b = SketchApi()
+        self.b = SketchBuilder()
         self.shape = None # Current open shape
         self.fileType = FILETYPE_SKETCH
 
     def read(self, path):
-        self.b = SketchApi(path)
+        self.b = SketchBuilder(path)
 
     def _createElements(self, sketchLayer, e):
         """Copy the attributes of the sketchLayer into the element where
