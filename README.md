@@ -20,7 +20,7 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 
 # External Links
 
-- https://travis-ci.org/PageBot/PageBot
+- [Travis](https://travis-ci.org/PageBot/PageBot)
 
 # Related
 
