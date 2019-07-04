@@ -58,6 +58,13 @@ class Publication(Element):
             templates = self.TEMPLATES
         self.templates= templates
 
+        # No current document. Default is to fill with self.newDocument call.
+        # self.openDocName saves how the current is stored, even if document 
+        # changes name in mean time.
+        self.openDocuments = {}
+        self.openDocName = None 
+        self.openDoc = None
+
     def getAPI(self):
     	"""Answers the API dictionary for this class that can be used by calling apps,
     	e.g. for construction and behavior of the scope of app UI parameter controls.
@@ -65,15 +72,15 @@ class Publication(Element):
 		different than the default empty dictionary."""
     	return {}
         
-
     def produce(self, viewId=None, **kwargs):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting pbulications classes."""
         pass
 
     def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None, 
-            padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None, 
-            baselineGrid=None, baselineGridStart=None, **kwargs):
+            makeCurrent=True, padding=None, theme=None, gw=None, gh=None, 
+            gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
+            **kwargs):
         """Answer a new Document instance for this publication, to be filled by the 
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
@@ -81,6 +88,12 @@ class Publication(Element):
         """
         if name is None:
             name = self.name
+        # If there is already a document with that name on stock, then simply answer
+        # it without creating a new one. The current self.docName selection is not changed.
+        assert name is not None
+        if name in self.openDocuments:
+            return self.openDocuments[name]
+
         if autoPages is None:
             autoPages = 1
         if w is None:
@@ -111,6 +124,15 @@ class Publication(Element):
         view.showImageLoresMarker = self.showImageLoresMarker
         view.showBaselineGrid = self.showBaselineGrid
  
+        # Store the document in the publication, and set the current name as selected,
+        # so it can be retrieved if there are multiple available at the same time.
+        # Note that we can not use "self.doc" here, because a publication is a "normal"
+        # element, the e.doc is use to find the top document where self can be placed in.
+        # Yes, it's all very recursive.
+        #
+        self.openDocuments[name] = self.openDoc = doc
+        self.openDocName = name
+
         return doc
 
     newSampleDocument = newDocument # To be redefined by inheriting publication classes.
