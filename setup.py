@@ -19,7 +19,7 @@ setup(
     description='Scripted page layout framework for Python.',
     url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanchez, Dave Crossland',
-    author_email = 'r@petr.org',
+    author_email = 'r@petr.com',
     version='0.6',
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
