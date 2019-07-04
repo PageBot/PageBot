@@ -36,7 +36,7 @@ content = {
             "techno", "traditional", "Transparant!", "turbo", "Unique", "Used", "Vacuum", "washable", 
             "washing", "White", "Wide", "Xtra-Lite", "yucky", "yuk", "pro", "super", "salivating", "excellent", "prohibitive",
             "free", "reduced", "electronic", "nano", "micro", "mini", "grand", "massive", "big", "tall", "wet", "best",
-            "****", "four star!", u"Æ", u"Å", "@", u"ï", u"©", u"°", "*", "&", '?', u'ø', "brand new",
+            "****", "four star!", "Æ", "Å", "@", "ï", "©", "°", "*", "&", '?', 'ø', "brand new",
             'micro', 'mini', 'macro', 'giga', 'tera', 'peta', '!', '!!'
                 ],
         'com_nouns' : [
@@ -52,7 +52,7 @@ content = {
             'video', 'programme', 'specimen', 'drive', 'matrix', 'activity', 'network', 'intranet', 'local', 'connection'
                 ],
         'com_letterrors':[
-            "letterror", 'LETTERROR', 'LTTRRR', u'Lt›rÆrR', 'LetterRor',
+            "letterror", 'LETTERROR', 'LTTRRR', 'Lt›rÆrR', 'LetterRor',
             """LTT
             RRR
             SND""",
@@ -65,28 +65,28 @@ content = {
             'pythography'        
                 ],
         'com_bylines':[
-            u"it’s pure fbt!",
-            u"We’re The Phone Company.", "We Make The Things That Cool Your Food.", 
+            "it’s pure fbt!",
+            "We’re The Phone Company.", "We Make The Things That Cool Your Food.", 
             "A Registered Trademark of LettError.", "Contains no artificial flavorings.",
             "Contains no inedible parts.", "Contains no content.", "www.letterror.com",
             "Visit our website Now!", "Part No. 123009", "Money in The Bank.", "Virtually No Interest.",
             "Stupid pretentious video ART.", "Manchester", "London", "Amsterdam", "Paris", "New York",
             "0% financing.", "10% extra.", "10% less.", "10% more.", "10 pack!", "15% Vol.", 
             "24 hours!", "30 D MBG.", "7 day no quibble money back guarantee.", 
-            "All major credit cards accepted.", "Amount per serving.",  u"Appelation controlée.", 
+            "All major credit cards accepted.", "Amount per serving.",  "Appelation controlée.", 
             "Buy one, and get one for free!", "Complete and Unabridged", "Daily allowance", 
-            "Dial one of these numbers.", u"Don’t buy this at home.", u"Don’t wait.", "For kids!", "For pets!", 
+            "Dial one of these numbers.", "Don’t buy this at home.", "Don’t wait.", "For kids!", "For pets!", 
             "Free delivery.", "Free inside!", "Free refill.", "Fresh!", "Freshly Killed Each Morning!", 
             "Gotta get it...", "I am satisfied!", "I have never felt so fresh before.", "Illegal when prohibited by law.", 
-            "It changed my life completely.", "It fills me up!", u"It’s natural!", "Just add water.", 
+            "It changed my life completely.", "It fills me up!", "It’s natural!", "Just add water.", 
             "Made in Europe.", "Made in HongKong.", "Made in Japan", "Made in USA.", "Mister card accepted.", 
-            "Net WT 12 OZ (340 grams).", u"New & improved.", "Next morning delivery.", "No conservatives.", 
+            "Net WT 12 OZ (340 grams).", "New & improved.", "Next morning delivery.", "No conservatives.", 
             "No secret ingredients.", "Not for internal use.", "Not funny!", "Now with improved GT.", 
             "Order now.", "Printed in England.", "Provides 8 essential vitamins & iron.", "Taste the difference.", 
             "The lowest prices.", "This will cost you absolutely nothing!", "Try it!", "Used to be cool.", 
             "Values by formulation and analysis.", "Void when prohibited by law.", "With wings!", 
-            u"Your kids’ll love it!", 'Have a look at our website.', 'http://www.letterror.com', 'Prions!',
-            u"I can’t believe it’s chicken!"
+            "Your kids’ll love it!", 'Have a look at our website.', 'http://www.letterror.com', 'Prions!',
+            "I can’t believe it’s chicken!"
                 ],
         'com_adjectivenouns':[
                 '<#com_adjectives#>',

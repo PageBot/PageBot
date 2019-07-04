@@ -38,7 +38,7 @@ content = {
             
     'politics_us_event_single':    ['Senator', 'Congressman', 'Congress', 'Senate', 'House', 
             'the <#politics_us_party#> party', 'the <#politics_us_party#> Convention',
-            'President', u'President’s <#politics_us_confidant#>', 'White House', 'White House <#politics_us_confidant#>',
+            'President', 'President’s <#politics_us_confidant#>', 'White House', 'White House <#politics_us_confidant#>',
             'Capitol Hill', 'Supreme Court', 'Supreme Court Justice', 'Lawyer', 'House Speaker',     '<#politics_us_agency#> spokesman'
             ],
     'politics_us_event_pl':        ['Senators', 'Supreme Court Justices', 'Lawyers', '<#politics_us_partyadj#>s'

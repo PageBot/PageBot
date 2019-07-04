@@ -409,7 +409,7 @@ The original message was received at <#msgdate:time_usenet#>
 <br>From: <#name#> <#msgsender:eMail_sender#>
 
 """,
-u"""
+"""
 <#eMail_header#>
 
 
@@ -433,7 +433,7 @@ Cheers,
 <br>the pictures are great! He's so cute!
 <br>Love, <#names_first_female#>
 """,
-u"""
+"""
 <#eMail_header#>
 
 CABLE TV DE-SCRAMBLER

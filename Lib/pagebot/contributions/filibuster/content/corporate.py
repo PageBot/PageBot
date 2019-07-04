@@ -33,7 +33,7 @@ content = {
     ],
     'corporate_biz_news_headline': [
         '<#company#> <#verb_cooperates#> <#j_thing#>',
-        u'<#company#>’s <#j_thing#> <#prod_accolades#> at <#events_tradeshow#>',
+        '<#company#>’s <#j_thing#> <#prod_accolades#> at <#events_tradeshow#>',
     ],
     'corporate_partnership_headline': [
         '<#company#> announces <#j_noun_gerund#> <#j_noun_pl#> with <#company#>',
@@ -44,9 +44,9 @@ content = {
     ],
     'corporate_newproduct_headline': [
         '<#jargon#> <#j_thing#> <#prod_accolades#> at <#events_corporate#>',
-        u'<#company#>’s <#jargon#> <#prod_accolades#> at <#events_tradeshow#>',
-        u'<#events_tradeshow#>: <#company#>’s <#jargon#> <#prod_accolades#>',
-        u'<#newssource#>: <#company#>’s <#jargon#> <#prod_accolades#> for <#j_thing#>',
+        '<#company#>’s <#jargon#> <#prod_accolades#> at <#events_tradeshow#>',
+        '<#events_tradeshow#>: <#company#>’s <#jargon#> <#prod_accolades#>',
+        '<#newssource#>: <#company#>’s <#jargon#> <#prod_accolades#> for <#j_thing#>',
     ],
     'corporate_prod_announcement_headline': [
         '<#company#> <#verb_introduces#> <#prod_upgrade#> <#jargon#> <#j_noun_sing#> <#j_noun_pl#>',
@@ -56,6 +56,33 @@ content = {
     ],
     'IPO2': [
         '<#p_business_px#><#p_business_name#><#p_business_sx#><#p_corporateform#>',
+    ],
+    'business_type': [
+        'Communications',
+        'Communications',
+        'Branding', 
+        'Branding', 
+        'Branding', 
+        'Branding', 
+        'Design', 
+        'Design', 
+        'Design', 
+        'Strategy', 
+        #'Events',
+        'Coaching',
+    ],
+    'business_name': [
+        '<#p_business_px#> <#p_business_name#>',
+        '<#p_business_px#> <#p_business_name#>',
+        '<#p_business_px#> <#p_business_name#>',
+        '<#p_business_px#> <#p_business_name#>',
+        '<#p_business_px#> <#name#> <#business_type#>',
+        '<#p_business_px#> <#name#> <#business_type#>',
+        '<#p_business_px#> <#name#> <#business_type#>',
+        '<#name#> <#car_brand#> <#business_type#>',
+        '<#name#> <#books_section#> <#business_type#>',
+        '<#books_section#> <#odd_material#> <#business_type#>',
+        '<#tonic_quack#> <#business_type#>',
     ],
     'bank_co_description_pl': [
         'banks',
@@ -121,7 +148,7 @@ content = {
     ],
     'filibuster_co_motto': [
         'We offer a fine selection of everything.',
-        u'We’re huge.',
+        'We’re huge.',
         'It will all be OK!',
         'Content is our department!',
         'We Power the Internet',
@@ -134,8 +161,8 @@ content = {
         'Content is nothing.',
         'Content is for suckers',
         'Content is overrated.',
-        u'It’s All Getting Better',
-        u'Our internet kicks your internet’s assAuctions speak louder than words!',
+        'It’s All Getting Better',
+        'Our internet kicks your internet’s assAuctions speak louder than words!',
     ],
     'filibuster_company': [
         'Filibuster.org',
@@ -215,6 +242,7 @@ content = {
         'Trade',
         'Works',
         'Net',
+        'Print',
     ],
     'p_business_px': [
         'i',

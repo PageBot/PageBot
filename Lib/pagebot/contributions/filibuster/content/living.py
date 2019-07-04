@@ -15,15 +15,15 @@ content = {
         'food_headline':[
             'Fresh Takes from Island Favorites',
             'Grab a Bite - Breakfast & Lunch',
-            u'Eating Out on Martha’s Vineyard',
+            'Eating Out on Martha’s Vineyard',
             'Empower your portal with Real-Time News Feeds and Search',
             'Slow Food',
             '1-year-old farmers marketspreads under 200-year-old oak',
             'Cheese Recall at <#town_us#> Farmers Market',
-            u'Farmers Market Vendor Spotlight: Norm’s Apiary',
+            'Farmers Market Vendor Spotlight: Norm’s Apiary',
             'Farmers Market Report: Blueberries Today',
             'Trend: Raspberries and Cabbage Today',
-            u'The Green Room: BBMG’s <#name#> Interviews Slow Food Founder',
+            'The Green Room: BBMG’s <#name#> Interviews Slow Food Founder',
             'Prawn Singapore Rice Noodles!',
             'The <#town_us#> NAPW Chapter met for dinner',
             'Wine tasting with <#name#>',
@@ -37,7 +37,7 @@ content = {
             'At <#town_us#> Farmers Market Vendors are Tempting Taste Buds',
         ],
         'living_ankeiler': [
-            u"""Scottish Bakehouse on Martha’s Vineyard is a favorite for egg sandwiches, fresh baked pastries, sandwiches, salads, soups and locally sourced main dishes offer islanders and visitors a one-stop option for any meal or snack daily. Offering gluten free options. Catering and take out available. Farmers market on site during the summer!""",
+            """Scottish Bakehouse on Martha’s Vineyard is a favorite for egg sandwiches, fresh baked pastries, sandwiches, salads, soups and locally sourced main dishes offer islanders and visitors a one-stop option for any meal or snack daily. Offering gluten free options. Catering and take out available. Farmers market on site during the summer!""",
         ],
     }
 

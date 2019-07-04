@@ -224,7 +224,7 @@ content = {
     'auction_music': [
         '<#classic_composer#> by <#classic_orchestra#> (<#auction_object_state#>)',
         'CD: <#classic_recording_highbrow#>',
-        u'old 78’s! <#classic_composer#> <#classic_classification#> (<#auction_object_state#>)',
+        'old 78’s! <#classic_composer#> <#classic_classification#> (<#auction_object_state#>)',
         'Piano rolls: <#classic_composer#> (<#auction_object_state#>)',
     ],
     'auction_music_bid': [

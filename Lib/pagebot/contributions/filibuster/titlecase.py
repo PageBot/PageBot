@@ -15,13 +15,13 @@ import re
 SMALL = 'a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v\.?|via|vs\.?'
 PUNCT = "[!\"#$%&'‘()*+,-./:;?@[\\\\\\]_`{|}~]"
 
-SMALL_WORDS = re.compile(r'^(%s)$' % SMALL, re.I)
-INLINE_PERIOD = re.compile(r'[a-zA-Z][.][a-zA-Z]')
-UC_ELSEWHERE = re.compile(r'%s*?[a-zA-Z]+[A-Z]+?' % PUNCT)
-CAPFIRST = re.compile(r"^%s*?([A-Za-z])" % PUNCT)
-SMALL_FIRST = re.compile(r'^(%s*)(%s)\b' % (PUNCT, SMALL), re.I)
-SMALL_LAST = re.compile(r'\b(%s)%s?$' % (SMALL, PUNCT), re.I)
-SUBPHRASE = re.compile(r'([:.;?!][ ])(%s)' % SMALL)
+SMALL_WORDS = re.compile('^(%s)$' % SMALL, re.I)
+INLINE_PERIOD = re.compile('[a-zA-Z][.][a-zA-Z]')
+UC_ELSEWHERE = re.compile('%s*?[a-zA-Z]+[A-Z]+?' % PUNCT)
+CAPFIRST = re.compile("^%s*?([A-Za-z])" % PUNCT)
+SMALL_FIRST = re.compile('^(%s*)(%s)\b' % (PUNCT, SMALL), re.I)
+SMALL_LAST = re.compile('\b(%s)%s?$' % (SMALL, PUNCT), re.I)
+SUBPHRASE = re.compile('([:.;?!][ ])(%s)' % SMALL)
 
 def titlecase(text):
 
@@ -68,18 +68,18 @@ class TitlecaseTests(unittest.TestCase):
     """Tests to ensure titlecase follows all of the rules"""
 
     def test_q_and_a(self):
-        u"""Testing: Q&A With Steve Jobs: 'That’s What Happens In Technology' """
+        """Testing: Q&A With Steve Jobs: 'That’s What Happens In Technology' """
         text = titlecase(
-            u"Q&A with steve jobs: 'that’s what happens in technology'"
+            "Q&A with steve jobs: 'that’s what happens in technology'"
         )
-        result = u"Q&A With Steve Jobs: 'That’s What Happens in Technology'"
+        result = "Q&A With Steve Jobs: 'That’s What Happens in Technology'"
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_at_and_t(self):
-        u"""Testing: What Is AT&T's Problem?"""
+        """Testing: What Is AT&T's Problem?"""
 
-        text = titlecase(u"What is AT&T’s problem?")
-        result = u"What Is AT&T’s Problem?"
+        text = titlecase("What is AT&T’s problem?")
+        result = "What Is AT&T’s Problem?"
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_apple_deal(self):
@@ -117,10 +117,10 @@ class TitlecaseTests(unittest.TestCase):
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_apple_sec(self):
-        u"""Testing: The SEC’s Apple Probe: What You Need to Know"""
+        """Testing: The SEC’s Apple Probe: What You Need to Know"""
 
         text = titlecase("The SEC’s Apple Probe: What You Need to Know")
-        result = u"The SEC’s Apple Probe: What You Need to Know"
+        result = "The SEC’s Apple Probe: What You Need to Know"
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_small_word_quoted(self):
@@ -214,19 +214,19 @@ class TitlecaseTests(unittest.TestCase):
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_thoughts_on_music(self):
-        u"""Testing: Reading Between the Lines of Steve Jobs’s..."""
+        """Testing: Reading Between the Lines of Steve Jobs’s..."""
 
         text = titlecase(
-            u'Reading between the lines of steve jobs’s ‘thoughts on music’'
+            'Reading between the lines of steve jobs’s ‘thoughts on music’'
         )
-        result = u'Reading Between the Lines of Steve Jobs’s ‘Thoughts on Music’'
+        result = 'Reading Between the Lines of Steve Jobs’s ‘Thoughts on Music’'
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_repair_perms(self):
-        u"""Testing: Seriously, ‘Repair Permissions’ Is Voodoo"""
+        """Testing: Seriously, ‘Repair Permissions’ Is Voodoo"""
 
-        text = titlecase(u'seriously, ‘repair permissions’ is voodoo')
-        result = u'Seriously, ‘Repair Permissions’ Is Voodoo'
+        text = titlecase('seriously, ‘repair permissions’ is voodoo')
+        result = 'Seriously, ‘Repair Permissions’ Is Voodoo'
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
     def test_generalissimo(self):
@@ -236,7 +236,7 @@ class TitlecaseTests(unittest.TestCase):
             'generalissimo francisco franco: still dead; kieren McCarthy: '\
                 'still a jackass'
         )
-        result = u"""Generalissimo Francisco Franco: Still Dead; Kieren McCarthy: Still a Jackass."""
+        result = """Generalissimo Francisco Franco: Still Dead; Kieren McCarthy: Still a Jackass."""
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
 
