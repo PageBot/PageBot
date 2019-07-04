@@ -35,6 +35,7 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 
 - [PyPi](https://pypi.org/project/pagebot/)
 - [Travis](https://travis-ci.org/PageBot/PageBot)
+- [ReadTheDocs](https://pagebot.readthedocs.io/en/latest/)
 
 # Related
 
