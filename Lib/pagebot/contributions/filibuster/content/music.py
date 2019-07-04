@@ -169,8 +169,8 @@ content = {
                 ],
         'classic_recording_highbrow':   [
                 "Works by <#classic_composer#>",
-                u"<#classic_composer#>’s <#classic_work#>, by the <#classic_orchestra#>. <#classic_classification#>",
-                u"<#classic_composer#>’s <#classic_work#>, by the <#classic_orchestra#>, directed by <#classic_director#>. <#classic_classification#>",
+                "<#classic_composer#>’s <#classic_work#>, by the <#classic_orchestra#>. <#classic_classification#>",
+                "<#classic_composer#>’s <#classic_work#>, by the <#classic_orchestra#>, directed by <#classic_director#>. <#classic_classification#>",
                 "<#!^^,classic_work#> by <#classic_composer#>, recorded by the <#classic_orchestra#><#classic_orchestra_more#>, conducted by <#classic_director#>. <#classic_classification#>",
                 "<#!^^,classic_work#> by <#classic_composer#>, recorded by the <#classic_orchestra#><#classic_orchestra_more#>. <#classic_classification#>",
                 "<#!^^,classic_work#> by <#classic_composer#>, a recording by the <#classic_orchestra#><#classic_orchestra_more#>. <#classic_classification#>"

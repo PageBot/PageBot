@@ -1,4 +1,5 @@
-# coding: UTF-8
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 
 import re
 import random
@@ -190,7 +191,7 @@ class BlurbWriter:
             hard = 1
             name = parts[-1].strip()
             cmd = []
-            variable = u"".join(parts[0:-1]).strip()
+            variable = str().join(parts[0:-1]).strip()
             return name, cmd, variable, hard
         # check for soft definition
         parts = tag.split(':')
@@ -198,7 +199,7 @@ class BlurbWriter:
             hard=0
             name = parts[-1].strip()
             cmd = []
-            variable = ''.join(parts[0:-1]).strip()
+            variable = str().join(parts[0:-1]).strip()
             return name, cmd, variable, hard
         # rest
         else:
@@ -342,7 +343,7 @@ class BlurbWriter:
                 if '!' in si:        # it's a format command!
                     formatcmds.append(si[1:])
                 if '^' in si:        # make first character uppercase
-                    capped = si.count(u"^")
+                    capped = si.count('^')
                     if capped == 1:
                         makeUpperCase = True
                     elif capped == 2:
@@ -382,13 +383,13 @@ class BlurbWriter:
                     c = c.lower()
                 if nonletter_remove:
                     #print('before', c)
-                    c = c.replace(u" ", u"")
-                    c = c.replace(u".", u"")
-                    c = c.replace(u"-", u"")
-                    c = c.replace(u"_", u"")
+                    c = c.replace(' ', '')
+                    c = c.replace('.', '')
+                    c = c.replace('-', '')
+                    c = c.replace('_', '')
                     #print('after', c)
                 elif space_to_underscore:
-                    c = c.replace(u" ", u"_")
+                    c = c.replace(' ', '_')
 
             #print('cacheThis', cacheThis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
 
@@ -406,7 +407,7 @@ class BlurbWriter:
             # build the new line
             vardef = c
             if variable:
-                c = ''
+                c = str()
             try:
                 text = parts[0] + art + c + (opentag + tag + closetag).join(parts[1:])
             except:
@@ -427,7 +428,7 @@ class BlurbWriter:
 
 
 def test():
-    u"""
+    """
     >>> # replace a single tag
     >>> content = { 'pattern1': ['a']}
     >>> bw = BlurbWriter(content)
@@ -547,8 +548,6 @@ def test():
     # >>> bw = BlurbWriter(content)
     # >>> bw.write('pattern1')
     # 'üößé'
-
-    # # '\\xfc\\xf6\\xdf\\xe9'
 
     # # not sure if that is the right way
 

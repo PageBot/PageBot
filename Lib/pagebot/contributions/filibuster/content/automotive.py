@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -47,7 +48,7 @@ content = {
                 'Volvo',
                 'Saab',
                 'Renault',
-                u'Citroën',
+                'Citroën',
                 'Audi',
                 ],
         'car_brand_japan': [
@@ -126,7 +127,7 @@ content = {
 #    by putting the entire string in double quotes
 #    better yet: use html entities, but I'll have more on that later.
         'car_hot_rods':    [
-                u"’57 Chevy",
+                "’57 Chevy",
                 'Willys coupe',
                 'duece',
                 'hi boy roadster',
@@ -134,12 +135,12 @@ content = {
                 'stang',
                 'Shelby Cobra',
                 'Cuda',
-                u"’67 Chevelle",
+                "’67 Chevelle",
                 'Galaxie 500',
                 'Fairlane',
-                u"’55 Merc",
+                "’55 Merc",
                 't-bucket',
-                u"’32 Ford",
+                "’32 Ford",
                 'GT 350',
                 'Chevy II',
                 'Challenger',
@@ -170,19 +171,19 @@ content = {
                 'ponies',
                 ],
         'car_name': [
-                u'<#car_hot_rods#>',
-                u'<#car_hot_rods#>, <#car_engine_type#>',
-                u'<#car_brand#>',
-                u'<#car_brand#>',
-                u'<#car_brand#>',
-                u'<#car_brand#> <#car_engine_type#>',
+                '<#car_hot_rods#>',
+                '<#car_hot_rods#>, <#car_engine_type#>',
+                '<#car_brand#>',
+                '<#car_brand#>',
+                '<#car_brand#>',
+                '<#car_brand#> <#car_engine_type#>',
                 ],
         'car_shop_talk':    [
-                u'This <#car_body_work#> <#car_heads_carsets#> has a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_power_delivery#> to get all that power on the street.',
-                u'You cant run with this <#car_hotrod_modifier#> <#car_hot_rods#>, she’s got a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_compression_ratio#> compression ratio and <#car_engine_boltons#>.',
-                u'Need more <#car_power_designators#>? Try a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_compression_ratio#> compression ratio and <#car_engine_boltons#>.',
-                u'<#car_engine_boltonscap#> and a <#car_engine_modifiers#> <#car_engine_type#> will give your <#car_hot_rods#> a lotta <#car_power_designators#>.',
-                u'Forget your <#car_busts#>, my <#car_hotrod_modifier#> <#car_hot_rods#> has a <#car_engine_modifiers#> <#car_engine_type#> thatll leave you <#car_blow_doors#>.',
+                'This <#car_body_work#> <#car_heads_carsets#> has a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_power_delivery#> to get all that power on the street.',
+                'You cant run with this <#car_hotrod_modifier#> <#car_hot_rods#>, she’s got a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_compression_ratio#> compression ratio and <#car_engine_boltons#>.',
+                'Need more <#car_power_designators#>? Try a <#car_engine_modifiers#> <#car_engine_type#> with a <#car_compression_ratio#> compression ratio and <#car_engine_boltons#>.',
+                '<#car_engine_boltonscap#> and a <#car_engine_modifiers#> <#car_engine_type#> will give your <#car_hot_rods#> a lotta <#car_power_designators#>.',
+                'Forget your <#car_busts#>, my <#car_hotrod_modifier#> <#car_hot_rods#> has a <#car_engine_modifiers#> <#car_engine_type#> thatll leave you <#car_blow_doors#>.',
                 ],
         }
 

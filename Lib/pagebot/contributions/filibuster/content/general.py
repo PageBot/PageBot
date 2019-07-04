@@ -47,9 +47,9 @@ content = {
     'num_ord_010_090'        :    ['twentieth','thirtieth','fortieth','fiftieth','sixtieth','seventieth','eightieth','ninetieth'],
     'num_ord_000_100'        :    ['<#num_ord#>','<#num_ord_010_019#>','<#num_ord_010_090#>','<#num_card_010_090#> <#num_ord#>'],
 
-    'num_temperatureF'        :    [u'<-randint(-20, 100)->°'],
-    'num_temperatureC'        :    [u'<-randint(-20, 50)->°'],
-    'num_temperature'        :    [u'<#num_temperatureF#>F',u'<#num_temperatureC#>C',],
+    'num_temperatureF'        :    ['<-randint(-20, 100)->°'],
+    'num_temperatureC'        :    ['<-randint(-20, 50)->°'],
+    'num_temperature'        :    ['<#num_temperatureF#>F','<#num_temperatureC#>C',],
 
     'amount_small'            :     ['some','few','2','3','4','5','6'],
     'amount_more'            :   ['over seven', 'over eight', 'over nine', 'over ten', 'over a dozen', 'dozens'],

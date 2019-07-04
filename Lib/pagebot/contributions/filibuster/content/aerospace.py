@@ -1,3 +1,4 @@
+﻿#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -140,11 +141,11 @@ content = {
                 '<#air_carrier#> <#air_people#> strike <#num_ord#> day, <-randint(2, 50)*100-> people stuck.',
                 ],
         'air_news_neutral':[ # Keep these short messages
-                u'<#air_carrier#>: “ticket prices up”',
+                '<#air_carrier#>: “ticket prices up”',
                 '<#air_carrier#> reports a <-randint(2,10)->M profit last quarter',
                 '<#air_carrier#> reports a <-randint(2,10)->M loss last quarter',
                 '<#air_carrier#> reports a <-randint(2,10)->M gross last quarter',
-                u'<#air_carrier#> last quarter “not so good”',
+                '<#air_carrier#> last quarter “not so good”',
                 '<#air_carrier#> bust: <-randint(200, 2000)-> jobs lost',
                 '<#air_carrier#> strike: <-randint(2, 50)*100-> stranded',
                 ],
@@ -156,7 +157,7 @@ content = {
                 '<#air_carrier#> joins <#air_carrier#> in <#air_loyalty#> program',
                 ],
         'air_commercial':[
-                u'<#air_commercial_offer#> <#carrier#>: <#air_commercial_motto#>™'
+                '<#air_commercial_offer#> <#carrier#>: <#air_commercial_motto#>™'
                 ],
         'air_commercial_offer':[
                 'Introducing <#air_class#> on all <#carrier=air_carrier#><#carrier#> <#air_jetmodel_wide#> planes',
@@ -168,3 +169,13 @@ content = {
                 ],
         }
 
+
+if __name__ == "__main__":
+    def test():
+            """
+                >>> from pagebot.contributions.filibuster.blurb import blurb 
+                >>> blurb.getBlurb('air_news_neutral')
+            """
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

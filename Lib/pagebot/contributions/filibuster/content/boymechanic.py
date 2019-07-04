@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -109,7 +110,7 @@ content = {
         'air pencil to make embossed letters',
         'relieving air pressure when closing record boxes',
         'alarm for sleepwalker',
-        u'amateur mechanic’s combination lathe',
+        'amateur mechanic’s combination lathe',
         'reducing amperage of fuse wire',
         'applications for small wounds',
         'atmospheric thermo engine',
@@ -166,7 +167,7 @@ content = {
         'frosting glass',
         'fountain pen, homemade',
         'furniture- jarndiniere pedestal',
-        u'D’Arsonval galvanometer',
+        'D’Arsonval galvanometer',
         'game played on ice',
         'centering gauge',
         'grape arbor built of poles',

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 """
@@ -48,7 +49,7 @@ content = {
         'The <#^,time_days#> Update',
         'The Daily News', 'The Daily Update', 'The World Updated', 'The Updated World',
         'The Daily Paper', 'The Paper World', 'The Evening Paper',
-        'The Morning Chronicle', u'The Break’n News',
+        'The Morning Chronicle', 'The Break’n News',
         'The <#^,abbr_cities_USmajor#> News',
         'The <#^,abbr_cities_USmajor#> News',
         '<#^,abbr_cities_USmajor#> Evening News',
@@ -156,7 +157,7 @@ content = {
 
     'section_weather':                        ['The Weather', 'Global Weather', 'Weather Overview', 'Forecast', 'The Skies'],
     'weather_city':                            [u'<#!bold, city#>: <-randint(-4, 30)->°',
-                                            u'<#!bold, city#>: <#weather_sky#>, <-randint(-4, 30)->°C'],
+                                            '<#!bold, city#>: <#weather_sky#>, <-randint(-4, 30)->°C'],
     'weather_sky':                            ['cloudy', 'rain', 'thunderstorms', 'sunny', 'partial overcast',
                                             'occasional showers', 'fog', 'snow'],
 
@@ -191,7 +192,7 @@ content = {
             "guerilla's", 'police', 'paramilitary war_forces',
             'paras', 'protestants', 'spies', 'catholics',
             'muslims', 'infiltrants', 'students', 'Hezbollah',
-            u"Mulah’s", 'members', 'navy seals',
+            "Mulah’s", 'members', 'navy seals',
             'corporals', 'officers',
             'dissidents', 'mobs', 'generals', 'chiefs of staff',
             'bosses', 'party leaders', 'weapons inspectors',

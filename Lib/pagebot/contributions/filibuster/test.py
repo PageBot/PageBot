@@ -41,7 +41,7 @@ for name in names:
 		f = codecs.open(namePath, 'a', 'utf-8')
 		result = w.getBlurb(name)
 		try:
-			f.write(u"\n\n"+result)
+			f.write("\n\n"+result)
 			success = True
 		except:
 			print("UnicodeDecodeError", definedIn[0], name)

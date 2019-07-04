@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -26,7 +27,7 @@ content = {
     ],
     'creditcard_issued': [
         '<#p_cc_issuer#> <#creditcard#>',
-        u'<#p_cc_issuer#>’s <#creditcard#>',
+        '<#p_cc_issuer#>’s <#creditcard#>',
         '<#creditcard#>, by <#p_cc_issuer#>',
     ],
     'creditcard_number': [

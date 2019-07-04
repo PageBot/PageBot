@@ -1,3 +1,4 @@
+# -*- #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -112,7 +113,7 @@ content = {
     ],
     'names_first_arabic': [
         'Abu',
-        u'Abu’l-Hasan',
+        'Abu’l-Hasan',
         'Mohammad',
         'Ahmad',
         'Ahmed',
@@ -142,7 +143,7 @@ content = {
         'Al-Buzjani',
         'al-Sadafi',
         'al-Misri',
-        u'Abu’l-Wafa',
+        'Abu’l-Wafa',
     ],
     'names_middle_British_scientist': [
         'Ronald',
@@ -163,7 +164,7 @@ content = {
         'ibn',
         'Kamil',
         'Hasan',
-        u'Abu’l-Wafa',
+        'Abu’l-Wafa',
         'Ali',
         'Jabir',
         'Isa',
@@ -211,7 +212,7 @@ content = {
         'Panstwowy Instytut Wydawniczy, Warszawa',
         'Ylioppilaspaveln: Helsinki',
         'Can Yayinlari: Istanbul',
-        u'Europa Könyvkiado, In Nagy Vilag, Budapest',
+        'Europa Könyvkiado, In Nagy Vilag, Budapest',
         'Botimet Elena Gjika: Tirana',
         'Ekdoseis Gnose: Athenai',
         'Biblioteca e Centro di Studi a Roma',

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -18,9 +19,9 @@ content = {
                 'The <#!bold,company#> website is <#review_accolade#>.',
                 'In its new incarnation the <#!bold,company#> site has something for everyone - <#review_accolade#>.',
                 '<#!capitalize,company#> is building an online community by <#j_noun_gerund#> the content with <#j_thing#> to <#review_audience#>.',
-                u"<#!capitalize,company#>’s motto says it all: “<#filibuster_co_motto#>”",
+                "<#!capitalize,company#>’s motto says it all: “<#filibuster_co_motto#>”",
                 '<#!capitalize,j_noun_gerund#>, <#j_noun_gerund#>, you heard it all before. But the new <#!bold,company#> website delivers.',
-                u"Targetting <#review_audience#>, <#!bold,company#> is expanding it’s online operations with this new enterprise.",
+                "Targetting <#review_audience#>, <#!bold,company#> is expanding it’s online operations with this new enterprise.",
                 ],
         'review_source': [
                 '-- <#paper_US#>',

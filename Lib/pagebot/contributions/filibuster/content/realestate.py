@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -29,7 +30,7 @@ content = {
             'Your Condo', 'Your Office', 'Your Site', 'Your Estate', 'Your area', 'Your Land',
         ],
         'realestate_types': [
-            'Homes', 'Houses', 'Accommodations', 'Apartments', 'Flats', u'Condo’s',    'Offices',
+            'Homes', 'Houses', 'Accommodations', 'Apartments', 'Flats', 'Condo’s',    'Offices',
             'Sites', 'Estates', 'Areas', 'Investments',
         ],
         'realestate_verb': [
@@ -86,9 +87,9 @@ content = {
     'Bulk Transfer',
     'Bungalow',
     'Buy-Down',
-    u'Buyer’s Agent',
-    u'Buyer’s Broker',
-    u'Buyer’s Market',
+    'Buyer’s Agent',
+    'Buyer’s Broker',
+    'Buyer’s Market',
     'Buyout',
     'By-Laws',
     'Caisson',
