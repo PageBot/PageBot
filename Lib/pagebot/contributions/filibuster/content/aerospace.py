@@ -1,3 +1,4 @@
+﻿#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -168,3 +169,13 @@ content = {
                 ],
         }
 
+
+if __name__ == "__main__":
+    def test():
+            """
+                >>> from pagebot.contributions.filibuster.blurb import blurb 
+                >>> blurb.getBlurb('air_news_neutral')
+            """
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

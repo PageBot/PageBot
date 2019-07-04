@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 #
 """
         history
@@ -360,4 +360,15 @@ content = {
             ],
     'geographicplace': ['city','county','country','island','republic','contintent'],
     }
+
+
+if __name__ == "__main__":
+    def test():
+            """
+                >>> from pagebot.contributions.filibuster.blurb import blurb 
+                >>> #blurb.getBlurb('address')
+            """
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
 

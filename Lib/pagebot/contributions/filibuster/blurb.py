@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 #    blurb.py
@@ -32,17 +33,16 @@ class Blurb:
         if noTags: # Remove the HTML tags.
             if newLines: # If newlines, then replace the <p> by return, before removing all tags.
                 content = content.replace('<p>','').replace('</p>','\n')
-            content = ''.join(self.reNoTags.findall(content))
+            content = str().join(self.reNoTags.findall(content))
 
         if cnt is not None: # If word count defined, slice by wordspace.
-            content = ' '.join(content.split(' ')[:cnt])
+            content = str(' ').join(content.split(' ')[:cnt])
 
         if charCnt is not None and len(content) > charCnt:
             # Shorten the string to the requested amount of glyphs.
             content = self.writer.write(type)[:charCnt].strip()
             while content and not content[-1].lower() in 'abcdefghijklmnopqrstuvwxyz':
                 content = content[:-1]
-
         return content
 
     def getBlurbTypes(self):
@@ -70,9 +70,10 @@ if __name__ == '__main__':
                     start = n
 
     w = blurb
-    for t in w.getBlurbTypes():
-        printString('%s --> %s' % (t, w.getBlurb(t)))
+    #for t in w.getBlurbTypes():
+    #    printString('%s --> %s' % (t, w.getBlurb(t)))
 
+    printString(w.getBlurb('address'))
     printString(w.getBlurb('sports_headline'))
     printString(w.getBlurb('filibuster_about'))
     printString(w.getBlurb('aerospace_headline'))

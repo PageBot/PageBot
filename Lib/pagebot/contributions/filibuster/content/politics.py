@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 """
@@ -91,7 +92,7 @@ content = {
             '<#name_somewhiteguy#>',
             'Larry Flynt',
             'Howard Hughes',
-            'Donald Trump',
+            #'Donald Trump', Oh no, no longer getting that attention
             'Bill F. Gates',
             'Franklin D. Roosevelt',
             

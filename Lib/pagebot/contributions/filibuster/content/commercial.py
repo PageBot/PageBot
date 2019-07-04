@@ -36,7 +36,7 @@ content = {
             "techno", "traditional", "Transparant!", "turbo", "Unique", "Used", "Vacuum", "washable", 
             "washing", "White", "Wide", "Xtra-Lite", "yucky", "yuk", "pro", "super", "salivating", "excellent", "prohibitive",
             "free", "reduced", "electronic", "nano", "micro", "mini", "grand", "massive", "big", "tall", "wet", "best",
-            "****", "four star!", "Æ", "Å", "@", "ï", "©", "°", "*", "&", '?', 'ø', "brand new",
+            "****", "four star!", "Æ", "Å", "ï", "©", "°", "*", "&", '?', 'ø', "brand new",
             'micro', 'mini', 'macro', 'giga', 'tera', 'peta', '!', '!!'
                 ],
         'com_nouns' : [

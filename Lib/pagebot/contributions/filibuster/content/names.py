@@ -41,7 +41,8 @@ content = {
     ],
     'name_english': [
         'Gibbs', 'McLaren', 'Miller', 'Kwon', 'Little', 'Reage', 'Keaney', 'Muller', 'Chou',
-        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh', 'Trump',
+        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh', 
+        #'Trump', Oh no, no longer getting that attention
         'Fernandez', 'Fitzpatrick', 'Lin', 'Vanderbeck', 'Lee', 'Larssen','Vanderkeere',
         'Nobelman','Frime','Mustcado','Fnimble','Handersjen','Devries','Naaktgeboren',
         'McNaville','Stormby','Stromby','McMillen','Wrombley','Zóchi','Ångstrøm',
@@ -636,7 +637,7 @@ content = {
         'Dunbar',
         'Emerson',
         'Bryant',
-        'Trump',
+        #'Trump', Oh no, no longer getting that attention
         'Stanley',
         'Sinclair',
         'Forbes',
@@ -691,4 +692,16 @@ content = {
         '<#names_sx#>',
     ],
         }
+
+
+
+if __name__ == "__main__":
+    def test():
+        """
+            >>> from pagebot.contributions.filibuster.blurb import blurb 
+            >>> blurb.getBlurb('name')
+        """
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
 

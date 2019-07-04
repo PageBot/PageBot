@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
 #    Contributed by Erik van Blokland and Jonathan Hoefler
