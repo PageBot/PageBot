@@ -353,13 +353,47 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         fill = noColor, # Default is no color for filling rectangle. Instead textFill color is set default black.
         stroke = noColor, # Default is to have no stroke on drawing elements. Not for text.
         strokeWidth = None, # Stroke thickness for drawing element, not text.
+        fillDiap = None, # Exception color, in case used as diapositive (foreground/background flipped)
+        fillHover = None,
 
-        # Text color
+        # Text color, used by context.newString() style
         textFill = blackColor, # Separate between the fill of a text box and the color of the text itself.
         textStroke = noColor, # No stroke of color text by default.
         textStrokeWidth = None, # Width of stroke in units
         textShadow = None,
         textGradient = None,
+
+        textFillDiap = None, # Exception color, in case used as diapositive (foreground/background flipped)
+
+        # Color by function, depending on context, as filled by themes
+        textHed = None, # Optional color for Hed text.
+        textDeck = None, # Optional color for Deck text.
+        textSubhead = None,
+        textByline = None,
+        textBody = None,
+        textSupport = None,
+
+        # Alternative functions, support CSS
+        textHover = None,
+        textHoverLink = None,
+        textHoverDiap = None,
+        textLink = None,
+        textLinkDiap = None,
+        textSublink = None,
+        textSublinkDiap = None,
+        textSubhover = None,
+        textSubhoverDiap = None,
+
+        # Color by order of layer
+        textMostFront = None, # Layer on a page, most close to the reader.
+        textMoreFront = None,
+        textFront = None,
+        textMiddle = None,
+        textBack = None,
+        textMoreBack = None,
+        textMostBack = None, # Layer on a page, most far from the reader.
+        
+        # Text alignments
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.
         yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
         zTextAligh = FRONT, # Alignment of text inside a 3d text box, one of (FRONT, MIDDLE, BACK)
