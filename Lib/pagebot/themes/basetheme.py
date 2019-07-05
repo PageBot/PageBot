@@ -146,6 +146,13 @@ class Mood:
     ATTRS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
         'diapcolor', 'diapbgcolor', 'diaplink', 'diaphover',
         )
+    ALT_ATTR = dict(
+        color='textFill',
+        bgcolor='fill',
+        stroke='textStrokeWidth',
+        diapcolor='diapTextFill',
+        diapbgcolor='diapFill'
+    )
     UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin', 
         'tracking', 'height', 
         )
@@ -166,9 +173,14 @@ class Mood:
                     keyValue = value
                 self.attributes['%s.%s' % (styleName, attrName)] = keyValue # Key value is hex color
                 setattr(self, '%s_%s' % (styleName, attrName), value) # Attr value is origina value object
+                # Save the styleName-attrName-value as style dictionary, that can be directly
+                # used for creating formattef strings.
                 if not styleName in self.styles:
                     self.styles[styleName] = {}
                 self.styles[styleName][attrName] = value
+                if attrName in self.ALT_ATTR: # In case there are alternative style named for this tag
+                    self.styles[styleName][self.ALT_ATTR[attrName]] = value
+
         # Set all colors as separate entries too, do they can be referred to, ignoring the mood.
         for colorName in self.COLORS:
             value = palette.get(colorName)
@@ -183,14 +195,17 @@ class Mood:
         return '<%s %s>' % (self.__class__.__name__, self.name)
 
     def getStyle(self, tag):
-        """
+        """Answer the style dictionary 
         >>> theme = BaseTheme('dark') # Using default mood and default palette
         >>> theme.mood
         <Mood dark>
-        >>> theme.mood.getStyle('h2')['fontSize']
+        >>> style = theme.mood.getStyle('h2')
+        >>> style['fontSize']
         28pt
+        >>> style['textFill'] == style['color']
+        True
         """
-        return self.styles[tag]
+        return self.styles.get(tag)
 
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
@@ -248,7 +263,8 @@ class BaseTheme:
             width=perc(100),
             height=perc(100),
             padding=p(4, 4, 4, 4),
-            margin=0
+            margin=0,
+            strokeWidth=0,
         )
 
     def DEFAULT_H_COLORS_NORMAL(c):
