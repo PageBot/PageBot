@@ -856,6 +856,32 @@ class Document:
 
     pzb = property(_get_pzb, _set_pzb)
 
+    #   P A G E  S I Z E S
+
+    def _get_block(self):
+        """Analog to the behavior of Elements, the self.block property answers the 
+        vacuum bounding box around all page elements in 2D, so it can be used as indicator
+        what the placement size is for the document.
+
+        >>> doc = Document(w=560, h=780, autoPages=2)
+        >>> doc[1].w = 200
+        >>> doc[2].w = 1120
+        >>> doc[1].h = 880
+        >>> doc[2].h = 440
+        >>> doc.size
+        (560pt, 780pt)
+        >>> doc.block
+        (0, 0, 1120pt, 880pt)
+
+        """
+        w = h = 0
+        for pages in self.pages.values():
+            for page in pages:
+                w = max(w, page.w)
+                h = max(h, page.h)
+        return 0, 0, w, h
+    block = property(_get_block)
+
     #   P A G E S
 
     def appendPage(self, page, pn=None):
