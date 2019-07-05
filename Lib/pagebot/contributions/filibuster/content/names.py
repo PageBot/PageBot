@@ -28,6 +28,12 @@ content = {
         '<#name_japanese#>-<#name_japanese#><#p_oldbiz_corporateform#>',
     ],
     'name': [
+        '<#name_first_last#>',
+        '<#names_px_scientific#> <#name_first_last#>',
+        '<#names_px_scientific#> <#name_first_last#>',
+        '<#names_px_scientific#> <#name_first_last#>',
+    ],
+    'name_first_last':[
         '<#names_first#> <#names_last#>',
         '<#names_first#> <#names_last#>',
         '<#names_first#> <#names_last#>',

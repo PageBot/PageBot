@@ -255,9 +255,10 @@ class BaseTheme:
 
     def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
             # Add typographic styles to the standards for this class.
-        if tag not in fontSizes:
-            tag = 'body'
-        fontSize, leading, tracking = fontSizes[tag] 
+        if tag in fontSizes:
+            fontSize, leading, tracking = fontSizes[tag] 
+        else: # If unknown tag, then take body values.
+            fontSize, leading, tracking = fontSizes['body']
         padding = p(4)
         margin = 0
         return dict(
