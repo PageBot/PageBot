@@ -14,7 +14,9 @@
 
 from random import choice
 
-from pagebot.toolbox.units import pt
+from pagebot.constants import *
+from pagebot.paths import DEFAULT_FONT_NAME
+from pagebot.toolbox.units import pt, perc, p
 from pagebot.toolbox.color import spotColor, rgbColor, whiteColor, blackColor, grayColor
 
 class Palette:
@@ -144,13 +146,16 @@ class Mood:
     ATTRS = ('color', 'stroke', 'bgcolor', 'link', 'hover',
         'diapcolor', 'diapbgcolor', 'diaplink', 'diaphover',
         )
-    UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin')
+    UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin', 
+        'tracking', 'height', 
+        )
     NAMES = ('font',)
 
     def __init__(self, name, styles, palette):
         self.name = name
         self.palette = palette
         self.attributes = {}
+        self.styles = {} # Dictionary of values by tag name
         # Set colors from combined "IDS.COLOR" names
         for styleName, styleDict in styles.items():
             for attrName, value in styleDict.items():
@@ -161,6 +166,9 @@ class Mood:
                     keyValue = value
                 self.attributes['%s.%s' % (styleName, attrName)] = keyValue # Key value is hex color
                 setattr(self, '%s_%s' % (styleName, attrName), value) # Attr value is origina value object
+                if not styleName in self.styles:
+                    self.styles[styleName] = {}
+                self.styles[styleName][attrName] = value
         # Set all colors as separate entries too, do they can be referred to, ignoring the mood.
         for colorName in self.COLORS:
             value = palette.get(colorName)
@@ -173,6 +181,16 @@ class Mood:
 
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__, self.name)
+
+    def getStyle(self, tag):
+        """
+        >>> theme = BaseTheme('dark') # Using default mood and default palette
+        >>> theme.mood
+        <Mood dark>
+        >>> theme.mood.getStyle('h2')['fontSize']
+        28pt
+        """
+        return self.styles[tag]
 
 class BaseTheme:
     u"""The Theme instances combines a number of style dictionaries (property
@@ -191,9 +209,9 @@ class BaseTheme:
     >>> theme = BaseTheme()
     >>> theme.mood
     <Mood normal>
-    >>> theme.mood['page.bgcolor'] # Access by key
+    >>> theme.mood['page.bgcolor'] # Access by key renders the value to text.
     'FFFFFF'
-    >>> theme.mood.page_bgcolor # Access by attribute
+    >>> theme.mood.page_bgcolor # Access by attribute answers color instance.
     Color(r=1, g=1, b=1)
     >>> theme.mood['h1.bgcolor']
     'FFFFFF'
@@ -201,7 +219,38 @@ class BaseTheme:
     ('E7E7E7', Color(r=0.90625, g=0.90625, b=0.90625))
     >>> theme.mood['p.hover'], theme.mood.p_hover # Both access by key and by attribute syntax work
     ('DFDFDF', Color(r=0.875, g=0.875, b=0.875))
+    >>> theme.mood.body_fontSize, theme.mood.h1_fontSize
+    (12pt, 44pt)
+    >>> theme.mood.li_fontSize, theme.mood.li_leading
+    (12pt, 16.8pt)
+
     """
+    def FONT_SIZES(fs):
+        return dict(
+            body=pt(fs, fs*1.4, fs*0.05),
+            h5=pt(fs, fs*1.4, fs*0.05),
+            h4=pt(fs+4, (fs+4)*1.3, (fs+4)*0.05),
+            h3=pt(fs+8, (fs+8)*1.2, 0),
+            h2=pt(fs+16, (fs+16)*1.1, 0),
+            h1=pt(fs+32, (fs+32)*1.1, 0),
+        )
+    def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
+            # Add typographic styles to the standards for this class.
+        if tag not in fontSizes:
+            tag = 'body'
+        fontSize, leading, tracking = fontSizes[tag] 
+        return dict(
+            font=DEFAULT_FONT_NAME,
+            fontSize=fontSize,
+            tracking=tracking,
+            leading=leading,
+            fallBackFont=DEFAULT_FALLBACK_FONT_PATH,
+            width=perc(100),
+            height=perc(100),
+            padding=p(4, 4, 4, 4),
+            margin=0
+        )
+
     def DEFAULT_H_COLORS_NORMAL(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
@@ -210,7 +259,7 @@ class BaseTheme:
             link='darker%d'%c, hover='dark%d'%c,
             diaplink='lightest%d'%c, diaphover='lighter%d'%c)
 
-    def DEFAULT_MENU_NORMAL(c):
+    def DEFAULT_MENU_COLORS_NORMAL(c):
         """Make new dictionary, in case the caller wants to change value."""
         return dict(
             color='darkest%d'%c, bgcolor='lightest%d'%c,
@@ -233,26 +282,26 @@ class BaseTheme:
         h4=DEFAULT_H_COLORS_NORMAL(0),
         h5=DEFAULT_H_COLORS_NORMAL(0),
         # Default menu and navigation with base0
-        menu=DEFAULT_MENU_NORMAL(0), # Default base0 if no index used
-        mobilemenu=DEFAULT_MENU_NORMAL(0), # Default base0 if no index used
-        menu0=DEFAULT_MENU_NORMAL(0),
-        mobilemenu0=DEFAULT_MENU_NORMAL(0),
+        menu=DEFAULT_MENU_COLORS_NORMAL(0), # Default base0 if no index used
+        mobilemenu=DEFAULT_MENU_COLORS_NORMAL(0), # Default base0 if no index used
+        menu0=DEFAULT_MENU_COLORS_NORMAL(0),
+        mobilemenu0=DEFAULT_MENU_COLORS_NORMAL(0),
         hr0=dict(color='darker0'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
         intro0=dict(color='light0', bgcolor='dark0', # .introduction h1
-            link='light0', hover='darker0'), # .introduciton h1 a
+            link='light0', hover='darker0'), # .introduction h1 a
 
         # Base 1
-        menu1=DEFAULT_MENU_NORMAL(1),
-        mobilemenu1=DEFAULT_MENU_NORMAL(1),
+        menu1=DEFAULT_MENU_COLORS_NORMAL(1),
+        mobilemenu1=DEFAULT_MENU_COLORS_NORMAL(1),
         hr=dict(color='darker1'), # Default ruler color
         hr1=dict(color='darker1'), # <hr> Horizontal ruler color by index
         banner=dict(color='base1', bgcolor='white'),
         # Introduction default is base1
         intro=dict(color='lightest1', bgcolor='dark1', # .introduction h1
-            link='light1', hover='lighter1'), # .introduciton h1 a
+            link='light1', hover='lighter1'), # .introduction h1 a
         intro1=dict(color='lightest1', bgcolor='dark1', # .introduction h1
-            link='light1', hover='lighter1'), # .introduciton h1 a
+            link='light1', hover='lighter1'), # .introduction h1 a
 
         group=dict(color='black', bgcolor='light1',
             diapcolor='white', diapbgcolor='dark1'),
@@ -260,8 +309,8 @@ class BaseTheme:
             diapcolor='white', diapbgcolor='dark1'),
 
         # Base 2
-        menu2=DEFAULT_MENU_NORMAL(2),
-        mobilemenu2=DEFAULT_MENU_NORMAL(2),
+        menu2=DEFAULT_MENU_COLORS_NORMAL(2),
+        mobilemenu2=DEFAULT_MENU_COLORS_NORMAL(2),
         hr2=dict(color='darker2'), # <hr> Horizontal ruler color by index
         p=dict(color='darkest2', bgcolor='white',
             diapcolor='lightest2', diapbgcolor='dark2',
@@ -273,33 +322,33 @@ class BaseTheme:
             diaplink='light2', hoverlink='lightest2'),
         # Introduction default is base1
         intro2=dict(color='lightest2', bgcolor='dark2', # .introduction h1
-            link='light2', hover='lighter2'), # .introduciton h1 a
+            link='light2', hover='lighter2'), # .introduction h1 a
 
         # Base 3
-        menu3=DEFAULT_MENU_NORMAL(3),
-        mobilemenu3=DEFAULT_MENU_NORMAL(3),
+        menu3=DEFAULT_MENU_COLORS_NORMAL(3),
+        mobilemenu3=DEFAULT_MENU_COLORS_NORMAL(3),
         hr3=dict(color='darker3'), # <hr> Horizontal ruler color by index
         side=dict(color='black', bgcolor='white',
             padding=pt(12), link='dark3', hover='darkest3'),
         # Introduction default is base1
         intro3=dict(color='lightest3', bgcolor='dark3', # .introduction h1
-            link='light3', hover='lighter3'), # .introduciton h1 a
+            link='light3', hover='lighter3'), # .introduction h1 a
 
         # Base 4 (supporting color)
-        menu4=DEFAULT_MENU_NORMAL(4),
-        mobilemenu4=DEFAULT_MENU_NORMAL(4),
+        menu4=DEFAULT_MENU_COLORS_NORMAL(4),
+        mobilemenu4=DEFAULT_MENU_COLORS_NORMAL(4),
         hr4=dict(color='darker4'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
         intro4=dict(color='lightest4', bgcolor='dark4', # .introduction h1
-            link='light4', hover='lighter4'), # .introduciton h1 a
+            link='light4', hover='lighter4'), # .introduction h1 a
 
         # Base 5 (supporting color)
-        menu5=DEFAULT_MENU_NORMAL(5),
-        mobilemenu5=DEFAULT_MENU_NORMAL(5),
+        menu5=DEFAULT_MENU_COLORS_NORMAL(5),
+        mobilemenu5=DEFAULT_MENU_COLORS_NORMAL(5),
         hr5=dict(color='darker5'), # <hr> Horizontal ruler color by index
         # Introduction default is base1
         intro5=dict(color='lightest5', bgcolor='dark5', # .introduction h1
-            link='light5', hover='lighter5'), # .introduciton h1 a
+            link='light5', hover='lighter5'), # .introduction h1 a
 
         # Functional
         feature=dict(hed='darkest0', deck='darker1',
@@ -471,7 +520,7 @@ class BaseTheme:
 
     STYLES_SMOOTH = STYLES_NORMAL
     STYLES_CONTRAST = STYLES_NORMAL
-    # To be redefined by inheriting Them classes if necessary
+    # To be redefined by inheriting Theme classes if necessary
     MOOD_NAME_LIGHT = 'light'
     MOOD_NAME_NORMAL = 'normal'
     MOOD_NAME_DARK = 'dark'
@@ -485,6 +534,12 @@ class BaseTheme:
         MOOD_NAME_SMOOTH: STYLES_SMOOTH,
         MOOD_NAME_CONTRAST: STYLES_CONTRAST,
     }
+    # Add typographic value, taking tag into account
+    for mood in MOODS.values():
+        for tag, tagStyle in mood.items():
+            for key, value in DEFAULT_TYPOGRAPHIC(tag, FONT_SIZES(DEFAULT_FONT_SIZE)).items():
+                tagStyle[key] = value
+
     # Keep them in order for popups
     MOOD_NAMES = (
         MOOD_NAME_LIGHT,
@@ -495,9 +550,7 @@ class BaseTheme:
     )
     DEFAULT_MOOD_NAME = MOOD_NAME_NORMAL
     NAME = "BaseTheme"
-    COLORS = None # To redefined by inheriting Theme classes.
-    BASE_COLORS = {}
-
+    BASE_COLORS = {} # To redefined by inheriting Theme classes.
 
     def __init__(self, name=None):
         self.palette = Palette(self.BASE_COLORS)

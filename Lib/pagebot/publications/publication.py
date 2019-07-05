@@ -141,15 +141,15 @@ class Publication(Element):
 
         >>> pub = Publication(name='MyPublication', w=500, h=700)
         >>> doc = pub.document
-        >>> doc.name
-        'MyPublication'
+        >>> doc
+        <Document "MyPublication" Pages=1 Templates=1 Views=1>
         >>> doc.size
         (500pt, 700pt)
         """
         for e in self.elements: # Look for DocWrap child elements
             if isinstance(e, DocWrap):
                 if name in (None, e.name): # If not name defined, then take first one.
-                    return e
+                    return e.wrappedDocument
         if force: # If it does not exist, then create it with the settings of self.
             return self.newDocument(name=name)
         return None
@@ -196,6 +196,12 @@ class Publication(Element):
         self.finders[finder.rootPath] = finder # Overwrite if there is already one on that root path,
         return finder # Answer the finders for convenience of the caller.
 
+    #   E X P O R T I N G
+
+    def export(self, path=None, multiPage=True, **kwargs):
+        document = self.document
+        assert document is not None
+        document.export(path=path, multiPage=multiPage, **kwargs)
 
 if __name__ == '__main__':
     import doctest
