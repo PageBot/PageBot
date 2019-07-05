@@ -1,7 +1,7 @@
 
 body {
     background-color: #E6E2DF;
-    color: #241811;
+    color: #3E2B1E;
     font-family: 'Upgrade-Regular', sans-serif;
     font-size: 17px;
     line-height: 1.4em;
@@ -27,7 +27,7 @@ p strong, li strong {
 }
 a {
     text-decoration: none;
-    color: #462F02;
+    color: #7A5203;
 }
 a:hover {
     text-decoration: none;
@@ -59,46 +59,46 @@ h1 {
     color: #0D0906;
 }
 h1 a {
-    color: #3E2B1E;
+    color: #241811;
 }
 h1 a:hover {
-    color: #241811;
+    color: #3E2B1E;
     background-color: none;
 }
 
 h2 a {
-    color: #3E2B1E;
+    color: #241811;
     background-color: none;
 }
 h2 a:hover {
-    color: #241811;
+    color: #3E2B1E;
     background-color: none;
 }
 
 h3 a {
-    color: #3E2B1E;
+    color: #241811;
     background-color: none;
 }
 h3 a:hover {
-    color: #241811;
+    color: #3E2B1E;
     background-color: none;
 }
 
 h4 a {
-    color: #3E2B1E;
+    color: #241811;
     background-color: none;
 }
 h4 a:hover {
-    color: #241811;
+    color: #3E2B1E;
     background-color: none;
 }
 
 h5 a {
-    color: #3E2B1E;
+    color: #241811;
     background-color: none;
 }
 h5 a:hover {
-    color: #241811;
+    color: #3E2B1E;
     background-color: none;
 }
 
@@ -144,10 +144,10 @@ h5 a:hover {
 /* Rulers */
 
 .main hr {
-    border: 8px solid #7A5203;
+    border: 8px solid #462F02;
 }
 .side hr {
-    border: 1px solid #7A5203;
+    border: 1px solid #462F02;
 }
 
 /* Desktop navigation/menu */
@@ -198,7 +198,7 @@ ul.navmenu li a {
 
 ul.navmenu li a:hover { 
     color: #ccc;
-    background-color: #241811;
+    background-color: #3E2B1E;
 }
 
 li:hover ul.navmenu {
@@ -217,7 +217,7 @@ li:hover a {
 
 li:hover li a:hover { 
     background-color: #E6E2DF; 
-    color: #7A5203;
+    color: #462F02;
 }
 
 .main-navigation li ul.navmenu li { 
@@ -299,7 +299,7 @@ ul.navmenu:after {
 }
 
 .introduction {
-    background-color: #2B1C08;
+    background-color: #4B320E;
     padding: 1em;
 }
 .introduction .textbox h1 {
@@ -310,10 +310,10 @@ ul.navmenu:after {
 }
 .introduction .textbox h1 a {
     font-family: 'Upgrade-Book', sans-serif;
-    color: #C4B5A1;
+    color: #977E5A;
 }
 .introduction .textbox h1 a:hover {
-    color: #977E5A;
+    color: #C4B5A1;
 }
 
 /* Slide show */
@@ -323,13 +323,13 @@ ul.navmenu:after {
     grid-template-columns: 2fr 1fr;
     column-gap: 10px;
     row-gap: 10px;    
-    background-color: #2B1C08;
+    background-color: #4B320E;
 }
 .slideshow {
-    background-color: #2B1C08;
+    background-color: #4B320E;
 }
 .slideside {
-    background-color: #2B1C08;
+    background-color: #4B320E;
     padding: 0 1em 1em 0;
 }
 .slideside .textbox h1 {
@@ -342,7 +342,7 @@ ul.navmenu:after {
 .slideside .textbox h1 a {
     color: #D3B7A3;
 }
-.slideside .textbox h1 a:hover {
+.slideside .textbox h1 a:textHover {
     color: #544941;
 }
 .slideside .textbox h2 {
@@ -413,8 +413,8 @@ li sup { /* Superior Scale number in Menu */
     row-gap: 10px;    
 }
 .main {
-    padding: 0 12pt;
-    border-top: 15px solid #4B320E;
+    padding: 0 4p;
+    border-top: 15px solid #2B1C08;
 }
 .sides {
     display: grid;
@@ -423,15 +423,15 @@ li sup { /* Superior Scale number in Menu */
     row-gap: 10px;    
 }
 .side {
-    padding: 0 12pt;
-    border-top: 15px solid #4B320E;
+    padding: 0 4p;
+    border-top: 15px solid #2B1C08;
 }
 
 /* Cropped has attribute background-image and optional
 floating elements inside.*/
 .cropped {
     padding: 0;
-    border-top: 15px solid #4B320E;
+    border-top: 15px solid #2B1C08;
 }
 /* Solve Cropped empty <p> first.
 .cropped .textbox {

@@ -18,8 +18,8 @@ __version__ = '4.0'
 #    geography
 #
 content = {
-    'location':    ['<#cities_hip#>', '<#city_and_state#>'],
-    'cities_hip':    [
+    'location': ['<#cities_hip#>', '<#city_and_state#>'],
+    'cities_hip': [
             'New York',
             'Stockholm',
             'Den Haag',
@@ -29,18 +29,18 @@ content = {
             'Sao Paolo'
             ],
 
-    'state_name'    :    ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District Of Columbia','Florida','Georgia','Hawaii','Idaho',
+    'state_name': ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District Of Columbia','Florida','Georgia','Hawaii','Idaho',
             'Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana',
             'Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Puerto Rico',
             'Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virgin Islands','Virginia','Washington','West Virginia','Wisconsin','Wyoming'],
 
-    'state_abbr'    :    ['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+    'state_abbr': ['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
             'NM','NY','ND','OH','OK','OR','PA','PR','RI','SC','SD','TN','TX','UT','VT','VI','VA','WA','WV','WI','WY'],
 
-    'state_abbr_lc'    :    ['al','ak','az','ar','ca','co','ct','de','dc','fl','ga','hi','id','il','in','ia','ks','ky','la','me','md','ma','mi','mn','ms','mo','mt','ne','nv','nh','nj',
+    'state_abbr_lc': ['al','ak','az','ar','ca','co','ct','de','dc','fl','ga','hi','id','il','in','ia','ks','ky','la','me','md','ma','mi','mn','ms','mo','mt','ne','nv','nh','nj',
             'nm','ny','nd','oh','ok','or','pa','pr','ri','sc','sd','tn','tx','ut','vt','vi','va','wa','wv','wi','wy'],
 
-    'country'        :    ['the United States','Argentina','Australia','Austria','Belgium','Brazil','Canada','Denmark','Finland','France','Germany','Hong Kong','Italy','Japan',
+    'country': ['the United States','Argentina','Australia','Austria','Belgium','Brazil','Canada','Denmark','Finland','France','Germany','Hong Kong','Italy','Japan',
             'The Netherlands','New Zealand','Norway','Portugal','Singapore','Spain','Sweden','Switzerland','United Kingdom','Afghanistan','Albania','Algeria','American Samoa',
             'Andorra','Angola','Anguilla','Antarctica','Antigua and Barbuda','Armenia','Aruba','Ascension Island','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados',
             'Belarus','Belize','Benin','Bermuda','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Bouvet Island','British Virgin Islands','Brunei','Bulgaria','Burkina Faso',
@@ -60,10 +60,9 @@ content = {
             'Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Turks and Caicos Islands','Tuvalu','Uganda','Ukraine','United Arab Emirates','Uruguay','Uzbekistan',
             'Vanuatu','Vatican City','Venezuela','Vietnam','Virgin Islands','Wallis and Futuna Islands','Western Sahara','Yemen','Yugoslavia','Zambia','Zimbabwe'],
 
-    'countries_major'    :    ['United States','Argentina','Australia','Austria','Belgium','Brazil','Canada','Denmark','Finland','France','Germany','Hong Kong','Italy','Japan',
+    'countries_major': ['United States','Argentina','Australia','Austria','Belgium','Brazil','Canada','Denmark','Finland','France','Germany','Hong Kong','Italy','Japan',
             'Netherlands','New Zealand','Norway','Portugal','Singapore','Spain','Sweden','Switzerland','United Kingdom'],
-    'nationality_major':
-            [
+    'nationality_major': [
             '<#politics_euro_nationality#>',
             'Canadian',
             'Russian',
@@ -78,22 +77,27 @@ content = {
     'us_telephone': [
             '+1 (<#figs_rand_03digit#>) <#figs_rand_03digit#> <#figs_rand_04digit#>',
     ],
-    'address_street'        :    [
+    'address_street': [
             'Street','Street','Street',
             'Avenue','Avenue','Avenue',
             'Way','Road','Place','Boulevard','Close','Center','Plaza','Crescent','Terrace','Drive','Circle',
             ],
-    'address_floor'        :    [
+    'address_floor': [
             '','','',
             '<#figs_ord#> Floor, ',
             'Suite <#figs_nonzero#><#figs#><#figs#>, ',
             'MS: <#figs_nonzero#><#figs#><#alphabet_caps#><#alphabet_caps#>-<#figs#><#figs#>, ',
             ],
     'address' : [
-            '<#figs_nonzero#><#figs#><#figs#> <#names_last_patrician#> <#address_street#>, <#address_floor#><#town_us#>, <#state_abbr#>.',
-            '<#figs_rand_5digit#> <#figs_nonzero#><#figs_ord#> Street, <#address_floor#><#town_us#>, <#state_abbr#>.',
-            '<#figs_rand_5digit#> <#_scarycartel=names_last_patrician#><#_scarycartel#> <#address_street#>, <#address_floor#><#_scarycartel#>, <#state_abbr#>.',
-            'P.O. Box <#figs_rand_5digit#>, <#names_last_patrician#> Station, <#town_us#>, <#state_abbr#>.'
+            '<#address_street_line#>, <#address_city_line#>',
+            ],
+    'address_street_line' : [
+            '<#figs_nonzero#><#figs#><#figs#> <#names_last_patrician#> <#address_street#>',
+            '<#figs_rand_5digit#> <#figs_nonzero#><#figs_ord#> <#address_street#>',
+            'P.O. Box <#figs_rand_5digit#>, <#names_last_patrician#> Station',
+            ],
+    'address_city_line' : [
+            '<#address_floor#><#town_us#>, <#state_abbr#>',
             ],
     'city_and_state': [
             'Palo Alto, CA',

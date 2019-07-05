@@ -385,13 +385,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         textSubhoverDiap = None,
 
         # Color by order of layer
-        textMostFront = None, # Layer on a page, most close to the reader.
-        textMoreFront = None,
-        textFront = None,
-        textMiddle = None,
-        textBack = None,
-        textMoreBack = None,
-        textMostBack = None, # Layer on a page, most far from the reader.
+        colorMostFront = None, # Layer on a page, most close to the reader.
+        colorMoreFront = None,
+        colorFront = None,
+        colorMiddle = None,
+        colorBack = None,
+        colorMoreBack = None,
+        colorMostBack = None, # Layer on a page, most far from the reader.
         
         # Text alignments
         xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.

@@ -251,14 +251,18 @@ class PageView(BaseView):
         >>> view.drawFrame(e, (0, 0))
 
         """
+        strokeColor = self.stroke
+        strokeWidth = self.strokeWidth
+
         if ((self.showFrame and e.isPage) or e.showFrame) and \
+                strokeColor != noColor and strokeWidth and \
                 self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
                 self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
             # TODO: May need to be scaled, as self.drawPadding does.
             ox, oy = point2D(origin)
             context = self.context
             context.fill(noColor)
-            context.stroke(color(0, 0, 1), pt(0.5))
+            context.stroke(strokeColor, strokeWidth)
             context.rect(ox, oy, e.w, e.h)
             # If there are folds, draw them too in the same color.
             folds = e.folds or self.folds
