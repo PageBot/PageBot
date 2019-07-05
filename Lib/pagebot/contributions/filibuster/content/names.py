@@ -31,7 +31,6 @@ content = {
         '<#name_first_last#>',
         '<#names_px_scientific#> <#name_first_last#>',
         '<#names_px_scientific#> <#name_first_last#>',
-        '<#names_px_scientific#> <#name_first_last#>',
     ],
     'name_first_last':[
         '<#names_first#> <#names_last#>',
@@ -448,7 +447,7 @@ content = {
         'Irwin',
         'Torben',
         'Erik',
-        'Petr',
+        #'Petr', # Nah, too specific recognizable.
         'Maarten',
         'Jasper',
         'Michiel',
@@ -678,8 +677,43 @@ content = {
         'Foster',
     ],
     'names_px_scientific': [
-        'Prof. ',
-        'Dr. ',
+        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 
+        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 
+        'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ',
+        'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ',
+        # See https://degree.studentnews.eu/s/4113/77169-Degree-abbreviations.htm
+        'DArts. ',          # Doctor of Art      
+        'DBMS. ',           # Biomedical Science        
+        'DBEnv. ',          # Built Environment    
+        'DBA ', 'D.B.A. ',  # Doctor of Business Administration   
+        'DCL. ',            # Doctor of Civil Law  
+        'DCaM. ',           # Doctor of Coaching and Mentoring        
+        'DCommEd. ',        # Doctor of Community Learning & Development   
+        'DDes. ',           # Doctor of Design        
+        'DEd. ', 'EdD. ',   # Doctor of Education 
+        'EntD. ',           # Doctor of Enterprise        
+        'JD. ',             # Doctor of Jurisprudence  
+        'LLD. ',            # Doctor of Laws   
+        'MusD. ', 'DMus. ', # Doctor of Music     
+        'PhD. ', 'DPhil. ', # Doctor of Philosophy   
+        'DPS. ',            # Doctor of Professional Studies  
+        'DSc. ', 'ScD. ',   # Doctor of Science   
+        'MBA. ', 'EMBA. ',  # Executive MBA   
+        'FdA. ', 'FDA. ', 
+        'FDArts. ',         # Foundation of Arts (Foundation degree)  
+        'FdSc. ',           # Foundation of Sciences (Foundation degree)      
+        'Mart',             # Master in Arts  MART    Mart
+        'MArch', 
+        'M.Arch. ',         # Master of Architecture  
+        'MA. ', 'M.A. ',    # Master of Arts  
+        'MComp. ',          # Master of Computing
+        'MLA. ',            # Master of Liberal Arts   
+        'MMath. ',          # Master of Mathematics     
+        'MSc', 'MSci', 
+        'M.S. ', 'MS. ', 
+        'M.Sc. ', 'M.Sci. ', 
+        'S.M. ', 'Sc.M. ', 
+        'Sci.M. ',          # Master of Science 
     ],
     'names_sx': [
         ', Jr.',

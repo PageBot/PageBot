@@ -74,8 +74,19 @@ content = {
     'politics_euro_nationality':    ['French', 'Dutch', 'British','European','German', 'Croat', 'Serb', 'Turkish',
                             'Belgium','Swiss', 'Danish', 'Norwegian', 'Swedish', 'Finnish','Russian',
                             'Italian','Spanish','Austrian','Portugese','Maltesian','Polish'],
+    'telephone': [
+            '<#us_telephone#>',
+            '<#us_telephone#>',
+            '<#us_telephone#>',
+            '<#nl_telephone#>',
+    ],
     'us_telephone': [
             '+1 (<#figs_rand_03digit#>) <#figs_rand_03digit#> <#figs_rand_04digit#>',
+    ],
+    'nl_telephone': [
+            '+31 6 <#figs_rand_03digit#> <#figs_rand_03digit#> <#figs_rand_03digit#>',
+            '+31 10 <#figs_rand_04digit#> <#figs_rand_04digit#>',
+            '+31 20 <#figs_rand_04digit#> <#figs_rand_04digit#>',
     ],
     'address_street': [
             'Street','Street','Street',
