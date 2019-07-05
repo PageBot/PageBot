@@ -34,12 +34,12 @@ class DocWrap(Element):
         >>> e = Rect(parent=page, fill='red')
         >>> doc2 = Document(name='Canvas Document')
         >>> page = doc2[1]
-        >>> e = DocWrap(doc1, parent=page, x=200, y=300, fill=0.5)
+        >>> e = DocWrap(doc1, parent=page, x=100, y=200, fill=0.5)
         >>> doc2.export('_export/ExampleDocWrap.pdf')
         """
         Element.__init__(self, **kwargs)
         self.wrappedDocument = document
-        self.docCacheType = docCacheType
+        self.docCacheType = docCacheType # TODO: Currently not used.
         self.pn = pn or 1 # In case a specific page is selected.
 
     def _get_w(self):
@@ -61,7 +61,7 @@ class DocWrap(Element):
         building there. Since the page does not change parent, all local styles
         and references are exactly the same, as if the wrapped document is building.
         """
-        page = self.openDocument[self.pn]
+        page = self.wrappedDocument[self.pn]
         page.buildElement(view, p, drawElements, **kwargs)
 
 if __name__ == "__main__":

@@ -58,13 +58,6 @@ class Publication(Element):
             templates = self.TEMPLATES
         self.templates= templates
 
-        # No current document. Default is to fill with self.newDocument call.
-        # self.openDocName saves how the current is stored, even if document 
-        # changes name in mean time.
-        self.openDocuments = {}
-        self.openDocName = None 
-        self.openDoc = None
-
     def getAPI(self):
     	"""Answers the API dictionary for this class that can be used by calling apps,
     	e.g. for construction and behavior of the scope of app UI parameter controls.
@@ -91,8 +84,9 @@ class Publication(Element):
         # If there is already a document with that name on stock, then simply answer
         # it without creating a new one. The current self.docName selection is not changed.
         assert name is not None
-        if name in self.openDocuments:
-            return self.openDocuments[name]
+        for e in self.elements:
+            if e.name == name:
+                return e
 
         if autoPages is None:
             autoPages = 1
@@ -114,28 +108,51 @@ class Publication(Element):
             baselineGrid = self.baselineGrid
         if theme is None:
             theme = self.theme
-        doc = Document(name=name, w=w, h=h, originTop=originTop, padding=padding, 
+        document = Document(name=name, w=w, h=h, originTop=originTop, padding=padding, 
             theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
             baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart, 
             **kwargs)
-        view = doc.view
+        view = document.view
         view.showGrid = self.showGrid
         view.showPadding = self.showPadding
         view.showImageLoresMarker = self.showImageLoresMarker
         view.showBaselineGrid = self.showBaselineGrid
  
-        # Store the document in the publication, and set the current name as selected,
-        # so it can be retrieved if there are multiple available at the same time.
+        # Store the document in the publication as wrapped child element, and set 
+        # the current name as selected, so it can be retrieved if there are multiple 
+        # available at the same time.
         # Note that we can not use "self.doc" here, because a publication is a "normal"
-        # element, the e.doc is use to find the top document where self can be placed in.
+        # element, the e.doc is used to find the top document where self can be placed in.
         # Yes, it's all very recursive.
         #
-        self.openDocuments[name] = self.openDoc = doc
-        self.openDocName = name
-
-        return doc
+        DocWrap(document, parent=self)
+        return document
 
     newSampleDocument = newDocument # To be redefined by inheriting publication classes.
+
+    def _get_document(self):
+        return self.getDocument()
+    document = property(_get_document)
+
+    def getDocument(self, name=None, force=True):
+        """Answer the named document, searching through the list of child elements.
+        If it does not exist and he force flag is set, then create a new document
+        and wrap it as child of self.
+
+        >>> pub = Publication(name='MyPublication', w=500, h=700)
+        >>> doc = pub.document
+        >>> doc.name
+        'MyPublication'
+        >>> doc.size
+        (500pt, 700pt)
+        """
+        for e in self.elements: # Look for DocWrap child elements
+            if isinstance(e, DocWrap):
+                if name in (None, e.name): # If not name defined, then take first one.
+                    return e
+        if force: # If it does not exist, then create it with the settings of self.
+            return self.newDocument(name=name)
+        return None
 
     #   P A R T S
 

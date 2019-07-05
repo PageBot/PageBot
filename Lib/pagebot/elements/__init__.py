@@ -30,6 +30,7 @@ from pagebot.elements.pbruler import Ruler
 from pagebot.elements.pbpolygon import Polygon
 from pagebot.elements.pboval import Oval
 from pagebot.elements.pboval import Circle
+from pagebot.elements.pbdocwrap import DocWrap
 
 # Page elements
 from pagebot.elements.pbimage import Image
