@@ -74,9 +74,13 @@ class Element:
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
+            # Viewing parameters, local overwrite on self.doc.view parameters
             showBaselineGrid=None, showCropMarks=None, showRegistrationMarks=None,
-            showPadding=None, showFrame=None, showMargin=None,
+            showPadding=None, viewPaddingStroke=None, viewPaddingStrokeWidth=None,
+            showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
+            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
             **kwargs):
+
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
@@ -315,6 +319,12 @@ class Element:
         self.showPadding = showPadding
         self.showMargin = showMargin
         self.showFrame = showFrame
+        self.viewFrameStroke = viewFrameStroke
+        self.viewFrameStrokeWidth = viewFrameStrokeWidth
+        self.viewPaddingStroke = viewPaddingStroke
+        self.viewPaddingStrokeWidth = viewPaddingStrokeWidth
+        self.viewMarginStroke = viewMarginStroke
+        self.viewMarginStrokeWidth = viewMarginStrokeWidth
 
     def __repr__(self):
         """Object as string.

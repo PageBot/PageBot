@@ -62,6 +62,11 @@ class DocWrap(Element):
         building there. Since the page does not change parent, all local styles
         and references are exactly the same, as if the wrapped document is building.
         """
+        # FIXME: Hack for now, to reset outline drawing, caused by previous view drawing.
+        from pagebot.toolbox.color import noColor
+        view.context.stroke(noColor)
+        view.context.fill(noColor)
+
         page = self.wrappedDocument[self.pn]
         page.buildElement(view, p, drawElements, **kwargs)
 
