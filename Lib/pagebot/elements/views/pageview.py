@@ -287,7 +287,7 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPadding = True
+        >>> view.showPadding = True        
         >>> view.drawPadding(e, (0, 0))
         """
         e_pt, e_pr, e_pb, e_pl = e.padding
@@ -326,8 +326,8 @@ class PageView(BaseView):
         >>> view.showMargin = True
         >>> view.drawMargin(e, (0, 0))
         """
-        mt, mr, mb, ml = e.margin
-        if ((self.showMargin and e.isPage) or e.showMargin) and (mt or mr or mb or ml):
+        e_mt, e_mr, e_mb, e_ml = e.margin
+        if ((self.showMargin and e.isPage) or e.showMargin) and (e_mt or e_mr or e_mb or e_ml):
             context = self.context
 
             if e.isPage:
@@ -343,9 +343,9 @@ class PageView(BaseView):
             context.stroke(viewMarginStroke, viewMarginStrokeWidth)
             if e.originTop:
                 #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px-ml, py-e.h-mb, e.w+ml+mr, e.h+mt+mb)
+                context.rect(px-e_ml, py-e.h-e_mb, e.w+e_ml+e_mr, e.h+e_mt+e_mb)
             else:
-                context.rect(px-ml, py-mb, e.w+ml+mr, e.h+mt+mb)
+                context.rect(px-e_ml, py-e_mb, e.w+e_ml+e_mr, e.h+e_mt+e_mb)
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):

@@ -75,6 +75,7 @@ class Element:
             radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
             showBaselineGrid=None, showCropMarks=None, showRegistrationMarks=None,
+            showPadding=None, showFrame=None, showMargin=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -311,6 +312,9 @@ class Element:
         self.showBaselineGrid = showBaselineGrid # Initialize to default values by property.
         self.showCropMarks = showCropMarks
         self.showRegistrationMarks = showRegistrationMarks
+        self.showPadding = showPadding
+        self.showMargin = showMargin
+        self.showFrame = showFrame
 
     def __repr__(self):
         """Object as string.
