@@ -44,6 +44,9 @@ class PageView(BaseView):
 
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
 
+    DEFAULT_STROKE_COLOR = color(0.2, 0.2, 1)
+    DEFAULT_STROKE_WIDTH = pt(0.25)
+
     def __repr__(self):
         return '<PageView>'
 
@@ -251,18 +254,18 @@ class PageView(BaseView):
         >>> view.drawFrame(e, (0, 0))
 
         """
-        strokeColor = self.stroke
-        strokeWidth = self.strokeWidth
-
         if ((self.showFrame and e.isPage) or e.showFrame) and \
-                strokeColor != noColor and strokeWidth and \
                 self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
                 self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
             # TODO: May need to be scaled, as self.drawPadding does.
             ox, oy = point2D(origin)
             context = self.context
             context.fill(noColor)
-            context.stroke(strokeColor, strokeWidth)
+
+            viewFrameStroke = e.viewFrameStroke or self.viewFrameStroke or self.DEFAULT_STROKE_COLOR
+            viewFrameStrokeWidth = e.viewFrameStrokeWidth or self.viewFrameStrokeWidth or self.DEFAULT_STROKE_WIDTH
+
+            context.stroke(viewFrameStroke, viewFrameStrokeWidth)
             context.rect(ox, oy, e.w, e.h)
             # If there are folds, draw them too in the same color.
             folds = e.folds or self.folds
@@ -287,8 +290,8 @@ class PageView(BaseView):
         >>> view.showPadding = True
         >>> view.drawPadding(e, (0, 0))
         """
-        pt, pr, pb, pl = e.padding
-        if ((self.showPadding and e.isPage) or e.showPadding) and (pt or pr or pb or pl):
+        e_pt, e_pr, e_pb, e_pl = e.padding
+        if ((self.showPadding and e.isPage) or e.showPadding) and (e_pt or e_pr or e_pb or e_pl):
             context = self.context
 
             if e.isPage:
@@ -297,14 +300,17 @@ class PageView(BaseView):
                 p = origin
             px, py = point2D(e._applyScale(self, p))
 
+            viewPaddingStroke = e.viewPaddingStroke or self.viewPaddingStroke or self.DEFAULT_STROKE_COLOR
+            viewPaddingStrokeWidth = e.viewPaddingStrokeWidth or self.viewPaddingStrokeWidth or self.DEFAULT_STROKE_WIDTH
+
             context.fill(noColor)
-            context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
-                                   self.css('viewPaddingStrokeWidth', 0.5))
+            context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
+
             if e.originTop:
-                #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px+pl, py-e.h+pb, e.w-pl-pr, e.h-pt-pb)
+                #context.rect(px+e_pl, py+e_pb, e.w-e_pl-e_pr, e.h-pt-e_pb)
+                context.rect(px+e_pl, py-e.h+e_pb, e.w-e_pl-e_pr, e.h-e_pt-e_pb)
             else:
-                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+                context.rect(px+e_pl, py+e_pb, e.w-e_pl-e_pr, e.h-e_pt-e_pb)
             e._restoreScale(self)
 
     def drawMargin(self, e, origin):
@@ -330,9 +336,11 @@ class PageView(BaseView):
                 p = origin
             px, py = point2D(e._applyScale(self, p))
 
+            viewMarginStroke = e.viewMarginStroke or self.viewMarginStroke or self.DEFAULT_STROKE_COLOR
+            viewMarginStrokeWidth = e.viewMarginStrokeWidth or self.viewMarginStrokeWidth or self.DEFAULT_STROKE_WIDTH
+
             context.fill(noColor)
-            context.stroke(self.css('viewMarginStroke', color(0.2, 0.2, 1)),
-                                   self.css('viewMarginStrokeWidth', 0.5))
+            context.stroke(viewMarginStroke, viewMarginStrokeWidth)
             if e.originTop:
                 #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
                 context.rect(px-ml, py-e.h-mb, e.w+ml+mr, e.h+mt+mb)
@@ -691,7 +699,7 @@ class PageView(BaseView):
             context.fill(noColor)
             # Use local element color setting, otherwise find by view.css
             gridStrokeColor = e.style.get('viewGridStrokeY', self.css('viewGridStrokeY', noColor))
-            gridStrokeWidth = e.style.get('viewGridStrokeWidthY', self.css('viewGridStrokeWidthY', pt(0.5)))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthY', self.css('viewGridStrokeWidthY', self.DEFAULT_STROKE_WIDTH))
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             gridX = e.gridX
@@ -715,7 +723,7 @@ class PageView(BaseView):
             context.fill(noColor)
             # Use local element color setting, otherwise find by view.css
             gridStrokeColor = e.style.get('viewGridStrokeX', self.css('viewGridStrokeX', noColor))
-            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', pt(0.5)))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', self.DEFAULT_STROKE_WIDTH))
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
             gridY = e.gridY
@@ -739,7 +747,7 @@ class PageView(BaseView):
             # Use local element color setting, otherwise find by view.css
             gridFillColor = e.style.get('gridFillColor', self.css('gridFillColor', noColor))
             gridStrokeColor = e.style.get('viewGridStrokeX', self.css('viewGridStrokeX', noColor))
-            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', pt(0.5)))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthX', self.css('viewGridStrokeWidthX', self.DEFAULT_STROKE_WIDTH))
             context.fill(gridFillColor)
             context.stroke(gridStrokeColor, gridStrokeWidth)
 
@@ -886,7 +894,9 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element() # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showRegistrationMarks = True
+        >>> view.showRegistrationMarks = True # Boolean expands into set
+        >>> sorted(view.showRegistrationMarks)
+        ['bottom', 'left', 'right', 'top']
         >>> view.drawRegistrationMarks(e, pt(0, 0))
         """
         # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags
@@ -936,7 +946,9 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element()
         >>> view = PageView(context=context, style=style)
-        >>> view.showCropMarks = True
+        >>> view.showCropMarks = True # Boolean expand into full set by property
+        >>> sorted(view.showCropMarks)
+        ['bottom', 'bottomFold', 'left', 'leftFold', 'right', 'rightFold', 'top', 'topFold']
         >>> view.folds = [(mm(40), mm(60))]
         >>> view.drawCropMarks(e, pt(0, 0))
         """
@@ -951,9 +963,18 @@ class PageView(BaseView):
             x, y = point2D(origin) # Ignore z-axus for now.
             w, h = e.size
             folds = e.folds or self.css('folds')
-            cmDistance = self.css('viewCropMarkDistance') # From the side, compare with bleed.
-            cmSize = min(self.css('viewCropMarkSize', pt(32)), self.pl)
-            cmStrokeWidth = self.css('viewCropMarkStrokeWidth')
+
+            cmDistance = e.css('viewCropMarkDistance') # From the side, compare with bleed.
+            if not cmDistance:
+                cmDistance = self.css('viewCropMarkDistance', pt(12)) 
+
+            cmSize = e.css('viewCropMarkSize')
+            if not cmSize:
+                cmSize = self.css('viewCropMarkSize', pt(32))
+
+            cmStrokeWidth = e.css('viewCropMarkStrokeWidth')
+            if not cmStrokeWidth:
+                cmStrokeWidth = self.css('viewCropMarkStrokeWidth', pt(0.25))
 
             context.fill(noColor)
             context.stroke(registrationColor, w=cmStrokeWidth) # For CMYK, draw all colors color(cmyk=1))

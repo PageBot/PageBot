@@ -74,7 +74,7 @@ class Element:
             borderLeft=None, shadow=None, gradient=None, drawBefore=None,
             radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
-            showBaselineGrid=None,
+            showBaselineGrid=None, showCropMarks=None, showRegistrationMarks=None,
             **kwargs):
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -307,8 +307,10 @@ class Element:
         if solve:
             self.solve()
 
-        # View flags
+        # View flags, set them as properties, so the right type is expanded (e.g. from bool to list of sides)
         self.showBaselineGrid = showBaselineGrid # Initialize to default values by property.
+        self.showCropMarks = showCropMarks
+        self.showRegistrationMarks = showRegistrationMarks
 
     def __repr__(self):
         """Object as string.
@@ -7521,6 +7523,56 @@ class Element:
         self.style['showRegistrationMarks'] = showRegistrationMarks
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
+    def _get_viewFrameStroke(self):
+        """Answer local setting of frame stroke color, used if self.showFrame is True. 
+        Note that this is independent from the element border showing.
+        """
+        return self.style.get('viewFrameStroke') # Not inherited
+    def _set_viewFrameStroke(self, stroke):
+        self.style['viewFrameStroke'] = stroke
+    viewFrameStroke = property(_get_viewFrameStroke, _set_viewFrameStroke)
+    
+    def _get_viewFrameStrokeWidth(self):
+        """Answer local setting of frame stroke width, used if self.showFrame is True. 
+        Note that this is independent from the element border showing.
+        """
+        return self.style.get('viewFrameStrokeWidth') # Not inherited
+    def _set_viewFrameStrokeWidth(self, strokeWidth):
+        self.style['viewFrameStrokeWidth'] = strokeWidth
+    viewFrameStrokeWidth = property(_get_viewFrameStrokeWidth, _set_viewFrameStrokeWidth)
+
+    def _get_viewPaddingStroke(self):
+        """Answer local setting of padding stroke color, used if self.showPadding is True. 
+        """
+        return self.style.get('viewPaddingStroke') # Not inherited
+    def _set_viewPaddingStroke(self, stroke):
+        self.style['viewPaddingStroke'] = stroke
+    viewPaddingStroke = property(_get_viewPaddingStroke, _set_viewPaddingStroke)
+    
+    def _get_viewPaddingStrokeWidth(self):
+        """Answer local setting of padding stroke width, used if self.showFrame is True. 
+        """
+        return self.style.get('viewPaddingStrokeWidth') # Not inherited
+    def _set_viewPaddingStrokeWidth(self, strokeWidth):
+        self.style['viewPaddingStrokeWidth'] = strokeWidth
+    viewPaddingStrokeWidth = property(_get_viewPaddingStrokeWidth, _set_viewPaddingStrokeWidth)
+
+    def _get_viewMarginStroke(self):
+        """Answer local setting of margin stroke color, used if self.showMargin is True. 
+        """
+        return self.style.get('viewMarginStroke') # Not inherited
+    def _set_viewMarginStroke(self, stroke):
+        self.style['viewMarginStroke'] = stroke
+    viewMarginStroke = property(_get_viewMarginStroke, _set_viewMarginStroke)
+    
+    def _get_viewMarginStrokeWidth(self):
+        """Answer local setting of margin stroke width, used if self.showMargin is True. 
+        """
+        return self.style.get('viewMarginStrokeWidth') # Not inherited
+    def _set_viewMarginStrokeWidth(self, strokeWidth):
+        self.style['viewMarginStrokeWidth'] = strokeWidth
+    viewMarginStrokeWidth = property(_get_viewMarginStrokeWidth, _set_viewMarginStrokeWidth)
+    
     def _get_showColorBars(self):
         """Set value, containing the selection of color bars that should be shown.
         See pagebot.constants for the names of the options."""

@@ -38,6 +38,7 @@ class DocWrap(Element):
         >>> doc2.export('_export/ExampleDocWrap.pdf')
         """
         Element.__init__(self, **kwargs)
+        assert document is not self.doc # Make sure there is not circular reference.
         self.wrappedDocument = document
         self.docCacheType = docCacheType # TODO: Currently not used.
         self.pn = pn or 1 # In case a specific page is selected.

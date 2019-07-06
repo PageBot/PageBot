@@ -482,7 +482,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewGridStrokeY = color(0.7), # Stroke of grid lines in vertical direction.
         viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
 
-        # Page padding grid
+        # View framing display values
+        viewFrameStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page frame, if view.showFrame is True
+        viewFrameStrokeWidth = pt(0.5), # Line thickness of the page frame lines.
         viewPaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
         viewPaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
         viewMarginStroke = color(r=0.7, g=0.4, b=0.4), # Stroke of page margin lines, if view.showMargin is True
