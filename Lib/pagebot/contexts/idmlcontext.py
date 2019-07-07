@@ -15,7 +15,11 @@
 # -----------------------------------------------------------------------------
 #
 #     idmlcontext.py
-
+#
+#     IDML file specifications here:
+#     http://wwwimages.adobe.com/content/dam/acom/en/devnet/indesign/sdk/cs6/idml/idml-specification.pdf
+#     https://pypi.org/project/SimpleIDML/
+#
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.idmlbuilder import IdmlBuilder
 from pagebot.contexts.strings.idmlstring import IdmlString
