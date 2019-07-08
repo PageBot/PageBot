@@ -30,7 +30,7 @@ release = '0.6-alpha'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['recommonmark']#, 'sphinx.ext.autodoc']
-
+master_doc = 'index'
 #from recommonmark.parser import CommonMarkParser
 
 #source_parsers = {'.md': CommonMarkParser}
