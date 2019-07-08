@@ -33,8 +33,8 @@ from pagebot.constants import FILETYPE_SKETCH, A4, TOP, INLINE, ONLINE, OUTLINE
 from pagebot.contexts.basecontext import BaseContext
 from pagebot.contexts.builders.sketchbuilder import sketchBuilder
 from pagebot.toolbox.color import color
-from pagebot.toolbox.units import asNumber, pt
-from pagebot.toolbox.transformer import path2Dir, path2Extension
+from pagebot.toolbox.units import pt
+from pagebot.toolbox.transformer import path2Dir, path2Extension, asNumber
 from pagebot.elements import *
 
 VERBOSE = False

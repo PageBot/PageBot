@@ -164,7 +164,6 @@ class PageBotDoc(Publication):
                     print(traceback.format_exc())
 
         return node
-
     def scanPackage(self, m):
         u"""Loads modules into packages and classes dictionaries."""
         p = m.__path__
@@ -195,7 +194,7 @@ class PageBotDoc(Publication):
         """Writes config file including menu, traverses module to parse
         docstrings for all files."""
         self.copyFiles()
-        self.scanPackage(m)
+        #self.scanPackage(m)
         f = open(CONFIG, 'w')
         f.write('site_name: PageBot\n')
         f.write('repo_url: https://github.com/typenetwork/PageBot/\n')
@@ -215,7 +214,7 @@ class PageBotDoc(Publication):
         u"""Copies hand edited files."""
         copyfile('README.md', '%s/index.md' % DOCS)
         copyfile('LICENSE.md', '%s/license.md' % DOCS)
-        copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOCS)
+        #copyfile('Examples/Howto/TOC.md', '%s/howto.md' % DOCS)
 
     def buildDocsMenu(self, m, yml):
         u"""Extracts menu from module structure."""

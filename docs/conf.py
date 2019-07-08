@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'PageBot'
-copyright = '2019, Petr van Blokland, Michiel Kauw-A-Tjoe'
-author = 'Petr van Blokland, Michiel Kauw-A-Tjoe'
+copyright = '2019, Petr van Blokland, Michiel Kauw-A-Tjoe, David Crossland'
+author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, David Crossland'
 
 # The full version, including alpha/beta/rc tags
 release = '0.6'
@@ -39,7 +39,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # -- Options for HTML output -------------------------------------------------
