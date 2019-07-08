@@ -1,3 +1,6 @@
 libsass
+pyobjc
 pagebot
 fontTools
+markdown
+svgwrite
