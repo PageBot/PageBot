@@ -282,25 +282,25 @@ class FontInfo:
     def _get_metrics(self):
         """Small collection of font metrics info data as dictionary."""
         # @@@ TODO Review this!
-        return dict(typoDescender=self.typoDescender(),
-                    typoAscender=self.typoAscender(),
-                    descender=self.descender(),
-                    ascender=self.ascender(),
-                    xHeight=self.xHeight(),
-                    capHeight=self.capHeight(),
-                    subscriptYOffset=self.subscriptYOffset(),
-                    lineGap=self.lineGap(),
-                    superscriptXSize=self.superscriptXSize(),
-                    weightClass=self.weightClass(),
-                    widthClass=self.widthClass(),
-                    subscriptXOffset=self.subscriptXOffset(),
-                    strikeoutPosition=self.strikeoutPosition(),
-                    subscriptXSize=self.subscriptXSize(),
-                    superscriptYOffset=self.superscriptYOffset(),
-                    strikeoutSize=self.strikeoutSize(),
-                    subscriptYSize=self.subscriptYSize(),
-                    superscriptYSize=self.superscriptYSize(),
-                    unitsPerEm=self.unitsPerEm())
+        return dict(typoDescender=self.typoDescender,
+                    typoAscender=self.typoAscender,
+                    descender=self.descender,
+                    ascender=self.ascender,
+                    xHeight=self.xHeight,
+                    capHeight=self.capHeight,
+                    subscriptYOffset=self.subscriptYOffset,
+                    lineGap=self.lineGap,
+                    superscriptXSize=self.superscriptXSize,
+                    weightClass=self.weightClass,
+                    widthClass=self.widthClass,
+                    subscriptXOffset=self.subscriptXOffset,
+                    strikeoutPosition=self.strikeoutPosition,
+                    subscriptXSize=self.subscriptXSize,
+                    superscriptYOffset=self.superscriptYOffset,
+                    strikeoutSize=self.strikeoutSize,
+                    subscriptYSize=self.subscriptYSize,
+                    superscriptYSize=self.superscriptYSize,
+                    unitsPerEm=self.unitsPerEm,)
     metrics = property(_get_metrics)
 
 

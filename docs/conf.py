@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'PageBot'
-copyright = '2019, Petr van Blokland, Michiel Kauw-A-Tjoe, David Crossland'
+copyright = 'Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens (http://pagebot.io)'
 author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, David Crossland'
 
 # The full version, including alpha/beta/rc tags
