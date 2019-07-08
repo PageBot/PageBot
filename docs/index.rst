@@ -7,11 +7,10 @@ Welcome to PageBot's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
-   ./README.md
-
+   README.md
 
 Indices and tables
 ==================
