@@ -9,17 +9,11 @@
 #
 #     canvasview.py
 #
-#     TODO: To be fixed.
-#
-#   Traceback (most recent call last):
-#     File "/Users/petr/Desktop/git/PageBot/Lib/pagebot/apps/canvas/canvasview.py", line 18, in <module>
-#       class CanvasView(NSView):
-#   objc.BadPrototypeError: Objective-C expects 1 arguments, Python argument has 3 arguments for <unbound selector setSize of CanvasView at 0x1109def38>
-#
 
 from AppKit import NSView, NSMakeRect, NSClipView, NSTrackingArea, \
     NSTrackingMouseEnteredAndExited , NSTrackingActiveWhenFirstResponder, \
     NSTrackingMouseMoved, NSTrackingInVisibleRect, NSTrackingActiveAlways
+import objc
 
 class CanvasView(NSView):
     """Drawable NSView. To be used by tnbits.canvas.Canvas class."""
@@ -40,13 +34,15 @@ class CanvasView(NSView):
         self.setDelegate_(delegate)
         self.setAcceptsMouseMoved_(acceptsMouseMoved)
         if acceptsMouseMoved:
-            self.setTracking(0, 0, w, h, active)
+            self.setTrackingArea(0, 0, w, h, active)
         self.resizing = False
 
+    @objc.python_method
     def setSize(self, w, h):
         self.setFrame_(NSMakeRect(0, 0, w, h))
 
-    def setTracking(self, x, y, w, h, active):
+    @objc.python_method
+    def setTrackingArea(self, x, y, w, h, active):
         if active == 'always':
             a = NSTrackingActiveAlways
         else:
@@ -160,6 +156,7 @@ class CanvasView(NSView):
     def selectAllControl_(self, event):
         self.sendDelegateAction_event_("selectAllControl", event)
 
+    @objc.python_method
     def deselect(self, event):
         self.sendDelegateAction_event_("deselect", event)
 
@@ -251,6 +248,6 @@ class CanvasClipView(NSClipView):
         super(CanvasClipView, self).viewFrameChanged_(notification)
         #self.centerDocument()
     '''
-    
+
     def getSize(self):
         return self.frame().size
