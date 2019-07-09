@@ -61,14 +61,13 @@ def getVariableAxisFonts(varFont, axisName,
         return minInstance, maxInstance
     return varFont, varFont
 
-def fitVariableWidth(varFont, s, w, fontSize,
-                     condensedLocation, wideLocation, fixedSize=True,
-                     tracking=None, cached=True, lazy=True):
+def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation,
+        fixedSize=True, tracking=None, cached=True, lazy=True):
     """Answers the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
     and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
     The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
-    until the location is found where the string *s* fits width *w). Note that interpolation may not be enough,
+    until the location is found where the string *s* fits width *w*). Note that interpolation may not be enough,
     as the width axis may contain non-linear masters.
     If the requested w outside of what is possible with two locations, then interations are performed to
     change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
@@ -183,9 +182,9 @@ def generateInstance(variableFontPath, location, targetDirectory,
 
     Instantiate an instance of a variable font at the specified location.
     Keyword arguments:
-        varfilename -- a variable font file path
-        location -- a dictionary of axis tag and value {"wght": 0.75, "wdth":
-        -0.5}
+    varfilename -- a variable font file path
+    location -- a dictionary of axis tag and value {"wght": 0.75, "wdth":
+    -0.5}
     """
     # make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
     instanceName = ""

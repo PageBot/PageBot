@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
+
 """
-        history
-        This is the init code for the Content package.
-        No user servicable parts inside.
+
+history
+This is the init code for the Content package.
+No user servicable parts inside.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'contexnt' allowed per module
-        this limitation is to speed up loading
-4.0    - changes due to the fact that Content is now a submodule of the
-        new ContentWriter package. (jvr)
-4.0     2016 public release
+
+ - 3.0.0: split all the content into babycontents
+ - evb: note: only one dictionary named 'context' allowed per module
+   this limitation is to speed up loading
+ - 4.0: changes due to the fact that Content is now a submodule of the
+   new ContentWriter package. (jvr)
+ - 4.0: 2016 public release
+
 """
 
 import glob
-import os, string
+import os
 import traceback
 
 _version__ = '4.0'
@@ -93,8 +97,9 @@ def index(tagname):
             for k in c.keys():
                 if k == tagname:
                     keys.append(m)
+
                 for item in c[k]:
-                    if string.find(item, tagname) !=  -1:
+                    if str.find(item, tagname) !=  -1:
                         usedin[(m, k)] = 1
     return keys, usedin.keys()
 

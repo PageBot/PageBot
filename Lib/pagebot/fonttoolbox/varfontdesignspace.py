@@ -21,7 +21,7 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation # VariableModel
 from fontTools.varLib import _GetCoordinates
-from pagebot.fonttoolbox.dsmodel import DesignSpaceBase, Axis
+from pagebot.fonttoolbox.designspace.dsmodel import DesignSpace, Axis
 from pagebot.fonttoolbox.ttftools import getBestCmap
 
 
@@ -65,7 +65,7 @@ class TTVarFontGlyphSet:
         self._ttFont = ttFont
         self._axes = {a.axisTag: (a.minValue, a.defaultValue, a.maxValue) for a in ttFont['fvar'].axes}
         self.setLocation({})
-    
+
     def setLocation(self, location):
         self.location = normalizeLocation(location, self._axes)
 
@@ -125,7 +125,7 @@ class TTVarGlyph:
         glyph.draw(pen, self._ttFont['glyf'])  # XXX offset based on lsb
 
 
-class TTVarFontDesignSpace(DesignSpaceBase):
+class TTVarFontDesignSpace(DesignSpace):
 
     @classmethod
     def fromVarFontPath(cls, path):

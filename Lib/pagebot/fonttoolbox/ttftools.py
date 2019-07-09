@@ -431,17 +431,23 @@ def tagToIdentifier(tag):
 
 
 class TTFTraverser:
-
     """TTFTraverser is a tiny framework to write functionality that has to deal with
     looking at or modifying multiple TTF/OTF tables more or less independently. Simply
     subclass TTFTraverser, implement a table handler method per TTF/OTF table, using
     the following naming scheme:
 
+    ::
+
         def <myprefix>_<tabletag>(self, table, *args, **kwargs): ...
 
-    Then calling traverser.traverseTables("<myprefix>", *args, **kwargs) will go
-    through all the tables in the font, and will call a handler for each, if one
-    is defined, passing along args and kwargs.
+    Then calling
+
+    ::
+
+        traverser.traverseTables("<myprefix>", *args, **kwargs)
+
+    will go through all the tables in the font, and will call a handler for
+    each, if one is defined, passing along args and kwargs.
     """
 
     def __init__(self, font):

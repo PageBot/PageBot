@@ -18,7 +18,7 @@
 
 import os
 from copy import copy, deepcopy
-from fontTools.varLib import designspace
+from fontTools.designspaceLib import DesignSpaceDocument
 from fontTools.varLib.models import VariationModel, normalizeLocation
 from pagebot.toolbox.units import asFormatted
 
@@ -397,6 +397,7 @@ class DesignSpace:
 
     def _get_path(self):
         return self._path
+
     def _set_path(self, path):
         self._path = path
         self._ds = None
@@ -408,7 +409,7 @@ class DesignSpace:
         self.instanceList = []
 
         if path is not None:
-            self._ds = ds = designspace.load(path) # Raw eTree from file.
+            self._ds = ds = DesignSpaceDocument.fromfile(path) # Raw eTree from file.
             for a in ds['axes']: # Maintain order by index
                 axis = Axis(tag=a['tag'], name=a['name'], minimum=a['minimum'], default=a['default'], maximum=a['maximum'])
                 self.appendAxes(axis)

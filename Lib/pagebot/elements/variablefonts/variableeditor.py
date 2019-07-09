@@ -17,9 +17,12 @@
 import sys
 from pagebot import getContext
 context = getContext()
+
+'''
 if 1 or not context.isDrawBot:
     print ('Example only runs on DrawBot.')
     sys.exit()
+'''
 
 import AppKit
 import CoreText
