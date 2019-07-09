@@ -31,15 +31,18 @@ looks like this:
     from pagebot.toolbox.units import pt
     from pagebot.toolbox.color import color
 
-    W, H = pt(500, 400)
-    doc = Document(w=W, h=H, originTop=False, autoPages=1)
-    page = doc[1]
+    W, H = pt(500, 400) # Get size units
+    # Create document with default 1 page.
+    doc = Document(w=W, h=H, originTop=False) 
+    page = doc[1] # First page in the list is uneven (right side)
+    # Create a new rectangle element with position conditions
     newRect(parent=page, fill=color('red'), size=pt(200),
+        showDimensions=True,
         conditions=[Center2Center(), Middle2Middle()])
-    page.solve()
-    doc.export('_export/RedSquare.png')
+    page.solve() # Make the page apply all conditions.
+    doc.export('_export/RedSquare.png') # Export the document page.
         
-![](images/RedSquare_1.png)
+![](images/RedSquare_1.png) 
 
 # Issue Tracking 
 
