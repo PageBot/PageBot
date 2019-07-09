@@ -3,12 +3,18 @@
 PageBot is a page layout program that enables designers to create high quality
 documents using Python programming. It is available both as Python library
 working with [DrawBot](http://www.drawbot.com) and as part of a collection of
-stand-alone desktop applications. Other contexts such as
+stand-alone desktop applications. 
+
+Other contexts such as
 [Flat](http://xxyxyz.org/flat) and InDesign are currently being developed. They
 will allow PageBot to output to print-ready formats and to run in environments
-other than Mac OS X such as Posix web servers. The aim of the developers of
+other than Mac OS X such as Posix web servers. 
+
+The aim of the developers of
 PageBot is to create a system of scriptable applications to generate
-professionally designed documents that make use of high quality typography.
+professionally designed documents that make use of high quality typography. 
+The same code can export to a variaty of output formats, such as PDF, PNG, JPG, 
+TIFF, GIF, MOV, HTML/CSS, IDML and SVG. 
 
 # Installation
 
@@ -16,13 +22,28 @@ professionally designed documents that make use of high quality typography.
 
 # Usage
 
+A typical small PageBot script, generating a page with a centered red square,
+looks like this:
+
     from pagebot.document import Document
+    from pagebot.elements import newRect
+    from pagebot.conditions import Center2Center, Middle2Middle
     from pagebot.toolbox.units import pt
-    
-    W, H = pt(500, 400)
-    doc = Document(w=W, h=H, originTop=False, autoPages=1)
-    page = doc[1]
-    
+    from pagebot.toolbox.color import color
+
+    W, H = pt(500, 400) # Get size units
+    # Create document with default 1 page.
+    doc = Document(w=W, h=H, originTop=False) 
+    page = doc[1] # First page in the list is uneven (right side)
+    # Create a new rectangle element with position conditions
+    newRect(parent=page, fill=color('red'), size=pt(200),
+        showDimensions=True, # Show measure lines on the element.
+        conditions=[Center2Center(), Middle2Middle()])
+    page.solve() # Make the page apply all conditions.
+    doc.export('_export/RedSquare.png') # Export the document page.
+        
+![](images/RedSquare_1.png) 
+
 # Issue Tracking 
 
 Bugs, enhancements and requested features can be added to the GitHub issue tracker:
