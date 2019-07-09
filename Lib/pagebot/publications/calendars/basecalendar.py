@@ -18,8 +18,15 @@ from pagebot.elements import *
 from pagebot.constants import *
 
 class BaseCalendar(Publication):
-    """Create a default calemdar, with cover, month pages.
+    """Create a default calendar for the indicated year. 
+    Add cover and monthly pages.
 
+    >>> from pagebot.toolbox.dating import now
+    >>> calendar = BaseCalendar(now().year, size=A4)
+    >>> calendar.year == now().year
+    True
+    >>> calendar.size
+    (210mm, 297mm)
     """
 
     # Default paper sizes that are likely to be used for 
@@ -53,4 +60,12 @@ class BaseCalendar(Publication):
     DEFAULT_PAGE_SIZE_NAME = 'A3Square'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
-    
+    def __init__(self, year, **kwargs):
+        Publication.__init__(self, **kwargs)
+        self.year = year
+
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
