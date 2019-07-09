@@ -3,7 +3,7 @@
 
 
 
-from blurb import Blurb
+from .blurb import Blurb
 
 # Show the list of all possible entries.
 SHOW_ALL_TYPES = False

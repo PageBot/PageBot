@@ -139,7 +139,9 @@ class BlurbWriter:
     def choice(self, cached, key):
         if self.has_key(cached):
             return 1, self[cached][0]
+
         items = self[key]
+
         if items:
             i = randint(0, len(items)-1)
             self.choicetree.append((self.keyindex(key), i))

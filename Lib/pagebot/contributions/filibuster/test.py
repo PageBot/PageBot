@@ -1,6 +1,6 @@
 
-from blurb import Blurb
-from content import index
+from .blurb import Blurb
+from .content import index
 
 import codecs
 import os

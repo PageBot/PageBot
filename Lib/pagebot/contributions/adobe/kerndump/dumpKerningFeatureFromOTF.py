@@ -5,7 +5,7 @@
 import os
 import sys
 import string
-import getKerningPairsFromOTF
+from .getKerningPairsFromOTF import *
 #reload(getKerningPairsFromOTF)
 
 __doc__ ='''\
@@ -74,7 +74,7 @@ def buildOutputList(sourceList, outputList, headlineString):
 
 
 def makeKernFeature(fontPath):
-    f = getKerningPairsFromOTF.ReadKerning(fontPath)
+    f = ReadKerning(fontPath)
     allClasses = {}
     classList = []
     output = []

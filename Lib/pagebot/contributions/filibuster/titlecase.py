@@ -24,16 +24,13 @@ SMALL_LAST = re.compile('\b(%s)%s?$' % (SMALL, PUNCT), re.I)
 SUBPHRASE = re.compile('([:.;?!][ ])(%s)' % SMALL)
 
 def titlecase(text):
-
-    """
-    Titlecases input text
+    """Titlecases input text
 
     This filter changes all words to Title Caps, and attempts to be clever
     about *un*capitalizing SMALL words like a/an/the in the input.
 
-    The list of "SMALL words" which are not capped comes from
-    the New York Times Manual of Style, plus 'vs' and 'v'.
-
+    The list of "SMALL words" which are not capped comes from the New York
+    Times Manual of Style, plus 'vs' and 'v'.
     """
 
     words = re.split('\s', text)
