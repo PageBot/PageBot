@@ -633,9 +633,11 @@ table {
     def html(self, xmlns=None, **args):
         """
         <www href="http://www.w3schools.com/tags/tag_html.asp" target="external"/>
+
         self.html(xmlns="http://www.w3.org/1999/xhtml", dir=ltr, lang=no, xmllang=no)
-            ...
+        ...
         self._html()
+
         Default value for xmlns is "http://www.w3.org/1999/xhtml".
 
         >>> b = HtmlBuilder()
@@ -660,10 +662,13 @@ table {
         browser does not display the "head information" to the user. The
         following tags can be in the head section: base, link, meta, script,
         style and title.
+
         <www href="http://www.w3schools.com/tags/tag_head.asp" target="external"/>
+
         self.head()
-            ...
+        ...
         self._head()
+
         """
         self.tabs()
         self.write('<head')
@@ -679,8 +684,9 @@ table {
         """This tag defines the title of the document.
 
         <www href="http://www.w3schools.com/tags/tag_title.asp" target="external"/>
+
         self.title()
-            ...
+        ...
         self._title()
 
         >>> b = HtmlBuilder()
@@ -718,11 +724,13 @@ table {
         """The link tag defines the relationship between two linked documents.
 
         <www href="http://www.w3schools.com/tags/tag_link.asp" target="external"/>
+
         self.head()
-            ...
-            self.link(href='/_images/favicon.ico', rel='shortcut icon')
-            ...
+        ...
+        self.link(href='/_images/favicon.ico', rel='shortcut icon')
+        ...
         self._head()
+
         """
         self.write_tag('link', False, args)
         self.newLine() # Optional newline is self.compact is False.
@@ -734,8 +742,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_body.asp" target="external"/>
         self.body(onload='javascript:loadpage()')
-            ...
+        ...
         self._body()
+
         """
         self.write_tag('body', True, args)
 
@@ -747,9 +756,10 @@ table {
         """
         The h1 to h6 tags define headers. h1 defines the largest header. h6
         defines the smallest header.
+
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
         self.h1(cssClass='chapter')
-            ...
+        ...
         self._h1()
 
         >>> b = HtmlBuilder()
@@ -783,10 +793,13 @@ table {
     def h2(self, **args):
         """The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
+
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
         self.h2(cssClass='head')
-            ...
+        ...
         self._h2()
+
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -821,9 +834,11 @@ table {
         """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
+
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
         self.h3(cssClass='subhead')
-            ...
+        ...
         self._h3()
 
         >>> b = HtmlBuilder()
@@ -860,8 +875,9 @@ table {
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
         self.h4(cssClass='subsubhead')
-            ...
+        ...
         self._h4()
 
         >>> b = HtmlBuilder()
@@ -898,9 +914,11 @@ table {
         """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
-         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
+        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
         self.h5(cssClass='caption')
-            ...
+        ...
         self._h5()
 
         >>> b = HtmlBuilder()
@@ -935,9 +953,11 @@ table {
         """
         The h1 to h6 tags define headers.
         h1 defines the largest header. h6 defines the smallest header.
+
         <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
         self.h6(cssClass='footnote')
-            ...
+        ...
         self._h6()
 
         >>> b = HtmlBuilder()
@@ -1285,10 +1305,13 @@ table {
         """
         The table tag defines a table.¬†Inside a table tag you can put table headers,
         table rows, table cells, and other tables.
+
         <www href="http://www.w3schools.com/tags/tag_table.asp" target="external"/>
+
         self.table()
-            ...
+        ...
         self._table()
+
         """
         self.write_tag_noWhitespace('table', True, args)
         #self._debugclass('table', self.getClassName(args, self.TABLE_ATTRIBUTES))
@@ -1338,10 +1361,13 @@ table {
     def tr(self, **args):
         """
         Defines a row in a table.
+
         <www href="http://www.w3schools.com/tags/tag_tr.asp" target="external"/>
+
         self.tr()
-            ...
+        ...
         self._tr()
+
         """
         self.write_tag('tr', True, args)
 
@@ -1352,10 +1378,13 @@ table {
         """
         Defines a cell in a table. If the rolspan or colspan are not defined or if their value is 1
         then the output is ignored.
+
         <www href="http://www.w3schools.com/tags/tag_td.asp" target="external"/>
+
         self.td()
-            ...
+        ...
         self._td()
+
         """
         self.write_tag_noWhitespace('td', True, args)
         #self._debugclass('td', self.getClassName(args, self.TD_ATTRIBUTES))
@@ -1369,9 +1398,11 @@ table {
          or colspan are not defined or if their value is 1 then the output is ignored.
 
         <www href="http://www.w3schools.com/tags/tag_th.asp" target="external"/>
+
         self.th()
-            ...
+        ...
         self._th()
+
         """
         self.write_tag_noWhitespace('th', True, args)
 
@@ -1384,9 +1415,11 @@ table {
         define the style sheet externally, and link to it using XHTML link.
 
         <www href="http://www.w3schools.com/tags/tag_style.asp" target="external"/>
+
         self.style()
-            ...
+        ...
         self._style()
+
         """
         self.write_tag('style', True, args)
 
@@ -1402,11 +1435,13 @@ table {
     def div(self, **args):
         """
         The div tag defines a division/section in a document.
-        <note>Browsers usually place a line break before and after the div element.</note>
+        NOTE: Browsers usually place a line break before and after the div element.
+
         <www href="http://www.w3schools.com/tags/tag_div.asp" target="external"/>
         self.div()
-            ...
+        ...
         self._div()
+
         """
         self.write_tag_noWhitespace('div', True, args)
 
@@ -1526,6 +1561,7 @@ table {
         as border, scrolling, the ability to resize, etc.
 
         <www href="http://www.w3schools.com/tags/tag_frame.asp"/>
+
         """
         self.write_tag('frame', True, args)
         self._debugclass('frame', self.getClassName(args, self.FRAME_ATTRIBUTES))
@@ -1543,7 +1579,9 @@ table {
         The noframes element is most used to link to a non-frameset version of
         the web site or to display a message to users that frames are required.
         The noframes element goes inside the frameset element.
+
         <www href="http://www.w3schools.com/tags/tag_noframes.asp"/>
+
         """
         self.write_tag('noframes', False, args)
         self._debugclass('noframes', self.getClassName(args, self.NOFRAMES_ATTRIBUTES))
@@ -1553,7 +1591,9 @@ table {
 
     def iframe(self, src, **args):
         """The iframe tag creates an inline frame that contains another document.
+
         <www href="http://www.w3schools.com/tags/tag_iframe.asp"/>
+
         """
         self.write('<iframe src="%s"' % src)
         self.getandwrite_attributes('iframe', args)
@@ -1582,9 +1622,11 @@ table {
         br to repeat.
 
         <www href="http://www.w3schools.com/tags/tag_script.asp" target="external"/>
+
         self.script()
-            ...
+        ...
         self._script()
+
         """
         #
         #     Build script. Note that if @src is used, then no self._script()
@@ -1626,8 +1668,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_ul.asp" target="external"/>
         self.ul()
-            ...
+        ...
         self._ul()
+
         """
         self.write_tag('ul', True, args)
 
@@ -1639,8 +1682,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_ol.asp" target="external"/>
         self.ol()
-            ...
+        ...
         self._ol()
+
         """
         self.write_tag('ol', True, args)
 
@@ -1655,8 +1699,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_li.asp" target="external"/>
         self.li()
-            ...
+        ...
         self._li()
+
         """
         self.write_tag_noWhitespace('li', True, args)
 
@@ -1668,8 +1713,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_dl.asp" target="external"/>
         self.dl()
-            ...
+        ...
         self._dl()
+
         """
         self.write_tag('dl', True, args)
 
@@ -1682,8 +1728,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_dt.asp" target="external"/>
         self.dt()
-            ...
+        ...
         self._dt()
+
         """
         self.write_tag('dt', True, args)
 
@@ -1696,8 +1743,9 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_dd.asp" target="external"/>
         self.dd()
-            ...
+        ...
         self._dd()
+
         """
         self.write_tag('dd', True, args)
 
@@ -1717,11 +1765,13 @@ table {
 
         <www href="http://www.w3schools.com/tags/tag_form.asp" target="external"/>
 
-        If an upload tag is used in the form, then the enctype attribute should be set to
-        enctype="multipart/form-data"
+        If an upload tag is used in the form, then the enctype attribute should
+        be set to enctype="multipart/form-data".
+
         self.form(action=e['path'])
-            ...
+        ...
         self._form()
+
         """
         #
         #     @class_
@@ -1784,10 +1834,13 @@ table {
 
     def select(self, **args):
         """The select element creates a drop-down list.
+
         <www href="http://www.w3schools.com/tags/tag_select.asp" target="external"/>
+
         self.select()
-            ...
+        ...
         self._select()
+
         """
         self.write_tag('select', True, args)
 
@@ -1796,10 +1849,13 @@ table {
 
     def option(self, **args):
         """The option tag defines an option in the drop-down list.
+
         <www href="http://www.w3schools.com/tags/tag_option.asp" target="external"/>
+
         self.option()
-            ...
+        ...
         self._option()
+
         """
         self.write_tag('option', True, args)
 
@@ -1808,10 +1864,13 @@ table {
 
     def optgroup(self, **args):
         """The optgroup tag defines an option group in the drop-down list.
+
         <www href="http://www.w3schools.com/tags/tag_optgroup.asp" target="external"/>
+
         self.optgroup()
-            ...
+        ...
         self._optgroup()
+
         """
         self.write_tag('optgroup', True, args)
 
@@ -1840,9 +1899,11 @@ table {
         number of characters. The default font in the text area is fixed pitch.
 
         <www href="http://www.w3schools.com/tags/tag_textarea.asp" target="external"/>
+
         self.textarea()
-            ...
+        ...
         self._textarea()
+
         """
         self.write_tag_noWhitespace('textarea', True, args) # No tabbing inside the <textarea> tag.
 
@@ -1854,9 +1915,11 @@ table {
         descriptions and keywords for search engines and refresh rates.
 
         <www href="http://www.w3schools.com/tags/tag_meta.asp" target="external"/>
+
         self.meta()
-            ...
+        ...
         self._meta()
+
         """
         self.write_tag('meta', False, args)
 
