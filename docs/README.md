@@ -37,7 +37,7 @@ looks like this:
     page = doc[1] # First page in the list is uneven (right side)
     # Create a new rectangle element with position conditions
     newRect(parent=page, fill=color('red'), size=pt(200),
-        showDimensions=True,
+        showDimensions=True, # Show measure lines on the element.
         conditions=[Center2Center(), Middle2Middle()])
     page.solve() # Make the page apply all conditions.
     doc.export('_export/RedSquare.png') # Export the document page.
