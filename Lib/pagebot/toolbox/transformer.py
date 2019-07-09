@@ -634,41 +634,6 @@ def path2FamilyName(path):
 
 path2GlyphIdName = path2FontName
 
-styleNameParts = re.compile('[^A-Za-z]*([A-Z]*[a-z]*)')
-
-'''
-def path2StyleNameParts(pathOrName, extensions=None):
-    """Answers the fileName or name as set of unique parts that can be checked
-    for as style e.g. by the abbreviated style names in style.py.
-    The parts a split on Cap(+Cap)(+lc) patterns.
-
-    NOTE that the family name is also included, as often there is no difference
-    between the family name and the style parts.
-
-    """
-
-    """
-    TODO: cons.STYLE_REPLACEMENTS is not longer there.
-    TODO: Make compatible with pagebot.constants
-    >>> sorted(path2StyleNameParts('/xxx/yyy/zzz/Agency_FB-Compressed.ufo', ['ufo']))
-    ['Agency', 'Compressed', 'FB']
-    >>> sorted(path2StyleNameParts('Agency   FB-&&BoldCondensed.TTF'))
-    ['Agency', 'Bold', 'Condensed', 'FB']
-    >>> sorted(path2StyleNameParts('Roboto Condensed_SemiBoldItalic--.1234.UFO', ['ufo']))
-    ['Condensed', 'Italic', 'Roboto', 'Semibold']
-    """
-    from pagebot.constants import STYLE_REPLACEMENTS
-    fontName = path2FontName(pathOrName, extensions)
-    if fontName is None:
-        return []
-    for fromException, toException in STYLE_REPLACEMENTS:
-        if fromException in fontName:
-            fontName = fontName.replace(fromException, toException)
-    parts = set(styleNameParts.findall(fontName))
-    parts.remove('')
-    return parts
-'''
-
 def path2HintPath(path):
     return path2FormatPath(path, 'autohint.ttf')
 
@@ -1041,8 +1006,8 @@ def bash(cmd, cwd=None):
 
 def dataAttribute2Html5Attribute(key):
     """The @dataAttribute2Html5Attribute@ method converts an *key*
-    attribute that starts with @'data_'@ to the HTML5 attribute that starts
-    with @'data-'@. Otherwise the *key* attribute is answered unchanged.
+    attribute that starts with `'data_'` to the HTML5 attribute that starts
+    with `'data-'`. Otherwise the *key* attribute is answered unchanged.
     """
     if key.startswith(u'data_'):
         return 'data-' + key[5:]
@@ -1065,11 +1030,10 @@ def pyAttrName2XmlAttrName(key):
 
 def xmlAttrName2PyAttrName(key):
     """The @xmlAttrName2PyAttrName@ method converts the XML attribute name
-    *key* to an appropriate Python attribute identifier.
-    If the *key* is @'class'@ then it is translated into 'class_'. If a
-    namespace is defined (to be recognized on {...}, then replace that by
-    prefix @'ns_'@. If there is an HTML5 attribute *data-xxxx* used,
-    then change that to *data_xxxx*."""
+    *key* to an appropriate Python attribute identifier. If the *key* is
+    `'class'` then it is translated into 'class_'. If a namespace is defined
+    (to be recognized on {...}, then replace that by prefix `'ns_'`. If there
+    is an HTML5 attribute *data-xxxx* used, then change that to *data_xxxx*."""
     if key == 'class':
         key = 'cssClass'
     elif key == 'id':

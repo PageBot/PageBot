@@ -31,7 +31,7 @@ from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, ORIGIN, QUIRE_SPREAD,
     BASE_INDEX_LEFT, BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT,
     BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
-from pagebot.toolbox.units import pt, upt, pointOffset, point2D, asFormatted
+from pagebot.toolbox.units import pt, upt, pointOffset, point2D
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -59,13 +59,13 @@ class PageView(BaseView):
 
     def getSortedPages(self):
         """Get the dictionary of sorted pages from the document. Depending on the self.showSpread
-        flag, the answered dicitionary is the plain self.doc.getSortedPages() result, or wrapped 
+        flag, the answered dicitionary is the plain self.doc.getSortedPages() result, or wrapped
         as Quire instances containing positioned spread pages."""
-        sortedPages = self.doc.getSortedPages() 
+        sortedPages = self.doc.getSortedPages()
         if self.showSpread:
             spreads = {} # Key is uneven page number. Value is a Quire, holding spread pages.
 
-            # If flag is set, compose the page dictionary into a dictionary of larger pages, holding 
+            # If flag is set, compose the page dictionary into a dictionary of larger pages, holding
             # Quire instances that can compose vairous layouts of the pages, including spreads.
             # page.ml and page.mr define the distance between the spread pages.
             sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
@@ -104,7 +104,7 @@ class PageView(BaseView):
         # building in this context.
         self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
         self.context.newDrawing()
-        
+
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
 
@@ -146,12 +146,12 @@ class PageView(BaseView):
                 origin = ORIGIN
 
             #  Make page in context, actual page may be smaller if showing cropmarks.
-            self.context.newPage(pw, ph) 
+            self.context.newPage(pw, ph)
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
             # Set the duration of this page, in case exporting GIF
-            self.context.frameDuration(page.frameDuration) 
+            self.context.frameDuration(page.frameDuration)
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)
@@ -287,7 +287,7 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
-        >>> view.showPadding = True        
+        >>> view.showPadding = True
         >>> view.drawPadding(e, (0, 0))
         """
         e_pt, e_pr, e_pb, e_pl = e.padding
@@ -579,10 +579,10 @@ class PageView(BaseView):
                 context.line((px+pw+2*S, py),      (px+pw+2.5*S, py+S))
                 context.line((px+pw+2*S, py),      (px+pw+1.5*S, py+S))
 
-                bs = context.newString(str(ph), 
+                bs = context.newString(str(ph),
                                        style=dict(font=self.css('viewInfoFont'),
-                                                  fontSize=self.css('viewInfoFontSize'), 
-                                                  leading=self.css('viewInfoLeading'), 
+                                                  fontSize=self.css('viewInfoFontSize'),
+                                                  leading=self.css('viewInfoLeading'),
                                                   textFill=color(0.1)))
                 tw, th = bs.size
                 context.text(bs, (px+pw+2*S-tw/2, py+ph/2))
@@ -832,7 +832,7 @@ class PageView(BaseView):
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)
 
-        for lineIndex, oy in enumerate(baselineYs): 
+        for lineIndex, oy in enumerate(baselineYs):
             tl = tr = None
             if not background:
                 if BASE_INDEX_LEFT in show: # Shows line baseline index
@@ -907,19 +907,19 @@ class PageView(BaseView):
         if e.isPage and self.showRegistrationMarks:
             showRegistrationMarks = self.showRegistrationMarks
             cmSizes = {
-                LEFT: min(self.pl/2, rms), 
-                BOTTOM: min(self.pb/2, rms), 
-                RIGHT: min(self.pr/2, rms), 
+                LEFT: min(self.pl/2, rms),
+                BOTTOM: min(self.pb/2, rms),
+                RIGHT: min(self.pr/2, rms),
                 TOP: min(self.pt/2, rms)
-            } 
+            }
         else:
-            showRegistrationMarks = e.showRegistrationMarks 
+            showRegistrationMarks = e.showRegistrationMarks
             cmSizes = {
-                LEFT: min(self.ml/2, rms), 
-                BOTTOM: min(self.mb/2, rms), 
-                RIGHT: min(self.mr/2, rms), 
+                LEFT: min(self.ml/2, rms),
+                BOTTOM: min(self.mb/2, rms),
+                RIGHT: min(self.mr/2, rms),
                 TOP: min(self.mt/2, rms)
-            } 
+            }
         if showRegistrationMarks:
             # TODO: Make crop mark go closer to page edge and disappear if too small.
             cmStrokeWidth = self.css('viewRegistrationMarkStrokeWidth')
@@ -959,7 +959,7 @@ class PageView(BaseView):
         if e.isPage and self.showCropMarks:
             showCropMarks = self.showCropMarks
         else:
-            showCropMarks = e.showCropMarks 
+            showCropMarks = e.showCropMarks
         if showCropMarks:
             context = self.context
 
@@ -969,7 +969,7 @@ class PageView(BaseView):
 
             cmDistance = e.css('viewCropMarkDistance') # From the side, compare with bleed.
             if not cmDistance:
-                cmDistance = self.css('viewCropMarkDistance', pt(12)) 
+                cmDistance = self.css('viewCropMarkDistance', pt(12))
 
             cmSize = e.css('viewCropMarkSize')
             if not cmSize:
@@ -1021,7 +1021,7 @@ class PageView(BaseView):
 
     def drawColorBars(self, e, origin):
         """Draw the color bars for offset printing color calibration
-        if there is at lest than self.viewMinInfoPadding of space 
+        if there is at lest than self.viewMinInfoPadding of space
         in view left padding..
         """
         # TODO Get this to work for content of the parameter set.
