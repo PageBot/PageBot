@@ -1,4 +1,4 @@
-# Getting started with PageBot
+# Getting started
 
 ## Installation
 
@@ -6,7 +6,7 @@
 * Some experience with DrawBot is recommended. Otherwise examine [DrawBot Documentation](https://drawbot.readthedocs.io)
 * Install PageBot (from terminal)
 
-		pip install pagebot'
+		pip install pagebot
 * Run the following code in DrawBot. It should not give an error.
 
 		import pagebot
@@ -15,14 +15,13 @@
 
     from pagebot.document import Document
     from pagebot.elements import newText
-    from pagebot.toolbox.units import pt
     from pagebot.fonttoolbox.objects.font import findFont
 
     f = findFont('Roboto-Bold')
-    doc = Document(w=pt(800), h=pt(190), originTop=False) 
+    doc = Document(w=800, h=190, originTop=False) 
     page = doc[1] 
-    newText('Hello World', x=30, y=0, 
-        font=f, fontSize=140, textFill=0.2, parent=page)
+    newText('Hello World', x=30, y=0, font=f, fontSize=140, 
+        textFill=0.2, parent=page)
     doc.export('_export/HelloWorld.png') 
 
 ![](images/HelloWorld_1.png)
