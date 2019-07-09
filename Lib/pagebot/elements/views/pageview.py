@@ -524,7 +524,8 @@ class PageView(BaseView):
             p = pointOffset(e.origin, origin)
             p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-            if (self.showElementInfo or e.isPage) or e.showElementInfo:
+            pw, ph = e.w, e.h
+            if (self.showElementInfo and e.isPage) or e.showElementInfo:
                 # Draw box with element info.
                 bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
@@ -539,50 +540,52 @@ class PageView(BaseView):
                 context.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
                 # Frame
                 context.fill(self.css('viewInfoFill'))
-                context.stroke(color(0.3), w=0.25)
+                context.stroke(color(0.3), w=pt(0.25))
                 context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
                 context.text(bs, (tpx+Pd, tpy+th))
 
-            if (self.showDimensions or e.isPage) or e.showDimensions:
+            if (self.showDimensions and e.isPage) or e.showDimensions:
                 # TODO: Make separate arrow functio and better positions
                 # Draw width and height measures
                 context.fill(noColor)
                 context.stroke(blackColor, w=pt(0.25))
                 S = self.css('viewInfoOriginMarkerSize', pt(5))
-                x1, y1, x2, y2 = px + e.left, py + e.bottom, e.right, e.top
 
                 # Horizontal measure
-                context.line((x1, y1 - 0.5*S), (x1, y1 - 3.5*S))
-                context.line((x2, y1 - 0.5*S), (x2, y1 - 3.5*S))
-                context.line((x1, y1 - 2*S), (x2, y1 - 2*S))
+                context.line((px,    py - 0.5*S), (px,      py - 3.5*S))
+                context.line((px+pw, py - 0.5*S), (px+pw,   py - 3.5*S))
+                context.line((px,    py - 2*S),   (px+pw,   py - 2*S))
                 # Arrow heads
-                context.line((x1, y1 - 2*S), (x1+S, y1 - 1.5*S))
-                context.line((x1, y1 - 2*S), (x1+S, y1 - 2.5*S))
-                context.line((x2, y1 - 2*S), (x2-S, y1 - 1.5*S))
-                context.line((x2, y1 - 2*S), (x2-S, y1 - 2.5*S))
+                context.line((px,    py - 2*S),   (px+S,    py - 1.5*S))
+                context.line((px,    py - 2*S),   (px+S,    py - 2.5*S))
+                context.line((px+pw, py - 2*S),   (px+pw-S, py - 1.5*S))
+                context.line((px+pw, py - 2*S),   (px+pw-S, py - 2.5*S))
 
-                bs = context.newString(asFormatted(x2 - x1),
+                bs = context.newString(str(pw),
                                        style=dict(font=self.css('viewInfoFont'),
                                                   fontSize=self.css('viewInfoFontSize'),
                                                   leading=self.css('viewInfoLeading'),
                                                   textFill=color(0.1)))
                 tw, th = bs.size
-                context.text(bs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
+                context.text(bs, (px + pw/2 - tw/2, py-1.5*S))
 
                 # Vertical measure
-                context.line((x2+0.5*S, y1), (x2+3.5*S, y1))
-                context.line((x2+0.5*S, y2), (x2+3.5*S, y2))
-                context.line((x2+2*S, y1), (x2+2*S, y2))
+                context.line((px+pw+0.5*S, py),    (px+pw+3.5*S, py))
+                context.line((px+pw+0.5*S, py+ph), (px+pw+3.5*S, py+ph))
+                context.line((px+pw+2*S,   py),    (px+pw+2*S,   py+ph))
                 # Arrow heads
-                context.line((x2+2*S, y2), (x2+2.5*S, y2-S))
-                context.line((x2+2*S, y2), (x2+1.5*S, y2-S))
-                context.line((x2+2*S, y1), (x2+2.5*S, y1+S))
-                context.line((x2+2*S, y1), (x2+1.5*S, y1+S))
+                context.line((px+pw+2*S, py+ph),   (px+pw+2.5*S, py+ph-S))
+                context.line((px+pw+2*S, py+ph),   (px+pw+1.5*S, py+ph-S))
+                context.line((px+pw+2*S, py),      (px+pw+2.5*S, py+S))
+                context.line((px+pw+2*S, py),      (px+pw+1.5*S, py+S))
 
-                bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
+                bs = context.newString(str(ph), 
+                                       style=dict(font=self.css('viewInfoFont'),
+                                                  fontSize=self.css('viewInfoFontSize'), 
+                                                  leading=self.css('viewInfoLeading'), 
+                                                  textFill=color(0.1)))
                 tw, th = bs.size
-                context.text(bs, (x2+2*S-tw/2, (y2+y1)/2))
+                context.text(bs, (px+pw+2*S-tw/2, py+ph/2))
 
             e._restoreScale(self)
 
