@@ -11,11 +11,11 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     newspaper.py
+#     basenewspaper.py
 #
 from pagebot.publications.publication import Publication
-from pagebot.publications.newspaper.title import Title
-from pagebot.publications.newspaper.article import Article
+from pagebot.publications.newspapers.classic.title import Title
+from pagebot.publications.newspapers.classic.article import Article
 from pagebot.constants import *
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
@@ -25,15 +25,14 @@ from pagebot.fonttoolbox.objects.family import getFontPaths
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import color
 
-
 class Newspaper(Publication):
     """Create a default newspaper, with layout and content options defined by
     external parameters. Inheriting from Document with the following optional
-    attribures:
+    attributes:
 
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None,
-    exportPaths=None, **kwargs)
+    rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+    title=None, autoPages=1, defaultTemplate=None, templates=None,
+    originTop=True, startPage=0, w=None, h=None, exportPaths=None, **kwargs)
 
     >>> from pagebot.constants import Broadsheet, GRID_SQR, BASE_LINE
     >>> blurb = Blurb()
@@ -64,7 +63,7 @@ class Newspaper(Publication):
     GUTTER = 18
     PADDING = 48
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # newspapers in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
