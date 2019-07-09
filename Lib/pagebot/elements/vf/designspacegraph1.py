@@ -27,7 +27,7 @@ DATA_PATH = 'code/2-masters-1-axis.json'
 
 class DesignSpace(Rect):
     """Generic base DesignSpace Element class to show the content and topology of a 
-    VF-designspace. Reading can be done from a standard design space file of from 
+    VF-designspace. Reading can be done from a standard design space file or from 
     a Variable Font.
     """
 
