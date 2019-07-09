@@ -16,7 +16,7 @@
 #     Read markdown files from path or url and answer the etree.
 #
 import codecs
-from xmlreader import readXML
+from pagebot.readers.xmlreader import readXML
 
 try:
     import markdown

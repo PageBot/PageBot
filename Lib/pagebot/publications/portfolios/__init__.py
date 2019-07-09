@@ -21,5 +21,5 @@
 from pagebot.publications.portfolios.baseportfolio import BasePortfolio
 
 PORTFOLIO_CLASSES = {
-	
+
 }

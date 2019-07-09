@@ -28,7 +28,7 @@ class BasePortfolio(Publication):
     Subclassed from Element-->Publication-->Magazine.
     """
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # portfolios in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
@@ -55,8 +55,8 @@ class BasePortfolio(Publication):
     DEFAULT_PAGE_SIZE_NAME = 'A3'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
-    def __init__(self, path=None, cols=None, rows=None, imageTypes=None, styles=None, 
-            resolution=1, **kwargs):
+    def __init__(self, path=None, cols=None, rows=None, imageTypes=None,
+            styles=None, resolution=1, **kwargs):
         Publication.__init__(self, **kwargs)
         self.path = path
         self.imageTypes = imageTypes # If None, select all standard image types.
@@ -75,11 +75,15 @@ class BasePortfolio(Publication):
         return styles
 
     def findImagePaths(self, path, imagePaths=None):
-        """Answer the dictionary with images, Key is chapter name, derived from the enclosing 
+        """Answer the dictionary with images, Key is chapter name, derived from the enclosing
         folder. Value is list of image paths.
         """
         if imagePaths is None:
             imagePaths = {}
+
+        if path is None:
+            return imagePaths
+
         title = path.split('/')[-1]
         for fileName in os.listdir(path):
             if fileName.startswith('.') or fileName == '_scaled':
@@ -115,7 +119,7 @@ class BasePortfolio(Publication):
                 tw, th = bs.size
                 newTextBox(bs, conditions=[Left2Left(), Fit2Width(), Float2Top()], h=1.5*th, parent=page)
                 prevTitle = title
-            
+
             for imagePath in sorted(imagePaths):
                 newImage(path=imagePath, h=h, mr=gutter, mb=gutter, resolution=self.resolution,
                     conditions=[Right2Right(), Float2Top(), Float2Left()], parent=page)

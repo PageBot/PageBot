@@ -39,7 +39,7 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 
 # Related
 
-- Example scripts: [github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
+- Examples: [github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
 - Manual: [pagebot.github.io/PageBot](https://pagebot.github.io/PageBot)
 - PageBot generated website: [designdesign.space](http://designdesign.space). It also includes entry points
 for studies and workshops on how to work with PageBot.

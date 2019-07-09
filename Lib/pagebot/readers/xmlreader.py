@@ -24,6 +24,7 @@ def readXML(path, xPath=None):
     assert fileExtension.lower() in ('xml', 'xsl', 'html')
     tree = ET.parse(path)
     root = tree.getroot() # Get the root element of the tree.
+
     # If there is XSL filtering defined, they get the filtered nodes.
     if xPath is not None:
         return root.findall(xPath)
