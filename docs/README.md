@@ -27,9 +27,9 @@ professionally designed documents that make use of high quality typography.
 
 Bugs, enhancements and requested features can be added to the GitHub issue tracker:
 
- * https://github.com/PageBot/PageBot/issues
- * https://github.com/PageBot/PageBot/projects
- * https://github.com/PageBot/PageBot/milestones
+ * [github.com/PageBot/PageBot/issues](https://github.com/PageBot/PageBot/issues)
+ * [github.com/PageBot/PageBot/projects](https://github.com/PageBot/PageBot/projects)
+ * [github.com/PageBot/PageBot/milestones](https://github.com/PageBot/PageBot/milestones)
 
 # External Links
 
