@@ -26,6 +26,7 @@ def to255(values):
 
 def to100(values):
     return [round(val * 100) for val in values]
+
 def lucasRange(a, z, n, minN=None, maxN=None):
     """Answers the range stem widths for interpolation, according to
     Lucas’ formula.
@@ -190,11 +191,10 @@ def vectorLength(v):
 
 @classmethod
 def normalizedVector(p, length=1):
-    """Normalize the vector @(x,y). The *length* defines the length of the
-    normalized vector, default is @1@.
-
-    Freetype XXX: UNDOCUMENTED! It seems that it is possible to try to
-    normalize the vector (0,0). Return immediately."""
+    """Normalize the vector ``(x, y)``. The *length* defines the length of the
+    normalized vector, default is ``1``. Freetype XXX: UNDOCUMENTED! It seems
+    that it is possible to try to normalize the vector (0, 0). Return
+    immediately."""
     if p[1] == 0:
         return math.copysign(length, p[0]), 0
 

@@ -197,7 +197,7 @@ class FlatContext(BaseContext):
     def newDrawing(self):
         """Clear output canvas, start new export file.
 
-        >>> context = FlatContext() 
+        >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> context.newDocument(w, h)
         """
@@ -461,7 +461,7 @@ class FlatContext(BaseContext):
             p = 0, 0
         xpt, ypt = point2D(upt(p))
         self.save()
-        # TODO Skip for now. 
+        # TODO Skip for now.
         """
         img = self.b.image(path, height=h, width=w)
         img.resize(width=w.pt, height=h.pt)
@@ -678,12 +678,15 @@ class FlatContext(BaseContext):
         Flat function?
 
         TODO: Not implement yet.
+        ::
 
-        images = []
-        for filename in filenames:
-            images.append(imageio.imread(filename))
-        output_file = 'Gif-%s.gif' % datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
-        imageio.mimsave(output_file, images, duration=duration)
+            images = []
+
+            for filename in filenames:
+                images.append(imageio.imread(filename))
+            output_file = 'Gif-%s.gif' % datetime.now().strftime('%Y-%M-%d-%H-%M-%S')
+            imageio.mimsave(output_file, images, duration=duration)
+
         """
 
 if __name__ == '__main__':

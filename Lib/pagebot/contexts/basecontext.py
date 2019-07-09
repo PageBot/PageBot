@@ -734,7 +734,7 @@ class BaseContext(AbstractDrawBotContext):
 
         NOTE: signature differs from DrawBot:
 
-            def openTypeFeatures(self, *args, **features):
+        ``def openTypeFeatures(self, *args, **features):``
 
         >>> from pagebot.contexts.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()

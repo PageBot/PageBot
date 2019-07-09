@@ -502,22 +502,23 @@ class InDesignContext(BaseContext):
         self.restore()
 
     def drawGlyphPath(self, glyph):
-        """Converts the cubic commands to a drawable path.
+        """
+        Converts the cubic commands to a drawable path.::
 
-        TODO:
-        path = self.newPath()
+            path = self.newPath()
 
-        for command, t in glyph.cubic:
-            if command == 'moveTo':
-                path.moveTo(t)
-            elif command == 'lineTo':
-                path.lineTo(t)
-            elif command == 'curveTo':
-                path.curveTo(*t)
-            elif command == 'closePath':
-                path.closePath()
+            for command, t in glyph.cubic:
+                if command == 'moveTo':
+                    path.moveTo(t)
+                elif command == 'lineTo':
+                    path.lineTo(t)
+                elif command == 'curveTo':
+                    path.curveTo(*t)
+                elif command == 'closePath':
+                    path.closePath()
 
-        self.drawPath(path)
+            self.drawPath(path)
+
         """
         pass
 
