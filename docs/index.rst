@@ -11,7 +11,8 @@ Welcome to PageBot's documentation!
    :caption: Contents:
 
    README.md
-
+   HowToStart.md
+   
 Indices and tables
 ==================
 
