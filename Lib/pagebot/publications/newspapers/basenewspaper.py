@@ -14,8 +14,8 @@
 #     basenewspaper.py
 #
 from pagebot.publications.publication import Publication
-from pagebot.publications.newspapers.classic.title import Title
-from pagebot.publications.newspapers.classic.article import Article
+from .classic.title import Title
+from .classic.article import Article
 from pagebot.constants import *
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
