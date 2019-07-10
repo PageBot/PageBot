@@ -1,7 +1,5 @@
 # Getting started
 
-## Installation
-
 * Download the latest [DrawBot](http://www.drawbot.com/content/download.html)
 * Some experience with DrawBot is recommended. Otherwise examine [DrawBot Documentation](https://drawbot.readthedocs.io)
 * Install PageBot (from terminal)
