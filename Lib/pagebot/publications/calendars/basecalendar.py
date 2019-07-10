@@ -10,23 +10,28 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     book.py
+#     basecalendar.py
 #
-from pagebot.conditions import *
-from pagebot.publications.publication import Publication
-from pagebot.elements import *
+from random import random
 from pagebot.constants import *
+from pagebot.conditions import *
+from pagebot.elements import *
+from pagebot.toolbox.color import color
+from pagebot.toolbox.dating import now, Dating
+from pagebot.toolbox.units import p, pt
+from pagebot.publications.publication import Publication
 
 class BaseCalendar(Publication):
     """Create a default calendar for the indicated year. 
     Add cover and monthly pages.
 
     >>> from pagebot.toolbox.dating import now
-    >>> calendar = BaseCalendar(now().year, size=A4)
+    >>> calendar = BaseCalendar(now().year)
     >>> calendar.year == now().year
     True
-    >>> calendar.size
-    (210mm, 297mm)
+    >>> calendar.size # A3Square
+    (297mm, 297mm)
+    >>> calendar.export('_export/BaseCalendar.pdf')
     """
 
     # Default paper sizes that are likely to be used for 
@@ -60,10 +65,44 @@ class BaseCalendar(Publication):
     DEFAULT_PAGE_SIZE_NAME = 'A3Square'
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
-    def __init__(self, year, **kwargs):
-        Publication.__init__(self, **kwargs)
+    def __init__(self, year=None, w=None, h=None, size=None, name=None, **kwargs):
+
+        if year is None:
+            year = now().year
+        if name is None:
+            name = 'Calendar %d' % year
+        if w is None and h is None and size is None:
+            w, h = self.PAGE_SIZES[self.DEFAULT_PAGE_SIZE_NAME]
+        Publication.__init__(self, name=name, w=w, h=h, size=size, **kwargs)
+
         self.year = year
 
+        doc = self.getDocument(name=self.name)
+        self.initialize(doc)
+
+    def initialize(self, doc):
+        # Suggestion of cover image.
+        gray = color(0.8)
+        page = doc[1]
+        page.bleed = bleed = p(1)
+        page.padding = padding = p(4)
+        newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed, 
+            h=page.h+2*bleed, fill=gray)
+        calendarYear = Dating(year=self.year).calendarYear
+        for month in range(0, 12):
+            page = page.next
+            page.bleed = bleed
+            page.padding = padding
+            newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed, 
+                fill=gray)
+            weekH = page.ph/2
+            weekW = page.pw
+            dayH = weekH/5
+            dayW = weekW/7
+            for wIndex, week in enumerate(calendarYear[month]):
+                for dIndex, day in enumerate(week):
+                    newRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
+                        x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
 
 if __name__ == "__main__":
     import doctest

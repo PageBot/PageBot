@@ -26,6 +26,14 @@
 
 ![](images/HelloWorld_1.png)
 
+## Calendar Publication
+
+PageBot includes a lot of knowledge about design, embedded in default publication types.
+
+    from pagebot.publications.calendars import BaseCalendar
+    
+
+
 ## PageBot’s relation with DrawBot
 
 The main difference between DrawBot and PageBot, is that in DrawBot all drawing instructions are executed directly on the canvas. 
