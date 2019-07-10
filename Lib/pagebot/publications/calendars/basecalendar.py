@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
@@ -25,7 +25,7 @@ from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 
 class BaseCalendar(Publication):
-    """Create a default calendar for the indicated year. 
+    """Create a default calendar for the indicated year.
     Add cover and monthly pages.
 
     >>> from pagebot.toolbox.dating import now
@@ -38,7 +38,7 @@ class BaseCalendar(Publication):
     >>> calendar.document.export('_export/BaseCalendar%d.pdf' % calendar.year)
     """
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # books in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
@@ -90,14 +90,14 @@ class BaseCalendar(Publication):
         page = doc[1]
         page.bleed = bleed = p(1)
         page.padding = padding = p(4)
-        newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed, 
+        newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed,
             h=page.h+2*bleed, fill=gray)
         calendarYear = Dating(year=self.year).calendarYear
         for month in range(1, 13):
             page = page.next
             page.bleed = bleed
             page.padding = padding
-            newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed, 
+            newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed,
                 fill=gray)
             newTextBox('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName), 
                 fontSize=48, parent=page, w=page.pw, x=page.pl, y=page.h-page.pt-20)

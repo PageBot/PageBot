@@ -60,7 +60,7 @@ class Document:
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
             autoPages=1, template=None, templates=None, originTop=False, startPage=None,
-            sId=None, w=None, h=None, d=None, size=None, wh=None, whd=None, padding=None, 
+            sId=None, w=None, h=None, d=None, size=None, wh=None, whd=None, padding=None,
             docLib=None, context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -71,7 +71,7 @@ class Document:
         elif wh is not None:
             size = wh # Alternative ways to define size, making it intuitive to the caller.
         if size is not None: # For convenience of the caller, also accept size tuples.
-            w, h, d = point3D(size) # Set 
+            w, h, d = point3D(size) # Set
 
         # Set position of origin and direction of y for self and all inheriting pages
         # and elements.
@@ -859,7 +859,7 @@ class Document:
     #   P A G E  S I Z E S
 
     def _get_block(self):
-        """Analog to the behavior of Elements, the self.block property answers the 
+        """Analog to the behavior of Elements, the self.block property answers the
         vacuum bounding box around all page elements in 2D, so it can be used as indicator
         what the placement size is for the document.
 
@@ -1435,7 +1435,7 @@ class Document:
 
     #   S A V E  .  P B T
 
-    
+
     @classmethod
     def open(cls, path):
         """Save the document in native json source code file, represenrinf all of the current
