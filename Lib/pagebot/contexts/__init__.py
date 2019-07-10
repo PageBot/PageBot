@@ -86,7 +86,7 @@ def getFlatContext():
     return FlatContext()
 
 def getDrawBotContext():
-    from pagebot.contexts.drawbotcontext import DrawBotContext
+    from drawBotContext.context import DrawBotContext
     return DrawBotContext()
 
 def getCanvasContext():
