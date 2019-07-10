@@ -55,6 +55,13 @@ install:
 - cd ..
 - rm master.zip
 - rm -r compositor-master
+- wget https://github.com/PageBot/DrawBotContext/archive/master.zip
+- unzip master.zip
+- cd DrawBotContext-master
+- python3 setup.py install
+- cd ..
+- rm master.zip
+- rm -r DrawBotContext-master
 script:
 # TODO: move to pytest script.
 - mkdir _export
