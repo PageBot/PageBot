@@ -511,6 +511,7 @@ class PageView(BaseView):
         flag "showOrigin" defines if the origin marker of an element is
         drawn. Collect the (e, origin), so we can later draw all info, after
         the main drawing has been done."""
+        return # @@@@@@@
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
         # Supposedly drawing outside rotation/scaling mode, so the origin of

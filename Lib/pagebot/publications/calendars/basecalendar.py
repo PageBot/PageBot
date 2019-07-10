@@ -16,27 +16,26 @@ from random import random
 from pagebot.constants import *
 from pagebot.conditions import *
 from pagebot.elements import *
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.dating import now, Dating
 from pagebot.toolbox.units import p, pt
 from pagebot.publications.publication import Publication
 
-class RRect(Rect):
-
-    def buildElement(self, view, p, drawElements, **kwargs):
-        pass
+from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
+        asFormatted, isUnit, degrees)
 
 class BaseCalendar(Publication):
     """Create a default calendar for the indicated year.
     Add cover and monthly pages.
 
     >>> from pagebot.toolbox.dating import now
-    >>> calendar = BaseCalendar(now().year)
+    >>> year = now().year
+    >>> calendar = BaseCalendar(year)
     >>> calendar.year == now().year
     True
     >>> calendar.size # A3Square
     (297mm, 297mm)
-    >>> calendar.document.export('_export/BaseCalendar.pdf')
+    >>> calendar.document.export('_export/BaseCalendar%d.pdf' % calendar.year)
     """
 
     # Default paper sizes that are likely to be used for
@@ -94,20 +93,31 @@ class BaseCalendar(Publication):
         newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed,
             h=page.h+2*bleed, fill=gray)
         calendarYear = Dating(year=self.year).calendarYear
-        for month in range(0, 12):
+        for month in range(1, 13):
             page = page.next
             page.bleed = bleed
             page.padding = padding
             newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed,
                 fill=gray)
+            newTextBox('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName), 
+                fontSize=48, parent=page, w=page.pw, x=page.pl, y=page.h-page.pt-20)
             weekH = page.ph/2
             weekW = page.pw
-            dayH = weekH/5
+            dayH = weekH/6
             dayW = weekW/7
-            for wIndex, week in enumerate(calendarYear[month]):
+            for wIndex, week in enumerate(calendarYear[month-1]):
                 for dIndex, day in enumerate(week):
-                    RRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
+                    if day.month == month:
+                        fill = color(0.8, 0.8, 0.9)
+                        fontSize = 12
+                    else:
+                        fill = color(0.9)
+                        fontSize = 9
+                    e = newRect(parent=page, w=dayW, h=dayH, fill=fill,
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
+                    newTextBox(day.fullDayName + '\n' + day.date, fontSize=fontSize, parent=e, 
+                        w=dayW-10, x=10, y=dayH-20, fill=noColor)
+
 
 if __name__ == "__main__":
     import doctest
