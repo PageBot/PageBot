@@ -14,8 +14,8 @@
 #     basenewspaper.py
 #
 from pagebot.publications.publication import Publication
-from .classic.title import Title
-from .classic.article import Article
+from pagebot.publications.newspapers.classic.title import Title
+from pagebot.publications.newspapers.classic.article import Article
 from pagebot.constants import *
 from pagebot.elements import newRect, newTextBox
 from pagebot.contributions.filibuster.blurb import Blurb
@@ -39,7 +39,9 @@ class Newspaper(Publication):
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Broadsheet
     >>>
-    >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1, template='MainPage')
+    >>> print(w)
+    23.50"
+    >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1)
     >>> view = np.view
     >>> view.padding = 50
     >>> view.showCropMarks = True
@@ -52,7 +54,7 @@ class Newspaper(Publication):
     >>> #view.showFrame = True
     >>> templateFront = np.getTemplate('Front')
     >>> templateMainPage = np.getTemplate('MainPage')
-    >>> np[1].applyTemplate(templateFront)
+    >>> #np[1].applyTemplate(templateFront)
     >>> #np[2].applyTemplate(templateMainPage)
     >>> #np[3].applyTemplate(templateMainPage)
     >>> #np[4].applyTemplate(templateMainPage)

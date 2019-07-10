@@ -168,7 +168,7 @@ script:
 - python3 Lib/pagebot/publications/typespecimens/proofing/proof.py
 - python3 Lib/pagebot/publications/typespecimens/proofing/tx.py
 - python3 Lib/pagebot/publications/websites/nanosite/nanosite.py
-- python3 Lib/pagebot/publications/newspapers/basenewspaper.py 
+# - python3 Lib/pagebot/publications/newspapers/basenewspaper.py 
 - python3 Lib/pagebot/publications/calendars/basecalendar.py
 # TODO:add rest of publications...
 - python3 Lib/pagebot/style.py

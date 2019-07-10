@@ -13,7 +13,7 @@
 #
 #     publication.py
 #
-from pagebot.elements import *  
+from pagebot.elements import *
 from pagebot.document import Document
 from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
@@ -24,8 +24,8 @@ class Publication(Element):
 
     An old approach was to make Publication subclass from Document, but it shows to be more
     flexible as holding all kinds of information, generating multiple types of documents,
-    the Publication class is now an independent base class, holding multiple documents. 
-    
+    the Publication class is now an independent base class, holding multiple documents.
+
     >>> from pagebot.constants import A4
     >>> from pagebot.paths import RESOURCES_PATH
     >>> p = Publication(RESOURCES_PATH) # Finder created from path
@@ -33,7 +33,7 @@ class Publication(Element):
     FINDER_CLASS = Finder
 
     # Default values for a publication. To be redefined by inheriting publication classes.
-    PAGE_SIZES = { 
+    PAGE_SIZES = {
         'A3': A3,
         'A4': A4,
         'A5': A5,
@@ -56,7 +56,7 @@ class Publication(Element):
         self.addFinders(findersOrPaths)
         if templates is None:
             templates = self.TEMPLATES
-        self.templates= templates
+        self.templates = templates
 
     def getAPI(self):
     	"""Answers the API dictionary for this class that can be used by calling apps,
@@ -64,17 +64,17 @@ class Publication(Element):
 		This method needs to be redefined by inheriting publications classes to answer
 		different than the default empty dictionary."""
     	return {}
-        
+
     def produce(self, viewId=None, **kwargs):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting publication classes."""
         pass
 
-    def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None, 
-            makeCurrent=True, padding=None, theme=None, gw=None, gh=None, 
-            gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None, 
+    def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None,
+            makeCurrent=True, padding=None, theme=None, gw=None, gh=None,
+            gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None,
             **kwargs):
-        """Answer a new Document instance for this publication, to be filled by the 
+        """Answer a new Document instance for this publication, to be filled by the
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
         Optional arguments can overwrite the parameters of the publication.
@@ -104,22 +104,22 @@ class Publication(Element):
             gridX = self.gridX
         if gridY is None:
             gridY = self.gridY
-        if baselineGrid is None: 
+        if baselineGrid is None:
             baselineGrid = self.baselineGrid
         if theme is None:
             theme = self.theme
-        document = Document(name=name, w=w, h=h, originTop=originTop, padding=padding, 
+        document = Document(name=name, w=w, h=h, originTop=originTop, padding=padding,
             theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
-            baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart, 
+            baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart,
             **kwargs)
         view = document.view
         view.showGrid = self.showGrid
         view.showPadding = self.showPadding
         view.showImageLoresMarker = self.showImageLoresMarker
         view.showBaselineGrid = self.showBaselineGrid
- 
-        # Store the document in the publication as wrapped child element, and set 
-        # the current name as selected, so it can be retrieved if there are multiple 
+
+        # Store the document in the publication as wrapped child element, and set
+        # the current name as selected, so it can be retrieved if there are multiple
         # available at the same time.
         # Note that we can not use "self.doc" here, because a publication is a "normal"
         # element, the e.doc is used to find the top document where self can be placed in.
