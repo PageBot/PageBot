@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
 #
@@ -22,7 +22,7 @@ from pagebot.toolbox.units import p, pt
 from pagebot.publications.publication import Publication
 
 class BaseCalendar(Publication):
-    """Create a default calendar for the indicated year. 
+    """Create a default calendar for the indicated year.
     Add cover and monthly pages.
 
     >>> from pagebot.toolbox.dating import now
@@ -34,7 +34,7 @@ class BaseCalendar(Publication):
     >>> calendar.export('_export/BaseCalendar.pdf')
     """
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # books in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
@@ -86,14 +86,14 @@ class BaseCalendar(Publication):
         page = doc[1]
         page.bleed = bleed = p(1)
         page.padding = padding = p(4)
-        newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed, 
+        newRect(parent=page, x=-bleed, y=-bleed, w=page.w+2*bleed,
             h=page.h+2*bleed, fill=gray)
         calendarYear = Dating(year=self.year).calendarYear
         for month in range(0, 12):
             page = page.next
             page.bleed = bleed
             page.padding = padding
-            newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed, 
+            newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed,
                 fill=gray)
             weekH = page.ph/2
             weekW = page.pw
@@ -103,7 +103,7 @@ class BaseCalendar(Publication):
                 for dIndex, day in enumerate(week):
                     newRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
-                    
+
 if __name__ == "__main__":
     import doctest
     import sys
