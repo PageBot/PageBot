@@ -135,8 +135,8 @@ illustration.
 
 - The core library, tutorials and basic examples for PageBot are available
   under the MIT Open Source license. Some depencendies have been included in
-this repository and are available under their own licenses. See also the
-[LICENSE](https://github.com/PageBot/PageBot/blob/master/LICENSE.md).
+  this repository and are available under their own licenses. See also the
+  [LICENSE](https://github.com/PageBot/PageBot/blob/master/LICENSE.md).
 
 
 > PageBot® is a registered trademark 

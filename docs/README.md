@@ -58,14 +58,13 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 
 # External Links
 
-- [PyPi](https://pypi.org/project/pagebot/)
-- [Travis](https://travis-ci.org/PageBot/PageBot)
-- [ReadTheDocs](https://pagebot.readthedocs.io/en/latest/)
+- Download: [PyPi](https://pypi.org/project/pagebot/)
+- Continuous Integration: [Travis](https://travis-ci.org/PageBot/PageBot)
+- Documentation: [ReadTheDocs](https://pagebot.readthedocs.io/en/latest/)
+- Examples repository: [github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
 
 # Related
 
-- Example scripts: [github.com/PageBot/PageBotExamples](https://github.com/PageBot/PageBotExamples)
-- Manual: [pagebot.github.io/PageBot](https://pagebot.github.io/PageBot)
 - PageBot generated website: [designdesign.space](http://designdesign.space). It also includes entry points
 for studies and workshops on how to work with PageBot.
 - The TYPETR Upgrade website [upgrade.typenetwork.com](https://upgrade.typenetwork.com) is an example where
@@ -161,8 +160,8 @@ illustration.
 
 - The core library, tutorials and basic examples for PageBot are available
   under the MIT Open Source license. Some depencendies have been included in
-this repository and are available under their own licenses. See also
-[github.com/PageBot/PageBot/LICENSE.md](https://github.com/PageBot/PageBot/LICENSE.md).
+  this repository and are available under their own licenses. See also the
+  [LICENSE](https://github.com/PageBot/PageBot/blob/master/LICENSE.md).
 
 
 > PageBot® is a registered trademark 
