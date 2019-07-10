@@ -103,7 +103,7 @@ class BaseCalendar(Publication):
                 for dIndex, day in enumerate(week):
                     newRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
-
+                    
 if __name__ == "__main__":
     import doctest
     import sys
