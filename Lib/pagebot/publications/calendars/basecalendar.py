@@ -12,7 +12,7 @@
 #
 #     basecalendar.py
 #
-from random import random
+#from random import random
 from pagebot.constants import *
 from pagebot.conditions import *
 from pagebot.elements import *
@@ -20,9 +20,6 @@ from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.dating import now, Dating
 from pagebot.toolbox.units import p, pt
 from pagebot.publications.publication import Publication
-
-from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
-        asFormatted, isUnit, degrees)
 
 class BaseCalendar(Publication):
     """Create a default calendar for the indicated year.
@@ -99,7 +96,7 @@ class BaseCalendar(Publication):
             page.padding = padding
             newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed,
                 fill=gray)
-            newTextBox('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName), 
+            newTextBox('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName),
                 fontSize=48, parent=page, w=page.pw, x=page.pl, y=page.h-page.pt-20)
             weekH = page.ph/2
             weekW = page.pw
@@ -115,7 +112,7 @@ class BaseCalendar(Publication):
                         fontSize = 9
                     e = newRect(parent=page, w=dayW, h=dayH, fill=fill,
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
-                    newTextBox(day.fullDayName + '\n' + day.date, fontSize=fontSize, parent=e, 
+                    newTextBox(day.fullDayName + '\n' + day.date, fontSize=fontSize, parent=e,
                         w=dayW-10, x=10, y=dayH-20, fill=noColor)
 
 
