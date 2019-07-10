@@ -21,6 +21,11 @@ from pagebot.toolbox.dating import now, Dating
 from pagebot.toolbox.units import p, pt
 from pagebot.publications.publication import Publication
 
+class RRect(Rect):
+
+    def buildElement(self, view, p, drawElements, **kwargs):
+        pass
+
 class BaseCalendar(Publication):
     """Create a default calendar for the indicated year.
     Add cover and monthly pages.
@@ -31,7 +36,7 @@ class BaseCalendar(Publication):
     True
     >>> calendar.size # A3Square
     (297mm, 297mm)
-    >>> calendar.export('_export/BaseCalendar.pdf')
+    >>> calendar.document.export('_export/BaseCalendar.pdf')
     """
 
     # Default paper sizes that are likely to be used for
@@ -77,11 +82,11 @@ class BaseCalendar(Publication):
 
         self.year = year
 
-        doc = self.getDocument(name=self.name)
-        self.initialize(doc)
+        self.initialize()
 
-    def initialize(self, doc):
+    def initialize(self):
         # Suggestion of cover image.
+        doc = self.document
         gray = color(0.8)
         page = doc[1]
         page.bleed = bleed = p(1)
@@ -101,7 +106,7 @@ class BaseCalendar(Publication):
             dayW = weekW/7
             for wIndex, week in enumerate(calendarYear[month]):
                 for dIndex, day in enumerate(week):
-                    newRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
+                    RRect(parent=page, w=dayW, h=dayH, fill=color(random(), 0, random()),
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
 
 if __name__ == "__main__":
