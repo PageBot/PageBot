@@ -84,7 +84,7 @@ class BaseContext(AbstractContext):
         """Answers the open drawing self._path. Creates one if it does not
         exist.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> path = context.path
         >>> path is not None
@@ -113,7 +113,7 @@ class BaseContext(AbstractContext):
     def newDrawing(self):
         """Clear output canvas, start new export file. DrawBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newDrawing()
         """
@@ -145,7 +145,7 @@ class BaseContext(AbstractContext):
         """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newPage(pt(100), pt(100))
         >>> context.newPage(100, 100)
@@ -184,7 +184,7 @@ class BaseContext(AbstractContext):
         BezierPath as path to draw on. For a more rich environment use
         PageBotPath(context) instead.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
@@ -198,7 +198,7 @@ class BaseContext(AbstractContext):
         (w,h).  This method uses BezierPath; for a more rich environment use
         PageBotPath(context) instead.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
@@ -211,7 +211,7 @@ class BaseContext(AbstractContext):
         This method is using the core BezierPath as path to draw on. For a more rich
         environment use PageBotPath(context) instead. PageBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -233,7 +233,7 @@ class BaseContext(AbstractContext):
         This method is using the BezierPath as path to draw on. For a more
         rich environment use PageBotPath(context) instead. PageBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newPath()
         <BezierPath>
@@ -245,7 +245,7 @@ class BaseContext(AbstractContext):
         is open.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -263,7 +263,7 @@ class BaseContext(AbstractContext):
         """Line to point p in the open path. Create a new self._path if none
         is open.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
@@ -283,7 +283,7 @@ class BaseContext(AbstractContext):
         """Curve to point p i nthe open path. Create a new path if none is
         open.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
@@ -314,7 +314,7 @@ class BaseContext(AbstractContext):
         """Closes the open path if it exists, otherwise ignore it.
         PageBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
@@ -335,7 +335,7 @@ class BaseContext(AbstractContext):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
         Use self._path if path is omitted. PageBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
@@ -422,7 +422,7 @@ class BaseContext(AbstractContext):
         as path to draw on. For a more rich ennvironment use
         PageBotPath(context).
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
@@ -454,7 +454,7 @@ class BaseContext(AbstractContext):
         """Sets the global fill color.
 
         >>> from pagebot.toolbox.color import color
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -494,7 +494,7 @@ class BaseContext(AbstractContext):
         """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
@@ -598,7 +598,7 @@ class BaseContext(AbstractContext):
         """Set the current stroke width.
 
         >>> from pagebot.toolbox.units import pt, mm
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))
@@ -642,7 +642,7 @@ class BaseContext(AbstractContext):
         """Rotate the canvas by angle. If angle is not a units.Angle instance,
         then convert.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.rotate(40)
         """
@@ -690,7 +690,7 @@ class BaseContext(AbstractContext):
         """Set the font size in the context.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.fontSize(pt(12))
         """
@@ -736,7 +736,7 @@ class BaseContext(AbstractContext):
 
         ``def openTypeFeatures(self, *args, **features):``
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.openTypeFeatures(dict(smcp=True, zero=True))
         """
@@ -770,7 +770,7 @@ class BaseContext(AbstractContext):
         plain string or a BabelString instance. In case a plain string is given
         then the current font/fontSize/etc. settings of the builder are used.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.font('Verdana')
         >>> context.fontSize(12)
@@ -798,7 +798,7 @@ class BaseContext(AbstractContext):
         NOTE: signature differs from DrawBot.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.textBox('ABC', (10, 10, 200, 200))
         """
@@ -1016,11 +1016,12 @@ class BaseContext(AbstractContext):
     def ImageObject(self, path=None):
         """Answers the ImageObject that knows about image filters. For names
         and parameters of filters see:
+        # TODO: move to drawBotContext, add implementation to Flat.
 
         * http://www.drawbot.com/content/image/imageObject.html
 
         >>> from pagebot import getResourcesPath
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imo = context.getImageObject(path)
@@ -1159,7 +1160,7 @@ class BaseContext(AbstractContext):
         """Answers the current screen size in DrawBot. Otherwise default is to
         do nothing. PageBot function.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> size = context.screenSize()
         >>> size[0] > 100 and size[1] > 100

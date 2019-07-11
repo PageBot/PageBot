@@ -18,7 +18,7 @@ import sys, os
 import AppKit
 import CoreText
 
-from pagebot.contexts.color.color import *
+from pagebot.color.color import *
 from pagebot.errors import PageBotError
 from drawBot.context.tools.openType import getFeatureTagsForFontName, featureMap
 from drawBot.context.tools.variation import *

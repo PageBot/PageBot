@@ -19,13 +19,14 @@ import AppKit
 import CoreText
 import Quartz
 import traceback
-from pagebot.contexts.base.builder import BaseBuilder
-from pagebot.contexts.graphics.graphic import Graphic
-from pagebot.strings.formattedstring import FormattedString
-from pagebot.contexts.bezierpaths.bezierpath import BezierPath
-from pagebot.contexts.color.color import *
-from pagebot.errors import PageBotError
+
 from pagebot.apps.canvas.canvas import Canvas
+from pagebot.bezierpaths.bezierpath import BezierPath
+from pagebot.color.color import *
+from pagebot.contexts.base.builder import BaseBuilder
+from pagebot.errors import PageBotError
+from pagebot.graphics.graphic import Graphic
+from pagebot.strings.formattedstring import FormattedString
 from pagebot.toolbox.color import noColor, cmyk2Rgb
 
 # FIXME: using drawBot for now.
