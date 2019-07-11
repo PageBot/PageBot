@@ -18,25 +18,10 @@ from pagebot.toolbox.units import em, pt
 from pagebot.toolbox.color import color
 from pagebot.fonttoolbox.objects.font import findFont
 
-
-try:
-    from CoreText import (CTRunGetGlyphCount, CTRunGetStringRange,
-            CTRunGetStringIndicesPtr, CTRunGetAdvances, CTRunGetStatus,
-            CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes,
-            CTRunGetTextMatrix, CFRange)
-except:
-    CTRunGetStringRange = None
-    CTFrameGetLineOrigins = None
-    CTFramesetterCreateFrame = None
-    CTRunGetGlyphCount = None
-    CTRunGetStringIndicesPtr = None
-    CTRunGetAdvances = None
-    CTRunGetStatus = None
-    CTRunGetPositions = None
-    CTRunGetGlyphs = None
-    CTRunGetAttributes = None
-    CFRange = None
-    CTRunGetTextMatrix = None
+from CoreText import (CTRunGetGlyphCount, CTRunGetStringRange,
+        CTRunGetStringIndicesPtr, CTRunGetAdvances, CTRunGetStatus,
+        CTRunGetPositions, CTRunGetGlyphs, CTRunGetAttributes,
+        CTRunGetTextMatrix, CFRange)
 
 class TextRun:
     """The ctRun object contains the chunk of text that combines a single

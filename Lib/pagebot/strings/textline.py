@@ -18,18 +18,11 @@ import re
 from pagebot.strings.textrun import TextRun
 from pagebot.strings.pattern import FoundPattern
 from pagebot.toolbox.units import pt, upt
-try:
-    from CoreText import (CGPoint, CTLineGetGlyphRuns,
-            CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex,
-            CTLineGetStringRange, CTLineGetImageBounds,
-            CTLineGetTypographicBounds, CTLineGetTrailingWhitespaceWidth)
-except:
-    CTLineGetGlyphRuns = None
-    CTLineGetImageBounds = None
-    CTLineGetStringIndexForPosition = None
-    CTLineGetTrailingWhitespaceWidth = None
-    CTLineGetTypographicBounds = None
-    CGPoint = None
+
+from CoreText import (CGPoint, CTLineGetGlyphRuns,
+        CTLineGetStringIndexForPosition, CTLineGetOffsetForStringIndex,
+        CTLineGetStringRange, CTLineGetImageBounds, CTLineGetTypographicBounds,
+        CTLineGetTrailingWhitespaceWidth)
 
 class TextLine:
 
