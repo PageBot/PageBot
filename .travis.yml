@@ -78,8 +78,6 @@ script:
 - python3 Lib/pagebot/color/__init__.py
 - python3 Lib/pagebot/color/color.py
 - python3 Lib/pagebot/composer.py
-- python3 Lib/pagebot/graphics/__init__.py
-- python3 Lib/pagebot/graphics/graphic.py
 - python3 Lib/pagebot/conditions/__init__.py
 - python3 Lib/pagebot/conditions/align.py
 - python3 Lib/pagebot/conditions/columns.py
@@ -99,15 +97,12 @@ script:
 - python3 Lib/pagebot/contexts/flat/string.py
 - python3 Lib/pagebot/contexts/xml/htmlbuilder.py
 - python3 Lib/pagebot/contexts/xml/svgbuilder.py
-- python3 Lib/pagebot/contexts/xml/idmlbuilder.py
 - python3 Lib/pagebot/contexts/xml/sitebuilder.py
 - python3 Lib/pagebot/contexts/xml/xmlbuilder.py
 - python3 Lib/pagebot/contexts/xml/htmlcontext.py
 - python3 Lib/pagebot/contexts/xml/htmlstring.py
 - python3 Lib/pagebot/contexts/xml/svgcontext.py
 - python3 Lib/pagebot/strings/babelstring.py
-- python3 Lib/pagebot/strings/textline.py
-- python3 Lib/pagebot/strings/textrun.py
 # TODO: add rest of contributions.
 - python3 Lib/pagebot/contributions/filibuster/blurbwriter.py
 - python3 Lib/pagebot/document.py

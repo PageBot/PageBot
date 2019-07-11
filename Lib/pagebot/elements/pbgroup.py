@@ -35,7 +35,7 @@ class Group(Rect):
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
 
-    >>> from pagebot.contexts.flatcontext import FlatContext 
+    >>> from pagebot.contexts.flat.context import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
@@ -43,7 +43,7 @@ class Group(Rect):
     >>> e1, e2, e3 = Element(w=123), Element(w=234), Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
     >>> # Allow the context to create a new document and page canvas. Normally view does it.
-    >>> c.newPage(w, h) 
+    >>> c.newPage(w, h)
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy, e.xyz
     ((0pt, 20pt), (0pt, 20pt, 0pt))

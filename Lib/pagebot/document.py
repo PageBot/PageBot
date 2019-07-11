@@ -284,7 +284,7 @@ class Document:
         (<Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
         """
 
-        """>>> from pagebot.contexts.flatcontext import FlatContext
+        """>>> from pagebot.contexts.flat.context import FlatContext
         >>> context = FlatContext()
         >>> doc = Document(context=context)
         >>> doc.context

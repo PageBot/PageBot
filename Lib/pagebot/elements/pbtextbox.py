@@ -338,7 +338,7 @@ class TextBox(Element):
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1]
         28.0
-        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> from pagebot.contexts.flat.context import FlatContext
         >>> c = FlatContext()
         >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None)
