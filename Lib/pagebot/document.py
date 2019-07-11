@@ -277,7 +277,7 @@ class Document:
     def _get_builder(self):
         """Answers the builder, which should be available from self.context.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> doc = Document(context=context, title='MySite')
         >>> doc, doc.context, doc.title

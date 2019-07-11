@@ -98,7 +98,7 @@ class Element:
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
         >>> size = pt(300, 400)
@@ -1649,7 +1649,7 @@ class Element:
         conversion defined (no reliable way of doing that, they should be created
         in the right context from the beginning).
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> e = Element(context=context)
         """

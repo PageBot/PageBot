@@ -442,7 +442,7 @@ class TextBox(Element):
         Overflow is solved by element condition Overflow2Next()
 
         >>> from pagebot.document import Document
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> doc = Document(w=1000, h=1000, context=context)
         >>> page1 = doc[1]

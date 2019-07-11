@@ -20,7 +20,7 @@ class Group(Rect):
     """Draw rectangle, default identacal to Element itself.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
     >>> from pagebot.elements.element import Element
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()

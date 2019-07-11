@@ -12,8 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     pagebot/__init__.py
+#     __init__.py
 #
+
 import re
 from pagebot.paths import *
 

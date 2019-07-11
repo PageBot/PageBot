@@ -62,7 +62,7 @@ class Line(Element):
         """Draw a line on the current context canvas.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
         >>> w, h = pt(300, 400)
