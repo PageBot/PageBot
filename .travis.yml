@@ -41,13 +41,13 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
-- wget https://github.com/PageBot/flat/archive/master.zip
+- wget https://github.com/PageBot/Flat3/archive/master.zip
 - unzip master.zip
-- cd flat-master
+- cd Flat3-master
 - python3 setup.py install
 - cd ..
 - rm master.zip
-- rm -r flat-master
+- rm -r Flat3-master
 - wget https://github.com/typesupply/compositor/archive/master.zip
 - unzip master.zip
 - cd compositor-master

@@ -33,8 +33,8 @@ class FlatString(BabelString):
     UNITS = 'pt'
 
     def __init__(self, s, context, style=None):
-        """Constructor of the DrawBotString, which is a wrapper around
-        DrawBot.FormattedString. Optionally stores the (latest) style that was
+        """Constructor of the FlatString, which is a wrapper around
+        flat string. Optionally stores the (latest) style that was
         used to produce the formatted string.
 
         >>> from pagebot.contexts.flatcontext import FlatContext
