@@ -11,14 +11,5 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     sitebuilder.py
+#     __init__.py
 #
-from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
-
-class SiteBuilder(HtmlBuilder):
-    """Generic output builder container, used of collecting html, css, js,
-    include paths and other data needed to export the website, e.g. by the
-    GitView or MampView."""
-
-    def frameDuration(self, frameDurection):
-    	pass

@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     basebuilder.py
+#     builder.py
 #
 
 import os

@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     basecontext.py
+#     context.py
 #
 import os
 from math import radians, sin, cos
@@ -21,9 +21,9 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
-from pagebot.contexts.abstractdrawbotcontext import AbstractDrawBotContext
+from pagebot.contexts.base.abstractcontext import AbstractContext
 
-class BaseContext(AbstractDrawBotContext):
+class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
     """
     # Indication to Typesetter that by default tags should not be included in

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -10,18 +9,7 @@
 #
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
-#     Supporting usage of InDesign API-scripting
 # -----------------------------------------------------------------------------
 #
-#     idmlbuilder.py
+#     __init__.py
 #
-from pagebot.contexts.builders.basebuilder import BaseBuilder
-
-class IdmlBuilder(BaseBuilder):
-    """TODO: Implement functions to make it work.
-    """
-    
-if __name__ == '__main__':
-    import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])

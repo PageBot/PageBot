@@ -8,18 +8,8 @@
 #     Licensed under MIT conditions
 #
 #     Supporting DrawBot, www.drawbot.com
-#     Supporting Indesign, xxyxyz.org/indesign
+#     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     idmlstring.py
+#     __init__.py
 #
-
-from pagebot.contexts.strings.babelstring import BabelString
-
-class IdmlString(BabelString):
-    pass
-
-if __name__ == '__main__':
-    import doctest
-    import sys
-    sys.exit(doctest.testmod()[0])

@@ -17,12 +17,13 @@
 import sys, os
 import AppKit
 import CoreText
+
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError
-import logging
 from drawBot.context.tools.openType import getFeatureTagsForFontName, featureMap
 from drawBot.context.tools.variation import *
 
+import logging
 logger = logging.getLogger(__name__)
 _FALLBACKFONT = "LucidaGrande"
 

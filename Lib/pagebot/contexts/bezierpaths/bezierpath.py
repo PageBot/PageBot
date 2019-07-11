@@ -18,7 +18,7 @@ import math
 import AppKit
 import Quartz
 import CoreText
-from pagebot.contexts.basecontext import BaseContext
+from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.bezierpaths.beziercontour import BezierContour
 from fontTools.pens.basePen import BasePen
 from pagebot.errors import PageBotError

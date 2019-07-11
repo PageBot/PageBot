@@ -11,10 +11,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     abstractdrawbot.py
+#     abstractcontext.py
 #
 
-class AbstractDrawBotContext:
+class AbstractContext:
     """All contexts should at least contain the same (public) functions DrawBot does.
 
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py

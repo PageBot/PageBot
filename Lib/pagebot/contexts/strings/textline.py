@@ -15,8 +15,8 @@
 #     textline.py
 #
 import re
-from pagebot.contexts.strings.textrun import TextRun
-from pagebot.contexts.strings.pattern import FoundPattern
+from .textrun import TextRun
+from .pattern import FoundPattern
 from pagebot.toolbox.units import pt, upt
 try:
     from CoreText import (CGPoint, CTLineGetGlyphRuns,

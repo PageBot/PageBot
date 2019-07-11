@@ -13,18 +13,15 @@
 #
 #     flatbuilder.py
 #
-from pagebot.contexts.builders.nonebuilder import NoneFlatBuilder
+import flat
+flatBuilder = flat
 
-try:
-    # ID to make builder hook name. Views will try to call e.build_flat().
-    import flat
-    flatBuilder = flat
-    flatBuilder.PB_ID = 'flat'
-except ImportError:
-    flatBuilder = NoneFlatBuilder()
+# ID to make builder hook name. Views will try to call e.build_flat().
+flatBuilder.PB_ID = 'flat'
 
 class BezierPath:
     """Make BezierPath with the same API as DrawBot.BezierPath.
+    TODO: move somewhere else.
 
     >>> path = BezierPath(flatBuilder)
     >>> path.moveTo((0, 0))

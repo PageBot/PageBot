@@ -18,7 +18,7 @@
 #import imageio
 from pagebot.toolbox.units import pt, upt, point2D
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.contexts.basecontext import BaseContext
+from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.flat.builder import flatBuilder, BezierPath
 from pagebot.contexts.flat.string import FlatString
 from pagebot.toolbox.mathematics import *

@@ -48,10 +48,10 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getCanvasContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
-            elif contextType == 'InDesign':
-                DEFAULT_CONTEXT = getInDesignContext()
-            elif contextType == 'idml':
-                DEFAULT_CONTEXT = getIdmlContext()
+            #elif contextType == 'InDesign':
+            #    DEFAULT_CONTEXT = getInDesignContext()
+            #elif contextType == 'idml':
+            #    DEFAULT_CONTEXT = getIdmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
             #elif contextType == 'SVG':
@@ -67,10 +67,10 @@ def getContext(contextType='DrawBot'):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
-            elif contextType == 'InDesign':
-                DEFAULT_CONTEXT = getInDesignContext()
-            elif contextType == 'idml':
-                DEFAULT_CONTEXT = getIdmlContext()
+            #elif contextType == 'InDesign':
+            #    DEFAULT_CONTEXT = getInDesignContext()
+            #elif contextType == 'idml':
+            #    DEFAULT_CONTEXT = getIdmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
 
@@ -81,32 +81,35 @@ def getContext(contextType='DrawBot'):
 
     return DEFAULT_CONTEXT
 
+def getDrawBotContext():
+    # TODO: check if drawBotContext exists first, ask to install.
+    from drawBotContext.context import DrawBotContext
+    return DrawBotContext()
+
 def getFlatContext():
     from pagebot.contexts.flat.context import FlatContext
     return FlatContext()
 
-def getDrawBotContext():
-    from drawBotContext.context import DrawBotContext
-    return DrawBotContext()
-
 def getCanvasContext():
-    from pagebot.contexts.canvascontext import CanvasContext
+    from pagebot.contexts.canvas.context import CanvasContext
     return CanvasContext()
 
 def getHtmlContext():
-    from pagebot.contexts.htmlcontext import HtmlContext
+    from pagebot.contexts.xml.htmlcontext import HtmlContext
     return HtmlContext()
 
+'''
 def getInDesignContext():
-    from pagebot.contexts.indesigncontext import InDesignContext
+    from indesigncontext import InDesignContext
     return InDesignContext()
 
 def getIdmlContext():
     from pagebot.contexts.idmlcontext import IdmlContext
     return IdmlContext()
+'''
 
 def getSvgContext():
-    from pagebot.contexts.svgcontext import SvgContext
+    from pagebot.contexts.xml.svgcontext import SvgContext
     return SvgContext()
 
 def getMampPath():

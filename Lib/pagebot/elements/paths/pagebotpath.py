@@ -26,7 +26,7 @@ import os
 from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, \
     DEFAULT_WIDTH
 from pagebot.toolbox.units import upt, degrees, point2D
-from pagebot.contexts.basecontext import BaseContext
+from pagebot.contexts.base.context import BaseContext
 
 class PageBotPoint:
     def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None, start=False):

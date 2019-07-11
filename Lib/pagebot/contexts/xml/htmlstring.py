@@ -77,7 +77,7 @@ class HtmlString(BabelString):
         u"""Answers the dictionary of TextLine instances. Key is y position of the line.
 
         >>> from pagebot.toolbox.units import mm, uRound, pt
-        >>> from pagebot.contexts.htmlcontext import HtmlContext
+        >>> from pagebot.contexts.xml.htmlcontext import HtmlContext
         >>> context = HtmlContext()
         >>> style = dict(font='Verdana', fontSize=pt(12))
         >>> bs = context.newString('Example Text ' * 10, style=style)

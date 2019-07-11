@@ -19,7 +19,7 @@ import AppKit
 import CoreText
 import Quartz
 import traceback
-from pagebot.contexts.builders.basebuilder import BaseBuilder
+from pagebot.contexts.base.builder import BaseBuilder
 from pagebot.contexts.graphics.graphic import Graphic
 from pagebot.contexts.strings.formattedstring import FormattedString
 from pagebot.contexts.bezierpaths.bezierpath import BezierPath

@@ -1,4 +1,4 @@
-    # -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -11,21 +11,14 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     sketchbuilder.py
+#     sitebuilder.py
 #
-from pagebot.contexts.builders.basebuilder import BaseBuilder
+from .htmlbuilder import HtmlBuilder
 
-class SketchBuilder(BaseBuilder):
-    PB_ID = 'Sketch'
+class SiteBuilder(HtmlBuilder):
+    """Generic output builder container, used of collecting html, css, js,
+    include paths and other data needed to export the website, e.g. by the
+    GitView or MampView."""
 
-    def frameDuration(self, frameDuration):
-        pass
-
-    def save(self):
-        pass
-
-    def fill(self, e, g, b, alpha=None):
-        pass
-
-sketchBuilder = SketchBuilder()
-
+    def frameDuration(self, frameDurection):
+    	pass

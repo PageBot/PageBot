@@ -15,7 +15,7 @@
 #     htmlview.py
 #
 from pagebot.elements.views.baseview import BaseView
-from pagebot.contexts.htmlcontext import HtmlContext
+from pagebot.contexts.xml.htmlcontext import HtmlContext
 
 class HtmlView(BaseView):
     """Abstract class for HTML/CSS generating views."""

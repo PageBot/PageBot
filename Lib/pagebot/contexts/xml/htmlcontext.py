@@ -13,9 +13,9 @@
 #
 #     htmlcontext.py
 #
-from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.htmlbuilder import HtmlBuilder
-from pagebot.contexts.strings.htmlstring import HtmlString
+from .htmlbuilder import HtmlBuilder
+from .htmlstring import HtmlString
+from pagebot.contexts.base.context import BaseContext
 from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):
@@ -105,7 +105,7 @@ class HtmlContext(BaseContext):
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
         from pagebot.contexts.drawbotcontext import DrawBotContext
-        return DrawBotContext().scaleImage(path, w, h, index=index, 
+        return DrawBotContext().scaleImage(path, w, h, index=index,
             showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
             force=force)
 
@@ -138,16 +138,16 @@ class HtmlContext(BaseContext):
 
     def getFlattenedContours(self, glyph):
         return None
- 
+
     def getFlattenedPath(self, glyph):
         return None
-        
+
     def getGlyphPath(self, glyph):
         return None
-        
+
     def numberOfImages(self):
         return 0
-        
+
     def saveDocument(self, path):
         pass
 

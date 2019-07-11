@@ -16,7 +16,7 @@
 #
 #     Converts SVG paths to drawbot Bézier paths.
 #
-from drawBot.context.baseContext import BezierPath
+from drawBot.context.base.cntext import BezierPath
 from xml.dom import minidom
 
 def getSvgPaths(fileName):

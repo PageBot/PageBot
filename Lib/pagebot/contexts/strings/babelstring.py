@@ -27,7 +27,7 @@ class BabelString:
 
     """
     >>> bla = context.newString('bla')
-    >>> from pagebot.contexts.strings.drawbotstring import DrawBotString
+    >>> from drawBotContext.string import DrawBotString
     >>> isinstance(bla, DrawBotString)
     True
     >>> type(bla)
@@ -72,7 +72,7 @@ class BabelString:
     def __getitem__(self, given):
         """Answer a copy of self with sliced string or with single indexed character.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newString('blablabla')[2:]
         ablabla
