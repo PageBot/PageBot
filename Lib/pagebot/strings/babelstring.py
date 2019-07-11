@@ -72,7 +72,7 @@ class BabelString:
     def __getitem__(self, given):
         """Answer a copy of self with sliced string or with single indexed character.
 
-        >>> from drawBotContext.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newString('blablabla')[2:]
         ablabla
