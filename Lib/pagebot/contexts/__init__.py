@@ -11,7 +11,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     pagebot/contexts/__init__.py
+#     __init__.py
 #
 
 DEFAULT_CONTEXT = None
@@ -82,7 +82,7 @@ def getContext(contextType='DrawBot'):
     return DEFAULT_CONTEXT
 
 def getFlatContext():
-    from pagebot.contexts.flatcontext import FlatContext
+    from pagebot.contexts.flat.context import FlatContext
     return FlatContext()
 
 def getDrawBotContext():

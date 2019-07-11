@@ -19,8 +19,8 @@
 from pagebot.toolbox.units import pt, upt, point2D
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.contexts.basecontext import BaseContext
-from pagebot.contexts.builders.flatbuilder import flatBuilder, BezierPath
-from pagebot.contexts.strings.flatstring import FlatString
+from pagebot.contexts.flat.builder import flatBuilder, BezierPath
+from pagebot.contexts.flat.string import FlatString
 from pagebot.toolbox.mathematics import *
 from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
     FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE
