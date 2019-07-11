@@ -13,9 +13,10 @@
 #
 #     htmlcontext.py
 #
-from htmlbuilder import HtmlBuilder
-from htmlstring import HtmlString
+
 from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.xml.htmlbuilder import HtmlBuilder
+from pagebot.context.xml.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):
