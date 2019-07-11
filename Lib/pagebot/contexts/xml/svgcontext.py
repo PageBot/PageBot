@@ -17,17 +17,15 @@
 #
 
 import shutil
-from svgbuilder import svgBuilder
-from htmlstring import HtmlString
-from pagebot.toolbox.transformer import uniqueID
+from pagebot.contexts.xml.svgbuilder import svgBuilder
+from pagebot.contexts.xml.htmlstring import HtmlString
 from pagebot.contexts.base.context import BaseContext
-from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE
+from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
 from pagebot.paths import DEFAULT_FONT_PATH
-from pagebot.toolbox.units import upt, point2D
-from pagebot.toolbox.dating import seconds
 from pagebot.toolbox.color import noColor, color
-from pagebot.toolbox.units import pt
-from pagebot.constants import FILETYPE_SVG
+from pagebot.toolbox.dating import seconds
+from pagebot.toolbox.transformer import uniqueID
+from pagebot.toolbox.units import pt, upt, point2D
 
 class SvgContext(BaseContext):
     """The SvgContext implements SVG functionality within the PageBot framework
