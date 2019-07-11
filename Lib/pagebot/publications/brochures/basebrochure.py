@@ -60,7 +60,7 @@ class BaseBrochure(Publication):
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic brochure templates. """
+        """Initialize the generic brochure templates. """
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h

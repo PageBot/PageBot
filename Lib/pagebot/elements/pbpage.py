@@ -283,7 +283,7 @@ class Page(Element):
     next = property(_get_next)
 
     def _get_prev(self):
-        u"""Answers the previous page in the document, relative to self. Answer
+        """Answers the previous page in the document, relative to self. Answer
         None if self is the first page.
 
         >>> from pagebot.document import Document

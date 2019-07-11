@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class SomethingInTheAir(BaseTheme):
-    u"""The SomethingInTheAir theme is ..."""
+    """The SomethingInTheAir theme is ..."""
 
     NAME = 'Something in the Air'
     BASE_COLORS = dict(

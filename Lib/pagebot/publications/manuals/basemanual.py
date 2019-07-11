@@ -55,7 +55,7 @@ class BaseManual(Publication):
     }
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic manual templates. """
+        """Initialize the generic manual templates. """
 
         padding = self.css('pt'), self.css('pr'), self.css('pb'), self.css('pl')
         w, h = self.w, self.h

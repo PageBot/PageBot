@@ -73,7 +73,7 @@ class HtmlString(BabelString):
         return ''
 
     def getTextLines(self, w, h=None, align=LEFT):
-        u"""Answers the dictionary of TextLine instances. Key is y position of the line.
+        """Answers the dictionary of TextLine instances. Key is y position of the line.
 
         >>> from pagebot.toolbox.units import mm, uRound, pt
         >>> from pagebot.contexts.xml.htmlcontext import HtmlContext

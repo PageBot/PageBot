@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class FairyTales(BaseTheme):
-    u"""The FairyTales theme is ..."""
+    """The FairyTales theme is ..."""
 
     NAME = 'Fairy Tales'
     BASE_COLORS = dict(

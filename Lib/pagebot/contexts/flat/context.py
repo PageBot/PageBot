@@ -617,7 +617,7 @@ class FlatContext(BaseContext):
     setTextFillColor = textFill
 
     def fill(self, c):
-        u"""Set the color for global or the color of the formatted string.
+        """Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py.
 
         """
@@ -633,7 +633,7 @@ class FlatContext(BaseContext):
         self._fill = c
 
     def stroke(self, c, w=None):
-        u"""Set global stroke color or the color of the formatted string."""
+        """Set global stroke color or the color of the formatted string."""
         if c is None:
             c = noColor
         elif isinstance(c, (tuple, list)):

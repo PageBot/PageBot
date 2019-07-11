@@ -73,7 +73,7 @@ class ImageData(Element):
     h = property(_get_h, _set_h)
 
     def _get_iw(self):
-        u"""Answers the width of the image file. Initialize from the file if self._iw is None.
+        """Answers the width of the image file. Initialize from the file if self._iw is None.
         Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._iw is None:
@@ -82,7 +82,7 @@ class ImageData(Element):
     iw = property(_get_iw)
 
     def _get_ih(self):
-        u"""Answers the height of the image file. Initialize from the file if self._ih is None.
+        """Answers the height of the image file. Initialize from the file if self._ih is None.
         Answer pt(0) if the image file does not exist or the size could not be determined.
         """
         if self._ih is None:

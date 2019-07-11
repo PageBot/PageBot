@@ -493,7 +493,7 @@ class Glyph:
     analyzer = property(_get_analyzer) # Read only for now.
 
     def _get_box(self):
-        u"""Answers the bounding box as defined by self.ttGlyph boundaries.
+        """Answers the bounding box as defined by self.ttGlyph boundaries.
         """
         if self._box is None:
             self._box = (self.ttGlyph.xMin, self.ttGlyph.yMin, self.ttGlyph.xMax, self.ttGlyph.yMax)

@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class BackToTheCity(BaseTheme):
-    u"""The BackToTheCity theme is ..."""
+    """The BackToTheCity theme is ..."""
 
     NAME = 'Back to the City'
     BASE_COLORS = dict(

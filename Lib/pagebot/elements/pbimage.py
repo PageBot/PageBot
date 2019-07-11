@@ -208,7 +208,7 @@ class Image(Element):
     h = property(_get_h, _set_h)
 
     def __len__(self):
-        u"""Answers the number of pages in the the current image file."""
+        """Answers the number of pages in the the current image file."""
         if self.path:
             return self.context.numberOfImages(self.path)
         return 0

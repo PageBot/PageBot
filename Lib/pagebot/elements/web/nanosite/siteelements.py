@@ -19,7 +19,7 @@ from pagebot.elements import *
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
 
 class Site(Publication):
-    u"""Build a website, simplest responsive structure, using CSS Grid.
+    """Build a website, simplest responsive structure, using CSS Grid.
     """
 
 class NanoElement(Column):

@@ -520,7 +520,7 @@ class Unit:
     px = property(_get_px)
 
     def _get_inch(self):
-        u"""Answers the rendered value, translated to inch via pt.
+        """Answers the rendered value, translated to inch via pt.
 
         >>> u = pt(72)
         >>> u.pt, u.inch
@@ -532,7 +532,7 @@ class Unit:
     inch = property(_get_inch)
 
     def _get_p(self):
-        u"""Answers the rendered value, translated to Pica via pt.
+        """Answers the rendered value, translated to Pica via pt.
 
         >>> 2 * pt(12).p # Rendered and cast to picas
         2
@@ -543,7 +543,7 @@ class Unit:
     p = property(_get_p)
 
     def _get_cm(self):
-        u"""Answers the rendered value, translated to cm via pt.
+        """Answers the rendered value, translated to cm via pt.
 
         >>> int(round(pt(595).cm)) # Rendered and cast to cm
         21
@@ -556,7 +556,7 @@ class Unit:
     cm = property(_get_cm)
 
     def _get_mm(self):
-        u"""Answers the rendered value, translated to mm via pt.
+        """Answers the rendered value, translated to mm via pt.
 
         >>> int(round(4 * pt(12).mm)) # Rendered and cast to picas
         17
@@ -588,7 +588,7 @@ class Unit:
     rv = property(_get_rv, _set_rv)
 
     def _get_ru(self):
-        u"""For absolute units the rendering toward units is just a copy of self.
+        """For absolute units the rendering toward units is just a copy of self.
 
         >>> u = inch(3)
         >>> u.ru, u == u.ru, u is u.ru
@@ -630,7 +630,7 @@ class Unit:
         return self.rounded
 
     def __bool__(self):
-        u"""Answers the boolean representation of self, if self.rv renders to 0.
+        """Answers the boolean representation of self, if self.rv renders to 0.
 
         >>> bool(pt(0))
         False
@@ -2526,7 +2526,7 @@ class Degrees(Angle):
         return '%sdeg' % self.angle
 
     def asValue(self, angle):
-        u"""Answers the value of angle of the same type as self.
+        """Answers the value of angle of the same type as self.
 
         >>> degrees(30).asValue(60)
         60
@@ -2580,7 +2580,7 @@ class Radians(Angle):
         return '%srad' % self.angle
 
     def asValue(self, angle):
-        u"""Answers the value of angle of the same type as self.
+        """Answers the value of angle of the same type as self.
 
         >>> radians(0.5).asValue(0.75)
         0.75

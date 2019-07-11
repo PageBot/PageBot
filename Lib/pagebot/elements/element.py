@@ -2691,7 +2691,7 @@ class Element:
     # Colors for fill and stroke
 
     def _get_fill(self):
-        u"""Fill color property in style, using self.css to query cascading values.
+        """Fill color property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> e = Element(fill=color('red'))
@@ -2710,7 +2710,7 @@ class Element:
     fill = property(_get_fill, _set_fill)
 
     def _get_stroke(self):
-        u"""Fill color property in style, using self.css to query cascading values.
+        """Fill color property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> e = Element(stroke=color('red'))
@@ -2729,7 +2729,7 @@ class Element:
     stroke = property(_get_stroke, _set_stroke)
 
     def _get_strokeWidth(self):
-        u"""Stroke width property in style, using self.css to query cascading values.
+        """Stroke width property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> from pagebot.toolbox.units import mm, p
@@ -2771,7 +2771,7 @@ class Element:
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
 
     def _get_borders(self):
-        u"""Set all borders of the element.
+        """Set all borders of the element.
 
         >>> from pagebot.toolbox.units import p
         >>> e = Element(stroke=(1, 0, 0))
@@ -7152,14 +7152,14 @@ class Element:
         return True
 
     def fit2Left(self):
-        u"""Fit to left, inlcuding margin left and margin right."""
+        """Fit to left, inlcuding margin left and margin right."""
         right = self.mRight
         self.mLeft = self.parent.pl # Padding left
         self.w += right - self.mRight
         return True
 
     def fit2LeftSide(self):
-        u"""Fit to left, including margin left and margin right."""
+        """Fit to left, including margin left and margin right."""
         right = self.mRight
         self.mLeft = 0
         self.w += right - self.mRight

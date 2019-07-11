@@ -18,7 +18,7 @@ from pagebot.publications.publication import Publication
 from pagebot.elements import *
 
 class Site(Publication):
-    u"""Build a website, similar to the original template by Kirsten Langmuur.
+    """Build a website, similar to the original template by Kirsten Langmuur.
     """
 
 class SiteColumn(Column):
@@ -45,7 +45,7 @@ class SiteColumn(Column):
         return cssId
 
 class Header(SiteColumn):
-    u"""Container for header elements on a page. Using standard
+    """Container for header elements on a page. Using standard
     Element.build for non-Html contexts.
     """
     def build_html(self, view, path, drawElements=True, **kwargs):
@@ -60,7 +60,7 @@ class Header(SiteColumn):
         b.comment('End %s' % cssId)
 
 class Banner(SiteColumn):
-    u"""Container for banner elements on a page.
+    """Container for banner elements on a page.
     Often used inside the Header element.
     Using standard Element.build for non-Html contexts.
     """
@@ -166,7 +166,7 @@ class MenuItem(SiteColumn):
         pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
-        u"""
+        """
         <li>
             <a href="index.html">Home</a>
         </li>

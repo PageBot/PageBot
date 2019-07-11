@@ -19,7 +19,7 @@ from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
 
 class Publication(Element):
-    u"""Implementing data and templates for generic publications.
+    """Implementing data and templates for generic publications.
     See also other – more specific – implementations, such as Poster, Brochure and Magazines.
 
     An old approach was to make Publication subclass from Document, but it shows to be more

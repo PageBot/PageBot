@@ -55,7 +55,7 @@ class Quire(Element):
         self.pages = {}
 
     def place(self, page, pix, piy):
-        u"""Add the page to the page list at location (pix, piy). If there is no
+        """Add the page to the page list at location (pix, piy). If there is no
         list yet at that location, then first create an empty list.
         Note that the pages are kept in the self.pages by reference, not changing their
         parent and no

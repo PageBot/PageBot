@@ -26,7 +26,7 @@ REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def getPoints(glyph):
-    u"""Answers the list of points for this glyph."""
+    """Answers the list of points for this glyph."""
     points = []
     for contour in glyph:
         for segment in contour:

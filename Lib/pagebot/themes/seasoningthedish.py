@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class SeasoningTheDish(BaseTheme):
-    u"""The SeasoningTheDish theme is ..."""
+    """The SeasoningTheDish theme is ..."""
 
     NAME = 'Seasoning the Dish'
     BASE_COLORS = dict(
