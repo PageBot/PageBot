@@ -17,8 +17,8 @@
 #
 
 import shutil
-from .svgbuilder import svgBuilder
-from .htmlstring import HtmlString
+from svgbuilder import svgBuilder
+from htmlstring import HtmlString
 from pagebot.toolbox.transformer import uniqueID
 from pagebot.contexts.base.context import BaseContext
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE

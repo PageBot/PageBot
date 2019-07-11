@@ -18,7 +18,7 @@ import os
 import codecs
 import sass
 
-from .xmlbuilder import XmlBuilder
+from xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,

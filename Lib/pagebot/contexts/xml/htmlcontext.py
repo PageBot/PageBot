@@ -13,8 +13,8 @@
 #
 #     htmlcontext.py
 #
-from .htmlbuilder import HtmlBuilder
-from .htmlstring import HtmlString
+from htmlbuilder import HtmlBuilder
+from htmlstring import HtmlString
 from pagebot.contexts.base.context import BaseContext
 from pagebot.toolbox.color import noColor
 
