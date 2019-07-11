@@ -14,9 +14,10 @@
 #
 #     graphic.py
 #
-from pagebot.contexts.strings.formattedstring import FormattedString
-from pagebot.contexts.color.color import *
-from pagebot.contexts.bezierpaths.bezierpath import BezierPath
+
+from pagebot.color.color import *
+from pagebot.strings.formattedstring import FormattedString
+from pagebot.bezierpaths.bezierpath import BezierPath
 
 class Graphic:
     """A graphical object to be drawn."""

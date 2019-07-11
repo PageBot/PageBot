@@ -21,7 +21,7 @@ import Quartz
 import traceback
 from pagebot.contexts.base.builder import BaseBuilder
 from pagebot.contexts.graphics.graphic import Graphic
-from pagebot.contexts.strings.formattedstring import FormattedString
+from pagebot.strings.formattedstring import FormattedString
 from pagebot.contexts.bezierpaths.bezierpath import BezierPath
 from pagebot.contexts.color.color import *
 from pagebot.errors import PageBotError

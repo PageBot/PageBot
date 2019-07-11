@@ -22,7 +22,7 @@ STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg', 'InDesign', 'idml')
+contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')#, 'InDesign', 'idml')
 
 def getRootPath():
     """Answers the root path of the PageBot module for the current platform."""
@@ -55,6 +55,9 @@ def getContext(contextType='DrawBot'):
     >>> context = getContext('svg')
     >>> print(context)
     <SvgContext>
+    """
+
+    """
     >>> context = getContext('InDesign')
     >>> print(context)
     <InDesignContext>

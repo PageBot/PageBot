@@ -16,14 +16,14 @@
 #
 
 #import imageio
-from pagebot.toolbox.units import pt, upt, point2D
-from pagebot.toolbox.color import color, Color, noColor
+from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
+        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE)
 from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.flat.builder import flatBuilder, BezierPath
 from pagebot.contexts.flat.string import FlatString
+from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
-from pagebot.constants import FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG, \
-    FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE
+from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -395,7 +395,7 @@ class FlatContext(BaseContext):
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> print(type(bs))
-        <class 'pagebot.contexts.strings.flatstring.FlatString'>
+        <class 'pagebot.context.flat.string.FlatString'>
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()

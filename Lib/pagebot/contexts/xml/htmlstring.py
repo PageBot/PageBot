@@ -13,11 +13,11 @@
 #
 #     htmlstring.py
 #
-from pagebot.contexts.strings.babelstring import BabelString
+from pagebot.constants import XXXL
+from pagebot.strings.babelstring import BabelString
 from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_LANGUAGE
 from pagebot.toolbox.units import upt
-from pagebot.constants import XXXL
 
 class HtmlString(BabelString):
 
