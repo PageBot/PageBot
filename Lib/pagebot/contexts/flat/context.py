@@ -20,7 +20,7 @@ from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE)
 from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.flat.builder import flatBuilder, BezierPath
-from pagebot.contexts.flat.string import FlatString
+from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
