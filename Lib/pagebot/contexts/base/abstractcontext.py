@@ -48,7 +48,7 @@ class AbstractContext:
     def size(self, width, height=None):
         raise NotImplementedError
 
-    def newPage(self, w, h):
+    def newPage(self, w, h, **kwargs):
         raise NotImplementedError
 
     def _get_pages(self):
@@ -261,7 +261,8 @@ class AbstractContext:
 
     # Images
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None):
+    def image(self, path, p, alpha=1, pageNumber=None, 
+            w=None, h=None, scaleType=None):
         raise NotImplementedError
 
     def imageSize(self, path):

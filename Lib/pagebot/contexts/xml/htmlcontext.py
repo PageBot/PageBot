@@ -56,7 +56,7 @@ class HtmlContext(BaseContext):
     def endDrawing(self):
         pass
 
-    def newPage(self, w, h):
+    def newPage(self, w, h, **kwargs):
         pass
 
     def frameDuration(self, value):

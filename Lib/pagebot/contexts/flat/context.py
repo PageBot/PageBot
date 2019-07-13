@@ -179,7 +179,7 @@ class FlatContext(BaseContext):
     def getDocument(self):
         pass
 
-    def newPage(self, w=None, h=None, size=None):
+    def newPage(self, w=None, h=None, **kwargs):
         """Other page sizes than default in self.doc, are ignored in Flat.
         # FIXME: test units, page auto-sizes to parent doc.
 

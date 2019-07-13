@@ -680,6 +680,11 @@ TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 # Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
 MAX_IMAGE_WIDTH = pt(800)
 
+SCALE_TYPE_PROPORTIONAL = 'Proportional' # Default, best fitting for smallest of (w, h)
+SCALE_TYPE_FITW = 'FitW' # Fitting given width, height is proportional
+SCALE_TYPE_FITH = 'FitH' # Fitting given height, width is proportional
+SCALE_TYPE_FITWH = 'FitWH' # Disproportional scaling
+
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
     FILETYPE_PDF: 1, # Not used online, keep size as used.

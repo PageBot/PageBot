@@ -93,7 +93,7 @@ class SvgContext(BaseContext):
     def getDocument(self):
         pass
 
-    def newPage(self, w, h):
+    def newPage(self, w, h, **kwargs):
         """Create a new SVG page.
 
         >>> context = SvgContext()

@@ -87,7 +87,7 @@ class PartOfBook(Element):
             self.newPage(name, (pn, 0))
             pn += 1
 
-    def newPage(self, name=None, pn=None):
+    def newPage(self, name=None, pn=None, **kwargs):
         if self.thumbPath:
             thumbPath = self.thumbPath % (len(self.pages)+1)
         else:

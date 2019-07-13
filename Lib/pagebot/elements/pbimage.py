@@ -19,7 +19,7 @@
 import os
 
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN, CACHE_EXTENSIONS #
+from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL 
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import path2Extension
@@ -33,7 +33,7 @@ class Image(Element):
     >>> from pagebot import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
-    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from drawBotContext.context import DrawBotContext
     >>> from pagebot.constants import A4
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
@@ -69,7 +69,7 @@ class Image(Element):
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
             size=None, z=0, mask=None, imo=None, proportional=True, index=1,
-            scaleImage=True, resolutionFactor=None, **kwargs):
+            scaleImage=True, resolutionFactor=None, scaleType=None, **kwargs):
         Element.__init__(self, **kwargs)
 
         # Initializes the self.im and self.ih sizes of the image file, defined
@@ -121,6 +121,7 @@ class Image(Element):
         # index. Default is first = 1.
         self.index = index
         self.scaleImage = scaleImage
+        self.scaleType = SCALE_TYPE_PROPORTIONAL
 
         # If defined, overwrites the automatic factor of image type.
         self.resolutionFactor = resolutionFactor
@@ -370,7 +371,7 @@ class Image(Element):
             e.prepare(view)
 
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
-        """Draw the image in the calculated scale. Since we need to use the
+        """Draw the image in the calculated (w, h). Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
 
@@ -410,13 +411,12 @@ class Image(Element):
             # Check if scaling exceeds limit, then generate a cached file and
             # update the path and (self.iw, self.ih) accordingly.
 
-            sx = self.w / self.iw
-            sy = self.h / self.ih
-            context.scale(sx, sy)
-
             # If a clipRect is defined, create the Bézier path.
             """
             if self.clipPath is not None:
+                DON'T CALL BUILDER DIRECTLY and don't scale here. 
+                Context must do it's own scaling.
+                
                 clipRect = context.newPath()
                 clX, clY, clW, clH = upt(self.clipRect)
                 sclX = clX/sx
@@ -442,12 +442,15 @@ class Image(Element):
             """
             if self.imo is not None:
                 with self.imo:
-                    b.image(self.path, (0, 0), pn=1, alpha=self._getAlpha())
-                b.image(self.imo, upt(px/sx, py/sy), pageNumber=self.index,
-                        alpha=self._getAlpha())
+                    context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(), 
+                        w=self.w, h=self.h, scaleType=self.scaleType)
+                context.image(self.imo, (px, py), pageNumber=self.index,
+                        alpha=self._getAlpha(), w=self.w, h=self.h, 
+                        scaleType=self.scaleType)
             else:
-                b.image(self.path, upt(px/sx, py/sy), pageNumber=self.index,
-                        alpha=self._getAlpha())
+                context.image(self.path, (px, py), pageNumber=self.index,
+                        alpha=self._getAlpha(), w=self.w, h=self.h,
+                        scaleType=self.scaleType)
 
             # TODO: Draw optional (transparant) forground color?
             context.restore()
@@ -468,7 +471,7 @@ class Image(Element):
     def gaussianBlur(self, radius=None):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from drawBotContext.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> from pagebot import getResourcesPath
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'

@@ -59,7 +59,7 @@ def getContext(contextType='DrawBot'):
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
-            if contextType in ('DrawBot'):
+            if contextType in ('DrawBot',):
                 print('Selected context type is not available on this platform: %s for %s' % (contextType, platform))
                 # TODO: raise error
                 DEFAULT_CONTEXT = getFlatContext()

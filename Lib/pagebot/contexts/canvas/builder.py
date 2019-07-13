@@ -112,8 +112,8 @@ class CanvasBuilder(BaseBuilder):
         self.strokeWidthValue = None
         self.reset()
 
-    def _newPage(self, width, height):
-        self.size(width, height)
+    def _newPage(self, w, h):
+        self.size(w, h)
 
     def _save(self):
         pass
@@ -163,22 +163,22 @@ class CanvasBuilder(BaseBuilder):
         Color.colorSpace = self._colorSpaceMap['genericRGB']
         self._reset()
 
-    def size(self, width=None, height=None):
-        if width is not None:
-            self.width = width
-        if height is not None:
-            self.height = height
+    def size(self, w=None, h=None):
+        if w is not None:
+            self.width = w
+        if h is not None:
+            self.height = h
 
-    def newPage(self, width=None, height=None):
+    def newPage(self, w=None, h=None):
         if self.width is None:
-            if width is None:
+            if w is None:
                 raise PageBotError("A page must have a width")
-            self.width = width
+            self.width = w
 
         if self.height is None:
-            if height is None:
+            if h is None:
                 raise PageBotError("A page must have a height")
-            self.height = height
+            self.height = h
 
         self.hasPage = True
 
@@ -187,7 +187,7 @@ class CanvasBuilder(BaseBuilder):
             hasHorizontalScroller=True, hasVerticalScroller=True,
             autohidesScrollers=False, backgroundColor=None,
             drawsBackground=True, flipped=True)
-        self._newPage(width, height)
+        self._newPage(w, h)
         return self.page
 
     def draw(self, rect):
