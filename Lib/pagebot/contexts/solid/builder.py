@@ -16,7 +16,7 @@
 #	  https://github.com/SolidCode/SolidPython/tree/master/solid
 #	  https://github.com/felipesanches/SolidPinball
 #
-from basebuilder import BaseBuilder
+from pagebot.contexts.base.builder import BaseBuilder
 
 class SolidBuilder(BaseBuilder):
  	pass

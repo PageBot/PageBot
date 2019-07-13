@@ -13,7 +13,7 @@
 #
 #     sitebuilder.py
 #
-from .htmlbuilder import HtmlBuilder
+from htmlbuilder import HtmlBuilder
 
 class SiteBuilder(HtmlBuilder):
     """Generic output builder container, used of collecting html, css, js,

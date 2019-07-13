@@ -50,7 +50,7 @@ def value01(v):
     return v
 
 def asRgb(c, *args):
-    u"""Answers the color as rgb tuple. If c is a list or tuple, then answer the
+    """Answers the color as rgb tuple. If c is a list or tuple, then answer the
     rgb tuples in the same structure.
 
     >>> asRgb(color(1, 0, 0))

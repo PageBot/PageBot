@@ -20,7 +20,7 @@ from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE)
 from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.flat.builder import flatBuilder, BezierPath
-from pagebot.contexts.flat.string import FlatString
+from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
@@ -478,7 +478,7 @@ class FlatContext(BaseContext):
 
         TODO: Make better match for all file types, transparency and spot
         color."""
-        from flat import rgb
+        from flat3 import rgb
         return rgb(*to255(c.rgb))
 
 
@@ -617,7 +617,7 @@ class FlatContext(BaseContext):
     setTextFillColor = textFill
 
     def fill(self, c):
-        u"""Set the color for global or the color of the formatted string.
+        """Set the color for global or the color of the formatted string.
         See: http://xxyxyz.org/flat, color.py.
 
         """
@@ -633,7 +633,7 @@ class FlatContext(BaseContext):
         self._fill = c
 
     def stroke(self, c, w=None):
-        u"""Set global stroke color or the color of the formatted string."""
+        """Set global stroke color or the color of the formatted string."""
         if c is None:
             c = noColor
         elif isinstance(c, (tuple, list)):

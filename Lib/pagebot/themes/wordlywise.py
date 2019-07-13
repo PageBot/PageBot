@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class WordlyWise(BaseTheme):
-    u"""The WordlyWise theme is ...
+    """The WordlyWise theme is ...
 
     >>> theme = WordlyWise()
     >>> theme.palette

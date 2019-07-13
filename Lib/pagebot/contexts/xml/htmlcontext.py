@@ -13,9 +13,10 @@
 #
 #     htmlcontext.py
 #
-from .htmlbuilder import HtmlBuilder
-from .htmlstring import HtmlString
+
 from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.xml.htmlbuilder import HtmlBuilder
+from pagebot.contexts.xml.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):
@@ -96,7 +97,7 @@ class HtmlContext(BaseContext):
         """Answers the (w, h) image size of the image file at path. As we cannot assume
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
-        from pagebot.contexts.drawbotcontext import DrawBotContext
+        from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         return DrawBotContext().imageSize(path)
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
@@ -104,7 +105,7 @@ class HtmlContext(BaseContext):
         """Scales the images and save to another file. As we cannot assume
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
-        from pagebot.contexts.drawbotcontext import DrawBotContext
+        from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         return DrawBotContext().scaleImage(path, w, h, index=index,
             showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
             force=force)

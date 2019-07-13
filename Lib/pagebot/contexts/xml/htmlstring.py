@@ -13,17 +13,16 @@
 #
 #     htmlstring.py
 #
-from pagebot.constants import XXXL
+from pagebot.constants import XXXL, LEFT, DEFAULT_LANGUAGE
 from pagebot.strings.babelstring import BabelString
 from pagebot.style import css
-from pagebot.constants import LEFT, DEFAULT_LANGUAGE
 from pagebot.toolbox.units import upt
 
 class HtmlString(BabelString):
+    """HtmlString is a wrapper around an HTML tagged string."""
 
     BABEL_STRING_TYPE = 'html'
 
-    """HtmlString is a wrapper around an HTML tagged string."""
     def __init__(self, s, context, language=None, style=None):
         self.context = context # Store the context, in case we need it.
         self.s = s # Enclose the HTML string
@@ -74,7 +73,7 @@ class HtmlString(BabelString):
         return ''
 
     def getTextLines(self, w, h=None, align=LEFT):
-        u"""Answers the dictionary of TextLine instances. Key is y position of the line.
+        """Answers the dictionary of TextLine instances. Key is y position of the line.
 
         >>> from pagebot.toolbox.units import mm, uRound, pt
         >>> from pagebot.contexts.xml.htmlcontext import HtmlContext

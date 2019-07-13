@@ -17,7 +17,7 @@ from pagebot.themes.basetheme import BaseTheme
 from pagebot.toolbox.color import spotColor
 
 class IntoTheWoods(BaseTheme):
-    u"""The IntoTheWoods theme is ...
+    """The IntoTheWoods theme is ...
 
     >>> theme = IntoTheWoods
     """

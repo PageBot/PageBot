@@ -200,7 +200,7 @@ class Mood:
         return self.styles.get(tag)
 
 class BaseTheme:
-    u"""The Theme instances combines a number of style dictionaries (property
+    """The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
     a theme could describe the entire CSS file where the keys are used as CSS
     selector and the connected styles are used as property:value declaration.

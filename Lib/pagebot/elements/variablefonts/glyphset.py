@@ -28,7 +28,7 @@ class GlyphSet(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.color import color, blackColor
         >>> from pagebot.toolbox.units import em

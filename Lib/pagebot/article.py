@@ -38,7 +38,7 @@ class Article:
     """
 
     def __init__(self, doc, artDirection, path=None, mdText=None, startPage=1, name=None, **kwargs):
-        u"""Initialize the Article instance, using the initialized Document instance.
+        """Initialize the Article instance, using the initialized Document instance.
 
         >>> from pagebot.document import Document
         >>> from pagebot.constants import A4
@@ -57,7 +57,7 @@ class Article:
         self.startPage = startPage
 
     def typeset(self): 
-        u"""Take the composition descriptor of the Article and apply it to the document,
+        """Take the composition descriptor of the Article and apply it to the document,
         by interpreting key words in the "free language" design talk and finding the 
         related functions to call.
 

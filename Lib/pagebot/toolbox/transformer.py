@@ -145,7 +145,7 @@ def asFloat(value, default=None):
         return default
 
 def asIntOrFloat(value):
-    u"""Answers value converted to int if same value, otherwise answer float.
+    """Answers value converted to int if same value, otherwise answer float.
 
     >>> asIntOrFloat(100.00)
     100
@@ -160,7 +160,7 @@ def asIntOrFloat(value):
     return value
 
 def asFormatted(value, default=None, format=None):
-    u"""Answers the formatted string of value. Use the format string if defined.
+    """Answers the formatted string of value. Use the format string if defined.
     Otherwise answer the cleanest representation, eating all 0 and /. from the
     right side.
 

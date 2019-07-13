@@ -18,7 +18,7 @@ import os
 import codecs
 import sass
 
-from .xmlbuilder import XmlBuilder
+from pagebot.contexts.xml.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,
@@ -461,7 +461,7 @@ table {
             print('[HtmlBuilder.writeSass] Cannot write SCSS file "%s"' % path)
 
     def compileScss(self, scssPath, cssPath=None, compressed=True):
-        u"""For now using sass to support SCSS. SASS support could be added later."""
+        """For now using sass to support SCSS. SASS support could be added later."""
         if cssPath is None:
             cssPath = scssPath.replace('.scss', '.css')
         css = sass.compile(filename=scssPath)#, output_style={True:sass.SASS_STYLE_COMPRESSED}.get(compressed))

@@ -52,7 +52,7 @@ class BaseBook(Publication):
     DEFAULT_PAGE_SIZE = PAGE_SIZES[DEFAULT_PAGE_SIZE_NAME]
 
     def initialize(self, coverBackgroundFill=None, **kwargs):
-        u"""Initialize the generic book templates. """
+        """Initialize the generic book templates. """
 
         # TODO: Solve for left/right templates.
 

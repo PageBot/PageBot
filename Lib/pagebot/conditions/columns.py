@@ -96,7 +96,7 @@ class Right2Col(ColCondition):
 			self.addScore(e.right2Col(self.col), e, score)
 
 class Fit2ColSpan(ColCondition):
-	u"""Fit the width of the element to the col spans self.colSpan starting at self.col."""
+	"""Fit the width of the element to the col spans self.colSpan starting at self.col."""
 	def test(self, e):
 		return e.isLeftOnCol(self.col, self.tolerance) and e.isFitOnColSpan(self.col, self.colSpan, self.tolerance)
 
@@ -106,7 +106,7 @@ class Fit2ColSpan(ColCondition):
 			self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isTopOnRow(self.row, self.tolerance)
 
@@ -115,7 +115,7 @@ class Top2Row(RowCondition):
 			self.addScore(e.top2Row(self.row), e, score)
 
 class Bottom2Row(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isBottomOnRow(self.row, self.tolerance)
 
@@ -124,7 +124,7 @@ class Bottom2Row(RowCondition):
 			self.addScore(e.bottom2Row(self.row), e, score)
 
 class Fit2RowSpan(RowCondition):
-	u"""Fit the left of the element on the column index #, as defined in self.col."""
+	"""Fit the left of the element on the column index #, as defined in self.col."""
 	def test(self, e):
 		return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowSpan(self.row, self.rowSpan, self.tolerance)
 

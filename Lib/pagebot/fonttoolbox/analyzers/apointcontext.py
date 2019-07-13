@@ -71,7 +71,7 @@ class APointContext:
         return self.p[index]
 
     def __lt__(self, p):
-        u"""Compare the points.
+        """Compare the points.
 
         >>> o = APoint((0, 0))
         >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
@@ -85,7 +85,7 @@ class APointContext:
         return self.p < p.p
 
     def __le__(self, p):
-        u"""Compare the points.
+        """Compare the points.
 
         >>> o = APoint((0, 0))
         >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
@@ -99,7 +99,7 @@ class APointContext:
         return self.p <= p.p
 
     def __gt__(self, p):
-        u"""Compare the points.
+        """Compare the points.
 
         >>> o = APoint((0, 0))
         >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
@@ -113,7 +113,7 @@ class APointContext:
         return self.p > p.p
 
     def __ge__(self, p):
-        u"""Compare the points.
+        """Compare the points.
 
         >>> o = APoint((0, 0))
         >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
@@ -127,7 +127,7 @@ class APointContext:
         return self.p >= p.p
 
     def __sub__(self, p):
-        u"""Subtract the points. Result is a point3D tuple.
+        """Subtract the points. Result is a point3D tuple.
 
         >>> APoint((200, 500)) - APoint((100, 300))
         (100, 200, 0)
@@ -139,7 +139,7 @@ class APointContext:
         return self.p[0] - p[0], self.p[1] - p[1], self.p[2] - p[2]
 
     def __add__(self, p):
-        u"""Add the points. Result is a point3D tuple.
+        """Add the points. Result is a point3D tuple.
 
         >>> APoint((200, 500)) + APoint((100, 300))
         (300, 800, 0)
@@ -151,7 +151,7 @@ class APointContext:
         return self.p[0] + p[0], self.p[1] + p[1], self.p[2] + p[2]
 
     def __mul__(self, v):
-        u"""Multiple the point with a scalar. Result is a point3D tuple.
+        """Multiple the point with a scalar. Result is a point3D tuple.
 
         >>> APoint((200, 500)) * 2
         (400, 1000, 0)
@@ -162,7 +162,7 @@ class APointContext:
         return self.p[0] * v, self.p[1] * v, self.p[2] * v
 
     def __div__(self, v):
-        u"""Divide the point by a scalar. Result is a point3D tuple.
+        """Divide the point by a scalar. Result is a point3D tuple.
 
         >>> APoint((200, 500)) / 2
         (100, 250, 0)

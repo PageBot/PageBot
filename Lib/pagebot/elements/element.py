@@ -98,7 +98,7 @@ class Element:
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
         >>> size = pt(300, 400)
@@ -114,7 +114,7 @@ class Element:
         >>> e.build(view, pt(0, 0))
         """
         """
-        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> from pagebot.contexts.flat.context import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> size = pt(320, 420)
@@ -1649,7 +1649,7 @@ class Element:
         conversion defined (no reliable way of doing that, they should be created
         in the right context from the beginning).
 
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> e = Element(context=context)
         """
@@ -1659,7 +1659,7 @@ class Element:
         >>> bs = e.newString('ABC')
         >>> str(bs.s)
         'ABC'
-        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> from pagebot.contexts.flat.context import FlatContext
         >>> context = FlatContext()
         >>> e = Element(context=context)
         >>> bs = e.newString('ABC')
@@ -2691,7 +2691,7 @@ class Element:
     # Colors for fill and stroke
 
     def _get_fill(self):
-        u"""Fill color property in style, using self.css to query cascading values.
+        """Fill color property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> e = Element(fill=color('red'))
@@ -2710,7 +2710,7 @@ class Element:
     fill = property(_get_fill, _set_fill)
 
     def _get_stroke(self):
-        u"""Fill color property in style, using self.css to query cascading values.
+        """Fill color property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> e = Element(stroke=color('red'))
@@ -2729,7 +2729,7 @@ class Element:
     stroke = property(_get_stroke, _set_stroke)
 
     def _get_strokeWidth(self):
-        u"""Stroke width property in style, using self.css to query cascading values.
+        """Stroke width property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> from pagebot.toolbox.units import mm, p
@@ -2771,7 +2771,7 @@ class Element:
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
 
     def _get_borders(self):
-        u"""Set all borders of the element.
+        """Set all borders of the element.
 
         >>> from pagebot.toolbox.units import p
         >>> e = Element(stroke=(1, 0, 0))
@@ -7152,14 +7152,14 @@ class Element:
         return True
 
     def fit2Left(self):
-        u"""Fit to left, inlcuding margin left and margin right."""
+        """Fit to left, inlcuding margin left and margin right."""
         right = self.mRight
         self.mLeft = self.parent.pl # Padding left
         self.w += right - self.mRight
         return True
 
     def fit2LeftSide(self):
-        u"""Fit to left, including margin left and margin right."""
+        """Fit to left, including margin left and margin right."""
         right = self.mRight
         self.mLeft = 0
         self.w += right - self.mRight
@@ -7538,16 +7538,16 @@ class Element:
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_viewFrameStroke(self):
-        """Answer local setting of frame stroke color, used if self.showFrame is True. 
+        """Answer local setting of frame stroke color, used if self.showFrame is True.
         Note that this is independent from the element border showing.
         """
         return self.style.get('viewFrameStroke') # Not inherited
     def _set_viewFrameStroke(self, stroke):
         self.style['viewFrameStroke'] = stroke
     viewFrameStroke = property(_get_viewFrameStroke, _set_viewFrameStroke)
-    
+
     def _get_viewFrameStrokeWidth(self):
-        """Answer local setting of frame stroke width, used if self.showFrame is True. 
+        """Answer local setting of frame stroke width, used if self.showFrame is True.
         Note that this is independent from the element border showing.
         """
         return self.style.get('viewFrameStrokeWidth') # Not inherited
@@ -7556,15 +7556,15 @@ class Element:
     viewFrameStrokeWidth = property(_get_viewFrameStrokeWidth, _set_viewFrameStrokeWidth)
 
     def _get_viewPaddingStroke(self):
-        """Answer local setting of padding stroke color, used if self.showPadding is True. 
+        """Answer local setting of padding stroke color, used if self.showPadding is True.
         """
         return self.style.get('viewPaddingStroke') # Not inherited
     def _set_viewPaddingStroke(self, stroke):
         self.style['viewPaddingStroke'] = stroke
     viewPaddingStroke = property(_get_viewPaddingStroke, _set_viewPaddingStroke)
-    
+
     def _get_viewPaddingStrokeWidth(self):
-        """Answer local setting of padding stroke width, used if self.showFrame is True. 
+        """Answer local setting of padding stroke width, used if self.showFrame is True.
         """
         return self.style.get('viewPaddingStrokeWidth') # Not inherited
     def _set_viewPaddingStrokeWidth(self, strokeWidth):
@@ -7572,21 +7572,21 @@ class Element:
     viewPaddingStrokeWidth = property(_get_viewPaddingStrokeWidth, _set_viewPaddingStrokeWidth)
 
     def _get_viewMarginStroke(self):
-        """Answer local setting of margin stroke color, used if self.showMargin is True. 
+        """Answer local setting of margin stroke color, used if self.showMargin is True.
         """
         return self.style.get('viewMarginStroke') # Not inherited
     def _set_viewMarginStroke(self, stroke):
         self.style['viewMarginStroke'] = stroke
     viewMarginStroke = property(_get_viewMarginStroke, _set_viewMarginStroke)
-    
+
     def _get_viewMarginStrokeWidth(self):
-        """Answer local setting of margin stroke width, used if self.showMargin is True. 
+        """Answer local setting of margin stroke width, used if self.showMargin is True.
         """
         return self.style.get('viewMarginStrokeWidth') # Not inherited
     def _set_viewMarginStrokeWidth(self, strokeWidth):
         self.style['viewMarginStrokeWidth'] = strokeWidth
     viewMarginStrokeWidth = property(_get_viewMarginStrokeWidth, _set_viewMarginStrokeWidth)
-    
+
     def _get_showColorBars(self):
         """Set value, containing the selection of color bars that should be shown.
         See pagebot.constants for the names of the options."""

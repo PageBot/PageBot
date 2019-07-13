@@ -21,7 +21,7 @@ class Placer(Element):
     """Draw an area showing to be a place holder, e.g. reserved places of images in a template.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
     >>> w, h = pt(300, 400)
@@ -42,7 +42,7 @@ class Placer(Element):
 
     """ TODO: Make this work in Flat
 
-    >>> from pagebot.contexts.flatcontext import FlatContext
+    >>> from pagebot.contexts.flat.context import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
@@ -73,7 +73,7 @@ class Placer(Element):
     def _drawNameLabel(self, aa, view, p):
         x, y = point2D(p)
         context = self.context
-        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=18, 
+        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=18,
             textFill=(1, 0, 0)))
         tw, th = bs.size
         M = pt(8)

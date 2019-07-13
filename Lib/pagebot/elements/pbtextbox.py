@@ -338,7 +338,7 @@ class TextBox(Element):
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1]
         28.0
-        >>> from pagebot.contexts.flatcontext import FlatContext
+        >>> from pagebot.contexts.flat.context import FlatContext
         >>> c = FlatContext()
         >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None)
@@ -442,7 +442,7 @@ class TextBox(Element):
         Overflow is solved by element condition Overflow2Next()
 
         >>> from pagebot.document import Document
-        >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
         >>> doc = Document(w=1000, h=1000, context=context)
         >>> page1 = doc[1]

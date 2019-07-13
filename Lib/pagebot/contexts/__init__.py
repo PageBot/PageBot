@@ -83,7 +83,7 @@ def getContext(contextType='DrawBot'):
 
 def getDrawBotContext():
     # TODO: check if drawBotContext exists first, ask to install.
-    from drawBotContext.context import DrawBotContext
+    from pagebotcocoa.contexts.drawbot.context import DrawBotContext
     return DrawBotContext()
 
 def getFlatContext():

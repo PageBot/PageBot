@@ -59,7 +59,7 @@ class PageBotPath:
     """Implements a wrapper around DrawBot.BezierPath with the same API, while
     adding knowledge of units and some other additions.
 
-    >>> from pagebot.contexts.drawbotcontext import DrawBotContext
+    >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts
     >>> font = findFonts(('Robo', 'Con', 'Bol', 'Ita'))[0]
     >>> font
