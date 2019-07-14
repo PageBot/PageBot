@@ -32,13 +32,13 @@ class MampView(SiteView):
     # There is a free demo version can be installed.
     MAMP_SHOP_URL = 'https://www.mamp.info/en/'
     LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
-    SITE_ROOT_PATH = getMampPath()
+    #SITE_ROOT_PATH = getMampPath()
 
     DEFAULT_HTML_FILE = 'index.html'
-    DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
-    SCSS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
-    SCSS_PATH = SITE_ROOT_PATH + 'css/style.scss'
-    SCSS_VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
+    #DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
+    #SCSS_CSS_PATH = SITE_ROOT_PATH + 'css/style.scss.css'
+    #SCSS_PATH = SITE_ROOT_PATH + 'css/style.scss'
+    #SCSS_VARIABLES_PATH = SITE_ROOT_PATH + 'css/variables.scss'
 
     #   B U I L D  H T M L  /  C S S
 

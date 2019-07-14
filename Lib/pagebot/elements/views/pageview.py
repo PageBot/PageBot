@@ -198,7 +198,7 @@ class PageView(BaseView):
 
         folder = path2ParentPath(path)
 
-        if not os.path.exists(folder):
+        if folder and not os.path.exists(folder):
             os.mkdir(folder)
 
         # FIXME:
