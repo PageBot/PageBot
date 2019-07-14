@@ -239,9 +239,12 @@ class PageView(BaseView):
         self.drawFlowConnections(page, origin)
 
     def drawFrame(self, e, origin):
-        """Draw the page frame if the the flag is on and  if there ie padding
+        """Draw the page frame if the the flag is on and if there ie padding
         enough to show other meta info.  Otherwise the padding is truncated to
         0: no use to draw the frame.
+        Note that drawing a frame around a page or element here is for viewing
+        purposes only. Actual frame (stroke) drawing of an element is done
+        by the element itself.
 
         >>> from pagebot import getContext
         >>> context = getContext()

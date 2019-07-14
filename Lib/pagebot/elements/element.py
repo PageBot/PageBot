@@ -4892,6 +4892,14 @@ class Element:
             else: # No implementation for this context, call default building method for this element.
                 e.build(view, origin, **kwargs)
 
+    #   I N D E S I G N  S U P P O R T
+
+    def prepare_inds(self, view):
+        print('prepare_inds', view)
+        
+    def build_inds(self, view, origin, drawElements=True, **kwargs):
+        print('build_inds', view)
+        
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
     # Sass syntax is not supported yet. It does not appear to be standard and cannot be easily
