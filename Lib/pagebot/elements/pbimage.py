@@ -121,7 +121,7 @@ class Image(Element):
         # index. Default is first = 1.
         self.index = index
         self.scaleImage = scaleImage
-        self.scaleType = SCALE_TYPE_PROPORTIONAL
+        self.scaleType = scaleType or SCALE_TYPE_PROPORTIONAL
 
         # If defined, overwrites the automatic factor of image type.
         self.resolutionFactor = resolutionFactor
