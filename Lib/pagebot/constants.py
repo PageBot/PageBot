@@ -683,7 +683,7 @@ MAX_IMAGE_WIDTH = pt(800)
 SCALE_TYPE_PROPORTIONAL = 'Proportional' # Default, best fitting for smallest of (w, h)
 SCALE_TYPE_FITW = 'FitW' # Fitting given width, height is proportional
 SCALE_TYPE_FITH = 'FitH' # Fitting given height, width is proportional
-SCALE_TYPE_FITWH = 'FitWH' # Disproportional scaling
+SCALE_TYPE_FITWH = 'FitWH' # Disproportional scaling to fit on width and height
 
 # Default factors to save images (e.g. thumbnails) larger than used (w, h) size
 DEFAULT_RESOLUTION_FACTORS = {
