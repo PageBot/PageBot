@@ -14,18 +14,18 @@
 #
 #     textbox.py
 #
+
 import re
-from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE,
-                            BOTTOM, DEFAULT_WIDTH, DEFAULT_HEIGHT,
-                            DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
-                            BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT,
-                            BASE_INDEX_RIGHT, BASE_Y_RIGHT)
+
+from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, BOTTOM,
+    DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_BASELINE_COLOR,
+    DEFAULT_BASELINE_WIDTH, BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT,
+    BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
 from pagebot.toolbox.color import color, noColor
 
 class TextBox(Element):
-
     # Initialize the default behavior tags as different from Element.
     isText = True  # This element is capable of handling text.
     isTextBox = True
@@ -54,9 +54,9 @@ class TextBox(Element):
         """
         return self._bs
     def _set_bs(self, bs):
-        """If not None, make sure that this is a formatted string. Otherwise create it with
-        the current style. Note that in case there is potential clash in the
-        double usage of fill and stroke.
+        """If not None, make sure that this is a formatted string. Otherwise
+        create it with the current style. Note that in case there is potential
+        clash in the double usage of fill and stroke.
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -206,7 +206,6 @@ class TextBox(Element):
 
             if self.bs:
                 for textLine in self.bs.getTextLines(self.pw, self.ph):
-                    #print('---', textLine.y, self.h - textLine.y)
                     textLine.y = units(self.h - textLine.y) # Make postion relative to text box self.
                     self._textLines.append(textLine)
                     self._baselines[upt(textLine.y)] = textLine
@@ -283,6 +282,7 @@ class TextBox(Element):
         string."""
         if isinstance(bs, (int, float)):
             bs = str(bs)
+
         if isinstance(bs, str):
             bs = self.newString(bs, e=self, style=style)
         self.bs = bs
@@ -290,6 +290,7 @@ class TextBox(Element):
     def _get_text(self):
         """Answers the plain text of the current self.bs"""
         return u'%s' % self.bs
+
     text = property(_get_text)
 
     def append(self, bs, style=None):
@@ -358,10 +359,12 @@ class TextBox(Element):
         or styled (self.w, self.h) of this text box. If h is None and self.h is
         None then by definintion overflow will allways be empty, as the box is
         elastic."""
-        if self.h is None and h is None: # In case height is undefined, box will always fit the content.
+        # In case height is undefined, box will always fit the content.
+        if self.h is None and h is None:
             return ''
 
-        # Otherwise test if there is overflow of text in the given element size.
+        # Otherwise test if there is overflow of text in the given element
+        # size.
         if w is None:
             w = self.pw # Padded width
 
@@ -548,10 +551,10 @@ class TextBox(Element):
 
         box = clipPath = None
 
-        # DrawBotContext wants the language and hyphenation set per block when drawing.
+        # DrawBotContext wants the language and hyphenation set per block when
+        # drawing.
         context.language(self.bs.language or 'en')
         context.hyphenation(self.bs.hyphenation or True)
-        #print('Set language and hyphenation', self.bs.language, self.bs.hyphenation, self.page.pageNumber)
 
         if self.clipPath is not None: # Use the elements as clip path:
             clipPath = self.clipPath
@@ -559,8 +562,12 @@ class TextBox(Element):
             context.textBox(self.bs, clipPath=clipPath, align=self.css('xTextAlign'))
 
         elif clipPath is None:
-            if 0 and self.elements: # If there are child elements, then these are used as layout for the clipping path.
-                clipPath = self.childClipPath # Construct the clip path, so we don't need to restore translate.
+            # If there are child elements, then these are used as layout for
+            # the clipping path.
+            if 0 and self.elements:
+                # Construct the clip path, so we don't need to restore
+                # translate.
+                clipPath = self.childClipPath
                 if clipPath is not None:
                     clipPath.translate((self.pl, self.pb))
                 clipPath.translate((self.pl, self.pb))
@@ -772,12 +779,13 @@ class TextBox(Element):
         match all of the (font, fontSize, textFill) keys of the style.
         Then answer the line. Otherwise answer None.
 
-        Note that this should be extended to scanning all textRuns,
-        as by conicidence there van be a "Bold" style inside main text
-        at the start of a line.
-        Also it should be testing on cascading values (what is defined
-        in the style?) instead of testing on all 3 parameters.
-        Also testing on line parameters, such as leading.
+        Note that this should be extended to scanning all textRuns, as by
+        conicidence there van be a "Bold" style inside main text at the start
+        of a line.
+
+        Also it should be testing on cascading values (what is defined in the
+        style?) instead of testing on all 3 parameters.  Also testing on line
+        parameters, such as leading.
         """
         matchingIndex = 0
         for line in self.textLines:

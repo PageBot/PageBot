@@ -146,6 +146,7 @@ class BabelString:
         return None
 
 
+    #def _get_size(self):
     #def textSize(self, w=None, h=None):
     #def _get_fontSize(self):
     #def _set_fontSize(self, fontSize):
@@ -155,8 +156,9 @@ class BabelString:
     #def cmykFill(self, c, m=None, y=None, k=None, a=None, alpha=None):
     #def stroke(self, r, g=None, b=None, a=None, alpha=None):
     #def setStrokeWidth(self, w):
-    #def getTextLines(self, w, h=None, align=LEFT):
-    #def _get_size(self):
+
+    def getTextLines(self, w, h=None, align=LEFT):
+        raise NotImplementedError
 
 if __name__ == '__main__':
     import doctest

@@ -225,6 +225,9 @@ class FlatString(BabelString):
 
         return cls(strike.text(s), context=context, style=style)
 
+    def getTextLines(self, w, h=None, align=LEFT):
+        pass
+
 if __name__ == '__main__':
     import doctest
     import sys
