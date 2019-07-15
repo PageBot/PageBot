@@ -395,7 +395,7 @@ class FlatContext(BaseContext):
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> print(type(bs))
-        <class 'pagebot.context.flat.string.FlatString'>
+        <class 'pagebot.contexts.flat.flatstring.FlatString'>
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()
