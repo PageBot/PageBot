@@ -888,9 +888,9 @@ class BaseContext(AbstractContext):
     def numberOfImages(self, path):
         pass
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None):
-        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
-            w=w, h=h, scaleType=scaleType)
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None, e=None):
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, 
+            w=w, h=h, scaleType=scaleType, e=e)
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path. If the path is an SVG
