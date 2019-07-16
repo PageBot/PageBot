@@ -360,6 +360,21 @@ class Image(Element):
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
+    def build_inds(self, view, origin, drawElements=True):
+        """It is better to have a separate InDesignContext build tree, since we need more
+        information down there than just drawing instructions.
+        This way the InDesignContext just gets the PageBot Element passed over, using
+        it's own API."""
+        context = view.context
+        p = pointOffset(self.origin, origin)
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        context.image(self.path, (px, py), pageNumber=self.index,
+                alpha=self._getAlpha(), w=self.w, h=self.h,
+                scaleType=self.scaleType, e=self)
+        if drawElements:
+            for e in self.elements:
+                e.build_inds(view, origin)
+
     def prepare(self, view):
         """Respond to the top-down element broadcast to prepare for build.  If
         the original image needs scaling, then prepare the build by letting the

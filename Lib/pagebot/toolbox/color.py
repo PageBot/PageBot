@@ -416,7 +416,8 @@ class Color:
     ((0.984313725490196, 0.0392156862745098, 0.10980392156862745), (0, 0, 0, 1), 185, 3024)
     """
     def __init__(self, r=None, g=None, b=None, a=1, rgb=None, c=None, m=None,
-            y=None, k=None, cmyk=None, ral=None, spot=None, overPrint=False, name=None):
+            y=None, k=None, cmyk=None, ral=None, spot=None, overPrint=False, 
+            tint=None, name=None):
         self.a = a
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
         self.overPrint = overPrint # Used by FlatBuilder
@@ -434,6 +435,11 @@ class Color:
             rgb, r = r, None
         elif c is not None or m is not None or y is not None or k is not None:
             cmyk = c, m, y, k
+
+        # Tint is defined
+        if tint is None:
+            tint = 1
+        self.tint = tint
 
         # Name is defined
         if name is not None:
@@ -505,6 +511,35 @@ class Color:
         else: # Default is black, if all fails.
             self.r = self.g = self.b = 0
 
+    def _get_rt(self):
+        return self.r * self.tint
+    rt = property(_get_rt)
+
+    def _get_gt(self):
+        return self.g * self.tint
+    gt = property(_get_gt)
+
+    def _get_bt(self):
+        return self.b * self.tint
+    bt = property(_get_bt)
+
+    def _get_ct(self):
+        return self.c * self.tint
+    ct = property(_get_ct)
+
+    def _get_mt(self):
+        return self.m * self.tint
+    mt = property(_get_mt)
+
+    def _get_yt(self):
+        return self.y * self.tint
+    yt = property(_get_yt)
+
+    def _get_kt(self):
+        return self.k * self.tint
+    kt = property(_get_kt)
+
+
     def asNormalizedJSON(self):
         """Answer self as normalized JSON-compatible dict.
 
@@ -552,16 +587,20 @@ class Color:
         True
         >>> color('red') == color('blue')
         False
+        >>> color(1, 0, 0, tint=0.5) == color(1, 0, 0)
+        False
+        >>> color('red', tint=0.2) == color(1, 0, 0, tint=0.2)
+        True
         """
         if not isinstance(c, self.__class__):
             return False
-        if (self.isRgba or c.isRgba) and self.rgba == c.rgba:
+        if (self.isRgba or c.isRgba) and self.rgba == c.rgba and self.tint == c.tint:
             return True
-        if (self.isRgb or c.isRgb) and self.rgb == c.rgb:
+        if (self.isRgb or c.isRgb) and self.rgb == c.rgb and self.tint == c.tint:
             return True
         if (self.isSpot or c.isSpot) and self.spot == c.spot:
             return True
-        if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk:
+        if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk and self.tint == c.tint:
             return True
         if (self.isRal or c.isRal) and self.ral == c.ral:
             return True
@@ -1084,11 +1123,11 @@ class Color:
     name = property(_get_name)
 
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
-        k=None, cmyk=None, spot=None, ral=None, name=None):
+        k=None, cmyk=None, spot=None, ral=None, name=None, tint=None):
     if isinstance(r, Color): # If already a color, then return it
         return r
     return Color(r=r, g=g, b=b, a=a, rgb=rgb, c=c, m=m, y=y, k=k, cmyk=cmyk,
-            spot=spot, ral=ral, name=name)
+            spot=spot, ral=ral, name=name, tint=tint)
 
 # Some predefined Color instances that are used often.
 

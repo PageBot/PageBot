@@ -4895,10 +4895,17 @@ class Element:
     #   I N D E S I G N  S U P P O R T
 
     def prepare_inds(self, view):
-        print('prepare_inds', view)
+        for e in self.elements:
+            e.prepare_inds(view)
         
     def build_inds(self, view, origin, drawElements=True, **kwargs):
-        print('build_inds', view)
+        """It is better to have a separate InDesignContext build tree, since we need more
+        information down there than just drawing instructions.
+        This way the InDesignContext just gets the PageBot Element passed over, using
+        it's own API."""
+        if drawElements:
+            for e in self.elements:
+                e.build_inds(view, origin, **kwargs)
         
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 

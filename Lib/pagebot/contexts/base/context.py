@@ -64,7 +64,7 @@ class BaseContext(AbstractContext):
 
         self.page = None
         self._pages = []
-        self.style = None
+        self.style = None # Current style dictionary
         self.units = Pt.UNIT
 
     def __repr__(self):
@@ -102,7 +102,7 @@ class BaseContext(AbstractContext):
 
     # Documents.
 
-    def newDocument(self, w, h):
+    def newDocument(self, w=None, h=None, doc=None):
         """PageBot function."""
         pass
 
@@ -110,16 +110,16 @@ class BaseContext(AbstractContext):
         """PageBot function."""
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> context.newDrawing()
         """
-        self.b.newDrawing()
+        self.b.newDrawing(doc)
 
-    def endDrawing(self):
+    def endDrawing(self, doc=None):
         pass
 
     # Magic variables.
@@ -532,7 +532,7 @@ class BaseContext(AbstractContext):
 
     setStrokeColor = stroke
 
-    def shadow(self, eShadow):
+    def shadow(self, eShadow, e=None):
         """Set the DrawBot graphics state for shadow if all parameters are
         set."""
         if eShadow is not None and eShadow.offset is not None:
@@ -889,9 +889,9 @@ class BaseContext(AbstractContext):
     def numberOfImages(self, path):
         pass
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None):
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None, e=None):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, 
-            w=w, h=h, scaleType=scaleType)
+            w=w, h=h, scaleType=scaleType, e=e)
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path. If the path is an SVG
