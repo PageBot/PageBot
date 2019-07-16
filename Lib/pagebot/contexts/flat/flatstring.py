@@ -176,8 +176,7 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.flat.context import FlatContext
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
-        >>> #bs.s.lines()
-        >>> 'flat.text.text' in str(bs)
+        >>> 'flat3.text.text' in str(bs)
         True
         """
         if style is None:
@@ -225,6 +224,9 @@ class FlatString(BabelString):
         #    strike.width = w
 
         return cls(strike.text(s), context=context, style=style)
+
+    def getTextLines(self, w, h=None, align=LEFT):
+        pass
 
 if __name__ == '__main__':
     import doctest

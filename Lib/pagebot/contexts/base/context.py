@@ -26,8 +26,7 @@ from pagebot.contexts.base.abstractcontext import AbstractContext
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
     """
-    # Indication to Typesetter that by default tags should not be included in
-    # output.
+    # Tells Typesetter that by default tags should not be included in output.
     useTags = False
 
     # To be redefined by inheriting context classes.
@@ -889,9 +888,9 @@ class BaseContext(AbstractContext):
     def numberOfImages(self, path):
         pass
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None, e=None):
-        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, 
-            w=w, h=h, scaleType=scaleType, e=e)
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None):
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
+            w=w, h=h, scaleType=scaleType)
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path. If the path is an SVG
