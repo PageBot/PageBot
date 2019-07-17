@@ -32,7 +32,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
-from pagebot.toolbox.units import (units, rv, pt, point3D, pointOffset,
+from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON
@@ -4903,9 +4903,12 @@ class Element:
         information down there than just drawing instructions.
         This way the InDesignContext just gets the PageBot Element passed over, using
         it's own API."""
+        p = pointOffset(self.origin, origin)
+        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        # Inheriting Elements should add their context call here.
         if drawElements:
             for e in self.elements:
-                e.build_inds(view, origin, **kwargs)
+                e.build_inds(view, p2D, **kwargs)
         
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 

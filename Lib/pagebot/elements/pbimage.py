@@ -367,13 +367,13 @@ class Image(Element):
         it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        context.image(self.path, (px, py), pageNumber=self.index,
+        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        context.image(self.path, p2D, pageNumber=self.index,
                 alpha=self._getAlpha(), w=self.w, h=self.h,
                 scaleType=self.scaleType, e=self)
         if drawElements:
             for e in self.elements:
-                e.build_inds(view, origin)
+                e.build_inds(view, p2D)
 
     def prepare(self, view):
         """Respond to the top-down element broadcast to prepare for build.  If

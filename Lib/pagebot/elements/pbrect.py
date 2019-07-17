@@ -17,7 +17,7 @@
 
 
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, point2D
 
 class Rect(Element):
     """Draw rectangle, default identical to Element itself.
@@ -66,11 +66,11 @@ class Rect(Element):
         it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         context.rect(px, py, e=self)
         if drawElements:
             for e in self.elements:
-                e.build_inds(view, origin)
+                e.build_inds(view, p2D)
 
 if __name__ == '__main__':
     import doctest

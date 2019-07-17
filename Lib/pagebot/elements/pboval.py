@@ -17,7 +17,7 @@
 
 from pagebot.constants import ORIGIN, MIDDLE, CENTER
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset
+from pagebot.toolbox.units import pointOffset, point2D
 from pagebot.toolbox.color import noColor
 from pagebot.constants import ORIGIN
 
@@ -69,11 +69,11 @@ class Oval(Element):
         it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         context.oval(px, py, e=self)
         if drawElements:
             for e in self.elements:
-                e.build_inds(view, origin)
+                e.build_inds(view, p2D)
 
 class Circle(Oval):
     def __init__(self, r=None, x=None, y=None, w=None, h=None, 
