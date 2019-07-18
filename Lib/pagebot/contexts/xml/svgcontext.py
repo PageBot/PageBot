@@ -98,7 +98,7 @@ class SvgContext(BaseContext):
         >>> context.newPage(100, 100)
         """
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file.
 
         >>> context = SvgContext()

@@ -48,7 +48,7 @@ class HtmlContext(BaseContext):
         """PageBot function. Ignore for now in HTMLContext. """
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
         Ignore for now in HtmlContect
         """

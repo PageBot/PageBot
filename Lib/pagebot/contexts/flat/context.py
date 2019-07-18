@@ -194,7 +194,7 @@ class FlatContext(BaseContext):
         self.page = self.doc.addpage()
         self.pages.append(self.page)
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file.
 
         >>> context = FlatContext()
