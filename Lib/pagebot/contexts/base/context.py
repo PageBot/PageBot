@@ -116,7 +116,10 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         """
-        self.b.newDrawing(doc)
+        if doc:
+            self.b.newDrawing(doc)
+        else:
+            self.b.newDrawing()
 
     def endDrawing(self, doc=None):
         pass

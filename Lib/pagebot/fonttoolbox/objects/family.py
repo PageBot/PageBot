@@ -257,7 +257,7 @@ class Family:
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
         >>> family.getStyles()
-        {'Regular': [<Font Amstelvar-Roman-VF>]}
+        {'Roman': [<Font Amstelvar-Roman-VF>]}
         """
         """
         >>> family = getFamily('Bungee')
