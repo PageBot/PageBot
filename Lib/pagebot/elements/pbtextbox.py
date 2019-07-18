@@ -22,7 +22,7 @@ from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, BOTTOM,
     DEFAULT_BASELINE_WIDTH, BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT,
     BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset, pt, units, uRound, upt
+from pagebot.toolbox.units import pointOffset, point2D, pt, units, uRound, upt
 from pagebot.toolbox.color import color, noColor
 
 class TextBox(Element):
@@ -665,10 +665,24 @@ class TextBox(Element):
         #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
         b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
 
+    #   B U I L D  I N D E S I G N
+
+    def build_inds(self, view, origin=None, drawElements=True, **kwargs):
+        """It is better to have a separate InDesignContext build tree, since we need more
+        information down there than just drawing instructions.
+        This way the InDesignContext just gets the PageBot Element passed over, using
+        it's own API."""
+        context = view.context
+        p = pointOffset(self.origin, origin)
+        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        context.textBox(self.bs, p2D, e=self)
+        if drawElements:
+            for e in self.elements:
+                e.build_inds(view, p2D)
 
     #   B U I L D  H T M L
 
-    def build_html(self, view, origin=None, drowElements=True, **kwargs):
+    def build_html(self, view, origin=None, drawElements=True, **kwargs):
         """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent."""

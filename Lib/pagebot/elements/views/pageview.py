@@ -102,8 +102,8 @@ class PageView(BaseView):
 
         # Make sure that canvas is empty, there may have been another document
         # building in this context.
-        self.context.newDocument(w, h) # Allow the context to create a new document and page canvas.
-        self.context.newDrawing()
+        self.context.newDocument(w, h, self.doc) # Allow the context to create a new document and page canvas.
+        self.context.newDrawing(self.doc)
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
@@ -146,20 +146,20 @@ class PageView(BaseView):
                 origin = ORIGIN
 
             #  Make page in context, actual page may be smaller if showing cropmarks.
-            self.context.newPage(pw, ph, padding=page.padding)
+            self.context.newPage(pw, ph, page)
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
             # Set the duration of this page, in case exporting GIF
-            self.context.frameDuration(page.frameDuration)
+            self.context.frameDuration(page.frameDuration, e=page)
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)
 
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
-                self.context.fill(fillColor)
-                self.context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
+                self.context.rect(x=page.leftBleed, y=page.bottomBleed, w=pw+br+bl, h=ph+bt+bb, 
+                    fillColor=fillColor, e=page)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)

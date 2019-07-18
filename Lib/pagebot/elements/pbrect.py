@@ -17,6 +17,7 @@
 
 
 from pagebot.elements.element import Element
+from pagebot.toolbox.units import pointOffset, point2D
 
 class Rect(Element):
     """Draw rectangle, default identical to Element itself.
@@ -57,6 +58,19 @@ class Rect(Element):
     """
 
     # No separate build, default behavior is in Element.build()
+
+    def build_inds(self, view, origin, drawElements=True):
+        """It is better to have a separate InDesignContext build tree, since we need more
+        information down there than just drawing instructions.
+        This way the InDesignContext just gets the PageBot Element passed over, using
+        it's own API."""
+        context = view.context
+        p = pointOffset(self.origin, origin)
+        px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        context.rect(px, py, e=self)
+        if drawElements:
+            for e in self.elements:
+                e.build_inds(view, p2D)
 
 if __name__ == '__main__':
     import doctest

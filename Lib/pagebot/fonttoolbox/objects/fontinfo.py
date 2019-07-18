@@ -115,21 +115,24 @@ class FontInfo:
         >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.styleName
-        'Regular'
+        'Black'
         >>> font.info.styleName = 'Bold'
         >>> font.info.styleName
         'Bold'
         """
         if self._styleName is None:
             self._styleName = ''
-            if self._getNameTableEntry(1):
-                familyNameParts = ' '.split(self._getNameTableEntry(1))
-                if len(familyNameParts) > 1:
-                    self._styleName = ' '.join(familyNameParts[1:])
-            if self._getNameTableEntry(2):
-                if self._styleName:
-                    self._styleName += ' '
-                self._styleName += self._getNameTableEntry(2)
+            fullName = self._getNameTableEntry(1)
+            if fullName:
+                fullNameParts = fullName.split(' ')
+                if len(fullNameParts) > 1:
+                    self._styleName = ' '.join(fullNameParts[1:])
+            if not self._styleName:
+                fullName = self._getNameTableEntry(4)
+                if fullName:
+                    fullNameParts = fullName.split(' ')
+                    if len(fullNameParts) > 1:
+                        self._styleName = ' '.join(fullNameParts[1:])
         return self._styleName
     def _set_styleName(self, styleName):
         self._styleName = styleName

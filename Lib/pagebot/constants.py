@@ -163,9 +163,9 @@ BusinessCardZazzleChubby = inch(3.5, 2.5)
 BusinessCardZazzleSkinny = inch(3.5, 1)
 
 # Newspapers
-Tabloid = inch(11, 16.9)
-Broadsheet = inch(23.5, 29.5)
-Berliner = inch(12.4, 18.5)
+Newspaper_Tabloid = inch(11, 16.9)
+Newspaper_Broadsheet = inch(23.5, 29.5)
+Newspaper_Berliner = inch(12.4, 18.5)
 
 # Instagram
 InstagramHires = px(2048, 2048)
@@ -217,7 +217,7 @@ iPhone7Plus = pt(414, 736) # 1080 x 1920
 iPhone7 = pt(375, 667) # 750 x 1334
 iPhone6Plus = iPhone6SPlus = pt(414, 736) # 1080 x 1920
 iPhone6 = pt(375, 667) # 750 x 1334
-iPHone5 = pt(320, 568) # 640 x 1136
+iPhone5 = pt(320, 568) # 640 x 1136
 iPodTouch = pt(320, 568) # 640 x 1136
 iPadPro = pt(1024, 1366) # 2048 x 2732
 iPadThirdGeneration = iPadFourthGeneration = pt(768, 1024) # 1536 x 2048
@@ -246,6 +246,87 @@ Nexus9 = pt(768, 1024) # 1536 x 2048
 SamsungGalaxyTab10 = pt(800, 1280) # 800 x 1280
 ChromebookPixel = pt(1280, 850) # 2560 x 1700
 
+
+PAGE_SIZES = dict(
+    # NEN sizes
+    A0=A0, A1=A1, A2=A2, A3=A3, A4=A4,
+    A5=A5, A6=A6, A7=A7, A8=A8, A9=A9, A10=A10, 
+    A2Square=A2Square, A3Square=A3Square,
+    A4Square=A4Square, A5Square=A5Square, A4Rounded=A4Rounded,
+    B0=B0, B1=B1, B2=B2, B3=B3, B4=B4,
+    B5=B5, B6=B6, B7=B7, B8=B8, B9=B9, B10=B10,
+    C0=C0, C1=C1, C2=C2, C3=C3, C4=C4,
+    C5=C5, C6=C6, C7=C7, C8=C8, C9=C9, C10=C10,
+    # US sizes
+    HalfLetter=HalfLetter, Letter=Letter, Legal=Legal,
+    JuniorLegal=JuniorLegal, Tabloid=Tabloid, Ledger=Ledger,
+    Statement=Statement, Executive=Executive, Folio=Folio, 
+    Quarto=Quarto, Size10x14=Size10x14, A4Letter=A4Letter,
+    A4Oversized=A4Oversized, A3Oversized=A3Oversized,
+    IntPostcardMax=IntPostcardMax, IntPostcardMin=IntPostcardMin,
+    AnsichtCard=AnsichtCard, ISO216=ISO216,
+    USPostcardMax=USPostcardMax, USPostcardMin=USPostcardMin,
+    # Business cards
+    BusinessCard=BusinessCard, BusinessCardUS=BusinessCardUS,
+    BusinessCardEurope=BusinessCardEurope, 
+    BusinessCardEastEurope=BusinessCardEastEurope,
+    BusinessCardWorld=BusinessCardWorld,
+    BusinessCardIran=BusinessCardIran, 
+    BusinessCardAustralia=BusinessCardAustralia,
+    BusinessCardTurkey=BusinessCardTurkey,
+    BusinessCardChina=BusinessCardChina, 
+    BusinessCardJapan=BusinessCardJapan,
+    BusinessCardVistaprint=BusinessCardVistaprint,
+    BusinessCardMoo=BusinessCardMoo,
+    BusinessCardMooMini=BusinessCardMooMini,
+    BusinessCardZazzle=BusinessCardZazzle,
+    BusinessCardZazzleChubby=BusinessCardZazzleChubby,
+    BusinessCardZazzleSkinny=BusinessCardZazzleSkinny,
+    # Newspapers
+    Newspaper_Tabloid=Newspaper_Tabloid,
+    Newspaper_Broadsheet=Newspaper_Broadsheet, 
+    Newspaper_Berliner=Newspaper_Berliner,
+    # Websites offering document services
+    InstagramHires=InstagramHires, Instagram=Instagram,
+    InstagramLegacy=InstagramLegacy, 
+    InstagramLandscape=InstagramLandscape,
+    InstagramPortrait=InstagramPortrait,
+    BlurbPhotobookSmallSquare=BlurbPhotobookSmallSquare,
+    BlurbPhotobookPortrait=BlurbPhotobookPortrait,
+    BlurbPhotobookLandcape=BlurbPhotobookLandcape,
+    BlurbPhotobookLargeFormat=BlurbPhotobookLargeFormat,
+    BlurbPhotobookLargeSquare=BlurbPhotobookLargeSquare,
+    BlurbBookSmall=BlurbBookSmall,
+    BlurbBookMiddle=BlurbBookMiddle,
+    BlurbBookLarge=BlurbBookLarge,
+    BlurbMagazine=BlurbMagazine,
+    NewsPaperClub_BroadSheet=NewsPaperClub_BroadSheet,
+    NewsPaperClub_BroadSheet_Spread=NewsPaperClub_BroadSheet_Spread,
+    NewsPaperClub_Tabloid=NewsPaperClub_Tabloid,
+    NewsPaperClub_Tabloid_Spread=NewsPaperClub_Tabloid_Spread,
+    NewsPaperClub_Mini=NewsPaperClub_Mini,
+    NewsPaperClub_Mini_Spread=NewsPaperClub_Mini_Spread,
+    OpBookletSmall=OpBookletSmall, OpBooklet=OpBooklet,
+    # Phones
+    iPhoneeX=iPhoneeX, iPhone8Plus=iPhone8Plus, iPhone8=iPhone8,
+    iPhone7Plus=iPhone7Plus, iPhone7=iPhone7, 
+    iPhone6Plus=iPhone6Plus, iPhone6SPlus=iPhone6SPlus,
+    iPhone6=iPhone6, iPhone5=iPhone5, iPodTouch=iPodTouch,
+    iPadPro=iPadPro, iPadThirdGeneration=iPadThirdGeneration,
+    iPadAir1=iPadAir1, iPadAir2=iPadAir2, iPadMini=iPadMini,
+    iPadMini2=iPadMini2, iPadMini3=iPadMini3,
+    Nexus6P=Nexus6P, Nexus5X=Nexus5X, GooglePixel=GooglePixel,
+    GooglePixelXL=GooglePixelXL, GooglePixel2=GooglePixel2,
+    GooglePixel2XL=GooglePixel2XL, LGG5=LGG5, OnePlus3=OnePlus3,
+    SamsungGalaxyNote5=SamsungGalaxyNote5,
+    SamsungGalaxyS9=SamsungGalaxyS9, 
+    SamsungGalaxyS9Plus=SamsungGalaxyS9Plus,
+    SamsungGalaxyS8=SamsungGalaxyS8,
+    SamsungGalaxyS8Plus=SamsungGalaxyS8Plus, Nexus9=Nexus9,
+    SamsungGalaxyS7=SamsungGalaxyS7, Nexus7=Nexus7, 
+    SamsungGalaxyTab10=SamsungGalaxyTab10, 
+    ChromebookPixel=ChromebookPixel,
+)
 # Types of Quire formats, how to compose pages from folding sheets.
 # Gutter between the pages is defined by the page.margin values.
 QUIRE_SINGLE = (1, 1) # Single page

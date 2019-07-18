@@ -1761,6 +1761,21 @@ class Col(RelativeUnit):
 #   Em
 
 def em(v, *args, **kwargs):
+    """Create an Em instance.
+
+    >>> u = em(1, base=32)
+    >>> u.pt
+    32
+    >>> u.base = pt(34)
+    >>> u.pt
+    34
+    >>> u = em(1.5, base=48)
+    >>> u
+    1.5em
+    >>> u.pt == 48*1.5
+    True
+
+    """
     u = None
     base = kwargs.get('base', EM_FONT_SIZE)
     g = kwargs.get('g', 0) # Default not used by Em
