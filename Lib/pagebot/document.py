@@ -58,10 +58,11 @@ class Document:
     PAGE_CLASS = Page # Allow inherited versions of the Page class.
     DEFAULT_VIEWID = defaultViewClass.viewId
 
-    def __init__(self, styles=None, theme=None, viewId=None, name=None, title=None, pages=None,
-            autoPages=1, template=None, templates=None, originTop=False, startPage=None,
-            sId=None, w=None, h=None, d=None, size=None, wh=None, whd=None, padding=None,
-            docLib=None, context=None, path=None, exportPaths=None, **kwargs):
+    def __init__(self, styles=None, theme=None, viewId=None, name=None,
+            title=None, pages=None, autoPages=1, template=None, templates=None,
+            originTop=False, startPage=None, sId=None, w=None, h=None, d=None,
+            size=None, wh=None, whd=None, padding=None, docLib=None,
+            context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
@@ -69,74 +70,97 @@ class Document:
         if whd is not None:
             size = whd
         elif wh is not None:
-            size = wh # Alternative ways to define size, making it intuitive to the caller.
-        if size is not None: # For convenience of the caller, also accept size tuples.
+            # Alternative ways to define size.
+            size = wh
+
+        # Also accept size tuples.
+        if size is not None:
             w, h, d = point3D(size) # Set
 
-        # Set position of origin and direction of y for self and all inheriting pages
-        # and elements.
-        self._originTop = originTop # Set as property. Ii is not supposed to change.
+        # Set position of origin and direction of `y` for self and all inheriting
+        # pages and elements as property. It is not supposed to change.
+        self._originTop = originTop
 
-        # If no theme defined, then use the default theme class to create an instance.
-        # Themes hold values and colors, combined in a theme.mood dictionary that matches
-        # functions with parameters.
+        # If no theme is defined, then use the default theme class to create an
+        # instance.
+
+        # Themes hold values and colors, combined in a theme.mood dictionary
+        # that matches functions with parameters.
         if theme is None:
             theme = DEFAULT_THEME_CLASS()
+
         self.theme = theme
 
-        # Adjust self.rootStyle['yAlign'] default value, based on self.origin, if not defined
-        # as separate attribute in **kwargs.
+        # If not defined as separate attribute in **kwargs, Adjusts the default
+        # self.rootStyle['yAlign'] value based on self.origin.
         self.rootStyle = rs = self.makeRootStyle(**kwargs)
-        self.initializeStyles(styles) # May or may not overwrite the root style.
-        self.path = path # Optional source file path of the document, e.g. .sketch file.
+
+        # May overwrite the root style.
+        self.initializeStyles(styles)
+
+        # Optional source file path of the document, e.g. .sketch file.
+        self.path = path
         self.name = name or title or 'Untitled'
         self.title = title or self.name
 
-        self.w = w or DEFAULT_DOC_WIDTH # Always needs a value. Take 1000 if 0 or None defined.
-        self.h = h or DEFAULT_DOC_HEIGHT # These values overwrite the self.rootStyle['w'] and self.rootStyle['h']
-        self.d = d # In case depth is 0, keep is as value
+        # Always needs a value. Take 1000 if 0 or None defined. These values
+        # overwrite the self.rootStyle['w'] and self.rootStyle['h']
+        self.w = w or DEFAULT_DOC_WIDTH
+        self.h = h or DEFAULT_DOC_HEIGHT
 
-        self.sId = sId # Optional system id, used by an external application (e.g. Sketch). Can be None.
+        # In case depth is 0, keep is as value.
+        self.d = d
+
+        # Optional system ID, used by an external application (e.g. Sketch).
+        # Can be None.
+        self.sId = sId
 
         if padding is not None:
             self.padding = padding
 
         # Initialize the dictionary of pages.
-        self.pages = {} # Key is pageNumber, Value is row list of pages: self.pages[pn][index] = page
-        for page in pages or []: # In case there are pages defined on init, add them.
+
+        # Key is pageNumber, Value is row list of pages:
+        # `self.pages[pn][index] = page`
+        self.pages = {}
+
+        # In case there are pages defined on initialization, add them.
+        for page in pages or []:
             self.appendPage(page, startPage)
 
-        # Initialize the current view of this document. All conditional
+        # Initializes the current view of this document. All conditional
         # checking and building is done through this view. The defaultViewClass
-        # is set either to an in stance of PageView.
-        self.views = {} # Key is the viewId. Value is a view instance.
+        # is set either to an in stance of PageView. Key is the viewId. Value
+        # is a view instance.
+        self.views = {}
 
-        # Set the self.view to an instance of viewId or defaultViewClass.viewId
-        # and store in self.views. Add the optional context, if defined.
-        # Otherwise use the result of default getContext. A context is an
+        # Sets the self.view to an instance of viewId or defaultViewClass.viewId
+        # and stores it in self.views. Adds the optional context, if defined.
+        # Otherwise uses the result of default getContext. A context is an
         # instance of e.g. one of DrawBotContext, FlatContext or HtmlContext,
-        # which then hold the instance of a builder (respectively DrawBot, Flat
-        # and one of the HtmlBuilders, such as GitBuilder or MampBuilder)
+        # which contains a builder; DrawBot, Flat and one of the HtmlBuilders
+        # respectively.
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
         # Template is name or instance default template.
         self.initializeTemplates(templates, template)
 
-        # Property self.docLib for storage of collected content while typesetting
-        # and composing, referring to the pages they where placed on during
-        # composition. The docLib can optionally be defined when constructing
-        # self.
+        # Property self.docLib for storage of collected content while
+        # typesetting and composing, referring to the pages they where placed
+        # on during composition. The docLib can optionally be defined when
+        # constructing self.
         if docLib is None:
             docLib = {}
         self._docLib = docLib
 
-        # Document (w, h) size is default from page, but will modified by the type of display mode.
+        # Document (w, h) size is default from page, but will modified by the
+        # type of display mode.
         if autoPages:
             self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, d=self.d, **kwargs)
 
         # Call generic initialize method, allowing inheriting publication
         # classes to initialize their stuff. This can be the creation of
-        # templates, pages, adding/altering styles and view settings. Default
+        # templates, pages, adding / altering styles and view settings. Default
         # is to do nothing.
         self.initialize(**kwargs)
 

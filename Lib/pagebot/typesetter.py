@@ -37,7 +37,6 @@ from pagebot.toolbox.color import color, blackColor
 from pagebot.constants import *
 from pagebot.toolbox.transformer import asIntOrNone
 
-
 class Typesetter:
     """The Typesetter takes one or more markdown files or a sequence of
     markdown strings and builds a galley, using a dictionary of styles for the
@@ -123,24 +122,37 @@ class Typesetter:
         3
         """
         self.context = context
+
         # Find the context, in case no doc has be defined yet.
         if galley is None:
             galley = self.GALLEY_CLASS(context=context)
+
         self.galley = galley
 
         if styles is None:
             styles = self.DEFAULT_STYLES
         self.styles = styles # Style used, in case the current text box does not have them.
 
-        # Stack of graphic state as cascading styles. Last is template for the next.
+        # Stack of graphic state as cascading styles. Last is template for the
+        # next.
         self.gState = []
-        self.tagHistory = [] # Sequential list of all tags that passed parsing
-        self.tagStack = [] # Stack of currently active tag names.
-        # Save some flags in case the typesetter is running in Python try-except mode.
+
+        # Sequential list of all tags that passed parsing.
+        self.tagHistory = []
+
+        # Stack of currently active tag names.
+        self.tagStack = []
+
+        # Save some flags in case the typesetter is running in Python
+        # try-except mode.
         self.tryExcept = tryExcept
-        # If True add tags to the output, otherwise ignore. Can be overwritten by caller for debugging.
+
+        # If True add tags to the output, otherwise ignore. Can be overwritten
+        # by caller for debugging.
         self.writeTags = context.useTags
-        self.root = None # Will contain the root node after executing typesetFile.
+
+        # Will contain the root node after executing typesetFile.
+        self.root = None
 
         # Some MarkDown generated tags need to be skipped on output, while
         # their content still is processed.
