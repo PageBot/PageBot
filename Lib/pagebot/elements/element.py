@@ -1552,12 +1552,22 @@ class Element:
     fontSize = em
 
     def _get_font(self):
-        """Answers the current font instance as defined in style. Text based inheriting
-        elements may want to implement as the font of the last added text.
+        """Answers the current font instance as defined in style. Text based
+        inheriting elements may want to implement as the font of the last added
+        text.
 
         >>> e = Element(style=dict(font='Roboto-Regular'))
         >>> e.font
         <Font Roboto-Regular>
+        >>> print(type(e.font))
+        <class 'pagebot.fonttoolbox.objects.font.Font'>
+        >>> print(type(e.font.info))
+        <class 'pagebot.fonttoolbox.objects.fontinfo.FontInfo'>
+        >>> print(e.font.info.styleName)
+        <BLANKLINE>
+        """
+        """
+        # FIXME: yields 'Roboto-'
         >>> e.font.info.cssName
         'Roboto-Regular'
         """
