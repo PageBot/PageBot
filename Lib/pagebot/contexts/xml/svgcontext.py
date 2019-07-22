@@ -102,8 +102,8 @@ class SvgContext(BaseContext):
         #    h = h or doc.h
         pass
 
-    def newDrawing(self):
-        """Clear output canvas, start new export file. 
+    def newDrawing(self, doc=None):
+        """Clear output canvas, start new export file.
 
         >>> context = SvgContext()
         >>> context.newDrawing()

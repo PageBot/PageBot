@@ -254,12 +254,12 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
 
 def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True,
         cached=True, lazy=True, kerning=None):
-    """The getInstance refers to the file of the source variable font.
-    The nLocation is dictionary axis locations of the instance with values
-    between (0, 1000), e.g. dict(wght=0, wdth=1000) or values between (0, 1),
-    e.g. dict(wght=0.2, wdth=0.6). Set normalize to False if the values in
-    location already are matching the axis min/max of the font. If there is a
-    [opsz] Optical Size value defined, then store that information in the
+    """The getInstance refers to the file of the source variable font. The
+    nLocation is dictionary axis locations of the instance with values between
+    (0, 1000), e.g. dict(wght=0, wdth=1000) or values between (0, 1), e.g.
+    dict(wght=0.2, wdth=0.6). Set normalize to False if the values in location
+    already are matching the axis min/max of the font. If there is a [opsz]
+    Optical Size value defined, then store that information in the
     font.info.opticalSize.
 
     The optional *styleName* overwrites the *font.info.styleName* of the

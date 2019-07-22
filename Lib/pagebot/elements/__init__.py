@@ -16,11 +16,12 @@
 #     New Elements to be added
 #     Graphs, Maps, 3Dto2DContainers.
 #
+
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 
-# Simple elements
+# Simple elements.
 from pagebot.elements.pbtext import Text
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.pbrect import Rect
@@ -32,25 +33,25 @@ from pagebot.elements.pboval import Oval
 from pagebot.elements.pboval import Circle
 from pagebot.elements.pbdocwrap import DocWrap
 
-# Page elements
+# Page elements.
 from pagebot.elements.pbimage import Image
 from pagebot.elements.pbgalley import Galley, Column
 from pagebot.elements.pbpage import Page, Template
+
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.pbplacer import Placer
 
-# Dating elements
+# Dating elements.
 from pagebot.elements.dating.calendarmonth import CalendarMonth
 
-# Artboard (SketchApp compatible, content element on pages.)
+# Artboard. SketchApp compatible, content element on pages.
 from pagebot.elements.pbartboard import Artboard
 
-# Path and mask elements
-from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
-#OLD from pagebot.elements.paths.pbpath import Path
-#OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
-#from pagebot.elements.paths.glyphpath import GlyphPath
-from pagebot.elements.paths.pbpaths import Paths, Mask # Element that holds a number of styled PageBotPath instances to draw.
+# Path and mask elements. Generic PageBot equivalent of DrawBot.BezierPath.
+from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath
+
+# Element that holds a number of styled PageBotPath instances to draw.
+from pagebot.elements.paths.pbpaths import Paths, Mask
 
 # Table elements
 from pagebot.elements.pbtable import Table
@@ -67,8 +68,8 @@ from pagebot.elements.pbcodeblock import CodeBlock
 #from pagebot.elements.ui.uicanvas import UICanvas
 
 # Variable Font elements
-#"variablefonts" is deprecated.
-# Elements will be tested and moved to elements/vf
+# NOTE: `variablefonts` is deprecated.
+# Elements should be tested and moved to elements.vf.
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
 from pagebot.elements.vf.designspacegraph import DesignSpace, DesignSpaceGraph
 
@@ -79,17 +80,23 @@ def elementFromPath(path, name=None, **kwargs):
     if extension in IMAGE_TYPES:
         e = newImage(path, name=name, **kwargs)
     elif extension in FONT_TYPES:
-        e = None # TODO: Answer a default specimen element to show the font.
+        # TODO: Answer a default specimen element to show the font.
+        e = None
     elif extension in MOVIE_TYPES:
-        e = None # TODO: Answer a MovieElement instance (to be developed)
+        # TODO: Answer a MovieElement instance (to be developed)
+        e = None
     elif extension in TEXT_TYPES:
-        e = newTextBox(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
+        # TODO: Answer TextBox on the parsed content of the file, instead of
+        # the path.
+        e = newTextBox(path, name=name, **kwargs)
     else:
-        e = None # If no extension-->element can be found.
+        # If no extension-->element can be found.
+        e = None
 
     return e
 
-#   S H O R T  C U T S  F O R  C H I L D  E L E M E N T S  G E N E R A T O R S
+
+#   S H O R T C U T S   F O R   C H I L D   E L E M E N T    G E N E R A T O R S
 
 def newView(viewId, **kwargs):
     """In most cases views are initialized as dictionary by the Document class.
@@ -118,11 +125,12 @@ def newPlacer(**kwargs):
     return Placer(**kwargs)
 
 def newColumn(**kwargs):
-    """Answer a new Column instance, offering a squential paste-board for elements."""
+    """Answer a new Column instance, offering a squential paste-board for
+    elements."""
     return Column(**kwargs)
-    
+
 def newTextBox(bs='', **kwargs):
-    """Caller must supply formatted string. Note that w and h can also be
+    """Caller must supply a formatted string. Note that w and h can also be
     defined in the style."""
     return TextBox(bs, **kwargs)
 
@@ -135,13 +143,12 @@ def newText(bs='', **kwargs):
     return Text(bs, **kwargs)
 
 def newRect(**kwargs):
-    """Create a new Rect element. Note that points can also be defined in the style.
-    When omitted, a square is drawn."""
+    """Create a new Rect element. Note that points can also be defined in the
+    style. When omitted, a square is drawn."""
     return Rect(**kwargs)
 
 def newQuire(**kwargs):
-    """Create a new Quire element.
-    When omitted, a square is drawn."""
+    """Create a new Quire element. When omitted, a square is drawn."""
     return Quire(**kwargs)
 
 def newArtboard(**kwargs):
@@ -149,16 +156,18 @@ def newArtboard(**kwargs):
     return Artboard(**kwargs)
 
 def newGroup(**kwargs):
-    """Create a new Group element. Note that points can also be defined in the style.
-    When omitted, a square is drawn."""
+    """Create a new Group element. Note that points can also be defined in the
+    style. When omitted, a square is drawn."""
     return Group(**kwargs)
 
 def newOval(**kwargs):
-    """Create an Oval element. Note that points can also be defined in the style."""
+    """Create an Oval element. Note that points can also be defined in the
+    style."""
     return Oval(**kwargs)
 
 def newCircle(**kwargs):
-    """Create a Circle element. Note that points can also be defined in the style."""
+    """Create a Circle element. Note that points can also be defined in the
+    style."""
     return Circle(**kwargs)
 
 def newLine(**kwargs):
@@ -177,18 +186,18 @@ def newPageBotPath(**kwargs):
     return PageBotPath(**kwargs)
 
 def newPaths(paths=None, **kwargs):
-    """Create a Paths element, holding PageBotPath object(s) in the element frame.
-    The paths can be a single PageBotPath instance or a list/tuple of instances.
-    Not be confused with the filePath "path" in Image."""
+    """Creates a Paths element, holding PageBotPath object(s) in the element
+    frame. The paths can be a single PageBotPath instance or a list / tuple of
+    instances. Not be confused with the filePath "path" in Image."""
     return Paths(paths, **kwargs)
 
 def newImage(path=None, **kwargs):
     """Create Image element as position (x, y) and optional width, height (w,
     h) of which at least one of them should be defined. The path can be None,
-    to be filled later. If the image is drawn with an empty or non-existent file path, a
-    missingImage cross-frame is shown. The optional imo attribute is an
-    DrawBot-modelled ImageObject() with filters in place.
-    The created Image element is answered as convenience to the caller."""
+    to be filled later. If the image is drawn with an empty or non-existent
+    file path, a missingImage cross-frame is shown. The optional imo attribute
+    is an DrawBot-modelled ImageObject() with filters in place. The created
+    Image element is answered as convenience to the caller."""
     return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):

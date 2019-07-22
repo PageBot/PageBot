@@ -704,7 +704,7 @@ class TextBox(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)
 
-        if drowElements:
+        if drawElements:
             for e in self.elements:
                 e.build_html(view, origin, **kwargs)
 

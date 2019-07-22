@@ -49,7 +49,7 @@ class HtmlContext(BaseContext):
         The @doc is the optional Document instance of the caller."""
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
         Ignore for now in HtmlContect. 
         """

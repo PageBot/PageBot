@@ -1552,14 +1552,27 @@ class Element:
     fontSize = em
 
     def _get_font(self):
-        """Answers the current font instance as defined in style. Text based inheriting
-        elements may want to implement as the font of the last added text.
+        """Answers the current font instance as defined in style. Text based
+        inheriting elements may want to implement as the font of the last added
+        text.
 
         >>> e = Element(style=dict(font='Roboto-Bold'))
         >>> e.font
         <Font Roboto-Bold>
         >>> e.font.info.styleName
         'Bold'
+        <Font Roboto-Regular>
+        >>> print(type(e.font))
+        <class 'pagebot.fonttoolbox.objects.font.Font'>
+        >>> print(type(e.font.info))
+        <class 'pagebot.fonttoolbox.objects.fontinfo.FontInfo'>
+        >>> print(e.font.info.styleName)
+        <BLANKLINE>
+        """
+        """
+        # FIXME: yields 'Roboto-'
+        >>> e.font.info.cssName
+        'Roboto-Regular'
         """
         font = self.css('font', DEFAULT_FONT_PATH)
         if isinstance(font, str):
@@ -4919,37 +4932,38 @@ class Element:
     def prepare_inds(self, view):
         for e in self.elements:
             e.prepare_inds(view)
-        
+
     def build_inds(self, view, origin, drawElements=True, **kwargs):
-        """It is better to have a separate InDesignContext build tree, since we need more
-        information down there than just drawing instructions.
-        This way the InDesignContext just gets the PageBot Element passed over, using
-        it's own API."""
+        """It is better to have a separate InDesignContext build tree, since we
+        need more information down there than just drawing instructions. This
+        way the InDesignContext just gets the PageBot Element passed over,
+        using it's own API."""
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         # Inheriting Elements should add their context call here.
         if drawElements:
             for e in self.elements:
                 e.build_inds(view, p2D, **kwargs)
-        
+
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
-    # Sass syntax is not supported yet. It does not appear to be standard and cannot be easily
-    # converted from existing CSS. Meanwhile, many CSS designers can extend easier to SCSS.
+    # Sass syntax is not supported yet. It does not appear to be standard and
+    # cannot be easily converted from existing CSS. Meanwhile, many CSS
+    # designers can extend easier to SCSS.
 
     def prepare_html(self, view):
-        """Respond to the top-down view-->element broadcast in preparation for build_html.
-        Default behavior is to do nothing other than recursively broadcast to all child element.
-        Inheriting Element classes can redefine.
-        """
+        """Respond to the top-down view --> element broadcast in preparation for
+        build_html. Default behavior is to do nothing other than recursively
+        broadcast to all child element. Inheriting Element classes can
+        redefine."""
         for e in self.elements:
             e.prepare_html(view)
 
     def prepare_zip(self, view):
-        """Respond to the top-down view-->element broadcast in preparation for build_zip.
-        Default behavior is to do nothing other than recursively broadcast to all child element.
-        Inheriting Element classes can redefine.
-        """
+        """Respond to the top-down view --> element broadcast in preparation
+        for build_zip. Default behavior is to do nothing other than
+        recursively broadcast to all child element. Inheriting Element classes
+        can redefine."""
         for e in self.elements:
             e.prepare_zip(view)
 
@@ -4963,11 +4977,11 @@ class Element:
 
 
     def asNormalizedJSON(self):
-        """Build self and all child elements as regular dict and add
-        it to the list of siblings. Path points to the folder where
-        elements can copy additional files, such as images, fonts,
-        CSS, JS, etc.). This path will later be converted to zip file,
-        as main storage of the current document.
+        """Build self and all child elements as regular dict and add it to the
+        list of siblings. Path points to the folder where elements can copy
+        additional files, such as images, fonts, CSS, JS, etc.). This path will
+        later be converted to zip file, as main storage of the current
+        document.
 
         >>> import os
         >>> e = Element(x=50, y=60)
@@ -4990,16 +5004,21 @@ class Element:
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent. For
-        HTML builder the origin is ignored, as all position is relative.
-        """
-        b = view.context.b # Use the current context builder to write the HTML/CSS code.
+        HTML builder the origin is ignored, as all position is relative."""
+        # Use the current context builder to write the HTML/CSS code.
+        b = view.context.b
+
         if self.htmlCode is not None:
-            b.addHtml(self.htmlCode) # Add chunk of defined HTML to output.
+            # Add chunk of defined HTML to output.
+            b.addHtml(self.htmlCode)
         elif self.htmlPaths is not None:
             for htmlPath in self.htmlPaths:
-                b.importHtml(htmlPath) # Add HTML content from file, if path is not None and the file exists.
+                # Add HTML content from file, if path is not None and the file
+                # exists.
+                b.importHtml(htmlPath)
         else:
-            b.div(cssClass=self.cssClass, cssId=self.cssId) # No default class, ignore if not defined.
+            # No default class, ignore if not defined.
+            b.div(cssClass=self.cssClass, cssId=self.cssId)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(self, view)
@@ -5009,7 +5028,8 @@ class Element:
             if drawElements:
                 self.buildChildElements(view, path, **kwargs)
 
-            if self.drawAfter is not None: # Call if defined
+            # Call if defined.
+            if self.drawAfter is not None:
                 self.drawAfter(self, view)
 
             b._div()
@@ -5020,12 +5040,18 @@ class Element:
         """Evaluate the content of element e with the total sum of conditions."""
         if score is None:
             score = Score()
-        if self.conditions: # Can be None or empty
-            for condition in self.conditions: # Skip in case there are no conditions in the style.
+
+        # Can be None or empty.
+        if self.conditions:
+            # Skip in case there are no conditions in the style.
+            for condition in self.conditions:
              condition.evaluate(self, score)
-        for e in self.elements: # Also works if showing element is not a container.
+
+        # Also works if showing element is not a container.
+        for e in self.elements:
             if e.show:
                 e.evaluate(score)
+
         return score
 
     def solve(self, score=None):
@@ -5196,8 +5222,7 @@ class Element:
         return abs(self.parent.h - self.parent.pt - self.y) <= tolerance
 
     def isOriginOnTopSide(self, tolerance=0):
-        """Answers the boolean test if the origin of self is on the top side of
-        self.parent.
+        """Answers if the origin of self is on the top side of self.parent.
 
         >>> e1 = Element(w=200, h=400)
         >>> e2 = Element(w=50, h=50, parent=e1)
@@ -5214,8 +5239,7 @@ class Element:
         return abs(self.parent.top - self.y) <= tolerance
 
     def isOriginOnMiddle(self, tolerance=0):
-        """Answers the boolean test if the origin of self is on the top side of
-        self.parent.
+        """Answers if the origin of self is on the top side of self.parent.
 
         >>> e1 = Element(w=200, h=400)
         >>> e2 = Element(w=50, h=50, parent=e1)
@@ -5401,8 +5425,8 @@ class Element:
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
-        """Answer the boolean flag if the self.w is the same as the total of
-        column widths between col and col+colSpan
+        """Answer if the self.w is the same as the total of column widths
+        between col and col+colSpan
 
         >>> from pagebot.toolbox.units import pt
         >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
@@ -5422,26 +5446,33 @@ class Element:
         True
         """
         gridColumns = self.getGridColumns()
+
         if col >= 0 and col+colSpan <= len(gridColumns):
             c1 = gridColumns[col]
             c2 = gridColumns[col + colSpan - 1]
-            #print(self.w, c2[0] - c1[0] + c2[1])
             return abs(self.w - (c2[0] - c1[0] + c2[1])) <= tolerance
+
         return False
 
     def isTopOnRow(self, row, tolerance):
         """Move top of the element to row."""
         gridRows = self.getGridRows()
+
         if row in range(len(gridRows)):
             return abs(self.mTop - gridRows[row][0]) <= tolerance
-        return False # row is not in range of gridColumns
+
+        # row is not in range of gridColumns.
+        return False
 
     def isBottomOnRow(self, row, tolerance):
         """Move top of the element to row."""
         gridRows = self.getGridRows()
+
         if row in range(len(gridRows)):
             return abs(self.mBottom - gridRows[row][0]) <= tolerance
-        return False # row is not in range of gridColumns
+
+        # row is not in range of gridColumns.
+        return False
 
     def isFitOnRowSpan(self, row, rowSpan, tolerance):
         gridRows = self.getGridRows()
@@ -5458,18 +5489,24 @@ class Element:
     def left2Col(self, col):
         """Move top of the element to col index position."""
         gridColumns = self.getGridColumns()
+
         if col in range(len(gridColumns)):
             self.mLeft = self.parent.pl + gridColumns[col][0] # @@@ FIX GUTTER
             return True
-        return False # Row is not in range of available gridColumns
+
+        # Row is not in range of available gridColumns.
+        return False
 
     def right2Col(self, col):
         """Move right of the element to col index position."""
         gridColumns = self.getGridColumns()
+
         if col in range(len(gridColumns)):
             self.mRight = self.parent.pl + gridColumns[col][0] - self.gw
             return True
-        return False # Row is not in range of available gridColumns
+
+        # Row is not in range of available gridColumns.
+        return False
 
     def fit2ColSpan(self, col, colSpan):
         """Fit the width of self to colSpan (can run over several columns),

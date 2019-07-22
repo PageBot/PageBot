@@ -116,7 +116,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         """
-        self.b.newDrawing()
+        self.b.newDrawing(doc)
 
     def endDrawing(self):
         pass
@@ -892,7 +892,7 @@ class BaseContext(AbstractContext):
         pass
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None, e=None):
-        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, 
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
             w=w, h=h, scaleType=scaleType, e=e)
 
     def imageSize(self, path):

@@ -22,6 +22,7 @@ class BabelString:
     representations needed for the builder classes.
 
     TODO: add abstract functions for proper inheritance.
+    TODO: add Flat class tests.
     >>> from pagebot import getContext
     >>> context = getContext()
     """
@@ -40,17 +41,18 @@ class BabelString:
     """
 
     def __init__(self, s, context, style=None):
-        # Wraps the native string.
-        # Encloses the Flat/Drawbot/html string in this wrapper.
+        # Wraps the native string. Encloses the Flat, Drawbot or HTML string
+        # in this wrapper.
         self.s = s
 
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
-        self.style = style # Optional style to set the context parameters.
+        # Optional style to set the context parameters.
+        self.style = style
         self.context = context
 
     def __repr__(self):
-        return u'%s' % self.s
+        return '%s' % self.s
 
     def __add__(self, s):
         self.append(s)
@@ -58,8 +60,10 @@ class BabelString:
 
     def __mul__(self, d):
         s = self.s
+
         for n in range(d-1):
             s += self.s
+
         self.s = s
         # Something to do with the HTML?
         return self
@@ -71,7 +75,8 @@ class BabelString:
         return s in self.s
 
     def __getitem__(self, given):
-        """Answer a copy of self with sliced string or with single indexed character.
+        """Answers a copy of self with a sliced string or with a single indexed
+        character.
 
         >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
         >>> context = DrawBotContext()
@@ -102,9 +107,7 @@ class BabelString:
         """Answers the ID of the class, in case a caller wants to know what
         kind of BabelString this is.
 
-        FIXME: doesn't this mess with object inheritance?
-
-        """
+        FIXME: doesn't this mess with object inheritance?"""
         return self.BABEL_STRING_TYPE
 
     type = property(_get_type)
@@ -131,9 +134,9 @@ class BabelString:
     size = property(_get_size)
 
     def columnStart(self, firstColumnIndent):
-        """Allow the string to set itself to firstLineIndex = firstColumnIndent
-        if that makes sense for inheriting BabelString classes. Default is just to answer self.
-        """
+        """Allows the string to set itself to firstLineIndex = firstColumnIndent
+        if that makes sense for inheriting BabelString classes. Default is just
+        to answer self."""
         return self
 
     def getStyleAtIndex(self, index):
@@ -146,6 +149,7 @@ class BabelString:
             pixelFit=True):
         return None
 
+    # To be implemented:
 
     #def _get_size(self):
     #def textSize(self, w=None, h=None):

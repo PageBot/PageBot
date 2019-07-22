@@ -40,11 +40,11 @@ class Page(Element):
     GALLEY_CLASS = Galley
 
     def __init__(self, originTop=None, isLeft=None, isRight=None, name=None,
-            htmlCode=None, htmlPath=None, headCode=None, headPath=None, 
-            bodyCode=None, bodyPath=None,
-            cssCode=None, cssPaths=None, cssUrls=None, jsCode=None,
-            jsPaths=None, jsUrls=None, viewPort=None, favIconUrl=None,
-            fileName=None, url=None, webFontUrls=None, pn=None, **kwargs):
+            htmlCode=None, htmlPath=None, headCode=None, headPath=None,
+            bodyCode=None, bodyPath=None, cssCode=None, cssPaths=None,
+            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
+            viewPort=None, favIconUrl=None, fileName=None, url=None,
+            webFontUrls=None, pn=None, **kwargs):
         """Add specific parameters for a page, besides the parameters for standard Elements.
 
         >>> page = Page(name='MyPage')
@@ -58,12 +58,17 @@ class Page(Element):
         """
         Element.__init__(self, **kwargs)
 
-        self.originTop = originTop # Set property, used by all child elements as reference.
+        # Set property, used by all child elements as reference.
+        self.originTop = originTop
 
-        self.cssClass = self.cssClass or 'page' # Defined default CSS class for pages.
-        # Overwrite flag for side of page. Otherwise test on document pagenumber.
+        # Defined default CSS class for pages.
+        self.cssClass = self.cssClass or 'page'
+
+        # Overwrite flag for side of page. Otherwise test on document
+        # pagenumber.
         self._isLeft = isLeft
         self._isRight = isRight
+
         # Optional storage of page number in the page (normally this is owned
         # by the containing document). It is used if the pagnumbering of the
         # document with format (1, 0) is different from the pagnumber that
@@ -72,12 +77,16 @@ class Page(Element):
 
         #   F I L E  S T U F F
 
-        # Used for links to home or current page url. Also used by Document.getPageTree()
-        # to answer the nexted dict/list for pages, so Navigation can build a tree of
-        # menu items. Url is a property to make sure that spaces are removed and all lower case.
-        self.url = url or self.INDEX_HTML_URL # Property to make sure that the url is a default file.
-        self.name = name # Set property. If undefined, takes the file part of self.url
-        self.fileName = fileName # Set property. If undefined, takes the file part of self.url
+        # Used for links to home or current page url. Also used by
+        # Document.getPageTree() to answer the nexted dict/list for pages, so
+        # Navigation can build a tree of menu items. Url is a property to make
+        # sure that spaces are removed and all lower case.
+        # Property to make sure that the url is a default file.
+        self.url = url or self.INDEX_HTML_URL
+        # Set property. If undefined, takes the file part of self.url
+        self.name = name
+        # Set property. If undefined, takes the file part of self.url
+        self.fileName = fileName
 
         #   H T M L  S T U F F
 
@@ -91,21 +100,40 @@ class Page(Element):
         # constructing by the builder.  See also self.htmlCode and
         # self.htmlPath as defined for all Element classes.
 
-        self.headCode = headCode # Optional set to string that contains the page <head>...</head>, including the tags.
-        self.headPath = headPath # Set to path, if head is available in a single file, including the tags.
+        # Optional set to string that contains the page <head>...</head>,
+        # including the tags.
+        self.headCode = headCode
+        # Set to path, if head is available in a single file, including the
+        # tags.
+        self.headPath = headPath
 
-        self.cssCode = cssCode # Set to string, if CSS is available as single source. Exported as css file once.
-        self.cssPaths = cssPaths # Set to path, if CSS is available in a single file to be included in the page.
-        self.cssUrls = cssUrls # Optional CSS, if different from what is defined by the view.
+        # Set to string, if CSS is available as single source. Exported as css
+        # file once.
+        self.cssCode = cssCode
+        # Set to path, if CSS is available in a single file to be included in
+        # the page.
+        self.cssPaths = cssPaths
+        # Optional CSS, if different from what is defined by the view.
+        self.cssUrls = cssUrls
 
-        self.bodyCode = bodyCode # Optional set to string that contains the page <body>...</body>, including the tags.
-        self.bodyPath = bodyPath # Set to path, if body is available in a single file, including the tags.
+        # Optional set to string that contains the page <body>...</body>,
+        # including the tags.
+        self.bodyCode = bodyCode
+        # Set to path, if body is available in a single file, including the
+        # tags.
+        self.bodyPath = bodyPath
 
-        self.jsCode = jsCode # Set to path, if JS is available in a single file, including the tags.
-        self.jsPaths = jsPaths # Optional javascript, to be added at the end of the page, inside <body>...</body> tag.
-        self.jsUrls = jsUrls # Optional Javascript Urls in <head>, if different from what is defined by the view.
+        # Set to path, if JS is available in a single file, including the tags.
+        self.jsCode = jsCode
+        # Optional javascript, to be added at the end of the page, inside
+        # <body>...</body> tag.
+        self.jsPaths = jsPaths
+        # Optional Javascript URL's in <head>, if different from what is defined
+        # by the view.
+        self.jsUrls = jsUrls
 
-        self.webFontUrls = webFontUrls # Optional set of webfont urls if different from what is in the view.
+        # Optional set of webfont URL's if different from what is in the view.
+        self.webFontUrls = webFontUrls
 
     def _get_url(self):
         return path2Url(self._url)
@@ -119,7 +147,7 @@ class Page(Element):
     flatUrl = property(_get_flatUrl, _set_url)
 
     def _get_fileName(self):
-        if self._fileName is None: # If not defined, try to get it from the url
+        if self._fileName is None: # If not defined, try to get it from the URL
             return self.url.split('/')[-1]
         return self._fileName
     def _set_fileName(self, fileName):
@@ -127,7 +155,7 @@ class Page(Element):
     fileName = property(_get_fileName, _set_fileName)
 
     def _get_name(self):
-        if self._name is None: # If not defined, try to get it from the url/fileName
+        if self._name is None: # If not defined, try to get it from the URL or fileName
             return self.fileName
         return self._name
     def _set_name(self, name):
@@ -135,7 +163,7 @@ class Page(Element):
     name = property(_get_name, _set_name)
 
     def _get_title(self):
-        if self._title is None: # If not defined, try to get the name/fileName/url
+        if self._title is None: # If not defined, try to get the name, fileName or URL
             return self.name
         return self._title
     def _set_title(self, title):
@@ -168,6 +196,7 @@ class Page(Element):
             elements = ''
 
         pn = ''
+
         if self.parent: # If there is a parent, get the (pageNumber, index) tuple.
             if self._pn is not None: # Hard coded page number, then ignore document index.
                 pn_index = self._pn
@@ -453,7 +482,7 @@ class Page(Element):
                 b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
             else:
                 b.head()
-                
+
                 # Add Google Analytics if accounts numbers are defined.
                 if view.googleAdsAccount is not None and view.googleAnalyticsId is not None:
                     gaScript_XXX = """<!-- Global Site Tag (gtag.js) - Google Analytics -->
@@ -501,8 +530,9 @@ class Page(Element):
                         for webFontUrl in webFontUrls:
                             b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
 
-                # If there is cumulated CSS in the builder, e.g. by individual elements for this page
-                # only, then add that directly inside the page
+                # If there is accumulated CSS in the builder, e.g. by individual
+                # elements for this page only, then add that directly inside
+                # the page
                 if b.hasCss():
                     b.style()
                     b.addHtml(b.getCss())
@@ -514,7 +544,8 @@ class Page(Element):
                         for cssUrl in cssUrls:
                             b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
 
-                # Use one of both of these options in case CSS needs to be copied into the page.
+                # Use one of both of these options in case CSS needs to be
+                # copied into the page.
                 for cssCode in (view.cssCode, self.cssCode):
                     if cssCode is not None:
                         # Add the code directly into the page if it is not None
@@ -522,12 +553,14 @@ class Page(Element):
                         b.addHtml(cssCode)
                         b._style()
 
-                # Use one or both of these options in case CSS is needs to be copied from files into the page.
+                # Use one or both of these options in case CSS is needs to be
+                # copied from files into the page.
                 for cssPaths in (view.cssPaths, self.cssPaths):
                     if self.cssPaths:
                         b.style()
                         for cssPath in cssPaths:
-                            # Include CSS content of file, if path is not None and the file exists.
+                            # Include CSS content of file, if path is not None
+                            # and the file exists.
                             b.importHtml(cssPath)
                         b._style()
 
@@ -597,7 +630,7 @@ class Page(Element):
 
         if view.doExport: # View flag to avoid writing, in case of testing.
             # Construct the file name for this page and save the file.
-            url = self.url.lower()  
+            url = self.url.lower()
             if not url.endswith('.html'):
                 url += '.html'
 
