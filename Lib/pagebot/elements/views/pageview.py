@@ -103,7 +103,7 @@ class PageView(BaseView):
         # Make sure that canvas is empty, there may have been another document
         # building in this context.
         self.context.newDocument(w, h, self.doc) # Allow the context to create a new document and page canvas.
-        self.context.newDrawing(self.doc)
+        self.context.newDrawing()
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
@@ -151,7 +151,7 @@ class PageView(BaseView):
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
             # Set the duration of this page, in case exporting GIF
-            self.context.frameDuration(page.frameDuration, e=page)
+            self.context.frameDuration(page.frameDuration)
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)

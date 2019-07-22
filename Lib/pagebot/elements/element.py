@@ -1555,11 +1555,11 @@ class Element:
         """Answers the current font instance as defined in style. Text based inheriting
         elements may want to implement as the font of the last added text.
 
-        >>> e = Element(style=dict(font='Roboto-Regular'))
+        >>> e = Element(style=dict(font='Roboto-Bold'))
         >>> e.font
-        <Font Roboto-Regular>
-        >>> e.font.info.cssName
-        'Roboto-Regular'
+        <Font Roboto-Bold>
+        >>> e.font.info.styleName
+        'Bold'
         """
         font = self.css('font', DEFAULT_FONT_PATH)
         if isinstance(font, str):
@@ -1611,6 +1611,28 @@ class Element:
             return self.parent.doc
         return None
     doc = property(_get_doc)
+
+    def _get_page(self):
+        """Answers the Page that this element is part of, looking upward in the
+        anscestor tree. Answer None, if no Page ascenstor can be found.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newRect
+        >>> doc = Document()
+        >>> page = doc[1]
+        >>> e1 = newRect(parent=page)
+        >>> e2 = newRect(parent=e1)
+        >>> e3 = newRect(parent=e2)
+        >>> e3.page is page
+        True
+        >>> newRect().page is None
+        True
+        """
+        if self.isPage:
+            return self
+        if self.parent is not None:
+            return self.parent.page
+        return None
 
     def _get_view(self):
         """Answers the self.doc.view, currently set for reference and building

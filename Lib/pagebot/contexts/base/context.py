@@ -109,16 +109,16 @@ class BaseContext(AbstractContext):
         """PageBot function."""
         pass
 
-    def newDrawing(self, doc=None):
+    def newDrawing(self):
         """Clear output canvas, start new export file. DrawBot function.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> context.newDrawing()
         """
-        self.b.newDrawing(doc)
+        self.b.newDrawing()
 
-    def endDrawing(self, doc=None):
+    def endDrawing(self):
         pass
 
     # Magic variables.
@@ -140,7 +140,7 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
-    def newPage(self, w, h, **kwargs):
+    def newPage(self, w=None, h=None, doc=None):
         """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
@@ -149,6 +149,9 @@ class BaseContext(AbstractContext):
         >>> context.newPage(pt(100), pt(100))
         >>> context.newPage(100, 100)
         """
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
         wpt, hpt = upt(w, h)
         self.b.newPage(wpt, hpt)
 
@@ -479,8 +482,8 @@ class BaseContext(AbstractContext):
         elif c.isCmyk:
             # DrawBot.fill has slight API differences compared to
             # FormattedString fill().
-            c, m, y, k = c.cmyk
-            self.b.cmykFill(c, m, y, k, alpha=c.a)
+            c_, m_, y_, k_ = c.cmyk
+            self.b.cmykFill(c_, m_, y_, k_, alpha=c.a)
         else:
             # DrawBot.fill has slight API differences compared to
             # FormattedString fill(). Convert to RGB, whatever the color type.

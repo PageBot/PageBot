@@ -67,9 +67,9 @@ class SvgContext(BaseContext):
         self.newDrawing()
         self._path = None # Hold current open SVG path
 
-    def newDocument(self, w, h):
+    def newDocument(self, w=None, h=None, doc=None):
         """Ignore for SvgContext; Drawing opens automatically if first page
-        is created."""
+        is created. The @doc is the optional Document instance of the caller."""
         pass
 
     def saveDocument(self, path, multiPage=None):
@@ -91,15 +91,19 @@ class SvgContext(BaseContext):
     def getDocument(self):
         pass
 
-    def newPage(self, w, h, **kwargs):
+    def newPage(self, w=None, h=None, doc=None):
         """Create a new SVG page.
 
         >>> context = SvgContext()
         >>> context.newPage(100, 100)
         """
+        #if doc is not None:
+        #    w = w or doc.w
+        #    h = h or doc.h
+        pass
 
     def newDrawing(self):
-        """Clear output canvas, start new export file.
+        """Clear output canvas, start new export file. 
 
         >>> context = SvgContext()
         >>> context.newDrawing()

@@ -82,8 +82,9 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, size=None):
-        """Create a new self.doc Flat canvas to draw on.
+    def newDocument(self, w, h, size=None, doc=None):
+        """Create a new self.doc Flat canvas to draw on. The @doc is
+        the optional Document instance of the caller.
 
         >>> context = FlatContext()
         >>> context.newDocument(100, 100)
@@ -179,7 +180,7 @@ class FlatContext(BaseContext):
     def getDocument(self):
         pass
 
-    def newPage(self, w=None, h=None, **kwargs):
+    def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
         # FIXME: test units, page auto-sizes to parent doc.
 
@@ -188,6 +189,9 @@ class FlatContext(BaseContext):
         >>> context.newDocument(w, h)
         >>> context.newPage()
         """
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
         if self.doc is None:
             self.newDocument(w, h)
 
@@ -195,7 +199,7 @@ class FlatContext(BaseContext):
         self.pages.append(self.page)
 
     def newDrawing(self):
-        """Clear output canvas, start new export file.
+        """Clear output canvas, start new export file. 
 
         >>> context = FlatContext()
         >>> w = h = pt(100)

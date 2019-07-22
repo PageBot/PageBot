@@ -327,15 +327,29 @@ class Page(Element):
         if self.parent is None:
             return None # Not placed directly in a document. No page number known.
         return self.parent.getPageNumber(self)
-
     def _set_pn(self, pn):
-        """Set the optional page numbere, overwriting queries into the
+        """Set the optional page number, overwriting queries into the
         containing document."""
         if pn is not None and not isinstance(pn, (list, tuple)):
             pn = pn, 0
         self._pn = pn
-
     pn = pageNumber = property(_get_pn, _set_pn)
+
+    def _get_index(self):
+        """Answer the index number of this page compared with all pages as 
+        linear list. This ignores any spread or left/right settings in the document.
+        Answer None if there is not parent document.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(autoPages=10)
+        >>> page = doc[5]
+        >>> page.index
+        4
+        """
+        if self.parent is None:
+            return None
+        return self.parent.getPageIndex(self)
+    index = property(_get_index)
 
     #   E L E M E N T S
 

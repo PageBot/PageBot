@@ -24,15 +24,13 @@ class AbstractContext:
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
     """
 
-    def newDrawing(self, doc=None):
-        """Resets to a clean and empty drawing stack.
-        The @doc attribute is the optional Document instance of the caller."""
+    def newDrawing(self):
+        """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
 
-    def endDrawing(self, doc=None):
+    def endDrawing(self):
         """Explicitly tells the context that drawing is done. 
-        This is advised when using DrawBot as a standalone module.
-        The @doc attribute is the optional Document instance of the caller."""
+        This is advised when using DrawBot as a standalone module."""
         raise NotImplementedError
 
     # Styles
