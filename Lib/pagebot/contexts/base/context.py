@@ -116,10 +116,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         """
-        if doc:
-            self.b.newDrawing(doc)
-        else:
-            self.b.newDrawing()
+        self.b.newDrawing(doc)
 
     def endDrawing(self, doc=None):
         pass
@@ -143,7 +140,7 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
-    def newPage(self, w, h, **kwargs):
+    def newPage(self, w=None, h=None, **kwargs):
         """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
@@ -914,7 +911,7 @@ class BaseContext(AbstractContext):
 
     # Mov.
 
-    def frameDuration(self, secondsPerFrame):
+    def frameDuration(self, secondsPerFrame, **kwargs):
         """Set the self._frameDuration for animated GIFs to a number of seconds
         per frame. Used when initializing a new page."""
         self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)

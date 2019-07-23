@@ -82,7 +82,7 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, size=None):
+    def newDocument(self, w, h, size=None, doc=None):
         """Create a new self.doc Flat canvas to draw on.
 
         >>> context = FlatContext()
@@ -280,7 +280,7 @@ class FlatContext(BaseContext):
 
     #   A N I M A T I O N
 
-    def frameDuration(self, secondsPerFrame):
+    def frameDuration(self, secondsPerFrame, **kwargs):
         """Set the frame duretion for animated gifs to a number of seconds per
         frame."""
         self._frameDuration = secondsPerFrame
