@@ -24,7 +24,7 @@ class AbstractContext:
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
     """
 
-    def newDrawing(self):
+    def newDrawing(self, w=None, h=None, doc=None):
         """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
 

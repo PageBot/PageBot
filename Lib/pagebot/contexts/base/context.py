@@ -109,7 +109,7 @@ class BaseContext(AbstractContext):
         """PageBot function."""
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
 
         >>> from pagebot.contexts import getContext

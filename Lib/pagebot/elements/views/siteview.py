@@ -65,7 +65,7 @@ class SiteView(HtmlView):
         self.googleAdsAccount = None
         self.googleAnalyticsId = None
     
-    def copyResources(self, path):
+    def copyResources(self, path, removeExisting=False):
         """If self.resourcePaths are defined, then copy them into the destiation path.
         If the resources already exist, then delete them before copy.
         """
@@ -77,7 +77,7 @@ class SiteView(HtmlView):
                     dstPath += resourcePath.split('/')[-1] + '/'
                 if self.verbose:
                     print('[%s.build] Copy %s --> %s' % (self.__class__.__name__, resourcePath, dstPath))
-                if os.path.exists(dstPath):
+                if removeExisting and os.path.exists(dstPath):
                     # Safety check, only run on relative paths
                     #assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
                     shutil.rmtree(dstPath)
