@@ -57,7 +57,8 @@ class HtmlContext(BaseContext):
     def endDrawing(self):
         pass
 
-    def newPage(self, w, h, **kwargs):
+    def newPage(self, w=None, h=None, page=None, **kwargs):
+    #def newPage(self, w, h, **kwargs):
         pass
 
     def frameDuration(self, value):
@@ -123,6 +124,7 @@ class HtmlContext(BaseContext):
         self._fill = c
 
     setFillColor = fill # DrawBot compatible API
+    cmykFill = fill
 
     def stroke(self, c, w=None):
         self._stroke = c
@@ -130,6 +132,7 @@ class HtmlContext(BaseContext):
             self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
+    cmykStroke = stroke
 
     def strokeWidth(self, w):
         self._strokeWidth = w
@@ -150,6 +153,13 @@ class HtmlContext(BaseContext):
         return 0
 
     def saveDocument(self, path):
+        pass
+
+    cmykShadow = shadow
+    cmykLinearGradient = linearGradient
+    cmykRadialGradient = linearGradient
+
+    def setStyles(self, styles):
         pass
 
 if __name__ == '__main__':
