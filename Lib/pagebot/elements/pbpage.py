@@ -158,22 +158,38 @@ class Page(Element):
         if self._name is None: # If not defined, try to get it from the URL or fileName
             return self.fileName
         return self._name
+
     def _set_name(self, name):
         self._name = name
+
     name = property(_get_name, _set_name)
 
     def _get_title(self):
         if self._title is None: # If not defined, try to get the name, fileName or URL
             return self.name
         return self._title
+
     def _set_title(self, title):
         self._title = title
+
     title = property(_get_title, _set_title)
+
+    def _get_index(self):
+        pn_index = 0
+
+        if self._pn is not None: # Hard coded page number, then ignore document index.
+            pn_index = self._pn
+        else:
+            pn, pn_index = self.parent.getPageNumber(self)
+
+        return pn_index
+
+    index = property(_get_index)
 
     def __repr__(self):
         """Page as string. Similar to general Element.__repr__, except showing
-        the (pagenNumber, index) as it is stored in the parent document. And
-        not showing (self.x, self.y), as most pages will not be part of another
+        the (pageNumber, index) as it is stored in the parent document. And not
+        showing (self.x, self.y), as most pages will not be part of another
         page (although it is allowed and there could be situations to do so,
         e.g. if a page is used as illustration in another page.)
 
@@ -202,6 +218,7 @@ class Page(Element):
                 pn_index = self._pn
             else:
                 pn_index = self.parent.getPageNumber(self)
+
             if pn_index is not None:
                 if pn_index[1]: # Index > 1, then show.
                     pn = ' #%d:%d' % pn_index
@@ -216,6 +233,7 @@ class Page(Element):
         orientation). For Y-axis only. The axes in X and Z directions are
         fixed. The value is stored on page level, so there is no origin top/down
         switching possible inside the element tree of a page.
+
         Note that by changing, the position of existing glyphs does NOT change,
         so their (x,y) position changes (unless referred to by side positions
         such as e.top and e.center, etc.).
