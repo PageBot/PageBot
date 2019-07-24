@@ -6,7 +6,8 @@ Subpackages
 
 .. toctree::
 
-   pagebot.apps
+   pagebot.bezierpaths
+   pagebot.color
    pagebot.conditions
    pagebot.contexts
    pagebot.contributions
@@ -18,6 +19,7 @@ Subpackages
    pagebot.readers
    pagebot.resources
    pagebot.server
+   pagebot.strings
    pagebot.templates
    pagebot.themes
    pagebot.toolbox
