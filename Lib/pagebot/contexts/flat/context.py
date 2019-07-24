@@ -369,13 +369,23 @@ class FlatContext(BaseContext):
         """
         self._fontSize = upt(fontSize)
 
-    def textBox(self, bs, r):
+    #def textBox(self, bs, r):
+    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """
-        ...
 
-        FIXME: Not using width and height here?"""
+        FIXME: Not using width and height here?
+        TODO: clipPath
+        TODO: align
+
+        """
+        if hasattr(sOrBs, 's'):
+            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+        else:
+            sOrBs = str(sOrBs) # Otherwise convert to string if it is not already
+
         xpt, ypt, _, _ = upt(r)
-        placedText = self.page.place(bs.s)
+        placedText = self.page.place(sOrBs)
+
         placedText.position(xpt, ypt)
 
     def textSize(self, bs, w=None, h=None):
