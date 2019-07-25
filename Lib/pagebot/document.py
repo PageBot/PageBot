@@ -1149,7 +1149,7 @@ class Document:
         >>> page = doc[2]
         >>> next = doc.nextPage(page)
         >>> next
-        <Page #3 default (11", 16.90")>
+        <Page #3 default (11", 17")>
         >>> doc.getPageNumber(next)
         (3, 0)
         >>> next = doc.nextPage(next)
@@ -1186,7 +1186,7 @@ class Document:
         >>> page = doc[2]
         >>> prev = doc.prevPage(page)
         >>> prev
-        <Page #1 default (11", 16.90")>
+        <Page #1 default (11", 17")>
         >>> doc.getPageNumber(prev)
         (1, 0)
         >>> prev = doc.prevPage(prev)
