@@ -191,6 +191,7 @@ class SvgContext(BaseContext):
             self._svgFill = self.b.rgb(100*r, 100*g, 100*b, '%')
 
     setFillColor = fill
+    cmykFill = fill
 
     def stroke(self, c, strokeWidth=None):
         c = color(c)
@@ -202,6 +203,7 @@ class SvgContext(BaseContext):
         self._strokeWidth = upt(strokeWidth or pt(1))
 
     setStrokeColor = stroke
+    cmykStroke = stroke
 
     def saveGraphicState(self):
         """Save the current graphic state.
@@ -323,6 +325,20 @@ class SvgContext(BaseContext):
         pass
 
     def getGlyphPath(self, glyph, p=None, path=None):
+        pass
+
+    def shadow(self, eShadow, e=None):
+        pass
+
+    def linearGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None):
+        pass
+
+    cmykShadow = shadow
+    cmykLinearGradient = linearGradient
+    cmykRadialGradient = linearGradient
+
+    def setStyles(self, styles):
         pass
 
 if __name__ == '__main__':

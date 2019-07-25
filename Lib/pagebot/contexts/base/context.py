@@ -407,7 +407,7 @@ class BaseContext(AbstractContext):
         self.b.drawPath(bezierPath)
         self.restore()
 
-    def clipPath(self, clipPath):
+    def clipPath(self, clipPath=None):
         """Sets the clipPath of the DrawBot builder in a new saved graphics
         state. Clip paths cannot be restored, so they should be inside a
         context.save() and context.restore().

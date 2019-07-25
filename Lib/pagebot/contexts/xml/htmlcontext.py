@@ -155,6 +155,13 @@ class HtmlContext(BaseContext):
     def saveDocument(self, path):
         pass
 
+    def shadow(self, eShadow, e=None):
+        pass
+
+    def linearGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None):
+        pass
+
     cmykShadow = shadow
     cmykLinearGradient = linearGradient
     cmykRadialGradient = linearGradient
