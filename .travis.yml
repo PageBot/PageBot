@@ -19,6 +19,7 @@ install:
 - pip3 install booleanOperations
 - pip3 install tornado
 - pip3 install SimpleIDML
+- pip3 install flat
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
@@ -41,13 +42,6 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
-- wget https://github.com/PageBot/Flat3/archive/master.zip
-- unzip master.zip
-- cd Flat3-master
-- python3 setup.py install
-- cd ..
-- rm master.zip
-- rm -r Flat3-master
 - wget https://github.com/typesupply/compositor/archive/master.zip
 - unzip master.zip
 - cd compositor-master
