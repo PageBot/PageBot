@@ -176,7 +176,7 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.flat.context import FlatContext
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
-        >>> 'flat3.text.text' in str(bs)
+        >>> 'flat.text.text' in str(bs)
         True
         """
         if style is None:

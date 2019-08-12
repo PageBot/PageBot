@@ -488,7 +488,7 @@ class FlatContext(BaseContext):
 
         TODO: Make better match for all file types, transparency and spot
         color."""
-        from flat3 import rgb
+        from flat import rgb
         return rgb(*to255(c.rgb))
 
 
