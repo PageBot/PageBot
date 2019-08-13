@@ -1,16 +1,13 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-
-"""
-titlecase.py v0.2
-Original Perl version by: John Gruber http://daringfireball.net/ 10 May 2008
-Python version by Stuart Colville http://muffinresearch.co.uk
-License: http://www.opensource.org/licenses/mit-license.php
-"""
+# titlecase.py v0.2
+# Original Perl version by: John Gruber http://daringfireball.net/ 10 May 2008
+# Python version by Stuart Colville http://muffinresearch.co.uk
+# License: http://www.opensource.org/licenses/mit-license.php
 
 import unittest
 import sys
 import re
-
 
 SMALL = 'a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v\.?|via|vs\.?'
 PUNCT = "[!\"#$%&'‘()*+,-./:;?@[\\\\\\]_`{|}~]"
@@ -24,7 +21,7 @@ SMALL_LAST = re.compile('\b(%s)%s?$' % (SMALL, PUNCT), re.I)
 SUBPHRASE = re.compile('([:.;?!][ ])(%s)' % SMALL)
 
 def titlecase(text):
-    """Titlecases input text
+    """Titlecases input text.
 
     This filter changes all words to Title Caps, and attempts to be clever
     about *uncapitalizing* SMALL words like a/an/the in the input.
@@ -32,9 +29,9 @@ def titlecase(text):
     The list of "SMALL words" which are not capped comes from the New York
     Times Manual of Style, plus 'vs' and 'v'.
     """
-
     words = re.split('\s', text)
     line = []
+
     for word in words:
         if INLINE_PERIOD.search(word) or UC_ELSEWHERE.match(word):
             line.append(word)
@@ -61,7 +58,6 @@ def titlecase(text):
     return line
 
 class TitlecaseTests(unittest.TestCase):
-
     """Tests to ensure titlecase follows all of the rules"""
 
     def test_q_and_a(self):
@@ -236,13 +232,10 @@ class TitlecaseTests(unittest.TestCase):
         result = """Generalissimo Francisco Franco: Still Dead; Kieren McCarthy: Still a Jackass."""
         self.assertEqual(text, result, "%s should be: %s" % (text, result, ))
 
-
 if __name__ == '__main__':
     if not sys.stdin.isatty():
         for line in sys.stdin:
             print(titlecase(line))
-
     else:
         suite = unittest.TestLoader().loadTestsFromTestCase(TitlecaseTests)
         unittest.TextTestRunner(verbosity=2).run(suite)
-

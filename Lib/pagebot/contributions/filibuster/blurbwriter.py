@@ -72,9 +72,7 @@ randint = random.randint
 vowels = 'aeiuoAEIUO'
 
 class BlurbWriter:
-
-    '''A very unspecific recursive compiler and randomizer for text.
-    '''
+    """A very unspecific recursive compiler and randomizer for text."""
 
     def __init__(self, content, debug=False):
         self.DEBUG = debug
@@ -94,7 +92,9 @@ class BlurbWriter:
         self.importcontent(content)
 
     def importcontentPy2(self, contentdict):
-        '''make all strings unicode here?'''
+        """
+        FIXME: deprecated?
+        """
         for k, v in contentdict.items():
             self.data[k] = [name for name in v]
 
@@ -212,12 +212,13 @@ class BlurbWriter:
             return name, cmd, variable, hard
 
     def write(self, tag, formatdict=None, formatfunc=None):
-        '''this assumes tag to be a direct entry in content'''
+        """This assumes tag to be a direct entry in content."""
         return self.writetag(opentag+tag+closetag, formatdict, formatfunc)
 
     def writetag(self, tag, formatdict=None, formatfunc=None):
-        '''this will evaluate tag directly, use writetag if you want to more tags in one line to be processed.
-        this is the main interface to the writer class'''
+        """This will evaluate tag directly, use writetag if you want to more
+        tags in one line to be processed. this is the main interface to the
+        writer class."""
         self.allkeys = self.keys()
         self.choicetree = []
         if not formatdict:
@@ -301,8 +302,9 @@ class BlurbWriter:
         level = level + 1
         if level > 100:
             raise('Blurbwriter.replacetag: Recursion error? too many nested instructions! last tag: %s' % self.lasttag)
-        #pend = 0
+
         m = 1
+
         while m != None:
             start, stop = self.findtag(text)
             if start == None:
@@ -325,6 +327,7 @@ class BlurbWriter:
                 return self.replacetag(level, tag)
 
             tagname, cmd, variable, hard = self.parsetag(tag)
+
             # process in-tag commands, if any
             cacheThis = False    # whether results should be cached
             setArticle = False    # prepare an article ( 'a' or 'an' )
@@ -384,16 +387,12 @@ class BlurbWriter:
                 elif makeLowercase:
                     c = c.lower()
                 if nonletter_remove:
-                    #print('before', c)
                     c = c.replace(' ', '')
                     c = c.replace('.', '')
                     c = c.replace('-', '')
                     c = c.replace('_', '')
-                    #print('after', c)
                 elif space_to_underscore:
                     c = c.replace(' ', '_')
-
-            #print('cacheThis', cacheThis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
 
             # format the line if necessary
             if formatcmds and self.formatfunc:
