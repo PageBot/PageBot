@@ -29,11 +29,15 @@ from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont, TTLibError
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
+
+'''
 try:
     from fontTools.varLib import _GetCoordinates, _SetCoordinates
 except:
+    import fontTools
     print(fontTools.__version__)
     print(traceback.format_exc())
+'''
 
 try:
     from fontTools.varLib.iup import iup_delta
@@ -280,7 +284,6 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=
     instance.info.varStyleName = styleName
     return instance
 
-
 def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=True,
         lazy=True, kerning=None):
     """Instantiate an instance of a variable font at the specified location.
@@ -357,6 +360,7 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
         gvar = ttFont['gvar']
         glyf = ttFont['glyf']
+
         # get list of glyph names in gvar sorted by component depth
         glyphNames = sorted(
             gvar.variations.keys(),
@@ -367,7 +371,8 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
         for glyphName in glyphNames:
             variations = gvar.variations[glyphName]
-            coordinates,_ = _GetCoordinates(ttFont, glyphName)
+            #coordinates,_ = _GetCoordinates(ttFont, glyphName)
+            coordinates, _ = glyf.getCoordinatesAndControls(glyphName, ttFont)
             origCoords, endPts = None, None
 
             for var in variations:
@@ -376,11 +381,14 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
                 delta = var.coordinates
                 if None in delta:
                     if origCoords is None:
-                        origCoords,control = _GetCoordinates(ttFont, glyphName)
+                        origCoords, control = glyf.getCoordinatesAndControls(glyphname, ttFont)
+                        #origCoords,control = _GetCoordinates(ttFont, glyphName)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
                     delta = iup_delta(delta, origCoords, endPts)
                 coordinates += GlyphCoordinates(delta) * scalar
-            _SetCoordinates(ttFont, glyphName, coordinates)
+            #_SetCoordinates(ttFont, glyphName, coordinates)
+
+            glyf.setCoordinates(glyphName, coordinates, ttFont)
 
         # Interpolate cvt
 
