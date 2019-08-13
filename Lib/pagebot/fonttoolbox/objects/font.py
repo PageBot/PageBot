@@ -23,21 +23,11 @@
 #     to avoid confusion with the PageBot style dictionary, which hold style parameters.
 #
 import os
-import traceback
 
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont, TTLibError
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-
-'''
-try:
-    from fontTools.varLib import _GetCoordinates, _SetCoordinates
-except:
-    import fontTools
-    print(fontTools.__version__)
-    print(traceback.format_exc())
-'''
 
 try:
     from fontTools.varLib.iup import iup_delta
@@ -371,7 +361,6 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
         for glyphName in glyphNames:
             variations = gvar.variations[glyphName]
-            #coordinates,_ = _GetCoordinates(ttFont, glyphName)
             coordinates, _ = glyf.getCoordinatesAndControls(glyphName, ttFont)
             origCoords, endPts = None, None
 
@@ -382,15 +371,13 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
                 if None in delta:
                     if origCoords is None:
                         origCoords, control = glyf.getCoordinatesAndControls(glyphName, ttFont)
-                        #origCoords,control = _GetCoordinates(ttFont, glyphName)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
                     delta = iup_delta(delta, origCoords, endPts)
                 coordinates += GlyphCoordinates(delta) * scalar
-            #_SetCoordinates(ttFont, glyphName, coordinates)
 
             glyf.setCoordinates(glyphName, coordinates, ttFont)
 
-        # Interpolate cvt
+        # Interpolate cvt.
 
         if 'cvar' in ttFont:
             cvar = ttFont['cvar']

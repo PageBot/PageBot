@@ -25,7 +25,6 @@ import os
 from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
-from fontTools.varLib import _GetCoordinates, _SetCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
 from fontTools.varLib.mutator import iup_delta
 
@@ -243,9 +242,10 @@ def generateInstance(variableFontPath, location, targetDirectory,
                 glyf[name].getCompositeMaxpValues(glyf).maxComponentDepth
                 if glyf[name].isComposite() else 0,
                 name))
+
         for glyphname in glyphnames:
             variations = gvar.variations[glyphname]
-            coordinates,_ = _GetCoordinates(varfont, glyphname)
+            coordinates,_ = glyf.getCoordinatesAndControls(glyphname, varfont)
             origCoords, endPts = None, None
             for var in variations:
                 scalar = supportScalar(loc, var.axes)#, ot=True)
@@ -253,11 +253,11 @@ def generateInstance(variableFontPath, location, targetDirectory,
                 delta = var.coordinates
                 if None in delta:
                     if origCoords is None:
-                        origCoords,control = _GetCoordinates(varfont, glyphname)
+                        origCoords, control = glyph.getCoordinates(glyphname, varfont)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
                     delta = iup_delta(delta, origCoords, endPts)
                 coordinates += GlyphCoordinates(delta) * scalar
-            _SetCoordinates(varfont, glyphname, coordinates)
+            glyf.setCoordinates(glyphname, coordinates, varfont)
 
         # Interpolate cvt
 
