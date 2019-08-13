@@ -381,7 +381,7 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
                 delta = var.coordinates
                 if None in delta:
                     if origCoords is None:
-                        origCoords, control = glyf.getCoordinatesAndControls(glyphname, ttFont)
+                        origCoords, control = glyf.getCoordinatesAndControls(glyphName, ttFont)
                         #origCoords,control = _GetCoordinates(ttFont, glyphName)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
                     delta = iup_delta(delta, origCoords, endPts)
