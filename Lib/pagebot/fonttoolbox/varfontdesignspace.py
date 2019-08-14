@@ -107,7 +107,7 @@ class TTVarGlyph:
         glyph = self._ttFont['glyf'][self._glyphName]
         glyph = self._copyGlyph(glyph, self._ttFont['glyf'])
         variables = self._ttFont['gvar'].variables[self._glyphName]
-        coordinates, _ = glyf.getCoordinates(self._glyphName, self._ttFont)
+        coordinates, _ = glyph.getCoordinates(self._glyphName, self._ttFont)
 
         for var in variables:
             scalar = supportScalar(self._location, var.axes)
