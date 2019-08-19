@@ -470,12 +470,18 @@ class Element:
         <Template>
         """
         return self._template
+
     def _set_template(self, template):
-        self.clearElements() # Clear all existing child elements in self.
-        self._template = template # Keep template reference to clone pages or if additional template info is needed later.
+        # Clear all existing child elements in self.
+        self.clearElements()
+        # Keep template reference to clone pages or if additional template info
+        # is needed later.
+        self._template = template
+
         # Copy optional template stuff
         if template is not None:
-            # Copy elements from the template and put them in the designated positions.
+            # Copy elements from the template and put them in the designated
+            # positions.
             self.w = template.w
             self.h = template.h
             self.padding = template.padding
@@ -483,21 +489,28 @@ class Element:
             self.prevElement = template.prevElement
             self.nextElement = template.nextElement
             self.nextPage = template.nextPage
-            # Copy style items
+
+            # Copy style items.
             for  name, value in template.style.items():
                 self.style[name] = value
-            # Copy condition list. Does not have to be deepCopy, condition instances are multi-purpose.
+
+            # Copy condition list. Does not have to be deepCopy, condition
+            # instances are multi-purpose.
             self.conditions = copy.copy(template.conditions)
+
             for e in template.elements:
                 self.appendElement(e.copy(parent=self))
+
     template = property(_get_template, _set_template)
 
     #   E L E M E N T S
-    #   Every element is potentially a container of other elements, beside its own specific behavi.
+    #
+    #   Every element is potentially a container of other elements, in addition
+    #   to its own behavior.
 
     def __getitem__(self, eIdOrName):
-        """Answers the element with eIdOrName. Answer None if the element does not exist.
-        Elements behave as a semi-dictionary for child elements.
+        """Answers the element with eIdOrName. Answer None if the element does
+        not exist. Elements behave as a semi-dictionary for child elements.
         For retrieval by index, use e.elements[index]
 
         >>> e = Element(name='TestElement')
@@ -524,10 +537,10 @@ class Element:
     eId = property(_get_eId)
 
     def _get_elements(self):
-        """Property to get/set elements to parent self. Answer a copy of the list,
-        not self._elements itself, to avoid problems if iterations on the children
-        is changing the parent. E.g. if elements of a Typesetter galley are composed
-        on a page.
+        """Property to get/set elements to parent self. Answer a copy of the
+        list, not self._elements itself, to avoid problems if iterations on the
+        children is changing the parent. E.g. if elements of a Typesetter
+        galley are composed on a page.
 
         >>> e = Element()
         >>> len(e), len(e.elements)
@@ -537,13 +550,19 @@ class Element:
         (3, 3)
         """
         return list(self._elements)
+
     def _set_elements(self, elements):
-        self.clearElements() # Clear all existing child elements of self.
+        # Clear all existing child elements of self.
+        self.clearElements()
+
         for e in elements:
-            self.appendElement(e) # Make sure to set all references.
+            # Make sure to set all references.
+            self.appendElement(e)
+
     elements = property(_get_elements, _set_elements)
 
-    def _get_elementIds(self): # Answer the x-ref dictionary with elements by their e.eIds
+    # Answer the x-ref dictionary with elements by their e.eIds
+    def _get_elementIds(self):
         """Answers the list with child.eId
 
         >>> e = Element()
@@ -616,7 +635,8 @@ class Element:
         True
         """
         if self.isPage:
-            return self # Answer if self is a page.
+            # Answer if self is a page.
+            return self
         if self.parent is not None:
             return self.parent.getElementPage()
         return None
@@ -653,6 +673,7 @@ class Element:
     def getElementByName(self, name):
         """Answers the first element in the offspring list that fits the name.
         Answer None if it cannot be found.
+
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
         searching witn self as arbitrary Element instance.
@@ -736,6 +757,7 @@ class Element:
         """
         assert name or pattern or cls
         result = []
+
         for e in self.elements:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                  result.append(e)
@@ -743,12 +765,13 @@ class Element:
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
+
         return result
 
     def deepFind(self, name=None, pattern=None, cls=None):
-        """Perform a dynamic recursive deep find for all elements with the name.
-        Don't include self. Either *name* or *pattern* should be defined,
-        otherwise an error is raised. Return the first matching child
+        """Perform a dynamic recursive deep find for all elements with the
+        name. Don't include self. Either *name* or *pattern* should be
+        defined, otherwise an error is raised. Return the first matching child
         element. Answer None if no elements can be found.
 
         Note that the result of the search depends on where in the tree self is.
@@ -820,6 +843,7 @@ class Element:
         True
         """
         assert name or pattern or cls
+
         for e in self.elements:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                 return e
@@ -827,11 +851,13 @@ class Element:
                 return e
             if name is not None and name in (e.cssId, e.name):
                 return e
+
         return None
 
     def findBysId(self, sId):
-        """If defined, the system self.sId can be used to recursively find self or a child.
-        Answer None if nothing can be found that is exactly matching.
+        """If defined, the system self.sId can be used to recursively find self
+        or a child. Answer None if nothing can be found that is exactly
+        matching.
         """
         if sId is not None:
             if self.sId == sId:
@@ -860,8 +886,8 @@ class Element:
         self._eIds = {}
 
     def clear(self):
-        """Make inheriting classes define a method to clear their content if appropriate.
-        Default behavior of Element is to do nothing."""
+        """Make inheriting classes define a method to clear their content if
+        appropriate. Default behavior of Element is to do nothing."""
         pass
 
     def copy(self, parent=None):
@@ -895,58 +921,9 @@ class Element:
             copied.appendElement(e.copy())
         return copied
 
-        """" REMOVE THIS
-        self.__class__(
-            x=self.x,
-            y=self.y,
-            z=self.z,
-            w=self.w,
-            h=self.h,
-            d=self.d,
-            t=self.t, # Copy type frame.
-            parent=parent, # Allow to keep reference to current parent context and style.
-            context=self._context, # Copy local context, None most cases, where reference to parent->doc context is required.
-            name=self.name,
-            #cssId is copied conditionally by copyCssId flag. E.g. applying template to web page.
-            cssClass=self.cssClass,
-            title=self.title,
-            description=self.description,
-            language=self.language,
-            lib=copy.deepcopy(self.lib),
-            style=copy.deepcopy(self.style), # Style is supposed to be a deep-copyable dictionary.
-            conditions=copy.deepcopy(self.conditions), # Conditions may be modified by the element of ascestors.
-            framePath=self.framePath,
-            elements=None, # Will be copied separately, if there are child elements
-            template=self.template,
-            nextElement=self.nextElement,
-            prevElement=self.prevElement,
-            nextPage=self.nextPage,
-            prevPage=self.prevPage,
-            padding=self.padding, # Copies all padding values at once
-            margin=self.margin, # Copies all margin values at once,
-            borders=self.borders, # Copies all borders at once.
-            gridX=copy.deepcopy(self.gridX),
-            gridY=copy.deepcopy(self.gridY),
-            shadow=self.shadow, # Needs to be copied?
-            gradient=self.gradient, # Needs to be copied?
-            drawBefore=self.drawBefore,
-            drawAfter=self.drawAfter)
-
-        # If any additional attribute names defined, then deepcopy these as well.
-        for attrName in (attrNames or []): # Any additional attributes to copy? :
-            setattr(e, attrName, copy.deepcopy(getattr(self, attrName)))
-
-        # Now do the same for each child element and append it to self.
-        for child in self.elements:
-            # Add the element to child list and update self._eId dictionary
-            # Keep the copyCssIf flag downwards, in case we are applying a template on
-            # a web page.
-            e.appendElement(child.copy(attrNames=attrNames))
-        return e
-        """
-
     def _get_childClipPath(self):
-        """Answer the clipping context.BezierPath, derived from the layout of child elements.
+        """Answer the clipping context.BezierPath, derived from the layout of
+        child elements.
 
         >>> from pagebot.conditions import *
         >>> from pagebot.contexts import getContext
@@ -1018,15 +995,27 @@ class Element:
         (True, True, True)
         """
         eParent = e.parent
-        if not eParent is None:
-            eParent.removeElement(e) # Remove from current parent, if there is one.
-        self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
-        e.setParent(self) # Set parent of element without calling this method again.
-        if e.eId: # Store the element by unique element id, if it is defined.
-            self._eIds[e.eId] = e
-        return len(self._elements)-1 # Answer the element index for e.
 
-    append = appendElement # Add alternative method name for conveniece of high-level element additions.
+        if not eParent is None:
+            # Remove from current parent, if there is one.
+            eParent.removeElement(e)
+
+        # Possibly add to self again, will move it to the top of the element
+        # stack.
+        self._elements.append(e)
+        # Set parent of element without calling this method again.
+        e.setParent(self)
+
+        # Store the element by unique element ID, if it is defined.
+        if e.eId:
+            self._eIds[e.eId] = e
+
+        # Answer the element index for e.
+        return len(self._elements)-1
+
+    # Add alternative method name for conveniece of high-level element
+    # additions.
+    append = appendElement
 
     def removeElement(self, e):
         """If the element is placed in self, then remove it. Don't touch the

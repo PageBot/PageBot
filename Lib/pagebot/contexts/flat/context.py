@@ -30,7 +30,6 @@ class FlatContext(BaseContext):
     framework.
 
     * xxyxyz.org/flat
-    * xxyxyz.org/flat
 
     Text behavior:
 
@@ -62,6 +61,18 @@ class FlatContext(BaseContext):
 
     # Default is point document, should not be changed. Units render to points.
     UNITS = 'pt'
+
+    # Flat color types.
+    RGB = 'rgb'
+    RGBA = 'rgba'
+    GRAY = 'gray'
+    GA = 'ga'
+    CMYK = 'cmyk'
+    SPOT = 'spot'
+
+    # NOTE: other Flat color features are
+    # thinned
+    # overprint
 
     def __init__(self):
         """Constructor of Flat context.
@@ -142,9 +153,6 @@ class FlatContext(BaseContext):
         self.checkExportPath(path)
         self.fileType = path.split('.')[-1].lower()
 
-        RGB = 'rgb'
-        RGBA = 'rgba'
-
         if self.fileType == FILETYPE_PNG:
             if len(self.pages) == 1 or not multiPage:
                 im = self.pages[0].image(kind=RGB)
@@ -153,6 +161,7 @@ class FlatContext(BaseContext):
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).png(pagePath)
+
         elif self.fileType == FILETYPE_JPG:
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind=RGB).jpeg(path)
@@ -430,8 +439,8 @@ class FlatContext(BaseContext):
             return (w, w/len(bs))
 
     def textOverflow(self, bs, w, h, align=LEFT):
-        """Answers the overflowing of from the box (0, 0, w, h) as new FlatString
-        in the current context."""
+        """Answers the the box (0, 0, w, h) overflow as a new FlatString in the
+        current context."""
         wpt, hpt = upt(w, h)
         return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
@@ -464,20 +473,22 @@ class FlatContext(BaseContext):
         return pt(img.width), pt(img.height)
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
-        """Draw the image. If w or h is defined, then scale the image to fit."""
+        """Draws the image. If position is none, sets x and y to the origin. If
+        w or h is defined, then scale the image to fit."""
+
         if w is None or h is None:
             w, h = self.imageSize(path)
+
         if p is None:
             p = 0, 0
+
         xpt, ypt = point2D(upt(p))
         self.save()
-        # TODO Skip for now.
-        """
+
         img = self.b.image(path, height=h, width=w)
         img.resize(width=w.pt, height=h.pt)
         placed = self.page.place(img)
         placed.position(xpt, ypt)
-        """
         self.restore()
 
     #   D R A W I N G
@@ -493,7 +504,7 @@ class FlatContext(BaseContext):
 
 
     def _getShape(self):
-        """Renders Pagebot FlatBuilder shape to Flat shape. Flat function."""
+        """Renders Pagebot FlatBuilder shape to a Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
             return None
 
@@ -518,6 +529,7 @@ class FlatContext(BaseContext):
         """
         if not self.doc:
             self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
+
         if not self.pages:
             self.newPage(self.doc.width, self.doc.height)
 
@@ -531,18 +543,19 @@ class FlatContext(BaseContext):
             self.page.place(r)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom left origin and
-        (w,h) is the size. This default DrawBot behavior, different from
-        default Flat, where the (x,y) is the middle if the oval. Compensate for
-        the difference."""
+        """Draws an oval in a rectangle, where (x, y) is the bottom left origin
+        and (w, h) is the size. This default DrawBot behavior, different from
+        default Flat, where the (x, y) is the middle of the oval. Compensate
+        for the difference."""
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.ellipse(xpt-wpt/2, ypt-hpt/2, wpt, hpt))
 
     def circle(self, x, y, r):
-        """Draws a circle in square with radius r and (x,y) as middle."""
+        """Draws a circle in a square with radius r and (x, y) as center."""
         xpt, ypt, rpt = upt(x, y, r)
         shape = self._getShape()
 
@@ -559,17 +572,20 @@ class FlatContext(BaseContext):
             self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
 
     def newPath(self):
-        """Create a new path list, o collect the path commands."""
-        self._path = BezierPath(self.b) # Collect path commands here.
+        """Creates a new Bézier path object to store subsequent path commands."""
+        self._path = BezierPath(self.b)
         return self._path
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
+        """Renders the path object as a Flat vector graphic."""
         if p is None:
             xpt = ypt = 0
         else:
             xpt, ypt = point2D(upt(p))
+
         # TODO: xpt, ypt?
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.path(self._path.commands))
@@ -671,13 +687,13 @@ class FlatContext(BaseContext):
         self._strokeWidth = upt(w)
 
     def translate(self, dx, dy):
-        """Translate the origin by (dx, dy)."""
+        """Translates the origin by (dx, dy)."""
         dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dxpt
         self._oy += dypt
 
     def rotate(self, angle, center=None):
-        """Rotate by angle."""
+        """Rotates by angle."""
         self._rotationCenter = center
         self._rotate = angle
 
