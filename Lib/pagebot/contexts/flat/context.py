@@ -25,6 +25,19 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
 
+# Flat color types.
+RGB = 'rgb'
+RGBA = 'rgba'
+GRAY = 'gray'
+GA = 'ga'
+CMYK = 'cmyk'
+SPOT = 'spot'
+
+# NOTE: other Flat color features are
+# thinned
+# overprint
+
+
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
@@ -61,18 +74,6 @@ class FlatContext(BaseContext):
 
     # Default is point document, should not be changed. Units render to points.
     UNITS = 'pt'
-
-    # Flat color types.
-    RGB = 'rgb'
-    RGBA = 'rgba'
-    GRAY = 'gray'
-    GA = 'ga'
-    CMYK = 'cmyk'
-    SPOT = 'spot'
-
-    # NOTE: other Flat color features are
-    # thinned
-    # overprint
 
     def __init__(self):
         """Constructor of Flat context.
