@@ -17,21 +17,13 @@
 
 #import imageio
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
-        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE)
+        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.context import BaseContext
 from pagebot.contexts.flat.builder import flatBuilder, BezierPath
 from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
-
-# Flat color types.
-RGB = 'rgb'
-RGBA = 'rgba'
-GRAY = 'gray'
-GA = 'ga'
-CMYK = 'cmyk'
-SPOT = 'spot'
 
 # NOTE: other Flat color features are
 # thinned
@@ -94,8 +86,9 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, size=None, doc=None):
-        """Create a new self.doc Flat canvas to draw on.
+    def newDocument(self, w, h, size=None, doc=None, flipped=True):
+        """Create a new self.doc Flat canvas to draw on. Flipped Y-axis by
+        default to conform to DrawBot's drawing methods.
 
         >>> context = FlatContext()
         >>> context.newDocument(100, 100)
@@ -107,6 +100,7 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
+
         wpt, hpt = upt(w, h) # Convert units to point values
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
 
