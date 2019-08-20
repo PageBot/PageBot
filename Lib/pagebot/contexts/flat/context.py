@@ -15,7 +15,6 @@
 #     flatcontext.py
 #
 
-#import imageio
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.context import BaseContext
@@ -24,10 +23,6 @@ from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
-
-# NOTE: other Flat color features are
-# thinned
-# overprint
 
 
 class FlatContext(BaseContext):
@@ -83,6 +78,7 @@ class FlatContext(BaseContext):
         self.flatString = None
         self.fileType = DEFAULT_FILETYPE
         self._pages = []
+        self.flipped = True
 
     #   D O C U M E N T
 
@@ -100,9 +96,17 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
+        self.flipped = flipped
 
         wpt, hpt = upt(w, h) # Convert units to point values
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+
+    def getY(self, y):
+        if not self.flipped:
+            return y
+        else:
+            y = self.doc.height - y
+            return y
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -210,7 +214,7 @@ class FlatContext(BaseContext):
         #context.newDrawing(w, h)
         pass
 
-    #   C A N V A S
+    #   S T A T E
 
     def saveGraphicState(self):
         """Save the current graphic state.
@@ -346,7 +350,7 @@ class FlatContext(BaseContext):
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to DEFAULT_FONT_PATH
+        >>> context.font('OtherFont', 12) # If doesn't exists, path is set to default.
         >>> context._font == DEFAULT_FONT_PATH
         True
         >>> context._fontSize # Renders to pt-unit
@@ -373,7 +377,6 @@ class FlatContext(BaseContext):
         """
         self._fontSize = upt(fontSize)
 
-    #def textBox(self, bs, r):
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """
 
@@ -383,9 +386,11 @@ class FlatContext(BaseContext):
 
         """
         if hasattr(sOrBs, 's'):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
+            # Assume here is's a BabelString with a FormattedString inside.
+            sOrBs = sOrBs.s
         else:
-            sOrBs = str(sOrBs) # Otherwise convert to string if it is not already
+            # Otherwise convert to string if it isn't already.
+            sOrBs = str(sOrBs)
 
         xpt, ypt, _, _ = upt(r)
         placedText = self.page.place(sOrBs)
@@ -530,7 +535,7 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        y = self.getY(y) - h
         shape = self._getShape()
 
         if shape is not None:
@@ -543,16 +548,22 @@ class FlatContext(BaseContext):
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference."""
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
 
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse(xpt-wpt/2, ypt-hpt/2, wpt, hpt))
+            x0 = x + w / 2
+            y0 = self.getY(y+ h / 2)
+            w0 = w
+            h0 = h
+            self.page.place(shape.ellipse(x0, y0, w0, h0))
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center."""
         xpt, ypt, rpt = upt(x, y, r)
+        ypt = self.getY(ypt)
+
         shape = self._getShape()
 
         if shape is not None:
@@ -566,6 +577,8 @@ class FlatContext(BaseContext):
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
+
+    #   P A T H
 
     def newPath(self):
         """Creates a new Bézier path object to store subsequent path commands."""

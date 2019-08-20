@@ -50,7 +50,8 @@ DISPLAY_INLINE = 'inline'
 #
 # ISO A Sizes
 #
-A0 = mm(841, 1189) # Millimeters real Mm unit instance.
+# Millimeters real Mm unit instance.
+A0 = mm(841, 1189)
 A1 = mm(594, 841)
 A2 = mm(420, 594)
 A3 = mm(297, 420)
@@ -67,9 +68,10 @@ A3Square = A3[0], A3[0] # Square of A3 (portrait, short side)
 A4Square = A4[0], A4[0] # Square of A4 (portrait, short side)
 A5Square = A5[0], A5[0] # Square of A5 (portrait, short side)
 
-A4Rounded = pt(595, 842) # Rounded to points pt(595, 842) to fit exact column measures
+# Rounded to points pt(595, 842) to fit exact column measures.
+A4Rounded = pt(595, 842)
 
-# ISO B Sizes
+# ISO B Sizes.
 B0 = mm(1000,1414)
 B1 = mm(707, 1000)
 B2 = mm(500, 707)
@@ -82,7 +84,7 @@ B8 = mm(62,  88)
 B9 = mm(44,  62)
 B10 = mm(31, 44)
 
-# ISO C Envelop Sizes
+# ISO C Envelop Sizes.
 C0 = mm(917, 1297)
 C1 = mm(648, 917)
 C2 = mm(458, 648)
@@ -103,6 +105,10 @@ GA = 'ga'
 CMYK = 'cmyk'
 SPOT = 'spot'
 
+# NOTE: other Flat color features are:
+# thinned
+# overprint
+
 # American Sizes as non-rounded values
 HalfLetter = inch(8.5, 5.5)
 Letter = inch(8.5, 11)
@@ -111,7 +117,8 @@ JuniorLegal = inch(5, 8)
 Tabloid = inch(11, 17)
 
 # Other rounded definintions compatible to DrawBot predefines
-#Screen = getContext().screenSize() # Current screen size. TODO: fix this
+# Current screen size. FIXME: not working yet.
+#Screen = getContext().screenSize()
 Ledger = pt(1224, 792)
 Statement = pt(396, 612)
 Executive = pt(540, 720)
