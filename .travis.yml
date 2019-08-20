@@ -86,8 +86,8 @@ script:
 - python3 Lib/pagebot/contexts/base/builder.py
 - python3 Lib/pagebot/contexts/base/context.py
 - python3 Lib/pagebot/contexts/solid/builder.py
-- python3 Lib/pagebot/contexts/flat/builder.py
-- python3 Lib/pagebot/contexts/flat/context.py
+- python3 Lib/pagebot/contexts/flat/flatbuilder.py
+- python3 Lib/pagebot/contexts/flat/flatcontext.py
 - python3 Lib/pagebot/contexts/flat/flatstring.py
 - python3 Lib/pagebot/contexts/xml/htmlbuilder.py
 - python3 Lib/pagebot/contexts/xml/svgbuilder.py
