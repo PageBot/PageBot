@@ -20,7 +20,6 @@
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import Glyph as TTGlyph, GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation # VariableModel
-from fontTools.varLib import _GetCoordinates
 from pagebot.fonttoolbox.designspace.dsmodel import DesignSpace, Axis
 from pagebot.fonttoolbox.ttftools import getBestCmap
 
@@ -107,9 +106,9 @@ class TTVarGlyph:
     def draw(self, pen):
         glyph = self._ttFont['glyf'][self._glyphName]
         glyph = self._copyGlyph(glyph, self._ttFont['glyf'])
-
         variables = self._ttFont['gvar'].variables[self._glyphName]
-        coordinates, _ = _GetCoordinates(self._ttFont, self._glyphName)
+        coordinates, _ = glyph.getCoordinates(self._glyphName, self._ttFont)
+
         for var in variables:
             scalar = supportScalar(self._location, var.axes)
             if not scalar:

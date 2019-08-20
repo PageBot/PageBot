@@ -9,53 +9,61 @@ choice = random.choice
 
 
 """
-26 12 99         added support for 'article' in tags:
-            'this_demonstrates_articles':    ['<#article, demo_fruit#>'],
-            'demo_fruit':    ['pear', 'apple', 'olive']
-            #a pear
-            #an apple
-            #a pear
-            #an olive
+26 12 99 - added support for 'article' in tags:
 
-30 12 99         fixed replacecode - now it will interpret identical tags in one line individually
+    'this_demonstrates_articles':    ['<#article, demo_fruit#>'],
+    'demo_fruit':    ['pear', 'apple', 'olive']
+    #a pear
+    #an apple
+    #a pear
+    #an olive
 
-4 jan 99        added support for inline style references
-            <#!bold, company#>    will label this for bold, it depends on the styledict
-                                how it is formatted in the end
-            <#!bold, !uppercase, company#> - multiple styles should be possible as well, no?
-            in theory yes, but somehow netscape doesn't draw the uppercase - odd?
-            - tag = name of an entry from the Content module
-            - formatdict is a dictionary in which style
-                commands that are used in Content are mapped
-                to any arbitrary outside defined stylename.
-                This is to prevent pollution from outside formatting stuff
-                in the content module.
-                For instance, a content tag can say <#!bold, company#>
-                the formatdict can look like this: {'bold':    'CSS_my_specific_bold'}
-                If the style cmd from the tag can be found in the provided formatdict
-                format func is used to format the final resulting text.
-                    def formatfunc(text, tagname)
-                This means that Writer and Content should also be able to be used
-                to make RTF, or any other kind of formatted text without making
-                the modules specific to any kind of format, or platform.
+30 12 99 - fixed replacecode - now it will interpret identical tags in one line
+individually.
 
+4 jan 99 - added support for inline style references
 
-3.0            added support for the Content package, added some UI
+<#!bold, company#>
+
+will label this for bold, it depends on the styledict how it is formatted in
+the end.
+
+<#!bold, !uppercase, company#> - multiple styles should be possible as well, no?
+in theory yes, but somehow netscape doesn't draw the uppercase - odd?
+
+- tag = name of an entry from the Content module
+- formatdict is a dictionary in which style
+    commands that are used in Content are mapped
+    to any arbitrary outside defined stylename.
+    This is to prevent pollution from outside formatting stuff
+    in the content module.
+    For instance, a content tag can say <#!bold, company#>
+    the formatdict can look like this: {'bold':    'CSS_my_specific_bold'}
+    If the style cmd from the tag can be found in the provided formatdict
+    format func is used to format the final resulting text.
+        def formatfunc(text, tagname)
+    This means that Writer and Content should also be able to be used
+    to make RTF, or any other kind of formatted text without making
+    the modules specific to any kind of format, or platform.
+
+3.0 - added support for the Content package, added some UI.
+
 17 1 2000
 
-3.1            Writer can now handle nested tags, opening a whole world of metaprogramming
-evb
+3.1 - Writer can now handle nested tags, opening a whole world of
+metaprogramming.
 
-3.2            messed with the caching mechanism
-evb
+3.2 - messed with the caching mechanism.
 
-3.3            now the write() method also accepts tagged entries, simpler code, more flexible
-evb            w.write('<#name#>') and w.write('name') have the same results
+3.3 - now the write() method also accepts tagged entries, simpler code, more
+flexible.
 
-3.4            added simpler support for initial capitals. Write '<#^,word#> for a capital of the first letter
-evb
+w.write('<#name#>') and w.write('name') have the same results
 
-4.0             Removed string module import. Added some tests.
+3.4 - added simpler support for initial capitals. Write '<#^,word#> for a
+capital of the first letter.
+
+4.0 - Removed string module import. Added some tests.
 """
 
 __version__ = '4.0'
@@ -72,9 +80,7 @@ randint = random.randint
 vowels = 'aeiuoAEIUO'
 
 class BlurbWriter:
-
-    '''A very unspecific recursive compiler and randomizer for text.
-    '''
+    """A very unspecific recursive compiler and randomizer for text."""
 
     def __init__(self, content, debug=False):
         self.DEBUG = debug
@@ -82,10 +88,11 @@ class BlurbWriter:
         self._cache = {}
         self.formatdict = None
         self.formatfunc = None
-        self.lasttag = 'no last tag'    # last processed tag, useful when debugging loops
+
+        # Last processed tag, useful when debugging loops.
+        self.lasttag = 'no last tag'
         self.choicetree = []
         p = '\<#(?P<tagname>.*)#\>'
-        #p = '\<#(?P<tagname>.*?)#\>'
         self.tag = re.compile(p, re.IGNORECASE)
         p = '\<-(?P<tagname>.*?)-\>'
         self.pstatement = re.compile(p, re.IGNORECASE)
@@ -94,7 +101,9 @@ class BlurbWriter:
         self.importcontent(content)
 
     def importcontentPy2(self, contentdict):
-        '''make all strings unicode here?'''
+        """
+        FIXME: deprecated, Py3 only?
+        """
         for k, v in contentdict.items():
             self.data[k] = [name for name in v]
 
@@ -123,7 +132,6 @@ class BlurbWriter:
 
     def keys(self):
         k = list(self.data.keys())
-        #return k.sort()
         return self.data.keys()
 
     def has_key(self, key):
@@ -212,23 +220,28 @@ class BlurbWriter:
             return name, cmd, variable, hard
 
     def write(self, tag, formatdict=None, formatfunc=None):
-        '''this assumes tag to be a direct entry in content'''
+        """This assumes tag to be a direct entry in content."""
         return self.writetag(opentag+tag+closetag, formatdict, formatfunc)
 
     def writetag(self, tag, formatdict=None, formatfunc=None):
-        '''this will evaluate tag directly, use writetag if you want to more tags in one line to be processed.
-        this is the main interface to the writer class'''
+        """This will evaluate tag directly, use writetag if you want to more
+        tags in one line to be processed. this is the main interface to the
+        writer class."""
         self.allkeys = self.keys()
         self.choicetree = []
+
         if not formatdict:
             self.formatdict = {}
         else:
             self.formatdict = formatdict
+
         self.formatfunc = formatfunc
         _, item = self.replacetag(0, tag) # ok, item
         _, item = self.replacecode(item) # ok, item
+
         if FILTERWHITESPACE:
             return ' '.join(item.split())
+
         return item
 
     def replacecode(self, text):
@@ -301,8 +314,9 @@ class BlurbWriter:
         level = level + 1
         if level > 100:
             raise('Blurbwriter.replacetag: Recursion error? too many nested instructions! last tag: %s' % self.lasttag)
-        #pend = 0
+
         m = 1
+
         while m != None:
             start, stop = self.findtag(text)
             if start == None:
@@ -325,6 +339,7 @@ class BlurbWriter:
                 return self.replacetag(level, tag)
 
             tagname, cmd, variable, hard = self.parsetag(tag)
+
             # process in-tag commands, if any
             cacheThis = False    # whether results should be cached
             setArticle = False    # prepare an article ( 'a' or 'an' )
@@ -384,16 +399,12 @@ class BlurbWriter:
                 elif makeLowercase:
                     c = c.lower()
                 if nonletter_remove:
-                    #print('before', c)
                     c = c.replace(' ', '')
                     c = c.replace('.', '')
                     c = c.replace('-', '')
                     c = c.replace('_', '')
-                    #print('after', c)
                 elif space_to_underscore:
                     c = c.replace(' ', '_')
-
-            #print('cacheThis', cacheThis, 'makeUpperCase', makeUpperCase, 'makeLowercase', makeLowercase, 'space_to_underscore', space_to_underscore, 'nonletter_remove', nonletter_remove)
 
             # format the line if necessary
             if formatcmds and self.formatfunc:

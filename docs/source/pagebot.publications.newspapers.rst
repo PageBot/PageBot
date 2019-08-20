@@ -1,6 +1,13 @@
 pagebot.publications.newspapers package
 =======================================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   pagebot.publications.newspapers.classic
+
 Submodules
 ----------
 

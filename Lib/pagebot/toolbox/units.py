@@ -16,7 +16,7 @@
 #
 #     Implements basic intelligent spacing units with build-in conversions.
 #
-#     units # Basic contextual converter and interpretor
+#     units # contextual converter and interpretor
 #
 #     Absolute units
 #     Millimeters MM = 0.0393701 * INCH
@@ -37,8 +37,10 @@
 #     radian       Radians angle
 #     degrees      Degrees angle
 #
+
 import re, sys, math
 from copy import copy
+from pagebot.toolbox.transformer import asNumberOrNone, asIntOrFloat, asFormatted
 
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
@@ -48,14 +50,12 @@ U = 6 # Some basic unit grid to use as default.
 EM_FONT_SIZE = U*2 # 12pt
 BASELINE_GRID = U*2+3 # 2.5U = 15pt
 
-from pagebot.toolbox.transformer import asNumberOrNone, asIntOrFloat, asFormatted
-
 # P O I N T
 
 def point3D(p=None):
-    """Answers `p` as a 3D point. If it already is a list of 3 elements, then
-    don't change and answer the original. If it's a smaller or larger
-    list/tuple, then extend it.
+    """Answers `p` as a 3D point. If it is already a list of 3 elements, then
+    don't change and answer the original. If it's a smaller or larger list /
+    tuple, then extend it.
 
     >>> point3D() # Default 3D origin
     (0pt, 0pt, 0pt)
@@ -95,7 +95,7 @@ def point2D(p=None):
     return point3D(p)[:2]
 
 def pointOffset(point, offset):
-    """Answers new 3D point, shifted by offset.
+    """Answers a new 3D point, shifted by offset.
 
     Note that in normal usage the elements probably will be Unit instances.
 
@@ -123,8 +123,8 @@ def pointOffset(point, offset):
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
-    """Answers the point as string of units. Ignore `z`-value if it renders to
-    0.
+    """Answers the point as string of units. Ignores the `z`-value if it
+    renders to 0.
 
     >>> point2S(pt(22.4, 33.5, 44.6))
     '22.4pt 33.5pt 44.6pt'
@@ -137,8 +137,8 @@ def point2S(p):
     return '%s %s' % (x, y)
 
 def point2roundedS(p):
-    """Answers the point as string of rounded units. Ignore `z`-value if it
-    renders to 0.
+    """Answers the point as string of rounded units. Ignores the `z`-value if
+    it renders to 0.
 
     >>> point2roundedS(pt(22.4, 33.5, 44.6))
     '22 34 45'
@@ -183,8 +183,8 @@ def ru(u, *args, **kwargs):
         return uu
 
 def rv(u, *args, **kwargs):
-    """Render to uu.rv or (u1.rv, u2.rv, ...) if uu is a list or tuple.
-    If maker is defined, then use that to render towards.
+    """Renders to uu.rv or (u1.rv, u2.rv, ...) if uu is a list or tuple. If
+    a maker is defined, then use that to render towards it.
 
     >>> rv(pt(100), pt(120)) # Absolute inits, nothing changes.
     (100, 120)
@@ -211,12 +211,14 @@ def rv(u, *args, **kwargs):
         return tuple(ruu)
 
     uu = units(u, **kwargs)
+
     if uu is not None:
         uu = uu.rv
+
     return uu
 
 def upt(u, *args, **kwargs):
-    """Render to pt value(s). If values are a number, then answer it unchanged.
+    """Renders to pt value(s). If values are a number, then return them unchanged.
 
     >>> upt(50, pt(100), pt(120), (10, pt(20)))
     (50, 100, 120, (10, 20))
@@ -254,8 +256,8 @@ def upt(u, *args, **kwargs):
     return uu
 
 def isUnits(u, *args):
-    """Answers is u (and all of the other items in the argument list)
-    are a Unit instance.
+    """Answers if u (and all of the other items in the argument list) are a
+    Unit instance.
 
     >>> isUnits(Em(2))
     True
@@ -292,12 +294,13 @@ def isUnit(u):
     >>> isUnit(2)
     False
     """
-    # isinstance(u, Unit) # Does not seem to work right for units created in other sources such as A4
+    # isinstance(u, Unit) # Does not seem to work right for units created in
+    # other sources such as A4.
     return hasattr(u, 'v') and hasattr(u, 'g') and hasattr(u, 'base')
 
 def uRound(u, *args):
-    """Answers the list with rounded units (and all of the other items in the argument list)
-    are a Unit instance.
+    """Answers the list with rounded units (and all of the other items in the
+    argument list) are a Unit instance.
 
     >>> uRound(Em(2.3))
     2em
@@ -356,9 +359,9 @@ def uString(u, maker=None):
 us = uString # Convenience abbreviaion
 
 class Unit:
-    """Base class for units, implementing most of the logic.  Unit classes can
+    """Base class for units, implementing most of the logic. Unit classes can
     be absolute (Pt, Px, Pica/P, Mm, Inch) and relative, which need the
-    definintion of a base reference value (Perc, Fr) or em (Em).
+    definition of a base reference value (Perc, Fr) or em (Em).
 
         >>> mm(1)
         1mm
@@ -448,6 +451,7 @@ class Unit:
 
     def _get_rounded(self):
         """Answers a new instance of self with rounded value.
+
         Note that we are rounding the self.v here, not the rendered result.
 
         >>> u = pt(12.2)
@@ -588,7 +592,8 @@ class Unit:
     rv = property(_get_rv, _set_rv)
 
     def _get_ru(self):
-        """For absolute units the rendering toward units is just a copy of self.
+        """For absolute units the rendering toward units is just a copy of
+        self.
 
         >>> u = inch(3)
         >>> u.ru, u == u.ru, u is u.ru
@@ -678,12 +683,17 @@ class Unit:
         >>> u == []
         False
         """
-        if isinstance(u, (int, float)): # One is a scalar, just compare with rendered value
+        # One is a scalar, just compare with rendered value
+        if isinstance(u, (int, float)):
             return self.rv == u
+
         if isUnit(u):
             if isinstance(u, self.__class__):
-                return self.rv == u.rv # Same class, compare rendered result may differe from base)
-            return self.pt == u.pt # Incompatible unit types, compare via points
+                # Same class, compare rendered result may differe from base)
+                return self.rv == u.rv
+
+            # Incompatible unit types, compare via points
+            return self.pt == u.pt
         return False
 
     def __ne__(self, u):
@@ -945,7 +955,7 @@ class Unit:
     __rmul__ = __mul__
 
     def __neg__(self):
-        """Reverse sign of self, answer as copied unit.
+        """Reverse sign of self, answers as copied unit.
 
         >>> -pt(-20)
         20pt
@@ -987,7 +997,7 @@ def mm(v, *args, **kwargs):
     return u
 
 class Mm(Unit):
-    """Answers the mm instance.
+    """Answers the millimetre instance.
 
     >>> u = Mm(210)
     >>> u
@@ -2235,7 +2245,8 @@ class Angle:
     __radd__ = __add__ # Additions work in both directions.
 
     def __sub__(self, angle):
-        """Subtract two angles or angle and value, using degrees as intermedia value.
+        """Subtract two angles or angle and value, using degrees as intermedia
+        value.
 
         >>> degrees(45) - 5
         40deg
@@ -2263,7 +2274,8 @@ class Angle:
         return self.__class__(angle) # Answer new instance
 
     def __mul__(self, factor):
-        """Multiply the angle with a factor. Answer a new instance of the same type.
+        """Multiply the angle with a factor. Answer a new instance of the same
+        type.
 
         >>> degrees(45) * 2
         90deg
@@ -2278,10 +2290,11 @@ class Angle:
             angle = int(angle)
         return self.__class__(angle)
 
-    __rmul__ = __mul__ # Multiplications work in both directions
+    __rmul__ = __mul__ # Multiplications work in both directions.
 
     def __div__(self, factor):
-        """Divide the angle by a factor. Answer a new instance of the same type.
+        """Divide the angle by a factor. Answer a new instance of the same
+        type.
 
         >>> degrees(80) / 2
         40deg
@@ -2299,7 +2312,8 @@ class Angle:
     __truediv__ = __div__
 
     def __floordiv__(self, factor):
-        """Fllor-divide the angle by a factor. Answer a new instance of the same type.
+        """Floor-divide the angle by a factor. Answer a new instance of the
+        same type.
 
         >>> degrees(45) // 2
         22deg
@@ -2486,8 +2500,8 @@ class Angle:
     # Math angle functions as properties
 
     def _get_sin(self):
-        """Answers the math.sin(self) of this angle.
-        See also asin(v) above, that answers an Angle instance.
+        """Answers the math.sin(self) of this angle. See also asin(v) above,
+        that answers an Angle instance.
 
         >>> degrees(0).sin
         0.0
@@ -2504,8 +2518,8 @@ class Angle:
     sin = property(_get_sin)
 
     def _get_cos(self):
-        """Answers the math.cos(self) of this angle.
-        See also acos(v) above, that answers an Angle instance.
+        """Answers the math.cos(self) of this angle. See also acos(v) above,
+        that answers an Angle instance.
 
         >>> degrees(0).cos
         1.0
@@ -2522,8 +2536,8 @@ class Angle:
     cos = property(_get_cos)
 
     def _get_tan(self):
-        """Answers the math.tan(self) of this angle.
-        See also atan2(v1, v2) above, that answers an Angle instance.
+        """Answers the math.tan(self) of this angle. See also atan2(v1, v2)
+        above, that answers an Angle instance.
 
         >>> degrees(0).tan
         0.0
@@ -2595,7 +2609,8 @@ def degrees(angle):
     return Degrees(angle)
 
 class Radians(Angle):
-    """Store the value as radians factor to math.pi, so 0.5*pi is stored in self.angle as 0.5
+    """Store the value as radians factor to math.pi, so 0.5*pi is stored in
+    self.angle as 0.5.
 
     >>> from math import pi
     >>> a = radians(0.75)

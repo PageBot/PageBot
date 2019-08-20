@@ -29,7 +29,7 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.units import em
         >>> c = DrawBotContext()
@@ -52,7 +52,7 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
         >>> c = DrawBotContext()
         >>> w, h = Letter

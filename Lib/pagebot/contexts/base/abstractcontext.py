@@ -28,9 +28,16 @@ class AbstractContext:
         """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
 
+<<<<<<< HEAD
     def endDrawing(self):
         """Explicitly tells the context that drawing is done. 
         This is advised when using DrawBot as a standalone module."""
+=======
+    def endDrawing(self, doc=None):
+        """Explicitly tells the context that drawing is done.
+        This is advised when using DrawBot as a standalone module.
+        The @doc attribute is the optional Document instance of the caller."""
+>>>>>>> origin/master
         raise NotImplementedError
 
     # Styles
@@ -40,7 +47,7 @@ class AbstractContext:
         into paragraph styles in InDesignContext or to be used as styles
         for context strings."""
         raise NotImplementedError
-        
+
     # Magic variables.
 
     def width(self):
@@ -53,7 +60,7 @@ class AbstractContext:
 
     def sizes(self, paperSize=None):
         """Returns the (w, h) of a specified canvas size.
-        If no canvas size is given it will return the dictionary 
+        If no canvas size is given it will return the dictionary
         containing all possible page sizes.
         Note that the sizes are in PageBot units, different from what DrawBot returns.
 
@@ -80,14 +87,14 @@ class AbstractContext:
 
     def size(self, w, h=None):
         """Set the width and height of the current page.
-        Standardize on PageBot (@w, @h) for consistent naming, 
+        Standardize on PageBot (@w, @h) for consistent naming,
         instead of DrawBot (width, height)."""
         raise NotImplementedError
 
-    def newPage(self, w=None, h=None, page=None):
+    def newPage(self, w=None, h=None, page=None, **kwargs):
         """Optional width and height if defined. Standardize
-        on PageBot (@w, @h) for consistent naming, instead of 
-        DrawBot (width, height). Otherwise the optional PageBot @page 
+        on PageBot (@w, @h) for consistent naming, instead of
+        DrawBot (width, height). Otherwise the optional PageBot @page
         instance can be used by the context to extract page size."""
         raise NotImplementedError
 
@@ -100,12 +107,12 @@ class AbstractContext:
 
     def saveImage(self, path, *args, **options):
         """Save or export the canvas to a specified format.
-        The @path argument is a single destination path to save the current 
-        drawing actions. The @file extension is important because it will 
+        The @path argument is a single destination path to save the current
+        drawing actions. The @file extension is important because it will
         determine the format in which the image will be exported.
         All supported file extensions: %(supporttedExtensions)s.
         (`*` will print out all actions.)
-        When exporting an animation or movie, each page represents a 
+        When exporting an animation or movie, each page represents a
         frame and the framerate is set by page.frameDuration."""
         raise NotImplementedError
 
@@ -121,14 +128,14 @@ class AbstractContext:
     # Graphics state.
 
     def save(self):
-        """DrawBot strongly recommends to use self.savedState() in 
+        """DrawBot strongly recommends to use self.savedState() in
         a `with` statement instead. Save the current graphics state.
         This will save the state of the canvas (with all the transformations)
         but also the state of the colors, strokes..."""
         raise NotImplementedError
 
     def restore(self):
-        """DrawBot strongly recommends to use self.savedState() in 
+        """DrawBot strongly recommends to use self.savedState() in
         a `with` statement instead. Restore from a previously saved graphics state.
         This will restore the state of the canvas (with all the transformations)
         but also the state of colors, strokes..."""
@@ -141,13 +148,13 @@ class AbstractContext:
     # Basic shapes.
 
     def rect(self, x, y, w=None, h=None, e=None):
-        """Draw a rectangle at position (@x, @y), with the optional given 
+        """Draw a rectangle at position (@x, @y), with the optional given
         @w width and @h height. Otherwise the optional PageBot Element
         instance @e can be used by the context to extract width and height."""
         raise NotImplementedError
 
     def oval(self, x, y, w=None, h=None, e=None):
-        """Draw an oval at position (@x, @y), with the optional given 
+        """Draw an oval at position (@x, @y), with the optional given
         @w width and @h height. Otherwise the optional PageBot Element
         instance @e can be used by the context to extract width and height."""
         raise NotImplementedError
@@ -176,13 +183,13 @@ class AbstractContext:
         raise NotImplementedError
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
-        """Arc with @center (x, y) and a given @radius`, from @startAngle to 
-        @endAngle`, going clockwise if @clockwise is True and counter clockwise 
+        """Arc with @center (x, y) and a given @radius`, from @startAngle to
+        @endAngle`, going clockwise if @clockwise is True and counter clockwise
         if @clockwise is False."""
         raise NotImplementedError
 
     def arcTo(self, xy1, xy2, radius):
-        """Arc from one point @xy1 (x1, y1) to an other point @xy2 (x2, y2) 
+        """Arc from one point @xy1 (x1, y1) to an other point @xy2 (x2, y2)
         with a given @radius."""
         raise NotImplementedError
 
@@ -197,9 +204,9 @@ class AbstractContext:
         raise NotImplementedError
 
     def clipPath(self, clipPath=None):
-        """Use the given @clipPath as a clipping path, or the current path if no 
-        path was given. Everything drawn after a `clipPath()` call will be clipped 
-        by the clipping path. To "undo" the clipping later, make sure you do the 
+        """Use the given @clipPath as a clipping path, or the current path if no
+        path was given. Everything drawn after a `clipPath()` call will be clipped
+        by the clipping path. To "undo" the clipping later, make sure you do the
         clipping inside a `with savedState():` block, as shown in the example."""
         raise NotImplementedError
 
@@ -239,9 +246,10 @@ class AbstractContext:
     def fill(self, c):
         """
         Note: signature differs from DrawBot.
+
         def fill(self, r, g=None, b=None, a=None, alpha=None):
-        Inplementing context needs to check on rgb or cmyk nature of the color.
-        """
+
+        Inplementing context needs to check on RGB or CMYK nature of the color."""
         raise NotImplementedError
 
     cmykFill = fill
@@ -249,9 +257,11 @@ class AbstractContext:
     def stroke(self, c, w=None):
         """
         Note: signature differs from DrawBot.
+
         def stroke(self, r, g=None, b=None, a=None, alpha=None):
-        Implementing method needs to check on rgb or cmyk nature of the color.
-        """
+
+        Implementing method needs to check on RGB or CMYK nature of the
+        color."""
         raise NotImplementedError
 
     cmykStroke = stroke
@@ -259,22 +269,30 @@ class AbstractContext:
     def shadow(self, shadow):
         """Adds a Shadow @shadow instance with an shadow.offset (x, y), `
         shadow.blur and a shadow.color. This is different from DrawBot API
+
         shadow(offset, blur=None, color=None).
-        Inplementing context needs to check on rgb or cmyk nature of the color."""
+
+        Implementing context needs to check on RGB or CMYK nature of the
+        color."""
         raise NotImplementedError
 
     cmykShadow = shadow
 
     def linearGradient(self, gradient, origin, w, h, e=None):
         """A linear Gradient @gradient instance fill with:
+
         * `startPoint` as (x, y)
         * `endPoint` as (x, y)
         * `colors` as a list of colors, described similary as `fill`
         * `locations` of each color as a list of floats. (optionally)
+
         Setting a gradient will ignore the `fill`.
         This is different from the DrawBot API
-        startPoint=None, endPoint=None, colors=None, locations=None)
-        Inplementing context needs to check on rgb or cmyk nature of the color."""
+
+        startPoint=None, endPoint=None, colors=None, locations=None
+
+        Implementing context needs to check on RGB or CMYK nature of the
+        color."""
         raise NotImplementedError
 
     cmykLinearGradient = linearGradient
@@ -396,7 +414,7 @@ class AbstractContext:
 
     # Images
 
-    def image(self, path, p, alpha=1, pageNumber=None, 
+    def image(self, path, p, alpha=1, pageNumber=None,
             w=None, h=None, scaleType=None, e=None):
         raise NotImplementedError
 

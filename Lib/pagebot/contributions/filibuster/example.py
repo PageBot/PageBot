@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-
-
 from .blurb import Blurb
 
 # Show the list of all possible entries.
@@ -29,8 +27,6 @@ print(blurb.getBlurb('air_news_neutral'))
 
 # General aricle new headline
 print(blurb.getBlurb('_headline'))
-
-
 
 # Show the list of all possible entries.
 if SHOW_ALL_TYPES:

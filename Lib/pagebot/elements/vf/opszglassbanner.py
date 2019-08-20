@@ -17,7 +17,7 @@ from pagebot.elements import *
 from pagebot.elements.vf.animationframe import AnimationFrame
 from pagebot.document import Document
 from pagebot.constants import RIGHT
-from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
 from pagebot.conditions import *
 from pagebot.toolbox.color import color, blackColor
 from pagebot.toolbox.units import em

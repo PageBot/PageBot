@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+#
+
+
+
+content = {
+    'stylewars_original': ['The Original Style Wars'],
+    'stylewars_documentary': ['''Directed by Tony Silver and produced by Tony Silver and Henry Chalfant, it was awarded the Grand Prize for Documentaries at the 1983 Sundance Film Festival. STYLE WARS is regarded as the indispensable document of New York Street culture of the early ’80s, the filmic record of a golden age of youthful creativity that exploded into the world from a city in crisis.\n\n
+STYLE WARS captured the look and feel of New York’s ramshackle subway system as graffiti writers’ public playground, battleground and spectacular artistic canvas. Opposing them by every means possible were Mayor Edward Koch, the police, and the New York Transit Authority. Meanwhile MCs, DJs and B-boys rocked the city with new sounds and new moves and street corner breakdance battles evolved into performance art.\n\n
+New York’s legendary kings of graffiti and b-boys own a special place in the hip hop pantheon. STYLE WARS has become an emblem of the original, embracing spirit of hip hop as it reached out across the world from underground tunnels, uptown streets, clubs and playgrounds.'''],
+    'stylewars_bluray': ['''About 10 years ago, Tony Silver and I set out to digitize Style Wars in High Definition. For best results you must go back to the first generation, and make the transfer from the original edited negative. To our great disappointment, we discovered that the negative had been badly damaged by moisture during the two decades it had been in storage. We were told that once we made the transfer, we could restore the film digitally, frame by frame, but that the cost would be astronomical. Sadly, we we put the idea on the shelf. Tony died before realizing this dream. In the years since, His widow, Lisa Citron, and I were able to raise the money for the film’s restoration, almost entirely through fan-based donations. Catherine Keener recruited celebrities from the world of film to contribute artworks they had made for a fundraising auction; a successful Kickstarter campaign raised enough money to produce the outtakes. Through more good fortune, we engaged Chris Woods who did the digital restoration without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'''],
+
+
+}

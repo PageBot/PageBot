@@ -4,11 +4,10 @@
 """
         history
         Airplanes n things
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
 
 __version__ = '4.0'
-
 
 content = {
         'aerospace_headline': ['<#air_news_neutral#>'],
@@ -164,16 +163,16 @@ content = {
                 '<#air_class#> now available on all <#carrier=air_carrier#><#carrier#> flights to <#city#>'
                 ],
         'air_commercial_motto':[
-                'a fine way to fly', 'we know how to fly', 'flying comes natural to us', 'we fly planes the way they were intended', 'we read the manual',
+                'a fine way to fly', 'we know how to fly', 'flying comes natural to us',
+                'we fly planes the way they were intended', 'we read the manual',
                 'taking you there'
                 ],
         }
 
-
 if __name__ == "__main__":
     def test():
             """
-                >>> from pagebot.contributions.filibuster.blurb import blurb 
+                >>> from pagebot.contributions.filibuster.blurb import blurb
                 >>> blurb.getBlurb('air_news_neutral')
             """
     import doctest

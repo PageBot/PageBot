@@ -21,9 +21,11 @@ from pagebot.toolbox.units import pt, px, em, mm, inch, EM_FONT_SIZE
 
 # General indicators
 
-FIT = 'fit' # Special fontsize that makes text fitting on element width.
+# Special fontsize that makes text fitting on element width.
+FIT = 'fit'
 
-ONLINE = 'online' # Positions of borders
+# Positions of borders
+ONLINE = 'online'
 INLINE = 'inline'
 OUTLINE = 'outline'
 
@@ -34,17 +36,22 @@ MIDDLE = 'middle'
 JUSTIFIED = 'justified'
 TOP = 'top'
 BOTTOM = 'bottom'
-FRONT = 'front' # Align in front, z-axis, nearest to view, perpendicular to the screen.
-BACK = 'back' # Align in back, z-axis, nearest to view, perpendicular to the screen.
-DISPLAY_BLOCK = 'block' # Add \n to the end of a style block. Similar to CSS behavior of <div>
-DISPLAY_INLINE = 'inline' # Inline style, similar to CSS behavior of <span>
+# Align in front, z-axis, nearest to view, perpendicular to the screen.
+FRONT = 'front'
+# Align in back, z-axis, nearest to view, perpendicular to the screen.
+BACK = 'back'
+# Add \n to the end of a style block. Similar to CSS behavior of <div>
+DISPLAY_BLOCK = 'block'
+# Inline style, similar to CSS behavior of <span>
+DISPLAY_INLINE = 'inline'
 
 # These sizes are all portrait. For Landscape simply reverse to (H, W) usage.
 # All measure are defined in Unit instances, to make conversion easier.
 #
 # ISO A Sizes
 #
-A0 = mm(841, 1189) # Millimeters real Mm unit instance.
+# Millimeters real Mm unit instance.
+A0 = mm(841, 1189)
 A1 = mm(594, 841)
 A2 = mm(420, 594)
 A3 = mm(297, 420)
@@ -61,11 +68,10 @@ A3Square = A3[0], A3[0] # Square of A3 (portrait, short side)
 A4Square = A4[0], A4[0] # Square of A4 (portrait, short side)
 A5Square = A5[0], A5[0] # Square of A5 (portrait, short side)
 
-A4Rounded = pt(595, 842) # Rounded to points pt(595, 842) to fit exact column measures
+# Rounded to points pt(595, 842) to fit exact column measures.
+A4Rounded = pt(595, 842)
 
-#
-# ISO B Sizes
-#
+# ISO B Sizes.
 B0 = mm(1000,1414)
 B1 = mm(707, 1000)
 B2 = mm(500, 707)
@@ -77,9 +83,8 @@ B7 = mm(88,  125)
 B8 = mm(62,  88)
 B9 = mm(44,  62)
 B10 = mm(31, 44)
-#
-# ISO C Envelop Sizes
-#
+
+# ISO C Envelop Sizes.
 C0 = mm(917, 1297)
 C1 = mm(648, 917)
 C2 = mm(458, 648)
@@ -92,14 +97,28 @@ C8 = mm(57,  81)
 C9 = mm(40,  57)
 C10 = mm(28, 40)
 
+# Flat color type coding.
+RGB = 'rgb'
+RGBA = 'rgba'
+GRAY = 'gray'
+GA = 'ga'
+CMYK = 'cmyk'
+SPOT = 'spot'
+
+# NOTE: other Flat color features are:
+# thinned
+# overprint
+
 # American Sizes as non-rounded values
 HalfLetter = inch(8.5, 5.5)
 Letter = inch(8.5, 11)
 Legal = inch(8.5, 14)
 JuniorLegal = inch(5, 8)
 Tabloid = inch(11, 17)
+
 # Other rounded definintions compatible to DrawBot predefines
-#Screen = getContext().screenSize() # Current screen size. TODO: fix this
+# Current screen size. FIXME: not working yet.
+#Screen = getContext().screenSize()
 Ledger = pt(1224, 792)
 Statement = pt(396, 612)
 Executive = pt(540, 720)
@@ -107,15 +126,17 @@ Folio = pt(612, 936)
 Quarto = pt(610, 780)
 Size10x14 = pt(720, 1008)
 
-
 # Hybrid sizes
 # International generic fit for stationary
-A4Letter = A4[0], Letter[1] # 210mm width and 11" height will always fit printer and fax.
-# Oversized (depending on requirement of printer, including 36pt view padding for crop marks
+# 210mm width and 11" height will always fit printer and fax.
+A4Letter = A4[0], Letter[1]
+
+# Oversized (depending on requirement of printer, including 36pt view padding
+# for crop marks.
 A4Oversized = A4[0]+inch(1), A4[1]+inch(1)
 A3Oversized = A3[0]+inch(1), A3[1]+inch(1)
 
-# International Postcard Size
+# International Postcard Size.
 IntPostcardMax = mm(235, 120)
 IntPostcardMin = mm(140, 90)
 AnsichtCard = pt(A6[1].rounded, A6[0].rounded) # Landscape Rounded A6
@@ -127,26 +148,35 @@ USPostcardMin = inch(5, 3.5)
 # Business card, https://nl.wikipedia.org/wiki/Visitekaartje
 ISO216 = A8
 BusinessCard = ISOCreditCard = mm(85.60, 53.98)
+
 # USA, Canada
 BusinessCardUS = inch(3.5, 2)
-# Germany, France, Italy, Spain, UK, Netherlands, Portugal, Iceland IS
+
+# Germany, France, Italy, Spain, UK, Netherlands, Portugal, Iceland IS.
 BusinessCardEurope = mm(85, 55)
-# Poland PL, Czech Republic CZ, Slovakia SK, Hungary HU, Croatia HR, Bosnia and Herzegovina BA,
-# Serbia, Montenegro, Albania AL, Macedonia MK, Bulgaria BG, Romania RO, Moldova MD, Ukraine UA,
-# Belarus BY, Lithuania LT, Latvia LV, Estonia EE, Finland FI, Georgia GE, Armenia AM, Azerbaijan AZ,
-# Sri Lanka LK, South Korea KR, South Africa ZA, Namibia NA, Israel IL,
-# Mexico MX, Brazil BR, Argentina AR, Venezuela VE, Russia RU, Kazakhstan KZ, Uzbekistan UZ
+
+# Poland PL, Czech Republic CZ, Slovakia SK, Hungary HU, Croatia HR, Bosnia and
+# Herzegovina BA, Serbia, Montenegro, Albania AL, Macedonia MK, Bulgaria BG,
+# Romania RO, Moldova MD, Ukraine UA, Belarus BY, Lithuania LT, Latvia LV,
+# Estonia EE, Finland FI, Georgia GE, Armenia AM, Azerbaijan AZ, Sri Lanka LK,
+# South Korea KR, South Africa ZA, Namibia NA, Israel IL, Mexico MX, Brazil BR,
+# Argentina AR, Venezuela VE, Russia RU, Kazakhstan KZ, Uzbekistan UZ
 BusinessCardEastEurope = BusinessCardWorld = mm(90, 50)
+
 # Iran IR
 BusinessCardIran = mm(85, 48)
-# Australia, New Zealand, India IN, Taiwan TW, Vietnam VN, Thailand TH, Cambodia KH, Laos LA,
-# Myanmar (Burma) MM, Bangladesh BD, Bhutan BT, Nepal NP, Colombia CO,
-# Norway NO, Sweden SE, Denmark DK, Greece GR
+
+# Australia, New Zealand, India IN, Taiwan TW, Vietnam VN, Thailand TH,
+# Cambodia KH, Laos LA, Myanmar (Burma) MM, Bangladesh BD, Bhutan BT, Nepal NP,
+# Colombia CO, Norway NO, Sweden SE, Denmark DK, Greece GR
 BusinessCardAustralia = mm(90, 55)
+
 # Turkey TR
 BusinessCardTurkey = mm(85, 50)
+
 # Egypt EG
 BusinessCardTurkey = mm(87), mm(57)
+
 # China CN, Hong Kong HK, Singapore SG, Mongolia MN, Malaysia MY
 BusinessCardChina = mm(90, 54)
 BusinessCardJapan = mm(91, 55)
@@ -154,9 +184,11 @@ BusinessCardJapan = mm(91, 55)
 # Popular Online Business Card Printers
 # Vistaprint
 BusinessCardVistaprint = mm(87, 49)
+
 # Moo Cards
 BusinessCardMoo = mm(84, 55)
 BusinessCardMooMini = mm(70, 28)
+
 # Zazzle Cards
 BusinessCardZazzle = inch(3.5, 2)
 BusinessCardZazzleChubby = inch(3.5, 2.5)
@@ -175,7 +207,8 @@ InstagramLandscape = px(1080, 566)
 InstagramPortrait = px(1080, 1350)
 
 # Standard size of online printing sites.
-# TODO: Add more online services and adapt other parameters/preferences for these PDF's
+# TODO: Add more online services and adapt other parameters/preferences for
+# these PDF's.
 
 # www.blurb.com
 BlurbPhotobookSmallSquare = inch(7, 7)
@@ -246,11 +279,10 @@ Nexus9 = pt(768, 1024) # 1536 x 2048
 SamsungGalaxyTab10 = pt(800, 1280) # 800 x 1280
 ChromebookPixel = pt(1280, 850) # 2560 x 1700
 
-
 PAGE_SIZES = dict(
     # NEN sizes
     A0=A0, A1=A1, A2=A2, A3=A3, A4=A4,
-    A5=A5, A6=A6, A7=A7, A8=A8, A9=A9, A10=A10, 
+    A5=A5, A6=A6, A7=A7, A8=A8, A9=A9, A10=A10,
     A2Square=A2Square, A3Square=A3Square,
     A4Square=A4Square, A5Square=A5Square, A4Rounded=A4Rounded,
     B0=B0, B1=B1, B2=B2, B3=B3, B4=B4,
@@ -260,7 +292,7 @@ PAGE_SIZES = dict(
     # US sizes
     HalfLetter=HalfLetter, Letter=Letter, Legal=Legal,
     JuniorLegal=JuniorLegal, Tabloid=Tabloid, Ledger=Ledger,
-    Statement=Statement, Executive=Executive, Folio=Folio, 
+    Statement=Statement, Executive=Executive, Folio=Folio,
     Quarto=Quarto, Size10x14=Size10x14, A4Letter=A4Letter,
     A4Oversized=A4Oversized, A3Oversized=A3Oversized,
     IntPostcardMax=IntPostcardMax, IntPostcardMin=IntPostcardMin,
@@ -268,13 +300,13 @@ PAGE_SIZES = dict(
     USPostcardMax=USPostcardMax, USPostcardMin=USPostcardMin,
     # Business cards
     BusinessCard=BusinessCard, BusinessCardUS=BusinessCardUS,
-    BusinessCardEurope=BusinessCardEurope, 
+    BusinessCardEurope=BusinessCardEurope,
     BusinessCardEastEurope=BusinessCardEastEurope,
     BusinessCardWorld=BusinessCardWorld,
-    BusinessCardIran=BusinessCardIran, 
+    BusinessCardIran=BusinessCardIran,
     BusinessCardAustralia=BusinessCardAustralia,
     BusinessCardTurkey=BusinessCardTurkey,
-    BusinessCardChina=BusinessCardChina, 
+    BusinessCardChina=BusinessCardChina,
     BusinessCardJapan=BusinessCardJapan,
     BusinessCardVistaprint=BusinessCardVistaprint,
     BusinessCardMoo=BusinessCardMoo,
@@ -284,11 +316,11 @@ PAGE_SIZES = dict(
     BusinessCardZazzleSkinny=BusinessCardZazzleSkinny,
     # Newspapers
     Newspaper_Tabloid=Newspaper_Tabloid,
-    Newspaper_Broadsheet=Newspaper_Broadsheet, 
+    Newspaper_Broadsheet=Newspaper_Broadsheet,
     Newspaper_Berliner=Newspaper_Berliner,
     # Websites offering document services
     InstagramHires=InstagramHires, Instagram=Instagram,
-    InstagramLegacy=InstagramLegacy, 
+    InstagramLegacy=InstagramLegacy,
     InstagramLandscape=InstagramLandscape,
     InstagramPortrait=InstagramPortrait,
     BlurbPhotobookSmallSquare=BlurbPhotobookSmallSquare,
@@ -309,7 +341,7 @@ PAGE_SIZES = dict(
     OpBookletSmall=OpBookletSmall, OpBooklet=OpBooklet,
     # Phones
     iPhoneeX=iPhoneeX, iPhone8Plus=iPhone8Plus, iPhone8=iPhone8,
-    iPhone7Plus=iPhone7Plus, iPhone7=iPhone7, 
+    iPhone7Plus=iPhone7Plus, iPhone7=iPhone7,
     iPhone6Plus=iPhone6Plus, iPhone6SPlus=iPhone6SPlus,
     iPhone6=iPhone6, iPhone5=iPhone5, iPodTouch=iPodTouch,
     iPadPro=iPadPro, iPadThirdGeneration=iPadThirdGeneration,
@@ -319,14 +351,15 @@ PAGE_SIZES = dict(
     GooglePixelXL=GooglePixelXL, GooglePixel2=GooglePixel2,
     GooglePixel2XL=GooglePixel2XL, LGG5=LGG5, OnePlus3=OnePlus3,
     SamsungGalaxyNote5=SamsungGalaxyNote5,
-    SamsungGalaxyS9=SamsungGalaxyS9, 
+    SamsungGalaxyS9=SamsungGalaxyS9,
     SamsungGalaxyS9Plus=SamsungGalaxyS9Plus,
     SamsungGalaxyS8=SamsungGalaxyS8,
     SamsungGalaxyS8Plus=SamsungGalaxyS8Plus, Nexus9=Nexus9,
-    SamsungGalaxyS7=SamsungGalaxyS7, Nexus7=Nexus7, 
-    SamsungGalaxyTab10=SamsungGalaxyTab10, 
+    SamsungGalaxyS7=SamsungGalaxyS7, Nexus7=Nexus7,
+    SamsungGalaxyTab10=SamsungGalaxyTab10,
     ChromebookPixel=ChromebookPixel,
 )
+
 # Types of Quire formats, how to compose pages from folding sheets.
 # Gutter between the pages is defined by the page.margin values.
 QUIRE_SINGLE = (1, 1) # Single page
@@ -699,17 +732,24 @@ TOP_FOLD = TOP+'Fold'
 BOTTOM_FOLD = BOTTOM+'Fold'
 LEFT_FOLD = LEFT+'Fold'
 RIGHT_FOLD = RIGHT+'Fold'
-# Flags to indicate where crop marks and registration marks should be placed, their size and position
+# Flags to indicate where crop marks and registration marks should be placed,
+# their size and position
 # e.showCropMarks = False
 DEFAULT_CROPMARKS = {TOP, RIGHT, BOTTOM, LEFT, TOP_FOLD, BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD}
-# See constants for the options to direct the side, position and size of the registration marks.
+
+# See constants for the options to direct the side, position and size of the
+# registration marks.
 # e.showRegistrationMarks = False
 DEFAULT_REGISTRATIONMARKS = {TOP, RIGHT, BOTTOM, LEFT}
 
-DEFAULT_MININFOPADDING = pt(36) # Default min-info padding of view, before side information collapses.
+# Default min-info padding of view, before side information collapses.
+DEFAULT_MININFOPADDING = pt(36)
 
-VIEW_PRINT = 'Print' # View settings flags to True for print (such as crop marks and registration marks)
-VIEW_PRINT2 = 'Print2' # Extended view settings flags to True for print (such as color bars)
+# View settings flags to True for print (such as crop marks and registration
+# marks)
+VIEW_PRINT = 'Print'
+# Extended view settings flags to True for print (such as color bars)
+VIEW_PRINT2 = 'Print2'
 VIEW_DEBUG = 'Debug' # View settings flags to True that are useful for debugging a document
 VIEW_DEBUG2 = 'Debug2' # Extended view settings flags to True that are useful for debugging a document
 VIEW_FLOW = 'Flow' # View settings that show text flow markers.
@@ -759,7 +799,8 @@ MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
 TEXT_TYPES = (FILETYPE_TXT, FILETYPE_MD)
 
-# Max image size of scaled cache (used mulitplied by resolution per image type DEFAULT_RESOLUTION_FACTORS
+# Max image size of scaled cache (used mulitplied by resolution per image type
+# DEFAULT_RESOLUTION_FACTORS
 MAX_IMAGE_WIDTH = pt(800)
 
 SCALE_TYPE_PROPORTIONAL = 'Proportional' # Default, best fitting for smallest of (w, h)

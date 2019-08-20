@@ -4,7 +4,7 @@
 """
         history
         All the filibuster specific stuff, or things that are shared by all themes like copyright notices etc.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 3.0.0    - split all the content into babycontents
 evb        - note: only one dictionary named 'content' allowed per module
         this limitation is to speed up loading
@@ -35,41 +35,36 @@ content = {
         'filibuster_productname':        ['<#!bold, filibuster_productprefix#><#!bold, filibuster_productsuffix#>'],
         'filibuster_productprefix':        ['World', 'Page', 'Content', 'Material', 'Data', 'Spoof', 'Knowledge', 'AI-'],
         'filibuster_productsuffix':        ['Creator', 'Compiler', 'Builder', 'Assembler', 'Interpreter', 'Thinker'],
-        
+
         #
         'filibuster_terms':        ["Don't you dare use any of the content, images, text, names or anything else - we'll send our lawyers <#broker#> after you!"],
-        
+
         # note: the names of the following items have been standardised, don't change the name
         'filibuster_disclaimer'    :    ['Filibuster.org is randomly generated based on algorithms and word lists. Any similarity between Filibuster.org and any venture real or ficticious is completely coincidental, and moreover shows a real lack of imagination on your part. I mean, come on: "<#company#>." Please.'],
         'filibuster_privacy_statement':    ['''This privacy statement is applicable to filibuster.org, <#!bold, company#> and <#!bold, _company#>
-                
+
 
                 Considering you’re not really visiting a real website, we can’t make any genuine promises what we do with the data that we're not collecting.
-                
+
 
                 If you have any questions about the privacy policies of <#!bold, company#>, please contact <#!bold, name#>, our <#position#>.
 <#eMail_biz_info#>
-                
-                '''],
 
+                '''],
 
     # ------------------------------------------------------
     #    mission statements and other non-consequential filler text
     #
-    
+
     'filler_hotair':    ['<#creditcard_accepted#>',
             '<#company#>',
             'Have you checked in yet?',
             '<#company#> is Y2K compliant.',
             '<#company#> is <#p_acronym#> registered!',
             ],
-    'filler_intro':    ['News provided by:', 
+    'filler_intro':    ['News provided by:',
             'This news is brought to you by:',
             'Our <#j_thing#> partners:',
             '<#company#> is proud to be associated with:'
             ]
         }
-
-
-
-

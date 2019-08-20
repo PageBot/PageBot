@@ -15,21 +15,20 @@
 #     flatcontext.py
 #
 
-#import imageio
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
-        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE)
+        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.context import BaseContext
-from pagebot.contexts.flat.builder import flatBuilder, BezierPath
+from pagebot.contexts.flat.flatbuilder import flatBuilder, BezierPath
 from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
 
+
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
 
-    * xxyxyz.org/flat
     * xxyxyz.org/flat
 
     Text behavior:
@@ -79,12 +78,19 @@ class FlatContext(BaseContext):
         self.flatString = None
         self.fileType = DEFAULT_FILETYPE
         self._pages = []
+        self.flipped = True
 
     #   D O C U M E N T
 
+<<<<<<< HEAD:Lib/pagebot/contexts/flat/context.py
     def newDocument(self, w, h, size=None, doc=None):
         """Create a new self.doc Flat canvas to draw on. The @doc is
         the optional Document instance of the caller.
+=======
+    def newDocument(self, w, h, size=None, doc=None, flipped=True):
+        """Create a new self.doc Flat canvas to draw on. Flipped Y-axis by
+        default to conform to DrawBot's drawing methods.
+>>>>>>> origin/master:Lib/pagebot/contexts/flat/flatcontext.py
 
         >>> context = FlatContext()
         >>> context.newDocument(100, 100)
@@ -96,8 +102,17 @@ class FlatContext(BaseContext):
         """
         if size is not None:
             w, h = size
+        self.flipped = flipped
+
         wpt, hpt = upt(w, h) # Convert units to point values
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+
+    def getY(self, y):
+        if not self.flipped:
+            return y
+        else:
+            y = self.doc.height - y
+            return y
 
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -143,9 +158,6 @@ class FlatContext(BaseContext):
         self.checkExportPath(path)
         self.fileType = path.split('.')[-1].lower()
 
-        RGB = 'rgb'
-        RGBA = 'rgba'
-
         if self.fileType == FILETYPE_PNG:
             if len(self.pages) == 1 or not multiPage:
                 im = self.pages[0].image(kind=RGB)
@@ -154,6 +166,7 @@ class FlatContext(BaseContext):
                 for n, p in enumerate(self.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).png(pagePath)
+
         elif self.fileType == FILETYPE_JPG:
             if len(self.pages) == 1 or not multiPage:
                 self.pages[0].image(kind=RGB).jpeg(path)
@@ -210,7 +223,7 @@ class FlatContext(BaseContext):
         #context.newDrawing(w, h)
         pass
 
-    #   C A N V A S
+    #   S T A T E
 
     def saveGraphicState(self):
         """Save the current graphic state.
@@ -284,7 +297,7 @@ class FlatContext(BaseContext):
 
     #   A N I M A T I O N
 
-    def frameDuration(self, secondsPerFrame):
+    def frameDuration(self, secondsPerFrame, **kwargs):
         """Set the frame duretion for animated gifs to a number of seconds per
         frame."""
         self._frameDuration = secondsPerFrame
@@ -346,7 +359,7 @@ class FlatContext(BaseContext):
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', 12) # Font does not exists, font path is set to DEFAULT_FONT_PATH
+        >>> context.font('OtherFont', 12) # If doesn't exists, path is set to default.
         >>> context._font == DEFAULT_FONT_PATH
         True
         >>> context._fontSize # Renders to pt-unit
@@ -373,13 +386,24 @@ class FlatContext(BaseContext):
         """
         self._fontSize = upt(fontSize)
 
-    def textBox(self, bs, r):
+    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """
-        ...
 
-        FIXME: Not using width and height here?"""
+        FIXME: Not using width and height here?
+        TODO: clipPath
+        TODO: align
+
+        """
+        if hasattr(sOrBs, 's'):
+            # Assume here is's a BabelString with a FormattedString inside.
+            sOrBs = sOrBs.s
+        else:
+            # Otherwise convert to string if it isn't already.
+            sOrBs = str(sOrBs)
+
         xpt, ypt, _, _ = upt(r)
-        placedText = self.page.place(bs.s)
+        placedText = self.page.place(sOrBs)
+
         placedText.position(xpt, ypt)
 
     def textSize(self, bs, w=None, h=None):
@@ -424,8 +448,8 @@ class FlatContext(BaseContext):
             return (w, w/len(bs))
 
     def textOverflow(self, bs, w, h, align=LEFT):
-        """Answers the overflowing of from the box (0, 0, w, h) as new FlatString
-        in the current context."""
+        """Answers the the box (0, 0, w, h) overflow as a new FlatString in the
+        current context."""
         wpt, hpt = upt(w, h)
         return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
 
@@ -457,21 +481,24 @@ class FlatContext(BaseContext):
         # Answer units of the same time as the document.w was defined.
         return pt(img.width), pt(img.height)
 
-    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
-        """Draw the image. If w or h is defined, then scale the image to fit."""
-        if w is None or h is None:
-            w, h = self.imageSize(path)
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None, scaleType=None):
+        """Draws the image. If position is none, sets x and y to the origin. If
+        w or h is defined, then scale the image to fit."""
         if p is None:
             p = 0, 0
+
+
         xpt, ypt = point2D(upt(p))
         self.save()
-        # TODO Skip for now.
-        """
-        img = self.b.image(path, height=h, width=w)
-        img.resize(width=w.pt, height=h.pt)
+
+        img = self.b.image.open(path)
+
+        # TODO: calculate other if one is None.
+        if not w is None and not h is None:
+            img.resize(width=w.pt, height=h.pt)
+
         placed = self.page.place(img)
         placed.position(xpt, ypt)
-        """
         self.restore()
 
     #   D R A W I N G
@@ -482,12 +509,12 @@ class FlatContext(BaseContext):
 
         TODO: Make better match for all file types, transparency and spot
         color."""
-        from flat3 import rgb
+        from flat import rgb
         return rgb(*to255(c.rgb))
 
 
     def _getShape(self):
-        """Renders Pagebot FlatBuilder shape to Flat shape. Flat function."""
+        """Renders Pagebot FlatBuilder shape to a Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
             return None
 
@@ -512,11 +539,12 @@ class FlatContext(BaseContext):
         """
         if not self.doc:
             self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
+
         if not self.pages:
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        y = self.getY(y) - h
         shape = self._getShape()
 
         if shape is not None:
@@ -525,19 +553,26 @@ class FlatContext(BaseContext):
             self.page.place(r)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle, where (x,y) is the bottom left origin and
-        (w,h) is the size. This default DrawBot behavior, different from
-        default Flat, where the (x,y) is the middle if the oval. Compensate for
-        the difference."""
-        xpt, ypt, wpt, hpt = upt(x, y, w, h)
+        """Draws an oval in a rectangle, where (x, y) is the bottom left origin
+        and (w, h) is the size. This default DrawBot behavior, different from
+        default Flat, where the (x, y) is the middle of the oval. Compensate
+        for the difference."""
+        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.ellipse(xpt-wpt/2, ypt-hpt/2, wpt, hpt))
+            x0 = x + w / 2
+            y0 = self.getY(y+ h / 2)
+            w0 = w
+            h0 = h
+            self.page.place(shape.ellipse(x0, y0, w0, h0))
 
     def circle(self, x, y, r):
-        """Draws a circle in square with radius r and (x,y) as middle."""
+        """Draws a circle in a square with radius r and (x, y) as center."""
         xpt, ypt, rpt = upt(x, y, r)
+        ypt = self.getY(ypt)
+
         shape = self._getShape()
 
         if shape is not None:
@@ -552,18 +587,23 @@ class FlatContext(BaseContext):
             self.ensure_page()
             self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
 
+    #   P A T H
+
     def newPath(self):
-        """Create a new path list, o collect the path commands."""
-        self._path = BezierPath(self.b) # Collect path commands here.
+        """Creates a new Bézier path object to store subsequent path commands."""
+        self._path = BezierPath(self.b)
         return self._path
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
+        """Renders the path object as a Flat vector graphic."""
         if p is None:
             xpt = ypt = 0
         else:
             xpt, ypt = point2D(upt(p))
+
         # TODO: xpt, ypt?
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.path(self._path.commands))
@@ -665,13 +705,13 @@ class FlatContext(BaseContext):
         self._strokeWidth = upt(w)
 
     def translate(self, dx, dy):
-        """Translate the origin by (dx, dy)."""
+        """Translates the origin by (dx, dy)."""
         dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dxpt
         self._oy += dypt
 
     def rotate(self, angle, center=None):
-        """Rotate by angle."""
+        """Rotates by angle."""
         self._rotationCenter = center
         self._rotate = angle
 

@@ -140,7 +140,11 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
+<<<<<<< HEAD
     def newPage(self, w=None, h=None, doc=None):
+=======
+    def newPage(self, w=None, h=None, **kwargs):
+>>>>>>> origin/master
         """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
@@ -410,7 +414,7 @@ class BaseContext(AbstractContext):
         self.b.drawPath(bezierPath)
         self.restore()
 
-    def clipPath(self, clipPath):
+    def clipPath(self, clipPath=None):
         """Sets the clipPath of the DrawBot builder in a new saved graphics
         state. Clip paths cannot be restored, so they should be inside a
         context.save() and context.restore().
@@ -914,7 +918,7 @@ class BaseContext(AbstractContext):
 
     # Mov.
 
-    def frameDuration(self, secondsPerFrame):
+    def frameDuration(self, secondsPerFrame, **kwargs):
         """Set the self._frameDuration for animated GIFs to a number of seconds
         per frame. Used when initializing a new page."""
         self.b.frameDuration(secondsPerFrame or DEFAULT_FRAME_DURATION)

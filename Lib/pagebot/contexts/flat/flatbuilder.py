@@ -13,8 +13,8 @@
 #
 #     flatbuilder.py
 #
-import flat3
-flatBuilder = flat3
+import flat
+flatBuilder = flat
 
 # ID to make builder hook name. Views will try to call e.build_flat().
 flatBuilder.PB_ID = 'flat'

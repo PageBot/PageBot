@@ -58,7 +58,7 @@ class HtmlContext(BaseContext):
     def endDrawing(self):
         pass
 
-    def newPage(self, w=None, h=None, doc=None):
+    def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
         pass
 
     def frameDuration(self, value):
@@ -98,7 +98,7 @@ class HtmlContext(BaseContext):
         """Answers the (w, h) image size of the image file at path. As we cannot assume
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
-        from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         return DrawBotContext().imageSize(path)
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
@@ -106,7 +106,7 @@ class HtmlContext(BaseContext):
         """Scales the images and save to another file. As we cannot assume
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
-        from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         return DrawBotContext().scaleImage(path, w, h, index=index,
             showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
             force=force)
@@ -124,6 +124,7 @@ class HtmlContext(BaseContext):
         self._fill = c
 
     setFillColor = fill # DrawBot compatible API
+    cmykFill = fill
 
     def stroke(self, c, w=None):
         self._stroke = c
@@ -131,6 +132,7 @@ class HtmlContext(BaseContext):
             self.strokeWidth(w)
 
     setStrokeColor = stroke # DrawBot compatible API
+    cmykStroke = stroke
 
     def strokeWidth(self, w):
         self._strokeWidth = w
@@ -151,6 +153,20 @@ class HtmlContext(BaseContext):
         return 0
 
     def saveDocument(self, path):
+        pass
+
+    def shadow(self, eShadow, e=None):
+        pass
+
+    def linearGradient(self, startPoint=None, endPoint=None, colors=None,
+            locations=None):
+        pass
+
+    cmykShadow = shadow
+    cmykLinearGradient = linearGradient
+    cmykRadialGradient = linearGradient
+
+    def setStyles(self, styles):
         pass
 
 if __name__ == '__main__':

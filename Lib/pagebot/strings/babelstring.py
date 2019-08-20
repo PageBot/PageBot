@@ -15,7 +15,7 @@
 #
 from copy import copy
 from pagebot.toolbox.units import pt
-from pagebot.constants import LEFT
+from pagebot.constants import LEFT, DEFAULT_LANGUAGE
 
 class BabelString:
     """BabelString is the base class of all types of (formatted) string
@@ -47,9 +47,29 @@ class BabelString:
 
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
-        # Optional style to set the context parameters.
+
+        # Optional style to set the context parameters. In case defined, store
+        # current status here as property and set the current FormattedString
+        # for future additions. Also the answered metrics will not be based on
+        # these values.
+        if style is None:
+            style = {}
+
         self.style = style
+
         self.context = context
+        self.language = DEFAULT_LANGUAGE
+        self.hyphenation = False
+
+        # Filled in case w or h are defined and depending if the font is a
+        # variable font. Set to fitting font size, in case the size iterates
+        # to find width.
+        self.fittingFontSize = pt(0)
+        # In case we are sampling with a Variable Font.
+        self.fittingFont = None
+        self.fittingLocation = None
+        self.isFitting = False
+
 
     def __repr__(self):
         return '%s' % self.s
@@ -78,7 +98,7 @@ class BabelString:
         """Answers a copy of self with a sliced string or with a single indexed
         character.
 
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newString('blablabla')[2:]
         ablabla
