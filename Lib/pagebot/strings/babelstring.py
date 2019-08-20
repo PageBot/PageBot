@@ -98,7 +98,7 @@ class BabelString:
         """Answers a copy of self with a sliced string or with a single indexed
         character.
 
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> context.newString('blablabla')[2:]
         ablabla

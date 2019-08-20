@@ -98,7 +98,7 @@ class Element:
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
 
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> from pagebot.document import Document
         >>> c = DrawBotContext()
         >>> size = pt(300, 400)
@@ -114,7 +114,7 @@ class Element:
         >>> e.build(view, pt(0, 0))
         """
         """
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> size = pt(320, 420)
@@ -1648,7 +1648,7 @@ class Element:
         conversion defined (no reliable way of doing that, they should be created
         in the right context from the beginning).
 
-        >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> context = DrawBotContext()
         >>> e = Element(context=context)
         """
@@ -1658,7 +1658,7 @@ class Element:
         >>> bs = e.newString('ABC')
         >>> str(bs.s)
         'ABC'
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> e = Element(context=context)
         >>> bs = e.newString('ABC')

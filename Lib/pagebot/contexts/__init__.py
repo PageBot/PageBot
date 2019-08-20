@@ -83,30 +83,28 @@ def getContext(contextType='DrawBot'):
 
 def getDrawBotContext():
     # TODO: check if drawBotContext exists first, ask to install.
-    from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+    from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
     return DrawBotContext()
 
 def getFlatContext():
-    from pagebot.contexts.flat.context import FlatContext
+    from pagebot.contexts.flat.flatcontext import FlatContext
     return FlatContext()
 
 def getCanvasContext():
-    from pagebot.contexts.canvas.context import CanvasContext
+    from pagebot.contexts.canvas.canvascontext import CanvasContext
     return CanvasContext()
 
 def getHtmlContext():
     from pagebot.contexts.xml.htmlcontext import HtmlContext
     return HtmlContext()
 
-'''
-def getInDesignContext():
-    from indesigncontext import InDesignContext
-    return InDesignContext()
+#def getInDesignContext():
+#    from indesigncontext import InDesignContext
+#    return InDesignContext()
 
-def getIdmlContext():
-    from pagebot.contexts.idmlcontext import IdmlContext
-    return IdmlContext()
-'''
+#def getIdmlContext():
+#    from pagebot.contexts.idmlcontext import IdmlContext
+#    return IdmlContext()
 
 def getSvgContext():
     from pagebot.contexts.xml.svgcontext import SvgContext

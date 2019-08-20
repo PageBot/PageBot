@@ -37,7 +37,7 @@ class FlatString(BabelString):
         flat string. Optionally stores the (latest) style that was
         used to produce the formatted string.
 
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> bs = context.newString('ABC')
         >>> #bs
@@ -111,7 +111,7 @@ class FlatString(BabelString):
     def __len__(self):
         """Answers the number of characters in self.s
 
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> fs = FlatString('ABC', context)
         >>> fs
@@ -124,7 +124,7 @@ class FlatString(BabelString):
     def asText(self):
         """Answers as unicode string.
 
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> fs = FlatString('ABC', context)
         >>> fs.s
@@ -173,7 +173,7 @@ class FlatString(BabelString):
         then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.flat.context import FlatContext
+        >>> from pagebot.contexts.flat.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
         >>> 'flat.text.text' in str(bs)

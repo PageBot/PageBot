@@ -24,7 +24,7 @@ class Rect(Element):
 
     >>> from pagebot.toolbox.color import color
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebotcocoa.contexts.drawbot.context import DrawBotContext
+    >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
     >>> w, h = pt(300, 400)
@@ -42,7 +42,7 @@ class Rect(Element):
 
     """
     """ TODO: Get to work in Flat
-    >>> from pagebot.contexts.flat.context import FlatContext
+    >>> from pagebot.contexts.flat.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
