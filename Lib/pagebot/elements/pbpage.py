@@ -456,9 +456,9 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
         b.clearHtml()
-        #b.clearCss()
 
-        self.build_scss(view)
+        #b.clearCss()
+        #self.build_scss(view)
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
@@ -532,10 +532,11 @@ class Page(Element):
 
                 # If there is accumulated CSS in the builder, e.g. by individual
                 # elements for this page only, then add that directly inside
-                # the page
-                if b.hasCss():
+                # the page. Recursively query all page elements for their contributions.
+                pageCssList = self.build_css(view)
+                if pageCssList:
                     b.style()
-                    b.addHtml(b.getCss())
+                    b.addHtml('\n'.join(pageCssList))
                     b._style()
 
                 # View and pages can both implements CSS paths

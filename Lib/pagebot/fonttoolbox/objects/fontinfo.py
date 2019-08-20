@@ -57,6 +57,7 @@ class FontInfo:
         self.location = None
         self.varStyleName = None
         self.installedName = None # Storage for the installed (menu) name, e.g. DrawBotContext.font(path)
+        self.cssFontUrl = 'fonts/' # Change if css fonts are in a different url.
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None
@@ -140,7 +141,38 @@ class FontInfo:
 
     @cached_property
     def cssName(self):
-        return self.familyName + '-' + self.styleName
+        cssName = self.familyName
+        if self.styleName:
+            cssName += '-' + self.styleName
+        return cssName
+
+    @cached_property
+    def eotName(self):
+        eotName = self.cssFontUrl + self.familyName
+        if self.styleName:
+            eotName += '-' + self.styleName.replace(' ', '_')
+        return eotName + '.eot'
+
+    @cached_property
+    def woff2Name(self):
+        woff2Name = self.cssFontUrl + self.familyName
+        if self.styleName:
+            woff2Name += '-' + self.styleName.replace(' ', '_')
+        return woff2Name + '.woff2'
+
+    @cached_property
+    def woffName(self):
+        woffName = self.cssFontUrl + self.familyName
+        if self.styleName:
+            woffName += '-' + self.styleName.replace(' ', '_')
+        return woffName + '.woff'
+
+    @cached_property
+    def ttfName(self):
+        ttfName = self.cssFontUrl + self.familyName
+        if self.styleName:
+            ttfName += '-' + self.styleName.replace(' ', '_')
+        return ttfName + '.ttf'
 
     @cached_property
     def copyright(self):

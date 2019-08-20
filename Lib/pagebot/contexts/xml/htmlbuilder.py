@@ -24,7 +24,8 @@ from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,
         object2SpacedString, value2Bool)
 from pagebot.toolbox.units import upt
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.constants import DEFAULT_FONT
 
 class HtmlBuilder(XmlBuilder):
     """The HtmlBuilder class implements the standard XHTML tag set with all
@@ -400,6 +401,10 @@ table {
             assert isinstance(css, str), ('Added CSS should be of type str "%s"' % css)
             self._cssOut.append(css)
 
+    def containsCss(self, css):
+        """Answer the boolean string if this css already exists in the self._cssOut."""
+        return bool(css in self.getCss())
+
     def getCss(self):
         """Answers the joined content of sel._cssOut."""
         return ''.join(self._cssOut)
@@ -494,11 +499,11 @@ table {
         if upt(e.pr):
             scss[scssId+'-padding-right'] = e.pr
         if e.css('font') is not None:
-            if os.path.exists(e.css('font')):
-                font = Font(e.css('font'))
-                scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
-            else:
-                font = e.css('font')
+            font = e.css('font')
+            if not hasattr(font, 'path'):  # In case it is not a PageBot Font instance.
+                font = findFont(font, default=DEFAULT_FONT)
+            assert font is not None
+            scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
         if e.css('fontSize') is not None:
             scss[scssId+'-font-size'] = e.css('fontSize')
         if e.css('fontStyle') is not None:

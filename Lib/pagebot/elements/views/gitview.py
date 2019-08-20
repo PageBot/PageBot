@@ -51,7 +51,7 @@ class GitView(SiteView):
                 getattr(page, hook)(self) # Typically calling page.prepare_html
 
         # If resources defined, copy them to the export folder.
-        self.copyResources(path)
+        self.copyResources(path, removeExisting=False)
 
         for pn, pages in doc.pages.items():
             for page in pages:

@@ -259,7 +259,7 @@ class BaseTheme:
             fontSize, leading, tracking = fontSizes[tag] 
         else: # If unknown tag, then take body values.
             fontSize, leading, tracking = fontSizes['body']
-        padding = pt(48) # Must be pt, to convert automatic in CSS, for now.
+        padding = pt(12) # Must be pt, to convert automatic in CSS, for now.
         margin = 0
         return dict(
             font=DEFAULT_FONT_NAME,

@@ -101,7 +101,7 @@ class MampView(SiteView):
         #        b.compileScss(self.SCSS_PATH)
 
         # If resources defined, copy them to the export folder.
-        self.copyResources(path)
+        self.copyResources(path, removeExisting=False)
 
 
     def getUrl(self, name):

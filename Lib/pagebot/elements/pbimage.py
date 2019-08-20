@@ -20,7 +20,7 @@ import os
 
 from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL 
-from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
+from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt, isUnit
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import path2Extension
 
@@ -68,7 +68,7 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
-            size=None, z=0, mask=None, imo=None, proportional=True, index=1,
+            size=None, cssSize=None, z=0, mask=None, imo=None, proportional=True, index=1,
             scaleImage=True, resolutionFactor=None, scaleType=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -86,18 +86,20 @@ class Image(Element):
                     w, h = point2D(size)
                 if w is not None:
                     # Brackets: Divide into ratio number before multiplying.
-                    self.size = w, w * (self.ih/self.iw)
+                    uw = units(w)
+                    self.size = uw, self.ih/self.iw * uw
                 elif h is not None:
                     # Brackets: Divide into ratio number before multiplying.
-                    self.size = h * (self.iw/self.ih), h
+                    uh = units(h)
+                    self.size = self.iw/self.ih * uh, uh
                 else:
-                    self.size = units(w, h)
+                    self.size = units(self.iw, self.ih)
             else:
                 # No proportional flag, try to figure out from the supplied
                 # proportions.
                 if size is not None:
                     w, h = point2D(size)
-                    self.size = w, h
+                    self.size = units(w, h)
 
                 # One of the two needs to be defined, the other can be None.
                 # If both are set, then the image scales disproportional.
@@ -107,6 +109,12 @@ class Image(Element):
 
         else:
             print('Image: Missing image at path "%s"' % path)
+
+        # Used to overwrite self.w and self.h values, in case of CSS output.
+        # Values corresponding https://www.w3schools.com/cssref/css3_pr_background-size.asp
+        # Note: No comma between w and h values in CSS.
+        # Examples "auto 100%" "100% auto" "cover" "contain" "initial" "inherit"
+        self.cssSize = cssSize
 
         self.name = name
         self.alt = alt
