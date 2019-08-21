@@ -104,11 +104,11 @@ class NanoElement(Column):
     def newMovie(self, url, parent=None, **kwargs):
         return Movie(url, parent=self, **kwargs)
 
-    def newTypeList(self, styleNames, parent=None, **kwargs):
+    def newTypeList(self, styleNames, parent=None, styleData=None, **kwargs):
         """Create a list of type specimens, using the web type references as well
         as well as showing information that is embedded into the fonts.
         """
-        return TypeList(styleNames, parent=self, **kwargs)
+        return TypeList(styleNames, parent=self, styleData=styleData, **kwargs)
 
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work.

@@ -218,7 +218,7 @@ def rv(u, *args, **kwargs):
     return uu
 
 def upt(u, *args, **kwargs):
-    """Renders to pt value(s). If values are a number, then return them unchanged.
+    """Renders to pt value(s). If values are numbers, then return them unchanged.
 
     >>> upt(50, pt(100), pt(120), (10, pt(20)))
     (50, 100, 120, (10, 20))
@@ -429,7 +429,8 @@ class Unit:
     isEm = False
 
     def __init__(self, v=0, base=None, g=0):
-        assert isinstance(v, (int, float)) # Otherwise do a cast first as pt(otherUnit)
+        if not isinstance(v, (int, float)): # Otherwise do a cast first as pt(otherUnit)
+            v = pt(v)
         self.v = v
         # Base can be a unit value, ot a dictionary, where self.UNIT is the key.
         # This way units(...) can decide on the type of unit, where the base has multiple entries.
@@ -939,6 +940,10 @@ class Unit:
         100mm
         >>> pt(100) * 0.8
         80pt
+        >>> em(1.2) * 100
+        120em
+        >>> em(1.2) * pt(100)
+        120pt
         """
         u0 = copy(self) # Keep original values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
@@ -946,6 +951,8 @@ class Unit:
         elif isUnit(u) and u.isEm:
             u0.base = u.r
             u0 = u0.r
+        elif self.isEm:
+            u0 = copy(u) * self.v
         else:
             raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (
                 self, u, u.__class__.__name__))

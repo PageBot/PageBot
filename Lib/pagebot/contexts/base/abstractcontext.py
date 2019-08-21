@@ -28,16 +28,10 @@ class AbstractContext:
         """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
 
-<<<<<<< HEAD
-    def endDrawing(self):
-        """Explicitly tells the context that drawing is done. 
-        This is advised when using DrawBot as a standalone module."""
-=======
     def endDrawing(self, doc=None):
         """Explicitly tells the context that drawing is done.
         This is advised when using DrawBot as a standalone module.
         The @doc attribute is the optional Document instance of the caller."""
->>>>>>> origin/master
         raise NotImplementedError
 
     # Styles

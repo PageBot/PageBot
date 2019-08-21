@@ -24,7 +24,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE, DEFAULT_WIDTH,
         DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE, ONLINE, INLINE,
         DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
-        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
+        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS, 
+        DEFAULT_LEADING, DEFAULT_TRACKING,
         DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
@@ -1571,6 +1572,38 @@ class Element:
         self.style['font'] = font
     font = property(_get_font, _set_font)
 
+    def _get_leading(self):
+        """Answers the current leading value as defined in style. Text based
+        inheriting elements may want to implement leading as the value of the last
+        added text.
+
+        >>> from pagebot.toolbox.units import em
+        >>> e = Element(style=dict(leading=em(1.4)))
+        >>> e.leading
+        1.4em
+        """
+        return self.css('leading', DEFAULT_LEADING)
+    def _set_leading(self, leading):
+        """Store the leading in the local style."""
+        self.style['leading'] = units(leading)
+    leading = property(_get_leading, _set_leading)
+    
+    def _get_tracking(self):
+        """Answers the current tracking value as defined in style. Text based
+        inheriting elements may want to implement tracking as the value of the last
+        added text.
+
+        >>> from pagebot.toolbox.units import em
+        >>> e = Element(style=dict(tracking=em(0.05)))
+        >>> e.tracking
+        0.05em
+        """
+        return self.css('tracking', DEFAULT_TRACKING)
+    def _set_tracking(self, tracking):
+        """Store the tracking in the local style."""
+        self.style['tracking'] = units(tracking)
+    tracking = property(_get_tracking, _set_tracking)
+    
     def _get_lib(self):
         """Answer the local element.lib dictionary by property, used for custom
         application value storage. Always make sure it is a dictionary.

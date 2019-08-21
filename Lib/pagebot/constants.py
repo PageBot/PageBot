@@ -688,6 +688,7 @@ URL_D3 = 'https://d3js.org/d3.v5.min.js'
 DEFAULT_FONT = 'PageBot-Regular' # We know for sure this one can be found.
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
+DEFAULT_TRACKING = em(0)
 DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
 
 # Default element names

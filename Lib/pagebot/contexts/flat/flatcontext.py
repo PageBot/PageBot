@@ -82,15 +82,9 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-<<<<<<< HEAD:Lib/pagebot/contexts/flat/context.py
-    def newDocument(self, w, h, size=None, doc=None):
-        """Create a new self.doc Flat canvas to draw on. The @doc is
-        the optional Document instance of the caller.
-=======
     def newDocument(self, w, h, size=None, doc=None, flipped=True):
         """Create a new self.doc Flat canvas to draw on. Flipped Y-axis by
         default to conform to DrawBot's drawing methods.
->>>>>>> origin/master:Lib/pagebot/contexts/flat/flatcontext.py
 
         >>> context = FlatContext()
         >>> context.newDocument(100, 100)

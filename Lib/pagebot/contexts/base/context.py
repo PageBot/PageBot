@@ -140,11 +140,7 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
-<<<<<<< HEAD
-    def newPage(self, w=None, h=None, doc=None):
-=======
-    def newPage(self, w=None, h=None, **kwargs):
->>>>>>> origin/master
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Creates a new drawbot page.
 
         >>> from pagebot.toolbox.units import px
