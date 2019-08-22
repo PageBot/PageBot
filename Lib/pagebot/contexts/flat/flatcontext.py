@@ -206,7 +206,7 @@ class FlatContext(BaseContext):
         self.pages.append(self.page)
 
     def newDrawing(self, doc=None):
-        """Clear output canvas, start new export file. 
+        """Clear output canvas, start new export file.
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -283,11 +283,56 @@ class FlatContext(BaseContext):
             fontSize=None, xAlign=CENTER):
         """Draw the font[glyphName] at the defined position with the defined
         fontSize."""
-        pass
+        path = self.getGlyphPath(glyph)
+        self.drawPath(path)
 
-    def drawGlyphPath(self, glyph):
+    def getGlyphPath(self, glyph, p=None, path=None):
         """Converts the cubic commands to a drawable path."""
-        pass
+        if path is None:
+            path = self.newPath()
+
+        if p is None:
+            px = py = 0
+            #py = self.getY(py)
+        else:
+            px = p[0]
+            py = p[1]
+            #py = self.getY(py)
+
+        for command, t in glyph.cubic:
+            if command == 'moveTo':
+                x, y = t
+                #y = self.getY(y)
+                path.moveTo((px+x, py+y))
+            elif command == 'lineTo':
+                x, y = t
+                #y = self.getY(y)
+
+                path.lineTo((px+x, py+y))
+            elif command == 'curveTo':
+                p0, p1, p = t
+                x0, y0 = p0
+                x0 = px + x0
+                #y0 = self.getY(y0)
+                y0 = py + y0
+
+                x1, y1 = p1
+                x1 = px + x1
+                #y1 = self.getY(y1)
+                y1 = py + y1
+
+                x, y = p
+                x = px + x
+                #y = self.getY(y)
+                y = py + y
+                path.curveTo((x0, y0), (x1, y1), (x, y))
+            elif command == 'closePath':
+                path.closePath()
+            elif command == 'component':
+                (x, y), componentGlyph = t
+                #y = self.getY(y)
+                self.getGlyphPath(componentGlyph, (px+x, py+y), path)
+        return path
 
     #   A N I M A T I O N
 
@@ -331,6 +376,7 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         xpt, ypt = point2D(upt(p))
+        y = self.getY(ypt)
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
@@ -574,9 +620,14 @@ class FlatContext(BaseContext):
             self.page.place(shape.circle(xpt, ypt, rpt))
 
     def line(self, p0, p1):
+        """Draws a line from point p0 to point p1."""
+
         x0pt, y0pt = point2D(upt(p0))
         x1pt, y1pt = point2D(upt(p1))
+        y0pt = self.getY(y0pt)
+        y1pt = self.getY(y1pt)
         shape = self._getShape()
+
         if shape is not None:
             self.ensure_page()
             self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
