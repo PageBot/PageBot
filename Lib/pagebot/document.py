@@ -16,6 +16,7 @@
 #
 import copy
 import codecs
+import codecs
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -1202,7 +1203,7 @@ class Document:
         return None # No previous page found.
 
     def getPageNumber(self, page):
-        """Answers a string with the page number (pn, index), if the page can
+        """Answers a tuple with the page number (pn, index), if the page can
         be found and there are multiple. Pages are organized as dict of lists
         (allowing multiple pages on the same page number)
 
@@ -1216,6 +1217,26 @@ class Document:
                 if page is pg:
                     return (pn, 0)
         return None # Cannot find this page
+
+    def getPageIndex(self, page):
+        """Answer the index number of the page, if the page can be found
+        in self. Otherwise answer None.
+
+        TODO: Make a reversed dictionary if this sequential search show to be
+        too slow in the future with large docs.
+
+        >>> doc = Document(name='TestDoc', w=500, h=500, startPage=624, autoPages=10)
+        >>> page = doc.getLastPage()
+        >>> doc.getPageIndex(page)
+        9
+        """
+        index = 0
+        for pn, pnPages in sorted(self.pages.items()):
+            for pg in pnPages:
+                if pg is page:
+                    return index
+                index += 1
+        return None
 
     def getFirstPage(self):
         """Answers the list of pages with the lowest sorted `page.y`. Answer

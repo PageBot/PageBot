@@ -51,12 +51,14 @@ class FontInfo:
     """
     def __init__(self, ttFont):
         self.ttFont = ttFont
+        self._familyName = None
         self._styleName = None
         # Optional informaiton, set if instance is created from a VarFont
         self.opticalSize = None
         self.location = None
         self.varStyleName = None
         self.installedName = None # Storage for the installed (menu) name, e.g. DrawBotContext.font(path)
+        self.cssFontUrl = 'fonts/' # Change if css fonts are in a different url.
 
     def _getNameTableEntry(self, nameId):
         nameEntry = None
@@ -71,6 +73,8 @@ class FontInfo:
     def _get_fullName(self):
         """Answers the full name of the font. Construct it from family name and style name
         if there is no full name defined.
+        This is often wrong: return self._getNameTableEntry(4)
+        So construct from self.familyName + ' ' + self.styleName
 
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
@@ -79,14 +83,16 @@ class FontInfo:
         >>> font.info.fullName
         'Roboto Black'
         """
-        fullName = self._getNameTableEntry(4)
-        if not fullName:
-            fullName = '%s %s' % (self.familyName, self.styleName)
-        return fullName
+        #fullName = self._getNameTableEntry(4)
+        #if not fullName:
+        return '%s %s' % (self.familyName, self.styleName)
     fullName = property(_get_fullName)
 
     def _get_familyName(self):
         """Should be this, but often wrong: return self._getNameTableEntry(1)
+        So, for now we just look at the format of the file name.
+        The first hyphen in the name is the split between family name and style name.
+        Replace underscores in the name by spaces.
 
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
@@ -95,19 +101,21 @@ class FontInfo:
         >>> font.info.familyName
         'Roboto'
         """
-        if self._getNameTableEntry(1):
-            return self._getNameTableEntry(1).split(' ')[0]
-        # If name table fails, try to guess from the file name
-        if self.ttFont.reader:
+        #if self._getNameTableEntry(1):
+        #    return self._getNameTableEntry(1).split(' ')[0]
+        # As name table often fails, try to guess from the file name
+        if self._familyName is None and self.ttFont.reader:
             path = self.ttFont.reader.file.name
-            return path.split('/')[-1].split('-')[0].split('.')[0]
-        return 'Untitled'
+            self._familyName = path.split('/')[-1].split('-')[0].split('.')[0].replace('_', ' ')
+        elif self._familyName is None:
+            self._familyName = 'Untitled'
+        return self._familyName
     familyName = property(_get_familyName)
 
     def _get_styleName(self):
         """Answers the style name of the font.
         Family name should be this, but often wrong: return self._getNameTableEntry(1)
-        We take the first spaced part as family name, and fill the rest here under style.
+        We take the first hyphen part as family name, and fill the rest here under style.
         So we add rest of family.
 
         >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
@@ -119,6 +127,7 @@ class FontInfo:
         >>> font.info.styleName = 'Bold'
         >>> font.info.styleName
         'Bold'
+        """
         """
         if self._styleName is None:
             self._styleName = ''
@@ -133,6 +142,12 @@ class FontInfo:
                     fullNameParts = fullName.split(' ')
                     if len(fullNameParts) > 1:
                         self._styleName = ' '.join(fullNameParts[1:])
+        """
+        if self._styleName is None and self.ttFont.reader:
+            path = self.ttFont.reader.file.name
+            self._styleName = '-'.join(path.split('/')[-1].split('-')[1:]).split('.')[0].replace('_', ' ')
+        elif self._styleName is None:
+            self._styleName = 'Untitled'
         return self._styleName
     def _set_styleName(self, styleName):
         self._styleName = styleName
@@ -140,7 +155,38 @@ class FontInfo:
 
     @cached_property
     def cssName(self):
-        return self.familyName + '-' + self.styleName
+        cssName = self.familyName.replace(' ', '_')
+        if self.styleName:
+            cssName += '-' + self.styleName.replace(' ', '_')
+        return cssName
+
+    @cached_property
+    def eotName(self):
+        eotName = self.cssFontUrl + self.familyName.replace(' ', '_')
+        if self.styleName:
+            eotName += '-' + self.styleName.replace(' ', '_')
+        return eotName + '.eot'
+
+    @cached_property
+    def woff2Name(self):
+        woff2Name = self.cssFontUrl + self.familyName.replace(' ', '_')
+        if self.styleName:
+            woff2Name += '-' + self.styleName.replace(' ', '_')
+        return woff2Name + '.woff2'
+
+    @cached_property
+    def woffName(self):
+        woffName = self.cssFontUrl + self.familyName.replace(' ', '_')
+        if self.styleName:
+            woffName += '-' + self.styleName.replace(' ', '_')
+        return woffName + '.woff'
+
+    @cached_property
+    def ttfName(self):
+        ttfName = self.cssFontUrl + self.familyName.replace(' ', '_')
+        if self.styleName:
+            ttfName += '-' + self.styleName.replace(' ', '_')
+        return ttfName + '.ttf'
 
     @cached_property
     def copyright(self):

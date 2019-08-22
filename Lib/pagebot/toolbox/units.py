@@ -218,7 +218,7 @@ def rv(u, *args, **kwargs):
     return uu
 
 def upt(u, *args, **kwargs):
-    """Renders to pt value(s). If values are a number, then return them unchanged.
+    """Renders to pt value(s). If values are numbers, then return them unchanged.
 
     >>> upt(50, pt(100), pt(120), (10, pt(20)))
     (50, 100, 120, (10, 20))
@@ -429,7 +429,8 @@ class Unit:
     isEm = False
 
     def __init__(self, v=0, base=None, g=0):
-        assert isinstance(v, (int, float)) # Otherwise do a cast first as pt(otherUnit)
+        if not isinstance(v, (int, float)): # Otherwise do a cast first as pt(otherUnit)
+            v = pt(v)
         self.v = v
         # Base can be a unit value, ot a dictionary, where self.UNIT is the key.
         # This way units(...) can decide on the type of unit, where the base has multiple entries.
@@ -939,6 +940,10 @@ class Unit:
         100mm
         >>> pt(100) * 0.8
         80pt
+        >>> em(1.2) * 100
+        120em
+        >>> em(1.2) * pt(100)
+        120pt
         """
         u0 = copy(self) # Keep original values of self
         if isinstance(u, (int, float)): # One is a scalar, just multiply
@@ -946,8 +951,11 @@ class Unit:
         elif isUnit(u) and u.isEm:
             u0.base = u.r
             u0 = u0.r
+        elif self.isEm:
+            u0 = copy(u) * self.v
         else:
-            raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (u0, u, u.__class__.__name__))
+            raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (
+                self, u, u.__class__.__name__))
         return u0
 
     # Order of multiplication doesn't matter, except for the resulting unit type.
@@ -1108,6 +1116,14 @@ class Cm(Unit):
 #   Pt
 
 def pt(v, *args, **kwargs):
+    """
+    Create a Pt instance, depending on the given arguments.
+
+    >>> pt(900, base=None, g=None)
+    900pt
+    >>> pt('900')
+    900pt
+    """
     u = None
 
     if args: # If there are more arguments, bind them together in a list.
@@ -1120,22 +1136,25 @@ def pt(v, *args, **kwargs):
         u = tuple(u)
 
     elif isinstance(v, (int, float)): # Simple value as input, use class
-        u = Pt(v)
+        u = Pt(v, *args, **kwargs)
     elif isUnit(v): # It's already a Unit instance, convert via points.
-        u = Pt(v.pt)
+        u = Pt(v.pt, *args, **kwargs)
     elif isinstance(v, str): # Value is a string, interpret from unit extension.
         v = v.strip().lower()
+        v1 = asNumberOrNone(v) # Is it a plain number?
         if v.endswith(Pt.UNIT):
-            v = asNumberOrNone(v[:-2])
-            if v is not None:
-                u = Pt(asIntOrFloat(v))
-        else: # Something else, recursively try again, force to pt.
-            u = pt(units(v))
+            v1 = asNumberOrNone(v[:-2])
+        else:
+            v1 = asNumberOrNone(v)
+        if v1 is not None:
+            u = Pt(v1)
+        else: # Must be something else. Just convert to units
+            u = pt(upt(v))
 
     return u
 
 class Pt(Unit):
-    """pt is the base unit size of all PageBot measures.
+    """Pt is the base unit size of all PageBot measures.
 
     >>> Pt(6) # Create directly as class, only takes numbers or Unit instances
     6pt
@@ -1876,6 +1895,8 @@ def perc(v, *args, **kwargs):
     >>> u = perc(12, base=240)
     >>> perc('10%', '11%', '12%', '13%') # Convert series of arguments to a list of Perc instances.
     (10%, 11%, 12%, 13%)
+    >>> perc(100) * (pt(300)/pt(500))
+    60%
     """
     u = None
     base = kwargs.get('base')
@@ -1999,11 +2020,17 @@ def value2Maker(v):
     True
     >>> value2Maker('pt') == pt
     True
+    >>> value2Maker(pt(10)) == pt
+    True
     >>> value2Maker(pt) == pt
     True
     >>> value2Maker(Pt) == pt
     True
     >>> value2Maker(Inch) == inch
+    True
+    >>> value2Maker(inch(5)) == inch
+    True
+    >>> value2Maker(mm(123) + pt(456)) == mm
     True
     >>> value2Maker(Col) == col
     True
@@ -2011,15 +2038,14 @@ def value2Maker(v):
     maker = None
     if isinstance(v, (int, float)):
         maker = pt
+    elif isUnit(v):
+        maker = UNIT_MAKERS[v.UNIT]
     elif v in UNIT_MAKERS:
         maker = UNIT_MAKERS[v]
     elif v in CLASS_MAKERS:
         maker = CLASS_MAKERS[v]
     elif v in MAKERS:
         maker = v
-    elif isUnit(v):
-        maker = UNIT_MAKERS[v.UNIT]
-
     elif isinstance(v, str):
         v = v.lower()
         if v in UNIT_MAKERS:
@@ -2041,7 +2067,7 @@ def value2Maker(v):
             maker = UNIT_MAKERS.get(unitType, maker)
     return maker
 
-def units(v, maker=None, g=None, base=None, default=None):
+def units(v, maker=None, base=None, g=None, default=None):
     """If value is a string, then try to guess what type of units value is and
     answer the right instance. Answer None if not valid transformation could be
     done.
@@ -2076,6 +2102,8 @@ def units(v, maker=None, g=None, base=None, default=None):
     10p
     >>> units(12) # Default for plain number is pt if no class defined.
     12pt
+    >>> units(None) is None
+    True
     >>> units('SomethingElse') is None
     True
     >>> units('12pt', 'mm') # Altering maker units converts.
@@ -2088,11 +2116,17 @@ def units(v, maker=None, g=None, base=None, default=None):
     >>> uu = pt(0), 12, (pt(13), pt(14))
     >>> units(uu) # Create a recursive list of units
     (0pt, 12pt, (13pt, 14pt))
+    >>> units(pt(200)) # Already a unit instance does not change it.
+    200pt
+    >>> pt(units(200))
+    200pt
+    >>> pt(units(pt(200)))
+    200pt
     """
     if isinstance(v, (list, tuple)):
         uu = []
         for vv in v:
-            uu.append(units(vv, maker=maker, g=g, base=base))
+            uu.append(units(vv, maker=maker, base=base, g=g))
         return tuple(uu)
 
     u = default
@@ -2102,14 +2136,14 @@ def units(v, maker=None, g=None, base=None, default=None):
     if isUnit(v):
         u = copy(v) # Make sure to copy, avoiding overwriting local values of units.
         if maker is not None:
-            u = makerF(u, g=g, base=base)
+            u = makerF(u, base=base, g=g)
     elif v is not None:
         # Plain values are interpreted as point Units
         if makerF is None:
             makerF = value2Maker(v)
         # makerF is now supposed to be a maker or real Unit class, use it
         if makerF:
-            u = makerF(v, g=g, base=base)
+            u = makerF(v, base=base, g=g)
 
     # In case we got a valid unit, then try to set the paremeters if not None.
     if u is not None:
@@ -2119,7 +2153,7 @@ def units(v, maker=None, g=None, base=None, default=None):
             u.g = g # Recursive force gutter to be unit instance.
 
     if u is None and default is not None:
-        u = units(default, g=g, base=base)
+        u = units(default, base=base, g=g)
     return u # If possible to create, answer u. Otherwise result is None
 
 # Automatic angle conversion between degrees and radians.

@@ -169,7 +169,10 @@ class CanvasBuilder(BaseBuilder):
         if h is not None:
             self.height = h
 
-    def newPage(self, w=None, h=None):
+    def newPage(self, w=None, h=None, doc=None):
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
         if self.width is None:
             if w is None:
                 raise PageBotError("A page must have a width")

@@ -24,7 +24,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE, DEFAULT_WIDTH,
         DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE, ONLINE, INLINE,
         DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
-        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS,
+        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS, 
+        DEFAULT_LEADING, DEFAULT_TRACKING,
         DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
         DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
@@ -1545,17 +1546,19 @@ class Element:
         inheriting elements may want to implement as the font of the last added
         text.
 
-        >>> e = Element(style=dict(font='Roboto-Regular'))
+        >>> e = Element(style=dict(font='Roboto-Bold'))
         >>> e.font
-        <Font Roboto-Regular>
+        <Font Roboto-Bold>
+        >>> e.font.info.styleName
+        'Bold'
         >>> print(type(e.font))
         <class 'pagebot.fonttoolbox.objects.font.Font'>
         >>> print(type(e.font.info))
         <class 'pagebot.fonttoolbox.objects.fontinfo.FontInfo'>
+        """
+        """
         >>> print(e.font.info.styleName)
         <BLANKLINE>
-        """
-        """
         # FIXME: yields 'Roboto-'
         >>> e.font.info.cssName
         'Roboto-Regular'
@@ -1569,6 +1572,38 @@ class Element:
         self.style['font'] = font
     font = property(_get_font, _set_font)
 
+    def _get_leading(self):
+        """Answers the current leading value as defined in style. Text based
+        inheriting elements may want to implement leading as the value of the last
+        added text.
+
+        >>> from pagebot.toolbox.units import em
+        >>> e = Element(style=dict(leading=em(1.4)))
+        >>> e.leading
+        1.4em
+        """
+        return self.css('leading', DEFAULT_LEADING)
+    def _set_leading(self, leading):
+        """Store the leading in the local style."""
+        self.style['leading'] = units(leading)
+    leading = property(_get_leading, _set_leading)
+    
+    def _get_tracking(self):
+        """Answers the current tracking value as defined in style. Text based
+        inheriting elements may want to implement tracking as the value of the last
+        added text.
+
+        >>> from pagebot.toolbox.units import em
+        >>> e = Element(style=dict(tracking=em(0.05)))
+        >>> e.tracking
+        0.05em
+        """
+        return self.css('tracking', DEFAULT_TRACKING)
+    def _set_tracking(self, tracking):
+        """Store the tracking in the local style."""
+        self.style['tracking'] = units(tracking)
+    tracking = property(_get_tracking, _set_tracking)
+    
     def _get_lib(self):
         """Answer the local element.lib dictionary by property, used for custom
         application value storage. Always make sure it is a dictionary.
@@ -1610,6 +1645,28 @@ class Element:
             return self.parent.doc
         return None
     doc = property(_get_doc)
+
+    def _get_page(self):
+        """Answers the Page that this element is part of, looking upward in the
+        anscestor tree. Answer None, if no Page ascenstor can be found.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import newRect
+        >>> doc = Document()
+        >>> page = doc[1]
+        >>> e1 = newRect(parent=page)
+        >>> e2 = newRect(parent=e1)
+        >>> e3 = newRect(parent=e2)
+        >>> e3.page is page
+        True
+        >>> newRect().page is None
+        True
+        """
+        if self.isPage:
+            return self
+        if self.parent is not None:
+            return self.parent.page
+        return None
 
     def _get_view(self):
         """Answers the self.doc.view, currently set for reference and building
@@ -2709,7 +2766,7 @@ class Element:
     fill = property(_get_fill, _set_fill)
 
     def _get_stroke(self):
-        """Fill color property in style, using self.css to query cascading values.
+        """Stroke color property in style, using self.css to query cascading values.
         Setting the color will overwrite the cascade, by storing as local value.
 
         >>> e = Element(stroke=color('red'))
@@ -2743,6 +2800,61 @@ class Element:
     def _set_strokeWidth(self, u):
         self.style['strokeWidth'] = units(u)
     strokeWidth = property(_get_strokeWidth, _set_strokeWidth)
+
+    def _get_textFill(self):
+        """Fill color property in style for text, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> e = Element(textFill=color('red'))
+        >>> e.textFill
+        Color(name="red")
+        >>> e.textFill = 1, 0, 0 # Construct color from tuple
+        >>> e.textFill
+        Color(r=1, g=0, b=0)
+        >>> e.textFill = 0.5
+        >>> e.textFill
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        return self.css('textFill', noColor)
+    def _set_textFill(self, c):
+        self.style['textFill'] = color(c)
+    textFill = property(_get_textFill, _set_textFill)
+
+    def _get_textStroke(self):
+        """Stroke color property in style, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> e = Element(textStroke=color('red'))
+        >>> e.textStroke
+        Color(name="red")
+        >>> e.textStroke = 1, 0, 0 # Construct color from tuple
+        >>> e.textStroke
+        Color(r=1, g=0, b=0)
+        >>> e.textStroke = 0.5
+        >>> e.textStroke
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        return self.css('textStroke', noColor)
+    def _set_textStroke(self, c):
+        self.style['textStroke'] = color(c)
+    textStroke = property(_get_textStroke, _set_textStroke)
+
+    def _get_textStrokeWidth(self):
+        """Stroke width property in style for text, using self.css to query cascading values.
+        Setting the color will overwrite the cascade, by storing as local value.
+
+        >>> from pagebot.toolbox.units import mm, p
+        >>> e = Element(textStrokeWidth=p(6))
+        >>> e.textStrokeWidth
+        6p
+        >>> e.textStrokeWidth = mm(2)
+        >>> e.textStrokeWidth
+        2mm
+        """
+        return self.css('textStrokeWidth', pt(1))
+    def _set_textStrokeWidth(self, u):
+        self.style['textStrokeWidth'] = units(u)
+    textStrokeWidth = property(_get_textStrokeWidth, _set_textStrokeWidth)
 
     # Borders (equivalent for element stroke and strokWidth)
 
@@ -4931,6 +5043,7 @@ class Element:
         for e in self.elements:
             e.prepare_zip(view)
 
+    '''
     def build_scss(self, view):
         """Build the scss variables for this element."""
         b = self.context.b
@@ -4938,7 +5051,18 @@ class Element:
         for e in self.elements:
             if e.show:
                 e.build_scss(view)
+    '''
 
+    def build_css(self, view, cssList=None):
+        """Build the scss variables for this element and pass the request on
+        to the child elements. This should harvest the CSS that is specific
+        for a single page."""
+        if cssList is None:
+            cssList = []
+        for e in self.elements:
+            if e.show:
+                e.build_css(view, cssList)
+        return cssList
 
     def asNormalizedJSON(self):
         """Build self and all child elements as regular dict and add it to the

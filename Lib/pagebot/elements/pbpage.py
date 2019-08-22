@@ -374,15 +374,29 @@ class Page(Element):
         if self.parent is None:
             return None # Not placed directly in a document. No page number known.
         return self.parent.getPageNumber(self)
-
     def _set_pn(self, pn):
-        """Set the optional page numbere, overwriting queries into the
+        """Set the optional page number, overwriting queries into the
         containing document."""
         if pn is not None and not isinstance(pn, (list, tuple)):
             pn = pn, 0
         self._pn = pn
-
     pn = pageNumber = property(_get_pn, _set_pn)
+
+    def _get_index(self):
+        """Answer the index number of this page compared with all pages as 
+        linear list. This ignores any spread or left/right settings in the document.
+        Answer None if there is not parent document.
+
+        >>> from pagebot.document import Document
+        >>> doc = Document(autoPages=10)
+        >>> page = doc[5]
+        >>> page.index
+        4
+        """
+        if self.parent is None:
+            return None
+        return self.parent.getPageIndex(self)
+    index = property(_get_index)
 
     #   E L E M E N T S
 
@@ -460,9 +474,9 @@ class Page(Element):
         context = view.context # Get current context and builder from this view.
         b = context.b # This is a bit more efficient than self.b once we got the context fixed.
         b.clearHtml()
-        #b.clearCss()
 
-        self.build_scss(view)
+        #b.clearCss()
+        #self.build_scss(view)
 
         if self.htmlCode: # In case the full HTML is here, then just output it.
             b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
@@ -536,10 +550,11 @@ class Page(Element):
 
                 # If there is accumulated CSS in the builder, e.g. by individual
                 # elements for this page only, then add that directly inside
-                # the page
-                if b.hasCss():
+                # the page. Recursively query all page elements for their contributions.
+                pageCssList = self.build_css(view)
+                if pageCssList:
                     b.style()
-                    b.addHtml(b.getCss())
+                    b.addHtml('\n'.join(pageCssList))
                     b._style()
 
                 # View and pages can both implements CSS paths

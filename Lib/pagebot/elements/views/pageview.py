@@ -151,7 +151,7 @@ class PageView(BaseView):
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.
             # Set the duration of this page, in case exporting GIF
-            self.context.frameDuration(page.frameDuration, e=page)
+            self.context.frameDuration(page.frameDuration)
 
             # View may have defined a background. Build with page bleed, if it is defined.
             fillColor = self.style.get('fill', noColor)

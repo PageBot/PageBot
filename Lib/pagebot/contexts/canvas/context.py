@@ -26,8 +26,12 @@ class CanvasContext(BaseContext):
         self.b = CanvasBuilder()
         self.name = self.__class__.__name__
 
-    def newPage(self, w, h, **kwargs):
-        return self.b.newPage(w, h)
+    def newPage(self, w=None, h=None, doc=None):
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
+        wpt, hpt = upt(w, h)
+        return self.b.newPage(wpt, hpt)
 
     def update(self):
         self.b.update()

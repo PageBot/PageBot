@@ -32,7 +32,7 @@ from pagebot.contributions.markdown.footnotes import FootnoteExtension
 from pagebot.contributions.markdown.inline import InlineExtension
 
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
-from pagebot.toolbox.units import pt, em
+from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
 from pagebot.constants import *
 from pagebot.toolbox.transformer import asIntOrNone
@@ -307,10 +307,15 @@ class Typesetter:
     #   <figcaption>Caption here</figcaption>
     # </figure>
     #
-    IMAGE_CACHE_WIDTH = re.compile('w=([012345679]*)')
-    IMAGE_CACHE_HEIGHT = re.compile('h=([012345679]*)')
+    IMAGE_CACHE_WIDTH = re.compile('w=([012345679%%]*)')
+    IMAGE_CACHE_HEIGHT = re.compile('h=([012345679%%]*)')
     IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)')
     IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)')
+    IMAGE_CACHE_NOSCALE = re.compile('(noscale|noScale)')
+    IMAGE_CACHE_COVER = re.compile('(cover)')
+    IMAGE_CACHE_CONTAIN = re.compile('(contain)')
+    IMAGE_CACHE_INITIAL = re.compile('(initial)')
+    IMAGE_CACHE_INHERIT = re.compile('(inherit)')
     # TODO: Add parameter ro prevent scaling
 
     def node_img(self, node, e):
@@ -328,18 +333,53 @@ class Typesetter:
         If one or both if (w, h) are defined, then set the imageScale flag accordingly.
         """
         w = ww = h = hh = xAlign = yAlign = None # Values are optional set by alt content.
-        proportional = not (w is not None and h is not None) # Not proportional if both are defined.
+        cover = contain = initial = inherit = False
         path = node.attrib.get('src')
+        doScale = not path.endswith('.'+FILETYPE_SVG) and not path.endswith('.'+FILETYPE_GIF)
         alt = node.attrib.get('alt')
         if alt:
             xAlign = (self.IMAGE_CACHE_XALIGN.findall(alt) or [None])[0] # x=center
             yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
-            w = asIntOrNone((self.IMAGE_CACHE_WIDTH.findall(alt)  or [None])[0]) # w=800
-            h = asIntOrNone((self.IMAGE_CACHE_HEIGHT.findall(alt)  or [None])[0]) # h=800
-        doScale = not path.endswith('.'+FILETYPE_SVG) and not path.endswith('.'+FILETYPE_GIF)
+            w = (self.IMAGE_CACHE_WIDTH.findall(alt) or [None])[0] # w=800, w=100%
+            h = (self.IMAGE_CACHE_HEIGHT.findall(alt) or [None])[0] # h=800
+            doScale = doScale and not self.IMAGE_CACHE_NOSCALE.findall(alt)
+            cover = self.IMAGE_CACHE_NOSCALE.findall(alt)
+            contain = self.IMAGE_CACHE_NOSCALE.findall(alt)
+            initial = self.IMAGE_CACHE_INITIAL.findall(alt)
+            inherit = self.IMAGE_CACHE_INHERIT.findall(alt)
         # doScale = doScale or w is not None or h is not None
+        proportional = not (w is not None and h is not None) # Not proportional if both are defined.
+        # auto    Default value. The background image is displayed in its original size 
+        # (w, h)  Sets the width and height of the background image. 
+        #         The first value sets the width, the second value sets the height. 
+        #         If only one value is given, the second is set to "auto". Read about length units 
+        #         w and h can be fixed units or pecentage.
+        #         A percentage sets the width and height of the background image in percent of the parent element. 
+        #         The first value sets the width, the second value sets the height. 
+        #         If only one value is given, the second is set to "auto"   Play it »
+        # cover   Resize the background image to cover the entire container, 
+        #         even if it has to stretch the image or cut a little bit off one of the edges Play it »
+        # contain Resize the background image to make sure the image is fully visible Play it »
+        # initial Sets this property to its default value. Read about initial Play it »
+        # inherit Inherits this property from its parent element. Read about inherit
+        if cover:
+            cssSize = 'cover'
+        elif contain:
+            cssSize = 'contain'
+        elif initial:
+            cssSize = 'initial'
+        elif inherit:
+            cssSize = 'inherit'
+        elif h is not None and w is not None:
+            cssSize = '%s %s' % (w, h)
+        elif w is not None:
+            cssSize = '%s auto' % w
+        else: # h is not None:
+            cssSize = 'auto %s' % h
+
         self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
+            cssSize=cssSize, # Examples "auto 100%" "100% auto" "cover" "contain" "initial" "inherit"
             xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional,
             index=node.attrib.get('index', 0))
 
