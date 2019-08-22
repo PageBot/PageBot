@@ -40,7 +40,8 @@ def getDefaultFontPath():
     return DEFAULT_FONT_PATH
 
 def getContext(contextType='DrawBot'):
-    """
+    """Returns a single context.
+
     >>> context = getContext()
     >>> print(context)
     <DrawBotContext>
@@ -69,9 +70,23 @@ def getContext(contextType='DrawBot'):
     from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
-def getAllContexts():
+def getContexts(contextTypes):
+    """Returns multiple contexts, contextTypes should be specified as a
+    list."""
     from pagebot.contexts import getContext as getPlatformContext
     contexts = []
+
+    for contextType in contextTypes:
+        context = getPlatformContext(contextType=contextType)
+        contexts.append(context)
+
+    return contexts
+
+def getAllContexts():
+    """Returns all available contexts."""
+    from pagebot.contexts import getContext as getPlatformContext
+    contexts = []
+
     for contextType in contextTypes:
         contexts.append(getPlatformContext(contextType=contextType))
     return contexts

@@ -99,7 +99,7 @@ class Glyph:
         return not self.font is g.font or self.name != g.name
 
     def __repr__(self):
-        return '<PageBot Glyph %s Pts:%d/Cnt:%d/Cmp:%d>' % (self.name,
+        return '<Glyph \'%s\' (Pts:%d, Cnt:%d, Cmp:%d)>' % (self.name,
             len(self.coordinates), len(self.endPtsOfContours), len(self.components))
 
     def __getitem__(self, contourIndex):
