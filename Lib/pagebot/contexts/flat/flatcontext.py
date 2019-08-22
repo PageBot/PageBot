@@ -293,44 +293,50 @@ class FlatContext(BaseContext):
 
         if p is None:
             px = py = 0
-            #py = self.getY(py)
+            py = self.getY(py)
         else:
             px = p[0]
             py = p[1]
-            #py = self.getY(py)
+            py = self.getY(py)
 
         for command, t in glyph.cubic:
             if command == 'moveTo':
                 x, y = t
-                #y = self.getY(y)
+                if self.flipped:
+                    y = -y
                 path.moveTo((px+x, py+y))
+
             elif command == 'lineTo':
                 x, y = t
-                #y = self.getY(y)
-
+                if self.flipped:
+                    y = -y
                 path.lineTo((px+x, py+y))
+            elif command == 'closePath':
+                path.closePath()
             elif command == 'curveTo':
                 p0, p1, p = t
                 x0, y0 = p0
                 x0 = px + x0
-                #y0 = self.getY(y0)
+                if self.flipped:
+                    y0 = -y0
                 y0 = py + y0
 
                 x1, y1 = p1
                 x1 = px + x1
-                #y1 = self.getY(y1)
+                if self.flipped:
+                    y1 = -y1
                 y1 = py + y1
 
                 x, y = p
                 x = px + x
-                #y = self.getY(y)
+                if self.flipped:
+                    y = -y
                 y = py + y
                 path.curveTo((x0, y0), (x1, y1), (x, y))
-            elif command == 'closePath':
-                path.closePath()
             elif command == 'component':
                 (x, y), componentGlyph = t
-                #y = self.getY(y)
+                if self.flipped:
+                    y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
         return path
 
