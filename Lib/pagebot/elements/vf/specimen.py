@@ -50,7 +50,7 @@ class TypeListLine(Element):
         self.cssClass = self.CSS_CLASS or self.__class__.__name__.lower()
 
         # Fonts
-        assert font is not None
+        assert font is not None, ('Cannot find font %s' % fontData)
         self.font = font
         if labelFont is None:
             labelFont = findFont(self.LABEL_FONT_NAME)
