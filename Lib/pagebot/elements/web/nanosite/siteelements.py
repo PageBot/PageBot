@@ -17,6 +17,7 @@
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
+from pagebot.toolbox.color import noColor
 
 class Site(Publication):
     """Build a website, simplest responsive structure, using CSS Grid.
@@ -488,8 +489,19 @@ class Cropped(NanoElement):
             # such as ![y=top w=450](images/myImage.png) etc.
             # https://www.w3schools.com/cssref/pr_background-position.asp
             # cssSize can be ((auto, 100%), (100%, auto), contain cropped)
+            # style="
+            #   background-image:url('images/img_4539.jpg');
+            #   background-position:center top;
+            #   background-color: #888;
+            #   background-repeat: no-repeat;
+            #   background-size:contain;"
+
             style = "background-image:url('%s');background-position:%s %s;background-size:%s;" % \
                 (image.path.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
+            if self.fill is not noColor:
+                style += 'background-color:#%s;' % self.fill.hex
+            if image.cssRepeat:
+                style += 'background-repeat:%s;' % image.cssRepeat
         else:
             style = None
         b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style) 

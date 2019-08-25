@@ -30,12 +30,25 @@ FONT_TYPENETWORK_URL = 'typenetwork' # Url to typeNetWork: https://store.typenet
 FONT_DESCRIPTION = 'description' # Description of this style, status, usage, glyph set', 
 FONT_CAPTION = 'caption' # Optional caption with the image'
 
+ADOBE_LOGO_W = 20
+ADOBE_LOGO_H = 17
+ADOBE_SVG_ICON = """
+    <svg class="adobe-logo-image" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" focusable="false">
+    <path fill="#FF0000" d="M15.1,0H24v20L15.1,0z M8.9,0H0v20L8.9,0z M12,7.4L17.6,20h-3.8l-1.6-4H8.1L12,7.4z"></path>
+    </svg>""" % (ADOBE_LOGO_W, ADOBE_LOGO_H, ADOBE_LOGO_W+6, ADOBE_LOGO_H+3)
+
+#TN_ICON = """<img class="icon" src="images/TypeNetwork-32x32.png"/>"""
+TN_ICON = """<span class="tn-icon">TN</span>"""
+TRY_ICON = """<span class="try-icon">TRY</span>"""
+TYPETR_ICON = """<span class="typetr-icon">TP</span>"""
+GOOGLE_ICON = """<span class="google-icon">G</span>"""
+
 FONT_DATA_KEYS = (
-    (FONT_DOWNLOAD_URL, '[F] TRY Download'), # Adding icon string once implemented in PageBot font.
-    (FONT_SEEALSO, '[?] More about'),
-    (FONT_TYPENETWORK_URL, '[TN] Type Network Library'), 
-    (FONT_ADOBE_URL, '[A] Adobe Fonts Library'), 
-    (FONT_GOOGLE_URL, '[G] Google Fonts Library'),
+    (FONT_DOWNLOAD_URL, '%s Download' % TRY_ICON), # Adding icon string once implemented in PageBot font.
+    (FONT_SEEALSO, '%s TYPETR Library' % TYPETR_ICON),
+    (FONT_TYPENETWORK_URL, '%s Type Network Library' % TN_ICON), 
+    (FONT_ADOBE_URL, '%s Adobe Fonts Library' % ADOBE_SVG_ICON), 
+    (FONT_GOOGLE_URL, '%s Google Fonts Library' % GOOGLE_ICON),
 )
 class TypeListLine(Element):
 
@@ -106,14 +119,14 @@ class TypeListLine(Element):
 
         # If Urls provided, then add then as links. 
         hasLine = False
-        for k, label in FONT_DATA_KEYS:
+        for index, (k, label) in enumerate(FONT_DATA_KEYS):
             if k in self.fontData:
+                if index > 0:
+                    b.addHtml('&nbsp;&nbsp;')
                 b.a(href=self.fontData[k], target='external') # Always jump out on new window
-                b.addHtml(' | ' + label)
+                b.addHtml(label)
                 b._a()
                 hasLine = True
-        if hasLine:
-            b.addHtml(' |')
         b._div()
         b._div()
 

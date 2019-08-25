@@ -830,6 +830,14 @@ CACHE_EXTENSIONS = {
     FILETYPE_TIF: FILETYPE_JPG,
     FILETYPE_TIFF: FILETYPE_JPG,
 }
+# Image background-repeat flags
+CSS_REPEAT = 'repeat'
+CSS_REPEAT_X = 'repeat-x'
+CSS_REPEAT_Y = 'repeat-y'
+CSS_NO_REPEAT = 'no-repeat'
+CSS_SPACE = 'space'
+CSS_BACKGROUND_REPEAT = (CSS_REPEAT, CSS_REPEAT_X, CSS_REPEAT_Y, CSS_NO_REPEAT, CSS_SPACE)
+
 # Standard font style names, with the matching abbreviations they can have in
 # font style As reference TYPETR Upgrade is mentioned. In normalized keys, all
 # CamelCase is flattened. Works together with

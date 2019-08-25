@@ -68,7 +68,8 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
-            size=None, cssSize=None, z=0, mask=None, imo=None, proportional=True, index=1,
+            size=None, cssSize=None, cssRepeat=None, z=0, mask=None, imo=None, 
+            proportional=True, index=1,
             scaleImage=True, resolutionFactor=None, scaleType=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -115,6 +116,7 @@ class Image(Element):
         # Note: No comma between w and h values in CSS.
         # Examples "auto 100%" "100% auto" "cover" "contain" "initial" "inherit"
         self.cssSize = cssSize
+        self.cssRepeat = cssRepeat
 
         self.name = name
         self.alt = alt

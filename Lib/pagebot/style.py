@@ -150,6 +150,11 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         yAlign = TOP, 
         zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
 
+        # Repeater flag, shaped from CSS image background-repeat value
+        # Possible values: CSS_REPEAT:
+        # ('repeat', 'repeat-x', 'repeat-y', 'no-repeat'. 'space')
+        cssRepeat = None,
+
         # Although it is common to talk about the "margins" on a page, as the
         # space between elements and the side of the page, this naming is not
         # conform the current CSS definition.  To guarantee compatibility with
