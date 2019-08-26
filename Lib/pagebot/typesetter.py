@@ -356,7 +356,7 @@ class Typesetter:
             yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
             w = units(self.IMAGE_CACHE_WIDTH.findall(alt) or [None])[0] # w=800, w=100%
             h = units(self.IMAGE_CACHE_HEIGHT.findall(alt) or [None])[0] # h=800
-            doScale = doScale and self.IMAGE_CACHE_NOSCALE.findall(alt)
+            doScale = doScale and not self.IMAGE_CACHE_NOSCALE.findall(alt)
             cssSize = (self.IMAGE_CACHE_SIZE.findall(alt) or [None])[0]
             cssRepeat = (self.IMAGE_CACHE_REPEAT.findall(alt) or [None])[0]
         # doScale = doScale or w is not None or h is not None

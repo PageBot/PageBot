@@ -93,7 +93,7 @@ class XmlBuilder(BaseBuilder):
         If the key has an attached builder type as @xxx-html@ or @xxx-css@,
         then show the attribute only with the builder type matches the type of
         @self@."""
-        for key, value in args.items():
+        for key, value in sorted(args.items()):
             if key == 'php':
                 self.write_php_attribute(value)
             elif key in attributes or key.startswith(u'data_'): # or key.startswith(self.PHP_OPEN):
@@ -108,7 +108,7 @@ class XmlBuilder(BaseBuilder):
             #    if builderType is not None:
             #        # If the key is not in the standard HTML list, is can be a CSS attribute. Just ignore it.
 
-        for key, value in default_attributes.items():
+        for key, value in sorted(default_attributes.items()):
             if key not in args.keys():
                 self.get_attribute_exceptions(key, value)
 

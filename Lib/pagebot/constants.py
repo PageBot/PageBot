@@ -836,7 +836,8 @@ CSS_REPEAT_X = 'repeat-x'
 CSS_REPEAT_Y = 'repeat-y'
 CSS_NO_REPEAT = 'no-repeat'
 CSS_SPACE = 'space'
-CSS_BACKGROUND_REPEAT = (CSS_REPEAT, CSS_REPEAT_X, CSS_REPEAT_Y, CSS_NO_REPEAT, CSS_SPACE)
+CSS_ROUND= 'round'
+CSS_BACKGROUND_REPEAT = (CSS_REPEAT, CSS_REPEAT_X, CSS_REPEAT_Y, CSS_NO_REPEAT, CSS_SPACE, CSS_ROUND)
 
 # Standard font style names, with the matching abbreviations they can have in
 # font style As reference TYPETR Upgrade is mentioned. In normalized keys, all

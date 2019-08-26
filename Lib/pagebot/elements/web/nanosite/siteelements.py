@@ -111,6 +111,12 @@ class NanoElement(Column):
         """
         return TypeList(styleNames, parent=self, styleData=styleData, **kwargs)
 
+    def newWaterfall(self, styleNames, parent=None, styleData=None, **kwargs):
+        """Create a list of type specimens, using the web type references as well
+        as well as showing information that is embedded into the fonts.
+        """
+        return Waterfall(styleNames, parent=self, styleData=styleData, **kwargs)
+
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work.
 

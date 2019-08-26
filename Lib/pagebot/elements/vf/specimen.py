@@ -241,6 +241,85 @@ class TypeList(Group):
         b.div(cssId=self.cssId, cssClass=self.cssClass)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
+        b.input(type="range", min="12", max="42", cssId="slider", style="width:50%")
+        b.addJs("""
+$( ".slider" ).slider({
+  change: function( event, ui ) {
+    $(<text div selector>).css("font-size",(ui.value+"px"));
+  }
+});
+""")
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
+
+class Waterfall(Group):
+    """Shows a list of type styles in their style.
+    Add information as it is available in the font.
+
+    >>> from pagebot.document import Document
+    >>> from pagebot.constants import A4Rounded
+    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot.toolbox.units import pt
+    >>> context = getDrawBotContext()
+    >>> context
+    <DrawBotContext>
+    >>> W, H = A4Rounded
+    >>> fontSize = pt(32) # Size of main sample
+    >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
+    >>> #adobeUrl = 'https://fonts.adobe.com/fonts/bitcount-mono-double'
+    >>> downloadFontUrl = 'font/Upgrade_Try.zip'
+    >>> typeNetWorkUrl = 'https://store.typenetwork.com/foundry/typetr/fonts/upgrade'
+    >>> seeAlsoUrl = 'https://upgrade.typenetwork.com'
+    >>> fdl = [('PageBot-Book', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl))]
+    >>> fdl.append(('PageBot-Bold', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl)))
+    >>> doc = Document(w=W, h=H, context=context)
+    >>> view = doc.view
+    >>> view.showPadding = True
+    >>> page = doc[1]
+    >>> page.padding = pt(50) 
+    >>> fontSizes = range(9, 25)
+    >>> typeList = Waterfall(fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
+    >>> score = page.solve()
+    >>> doc.export('_export/Waterfall.pdf')
+    >>> view = doc.newView('Site')
+    >>> doc.export('_export/Waterfall')
+
+    """
+    CSS_ID = 'Waterfall'
+
+    def __init__(self, fontDataList, parent=None, fontSizes=None, 
+            labelFont=None, labelFontSize=None, **kwargs):
+        """
+        @fontNames is order and list of findFont(fontName)
+        @fontData has format {
+            'PageBot-Book': dict(
+                description='Description of this style, status, usage, glyph set', 
+                caption='Optional caption with the image'
+                adobe=adobeUrl, # https://fonts.adobe.com/fonts/upgrade
+                download=downloadFontUrl, # font/Upgrade_Try.zip
+                typenetwork=typeNetWorkUrl, # https://store.typenetwork.com/foundry/typetr/fonts/upgrade
+                seeAlso=seeAlsoUrl # https://upgrade.typenetwork.com
+            )
+        }
+        """
+        Element.__init__(self, parent=parent, **kwargs)
+        self.fonts = {}
+        if fontSizes is None:
+            fontSizes = range(9, 25)
+        self.fontSizes = fontSizes
+        self.fontDataList = fontDataList
+
+    def build_html(self, view, path, drawElements=True, **kwargs):
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass=self.cssClass)
+        for fontSize in self.fontSizes:
+            for fontName, _ in self.fontDataList:
+                style = "font-family:%s;font-size:%s;line-height:1.1em;height:%s;width:100%%;" % (fontName, px(fontSize), px(fontSize*1.1))
+                style += "overflow:hidden;text-overflow:ellipsis;"
+                b.div(style=style)
+                b.addHtml('AaBbCcDdEe FfGgHhIiJjKk LlMmNnOoPp QqRrSsTtUu VvWwXxYyZz') #FfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz')
+                b._div()
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 

@@ -83,7 +83,11 @@ class HtmlBuilder(XmlBuilder):
 
     BLOCKQUOTE_ATTRIBUTES = {}
 
-    INPUT_ATTRIBUTES_DEFAULTS = {'alt': '+', 'disabled': False}
+    INPUT_ATTRIBUTES_DEFAULTS = {'accept', 'align', 'alt', 'autocomplete',
+        'autofocus', 'checked', 'dirname', 'disabled', 'form', 'formaction',
+        'formenctype', 'formmethod', 'formnovalidate', 'formtaget', 'height',
+        'list', 'min', 'max', 'maxlength', 'multiple', 'name', 'pattern',
+        'placeholder', 'readonly', 'required', 'size', 'src', 'step', 'type'}
 
     CANVAS_ATTRIBUTES = {'width_html', 'height_html'}
 
@@ -1477,7 +1481,7 @@ table {
         >>> b.compact = True
         >>> b.img(src="myImage.png", cssClass="myClass", width="100%")
         >>> b.getHtml()
-        '<img src="myImage.png" class="myClass"/>'
+        '<img class="myClass" src="myImage.png"/>'
         """
         if not args.get('border'):
             args['border'] = 0
@@ -1527,7 +1531,7 @@ table {
         >>> b.write('Hello')
         >>> b._a()
         >>> b.getHtml()
-        '<a href="mypage.html" target="external" class="myClass">Hello</a>'
+        '<a class="myClass" href="mypage.html" target="external">Hello</a>'
         >>> b.clearHtml()
         >>> b.a(name="marker")
         >>> b.getHtml()
@@ -1567,7 +1571,6 @@ table {
         """
         self.write_tag('frame', True, args)
         self._debugclass('frame', self.getClassName(args, self.FRAME_ATTRIBUTES))
-
 
     def _frame(self):
         self._closeTag('frame')
