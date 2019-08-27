@@ -71,23 +71,19 @@ class HtmlBuilder(XmlBuilder):
 
     LABEL_ATTRIBUTES = {'for'}
 
-    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {
-        'type', 'name', 'size', 'value', 'accept', 'autocorrect',
-        'autocapitalize', 'placeholder', 'inputmode', 'relation', 'checked',
-        'src', 'alt', 'readonly', 'tabindex', 'accesskey', 'onfocus', 'onblur',
-        'onselect', 'onchange', 'ondblclick', 'onmousedown', 'onmouseup',
-        'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown',
-        'onkeyup', 'maxlength', 'disabled', 'autocorrect', 'autocapitalize',
-        'placeholder', 'results',
-    }
+    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {'accesskey', 'dirname', 'onblur', 
+        'pattern', 'relation', 'onchange', 'type', 'onmouseup', 'value', 'step', 
+        'onmousedown', 'autofocus', 'onkeypress', 'onselect', 'list', 'formnovalidate', 
+        'maxlength', 'onkeyup', 'tabindex', 'autocapitalize', 'autocorrect', 
+        'results', 'min', 'placeholder', 'formtaget', 'inputmode', 'src', 
+        'formaction', 'height', 'formenctype', 'size', 'onmousemove', 'name', 
+        'alt', 'autocomplete', 'onmouseout', 'required', 'onkeydown', 'multiple', 
+        'ondblclick', 'readonly', 'onfocus', 'accept', 'align', 'form', 'max', 
+        'disabled', 'checked', 'formmethod', 'onmouseover'}
+    
+    INPUT_ATTRIBUTES_DEFAULTS = {'alt':'+', 'disabled': 'false'}
 
     BLOCKQUOTE_ATTRIBUTES = {}
-
-    INPUT_ATTRIBUTES_DEFAULTS = {'accept', 'align', 'alt', 'autocomplete',
-        'autofocus', 'checked', 'dirname', 'disabled', 'form', 'formaction',
-        'formenctype', 'formmethod', 'formnovalidate', 'formtaget', 'height',
-        'list', 'min', 'max', 'maxlength', 'multiple', 'name', 'pattern',
-        'placeholder', 'readonly', 'required', 'size', 'src', 'step', 'type'}
 
     CANVAS_ATTRIBUTES = {'width_html', 'height_html'}
 
