@@ -15,7 +15,7 @@ from random import choice
 
 from pagebot.constants import *
 from pagebot.paths import DEFAULT_FONT_NAME
-from pagebot.toolbox.units import pt, p
+from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spotColor, rgbColor, whiteColor, blackColor, grayColor
 
 class Palette:
@@ -146,8 +146,8 @@ class Mood:
     ATTRS = ('textFill', 'textStroke', 'stroke', 'fill', 'link', 'hover',
         'textFillDiap', 'fillDiap', 'textLinkDiap', 'textHoverDiap',
         )
-    UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin', 
-        'tracking', 'height', 
+    UNITS = ('leading', 'fontSize', 'width', 'padding', 'margin',
+        'tracking', 'height',
         )
     NAMES = ('font',)
 
@@ -186,7 +186,7 @@ class Mood:
         return '<%s %s>' % (self.__class__.__name__, self.name)
 
     def getStyle(self, tag):
-        """Answer the style dictionary indicated by tag. Note that this is the 
+        """Answer the style dictionary indicated by tag. Note that this is the
         reference to the original, so a called can change values directly in the style.
         Answer None if there is not style with that tag name.
 
@@ -256,7 +256,7 @@ class BaseTheme:
     def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
             # Add typographic styles to the standards for this class.
         if tag in fontSizes:
-            fontSize, leading, tracking = fontSizes[tag] 
+            fontSize, leading, tracking = fontSizes[tag]
         else: # If unknown tag, then take body values.
             fontSize, leading, tracking = fontSizes['body']
         padding = pt(12) # Must be pt, to convert automatic in CSS, for now.
@@ -351,7 +351,7 @@ class BaseTheme:
         mobilemenu3=DEFAULT_MENU_COLORS_NORMAL(3),
         hr3=dict(stroke='darker3'), # <hr> Horizontal ruler color by index
         side=dict(textFill='black', fill='white',
-            pt=pt(12), pr=pt(12), pb=pt(12), pl=pt(12), 
+            pt=pt(12), pr=pt(12), pb=pt(12), pl=pt(12),
             textLink='dark3', textHover='darkest3'),
         # Introduction default is base1
         intro3=dict(textFill='lightest3', fill='dark3', # .introduction h1
@@ -487,7 +487,7 @@ class BaseTheme:
         mobileMenu3=DEFAULT_MENU_DARK(3),
         hr3=dict(stroke='base3'), # <hr> Horizontal ruler color by index
         side=dict(textFill='white', fill='black',
-            mt=pt(12), mr=pt(12), mb=pt(12), ml=pt(12), 
+            mt=pt(12), mr=pt(12), mb=pt(12), ml=pt(12),
             textLink='darkest3', textHover='dark3'),
         # Introduction default is base1
         intro3=dict(textFill='darkest3', fill='lightest3', # .introduction h1

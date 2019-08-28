@@ -35,7 +35,6 @@ from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
 from pagebot.constants import *
-from pagebot.toolbox.transformer import asIntOrNone
 
 class Typesetter:
     """The Typesetter takes one or more markdown files or a sequence of
@@ -361,15 +360,15 @@ class Typesetter:
             cssRepeat = (self.IMAGE_CACHE_REPEAT.findall(alt) or [None])[0]
         # doScale = doScale or w is not None or h is not None
         proportional = not (w is not None and h is not None) # Not proportional if both are defined.
-        # auto    Default value. The background image is displayed in its original size 
-        # (w, h)  Sets the width and height of the background image. 
-        #         The first value sets the width, the second value sets the height. 
-        #         If only one value is given, the second is set to "auto". Read about length units 
+        # auto    Default value. The background image is displayed in its original size
+        # (w, h)  Sets the width and height of the background image.
+        #         The first value sets the width, the second value sets the height.
+        #         If only one value is given, the second is set to "auto". Read about length units
         #         w and h can be fixed units or pecentage.
-        #         A percentage sets the width and height of the background image in percent of the parent element. 
-        #         The first value sets the width, the second value sets the height. 
+        #         A percentage sets the width and height of the background image in percent of the parent element.
+        #         The first value sets the width, the second value sets the height.
         #         If only one value is given, the second is set to "auto"   Play it »
-        # cover   Resize the background image to cover the entire container, 
+        # cover   Resize the background image to cover the entire container,
         #         even if it has to stretch the image or cut a little bit off one of the edges Play it »
         # contain Resize the background image to make sure the image is fully visible Play it »
         # initial Sets this property to its default value. Read about initial Play it »

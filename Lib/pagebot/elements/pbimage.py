@@ -19,8 +19,8 @@
 import os
 
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL 
-from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt, isUnit
+from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL
+from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import path2Extension
 
@@ -68,7 +68,7 @@ class Image(Element):
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
-            size=None, cssSize=None, cssRepeat=None, z=0, mask=None, imo=None, 
+            size=None, cssSize=None, cssRepeat=None, z=0, mask=None, imo=None,
             proportional=True, index=1,
             scaleImage=True, resolutionFactor=None, scaleType=None, **kwargs):
         Element.__init__(self, **kwargs)
@@ -439,9 +439,9 @@ class Image(Element):
             # If a clipRect is defined, create the Bézier path.
             """
             if self.clipPath is not None:
-                DON'T CALL BUILDER DIRECTLY and don't scale here. 
+                DON'T CALL BUILDER DIRECTLY and don't scale here.
                 Context must do it's own scaling.
-                
+
                 clipRect = context.newPath()
                 clX, clY, clW, clH = upt(self.clipRect)
                 sclX = clX/sx
@@ -467,10 +467,10 @@ class Image(Element):
             """
             if self.imo is not None:
                 with self.imo:
-                    context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(), 
+                    context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
                         w=self.w, h=self.h, scaleType=self.scaleType)
                 context.image(self.imo, (px, py), pageNumber=self.index,
-                        alpha=self._getAlpha(), w=self.w, h=self.h, 
+                        alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType)
             else:
                 context.image(self.path, (px, py), pageNumber=self.index,

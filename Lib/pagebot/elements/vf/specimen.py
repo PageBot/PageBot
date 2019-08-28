@@ -19,7 +19,7 @@
 from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.toolbox.units import pointOffset, pt, em, upt, px
+from pagebot.toolbox.units import pt, px
 from pagebot.conditions import *
 
 FONT_DOWNLOAD_URL = 'download' # Url to download the font: font/Upgrade_Try.zip
@@ -27,7 +27,7 @@ FONT_SEEALSO = 'seeAlso' # Url to alternative website: https://upgrade.typenetwo
 FONT_ADOBE_URL = 'adobe' # Url to adobe page of the font: https://fonts.adobe.com/fonts/upgrade
 FONT_GOOGLE_URL = 'google' # Url to Google fonts page of the font: https://fonts.google.com/specimen/Roboto
 FONT_TYPENETWORK_URL = 'typenetwork' # Url to typeNetWork: https://store.typenetwork.com/foundry/typetr/fonts/upgrade
-FONT_DESCRIPTION = 'description' # Description of this style, status, usage, glyph set', 
+FONT_DESCRIPTION = 'description' # Description of this style, status, usage, glyph set',
 FONT_CAPTION = 'caption' # Optional caption with the image'
 
 ADOBE_LOGO_W = 20
@@ -46,8 +46,8 @@ GOOGLE_ICON = """<span class="google-icon">G</span>"""
 FONT_DATA_KEYS = (
     (FONT_DOWNLOAD_URL, '%s Download' % TRY_ICON), # Adding icon string once implemented in PageBot font.
     (FONT_SEEALSO, '%s TYPETR Library' % TYPETR_ICON),
-    (FONT_TYPENETWORK_URL, '%s Type Network Library' % TN_ICON), 
-    (FONT_ADOBE_URL, '%s Adobe Fonts Library' % ADOBE_SVG_ICON), 
+    (FONT_TYPENETWORK_URL, '%s Type Network Library' % TN_ICON),
+    (FONT_ADOBE_URL, '%s Adobe Fonts Library' % ADOBE_SVG_ICON),
     (FONT_GOOGLE_URL, '%s Google Fonts Library' % GOOGLE_ICON),
 )
 class TypeListLine(Element):
@@ -56,7 +56,7 @@ class TypeListLine(Element):
     CSS_ID = 'TypeListLine'
     CSS_CLASS = None
 
-    def __init__(self, font, fontData=None, sampleText=None, fontName=None, 
+    def __init__(self, font, fontData=None, sampleText=None, fontName=None,
             fontSize=None, labelFont=None, labelFontSize=None, **kwargs):
         """Make a sample line with font (can be None)"""
         Element.__init__(self, **kwargs)
@@ -117,7 +117,7 @@ class TypeListLine(Element):
         #if labelString:
         #    b.addHtml(labelString)
 
-        # If Urls provided, then add then as links. 
+        # If Urls provided, then add then as links.
         hasLine = False
         for index, (k, label) in enumerate(FONT_DATA_KEYS):
             if k in self.fontData:
@@ -147,7 +147,7 @@ class TypeListLine(Element):
             src: url("%s") format("eot"),
             url("%s") format("woff2"),
             url("%s") format("woff");
-        }\n""" % (self.font.info.cssName, self.font.info.eotName, 
+        }\n""" % (self.font.info.cssName, self.font.info.eotName,
             self.font.info.woff2Name, self.font.info.woffName)
         if css not in cssList:
             cssList.append(css)
@@ -190,7 +190,7 @@ class TypeList(Group):
     >>> view = doc.view
     >>> view.showPadding = True
     >>> page = doc[1]
-    >>> page.padding = pt(50) 
+    >>> page.padding = pt(50)
     >>> typeList = TypeList(fdl, sampleText=None, fontSize=fontSize, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> typeList.size
     (495pt, 742pt)
@@ -208,13 +208,13 @@ class TypeList(Group):
     """
     CSS_ID = 'TypeList'
 
-    def __init__(self, fontDataList, parent=None, h=None, fontSize=None, 
+    def __init__(self, fontDataList, parent=None, h=None, fontSize=None,
             labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
         @fontData has format {
             'PageBot-Book': dict(
-                description='Description of this style, status, usage, glyph set', 
+                description='Description of this style, status, usage, glyph set',
                 caption='Optional caption with the image'
                 adobe=adobeUrl, # https://fonts.adobe.com/fonts/upgrade
                 download=downloadFontUrl, # font/Upgrade_Try.zip
@@ -231,8 +231,8 @@ class TypeList(Group):
             if font is not None:
                 self.fonts.append(font)
             h = self.leading * pt(self.fontSize)
-            TypeListLine(font, fontData=fontData, fontName=fontName, 
-                fontSize=self.fontSize, labelFont=labelFont, 
+            TypeListLine(font, fontData=fontData, fontName=fontName,
+                fontSize=self.fontSize, labelFont=labelFont,
                 labelFontSize=labelFontSize, parent=self, h=h, **kwargs)
 
     def build_html(self, view, path, drawElements=True, **kwargs):
@@ -276,7 +276,7 @@ class Waterfall(Group):
     >>> view = doc.view
     >>> view.showPadding = True
     >>> page = doc[1]
-    >>> page.padding = pt(50) 
+    >>> page.padding = pt(50)
     >>> fontSizes = range(9, 25)
     >>> typeList = Waterfall(fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> score = page.solve()
@@ -287,13 +287,13 @@ class Waterfall(Group):
     """
     CSS_ID = 'Waterfall'
 
-    def __init__(self, fontDataList, parent=None, fontSizes=None, 
+    def __init__(self, fontDataList, parent=None, fontSizes=None,
             labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
         @fontData has format {
             'PageBot-Book': dict(
-                description='Description of this style, status, usage, glyph set', 
+                description='Description of this style, status, usage, glyph set',
                 caption='Optional caption with the image'
                 adobe=adobeUrl, # https://fonts.adobe.com/fonts/upgrade
                 download=downloadFontUrl, # font/Upgrade_Try.zip
