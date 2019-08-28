@@ -59,7 +59,7 @@ class TypeListLine(Element):
     def __init__(self, font, fontData=None, sampleText=None, fontName=None,
             fontSize=None, labelFont=None, labelFontSize=None, **kwargs):
         """Make a sample line with font (can be None)"""
-        Element.__init__(self, **kwargs)
+        super().__init__(**kwargs)
         self.cssClass = self.CSS_CLASS or self.__class__.__name__.lower()
 
         # Fonts
