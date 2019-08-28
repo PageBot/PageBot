@@ -35,13 +35,13 @@ install:
 - cd ..
 - rm master.zip
 - rm -r defconAppKit-master
-- wget https://github.com/typemytype/drawbot/archive/master.zip
-- unzip master.zip
-- cd drawbot-master
+- wget https://github.com/typemytype/drawbot/archive/remove-PY2-symbol.zip
+- unzip remove-PY2-symbol.zip
+- cd drawbot-remove-PY2-symbol
 - python3 setup.py install
 - cd ..
-- rm master.zip
-- rm -r drawbot-master
+- rm remove-PY2-symbol.zip
+- rm -r drawbot-remove-PY2-symbol
 - wget https://github.com/typesupply/compositor/archive/master.zip
 - unzip master.zip
 - cd compositor-master
