@@ -153,7 +153,7 @@ class TypeListLine(Element):
             cssList.append(css)
         return cssList
 
-    def buildElement(self, view, p, drawElements, **kwargs):
+    def buildElement(self, view, p, drawElements=True, **kwargs):
         """Draw the specimen line, assuming context to be of a drawing type.
         """
         c = self.context
@@ -223,7 +223,8 @@ class TypeList(Group):
             )
         }
         """
-        Element.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        #FIXME: Group is base class, not Element.
+        #Element.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
         self.fonts = []
         self.fontSize = fontSize
         for fontName, fontData in fontDataList:
@@ -302,7 +303,8 @@ class Waterfall(Group):
             )
         }
         """
-        Element.__init__(self, parent=parent, **kwargs)
+        #FIXME: Group is base class, not Element.
+        #Element.__init__(self, parent=parent, **kwargs)
         self.fonts = {}
         if fontSizes is None:
             fontSizes = range(9, 25)
