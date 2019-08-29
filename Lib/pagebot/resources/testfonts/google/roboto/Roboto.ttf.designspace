@@ -97,42 +97,42 @@
                 <dimension name="weight" xvalue="900" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-Light.ttf" name="RobotoCondensed-Light.ttf" stylename="Condensed Light">
+        <source familyname="Roboto" filename="Roboto-CondensedLight.ttf" name="Roboto-CondensedLight.ttf" stylename="Condensed Light">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="0" />
                 <dimension name="weight" xvalue="300" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-Regular.ttf" name="RobotoCondensed-Regular.ttf" stylename="Condensed Regular">
+        <source familyname="Roboto" filename="Roboto-CondensedRegular.ttf" name="Roboto-CondensedRegular.ttf" stylename="Condensed Regular">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="0" />
                 <dimension name="weight" xvalue="400" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-Bold.ttf" name="RobotoCondensed-Bold.ttf" stylename="Condensed Bold">
+        <source familyname="Roboto" filename="Roboto-CondensedBold.ttf" name="Roboto-CondensedBold.ttf" stylename="Condensed Bold">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="0" />
                 <dimension name="weight" xvalue="700" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-LightItalic.ttf" name="RobotoCondensed-LightItalic.ttf" stylename="Condensed Light Italic">
+        <source familyname="Roboto" filename="Roboto-CondensedLightItalic.ttf" name="Roboto-CondensedLightItalic.ttf" stylename="Condensed Light Italic">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="12" />
                 <dimension name="weight" xvalue="300" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-Italic.ttf" name="RobotoCondensed-Italic.ttf" stylename="Condensed Italic">
+        <source familyname="Roboto" filename="Roboto-CondensedItalic.ttf" name="Roboto-CondensedItalic.ttf" stylename="Condensed Italic">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="12" />
                 <dimension name="weight" xvalue="400" />
             </location>
         </source>
-        <source familyname="Roboto" filename="RobotoCondensed-BoldItalic.ttf" name="RobotoCondensed-BoldItalic.ttf" stylename="Condensed Bold Italic">
+        <source familyname="Roboto" filename="Roboto-CondensedBoldItalic.ttf" name="Roboto-CondensedBoldItalic.ttf" stylename="Condensed Bold Italic">
             <location>
                 <dimension name="width" xvalue="75" />
                 <dimension name="slant" xvalue="12" />
