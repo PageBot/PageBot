@@ -259,11 +259,11 @@ class Family:
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> family = Family('MyFamily')
         >>> family.addFonts(path)
         >>> family.getStyles()
-        {'Roman': [<Font Amstelvar-Roman-VF>]}
+        {'Regular': [<Font Bungee-Regular>]}
         """
         """
         >>> family = getFamily('Bungee')
