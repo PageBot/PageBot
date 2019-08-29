@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -38,11 +39,15 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
     5
     """
     global FAMILY_PATHS
+
     if force:
         FAMILY_PATHS = {}
-    if not FAMILY_PATHS: # If forced or not initialized yet
+
+    # If forced or not initialized yet.
+    if not FAMILY_PATHS:
         for fontPath in getFontPaths().values():
             familyName = None
+
             if useFontInfo:
                 font = getFont(fontPath)
                 if font is not None:
@@ -55,6 +60,7 @@ def getFamilyPaths(useFontInfo=True, useFileName=True, force=False):
                 if familyName not in FAMILY_PATHS:
                     FAMILY_PATHS[familyName] = []
                 FAMILY_PATHS[familyName].append(fontPath)
+
     return FAMILY_PATHS
 
 def getFamily(familyName, useFontInfo=True, useFileName=True):
@@ -267,12 +273,15 @@ class Family:
         ['Regular']
         """
         fontStyles = {}
+
         for font in self.fonts.values():
             styleName = font.info.styleName
+
             if not styleName in fontStyles:
                 fontStyles[styleName] = [font]
             else:
                 fontStyles[styleName].append(font)
+
         return fontStyles
 
     def getWeights(self):
