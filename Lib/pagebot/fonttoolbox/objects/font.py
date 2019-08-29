@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -94,6 +95,9 @@ def findFonts(pattern, lazy=True):
     """Answers a list of Font instances where the pattern fits the font path.
     If pattern is a list, all parts should have a match.
 
+
+    """
+    """
     >>> findFonts('Roboto-Thi')
     [<Font Roboto-Thin>, <Font Roboto-ThinItalic>]
     >>> findFonts(('Robo', 'Ita', 'Thi')) # Select on family and name parts
@@ -436,7 +440,7 @@ class Font:
 
         >>> f = Font()
         >>> f
-        <Font Untitled>
+        <Font Untitled Untitled>
         """
         if path is None and ttFont is None:
             self.ttFont = TTFont()
@@ -884,14 +888,14 @@ class Font:
         >>> sorted(f.axes.keys())
         ['GRAD', 'POPS', 'PWDT', 'PWGT', 'UDLN', 'XOPQ', 'XTRA', 'YOPQ', 'YTAD', 'YTAS', 'YTDD', 'YTDE', 'YTLC', 'YTRA', 'YTUC', 'opsz', 'wdth', 'wght']
         >>> f.name
-        'RobotoDelta Regular'
+        'RobotoDelta VF'
         >>> len(f)
         188
         >>> f.axes['wght']
         (100.0, 400.0, 900.0)
         >>> g = f['H']
         >>> g
-        <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
+        <Glyph 'H' (Pts:12, Cnt:1, Cmp:0)>
         >>> g.points[6], g.width
         (APoint(1288,1456,On), 1458)
         >>> instance = f.getInstance(location=dict(wght=500))
@@ -899,7 +903,7 @@ class Font:
         <Font RobotoDelta-VF-wght500>
         >>> ig = instance['H']
         >>> ig
-        <PageBot Glyph H Pts:12/Cnt:1/Cmp:0>
+        <Glyph 'H' (Pts:12, Cnt:1, Cmp:0)>
         >>> ig.points[6], ig.width
         (APoint(1307,1456,On), 1477)
         """
