@@ -17,7 +17,7 @@
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE, RGB)
-from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.contexts.flat.flatbuilder import flatBuilder
 from pagebot.contexts.flat.flatbezierpath import BezierPath
 from pagebot.contexts.flat.flatstring import FlatString

@@ -83,12 +83,15 @@ script:
 - python3 Lib/pagebot/constants.py
 - python3 Lib/pagebot/contexts/__init__.py
 - python3 Lib/pagebot/contexts/base/abstractcontext.py
-- python3 Lib/pagebot/contexts/base/builder.py
-- python3 Lib/pagebot/contexts/base/context.py
-- python3 Lib/pagebot/contexts/solid/builder.py
+- python3 Lib/pagebot/contexts/base/basecontext.py
+- python3 Lib/pagebot/contexts/base/basebuilder.py
+- python3 Lib/pagebot/contexts/canvas/canvascontext.py
+- python3 Lib/pagebot/contexts/canvas/canvasbuilder.py
 - python3 Lib/pagebot/contexts/flat/flatbuilder.py
+- python3 Lib/pagebot/contexts/flat/flatbezierpath.py
 - python3 Lib/pagebot/contexts/flat/flatcontext.py
 - python3 Lib/pagebot/contexts/flat/flatstring.py
+- python3 Lib/pagebot/contexts/solid/builder.py
 - python3 Lib/pagebot/contexts/xml/htmlbuilder.py
 - python3 Lib/pagebot/contexts/xml/svgbuilder.py
 - python3 Lib/pagebot/contexts/xml/sitebuilder.py
@@ -96,7 +99,6 @@ script:
 - python3 Lib/pagebot/contexts/xml/htmlcontext.py
 - python3 Lib/pagebot/contexts/xml/htmlstring.py
 - python3 Lib/pagebot/contexts/xml/svgcontext.py
-- python3 Lib/pagebot/strings/babelstring.py
 # TODO: add rest of contributions.
 - python3 Lib/pagebot/contributions/filibuster/blurbwriter.py
 - python3 Lib/pagebot/document.py
@@ -133,6 +135,7 @@ script:
 - python3 Lib/pagebot/elements/views/pageview.py
 - python3 Lib/pagebot/elements/views/pagemapview.py
 - python3 Lib/pagebot/elements/views/siteview.py
+- python3 Lib/pagebot/errors.py
 - python3 Lib/pagebot/fonttoolbox/objects/family.py
 - python3 Lib/pagebot/fonttoolbox/objects/font.py
 - python3 Lib/pagebot/fonttoolbox/objects/fontinfo.py
@@ -141,6 +144,10 @@ script:
 - python3 Lib/pagebot/fonttoolbox/otlTools.py
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
+- python3 Lib/pagebot/gradient.py
+- python3 Lib/pagebot/interaction/__init__.py
+- python3 Lib/pagebot/interaction/variables.py
+- python3 Lib/pagebot/paths.py
 - python3 Lib/pagebot/publications/typespecimens/__init__.py
 - python3 Lib/pagebot/publications/typespecimens/basetypespecimen.py
 - python3 Lib/pagebot/publications/typespecimens/simplespecimen.py
@@ -152,10 +159,31 @@ script:
 - python3 Lib/pagebot/publications/typespecimens/proofing/tx.py
 - python3 Lib/pagebot/publications/websites/nanosite/nanosite.py
 # - python3 Lib/pagebot/publications/newspapers/basenewspaper.py 
+# TODO: add rest of publications...
+# ...
 - python3 Lib/pagebot/publications/calendars/basecalendar.py
-# TODO:add rest of publications...
+- python3 Lib/pagebot/readers/__init__.py
+- python3 Lib/pagebot/readers/mdreader.py
+- python3 Lib/pagebot/readers/rereader.py
+- python3 Lib/pagebot/readers/xmlreader.py
+- python3 Lib/pagebot/server/__init__.py
+- python3 Lib/pagebot/server/baseserver.py
+- python3 Lib/pagebot/strings/babelstring.py
 - python3 Lib/pagebot/style.py
 - python3 Lib/pagebot/stylelib.py
+- python3 Lib/pagebot/templates/__init__.py
+# ...
+- python3 Lib/pagebot/themes/__init__.py
+- python3 Lib/pagebot/themes/backtothecity.py
+- python3 Lib/pagebot/themes/basetheme.py
+- python3 Lib/pagebot/themes/businessasusual.py
+- python3 Lib/pagebot/themes/fairytales.py
+- python3 Lib/pagebot/themes/freshandshiny.py
+- python3 Lib/pagebot/themes/happyholidays.py
+- python3 Lib/pagebot/themes/intothewoods.py
+- python3 Lib/pagebot/themes/seasoningthedish.py
+- python3 Lib/pagebot/themes/somethingintheair.py
+- python3 Lib/pagebot/themes/wordlywise.py
 - python3 Lib/pagebot/toolbox/color.py
 - python3 Lib/pagebot/toolbox/columncalc.py
 - python3 Lib/pagebot/toolbox/dating.py

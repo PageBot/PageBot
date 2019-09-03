@@ -19,7 +19,7 @@
 import shutil
 from pagebot.contexts.xml.svgbuilder import svgBuilder
 from pagebot.contexts.xml.htmlstring import HtmlString
-from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.toolbox.color import noColor, color

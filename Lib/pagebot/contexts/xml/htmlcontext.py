@@ -14,7 +14,7 @@
 #     htmlcontext.py
 #
 
-from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.contexts.xml.htmlbuilder import HtmlBuilder
 from pagebot.contexts.xml.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
@@ -45,13 +45,13 @@ class HtmlContext(BaseContext):
         self._fill = noColor
 
     def newDocument(self, w=None, h=None, doc=None):
-        """PageBot function. Ignore for now in HTMLContext. 
+        """PageBot function. Ignore for now in HTMLContext.
         The @doc is the optional Document instance of the caller."""
         pass
 
     def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
-        Ignore for now in HtmlContect. 
+        Ignore for now in HtmlContect.
         """
         pass
 
