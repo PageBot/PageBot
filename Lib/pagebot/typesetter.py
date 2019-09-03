@@ -306,14 +306,13 @@ class Typesetter:
     #   <figcaption>Caption here</figcaption>
     # </figure>
     #
-    IMAGE_CACHE_WIDTH = re.compile('w=([012345679\\%]*)')
-    IMAGE_CACHE_HEIGHT = re.compile('h=([012345679\\%]*)')
-    IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)')
-    IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)')
-    IMAGE_CACHE_NOSCALE = re.compile('(noscale|noScale)')
+    IMAGE_CACHE_WIDTH = re.compile('w=([px012345679\\%]*)') # 200px, 100% 
+    IMAGE_CACHE_HEIGHT = re.compile('h=([px012345679\\%]*)') # 200px, 100% 
+    IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)') # left, center, right 
+    IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)') # top, middle, bottom
+    IMAGE_CACHE_NOSCALE = re.compile('(noscale|noScale)') # noscale does not create a scaled/ image.
     IMAGE_CACHE_SIZE = re.compile('(cover|contain|initial|inherit)')
     IMAGE_CACHE_REPEAT = re.compile('(%s)' % '|'.join(CSS_BACKGROUND_REPEAT))
-    # TODO: Add parameter ro prevent scaling
 
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the
@@ -378,8 +377,10 @@ class Typesetter:
                 cssSize = '%s %s' % (w, h)
             elif w is not None:
                 cssSize = '%s auto' % w
-            else: # h is not None:
+            elif h is not None: 
                 cssSize = 'auto %s' % h
+            else:
+                cssSize = 'auto'
 
         self.currentImage = self.IMAGE_CLASS(path=path, parent=self.galley,
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
