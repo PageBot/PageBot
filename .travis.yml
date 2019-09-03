@@ -85,8 +85,6 @@ script:
 - python3 Lib/pagebot/contexts/base/abstractcontext.py
 - python3 Lib/pagebot/contexts/base/basecontext.py
 - python3 Lib/pagebot/contexts/base/basebuilder.py
-- python3 Lib/pagebot/contexts/canvas/canvascontext.py
-- python3 Lib/pagebot/contexts/canvas/canvasbuilder.py
 - python3 Lib/pagebot/contexts/flat/flatbuilder.py
 - python3 Lib/pagebot/contexts/flat/flatbezierpath.py
 - python3 Lib/pagebot/contexts/flat/flatcontext.py
