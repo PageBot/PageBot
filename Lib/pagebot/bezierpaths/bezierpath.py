@@ -21,7 +21,7 @@ import CoreText
 from fontTools.pens.basePen import BasePen
 
 from pagebot.bezierpaths.beziercontour import BezierContour
-from pagebot.contexts.base.context import BaseContext
+from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.errors import PageBotError
 
 _FALLBACKFONT = "LucidaGrande"
