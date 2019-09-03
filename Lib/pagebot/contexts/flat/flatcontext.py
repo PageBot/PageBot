@@ -24,7 +24,6 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
 
-
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
@@ -101,7 +100,12 @@ class FlatContext(BaseContext):
         wpt, hpt = upt(w, h) # Convert units to point values
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
 
+    def getX(self, x):
+        """Calculates x-coordinate based translation."""
+        pass
+
     def getY(self, y):
+        """Calculates y-coordinate based on origin and translation."""
         if not self.flipped:
             return y
         else:
@@ -263,13 +267,6 @@ class FlatContext(BaseContext):
         self._rotationCenter = gState['rotationCenter']
 
     restore = restoreGraphicState
-
-    #   T R A N S F O R M A T I O N
-
-    def translate(self, ox, soy):
-        """Shift the origin of the canvas by (ox, oy).
-        TODO: To be implemented."""
-        pass
 
     #   F O N T S
 
@@ -755,16 +752,37 @@ class FlatContext(BaseContext):
     def strokeWidth(self, w):
         self._strokeWidth = upt(w)
 
+    # Transform.
+
+    def transform(self, matrix, center=(0, 0)):
+        raise NotImplementedError
+
     def translate(self, dx, dy):
-        """Translates the origin by (dx, dy)."""
+        """Translates the origin by (dx, dy).
+        TODO: use transform matrix.
+        """
         dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dxpt
         self._oy += dypt
 
     def rotate(self, angle, center=None):
-        """Rotates by angle."""
+        """Rotates by angle.
+        TODO: use transform matrix.
+        """
         self._rotationCenter = center
         self._rotate = angle
+
+    def scale(self, sx=1, sy=None, center=(0, 0)):
+        """
+        TODO: use transform matrix.
+        """
+        pass
+
+    def skew(self, angle1, angle2=0, center=(0, 0)):
+        """
+        TODO: use transform matrix.
+        """
+        pass
 
     #   E X P O R T
 
