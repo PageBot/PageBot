@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -12,12 +11,21 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     commandbezierpath.py
+#     flatbezierpath.py
 #
 
-class CommandBezierPath:
-    """Bézier path that stores commands to be executed later."""
+class BezierPath:
+    """BezierPath with the same API as DrawBot.BezierPath.
 
+    >>> path = BezierPath(flatBuilder)
+    >>> path.moveTo((0, 0))
+    >>> path.lineTo((0, 100))
+    >>> path.lineTo((100, 100))
+    >>> path.lineTo((100, 0))
+    >>> path.lineTo((0, 0))
+    >>> path.closePath()
+
+    """
     def __init__(self, b):
         self.b = b
         self.commands = []
@@ -26,19 +34,21 @@ class CommandBezierPath:
         self.commands.append(command)
 
     def moveTo(self, p):
-        pass
+        self.commands.append(self.b.moveto(p[0], p[1]))
 
     def lineTo(self, p):
-        pass
+        self.commands.append(self.b.lineto(p[0], p[1]))
 
     def quadTo(self, bcp, p):
-        pass
+        self.commands.append(self.b.quadto(bcp[0], bcp[1], p[0], p[1]))
 
     def curveTo(self, bcp1, bcp2, p):
-        pass
+        self.commands.append(self.b.curveto(bcp1[0], bcp1[1], bcp2[0], bcp2[1], p[0], p[1]))
 
     def closePath(self):
-        pass
+    	pass
+    	# TODO Seems to be a problem in direct closing, not storing as command?
+    	#self.commands.append(self.b.closepath)
 
     def appendPath(self, path):
         self.commands += path.commands

@@ -29,8 +29,8 @@ _FALLBACKFONT = "LucidaGrande"
 from fontTools.misc.transform import Transform
 
 def transformationAtCenter(matrix, centerPoint):
-    """Helper function for rotate(), scale() and skew() to apply a transformation
-    with a specified center point.
+    """Helper function for rotate(), scale() and skew() to apply a
+    transformation with a specified center point.
 
         >>> transformationAtCenter((2, 0, 0, 2, 0, 0), (0, 0))
         (2, 0, 0, 2, 0, 0)
@@ -46,13 +46,13 @@ def transformationAtCenter(matrix, centerPoint):
     """
     if centerPoint == (0, 0):
         return matrix
+
     t = Transform()
     cx, cy = centerPoint
     t = t.translate(cx, cy)
     t = t.transform(matrix)
     t = t.translate(-cx, -cy)
     return tuple(t)
-
 
 
 class BezierPath(BasePen):
@@ -84,7 +84,7 @@ class BezierPath(BasePen):
     def __repr__(self):
         return "<BezierPath>"
 
-    # pen support
+    # pen support.
 
     '''
     def moveTo(self, point):
@@ -111,7 +111,7 @@ class BezierPath(BasePen):
     '''
     def curveTo(self, *points):
         """
-        Draw a cubic bezier with an arbitrary number of control points.
+        Draw a cubic Bézier with an arbitrary number of control points.
 
         The last point specified is on-curve, all others are off-curve
         (control) points.
@@ -129,7 +129,7 @@ class BezierPath(BasePen):
     '''
 
     def _curveToOne(self, pt1, pt2, pt3):
-        """Curve to a point `x3`, `y3`. With given bezier handles `x1`, `y1`
+        """Curve to a point `x3`, `y3`. With given Bézier handles `x1`, `y1`
         and `x2`, `y2`."""
         self._path.curveToPoint_controlPoint1_controlPoint2_(pt3, pt1, pt2)
 
@@ -164,11 +164,11 @@ class BezierPath(BasePen):
         """End the current subpath. Calling this method has two distinct
         meanings depending on the context:
 
-        When the bezier path is used as a segment pen (using `moveTo`,
+        When the Bézier path is used as a segment pen (using `moveTo`,
         `lineTo`, etc.), the current subpath will be finished as an open
         contour.
 
-        When the bezier path is used as a point pen (using `beginPath`,
+        When the Bézier path is used as a point pen (using `beginPath`,
         `addPoint` and `endPath`), the path will process all the points added
         with `addPoint`, finishing the current subpath."""
         if hasattr(self, "_pointToSegmentPen"):
@@ -194,14 +194,14 @@ class BezierPath(BasePen):
     '''
     def drawToPen(self, pen):
         """
-        Draw the bezier path into a pen
+        Draw the Bézier path into a pen
         """
         contours = self.contours
         for contour in contours:
             contour.drawToPen(pen)
 
     def drawToPointPen(self, pointPen):
-        """Draw the bezier path into a point pen."""
+        """Draw the Bézier path into a point pen."""
         contours = self.contours
         for contour in contours:
             contour.drawToPointPen(pointPen)
@@ -231,7 +231,7 @@ class BezierPath(BasePen):
 
     def text(self, txt, offset=None, font=_FALLBACKFONT, fontSize=10, align=None):
         """Draws a `txt` with a `font` and `fontSize` at an `offset` in the
-        bezier path.  If a font path is given the font will be installed and
+        Bézier path. If a font path is given the font will be installed and
         used directly.
 
         - Optionally an alignment can be set.
@@ -267,7 +267,7 @@ class BezierPath(BasePen):
 
     def textBox(self, txt, box, font=_FALLBACKFONT, fontSize=10, align=None,
             hyphenation=None):
-        """Draws a `txt` with a `font` and `fontSize` in a `box` in the bezier
+        """Draws a `txt` with a `font` and `fontSize` in a `box` in the Bézier
         path. If a font path is given the font will be installed and used
         directly.
 
@@ -405,7 +405,7 @@ class BezierPath(BasePen):
 
     def copy(self):
         """
-        Copy the bezier path.
+        Copy the Bézier path.
         """
         new = self.__class__()
         new._path = self._path.copy()
@@ -497,7 +497,7 @@ class BezierPath(BasePen):
 
     def union(self, other):
         """
-        Return the union between two bezier paths.
+        Return the union between two Bézier paths.
         """
         assert isinstance(other, self.__class__)
         import booleanOperations
@@ -508,7 +508,7 @@ class BezierPath(BasePen):
 
     def removeOverlap(self):
         """
-        Remove all overlaps in a bezier path.
+        Remove all overlaps in a Bézier path.
         """
         import booleanOperations
         contours = self._contoursForBooleanOperations()
@@ -518,7 +518,7 @@ class BezierPath(BasePen):
         return self
 
     def difference(self, other):
-        """Return the difference between two bezier paths."""
+        """Return the difference between two Bézier paths."""
         assert isinstance(other, self.__class__)
         import booleanOperations
         subjectContours = self._contoursForBooleanOperations()
@@ -528,7 +528,7 @@ class BezierPath(BasePen):
         return result
 
     def intersection(self, other):
-        """Return the intersection between two bezier paths."""
+        """Return the intersection between two Bézier paths."""
         assert isinstance(other, self.__class__)
         import booleanOperations
         subjectContours = self._contoursForBooleanOperations()
@@ -539,7 +539,7 @@ class BezierPath(BasePen):
 
     def xor(self, other):
         """
-        Return the xor between two bezier paths.
+        Return the xor between two Bézier paths.
         """
         assert isinstance(other, self.__class__)
         import booleanOperations
