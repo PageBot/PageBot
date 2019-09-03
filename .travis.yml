@@ -165,7 +165,8 @@ script:
 - python3 Lib/pagebot/readers/rereader.py
 - python3 Lib/pagebot/readers/xmlreader.py
 - python3 Lib/pagebot/server/__init__.py
-- python3 Lib/pagebot/server/baseserver.py
+# Hangs on server process.
+#- python3 Lib/pagebot/server/baseserver.py
 - python3 Lib/pagebot/strings/babelstring.py
 - python3 Lib/pagebot/style.py
 - python3 Lib/pagebot/stylelib.py

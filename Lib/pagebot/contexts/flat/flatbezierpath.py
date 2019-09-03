@@ -46,9 +46,8 @@ class BezierPath:
         self.commands.append(self.b.curveto(bcp1[0], bcp1[1], bcp2[0], bcp2[1], p[0], p[1]))
 
     def closePath(self):
-    	pass
     	# TODO Seems to be a problem in direct closing, not storing as command?
-    	#self.commands.append(self.b.closepath)
+    	self.commands.append(self.b.closepath)
 
     def appendPath(self, path):
         self.commands += path.commands

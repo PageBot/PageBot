@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -31,7 +32,7 @@ class MainHandler(tornado.web.RequestHandler):
 
     def data_received(self):
         pass
-        
+
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
@@ -40,4 +41,5 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
     app.listen(PORT)
+    print('Starting Tornado server on port %s' % PORT)
     tornado.ioloop.IOLoop.current().start()

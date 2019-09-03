@@ -83,7 +83,7 @@ class FlatContext(BaseContext):
     #   D O C U M E N T
 
     def newDocument(self, w, h, size=None, doc=None, flipped=True):
-        """Create a new self.doc Flat canvas to draw on. Flipped Y-axis by
+        """Create a new self.doc Flat canvas to draw on. Flipped `y`-axis by
         default to conform to DrawBot's drawing methods.
 
         >>> context = FlatContext()
@@ -102,11 +102,13 @@ class FlatContext(BaseContext):
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
 
     def getX(self, x):
-        """Calculates x-coordinate based translation."""
-        pass
+        """Calculates `x`-coordinate based translation."""
+        return self._ox + x
 
     def getY(self, y):
-        """Calculates y-coordinate based on origin and translation."""
+        """Calculates `y`-coordinate based on origin and translation."""
+        y = self._oy + y
+
         if not self.flipped:
             return y
         else:
@@ -277,12 +279,14 @@ class FlatContext(BaseContext):
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
+    '''
     def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0,
             fontSize=None, xAlign=CENTER):
         """Draw the font[glyphName] at the defined position with the defined
         fontSize."""
         path = self.getGlyphPath(glyph)
         self.drawPath(path)
+    '''
 
     def getGlyphPath(self, glyph, p=None, path=None):
         """Converts the cubic commands to a drawable path."""
@@ -291,10 +295,12 @@ class FlatContext(BaseContext):
 
         if p is None:
             px = py = 0
+            px = self.getX(px)
             py = self.getY(py)
         else:
             px = p[0]
             py = p[1]
+            px = self.getX(px)
             py = self.getY(py)
 
         for command, t in glyph.cubic:
