@@ -16,8 +16,8 @@
 #
 #     D E P R E C A T E D
 #     Don't use or develop here.
-#     
+#
 #     Templates will be defined in Publications
 #
-from .stackedtypography import StackedTypography
+#from .stackedtypography import StackedTypography
 
