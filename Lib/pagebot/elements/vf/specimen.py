@@ -25,7 +25,7 @@ from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.conditions import *
-from pagebot.toolbox.units import pointOffset, pt, em, upt, px
+from pagebot.toolbox.units import pt, px
 
 FONT_DOWNLOAD_URL = 'download' # Url to download the font: font/Upgrade_Try.zip
 FONT_SEEALSO = 'seeAlso' # Url to alternative website: https://upgrade.typenetwork.com
@@ -49,8 +49,8 @@ FONT_DATA_KEYS = ( # Define the preferred order, if there is a link available in
     (FONT_DOWNLOAD_URL, '%s <span class=icon-label>Download</span>' % TRY_ICON), # Adding icon string once implemented in PageBot font.
     (FONT_BUY_BY_EMAIL, '%s <span class=icon-label>Buy direct</span>' % BUY_ICON),
     (FONT_SEEALSO, '%s <span class=icon-label>TYPETR</span>' % TYPETR_ICON),
-    (FONT_TYPENETWORK_URL, '%s <span class=icon-label>Type Network</span>' % TN_ICON), 
-    (FONT_ADOBE_URL, '%s <span class=icon-label>Adobe Fonts</span>' % ADOBE_ICON), 
+    (FONT_TYPENETWORK_URL, '%s <span class=icon-label>Type Network</span>' % TN_ICON),
+    (FONT_ADOBE_URL, '%s <span class=icon-label>Adobe Fonts</span>' % ADOBE_ICON),
     (FONT_GOOGLE_URL, '%s <span class=icon-label>Google Fonts</span>' % GOOGLE_ICON),
 )
 class TypeListLine(Element):
@@ -59,7 +59,7 @@ class TypeListLine(Element):
     CSS_ID = 'TypeListLine'
     CSS_CLASS = None
 
-    def __init__(self, font, fontData=None, sampleText=None, fontName=None, 
+    def __init__(self, font, fontData=None, sampleText=None, fontName=None,
             fontSize=None, labelFont=None, labelFontSize=None, labelLeading=None, **kwargs):
         """Make a sample line with font (can be None)"""
         super().__init__(**kwargs)
@@ -67,7 +67,7 @@ class TypeListLine(Element):
 
         # Fonts
         if font is None:
-            font = findFont(DEFAULT_FONT) 
+            font = findFont(DEFAULT_FONT)
             print('Cannot find font %s' % fontData)
         self.font = font
         if labelFont is None:
@@ -117,14 +117,14 @@ class TypeListLine(Element):
         sampleCss = """font-family:'%s';font-size:%s;line-height:%s;letter-spacing:%s""" % (
             self.font.info.cssName, px(self.fontSize), self.leading, px(self.tracking or 0))
         labelCss = """font-family:'%s';font-size:%s;line-height:%s;letter-spacing:%s""" % (
-            self.labelFont.info.cssName, px(self.labelFontSize), self.labelLeading, 
+            self.labelFont.info.cssName, px(self.labelFontSize), self.labelLeading,
             px(self.tracking or 0))
 
         b.div(cssClass='sample', style=sampleCss)
         b.addHtml(self.sampleText)
         b._div()
 
-        # If Urls provided, then add then as links. 
+        # If Urls provided, then add then as links.
         hasLine = False
         for index, (k, label) in enumerate(FONT_DATA_KEYS):
             if k in self.fontData:
@@ -157,7 +157,7 @@ class TypeListLine(Element):
             src: url("%s") format("eot"),
             url("%s") format("woff2"),
             url("%s") format("woff");
-        }\n""" % (self.font.info.cssName, self.font.info.eotName.lower(), 
+        }\n""" % (self.font.info.cssName, self.font.info.eotName.lower(),
             self.font.info.woff2Name.lower(), self.font.info.woffName.lower())
         if css not in cssList:
             cssList.append(css)
@@ -169,7 +169,7 @@ class TypeListLine(Element):
         c = self.context
         labelFont = findFont(self.LABEL_FONT_NAME)
         sampleStyle = dict(font=self.font, fontSize=self.fontSize, textFill=self.textFill, leading=self.leading)
-        labelStyle = dict(font=labelFont, fontSize=self.labelFontSize or self.fontSize/4, 
+        labelStyle = dict(font=labelFont, fontSize=self.labelFontSize or self.fontSize/4,
             textFill=self.textFill, leading=self.labelLeading)
         bs = c.newString(self.sampleText, style=sampleStyle)
         labelString = self.getLabelString().strip()
@@ -221,7 +221,7 @@ class TypeList(Group):
     """
     CSS_ID = 'TypeList'
 
-    def __init__(self, fontDataList, parent=None, h=None, fontSize=None, 
+    def __init__(self, fontDataList, parent=None, h=None, fontSize=None,
             sampleText=None, labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
@@ -245,8 +245,8 @@ class TypeList(Group):
             if font is not None:
                 self.fonts.append(font)
             h = self.leading * pt(self.fontSize)
-            TypeListLine(font, fontData=fontData, fontName=fontName, 
-                sampleText=sampleText, fontSize=self.fontSize, labelFont=labelFont, 
+            TypeListLine(font, fontData=fontData, fontName=fontName,
+                sampleText=sampleText, fontSize=self.fontSize, labelFont=labelFont,
                 labelFontSize=labelFontSize, parent=self, h=h, **kwargs)
 
     def build_html(self, view, path, drawElements=True, **kwargs):
