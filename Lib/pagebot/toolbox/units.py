@@ -114,12 +114,13 @@ def pointOffset(point, offset):
     """
     if not offset:
         offset = pt(0, 0, 0)
+
     if not isinstance(offset, (tuple, list)):
         offset = (offset, offset, offset)
+
     point = point3D(point)
     offset = point3D(offset)
     assert isinstance(point, (tuple, list))
-    #print(point[0], offset[0], point[1], offset[1], point[2], offset[2])
     return point[0] + offset[0], point[1] + offset[1], point[2] + offset[2]
 
 def point2S(p):
@@ -621,6 +622,7 @@ class Unit:
 
     def __round__(self):
         """Answers the rounded self as value.
+    #print(point[0], offset[0], point[1], offset[1], point[2], offset[2])
 
         >>> u = pt(12.4)
         >>> u.rounded
@@ -895,7 +897,7 @@ class Unit:
         '14.11'
         >>> u / units('120pt') # Unit / Unit create a float ratio number.
         0.5
-        >>> pt(10)/pt(5)
+        >>> pt(10) / pt(5)
         2.0
         """
         u0 = copy(self) # Keep values of self
@@ -929,9 +931,9 @@ class Unit:
     __rtruediv__ = __rdiv__
 
     def __mul__(self, u):
-        """Multiply self by `u`, creating a new Unit instance with the same
-        type as self. Units can only be multiplied by numbers. Unit * Unit
-        raises a ValueError.
+        """Multiply self by `u`, creating a new Unit instance with the same type as
+        self. Units can only be multiplied by numbers. Unit * Unit raises a
+        ValueError.
 
         >>> u = units('60pt')
         >>> u * 2 # Create a new Unit instance of the same type
@@ -944,6 +946,8 @@ class Unit:
         120em
         >>> em(1.2) * pt(100)
         120pt
+        >>> pt(100) * pt(100)
+        10000
         """
         # Keep original values of self.
         u0 = copy(self)
@@ -956,6 +960,11 @@ class Unit:
             u0 = u0.r
         elif self.isEm:
             u0 = copy(u) * self.v
+        elif isUnit(u):
+            upt = u.pt
+            u0 = u0.pt * upt
+            # FIXME: should output points?
+            #u0 = pt(u0)
         else:
             raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (self, u, u.__class__.__name__))
 
