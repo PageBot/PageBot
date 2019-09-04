@@ -19,6 +19,9 @@ from pagebot.toolbox.color import spotColor, rgbColor
 class FreshAndShiny(BaseTheme):
     """The FreshAndShiny theme is ...
 
+    """
+    """
+
     >>> theme = FreshAndShiny()
     >>> theme.mood['h1.color']
     'hilite2'

@@ -929,9 +929,9 @@ class Unit:
     __rtruediv__ = __rdiv__
 
     def __mul__(self, u):
-        """Multiply self by u, creating a new Unit instance with the same type
-        as self. Units can only be multiplied by numbers. Unit * Unit raises a
-        ValueError.
+        """Multiply self by `u`, creating a new Unit instance with the same
+        type as self. Units can only be multiplied by numbers. Unit * Unit
+        raises a ValueError.
 
         >>> u = units('60pt')
         >>> u * 2 # Create a new Unit instance of the same type
@@ -945,17 +945,20 @@ class Unit:
         >>> em(1.2) * pt(100)
         120pt
         """
-        u0 = copy(self) # Keep original values of self
-        if isinstance(u, (int, float)): # One is a scalar, just multiply
-            u0.v *= u # Just multiply
+        # Keep original values of self.
+        u0 = copy(self)
+
+        if isinstance(u, (int, float)):
+            # One is a scalar, just multiply.
+            u0.v *= u
         elif isUnit(u) and u.isEm:
             u0.base = u.r
             u0 = u0.r
         elif self.isEm:
             u0 = copy(u) * self.v
         else:
-            raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (
-                self, u, u.__class__.__name__))
+            raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (self, u, u.__class__.__name__))
+
         return u0
 
     # Order of multiplication doesn't matter, except for the resulting unit type.

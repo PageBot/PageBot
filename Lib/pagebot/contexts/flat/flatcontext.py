@@ -16,7 +16,7 @@
 #
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
-        FILETYPE_PNG, FILETYPE_GIF, CENTER, LEFT, DEFAULT_FILETYPE, RGB)
+        FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.contexts.flat.flatbuilder import flatBuilder
 from pagebot.contexts.flat.flatbezierpath import BezierPath
@@ -103,11 +103,12 @@ class FlatContext(BaseContext):
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
-        return self._ox + x
+        #return self._ox + x
+        return x
 
     def getY(self, y):
         """Calculates `y`-coordinate based on origin and translation."""
-        y = self._oy + y
+        #y = self._oy + y
 
         if not self.flipped:
             return y

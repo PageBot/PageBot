@@ -22,7 +22,6 @@ class WordlyWise(BaseTheme):
     >>> theme = WordlyWise()
     >>> theme.palette
     <Palette colors=51>
-    >>> from pagebot.elements.web.nanosite.nanostyle_css import cssPy
     """
 
     NAME = 'Wordly Wise'
