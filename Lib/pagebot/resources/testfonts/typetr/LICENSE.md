@@ -8,8 +8,7 @@ U.S. Serial Number: 87-457,280
 Owner: Buro Petr van Blokland + Claudia Mens VOF
 Docket/Reference Number: 1538-25     
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 DEFINITIONS
 "Font Software" refers to the set of files released by the Copyright Holder(s) under this license and clearly marked as such. This may include source files, build scripts and documentation.

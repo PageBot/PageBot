@@ -15,12 +15,17 @@
 #     specimen.py
 #
 #     Implement base specimen elements.
+#     These elements are dedicated to be use for the TYPE-TRY website,
+#     but given the generic usage of some specimen fuctions, they may
+#     be useful in other sites too.
 #
+from pagebot.conditions import *
+from pagebot.constants import DEFAULT_FONT
 from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.toolbox.units import pt, px
 from pagebot.conditions import *
+from pagebot.toolbox.units import pointOffset, pt, em, upt, px
 
 FONT_DOWNLOAD_URL = 'download' # Url to download the font: font/Upgrade_Try.zip
 FONT_SEEALSO = 'seeAlso' # Url to alternative website: https://upgrade.typenetwork.com
@@ -29,26 +34,24 @@ FONT_GOOGLE_URL = 'google' # Url to Google fonts page of the font: https://fonts
 FONT_TYPENETWORK_URL = 'typenetwork' # Url to typeNetWork: https://store.typenetwork.com/foundry/typetr/fonts/upgrade
 FONT_DESCRIPTION = 'description' # Description of this style, status, usage, glyph set',
 FONT_CAPTION = 'caption' # Optional caption with the image'
+FONT_BUY_BY_EMAIL = 'buybyemail' # Email link to buy directly.
 
-ADOBE_LOGO_W = 20
-ADOBE_LOGO_H = 17
-ADOBE_SVG_ICON = """
-    <svg class="adobe-logo-image" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" focusable="false">
-    <path fill="#FF0000" d="M15.1,0H24v20L15.1,0z M8.9,0H0v20L8.9,0z M12,7.4L17.6,20h-3.8l-1.6-4H8.1L12,7.4z"></path>
-    </svg>""" % (ADOBE_LOGO_W, ADOBE_LOGO_H, ADOBE_LOGO_W+6, ADOBE_LOGO_H+3)
-
+# Icons by CSS class definition are fastest.
 #TN_ICON = """<img class="icon" src="images/TypeNetwork-32x32.png"/>"""
-TN_ICON = """<span class="tn-icon">TN</span>"""
 TRY_ICON = """<span class="try-icon">TRY</span>"""
+BUY_ICON = """<span class="buy-icon">$€</span>"""
 TYPETR_ICON = """<span class="typetr-icon">TP</span>"""
+TN_ICON = """<span class="tn-icon">TN</span>"""
+ADOBE_ICON = """<img class="adobe-icon" src="images/Adobe.png"/>"""
 GOOGLE_ICON = """<span class="google-icon">G</span>"""
 
-FONT_DATA_KEYS = (
-    (FONT_DOWNLOAD_URL, '%s Download' % TRY_ICON), # Adding icon string once implemented in PageBot font.
-    (FONT_SEEALSO, '%s TYPETR Library' % TYPETR_ICON),
-    (FONT_TYPENETWORK_URL, '%s Type Network Library' % TN_ICON),
-    (FONT_ADOBE_URL, '%s Adobe Fonts Library' % ADOBE_SVG_ICON),
-    (FONT_GOOGLE_URL, '%s Google Fonts Library' % GOOGLE_ICON),
+FONT_DATA_KEYS = ( # Define the preferred order, if there is a link available in a font.
+    (FONT_DOWNLOAD_URL, '%s <span class=icon-label>Download</span>' % TRY_ICON), # Adding icon string once implemented in PageBot font.
+    (FONT_BUY_BY_EMAIL, '%s <span class=icon-label>Buy direct</span>' % BUY_ICON),
+    (FONT_SEEALSO, '%s <span class=icon-label>TYPETR</span>' % TYPETR_ICON),
+    (FONT_TYPENETWORK_URL, '%s <span class=icon-label>Type Network</span>' % TN_ICON), 
+    (FONT_ADOBE_URL, '%s <span class=icon-label>Adobe Fonts</span>' % ADOBE_ICON), 
+    (FONT_GOOGLE_URL, '%s <span class=icon-label>Google Fonts</span>' % GOOGLE_ICON),
 )
 class TypeListLine(Element):
 
@@ -56,14 +59,16 @@ class TypeListLine(Element):
     CSS_ID = 'TypeListLine'
     CSS_CLASS = None
 
-    def __init__(self, font, fontData=None, sampleText=None, fontName=None,
-            fontSize=None, labelFont=None, labelFontSize=None, **kwargs):
+    def __init__(self, font, fontData=None, sampleText=None, fontName=None, 
+            fontSize=None, labelFont=None, labelFontSize=None, labelLeading=None, **kwargs):
         """Make a sample line with font (can be None)"""
         super().__init__(**kwargs)
         self.cssClass = self.CSS_CLASS or self.__class__.__name__.lower()
 
         # Fonts
-        assert font is not None, ('Cannot find font %s' % fontData)
+        if font is None:
+            font = findFont(DEFAULT_FONT) 
+            print('Cannot find font %s' % fontData)
         self.font = font
         if labelFont is None:
             labelFont = findFont(self.LABEL_FONT_NAME)
@@ -78,6 +83,9 @@ class TypeListLine(Element):
         if labelFontSize is None:
             labelFontSize = max(pt(12), self.fontSize/4)
         self.labelFontSize = labelFontSize
+
+        # Leading
+        self.labelLeading = labelLeading or self.leading
 
         if fontData is None: # No extra information available about this font
             fontData = {}
@@ -97,37 +105,39 @@ class TypeListLine(Element):
             self.conditions = Fit2Width(), Float2Top()
 
     def getLabelString(self):
-        return 'Family: %s | Style: %s | Font size: %d | Glyphs: %d' % (self.font.info.familyName, self.font.info.styleName, self.fontSize, len(self.font))
+        return 'Family: %s | Style: %s | Font size: %d | Glyphs: %d' % (
+            self.font.info.familyName, self.font.info.styleName, self.fontSize, len(self.font)
+        )
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
-        b.div(cssClass=self.cssClass, style="width:100%%")
+        b.div(cssClass=self.cssClass, style="width:100%")
 
+        # TODO: Bring this to global page CSS instead of attributes.
         sampleCss = """font-family:'%s';font-size:%s;line-height:%s;letter-spacing:%s""" % (
             self.font.info.cssName, px(self.fontSize), self.leading, px(self.tracking or 0))
         labelCss = """font-family:'%s';font-size:%s;line-height:%s;letter-spacing:%s""" % (
-            self.labelFont.info.cssName, px(self.labelFontSize), self.leading, px(self.tracking or 0))
+            self.labelFont.info.cssName, px(self.labelFontSize), self.labelLeading, 
+            px(self.tracking or 0))
 
         b.div(cssClass='sample', style=sampleCss)
         b.addHtml(self.sampleText)
         b._div()
 
-        b.div(cssClass='label', style=labelCss)
-        #labelString = self.getLabelString()
-        #if labelString:
-        #    b.addHtml(labelString)
-
-        # If Urls provided, then add then as links.
+        # If Urls provided, then add then as links. 
         hasLine = False
         for index, (k, label) in enumerate(FONT_DATA_KEYS):
             if k in self.fontData:
+                if not hasLine:
+                    b.div(cssClass='label', style=labelCss)
+                    hasLine = True
                 if index > 0:
                     b.addHtml('&nbsp;&nbsp;')
                 b.a(href=self.fontData[k], target='external') # Always jump out on new window
                 b.addHtml(label)
                 b._a()
-                hasLine = True
-        b._div()
+        if hasLine:
+            b._div()
         b._div()
 
     def build_css(self, view, cssList=None):
@@ -147,8 +157,8 @@ class TypeListLine(Element):
             src: url("%s") format("eot"),
             url("%s") format("woff2"),
             url("%s") format("woff");
-        }\n""" % (self.font.info.cssName, self.font.info.eotName,
-            self.font.info.woff2Name, self.font.info.woffName)
+        }\n""" % (self.font.info.cssName, self.font.info.eotName.lower(), 
+            self.font.info.woff2Name.lower(), self.font.info.woffName.lower())
         if css not in cssList:
             cssList.append(css)
         return cssList
@@ -158,10 +168,13 @@ class TypeListLine(Element):
         """
         c = self.context
         labelFont = findFont(self.LABEL_FONT_NAME)
-        sampleStyle = dict(font=self.font, fontSize=self.fontSize, textFill=self.textFill)
-        labelStyle = dict(font=labelFont, fontSize=self.labelFontSize or self.fontSize/4, textFill=self.textFill)
+        sampleStyle = dict(font=self.font, fontSize=self.fontSize, textFill=self.textFill, leading=self.leading)
+        labelStyle = dict(font=labelFont, fontSize=self.labelFontSize or self.fontSize/4, 
+            textFill=self.textFill, leading=self.labelLeading)
         bs = c.newString(self.sampleText, style=sampleStyle)
-        bs += c.newString('\n'+self.getLabelString(), style=labelStyle)
+        labelString = self.getLabelString().strip()
+        if labelString:
+            bs += c.newString('\n'+labelString, style=labelStyle)
 
         c.textBox(bs, (p[0], p[1], self.w, self.h))
         #print(self, self.font)
@@ -208,8 +221,8 @@ class TypeList(Group):
     """
     CSS_ID = 'TypeList'
 
-    def __init__(self, fontDataList, parent=None, h=None, fontSize=None,
-            labelFont=None, labelFontSize=None, **kwargs):
+    def __init__(self, fontDataList, parent=None, h=None, fontSize=None, 
+            sampleText=None, labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
         @fontData has format {
@@ -232,8 +245,8 @@ class TypeList(Group):
             if font is not None:
                 self.fonts.append(font)
             h = self.leading * pt(self.fontSize)
-            TypeListLine(font, fontData=fontData, fontName=fontName,
-                fontSize=self.fontSize, labelFont=labelFont,
+            TypeListLine(font, fontData=fontData, fontName=fontName, 
+                sampleText=sampleText, fontSize=self.fontSize, labelFont=labelFont, 
                 labelFontSize=labelFontSize, parent=self, h=h, **kwargs)
 
     def build_html(self, view, path, drawElements=True, **kwargs):
@@ -242,14 +255,16 @@ class TypeList(Group):
         b.div(cssId=self.cssId, cssClass=self.cssClass)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
-        b.input(type="range", min="12", max="42", cssId="slider", style="width:50%")
-        b.addJs("""
-$( ".slider" ).slider({
-  change: function( event, ui ) {
-    $(<text div selector>).css("font-size",(ui.value+"px"));
-  }
-});
-""")
+        # TODO: Connect Slider to CSS font size of specimen boxes.
+        # Add font size indicator
+        #b.input(type="range", min="12", max="42", cssId="slider", style="width:50%")
+        #b.addJs("""
+#$( ".slider" ).slider({
+#  change: function( event, ui ) {
+#    $(<text div selector>).css("font-size",(ui.value+"px"));
+#  }
+#});
+#""")
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 

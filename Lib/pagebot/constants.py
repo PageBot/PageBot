@@ -864,11 +864,11 @@ FONT_WEIGHT_MATCHES = { # Alternative names
     'Thin': ('Thin', 'Thn', 'Thi'),
     'Ultralight':  ('Ultralight', 'UltraLight', 'ULight', 'ULght', 'ULt'),
     'Light': ('Light', 'Lght', 'Lig', 'Lt'),
-    'Semilight': ('Semilight', 'SemiLight', 'SLight', 'SLght', 'SLt'),
+    'Cover': ('Cover', ), # Used in TYPETR Upgrade as weight between Light and Book
     'Book': ('Book', 'Bk'),
-    'Semibook': ('Semibook', 'SemiBook', 'SBook', 'SBk'),
-    'Regular': ('Regular', 'Standard', 'Normal', 'Reg', 'Roman', 'Lean', 'Rom'),
-    'Semimedium': ('Semimedium', 'SemiMedium', 'SMedium', 'SMed', 'SMd' ),
+    'Normal': ('Normal',), # Used in TYPETR Upgrade as weight between Book and Regular
+    'Regular': ('Regular', 'Reg', 'Roman', 'Lean', 'Rom'),
+    'Standard': ('Standard', ), # Used in TYPETR Upgrade as weight between Regular and Medium
     'Medium': ('Medium', 'Med', 'Md'),
     'Semibold': ('Semibold', 'SemiBold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'),
     'Bold': ('Bold', 'Bol', 'Bd'),
@@ -883,12 +883,12 @@ FONT_WEIGHT_RANGES = { # OS/2 standard values and alternative ranges
     'Thin': range(260, 275), # Upgrade 270 + list(range(275, 295)), # Upgrade 280
     'Ultralight': range(275, 295),
     'Light': range(295, 320), # Upgrade 300
-    'Semilight': range(320, 350), # Upgrade 350
+    'Cover': range(320, 350), # Upgrade 350. Used in TYPETR Upgrade as weight between Light and Book
     'Book': range(350, 395), # Upgrade 390
-    'Semibook': range(395, 400), # Upgrade 395
+    'Normal': range(395, 400), # Upgrade 395. Used in TYPETR Upgrade as weight between Book and Regular
     'Regular': range(400, 450), # Upgrade 400
-    'Semimedium': range(450, 550), # Upgrade 450
-    'Medium': range(450, 550), # Upgrade 500
+    'Standard': range(450, 500), # Upgrade 450. Used in TYPETR Upgrade as weight between Regular and Medium
+    'Medium': range(500, 550), # Upgrade 500
     'Semibold': range(550, 650), # Upgrade 600
     'Bold': range(650, 725), # Upgrade 700
     'Extrabold': range(725, 755), # 750
