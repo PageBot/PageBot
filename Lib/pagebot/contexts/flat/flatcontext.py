@@ -539,15 +539,18 @@ class FlatContext(BaseContext):
         if p is None:
             p = 0, 0
 
-
         xpt, ypt = point2D(upt(p))
+        xpt = self.getX(xpt)
+        ypt = self.getY(ypt)
         self.save()
-
         img = self.b.image.open(path)
 
         # TODO: calculate other if one is None.
         if not w is None and not h is None:
             img.resize(width=w.pt, height=h.pt)
+
+        if self.flipped:
+            ypt -= h.pt
 
         placed = self.page.place(img)
         placed.position(xpt, ypt)
@@ -618,8 +621,8 @@ class FlatContext(BaseContext):
             x = self.getX(x)
             x0 = x + w / 2
             y0 = self.getY(y+ h / 2)
-            w0 = w
-            h0 = h
+            w0 = w / 2
+            h0 = h / 2
             self.page.place(shape.ellipse(x0, y0, w0, h0))
 
     def circle(self, x, y, r):
