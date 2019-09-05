@@ -29,12 +29,19 @@ from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.base.basecontext import BaseContext
 
 class PageBotPoint:
+
     def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None, start=False):
-        # http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
+        """
+        See also
+
+        http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
+        """
         self.x = x
         self.y = y
         self.segmentType = segmentType
         self.smooth = smooth
+        self.name = name
+        self.identifier = identifier
         self.start = start
 
 class PageBotContour:

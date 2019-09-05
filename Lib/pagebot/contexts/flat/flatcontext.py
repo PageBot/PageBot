@@ -98,17 +98,17 @@ class FlatContext(BaseContext):
             w, h = size
         self.flipped = flipped
 
-        wpt, hpt = upt(w, h) # Convert units to point values
+        # Convert units to point values.
+        wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
-        #return self._ox + x
-        return x
+        return self._ox + x
 
     def getY(self, y):
         """Calculates `y`-coordinate based on origin and translation."""
-        #y = self._oy + y
+        y = self._oy + y
 
         if not self.flipped:
             return y
@@ -387,7 +387,8 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         xpt, ypt = point2D(upt(p))
-        y = self.getY(ypt)
+        xpt = self.getX(xpt)
+        ypt = self.getY(ypt)
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):
