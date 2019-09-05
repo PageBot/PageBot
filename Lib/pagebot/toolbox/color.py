@@ -669,7 +669,8 @@ class Color:
 
     def _get_isRgba(self):
         """Answers if the base of this color is defined as RGB or if an (RGB)
-        name is defined and if opacity is not 1 (meaning, there is some transparancy).
+        name is defined and if opacity is not 1 (meaning, there is some
+        transparancy).
 
         >>> color(rgb=0.5, a=0.5).isRgba
         True
@@ -926,7 +927,7 @@ class Color:
         '#000000'
         >>> color((0, 0, 0, 0.5)).css
         'rgba(0.00, 0.00, 0.00, 0.50'
-        >>> color('red', a=0.1).css # Transparant rgb name color as CSS notation
+        >>> color('red', a=0.1).css # Transparant RGB name color as CSS notation
         'rgba(1.00, 0.00, 0.00, 0.10'
         >>> color(spot=300, a=0.1).css # Transparant spot color as CSS notation
         'rgba(0.00, 0.45, 0.78, 0.10'

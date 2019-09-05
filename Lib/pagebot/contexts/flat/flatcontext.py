@@ -576,15 +576,15 @@ class FlatContext(BaseContext):
         shape = self.b.shape()
 
         # TODO: revert to PageBot Color globally, convert to Flat RGB here.
-        if self._fill is None:
-            shape.nofill()
-        elif self._fill != noColor:
+        if self._fill and self._fill != noColor:
             shape.fill(self.getFlatRGB(self._fill))
+        else:
+            shape.nofill()
 
-        if self._stroke is None:
-            shape.nostroke()
-        elif self._stroke != noColor:
+        if self._stroke and self._stroke != noColor:
             shape.stroke(self.getFlatRGB(self._stroke)).width(self._strokeWidth)
+        else:
+            shape.nostroke()
 
         return shape
 
