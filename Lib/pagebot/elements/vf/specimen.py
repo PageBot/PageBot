@@ -236,8 +236,7 @@ class TypeList(Group):
             )
         }
         """
-        #FIXME: Group is base class, not Element.
-        #Element.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        super().__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
         self.fonts = []
         self.fontSize = fontSize
         for fontName, fontData in fontDataList:
