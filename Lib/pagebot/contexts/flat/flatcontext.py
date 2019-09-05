@@ -596,6 +596,7 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
+        x = self.getX(x)
         y = self.getY(y) - h
         shape = self._getShape()
 
@@ -614,6 +615,7 @@ class FlatContext(BaseContext):
 
         if shape is not None:
             self.ensure_page()
+            x = self.getX(x)
             x0 = x + w / 2
             y0 = self.getY(y+ h / 2)
             w0 = w
@@ -623,6 +625,7 @@ class FlatContext(BaseContext):
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center."""
         xpt, ypt, rpt = upt(x, y, r)
+        xpt = self.getX(xpt)
         ypt = self.getY(ypt)
 
         shape = self._getShape()
@@ -636,7 +639,9 @@ class FlatContext(BaseContext):
 
         x0pt, y0pt = point2D(upt(p0))
         x1pt, y1pt = point2D(upt(p1))
+        x0pt = self.getX(x0pt)
         y0pt = self.getY(y0pt)
+        x1pt = self.getX(x1pt)
         y1pt = self.getY(y1pt)
         shape = self._getShape()
 
