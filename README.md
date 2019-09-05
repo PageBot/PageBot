@@ -1,6 +1,6 @@
 # What is PageBot®?
 
-**Homepage: [pagebot.io](https://pagebot.io)**
+**Homepage: [pagebot.io](http://pagebot.io)**
 
 PageBot is a page layout program that enables designers to create high quality
 documents using Python programming. It is available both as Python library
