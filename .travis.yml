@@ -143,8 +143,6 @@ script:
 - python3 Lib/pagebot/fonttoolbox/ttftools.py
 - python3 Lib/pagebot/fonttoolbox/unicodes/unicoderanges.py
 - python3 Lib/pagebot/gradient.py
-- python3 Lib/pagebot/interaction/__init__.py
-- python3 Lib/pagebot/interaction/variables.py
 - python3 Lib/pagebot/paths.py
 - python3 Lib/pagebot/publications/typespecimens/__init__.py
 - python3 Lib/pagebot/publications/typespecimens/basetypespecimen.py
