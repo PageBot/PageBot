@@ -55,12 +55,6 @@ class FlatString(BabelString):
         super().__init__(s, context, style=style)
 
     def __repr__(self):
-        #s = ''
-
-        #for  p in self.s.paragraphs:
-        #    for span in p.spans:
-        #        s += span.string
-
         return str(self.s)
 
     def _get_s(self):
@@ -96,6 +90,13 @@ class FlatString(BabelString):
         self.style['fontSize'] = fontSize
 
     fontSize = property(_get_fontSize, _set_fontSize)
+
+    def _get_leading(self):
+        """Answers the current leading value."""
+        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING))
+        return leadingPt 
+
+    leading = property(_get_leading)
 
     def _get_color(self):
         """Answers the current state of the color."""

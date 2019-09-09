@@ -186,9 +186,11 @@ class FlatContext(BaseContext):
         elif self.fileType == FILETYPE_PDF:
             self.doc.pdf(path)
         elif self.fileType == FILETYPE_GIF:
-            print('[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1])
+            msg = '[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1]
+            print(msg)
         else:
-            raise NotImplementedError('[FlatContext] File format "%s" is not implemented' % path.split('/')[-1])
+            msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
+            raise NotImplementedError(msg)
 
     saveImage = saveDocument # Compatible API with DrawBot
 
@@ -389,6 +391,11 @@ class FlatContext(BaseContext):
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
+
+        if self.flipped:
+            ypt -= bs.fontSize * 1.4 #* bs.leading
+            print(bs.leading)
+
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):

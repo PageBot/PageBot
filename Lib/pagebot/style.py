@@ -46,7 +46,6 @@ def makeStyle(style=None, raiseError=True, **kwargs):
         new = dict()
 
         for key, value in style.items():
-        #style = copy.copy(style)  # As we are going to alter values, use a copy just to be sure.
             if key not in rs:
                 warning = '[makeStyle] %s not allowed in (root) style!' % key
                 if raiseError:
