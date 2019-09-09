@@ -397,6 +397,11 @@ class FlatContext(BaseContext):
             textHeight = leading.byBase(bs.fontSize)
             ypt -= textHeight
 
+        if 'textFill' in bs.style:
+            c = bs.style['textFill']
+            c = color(rgb=c)
+            self.textFill(c)
+
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
     def font(self, font, fontSize=None):

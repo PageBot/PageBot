@@ -13,13 +13,13 @@ install:
 - pip3 install fontTools
 - pip3 install markdown
 - pip3 install pylint
-- pip3 install pyobjc
 - pip3 install svgwrite
 - pip3 install SimpleIDML
 - pip3 install booleanOperations
 - pip3 install tornado
 - pip3 install SimpleIDML
 - pip3 install flat
+- pip3 install pyobjc
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
@@ -35,13 +35,6 @@ install:
 - cd ..
 - rm master.zip
 - rm -r defconAppKit-master
-- wget https://github.com/typemytype/drawbot/archive/remove-PY2-symbol.zip
-- unzip remove-PY2-symbol.zip
-- cd drawbot-remove-PY2-symbol
-- python3 setup.py install
-- cd ..
-- rm remove-PY2-symbol.zip
-- rm -r drawbot-remove-PY2-symbol
 - wget https://github.com/typesupply/compositor/archive/master.zip
 - unzip master.zip
 - cd compositor-master

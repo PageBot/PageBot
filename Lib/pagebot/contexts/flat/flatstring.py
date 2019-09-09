@@ -216,7 +216,14 @@ class FlatString(BabelString):
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        c = style.get('color', DEFAULT_COLOR)
+        #c = style.get('color', DEFAULT_COLOR)
+
+        if 'textFill' in style:
+            c = style['textFill']
+            c = Color(rgb=c)
+        else:
+            c = style.get('color', DEFAULT_COLOR)
+
         assert isinstance(c, Color)
         rgb = context.getFlatRGB(c)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
