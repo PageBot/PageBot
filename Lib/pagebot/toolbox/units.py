@@ -295,8 +295,9 @@ def isUnit(u):
     >>> isUnit(2)
     False
     """
-    # isinstance(u, Unit) # Does not seem to work right for units created in
-    # other sources such as A4.
+    # FIXME:
+    # isinstance(u, Unit) # Does not seem to work correctly for units created
+    # in other sources, such as A4.
     return hasattr(u, 'v') and hasattr(u, 'g') and hasattr(u, 'base')
 
 def uRound(u, *args):
@@ -449,6 +450,7 @@ class Unit:
         'Mm'
         """
         return self.__class__.__name__
+    
     name = property(_get_name)
 
     def _get_rounded(self):
@@ -466,6 +468,7 @@ class Unit:
         u = copy(self)
         u.v = int(round(self.v))
         return u
+
     rounded = property(_get_rounded)
 
     def __repr__(self):
@@ -505,8 +508,10 @@ class Unit:
         72
         """
         return asIntOrFloat(self.rv * self.PT_FACTOR) # Factor to points
+
     def _set_pt(self, v):
         self.v = v / self.PT_FACTOR
+
     pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
@@ -523,6 +528,7 @@ class Unit:
         2.8346472
         """
         return asIntOrFloat(px(self.pt).v)
+
     px = property(_get_px)
 
     def _get_inch(self):
@@ -535,6 +541,7 @@ class Unit:
         1
         """
         return asIntOrFloat(self.pt/Inch.PT_FACTOR)
+
     inch = property(_get_inch)
 
     def _get_p(self):
@@ -559,6 +566,7 @@ class Unit:
         5
         """
         return asIntOrFloat(self.pt/Cm.PT_FACTOR)
+
     cm = property(_get_cm)
 
     def _get_mm(self):
@@ -946,6 +954,8 @@ class Unit:
         120em
         >>> em(1.2) * pt(100)
         120pt
+        """
+        """
         >>> pt(100) * pt(100)
         10000
         """
@@ -960,11 +970,6 @@ class Unit:
             u0 = u0.r
         elif self.isEm:
             u0 = copy(u) * self.v
-        elif isUnit(u):
-            upt = u.pt
-            u0 = u0.pt * upt
-            # FIXME: should output points?
-            #u0 = pt(u0)
         else:
             raise ValueError('Cannot multiply "%s" by "%s" of class %s' % (self, u, u.__class__.__name__))
 

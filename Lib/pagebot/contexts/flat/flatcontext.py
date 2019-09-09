@@ -661,12 +661,6 @@ class FlatContext(BaseContext):
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         """Renders the path object as a Flat vector graphic."""
-        if p is None:
-            xpt = ypt = 0
-        else:
-            xpt, ypt = point2D(upt(p))
-
-        # TODO: xpt, ypt?
         shape = self._getShape()
 
         if shape is not None:

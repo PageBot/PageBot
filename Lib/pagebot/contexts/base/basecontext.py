@@ -334,8 +334,8 @@ class BaseContext(AbstractContext):
 
     def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None,
             stroke=None, strokeWidth=None):
-        """Draws the BezierPath. Scaled image is drawn on (x, y), in that order.
-        Use self._path if path is omitted. PageBot function.
+        """Draws the BezierPath. Scaled image is drawn on (x, y), in that
+        order. Use self._path if path is omitted. PageBot function.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -380,9 +380,12 @@ class BaseContext(AbstractContext):
         """
         if path is None:
             path = self.path
-        if hasattr(path, 'bp'): # If it's a PageBotPath, get the core BezierPath
+
+        # If it's a PageBotPath, get the core BezierPath.
+        if hasattr(path, 'bp'): 
             bezierPath = path.bp
-            # If not forced as attribute, then try to get from the PageBotPath.style
+            # If not forced as attribute, then try to get from the
+            # PageBotPath.style.
             if fill is None:
                 fill = path.style.get('fill')
             if stroke is None:
@@ -390,19 +393,24 @@ class BaseContext(AbstractContext):
             if strokeWidth is None:
                 stroke = path.style.get('strokeWidth')
         else:
-            bezierPath = path # Otherwise we assume it is a context core BezierPath instance
+            # Otherwise we assume it is a context core BezierPath instance.
+            bezierPath = path 
 
         self.save()
+
         if sy is None:
             sy = sx
+
         if p is None:
             xpt = ypt = 0
         else:
             xpt, ypt = point2D(upt(p))
+
         self.scale(sx, sy)
         self.translate(xpt/sx, ypt/sy)
         # Set fill and stroke if they are defined by attribute or by path.style
-        # Otherwise ignore and use the setting as defined already in the graphic state.
+        # Otherwise ignore and use the setting as defined already in the
+        # graphic state.
         if fill is not None:
             self.fill(color(fill))
         if stroke is not None and strokeWidth:
