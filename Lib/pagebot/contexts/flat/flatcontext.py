@@ -675,27 +675,20 @@ class FlatContext(BaseContext):
             self.page.place(shape.path(self._path.commands))
 
     def moveTo(self, p):
-        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.moveTo(ppt)
+        self._path.moveTo(p)
 
     def lineTo(self, p):
-        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.lineTo(ppt)
+        self._path.lineTo(p)
 
     def quadTo(self, bcp, p):
-        bpt = point2D(upt(bcp))
-        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.quadTo(bpt, ppt)
+        self._path.quadTo(bcp, p)
 
     def curveTo(self, bcp1, bcp2, p):
-        b1pt = point2D(upt(bcp1))
-        b2pt = point2D(upt(bcp2))
-        ppt = point2D(upt(p))
         assert self._path is not None
-        self._path.curveTo(b1pt, b2pt, ppt)
+        self._path.curveTo(bcp1, bcp2, p)
 
     def closePath(self):
         assert self._path is not None
