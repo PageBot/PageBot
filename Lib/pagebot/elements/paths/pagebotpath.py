@@ -30,7 +30,8 @@ from pagebot.contexts.base.basecontext import BaseContext
 
 class PageBotPoint:
 
-    def __init__(self, x, y, segmentType=None, smooth=False, name=None, identifier=None, start=False):
+    def __init__(self, x, y, segmentType=None, smooth=False, name=None,
+            identifier=None, start=False, onCurve=True):
         """
         See also
 
@@ -43,6 +44,7 @@ class PageBotPoint:
         self.name = name
         self.identifier = identifier
         self.start = start
+        self.onCurve = onCurve
 
 class PageBotContour:
     def __init__(self, context=None, bezierContour=None):

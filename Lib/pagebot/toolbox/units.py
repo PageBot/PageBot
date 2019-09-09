@@ -1905,7 +1905,7 @@ class Em(RelativeUnit):
 #   Perc
 
 def perc(v, *args, **kwargs):
-    """Convert value v to a Perc instance or list or Perc instances.
+    """Converts value `v` to a Perc instance or list or Perc instances.
 
     >>> u = perc(20, base=pt(440))
     >>> u, u.ru, u.rv, u.v
