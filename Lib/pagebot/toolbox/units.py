@@ -630,7 +630,6 @@ class Unit:
 
     def __round__(self):
         """Answers the rounded self as value.
-    #print(point[0], offset[0], point[1], offset[1], point[2], offset[2])
 
         >>> u = pt(12.4)
         >>> u.rounded
@@ -1897,8 +1896,10 @@ class Em(RelativeUnit):
         80
         """
         return asIntOrFloat(pt(self.base * self.v).v) # Render and factor to points
+
     def _set_pt(self, v):
         self.v = v / self.base
+
     pt = property(_get_pt, _set_pt)
 
 #   Perc
@@ -2009,8 +2010,10 @@ class Perc(RelativeUnit):
         12
         """
         return asIntOrFloat(self.base.pt * self.v / self.BASE) # Render and factor to points
+
     def _set_pt(self, v):
         self.v = v / self.base.pt * self.BASE
+
     pt = property(_get_pt)
 
 UNIT_MAKERS = dict(px=px, pt=pt, mm=mm, inch=inch, p=p, pica=pica, em=em, fr=fr, col=col, perc=perc)

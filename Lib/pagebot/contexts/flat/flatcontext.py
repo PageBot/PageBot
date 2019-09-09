@@ -393,8 +393,9 @@ class FlatContext(BaseContext):
         ypt = self.getY(ypt)
 
         if self.flipped:
-            ypt -= bs.fontSize * 1.4 #* bs.leading
-            print(bs.leading)
+            leading = bs.leading
+            textHeight = leading.byBase(bs.fontSize)
+            ypt -= textHeight
 
         placedText.position(xpt, ypt) # Render unit tuple to value tuple
 
@@ -540,7 +541,8 @@ class FlatContext(BaseContext):
         # Answer units of the same time as the document.w was defined.
         return pt(img.width), pt(img.height)
 
-    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None, scaleType=None):
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
+            scaleType=None):
         """Draws the image. If position is none, sets x and y to the origin. If
         w or h is defined, then scale the image to fit."""
         if p is None:

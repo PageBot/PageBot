@@ -93,8 +93,9 @@ class FlatString(BabelString):
 
     def _get_leading(self):
         """Answers the current leading value."""
-        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING))
-        return leadingPt 
+        return self.style.get('leading', DEFAULT_LEADING)
+        #leadingPt = upt(self.style.get('leading', DEFAULT_LEADING))
+        #return leadingPt 
 
     leading = property(_get_leading)
 
