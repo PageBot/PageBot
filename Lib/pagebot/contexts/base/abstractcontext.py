@@ -304,7 +304,7 @@ class AbstractContext:
     #    raise NotImplementedError
 
     radialGradient = linearGradient
-    cmykRadialGradient = linearGradient
+    cmykRadialGradient = radialGradient
 
     # Path drawing behavior.
 

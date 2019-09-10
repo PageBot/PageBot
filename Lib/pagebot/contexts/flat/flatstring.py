@@ -82,7 +82,7 @@ class FlatString(BabelString):
 
     def _get_fontSize(self):
         """Answers the current state of the fontSize."""
-        return self.style.get('fontSize')
+        return self.style.get('fontSize', DEFAULT_FONT_SIZE)
 
     def _set_fontSize(self, fontSize):
         if fontSize is not None:

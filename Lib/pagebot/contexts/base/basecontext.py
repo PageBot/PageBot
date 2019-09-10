@@ -525,6 +525,7 @@ class BaseContext(AbstractContext):
         if c is inheritColor:
             # Keep color setting as it is.
             pass
+
         if c is noColor:
             self.b.stroke(None) # Set color to no-color
         elif c.isCmyk:
@@ -537,6 +538,7 @@ class BaseContext(AbstractContext):
             # FormattedString stroke(). Convert to RGB, whatever the color type.
             r, g, b = c.rgb
             self.b.stroke(r, g, b, alpha=c.a)
+
         if w is not None:
             self.strokeWidth(w)
 
@@ -601,6 +603,12 @@ class BaseContext(AbstractContext):
         return self.b.radialGradient(startPoint=startPoint, endPoint=endPoint,
                 colors=colors, locations=locations, startRadius=startRadius,
                 endRadius=endRadius)
+
+    cmykFill = fill
+    cmykStroke = stroke
+    cmykShadow = shadow
+    cmykLinearGradient = linearGradient
+    cmykRadialGradient = radialGradient
 
     # Path drawing behavior.
 
