@@ -703,7 +703,7 @@ class FlatContext(BaseContext):
 
     def bezierPathByFlatteningPath(self, path):
         """TODO: Make Flat version of the NSBezier flatten path function."""
-        return None #path.getNSBezierPath().bezierPathByFlatteningPath()
+        return None
 
     #   S H A D O W  &  G R A D I E N T
 

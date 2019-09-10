@@ -545,8 +545,7 @@ class BaseContext(AbstractContext):
     setStrokeColor = stroke
 
     def shadow(self, eShadow, e=None):
-        """Set the DrawBot graphics state for shadow if all parameters are
-        set."""
+        """Set the graphics state for shadow if parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
                 self.b.shadow(upt(eShadow.offset), # Convert units to values

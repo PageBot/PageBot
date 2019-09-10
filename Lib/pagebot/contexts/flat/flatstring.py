@@ -220,7 +220,11 @@ class FlatString(BabelString):
 
         if 'textFill' in style:
             c = style['textFill']
-            c = Color(rgb=c)
+            if not isinstance(c, Color):
+                if isinstance(c, tuple) and len(c) == 3:
+                    c = Color(rgb=c)
+                # TODO: extend list of options.
+            print(c)
         else:
             c = style.get('color', DEFAULT_COLOR)
 
