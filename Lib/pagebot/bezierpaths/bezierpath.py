@@ -54,7 +54,6 @@ def transformationAtCenter(matrix, centerPoint):
     t = t.translate(-cx, -cy)
     return tuple(t)
 
-
 class BezierPath(BasePen):
     """A Bézier path object, if you want to draw the same over and over
     again."""

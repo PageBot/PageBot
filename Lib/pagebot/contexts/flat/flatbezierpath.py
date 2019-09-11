@@ -15,7 +15,8 @@
 #
 
 class BezierPath:
-    """BezierPath with the same API as DrawBot.BezierPath.
+    """Bézier path that implements commands like Flat, but with the same API
+    as DrawBot.BezierPath.
 
     >>> path = BezierPath(flatBuilder)
     >>> path.moveTo((0, 0))
