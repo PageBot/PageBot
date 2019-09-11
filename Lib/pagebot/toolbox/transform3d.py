@@ -38,6 +38,28 @@ def _offsetArray3D(array, offset):
         yield x+dx, y+dy, z+dz
 
 class Transform3D:
+    """
+    >>> t = Transform3D()
+    >>> t = t.translate(30,  30, 0)
+    >>> t = t.scale(2)
+    >>> point = (30, 30, 0)
+    >>> point2 = t.transformPoint(point)
+    >>> print(point2)
+    (90.0, 90.0, 0.0)
+    >>> at = t.getAffineTransform2D(2)
+    >>> print(at)
+    [2.0, 0.0, 0.0, 2.0, 30.0, 30.0]
+    """
+    """
+    t = t.rotateX(self.angleX)
+    t = t.rotateY(self.angleY)
+    angle = self.angleY + math.radians(45)
+    localT = t.rotateY(math.radians(-90) * (angle // math.radians(90)))
+    self.affine = localT.getAffineTransform2D(2)
+    for item in self.items:
+        item.transformedPoint = t.transformPoint(item.point)
+    self.items.sort(key=lambda item: item.transformedPoint[2])
+    """
 
     def __init__(self, matrix=None, offset=None):
         if matrix is None:
@@ -121,17 +143,18 @@ class Transform3D:
         else:
             raise NotImplementedError()
 
-        affine = [matrix[xi][xi], matrix[xi][yi], matrix[yi][xi], matrix[yi][yi], self.offset[xi], self.offset[yi]]
+        affine = [matrix[xi][xi], matrix[xi][yi], matrix[yi][xi],
+                matrix[yi][yi], self.offset[xi], self.offset[yi]]
         return affine
 
-    # def __len__(self):
-    #     return len(self.matrix)
+    def __len__(self):
+        return len(self.matrix)
 
-    # def __getitem__(self, index):
-    #     return self.matrix[index]
+    def __getitem__(self, index):
+        return self.matrix[index]
 
-    # def __iter__(self):
-    #     return iter(self.matrix)
+    def __iter__(self):
+        return iter(self.matrix)
 
     def __repr__(self):
         return "<%s %s %s>" % (self.__class__.__name__, self.matrix, self.offset)
@@ -140,4 +163,3 @@ if __name__ == "__main__":
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-
