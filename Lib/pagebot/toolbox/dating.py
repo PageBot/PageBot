@@ -13,6 +13,7 @@
 #
 #    dating.py
 #
+
 import datetime
 from time import localtime
 from random import randint
@@ -49,7 +50,7 @@ def uniqueId(size=0):
     return n[:size]
 
 def leapYear(year):
-    """Most common first
+    """Most common first.
 
     >>> leapYear(1956)
     True
@@ -72,7 +73,7 @@ def leapYear(year):
     return True
 
 def monthDays(year, month):
-    # Separate method, so it also can be used on initialization
+    """Separate method, so it also can be used on initialization."""
     if month == 2:
         if leapYear(year):
             return 29

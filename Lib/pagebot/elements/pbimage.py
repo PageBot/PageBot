@@ -285,12 +285,15 @@ class Image(Element):
         return alpha
 
     def _scaleImage(self, view):
-        """If the self.saveScaled is True and the reduction scale is inside the range,
-        then create a new cached image file, if it does not already exist. Scaling images in
-        the DrawBot context is a fast operation, so always worthwhile to creating PNG from
-        large export PDF files.
-        In case the source is a PDF, then use self.index to request for the page.
-        # TODO: Add clipPath and filter as parameters.
+        """If the self.saveScaled is True and the reduction scale is inside the
+        range, then create a new cached image file, if it does not already
+        exist. Scaling images in the DrawBot context is a fast operation, so
+        always worthwhile to creating PNG from large export PDF files.
+
+        In case the source is a PDF, then use self.index to request for the
+        page.
+
+        TODO: Add clipPath and filter as parameters.
         """
         if self.path is None or not self.scaleImage:
             return
@@ -371,10 +374,11 @@ class Image(Element):
         print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
 
     def build_inds(self, view, origin, drawElements=True):
-        """It is better to have a separate InDesignContext build tree, since we need more
-        information down there than just drawing instructions.
-        This way the InDesignContext just gets the PageBot Element passed over, using
-        it's own API."""
+        """It is better to have a separate InDesignContext build tree, since we
+        need more information down there than just drawing instructions.
+
+        This way the InDesignContext just gets the PageBot Element passed over,
+        using its own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
@@ -386,7 +390,7 @@ class Image(Element):
                 e.build_inds(view, p2D)
 
     def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.  If
+        """Respond to the top-down element broadcast to prepare for build. If
         the original image needs scaling, then prepare the build by letting the
         context make a new cache file with the scaled images. If the cache
         file already exists, then ignore, just continue the broadcast towards
@@ -396,7 +400,7 @@ class Image(Element):
             e.prepare(view)
 
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
-        """Draw the image in the calculated (w, h). Since we need to use the
+        """Draw the image in the calculated (w, h). Because we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
 

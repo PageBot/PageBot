@@ -118,7 +118,7 @@ def dotProduct(v1, v2):
 
 def pointProjectedOnLine(p1, p2, p):
     """Answers the projected point **(px, py)** on line **((x1, y1), (x2,
-    y2))**.  Answers **(x1, y1)** if there is not distance between the two
+    y2))**. Answers **(x1, y1)** if there is not distance between the two
     points of the line."""
     # Line vector.
     x1, y1 = point2D(p1)

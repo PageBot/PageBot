@@ -42,6 +42,7 @@ import re, sys, math
 from copy import copy
 from pagebot.toolbox.transformer import asNumberOrNone, asIntOrFloat, asFormatted
 
+# TODO: move to constants?
 INCH = 72
 MM = 0.0393701 * INCH # Millimeters as points. E.g. 3*MM --> 8.5039416 pt.
 

@@ -12,14 +12,17 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     drawPart.py
+#     drawing.py
 #
 from pagebot.toolbox.color import noColor
 from math import sin, cos, atan2, radians, degrees
 
-def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
     """Draw curved arrow marker between the two points.
-    TODO: Add drawing of real arrow-heads, rotated in the right direction."""
+
+    TODO: Add drawing of real arrow-heads, rotated in the right direction.
+    TODO: move to elements?
+    """
     context = view.context # Get current context
     b = context.b
 
@@ -39,7 +42,8 @@ def drawArrow_drawBot(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endM
     yb1 = ym - onText * (xt - xs) * fmf
     xb2 = xm - onText * (yt - ys) * fmf
     yb2 = ym + onText * (xt - xs) * fmf
-    # Arrow head position
+
+    # Arrow head position.
     arrowSize = 12
     arrowAngle = 0.4
     angle = atan2(xt-xb2, yt-yb2)

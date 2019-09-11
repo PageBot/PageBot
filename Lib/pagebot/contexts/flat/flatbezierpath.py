@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -18,7 +19,8 @@ class BezierPath:
     """Bézier path that implements commands like Flat, but with the same API
     as DrawBot.BezierPath.
 
-    >>> path = BezierPath(flatBuilder)
+    >>> import flat
+    >>> path = BezierPath(flat)
     >>> path.moveTo((0, 0))
     >>> path.lineTo((0, 100))
     >>> path.lineTo((100, 100))
@@ -52,3 +54,8 @@ class BezierPath:
 
     def appendPath(self, path):
         self.commands += path.commands
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

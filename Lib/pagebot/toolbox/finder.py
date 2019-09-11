@@ -20,7 +20,7 @@ from pagebot.elements import elementFromPath
 class Finder:
     """Answers a Finder instance that can find resources (images, texts)
     starting at a give root path. The Finder().find( ) allows optional
-    searches, such as matching name, name pattern, extension, etc.
+    searches such as matching name, name pattern, extension, etc.
 
     >>> from pagebot.paths import RESOURCES_PATH
     >>> finder = Finder(RESOURCES_PATH)
@@ -38,13 +38,14 @@ class Finder:
     DEFAULT_IGNORE_PATTERNS = ('_scaled', '_export', '_local')
 
     def __init__(self, rootPath=None):
-        """Create a new Finder instance for rootPath. If omitted, then used the current directory."""
+        """Create a new Finder instance for rootPath. If omitted, then used the
+        current directory."""
         self.rootPath = rootPath or '.'
 
     def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
-        """Answer the list of full file paths, that match the parameters. Matching both
-        name.lower() and pattern.lower() 
+        """Answer the list of full file paths, that match the parameters.
+        Matching both name.lower() and pattern.lower() 
         """
         if paths is None:
             paths = []
@@ -81,16 +82,14 @@ class Finder:
     def findPath(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
         """Answer the first of the list of full file paths, that match the parameters.
-        Answer None if nothing can be found.   
-        """
+        Answer None if nothing can be found."""
         paths = self.findPaths(name, pattern, extension, ignorePatterns, path, paths)
         if paths: # If anything found, then answer the first one.
             return paths[0]
         return None
 
     def find(self, name=None, pattern=None, extension=None, **kwargs):
-        """Answer the elements that hold the data of matching path extensions.
-        """
+        """Answer the elements that hold the data of matching path extensions."""
         elements = []
         for path in self.findPaths(name=name, pattern=pattern, extension=extension):
             e = elementFromPath(path, name=name, **kwargs)
@@ -102,5 +101,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-
-    

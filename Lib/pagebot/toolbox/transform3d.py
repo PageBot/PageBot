@@ -1,6 +1,21 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#
+#     P A G E B O T
+#
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
+#
+#     transformer.py
+#
 
 import math
-
 
 def _dotProduct(array, matrix):
     output = []
@@ -16,12 +31,10 @@ def _dotProduct(array, matrix):
         output.append(tuple(outPt))
     return tuple(output)
 
-
 def _offsetArray3D(array, offset):
     dx, dy, dz = offset
     for x, y, z in array:
         yield x+dx, y+dy, z+dz
-
 
 class Transform3D:
 
@@ -111,7 +124,6 @@ class Transform3D:
 
     def __repr__(self):
         return "<%s %s %s>" % (self.__class__.__name__, self.matrix, self.offset)
-
 
 if __name__ == "__main__":
     import doctest
