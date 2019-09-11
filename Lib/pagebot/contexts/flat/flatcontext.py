@@ -122,14 +122,15 @@ class FlatContext(BaseContext):
         """
         >>> context = FlatContext()
         >>> context.translate(10, 10)
-        >>> point = (1, 1)
-        >>> p1 = context.getCoordinates(point)
+        >>> context.newDocument(1000, 1000)
+        >>> x, y = 4, 5
+        >>> p1 = context.getCoordinates(x, y)
         >>> p1
-        (11pt, 11pt)
+        (14pt, 985pt)
         >>> context.scale(2)
-        >>> p2 = context.getCoordinates(point)
-        >>> p2
-        (22pt, 22pt)
+        >>> p2 = context.getCoordinates(x, y)
+        >>> p2 
+        (28pt, 970pt)
         """
         z = 0
         p0 = (x, y, z)
@@ -138,8 +139,10 @@ class FlatContext(BaseContext):
         t = t.translate(self._ox, self._oy, 0)
         p1 = t.transformPoint(p0)
         x1, y1, _ = p1
+
         if self.flipped:
             y1 = self.doc.height - y1
+
         return x1, y1
 
     def saveDocument(self, path, multiPage=True):
