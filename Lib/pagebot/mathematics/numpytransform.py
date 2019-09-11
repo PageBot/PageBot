@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     flattransform.py
+#     numpytransform.py
 #
 
 import numpy as np
