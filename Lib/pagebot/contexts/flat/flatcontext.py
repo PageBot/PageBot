@@ -118,7 +118,7 @@ class FlatContext(BaseContext):
             y = self.doc.height - y
             return y
 
-    def getCoordinates(self, point):
+    def getCoordinates(self, x, y):
         """
         >>> context = FlatContext()
         >>> context.translate(10, 10)
@@ -131,7 +131,6 @@ class FlatContext(BaseContext):
         >>> p2
         (22pt, 22pt)
         """
-        x, y = point
         z = 0
         p0 = (x, y, z)
         t = Transform3D()
@@ -139,6 +138,8 @@ class FlatContext(BaseContext):
         t = t.translate(self._ox, self._oy, 0)
         p1 = t.transformPoint(p0)
         x1, y1, _ = p1
+        if self.flipped:
+            y1 = self.doc.height - y1
         return x1, y1
 
     def saveDocument(self, path, multiPage=True):
@@ -638,8 +639,11 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        x = self.getX(x)
-        y = self.getY(y) - h
+        x, y = self.getCoordinates(x, y)
+
+        if self.flipped:
+            y = y - h
+
         shape = self._getShape()
 
         if shape is not None:
@@ -666,15 +670,13 @@ class FlatContext(BaseContext):
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center."""
-        xpt, ypt, rpt = upt(x, y, r)
-        xpt = self.getX(xpt)
-        ypt = self.getY(ypt)
+        x, y = self.getCoordinates(x, y)
 
         shape = self._getShape()
 
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.circle(xpt, ypt, rpt))
+            self.page.place(shape.circle(x, y, r))
 
     def line(self, p0, p1):
         """Draws a line from point p0 to point p1."""
@@ -817,7 +819,7 @@ class FlatContext(BaseContext):
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
-        TODO: add to getCoordinate().
+        TODO: add to getCoordinates().
         TODO: add to graphics state.
         """
         self._sx = sx
