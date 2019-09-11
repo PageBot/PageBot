@@ -190,7 +190,7 @@ def vectorLength(v):
 
 @classmethod
 def normalizedVector(p, length=1):
-    """Normalize the vector ``(x, y)``. The *length* defines the length of the
+    """Normalizes the vector ``(x, y)``. The *length* defines the length of the
     normalized vector, default is ``1``. Freetype XXX: UNDOCUMENTED! It seems
     that it is possible to try to normalize the vector (0, 0). Return
     immediately."""

@@ -22,8 +22,10 @@ from pagebot.contexts.flat.flatbuilder import flatBuilder
 from pagebot.contexts.flat.flatbezierpath import BezierPath
 from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.mathematics import *
+from pagebot.mathematics import to255
+from pagebot.mathematics.transform3d import Transform3D
 from pagebot.toolbox.units import pt, upt, point2D
+
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -782,6 +784,8 @@ class FlatContext(BaseContext):
         dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dxpt
         self._oy += dypt
+        t = Transform3D()
+        t = t.translate(self._ox, self._oy)
 
     def rotate(self, angle, center=None):
         """Rotates by angle.
