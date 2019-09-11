@@ -125,13 +125,18 @@ class FlatContext(BaseContext):
         >>> point = (1, 1)
         >>> p1 = context.getCoordinates(point)
         >>> p1
-        (11.0, 11.0)
+        (11pt, 11pt)
+        >>> context.scale(2)
+        >>> p2 = context.getCoordinates(point)
+        >>> p2
+        (22pt, 22pt)
         """
         x, y = point
         z = 0
         p0 = (x, y, z)
         t = Transform3D()
-        t = t.translate(self._ox.pt, self._oy.pt, 0)
+        t = t.scale(self._sx, self._sy)
+        t = t.translate(self._ox, self._oy, 0)
         p1 = t.transformPoint(p0)
         x1, y1, _ = p1
         return x1, y1

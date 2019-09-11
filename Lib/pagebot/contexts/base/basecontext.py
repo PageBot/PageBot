@@ -50,6 +50,9 @@ class BaseContext(AbstractContext):
         # Origin set by self.translate()
         self._ox = pt(0)
         self._oy = pt(0)
+        self._sx = 1
+        self._sy = 1
+        #self._sz = 1
         self._rotationCenter = (0, 0)
         self._rotate = 0
         self._hyphenation = True
