@@ -33,6 +33,7 @@ def _dotProduct(array, matrix):
 
 def _offsetArray3D(array, offset):
     dx, dy, dz = offset
+
     for x, y, z in array:
         yield x+dx, y+dy, z+dz
 
@@ -43,8 +44,10 @@ class Transform3D:
             matrix = ((1.0, 0.0, 0.0),
                       (0.0, 1.0, 0.0),
                       (0.0, 0.0, 1.0))
+
         if offset is None:
             offset = [0, 0, 0]
+
         self.matrix = matrix
         self.offset = offset
 
@@ -54,8 +57,10 @@ class Transform3D:
     def scale(self, xScale=1.0, yScale=None, zScale=None):
         if yScale is None:
             yScale = xScale
+
         if zScale is None:
             zScale = yScale
+
         matrix = ((xScale, 0, 0), (0, yScale, 0), (0, 0, zScale))
         return self.transform(matrix)
 
@@ -78,16 +83,20 @@ class Transform3D:
         if isinstance(other, Transform3D):
             assert offset is None
             other, offset = other.matrix, other.offset
+
         x, y, z = self.offset
+
         if offset is not None:
             dx, dy, dz = _dotProduct([offset], self.matrix)[0]
             x += dx
             y += dy
             z += dz
+
         if other:
             matrix = _dotProduct(other, self.matrix)
         else:
             matrix = self.matrix
+
         return self.__class__(matrix, (x, y, z))
 
     def transformPoint(self, pt):
@@ -102,6 +111,7 @@ class Transform3D:
     def getAffineTransform2D(self, axis=1):
         matrix = self.matrix
         dx, dy, dz = self.offset
+
         if axis == 1:
             xi = 0
             yi = 2
@@ -110,6 +120,7 @@ class Transform3D:
             yi = 1
         else:
             raise NotImplementedError()
+
         affine = [matrix[xi][xi], matrix[xi][yi], matrix[yi][xi], matrix[yi][yi], self.offset[xi], self.offset[yi]]
         return affine
 

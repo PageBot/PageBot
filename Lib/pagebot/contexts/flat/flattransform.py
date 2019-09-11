@@ -27,6 +27,9 @@ def trig(angle):
     return cos(r), sin(r)
 
 def transform(point, TransformArray):
+    """
+    >>> TransformArray = np.array([1, 0, 0, 1])
+    """
     p = np.array([0,0,0,1])
 
     for i in range (0,len(point)-1):
@@ -34,8 +37,8 @@ def transform(point, TransformArray):
 
     p = np.dot(TransformArray, np.transpose(p))
 
-    for i in range (0,len(point)-1):
-        point[i]=p[i]
+    for i in range (0, len(point) - 1):
+        point[i] = p[i]
 
     return point
 

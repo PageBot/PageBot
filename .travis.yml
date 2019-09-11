@@ -65,10 +65,6 @@ script:
 - $PYLINT Lib/pagebot/
 - python3 Lib/pagebot/__init__.py
 - python3 Lib/pagebot/article.py
-- python3 Lib/pagebot/bezierpaths/__init__.py
-- python3 Lib/pagebot/bezierpaths/beziercontour.py
-- python3 Lib/pagebot/bezierpaths/bezierpath.py
-- python3 Lib/pagebot/bezierpaths/commandbezierpath.py
 - python3 Lib/pagebot/composer.py
 - python3 Lib/pagebot/conditions/__init__.py
 - python3 Lib/pagebot/conditions/align.py
@@ -118,7 +114,6 @@ script:
 - python3 Lib/pagebot/elements/variablefonts/variablecircle.py
 - python3 Lib/pagebot/elements/variablefonts/variablecube.py
 - python3 Lib/pagebot/elements/variablefonts/variablecube2.py
-- python3 Lib/pagebot/elements/variablefonts/variableeditor.py
 - python3 Lib/pagebot/elements/variablefonts/variableglyphs.py
 - python3 Lib/pagebot/elements/variablefonts/variablescatter.py
 - python3 Lib/pagebot/elements/views/__init__.py
