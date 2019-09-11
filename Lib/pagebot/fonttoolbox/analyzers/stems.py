@@ -14,7 +14,7 @@
 #
 #     stems.py
 #
-from pagebot.toolbox.mathematics import distance
+from pagebot.mathematics import distance
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 

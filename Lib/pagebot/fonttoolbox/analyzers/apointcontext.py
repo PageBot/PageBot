@@ -20,7 +20,7 @@
 #     The 7 contained points can be of type point2D (x,y)-tuple, or APoint instances.
 #
 import math
-from pagebot.toolbox.mathematics import *
+from pagebot.mathematics import *
 from pagebot.fonttoolbox.analyzers.apoint import APoint
 
 def calculateAngle(p1, p2, inDegrees=True):

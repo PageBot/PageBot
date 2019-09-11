@@ -22,7 +22,7 @@ from pagebot.contexts.flat.flatbuilder import flatBuilder
 from pagebot.contexts.flat.flatbezierpath import BezierPath
 from pagebot.contexts.flat.flatstring import FlatString
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.toolbox.mathematics import *
+from pagebot.mathematics import *
 from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):
