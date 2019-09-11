@@ -118,6 +118,24 @@ class FlatContext(BaseContext):
             y = self.doc.height - y
             return y
 
+    def getCoordinates(self, point):
+        """
+        >>> context = FlatContext()
+        >>> context.translate(10, 10)
+        >>> point = (1, 1)
+        >>> p1 = context.getCoordinates(point)
+        >>> p1
+        (11.0, 11.0)
+        """
+        x, y = point
+        z = 0
+        p0 = (x, y, z)
+        t = Transform3D()
+        t = t.translate(self._ox.pt, self._oy.pt, 0)
+        p1 = t.transformPoint(p0)
+        x1, y1, _ = p1
+        return x1, y1
+
     def saveDocument(self, path, multiPage=True):
         """Save the current document to file(s)
 
@@ -781,11 +799,9 @@ class FlatContext(BaseContext):
         """Translates the origin by (dx, dy).
         TODO: use transform matrix.
         """
-        dxpt, dypt = point2D(upt(dx, dy))
-        self._ox += dxpt
-        self._oy += dypt
-        t = Transform3D()
-        t = t.translate(self._ox, self._oy)
+        #dxpt, dypt = point2D(upt(dx, dy))
+        self._ox += dx#pt
+        self._oy += dy#pt
 
     def rotate(self, angle, center=None):
         """Rotates by angle.
@@ -796,9 +812,12 @@ class FlatContext(BaseContext):
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
-        TODO: use transform matrix.
+        TODO: add to getCoordinate().
+        TODO: add to graphics state.
         """
-        pass
+        self._sx = sx
+        self._sy = sy or sx
+        self._scaleCenter = center
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         """
