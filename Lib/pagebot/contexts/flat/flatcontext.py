@@ -339,53 +339,36 @@ class FlatContext(BaseContext):
 
         if p is None:
             px = py = 0
-            px = self.getX(px)
-            py = self.getY(py)
         else:
             px = p[0]
             py = p[1]
-            px = self.getX(px)
-            py = self.getY(py)
 
         for command, t in glyph.cubic:
             if command == 'moveTo':
                 x, y = t
-                if self.flipped:
-                    y = -y
-                path.moveTo((px+x, py+y))
-
+                px0, py0 = self.getTransformed(px+x, py+y)
+                path.moveTo((px0, py0))
             elif command == 'lineTo':
                 x, y = t
-                if self.flipped:
-                    y = -y
-                path.lineTo((px+x, py+y))
+                px0, py0 = self.getTransformed(px+x, py+y)
+                path.lineTo((px0, py0))
             elif command == 'closePath':
                 path.closePath()
             elif command == 'curveTo':
                 p0, p1, p = t
                 x0, y0 = p0
-                x0 = px + x0
-                if self.flipped:
-                    y0 = -y0
-                y0 = py + y0
-
                 x1, y1 = p1
-                x1 = px + x1
-                if self.flipped:
-                    y1 = -y1
-                y1 = py + y1
-
                 x, y = p
-                x = px + x
-                if self.flipped:
-                    y = -y
-                y = py + y
+                x0, y0 = self.getTransformed(px+x0, py+y0)
+                x1, y1 = self.getTransformed(px+x1, py+y1)
+                x, y = self.getTransformed(px+x, py+y)
                 path.curveTo((x0, y0), (x1, y1), (x, y))
             elif command == 'component':
                 (x, y), componentGlyph = t
                 if self.flipped:
                     y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
+
         return path
 
     #   A N I M A T I O N
