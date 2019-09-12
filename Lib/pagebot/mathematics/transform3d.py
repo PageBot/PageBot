@@ -86,6 +86,11 @@ class Transform3D:
         matrix = ((xScale, 0, 0), (0, yScale, 0), (0, 0, zScale))
         return self.transform(matrix)
 
+    def rotate(self, angle):
+        c = math.cos(angle)
+        s = math.sin(angle)
+        self.transform(((c, s 0), (-s, c, 0), (0, 0, 1)))
+
     def rotateX(self, angle):
         s = math.sin(angle)
         c = math.cos(angle)
@@ -100,6 +105,9 @@ class Transform3D:
         s = math.sin(angle)
         c = math.cos(angle)
         return self.transform(((c, -s, 0), (s, c, 0), (0, 0, 1)))
+
+    def skew(self, angle1, angle2):
+        pass
 
     def transform(self, other=None, offset=None):
         if isinstance(other, Transform3D):

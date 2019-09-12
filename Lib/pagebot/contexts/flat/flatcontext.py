@@ -14,6 +14,7 @@
 #
 #     flatcontext.py
 #
+import math
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -806,34 +807,40 @@ class FlatContext(BaseContext):
     def transform(self, matrix, center=(0, 0)):
         #if center != (0, 0):
         #    transformMatrix = transformationAtCenter(transformMatrix, center)
-        t = Transform3D()
-        t = t.scale(self._sx, self._sy)
-        t = t.translate(self._ox, self._oy, 0)
-
-        print(matrix)
+        #t = Transform3D()
+        #t = t.scale(self._sx, self._sy)
+        #t = t.translate(self._ox, self._oy, 0)
+        pass
+        #print(matrix)
 
     def translate(self, dx, dy):
         """Translates the origin by (dx, dy).
         TODO: use transform matrix.
         """
-        #dxpt, dypt = point2D(upt(dx, dy))
-        self._ox += dx#pt
-        self._oy += dy#pt
-        #self.transform((1, 0, 0, 1, x, y))
-        #t = Transform3D()
+        self._ox += dx
+        self._oy += dy
         self.transform3D = self.transform3D.translate(dx, dy, 0)
-        #print(self.transform3D)
 
     def rotate(self, angle, center=None):
         """Rotates by angle.
         TODO: use transform matrix.
+        FIXME: implement off-center rotation.
+
+        >>> context = FlatContext()
+        >>> w = 800
+        >>> h = 600
+        >>> angle = 5
+        >>> context.newDocument(w, h) 
+        >>> x, y = 40, 50
+        >>> context.rotate(angle)
+        >>> p1 = context.getTransformed(x, y)
         """
-        self._rotationCenter = center
-        self._rotate = angle
         angle = math.radians(angle)
-        c = math.cos(angle)
-        s = math.sin(angle)
-        self.transform((c, s, -s, c, 0, 0), center)
+        self._rotationCenter = center # Sum of points?
+        self._rotate = self._rotate + angle # Sum?
+        self.transform3D = self.transform3D.rotateX(angle)
+        self.transform3D = self.transform3D.rotateY(angle)
+        print(self.transform3D)
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
@@ -844,9 +851,8 @@ class FlatContext(BaseContext):
         self._sy = self._sy * sy
 
         self._scaleCenter = center
-        self.transform3D = self.transform3D.scale(sx, sy)
         self._strokeWidth = self._strokeWidth * sx
-        #print(self.transform3D)
+        self.transform3D = self.transform3D.scale(sx, sy)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         """"""
