@@ -89,7 +89,7 @@ class Transform3D:
     def rotate(self, angle):
         c = math.cos(angle)
         s = math.sin(angle)
-        self.transform(((c, s 0), (-s, c, 0), (0, 0, 1)))
+        return self.transform(((c, s, 0), (-s, c, 0), (0, 0, 1)))
 
     def rotateX(self, angle):
         s = math.sin(angle)

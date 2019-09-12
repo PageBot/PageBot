@@ -639,21 +639,26 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        """
-        TODO: don't scale width / height but calculate points before transforming.
-        """
+        """Calculates rectangle points by combining (x, y) with width and
+        height, then runs the points through the affine transform and passes
+        the coordinates to a Flat polygon to be rendered."""
         shape = self._getShape()
 
         if shape is not None:
-            x, y = self.getTransformed(x, y)
-            w = w * self._sx
-            h = h * self._sy
+            x1 = x + w
+            y1 = y + h
 
-            if self.flipped:
-                y = y - h
-
+            p0 = (x, y)
+            p1 = (x1, y)
+            p2 = (x1, y1)
+            p3 = (x, y1)
+            x, y = self.getTransformed(*p0)
+            x1, y1 = self.getTransformed(*p1)
+            x2, y2 = self.getTransformed(*p2)
+            x3, y3 = self.getTransformed(*p3)
+            coordinates = (x, y, x1, y1, x2, y2, x3, y3) 
             self.ensure_page()
-            r = shape.rectangle(x, y, w, h)
+            r = shape.polygon(coordinates)
             self.page.place(r)
 
     def oval(self, x, y, w, h):
@@ -838,9 +843,8 @@ class FlatContext(BaseContext):
         angle = math.radians(angle)
         self._rotationCenter = center # Sum of points?
         self._rotate = self._rotate + angle # Sum?
-        self.transform3D = self.transform3D.rotateX(angle)
-        self.transform3D = self.transform3D.rotateY(angle)
-        print(self.transform3D)
+        #self.transform3D = self.transform3D.rotateX(angle)
+        self.transform3D = self.transform3D.rotate(angle)
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
