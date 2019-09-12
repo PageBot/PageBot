@@ -638,6 +638,9 @@ class FlatContext(BaseContext):
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
+        """
+        TODO: don't scale width / height but calculate points before transforming.
+        """
         shape = self._getShape()
 
         if shape is not None:
@@ -656,7 +659,10 @@ class FlatContext(BaseContext):
         """Draws an oval in a rectangle, where (x, y) is the bottom left origin
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
-        for the difference."""
+        for the difference.
+        
+        TODO: don't scale width / height but calculate points before transforming.
+        """
         shape = self._getShape()
 
         if shape is not None:
@@ -669,7 +675,10 @@ class FlatContext(BaseContext):
             self.page.place(shape.ellipse(x0, y0, w0, h0))
 
     def circle(self, x, y, r):
-        """Draws a circle in a square with radius r and (x, y) as center."""
+        """Draws a circle in a square with radius r and (x, y) as center.
+        
+        TODO: don't scale width / height but calculate points before transforming.
+        """
         shape = self._getShape()
 
         if shape is not None:
@@ -830,8 +839,10 @@ class FlatContext(BaseContext):
         """
         TODO: add to graphics state.
         """
-        self._sx = sx
-        self._sy = sy or sx
+        self._sx = self._sx * sx
+        sy = sy or sx
+        self._sy = self._sy * sy
+
         self._scaleCenter = center
         self.transform3D = self.transform3D.scale(sx, sy)
         self._strokeWidth = self._strokeWidth * sx
