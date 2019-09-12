@@ -81,6 +81,7 @@ class FlatContext(BaseContext):
         self.fileType = DEFAULT_FILETYPE
         self._pages = []
         self.flipped = True
+        self.transform3D = Transform3D()
 
     #   D O C U M E N T
 
@@ -118,26 +119,37 @@ class FlatContext(BaseContext):
             y = self.doc.height - y
             return y
 
-    def getCoordinates(self, x, y):
+    def getTransformed(self, x, y):
         """
         >>> context = FlatContext()
-        >>> context.translate(10, 10)
-        >>> context.newDocument(1000, 1000)
+        >>> w = 800
+        >>> h = 600
+        >>> dx = 6 
+        >>> dy = 8
+        >>> context.newDocument(w, h) 
         >>> x, y = 4, 5
-        >>> p1 = context.getCoordinates(x, y)
+        >>> context.translate(dx, dy)
+        >>> p1 = context.getTransformed(x, y)
         >>> p1
-        (14pt, 985pt)
+        (10.0, 587.0)
+        >>> p1[0] == 4 + dx
+        True
+        >>> p1[1] == h - (dy + 5)
+        True
         >>> context.scale(2)
-        >>> p2 = context.getCoordinates(x, y)
+        >>> p2 = context.getTransformed(x, y)
+        >>> p2[0] == (4 * 2) + dx
+        True
+        >>> p2[1] == h - ((5 * 2) + dy)
+        True
         >>> p2 
-        (28pt, 970pt)
+        (14.0, 582.0)
+        """
+        """
         """
         z = 0
         p0 = (x, y, z)
-        t = Transform3D()
-        t = t.scale(self._sx, self._sy)
-        t = t.translate(self._ox, self._oy, 0)
-        p1 = t.transformPoint(p0)
+        p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
 
         if self.flipped:
@@ -636,20 +648,23 @@ class FlatContext(BaseContext):
         Flat function?
         """
         if not self.doc:
-            self.newDocument(pt(100), pt(100)) # Standardize FlatContext document on pt.
+            # Standardize FlatContext document on pt.
+            self.newDocument(pt(100), pt(100)) 
 
         if not self.pages:
             self.newPage(self.doc.width, self.doc.height)
 
     def rect(self, x, y, w, h):
-        x, y = self.getCoordinates(x, y)
-
-        if self.flipped:
-            y = y - h
-
         shape = self._getShape()
 
         if shape is not None:
+            x, y = self.getTransformed(x, y)
+            w = w * self._sx
+            h = h * self._sy
+
+            if self.flipped:
+                y = y - h
+
             self.ensure_page()
             r = shape.rectangle(x, y, w, h)
             self.page.place(r)
@@ -659,42 +674,36 @@ class FlatContext(BaseContext):
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference."""
-        #xpt, ypt, wpt, hpt = upt(x, y, w, h)
         shape = self._getShape()
 
         if shape is not None:
             self.ensure_page()
-            x = self.getX(x)
             x0 = x + w / 2
-            y0 = self.getY(y+ h / 2)
-            w0 = w / 2
-            h0 = h / 2
+            y0 = y + h / 2
+            x0, y0 = self.getTransformed(x0, y0)
+            w0 = w / 2 * self._sx
+            h0 = h / 2 * self._sy
             self.page.place(shape.ellipse(x0, y0, w0, h0))
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center."""
-        x, y = self.getCoordinates(x, y)
-
         shape = self._getShape()
 
         if shape is not None:
+            x, y = self.getTransformed(x, y)
+            r = r * self._sx
             self.ensure_page()
             self.page.place(shape.circle(x, y, r))
 
     def line(self, p0, p1):
         """Draws a line from point p0 to point p1."""
-
-        x0pt, y0pt = point2D(upt(p0))
-        x1pt, y1pt = point2D(upt(p1))
-        x0pt = self.getX(x0pt)
-        y0pt = self.getY(y0pt)
-        x1pt = self.getX(x1pt)
-        y1pt = self.getY(y1pt)
         shape = self._getShape()
 
         if shape is not None:
+            x0, y0 = self.getTransformed(*p0)
+            x1, y1 = self.getTransformed(*p1)
             self.ensure_page()
-            self.page.place(shape.line(x0pt, y0pt, x1pt, y1pt))
+            self.page.place(shape.line(x0, y0, x1, y1))
 
     #   P A T H
 
@@ -803,7 +812,13 @@ class FlatContext(BaseContext):
     # Transform.
 
     def transform(self, matrix, center=(0, 0)):
-        raise NotImplementedError
+        #if center != (0, 0):
+        #    transformMatrix = transformationAtCenter(transformMatrix, center)
+        t = Transform3D()
+        t = t.scale(self._sx, self._sy)
+        t = t.translate(self._ox, self._oy, 0)
+
+        print(matrix)
 
     def translate(self, dx, dy):
         """Translates the origin by (dx, dy).
@@ -812,6 +827,10 @@ class FlatContext(BaseContext):
         #dxpt, dypt = point2D(upt(dx, dy))
         self._ox += dx#pt
         self._oy += dy#pt
+        #self.transform((1, 0, 0, 1, x, y))
+        #t = Transform3D()
+        self.transform3D = self.transform3D.translate(dx, dy, 0)
+        #print(self.transform3D)
 
     def rotate(self, angle, center=None):
         """Rotates by angle.
@@ -819,21 +838,28 @@ class FlatContext(BaseContext):
         """
         self._rotationCenter = center
         self._rotate = angle
+        angle = math.radians(angle)
+        c = math.cos(angle)
+        s = math.sin(angle)
+        self.transform((c, s, -s, c, 0, 0), center)
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
-        TODO: add to getCoordinates().
         TODO: add to graphics state.
         """
         self._sx = sx
         self._sy = sy or sx
         self._scaleCenter = center
+        self.transform3D = self.transform3D.scale(sx, sy)
+        self._strokeWidth = self._strokeWidth * sx
+        #print(self.transform3D)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
-        """
-        TODO: use transform matrix.
-        """
-        pass
+        """"""
+        angle1 = math.radians(angle1)
+        angle2 = math.radians(angle2)
+        self.transform((1, math.tan(angle2), math.tan(angle1), 1, 0, 0), center)
+
 
     #   E X P O R T
 
