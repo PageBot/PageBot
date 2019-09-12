@@ -345,6 +345,8 @@ class FlatContext(BaseContext):
             py = p[1]
 
         for command, t in glyph.cubic:
+            # TODO: quadTo()
+
             if command == 'moveTo':
                 x, y = t
                 px0, py0 = self.getTransformed(px+x, py+y)
@@ -667,14 +669,25 @@ class FlatContext(BaseContext):
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference.
         
-        TODO: don't scale width / height but calculate points before transforming.
+        TODO: don't scale width / height but calculate points before
+        transforming. Also convert to a path so we can rotate.
         """
         shape = self._getShape()
 
         if shape is not None:
+            path = self.newPath()
             self.ensure_page()
+            kappa = .05522848
+            offsetX = w / 2 * kappa
+            offsetY = h / 2 * kappa
             x0 = x + w / 2
             y0 = y + h / 2
+            x1 = x + w
+            y1 = y + w
+
+            #px0, py0 = self.getTransformed(x, y0)
+            #path.moveTo((px0, py0))
+
             x0, y0 = self.getTransformed(x0, y0)
             w0 = w / 2 * self._sx
             h0 = h / 2 * self._sy
