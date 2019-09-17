@@ -845,10 +845,10 @@ class FlatContext(BaseContext):
     # Transform.
 
     def transform(self, matrix, center=(0, 0)):
-        #if center != (0, 0):
-        #    transformMatrix = transformationAtCenter(transformMatrix, center)
+        """
+        NOTE: not used, implemented as a transform3D object for now.
+        """
         pass
-
 
     def translate(self, dx, dy):
         """Translates the origin by (dx, dy).
@@ -893,13 +893,26 @@ class FlatContext(BaseContext):
 
         self._scaleCenter = center
         self._strokeWidth = self._strokeWidth * sx
-        self.transform3D = self.transform3D.scale(sx, sy)
+
+        if center is None or center == (0, 0):
+            self.transform3D = self.transform3D.scale(sx, sy)
+        else:
+            cx, cy = center
+            self.translate(cx, cy) 
+            self.transform3D = self.transform3D.scale(sx, sy)
+            self.translate(-cx, -cy)
 
     def skew(self, angle1, angle2=0, center=(0, 0)):
         """"""
         angle1 = math.radians(angle1)
         angle2 = math.radians(angle2)
-        self.transform3D = self.transform3D.skew(angle1, angle2)
+        if center is None or center == (0, 0):
+            self.transform3D = self.transform3D.skew(angle1, angle2)
+        else:
+            cx, cy = center
+            self.translate(cx, cy) 
+            self.transform3D = self.transform3D.skew(angle1, angle2)
+            self.translate(-cx, -cy)
 
     #   E X P O R T
 
