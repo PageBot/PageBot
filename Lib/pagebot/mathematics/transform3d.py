@@ -107,7 +107,17 @@ class Transform3D:
         return self.transform(((c, -s, 0), (s, c, 0), (0, 0, 1)))
 
     def skew(self, angle1, angle2):
-        pass
+        t1 = math.tan(angle1)
+        t2 = math.tan(angle2)
+        return self.transform(((1, t2, 0), (t1, 1, 0), (0, 0, 1)))
+
+    def skewX(self, angle):
+        t = math.tan(angle)
+        return self.transform(((1, t, 0), (0, 1, 0), (0, 0, 1)))
+
+    def skewY(self, angle):
+        t = math.tan(angle)
+        return self.transform(((1, 0, 0), (t, 1, 0), (0, 0, 1)))
 
     def transform(self, other=None, offset=None):
         if isinstance(other, Transform3D):

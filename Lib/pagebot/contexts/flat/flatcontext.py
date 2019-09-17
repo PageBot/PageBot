@@ -899,8 +899,7 @@ class FlatContext(BaseContext):
         """"""
         angle1 = math.radians(angle1)
         angle2 = math.radians(angle2)
-        self.transform((1, math.tan(angle2), math.tan(angle1), 1, 0, 0), center)
-
+        self.transform3D = self.transform3D.skew(angle1, angle2)
 
     #   E X P O R T
 
