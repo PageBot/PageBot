@@ -86,7 +86,7 @@ class Transform3D:
         matrix = ((xScale, 0, 0), (0, yScale, 0), (0, 0, zScale))
         return self.transform(matrix)
 
-    def rotate(self, angle, center=(0, 0)):
+    def rotate(self, angle):
         c = math.cos(angle)
         s = math.sin(angle)
         return self.transform(((c, s, 0), (-s, c, 0), (0, 0, 1)))
