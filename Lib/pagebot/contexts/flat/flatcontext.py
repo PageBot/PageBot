@@ -847,15 +847,11 @@ class FlatContext(BaseContext):
     def transform(self, matrix, center=(0, 0)):
         #if center != (0, 0):
         #    transformMatrix = transformationAtCenter(transformMatrix, center)
-        #t = Transform3D()
-        #t = t.scale(self._sx, self._sy)
-        #t = t.translate(self._ox, self._oy, 0)
         pass
-        #print(matrix)
+
 
     def translate(self, dx, dy):
         """Translates the origin by (dx, dy).
-        TODO: use transform matrix.
         """
         self._ox += dx
         self._oy += dy
@@ -878,8 +874,14 @@ class FlatContext(BaseContext):
         angle = math.radians(angle)
         self._rotationCenter = center # Sum of points?
         self._rotate = self._rotate + angle # Sum?
-        #self.transform3D = self.transform3D.rotateX(angle)
-        self.transform3D = self.transform3D.rotate(angle)
+
+        if center is None or center == (0, 0):
+            self.transform3D = self.transform3D.rotate(angle)
+        else:
+            cx, cy = center
+            self.translate(cx, cy) 
+            self.transform3D = self.transform3D.rotate(angle)
+            self.translate(-cx, -cy)
 
     def scale(self, sx=1, sy=None, center=(0, 0)):
         """
