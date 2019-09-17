@@ -362,9 +362,9 @@ class FlatContext(BaseContext):
                 x0, y0 = p0
                 x1, y1 = p1
                 x, y = p
-                x0, y0 = self.getTransformed(px+x0, py+y0)
-                x1, y1 = self.getTransformed(px+x1, py+y1)
-                x, y = self.getTransformed(px+x, py+y)
+                x0, y0 = self.getTransformed(px + x0, py + y0)
+                x1, y1 = self.getTransformed(px + x1, py + y1)
+                x, y = self.getTransformed(px + x, py + y)
                 path.curveTo((x0, y0), (x1, y1), (x, y))
             elif command == 'component':
                 (x, y), componentGlyph = t
@@ -677,21 +677,42 @@ class FlatContext(BaseContext):
         if shape is not None:
             path = self.newPath()
             self.ensure_page()
-            kappa = .05522848
-            offsetX = w / 2 * kappa
-            offsetY = h / 2 * kappa
-            x0 = x + w / 2
-            y0 = y + h / 2
+
+            # Control point offsets.
+            kappa = .5522848
+            offsetX = (w / 2) * kappa
+            offsetY = (h / 2) * kappa
+       
+            # Middle and other extreme points.
+            x0 = x + (w / 2)
+            y0 = y + (h / 2)
             x1 = x + w
-            y1 = y + w
+            y1 = y + h
 
-            #px0, py0 = self.getTransformed(x, y0)
-            #path.moveTo((px0, py0))
+            px0, py0 = self.getTransformed(x, y0)
+            path.moveTo((px0, py0))
 
-            x0, y0 = self.getTransformed(x0, y0)
-            w0 = w / 2 * self._sx
-            h0 = h / 2 * self._sy
-            self.page.place(shape.ellipse(x0, y0, w0, h0))
+            cp1 = self.getTransformed(x, y0 - offsetY)
+            cp2 = self.getTransformed(x0 - offsetX, y)
+            p = self.getTransformed(x0, y)
+            path.curveTo(cp1, cp2, p)
+
+            cp1 = self.getTransformed(x0 + offsetX, y)
+            cp2 = self.getTransformed(x1, y0 - offsetY)
+            p = self.getTransformed(x1, y0)
+            path.curveTo(cp1, cp2, p)
+
+            cp1 = self.getTransformed(x1, y0 + offsetY)
+            cp2 = self.getTransformed(x0 + offsetX, y1)
+            p = self.getTransformed(x0, y1)
+            path.curveTo(cp1, cp2, p)
+
+            cp1 = self.getTransformed(x0 - offsetX, y1)
+            cp2 = self.getTransformed(x, y0 + offsetY)
+            p = self.getTransformed(x, y0)
+            path.curveTo(cp1, cp2, p)
+            path.closePath()
+            self.drawPath()
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
@@ -725,6 +746,7 @@ class FlatContext(BaseContext):
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         """Renders the path object as a Flat vector graphic."""
+        # FIXME: path parameter not used.
         shape = self._getShape()
 
         if shape is not None:

@@ -42,11 +42,20 @@ class BezierPath:
     def lineTo(self, p):
         self.commands.append(self.b.lineto(p[0], p[1]))
 
-    def quadTo(self, bcp, p):
-        self.commands.append(self.b.quadto(bcp[0], bcp[1], p[0], p[1]))
+    def quadTo(self, cp, p):
+        """
+        * cp: control point, off curve.
+        * p: on curve point.
+        """
+        self.commands.append(self.b.quadto(cp[0], cp[1], p[0], p[1]))
 
-    def curveTo(self, bcp1, bcp2, p):
-        self.commands.append(self.b.curveto(bcp1[0], bcp1[1], bcp2[0], bcp2[1],
+    def curveTo(self, cp1, cp2, p):
+        """
+        * cp1: control point 1, off curve.
+        * cp2: control point 2, off curve.
+        * p: on curve point.
+        """
+        self.commands.append(self.b.curveto(cp1[0], cp1[1], cp2[0], cp2[1],
             p[0], p[1]))
 
     def closePath(self):
