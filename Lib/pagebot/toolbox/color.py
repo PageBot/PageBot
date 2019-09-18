@@ -419,9 +419,22 @@ class Color:
             y=None, k=None, cmyk=None, ral=None, spot=None, overPrint=False, 
             tint=None, name=None):
         self.a = a
-        self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = self._ral = self._name = None
+        self.r = None
+        self.g = None
+        self.b = None
+        self._rgb = None
+        self.c = None
+        self.m = None
+        self.y = None
+        self.k = None
+        self._cmyk = None
+        self._spot = None
+        self._ral = None
+        self._tint = None
+        self._name = None
         self.overPrint = overPrint # Used by FlatBuilder
-        # Some reposition of attributes, in case used as rgb='red' or
+
+        # Some repositioning of attributes, in case used as rgb='red' or
         # cmy='magenta'
         if isinstance(rgb, str) and not rgb.startswith('#'):
             name = rgb
@@ -508,8 +521,10 @@ class Color:
                 cmyk = 1
             self.c = self.m = self.y = self.k = cmyk
 
-        else: # Default is black, if all fails.
-            self.r = self.g = self.b = 0
+        '''
+        else: # Default is None, if all fails.
+            self.rgb = None
+        '''
 
     def _get_rt(self):
         return self.r * self.tint
@@ -631,7 +646,8 @@ class Color:
             return '%s(spot=%s)' % (self.__class__.__name__, self._spot)
         if self._ral is not None:
             return '%s(ral=%d)' % (self.__class__.__name__, self._ral)
-        return '%s(rgb=0)' % self.__class__.__name__
+
+        return '%s(r=%s, g=%s, r=%s)' % (self.__class__.__name__, self.r, self.g, self.b)
 
     def _get_fullString(self):
         """Show all internal parameter for debugging.
@@ -755,7 +771,7 @@ class Color:
             return spot2Rgb(self._spot)
         if self._ral is not None:
             return ral2NameRgb(self._ral)[1]
-        return 0, 0, 0 #Answer black if all fails.
+        return None, None, None #Answer black if all fails.
 
     def _set_rgb(self, rgb):
         self.r, self.g, self.b = rgb
@@ -1123,6 +1139,9 @@ class Color:
         return self._name
     name = property(_get_name)
 
+class NoColor(Color):
+    pass
+
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
         k=None, cmyk=None, spot=None, ral=None, name=None, tint=None):
     if isinstance(r, Color): # If already a color, then return it
@@ -1133,7 +1152,8 @@ def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
 # Some predefined Color instances that are used often.
 
 # Set to no-drawing (DrawBot fill(None) setting).
-noColor = color(a=0)
+#noColor = color(r=None, g=None, b=None, a=None)
+noColor = NoColor()
 
 # Completely transparent, ignore setting the color. Draw color as previously.
 inheritColor = color(a=-1)

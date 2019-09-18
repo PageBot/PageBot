@@ -616,7 +616,6 @@ class FlatContext(BaseContext):
 
         shape = self.b.shape()
 
-        # TODO: revert to PageBot Color globally, convert to Flat RGB here.
         if self._fill and self._fill != noColor:
             shape.fill(self.getFlatRGB(self._fill))
         else:
