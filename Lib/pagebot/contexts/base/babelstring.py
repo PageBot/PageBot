@@ -70,7 +70,6 @@ class BabelString:
         self.fittingLocation = None
         self.isFitting = False
 
-
     def __repr__(self):
         return '%s' % self.s
 
@@ -169,7 +168,6 @@ class BabelString:
             pixelFit=True):
         return None
 
-    # To be implemented:
     def _get_fontSize(self):
         return self.style.get('fontSize', DEFAULT_FONT_SIZE)
 
@@ -179,7 +177,8 @@ class BabelString:
 
     fontSize = property(_get_fontSize, _set_fontSize)
 
-    #def textSize(self, w=None, h=None):
+    # To be implemented:
+    #def texzetSize(self, w=None, h=None):
     #def asText(self):
     #def bounds(self, language=None, hyphenation=None):
     #def fill(self, r, g=None, b=None, a=None, alpha=None):

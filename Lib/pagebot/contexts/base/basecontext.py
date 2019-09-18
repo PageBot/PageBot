@@ -716,6 +716,7 @@ class BaseContext(AbstractContext):
         >>> context.fontSize(pt(12))
         """
         fspt = upt(fontSize)
+        self._fontSize = fspt
         self.b.fontSize(fspt) # Render fontSize unit to value
 
     def lineHeight(self, value):
@@ -787,9 +788,8 @@ class BaseContext(AbstractContext):
             position = point2D(upt(p))
         else:
             s = sOrBs
-            size = DEFAULT_FONT_SIZE
             position = point2D(upt(p))
-            self.b.fontSize(size)
+            self.b.fontSize(self._fontSize)
 
         self.b.text(s, position) # Render point units to value tuple
 
