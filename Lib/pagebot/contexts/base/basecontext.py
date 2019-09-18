@@ -22,6 +22,7 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
 from pagebot.contexts.base.abstractcontext import AbstractContext
+from pagebot.strings.babelstring import BabelString
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
@@ -780,10 +781,18 @@ class BaseContext(AbstractContext):
 
         NOTE: signature differs from DrawBot.
         """
-        if not isinstance(sOrBs, str):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        ppt = point2D(upt(p))
-        self.b.text(sOrBs, ppt) # Render point units to value tuple
+        if isinstance(sOrBs, BabelString):
+            # BabelString with a FormattedString inside.
+            s = sOrBs.s 
+            position = point2D(upt(p))
+        else:
+            s = sOrBs
+            size = DEFAULT_FONT_SIZE
+            position = point2D(upt(p))
+            self.b.fontSize(size)
+
+        self.b.text(s, position) # Render point units to value tuple
+
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the overflow text if flowing it in the box. The sOrBs can be a

@@ -170,11 +170,16 @@ class BabelString:
         return None
 
     # To be implemented:
+    def _get_fontSize(self):
+        return self.style.get('fontSize', DEFAULT_FONT_SIZE)
 
-    #def _get_size(self):
+    def _set_fontSize(self, fontSize):
+        self.b.fontSize(fontSize)
+        self.style['fontSize'] = fontSize
+
+    fontSize = property(_get_fontSize, _set_fontSize)
+
     #def textSize(self, w=None, h=None):
-    #def _get_fontSize(self):
-    #def _set_fontSize(self, fontSize):
     #def asText(self):
     #def bounds(self, language=None, hyphenation=None):
     #def fill(self, r, g=None, b=None, a=None, alpha=None):
