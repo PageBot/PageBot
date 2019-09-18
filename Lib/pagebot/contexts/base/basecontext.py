@@ -22,7 +22,7 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
 from pagebot.contexts.base.abstractcontext import AbstractContext
-from pagebot.strings.babelstring import BabelString
+from pagebot.contexts.base.babelstring import BabelString
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.

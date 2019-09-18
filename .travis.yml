@@ -77,6 +77,7 @@ script:
 - python3 Lib/pagebot/constants.py
 - python3 Lib/pagebot/contexts/__init__.py
 - python3 Lib/pagebot/contexts/base/abstractcontext.py
+- python3 Lib/pagebot/contexts/base/babelstring.py
 - python3 Lib/pagebot/contexts/base/basecontext.py
 - python3 Lib/pagebot/contexts/base/basebuilder.py
 - python3 Lib/pagebot/contexts/flat/flatbuilder.py
@@ -161,7 +162,6 @@ script:
 - python3 Lib/pagebot/server/__init__.py
 # Hangs on server process.
 #- python3 Lib/pagebot/server/baseserver.py
-- python3 Lib/pagebot/strings/babelstring.py
 - python3 Lib/pagebot/style.py
 - python3 Lib/pagebot/stylelib.py
 - python3 Lib/pagebot/templates/__init__.py
