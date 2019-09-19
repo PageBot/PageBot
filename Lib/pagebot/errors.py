@@ -19,3 +19,12 @@
 class PageBotError(TypeError):
     pass
 
+
+
+class PageBotFileFormatError(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return '! PageBot file format error: %s' % self.msg

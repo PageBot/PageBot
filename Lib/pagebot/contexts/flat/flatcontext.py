@@ -26,6 +26,8 @@ from pagebot.toolbox.color import color, Color, noColor
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.toolbox.units import pt, upt, point2D
+from pagebot.errors import PageBotFileFormatError
+from pagebot.style import makeStyle
 
 
 class FlatContext(BaseContext):
@@ -386,7 +388,7 @@ class FlatContext(BaseContext):
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
 
-    def text(self, bs, p):
+    def text(self, fs, p):
         """Place the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain
@@ -398,38 +400,40 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
-        >>> bs = context.newString('ABC', style=style)
-        >>> bs.__class__.__name__
+        >>> fs = context.newString('ABC', style=style)
+        >>> fs.__class__.__name__
         'FlatString'
         >>> context.newDocument(1000, 1000)
         >>> context.newPage()
-        >>> context.text(bs, (100, 100))
+        >>> context.text(fs, (100, 100))
 
         """
-        if not isinstance(bs, FlatString):
-            if isinstance(bs, str):
-                bs = self.newString(bs)
-            else:
-                print('wrong type %s' % type(bs))
-                # TODO: raise error.
+        if isinstance(fs, str):
+            # Creates a new string with default styles.
+            style = {'fontSize': self._fontSize}
+            style = makeStyle(style=style)
+            fs = self.newString(fs, style=style)
+        elif not isinstance(fs, FlatString):
+            raise PageBotFileFormatError('type is %s' % type(s))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
-        placedText = self.page.place(bs.s)
+        placedText = self.page.place(fs.s)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
 
         if self.flipped:
-            leading = bs.leading
-            textHeight = leading.byBase(bs.fontSize)
+            leading = fs.leading
+            textHeight = leading.byBase(fs.fontSize)
             ypt -= textHeight
 
-        if 'textFill' in bs.style:
-            c = bs.style['textFill']
+        if 'textFill' in fs.style:
+            c = fs.style['textFill']
             c = color(rgb=c)
             self.textFill(c)
 
-        placedText.position(xpt, ypt) # Render unit tuple to value tuple
+        # Renders unit tuple to value tuple.
+        placedText.position(xpt, ypt)
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted
@@ -500,8 +504,10 @@ class FlatContext(BaseContext):
 
     def textSize(self, bs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
-        there is no text defined.  Answer the height of the string if the width
-        w is given.
+        no text is defined. Answers the height of the string if the width w is
+        given.
+
+        TODO: returns frame size, not actual text size like DrawBot.
 
         >>> w = h = 500 # Default to pt-units
         >>> x = y = 0

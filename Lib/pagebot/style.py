@@ -38,11 +38,10 @@ def makeStyle(style=None, raiseError=True, **kwargs):
     that case all the element style values need to be defined by argument. The
     calling element must test if its minimum set (such as self.w and self.h)
     are properly defined."""
-    rs = getRootStyle()
-
     if style is None:
         new = newStyle(**kwargs)  # Copy arguments in new style.
     else:
+        rs = getRootStyle()
         new = dict()
 
         for key, value in style.items():
@@ -552,6 +551,7 @@ def css(name, e=None, styles=None, default=None):
         for style in styles:
             if name in style:
                 return style[name]
+
     if e is not None:
         return e.css(name)
     return default
