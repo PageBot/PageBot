@@ -118,7 +118,7 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.fill((color(r=1, g=0, b=0.5)))
         >>> context.rect(pt(0), pt(100), pt(600), pt(200))
-        >>> context.stroke(pt(0), pt(20))
+        >>> context.stroke((0.4, 0.6, 0.1), pt(20))
         >>> context.fill((color(r=0.4, g=0.1, b=0.9)))
         >>> context.rect(pt(300), pt(150), pt(400), pt(600))
         >>> context.saveDocument(path)
@@ -198,12 +198,14 @@ class SvgContext(BaseContext):
     cmykFill = fill
 
     def stroke(self, c, strokeWidth=None):
-        c = color(c)
+
         if c is noColor:
             self._svgStroke = 'none'
         else:
+            c = color(c)
             r, g, b = c.rgb
             self._svgStroke = self.b.rgb(100*r, 100*g, 100*b, '%')
+
         self._strokeWidth = upt(strokeWidth or pt(1))
 
     setStrokeColor = stroke
