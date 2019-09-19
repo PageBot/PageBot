@@ -621,6 +621,7 @@ class FlatContext(BaseContext):
         else:
             shape.nofill()
 
+
         if self._stroke and self._stroke != noColor:
             shape.stroke(self.getFlatRGB(self._stroke)).width(self._strokeWidth)
         else:

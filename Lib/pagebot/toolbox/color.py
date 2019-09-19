@@ -1140,7 +1140,12 @@ class Color:
     name = property(_get_name)
 
 class NoColor(Color):
-    pass
+
+    def __eq__(self, c):
+
+        if isinstance(c, NoColor):
+            return True
+        return False
 
 def color(r=None, g=None, b=None, a=1, rgb=None, c=None, m=None, y=None,
         k=None, cmyk=None, spot=None, ral=None, name=None, tint=None):
