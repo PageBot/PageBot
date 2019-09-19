@@ -929,7 +929,6 @@ class BaseContext(AbstractContext):
         if path.lower().endswith('.'+FILETYPE_SVG):
             import xml.etree.ElementTree as ET
             svgTree = ET.parse(path)
-            print(svgTree)
             return pt(1000, 1000)
 
         return pt(self.b.imageSize(path))

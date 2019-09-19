@@ -413,7 +413,6 @@ class FlatContext(BaseContext):
                 print('wrong type %s' % type(bs))
                 # TODO: raise error.
 
-        print('Flat context %s' % bs.fontSize)
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(bs.s)
         xpt, ypt = point2D(upt(p))

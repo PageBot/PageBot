@@ -15,7 +15,7 @@
 #
 from copy import copy
 from pagebot.toolbox.units import pt
-from pagebot.constants import LEFT, DEFAULT_LANGUAGE
+from pagebot.constants import LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE
 
 class BabelString:
     """BabelString is the base class of all types of (formatted) string
