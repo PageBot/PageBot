@@ -366,7 +366,6 @@ class FlatString(BabelString):
 
         fsAttrs = cls.getFSAttrs(s, context, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
-        print(fsAttrs)
 
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
@@ -396,8 +395,6 @@ class FlatString(BabelString):
 
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
-
-        #print('FS font is %s' % font)
 
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)

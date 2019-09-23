@@ -793,6 +793,8 @@ class BaseContext(AbstractContext):
             s = sOrBs
             position = point2D(upt(p))
             self.b.fontSize(self._fontSize)
+            self.b.font(DEFAULT_FONT_PATH)
+            
 
         self.b.text(s, position) # Render point units to value tuple
 
@@ -862,7 +864,6 @@ class BaseContext(AbstractContext):
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
         """
-        # Copies style, check keys.
         style = makeStyle(style=style)
 
         if not isinstance(s, self.STRING_CLASS):
