@@ -80,13 +80,15 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
     """
     if u is None:
         u = U # Use default unit size from constants.
-    # Make sure to convert to units if not already
+
+    # Make sure to convert to units if not already.
     u = units(u)
 
     # Some calculations to show dependencies.
     defaultLeading = DEFAULT_LEADING
     baselineGrid = pt(BASELINE_GRID)
-    # Indent of lists. Needs to be the same as in tabs, to position rightly after bullets
+    # Indent of lists. Needs to be the same as in tabs, to position rightly
+    # after bullets.
     listIndent = 0.8 * u # The order or multiplication matters, in case u is a Unit instance.
     gutter = u # Make default gutter equal to the page unit.
 

@@ -414,7 +414,7 @@ class FlatContext(BaseContext):
             style = makeStyle(style=style)
             fs = self.newString(fs, style=style)
         elif not isinstance(fs, FlatString):
-            raise PageBotFileFormatError('type is %s' % type(s))
+            raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         placedText = self.page.place(fs.s)
