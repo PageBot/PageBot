@@ -16,13 +16,16 @@
 import os
 from math import radians, sin, cos
 
-from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
-from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
-from pagebot.toolbox.color import color, noColor, Color, inheritColor, blackColor
 from pagebot.contexts.base.abstractcontext import AbstractContext
 from pagebot.contexts.base.babelstring import BabelString
+from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
+        blackColor)
+from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
+from pagebot.style import makeStyle
+
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
@@ -859,8 +862,6 @@ class BaseContext(AbstractContext):
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
         """
-        from pagebot.style import makeStyle
-
         # Copies style, check keys.
         style = makeStyle(style=style)
 

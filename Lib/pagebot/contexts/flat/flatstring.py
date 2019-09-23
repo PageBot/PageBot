@@ -18,10 +18,10 @@
 import os
 import re
 
-from pagebot.style import css
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString
 from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.style import makeStyle, css
 from pagebot.toolbox.units import upt
 from pagebot.toolbox.color import Color
 
@@ -52,6 +52,7 @@ class FlatString(BabelString):
         # metrics will not be based on these values.
         if style is None:
             style = {}
+
         self.style = style
         super().__init__(s, context, style=style)
 
@@ -185,6 +186,8 @@ class FlatString(BabelString):
         if style is None:
             style = {}
 
+        style = makeStyle(style=style)
+
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
@@ -212,6 +215,8 @@ class FlatString(BabelString):
 
         if font is None or not os.path.exists(font):
             font = DEFAULT_FONT_PATH
+
+        print('FS font is %s' % font)
 
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
