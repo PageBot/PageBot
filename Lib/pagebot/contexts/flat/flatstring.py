@@ -24,8 +24,8 @@ from pagebot.contexts.base.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import Font#, getFont, getInstance
 from pagebot.paths import DEFAULT_FONT_PATH
 from pagebot.style import css
-from pagebot.toolbox.units import upt
-from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor
+from pagebot.toolbox.units import upt, pt, isUnit
+from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
