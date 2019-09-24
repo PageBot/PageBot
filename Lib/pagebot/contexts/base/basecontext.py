@@ -12,8 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     context.py
+#     basecontext.py
 #
+
 import os
 from math import radians, sin, cos
 
@@ -21,12 +22,13 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
 from pagebot.contexts.base.abstractcontext import AbstractContext
 from pagebot.contexts.base.babelstring import BabelString
-from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.paths import DEFAULT_FONT_PATH, DEFAULT_FONT_NAME
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.style import makeStyle
-
+from pagebot.fonttoolbox.objects.font import findFont
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
@@ -48,7 +50,7 @@ class BaseContext(AbstractContext):
         self._textFill = blackColor
         self._textStroke = noColor
         self._textStrokeWidth = 0
-        self._font = DEFAULT_FONT_PATH
+        self._font = DEFAULT_FONT_NAME
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
 
@@ -700,13 +702,17 @@ class BaseContext(AbstractContext):
     # Text.
 
     def font(self, fontName, fontSize=None):
-        # FIXME: fontSize?
-        self.b.font(fontName)
+        """Tries to find a PageBot font based on name, else assumes it is a
+        system font. Also optionally sets fontSize unit to value."""
+        font = findFont(fontName)
 
-        # Also renders fontSize unit to value.
+        if font:
+            self.b.font(font.path)
+        else:
+            self.b.font(fontName)
+
         if fontSize is not None:
-            fspt = upt(fontSize)
-            self.b.fontSize(fspt)
+            self.fontSize(fontSize)
 
     def fallbackFont(self, fontName):
         return self.b.fallbackFont(fontName)
@@ -794,11 +800,9 @@ class BaseContext(AbstractContext):
             s = sOrBs
             position = point2D(upt(p))
             self.b.fontSize(self._fontSize)
-            self.b.font(DEFAULT_FONT_PATH)
-            
+            self.font(self._font)
 
         self.b.text(s, position) # Render point units to value tuple
-
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the overflow text if flowing it in the box. The sOrBs can be a

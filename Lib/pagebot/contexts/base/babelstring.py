@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -166,7 +167,8 @@ class BabelString:
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
             pixelFit=True):
-        return None
+        raise NotImplementedError
+        #return None
 
     def _get_fontSize(self):
         return self.style.get('fontSize', DEFAULT_FONT_SIZE)
