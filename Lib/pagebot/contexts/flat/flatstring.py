@@ -394,6 +394,7 @@ class FlatString(BabelString):
             font = font.path
 
         if font is None or not os.path.exists(font):
+            # TODO: get path from base context self._font.
             font = DEFAULT_FONT_PATH
 
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))

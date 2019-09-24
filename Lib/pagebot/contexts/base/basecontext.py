@@ -22,7 +22,7 @@ from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
 from pagebot.contexts.base.abstractcontext import AbstractContext
 from pagebot.contexts.base.babelstring import BabelString
-from pagebot.paths import DEFAULT_FONT_PATH, DEFAULT_FONT_NAME
+from pagebot.paths import DEFAULT_FONT_NAME
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
@@ -50,7 +50,7 @@ class BaseContext(AbstractContext):
         self._textFill = blackColor
         self._textStroke = noColor
         self._textStrokeWidth = 0
-        self._font = DEFAULT_FONT_NAME
+        self._font = findFont(DEFAULT_FONT_NAME).path
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
 
