@@ -326,15 +326,6 @@ class FlatContext(BaseContext):
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
-    '''
-    def drawGlyph(self, glyph, x, y, fill=None, stroke=None, strokeWidth=0,
-            fontSize=None, xAlign=CENTER):
-        """Draw the font[glyphName] at the defined position with the defined
-        fontSize."""
-        path = self.getGlyphPath(glyph)
-        self.drawPath(path)
-    '''
-
     def getGlyphPath(self, glyph, p=None, path=None):
         """Converts the cubic commands to a drawable path."""
         if path is None:
@@ -833,7 +824,8 @@ class FlatContext(BaseContext):
         assert isinstance(c, Color), (msg % c)
         self._stroke = c
 
-        self.strokeWidth(w)
+        if w is not None:
+            self.strokeWidth(w)
 
     def textStroke(self, c, w=None):
         """
@@ -846,6 +838,7 @@ class FlatContext(BaseContext):
     setTextStrokeColor = textStroke
 
     def strokeWidth(self, w):
+        print(w)
         self._strokeWidth = upt(w)
 
     # Transform.
