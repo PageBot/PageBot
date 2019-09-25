@@ -838,7 +838,6 @@ class FlatContext(BaseContext):
     setTextStrokeColor = textStroke
 
     def strokeWidth(self, w):
-        print(w)
         self._strokeWidth = upt(w)
 
     # Transform.

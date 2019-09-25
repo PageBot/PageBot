@@ -350,7 +350,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> context.newDrawing()
-        >>> context.newPatorke(420, 420)
+        >>> context.newPage(420, 420)
         >>> len(context.path.points) # Property self.path creates a self._path BezierPath
         11
         >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
