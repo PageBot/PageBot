@@ -15,8 +15,8 @@
 #
 
 from pagebot.contexts.base.basecontext import BaseContext
-from pagebot.contexts.xml.htmlbuilder import HtmlBuilder
-from pagebot.contexts.xml.htmlstring import HtmlString
+from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
+from pagebot.contexts.markup.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
 
 class HtmlContext(BaseContext):

@@ -91,7 +91,7 @@ class Typesetter:
         >>> from pagebot import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
-        >>> from pagebot.contexts.xml.htmlcontext import HtmlContext
+        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> context = HtmlContext()
         >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
         >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
@@ -672,7 +672,7 @@ class Typesetter:
         then add it. Answer the (new) fileName.
 
         >>> import os
-        >>> from pagebot.contexts.xml.htmlcontext import HtmlContext
+        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
         >>> context = HtmlContext()
         >>> t = Typesetter(context)

@@ -95,7 +95,7 @@ def getCanvasContext():
     return CanvasContext()
 
 def getHtmlContext():
-    from pagebot.contexts.xml.htmlcontext import HtmlContext
+    from pagebot.contexts.markup.htmlcontext import HtmlContext
     return HtmlContext()
 
 #def getInDesignContext():
@@ -107,7 +107,7 @@ def getHtmlContext():
 #    return IdmlContext()
 
 def getSvgContext():
-    from pagebot.contexts.xml.svgcontext import SvgContext
+    from pagebot.contexts.markup.svgcontext import SvgContext
     return SvgContext()
 
 def getMampPath():
