@@ -111,29 +111,29 @@ class LiteratureExtension(Extension):
         res = finder(root)
         return res
 
-    def setLiterature(self, id, text):
+    def setLiterature(self, identifier, text):
         """ Store a literature for later retrieval. """
-        self.literatures[id] = text
+        self.literatures[identifier] = text
 
     def get_separator(self):
         if self.md.output_format in ['html5', 'xhtml5']:
             return '-'
         return ':'
 
-    def makeLiteratureId(self, id):
-        """ Return literature link id. """
+    def makeLiteratureId(self, identifier):
+        """ Return literature link identifier. """
         if self.getConfig("UNIQUE_IDS"):
-            return 'lit%s%d-%s' % (self.get_separator(), self.unique_prefix, id)
+            return 'lit%s%d-%s' % (self.get_separator(), self.unique_prefix, identifier)
         else:
-            return 'lit%s%s' % (self.get_separator(), id)
+            return 'lit%s%s' % (self.get_separator(), identifier)
 
-    def makeLiteratureRefId(self, id):
-        """ Return literature back-link id. """
+    def makeLiteratureRefId(self, identifier):
+        """ Return literature back-link identifier. """
         if self.getConfig("UNIQUE_IDS"):
             return 'litref%s%d-%s' % (self.get_separator(),
-                                     self.unique_prefix, id)
+                                     self.unique_prefix, identifier)
         else:
-            return 'litref%s%s' % (self.get_separator(), id)
+            return 'litref%s%s' % (self.get_separator(), identifier)
 
     def makeLiteraturesDiv(self, root):
         """ Return div of literatures as et Element. """
@@ -146,19 +146,19 @@ class LiteratureExtension(Extension):
         etree.SubElement(div, "hr")
         ol = etree.SubElement(div, "ol")
 
-        for id in self.literatures.keys():
+        for identifier in self.literatures.keys():
             li = etree.SubElement(ol, "li")
-            li.set("id", self.makeLiteratureId(id))
-            self.parser.parseChunk(li, self.literatures[id])
+            li.set("id", self.makeLiteratureId(identifier))
+            self.parser.parseChunk(li, self.literatures[identifier])
             backlink = etree.Element("a")
-            backlink.set("href", "#" + self.makeLiteratureRefId(id))
+            backlink.set("href", "#" + self.makeLiteratureRefId(identifier))
             if self.md.output_format not in ['html5', 'xhtml5']:
                 backlink.set("rev", "literature")  # Invalid in HTML5
             backlink.set("class", "literature-backref")
             backlink.set(
                 "title",
                 "Jump back to literature %d in the text" %
-                (self.literatures.index(id)+1)
+                (self.literatures.index(identifier)+1)
             )
             backlink.text = LIT_BACKLINK_TEXT
 
@@ -273,16 +273,16 @@ class LiteraturePattern(Pattern):
         self.literatures = literatures
 
     def handleMatch(self, m):
-        id = m.group(2)
-        if id in self.literatures.literatures.keys():
+        identifier = m.group(2)
+        if identifier in self.literatures.literatures.keys():
             sup = etree.Element("literatureref")
             a = etree.SubElement(sup, "a")
-            sup.set('id', self.literatures.makeLiteratureRefId(id))
-            a.set('href', '#' + self.literatures.makeLiteratureId(id))
+            sup.set('id', self.literatures.makeLiteratureRefId(identifier))
+            a.set('href', '#' + self.literatures.makeLiteratureId(identifier))
             if self.literatures.md.output_format not in ['html5', 'xhtml5']:
                 a.set('rel', 'literature')  # invalid in HTML5
             a.set('class', 'literature-ref')
-            a.text = '['+id+']'
+            a.text = '['+identifier+']'
             return sup
         else:
             return None

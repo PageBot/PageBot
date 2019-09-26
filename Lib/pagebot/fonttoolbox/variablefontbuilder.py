@@ -18,6 +18,7 @@
 #     variablefontbuilder.py
 #
 #     D E P R E C A T E D
+#     (but still in use)
 
 import copy
 import os
@@ -284,4 +285,3 @@ def generateInstance(variableFontPath, location, targetDirectory,
 
     # Answer the font name path.
     return outFile
-

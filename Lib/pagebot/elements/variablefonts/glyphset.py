@@ -16,7 +16,6 @@
 #
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.toolbox.future import chr
 
 class GlyphSet(BaseFontShow):
     """Showing the specified (variable) font as full page with a matrix
