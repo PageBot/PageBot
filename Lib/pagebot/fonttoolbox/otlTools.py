@@ -29,7 +29,6 @@ def findLookupTypes(otlTable):
     """Return the list of lookup types that a specific OTL table uses.
     TODO: Fix docTests working with OTF test fonts
 
-    >>> from fontTools.ttLib import TTFont
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> pf = findFont('Roboto-Regular')
     >>> ttf = pf.ttFont
@@ -45,7 +44,6 @@ def findAlternateGlyphs(otlTable, glyphNames):
     """Given a set of input glyph names, return the set of possible output
     glyphs, as the result of GSUB glyph substitutions.
 
-    >>> from fontTools.ttLib import TTFont
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> pf = findFont('Roboto-Regular')
     >>> ttf = pf.ttFont
@@ -66,7 +64,6 @@ def findSingleSubstAlts(otlTable):
     TODO: Fix docTests working with OTF test fonts; switch to a resource
     font that ships with PageBot.
 
-    >>> from fontTools.ttLib import TTFont
     >>> from tnTestFonts import getFontPath
     >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
     >>> mapping = findSingleSubstAlts(font["GSUB"])
@@ -94,37 +91,38 @@ def findSingleSubstAlts(otlTable):
 def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
     """Find all alternate glyphs that can be accessed through GSUB features, listing which
     feature(s) may trigger the substitution.
-    """
-    """
-        TODO: Fix docTests working with OTF test fonts; switch to a resource
-        font that ships with PageBot.
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-        >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
-        >>> mapping['one']
-        [(('lnum',), 'one.lf'), (('tnum',), 'one.tosf')]
-        >>> mapping['one.lf']
-        [(('onum',), 'one'), (('tnum',), 'one.tlf')]
-        >>> mapping['zero']
-        [(('lnum',), 'zero.lf'), (('tnum',), 'zero.tosf'), (('zero',), 'zeroslash')]
-        >>> mapping['zeroslash']
-        [(('lnum',), 'zeroslash.lf'), (('tnum',), 'zeroslash.tosf')]
-        >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
-        >>> mapping['one']
-        [(('ccmp', 'zz60'), 'glyph04495'), (('frac', 'zz27'), 'onehalf'), (('frac', 'zz27'), 'onequarter'), (('frac', 'zz42'), 'glyph03298'), (('frac', 'zz43'), 'glyph00240'), (('onum', 'zz44'), 'glyph03268'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03278'), (('salt', 'ss01', 'zz55'), 'glyph03288'), (('ss18', 'zz52'), 'glyph04281'), (('subs', 'zz22'), 'uni2081'), (('sups', 'zz23'), 'uni00B9')]
-        >>> mapping['four']
-        [(('ccmp', 'zz60'), 'glyph04498'), (('frac', 'zz27'), 'onequarter'), (('frac', 'zz27'), 'threequarters'), (('frac', 'zz42'), 'glyph03301'), (('frac', 'zz43'), 'glyph00568'), (('onum', 'zz44'), 'glyph03271'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03281'), (('salt', 'ss01', 'zz55'), 'glyph03291'), (('subs', 'zz22'), 'uni2084'), (('sups', 'zz23'), 'uni2074')]
-        >>> mapping['glyph02954']
-        [(('dlig', 'zz28'), 'uni05B9'), (('dlig', 'zz28'), 'uni05DC')]
-        >>> mapping['glyph03901']
-        [(('calt', 'zz18'), 'glyph04025'), (('calt', 'zz18'), 'glyph04026')]
-        >>> font = TTFont(getFontPath("ProW6.otf"))
-        >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
-        >>> mapping['cid02946']
-        [(('aalt', 'trad'), 'cid04470'), (('dlig',), 'cid08322'), (('dlig',), 'cid12051')]
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Bungee-Regular')
+    >>> ttf = pf.ttFont
+    """
+    """
+    FIXME: TypeError: unhashable type: 'LigatureSubst'
+
+    >>> mapping = findAlternateGlyphsAndFeatures(ttf["GSUB"])
+    >>> mapping['one']
+    [(('lnum',), 'one.lf'), (('tnum',), 'one.tosf')]
+    >>> mapping['one.lf']
+    [(('onum',), 'one'), (('tnum',), 'one.tlf')]
+    >>> mapping['zero']
+    [(('lnum',), 'zero.lf'), (('tnum',), 'zero.tosf'), (('zero',), 'zeroslash')]
+    >>> mapping['zeroslash']
+    [(('lnum',), 'zeroslash.lf'), (('tnum',), 'zeroslash.tosf')]
+
+    >>> font = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
+    >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
+    >>> mapping['one']
+    [(('ccmp', 'zz60'), 'glyph04495'), (('frac', 'zz27'), 'onehalf'), (('frac', 'zz27'), 'onequarter'), (('frac', 'zz42'), 'glyph03298'), (('frac', 'zz43'), 'glyph00240'), (('onum', 'zz44'), 'glyph03268'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03278'), (('salt', 'ss01', 'zz55'), 'glyph03288'), (('ss18', 'zz52'), 'glyph04281'), (('subs', 'zz22'), 'uni2081'), (('sups', 'zz23'), 'uni00B9')]
+    >>> mapping['four']
+    [(('ccmp', 'zz60'), 'glyph04498'), (('frac', 'zz27'), 'onequarter'), (('frac', 'zz27'), 'threequarters'), (('frac', 'zz42'), 'glyph03301'), (('frac', 'zz43'), 'glyph00568'), (('onum', 'zz44'), 'glyph03271'), (('pnum', 'salt', 'ss20', 'zz46', 'zz54'), 'glyph03281'), (('salt', 'ss01', 'zz55'), 'glyph03291'), (('subs', 'zz22'), 'uni2084'), (('sups', 'zz23'), 'uni2074')]
+    >>> mapping['glyph02954']
+    [(('dlig', 'zz28'), 'uni05B9'), (('dlig', 'zz28'), 'uni05DC')]
+    >>> mapping['glyph03901']
+    [(('calt', 'zz18'), 'glyph04025'), (('calt', 'zz18'), 'glyph04026')]
+    >>> font = TTFont(getFontPath("ProW6.otf"))
+    >>> mapping = findAlternateGlyphsAndFeatures(font["GSUB"])
+    >>> mapping['cid02946']
+    [(('aalt', 'trad'), 'cid04470'), (('dlig',), 'cid08322'), (('dlig',), 'cid12051')]
     """
     sf = AlternateGlyphAndFeatureFinder(otlTable)
     return sf.findAlternateGlyphsAndFeatures(onlyDirectSingleSubst=onlyDirectSingleSubst)
@@ -145,15 +143,12 @@ def deleteGlyphs(otlTable, glyphNames):
     gd.deleteGlyphs(glyphNames)
 
 def scaleGpos(otlTable, scaleFactor):
-    """Scale all values in the GPOS table that are in design units."""
-    """
-    TODO: Fix docTests
+    """Scale all values in the GPOS table that are in design units.
 
-    >>> from fontTools.ttLib import TTFont
-    >>> from tnTestFonts import getFontPath
-    >>> path = getFontPath("SegoeUI-Regular-All.ttf")
-    >>> f = TTFont(path)
-    >>> scaleGpos(f["GPOS"], 0.5)
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Roboto-Regular')
+    >>> ttf = pf.ttFont
+    >>> scaleGpos(ttf["GPOS"], 0.5)
     """
     assert otlTable.tableTag == "GPOS"
     gr = GposScaler(otlTable)
@@ -165,10 +160,12 @@ def mergeFeatures(table1, table2):
     """
     TODO: Fix docTests
 
-    >>> from fontTools.ttLib import TTFont
-    >>> from tnTestFonts import getFontPath
-    >>> font1 = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-    >>> font2 = TTFont(getFontPath("SaunaPro-RegularItalicSwash.ttf"))
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Roboto-Regular')
+    >>> font1 = pf.ttFont
+    >>> pf = findFont('Roboto-')
+    >>> font2 = pf.ttFont
+
     >>> mergeFeatures(font1["GPOS"], font2["GPOS"])
     >>> mergeFeatures(font1["GSUB"], font2["GSUB"])
     """
