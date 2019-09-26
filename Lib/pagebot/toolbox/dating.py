@@ -15,6 +15,7 @@
 #
 
 import datetime
+import time
 from time import localtime
 from random import randint
 import re
@@ -821,7 +822,6 @@ class Dating:
 
     @classmethod
     def timeStampLong(cls):
-        import time
         return '%012d' % int(time.time()*100)
 
     def getTimeStamp(self, usetz=False):

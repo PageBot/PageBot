@@ -52,8 +52,6 @@ def nameClass(glyphlist, flag):
     else:
         case = ''
 
-    flag = flag
-
     return '@%s%s%s' % (name, flag, case)
 
 
