@@ -13,8 +13,12 @@
 #
 #   otlTools.py
 #
-"""A collection of code to inspect and manipulate OpenType Layout features in a
-FontTools TTFont."""
+#   A collection of functions to inspect and manipulate OpenType Layout
+#   features in a FontTools TTFont.
+#
+
+import doctest
+
 
 #
 # Entry points
@@ -42,7 +46,6 @@ def findLookupTypes(otlTable):
     lstf = LookupTypeFinder(otlTable)
     return lstf.findLookupTypes()
 
-
 def findAlternateGlyphs(otlTable, glyphNames):
     """Given a set of input glyph names, return the set of possible output
     glyphs, as the result of GSUB glyph substitutions.
@@ -65,7 +68,6 @@ def findAlternateGlyphs(otlTable, glyphNames):
     assert otlTable.tableTag == "GSUB"
     gf = AlternateGlyphFinder(otlTable)
     return gf.findAlternateGlyphs(glyphNames)
-
 
 def findSingleSubstAlts(otlTable):
     """Find the alternate glyphs that can be accessed through any direct
@@ -99,7 +101,6 @@ def findSingleSubstAlts(otlTable):
     KeyError: 'glyph03901'
     """
     return findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=True)
-
 
 def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
     """Find all alternate glyphs that can be accessed through GSUB features, listing which
@@ -139,7 +140,6 @@ def findAlternateGlyphsAndFeatures(otlTable, onlyDirectSingleSubst=False):
     sf = AlternateGlyphAndFeatureFinder(otlTable)
     return sf.findAlternateGlyphsAndFeatures(onlyDirectSingleSubst=onlyDirectSingleSubst)
 
-
 def findNestedLookups(otlTable):
     """Return a list of lookup indices for lookups that are referenced from
     within other lookups. (As opposed to directly from features.) """
@@ -148,14 +148,12 @@ def findNestedLookups(otlTable):
     result = [index for subTable, index in result]
     return sorted(set(result))
 
-
 def deleteGlyphs(otlTable, glyphNames):
     """Delete all references to the glyphs named in the glyphNames set.
     Lookups, features, language systems and scripts that become dysfunctional
     because of that will also be deleted."""
     gd = GlyphDeleter(otlTable)
     gd.deleteGlyphs(glyphNames)
-
 
 def scaleGpos(otlTable, scaleFactor):
     """Scale all values in the GPOS table that are in design units."""
@@ -171,7 +169,6 @@ def scaleGpos(otlTable, scaleFactor):
     assert otlTable.tableTag == "GPOS"
     gr = GposScaler(otlTable)
     gr.scaleGpos(scaleFactor)
-
 
 def mergeFeatures(table1, table2):
     """Merge the features from table2 into table1. Note this is destructive also for table2.
@@ -259,7 +256,6 @@ def mergeFeatures(table1, table2):
 
     sortFeatureList(table1)
 
-
 def sortFeatureList(table):
     """Sort the feature list by feature tag, and remap the feature indices
     elsewhere. This is needed after the feature list has been modified."""
@@ -336,7 +332,6 @@ class LookupTraverser:
             format = 1
         return "%sFormat%s" % (lookupName, format)
 
-
 class LookupTypeFinder(LookupTraverser):
 
     def findLookupTypes(self):
@@ -348,7 +343,6 @@ class LookupTypeFinder(LookupTraverser):
             return self.handleLookupSubTable(methodPrefix, subTable.ExtSubTable, *args, **kwargs)
         lookupName = self._buildLookupName(subTable)
         return [lookupName]
-
 
 class AlternateGlyphFinder(LookupTraverser):
 
@@ -414,7 +408,6 @@ class AlternateGlyphFinder(LookupTraverser):
         inputGlyphs = glyphNames & set(subTable.mapping)
         return [subTable.mapping[glyphName] for glyphName in inputGlyphs]
     findAlternateGlyphs_SingleSubstFormat2 = findAlternateGlyphs_SingleSubstFormat1
-
 
 class AlternateGlyphAndFeatureFinder(LookupTraverser):
     """Find all alternate glyphs that can be accessed through any feature that
@@ -488,8 +481,10 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
 
     def findAlternateGlyphsAndFeatures_ChainContextSubstFormat2(self, subTable, dummy):
         return
+
     def findAlternateGlyphsAndFeatures_ChainContextSubstFormat3(self, subTable, dummy):
         return
+
     def findAlternateGlyphsAndFeatures_ContextSubstFormat2(self, subTable, dummy):
         return
 
@@ -530,8 +525,6 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
             mapping[inputGlyph] = [(featureTags, outputGlyph)]
         return [mapping]
     findAlternateGlyphsAndFeatures_SingleSubstFormat2 = findAlternateGlyphsAndFeatures_SingleSubstFormat1
-
-
 
 class NestedLookupFinderAndRemapper(LookupTraverser):
 
@@ -667,7 +660,6 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
     def findNestedLookups_ChainContextSubstFormat3(self, subTable, remap):
         return self._findNestedLookups_contextFormat3Helper(subTable, remap, "SubstLookupRecord")
 
-
 class GlyphDeleter(LookupTraverser):
 
     def deleteGlyphs(self, glyphNames):
@@ -677,6 +669,7 @@ class GlyphDeleter(LookupTraverser):
             glyphNames = set(glyphNames)
 
         deadLookups = self.traverseLookups("deleteGlyphs", glyphNames)
+
         while deadLookups:
             deadLookups = ObjectIdSet(deadLookups)
             lookupRemap = _pruneLookups(self.table, deadLookups)
@@ -1065,7 +1058,6 @@ class GlyphDeleter(LookupTraverser):
         if not subTable.alternates:
             return [subTable]  # this lookup subtable is dead
 
-
 class GposScaler(LookupTraverser):
 
     def scaleGpos(self, scaleFactor):
@@ -1139,7 +1131,6 @@ class GposScaler(LookupTraverser):
         # the positioning is done through another lookup
         pass
 
-
 # Helpers for GlyphDeleter
 
 def _printPairPosFormat2Matrix(subTable):
@@ -1208,11 +1199,11 @@ def _getClassesFromClassDef(classDef):
     else:
         return set(classDef.classDefs.values())
 
-
 class ObjectIdSet:
     """A set object using object id's for comparison and hashing. We use this
     to maintain a set of lookup subtables, which unfortunately aren't hashable,
     yet are unique objects.
+
     Only supports a minimal subset of the set protocol.
 
         >>> a = []
@@ -1532,7 +1523,6 @@ def _test():
     """
 
 def _runDocTests():
-    import doctest
     return doctest.testmod()
 
 

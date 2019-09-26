@@ -67,8 +67,7 @@ class FlatString(BabelString):
         return self._s
 
     def _set_s(self, s):
-        if isinstance(s, str):
-            s = s # TODO: Change to Flat equivalent of FormattedString.
+        assert isinstance(s, str)
         self._s = s
 
     s = property(_get_s, _set_s)

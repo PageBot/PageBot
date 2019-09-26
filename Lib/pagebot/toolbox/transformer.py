@@ -19,6 +19,8 @@
 import json, re, datetime
 from time import time
 from random import randint
+import string
+import subprocess
 
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
@@ -922,7 +924,6 @@ def field2Floq(fieldName):
 #    T T X
 
 def formatBinaryForTTX(b, length=32, segments=8):
-    import string
     s = str(b)[2:]
     prefix = '0' * (length - len(s))
     s = prefix + s
@@ -993,7 +994,6 @@ def bash(cmd, cwd=None):
     """
     Runs a command in the bash shell.
     """
-    import subprocess
     retVal = subprocess.Popen(cmd, shell=True, \
         stdout=subprocess.PIPE, cwd=cwd).stdout.read().strip('\n').split('\n')
     if retVal == ['']:

@@ -17,6 +17,7 @@
 
 import os
 from math import radians, sin, cos
+import xml.etree.ElementTree as ET
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
@@ -934,7 +935,6 @@ class BaseContext(AbstractContext):
         """Answers the (w, h) image size of the image file at path. If the path is an SVG
         image, then determine by parsing the SVG-XML."""
         if path.lower().endswith('.'+FILETYPE_SVG):
-            import xml.etree.ElementTree as ET
             svgTree = ET.parse(path)
             return pt(1000, 1000)
 

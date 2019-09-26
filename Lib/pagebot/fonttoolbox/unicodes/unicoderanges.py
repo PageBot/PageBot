@@ -29,6 +29,8 @@
 
 """
 
+import doctest
+
 from bisect import bisect, bisect_left, bisect_right
 from pagebot.fonttoolbox.unicodes.unicoderangesdata import unicodeRanges, otScriptTags
 
@@ -475,7 +477,6 @@ def _testAll():
     """
 
 def _runDocTests():
-    import doctest
     return doctest.testmod()
 
 

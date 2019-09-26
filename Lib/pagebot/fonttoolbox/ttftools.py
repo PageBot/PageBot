@@ -14,6 +14,8 @@
 #     ttftools.py
 #
 import re
+import sys
+import doctest
 from pagebot.fonttoolbox import otlTools
 from pagebot.fonttoolbox.unicodes import unicoderanges
 import traceback
@@ -553,7 +555,6 @@ class FontSubsetter(TTFTraverser):
             try:
                 ranges = unicoderanges.getUnicodeRangesByScriptTag(scriptTag)
             except KeyError:
-                import sys
                 sys.stderr.write("pruneOTScripts: can't find unicode range for %r script\n" % scriptTag)
                 print(traceback.format_exc())
             else:
@@ -950,7 +951,6 @@ def _findComponentParentGlyphs(font, glyphName):
 
 
 def _runDocTests():
-    import doctest
     return doctest.testmod()
 
 
