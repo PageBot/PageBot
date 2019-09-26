@@ -1411,7 +1411,7 @@ table {
     def _th(self):
         self._closeTag_noWhitespace('th')
 
-    def style(self, type='text/css', **args):
+    def style(self, styleType='text/css', **args):
         """Defines a style in a document. The style element goes in the head
         section. If you want to include a style sheet in your page, you should
         define the style sheet externally, and link to it using XHTML link.
@@ -1614,7 +1614,7 @@ table {
         """
         self.write_tag('embed', False, args)
 
-    def script(self, charset='UTF-8', type='text/javascript', **args):
+    def script(self, charset='UTF-8', scriptType='text/javascript', **args):
         """The br tag inserts a single line break.  Defines a script, such as a
         JavaScript. Note that if @src is used, then no self._script() must be
         used.
@@ -1637,7 +1637,7 @@ table {
         # Make sure to write "UTF-8" instead of "utf-8" since FireFox 2.0.0.4 will
         # ignore the script otherwise.
         self.write(' charset="%s"' % charset.upper())
-        self.write(' type="%s"' % type)
+        self.write(' type="%s"' % scriptType)
         language = args.get('language')
         if language is not None:
             self.write(' language="%s"' % language)
@@ -1655,8 +1655,8 @@ table {
         self._closeTag('script')
         self.newLine() # Optional newline is self.compact is False.
 
-    def script_(self, js, charset='UTF-8', type='text/javascript', **args):
-        self.script(charset='UTF-8', type='text/javascript', **args)
+    def script_(self, js, charset='UTF-8', scriptType='text/javascript', **args):
+        self.script(charset='UTF-8', scriptType='text/javascript', **args)
         self.addHtml(js)
         self._script()
 

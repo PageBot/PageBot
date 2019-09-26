@@ -14,7 +14,10 @@
 #
 #     typesetter.py
 #
-import re, copy, codecs, traceback
+import re
+import copy
+import codecs
+import traceback
 import xml.etree.ElementTree as ET
 
 try:

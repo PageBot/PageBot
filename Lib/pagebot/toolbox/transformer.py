@@ -16,7 +16,9 @@
 #
 #     Implements a range of common transforms.
 #
-import json, re, datetime
+import json
+import re
+import datetime
 from time import time
 from random import randint
 import string

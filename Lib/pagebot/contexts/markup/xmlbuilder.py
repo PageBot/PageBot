@@ -150,7 +150,7 @@ class XmlBuilder(BaseBuilder):
         self.write(' ')
         self.write(value)
 
-    def write_tag(self, tagname, open, args):
+    def write_tag(self, tagname, isOpen, args):
         """Writes a normally formatted HTML tag, exceptions have a custom
         implementation, see respective functions.
         """
@@ -158,7 +158,7 @@ class XmlBuilder(BaseBuilder):
         self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)
 
-        if open:
+        if isOpen:
             self.write(u'>')
             # Push as last, so we can see the current tag on the stack
             self._pushTag(tagname)
@@ -167,14 +167,14 @@ class XmlBuilder(BaseBuilder):
             self.write(u'/>')
         self.newLine() # Optional write newline if not self.compat
 
-    def write_tag_noWhitespace(self, tagname, open, args):
+    def write_tag_noWhitespace(self, tagname, isOpen, args):
         """Writes a normally formatted HTML tag, exceptions have a custom
         implementation, see respective functions. Don’t write any white space
         inside the block. E.g. used by <textarea>"""
         self.write(u'<' + tagname)
         self.getandwrite_attributes(tagname, args)
 
-        if open:
+        if isOpen:
             self.write(u'>')
             # Push as last, so we can see the current tag on the stack
             self._pushTag(tagname)

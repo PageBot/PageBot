@@ -97,19 +97,7 @@ class BlurbWriter:
         p = '\<-(?P<tagname>.*?)-\>'
         self.pstatement = re.compile(p, re.IGNORECASE)
         self.allkeys = self.keys()
-
         self.importcontent(content)
-
-    def importcontentPy2(self, contentdict):
-        """
-        FIXME: deprecated, Py3 only?
-        """
-        for k, v in contentdict.items():
-            self.data[k] = [name for name in v]
-
-        dk = list(self.data.keys())
-        dk.sort()
-        self.keywords = dk
 
     def importcontent(self, contentdict):
         for k, v in contentdict.items():

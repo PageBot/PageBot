@@ -16,7 +16,11 @@
 #
 #     Implements a VarFamily class Font instances.
 #
-import os, shutil, sys
+
+import os
+import shutil
+import sys
+
 from fontTools.designspaceLib import DesignSpaceDocument
 from pagebot.fonttoolbox.objects.family import Family
 from pagebot.fonttoolbox.objects.font import Font
