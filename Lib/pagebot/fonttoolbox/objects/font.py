@@ -30,6 +30,7 @@ from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
 
 try:
+    # TODO: remove?
     from fontTools.varLib.iup import iup_delta
 except:
     from fontTools.varLib.mutator import iup_delta
@@ -142,7 +143,7 @@ def findFont(fontPath, default=None, lazy=True):
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath], lazy=lazy)
 
-    # There ia a default defined. If it is a string, try to find it.
+    # A default is defined. If it's a string, try to find it.
     if isinstance(default, str) and default != fontPath: # Avoid circular calls
         return findFont(default, lazy=lazy)
 
@@ -150,17 +151,21 @@ def findFont(fontPath, default=None, lazy=True):
     return default # Otherwise assume it is a Font instance or None
 
 def getMasterPath():
-    """Answers the path to read master fonts, which typically is a user/Fonts/ folder.
+    """Answers the path to read master fonts, which typically is a <username>/Fonts/ folder.
     Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    """Answers the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    """Answers the path to write instance fonts, which typically is the
+
+    <username>/Fonts/_instances/
+    
+    folder."""
     return getMasterPath() + '_instances/'
 
 def getScaledValue(vf, tag, value):
-    """Answers the scaled value for the "tag" axis, where value (-1..0..1) is upscaled to
-    ratio in (minValue, defaultValue, maxValue)."""
+    """Answers the scaled value for the "tag" axis, where value (-1..0..1) is
+    upscaled to ratio in (minValue, defaultValue, maxValue)."""
     if not tag in vf.axes:
         return None
     assert -1 <= value <= 1
@@ -175,8 +180,10 @@ def getScaledValue(vf, tag, value):
 def getScaledLocation(vf, normalizedLocation):
     """Answers the instance of self, corresponding to the normalized location.
     (-1, 0, 1) values for axes as e.g. [wght] and [wdth].
-    The optical size [opsz] is supposed to contain the font size, so it is not scaled.
-    If [opsz] is not defined, then set it to default, if the axis exist.
+
+    The optical size [opsz] is supposed to contain the font size, so it is not
+    scaled. If [opsz] is not defined, then set it to default, if the axis
+    e xist.
 
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -255,8 +262,9 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
     return instance
     """
 
-def getInstance(pathOrFont, location, dstPath=None, styleName=None, opticalSize=None, normalize=True,
-        cached=True, lazy=True, kerning=None):
+def getInstance(pathOrFont, location, dstPath=None, styleName=None,
+        opticalSize=None, normalize=True, cached=True, lazy=True,
+        kerning=None):
     """The getInstance refers to the file of the source variable font. The
     nLocation is dictionary axis locations of the instance with values between
     (0, 1000), e.g. dict(wght=0, wdth=1000) or values between (0, 1), e.g.
@@ -435,8 +443,8 @@ class Font:
 
     def __init__(self, path=None, ttFont=None, name=None, opticalSize=None,
             location=None, styleName=None, lazy=True):
-        """Initialize the TTFont, for which Font is a wrapper.
-        self.name is supported, in case the caller wants to use a different
+        """Initialize the TTFont, for which Font is a wrapper. self.name is
+        supported, in case the caller wants to use a different
 
         >>> f = Font()
         >>> f
@@ -543,8 +551,8 @@ class Font:
         return 1.0
 
     def weightMatch(self, weight):
-        """Answers level of matching for the (abbreviated) weight name or number
-        with font, in a value between 0 and 1. Currently there is only
+        """Answers level of matching for the (abbreviated) weight name or
+        number with font, in a value between 0 and 1. Currently there is only
         no-match (0) and full-match (1). Future implementations may give a
         float indicator for the level of matching, so the caller can decide on
         the level of threshold.

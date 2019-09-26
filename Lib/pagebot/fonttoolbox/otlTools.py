@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -26,22 +27,16 @@ import doctest
 
 def findLookupTypes(otlTable):
     """Return the list of lookup types that a specific OTL table uses.
+    TODO: Fix docTests working with OTF test fonts
 
-    """
-    """
-        TODO: Fix docTests working with OTF test fonts
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> f = TTFont(getFontPath("ProW6.otf"))
-        >>> findLookupTypes(f["GPOS"])
-        ['PairPosFormat1', 'SinglePosFormat2']
-        >>> findLookupTypes(f["GSUB"])
-        ['AlternateSubstFormat1', 'LigatureSubstFormat1', 'SingleSubstFormat2']
-        >>> f = TTFont(getFontPath("SegoeUI-Regular-All.ttf"))
-        >>> findLookupTypes(f["GPOS"])
-        ['ChainContextPosFormat3', 'MarkBasePosFormat1', 'MarkLigPosFormat1', 'MarkMarkPosFormat1', 'PairPosFormat1', 'PairPosFormat2', 'SinglePosFormat1', 'SinglePosFormat2']
-        >>> findLookupTypes(f["GSUB"])
-        ['ChainContextSubstFormat3', 'LigatureSubstFormat1', 'MultipleSubstFormat1', 'SingleSubstFormat2']
+    >>> from fontTools.ttLib import TTFont
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Roboto-Regular')
+    >>> ttf = pf.ttFont
+    >>> findLookupTypes(ttf["GPOS"])
+    ['PairPosFormat1', 'SinglePosFormat1']
+    >>> findLookupTypes(ttf["GSUB"])
+    ['ChainContextSubstFormat3', 'LigatureSubstFormat1', 'SingleSubstFormat1', 'SingleSubstFormat2']
     """
     lstf = LookupTypeFinder(otlTable)
     return lstf.findLookupTypes()
@@ -49,21 +44,15 @@ def findLookupTypes(otlTable):
 def findAlternateGlyphs(otlTable, glyphNames):
     """Given a set of input glyph names, return the set of possible output
     glyphs, as the result of GSUB glyph substitutions.
-    """
-    """
-    TODO: Fix docTests working with OTF test fonts; switch to a resource
-    font that ships with PageBot.
 
     >>> from fontTools.ttLib import TTFont
-    >>> from tnTestFonts import getFontPath
-    >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-    >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
-    ['f_f', 'f_f_i', 'f_f_ij', 'f_f_l', 'f_i', 'f_ij', 'f_l']
-    >>> font = TTFont(getFontPath("SaunaPro-RegularItalicMerged.ttf"))
-    >>> sorted(findAlternateGlyphs(font["GSUB"], ["e"]))
-    ['e.swash']
-    >>> sorted(findAlternateGlyphs(font["GSUB"], ["f"]))
-    ['f.swash', 'f_b.swash', 'f_f', 'f_f.swash', 'f_f_i', 'f_f_i.swash', 'f_f_ij', 'f_f_ij.swash', 'f_f_l', 'f_f_l.swash', 'f_i', 'f_i.swash', 'f_ij', 'f_ij.swash', 'f_j.swash', 'f_k.swash', 'f_l', 'f_l.swash', 'f_t.swash']
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Roboto-Regular')
+    >>> ttf = pf.ttFont
+    >>> sorted(findAlternateGlyphs(ttf["GSUB"], ["f"]))
+    ['F', 'F.smcp', 'f_f', 'f_f_i', 'f_f_l', 'f_l', 'fi', 'uni1E1E', 'uni1E1F']
+    >>> sorted(findAlternateGlyphs(ttf["GSUB"], ["e"]))
+    ['E.smcp', 'E.unic', 'Eacute.smcp', 'Eacute.unic', 'Ebreve.smcp', 'Ebreve.unic', 'Ecaron.smcp', 'Ecaron.unic', 'Ecircumflex.smcp', 'Ecircumflex.unic', 'Edieresis.smcp', 'Edieresis.unic', 'Edotaccent.smcp', 'Edotaccent.unic', 'Egrave.smcp', 'Egrave.unic', 'Emacron.smcp', 'Emacron.unic', 'Eogonek.smcp', 'Eogonek.smcp.NAV', 'Eogonek.unic', 'e.ss07', 'eacute', 'ebreve', 'ecaron', 'ecircumflex', 'edieresis', 'edotaccent', 'egrave', 'emacron', 'eogonek', 'eogonek.NAV', 'uni0205', 'uni0207', 'uni0229', 'uni1E15', 'uni1E17', 'uni1E19', 'uni1E1B', 'uni1EB9', 'uni1EBB', 'uni1EBD', 'uni1EBF', 'uni1EC1', 'uni1EC3', 'uni1EC5']
     """
     assert otlTable.tableTag == "GSUB"
     gf = AlternateGlyphFinder(otlTable)

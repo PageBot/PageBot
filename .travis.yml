@@ -180,7 +180,6 @@ script:
 - python3 Lib/pagebot/toolbox/color.py
 - python3 Lib/pagebot/toolbox/columncalc.py
 - python3 Lib/pagebot/toolbox/dating.py
-- python3 Lib/pagebot/toolbox/future.py
 - python3 Lib/pagebot/toolbox/hyphenation.py
 - python3 Lib/pagebot/toolbox/markers.py
 - python3 Lib/pagebot/toolbox/timemark.py
