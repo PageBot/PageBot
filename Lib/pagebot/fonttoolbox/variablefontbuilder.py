@@ -23,7 +23,6 @@
 import copy
 import os
 
-from fontTools.misc.py23 import *
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
