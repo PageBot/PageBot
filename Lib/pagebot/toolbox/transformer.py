@@ -163,7 +163,7 @@ def asIntOrFloat(value):
         return iValue
     return value
 
-def asFormatted(value, default=None, format=None):
+def asFormatted(value, default=None, hasFormat=None):
     """Answers the formatted string of value. Use the format string if defined.
     Otherwise answer the cleanest representation, eating all 0 and /. from the
     right side.
@@ -188,23 +188,27 @@ def asFormatted(value, default=None, format=None):
     '100'
     >>> asFormatted(200/3) # Default rounds to 2 digits.
     '66.67'
-    >>> asFormatted(200/3, format='%0.10f') # Overwrite behavior by supplied format string
+    >>> asFormatted(200/3, hasFormat='%0.10f') # Overwrite behavior by supplied format string
     '66.6666666667'
     """
     if value is None:
         value = default
-    if format is None:
+    if hasFormat is None:
         iNumber = asNumber(value)
+
         if isinstance(iNumber, int): # Check on rounded by 0.00
             return '%d' % iNumber
         value = '%0.2f' % value # Round to 2 digits
+
         # Then remove any trailing zeros (there there is a decimal point)
         while value and '.' in value and value.endswith('0'):
             value = value[:-1]
         if value and value.endswith('.'):
             value = value[:-1] # Eat remaining period on the right.
+
         return value or '0' # Answer value. If all eaten, then just answer 0
-    return format % value # Otherwise show as float with 2 digits.
+
+    return hasFormat % value # Otherwise show as float with 2 digits.
 
 def value2Tuple4(v):
     """Answers a tuple of 4 values. Can be used for colors and rectangles.
@@ -735,7 +739,8 @@ def family2UfoQueryName(font):
 #    G E N E R A T O R
 
 def uniqueID(obj=None):
-    """Answers unique Id as hex string, based on time and id(obj) if defined.
+    """Answers unique identifier as hex string, based on time and id(obj) if
+    defined.
 
     >>> id = int('0x' + uniqueID(), base=16)
     >>> isinstance(id, int)
@@ -866,11 +871,12 @@ def dec2hex(n, uni=1):
     >>> dec2hex(100000)
     '186A0'
     """
-    hex = "%X" % n
+    hexadec = "%X" % n
+
     if uni == 1:
-        while len(hex) <= 3:
-            hex = '0' + str(hex)
-    return hex
+        while len(hexadec) <= 3:
+            hexadec = '0' + str(hexadec)
+    return hexadec
 
 def hex2dec(s):
     """ Convert hex string to decimal number. Answer None if conversion raises
@@ -891,7 +897,7 @@ def hex2dec(s):
         pass
     return None
 
-def hex2char(hex):
+def hex2char(hexadec):
     """Answers the unicode char that matcher the hex value. Answer None if
     conversion fails.
 
@@ -904,7 +910,7 @@ def hex2char(hex):
     >>> hex2char('FFZ') is None
     True
     """
-    v = hex2dec(hex)
+    v = hex2dec(hexadec)
     if v is not None:
         return chr(v)
     return None

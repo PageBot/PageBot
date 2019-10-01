@@ -38,7 +38,9 @@
 #     degrees      Degrees angle
 #
 
-import re, sys, math
+import re
+import sys
+import math
 from copy import copy
 from pagebot.toolbox.transformer import asNumberOrNone, asIntOrFloat, asFormatted
 

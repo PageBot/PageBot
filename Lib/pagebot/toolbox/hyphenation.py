@@ -33,7 +33,8 @@
 #     https://www.hyphenation24.com/?term=xxxx
 #
 
-import os, codecs
+import os
+import codecs
 from pagebot import getResourcesPath
 from pagebot.constants import DEFAULT_LANGUAGE
 
