@@ -246,7 +246,12 @@ def sortFeatureList(table):
     """Sort the feature list by feature tag, and remap the feature indices
     elsewhere. This is needed after the feature list has been modified."""
     # decorate, sort, undecorate
-    tagIndexFea = [(fea.FeatureTag, index, fea) for index, fea in enumerate(table.FeatureList.FeatureRecord)]
+    #tagIndexFea = [(fea.FeatureTag, index, fea) for index, fea in enumerate(table.FeatureList.FeatureRecord)]
+    tagIndexFea = []
+
+    for index, fea in enumerate(table.FeatureList.FeatureRecord):
+        tagIndexFea.append((fea.FeatureTag, index, fea))
+
     tagIndexFea.sort()
     table.FeatureList.FeatureRecord = [fea for tag, index, fea in tagIndexFea]
     featureRemap = dict(zip([index for tag, index, fea in tagIndexFea], range(len(tagIndexFea))))
@@ -1035,13 +1040,13 @@ class GlyphDeleter(LookupTraverser):
         return self._deleteGlyphs_chainContextFormat3Helper(subTable, glyphNames)
 
     def deleteGlyphs_AlternateSubstFormat1(self, subTable, glyphNames):
-        for input, alternates in subTable.alternates.items():
-            if input in glyphNames:
-                del subTable.alternates[input]
+        for aInput, alternates in subTable.alternates.items():
+            if aInput in glyphNames:
+                del subTable.alternates[aInput]
             else:
-                subTable.alternates[input] = [alt for alt in subTable.alternates[input] if alt not in glyphNames]
-                if not subTable.alternates[input]:
-                    del subTable.alternates[input]
+                subTable.alternates[aInput] = [alt for alt in subTable.alternates[aInput] if alt not in glyphNames]
+                if not subTable.alternates[aInput]:
+                    del subTable.alternates[aInput]
         if not subTable.alternates:
             return [subTable]  # this lookup subtable is dead
 
