@@ -109,22 +109,21 @@ def scaleFont(font, desiredUnitsPerEm):
     rs.scaleFont(desiredUnitsPerEm)
 
 
+'''
 def convertFontToTTF(font, quadErrorMargin=0.5, cubicToQuadConverter=None):
     """Convert a CFF-based OTF to a glyf-based TTF.
-    """
-    """
-        TODO: Fix docTests
+    TODO: Fix docTests
 
-        >>> from io import StringIO
-        >>> from fontTools.ttLib import TTFont
-         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
-        >>> font = TTFont(path)
-        >>> convertFontToTTF(font, 0.5)
-        >>> outf = StringIO()
-        >>> font.save(outf)
-        >>> len(outf.getvalue())
-        104280
+    >>> from io import StringIO
+    >>> from fontTools.ttLib import TTFont
+     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+    >>> path = getTestFontsPath() + '/djr/bungee/Bungee-Regular.ttf'
+    >>> font = TTFont(path)
+    >>> convertFontToTTF(font, 0.5)
+    >>> outf = StringIO()
+    >>> font.save(outf)
+    >>> len(outf.getvalue())
+    104280
     """
     from fontTools.ttLib import newTable
     from ttGlyphBuilder import TTGlyphBuilderPen, CubicToQuadFilterPen
@@ -157,6 +156,7 @@ def convertFontToTTF(font, quadErrorMargin=0.5, cubicToQuadConverter=None):
     _setupPost(font)
 
     font.sfntVersion = "\000\001\000\000"  # font is now officially a TrueType font
+'''
 
 
 def patchGlyphNames(font, filterFunc):

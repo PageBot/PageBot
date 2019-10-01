@@ -989,11 +989,12 @@ class GlyphDeleter(LookupTraverser):
         from copy import deepcopy
         mappingCopy = deepcopy(subTable.mapping)
 
-        for input, output in mappingCopy.items():
-            if input in glyphNames or output in glyphNames:
-                del subTable.mapping[input]
+        for minput, output in mappingCopy.items():
+            if minput in glyphNames or output in glyphNames:
+                del subTable.mapping[minput]
         if not subTable.mapping:
             return [subTable]  # this lookup subtable is dead
+
     deleteGlyphs_SingleSubstFormat2 = deleteGlyphs_SingleSubstFormat1
 
     def deleteGlyphs_LigatureSubstFormat1(self, subTable, glyphNames):
@@ -1534,11 +1535,12 @@ if __name__ == "__main__":
         print
         unsupported = 0
         supported = 0
-        for format in gposFormats + gsubFormats:
-            if "Extension" in format:
+
+        for otlFormat in gposFormats + gsubFormats:
+            if "Extension" in otlFormat:
                 continue
-            if not hasattr(GlyphDeleter, "deleteGlyphs_" + format):
-                print("missing support for: %s" % format)
+            if not hasattr(GlyphDeleter, "deleteGlyphs_" + otlFormat):
+                print("missing support for: %s" % otlFormat)
                 unsupported += 1
             else:
                 supported += 1

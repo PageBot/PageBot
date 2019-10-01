@@ -106,7 +106,8 @@ class BlurbWriter:
             for name in v:
                 bb.append(name)
 
-            self.data[k] = [name for name in v]
+            #self.data[k] = [name for name in v]
+            self.data[k] = v
 
         dk = list(self.data.keys())
         dk.sort()

@@ -22,11 +22,11 @@ class Blurb:
 
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
-    def getBlurb(self, type, cnt=None, charCnt=None, noTags=True,
+    def getBlurb(self, ofType, cnt=None, charCnt=None, noTags=True,
             newLines=False):
         """The getBlurb method answers a random generated blurb of type. The
         list of available types can be obtained by calling getBlurbTypes()."""
-        content = self.writer.write(type)
+        content = self.writer.write(ofType)
 
         # Remove the HTML tags.
         if noTags:
