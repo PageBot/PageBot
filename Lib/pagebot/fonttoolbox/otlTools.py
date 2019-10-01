@@ -313,10 +313,10 @@ class LookupTraverser:
     def _buildLookupName(self, subTable):
         lookupName = subTable.__class__.__name__
         if hasattr(subTable, "Format") and subTable.Format is not None:
-            format = subTable.Format
+            hasFormat = subTable.Format
         else:
-            format = 1
-        return "%sFormat%s" % (lookupName, format)
+            hasFormat = 1
+        return "%sFormat%s" % (lookupName, hasFormat)
 
 class LookupTypeFinder(LookupTraverser):
 

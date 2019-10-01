@@ -215,7 +215,7 @@ def generateInstance(variableFontPath, location, targetDirectory,
             if not familyName:
                 continue
             familyName = familyName.toUnicode() # NameRecord to unicode string
-            styleName = unicode(instanceName) # TODO make sure this works in any case
+            styleName = instanceName # TODO make sure this works in any case
             fullFontName = " ".join([familyName, styleName])
             postscriptName = fullFontName.replace(" ", "-")
             varfont['name'].setName(styleName, 2, platformID, platEncID, langID) # 2 Font Subfamily name

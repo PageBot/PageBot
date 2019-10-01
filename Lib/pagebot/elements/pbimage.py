@@ -234,8 +234,8 @@ class Image(Element):
         their ranges are."""
         if self.imo is None and self.path is not None:
             self.imo = self.context.ImageObject(self.path)
-            for filter, params in filters:
-                getattr(self.imo, filter)(**params)
+            for filterName, params in filters:
+                getattr(self.imo, filterName)(**params)
 
     def setPath(self, path):
         """Set the path of the image. If the path exists, the get the real

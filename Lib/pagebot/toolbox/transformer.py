@@ -539,13 +539,13 @@ def path2ScriptId(path):
     """Answers the scriptId, derived from the __file__ of the main source."""
     return path.split('/src/')[-1]
 
-def path2FormatPath(path, format=None):
+def path2FormatPath(path, hasFormat=None):
     """Answers the path where the extension is changed to format If format is
     None, then the extension is removed."""
     if path is not None:
         path = '.'.join(path.split('.')[:-1])
-        if format is not None:
-            path += '.' + format
+        if hasFormat is not None:
+            path += '.' + hasFormat
         return path
     return None
 
