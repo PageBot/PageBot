@@ -64,8 +64,9 @@ def findSingleSubstAlts(otlTable):
     TODO: Fix docTests working with OTF test fonts; switch to a resource
     font that ships with PageBot.
 
-    >>> from tnTestFonts import getFontPath
-    >>> font = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Bungee-Regular')
+    >>> font = pf.ttFont
     >>> mapping = findSingleSubstAlts(font["GSUB"])
     >>> mapping['one']
     [(('lnum',), 'one.lf'), (('tnum',), 'one.tosf')]
@@ -1440,10 +1441,10 @@ def _test():
     """
     """
     #TODO: Make these docTests to work.
-    >>> from fontTools.ttLib import TTFont
-    >>> from tnTestFonts import getFontPath
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> pf = findFont('Bungee-Regular')
+    >>> font = pf.ttFont
     >>> from io import StringIO
-    >>> font = TTFont(getFontPath("ProW6.otf"))
     >>> alts = sorted(findAlternateGlyphs(font["GSUB"], ["cid00962"]))
     >>> len(alts)
     28
@@ -1551,15 +1552,19 @@ if __name__ == "__main__":
                 supported += 1
         print("supported formats: %s" % supported)
         print("unsupported formats: %s" % unsupported)
+
     if False:
-        from fontTools.ttLib import TTFont
-        from tnTestFonts import getFontPath
-        font1 = TTFont(getFontPath("SaunaPro-RegularItalic.ttf"))
-        font2 = TTFont(getFontPath("SaunaPro-RegularItalicSwash.ttf"))
+        from pagebot.fonttoolbox.objects.font import findFont
+        pf1 = findFont('Bungee-Regular')
+        font1 = pf1.ttFont
+        pf2 = findFont('Bungee-HairlineRegular')
+        font2 = pf2.ttFont
+
         mergeFeatures(font1["GPOS"], font2["GPOS"])
         #mergeFeatures(font1["GSUB"], font2["GSUB"])
+
     if False:
-        from fontTools.ttLib import TTFont
-        from tnTestFonts import getFontPath
-        font = TTFont(getFontPath("MSGothic.ttf"))
+        from pagebot.fonttoolbox.objects.font import findFont
+        pf = findFont('Bungee-Regular')
+        font = pf.ttFont
         print(findAlternateGlyphsAndFeatures(font["GSUB"]))

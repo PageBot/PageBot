@@ -168,10 +168,9 @@ def patchGlyphNames(font, filterFunc):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> def myGlyphNameFilter(glyphName, glyphID):
         ...     return glyphName + ".alt"
         ...
@@ -234,10 +233,9 @@ def stripInstructions(font):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> byteCode = font["glyf"]["a"].program.getBytecode()
         >>> len(byteCode)
         58
@@ -275,10 +273,9 @@ def findComponentGlyphs(font, glyphNames):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("SegoeUI-Regular-All.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> sorted(findComponentGlyphs(font, ["aring", "agrave", "onehalf"]))
         ['a', 'fraction', 'glyph00240', 'glyph00241', 'grave', 'ring']
         >>> sorted(findComponentGlyphs(font, ["x"]))
@@ -316,10 +313,9 @@ def findGlyphsByUnicode(font, unicodes):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("SegoeUI-Regular-All.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> sorted(findGlyphsByUnicode(font, [ord("a"), ord("1")]))
         ['a', 'fraction', 'glyph00240', 'glyph00241', 'glyph00568', 'glyph03258', 'glyph03268', 'glyph03278', 'glyph03288', 'glyph03298', 'glyph03307', 'glyph04281', 'glyph04294', 'glyph04295', 'glyph04495', 'one', 'onehalf', 'onequarter', 'uni00B9', 'uni2081']
         >>> findGlyphsByUnicode(font, [1, 2, 99999, ord("|")])
@@ -354,10 +350,9 @@ def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> cmap = getBestCmap(font)
         >>> len(cmap)
         248
@@ -414,10 +409,9 @@ def tagToIdentifier(tag):
     """
         TODO: Fix docTests
 
-        >>> from fontTools.ttLib import TTFont
-        >>> from tnTestFonts import getFontPath
-        >>> path = getFontPath("CusterRE-RegularS2.ttf")
-        >>> font = TTFont(path)
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> pf = findFont('Bungee-Regular')
+        >>> font = pf.ttFont
         >>> sorted([tagToIdentifier(tableTag) for tableTag in font.keys()])
         ['DSIG', 'GlyphOrder', 'OS2', 'cmap', 'cvt', 'fpgm', 'gasp', 'glyf', 'head', 'hhea', 'hmtx', 'loca', 'maxp', 'name', 'post', 'prep']
     """
@@ -960,13 +954,9 @@ if __name__ == "__main__":
         sys.exit(_runDocTests()[0])
     else:
         import os
-        from fontTools.ttLib import TTFont
-        from tnTestFonts import getFontPath
-        #path = getFontPath("CusterRE-RegularS2.ttf")
-        #path = getFontPath("SegoeUI-Regular-All.ttf")
-        #path = getFontPath("Arial Unicode.ttf")
-        path = getFontPath("MSGothic.ttf")
-        font = TTFont(path)
+        from pagebot.fonttoolbox.objects.font import findFont
+        pf = findFont('Bungee-Regular')
+        font = pf.ttFont
         if True:
             scaleFont(font, 128)
         if False:
