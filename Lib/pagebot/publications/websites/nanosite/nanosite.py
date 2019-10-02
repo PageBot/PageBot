@@ -16,10 +16,11 @@
 #
 #     NanoSite is a simple basix website generator.
 #
-import os, shutil, traceback
+import os
+import shutil
+import traceback
 
 from pagebot.publications.websites.basesite import BaseSite
-from pagebot.toolbox.units import pt
 from pagebot.elements.views import MampView
 from pagebot.constants import *
 from pagebot.composer import Composer

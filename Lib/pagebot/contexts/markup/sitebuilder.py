@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,7 +14,7 @@
 #
 #     sitebuilder.py
 #
-from htmlbuilder import HtmlBuilder
+from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
 
 class SiteBuilder(HtmlBuilder):
     """Generic output builder container, used of collecting html, css, js,
