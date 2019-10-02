@@ -236,9 +236,9 @@ class BlurbWriter:
     def replacecode(self, text):
         m = 1
         pend= 0
-        while m != None:
+        while m is not None:
             m = self.pstatement.search(text, pend)
-            if m == None:
+            if m is None:
                 return 0, text
             tag = m.group('tagname')
             if not tag:
@@ -306,9 +306,9 @@ class BlurbWriter:
 
         m = 1
 
-        while m != None:
+        while m is not None:
             start, stop = self.findtag(text)
-            if start == None:
+            if start is None:
                 return 0, text
             tag = text[start:stop]
             if not tag:
