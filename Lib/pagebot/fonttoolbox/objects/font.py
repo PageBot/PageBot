@@ -108,8 +108,10 @@ def findFonts(pattern, lazy=True):
     from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
     fonts = []
+
     if not isinstance(pattern, (list, tuple)):
         pattern = [pattern]
+
     for fontPath in fontPaths:
         found = True
         for match in pattern:

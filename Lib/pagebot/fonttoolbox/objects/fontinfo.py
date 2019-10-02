@@ -16,7 +16,7 @@
 #
 #     Implements info functions on font info.
 #
-from pagebot.fonttoolbox.ttftools import getBestCmap
+#from pagebot.fonttoolbox.ttftools import getBestCmap
 
 class cached_property:
     """
@@ -212,10 +212,12 @@ class FontInfo:
     def license(self):
         return self._getNameTableEntry(13)
 
+    '''
     @cached_property
     def charSet(self):
         cmap = getBestCmap(self.ttFont)
         return sorted(cmap.keys())
+    '''
 
     @cached_property
     def glyphSet(self):
