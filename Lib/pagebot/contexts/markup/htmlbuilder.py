@@ -1,4 +1,4 @@
-pagebot.contexts.markup.#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
