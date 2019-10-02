@@ -21,12 +21,13 @@ from pagebot.stylelib import styleLib # Library with named, predefined style dic
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
-from pagebot.constants import *
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
-from pagebot.toolbox.transformer import obj2StyleId, path2Url, json2Dict, \
-    dict2Json, asNormalizedJSON
-from pagebot.toolbox.units import pt, units, isUnit, point3D
+from pagebot.toolbox.transformer import (obj2StyleId, path2Url, json2Dict,
+    dict2Json, asNormalizedJSON)
+from pagebot.toolbox.units import units, isUnit, point3D
+from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
+        BOTTOM, BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
     """A Document a container of pages.

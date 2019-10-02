@@ -37,7 +37,7 @@ from pagebot.contributions.markdown.inline import InlineExtension
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
-from pagebot.constants import *
+from pagebot.constants import CSS_BACKGROUND_REPEAT, FILETYPE_SVG, FILETYPE_GIF
 
 class Typesetter:
     """The Typesetter takes one or more markdown files or a sequence of
@@ -554,7 +554,8 @@ class Typesetter:
         htmlTag = u'<%s' % node.tag
         attrs = []
         for name, value in node.items():
-            if name == 'src' and value.startswith('docs/'): # Exception hack to bridge the .md --> img url.
+            if name == 'src' and value.startswith('docs/'):
+                # Exception hack to bridge the .md --> img URL.
                 value = value[5:]
             attrs.append('%s="%s"' % (name, value))
         if attrs:

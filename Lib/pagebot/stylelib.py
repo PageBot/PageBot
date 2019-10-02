@@ -20,7 +20,7 @@
 #
 #     CSS is now implemented as SCSS files, using PageBot-generated variable.scss.
 #
-from pagebot.toolbox.units import *
+from pagebot.toolbox.units import px, em
 from pagebot.toolbox.color import whiteColor, blackColor, color
 
 MARGIN = (0, 0, px(10), 0)
