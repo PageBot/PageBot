@@ -49,6 +49,7 @@ class SvgContext(BaseContext):
         >>> context.saveDocument('_export/SvgContext.%s' % FILETYPE_SVG)
 
         """
+        super().__init__()
         self.b = svgBuilder
         self.name = self.__class__.__name__
         self._language = DEFAULT_LANGUAGE

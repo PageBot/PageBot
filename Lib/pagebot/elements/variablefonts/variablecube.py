@@ -21,12 +21,13 @@ from pagebot.style import makeStyle
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import blackColor
 
-
 class VariableCube(Element):
     # Initialize the default behavior tags as different from Element.
 
-    def __init__(self, font, s=None, point=None, style=None, eId=None, dimensions=None, location=None, **kwargs):
-        self.__init__
+    def __init__(self, font, s=None, point=None, style=None, eId=None,
+            dimensions=None, location=None, **kwargs):
+        #self.__init__
+        super().__init__()
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
@@ -97,8 +98,6 @@ class VariableCube(Element):
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-
-
 
 if __name__ == '__main__':
     import doctest

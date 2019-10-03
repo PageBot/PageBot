@@ -31,6 +31,7 @@ class VariableGlyphs(Element):
 
     def __init__(self, ttFont, s=None, style=None, eId=None,
                  fontSize=50, location=None, **kwargs):
+        super().__init__()
         self.font = ttFont
         self.eId = eId
         self.fontSize = fontSize

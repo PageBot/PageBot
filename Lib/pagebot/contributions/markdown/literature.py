@@ -177,6 +177,7 @@ class LiteraturePreprocessor(Preprocessor):
     """ Find all literature references and store for later use. """
 
     def __init__(self, literatures):
+        super().__init__()
         self.literatures = literatures
 
     def run(self, lines):
@@ -292,6 +293,7 @@ class LiteratureTreeprocessor(Treeprocessor):
     """ Build and append literature div to end of document. """
 
     def __init__(self, literatures):
+        super().__init__()
         self.literatures = literatures
 
     def run(self, root):
@@ -313,7 +315,9 @@ class LiteratureTreeprocessor(Treeprocessor):
 
 class LiteraturePostprocessor(Postprocessor):
     """ Replace placeholders with html entities. """
+
     def __init__(self, literatures):
+        super().__init__()
         self.literatures = literatures
 
     def run(self, text):

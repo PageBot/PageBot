@@ -113,8 +113,7 @@ class HtmlBuilder(XmlBuilder):
     P_ATTRIBUTES = STRONG_ATTRIBUTES = EM_ATTRIBUTES = B_ATTRIBUTES = U_ATTRIBUTES = S_ATTRIBUTES = Q_ATTRIBUTES = {
         'type', 'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype'}
 
-    H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = {
-        'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'onclick'}
+    H1_ATTRIBUTES = H2_ATTRIBUTES = H3_ATTRIBUTES = H4_ATTRIBUTES = H5_ATTRIBUTES = H6_ATTRIBUTES = {'itemid', 'itemprop', 'itemref', 'itemscope', 'itemtype', 'onclick'}
 
     FIGURE_ATTRIBUTES = {'accesskey', 'contenteditable', 'contextmenu', 'dir',
         'draggable', 'hidden', 'lang', 'spellcheck', 'tabindex'}
@@ -281,6 +280,7 @@ table {
 """
 
     def __init__(self):
+        super().__init__()
         self.clearHtml() # Initialize the HTML output stream.
         self._cssOut = [] # Keep the collected CSS and JS from elements here.
         self._scssVariables = {}

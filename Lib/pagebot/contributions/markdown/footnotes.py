@@ -176,6 +176,7 @@ class FootnotePreprocessor(Preprocessor):
     """ Find all footnote references and store for later use. """
 
     def __init__(self, footnotes):
+        super().__init__()
         self.footnotes = footnotes
 
     def run(self, lines):
@@ -293,6 +294,7 @@ class FootnoteTreeprocessor(Treeprocessor):
     """ Build and append footnote div to end of document. """
 
     def __init__(self, footnotes):
+        super().__init__()
         self.footnotes = footnotes
 
     def run(self, root):
@@ -314,7 +316,9 @@ class FootnoteTreeprocessor(Treeprocessor):
 
 class FootnotePostprocessor(Postprocessor):
     """ Replace placeholders with html entities. """
+
     def __init__(self, footnotes):
+        super().__init__()
         self.footnotes = footnotes
 
     def run(self, text):

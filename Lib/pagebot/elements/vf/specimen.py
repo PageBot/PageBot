@@ -59,7 +59,8 @@ class TypeListLine(Element):
     CSS_CLASS = None
 
     def __init__(self, font, fontData=None, sampleText=None, fontName=None,
-            fontSize=None, labelFont=None, labelFontSize=None, labelLeading=None, **kwargs):
+            fontSize=None, labelFont=None, labelFontSize=None,
+            labelLeading=None, **kwargs):
         """Make a sample line with font (can be None)"""
         super().__init__(**kwargs)
         self.cssClass = self.CSS_CLASS or self.__class__.__name__.lower()
@@ -316,6 +317,7 @@ class Waterfall(Group):
             )
         }
         """
+        super().__init__(self, parent=parent, **kwargs)
         #FIXME: Group is base class, not Element.
         #Element.__init__(self, parent=parent, **kwargs)
         self.fonts = {}
