@@ -64,7 +64,8 @@ class GlyphAnalyzer:
         self._baselineBlueBar = None
         self._topBlueBar = None
 
-        # User defined dimensions, overruling automatic analyzer dimensions (UFO only)
+        # User defined dimensions, overruling automatic analyzer dimensions
+        # (UFO only).
         self._dimensions = None
 
     def _get_name(self):
@@ -365,26 +366,33 @@ class GlyphAnalyzer:
     straightRoundStems = property(_get_straightRoundStems)
 
     def getBeamStemCounters(self, context, y=None):
-        """Calculate the stems and counters by a horizontal beam through the middle of the bounding box.
-        This works best with the capital I. The value is uncached and should only be used if
-        normal stem detection fails. Or in case of italic."""
+        """Calculate the stems and counters by a horizontal beam through the
+        middle of the bounding box. This works best with the capital I. The
+        value is uncached and should only be used if normal stem detection
+        fails. Or in case of italic."""
         beamStems = {}
         beamCounters = {}
         if y is None:
             y = (self.maxY - self.minY)/2
         line = ((-sys.maxsize, y), (sys.maxsize, y))
-        # Get intersections with this line. We can assume they are sorted set by x value
+        # Get intersections with this line. We can assume they are sorted set
+        # by x value
         intersections = self.intersectWithLine(line, context)
-        # If could not make path or flattened path or no intersections or just one, give up.
+
+        # If could not make path or flattened path or no intersections or just
+        # one, give up.
         if intersections is None or len(intersections) < 2:
             return None
-        # Now make Stem instance from these values, as if they we Verticals positions.
-        # The difference is that we only have points, not point contexts here,
-        # but for limited use that should not make a difference for entry in a Stem
+
+        # Now make Stem instance from these values, as if they we Verticals
+        # positions. The difference is that we only have points, not point
+        # contexts here, but for limited use that should not make a difference
+        # for entry in a Stem
         p0 = ap0 = None
         for n in range(0, len(intersections)):
-            # Add this stem or counter to the result. Create point contexts, simulating vertical
-            # We cannot just check on odd/even, as a line may pass exactly on the top/bottom of a curve.
+            # Add this stem or counter to the result. Create point contexts,
+            # simulating vertical We cannot just check on odd/even, as a line
+            # may pass exactly on the top/bottom of a curve.
             p = intersections[n]
             pUp = p[0], p[1]+10
             pDown = p[0], p[1]-10
@@ -400,7 +408,8 @@ class GlyphAnalyzer:
             p0 = p
             ap0 = ap
 
-            # If middle of the point is on black, then it is a stem. Otherwise it is a counter.
+            # If middle of the point is on black, then it is a stem. Otherwise
+            # it is a counter.
             mp = (p0[0]+p1[0])/2, (p0[1]+p1[1])/2
             if self.onBlack(mp):
                 stem = self.STEM_CLASS(ap1, ap0, self.glyph.name)
@@ -408,7 +417,9 @@ class GlyphAnalyzer:
                 if not size in beamStems:
                     beamStems[size] = []
                 beamStems[size].append(stem)
-            else: # Otherwise, middle point between intersections is on white, it must be a counter
+            else:
+                # Otherwise, middle point between intersections is on white, it
+                # must be a counter
                 counter = self.COUNTER_CLASS(ap1, ap0, self.glyph.name)
                 size = asInt(counter.size) # Make sure to get floats as key
                 if not size in beamCounters:
@@ -487,19 +498,17 @@ class GlyphAnalyzer:
         """Answers is the connection between pc0.x and pc1.x
         is running entirely over white, and they both are some sort of
         horizontal extreme. The connection is a “white stem”."""
-        #print('pc0', pc0, pc0.isHorizontalRoundExtreme(tolerance), pc0.isVertical(tolerance))
-        #print('pc1', pc1, pc1.isHorizontalRoundExtreme(tolerance), pc1.isVertical(tolerance))
-        #print('===', pc0.inHorizontalWindow(pc1))
-        #print('---', self.lineOnWhite(pc0, pc1, 50), self.lineOnWhite(pc1, pc0, 50))
         if not (pc0.isHorizontalRoundExtreme(tolerance) or pc0.isVertical(tolerance)):
             return False
         if not (pc1.isHorizontalRoundExtreme(tolerance) or pc1.isVertical(tolerance)):
             return False
         if not pc0.inHorizontalWindow(pc1):
             return False
-        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner-->roundExtreme (as in the counter of "P"
-        # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
-        # from the corner point, so the iterations of the line are always white.
+        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner -->
+        # roundExtreme (as in the counter of "P" will be too close to the
+        # horizontal stroke, so it's recognized as black. Instead we take
+        # bigger steps from the corner point, so the iterations of the line are
+        # always white.
         return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
 
     def _get_horizontalCounters(self):
@@ -509,8 +518,9 @@ class GlyphAnalyzer:
     horizontalCounters = property(_get_horizontalCounters)
 
     def _get_hotizontalCounter(self):
-        """Answers single horizontal counter value, which by definintion is the smallest straight counter found.
-        Answer None if no counters can be found."""
+        """Answers single horizontal counter value, which by definintion is the
+        smallest straight counter found. Answer None if no counters can be
+        found."""
         counters = self.horizontalCounters.keys()
         if counters:
             return min(counters)
@@ -520,18 +530,20 @@ class GlyphAnalyzer:
     #   V E R T I C A L  C O U N T E R
 
     def isVerticalCounter(self, pc0, pc1, tolerance=0):
-        """Answers is the connection between pc0.y and pc1.y
-        is running entirely over white, and they both are some sort of
-        horizontal extreme. The connection is a “white bar”."""
+        """Answers if the connection between pc0.y and pc1.y is running
+        entirely over white and they both are some sort of horizontal extreme.
+        The connection is a “white bar”."""
         if not (pc0.isVerticalRoundExtreme(tolerance) or pc0.isHorizontal(tolerance)):
             return False
         if not (pc1.isVerticalRoundExtreme(tolerance) or pc1.isHorizontal(tolerance)):
             return False
         if not pc0.inVerticalWindow(pc1):
             return False
-        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner-->roundExtreme (as in the counter of "P"
-        # will be too close to the horizontal stroke, so it's recognized as black. Instead we take bigger steps
-        # from the corner point, so the iterations of the line are always white.
+        # Don't use plain self.lineOnWhite(pc0, px1) here, as corner -->
+        # roundExtreme (as in the counter of "P" will be too close to the
+        # horizontal stroke, so it's recognized as black. Instead we take
+        # bigger steps from the corner point, so the iterations of the line are
+        # always white.
         return self.lineOnWhite(pc0, pc1, 50) or self.lineOnWhite(pc1, pc0, 50)
 
     def _get_verticalCounters(self):
@@ -615,8 +627,9 @@ class GlyphAnalyzer:
                                 roundBars[size].append(rbar)
 
                             elif self.isStraightRoundBar(pc0, pc1):
-                                # If one side is straight and the other side is round extreme
-                                # then count this stem as straight round bar.
+                                # If one side is straight and the other side is
+                                # round extreme then count this stem as
+                                # straight round bar.
                                 srbar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
                                 size = asInt(srbar.size) # Make sure not to get floats as key
                                 if not size in straightRoundBars:
@@ -624,7 +637,8 @@ class GlyphAnalyzer:
                                 straightRoundBars[size].append(srbar)
 
                             elif self.isVerticalCounter(pc0, pc1):
-                                # If there is just white space between the points and they are some kind of extreme,
+                                # If there is just white space between the
+                                # points and they are some kind of extreme,
                                 # then assume this is a counter.
                                 counter = self.VERTICAL_COUNTER_CLASS(pc0, pc1, self.glyph.name)
                                 size = asInt(counter.size)
@@ -735,9 +749,12 @@ class GlyphAnalyzer:
     #   B L U E B A R S
 
     def _get_blueBars(self):
-        """If not self._blueBars defined, make the 3: minY->up, baseline->up and maxY->down."""
+        """If not self._blueBars defined, make the 3: minY->up, baseline->up
+        and maxY->down."""
         if self._blueBars is None:
+            # FIXME: upsubscriptable-object.
             gaH = self['H'] # Seperate from blueBars property, so no recursion problem.
+
             if gaH.bars: # Check if there were any bars found for 'H'
                 bbar = min(sorted(gaH.bars.keys()))
             else: # Otherwise take an arbitrary number for now.
@@ -746,7 +763,9 @@ class GlyphAnalyzer:
             self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bbar), self.name, name='baseline')
             self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bbar), self.name, name='top')
             self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
+
         return self._blueBars
+
     blueBars = property(_get_blueBars)
 
     def _get_bottomBlueBar(self):

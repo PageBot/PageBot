@@ -194,6 +194,8 @@ def normalizedVector(p, length=1):
     normalized vector, default is ``1``. Freetype XXX: UNDOCUMENTED! It seems
     that it is possible to try to normalize the vector (0, 0). Return
     immediately."""
+    assert isinstance(p, tuple)
+    # FIXME: upsubscriptable-object.
     if p[1] == 0:
         return math.copysign(length, p[0]), 0
 
@@ -202,6 +204,7 @@ def normalizedVector(p, length=1):
     if w == 0:
         return None
 
+    # FIXME: upsubscriptable-object.
     return 1.0 * p[0] * length / w, 1.0 * p[1] * length / w
 
 def normalize(p, length=1):

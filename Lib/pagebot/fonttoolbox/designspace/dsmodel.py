@@ -410,6 +410,7 @@ class DesignSpace:
 
         if path is not None:
             self._ds = ds = DesignSpaceDocument.fromfile(path) # Raw eTree from file.
+
             for a in ds['axes']: # Maintain order by index
                 axis = Axis(tag=a['tag'], name=a['name'], minimum=a['minimum'], default=a['default'], maximum=a['maximum'])
                 self.appendAxes(axis)
