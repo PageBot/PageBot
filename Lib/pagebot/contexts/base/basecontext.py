@@ -29,7 +29,6 @@ from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.style import makeStyle
-from pagebot.fonttoolbox.objects.font import findFont
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.

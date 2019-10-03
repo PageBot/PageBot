@@ -95,17 +95,17 @@ class CodeBlock(TextBox):
             if doc is not None:
                 targets['doc'] = doc
         if not self.tryExcept: # For debugging show full error of code block run.
-            exec(self.code, targets) # Exectute code block, where result goes dict.
+            exec(self.code, targets) # Execute code block, where result goes dict.
             if '__builtins__' in targets:
                 del targets['__builtins__'] # We don't need this set of globals in the returned results.
         else:
             error = None
             try:
-                exec(self.code, targets) # Exectute code block, where result goes dict.
+                exec(self.code, targets) # Execute code block, where result goes dict.
                 if '__builtins__' in targets:
                     del targets['__builtins__'] # We don't need this set of globals in the results.
             except TypeError:
-                error = u'TypeError'
+                error = 'TypeError'
             except NameError:
                 error = 'NameError'
             except SyntaxError:

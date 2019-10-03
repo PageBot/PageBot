@@ -950,7 +950,6 @@ def _runDocTests():
 
 if __name__ == "__main__":
     if True:
-        import sys
         sys.exit(_runDocTests()[0])
     else:
         import os

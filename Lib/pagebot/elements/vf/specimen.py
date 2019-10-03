@@ -24,7 +24,6 @@ from pagebot.constants import DEFAULT_FONT
 from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.conditions import *
 from pagebot.toolbox.units import pt, px
 
 FONT_DOWNLOAD_URL = 'download' # Url to download the font: font/Upgrade_Try.zip

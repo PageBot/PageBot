@@ -134,14 +134,14 @@ class XmlBuilder(BaseBuilder):
             if key in self.CASCADING_ATTRIBUTES:
                 value = self.flatten2Class(value)
                 if isinstance(value, str):
-                    value = value.replace('"', '&quot;');
+                    value = value.replace('"', '&quot;')
                 if value:
                     line = u' %s="%s"' % (key, value)
             else:
                 raise ValueError('[XmlTagBuilder.write_attribute] No list attribute value allowed for %s="%s"' % (key, value))
         elif value:
             if isinstance(value, str):
-                value = value.replace('"', '&quot;');
+                value = value.replace('"', '&quot;')
             line = u' %s="%s"' % (key, value)
         if line:
             self.write(line)

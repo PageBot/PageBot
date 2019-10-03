@@ -16,7 +16,6 @@
 #
 import copy
 import codecs
-import codecs
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -27,7 +26,7 @@ from pagebot.toolbox.transformer import (obj2StyleId, path2Url, json2Dict,
     dict2Json, asNormalizedJSON)
 from pagebot.toolbox.units import units, isUnit, point3D
 from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
-        BOTTOM, BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
+        BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
     """A Document a container of pages.
@@ -441,6 +440,7 @@ class Document:
         >>> doc = Document(name='TestDoc', w=123)
         >>> doc.w
         123pt
+        >>> from pagebot.toolbox.units import pt
         >>> doc.applyStyle(dict(w=pt(1234)))
         >>> doc.w
         1234pt
