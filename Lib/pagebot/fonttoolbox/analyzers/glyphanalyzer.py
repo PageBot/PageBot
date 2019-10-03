@@ -572,11 +572,11 @@ class GlyphAnalyzer:
         if dimensions:
             for dimension in dimensions: # UFO only, needs to be written.
                 if self.FLOQMEME_BAR in dimensions['types']: # Is this this dimension defining a stem?
-                    bar = self.BAR_CLASS(dimensions['pc0'], dimensions['pc1'], self.glyph.name)
-                    size = bar.size
+                    vbar = self.BAR_CLASS(dimensions['pc0'], dimensions['pc1'], self.glyph.name)
+                    size = vbar.size
                     if not size in bars:
                         bars[size] = []
-                    bars[size].append(bar)
+                    bars[size].append(vbar)
         if not bars: # No "manual" hints defined, try to analyze from the found Vertical instances.
             for _, horizontal1 in sorted(horizontals.items()): # y1, horizontal1
                 for _, horizontal2 in sorted(horizontals.items()): # y2, horizontal2
@@ -599,29 +599,29 @@ class GlyphAnalyzer:
                             # and test if this pair is spanning a black space and not covered in black.
                             if self.isBar(pc0, pc1):
                                 # Add this bar to the result.
-                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
-                                size = asInt(bar.size) # Make sure not to get floats as keys
+                                hbar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
+                                size = asInt(hbar.size) # Make sure not to get floats as keys
                                 if not size in bars:
                                     bars[size] = []
-                                bars[size].append(bar)
+                                bars[size].append(hbar)
 
                             elif self.isRoundBar(pc0, pc1):
                                 # If either of the point context is a curve extreme
                                 # then count this bar as round bar
-                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
-                                size = asInt(bar.size) # Make sure not to get floats as keys
+                                rbar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
+                                size = asInt(rbar.size) # Make sure not to get floats as keys
                                 if not size in roundBars:
                                     roundBars[size] = []
-                                roundBars[size].append(bar)
+                                roundBars[size].append(rbar)
 
                             elif self.isStraightRoundBar(pc0, pc1):
                                 # If one side is straight and the other side is round extreme
                                 # then count this stem as straight round bar.
-                                bar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
-                                size = asInt(bar.size) # Make sure not to get floats as key
+                                srbar = self.BAR_CLASS(pc0, pc1, self.glyph.name)
+                                size = asInt(srbar.size) # Make sure not to get floats as key
                                 if not size in straightRoundBars:
                                     straightRoundBars[size] = []
-                                straightRoundBars[size].append(bar)
+                                straightRoundBars[size].append(srbar)
 
                             elif self.isVerticalCounter(pc0, pc1):
                                 # If there is just white space between the points and they are some kind of extreme,
@@ -709,7 +709,8 @@ class GlyphAnalyzer:
         return (not pc0Ext and min(p0x) <= pc1.p.x and pc1.p.x <= max(p0x))\
             or (not pc1Ext and min(p1x) <= pc0.p.x and pc0.p.x <= max(p1x))
 
-    # self.allBars      Answers the combination dict of bars and round bars
+    # self.allBars  
+    # Answers the combination dict of bars and round bars.
     def _get_allBars(self):
         """Collect all bars in the dictionary with their value as key.
         BlueBars are not added to self._allBars, to be addressed separately from self.blueBars """
@@ -738,12 +739,12 @@ class GlyphAnalyzer:
         if self._blueBars is None:
             gaH = self['H'] # Seperate from blueBars property, so no recursion problem.
             if gaH.bars: # Check if there were any bars found for 'H'
-                bar = min(sorted(gaH.bars.keys()))
+                bbar = min(sorted(gaH.bars.keys()))
             else: # Otherwise take an arbitrary number for now.
-                bar = self.font.info.unitsPerEm/20
-            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bar), self.name, name='bottom')
-            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bar), self.name, name='baseline')
-            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bar), self.name, name='top')
+                bbar = self.font.info.unitsPerEm/20
+            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bbar), self.name, name='bottom')
+            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bbar), self.name, name='baseline')
+            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bbar), self.name, name='top')
             self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
         return self._blueBars
     blueBars = property(_get_blueBars)
