@@ -484,168 +484,7 @@ class Page(Element):
             for htmlPath in self.htmlPaths:
                 b.importHtml(htmlPath) # Add HTML content of file, if path is not None and the file exists.
         else:
-            b.docType('html')
-            b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
-            #
-            #   H E A D
-            #
-            # Build the page head. There are 3 option (all including the <head>...</head>)
-            # 1 As html string (info.headHtml is defined as not None)
-            # 2 As path a html file, containing the string between <head>...</head>.
-            # 3 Constructed from info contect, page attributes and styles.
-            #
-            if self.headCode is not None:
-                b.addHtml(self.headCode)
-            elif self.headPath is not None:
-                b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
-            else:
-                b.head()
-
-                # Add Google Analytics if accounts numbers are defined.
-                if view.googleAdsAccount is not None and view.googleAnalyticsId is not None:
-                    gaScript_XXX = """<!-- Global Site Tag (gtag.js) - Google Analytics -->
-                        <script async src="https://www.googletagmanager.com/gtag/js?id=%(googleAnalyticsId)s"></script>
-                        <script>
-                          window.dataLayer = window.dataLayer || [];
-                          function gtag(){dataLayer.push(arguments);}
-                          gtag('js', new Date());
-
-                          gtag('config', '%(googleAnalyticsId)s');
-                        </script>
-                    """ % dict(googleAnalyticsId=view.googleAnalyticsId)
-                    gaScript = """
-                    <script>
-                    (function(i,s,o,g,r,a,m){
-                      i['GoogleAnalyticsObject']=r;
-                      i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},
-                      i[r].l=1*new Date();
-                      a=s.createElement(o),m=s.getElementsByTagName(o)[0];
-                      a.async=1;
-                      a.src=g;
-                      m.parentNode.insertBefore(a,m)
-                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-                    ga('create', '%(googleAnalyticsId)s', 'auto');
-                    ga('send', 'pageview');
-                    </script>
-                    """ % dict(googleAnalyticsId=view.googleAnalyticsId)
-                    b.addHtml(gaScript)
-
-                b.meta(charset=self.css('encoding')) # Default utf-8
-                # Try to find the page name, in sequence order of importance.
-                b.title_(self.title or self.name or self.url.split('/')[-1])
-
-                b.meta(httpequiv='X-UA-Compatible', content='IE=edge,chrome=1')
-
-                # Devices
-                if self.viewPort is not None: # Not supposed to be None. Check anyway
-                    b.comment('Mobile viewport')
-                    b.meta(name='viewport', content=self.viewPort)
-
-                # View and pages can both implements Webfonts urls
-                for webFontUrls in (view.webFontUrls, self.webFontUrls):
-                    if webFontUrls is not None:
-                        for webFontUrl in webFontUrls:
-                            b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
-
-                # If there is accumulated CSS in the builder, e.g. by individual
-                # elements for this page only, then add that directly inside
-                # the page. Recursively query all page elements for their contributions.
-                pageCssList = self.build_css(view)
-                if pageCssList:
-                    b.style()
-                    b.addHtml('\n'.join(pageCssList))
-                    b._style()
-
-                # View and pages can both implements CSS paths
-                for cssUrls in (view.cssUrls, self.cssUrls):
-                    if cssUrls is not None:
-                        for cssUrl in cssUrls:
-                            b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
-
-                # Use one of both of these options in case CSS needs to be
-                # copied into the page.
-                for cssCode in (view.cssCode, self.cssCode):
-                    if cssCode is not None:
-                        # Add the code directly into the page if it is not None
-                        b.style()
-                        b.addHtml(cssCode)
-                        b._style()
-
-                # Use one or both of these options in case CSS is needs to be
-                # copied from files into the page.
-                for cssPaths in (view.cssPaths, self.cssPaths):
-                    if self.cssPaths:
-                        b.style()
-                        for cssPath in cssPaths:
-                            # Include CSS content of file, if path is not None
-                            # and the file exists.
-                            b.importHtml(cssPath)
-                        b._style()
-
-                # Icons
-                if self.favIconUrl: # Add the icon link and let the type follow the image extension.
-                    b.link(rel='icon', href=self.favIconUrl, type='image/%s' % self.favIconUrl.split('.')[-1])
-                if self.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
-                    b.link(rel='apple-touch-icon-precomposed', href=self.appleTouchIconUrl, type='image/%s' % self.appleTouchIconUrl.split('.')[-1])
-
-                # Description and keywords
-                if self.description:
-                    b.meta(name='description', content=self.description)
-                if self.keyWords:
-                    b.meta(name='keywords', content=self.keyWords)
-                b._head()
-            #
-            #   B O D Y
-            #
-            # Build the page body. There are 3 option (all excluding the <body>...</body>)
-            # 1 As html string (self.bodyCode is defined as not None)
-            # 2 As path to a html file, containing the string between <body>...</body>, including the tags
-            # 3 Constructed from view parameter context, page attributes and styles.
-            #
-            if self.bodyCode is not None:
-                b.addHtml(self.bodyCode)
-            elif self.bodyPath is not None:
-                b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
-            else:
-                b.body()
-                for e in self.elements:
-                    e.build_html(view, path)
-                #
-                #   J A V A S C R I P T
-                #
-                # Build the JS body. There are 4 option (all not including the <script>...</script>)
-                # 1 As path a html file, containing the string between <script>...</script>, including the tags.
-                # 2 Constructed from info context, page attributes and styles.
-                # 3 As cumulated inside builders (from b.getJs())
-                # 4 As html/javascript string (view.jsCode and/or self.jsCode are defined as not None)
-                #
-                for jsUrls in (view.jsUrls, self.jsUrls):
-                    if jsUrls is not None:
-                        for jsUrl in jsUrls:
-                            b.script(type="text/javascript", src=jsUrl)
-
-                for jsPaths in (view.jsPaths, self.jsPaths):
-                    if jsPaths:
-                        for jsPath in jsPaths:
-                            b.script(type="text/javascript")
-                            b.addHtml(jsPath)
-                            b._script()
-
-                if b.hasJs():
-                    b.script(type="text/javascript")
-                    b.addHtml(b.getJs())
-                    b._script()
-
-                for jsCode in (view.jsCode, self.jsCode):
-                    if jsCode is not None:
-                        b.script(type="text/javascript")
-                        b.addHtml(jsCode)
-                        b._script()
-
-                # Close the page body
-                b._body()
-            b._html()
+            self.write_html(view, path)
 
         if view.doExport: # View flag to avoid writing, in case of testing.
             # Construct the file name for this page and save the file.
@@ -666,6 +505,193 @@ class Page(Element):
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
             b.writeHtml(filePath)
+
+    def write_html(self, view, path):
+        context = view.context
+        b = context.b
+        b.docType('html')
+        b.html()#lang="%s" itemtype="http://schema.org/">\n' % self.css('language'))
+
+        self.write_head(view)
+        self.write_body(view, path)
+
+    def write_body(self, view, path):
+        """
+        Build the page body. There are 3 option (all excluding the <body>...</body>)
+
+        1 As html string (self.bodyCode is defined as not None)
+        2 As path to a html file, containing the string between
+        <body>...</body>, including the tags
+        3 Constructed from view parameter context, page attributes and styles.
+        """
+        context = view.context
+        b = context.b
+
+        if self.bodyCode is not None:
+            b.addHtml(self.bodyCode)
+        elif self.bodyPath is not None:
+            b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.body()
+
+            for e in self.elements:
+                e.build_html(view, path)
+
+            self.write_javascript(view)
+
+            # Close the page body
+            b._body()
+        b._html()
+
+    def write_javascript(self, view):
+        """
+        Build the JS body. There are 4 option (all not including the <script>...</script>)
+
+        1 As path a html file, containing the string between
+        <script>...</script>, including the tags.
+        2 Constructed from info context, page attributes and styles.
+        3 As accumulated inside builders (from b.getJs())
+        4 As html/javascript string (view.jsCode and/or self.jsCode are defined
+        as not None)
+        """
+        context = view.context
+        b = context.b
+
+        for jsUrls in (view.jsUrls, self.jsUrls):
+            if jsUrls is not None:
+                for jsUrl in jsUrls:
+                    b.script(type="text/javascript", src=jsUrl)
+
+        for jsPaths in (view.jsPaths, self.jsPaths):
+            if jsPaths:
+                for jsPath in jsPaths:
+                    b.script(type="text/javascript")
+                    b.addHtml(jsPath)
+                    b._script()
+
+        if b.hasJs():
+            b.script(type="text/javascript")
+            b.addHtml(b.getJs())
+            b._script()
+
+        for jsCode in (view.jsCode, self.jsCode):
+            if jsCode is not None:
+                b.script(type="text/javascript")
+                b.addHtml(jsCode)
+                b._script()
+
+    def write_head(self, view):
+        """
+         Build the page head. There are 3 option (all including the <head>...</head>)
+
+         1 As html string (info.headHtml is defined as not None)
+         2 As path a html file, containing the string between <head>...</head>.
+         3 Constructed from info contect, page attributes and styles.
+        """
+        context = view.context
+        b = context.b
+
+        if self.headCode is not None:
+            b.addHtml(self.headCode)
+        elif self.headPath is not None:
+            b.importHtml(self.headPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.head()
+
+            # Add Google Analytics if accounts numbers are defined.
+            if view.googleAdsAccount is not None and view.googleAnalyticsId is not None:
+                gaScript_XXX = """<!-- Global Site Tag (gtag.js) - Google Analytics -->
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=%(googleAnalyticsId)s"></script>
+                    <script>
+                      window.dataLayer = window.dataLayer || [];
+                      function gtag(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+
+                      gtag('config', '%(googleAnalyticsId)s');
+                    </script>
+                """ % dict(googleAnalyticsId=view.googleAnalyticsId)
+                gaScript = """
+                <script>
+                (function(i,s,o,g,r,a,m){
+                  i['GoogleAnalyticsObject']=r;
+                  i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},
+                  i[r].l=1*new Date();
+                  a=s.createElement(o),m=s.getElementsByTagName(o)[0];
+                  a.async=1;
+                  a.src=g;
+                  m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', '%(googleAnalyticsId)s', 'auto');
+                ga('send', 'pageview');
+                </script>
+                """ % dict(googleAnalyticsId=view.googleAnalyticsId)
+                b.addHtml(gaScript)
+
+            b.meta(charset=self.css('encoding')) # Default utf-8
+            # Try to find the page name, in sequence order of importance.
+            b.title_(self.title or self.name or self.url.split('/')[-1])
+
+            b.meta(httpequiv='X-UA-Compatible', content='IE=edge,chrome=1')
+
+            # Devices
+            if self.viewPort is not None: # Not supposed to be None. Check anyway
+                b.comment('Mobile viewport')
+                b.meta(name='viewport', content=self.viewPort)
+
+            # View and pages can both implements Webfonts urls
+            for webFontUrls in (view.webFontUrls, self.webFontUrls):
+                if webFontUrls is not None:
+                    for webFontUrl in webFontUrls:
+                        b.link(rel='stylesheet', type="text/css", href=webFontUrl, media='all')
+
+            # If there is accumulated CSS in the builder, e.g. by individual
+            # elements for this page only, then add that directly inside
+            # the page. Recursively query all page elements for their contributions.
+            pageCssList = self.build_css(view)
+            if pageCssList:
+                b.style()
+                b.addHtml('\n'.join(pageCssList))
+                b._style()
+
+            # View and pages can both implements CSS paths
+            for cssUrls in (view.cssUrls, self.cssUrls):
+                if cssUrls is not None:
+                    for cssUrl in cssUrls:
+                        b.link(rel='stylesheet', href=cssUrl, type='text/css', media='all')
+
+            # Use one of both of these options in case CSS needs to be
+            # copied into the page.
+            for cssCode in (view.cssCode, self.cssCode):
+                if cssCode is not None:
+                    # Add the code directly into the page if it is not None
+                    b.style()
+                    b.addHtml(cssCode)
+                    b._style()
+
+            # Use one or both of these options in case CSS is needs to be
+            # copied from files into the page.
+            for cssPaths in (view.cssPaths, self.cssPaths):
+                if self.cssPaths:
+                    b.style()
+                    for cssPath in cssPaths:
+                        # Include CSS content of file, if path is not None
+                        # and the file exists.
+                        b.importHtml(cssPath)
+                    b._style()
+
+            # Icons
+            if self.favIconUrl: # Add the icon link and let the type follow the image extension.
+                b.link(rel='icon', href=self.favIconUrl, type='image/%s' % self.favIconUrl.split('.')[-1])
+            if self.appleTouchIconUrl: # Add the icon link and let the type follow the image extension.
+                b.link(rel='apple-touch-icon-precomposed', href=self.appleTouchIconUrl, type='image/%s' % self.appleTouchIconUrl.split('.')[-1])
+
+            # Description and keywords
+            if self.description:
+                b.meta(name='description', content=self.description)
+            if self.keyWords:
+                b.meta(name='keywords', content=self.keyWords)
+            b._head()
 
 class Template(Page):
 
