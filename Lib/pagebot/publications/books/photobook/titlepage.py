@@ -21,9 +21,9 @@ def makeTitlePage(page, title=None, text=None):
     """Cover template for photo books.
     """
     if title is not None:
-    	tw, th = title.size
-    	newTextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
+        tw, th = title.size
+        newTextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
     if text is not None:
-    	tw, th = text.size
-    	newTextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
+        tw, th = text.size
+        newTextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
             conditions=[Center2Center(), Bottom2Bottom()])

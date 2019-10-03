@@ -59,11 +59,11 @@ class Publication(Element):
         self.templates = templates
 
     def getAPI(self):
-    	"""Answers the API dictionary for this class that can be used by calling apps,
-    	e.g. for construction and behavior of the scope of app UI parameter controls.
-		This method needs to be redefined by inheriting publications classes to answer
-		different than the default empty dictionary."""
-    	return {}
+        """Answers the API dictionary for this class that can be used by calling apps,
+        e.g. for construction and behavior of the scope of app UI parameter controls.
+        This method needs to be redefined by inheriting publications classes to answer
+        different than the default empty dictionary."""
+        return {}
 
     def produce(self, viewId=None, **kwargs):
         """Produce the publication, using the viewId as target. To be implemented by

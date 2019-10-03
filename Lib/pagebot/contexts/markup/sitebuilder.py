@@ -22,4 +22,4 @@ class SiteBuilder(HtmlBuilder):
     GitView or MampView."""
 
     def frameDuration(self, frameDurection):
-    	pass
+        pass

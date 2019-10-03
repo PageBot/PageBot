@@ -13,10 +13,10 @@
 #
 #     solidbuilder.py
 #
-#	  https://github.com/SolidCode/SolidPython/tree/master/solid
-#	  https://github.com/felipesanches/SolidPinball
+#      https://github.com/SolidCode/SolidPython/tree/master/solid
+#      https://github.com/felipesanches/SolidPinball
 #
 from pagebot.contexts.base.basebuilder import BaseBuilder
 
 class SolidBuilder(BaseBuilder):
- 	pass
+     pass

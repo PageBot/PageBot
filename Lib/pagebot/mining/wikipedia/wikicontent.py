@@ -19,19 +19,19 @@
 import urllib
 
 class WikiContent:
-	"""Answer a container with content json from Wikipedia pages.
+    """Answer a container with content json from Wikipedia pages.
 
-	wiki = WikiContent()
-	"""
-	URL = 'https://en.wikipedia.org/w/api.php?'
+    wiki = WikiContent()
+    """
+    URL = 'https://en.wikipedia.org/w/api.php?'
 
-	def __init__(self, topic=None):
-		url = self.URL
-		# https://en.wikipedia.org/w/api.php?action=query&titles=Albert%20Einstein&prop=info&format=json
-		url += 'action=query&prop=extracts&format=json&exintro=&titles=%s' % (topic or 'bees')
-		response = urllib.request.urlopen(url) # TODO @@@@@ Error in urllib.request attribute
-		html = response.read()
-		print(html)
+    def __init__(self, topic=None):
+        url = self.URL
+        # https://en.wikipedia.org/w/api.php?action=query&titles=Albert%20Einstein&prop=info&format=json
+        url += 'action=query&prop=extracts&format=json&exintro=&titles=%s' % (topic or 'bees')
+        response = urllib.request.urlopen(url) # TODO @@@@@ Error in urllib.request attribute
+        html = response.read()
+        print(html)
 
 if __name__ == '__main__':
     import doctest

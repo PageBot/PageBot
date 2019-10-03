@@ -16,4 +16,4 @@
 from pagebot.publications.magazines.basemagazine import BaseMagazine
 
 class Glossy(BaseMagazine):
-	pass
+    pass

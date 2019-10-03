@@ -21,9 +21,9 @@ def makeCoverPage(page, imagePath=None, title=None, author=None, fill=None):
     """Cover template for photo books.
     """
     if fill is not None:
-    	newRect(fill=fill, parent=page, conditions=[Fit2Bleed()])
+        newRect(fill=fill, parent=page, conditions=[Fit2Bleed()])
     if imagePath is not None:
-    	newImage(imagePath, x=page.pl, y=page.pb, w=page.pw, h=page.ph, parent=page)
+        newImage(imagePath, x=page.pl, y=page.pb, w=page.pw, h=page.ph, parent=page)
     if title is not None:
         tw, _ = title.size
         newTextBox(title, parent=page, w=tw, conditions=[Center2Center(), Bottom2Top()])

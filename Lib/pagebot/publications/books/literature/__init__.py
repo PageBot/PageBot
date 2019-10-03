@@ -18,16 +18,16 @@
 #     they are not placed in a layout. Instead they contain a set of pages,
 #     that get transfered to a new created Document during composition.
 #
-#	  from pagebot.publications import Magazine, Specimen
+#      from pagebot.publications import Magazine, Specimen
 #
 #     class FashionMagazine(Magazine):
 #         pass
 #
-#	  fm = FashionMagazine('myFile.md')
+#      fm = FashionMagazine('myFile.md')
 #     fm.export('MyMagazine.pdf')
 #
 #     class MyVariableSpecimen(Specimen):
-#		  pass
+#          pass
 #
 #     fm = FashionMagazine('myDataMarkDown.md')
 #     fm.export('MySpeciment.pdf')
@@ -35,6 +35,4 @@
 from pagebot.publications.books.basebook import BaseBook
 
 class Literature(BaseBook):
-	pass
-
-	
+    pass

@@ -59,7 +59,7 @@ class BezierPath:
             p[0], p[1]))
 
     def closePath(self):
-    	self.commands.append(self.b.closepath)
+        self.commands.append(self.b.closepath)
 
     def appendPath(self, path):
         self.commands += path.commands

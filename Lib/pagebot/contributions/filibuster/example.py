@@ -30,7 +30,7 @@ print(blurb.getBlurb('_headline'))
 
 # Show the list of all possible entries.
 if SHOW_ALL_TYPES:
-	names = blurb.getBlurbTypes()
-	print(', '.join(names))
+    names = blurb.getBlurbTypes()
+    print(', '.join(names))
 
 print('done')
