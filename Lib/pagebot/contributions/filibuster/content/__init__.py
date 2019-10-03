@@ -85,12 +85,12 @@ def index(tagname):
 
         # find the deepest submodule
         for modname in path[1:]:
-            try:
+            #try:
                 module = getattr(module, modname)
-            except Exception as e:
-                print('Could not import module at path, %s, mod %s, name %s' % (path, module, modname))
-                traceback.format_exc()
-                return
+            #except Exception as e:
+            #    print('Could not import module at path, %s, mod %s, name %s' % (path, module, modname))
+            #    traceback.format_exc()
+            #    return
 
         if hasattr(module, 'content'):
             c = module.content
