@@ -327,7 +327,7 @@ class PageMapView(BaseView):
         if fms is None:
             fms = self.css('viewFlowMarkerSize')
         if fmf is None:
-            fmf or self.css('viewFlowCurvatureFactor')
+            fmf = self.css('viewFlowCurvatureFactor')
 
         if stroke is None:
             if onText == 1:
