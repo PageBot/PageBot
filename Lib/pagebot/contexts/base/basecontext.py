@@ -83,11 +83,15 @@ class BaseContext(AbstractContext):
         return self._pages
     pages = property(_get_pages)
 
+    '''
+    Conflict with def language().
     def _get_language(self):
         return self._language
     def _set_language(self, language):
         self._language = language or DEFAULT_LANGUAGE
+
     language = property(_get_language, _set_language)
+    '''
 
     def _get_path(self):
         """Answers the open drawing self._path. Creates one if it does not

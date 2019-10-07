@@ -45,7 +45,8 @@ class Page(Element):
             cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
             viewPort=None, favIconUrl=None, fileName=None, url=None,
             webFontUrls=None, pn=None, **kwargs):
-        """Add specific parameters for a page, besides the parameters for standard Elements.
+        """Add specific parameters for a page, besides the parameters for
+        standard Elements.
 
         >>> page = Page(name='MyPage')
         >>> page.w, page.h
@@ -69,19 +70,23 @@ class Page(Element):
         self._isLeft = isLeft
         self._isRight = isRight
 
-        # Optional storage of page number in the page (normally this is owned
-        # by the containing document). It is used if the pagnumbering of the
-        # document with format (1, 0) is different from the pagnumber that
-        # needs to be shown in the page.
+        '''
+        Optional storage of page number in the page (normally this is owned
+        by the containing document). It is used if the pagnumbering of the
+        document with format (1, 0) is different from the pagnumber that
+        needs to be shown in the page.
+        '''
         self.pn = pn
 
         #   F I L E  S T U F F
 
-        # Used for links to home or current page url. Also used by
-        # Document.getPageTree() to answer the nexted dict/list for pages, so
-        # Navigation can build a tree of menu items. Url is a property to make
-        # sure that spaces are removed and all lower case.
-        # Property to make sure that the url is a default file.
+        '''
+        Used for links to home or current page url. Also used by
+        Document.getPageTree() to answer the nexted dict or list for pages, so
+        Navigation can build a tree of menu items. Url is a property to make
+        sure that spaces are removed and all lower case. Property to make sure
+        that the url is a default file.
+        '''
         self.url = url or self.INDEX_HTML_URL
         # Set property. If undefined, takes the file part of self.url
         self.name = name
@@ -95,10 +100,12 @@ class Page(Element):
         self.appleTouchIconUrl = None
         self.favIconUrl = favIconUrl or self.FAVICON_PATH
 
-        # Optional resources that can be included for web output (HtmlContext).
-        # Define string or file paths where to read content, instead of
-        # constructing by the builder.  See also self.htmlCode and
-        # self.htmlPath as defined for all Element classes.
+        '''
+        Optional resources that can be included for web output (HtmlContext).
+        Define string or file paths where to read content, instead of
+        constructing by the builder. See also self.htmlCode and self.htmlPath
+        as defined for all Element classes.
+        '''
 
         # Optional set to string that contains the page <head>...</head>,
         # including the tags.
@@ -438,13 +445,14 @@ class Page(Element):
         """Draws all elements of this page in DrawBot. Note that this method is
         only used in case pages are drawn as element on another page. In normal
         usage, pages get drawn by PageView.build"""
-        p = pointOffset(self.origin, origin) # Ignoe z-axis for now.
+        p = pointOffset(self.origin, origin) # Ignore z-axis for now.
 
         view.drawPageMetaInfo(self, p, background=True)
 
         # If there are child elements, draw them over the text.
         if drawElements:
-            self.buildChildElements(view, p, **kwargs) # Build child elements, depending in context build implementations.
+            # Build child elements, depending in context build implementations.
+            self.buildChildElements(view, p, **kwargs) 
 
         # Draw addition page info, such as crop-mark, registration crosses,
         # etc. if parameters are set.
@@ -486,9 +494,11 @@ class Page(Element):
         else:
             self.write_html(view, path)
 
-        if view.doExport: # View flag to avoid writing, in case of testing.
-            # Construct the file name for this page and save the file.
+        if view.doExport:
+            # View flag to avoid writing, in case of testing. Construct the
+            # file name for this page and save the file.
             url = self.url.lower()
+
             if not url.endswith('.html'):
                 url += '.html'
 
@@ -515,76 +525,11 @@ class Page(Element):
         self.write_head(view)
         self.write_body(view, path)
 
-    def write_body(self, view, path):
-        """
-        Build the page body. There are 3 option (all excluding the <body>...</body>)
-
-        1 As html string (self.bodyCode is defined as not None)
-        2 As path to a html file, containing the string between
-        <body>...</body>, including the tags
-        3 Constructed from view parameter context, page attributes and styles.
-        """
-        context = view.context
-        b = context.b
-
-        if self.bodyCode is not None:
-            b.addHtml(self.bodyCode)
-        elif self.bodyPath is not None:
-            b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
-        else:
-            b.body()
-
-            for e in self.elements:
-                e.build_html(view, path)
-
-            self.write_javascript(view)
-
-            # Close the page body
-            b._body()
-        b._html()
-
-    def write_javascript(self, view):
-        """
-        Build the JS body. There are 4 option (all not including the <script>...</script>)
-
-        1 As path a html file, containing the string between
-        <script>...</script>, including the tags.
-        2 Constructed from info context, page attributes and styles.
-        3 As accumulated inside builders (from b.getJs())
-        4 As html/javascript string (view.jsCode and/or self.jsCode are defined
-        as not None)
-        """
-        context = view.context
-        b = context.b
-
-        for jsUrls in (view.jsUrls, self.jsUrls):
-            if jsUrls is not None:
-                for jsUrl in jsUrls:
-                    b.script(type="text/javascript", src=jsUrl)
-
-        for jsPaths in (view.jsPaths, self.jsPaths):
-            if jsPaths:
-                for jsPath in jsPaths:
-                    b.script(type="text/javascript")
-                    b.addHtml(jsPath)
-                    b._script()
-
-        if b.hasJs():
-            b.script(type="text/javascript")
-            b.addHtml(b.getJs())
-            b._script()
-
-        for jsCode in (view.jsCode, self.jsCode):
-            if jsCode is not None:
-                b.script(type="text/javascript")
-                b.addHtml(jsCode)
-                b._script()
-
     def write_head(self, view):
-        """
-         Build the page head. There are 3 option (all including the <head>...</head>)
+        """Builds the page head. There are 3 option (all including the
+        <head>...</head>):
 
-         1 As html string (info.headHtml is defined as not None)
+         1 As HTML string (info.headHtml is defined as not None)
          2 As path a html file, containing the string between <head>...</head>.
          3 Constructed from info contect, page attributes and styles.
         """
@@ -692,6 +637,70 @@ class Page(Element):
             if self.keyWords:
                 b.meta(name='keywords', content=self.keyWords)
             b._head()
+    def write_body(self, view, path):
+        """
+        Build the page body. There are 3 option (all excluding the <body>...</body>)
+
+        1 As html string (self.bodyCode is defined as not None)
+        2 As path to a html file, containing the string between
+        <body>...</body>, including the tags
+        3 Constructed from view parameter context, page attributes and styles.
+        """
+        context = view.context
+        b = context.b
+
+        if self.bodyCode is not None:
+            b.addHtml(self.bodyCode)
+        elif self.bodyPath is not None:
+            b.importHtml(self.bodyPath) # Add HTML content of file, if path is not None and the file exists.
+        else:
+            b.body()
+
+            for e in self.elements:
+                e.build_html(view, path)
+
+            self.write_javascript(view)
+
+            # Close the page body
+            b._body()
+        b._html()
+
+    def write_javascript(self, view):
+        """Builds the JS body. There are 4 option (all not including the
+        <script>...</script>):
+
+        1 As path a HTML file, containing the string between
+        <script>...</script>, including the tags.
+        2 Constructed from info context, page attributes and styles.
+        3 As accumulated inside builders (from b.getJs())
+        4 As html/javascript string (view.jsCode and/or self.jsCode are defined
+        as not None)
+        """
+        context = view.context
+        b = context.b
+
+        for jsUrls in (view.jsUrls, self.jsUrls):
+            if jsUrls is not None:
+                for jsUrl in jsUrls:
+                    b.script(type="text/javascript", src=jsUrl)
+
+        for jsPaths in (view.jsPaths, self.jsPaths):
+            if jsPaths:
+                for jsPath in jsPaths:
+                    b.script(type="text/javascript")
+                    b.addHtml(jsPath)
+                    b._script()
+
+        if b.hasJs():
+            b.script(type="text/javascript")
+            b.addHtml(b.getJs())
+            b._script()
+
+        for jsCode in (view.jsCode, self.jsCode):
+            if jsCode is not None:
+                b.script(type="text/javascript")
+                b.addHtml(jsCode)
+                b._script()
 
 class Template(Page):
 

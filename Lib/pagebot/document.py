@@ -955,16 +955,6 @@ class Document:
             return pages[0]
         return None
 
-    def removePage(self, page):
-        """Remove the page from the document and return the object.
-
-        >>> from pagebot.constants import A5
-        >>> doc = Document(name='TestDoc', autoPages=5, size=A5)
-        >>> page = doc[3]
-        >>> page
-        <Page #3 default (148mm, 210mm)>
-        """
-
     def getPages(self, pn):
         """Answers all pages that share the same page number. Raise KeyError if
         none exist.

@@ -347,23 +347,6 @@ class Fit2HeightBleeds(Condition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.top2TopBleed() and e.fit2BottomBleed(), e, score)
 
-class Fit2TopBleed(Condition):
-    """From the current bottom position, until it fits the parent.top and overshooting bleed."""
-    def test(self, e):
-        return e.isTopOnTopBleed(self.tolerance)
-
-    def solve(self, e, score):
-        if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.fit2TopBleed(), e, score)
-
-class Fit2BottomBleed(Condition):
-    def test(self, e):
-        return e.isBottomOnBottomBleed(self.tolerance)
-
-    def solve(self, e, score):
-        if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.fit2BottomBleed(), e, score)
-
 #    S H R I N K
 
 #   By shrinking conditions, elements get smaller to match the size of their children.
