@@ -351,7 +351,7 @@ class AlternateGlyphFinder(LookupTraverser):
             # be the input for a substitution, resulting in more alts. We just go
             # on until nothing new is found.
             altGlyphs = self._findAlternateGlyphsNonIterating(glyphsToDo)
-            if not (altGlyphs - allAltGlyphs):
+            if not altGlyphs - allAltGlyphs:
                 break
             allAltGlyphs.update(altGlyphs)
             doneGlyphs.update(glyphsToDo)

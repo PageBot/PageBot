@@ -1005,9 +1005,9 @@ def bash(cmd, cwd=None):
     retVal = subprocess.Popen(cmd, shell=True, \
         stdout=subprocess.PIPE, cwd=cwd).stdout.read().strip('\n').split('\n')
     if retVal == ['']:
-        return(0)
+        return 0
     else:
-        return(retVal)
+        return retVal 
 
 # ----------------------------------------------------------------------------------------------------------
 # XML  transformers.
@@ -1211,7 +1211,7 @@ def value2Bool(v):
 
     """
     FALSEVALUES = ('', 0, '0', 'f', 'F', 'none', 'None', 'NONE', 'false', 'False', 'FALSE', 'n', 'N', 'no', 'No', 'NO', None, False)
-    if (isinstance(v, (tuple, list))):
+    if isinstance(v, (tuple, list)):
         for vv in v:
             if value2Bool(vv):
                 return True

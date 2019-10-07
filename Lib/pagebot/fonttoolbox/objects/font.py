@@ -547,7 +547,7 @@ class Font:
         if not isinstance(pattern, (list, tuple)):
             pattern = [pattern]
         for part in pattern:
-            if not (part in fontName):# or part in self.info.fullName):
+            if not part in fontName:# or part in self.info.fullName):
                 return 0
         return 1.0
 
@@ -668,7 +668,7 @@ class Font:
         """
         if self.info.italicAngle:
             return 1
-        for altName in FONT_ITALIC_MATCHES.keys():
+        for altName in FONT_ITALIC_MATCHES:
             if altName in path2FontName(self.path) or altName in self.info.styleName:
                 return 1.0
         return 0

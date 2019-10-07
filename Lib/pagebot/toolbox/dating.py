@@ -1285,7 +1285,7 @@ class Dating:
     calendarYear = property(_get_calendarYear)
 
     def nextDayNamed(self, weekDay):
-        if not (0 <= weekDay <= 7):
+        if not 0 <= weekDay <= 7:
             raise ValueError('[%s.nextDayNamed] weekDay "%s" must be in range (0, 8)' % (self.__class__.__name__, weekDay))
         nextDay = self + Duration(days=1)
         for n in range(1, 8):

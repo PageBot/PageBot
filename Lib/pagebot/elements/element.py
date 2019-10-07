@@ -1502,7 +1502,7 @@ class Element:
         (Color(r=0.1, g=0.2, b=0.3), 12pt, 1.4em, 'left')
         """
         flattenedStyle = {} # Create a dict with all keys from root style and values from self.css()
-        for key in getRootStyle().keys():
+        for key in getRootStyle():
             flattenedStyle[key] = self.css(key)
         return flattenedStyle
 

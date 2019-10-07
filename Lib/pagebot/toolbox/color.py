@@ -631,7 +631,7 @@ class Color:
         """
         if not isinstance(c, self.__class__):
             return True
-        return not (self == c)
+        return not self == c
 
     def __repr__(self):
         if self._name is not None:
@@ -853,7 +853,7 @@ class Color:
         if not None in rgb:
             return rgb2Spot(rgb)
         cmyk = self.cmyk
-        if not None in (cmyk):
+        if not None in cmyk:
             return cmyk2Spot(cmyk)
         return 0 # If all fails, answer black
     def _set_spot(self, spot):
@@ -880,7 +880,7 @@ class Color:
         if not None in rgb:
             return rgb2RalName(rgb)[0]
         cmyk = self.cmyk
-        if not None in (cmyk):
+        if not None in cmyk:
             return rgb2RalName(cmyk2Rgb(cmyk))[0]
         return  # If all fails, answer black
     def _set_ral(self, ral):
