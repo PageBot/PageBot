@@ -37,7 +37,8 @@ class Article:
 
     """
 
-    def __init__(self, doc, artDirection, path=None, mdText=None, startPage=1, name=None, **kwargs):
+    def __init__(self, doc, artDirection, path=None, mdText=None, startPage=1,
+            name=None, **kwargs):
         """Initialize the Article instance, using the initialized Document instance.
 
         >>> from pagebot.document import Document

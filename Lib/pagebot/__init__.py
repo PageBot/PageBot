@@ -70,13 +70,13 @@ def getContext(contextType='DrawBot'):
     from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
-def getContexts(contextTypes):
+def getContexts(types):
     """Returns multiple contexts, contextTypes should be specified as a
     list."""
     from pagebot.contexts import getContext as getPlatformContext
     contexts = []
 
-    for contextType in contextTypes:
+    for contextType in types:
         context = getPlatformContext(contextType=contextType)
         contexts.append(context)
 
