@@ -16,11 +16,11 @@
 #     Read markdown files from path or url and answer the etree.
 #
 import codecs
-from pagebot.readers.xmlreader import readXML
 
 try:
     import markdown
     from markdown.extensions.nl2br import Nl2BrExtension
+    from pagebot.readers.xmlreader import readXML
     from pagebot.contributions.markdown.literature import LiteratureExtension
     from pagebot.contributions.markdown.footnotes import FootnoteExtension
 except ImportError:

@@ -513,13 +513,18 @@ class PageView(BaseView):
         """For debugging this will make the elements show their info. The css
         flag "showOrigin" defines if the origin marker of an element is
         drawn. Collect the (e, origin), so we can later draw all info, after
-        the main drawing has been done."""
-        return # @@@@@@@
+        the main drawing has been done.
+        
+        TODO: finish and test.
+        """
+        '''
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
         # Supposedly drawing outside rotation/scaling mode, so the origin of
         # the element is visible.
         self.drawElementOrigin(e, origin)
+        '''
+        pass
 
     def _drawElementsNeedingInfo(self, e):
         b = self.b

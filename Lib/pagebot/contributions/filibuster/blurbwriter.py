@@ -243,7 +243,7 @@ class BlurbWriter:
             tag = m.group('tagname')
             if not tag:
                 raise 'Error in blurb code' # Better make it crash to show the error
-                return 0, '__empty tag__'
+                #return 0, '__empty tag__'
             try:
                 result = eval(tag)
             except:
@@ -313,7 +313,7 @@ class BlurbWriter:
             tag = text[start:stop]
             if not tag:
                 raise 'Blurbwriter.replacetag: Error in blurb code' # Better make it crash to show the error
-                return 0, '__empty tag__'
+                #return 0, '__empty tag__'
 
             # do the meta-recursive tag-tagging thing here
             metatext = text
