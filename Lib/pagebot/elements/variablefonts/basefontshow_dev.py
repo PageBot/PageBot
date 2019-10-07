@@ -122,7 +122,7 @@ class BaseFontShow(Element):
         if labelSize is not None and label is None:
             label = '%s %s/%s\n\n' % (vf.info.familyName, 
                 asFormatted(fontSize), 
-                asFormatted(self.css('leading', 0), format='%0.1f'))
+                asFormatted(self.css('leading', 0), hasFormat='%0.1f'))
         bs = c.newString(label or '', style=style) # Create BabelString/FormattedString if content.
  
         if s1: # In case s1 lead is defined, then use that for the bold version of self.f
