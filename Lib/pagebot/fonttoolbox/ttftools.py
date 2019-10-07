@@ -967,7 +967,7 @@ if __name__ == "__main__":
             #otlTools.findAlternateGlyphs(font["GSUB"], [glyphNameToDelete])
             subsetFont(font, [glyphNameToDelete])
             # force post table to vers. 2 to keep glyph names for easier debugging
-            font["post"].formatType == 2.0
+            font["post"].formatType = 2.0
             font["post"].extraNames = []
             font["post"].mapping = {}
         if False:

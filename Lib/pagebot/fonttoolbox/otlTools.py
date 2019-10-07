@@ -1137,7 +1137,6 @@ def _printPairPosFormat2Matrix(subTable):
                 print("(%4d,%4d)" % (cls2.Value1.XAdvance, cls2.Value1.XPlacement))
             else:
                 raise NotImplementedError
-        print
 
 def _calcClassDefDeletionAndRemap(before, after):
     """
@@ -1538,7 +1537,6 @@ if __name__ == "__main__":
                 'ChainContextSubstFormat1', 'ChainContextSubstFormat2',
                 'ChainContextSubstFormat3', 'ExtensionSubstFormat1',
                 'ReverseChainSingleSubstFormat1']
-        print
         unsupported = 0
         supported = 0
 

@@ -148,8 +148,6 @@ class FlatContext(BaseContext):
         >>> p2 
         (14.0, 582.0)
         """
-        """
-        """
         z = 0
         p0 = (x, y, z)
         p1 = self.transform3D.transformPoint(p0)

@@ -215,7 +215,8 @@ class TextBox(Element):
 
     def _get_baselines(self):
         if self._baselines is None:
-            self.textLines # Initialize both self._textLines and self._baselines
+            #self.textLines # Initialize both self._textLines and self._baselines
+            self._get_textLines()
         return self._baselines
     baselines = property(_get_baselines)
 

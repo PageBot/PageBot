@@ -1222,8 +1222,9 @@ class Pt(Unit):
 #   P(ica)
 
 def p(v, *args, **kwargs):
-    """Create a new instance of P, using v as source value. In case v is already
-    a Unit instance, then convert to that P needs, through the amount of points.
+    """Create a new instance of P, using v as source value. In case v is
+    already a Unit instance, then convert to that P needs, through the amount
+    of points.
 
     >>> p(20)
     20p
