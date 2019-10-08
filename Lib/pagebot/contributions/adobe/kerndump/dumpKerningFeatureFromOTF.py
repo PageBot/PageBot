@@ -73,7 +73,6 @@ def buildOutputList(sourceList, outputList, headlineString):
 
 def makeKernFeature(fontPath):
     # Where is ReadKerning()?
-    pass
     '''
     f = ReadKerning(fontPath)
     allClasses = {}

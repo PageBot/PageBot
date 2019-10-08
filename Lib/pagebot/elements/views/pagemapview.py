@@ -891,7 +891,6 @@ class PageMapView(BaseView):
 
     def build_html(self, view, origin, **kwargs):
         """HTML page view to be implemented. Ignore for now."""
-        pass
 
 if __name__ == "__main__":
     import sys

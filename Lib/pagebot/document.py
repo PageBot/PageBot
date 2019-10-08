@@ -169,7 +169,6 @@ class Document:
         """Default implementation of publication initialized. Can be redefined
         by inheriting classed. All **kwargs are available to allow access for
         inheriting Publication documents."""
-        pass
 
     def _get_docLib(self):
         """Answers the global storage dictionary, used by TypeSetter and others

@@ -47,13 +47,11 @@ class HtmlContext(BaseContext):
     def newDocument(self, w=None, h=None, doc=None):
         """PageBot function. Ignore for now in HTMLContext.
         The @doc is the optional Document instance of the caller."""
-        pass
 
     def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
         Ignore for now in HtmlContect.
         """
-        pass
 
     def endDrawing(self):
         pass

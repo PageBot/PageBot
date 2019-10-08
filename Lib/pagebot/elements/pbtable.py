@@ -31,7 +31,6 @@ class Row(Element):
 class Header(Row):
     """The Table header is a special kind of row. The header holds the titles
     of the columns and is reference for their widthts."""
-    pass
 
 class Cell(TextBox):
     def __init__(self, fs, minW=None, w=None, h=None, colSpan=1, rowSpan=1, **kwargs):
@@ -45,7 +44,6 @@ class HeaderCell(Cell):
 class EmptyCell(Element):
     """Placeholder cell to make index of columns match up if there are empty
     areas, such as colspan and rowspan."""
-    pass
 
 class Table(Element):
 

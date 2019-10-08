@@ -267,7 +267,6 @@ class FlatContext(BaseContext):
         # FIXME: needs a width and height, so different from DrawBot?
         #context = FlatContext()
         #context.newDrawing(w, h)
-        pass
 
     #   S T A T E
 
@@ -777,11 +776,9 @@ class FlatContext(BaseContext):
     def setShadow(self, eShadow):
         """Sets the DrawBot graphics state for shadow if all parameters are
         set."""
-        pass # Not implemented?
 
     def setGradient(self, gradient, origin, w, h):
         wpt, hpt = upt(w, h)
-        pass # Not implemented?
 
     def lineDash(self, *lineDash):
         pass # Not implemented?
@@ -844,7 +841,6 @@ class FlatContext(BaseContext):
         """
         NOTE: not used, implemented as a transform3D object for now.
         """
-        pass
 
     def translate(self, dx, dy):
         """Translates the origin by (dx, dy).

@@ -225,6 +225,7 @@ class FootnotePreprocessor(Preprocessor):
             match = TABBED_RE.match(line)
             if match:
                 return match.group(4)
+            return False
 
         for line in lines:
             if line.strip():  # Non-blank line

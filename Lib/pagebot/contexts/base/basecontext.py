@@ -117,11 +117,9 @@ class BaseContext(AbstractContext):
 
     def newDocument(self, w=None, h=None, doc=None):
         """PageBot function."""
-        pass
 
     def saveDocument(self, path, multiPage=None):
         """PageBot function."""
-        pass
 
     def newDrawing(self, doc=None):
         """Clear output canvas, start new export file. DrawBot function.
@@ -1074,7 +1072,6 @@ class BaseContext(AbstractContext):
         """Offers interactive global value manipulation in DrawBot. Can be
         ignored in most contexts except DrawBot for now.
         """
-        pass
 
     # Glyphs.
 

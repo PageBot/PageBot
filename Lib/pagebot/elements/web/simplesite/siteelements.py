@@ -95,7 +95,6 @@ class Navigation(SiteColumn):
   
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
-        pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
@@ -114,7 +113,6 @@ class TopMenu(SiteColumn):
 
     def build(self, view, path):
         """Navigation is only supposed to show in interactive web-context."""
-        pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()
@@ -135,7 +133,6 @@ class Menu(SiteColumn):
 
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
-        pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
@@ -164,7 +161,6 @@ class MenuItem(SiteColumn):
 
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
-        pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         """
@@ -210,6 +206,7 @@ class Logo(SiteColumn):
         b.comment('End %s' % cssId)
 
 class Introduction(SiteColumn):
+
     def build(self, view, path, **kwargs):
         pass
 
@@ -217,6 +214,7 @@ class Introduction(SiteColumn):
         pass
 
 class SlideShow(SiteColumn):
+
     def newSlide(self):
         return newColumn(parent=self)
 
@@ -361,7 +359,6 @@ class Footer(SiteColumn):
 
     def build(self, view, path, **kwargs):
         """Footer is only supposed to show in interactive web-context."""
-        pass
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         cssId = self.getCssId()

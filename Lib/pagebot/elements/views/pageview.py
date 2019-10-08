@@ -524,7 +524,6 @@ class PageView(BaseView):
         # the element is visible.
         self.drawElementOrigin(e, origin)
         '''
-        pass
 
     def _drawElementsNeedingInfo(self, e):
         b = self.b
@@ -1077,7 +1076,6 @@ class PageView(BaseView):
 
     def build_html(self, view, origin, **kwargs):
         """HTML page view to be implemented. Ignore for now."""
-        pass
 
 if __name__ == "__main__":
     import sys

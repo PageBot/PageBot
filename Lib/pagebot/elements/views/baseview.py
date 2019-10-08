@@ -52,4 +52,3 @@ class BaseView(Element):
 
     def setControls(self):
         """Inheriting views can redefine to alter the default showing of parameters."""
-        pass

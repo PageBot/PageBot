@@ -210,13 +210,9 @@ class LiteraturePreprocessor(Preprocessor):
 
     def detectTabbed(self, lines):
         """ Find indented text and remove indent before further proccesing.
-
         Keyword arguments:
-
         * lines: an array of strings
-
         Returns: a list of post processed items and the index of last line.
-
         """
         items = []
         blank_line = False  # have we encountered a blank line yet?
@@ -226,6 +222,8 @@ class LiteraturePreprocessor(Preprocessor):
             match = TABBED_RE.match(line)
             if match:
                 return match.group(4)
+
+            return False
 
         for line in lines:
             if line.strip():  # Non-blank line
@@ -264,7 +262,6 @@ class LiteraturePreprocessor(Preprocessor):
             i += 1
 
         return items, i
-
 
 class LiteraturePattern(Pattern):
     """ InlinePattern for literature markers in a document's body text. """

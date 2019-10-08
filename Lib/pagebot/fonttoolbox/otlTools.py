@@ -381,7 +381,6 @@ class AlternateGlyphFinder(LookupTraverser):
     def findAlternateGlyphs_LigatureSubstFormat1(self, subTable, glyphNames):
         alts = []
         for initialGlyph, ligatures in subTable.ligatures.items():
-            #print(initialGlyph)
             for lig in ligatures:
                 if initialGlyph in glyphNames or glyphNames & set(lig.Component):
                     alts.append(lig.LigGlyph)
@@ -389,11 +388,14 @@ class AlternateGlyphFinder(LookupTraverser):
 
     def findAlternateGlyphs_MultipleSubstFormat1(self, subTable, glyphNames):
         selectedGlyphs = glyphNames & set(subTable.mapping)
-        if not selectedGlyphs:
-            return
         alts = set()
+
+        if not selectedGlyphs:
+            return alts
+
         for glyphName in selectedGlyphs:
             alts.update(subTable.mapping[glyphName])
+
         return alts
 
     def findAlternateGlyphs_SingleSubstFormat1(self, subTable, glyphNames):
@@ -462,7 +464,7 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
 
     def findAlternateGlyphsAndFeatures_AlternateSubstFormat1(self, subTable, subTableToFeatureTagMapping):
         if self.onlyDirectSingleSubst:
-            return
+            return []
         featureTags = subTableToFeatureTagMapping[subTable]
         mapping = {}
         for inputGlyph in subTable.alternates:
@@ -481,10 +483,12 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
         return
 
     def findAlternateGlyphsAndFeatures_LigatureSubstFormat1(self, subTable, subTableToFeatureTagMapping):
-        if self.onlyDirectSingleSubst:
-            return
         featureTags = subTableToFeatureTagMapping[subTable]
         result = []
+
+        if self.onlyDirectSingleSubst:
+            return result
+
         for initialGlyph, ligatures in subTable.ligatures.items():
             mapping = {initialGlyph: []}
             for lig in ligatures:
@@ -498,7 +502,7 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
 
     def findAlternateGlyphsAndFeatures_MultipleSubstFormat1(self, subTable, subTableToFeatureTagMapping):
         if self.onlyDirectSingleSubst:
-            return
+            return []
         featureTags = subTableToFeatureTagMapping[subTable]
         mapping = {}
         for inputGlyph in subTable.mapping:
@@ -509,7 +513,7 @@ class AlternateGlyphAndFeatureFinder(LookupTraverser):
 
     def findAlternateGlyphsAndFeatures_SingleSubstFormat1(self, subTable, subTableToFeatureTagMapping):
         if self.onlyDirectSingleSubst and subTable not in subTableToFeatureTagMapping:
-            return
+            return []
         featureTags = subTableToFeatureTagMapping[subTable]
         mapping = {}
         for inputGlyph in subTable.mapping:
@@ -554,7 +558,8 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
         # no nested lookups here
         return
 
-    def _findNestedLookups_contextFormat2Helper(self, subTable, remap, classSetName, classRuleName, lookupRecordName):
+    def _findNestedLookups_contextFormat2Helper(self, subTable, remap,
+            classSetName, classRuleName, lookupRecordName):
         if remap is None:
             lookupIndices = []
         classSets = getattr(subTable, classSetName)
@@ -593,6 +598,8 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
             # this lookup is dead, return it so it can be marked as such
             return [subTable]
 
+        return []
+
     def _findNestedLookups_contextFormat3Helper(self, subTable, remap, lookupRecordName):
         if remap is None:
             lookupIndices = []
@@ -600,7 +607,7 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
         lookupRecord = getattr(subTable, lookupRecordName)
         if not lookupRecord:
             # it's empty on purpose, better not delete the lookup
-            return
+            return []
         for lrIndex, lr in enumerate(lookupRecord):
             if remap is None:
                 lookupIndices.append((subTable, lr.LookupListIndex))
@@ -616,6 +623,8 @@ class NestedLookupFinderAndRemapper(LookupTraverser):
         if not lookupRecord:
             # this lookup is dead, return it so it can be marked as such
             return [subTable]
+
+        return []
 
     def findNestedLookups_ContextPosFormat2(self, subTable, remap):
         return self._findNestedLookups_contextFormat2Helper(subTable, remap, "PosClassSet", "PosClassRule", "PosLookupRecord")
@@ -694,6 +703,8 @@ class GlyphDeleter(LookupTraverser):
         if not subTable.Coverage.glyphs:
             return [subTable]  # this lookup subtable is dead
 
+        return []
+
     def deleteGlyphs_PairPosFormat2(self, subTable, glyphNames):
         # 1. delete the glyphs from the Coverage
         cov = subTable.Coverage
@@ -716,12 +727,13 @@ class GlyphDeleter(LookupTraverser):
 
         if classes1before == classes1after and classes2before == classes2after:
             # the PairPos matrix stays intact, nothing left to do
-            return
+            return []
 
         #_printPairPosFormat2Matrix(subTable)
 
-        # 5. some classes are no longer used, create a list of indices to delete
-        # (in reverse order) and create a mapping table for old -> new class numbers
+        # 5. some classes are no longer used, create a list of indices to
+        # delete (in reverse order) and create a mapping table for old -> new
+        # class numbers
         classes1delete, classes1remap = _calcClassDefDeletionAndRemap(classes1before, classes1after)
         classes2delete, classes2remap = _calcClassDefDeletionAndRemap(classes2before, classes2after)
 
@@ -737,15 +749,17 @@ class GlyphDeleter(LookupTraverser):
         _remapClassDefs(subTable.ClassDef1, classes1remap)
         _remapClassDefs(subTable.ClassDef2, classes2remap)
 
-        #print("classes1delete:", classes1delete, "classes2delete:", classes2delete)
         #_printPairPosFormat2Matrix(subTable)
 
-        # 8.
-        # lookup is dead when any of Coverage, ClassDef1, ClassDef2, Class1Record or cls1.Class2Record becomes empty
+        # 8. lookup is dead when any of Coverage, ClassDef1, ClassDef2,
+        # Class1Record or cls1.Class2Record becomes empty
         if (not subTable.Coverage or not subTable.ClassDef1.classDefs or not subTable.ClassDef2.classDefs):
-            # no need to test for Class1Record or cls1.Class2Record, as their emptiness is implied by that
+            # no need to test for Class1Record or cls1.Class2Record, as their
+            # emptiness is implied by that
             # of the ClassDefs
             return [subTable]  # this lookup subtable is dead
+
+        return []
 
     def deleteGlyphs_MarkBasePosFormat1(self, subTable, glyphNames):
         assert len(subTable.BaseCoverage.glyphs) == len(subTable.BaseArray.BaseRecord)
@@ -770,6 +784,7 @@ class GlyphDeleter(LookupTraverser):
         assert len(subTable.MarkCoverage.glyphs) == len(subTable.MarkArray.MarkRecord)
         if not subTable.BaseCoverage.glyphs or not subTable.MarkCoverage.glyphs:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     def deleteGlyphs_MarkMarkPosFormat1(self, subTable, glyphNames):
         assert len(subTable.Mark1Coverage.glyphs) == len(subTable.Mark1Array.MarkRecord)
@@ -794,6 +809,7 @@ class GlyphDeleter(LookupTraverser):
         assert len(subTable.Mark2Coverage.glyphs) == len(subTable.Mark2Array.Mark2Record)
         if not subTable.Mark1Coverage.glyphs or not subTable.Mark2Coverage.glyphs:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     def deleteGlyphs_ChainContextPosFormat2(self, subTable, glyphNames):
         return self._deleteGlyphs_chainContextPosFormat2Helper(subTable, glyphNames, "ChainPosClassSet", "ChainPosClassRule")
@@ -825,7 +841,7 @@ class GlyphDeleter(LookupTraverser):
         if (btClassesBefore == btClassesAfter and inClassesBefore == inClassesAfter
                 and laClassesBefore == laClassesAfter):
             # the sets of used classes were unaffected by the glyph deletion: we're done.
-            return
+            return []
 
         # find which classes need to be deleted and which need their indices to be remapped
         btClassesDelete, btClassesRemap = _calcClassDefDeletionAndRemap(btClassesBefore, btClassesAfter)
@@ -873,6 +889,8 @@ class GlyphDeleter(LookupTraverser):
         else:
             return [subTable]  # this lookup subtable is dead
 
+        return []
+
     def _deleteGlyphs_contextFormat2Helper(self, subTable, glyphNames, classSetName, classRuleName):
         # delete glyphs from Coverage
         cov = subTable.Coverage
@@ -892,7 +910,7 @@ class GlyphDeleter(LookupTraverser):
         classesAfter = set(subTable.ClassDef.classDefs.values())
         if classesBefore == classesAfter:
             # the set of used classes was unaffected by the glyph deletion: we're done.
-            return
+            return []
 
         # find which classes need to be deleted and which need their indices to be remapped
         classesDelete, classesRemap = _calcClassDefDeletionAndRemap(classesBefore, classesAfter)
@@ -949,12 +967,14 @@ class GlyphDeleter(LookupTraverser):
                     subTableIsDead = True
         if subTableIsDead:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     def deleteGlyphs_SinglePosFormat1(self, subTable, glyphNames):
         cov = subTable.Coverage
         cov.glyphs = [gn for gn in cov.glyphs if gn not in glyphNames]
         if not cov.glyphs:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     def deleteGlyphs_SinglePosFormat2(self, subTable, glyphNames):
         cov = subTable.Coverage
@@ -964,6 +984,7 @@ class GlyphDeleter(LookupTraverser):
             del subTable.Value[index]
         if not cov.glyphs:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     def deleteGlyphs_MarkLigPosFormat1(self, subTable, glyphNames):
         assert len(subTable.MarkCoverage.glyphs) == len(subTable.MarkArray.MarkRecord)
@@ -986,6 +1007,7 @@ class GlyphDeleter(LookupTraverser):
         # if either coverage array is empty, we can delete the entire lookup
         if not subTable.MarkCoverage.glyphs or not subTable.LigatureCoverage.glyphs:
             return [subTable]  # this lookup subtable is dead
+        return []
 
     #
     # GSUB
@@ -1000,6 +1022,8 @@ class GlyphDeleter(LookupTraverser):
                 del subTable.mapping[minput]
         if not subTable.mapping:
             return [subTable]  # this lookup subtable is dead
+
+        return []
 
     deleteGlyphs_SingleSubstFormat2 = deleteGlyphs_SingleSubstFormat1
 
@@ -1019,6 +1043,8 @@ class GlyphDeleter(LookupTraverser):
         if not subTable.ligatures:
             return [subTable]  # this lookup subtable is dead
 
+        return []
+
     def deleteGlyphs_ContextSubstFormat2(self, subTable, glyphNames):
         return self._deleteGlyphs_contextFormat2Helper(subTable, glyphNames, "SubClassSet", "SubClassRule")
 
@@ -1033,6 +1059,8 @@ class GlyphDeleter(LookupTraverser):
                         break
         if not subTable.mapping:
             return [subTable]  # this lookup subtable is dead
+
+        return []
 
     def deleteGlyphs_ChainContextSubstFormat2(self, subTable, glyphNames):
         return self._deleteGlyphs_chainContextPosFormat2Helper(subTable, glyphNames, "ChainSubClassSet", "ChainSubClassRule")
@@ -1050,6 +1078,8 @@ class GlyphDeleter(LookupTraverser):
                     del subTable.alternates[aInput]
         if not subTable.alternates:
             return [subTable]  # this lookup subtable is dead
+
+        return []
 
 class GposScaler(LookupTraverser):
 
@@ -1260,7 +1290,6 @@ class ObjectIdSet:
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, list(self._objects.values()))
 
-
 def _remapAndDeleteIndices(indices, remap):
     """
         >>> _remapAndDeleteIndices(range(6), {})
@@ -1273,7 +1302,6 @@ def _remapAndDeleteIndices(indices, remap):
         [4, 1, 2, 2, 1, 3, 3, 0]
     """
     return [remap[i] for i in indices if i in remap]
-
 
 def _pruneLookups(table, deadLookups):
     """Go through the lookup list and remove the lookups that are in the
@@ -1304,13 +1332,11 @@ def _pruneLookups(table, deadLookups):
     lookupRemap = dict(zip(indicesBefore, indicesAfter))
     return lookupRemap
 
-
 def _remapNestedLookups(table, lookupRemap):
     """Go through all the lookups and remap the references (indices) to other
     lookups."""
     lf = NestedLookupFinderAndRemapper(table)
     return lf.remapNestedLookups(lookupRemap)
-
 
 def _remapLookupsAndPruneFeatures(table, lookupRemap):
     """Go through the feature list and remap or remove lookup indices. If a feature
@@ -1334,28 +1360,32 @@ def _remapLookupsAndPruneFeatures(table, lookupRemap):
     featureRemap = dict(zip(indicesBefore, indicesAfter))
     return featureRemap
 
-
 def _remapFeaturesAndPruneScripts(table, featureRemap):
     """Go through the scripts list, and remap or delete feature indices. If a
     script becomes empty, delete it."""
     scriptsToDelete = []
+
     for scriptIndex, script in enumerate(table.ScriptList.ScriptRecord):
         defaultLangSys = script.Script.DefaultLangSys
         _remapLangSys(defaultLangSys, featureRemap)
         langSysRecordsToDelete = []
+
         for langSysRecordIndex, langSysRec in enumerate(script.Script.LangSysRecord):
             langSys = langSysRec.LangSys
             _remapLangSys(langSys, featureRemap)
             if not langSys.FeatureIndex and langSys.ReqFeatureIndex == 0xffff:
                 langSysRecordsToDelete.append(langSysRecordIndex)
+
         for langSysRecordIndex in reversed(langSysRecordsToDelete):
             del script.Script.LangSysRecord[langSysRecordIndex]
+
         if not script.Script.LangSysRecord and defaultLangSys.ReqFeatureIndex == 0xffff and not defaultLangSys.FeatureIndex:
             scriptsToDelete.append(scriptIndex)
+
     for scriptIndex in reversed(scriptsToDelete):
         del table.ScriptList.ScriptRecord[scriptIndex]
-    return scriptsToDelete
 
+    return scriptsToDelete
 
 def remapLookups(table, lookupRemap):
     deadLookups = _remapNestedLookups(table, lookupRemap)
@@ -1363,11 +1393,9 @@ def remapLookups(table, lookupRemap):
     featureRemap = _remapLookupsAndPruneFeatures(table, lookupRemap)
     assert not [k for k in featureRemap if featureRemap[k] != k]  # assert 1-1 mapping
 
-
 def remapFeatures(table, featureRemap):
     deletedScripts = _remapFeaturesAndPruneScripts(table, featureRemap)
     assert not deletedScripts
-
 
 # Helpers for mergeFeatures()
 
@@ -1376,10 +1404,13 @@ def _findScript(table, scriptTag):
         if script.ScriptTag == scriptTag:
             return script
 
+    return None
+
 def _findLanguage(langSysRecords, langSysTag):
     for rec in langSysRecords:
         if rec.LangSysTag == langSysTag:
             return rec
+    return None
 
 def _mergeLangSys(langSys1, langSys2, scriptTag, langSysTag):
     if (langSys1.ReqFeatureIndex != 0xffff and langSys2.ReqFeatureIndex != 0xffff

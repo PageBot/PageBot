@@ -882,7 +882,8 @@ class Color:
         cmyk = self.cmyk
         if not None in cmyk:
             return rgb2RalName(cmyk2Rgb(cmyk))[0]
-        return  # If all fails, answer black
+        return  blackColor # If all fails, answer black
+
     def _set_ral(self, ral):
         self._ral = ral # Keep ral color (number or name) as base
         self.r = self.g = self.b = self.c = self.m = self.y = self.k = self._spot = None

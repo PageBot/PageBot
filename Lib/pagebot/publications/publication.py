@@ -68,7 +68,6 @@ class Publication(Element):
     def produce(self, viewId=None, **kwargs):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting publication classes."""
-        pass
 
     def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None,
             makeCurrent=True, padding=None, theme=None, gw=None, gh=None,

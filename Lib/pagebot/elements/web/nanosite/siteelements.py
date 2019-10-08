@@ -191,7 +191,6 @@ class Navigation(NanoElement):
   
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
-        pass
 
     def _buildMenuNode_html(self, b, pageTree, navIndex=0):
         for node in pageTree.children:
@@ -410,7 +409,6 @@ class Mains(NanoElement):
     """Grouping Main elements together, so CSS grid can define the
     behavior of multiple, occupying a single main grid slot.
     """
-    pass
 
 class Main(NanoElement):
     pass
@@ -419,7 +417,6 @@ class Sides(NanoElement):
     """Grouping Side elements together, so CSS grid can define the
     behavior of multiple, occupying a single side grid slot.
     """
-    pass
 
 class Side(NanoElement):
     pass

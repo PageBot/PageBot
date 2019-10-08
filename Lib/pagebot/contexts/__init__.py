@@ -14,10 +14,11 @@
 #     __init__.py
 #
 
+from sys import platform
+
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None
 MAMP_PATH = None
-from sys import platform
 
 def getContext(contextType='DrawBot'):
     """Determines which context is used:

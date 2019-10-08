@@ -890,7 +890,6 @@ class Element:
     def clear(self):
         """Make inheriting classes define a method to clear their content if
         appropriate. Default behavior of Element is to do nothing."""
-        pass
 
     def copy(self, parent=None):
         """Answers a full copy of self, where the "unique" fields are set to
@@ -4701,7 +4700,6 @@ class Element:
         """Spellcheck the words of self. Default behavior is to do nothing.
         Inheriting classes can redefined this method.
         """
-        pass
 
     def spellCheck(self, languages=None, unknown=None, minLength=3):
         """Recursively spellcheck all child elements for the given languages. Answer a list with
@@ -6748,6 +6746,7 @@ class Element:
         if self.parent is None:
             return False
         self.middle = self.parent.h/2
+        return True
 
 
     def top2Middle(self):
