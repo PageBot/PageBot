@@ -202,6 +202,76 @@ class Mood:
         """
         return self.styles.get(tag)
 
+def MAKE_FONT_SIZES(fs):
+    return dict(
+        # fontSize, leading, tracking
+        body=pt(fs, fs*1.4, fs*0.02),
+        h5=pt(fs, fs*1.4, fs*0.02),
+        h4=pt(fs+4, (fs+4)*1.3, (fs+4)*0.02),
+        h3=pt(fs+8, (fs+8)*1.2, 0),
+        h2=pt(fs+16, (fs+16)*1.1, 0),
+        h1=pt(fs+32, fs+32, 0),
+        logo=pt(fs+32, fs+32, 0),
+        caption=pt(fs*0.8, fs*0.8*1.1, fs*0.02),
+    )
+
+FONT_SIZES = MAKE_FONT_SIZES(DEFAULT_FONT_SIZE)
+
+def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
+    # Add typographic styles to the standards for this class.
+    if tag in fontSizes:
+        fontSize, leading, tracking = fontSizes[tag]
+    else: # If unknown tag, then take body values.
+        fontSize, leading, tracking = fontSizes['body']
+    padding = pt(12) # Must be pt, to convert automatic in CSS, for now.
+    margin = 0
+    return dict(
+        font=DEFAULT_FONT_NAME,
+        fontSize=fontSize,
+        tracking=tracking,
+        leading=leading,
+        pt=padding, pr=padding, pb=padding, pl=padding,
+        mt=margin, mr=margin, mb=margin, ml=margin,
+        strokeWidth=pt(0),
+        xAlign=LEFT,
+    )
+
+def DEFAULT_H_COLORS_NORMAL(c):
+    """Make new dictionary, in case the caller wants to change value."""
+    return dict(
+        textFill='darkest%d'%c, fill='white',
+        textFillDiap='lightest%d'%c, fillDiap='black',
+        textLink='darker%d'%c, textHover='dark%d'%c,
+        textLinkDiap='lightest%d'%c, textHoverDiap='lighter%d'%c)
+
+def DEFAULT_MENU_COLORS_NORMAL(c):
+    """Make new dictionary, in case the caller wants to change value."""
+    return dict(
+        textFill='darkest%d'%c, fill='lightest%d'%c,
+        textFillDiap='lightest%d'%c, fillDiap='dark%d'%c,
+        textLink='darkest%d'%c, textHover='dark%d'%c, fillHover='lightest%d'%c,
+        textLinkDiap='lightest%d'%c, textHoverDiap='lighter%d'%c,
+        textSublink='darker%d'%c, textSubhover='dark%d'%c,
+        textSublinkDiap='lightest%d'%c, textSubhoverDiap='lighter%d'%c)
+
+def DEFAULT_H_COLORS_DARK(c):
+    """Make new dictionary, in case the caller wants to change value."""
+    return dict(
+        textFill='lightest%d'%c, fill='black',
+        textFillDiap='darkest%d'%c, fillDiap='white',
+        textLink='lighter%d'%c, textHover='light%d'%c,
+        textLinkDiap='darkest%d'%c, textHoverDiap='dark%d'%c)
+
+def DEFAULT_MENU_DARK(c):
+    """Make new dictionary, in case the caller wants to change value."""
+    return dict(
+        textFill='lightest%d'%c, fill='black',
+        textFillDiap='darkest%d'%c, fillDiap='white',
+        textLink='lightest%d'%c, textHover='lighter%d'%c, fillHover='darkest%d'%c,
+        textLinkDiap='darkest%d'%c, textHoverDiap='dark%d'%c,
+        textSublink='lighter%d'%c, textSubhover='light%d'%c,
+        textSublinkDiap='darkest%d'%c, textSubhoverDiap='darker%d'%c)
+
 class BaseTheme:
     """The Theme instances combines a number of style dictionaries (property
     values), in relation to a selector path for their usage. In Html/Css terms,
@@ -246,57 +316,6 @@ class BaseTheme:
     >>> for styleTag, style in theme.mood.styles.items():
     ...     style = makeStyle(style=style)
     """
-
-    def MAKE_FONT_SIZES(fs):
-        return dict(
-            # fontSize, leading, tracking
-            body=pt(fs, fs*1.4, fs*0.02),
-            h5=pt(fs, fs*1.4, fs*0.02),
-            h4=pt(fs+4, (fs+4)*1.3, (fs+4)*0.02),
-            h3=pt(fs+8, (fs+8)*1.2, 0),
-            h2=pt(fs+16, (fs+16)*1.1, 0),
-            h1=pt(fs+32, fs+32, 0),
-            logo=pt(fs+32, fs+32, 0),
-            caption=pt(fs*0.8, fs*0.8*1.1, fs*0.02),
-        )
-    FONT_SIZES = MAKE_FONT_SIZES(DEFAULT_FONT_SIZE)
-
-    def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
-            # Add typographic styles to the standards for this class.
-        if tag in fontSizes:
-            fontSize, leading, tracking = fontSizes[tag]
-        else: # If unknown tag, then take body values.
-            fontSize, leading, tracking = fontSizes['body']
-        padding = pt(12) # Must be pt, to convert automatic in CSS, for now.
-        margin = 0
-        return dict(
-            font=DEFAULT_FONT_NAME,
-            fontSize=fontSize,
-            tracking=tracking,
-            leading=leading,
-            pt=padding, pr=padding, pb=padding, pl=padding,
-            mt=margin, mr=margin, mb=margin, ml=margin,
-            strokeWidth=pt(0),
-            xAlign=LEFT,
-        )
-
-    def DEFAULT_H_COLORS_NORMAL(c):
-        """Make new dictionary, in case the caller wants to change value."""
-        return dict(
-            textFill='darkest%d'%c, fill='white',
-            textFillDiap='lightest%d'%c, fillDiap='black',
-            textLink='darker%d'%c, textHover='dark%d'%c,
-            textLinkDiap='lightest%d'%c, textHoverDiap='lighter%d'%c)
-
-    def DEFAULT_MENU_COLORS_NORMAL(c):
-        """Make new dictionary, in case the caller wants to change value."""
-        return dict(
-            textFill='darkest%d'%c, fill='lightest%d'%c,
-            textFillDiap='lightest%d'%c, fillDiap='dark%d'%c,
-            textLink='darkest%d'%c, textHover='dark%d'%c, fillHover='lightest%d'%c,
-            textLinkDiap='lightest%d'%c, textHoverDiap='lighter%d'%c,
-            textSublink='darker%d'%c, textSubhover='dark%d'%c,
-            textSublinkDiap='lightest%d'%c, textSubhoverDiap='lighter%d'%c)
 
     STYLES_NORMAL = dict(
         # white <-- lighest <-- light <-- lighter <-- base
@@ -415,24 +434,6 @@ class BaseTheme:
         ),
     )
     STYLES_LIGHT = STYLES_NORMAL
-
-    def DEFAULT_H_COLORS_DARK(c):
-        """Make new dictionary, in case the caller wants to change value."""
-        return dict(
-            textFill='lightest%d'%c, fill='black',
-            textFillDiap='darkest%d'%c, fillDiap='white',
-            textLink='lighter%d'%c, textHover='light%d'%c,
-            textLinkDiap='darkest%d'%c, textHoverDiap='dark%d'%c)
-
-    def DEFAULT_MENU_DARK(c):
-        """Make new dictionary, in case the caller wants to change value."""
-        return dict(
-            textFill='lightest%d'%c, fill='black',
-            textFillDiap='darkest%d'%c, fillDiap='white',
-            textLink='lightest%d'%c, textHover='lighter%d'%c, fillHover='darkest%d'%c,
-            textLinkDiap='darkest%d'%c, textHoverDiap='dark%d'%c,
-            textSublink='lighter%d'%c, textSubhover='light%d'%c,
-            textSublinkDiap='darkest%d'%c, textSubhoverDiap='darker%d'%c)
 
     STYLES_DARK = dict(
         # white <-- lighest <-- light <-- lighter <-- base
@@ -601,9 +602,7 @@ class BaseTheme:
     def __getitem__(self, selector):
         return self.selectMood(selector)
 
-
 if __name__ == "__main__":
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-
