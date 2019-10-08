@@ -1397,7 +1397,9 @@ class Document:
         if isinstance(languages, str):
             languages = [languages]
         elif languages is None:
-            languages = [self.language or DEFAULT_LANGUAGE]
+            # FIXME: no-member self.language
+            languages = [DEFAULT_LANGUAGE]
+            #languages = [self.language or DEFAULT_LANGUAGE]
         for pn, pnPages in sorted(self.pages.items()):
             unknown = []
             for page in pnPages:
@@ -1474,10 +1476,8 @@ class Document:
 
     @classmethod
     def open(cls, path):
-        """Save the document in native json source code file, represenrinf all of the current
-        settings, including the current dociment.view.
-        """
-
+        """Save the document in native JSON source code file, represenrinf all
+        of the current settings, including the current dociment.view."""
         """
         >>> doc1 = Document(name='MyDoc', w=300, h=400)
         >>> path = '/tmp/pagebot.document.json'

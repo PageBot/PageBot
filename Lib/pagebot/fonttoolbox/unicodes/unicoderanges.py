@@ -483,40 +483,45 @@ def _runDocTests():
 if __name__ == "__main__":
     import sys
     sys.exit(_runDocTests()[0])
-    if 0:
-        from random import randint
-        for i in range(100):
-            uni = randint(0, 0x10000)
-            print(getUnicodeRange(uni))
-        for bit in range(123):
-            print(bit, getUnicodeRangeByBit(bit))
-    if 0:
-        total = 0
-        matches = 0
-        for tag in sorted(otScriptTags):
-            try:
-                unirngs = getUnicodeRangesByScriptTag(tag)
-            except KeyError:
-                pass
-                #print("*** not matched:", tag)
-            else:
-                matches += 1
-                #print(tag, unirngs)
-            total += 1
-        print("total number of script tags: %d" % total)
-        print("found a unicode range match: %d" % matches)
-        print("coverage: %.1f%%" % (100.0 * matches / total))
-    if 0:
-        def myTimeIt(number, func, *args, **kwargs):
-            from time import time
-            t = time()
-            r = range(number)
-            for i in r:
-                func(*args, **kwargs)
-            return time() - t
-        unicodes = range(100000)
-        n = 10
-        print(myTimeIt(n, distributeUnicodes, unicodes))
-        print(myTimeIt(n, _distributeUnicodes_ReferenceImplementation, unicodes))
-        print(myTimeIt(n, getUnicodeRangeBits, unicodes))
-        print(myTimeIt(n, _getUnicodeRangeBits_ReferenceImplementation, unicodes))
+    '''
+    from random import randint
+    for i in range(100):
+        uni = randint(0, 0x10000)
+        print(getUnicodeRange(uni))
+    for bit in range(123):
+        print(bit, getUnicodeRangeByBit(bit))
+    '''
+
+    '''
+    total = 0
+    matches = 0
+    for tag in sorted(otScriptTags):
+        try:
+            unirngs = getUnicodeRangesByScriptTag(tag)
+        except KeyError:
+            pass
+            #print("*** not matched:", tag)
+        else:
+            matches += 1
+            #print(tag, unirngs)
+        total += 1
+    print("total number of script tags: %d" % total)
+    print("found a unicode range match: %d" % matches)
+    print("coverage: %.1f%%" % (100.0 * matches / total))
+    '''
+
+    '''
+    def myTimeIt(number, func, *args, **kwargs):
+        from time import time
+        t = time()
+        r = range(number)
+        for i in r:
+            func(*args, **kwargs)
+        return time() - t
+    unicodes = range(100000)
+    n = 10
+    print(myTimeIt(n, distributeUnicodes, unicodes))
+    print(myTimeIt(n, _distributeUnicodes_ReferenceImplementation, unicodes))
+    print(myTimeIt(n, getUnicodeRangeBits, unicodes))
+    print(myTimeIt(n, _getUnicodeRangeBits_ReferenceImplementation, unicodes))
+    '''

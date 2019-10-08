@@ -21,14 +21,14 @@ License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
 
+import re
+from collections import OrderedDict
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
 from markdown.util import etree, text_type
-from collections import OrderedDict
-import re
 
 FN_BACKLINK_TEXT = "zz1337820767766393qq"
 NBSP_PLACEHOLDER = "qq3936677670287331zz"

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-from .blurb import Blurb
-from .content import index
-
 import codecs
 import os
+from .blurb import Blurb
+from .content import index
 
 # see if we can generate all of them
 w = Blurb()

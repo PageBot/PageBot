@@ -15,8 +15,8 @@
 #
 import math
 import operator
-from pagebot.toolbox.units import point2D
 from functools import reduce
+from pagebot.toolbox.units import point2D
 
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))

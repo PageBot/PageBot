@@ -14,6 +14,7 @@
 #     condition.py
 #
 class Condition:
+
     def __init__(self, value=1, tolerance=1, error=-10, verbose=False):
         self.value = value # Value to answer if the condition is valid
         self.tolerance = tolerance
@@ -24,7 +25,9 @@ class Condition:
         """Answers the value between 0 and 1 to the level where the element is
         left aligned with the left margin of the parent."""
         parent = e.parent
-        self.addScore(parent is not None and self.test(e), e, score)
+        #self.addScore(parent is not None and self.test(e), e, score)
+        # FIXME: no-member test()
+        self.addScore(parent is not None, e, score)
 
     def addScore(self, success, e, score):
         if success:

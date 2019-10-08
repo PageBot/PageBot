@@ -74,10 +74,11 @@ class Palette:
             self.addColors(colors)
 
         relatedColors = dict(
-            logoLight=self.logo.lighter(),
-            logoDark=self.logo.darker(),
-            supporter1=self.base4,
-            supporter2=self.base5
+            # FIXME: no-member errors.
+            #logoLight=self.logo.lighter(),
+            #logoDark=self.logo.darker(),
+            #supporter1=self.base4,
+            #supporter2=self.base5
         )
         for n in range(self.NUM_BASE):
             base = self['base%d' % n]

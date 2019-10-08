@@ -16,9 +16,9 @@
 import re
 import sys
 import doctest
+import traceback
 from pagebot.fonttoolbox import otlTools
 from pagebot.fonttoolbox.unicodes import unicoderanges
-import traceback
 
 #
 # Entry points
@@ -386,13 +386,14 @@ def setUnicodeRanges(font):
     cmap = getBestCmap(font)
     rangeBits = unicoderanges.getUnicodeRangeBits(cmap.keys())
     os2Table = font["OS/2"]
-    if False:
-        oldRangeBits = unicoderanges.unpackRangeBits(os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
-                                                     os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4)
-        print(sorted(oldRangeBits))
-        print(sorted(rangeBits))
-        print("now but not before:", sorted(rangeBits - oldRangeBits))
-        print("before but not now:", sorted(oldRangeBits - rangeBits))
+    '''
+    oldRangeBits = unicoderanges.unpackRangeBits(os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
+                                                 os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4)
+    print(sorted(oldRangeBits))
+    print(sorted(rangeBits))
+    print("now but not before:", sorted(rangeBits - oldRangeBits))
+    print("before but not now:", sorted(oldRangeBits - rangeBits))
+    '''
     (os2Table.ulUnicodeRange1, os2Table.ulUnicodeRange2,
      os2Table.ulUnicodeRange3, os2Table.ulUnicodeRange4) = unicoderanges.packRangeBits(rangeBits)
 
@@ -864,9 +865,10 @@ class FontScaler(TTFTraverser):
         raise NotImplementedError("The CFF table is not yet supported for resizing.")
 
     def scale_glyf(self, table, scaleFactor, scaleFunction):
-        if False:
-            print("scale_glyf: skipping glyf table for faster testing of the other tables")
-            return
+        '''
+        print("scale_glyf: skipping glyf table for faster testing of the other tables")
+        return
+        '''
         for glyphName in table.keys():
             glyph = table[glyphName]
             if glyph.isComposite():
@@ -949,37 +951,43 @@ def _runDocTests():
 
 
 if __name__ == "__main__":
-    if True:
-        sys.exit(_runDocTests()[0])
-    else:
-        import os
-        from pagebot.fonttoolbox.objects.font import findFont
-        pf = findFont('Bungee-Regular')
-        font = pf.ttFont
-        if True:
-            scaleFont(font, 128)
-        if False:
-            glyphNameToDelete = "percent"
-            compoParents = _findComponentParentGlyphs(font, glyphNameToDelete)
-            if compoParents:
-                # can't delete this glyph, it is referenced elsewhere
-                print('Cannt delete glyph', compoParents)
-            #otlTools.findAlternateGlyphs(font["GSUB"], [glyphNameToDelete])
-            subsetFont(font, [glyphNameToDelete])
-            # force post table to vers. 2 to keep glyph names for easier debugging
-            font["post"].formatType = 2.0
-            font["post"].extraNames = []
-            font["post"].mapping = {}
-        if False:
-            cmap = getBestCmap(font)
-            unicodes = list(cmap)
-            unicodes.sort()
-            unicodes = unicodes[:1800]
-            glyphsToKeep = findGlyphsByUnicode(font, unicodes)
-            glyphsToDelete = set(font.getGlyphOrder()) - glyphsToKeep
-            print("glyphs to keep: %d" % len(glyphsToKeep))
-            print("glyphs to delete: %d" % len(glyphsToDelete))
-            subsetFont(font, glyphsToDelete)
-        outPath = os.path.expanduser("~/Desktop/TestFont.ttf")
-        font.verbose = 1
-        #font.save(outPath)
+    sys.exit(_runDocTests()[0])
+    '''
+    import os
+    from pagebot.fonttoolbox.objects.font import findFont
+    pf = findFont('Bungee-Regular')
+    font = pf.ttFont
+    scaleFont(font, 128)
+    '''
+
+    '''
+    glyphNameToDelete = "percent"
+    compoParents = _findComponentParentGlyphs(font, glyphNameToDelete)
+    if compoParents:
+        # can't delete this glyph, it is referenced elsewhere
+        print('Cannt delete glyph', compoParents)
+    #otlTools.findAlternateGlyphs(font["GSUB"], [glyphNameToDelete])
+    subsetFont(font, [glyphNameToDelete])
+    # force post table to vers. 2 to keep glyph names for easier debugging
+    font["post"].formatType = 2.0
+    font["post"].extraNames = []
+    font["post"].mapping = {}
+    '''
+
+    '''
+    cmap = getBestCmap(font)
+    unicodes = list(cmap)
+    unicodes.sort()
+    unicodes = unicodes[:1800]
+    glyphsToKeep = findGlyphsByUnicode(font, unicodes)
+    glyphsToDelete = set(font.getGlyphOrder()) - glyphsToKeep
+    print("glyphs to keep: %d" % len(glyphsToKeep))
+    print("glyphs to delete: %d" % len(glyphsToDelete))
+    subsetFont(font, glyphsToDelete)
+    '''
+
+    '''
+    outPath = os.path.expanduser("~/Desktop/TestFont.ttf")
+    font.verbose = 1
+    #font.save(outPath)
+    '''

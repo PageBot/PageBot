@@ -220,71 +220,69 @@ class VariableCircle(Element):
 
         
         # Draw axis names and DeltaLocation values
-        if 1: #self.showAxisNames:
-            for axisName, (minValue, defaultValue, maxValue) in axes.items():
-                angle = self.angles[axisName]
-                location = {axisName: maxValue}
-                valueFontSize = self.style.get('valueFontSize', 8)
-                axisNameFontSize = self.style.get('axisNameFontSize', 8)
-                markerX, markerY = self._angle2XY(angle, r/2)
-                bs = context.newString(self.makeAxisName(axisName),
-                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
-                                            fontSize=axisNameFontSize,
-                                            fill=self.style.get('axisNameColor', 0)))
-                tw, th = bs.size
-                context.fill((0.7, 0.7, 0.7, 0.6))
-                context.stroke(None)
-                context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5))
+        #if self.showAxisNames:
+        for axisName, (minValue, defaultValue, maxValue) in axes.items():
+            angle = self.angles[axisName]
+            location = {axisName: maxValue}
+            valueFontSize = self.style.get('valueFontSize', 8)
+            axisNameFontSize = self.style.get('axisNameFontSize', 8)
+            markerX, markerY = self._angle2XY(angle, r/2)
+            bs = context.newString(self.makeAxisName(axisName),
+                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                        fontSize=axisNameFontSize,
+                                        fill=self.style.get('axisNameColor', 0)))
+            tw, th = bs.size
+            context.fill((0.7, 0.7, 0.7, 0.6))
+            context.stroke(None)
+            context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
+            context.text(bs, (mx+markerX-tw/2, my+markerY-axisNameFontSize/2-th*1.5))
 
-                # DeltaLocation master value
-                if maxValue < 10:
-                    sMaxValue = '%0.2f' % maxValue
-                else:
-                    sMaxValue = repr(int(round(maxValue)))
-                bs = context.newString(sMaxValue,
-                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
-                                            fontSize=valueFontSize,
-                                            fill=self.style.get('axisValueColor', 0)))
-                tw, th = bs.size
-                context.fill((0.7, 0.7, 0.7, 0.6))
-                context.stroke(None)
-                context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5))
+            # DeltaLocation master value
+            if maxValue < 10:
+                sMaxValue = '%0.2f' % maxValue
+            else:
+                sMaxValue = repr(int(round(maxValue)))
+            bs = context.newString(sMaxValue,
+                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                        fontSize=valueFontSize,
+                                        fill=self.style.get('axisValueColor', 0)))
+            tw, th = bs.size
+            context.fill((0.7, 0.7, 0.7, 0.6))
+            context.stroke(None)
+            context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
+            context.text(bs, (mx+markerX-tw/2, my+markerY+valueFontSize/2+th*1.5))
 
-                # DeltaLocation value
-                interpolationValue = minValue + (maxValue - minValue)*self.INTERPOLATION
-                if interpolationValue < 10:
-                    sValue = '%0.2f' % interpolationValue
-                else:
-                    sValue = repr(int(round(interpolationValue)))
-                bs = context.newString(sValue,
-                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
-                                            fontSize=valueFontSize,
-                                            fill=self.style.get('axisValueColor', 0)))
-                tw, th = bs.size
-                context.fill((0.7, 0.7, 0.7, 0.6))
-                context.stroke(None)
-                context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
-                context.text(bs, (mx+markerX*self.INTERPOLATION-tw/2, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5))
+            # DeltaLocation value
+            interpolationValue = minValue + (maxValue - minValue)*self.INTERPOLATION
+            if interpolationValue < 10:
+                sValue = '%0.2f' % interpolationValue
+            else:
+                sValue = repr(int(round(interpolationValue)))
+            bs = context.newString(sValue,
+                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                        fontSize=valueFontSize,
+                                        fill=self.style.get('axisValueColor', 0)))
+            tw, th = bs.size
+            context.fill((0.7, 0.7, 0.7, 0.6))
+            context.stroke(None)
+            context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
+            context.text(bs, (mx+markerX*self.INTERPOLATION-tw/2, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5))
 
-                # DeltaLocation value
-                if minValue < 10:
-                    sValue = '%0.2f' % minValue
-                else:
-                    sValue = repr(int(round(minValue)))
-                bs = context.newString(sValue,
-                                 style=dict(font=self.style.get('labelFont', 'Verdana'),
-                                            fontSize=valueFontSize,
-                                            fill=self.style.get('axisValueColor', 0)))
-                tw, th = bs.size
-                context.fill((0.7, 0.7, 0.7, 0.6))
-                context.stroke(None)
-                minM = 0.2
-                context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
-                context.text(bs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5))
-
-        
+            # DeltaLocation value
+            if minValue < 10:
+                sValue = '%0.2f' % minValue
+            else:
+                sValue = repr(int(round(minValue)))
+            bs = context.newString(sValue,
+                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                                        fontSize=valueFontSize,
+                                        fill=self.style.get('axisValueColor', 0)))
+            tw, th = bs.size
+            context.fill((0.7, 0.7, 0.7, 0.6))
+            context.stroke(None)
+            minM = 0.2
+            context.rect(mx+markerX*minM-tw/2-4, my+markerY*minM+th*0.5-4, tw+8, th)
+            context.text(bs, (mx+markerX*minM-tw/2, my+markerY*minM+th*0.5))
 
     #   D R A W B O T  S U P P O R T
 

@@ -650,11 +650,12 @@ class TextBox(Element):
                     tw, th = bs.size
                     c.textBox(bs, (px + self.w + 3, py + y - th/5, tw*2, th))
 
-                if 0: #view.showTextLeading:
-                    leading = round(abs(y - prevY))
-                    bs = self.newString('%d' % leading, style=leadingStyle)
-                    _, th = bs.size
-                    c.textBox(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+                '''
+                leading = round(abs(y - prevY))
+                bs = self.newString('%d' % leading, style=leadingStyle)
+                _, th = bs.size
+                c.textBox(bs, (px + self.w + 3, py + prevY - leading/2 - th/5))
+                '''
             prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):

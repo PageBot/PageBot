@@ -1519,50 +1519,53 @@ def _runDocTests():
 
 
 if __name__ == "__main__":
-    if True:
-        import sys
-        sys.exit(_runDocTests()[0])
-    if False:
-        gposFormats = ['SinglePosFormat1', 'SinglePosFormat2',
-                'PairPosFormat1', 'PairPosFormat2', 'CursivePosFormat1',
-                'MarkBasePosFormat1', 'MarkLigPosFormat1',
-                'MarkMarkPosFormat1', 'ContextPosFormat1', 'ContextPosFormat2',
-                'ContextPosFormat3', 'ChainContextPosFormat1',
-                'ChainContextPosFormat2', 'ChainContextPosFormat3',
-                'ExtensionPosFormat1']
-        gsubFormats = ['SingleSubstFormat1', 'SingleSubstFormat2',
-                'MultipleSubstFormat1', 'AlternateSubstFormat1',
-                'LigatureSubstFormat1', 'ContextSubstFormat1',
-                'ContextSubstFormat2', 'ContextSubstFormat3',
-                'ChainContextSubstFormat1', 'ChainContextSubstFormat2',
-                'ChainContextSubstFormat3', 'ExtensionSubstFormat1',
-                'ReverseChainSingleSubstFormat1']
-        unsupported = 0
-        supported = 0
+    import sys
+    sys.exit(_runDocTests()[0])
 
-        for otlFormat in gposFormats + gsubFormats:
-            if "Extension" in otlFormat:
-                continue
-            if not hasattr(GlyphDeleter, "deleteGlyphs_" + otlFormat):
-                print("missing support for: %s" % otlFormat)
-                unsupported += 1
-            else:
-                supported += 1
-        print("supported formats: %s" % supported)
-        print("unsupported formats: %s" % unsupported)
+    '''
+    gposFormats = ['SinglePosFormat1', 'SinglePosFormat2',
+            'PairPosFormat1', 'PairPosFormat2', 'CursivePosFormat1',
+            'MarkBasePosFormat1', 'MarkLigPosFormat1',
+            'MarkMarkPosFormat1', 'ContextPosFormat1', 'ContextPosFormat2',
+            'ContextPosFormat3', 'ChainContextPosFormat1',
+            'ChainContextPosFormat2', 'ChainContextPosFormat3',
+            'ExtensionPosFormat1']
+    gsubFormats = ['SingleSubstFormat1', 'SingleSubstFormat2',
+            'MultipleSubstFormat1', 'AlternateSubstFormat1',
+            'LigatureSubstFormat1', 'ContextSubstFormat1',
+            'ContextSubstFormat2', 'ContextSubstFormat3',
+            'ChainContextSubstFormat1', 'ChainContextSubstFormat2',
+            'ChainContextSubstFormat3', 'ExtensionSubstFormat1',
+            'ReverseChainSingleSubstFormat1']
+    unsupported = 0
+    supported = 0
 
-    if False:
-        from pagebot.fonttoolbox.objects.font import findFont
-        pf1 = findFont('Bungee-Regular')
-        font1 = pf1.ttFont
-        pf2 = findFont('Bungee-HairlineRegular')
-        font2 = pf2.ttFont
+    for otlFormat in gposFormats + gsubFormats:
+        if "Extension" in otlFormat:
+            continue
+        if not hasattr(GlyphDeleter, "deleteGlyphs_" + otlFormat):
+            print("missing support for: %s" % otlFormat)
+            unsupported += 1
+        else:
+            supported += 1
+    print("supported formats: %s" % supported)
+    print("unsupported formats: %s" % unsupported)
+    '''
 
-        mergeFeatures(font1["GPOS"], font2["GPOS"])
-        #mergeFeatures(font1["GSUB"], font2["GSUB"])
+    '''
+    from pagebot.fonttoolbox.objects.font import findFont
+    pf1 = findFont('Bungee-Regular')
+    font1 = pf1.ttFont
+    pf2 = findFont('Bungee-HairlineRegular')
+    font2 = pf2.ttFont
 
-    if False:
-        from pagebot.fonttoolbox.objects.font import findFont
-        pf = findFont('Bungee-Regular')
-        font = pf.ttFont
-        print(findAlternateGlyphsAndFeatures(font["GSUB"]))
+    mergeFeatures(font1["GPOS"], font2["GPOS"])
+    #mergeFeatures(font1["GSUB"], font2["GSUB"])
+    '''
+
+    '''
+    from pagebot.fonttoolbox.objects.font import findFont
+    pf = findFont('Bungee-Regular')
+    font = pf.ttFont
+    print(findAlternateGlyphsAndFeatures(font["GSUB"]))
+    '''

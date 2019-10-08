@@ -14,8 +14,8 @@
 #
 #     drawing.py
 #
-from pagebot.toolbox.color import noColor
 from math import sin, cos, atan2, radians, degrees
+from pagebot.toolbox.color import noColor
 
 def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
     """Draw curved arrow marker between the two points.

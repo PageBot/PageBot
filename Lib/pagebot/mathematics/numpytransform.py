@@ -15,8 +15,8 @@
 #     numpytransform.py
 #
 
-import numpy as np
 from math import cos, sin, radians
+import numpy as np
 
 def trig(angle):
     """
