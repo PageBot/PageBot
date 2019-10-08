@@ -378,7 +378,8 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
 
             for var in variations:
                 scalar = supportScalar(loc, var.axes)#, ot=True)
-                if not scalar: continue
+                if not scalar:
+                    continue
                 delta = var.coordinates
                 if None in delta:
                     if origCoords is None:
@@ -397,7 +398,8 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
             deltas = {}
             for var in cvar.variations:
                 scalar = supportScalar(loc, var.axes)
-                if not scalar: continue
+                if not scalar:
+                    continue
                 for i, c in enumerate(var.coordinates):
                     if c is not None:
                         deltas[i] = deltas.get(i, 0) + scalar * c

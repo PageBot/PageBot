@@ -245,6 +245,7 @@ class BlurbWriter:
                 raise 'Error in blurb code' # Better make it crash to show the error
                 #return 0, '__empty tag__'
             try:
+                # FIXME: don't use eval.
                 result = eval(tag)
             except:
                 result = '__error('+tag+')__'

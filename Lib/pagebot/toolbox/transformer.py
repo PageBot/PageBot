@@ -307,10 +307,7 @@ def bool2Int(value):
     return 0
 
 def int2Bool(value):
-    if value:
-        return True
-    else:
-        return False
+    return bool(value)
 
 def index2PointId(self, index):
     return '*Pid%d' % index
@@ -943,17 +940,15 @@ def formatBinaryForTTX(b, length=32, segments=8):
 
 def isUniqueList(l):
     try:
-        if len(l) == len(set(l)):
-            return True
-        else:
-            return False
+        return bool(len(l) == len(set(l)))
     except:
         return False
 
 def makeUniqueList(seq, idfun=None):
     # order preserving
     if idfun is None:
-        def idfun(x): return x
+        def idfun(x):
+            return x
     seen = {}
     result = []
     for item in seq:
@@ -961,16 +956,14 @@ def makeUniqueList(seq, idfun=None):
         # in old Python versions:
         # if seen.has_key(marker)
         # but in new ones:
-        if marker in seen: continue
+        if marker in seen:
+            continue
         seen[marker] = 1
         result.append(item)
     return result
 
 def isUniqueDict(d):
-    if isUniqueList(d.values()):
-        return True
-    else:
-        return False
+    return bool(isUniqueList(d.values()))
 
 def reverseDict(d):
     """Reverse key-values of d.
@@ -1053,6 +1046,25 @@ def xmlAttrName2PyAttrName(key):
         key = key.replace('-', '_')
     return key
 
+# Remove all tags from the string
+REMOVETAGS = re.compile(r'<.*?>')
+
+def stripTags(xml):
+    return REMOVETAGS.sub('', xml)
+
+def addHtmlBreaks(s, isXhtml=True):
+    """Replace all returns by <br/> or <br>."""
+    tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
+    return s.replace('\n',tag)
+
+REMOVEMULTIPLEWHITESPACE = re.compile(r'\n\s+')
+
+def stripMultipleWhiteLines(s):
+    return REMOVEMULTIPLEWHITESPACE.sub('\n\n', s)
+
+#XMLATTRS = re.compile(r'''([A-Z][A-Z0-9_]*)\s*=\s*(?P<quote>["'])(.*?)(?<!\\)(?P=quote)''', re.IGNORECASE)
+
+'''
 def xmlValue2PyValue(value, conversions):
     """The @xmlValue2PyValue@ method converts the XML string attribute to
     the appropriate Python object type, if the class is defined in the list
@@ -1084,9 +1096,8 @@ def xmlValue2PyValue(value, conversions):
             (strippedvalue.startswith('[') and strippedvalue.endswith(']')) or
             (strippedvalue.startswith('(') and strippedvalue.endswith(')'))):
             try:
-                # In theory this is a security leak, since there maybe
-                # "strange" objects inside the dictionary. Problem to be
-                # solved in the future?
+                # FIXME: Security leak, since there maybe strange objects
+                # inside the dictionary.
                 return eval(strippedvalue)
             except (SyntaxError, NameError):
                 pass
@@ -1094,24 +1105,7 @@ def xmlValue2PyValue(value, conversions):
     # Can't do anything with this value. Return unstripped and untouched.
     return value
 
-# Remove all tags from the string
-REMOVETAGS = re.compile(r'<.*?>')
-
-def stripTags(xml):
-    return REMOVETAGS.sub('', xml)
-
-def addHtmlBreaks(s, isXhtml=True):
-    """Replace all returns by <br/> or <br>."""
-    tag = {True:'<br/>\n', False:'<br>\n'}[isXhtml]
-    return s.replace('\n',tag)
-
-REMOVEMULTIPLEWHITESPACE = re.compile(r'\n\s+')
-
-def stripMultipleWhiteLines(s):
-    return REMOVEMULTIPLEWHITESPACE.sub('\n\n', s)
-
 # support single or double quotes while ignoring quotes preceded by \
-XMLATTRS = re.compile(r'''([A-Z][A-Z0-9_]*)\s*=\s*(?P<quote>["'])(.*?)(?<!\\)(?P=quote)''', re.IGNORECASE)
 
 def xmlAttrString2PyAttr(s, conversions):
     attrs = {}
@@ -1139,6 +1133,7 @@ def xmlAttr2PyAttr(par_dict, conversions):
         value = xmlValue2PyValue(value, conversions)
         pydict[key] = value
     return pydict
+'''
 
 def tableField2JoinedField(table, field):
     if field.startswith(table):

@@ -41,8 +41,10 @@ def angleOfLines(p1, p2, q1, q2, inDegrees=True):
     angle1 = calculateAngle(p1, p2, inDegrees)
     angle2 = calculateAngle(q1, q2, inDegrees)
     angle = angle2 - angle1
-    if angle < -180: angle += 360
-    elif angle > 180: angle -= 360
+    if angle < -180:
+        angle += 360
+    elif angle > 180:
+        angle -= 360
     return angle
 
 class APointContext:

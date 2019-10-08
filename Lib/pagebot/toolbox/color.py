@@ -607,18 +607,17 @@ class Color:
         >>> color('red', tint=0.2) == color(1, 0, 0, tint=0.2)
         True
         """
-        if not isinstance(c, self.__class__):
-            return False
-        if (self.isRgba or c.isRgba) and self.rgba == c.rgba and self.tint == c.tint:
-            return True
-        if (self.isRgb or c.isRgb) and self.rgb == c.rgb and self.tint == c.tint:
-            return True
-        if (self.isSpot or c.isSpot) and self.spot == c.spot:
-            return True
-        if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk and self.tint == c.tint:
-            return True
-        if (self.isRal or c.isRal) and self.ral == c.ral:
-            return True
+        if isinstance(c, self.__class__):
+            if (self.isRgba or c.isRgba) and self.rgba == c.rgba and self.tint == c.tint:
+                return True
+            if (self.isRgb or c.isRgb) and self.rgb == c.rgb and self.tint == c.tint:
+                return True
+            if (self.isSpot or c.isSpot) and self.spot == c.spot:
+                return True
+            if (self.isCmyk or c.isCmyk) and self.cmyk == c.cmyk and self.tint == c.tint:
+                return True
+            if (self.isRal or c.isRal) and self.ral == c.ral:
+                return True
         return False
 
     def __ne__(self, c):

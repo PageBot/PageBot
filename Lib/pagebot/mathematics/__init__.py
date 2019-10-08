@@ -83,13 +83,17 @@ def isBetween(p1, p2, p):
     px, py = point2D(p)
     epsilon = 1e-6
     crossproduct = (py - y1) * (x2 - x1) - (px - x1) * (y2 - y1)
-    if abs(crossproduct) > epsilon: return False   # (or != 0 if using integers)
+    if abs(crossproduct) > epsilon:
+        # (or != 0 if using integers)
+        return False 
 
     dotproduct = (px - x1) * (x2 - x1) + (py - y1)*(y2 - y1)
-    if dotproduct < 0 : return False
+    if dotproduct < 0:
+        return False
 
     squaredlengthba = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1)
-    if dotproduct > squaredlengthba: return False
+    if dotproduct > squaredlengthba:
+        return False
 
     return True
 
