@@ -180,7 +180,7 @@ class Table(Element):
     def build_html(self, view, origin=None, drawElements=True, **kwargs):
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(p)
+        p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

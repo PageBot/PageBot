@@ -152,17 +152,15 @@ class XHeight2Top(BaselineCondition):
             self.addScore(e.xHeight2Top(index=self.index), e, score)
 
 class XHeight2Bottom(BaselineCondition):
+
     def test(self, e):
-        self.addScore(e.isXHeightOnBottom(self.tolerance, index=self.index))
+        return e.isXHeightOnBottom(self.tolerance, index=self.index)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.xHeight2Bottom(index=self.index), e, score)
 
-
-
 ''' 
-
 class Baseline2Bottom(Condition):
     def test(self, e):
         return e.isBaselineOnBottom(self.tolerance)
