@@ -1142,7 +1142,7 @@ class BaseContext(AbstractContext):
         minY = round(min(ly0, ly1))
 
         for contour in contours:
-            for n in range(len(contour)):
+            for n, _ in enumerate(contour):
                 pLine = contour[n], contour[n-1]
                 (px0, py0), (px1, py1) = pLine
                 if minY > round(max(py0, py1)) or maxY < round(min(py0, py1)) or \

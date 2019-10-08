@@ -389,7 +389,8 @@ class GlyphAnalyzer:
         # contexts here, but for limited use that should not make a difference
         # for entry in a Stem
         p0 = ap0 = None
-        for n in range(0, len(intersections)):
+
+        for n, _ in enumerate(intersections):
             # Add this stem or counter to the result. Create point contexts,
             # simulating vertical We cannot just check on odd/even, as a line
             # may pass exactly on the top/bottom of a curve.

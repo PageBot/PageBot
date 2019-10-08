@@ -522,7 +522,7 @@ class DesignSpace:
             #print('[DesignSpace.removeAxis] Axis with tag "%s" does not exist' % tag)
             return False
         axis = self.axes[tag]
-        for aIndex in range(len(self.axisList)):
+        for aIndex, _ in enumerate(self.axisList):
             if self.axisList[aIndex] is axis:
                 del self.axisList[aIndex]
                 break
@@ -1540,15 +1540,15 @@ class Model:
         metricsDeltas = []
         mvx, mvy, mvCx, mvCy, mt = self.getMasterValues(glyphName)
 
-        for pIndex in range(len(mvx)):
+        for pIndex, _ in enumerate(mvx):
             pointXDeltas.append(self.vm.getDeltas(mvx[pIndex]))
             pointYDeltas.append(self.vm.getDeltas(mvy[pIndex]))
 
-        for cIndex in range(len(mvCx)):
+        for cIndex, _ in enumerate(mvCx):
             componentXDeltas.append(self.vm.getDeltas(mvCx[cIndex]))
             componentYDeltas.append(self.vm.getDeltas(mvCy[cIndex]))
 
-        for mIndex in range(len(mt)):
+        for mIndex, _ in enumerate(mt):
             metricsDeltas.append(self.vm.getDeltas(mt[mIndex]))
 
         return pointXDeltas, pointYDeltas, componentXDeltas, componentYDeltas, metricsDeltas
@@ -1603,19 +1603,19 @@ class Model:
         interpolatedMetrics = []
         mvx, mvy, mvCx, mvCy, mMt = self.getMasterValues(glyphName)
 
-        for pIndex in range(len(mvx)):
+        for pIndex, _ in enumerate(mvx):
             interpolatedPoints.append((
                 self.vm.interpolateFromMasters(nLocation, mvx[pIndex]),
                 self.vm.interpolateFromMasters(nLocation, mvy[pIndex])
             ))
 
-        for cIndex in range(len(mvCx)):
+        for cIndex, _ in enumerate(mvCx):
             interpolatedComponents.append((
                 self.vm.interpolateFromMasters(nLocation, mvCx[cIndex]),
                 self.vm.interpolateFromMasters(nLocation, mvCy[cIndex])
             ))
 
-        for mIndex in range(len(mMt)):
+        for mIndex, _ in enumerate(mMt):
             interpolatedMetrics.append(
                 self.vm.interpolateFromMasters(nLocation, mMt[mIndex])
             )
@@ -1648,12 +1648,12 @@ class Model:
         # Normalize to location (-1..0..1)
         nLocation = normalizeLocation(location, self.ds.tripleAxes)
         # Get the point of the glyph, and set their (x,y) to the calculated variable points.
-        for pIndex in range(len(mvx)):
+        for pIndex, _ in enumerate(mvx):
             p = points[pIndex]
             p.x = self.vm.interpolateFromMasters(nLocation, mvx[pIndex])
             p.y = self.vm.interpolateFromMasters(nLocation, mvy[pIndex])
 
-        for cIndex in range(len(mvCx)):
+        for cIndex, _ in enumerate(mvCx):
             c = components[cIndex]
             t = list(c.transformation)
             t[-2] = self.vm.interpolateFromMasters(nLocation, mvCx[cIndex])

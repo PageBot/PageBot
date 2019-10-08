@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -70,16 +71,17 @@ class Palette:
 
         # Install default colors
         self.addColors(self.BASE_COLORS)
+
         if colors is not None:
             self.addColors(colors)
 
         relatedColors = dict(
-            # FIXME: no-member errors.
-            #logoLight=self.logo.lighter(),
-            #logoDark=self.logo.darker(),
-            #supporter1=self.base4,
-            #supporter2=self.base5
+            logoLight=spotColor(165).lighter(),
+            logoDark=spotColor(165).darker(),
+            supporter1=self.BASE_COLOR.darker(0.75),
+            supporter2=self.BASE_COLOR.lighter(0.75)
         )
+
         for n in range(self.NUM_BASE):
             base = self['base%d' % n]
             relatedColors['darker%d' % n] = base.darker(self.factorDarker)
@@ -102,7 +104,7 @@ class Palette:
         self.addColors(relatedColors, overwrite=False)
 
     def addColors(self, colors, overwrite=True):
-        # Add/overwrite custom base colors and recipes for this palette
+        # Add / overwrite custom base colors and recipes for this palette.
         for colorName, c in colors.items():
             if overwrite or not hasattr(self, colorName):
                 self.colorNames.add(colorName) # Called can overwrite any color recipe.
@@ -212,7 +214,8 @@ class BaseTheme:
     style defined.
 
     >>> from pagebot.style import makeStyle
-    >>> theme = BaseTheme('dark') # Using default mood and default palette
+    >>> # Using default mood and default palette.
+    >>> theme = BaseTheme('dark') 
     >>> theme.mood
     <Mood dark>
     >>> theme = BaseTheme()
@@ -220,19 +223,22 @@ class BaseTheme:
     <Mood normal>
     >>> theme.mood['page.fill'] # Access by key renders the value to text.
     'FFFFFF'
+    >>> len(theme.STYLES_NORMAL)
+    50
     >>> theme.mood.page_fill # Access by attribute answers color instance.
     Color(r=1, g=1, b=1)
     >>> theme.mood['h1.fill']
     'FFFFFF'
     >>> theme.mood['body.fill'], theme.mood.body_fill
     ('E7E7E7', Color(r=0.90625, g=0.90625, b=0.90625))
-    >>> theme.mood['p.textHover'], theme.mood.p_textHover # Both access by key and by attribute syntax work
+    >>> # Both access by key and by attribute syntax work.
+    >>> theme.mood['p.textHover'], theme.mood.p_textHover
     ('DFDFDF', Color(r=0.875, g=0.875, b=0.875))
     >>> theme.mood.body_fontSize, theme.mood.h1_fontSize
     (12pt, 44pt)
     >>> theme.mood.li_fontSize, theme.mood.li_leading
     (12pt, 16.8pt)
-    >>> # Test if all generated styles in the mood are a valid PageBot style
+    >>> # Test if all generated styles in the mood are a valid PageBot style.
     >>> for styleTag, style in theme.mood.styles.items():
     ...     style = makeStyle(style=style)
     >>> # Switch to ligh mood and test again.
@@ -240,6 +246,7 @@ class BaseTheme:
     >>> for styleTag, style in theme.mood.styles.items():
     ...     style = makeStyle(style=style)
     """
+
     def MAKE_FONT_SIZES(fs):
         return dict(
             # fontSize, leading, tracking

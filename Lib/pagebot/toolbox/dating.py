@@ -95,7 +95,7 @@ def checkDateTime(date):
     if not date: # Check on None or empty string
         return None
     if not isinstance(date, datetime):
-        return datetime(date=date).date
+        return datetime.datetime(date=date).date
     return date
 
 def now():
@@ -192,7 +192,7 @@ def newdatetime(date):
     if date is None:
         return None
     if not isinstance(date, datetime):
-        date = datetime(date=date)
+        date = datetime.datetime(date=date)
     return date
 
 class Duration:
