@@ -485,10 +485,14 @@ class FlatContext(BaseContext):
             # Otherwise convert to string if it isn't already.
             sOrBs = str(sOrBs)
 
-        xpt, ypt, _, _ = upt(r)
-        placedText = self.page.place(sOrBs)
+        xpt, ypt, wpt, hpt = upt(r)
 
-        placedText.position(xpt, ypt)
+        if self.flipped:
+            ypt = self.doc.height - ypt
+
+        placedText = self.page.place(sOrBs)
+        #placedText.position(xpt, ypt)
+        placedText.frame(xpt, ypt, wpt, hpt)
 
     def textSize(self, bs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if

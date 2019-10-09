@@ -775,10 +775,7 @@ def date2Seconds(dt):
 #    Note that Status now has its own json conversion.
 
 def json2Dict(src):
-    try:
-        return json.loads(src)
-    except TypeError:
-        return None
+    return json.loads(src)
 
 def dict2Json(d):
     return json.dumps(d, indent=4)
