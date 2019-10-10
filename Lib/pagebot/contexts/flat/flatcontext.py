@@ -80,11 +80,12 @@ class FlatContext(BaseContext):
         self.b = flatBuilder
         self.save() # Save current set of values on gState stack.
         self.shape = None # Current open shape
-        self.flatString = None
+        #self.flatString = None
         self.fileType = DEFAULT_FILETYPE
         self._pages = []
         self.flipped = True
         self.transform3D = Transform3D()
+        self.placedText = None
 
     #   D O C U M E N T
 
@@ -373,16 +374,13 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def newBulletString(self, bullet, e=None, style=None):
-        return self.newString(bullet, e=e, style=style)
-
     def text(self, fs, p):
-        """Place the babelstring instance at position p. The position can be
+        """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain
         Flat.text.
 
-        NOTE:in the Flat model the position is an attribute of the string,
+        NOTE: in the Flat model the position is an attribute of the string,
         therefore strings cannot be reused to be displayed on multiple
         positions.
 
@@ -405,7 +403,8 @@ class FlatContext(BaseContext):
             raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
-        placedText = self.page.place(fs.s)
+
+        self.placedText = self.page.place(fs.s)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
@@ -421,7 +420,85 @@ class FlatContext(BaseContext):
             self.textFill(c)
 
         # Renders unit tuple to value tuple.
-        placedText.position(xpt, ypt)
+        self.placedText.position(xpt, ypt)
+
+    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
+        """Places the babelstring instance inside rectangle `r`. The rectangle
+        can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
+        FlatContext version of the BabelString should contain Flat.text.
+
+        TODO: clipPath
+        TODO: align
+        """
+        if hasattr(sOrBs, 's'):
+            # Assume it's a BabelString with a FormattedString inside.
+            sOrBs = sOrBs.s
+        else:
+            # Otherwise convert to string if it isn't already.
+            sOrBs = str(sOrBs)
+
+        xpt, ypt, wpt, hpt = upt(r)
+
+        if self.flipped:
+            ypt = self.doc.height - ypt
+
+        self.placedText = self.page.place(sOrBs)
+        self.placedText.frame(xpt, ypt, wpt, hpt)
+        return self.placedText
+
+    def textOverflow(self, bs, box, align=LEFT):
+        """Answers the the box overflow as a new FlatString in the
+        current context."""
+        # TODO: need to calculate overflowing text.
+        #return FlatString(self.b.textOverflow(bs.s, box, align), self)
+
+    def textSize(self, bs, w=None, h=None):
+        """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
+        no text is defined. Answers the height of the string if the width w is
+        given.
+
+        TODO: returns frame size, not actual text size like DrawBot.
+
+        >>> w = h = 500 # Default to pt-units
+        >>> x = y = 0
+        >>> context = FlatContext()
+        >>> print(context)
+        <FlatContext>
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
+        >>> print(style)
+        {'font': 'Roboto-Regular', 'fontSize': 12}
+        >>> bs = context.newString('ABC ' * 100, style=style)
+        >>> print(type(bs))
+        <class 'pagebot.contexts.flat.flatstring.FlatString'>
+        >>> t = context.page.place(bs.s)
+        >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
+        >>> t.overflow()
+        False
+        >>> bs = context.newString('ABC ' * 100000, style=style)
+        >>> t = context.page.place(bs.s)
+        >>> t = t.frame(x, y, w, h)
+        >>> t.overflow()
+        True
+        >>> lines = t.lines()
+        >>> #len(lines)
+        35
+        """
+        # FIXME! This is a totally wrong boilerplate for now!
+
+        #t = placedtext(bs.s)
+        if not bs.s:
+            return (pt(0), pt(0))
+        elif w is None:
+            return (pt(100), pt(100))
+        else:
+            return (w, w / len(bs))
+
+    def textBoxBaseLines(self, txt, box):
+        raise NotImplementedError
+
+    #   F O N T
 
     def font(self, font, fontSize=None):
         """Set the current font, in case it is not defined in a formatted
@@ -470,81 +547,8 @@ class FlatContext(BaseContext):
         """
         self._fontSize = upt(fontSize)
 
-    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
-        """
-
-        FIXME: Not using width and height here?
-        TODO: clipPath
-        TODO: align
-
-        """
-        if hasattr(sOrBs, 's'):
-            # Assume here is's a BabelString with a FormattedString inside.
-            sOrBs = sOrBs.s
-        else:
-            # Otherwise convert to string if it isn't already.
-            sOrBs = str(sOrBs)
-
-        xpt, ypt, wpt, hpt = upt(r)
-
-        if self.flipped:
-            ypt = self.doc.height - ypt
-
-        placedText = self.page.place(sOrBs)
-        #placedText.position(xpt, ypt)
-        placedText.frame(xpt, ypt, wpt, hpt)
-
-    def textSize(self, bs, w=None, h=None):
-        """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
-        no text is defined. Answers the height of the string if the width w is
-        given.
-
-        TODO: returns frame size, not actual text size like DrawBot.
-
-        >>> w = h = 500 # Default to pt-units
-        >>> x = y = 0
-        >>> context = FlatContext()
-        >>> print(context)
-        <FlatContext>
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
-        >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
-        >>> print(style)
-        {'font': 'Roboto-Regular', 'fontSize': 12}
-        >>> bs = context.newString('ABC ' * 100, style=style)
-        >>> print(type(bs))
-        <class 'pagebot.contexts.flat.flatstring.FlatString'>
-        >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
-        >>> t.overflow()
-        False
-        >>> bs = context.newString('ABC ' * 100000, style=style)
-        >>> t = context.page.place(bs.s)
-        >>> t = t.frame(x, y, w, h)
-        >>> t.overflow()
-        True
-        >>> lines = t.lines()
-        >>> #len(lines)
-        35
-        """
-        # FIXME! This is a totally wrong boilerplate for now!
-
-        #t = placedtext(bs.s)
-        if not bs.s:
-            return (pt(0), pt(0))
-        elif w is None:
-            return (pt(100), pt(100))
-        else:
-            return (w, w/len(bs))
-
-    def textOverflow(self, bs, w, h, align=LEFT):
-        """Answers the the box (0, 0, w, h) overflow as a new FlatString in the
-        current context."""
-        wpt, hpt = upt(w, h)
-        return FlatString(self.b.textOverflow(bs.s, (0, 0, wpt, hpt), align), self)
-
-    def textBoxBaseLines(self, txt, box):
-        raise NotImplementedError
+    def newBulletString(self, bullet, e=None, style=None):
+        return self.newString(bullet, e=e, style=style)
 
     def language(self, language):
         self._language = language
@@ -606,7 +610,6 @@ class FlatContext(BaseContext):
         from flat import rgb
         return rgb(*to255(c.rgb))
 
-
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
@@ -647,7 +650,6 @@ class FlatContext(BaseContext):
         if shape is not None:
             x1 = x + w
             y1 = y + h
-
             p0 = (x, y)
             p1 = (x1, y)
             p2 = (x1, y1)

@@ -84,7 +84,8 @@ class BaseContext(AbstractContext):
     pages = property(_get_pages)
 
     '''
-    Conflict with def language().
+    FIXME: Conflict with def language().
+
     def _get_language(self):
         return self._language
     def _set_language(self, language):
@@ -194,9 +195,7 @@ class BaseContext(AbstractContext):
     # Basic shapes.
 
     def rect(self, x, y, w, h):
-        """Draws a rectangle in the canvas. This method is using the core
-        BezierPath as path to draw on. For a more rich environment use
-        PageBotPath(context) instead.
+        """Draws a rectangle in the canvas.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -208,10 +207,8 @@ class BaseContext(AbstractContext):
         self.b.rect(xpt, ypt, wpt, hpt)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle where (x,y) is the bottom-left and size
-        (w,h).  This method uses BezierPath; for a more rich environment use
-        PageBotPath(context) instead.
-
+        """Draw an oval in rectangle where (x, y) is the bottom-left and size
+        (w, h).
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
@@ -221,9 +218,7 @@ class BaseContext(AbstractContext):
         self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
 
     def circle(self, x, y, r):
-        """Circle draws a DrawBot oval with (x,y) as middle point and radius r.
-        This method is using the core BezierPath as path to draw on. For a more rich
-        environment use PageBotPath(context) instead. PageBot function.
+        """Circle draws a DrawBot oval with (x, y) as middle point and radius r.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -244,8 +239,10 @@ class BaseContext(AbstractContext):
     def newPath(self):
         """Makes a new Bezierpath to draw in and answers it. This will not
         initialize self._path, which is accessed by the property self.path.
-        This method is using the BezierPath as path to draw on. For a more
-        rich environment use PageBotPath(context) instead. PageBot function.
+        This method is using a BezierPath class path for drawing. For a more
+        rich environment use PageBotPath(context) instead.
+        
+        NOTE: PageBot function.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -701,7 +698,7 @@ class BaseContext(AbstractContext):
     def skew(self, angle1, angle2=0, center=(0, 0)):
         return self.b.skew(angle1, angle2=angle2, center=center)
 
-    # Text.
+    # Font.
 
     def font(self, fontName, fontSize=None):
         """Tries to find a PageBot font based on name, else assumes it is a
@@ -720,7 +717,7 @@ class BaseContext(AbstractContext):
         return self.b.fallbackFont(fontName)
 
     def fontSize(self, fontSize):
-        """Set the font size in the context.
+        """Sets the font size in the context.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
@@ -730,6 +727,8 @@ class BaseContext(AbstractContext):
         fspt = upt(fontSize)
         self._fontSize = fspt
         self.b.fontSize(fspt) # Render fontSize unit to value
+
+    # ...
 
     def lineHeight(self, value):
         return self.b.lineHeight(value)
@@ -744,7 +743,7 @@ class BaseContext(AbstractContext):
         return self.b.underline(value)
 
     def hyphenation(self, onOff):
-        """DrawBot needs an overall hyphenation flag set on/off, as it is not
+        """DrawBot needs an overall hyphenation flag set on / off, as it is not
         part of the FormattedString style attributes."""
         assert isinstance(onOff, bool)
         self._hyphenation = onOff
@@ -754,9 +753,9 @@ class BaseContext(AbstractContext):
         return self.b.tabs(*tabs)
 
     def language(self, language):
-        """DrawBot needs an overall language flag set to code, it is not
-        a FormattedString style attribute. For available ISO
-        language codes, see pagebot.constants."""
+        """DrawBot needs an overall language flag set to code, it is not a
+        FormattedString style attribute. For available ISO language codes, see
+        pagebot.constants."""
         # TODO: assert language is correct
         self.b.language(language)
 
@@ -777,7 +776,8 @@ class BaseContext(AbstractContext):
         self.b.openTypeFeatures(**features)
 
     def listOpenTypeFeatures(self, fontName=None):
-        """Answers the list of opentype features available in the named font."""
+        """Answers the list of opentype features available in the named
+        font."""
         return self.b.listOpenTypeFeatures(fontName)
 
     def fontVariations(self, *args, **axes):
@@ -786,7 +786,7 @@ class BaseContext(AbstractContext):
     def listFontVariations(self, fontName=None):
         return self.b.listFontVariations(fontName=fontName)
 
-    # Drawing text.
+    # Text.
 
     def text(self, sOrBs, p):
         """Draw the sOrBs text string, can be a str or BabelString, including a
@@ -799,12 +799,48 @@ class BaseContext(AbstractContext):
             s = sOrBs.s 
             position = point2D(upt(p))
         else:
+            # Regular string, use global font and size.
             s = sOrBs
             position = point2D(upt(p))
             self.b.fontSize(self._fontSize)
             self.font(self._font)
+        
+        # Render point units to value tuple
+        self.b.text(s, position) 
 
-        self.b.text(s, position) # Render point units to value tuple
+    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
+        """Draw the sOrBs text string, can be a str or BabelString, including a
+        DrawBot FormattedString in rectangle r.
+
+        NOTE: signature differs from DrawBot.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> context.textBox('ABC', (10, 10, 200, 200))
+        """
+        if hasattr(sOrBs, 's'):
+            # Assumes it's a BabelString with a FormattedString inside.
+            sOrBs = sOrBs.s 
+        else:
+            # Otherwise converts to string if it is not already.
+            sOrBs = str(sOrBs) 
+
+        if clipPath is not None:
+            box = clipPath.bp
+            # Renders rectangle units to value tuple.
+            self.b.textBox(sOrBs, clipPath.bp) 
+        elif isinstance(r, (tuple, list)):
+            # Renders rectangle units to value tuple.
+            xpt, ypt, wpt, hpt = upt(r)
+            ypt = ypt - hpt
+            box = (xpt, ypt, wpt, hpt)
+
+        else:
+            msg = '%s.textBox has no box or clipPath defined' % self.__class__.__name__
+            raise ValueError(msg)
+
+        return self.b.textBox(sOrBs, box, align=None)
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the overflow text if flowing it in the box. The sOrBs can be a
@@ -832,34 +868,15 @@ class BaseContext(AbstractContext):
         bs.s = overflow
         return bs
 
-    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
-        """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString in rectangle r.
-
-        NOTE: signature differs from DrawBot.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> context.textBox('ABC', (10, 10, 200, 200))
-        """
-        if hasattr(sOrBs, 's'):
-            sOrBs = sOrBs.s # Assume here is's a BabelString with a FormattedString inside.
-        else:
-            sOrBs = str(sOrBs) # Otherwise convert to string if it is not already
-
-        if clipPath is not None:
-            box = clipPath.bp
-            self.b.textBox(sOrBs, clipPath.bp) # Render rectangle units to value tuple
-        elif isinstance(r, (tuple, list)):
-            # Render rectangle units to value tuple
-            box = upt(r)
-        else:
-            raise ValueError('%s.textBox has no box or clipPath defined' % self.__class__.__name__)
-        self.b.textBox(sOrBs, box, align=None)
-
     def textBoxBaselines(self, txt, box, align=None):
         return self.b.textBoxBaselines(txt, box, align=align)
+
+    def textSize(self, bs, w=None, h=None, align=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h."""
+        return self.b.textSize(bs.s, width=w, height=h, align=align)
+
+    # String.
 
     def FormattedString(self, *args, **kwargs):
         # Refer to BabelString?
@@ -900,7 +917,7 @@ class BaseContext(AbstractContext):
 
     def newText(self, textStyles, e=None, w=None, h=None, newLine=False):
         """Answers a BabelString as a combination of all text and styles in
-        textStyles, which is should have format
+        textStyles, which is should have format:
 
         [(baseString, style), (baseString, style), ...]
 
@@ -928,13 +945,14 @@ class BaseContext(AbstractContext):
     def numberOfImages(self, path):
         pass
 
-    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None, scaleType=None, e=None):
+    def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
+            scaleType=None, e=None):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
             w=w, h=h, scaleType=scaleType, e=e)
 
     def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path. If the path is an SVG
-        image, then determine by parsing the SVG-XML."""
+        """Answers the (w, h) image size of the image file at path. If the path
+        is an SVG image, then determine by parsing the SVG-XML."""
         if path.lower().endswith('.'+FILETYPE_SVG):
             svgTree = ET.parse(path)
             return pt(1000, 1000)
@@ -963,11 +981,6 @@ class BaseContext(AbstractContext):
         return self.b.linkRect(name, xywh)
 
     # Helpers.
-
-    def textSize(self, bs, w=None, h=None, align=None):
-        """Answers the width and height of the formatted string with an
-        optional given w or h."""
-        return self.b.textSize(bs.s, width=w, height=h, align=align)
 
     def installedFonts(self, patterns=None):
         """Answers a list of all fonts (name or path) that are installed in the
