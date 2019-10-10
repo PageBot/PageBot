@@ -427,8 +427,10 @@ class FlatContext(BaseContext):
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
-        TODO: clipPath
-        TODO: align
+        TODO: make clipPath work
+        TODO: make align
+
+        See also drawBot.contexts.baseContext textbox()
         """
         if hasattr(sOrBs, 's'):
             # Assume it's a BabelString with a FormattedString inside.

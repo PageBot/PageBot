@@ -817,30 +817,46 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> context.textBox('ABC', (10, 10, 200, 200))
+        >>> txt = '''The 25-storey Jumeirah Beach Hotel, with its distinctive\
+design in the shape of a wave, has become one of the most successful\
+hotels in the world. Located on Jumeirah Beach, this well-known hotel\
+offers a wonderful holiday experience and a variety of pleasurable\
+activities. The many restaurants, bars and cafés, daily live\
+entertainment and sports facilities will keep you entertained, whilst\
+children will have a great time at the Sinbad’s Kids’ Club or Wild Wadi\
+WaterparkTM which is freely accessible through a private gate.'''
+        >>> context.fontSize(14)
+        >>> tb = context.textBox(txt, r=(100, 450, 200, 300))
+        >>> len(tb)
+        112
+        >>> tb
+        'great time at the Sinbad’s Kids’ Club or Wild WadiWaterparkTM which is freely accessible through a private gate.'
         """
+        tb = None 
+
         if hasattr(sOrBs, 's'):
             # Assumes it's a BabelString with a FormattedString inside.
             sOrBs = sOrBs.s 
         else:
-            # Otherwise converts to string if it is not already.
-            sOrBs = str(sOrBs) 
+            if not isinstance(sOrBs, str):
+                # Otherwise converts to string if it is not already.
+                sOrBs = str(sOrBs) 
 
         if clipPath is not None:
             box = clipPath.bp
-            # Renders rectangle units to value tuple.
-            self.b.textBox(sOrBs, clipPath.bp) 
+            tb = self.b.textBox(sOrBs, clipPath.bp) 
         elif isinstance(r, (tuple, list)):
             # Renders rectangle units to value tuple.
             xpt, ypt, wpt, hpt = upt(r)
             ypt = ypt - hpt
             box = (xpt, ypt, wpt, hpt)
-
+            tb = self.b.textBox(sOrBs, box, align=None)
         else:
             msg = '%s.textBox has no box or clipPath defined' % self.__class__.__name__
             raise ValueError(msg)
 
-        return self.b.textBox(sOrBs, box, align=None)
+        return tb
+
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the overflow text if flowing it in the box. The sOrBs can be a
