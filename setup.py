@@ -27,7 +27,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/PageBot/PageBot",
-    author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanchez, Dave Crossland',
+    author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanches, Dave Crossland',
     author_email = 'r@petr.com',
     version='0.8',
     package_dir={'': 'Lib'},
