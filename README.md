@@ -12,6 +12,8 @@ other than Mac OS X such as Posix web servers. The aim of the developers of
 PageBot is to create a system of scriptable applications to generate
 professionally designed documents that make use of high quality typography.
 
+
+
 # Installation
 
     pip install pagebot
@@ -24,6 +26,17 @@ professionally designed documents that make use of high quality typography.
     W, H = pt(500, 400)
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
     page = doc[1]
+    
+    # Create a new rectangle element with position conditions
+    newRect(parent=page, fill=color('red'), size=pt(240, 140),
+        # Show measure lines on the element.
+        showDimensions=True, 
+        conditions=[Center2Center(), Middle2Middle()])
+    # Make the page apply all conditions.
+    page.solve() 
+    # Export the document page as png, so it shows as web image.
+    doc.export('_export/RedSquare.png') 
+       
     
 # Issue Tracking 
 

@@ -1632,8 +1632,12 @@ class Element:
         """
         parent = self.parent
         if parent is not None:
-            return parent.docLib # Either parent element or document.docLib.
-        return None # Document cannot be found, or there is there is no parent defined in the element.
+            # Either parent element or document.docLib.
+            return parent.docLib 
+
+        # Document cannot be found, or there is there is no parent defined in
+        # the element.
+        return None 
     docLib = property(_get_docLib)
 
     def _get_doc(self):
@@ -1684,14 +1688,18 @@ class Element:
         # Context not defined for this element, try parent.
         if self.parent is not None:
             return self.parent.context
-        # No context defined and no parent, we cannot do any better now than answering None here.
+        # No context defined and no parent, we cannot do any better now than
+        # answering None here.
         return None
+
     def _set_context(self, context):
         self._context = context
+
     context = property(_get_context, _set_context)
 
     def _get_builder(self):
         return self.context.b
+
     b = builder = property(_get_builder)
 
     def newString(self, bs, e=None, style=None, w=None, h=None, pixelFit=True):
