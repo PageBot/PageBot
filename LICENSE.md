@@ -1,7 +1,6 @@
-This project contains seperate, aggregated works 
-(eg, found in the directories `pagebot/contributions` and
-`pagebot/resources/testfonts/`) which are marked with their original LICENSE.md
-or LICENSE.txt or OFL.txt files.
+This project contains separate, aggregated works (eg, found in the directories
+`pagebot/contributions` and `pagebot/resources/testfonts/`) which are marked
+with their original LICENSE.md or LICENSE.txt or OFL.txt files.
 
 The PageBot python source code is available under the following MIT license:
 
