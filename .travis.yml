@@ -84,7 +84,6 @@ script:
 - python3 Lib/pagebot/contexts/flat/flatbezierpath.py
 - python3 Lib/pagebot/contexts/flat/flatcontext.py
 - python3 Lib/pagebot/contexts/flat/flatstring.py
-- python3 Lib/pagebot/contexts/solid/builder.py
 - python3 Lib/pagebot/contexts/markup/htmlbuilder.py
 - python3 Lib/pagebot/contexts/markup/svgbuilder.py
 - python3 Lib/pagebot/contexts/markup/sitebuilder.py
