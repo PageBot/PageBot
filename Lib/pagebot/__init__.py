@@ -18,7 +18,7 @@
 import re
 from pagebot.paths import *
 
-VERSION = '0.6'
+VERSION = '0.8'
 STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)

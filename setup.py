@@ -13,14 +13,23 @@
 #     setup.py
 
 from setuptools import setup, find_packages
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+
+# read the contents of your README file
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='pagebot',
     description='Scripted page layout framework for Python.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanchez, Dave Crossland',
     author_email = 'r@petr.com',
-    version='0.6',
+    version='0.8',
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
