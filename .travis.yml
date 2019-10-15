@@ -8,18 +8,8 @@ branches:
 before_install:
 - pip3 install --upgrade pip
 install:
-# TODO: move to requirements.txt.
-- pip3 install libsass
-- pip3 install fontTools
-- pip3 install markdown
 - pip3 install pylint
-- pip3 install svgwrite
-- pip3 install SimpleIDML
-- pip3 install booleanOperations
-- pip3 install tornado
-- pip3 install SimpleIDML
-- pip3 install flat
-- pip3 install pyobjc
+- pip3 install -r requirements.txt
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip

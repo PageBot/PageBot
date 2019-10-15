@@ -58,5 +58,14 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing',
         'Topic :: Text Processing :: Fonts'],
-    install_requires=['libsass', 'fontTools']
+    install_requires=[
+        'booleanOperations',
+        'flat; platform_system=="Linux"',
+        'fontTools',
+        'libsass',
+        'markdown',
+        'pyobjc',
+        'SimpleIDML',
+        'svgwrite',
+        'tornado']
 )
