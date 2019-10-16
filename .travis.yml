@@ -1,7 +1,7 @@
-os:
+#os:
   # https://docs.travis-ci.com/user/multi-os/
-  - osx
-  - linux
+  #- osx
+  #- linux
 matrix:
   allow_failures:
     - os: linux
@@ -12,19 +12,16 @@ matrix:
       python: 3.6
       before_install:
         - ./install.sh
-      #addons:
-      #  apt:
-      #    packages:
-      #      - "python3"
-      #      - "python3-pip"
     - os: osx 
       language: python
       python: 3.6
+
 branches:
   only:
   - master
 - pyenv global system 3.6
 - pip3 install --upgrade pip
+
 install:
 - pip3 install pylint
 - pip3 install -r requirements.txt
@@ -64,6 +61,7 @@ install:
 - cd ..
 - rm master.zip
 - rm -r drawbot-master
+
 script:
 # TODO: move to pytest script.
 - mkdir _export
