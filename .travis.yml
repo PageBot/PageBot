@@ -1,7 +1,13 @@
 language:
   - python3.6
   - python3.7
-os: osx
+os:
+  # https://docs.travis-ci.com/user/multi-os/
+  - osx
+  - linux
+matrix:
+  allow_failures:
+    - os: linux
 branches:
   only:
   - master
