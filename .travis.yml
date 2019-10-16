@@ -1,4 +1,3 @@
-#language: python3
 os:
   # https://docs.travis-ci.com/user/multi-os/
   - osx
@@ -8,22 +7,22 @@ matrix:
     - os: linux
   include:
     - os: linux
+      language: python
       dist: trusty
       python: 3.6
-    - os: osx 
-      python: 3.6
-      #- os: osx 
-      #python: 3.7
+      before_install:
+        - ./install.sh
       #addons:
       #  apt:
       #    packages:
       #      - "python3"
       #      - "python3-pip"
+    - os: osx 
+      language: python
+      python: 3.6
 branches:
   only:
   - master
-before_install:
-    #- ./.travis/install.sh
 - pyenv global system 3.6
 - pip3 install --upgrade pip
 install:
