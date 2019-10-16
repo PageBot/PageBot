@@ -59,11 +59,11 @@ setup(
         'Topic :: Text Processing :: Fonts'],
     install_requires=[
         'booleanOperations',
-        'flat; platform_system=="Linux"',
+        'flat',
         'fontTools',
         'libsass',
         'markdown',
-        'pyobjc',
+        'pyobjc; platform_system=="darwin"',
         'SimpleIDML',
         'svgwrite',
         'tornado']
