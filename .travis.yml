@@ -1,4 +1,5 @@
 ---
+language: python3
 matrix:
   allow_failures:
     - os: linux
