@@ -1,17 +1,17 @@
 ---
-#language: python3
+language: python3
 matrix:
   allow_failures:
     - os: linux
   include:
     - os: linux
-      language: python3
+      language: python
       dist: trusty
       python: 3.6
       before_install:
         - ./install.sh
     - os: osx
-      language: python3
+      language: python
       python: 3.7
 branches:
   only:
