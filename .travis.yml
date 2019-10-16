@@ -12,10 +12,10 @@ branches:
   only:
   - master
 before_install:
-- pip3 install --upgrade pip
+- pip install --upgrade pip
 install:
-- pip3 install pylint
-- pip3 install -r requirements.txt
+- pip install pylint
+- pip install -r requirements.txt
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
