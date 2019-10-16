@@ -8,14 +8,17 @@ os:
 matrix:
   allow_failures:
     - os: linux
+include:
+    - os: linux
+      dist: trusty
 branches:
   only:
   - master
 before_install:
-- pip install --upgrade pip
+- pip3 install --upgrade pip
 install:
-- pip install pylint
-- pip install -r requirements.txt
+- pip3 install pylint
+- pip3 install -r requirements.txt
 - python3 setup.py install # PageBot itself.
 - wget https://github.com/typesupply/vanilla/archive/master.zip
 - unzip master.zip
