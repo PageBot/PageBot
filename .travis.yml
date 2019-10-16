@@ -1,6 +1,4 @@
-language:
-  - python3.6
-  - python3.7
+language: python
 os:
   # https://docs.travis-ci.com/user/multi-os/
   - osx
@@ -8,10 +6,14 @@ os:
 matrix:
   allow_failures:
     - os: linux
-include:
+  include:
     - os: linux
       dist: trusty
       python: 3.6
+    - os: osx 
+      python: 3.6
+    - os: osx 
+      python: 3.7
       #addons:
       #  apt:
       #    packages:
