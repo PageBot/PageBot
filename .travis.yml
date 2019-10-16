@@ -1,4 +1,4 @@
-language: python
+language: python3
 os:
   # https://docs.travis-ci.com/user/multi-os/
   - osx
@@ -23,7 +23,7 @@ branches:
   only:
   - master
 before_install:
-- ./.travis/install.sh
+    #- ./.travis/install.sh
 - pip3 install --upgrade pip
 install:
 - pip3 install pylint
