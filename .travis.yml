@@ -1,5 +1,5 @@
 ---
-language: python3
+#language: python3
 matrix:
   allow_failures:
     - os: linux
@@ -13,7 +13,7 @@ matrix:
     - os: osx
       before_install:
         - ./osx.sh
-      language: python
+      language: python3
       python: 3.7
 branches:
   only:
