@@ -5,6 +5,7 @@
     #sudo apt-get python3 python3-setuptools python3-pip
 #fi
 python --version
+pyenv versions
 pyenv global system 3.6
 pip install --upgrade pip
 pip install pylint

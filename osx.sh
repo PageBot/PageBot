@@ -1,5 +1,6 @@
 #!/bin/bash
-pyenv global system 3.6
+#pyenv global system 3.6
+pyenv versions
 pip3 install --upgrade pip
 pip3 install pylint
 pip3 install -r requirements.txt
