@@ -413,7 +413,7 @@ li sup { /* Superior Scale number in Menu */
     row-gap: 10px;    
 }
 .main {
-    padding: 0 4p;
+    padding: 0 12pt;
     border-top: 15px solid #2B1C08;
 }
 .sides {
@@ -423,7 +423,7 @@ li sup { /* Superior Scale number in Menu */
     row-gap: 10px;    
 }
 .side {
-    padding: 0 4p;
+    padding: 0 12pt;
     border-top: 15px solid #2B1C08;
 }
 

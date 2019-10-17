@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ev
 # https://docs.travis-ci.com/user/multi-os/
 
 #if [ $TRAVIS_OS_NAME = 'linux' ]; then

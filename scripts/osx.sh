@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ev
 #pyenv global system 3.6
 pyenv versions
 pip3 install --upgrade pip
