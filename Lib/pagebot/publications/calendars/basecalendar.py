@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # ----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -12,7 +13,7 @@
 #
 #     basecalendar.py
 #
-#from random import random
+
 from pagebot.constants import *
 from pagebot.conditions import *
 from pagebot.elements import *

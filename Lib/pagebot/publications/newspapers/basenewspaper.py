@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -34,32 +35,32 @@ class Newspaper(Publication):
     title=None, autoPages=1, defaultTemplate=None, templates=None,
     originTop=True, startPage=0, w=None, h=None, exportPaths=None, **kwargs)
 
-    >>> from pagebot.constants import Broadsheet, GRID_SQR, BASE_LINE
+    >>> from pagebot.constants import Newspaper_Broadsheet, GRID_SQR, BASE_LINE
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
-    >>> w, h = Broadsheet
+    >>> w, h = Newspaper_Broadsheet
     >>>
     >>> print(w)
     23.50"
     >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1)
     >>> view = np.view
-    >>> view.padding = 50
-    >>> view.showCropMarks = True
-    >>> view.showRegistrationMarks = True
+    >>> #view.padding = 50
+    >>> #view.showCropMarks = True
+    >>> #view.showRegistrationMarks = True
     >>> #view.showPadding = True
     >>> #view.showFrame = True
-    >>> view.showNameInfo = True
+    >>> #view.showNameInfo = True
     >>> #view.showGrid = GRID_SQR
     >>> #view.showBaselineGrid = [BASE_LINE]
     >>> #view.showFrame = True
-    >>> templateFront = np.getTemplate('Front')
-    >>> templateMainPage = np.getTemplate('MainPage')
+    >>> #templateFront = np.getTemplate('Front')
+    >>> #templateMainPage = np.getTemplate('MainPage')
     >>> #np[1].applyTemplate(templateFront)
     >>> #np[2].applyTemplate(templateMainPage)
     >>> #np[3].applyTemplate(templateMainPage)
     >>> #np[4].applyTemplate(templateMainPage)
-    >>> result = np.solve() # Drill down to all elements positions themselves.
-    >>> np.export('_export/Newspaper.pdf')
+    >>> #result = np.solve() # Drill down to all elements positions themselves.
+    >>> #np.export('_export/Newspaper.pdf')
     """
     COLUMNS = 7
     GUTTER = 18
