@@ -15,6 +15,7 @@
 #     __init__.py
 #
 
+from sys import platform
 import re
 from pagebot.paths import *
 
@@ -39,7 +40,7 @@ def getDefaultFontPath():
     platform."""
     return DEFAULT_FONT_PATH
 
-def getContext(contextType='DrawBot'):
+def getContext(contextType=None):
     """Returns a single context.
 
     >>> context = getContext()
@@ -67,6 +68,12 @@ def getContext(contextType='DrawBot'):
     >>> print(context)
     <IdmlContext>
     """
+    if contextType is None:
+        if platform == 'linux':
+            contextType = 'Flat'
+        elif platform == 'darwin':
+            contextType = 'DrawBot'
+
     from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
