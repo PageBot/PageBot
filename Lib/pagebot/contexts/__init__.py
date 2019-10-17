@@ -87,11 +87,15 @@ def getFlatContext():
     return FlatContext()
 
 def getDrawBotContext():
+    if platform != 'darwin':
+        return
     # TODO: check if drawBotContext exists first, ask to install.
     from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
     return DrawBotContext()
 
 def getCanvasContext():
+    if platform != 'darwin':
+        return
     from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
     return CanvasContext()
 
