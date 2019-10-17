@@ -9,10 +9,10 @@ matrix:
       dist: trusty
       python: 3.6
       before_install:
-        - ./linux.sh
+        - ./scripts/linux.sh
     - os: osx
       before_install:
-        - ./osx.sh
+        - ./scripts/osx.sh
       language: python3
       python: 3.7
 branches:
@@ -20,5 +20,5 @@ branches:
     - master
 script:
   - mkdir _export
-  - ./pylint.sh
-  - ./doctests.sh
+  - ./scripts/pylint.sh
+  - ./scripts/doctests.sh

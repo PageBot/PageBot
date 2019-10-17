@@ -9,6 +9,6 @@ pyenv versions
 pyenv global system 3.6
 pip install --upgrade pip
 pip install pylint
-pip install -r requirements.txt
-python setup.py install
+pip install -r ../requirements.txt
+python ../setup.py install
 

@@ -3,9 +3,9 @@
 pyenv versions
 pip3 install --upgrade pip
 pip3 install pylint
-pip3 install -r requirements.txt
+pip3 install -r ../requirements.txt
 pip3 install pyobjc==5.2
-python3 setup.py install
+python3 ../setup.py install
 wget https://github.com/typesupply/vanilla/archive/master.zip
 unzip master.zip
 cd vanilla-master
