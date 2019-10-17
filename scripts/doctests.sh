@@ -1,5 +1,5 @@
 #!/bin/bash
-export PWD="../Lib/pagebot"
+export PWD="Lib/pagebot"
 python3 $PWD/__init__.py
 python3 $PWD/article.py
 python3 $PWD/composer.py
