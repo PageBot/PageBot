@@ -179,10 +179,11 @@ class GlyphAnalyzer:
     def onBlack(self, p):
         """Answers is the single point (x, y) is on black."""
         # TODO: We need to make a method to have the context available here.
-        from pagebot import getContext
-        context = getContext()
-        glyphPath = context.getGlyphPath(self.glyph)
-        return context.onBlack(p, glyphPath)
+        # FIXME: cyclic import 
+        #from pagebot import getContext
+        #context = getContext()
+        #glyphPath = context.getGlyphPath(self.glyph)
+        #return context.onBlack(p, glyphPath)
 
     def spanBlack(self, p0, p1, step=SPANSTEP):
         """The spanBlack method answers if the number
