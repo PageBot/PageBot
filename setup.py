@@ -63,7 +63,6 @@ setup(
         'fontTools',
         'libsass',
         'markdown',
-        'pyobjc; platform_system=="darwin"',
         'SimpleIDML',
         'svgwrite',
         'tornado']
