@@ -18,6 +18,8 @@
 from sys import platform
 import re
 from pagebot.paths import *
+from pagebot.contexts import getContext as getPlatformContext
+from pagebot.contexts import getContextMampPath
 
 VERSION = '0.8'
 STATUS = 'alpha'
@@ -74,13 +76,11 @@ def getContext(contextType=None):
         elif platform == 'darwin':
             contextType = 'DrawBot'
 
-    from pagebot.contexts import getContext as getPlatformContext
     return getPlatformContext(contextType=contextType)
 
 def getContexts(types):
     """Returns multiple contexts, contextTypes should be specified as a
     list."""
-    from pagebot.contexts import getContext as getPlatformContext
     contexts = []
 
     for contextType in types:
@@ -91,7 +91,6 @@ def getContexts(types):
 
 def getAllContexts():
     """Returns all available contexts."""
-    from pagebot.contexts import getContext as getPlatformContext
     contexts = []
 
     for contextType in contextTypes:
@@ -99,8 +98,7 @@ def getAllContexts():
     return contexts
 
 def getMampPath():
-    from pagebot.contexts import getMampPath
-    return getMampPath()
+    return getContextMampPath()
 
 '''
 In order to let PageBot scripts and applications exchange information without

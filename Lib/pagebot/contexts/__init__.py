@@ -115,7 +115,7 @@ def getSvgContext():
     from pagebot.contexts.markup.svgcontext import SvgContext
     return SvgContext()
 
-def getMampPath():
+def getContextMampPath():
     """Make sure MAMP_PATH is initialized depending on the context."""
     if MAMP_PATH is None:
         getContext()
