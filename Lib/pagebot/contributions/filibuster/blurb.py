@@ -15,11 +15,10 @@ class Blurb:
     print(b.getBlurb('article'))
     """
     def __init__(self, customContent=None):
-        if customContent is None:
-            c = customContent
-        else:
-            c = content
-        self.writer = blurbwriter.BlurbWriter(c.content())
+        #if customContent is None:
+        #    content = customContent
+
+        self.writer = blurbwriter.BlurbWriter(content.content())
 
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
 
