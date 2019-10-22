@@ -20,9 +20,9 @@ from flat import rgb
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.basecontext import BaseContext
-from pagebot.contexts.flat.flatbuilder import flatBuilder
-from pagebot.contexts.flat.flatbezierpath import BezierPath
-from pagebot.contexts.flat.flatstring import FlatString
+from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
+from pagebot.contexts.flatcontext.flatbezierpath import BezierPath
+from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.mathematics import to255
@@ -474,7 +474,7 @@ class FlatContext(BaseContext):
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ' * 100, style=style)
         >>> print(type(bs))
-        <class 'pagebot.contexts.flat.flatstring.FlatString'>
+        <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()

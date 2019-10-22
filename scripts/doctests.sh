@@ -18,10 +18,10 @@ python3 $PWD/contexts/base/abstractcontext.py
 python3 $PWD/contexts/base/babelstring.py
 python3 $PWD/contexts/base/basecontext.py
 python3 $PWD/contexts/base/basebuilder.py
-python3 $PWD/contexts/flat/flatbuilder.py
-python3 $PWD/contexts/flat/flatbezierpath.py
-python3 $PWD/contexts/flat/flatcontext.py
-python3 $PWD/contexts/flat/flatstring.py
+python3 $PWD/contexts/flatcontext/flatbuilder.py
+python3 $PWD/contexts/flatcontext/flatbezierpath.py
+python3 $PWD/contexts/flatcontext/flatcontext.py
+python3 $PWD/contexts/flatcontext/flatstring.py
 python3 $PWD/contexts/markup/htmlbuilder.py
 python3 $PWD/contexts/markup/svgbuilder.py
 python3 $PWD/contexts/markup/sitebuilder.py

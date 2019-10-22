@@ -42,7 +42,7 @@ class Placer(Element):
 
     """ TODO: Make this work in Flat
 
-    >>> from pagebot.contexts.flat.flatcontext import FlatContext
+    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)

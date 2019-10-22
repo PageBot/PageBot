@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -15,7 +16,7 @@
 #
 
 from sys import platform
-from pagebot.contexts.flat.flatcontext import FlatContext
+from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 

@@ -114,7 +114,7 @@ class Element:
         >>> e.build(view, pt(0, 0))
         """
         """
-        >>> from pagebot.contexts.flat.flatcontext import FlatContext
+        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
         >>> size = pt(320, 420)
@@ -1721,7 +1721,7 @@ class Element:
         >>> bs = e.newString('ABC')
         >>> str(bs.s)
         'ABC'
-        >>> from pagebot.contexts.flat.flatcontext import FlatContext
+        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> e = Element(context=context)
         >>> bs = e.newString('ABC')
