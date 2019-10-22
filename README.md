@@ -21,7 +21,10 @@ professionally designed documents that make use of high quality typography.
 # Usage
 
     from pagebot.document import Document
+    from pagebot.elements import newRect
+    from pagebot.conditions import Center2Center, Middle2Middle
     from pagebot.toolbox.units import pt
+    from pagebot.toolbox.color import color
     
     W, H = pt(500, 400)
     doc = Document(w=W, h=H, originTop=False, autoPages=1)
