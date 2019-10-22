@@ -4,5 +4,8 @@ set -ev
 pyenv versions
 pip3 install --upgrade pip
 pip3 install pylint
+git clone git@github.com:PageBot/PageBotCocoa.git
+cd PageBotCocoa
 pip3 install -r requirements.txt
-pip3 install -r requirements-osx.txt
+cd ..
+pip3 install -r requirements.txt
