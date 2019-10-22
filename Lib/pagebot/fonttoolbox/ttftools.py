@@ -17,6 +17,7 @@ import re
 import sys
 import doctest
 import traceback
+from copy import deepcopy
 from pagebot.fonttoolbox import otlTools
 from pagebot.fonttoolbox.unicodes import unicoderanges
 
@@ -650,7 +651,6 @@ class FontSubsetter(TTFTraverser):
     def subsetFont_cmap(self, table, glyphsToDelete):
         for cmap in table.tables:
             if hasattr(cmap, "cmap"):
-                from copy import deepcopy
                 mapCopy = deepcopy(cmap.cmap)
                 for code, glyphName in mapCopy.items():
                     if glyphName in glyphsToDelete:

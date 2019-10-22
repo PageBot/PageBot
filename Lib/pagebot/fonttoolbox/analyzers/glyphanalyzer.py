@@ -19,6 +19,7 @@
 import sys
 import weakref
 
+from pagebot import getContext
 from pagebot.toolbox.transformer import asInt
 from pagebot.fonttoolbox.analyzers.apointcontextlist import Vertical, Horizontal
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, Counter, VerticalCounter
@@ -180,7 +181,6 @@ class GlyphAnalyzer:
         """Answers is the single point (x, y) is on black."""
         # TODO: We need to make a method to have the context available here.
         # FIXME: cyclic import on Linux.
-        from pagebot import getContext
         context = getContext()
         glyphPath = context.getGlyphPath(self.glyph)
         return context.onBlack(p, glyphPath)

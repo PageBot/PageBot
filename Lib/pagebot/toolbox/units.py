@@ -42,7 +42,8 @@ import re
 import sys
 import math
 from copy import copy
-from pagebot.toolbox.transformer import asNumberOrNone, asIntOrFloat, asFormatted
+from pagebot.toolbox.transformer import (asNumberOrNone, asIntOrFloat,
+        asFormatted, asNormalizedJSON)
 
 # TODO: move to constants?
 INCH = 72
@@ -490,7 +491,6 @@ class Unit:
         >>> d['class_'], d['v'], d['base']['v']
         ('Em', 200, 24)
         """
-        from pagebot.toolbox.transformer import asNormalizedJSON
         return dict(class_=self.__class__.__name__, v=self.v, base=asNormalizedJSON(self.base), g=self.g)
 
     def _get_pt(self):

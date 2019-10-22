@@ -15,6 +15,7 @@
 #     flatcontext.py
 #
 import math
+from flat import rgb
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -22,13 +23,13 @@ from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.contexts.flat.flatbuilder import flatBuilder
 from pagebot.contexts.flat.flatbezierpath import BezierPath
 from pagebot.contexts.flat.flatstring import FlatString
-from pagebot.toolbox.color import color, Color, noColor
+from pagebot.errors import PageBotFileFormatError
+from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
-from pagebot.toolbox.units import pt, upt, point2D
-from pagebot.errors import PageBotFileFormatError
 from pagebot.style import makeStyle
-
+from pagebot.toolbox.color import color, Color, noColor
+from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -528,8 +529,6 @@ class FlatContext(BaseContext):
         >>> context._fontSize # Renders to pt-unit
         12
         """
-        from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
-
         self._font = getFontPathOfFont(font) # Convert name or path to font path.
         if fontSize is not None:
             self._fontSize = upt(fontSize)
@@ -609,7 +608,6 @@ class FlatContext(BaseContext):
 
         TODO: Make better match for all file types, transparency and spot
         color."""
-        from flat import rgb
         return rgb(*to255(c.rgb))
 
     def _getShape(self):

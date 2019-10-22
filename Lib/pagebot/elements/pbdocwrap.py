@@ -15,6 +15,7 @@
 #     pbdocwrap.py
 #
 from pagebot.elements.element import Element
+from pagebot.toolbox.color import noColor
 
 class DocWrap(Element):
     """The DocWrap is used to create a watershed between a Document instance
@@ -63,7 +64,6 @@ class DocWrap(Element):
         and references are exactly the same, as if the wrapped document is building.
         """
         # FIXME: Hack for now, to reset outline drawing, caused by previous view drawing.
-        from pagebot.toolbox.color import noColor
         view.context.stroke(noColor)
         view.context.fill(noColor)
 

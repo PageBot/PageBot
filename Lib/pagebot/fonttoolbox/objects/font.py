@@ -34,13 +34,13 @@ try:
 except:
     from fontTools.varLib.mutator import iup_delta
 
+from pagebot.constants import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
+from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.toolbox.transformer import path2FontName, path2Extension#, asFormatted
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-
-from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
-from pagebot.constants import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 
 def isFontPath(fontPath):
     """Answers if the path is a font path.
@@ -105,7 +105,6 @@ def findFonts(pattern, lazy=True):
     >>> findFonts(('Ita', 'Bol', 'Con')) # Select on style parts only
     [<Font RobotoCondensed-BoldItalic>]
     """
-    from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
     fonts = []
 
@@ -138,7 +137,6 @@ def findFont(fontPath, default=None, lazy=True):
     >>> f
     <Font Roboto-Regular>
     """
-    from pagebot.fonttoolbox.fontpaths import getFontPaths
     fontPaths = getFontPaths()
 
     if fontPath in fontPaths:

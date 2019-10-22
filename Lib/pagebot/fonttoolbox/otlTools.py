@@ -19,7 +19,7 @@
 #
 
 import doctest
-
+from copy import deepcopy
 
 #
 # Entry points
@@ -1014,7 +1014,6 @@ class GlyphDeleter(LookupTraverser):
     #
 
     def deleteGlyphs_SingleSubstFormat1(self, subTable, glyphNames):
-        from copy import deepcopy
         mappingCopy = deepcopy(subTable.mapping)
 
         for minput, output in mappingCopy.items():

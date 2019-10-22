@@ -15,6 +15,10 @@
 #
 
 from sys import platform
+from pagebot.contexts.flat.flatcontext import FlatContext
+from pagebot.contexts.markup.htmlcontext import HtmlContext
+from pagebot.contexts.markup.svgcontext import SvgContext
+# from pagebot.contexts.idmlcontext import IdmlContext
 
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None
@@ -83,12 +87,12 @@ def getContext(contextType='DrawBot'):
     return DEFAULT_CONTEXT
 
 def getFlatContext():
-    from pagebot.contexts.flat.flatcontext import FlatContext
     return FlatContext()
 
 def getDrawBotContext():
     if platform != 'darwin':
         return None
+
     # TODO: check if drawBotContext exists first, ask to install.
     from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
     return DrawBotContext()
@@ -96,23 +100,17 @@ def getDrawBotContext():
 def getCanvasContext():
     if platform != 'darwin':
         return None
+
     from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
     return CanvasContext()
 
 def getHtmlContext():
-    from pagebot.contexts.markup.htmlcontext import HtmlContext
     return HtmlContext()
 
-#def getInDesignContext():
-#    from indesigncontext import InDesignContext
-#    return InDesignContext()
-
 #def getIdmlContext():
-#    from pagebot.contexts.idmlcontext import IdmlContext
 #    return IdmlContext()
 
 def getSvgContext():
-    from pagebot.contexts.markup.svgcontext import SvgContext
     return SvgContext()
 
 def getContextMampPath():

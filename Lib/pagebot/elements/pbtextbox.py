@@ -24,6 +24,7 @@ from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, BOTTOM,
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, point2D, pt, units, uRound, upt
 from pagebot.toolbox.color import color, noColor
+from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class TextBox(Element):
     # Initialize the default behavior tags as different from Element.
@@ -418,7 +419,6 @@ class TextBox(Element):
         >>> e.spellCheck(languages=['nl'])
         ['This', 'text']
         """
-        from pagebot.toolbox.hyphenation import hyphenatedWords
         for word in self.WORDS.findall(str(self.bs)):
             for language in languages:
                 languageWords = hyphenatedWords(language)

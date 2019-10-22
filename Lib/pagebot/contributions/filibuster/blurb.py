@@ -4,7 +4,7 @@
 #    blurb.py
 #
 import re
-from pagebot.contributions.filibuster import blurbwriter
+from pagebot.contributions.filibuster import blurbwriter, content
 
 class Blurb:
     """The Content is a wrapper around the filibuster BlurbWriter of Erik van
@@ -16,7 +16,6 @@ class Blurb:
     """
     def __init__(self, content=None):
         if content is None:
-            from pagebot.contributions.filibuster import content
 
         self.writer = blurbwriter.BlurbWriter(content.content())
 
