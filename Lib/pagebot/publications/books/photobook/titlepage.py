@@ -15,6 +15,7 @@
 #     books/photobook/titlepage.py
 #
 from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
+from pagebot.elements import newTextBox
 
 def makeTitlePage(page, title=None, text=None):
     """Cover template for photo books."""
