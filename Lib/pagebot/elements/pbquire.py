@@ -15,7 +15,7 @@
 #     pbquire.py
 #
 
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.constants import QUIRE_SINGLE
 
 class Quire(Element):

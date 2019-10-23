@@ -17,7 +17,7 @@
 #     (New version separating the Image-frame and the Image-pixelmap)
 #
 import os
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN # In case no image is defined.
 from pagebot.toolbox.units import pointOffset, point2D, pt, upt
 from pagebot.toolbox.color import noColor

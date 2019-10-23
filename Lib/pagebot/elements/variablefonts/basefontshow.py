@@ -14,7 +14,7 @@
 #
 #     basefontshow.py
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.constants import LEFT
 from pagebot.toolbox.units import asFormatted
 

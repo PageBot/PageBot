@@ -14,7 +14,7 @@
 #
 #     ruler.py
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import units

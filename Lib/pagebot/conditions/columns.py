@@ -36,7 +36,7 @@ class RowCondition(Condition):
 class Left2Col(ColCondition):
     """Fit the left of the element on the column index #, as defined in self.col.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> from pagebot.constants import mm
     >>> C, G, PAD = mm(50), mm(5), mm(20) # Column width, gutter and element paddig
     >>> gridX = [(C, G), (C, G), (C, G), (C, G), (C, G)] # Create the column grid
@@ -67,7 +67,7 @@ class Left2Col(ColCondition):
 class Right2Col(ColCondition):
     """Fit the left of the element on the column index #, as defined in self.col.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> from pagebot.constants import mm
     >>> C, G, PAD = mm(50), mm(5), mm(20) # Column width, gutter and element paddig
     >>> gridX = [(C, G), (C, G), (C, G), (C, G), (C, G)] # Create the column grid

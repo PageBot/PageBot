@@ -14,7 +14,7 @@
 #
 #     pbdocwrap.py
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.color import noColor
 
 class DocWrap(Element):

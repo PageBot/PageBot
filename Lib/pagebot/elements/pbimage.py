@@ -18,7 +18,7 @@
 
 import os
 
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor

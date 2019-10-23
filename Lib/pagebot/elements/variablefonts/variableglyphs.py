@@ -19,7 +19,7 @@
 #
 
 from copy import copy
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.style import makeStyle
 from pagebot import getContext
 from pagebot.toolbox.units import pointOffset

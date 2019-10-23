@@ -23,7 +23,7 @@ from math import pi, sin, cos
 
 from pagebot import getContext
 from pagebot.toolbox.units import pointOffset
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import pt, upt

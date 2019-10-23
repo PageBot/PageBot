@@ -13,7 +13,7 @@
 #
 #	  calendarmonth.py
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.dating import now
 
 class CalendarMonth(Element):

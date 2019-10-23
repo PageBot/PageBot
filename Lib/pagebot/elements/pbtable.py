@@ -15,7 +15,7 @@
 #     pbtable.py
 #
 from pagebot.constants import CENTER, ORIGIN, MIDDLE
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
 from pagebot.elements.pbtextbox import TextBox

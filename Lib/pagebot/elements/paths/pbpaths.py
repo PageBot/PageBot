@@ -17,7 +17,7 @@
 #     The Paths element holds an ordered list of PageBotPath elements, where each can
 #     have its own optional style, that overwrites the generic style of self.
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.elements.paths import PageBotPath
 from pagebot.toolbox.units import pointOffset, upt
 

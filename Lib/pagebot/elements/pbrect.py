@@ -16,7 +16,7 @@
 #
 
 
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, point2D
 
 class Rect(Element):

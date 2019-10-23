@@ -16,7 +16,7 @@
 #
 #     Draw the icon with optional information of the included font.
 #
-from pagebot.elements import Element
+from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, pt, upt
 from pagebot.toolbox.color import blackColor, noColor
 

@@ -34,7 +34,7 @@ class SolveBlock(Condition):
 class Fit(Condition):
     """Fit the element on all sides of the parent paddings.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
@@ -61,7 +61,7 @@ class Fit(Condition):
 class Fit2Sides(Condition):
     """Fit the element on all sides of the parent sides.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Sides()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=300, elements=[e1])
@@ -99,7 +99,7 @@ class Fit2Bleed(Condition):
 class Fit2Left(Condition):
     """Grow the element to the left side, until it fits the parent element padding.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Left()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
@@ -120,7 +120,7 @@ class Fit2Left(Condition):
 class Fit2Right(Condition):
     """Grow the element to the right side, until it fits the parent element padding.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Right()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=300, elements=[e1], padding=12)
@@ -141,7 +141,7 @@ class Fit2Right(Condition):
 class Fit2Width(Condition):
     """Grow the element to left and right side, until it fits the parent element.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Width()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=400, elements=[e1])
@@ -163,7 +163,7 @@ class Scale2Width(Condition):
     """Grow the element to left and right side, until it fits the parent element.
     The scale vertical to the original ratio.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Scale2Width()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=400, elements=[e1])
@@ -184,7 +184,7 @@ class Scale2Width(Condition):
 class Fit2Height(Condition):
     """Grow the element to top and bottom side, until it fits the parent element.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Height()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=400, elements=[e1])
@@ -205,7 +205,7 @@ class Fit2Height(Condition):
 class Fit2Top(Condition):
     """Grow the element to top side, until it fits the parent element.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Top()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=400, elements=[e1])
@@ -226,7 +226,7 @@ class Fit2Top(Condition):
 class Fit2Bottom(Condition):
     """Grow the element to bottom side, until it fits the parent element.
 
-    >>> from pagebot.elements import Element
+    >>> from pagebot.elements.element import Element
     >>> conditions = [Fit2Bottom()]
     >>> e1 = Element(x=20, y=20, w=50, h=50, conditions=conditions)
     >>> e2 = Element(w=300, h=400, elements=[e1])
