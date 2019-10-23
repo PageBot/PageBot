@@ -45,6 +45,7 @@ def getDefaultFontPath():
 def getContext(contextType=None):
     """Returns a single context."""
 
+    # Sets the default for both supported platforms.
     if contextType is None:
         if platform == 'linux':
             contextType = 'Flat'

@@ -17,7 +17,7 @@
 #     Graphs, Maps, 3Dto2DContainers.
 #
 
-from pagebot.elements.element import Element
+#from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 

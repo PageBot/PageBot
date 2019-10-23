@@ -20,6 +20,9 @@ from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
+DrawBotContext = None
+CanvasContext = None
+
 if platform == 'darwin':
     # TODO: check if drawBotContext exists first, ask to install.
     from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
