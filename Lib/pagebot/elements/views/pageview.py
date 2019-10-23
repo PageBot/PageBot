@@ -248,7 +248,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -285,7 +285,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -321,7 +321,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -357,7 +357,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> path = '_export/PageNameInfo.pdf'
         >>> style = getRootStyle() # Get default values
@@ -631,7 +631,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -681,7 +681,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -794,7 +794,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
@@ -900,7 +900,7 @@ class PageView(BaseView):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element() # Works on generic elements as well as pages.
@@ -952,7 +952,7 @@ class PageView(BaseView):
         >>> from pagebot.toolbox.units import mm
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> from pagebot.elements.element import Element
+        >>> from pagebot.elements import Element
         >>> from pagebot.style import getRootStyle
         >>> style = getRootStyle() # Get default values
         >>> e = Element()

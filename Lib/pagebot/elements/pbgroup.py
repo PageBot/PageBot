@@ -21,7 +21,7 @@ class Group(Rect):
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-    >>> from pagebot.elements.element import Element
+    >>> from pagebot.elements import Element
     >>> from pagebot.document import Document
     >>> c = DrawBotContext()
     >>> w, h = pt(300), pt(400)

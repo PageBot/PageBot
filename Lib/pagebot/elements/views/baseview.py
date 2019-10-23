@@ -16,7 +16,7 @@
 #
 
 from pagebot import getContext
-from pagebot.elements.element import Element
+from pagebot.elements import Element
 from pagebot.toolbox.transformer import *
 
 class BaseView(Element):

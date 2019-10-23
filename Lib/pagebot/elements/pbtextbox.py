@@ -21,7 +21,7 @@ from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, BOTTOM,
     DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_BASELINE_COLOR,
     DEFAULT_BASELINE_WIDTH, BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT,
     BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
-from pagebot.elements.element import Element
+from pagebot.elements import Element
 from pagebot.toolbox.units import pointOffset, point2D, pt, units, uRound, upt
 from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.hyphenation import hyphenatedWords

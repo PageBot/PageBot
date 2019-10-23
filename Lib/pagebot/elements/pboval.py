@@ -16,7 +16,7 @@
 
 
 from pagebot.constants import ORIGIN, MIDDLE, CENTER
-from pagebot.elements.element import Element
+from pagebot.elements import Element
 from pagebot.toolbox.units import pointOffset, point2D
 from pagebot.toolbox.color import noColor
 

@@ -15,7 +15,7 @@
 #     galley.py
 #
 from pagebot.constants import ORIGIN
-from pagebot.elements.element import Element
+from pagebot.elements import Element
 from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.pbruler import Ruler
 from pagebot.toolbox.units import pointOffset

@@ -14,7 +14,7 @@
 #
 #     line.py
 #
-from pagebot.elements.element import Element
+from pagebot.elements import Element
 from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import units, pointOffset
 
