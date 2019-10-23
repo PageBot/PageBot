@@ -15,14 +15,15 @@
 #     books/photobook/titlepage.py
 #
 from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
-from pagebot.elements import newTextBox
+#from pagebot.elements import newTextBox # gives cyclic import error.
+from pagebot.elements.pbtextbox import TextBox
 
 def makeTitlePage(page, title=None, text=None):
     """Cover template for photo books."""
     if title is not None:
         tw, th = title.size
-        newTextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
+        TextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
     if text is not None:
         tw, th = text.size
-        newTextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
+        TextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
             conditions=[Center2Center(), Bottom2Bottom()])
