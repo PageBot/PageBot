@@ -10,15 +10,20 @@ matrix:
       python: 3.6
       before_install:
         - ./scripts/linux.sh
+      script:
+        - mkdir _export
+        - ./scripts/pylint.sh
+        - ./scripts/doctests.sh
     - os: osx
       before_install:
         - ./scripts/osx.sh
       language: python3
       python: 3.7
+      script:
+        - mkdir _export
+        - ./scripts/pylint.sh
+        - ./scripts/doctests-osx.sh
+        - ./scripts/doctests.sh
 branches:
   only:
     - master
-script:
-  - mkdir _export
-  - ./scripts/pylint.sh
-  - ./scripts/doctests.sh

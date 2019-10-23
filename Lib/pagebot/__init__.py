@@ -43,33 +43,8 @@ def getDefaultFontPath():
     return DEFAULT_FONT_PATH
 
 def getContext(contextType=None):
-    """Returns a single context.
+    """Returns a single context."""
 
-    >>> context = getContext()
-    >>> print(context)
-    <DrawBotContext>
-    >>> context = getContext('DrawBot')
-    >>> print(context)
-    <DrawBotContext>
-    >>> context = getContext('Flat')
-    >>> print(context)
-    <FlatContext>
-    >>> context = getContext('HTML')
-    >>> print(context)
-    <HtmlContext>
-    >>> context = getContext('svg')
-    >>> print(context)
-    <SvgContext>
-    """
-
-    """
-    >>> context = getContext('InDesign')
-    >>> print(context)
-    <InDesignContext>
-    >>> context = getContext('idml')
-    >>> print(context)
-    <IdmlContext>
-    """
     if contextType is None:
         if platform == 'linux':
             contextType = 'Flat'
@@ -102,22 +77,21 @@ def getMampPath():
 
 '''
 In order to let PageBot scripts and applications exchange information without
-the need to save data in files, the pbglobals module supports the storage of
-non-persistent information. This way, applications with Vanilla windows can be
-used as UI for scripts that perform as batch process.
+the need to save data in files, the pbglobals module provides the storage of
+non-persistent information. This way, on OSX, applications with Vanilla windows
+can be used as UI for scripts that perform as batch process.
 
-Note that it is the responsibilty of individual scripts to create unique ID's
-for attributes. Also they need to know of each other, in case information is
-exchanged.
+Note that the individual scripts need to create unique ID's for attributes.
+Also they need to know of each other, in case information is exchanged.
 
-Key is script/application id, e.g. their __file__ value.
+The key is the script or application ID, e.g. their __file__ value.
 
 Access as:
 
   from pagebot.toolbox.transformer import path2ScriptId
   scriptGlobals = pagebot.getGlobals(path2ScriptId(__file__))
 
-or direct as:
+or directly as:
 
 ...
 '''
