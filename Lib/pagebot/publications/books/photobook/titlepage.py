@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -13,13 +14,10 @@
 #
 #     books/photobook/titlepage.py
 #
-from pagebot.conditions import *
-from pagebot.elements import *
-from pagebot.constants import *
+from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
 
 def makeTitlePage(page, title=None, text=None):
-    """Cover template for photo books.
-    """
+    """Cover template for photo books."""
     if title is not None:
         tw, th = title.size
         newTextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
