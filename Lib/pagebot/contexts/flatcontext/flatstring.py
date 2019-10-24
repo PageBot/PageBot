@@ -77,7 +77,16 @@ class FlatString(BabelString):
         super().__init__(s, context, style=style)
 
     def __repr__(self):
-        return str(self.s)
+        if isinstance(self.s, str):
+            return self.s
+
+        s = []
+        for paragraph in self.s.paragraphs:
+            for span in paragraph.spans:
+                s.append(span.string)
+
+        return ' '.join(s)
+        #return str(self.s)
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by
@@ -374,7 +383,7 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
-        >>> 'flat.text.text' in str(bs)
+        >>> str(bs) == 'AAA'
         True
         """
         if style is None:
