@@ -554,8 +554,17 @@ class TextBox(Element):
 
         # DrawBotContext wants the language and hyphenation set per block when
         # drawing.
-        context.language(self.bs.language or 'en')
-        context.hyphenation(self.bs.hyphenation or True)
+        lang = 'en'
+        hyphenation = True
+
+        if self.bs:
+            if self.bs.language:
+                lang = self.bs.language
+            if self.bs.hyphenation:
+                hyphenation = self.bs.hyphenation
+
+        context.language(lang)
+        context.hyphenation(hyphenation)
 
         if self.clipPath is not None: # Use the elements as clip path:
             clipPath = self.clipPath

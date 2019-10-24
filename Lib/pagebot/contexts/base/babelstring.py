@@ -25,20 +25,16 @@ class BabelString:
     TODO: add abstract functions for proper inheritance.
     TODO: add Flat class tests.
     >>> from pagebot import getContext
-    >>> context = getContext()
-    """
-
-    """
+    >>> context = getContext('Flat')
     >>> bla = context.newString('bla')
-    >>> from drawBotContext.string import DrawBotString
-    >>> isinstance(bla, DrawBotString)
+    >>> from pagebot.contexts.flatcontext.flatstring import FlatString
+    >>> isinstance(bla, FlatString)
     True
     >>> type(bla)
-    DrawBotString
-    >>> isinstance(bla, BabelString)
-    True
+    <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
     >>> import inspect
-    >>> inspect.getmro(DrawBotString)
+    >>> inspect.getmro(FlatString)
+    (<class 'pagebot.contexts.flatcontext.flatstring.FlatString'>, <class 'pagebot.contexts.base.babelstring.BabelString'>, <class 'object'>)
     """
 
     def __init__(self, s, context, style=None):

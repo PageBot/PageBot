@@ -27,34 +27,6 @@ class Composer:
     and element can be reshaped byt width and height, if that results in better
     placements.
 
-    >>> from pagebot import getResourcesPath
-    >>> from pagebot.constants import A4
-    >>> from pagebot.toolbox.units import em, pt
-    >>> from pagebot.toolbox.color import color, blackColor
-    >>> from pagebot.elements import TextBox
-    >>> from pagebot.typesetter import Typesetter
-    >>> from pagebot.document import Document
-    >>> numPages = 4
-    >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
-    >>> h1Style = dict(font='Verdana', fontSize=pt(36), textFill=color(1, 0, 0))
-    >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
-    >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
-    >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-    >>> doc = Document(size=A4, styles=styles, autoPages=numPages, originTop=True)
-    >>> t = Typesetter(doc.context, styles=styles)
-    >>> # Create a "main" textbox in each page.
-    >>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
-    >>> galley = t.typesetFile(path)
-    >>> c = Composer(doc)
-    >>> targets = c.compose(galley)
-    >>> targets['errors']
-    []
-    >>> page = doc[1]
-    >>> box = page.select('main') # Get the box of this page.
-    >>> box
-    TextBox:main ([100pt, 100pt], [400pt, 500pt]) E(2)
-    >>> #doc.export('_export/ComposerTest.pdf')
-
     """
     def __init__(self, doc):
         self.doc = doc

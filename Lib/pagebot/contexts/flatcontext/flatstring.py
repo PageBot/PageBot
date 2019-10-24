@@ -43,8 +43,26 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> context = FlatContext()
         >>> bs = context.newString('ABC')
-        >>> #bs
+        >>> print(bs)
         ABC
+        >>> #bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
+        #('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
+        >>> #'/Verdana'in bs.fontPath
+        #True
+        >>> #style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
+        >>> #bs = context.newString('Example Text', style=style)
+        >>> #from pagebot.contexts.base.babelstring import BabelString
+        >>> #isinstance(bs, BabelString)
+        #True
+        >>> #lines = bs.getTextLines(w=100)
+        >>> #len(lines)
+        #9
+        >>> #line = lines[0]
+        >>> #line.xHeight, line.capHeight # Max metrics of all runs in line as Em
+        #(0.55em, 0.73em)
+        >>> #run = line.textRuns[0]
+        >>> #run.xHeight, run.capHeight
+        #(0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
         self.s = s # Store the Flat equivalent of a DrawBot FormattedString.
@@ -399,16 +417,23 @@ class FlatString(BabelString):
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(font)
         strike = context.b.strike(flatFont)
-        #c = style.get('color', DEFAULT_COLOR)
+        c = None
 
         if 'textFill' in style:
             c = style['textFill']
+
             if not isinstance(c, Color):
+                # TODO: extend list of options, ie rgba, cmyk, etc.
                 if isinstance(c, tuple) and len(c) == 3:
                     c = Color(rgb=c)
-                # TODO: extend list of options.
-        else:
-            c = style.get('color', DEFAULT_COLOR)
+                else:
+                    c = DEFAULT_COLOR
+
+        elif 'color' in style:
+            c = Color(style.get('color'))
+
+        if c is None:
+            c = DEFAULT_COLOR
 
         assert isinstance(c, Color)
         rgb = context.getFlatRGB(c)

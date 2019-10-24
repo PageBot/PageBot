@@ -13,6 +13,7 @@ matrix:
       script:
         - mkdir _export
         - ./scripts/pylint.sh
+        - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
     - os: osx
       before_install:
