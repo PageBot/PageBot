@@ -1081,19 +1081,14 @@ WaterparkTM which is freely accessible through a private gate.'''
         return self.b.BezierPath(path=path, glyphSet=glyphSet)
 
     def ImageObject(self, path=None):
-        """Answers the ImageObject that knows about image filters. For names
-        and parameters of filters see:
-
-        * http://www.drawbot.com/content/image/imageObject.html
+        """Answers an ImageObject that knows about image filters.
 
         >>> from pagebot import getResourcesPath
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-        >>> imo = context.getImageObject(path)
-
+        >>> #imo = context.getImageObject(path)
         """
-        return self.b.ImageObject(path=path)
 
     getImageObject = ImageObject
 
