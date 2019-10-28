@@ -925,7 +925,7 @@ class Element:
         child elements.
 
         >>> from pagebot.conditions import *
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> e = Element(w=500, h=500, context=context)
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)

@@ -27,7 +27,7 @@ class Paths(Element):
     >>> from pagebot.document import Document
     >>> from pagebot.toolbox.color import color
     >>> from pagebot.toolbox.units import pt, inch
-    >>> from pagebot.contexts import getContext
+    >>> from pagebot import getContext
     >>> context = getContext()
     >>> path1 = PageBotPath(context=context)
     >>> path1.style['fill'] = color(1, 0, 0)
@@ -97,7 +97,7 @@ class Paths(Element):
     def _get_w(self):
         """Get the cumulated width of the bounding box of all paths combined.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> path1 = PageBotPath(context=context)
         >>> path1.oval(100, 100, 200, 200)
@@ -129,7 +129,7 @@ class Paths(Element):
     def _get_h(self):
         """Get the cumulated height of the bounding box of all paths combined.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> path1 = PageBotPath(context=context)
         >>> path1.oval(100, 100, 200, 300)

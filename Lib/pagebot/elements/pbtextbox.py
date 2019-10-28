@@ -341,8 +341,8 @@ class TextBox(Element):
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1]
         28.0
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> c = FlatContext()
+        >>> from pagebot import getContext
+        >>> c = getContext('Flat')
         >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None)
         >>> tb.getTextSize()[1] # ???
@@ -407,7 +407,7 @@ class TextBox(Element):
         """Spellcheck the words of self for the defined list of languages.
         Unknown words are appended to the unknown list.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> context = getContext()
         >>> e = TextBox('This is an English text', context=context)
         >>> e.spellCheck()
@@ -733,7 +733,7 @@ class TextBox(Element):
         moving the left position. Overwriting the default behavior of Element, as we want
         text to be fiting too.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
@@ -758,7 +758,7 @@ class TextBox(Element):
         """Shrink the box vertical to fit the vertical bounding box of the current text.
         This also tests by e.isShrunkOnTextHeight()
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
@@ -782,7 +782,7 @@ class TextBox(Element):
         """Shrink the box horizontal to fit the horizontal bounding box of the current text.
         This also tests by e.isShrunkOnTextWidth()
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
@@ -854,7 +854,7 @@ class TextBox(Element):
         gridIndex-th baseline. If gridIndex is None, then round to
         nearest grid line position.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
@@ -911,7 +911,7 @@ class TextBox(Element):
     def getBaselineY(self, index=0, parent=None):
         """Answer the vertical baseline position of the indexed line.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> from pagebot.constants import *
         >>> context = getContext()

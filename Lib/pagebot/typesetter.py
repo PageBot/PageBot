@@ -331,7 +331,7 @@ class Typesetter:
 
         If one or both if (w, h) are defined, then set the imageScale flag accordingly.
 
-        >>> from pagebot.contexts import getContext
+        >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import units
         >>> context = getContext()
         >>> ts = Typesetter(context=context)
