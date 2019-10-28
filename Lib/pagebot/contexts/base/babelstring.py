@@ -94,22 +94,35 @@ class BabelString:
         """Answers a copy of self with a sliced string or with a single indexed
         character.
 
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
-        >>> context.newString('blablabla')[2:]
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('blablabla')
+        >>> # [2:]
+        >>> fs[2:]
         ablabla
-        >>> context.newString('blablabla')[5]
+        >>> fs
+        blablabla
+        >>> fs[:5]
+        blabl
+        >>> fs[0]
+        b
+        >>> fs[5]
         a
         """
         if isinstance(given, slice):
             bs = copy(self)
-            bs.s = bs.s[given.start:given.stop]
+            s = repr(bs)
+            bs.s = s[given.start:given.stop]
             return bs
+
+        # Untouched.
         if isinstance(given, (list, tuple)):
-            return self # Untouched
-        # Must be a single index
+            return self 
+
+        # Single index.
         bs = copy(self)
-        bs.s = bs.s[given]
+        s = repr(bs)
+        bs.s = s[given]
         return bs
 
     def append(self, s):

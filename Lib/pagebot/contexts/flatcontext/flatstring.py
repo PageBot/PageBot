@@ -86,7 +86,6 @@ class FlatString(BabelString):
                 s.append(span.string)
 
         return ' '.join(s)
-        #return str(self.s)
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by
