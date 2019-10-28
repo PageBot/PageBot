@@ -543,8 +543,10 @@ class Typesetter:
             else:
                 box.bs += bs
         elif hasattr(bs, 's'):
-            while bs.s and bs.s[0] in ' \t\n\r':
-                bs.s = bs.s[1:]
+            s = repr(bs)
+            while s and s[0] in ' \t\n\r':
+                s = s[1:]
+            bs.s = s
             self.TEXTBOX_CLASS(bs, parent=self.galley)
         else:
             self.TEXTBOX_CLASS(bs, parent=self.galley)
