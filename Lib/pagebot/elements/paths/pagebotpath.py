@@ -1,4 +1,5 @@
-    # -*- coding: UTF-8 -*-
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -23,8 +24,8 @@
 #     with an identical API.
 #
 import os
-from pagebot.constants import ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, \
-    DEFAULT_WIDTH
+from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE,
+    DEFAULT_WIDTH)
 from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.base.basecontext import BaseContext
 
@@ -36,6 +37,8 @@ class PageBotPoint:
         See also
 
         http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
+
+        >>>  from pagebot.elements.paths.pagebotpath import PageBotPoint
         """
         self.x = x
         self.y = y
@@ -47,6 +50,7 @@ class PageBotPoint:
         self.onCurve = onCurve
 
 class PageBotContour:
+
     def __init__(self, context=None, bezierContour=None):
         assert isinstance(context, BaseContext)
         self.context = context

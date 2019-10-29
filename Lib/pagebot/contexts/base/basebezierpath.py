@@ -24,7 +24,7 @@ class BaseBezierPath:
     #contourClass = BezierContour
 
     def __init__(self, path=None, glyphSet=None):
-        pass
+        self._path = []
 
     def __repr__(self):
         return "<BezierPath>"
@@ -235,10 +235,12 @@ class BaseBezierPath:
         # contours are very temporaly objects
         # redirect drawToPointPen to drawPoints
         contours = self.contours
+
         for contour in contours:
             contour.drawPoints = contour.drawToPointPen
             if contour.open:
-                raise DrawBotError("open contours are not supported during boolean operations")
+                pass
+                #raise DrawBotError("open contours are not supported during boolean operations")
         return contours
 
     def union(self, other):
@@ -316,15 +318,15 @@ class BaseBezierPath:
 
     def _points(self, onCurve=True, offCurve=True):
         points = []
-        if not onCurve and not offCurve:
-            return points
-        for index in range(self._path.elementCount()):
-            instruction, pts = self._path.elementAtIndex_associatedPoints_(index)
-            if not onCurve:
-                pts = pts[:-1]
-            elif not offCurve:
-                pts = pts[-1:]
-            points.extend([(p.x, p.y) for p in pts])
+
+        for index, point in enumerate(self._path):
+            if onCurve:
+                if point.onCurve:
+                    points.append(point)
+            else:
+                if point.onCurve == False:
+                    points.append(point)
+
         return points
 
     def _get_points(self):
