@@ -99,12 +99,15 @@ class BaseContext(AbstractContext):
         exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> path = context.path
         >>> path is not None
         True
+        >>> path
+        <BezierPath>
+        >>> # Adding 2 points.
         >>> path.moveTo((0, 0))
-        >>> path.lineTo((100, 100)) # Adding 2 points
+        >>> path.lineTo((100, 100)) 
         >>> len(context.path.points) in (2, 19) # 2 or 19?
         True
         """

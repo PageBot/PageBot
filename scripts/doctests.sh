@@ -18,6 +18,7 @@ python3 $PWD/contexts/base/abstractcontext.py
 python3 $PWD/contexts/base/babelstring.py
 python3 $PWD/contexts/base/basecontext.py
 python3 $PWD/contexts/base/basebuilder.py
+python3 $PWD/contexts/base/baseimageobject.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py

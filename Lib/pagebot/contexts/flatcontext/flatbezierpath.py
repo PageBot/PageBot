@@ -33,6 +33,9 @@ class BezierPath:
         self.b = b
         self.commands = []
 
+    def __repr__(self):
+        return '<BezierPath>'
+
     def append(self, command):
         self.commands.append(command)
 
