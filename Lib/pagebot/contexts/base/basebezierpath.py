@@ -180,6 +180,7 @@ class BaseBezierPath:
 
     def appendPath(self, otherPath):
         """Append a path."""
+        return None
 
     def __add__(self, otherPath):
         new = self.copy()
@@ -245,29 +246,32 @@ class BaseBezierPath:
 
     def union(self, other):
         """Returns the union between two Bézier paths."""
+        return None
 
     def removeOverlap(self):
         """Remove all overlaps in a Bézier path."""
+        return None
 
     def difference(self, other):
         """Returns the difference between two Bézier paths."""
+        return None
 
     def intersection(self, other):
         """Returns the intersection between two Bézier paths."""
+        return None
 
     def xor(self, other):
         """Returns the xor between two Bézier paths."""
 
     def intersectionPoints(self, other=None):
         """
-        Returns a list of intersection points as `x`, `y` tuples.
-
-        Optionaly provide an other path object to find intersection points.
+        Returns a list of intersection points as `x`, `y` tuples. Optionaly
+        provides another path object to find intersection points.
         """
+        return None
 
     def expandStroke(self, width, lineCap="round", lineJoin="round", miterLimit=10):
-        """
-        Returns a new Bézier path with an expanded stroke around the original path,
+        """Returns a new Bézier path with an expanded stroke around the original path,
         with a given `width`. Note: the new path will not contain the original path.
 
         The following optional arguments are available with respect to line caps and joins:
@@ -275,6 +279,7 @@ class BaseBezierPath:
         * `lineJoin`: Possible values are `"bevel"`, `"miter"` or `"round"`
         * `miterLimit`: The miter limit to use for `"miter"` lineJoin option
         """
+        return None
 
     def __mod__(self, other):
         return self.difference(other)
@@ -324,7 +329,7 @@ class BaseBezierPath:
                 if point.onCurve:
                     points.append(point)
             else:
-                if point.onCurve == False:
+                if point.onCurve is False:
                     points.append(point)
 
         return points
