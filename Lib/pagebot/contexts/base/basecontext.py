@@ -199,6 +199,7 @@ class BaseContext(AbstractContext):
 
     def rect(self, x, y, w, h):
         """Draws a rectangle in the canvas.
+        TODO: draw as path?
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -212,6 +213,8 @@ class BaseContext(AbstractContext):
     def oval(self, x, y, w, h):
         """Draw an oval in rectangle where (x, y) is the bottom-left and size
         (w, h).
+        TODO: draw as path?
+
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
@@ -222,6 +225,7 @@ class BaseContext(AbstractContext):
 
     def circle(self, x, y, r):
         """Circle draws a DrawBot oval with (x, y) as middle point and radius r.
+        TODO: draw as path?
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -252,7 +256,8 @@ class BaseContext(AbstractContext):
         >>> context.newPath()
         <BezierPath>
         """
-        return self.b.BezierPath()
+        self._path = self.b.BezierPath()
+        return self._path
 
     def moveTo(self, p):
         """Move to point `p` in the open path. Create a new self._path if none
@@ -350,20 +355,28 @@ class BaseContext(AbstractContext):
         order. Use self._path if path is omitted. PageBot function.
 
         >>> from pagebot import getContext
+        >>> #context = getContext('Flat')
         >>> context = getContext()
+        >>> path = context.newPath()
+        >>> path.points
+        []
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> len(context.path.points) # Property self.path creates a self._path BezierPath
-        11
+        0
         >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
         >>> context.lineTo((110, 10))
         >>> context.lineTo((110, 110))
         >>> context.lineTo((10, 110))
-        >>> context.lineTo((10, 10))
+        >>> #context.lineTo((10, 10))
         >>> context.closePath()
+        >>> context.path.points
+        [(10.0, 10.0), (110.0, 10.0), (110.0, 110.0), (10.0, 110.0), (10.0, 10.0)]
+        >>> len(context.path.points)
+        5
         >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._path
         >>> len(context.path.points)
-        16
+        5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._path with various offsets
         >>> context.drawPath(p=(200, 200))

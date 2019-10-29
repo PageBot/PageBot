@@ -1,3 +1,21 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
+#
+#     basecontour.py
+#
+
+from fontTools.pens.areaPen import AreaPen
 
 class BezierContour(list):
 
@@ -13,7 +31,6 @@ class BezierContour(list):
         return "<BezierContour>"
 
     def _get_clockwise(self):
-        from fontTools.pens.areaPen import AreaPen
         pen = AreaPen()
         pen.endPath = pen.closePath
         self.drawToPen(pen)
