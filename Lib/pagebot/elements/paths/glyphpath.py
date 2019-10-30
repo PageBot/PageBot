@@ -42,10 +42,11 @@ class GlyphPath(Paths):
     """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
         Paths.__init__(self, **kwargs)
-        self.font = glyph.font # Store separate, to avoid disappearing weakref.
+        self.font = glyph.font # Store separately, to avoid disappearing weakref.
         self.glyph = glyph
-        # One of the two needs to be defined, the other should be None to scale proportional.
-        # If both are set, then the image scales disproportional.
+        # One of the two needs to be defined, the other should be None to scale
+        # proportionally. If both are set, then the image scales
+        # disproportionally.
         self.w = w
         self.h = h
         self.iw = max(1, glyph.width) # Image width of the element equals the glyph width.
@@ -103,7 +104,6 @@ class GlyphPath(Paths):
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-
 
 if __name__ == '__main__':
     import doctest

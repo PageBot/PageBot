@@ -24,7 +24,7 @@ from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
         DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH)
-from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 

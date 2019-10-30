@@ -21,7 +21,7 @@ from pagebot.contexts.markup.svgbuilder import svgBuilder
 from pagebot.contexts.markup.htmlstring import HtmlString
 from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
-from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.toolbox.color import noColor, color
 from pagebot.toolbox.dating import seconds
 from pagebot.toolbox.transformer import uniqueID

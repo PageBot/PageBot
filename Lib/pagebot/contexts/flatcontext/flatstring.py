@@ -22,7 +22,7 @@ from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
 from pagebot.contexts.base.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.paths import DEFAULT_FONT_PATH
+from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.style import css
 from pagebot.toolbox.units import upt, pt, isUnit
 from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color

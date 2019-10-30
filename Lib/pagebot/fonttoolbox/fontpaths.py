@@ -16,7 +16,7 @@
 import os
 
 from pagebot.toolbox.transformer import path2FontName
-from pagebot.paths import RESOURCES_PATH, DEFAULT_FONT_PATH
+from pagebot.filepaths import RESOURCES_PATH, DEFAULT_FONT_PATH
 
 #   P A T H S
 

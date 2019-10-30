@@ -510,7 +510,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
-        >>> from pagebot.paths import DEFAULT_FONT_PATH
+        >>> from pagebot.filepaths import DEFAULT_FONT_PATH
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         59

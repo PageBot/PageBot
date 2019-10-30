@@ -82,7 +82,7 @@ python3 $PWD/gradient.py
 python3 $PWD/mathematics/__init__.py
 python3 $PWD/mathematics/transform3d.py
 python3 $PWD/mathematics/numpytransform.py
-python3 $PWD/paths.py
+python3 $PWD/filepaths.py
 python3 $PWD/publications/typespecimens/__init__.py
 python3 $PWD/publications/typespecimens/basetypespecimen.py
 python3 $PWD/publications/typespecimens/simplespecimen.py

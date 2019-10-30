@@ -224,7 +224,6 @@ class Mask(Paths):
 
         self.b.restore()
 
-
 if __name__ == '__main__':
     import doctest
     import sys

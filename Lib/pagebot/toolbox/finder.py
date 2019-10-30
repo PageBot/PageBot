@@ -22,7 +22,7 @@ class Finder:
     starting at a give root path. The Finder().find( ) allows optional
     searches such as matching name, name pattern, extension, etc.
 
-    >>> from pagebot.paths import RESOURCES_PATH
+    >>> from pagebot.filepaths import RESOURCES_PATH
     >>> finder = Finder(RESOURCES_PATH)
     >>> imagePaths = finder.findPaths(extension='png')
     >>> imagePaths[0].endswith('png') # PageBot resources contain at least one .png

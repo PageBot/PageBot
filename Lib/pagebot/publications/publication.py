@@ -27,7 +27,7 @@ class Publication(Element):
     the Publication class is now an independent base class, holding multiple documents.
 
     >>> from pagebot.constants import A4
-    >>> from pagebot.paths import RESOURCES_PATH
+    >>> from pagebot.filepaths import RESOURCES_PATH
     >>> p = Publication(RESOURCES_PATH) # Finder created from path
     """
     FINDER_CLASS = Finder

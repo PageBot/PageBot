@@ -17,7 +17,7 @@
 
 from sys import platform
 import re
-from pagebot.paths import *
+from pagebot.filepaths import *
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
 
