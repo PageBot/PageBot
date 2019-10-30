@@ -741,8 +741,8 @@ class FlatContext(BaseContext):
 
     def newPath(self):
         """Creates a new Bézier path object to store subsequent path commands."""
-        self._path = BezierPath(self.b)
-        return self._path
+        self._bezierpath = BezierPath(self.b)
+        return self._bezierpath
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
         """Renders the path object as a Flat vector graphic."""
@@ -751,27 +751,27 @@ class FlatContext(BaseContext):
 
         if shape is not None:
             self.ensure_page()
-            self.page.place(shape.path(self._path.commands))
+            self.page.place(shape.path(self._bezierpath.commands))
 
     def moveTo(self, p):
-        assert self._path is not None
-        self._path.moveTo(p)
+        assert self._bezierpath is not None
+        self._bezierpath.moveTo(p)
 
     def lineTo(self, p):
-        assert self._path is not None
-        self._path.lineTo(p)
+        assert self._bezierpath is not None
+        self._bezierpath.lineTo(p)
 
     def quadTo(self, bcp, p):
-        assert self._path is not None
-        self._path.quadTo(bcp, p)
+        assert self._bezierpath is not None
+        self._bezierpath.quadTo(bcp, p)
 
     def curveTo(self, bcp1, bcp2, p):
-        assert self._path is not None
-        self._path.curveTo(bcp1, bcp2, p)
+        assert self._bezierpath is not None
+        self._bezierpath.curveTo(bcp1, bcp2, p)
 
     def closePath(self):
-        assert self._path is not None
-        self._path.closePath()
+        assert self._bezierpath is not None
+        self._bezierpath.closePath()
 
     def bezierPathByFlatteningPath(self, path):
         """TODO: Make Flat version of the NSBezier flatten path function."""

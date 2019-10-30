@@ -42,7 +42,7 @@ class BaseContext(AbstractContext):
 
     def __init__(self):
         # Holds current open Bézier path.
-        self._path = None
+        self._bezierpath = None
 
         self._fill = blackColor
         self._stroke = noColor
@@ -94,28 +94,33 @@ class BaseContext(AbstractContext):
     language = property(_get_language, _set_language)
     '''
 
-    def _get_path(self):
-        """Answers the open drawing self._path. Creates one if it does not
+    def _get_bezierpath(self):
+        """Answers the open drawing self._bezierpath. Creates one if it does not
         exist.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = context.path
+        >>> path = context.bezierpath
         >>> path is not None
         True
         >>> path
         <BezierPath>
+
+        """
+        """
+        >>> len(path)
+        4
         >>> # Adding 2 points.
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100)) 
-        >>> len(context.path.points) == 2
-        True
+        >>> len(context.bezierpath.points)
+        4
         """
-        if self._path is None:
-            self._path = self.newPath()
-        return self._path
+        if self._bezierpath is None:
+            self._bezierpath = self.newPath()
+        return self._bezierpath
 
-    path = property(_get_path)
+    bezierpath = property(_get_bezierpath)
 
     # Documents.
 
@@ -251,7 +256,7 @@ class BaseContext(AbstractContext):
 
     def newPath(self):
         """Makes a new Bezierpath to draw in and answers it. This will not
-        initialize self._path, which is accessed by the property self.path.
+        initialize self._bezierpath, which is accessed by the property self.bezierpath.
         This method is using a BezierPath class path for drawing. For a more
         rich environment use PageBotPath(context) instead.
         
@@ -264,11 +269,11 @@ class BaseContext(AbstractContext):
         >>> context.newPath()
         <BezierPath>
         """
-        self._path = self.b.BezierPath()
-        return self._path
+        self._bezierpath = self.b.BezierPath()
+        return self._bezierpath
 
     def moveTo(self, p):
-        """Move to point `p` in the open path. Create a new self._path if none
+        """Move to point `p` in the open path. Create a new self._bezierpath if none
         is open.
 
         >>> from pagebot.toolbox.units import pt
@@ -286,17 +291,17 @@ class BaseContext(AbstractContext):
         >>> context.drawPath(path)
         """
         ppt = upt(point2D(p))
-        self.path.moveTo(ppt) # Render units point tuple to tuple of values
+        self.bezierpath.moveTo(ppt) # Render units point tuple to tuple of values
 
     def lineTo(self, p):
-        """Line to point p in the open path. Create a new self._path if none
+        """Line to point p in the open path. Create a new self._bezierpath if none
         is open.
 
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> # Create a new self._path by property self.path
+        >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
         >>> context.lineTo(pt(100, 200))
         >>> context.closePath()
@@ -308,7 +313,7 @@ class BaseContext(AbstractContext):
         >>> context.drawPath(path)
         """
         ppt = upt(point2D(p))
-        self.path.lineTo(ppt) # Render units point tuple to tuple of values
+        self.bezierpath.lineTo(ppt) # Render units point tuple to tuple of values
 
     def curveTo(self, bcp1, bcp2, p):
         """Curve to point p i nthe open path. Create a new path if none is
@@ -318,7 +323,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> # Create a new self._path by property self.path
+        >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
@@ -332,7 +337,7 @@ class BaseContext(AbstractContext):
         b1pt = upt(point2D(bcp1))
         b2pt = upt(point2D(bcp2))
         ppt = upt(point2D(p))
-        self.path.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+        self.bezierpath.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def qCurveTo(self, *points):
         return self.b.qCurveTo(*points)
@@ -351,7 +356,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> # Create a new self._path by property self.path
+        >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
@@ -362,13 +367,13 @@ class BaseContext(AbstractContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        if self._path is not None: # Only if there is an open path.
-            self._path.closePath()
+        if self._bezierpath is not None: # Only if there is an open path.
+            self._bezierpath.closePath()
 
     def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None,
             stroke=None, strokeWidth=None):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that
-        order. Use self._path if path is omitted. PageBot function.
+        order. Use self._bezierpath if path is omitted. PageBot function.
 
         >>> from pagebot import getContext
         >>> #context = getContext('Flat')
@@ -378,32 +383,32 @@ class BaseContext(AbstractContext):
         []
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> len(context.path.points) # Property self.path creates a self._path BezierPath
+        >>> len(context.bezierpath.points) # Property self.bezierpath creates a self._bezierpath BezierPath
         0
-        >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._path
+        >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._bezierpath
         >>> context.lineTo((110, 10))
         >>> context.lineTo((110, 110))
         >>> context.lineTo((10, 110))
         >>> #context.lineTo((10, 10))
         >>> context.closePath()
-        >>> context.path.points
+        >>> context.bezierpath.points
         [(10.0, 10.0), (110.0, 10.0), (110.0, 110.0), (10.0, 110.0), (10.0, 10.0)]
-        >>> len(context.path.points)
+        >>> len(context.bezierpath.points)
         5
-        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._path
-        >>> len(context.path.points)
+        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._bezierpath
+        >>> len(context.bezierpath.points)
         5
         >>> context.fill((1, 0, 0))
-        >>> context.drawPath(p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets
         >>> context.drawPath(p=(200, 200))
         >>> context.drawPath(p=(0, 200))
         >>> context.drawPath(p=(200, 0))
         >>> context.saveImage('_export/DrawBotContext1.pdf')
         >>> # Drawing directly on a path, created by context
-        >>> path = context.newPath() # Leaves current self._path untouched
+        >>> path = context.newPath() # Leaves current self._bezierpath untouched
         >>> len(path.points)
         0
-        >>> path.moveTo((10, 10)) # Drawing on context._path
+        >>> path.moveTo((10, 10)) # Drawing on context._bezierpath
         >>> path.lineTo((110, 10))
         >>> path.lineTo((110, 110))
         >>> path.lineTo((10, 110))
@@ -413,14 +418,14 @@ class BaseContext(AbstractContext):
         >>> len(path.points)
         19
         >>> context.fill((0, 0.5, 1))
-        >>> context.drawPath(path, p=(0, 0)) # Draw self._path with various offsets
+        >>> context.drawPath(path, p=(0, 0)) # Draw self._bezierpath with various offsets
         >>> context.drawPath(path, p=(200, 200))
         >>> context.drawPath(path, p=(0, 200))
         >>> context.drawPath(path, p=(200, 0))
         >>> context.saveImage('_export/DrawBotContext2.pdf')
         """
         if path is None:
-            path = self.path
+            path = self.bezierpath
 
         # If it's a PageBotPath, get the core BezierPath.
         if hasattr(path, 'bp'): 
@@ -1160,9 +1165,9 @@ WaterparkTM which is freely accessible through a private gate.'''
         """Answers if the single point (x, y) is on black. For now this only
         works in DrawBotContext."""
         if path is None:
-            path = self.path
+            path = self.bezierpath
         p = point2D(p)
-        return path._path.containsPoint_(p)
+        return path._bezierpath.containsPoint_(p)
 
     def intersectGlyphWithCircle(self, glyph, m, r, spokes=16):
         mx, my = m
