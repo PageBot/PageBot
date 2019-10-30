@@ -18,8 +18,7 @@
 import math
 
 class BaseBezierPath:
-    """A Bézier path object, if you want to draw the same over and over
-    again."""
+    """Base class with same interface as drawBot Bézier path."""
 
     #contourClass = BezierContour
 

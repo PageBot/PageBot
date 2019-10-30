@@ -19,7 +19,7 @@ class BasePoint:
 
     def __init__(self, x, y, segmentType=None, smooth=False, name=None,
             identifier=None, start=False, onCurve=True):
-        """"""
+        """Point on a Bézier curve."""
         self.x = x
         self.y = y
         self.segmentType = segmentType

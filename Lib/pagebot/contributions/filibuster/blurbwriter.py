@@ -82,7 +82,7 @@ vowels = 'aeiuoAEIUO'
 class BlurbWriter:
     """A very unspecific recursive compiler and randomizer for text."""
 
-    def __init__(self, content, debug=False):
+    def __init__(self, contentdict, debug=False):
         self.DEBUG = debug
         self.data = {}
         self._cache = {}
@@ -97,7 +97,10 @@ class BlurbWriter:
         p = '\<-(?P<tagname>.*?)-\>'
         self.pstatement = re.compile(p, re.IGNORECASE)
         self.allkeys = self.keys()
-        self.importcontent(content)
+        self.importcontent(contentdict)
+
+    def __repr__(self):
+        return '<BlurbWriter>'
 
     def importcontent(self, contentdict):
         for k, v in contentdict.items():

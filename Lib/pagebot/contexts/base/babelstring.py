@@ -23,7 +23,6 @@ class BabelString:
     representations needed for the builder classes.
 
     TODO: add abstract functions for proper inheritance.
-    TODO: add Flat class tests.
     >>> from pagebot import getContext
     >>> context = getContext('Flat')
     >>> bla = context.newString('bla')

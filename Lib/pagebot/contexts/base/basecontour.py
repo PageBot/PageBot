@@ -18,10 +18,7 @@
 from fontTools.pens.areaPen import AreaPen
 
 class BezierContour(list):
-
-    """
-    A Bezier contour object.
-    """
+    """A Bézier contour object."""
 
     def __init__(self, *args, **kwargs):
         super(BezierContour, self).__init__(*args, **kwargs)

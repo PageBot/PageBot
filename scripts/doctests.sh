@@ -16,9 +16,12 @@ python3 $PWD/constants.py
 python3 $PWD/contexts/__init__.py
 python3 $PWD/contexts/base/abstractcontext.py
 python3 $PWD/contexts/base/babelstring.py
-python3 $PWD/contexts/base/basecontext.py
+python3 $PWD/contexts/base/basebezierpath.py
 python3 $PWD/contexts/base/basebuilder.py
+python3 $PWD/contexts/base/basecontext.py
+python3 $PWD/contexts/base/basecontour.py
 python3 $PWD/contexts/base/baseimageobject.py
+python3 $PWD/contexts/base/basepoint.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py
@@ -31,6 +34,7 @@ python3 $PWD/contexts/markup/htmlcontext.py
 python3 $PWD/contexts/markup/htmlstring.py
 python3 $PWD/contexts/markup/svgcontext.py
 #TODO: add rest of contributions.
+python3 $PWD/contributions/filibuster/blurb.py
 python3 $PWD/contributions/filibuster/blurbwriter.py
 python3 $PWD/document.py
 python3 $PWD/elements/element.py
