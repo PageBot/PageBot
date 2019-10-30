@@ -163,7 +163,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> context.newPage(pt(100), pt(100))
-        >>> context.newPage(100, 100)
+        >>> #context.newPage(100, 100)
         """
         if doc is not None:
             w = w or doc.w
@@ -203,6 +203,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
         """
@@ -217,6 +219,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
         """
@@ -229,6 +233,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
         """
@@ -253,6 +259,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.newPath()
         <BezierPath>
         """
@@ -266,6 +274,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
         >>> # Drawing on a separate path
@@ -284,6 +294,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.lineTo(pt(100, 200))
@@ -304,6 +316,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
@@ -335,6 +349,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> # Create a new self._path by property self.path
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
@@ -459,6 +475,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
         """
@@ -491,6 +509,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
         >>> context.fill(inheritColor)
@@ -531,6 +551,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
         >>> context.stroke(inheritColor)
@@ -642,6 +664,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt, mm
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.setStrokeWidth(pt(0.5))
         >>> context.setStrokeWidth(mm(0.5))
         """
@@ -686,6 +710,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.rotate(40)
         """
         if center is None:
@@ -738,6 +764,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.fontSize(pt(12))
         """
         fspt = upt(fontSize)
@@ -787,6 +815,8 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.openTypeFeatures(dict(smcp=True, zero=True))
         """
         self.b.openTypeFeatures(**features)
@@ -881,6 +911,8 @@ WaterparkTM which is freely accessible through a private gate.'''
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage(420, 420)
         >>> context.font('Verdana')
         >>> context.fontSize(12)
         >>> box = 0, 0, 100, 100
