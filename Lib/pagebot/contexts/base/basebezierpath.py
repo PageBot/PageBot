@@ -174,6 +174,7 @@ class BaseBezierPath:
 
     def copy(self):
         """Copy the Bézier path."""
+        return None
 
     def reverse(self):
         """Reverse the path direction."""
@@ -183,9 +184,10 @@ class BaseBezierPath:
         return None
 
     def __add__(self, otherPath):
-        new = self.copy()
-        new.appendPath(otherPath)
-        return new
+        #new = self.copy()
+        #new.appendPath(otherPath)
+        #return new
+        pass
 
     def __iadd__(self, other):
         self.appendPath(other)
@@ -287,9 +289,10 @@ class BaseBezierPath:
     __rmod__ = __mod__
 
     def __imod__(self, other):
-        result = self.difference(other)
-        self.setBezierPath(result.getBezierPath())
-        return self
+        #result = self.difference(other)
+        #self.setBezierPath(result.getBezierPath())
+        #return self
+        pass
 
     def __or__(self, other):
         return self.union(other)
@@ -297,9 +300,10 @@ class BaseBezierPath:
     __ror__ = __or__
 
     def __ior__(self, other):
-        result = self.union(other)
-        self.setBezierPath(result.getBezierPath())
-        return self
+        #result = self.union(other)
+        #self.setBezierPath(result.getBezierPath())
+        #return self
+        pass
 
     def __and__(self, other):
         return self.intersection(other)
@@ -307,9 +311,10 @@ class BaseBezierPath:
     __rand__ = __and__
 
     def __iand__(self, other):
-        result = self.intersection(other)
-        self.setBezierPath(result.getBezierPath())
-        return self
+        #result = self.intersection(other)
+        #self.setBezierPath(result.getBezierPath())
+        #return self
+        pass
 
     def __xor__(self, other):
         return self.xor(other)
@@ -317,9 +322,10 @@ class BaseBezierPath:
     __rxor__ = __xor__
 
     def __ixor__(self, other):
-        result = self.xor(other)
-        self.setBezierPath(result.getBezierPath())
-        return self
+        #result = self.xor(other)
+        #self.setBezierPath(result.getBezierPath())
+        #return self
+        pass
 
     def _points(self, onCurve=True, offCurve=True):
         points = []
