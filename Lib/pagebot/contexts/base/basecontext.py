@@ -108,7 +108,7 @@ class BaseContext(AbstractContext):
         >>> # Adding 2 points.
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100)) 
-        >>> len(context.path.points) in (2, 19) # 2 or 19?
+        >>> len(context.path.points) == 2
         True
         """
         if self._path is None:
