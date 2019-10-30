@@ -28,7 +28,7 @@ setup(
     url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanches, Dave Crossland',
     author_email = 'r@petr.com',
-    version='0.8',
+    version='0.9',
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
