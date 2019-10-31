@@ -19,8 +19,6 @@
 class PageBotError(TypeError):
     pass
 
-
-
 class PageBotFileFormatError(Exception):
 
     def __init__(self, msg):

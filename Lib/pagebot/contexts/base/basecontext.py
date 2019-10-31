@@ -269,8 +269,7 @@ class BaseContext(AbstractContext):
         >>> context.newPath()
         <BezierPath>
         """
-        self._bezierpath = self.b.BezierPath()
-        return self._bezierpath
+        # To be implemented by inheriting class.
 
     def moveTo(self, p):
         """Move to point `p` in the open path. Create a new self._bezierpath if none
@@ -356,11 +355,11 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> # Create a new self._bezierpath by property self.bezierpath
+        >>> # Creates. a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
         >>> context.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> context.closePath()
-        >>> # Drawing on a separate path
+        >>> # Drawing on a separate path.
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
@@ -389,10 +388,9 @@ class BaseContext(AbstractContext):
         >>> context.lineTo((110, 10))
         >>> context.lineTo((110, 110))
         >>> context.lineTo((10, 110))
-        >>> #context.lineTo((10, 10))
         >>> context.closePath()
-        >>> context.bezierpath.points
-        [(10.0, 10.0), (110.0, 10.0), (110.0, 110.0), (10.0, 110.0), (10.0, 10.0)]
+        >>> #context.bezierpath.points
+        #[(10.0, 10.0), (110.0, 10.0), (110.0, 110.0), (10.0, 110.0), (10.0, 10.0)]
         >>> len(context.bezierpath.points)
         5
         >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._bezierpath

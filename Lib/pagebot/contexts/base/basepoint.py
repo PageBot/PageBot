@@ -29,3 +29,6 @@ class BasePoint:
         self.start = start
         self.onCurve = onCurve
 
+    def __repr__(self):
+        return '(x=%s, y=%s, onCurve=%s)' % (self.x, self.y, self.onCurve)
+
