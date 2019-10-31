@@ -24,9 +24,11 @@ class BaseBezierPath:
 
     def __init__(self, path=None, glyphSet=None):
         self._path = []
+        self._contours = []
+        self._contours.append(self._path)
 
     def __repr__(self):
-        return "<BezierPath>"
+        return "<BaseBezierPath>"
 
     def _points(self, onCurve=True, offCurve=True):
         points = []
@@ -57,7 +59,7 @@ class BaseBezierPath:
     offCurvePoints = property(_get_offCurvePoints, doc="Return a list of all off curve points.")
 
     def _get_contours(self):
-        pass
+        return self._contours
 
     contours = property(_get_contours, doc="Return a list of contours with all point coordinates sorted in segments. A contour object has an `open` attribute.")
 

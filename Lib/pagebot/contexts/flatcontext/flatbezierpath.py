@@ -18,7 +18,7 @@
 from pagebot.contexts.base.basebezierpath import BaseBezierPath
 from pagebot.contexts.base.basepoint import BasePoint
 
-class BezierPath(BaseBezierPath):
+class FlatBezierPath(BaseBezierPath):
     """Bézier path that implements commands like Flat, but with the same API
     as DrawBot.BezierPath.
 
@@ -39,7 +39,7 @@ class BezierPath(BaseBezierPath):
         super().__init__()
 
     def __repr__(self):
-        return '<BezierPath>'
+        return '<FlatBezierPath>'
 
     def addToPath(self, p, onCurve=True):
         x, y = p
@@ -80,8 +80,8 @@ class BezierPath(BaseBezierPath):
 
     def closePath(self):
         self.commands.append(self.b.closepath)
-        p0 = self._bezierpath[0]
-        self._bezierpath.append(p0)
+        p0 = self._path[0]
+        self._path.append(p0)
 
     def appendPath(self, path):
         self.commands += path.commands

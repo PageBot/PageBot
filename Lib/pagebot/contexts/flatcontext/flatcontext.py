@@ -21,7 +21,7 @@ from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.base.basecontext import BaseContext
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
-from pagebot.contexts.flatcontext.flatbezierpath import BezierPath
+from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
@@ -711,7 +711,6 @@ class FlatContext(BaseContext):
             cp2 = self.getTransformed(x, y0 + offsetY)
             p = self.getTransformed(x, y0)
             path.curveTo(cp1, cp2, p)
-            path.closePath()
             self.drawPath()
 
     def circle(self, x, y, r):
@@ -741,7 +740,7 @@ class FlatContext(BaseContext):
 
     def newPath(self):
         """Creates a new Bézier path object to store subsequent path commands."""
-        self._bezierpath = BezierPath(self.b)
+        self._bezierpath = FlatBezierPath(self.b)
         return self._bezierpath
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
@@ -774,7 +773,7 @@ class FlatContext(BaseContext):
         self._bezierpath.closePath()
 
     def bezierPathByFlatteningPath(self, path):
-        """TODO: Make Flat version of the NSBezier flatten path function."""
+        """TODO: Make our own version of the NSBezier flatten path function."""
         return None
 
     #   S H A D O W  &  G R A D I E N T

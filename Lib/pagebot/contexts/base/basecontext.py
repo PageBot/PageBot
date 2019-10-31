@@ -105,7 +105,7 @@ class BaseContext(AbstractContext):
         >>> path is not None
         True
         >>> path
-        <BezierPath>
+        <FlatBezierPath>
 
         """
         """
@@ -264,11 +264,11 @@ class BaseContext(AbstractContext):
         NOTE: PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.newPath()
-        <BezierPath>
+        <FlatBezierPath>
         """
         self._bezierpath = BaseBezierPath(self.b)
         return self._bezierpath
@@ -377,8 +377,8 @@ class BaseContext(AbstractContext):
         order. Use self._bezierpath if path is omitted. PageBot function.
 
         >>> from pagebot import getContext
-        >>> #context = getContext('Flat')
-        >>> context = getContext()
+        >>> context = getContext('Flat')
+        >>> #context = getContext()
         >>> path = context.newPath()
         >>> path.points
         []
@@ -396,6 +396,8 @@ class BaseContext(AbstractContext):
         >>> len(context.bezierpath.points)
         5
         >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._bezierpath
+        >>> context.bezierpath.points
+        [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
         >>> len(context.bezierpath.points)
         5
         >>> context.fill((1, 0, 0))
@@ -414,9 +416,14 @@ class BaseContext(AbstractContext):
         >>> path.lineTo((10, 110))
         >>> path.lineTo((10, 10))
         >>> path.closePath()
+        >>> len(path)
+        1
+        >>> contour = path.contours[0]
+        >>> len(contour)
+        6
         >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
         >>> len(path.points)
-        19
+        6
         >>> context.fill((0, 0.5, 1))
         >>> context.drawPath(path, p=(0, 0)) # Draw self._bezierpath with various offsets
         >>> context.drawPath(path, p=(200, 200))
