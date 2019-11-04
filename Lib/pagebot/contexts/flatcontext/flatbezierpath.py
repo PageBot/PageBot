@@ -23,7 +23,7 @@ class FlatBezierPath(BaseBezierPath):
     as DrawBot.BezierPath.
 
     >>> import flat
-    >>> path = BezierPath(flat)
+    >>> path = FlatBezierPath(flat)
     >>> path.moveTo((0, 0))
     >>> path.lineTo((0, 100))
     >>> path.lineTo((100, 100))
@@ -31,7 +31,7 @@ class FlatBezierPath(BaseBezierPath):
     >>> path.lineTo((0, 0))
     >>> path.closePath()
     >>> len(path.points)
-    5
+    6
     """
     def __init__(self, b):
         self.b = b
