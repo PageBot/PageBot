@@ -323,6 +323,10 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
+        >>> context
+        <DrawBotContext>
+        >>> hasattr(context, 'newPath')
+        True
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
