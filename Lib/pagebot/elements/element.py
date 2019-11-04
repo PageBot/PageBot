@@ -928,6 +928,11 @@ class Element:
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> e = Element(w=500, h=500, context=context)
+        >>> e.childClipPath
+        <PageBotPath 1>
+        >>> e.childClipPath.bp
+        >>> # A DrawBot BézierPath type.
+        <BezierPath>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         >>> e.childClipPath.points
         [(50.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 80.0), (50.0, 80.0), (50.0, 0.0)]
@@ -942,10 +947,13 @@ class Element:
         """
         path = self.PATH_CLASS(self.context)
         path.rect(-self.ml, -self.mb, self.ml + self.w + self.mr, self.mb + self.h + self.mt)
+
         for e in self.elements:
             path = path.difference(e.childClipPath)
+
         path.translate(self.xy)
         return path
+
     childClipPath = property(_get_childClipPath)
 
     def setElementByIndex(self, e, index):

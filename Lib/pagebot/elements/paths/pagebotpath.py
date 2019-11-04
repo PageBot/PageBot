@@ -390,6 +390,7 @@ class PageBotPath:
         [(0.0, 0.0), (100.0, 100.0)]
         """
         return self.bp.points
+
     points = property(_get_points)
 
     def _get_onCurvePoints(self):
