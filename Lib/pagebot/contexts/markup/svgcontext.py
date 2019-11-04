@@ -109,6 +109,9 @@ class SvgContext(BaseContext):
         """
         self._drawing = self.b.Drawing(self._filePath, profile='tiny')
 
+    def newPath(self):
+        return None
+
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
 

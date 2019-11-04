@@ -930,9 +930,6 @@ class Element:
         >>> e = Element(w=500, h=500, context=context)
         >>> e.childClipPath
         <PageBotPath 1>
-        >>> e.childClipPath.bp
-        >>> # A DrawBot BézierPath type.
-        <BezierPath>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         >>> e.childClipPath.points
         [(50.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 80.0), (50.0, 80.0), (50.0, 0.0)]

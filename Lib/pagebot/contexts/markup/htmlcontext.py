@@ -59,6 +59,9 @@ class HtmlContext(BaseContext):
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
         pass
 
+    def newPath(self):
+        return None
+
     def frameDuration(self, value):
         pass
 
