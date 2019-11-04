@@ -257,9 +257,9 @@ class BaseContext(AbstractContext):
 
     def newPath(self):
         """Makes a new Bezierpath to draw in and answers it. This will not
-        initialize self._bezierpath, which is accessed by the property self.bezierpath.
-        This method is using a BezierPath class path for drawing. For a more
-        rich environment use PageBotPath(context) instead.
+        initialize self._bezierpath, which is accessed by the property
+        self.bezierpath.  This method is using a BezierPath class path for
+        drawing. For a more rich environment use PageBotPath(context) instead.
         
         NOTE: PageBot function.
 
@@ -270,8 +270,9 @@ class BaseContext(AbstractContext):
         >>> context.newPath()
         <FlatBezierPath>
         """
-        self._bezierpath = BaseBezierPath(self.b)
-        return self._bezierpath
+        raise NotImplementedError
+        #self._bezierpath = BaseBezierPath(self.b)
+        #return self._bezierpath
 
     def moveTo(self, p):
         """Move to point `p` in the open path. Create a new self._bezierpath if none
