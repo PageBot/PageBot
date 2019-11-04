@@ -42,6 +42,8 @@ class FlatBezierPath(BaseBezierPath):
         return '<FlatBezierPath>'
 
     def addToPath(self, p, onCurve=True):
+        """Keeps track of Bézier points, needs to be in sync with Flat
+        commands."""
         x, y = p
         point = BasePoint(x, y, onCurve=onCurve)
         self._path.append(point)
@@ -79,11 +81,19 @@ class FlatBezierPath(BaseBezierPath):
         self.addToPath(p)
 
     def closePath(self):
+        """Closes the path, add the first point to the end of the points
+        list."""
+        p0 = self._path[0]
+        self._path.append(p0)
         self.commands.append(self.b.closepath)
-        #p0 = self._path[0]
-        #self._path.append(p0)
 
     def appendPath(self, path):
+        """Joins another path with this one.
+
+        TODO: also parse each command and add its points.
+        """
+        # for command in path.commands:
+        # ...
         self.commands += path.commands
 
 if __name__ == '__main__':
