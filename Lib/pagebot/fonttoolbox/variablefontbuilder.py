@@ -254,7 +254,7 @@ def generateInstance(variableFontPath, location, targetDirectory,
                 delta = var.coordinates
                 if None in delta:
                     if origCoords is None:
-                        origCoords, control = glyf.getCoordinates(glyphname, varfont)
+                        origCoords, control = glyf.getCoordinatesAndControls(glyphname, varfont)
                         endPts = control[1] if control[0] >= 1 else list(range(len(control[1])))
                     delta = iup_delta(delta, origCoords, endPts)
                 coordinates += GlyphCoordinates(delta) * scalar
