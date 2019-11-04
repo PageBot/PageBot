@@ -80,8 +80,8 @@ class FlatBezierPath(BaseBezierPath):
 
     def closePath(self):
         self.commands.append(self.b.closepath)
-        p0 = self._path[0]
-        self._path.append(p0)
+        #p0 = self._path[0]
+        #self._path.append(p0)
 
     def appendPath(self, path):
         self.commands += path.commands

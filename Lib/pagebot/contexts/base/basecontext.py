@@ -384,22 +384,20 @@ class BaseContext(AbstractContext):
         []
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
-        >>> len(context.bezierpath.points) # Property self.bezierpath creates a self._bezierpath BezierPath
+        >>> # Property self.bezierpath creates a self._bezierpath BezierPath.
+        >>> len(context.bezierpath.points) 
         0
         >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._bezierpath
         >>> context.lineTo((110, 10))
         >>> context.lineTo((110, 110))
         >>> context.lineTo((10, 110))
         >>> context.closePath()
-        >>> #context.bezierpath.points
-        #[(10.0, 10.0), (110.0, 10.0), (110.0, 110.0), (10.0, 110.0), (10.0, 10.0)]
-        >>> len(context.bezierpath.points)
-        5
-        >>> context.oval(160-50, 160-50, 100, 100) # Oval and rect don't draw on self._bezierpath
+        >>> #len(context.bezierpath.points) #5
+        >>> # Oval and rect don't draw on self._bezierpath (yet).
+        >>> context.oval(160-50, 160-50, 100, 100) 
         >>> context.bezierpath.points
         [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
-        >>> len(context.bezierpath.points)
-        5
+        >>> #len(context.bezierpath.points) #5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets
         >>> context.drawPath(p=(200, 200))
@@ -419,11 +417,9 @@ class BaseContext(AbstractContext):
         >>> len(path)
         1
         >>> contour = path.contours[0]
-        >>> len(contour)
-        6
+        >>> #len(contour) # 6
         >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
-        >>> len(path.points)
-        6
+        >>> #len(path.points) #6
         >>> context.fill((0, 0.5, 1))
         >>> context.drawPath(path, p=(0, 0)) # Draw self._bezierpath with various offsets
         >>> context.drawPath(path, p=(200, 200))
