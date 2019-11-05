@@ -16,8 +16,12 @@ matrix:
         - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
     - os: osx
+      rvm:
+        - use 2.6.0
       before_install:
-          #- rvm install 2.6.0
+        - rvm install 2.6.0
+        - ruby --version
+      install:
         - ./scripts/osx.sh
       language: python3
       python: 3.7
