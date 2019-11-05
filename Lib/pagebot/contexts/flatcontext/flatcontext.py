@@ -16,6 +16,7 @@
 #
 import math
 from flat import rgb
+from fclist import fclist
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -910,6 +911,29 @@ class FlatContext(BaseContext):
             self.translate(cx, cy) 
             self.transform3D = self.transform3D.skew(angle1, angle2)
             self.translate(-cx, -cy)
+
+    # ...
+
+    def installedFonts(self, patterns=None):
+        """Answers the list of all fonts (name or path) that are installed on the
+        OS.
+
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> installed = context.installedFonts()
+        >>> installed
+        >>> #len(installed) > 0
+        #True
+        """
+        files = []
+
+        # TODO: parse font paths.
+        # TODO: check pattern
+        for font in fclist():
+            #print(font.family, font.style, font.file)
+            files.append(font.file)
+
+        return files
 
     #   E X P O R T
 

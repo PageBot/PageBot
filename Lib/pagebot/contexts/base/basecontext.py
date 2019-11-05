@@ -1059,29 +1059,16 @@ WaterparkTM which is freely accessible through a private gate.'''
     # Helpers.
 
     def installedFonts(self, patterns=None):
-        """Answers a list of all fonts (name or path) that are installed in the
+        """Answers the list of all fonts (name or path) that are installed on the
         OS.
 
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> installed = context.installedFonts()
-        >>> len(installed) > 0
-        True
+        >>> #from pagebot import getContext
+        >>> #context = getContext()
+        >>> #installed = context.installedFonts()
+        >>> #len(installed) > 0
+        #True
         """
-        if isinstance(patterns, str): # In case it is a string, convert to a list
-            patterns = [patterns]
-
-        fontNames = []
-
-        for fontName in self.b.installedFonts():
-            if not patterns:
-                fontNames.append(fontName) # If no pattern theun answer all.
-            else:
-                for pattern in patterns:
-                    if pattern in fontName:
-                        fontNames.append(fontName)
-                        break
-        return fontNames
+        raise NotImplementedError
 
     def installFont(self, fontOrName):
         """Install the font in the context. fontOrName can be a Font instance
