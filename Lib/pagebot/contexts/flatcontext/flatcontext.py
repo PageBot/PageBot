@@ -921,9 +921,8 @@ class FlatContext(BaseContext):
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> installed = context.installedFonts()
-        >>> installed
-        >>> #len(installed) > 0
-        #True
+        >>> len(installed) > 0
+        True
         """
         files = []
 
