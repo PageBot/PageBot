@@ -835,9 +835,11 @@ class BaseContext(AbstractContext):
         #raise NotImplementedError
 
     def fontVariations(self, *args, **axes):
+        pass
         #raise NotImplementedError
 
     def listFontVariations(self, fontName=None):
+        pass
         #raise NotImplementedError
 
     # Text.
