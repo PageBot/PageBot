@@ -1056,73 +1056,52 @@ WaterparkTM which is freely accessible through a private gate.'''
     def linkRect(self, name, xywh):
         return self.b.linkRect(name, xywh)
 
-    # Helpers.
+    # System fonts listing, installation, font properties.
 
     def installedFonts(self, patterns=None):
-        """Answers the list of all fonts (name or path) that are installed on the
-        OS.
-
-        >>> #from pagebot import getContext
-        >>> #context = getContext()
-        >>> #installed = context.installedFonts()
-        >>> #len(installed) > 0
-        #True
-        """
+        """Should Answer the list of all fonts (name or path) that are
+        installed on the OS."""
         raise NotImplementedError
 
     def installFont(self, fontOrName):
-        """Install the font in the context. fontOrName can be a Font instance
-        (in which case the path is used) or a full font path.
-
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> installed = context.installedFonts()
-        >>> len(installed) > 0
-        True
-        >>> font = findFont('Roboto-Regular')
-        >>> context.installFont(font)
-        'Roboto-Regular'
-        """
-        if hasattr(fontOrName, 'path'):
-            fontOrName.info.installedName = self.b.installFont(fontOrName.path)
-            return fontOrName.info.installedName
-        return self.b.installFont(fontOrName)
+        """Should install the font in the context. fontOrName can be a Font
+        instance (in which case the path is used) or a full font path."""
+        raise NotImplementedError
 
     def uninstallFont(self, fontOrName):
-        if hasattr(fontOrName, 'path'):
-            fontOrName = fontOrName.path
-        return self.b.uninstallFont(fontOrName)
+        raise NotImplementedError
 
     def fontContainsCharacters(self, characters):
-        return self.b.fontContainsCharacters(characters)
+        raise NotImplementedError
 
     def fontContainsGlyph(self, glyphName):
-        return self.b.fontContainsGlyph(glyphName)
+        raise NotImplementedError
 
     def fontFilePath(self):
-        return self.b.fontFilePath()
+        raise NotImplementedError
 
     def listFontGlyphNames(self):
-        return self.b.listFontGlyphNames()
+        raise NotImplementedError
 
     def fontAscender(self):
-        return self.b.fontAscender()
+        raise NotImplementedError
 
     def fontDescender(self):
-        return self.b.fontDescender()
+        raise NotImplementedError
 
     def fontXHeight(self):
-        return self.b.fontXHeight()
+        raise NotImplementedError
 
     def fontCapHeight(self):
-        return self.b.fontCapHeight()
+        raise NotImplementedError
 
     def fontLeading(self):
-        return self.b.fontLeading()
+        raise NotImplementedError
 
     def fontLineHeight(self):
-        return self.b.fontLineHeight()
+        raise NotImplementedError
+
+    # 
 
     def BezierPath(self, path=None, glyphSet=None):
         return self.b.BezierPath(path=path, glyphSet=glyphSet)

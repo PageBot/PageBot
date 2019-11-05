@@ -912,7 +912,7 @@ class FlatContext(BaseContext):
             self.transform3D = self.transform3D.skew(angle1, angle2)
             self.translate(-cx, -cy)
 
-    # ...
+    # System fonts listing, installation, font properties.
 
     def installedFonts(self, patterns=None):
         """Answers the list of all fonts (name or path) that are installed on the
@@ -933,6 +933,44 @@ class FlatContext(BaseContext):
             files.append(font.file)
 
         return files
+
+    def installFont(self, fontOrName):
+        """Should install the font in the context. fontOrName can be a Font
+        instance (in which case the path is used) or a full font path."""
+
+    def uninstallFont(self, fontOrName):
+        pass
+
+    def fontContainsCharacters(self, characters):
+        pass
+
+    def fontContainsGlyph(self, glyphName):
+        pass
+
+    def fontFilePath(self):
+        pass
+
+    def listFontGlyphNames(self):
+        pass
+
+    def fontAscender(self):
+        pass
+
+    def fontDescender(self):
+        pass
+
+    def fontXHeight(self):
+        pass
+
+    def fontCapHeight(self):
+        pass
+
+    def fontLeading(self):
+        pass
+
+    def fontLineHeight(self):
+        pass
+
 
     #   E X P O R T
 

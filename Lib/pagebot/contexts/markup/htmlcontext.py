@@ -172,6 +172,49 @@ class HtmlContext(BaseContext):
     def setStyles(self, styles):
         pass
 
+    # System fonts listing, installation, font properties.
+
+    def installedFonts(self, patterns=None):
+        """Should Answer the list of all fonts (name or path) that are
+        installed on the OS."""
+
+    def installFont(self, fontOrName):
+        """Should install the font in the context. fontOrName can be a Font
+        instance (in which case the path is used) or a full font path."""
+
+    def uninstallFont(self, fontOrName):
+        pass
+
+    def fontContainsCharacters(self, characters):
+        pass
+
+    def fontContainsGlyph(self, glyphName):
+        pass
+
+    def fontFilePath(self):
+        pass
+
+    def listFontGlyphNames(self):
+        pass
+
+    def fontAscender(self):
+        pass
+
+    def fontDescender(self):
+        pass
+
+    def fontXHeight(self):
+        pass
+
+    def fontCapHeight(self):
+        pass
+
+    def fontLeading(self):
+        pass
+
+    def fontLineHeight(self):
+        pass
+
 if __name__ == '__main__':
     import doctest
     import sys
