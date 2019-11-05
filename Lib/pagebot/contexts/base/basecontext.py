@@ -322,8 +322,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context
-        <DrawBotContext>
         >>> hasattr(context, 'newPath')
         True
         >>> context.newDrawing()
@@ -818,31 +816,29 @@ class BaseContext(AbstractContext):
     def listLanguages(self):
         return self.b.listLanguages()
 
+    # Features.
+
     def openTypeFeatures(self, features):
-        """Set the current of opentype features in the context canvas.
+        """Enables OpenType features and returns the current openType features
+        settings. If no arguments are given `openTypeFeatures()` will just
+        return the current openType features settings.
 
         NOTE: signature differs from DrawBot:
 
         ``def openTypeFeatures(self, *args, **features):``
-
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> context.newDrawing()
-        >>> context.newPage(420, 420)
-        >>> context.openTypeFeatures(dict(smcp=True, zero=True))
         """
-        self.b.openTypeFeatures(**features)
+        #raise NotImplementedError
 
     def listOpenTypeFeatures(self, fontName=None):
         """Answers the list of opentype features available in the named
         font."""
-        return self.b.listOpenTypeFeatures(fontName)
+        #raise NotImplementedError
 
     def fontVariations(self, *args, **axes):
-        return self.b.fontVariations(*args, **axes)
+        #raise NotImplementedError
 
     def listFontVariations(self, fontName=None):
-        return self.b.listFontVariations(fontName=fontName)
+        #raise NotImplementedError
 
     # Text.
 
@@ -914,7 +910,6 @@ WaterparkTM which is freely accessible through a private gate.'''
             raise ValueError(msg)
 
         return tb
-
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the overflow text if flowing it in the box. The sOrBs can be a
