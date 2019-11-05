@@ -17,6 +17,7 @@ matrix:
         - ./scripts/doctests.sh
     - os: osx
       before_install:
+        - rvm install 2.6.0
         - ./scripts/osx.sh
       language: python3
       python: 3.7
