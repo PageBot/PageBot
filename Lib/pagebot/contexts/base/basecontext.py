@@ -1225,7 +1225,7 @@ WaterparkTM which is freely accessible through a private gate.'''
         """If the path starts with "_export" make sure it exists, otherwise
         create it. The _export folders are used to export documents locally,
         without saving them to git. The _export name is included in the git
-        .gitignore file.
+        .gitignore file. PageBot function.
 
         >>> context = BaseContext()
         >>> context.checkExportPath('_export/myFile.pdf')
@@ -1234,22 +1234,17 @@ WaterparkTM which is freely accessible through a private gate.'''
         """
         if path.startswith('_export'):
             dirPath = '/'.join(path.split('/')[:-1])
+
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
 
     #   S C R E E N
 
     def screenSize(self):
-        """Answers the current screen size in DrawBot. Otherwise default is to
-        do nothing. PageBot function.
-
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> size = context.screenSize()
-        >>> size[0] > 100 and size[1] > 100
+        """Answers the current screen size. PageBot function.
         True
         """
-        return pt(self.b.sizes().get('screen', None))
+        pass
 
 if __name__ == '__main__':
     import doctest
