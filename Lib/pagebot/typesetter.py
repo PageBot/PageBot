@@ -25,7 +25,8 @@ try:
     from markdown.extensions.nl2br import Nl2BrExtension
     from markdown.extensions.fenced_code import FencedCodeExtension
 except ImportError:
-    print('[Typesetter] ImportError: Install Python markdown from https://pypi.python.org/pypi/Markdown')
+    print('[Typesetter] ImportError')
+    print('Please install python markdown')
     print(traceback.format_exc())
     import sys
     sys.exit()
@@ -42,10 +43,10 @@ from pagebot.constants import CSS_BACKGROUND_REPEAT, FILETYPE_SVG, FILETYPE_GIF
 class Typesetter:
     """The Typesetter takes one or more markdown files or a sequence of
     markdown strings and builds a galley, using a dictionary of styles for the
-    formatted string attributes. The result of the typesetting is a
-    self.galley, that contains a sequence of Element instances, such as
-    formatted images, textboxes (with BabelStrings), ruler elements and other
-    nested galleys. Mostly used by the Composer."""
+    formatted string attributes. The result is a self.galley that contains a
+    sequence of Element instances, such as formatted images, textboxes (with
+    BabelStrings), ruler elements and other nested galleys. Mostly used by the
+    Composer."""
     IMAGE_CLASS = Image
     TEXTBOX_CLASS = TextBox
     RULER_CLASS = Ruler
