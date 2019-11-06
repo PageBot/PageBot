@@ -1224,10 +1224,7 @@ WaterparkTM which is freely accessible through a private gate.'''
     #   S C R E E N
 
     def screenSize(self):
-        """Answers the current screen size. PageBot function.
-        True
-        """
-        pass
+        """Answers the current screen size. PageBot function."""
 
 if __name__ == '__main__':
     import doctest
