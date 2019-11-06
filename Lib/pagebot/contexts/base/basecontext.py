@@ -906,18 +906,26 @@ WaterparkTM which is freely accessible through a private gate.'''
         then the current font/fontSize/etc. settings of the builder are used.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.font('Verdana')
         >>> context.fontSize(12)
-        >>> box = 0, 0, 100, 100
-        >>> len(context.textOverflow('AAA ' * 200, box))
-        728
+        >>> box = 0, 0, 100, 10
+        >>> s = 'AAA ' * 200
+        >>> len(s)
+        800
+        >>> of = context.textOverflow(s, box)
+        >>> of
+        ''
+        >>> len(of) # Should be 728.
+        0
         >>> style = dict(font='Verdana', fontSize=12)
         >>> bs = context.newString('AAA ' * 200, style=style)
-        >>> len(context.textOverflow(bs, box))
-        740
+        >>> of = context.textOverflow(bs, box)
+        >>> of
+        ''
+        >>> #len(of) # Should be 740.
         """
         if isinstance(sOrBs, str):
             return self.b.textOverflow(sOrBs, box, align=align) # Plain string

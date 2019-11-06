@@ -65,11 +65,9 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
-        self.s = s # Store the Flat equivalent of a DrawBot FormattedString.
 
-        # In case defined, store current status here as property and set the
-        # current FormattedString for future additions. Also the answered
-        # metrics will not be based on these values.
+        self.s = s # Store the Flat equivalent `text` of a DrawBot FormattedString.
+
         if style is None:
             style = {}
 
@@ -80,12 +78,13 @@ class FlatString(BabelString):
         if isinstance(self.s, str):
             return self.s
 
-        s = []
+        s = ''
+
         for paragraph in self.s.paragraphs:
             for span in paragraph.spans:
-                s.append(span.string)
+                s += span.string
 
-        return ' '.join(s)
+        return s
 
     def _get_s(self):
         """Answers the embedded Flat equivalent of a OS X FormattedString by

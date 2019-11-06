@@ -17,6 +17,7 @@
 import math
 from flat import rgb
 from fclist import fclist
+from re import sub
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -466,13 +467,21 @@ class FlatContext(BaseContext):
 
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
-        return self.placedText
+        s = ''
+        for paragraph in self.placedText.layout.paragraphs:
+            for span in paragraph.spans:
+                # maybe also consider span.style?
+                s += span.string
 
-    def textOverflow(self, bs, box, align=LEFT):
+        #print(s)
+        return sub(str(fs), '', s)
+
+    def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context."""
-        # TODO: need to calculate overflowing text.
         #return FlatString(self.b.textOverflow(bs.s, box, align), self)
+        s = self.textBox(fs, r=box, align=align)
+        return s
 
     def textSize(self, bs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
