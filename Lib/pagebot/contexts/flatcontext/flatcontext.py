@@ -424,16 +424,27 @@ class FlatContext(BaseContext):
         # Renders unit tuple to value tuple.
         self.placedText.position(xpt, ypt)
 
-    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
+    def textBox(self, fs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
         TODO: make clipPath work
         TODO: make align
+        TODO: wrap placedText so we can derive length of text without overflow and
+        print the result.
 
         See also drawBot.contexts.baseContext textbox()
         """
+        if isinstance(fs, str):
+            # Creates a new string with default styles.
+            style = {'fontSize': self._fontSize}
+            style = makeStyle(style=style)
+            fs = self.newString(fs, style=style)
+        elif not isinstance(fs, FlatString):
+            raise PageBotFileFormatError('type is %s' % type(fs))
+
+        '''
         if hasattr(sOrBs, 's'):
             # Assume it's a BabelString with a FormattedString inside.
             sOrBs = sOrBs.s
@@ -441,12 +452,19 @@ class FlatContext(BaseContext):
             # Otherwise convert to string if it isn't already.
             sOrBs = str(sOrBs)
 
+        if self.flipped:
+            leading = fs.leading
+            textHeight = leading.byBase(fs.fontSize)
+            ypt -= textHeight
+        '''
+
+        assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
         if self.flipped:
             ypt = self.doc.height - ypt
 
-        self.placedText = self.page.place(sOrBs)
+        self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
         return self.placedText
 
