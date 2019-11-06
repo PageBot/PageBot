@@ -9,6 +9,9 @@ matrix:
       dist: trusty
       python: 3.6
       before_install:
+        - ruby --version
+        - python --version
+      install:
         - ./scripts/linux.sh
       script:
         - mkdir _export
@@ -19,8 +22,8 @@ matrix:
       rvm:
         - use 2.6.0
       before_install:
-        - rvm install 2.6.0
         - ruby --version
+        - python --version
       install:
         - ./scripts/osx.sh
       language: python3
