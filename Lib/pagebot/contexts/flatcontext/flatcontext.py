@@ -15,9 +15,9 @@
 #     flatcontext.py
 #
 import math
+from re import sub
 from flat import rgb
 from fclist import fclist
-from re import sub
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
