@@ -167,8 +167,10 @@ class FlatBezierPath(BaseBezierPath):
         closed path."""
         self.moveTo(points[0])
 
-        for point in points[1:]
+        for point in points[1:]:
             self.lineTo(point)
+
+        # TODO: optional close
 
     def text(self, txt, offset=None, font=None, fontSize=10, align=None):
         raise NotImplementedError
