@@ -145,8 +145,9 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            #  Make page in context, actual page may be smaller if showing cropmarks.
-            self.context.newPage(w=pw, h=ph, e=page)
+            # Make page in context, actual page may be smaller if showing cropmarks.
+            # FIXME: newPage doesn't have `e` parameter
+            self.context.newPage(w=pw, h=ph)#, e=page)
 
             # If page['frameDuration'] is set and saving as movie or animated gif,
             # then set the global frame duration.

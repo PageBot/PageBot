@@ -25,8 +25,8 @@ class BaseView(Element):
     services, such as answering the size of a formatted string (if possible),
     how much overflow there is for a certain box, etc. The view is also the
     only place where the current context should be stored."""
-    viewId = 'View'
 
+    viewId = 'View'
     isView = True
 
     def __init__(self, w=None, h=None, contect=None, parent=None, context=None,
@@ -41,7 +41,9 @@ class BaseView(Element):
 
         self.w = w
         self.h = h
-        self.verbose = verbose # If set to Trye, views may decide to add more information while building.
+        # If set to True, views may decide to add more information while
+        # building.
+        self.verbose = verbose 
 
         if context is None:
             # Use the default context for this view, if not defined.
@@ -50,13 +52,16 @@ class BaseView(Element):
         self.context = context
         self.context.newDocument(self.w, self.h)
         self.setControls()
-        # List of collected elements that need to draw their info on top of the main drawing,
+        # List of collected elements that need to draw their info on top of the
+        # main drawing.
         self.elementsNeedingInfo = {}
-        self._isDrawn = False # Automatic call self.drawPages if build is called without drawing.
+        # Automatic call self.drawPages if build is called without drawing.
+        self._isDrawn = False 
 
     def _getContext(self):
-        """Answers the best/default context for this type of view."""
-        return getContext() # Default is DrawBotContext or FlatContext instance.
+        """Answers the best / default context for this type of view."""
+        return getContext() 
 
     def setControls(self):
-        """Inheriting views can redefine to alter the default showing of parameters."""
+        """Inheriting views can redefine to alter the default showing of
+        parameters."""

@@ -381,7 +381,7 @@ class Document:
     #   S T Y L E
 
     def initializeStyles(self, styles):
-        """Make sure that the default styles always exist."""
+        """Makes sure that the default styles always exist."""
 
         if styles is None:
             styles = copy.copy(styleLib['default'])
@@ -433,7 +433,7 @@ class Document:
         return rootStyle
 
     def applyStyle(self, style):
-        """Apply the key-value of the style onto the self.rootStyle. This
+        """Applies the key-value of the style onto the self.rootStyle. This
         overwrites existing style values inthe self.rootStyle by all values in
         style. Cannot be undone.
 
@@ -469,7 +469,7 @@ class Document:
 
     def findStyle(self, styleId):
         """Answers the style that fits the optional sequence naming of styleId.
-        Answer `None` if no style can be found. styleId can have one of these
+        Answers `None` if no style can be found. styleId can have one of these
         formats:
 
             ('main h1', 'h1 b')
@@ -512,8 +512,8 @@ class Document:
         return style # Answer the style for convenience of the caller.
 
     def addStyle(self, name, style, force=False):
-        """Add the style to the self.styles dictionary. Make sure that styles
-        don't get overwritten, if force is False. Remove them first with
+        """Adds the style to the self.styles dictionary. Makes sure that styles
+        don't get overwritten, if force is False. Removes them first with
         *self.removeStyle* or use *self.replaceStyle(name, style)* instead."""
         if name in self.styles:
             assert force
@@ -521,7 +521,7 @@ class Document:
         self.replaceStyle(name, style)
 
     def removeStyle(self, name):
-        """Remove the style *name* if it exists. Raise an error if is does not
+        """Removes the style *name* if it exists. Raises an error if is does not
         exist."""
         del self.styles[name]
 
@@ -534,15 +534,17 @@ class Document:
         return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):
-        """Create a new style with the supplied arguments as attributes. Force
-        the style in self.styles, even if already exists. Forst the name of the
-        style to be the same as the style key. Answer the new style."""
+        """Creates a new style with the supplied arguments as attributes.
+        Forces the style in self.styles, even if already exists. Forces the
+        name of the style to be the same as the style key. Answers the new
+        style."""
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
 
     #   D E F A U L T  A T T R I B U T E S
 
     def _get_originTop(self):
-        """Answers the document flag if origin is on top. This value is not supposed to change.
+        """Answers the document flag if origin is on top. This value is not
+        supposed to change.
 
         >>> doc = Document(name='TestDoc', originTop=True)
         >>> doc.originTop
@@ -552,19 +554,21 @@ class Document:
     originTop = property(_get_originTop)
 
     def _get_frameDuration(self):
-        """Property answer the document frameDuration parameters, used for
+        """Answers the document frameDuration parameters, used for
         speed when exporting animated gifs.
         """
         return self.rootStyle.get('frameDuration')
+
     def _set_frameDuration(self, frameDuration):
         self.rootStyle['frameDuration'] = frameDuration
+
     frameDuration = property(_get_frameDuration, _set_frameDuration)
 
     # CSS property service to children.
 
     def _get_em(self):
-        """Answers the current em value (for use in relative units), as value of
-        self.css('fontSize', DEFAULT_FONT_SIZE)."""
+        """Answers the current em value (for use in relative units), as value
+        of self.css('fontSize', DEFAULT_FONT_SIZE)."""
         return self.rootStyle.get('fontSize', DEFAULT_FONT_SIZE)
     def _set_em(self, em):
         """Store the em size (as fontSize) in the local style."""
@@ -572,9 +576,9 @@ class Document:
     em = property(_get_em, _set_em)
 
     def _get_w(self): # Width
-        """Property answering the global (intended) width of the document as
-        defined by self.rootStyle['w']. This may not represent the actual width
-        of the document, which comes from the maximum width of all child pages
+        """Answers the global (intended) width of the document as defined by
+        self.rootStyle['w']. This may not represent the actual width of the
+        document, which comes from the maximum width of all child pages
         together and if the current view is defined as spread.
 
         >>> doc = Document(name='TestDoc', w=100)
@@ -593,10 +597,10 @@ class Document:
     w = property(_get_w, _set_w)
 
     def _get_h(self): # Height
-        """Property answering the global (intended) height of the document as
-        defined by self.rootStyle['h']. This may not represent the actual
-        height of the document, which comes from the maximum height of all
-        child pages together.
+        """Answers the global (intended) height of the document as defined by
+        self.rootStyle['h']. This may not represent the actual height of the
+        document, which comes from the maximum height of all child pages
+        together.
 
         >>> doc = Document(name='TestDoc', h=100)
         >>> doc.h
@@ -614,9 +618,9 @@ class Document:
     h = property(_get_h, _set_h)
 
     def _get_d(self): # Depth
-        """Property answering the global (intended) depth of the document as
-        defined by self.rootStyle['d']. This may not represent the actual depth
-        of the document, which comes from the maximum depth of all child pages
+        """Answers the global (intended) depth of the document as defined by
+        self.rootStyle['d']. This may not represent the actual depth of the
+        document, which comes from the maximum depth of all child pages
         together.
 
         >>> doc = Document(name='TestDoc', d=100)
@@ -635,12 +639,12 @@ class Document:
     d = property(_get_d, _set_d)
 
     def _get_size(self):
-        """Answer the (w, h) tuple of the document size."""
+        """Answers the (w, h) tuple of the document size."""
         return self.w, self.h
     size = property(_get_size)
 
     def _get_gridX(self):
-        """Answer the style value for gridX as property
+        """Answers the style value for gridX as property
 
         >>> gridX = [(100,8),(100,8)]
         >>> doc = Document(gridX=gridX)
@@ -656,7 +660,7 @@ class Document:
     gridX = property(_get_gridX, _set_gridX)
 
     def _get_gridY(self):
-        """Answer the style value for gridY as property
+        """Answers the style value for gridY as property
 
         >>> gridY = [(100,8),(100,8)]
         >>> doc = Document(gridY=gridY)
@@ -1475,7 +1479,6 @@ class Document:
         return view
 
     #   S A V E   . J S O N
-
 
     @classmethod
     def open(cls, path):
