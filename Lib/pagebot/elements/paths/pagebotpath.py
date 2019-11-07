@@ -505,7 +505,7 @@ class PageBotPath:
         [(10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0)]
         """
         ptx, pty, ptw, pth = upt(x, y, w, h)
-        self.bp.rect(ptx, pty, ptw, pth)
+        self.bp.oval(ptx, pty, ptw, pth)
 
     def circle(self, x, y, r):
         """Adds a circle with middle points at position `x`, `y` with radius `r`.
@@ -595,6 +595,7 @@ class PageBotPath:
                 #    h = 100
             if h is None:
                 h = th - ty
+
             clipPathOrBox = x, y, w, h
         else: # Otherwise take size from the string
             if isinstance(clipPath, PageBotPath):
@@ -640,10 +641,10 @@ class PageBotPath:
         self.bp.traceImage(imagePath, threshold=threshold, blur=blur, invert=invert, turd=turd,
             tolerance=tolerance, offset=offset)
 
-    #def getNSBezierPath()
+    #def getBezierPath()
     #    Returns the nsBezierPath.
 
-    #setNSBezierPath(path)
+    #setBezierPath(path)
     #   Set a nsBezierPath.
 
     def pointInside(self, p):

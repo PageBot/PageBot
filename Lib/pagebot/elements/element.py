@@ -908,11 +908,16 @@ class Element:
 
         >>> from pagebot.conditions import *
         >>> from pagebot import getContext
+        >>> #context = getContext('Flat')
         >>> context = getContext()
+        >>> context.newDrawing()
+        >>> context.newPage()
         >>> e = Element(w=500, h=500, context=context)
         >>> e.childClipPath
         <PageBotPath 1>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
+        >>> len(e.childClipPath)
+        7
         >>> e.childClipPath.points
         [(50.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 80.0), (50.0, 80.0), (50.0, 0.0)]
         >>> e = Element(w=500, h=500, context=context)

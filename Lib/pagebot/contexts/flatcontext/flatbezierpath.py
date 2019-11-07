@@ -48,8 +48,10 @@ class FlatBezierPath(BaseBezierPath):
         point = BasePoint(x, y, onCurve=onCurve)
         self._path.append(point)
 
-    def append(self, command):
-        self.commands.append(command)
+    #def append(self, command):
+    #    self.commands.append(command)
+
+    # Drawing.
 
     def moveTo(self, p):
         self.commands.append(self.b.moveto(p[0], p[1]))
@@ -80,6 +82,12 @@ class FlatBezierPath(BaseBezierPath):
         self.addToPath(cp2, onCurve=False)
         self.addToPath(p)
 
+    def qCurveTo(self, *points):
+        """Draws an entire string of quadratic curve segments. The last point
+        specified is on-curve, all others are off-curve (control) points.
+        """
+        raise NotImplementedError
+
     def closePath(self):
         """Closes the path, add the first point to the end of the points
         list."""
@@ -95,6 +103,75 @@ class FlatBezierPath(BaseBezierPath):
         # for command in path.commands:
         # ...
         self.commands += path.commands
+
+    # Shapes.
+
+    def rect(self, x, y, w, h):
+        """Adds a rectangle at position `x`, `y` with a size of `w`, `h`."""
+        x1 = x + w
+        y1 = y + h
+        p0 = (x, y)
+        p1 = (x1, y)
+        p2 = (x1, y1)
+        p3 = (x, y1)
+        self.moveTo(p0)
+        self.lineTo(p1)
+        self.lineTo(p2)
+        self.lineTo(p3)
+        self.closePath()
+
+    def oval(self, x, y, w, h):
+        """Adds an oval at position `x`, `y` with a size of `w`, `h`"""
+        raise NotImplementedError
+
+    def line(self, point1, point2):
+        """Adds a line between two given points."""
+        raise NotImplementedError
+
+    def polygon(self, *points, **kwargs):
+        """Draws a polygon with `n` points. Optionally a `close` argument can
+        be provided to open or close the path. By default a `polygon` is a
+        closed path."""
+        raise NotImplementedError
+
+    def text(self, txt, offset=None, font=None, fontSize=10, align=None):
+        raise NotImplementedError
+
+    def textBox(self, txt, box, font=None, fontSize=10, align=None,
+            hyphenation=None):
+        raise NotImplementedError
+
+    # Path operations.
+
+    def getBezierPath(self):
+        """Returns the BezierPath."""
+
+    def setBezierPath(self, path):
+        """Sets a BezierPath."""
+
+    def pointInside(self, xy):
+        """Checks if a point `x`, `y` is inside a path."""
+
+    def bounds(self):
+        """Returns the bounding box of the path."""
+
+    def controlPointBounds(self):
+        """Returns the bounding box of the path including the offcurve
+        points."""
+
+    def optimizePath(self):
+        pass
+
+    def copy(self):
+        """Copy the Bézier path."""
+        return None
+
+    def reverse(self):
+        """Reverse the path direction."""
+
+    def appendPath(self, otherPath):
+        """Append a path."""
+        return None
 
 if __name__ == '__main__':
     import doctest

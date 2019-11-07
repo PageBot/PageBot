@@ -152,10 +152,10 @@ class BaseBezierPath:
         legs of the angle."""
 
     def rect(self, x, y, w, h):
-        """Adds a rectangle at possition `x`, `y` with a size of `w`, `h`."""
+        """Adds a rectangle at position `x`, `y` with a size of `w`, `h`."""
 
     def oval(self, x, y, w, h):
-        """Adds an oval at possition `x`, `y` with a size of `w`, `h`"""
+        """Adds an oval at position `x`, `y` with a size of `w`, `h`"""
 
     def line(self, point1, point2):
         """Adds a line between two given points."""
