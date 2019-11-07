@@ -15,6 +15,7 @@
 #     basebezierpath.py
 #
 
+from pagebot.errors import PageBotError
 import math
 
 class BaseBezierPath:
@@ -295,7 +296,22 @@ class BaseBezierPath:
 
     def difference(self, other):
         """Returns the difference between two Bézier paths."""
+        #subjectContours = self._contoursForBooleanOperations()
+        #clipContours = other._contoursForBooleanOperations()
+        #result = self.__class__()
+        #booleanOperations.difference(subjectContours, clipContours, result)
+        #return result
         return None
+
+    def _contoursForBooleanOperations(self):
+        # contours are temporary objects
+        # redirect drawToPointPen to drawPoints
+        contours = self.contours
+        for contour in contours:
+            contour.drawPoints = contour.drawToPointPen
+            if contour.open:
+                raise PageBotError("open contours are not supported during boolean operations")
+        return contours
 
     def intersection(self, other):
         """Returns the intersection between two Bézier paths."""

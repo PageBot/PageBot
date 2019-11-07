@@ -122,17 +122,53 @@ class FlatBezierPath(BaseBezierPath):
 
     def oval(self, x, y, w, h):
         """Adds an oval at position `x`, `y` with a size of `w`, `h`"""
-        raise NotImplementedError
+        # Control point offsets.
+        kappa = .5522848
+        offsetX = (w / 2) * kappa
+        offsetY = (h / 2) * kappa
+   
+        # Middle and other extreme points.
+        x0 = x + (w / 2)
+        y0 = y + (h / 2)
+        x1 = x + w
+        y1 = y + h
+
+        self.moveTo((x0, y0))
+
+        cp1 = (x, y0 - offsetY)
+        cp2 = (x0 - offsetX, y)
+        p = (x1, y0)
+        self.curveTo(cp1, cp2, p)
+
+        cp1 = (x0 + offsetX, y)
+        cp2 = (x1, y0 - offsetY)
+        p = (x1, y0)
+        self.curveTo(cp1, cp2, p)
+
+        cp1 = (x1, y0 + offsetY)
+        cp2 = (x0 + offsetX, y1)
+        p = (x0, y1)
+        self.curveTo(cp1, cp2, p)
+
+        cp1 = (x0 - offsetX, y1)
+        cp2 = (x, y0 + offsetY)
+        p = (x, y0)
+        self.curveTo(cp1, cp2, p)
 
     def line(self, point1, point2):
         """Adds a line between two given points."""
         raise NotImplementedError
+        self.moveTo(point1)
+        self.lineTo(point2)
 
     def polygon(self, *points, **kwargs):
         """Draws a polygon with `n` points. Optionally a `close` argument can
         be provided to open or close the path. By default a `polygon` is a
         closed path."""
-        raise NotImplementedError
+        self.moveTo(points[0])
+
+        for point in points[1:]
+            self.lineTo(point)
 
     def text(self, txt, offset=None, font=None, fontSize=10, align=None):
         raise NotImplementedError
