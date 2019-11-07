@@ -125,7 +125,11 @@ class BaseContext(AbstractContext):
     # Documents.
 
     def newDocument(self, w=None, h=None, doc=None):
-        """PageBot function."""
+        """Creates a new native self.doc. Flipped `y`-axis by
+        default to conform to DrawBot's drawing methods.
+
+        NOTE: not to be confused with pagebot.document.Document.
+        PageBot function."""
 
     def saveDocument(self, path, multiPage=None):
         """PageBot function."""

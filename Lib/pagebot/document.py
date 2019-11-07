@@ -29,10 +29,7 @@ from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
         BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
-    """A Document a container of pages.
-
-    Doctest: https://docs.python.org/2/library/doctest.html
-    Run doctest in Sublime: cmd-B
+    """A Document is a container of pages.
 
     >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
@@ -54,9 +51,10 @@ class Document:
     (3, [1, 2, 3], 1)
     >>> doc.context
     <HtmlContext>
-
     """
-    PAGE_CLASS = Page # Allow inherited versions of the Page class.
+
+    # Allows inherited versions of the Page class.
+    PAGE_CLASS = Page 
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
@@ -139,7 +137,7 @@ class Document:
         # and stores it in self.views. Adds the optional context, if defined.
         # Otherwise uses the result of default getContext. A context is an
         # instance of e.g. one of DrawBotContext, FlatContext or HtmlContext,
-        # which contains a builder; DrawBot, Flat and one of the HtmlBuilders
+        # which contains a DrawBot, Flat and one of the HtmlBuilders
         # respectively.
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
@@ -157,7 +155,8 @@ class Document:
         # Document (w, h) size is default from page, but will modified by the
         # type of display mode.
         if autoPages:
-            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h, d=self.d, **kwargs)
+            self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h,
+                    d=self.d, **kwargs)
 
         # Call generic initialize method, allowing inheriting publication
         # classes to initialize their stuff. This can be the creation of
@@ -183,6 +182,7 @@ class Document:
         [('a', 12), ('b', 34)]
         """
         return self._docLib
+
     docLib = property(_get_docLib)
 
     def __len__(self):
@@ -195,7 +195,7 @@ class Document:
         return len(self.pages)
 
     def __repr__(self):
-        """Answering the string representation of the document.
+        """Answers a string representation of the document.
 
         >>> doc = Document(name='TestDoc', autoPages=41)
         >>> t = doc.addTemplate('Template1', Template())
@@ -215,24 +215,27 @@ class Document:
 
     def _get_doc(self):
         """Root of the chain of element properties, searching upward in the
-        ancestors tree. It refers to itself to make the call compatible with
-        any child page or element.
+        ancestor tree. Document refers to itself, thus making  a call to `doc`
+        compatible with any child page or element.
 
         >>> doc = Document(name='TestDoc')
         >>> doc.doc is doc
         True
         """
         return self
+
     doc = property(_get_doc)
 
     def _get_context(self):
         """Answers the context of the current view to allow searching the
-        parents --> document --> view. """
+        parents --> document --> view."""
         return self.view.context
+
     context = property(_get_context)
 
-    # Document[12] answers a list of pages where page.y == 12
-    # This behaviour is different from regular elements, who want the page.eId as key.
+    # Document[12] answers a list of pages where page.y == 12. This is
+    # different from regular elements, who want the page.eId as key.
+
     def __getitem__(self, pnIndex):
         """Answers the pages with pageNumber equal to page.y.
 
@@ -249,9 +252,11 @@ class Document:
             pn, index = pnIndex
         else:
             pn, index = pnIndex, 0 # Default is left page on pn row.
+
         if pn in self.pages:
             return self.pages[pn][index]
         return None
+
     def __setitem__(self, pn, page):
         if not pn in self.pages: # Add list as
             self.pages[pn] = []
@@ -306,15 +311,11 @@ class Document:
         >>> doc = Document(context=context, title='MySite')
         >>> doc, doc.title
         (<Document "MySite" Pages=1 Templates=1 Views=1>, 'MySite')
-        """
-
-        """>>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> doc = Document(context=context)
         >>> doc.context
         <FlatContext>
         """
         return self.context.b
+
     b = builder = property(_get_builder)
 
     #   T E M P L A T E
@@ -452,9 +453,9 @@ class Document:
     def css(self, name, default=None, styleId=None):
         """If optional eId is None or style cannot found, then use the root
         style. If the style is found from the (cascading) eId, then use that
-        to return the requested attribute.  Note that self.css( ) is a generic
-        query for a named CSS value, upwards the parent tree.  This is
-        different from the CSS functions as self.buildCss( ), that actually
+        to return the requested attribute.  Note that self.css() is a generic
+        query for a named CSS value, upwards the parent tree. This is
+        different from the CSS functions as self.buildCss(), that actually
         generate CSS code.
 
         >>> doc = Document(name='TestDoc', w=500, h=500, autoPages=10)
@@ -1466,11 +1467,14 @@ class Document:
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
-        view = self.view = self.views[viewId] = viewClasses[viewId](name=name or viewId, w=self.w, h=self.h, context=context)
-        view.setParent(self) # Just set parent, without all functionality of self.addElement()
+        view = self.view = self.views[viewId] = viewClasses[viewId](name=name or viewId,
+                w=self.w, h=self.h, context=context)
+
+        # Just set parent, without all functionality of self.addElement()
+        view.setParent(self) 
         return view
 
-    #   S A V E  .  P B T
+    #   S A V E   . J S O N
 
 
     @classmethod
@@ -1480,7 +1484,7 @@ class Document:
         """
         >>> doc1 = Document(name='MyDoc', w=300, h=400)
         >>> path = '/tmp/pagebot.document.json'
-        >>> doc1.save(path) # Save document as PageBot-native zip file.
+        >>> doc1.save(path) # Save document as JSON  file.
         >>> doc2 = Document.open(path)
         >>> doc2
 
@@ -1493,15 +1497,16 @@ class Document:
         return doc
 
     def save(self, path, **kwargs):
-        """Save the document in native json source code file, represenrinf all of the current
-        settings, including the current dociment.view.
+        """Saves the document in native JSON source code file, representing all
+        the current settings, including the current document.view.
         """
 
         """
         >>> doc = Document(w=300, h=400)
-        >>> doc.save('/tmp/pagebot.document.json') # Save document as PageBot-native zip file.
+        >>> doc.save('/tmp/pagebot.document.json') # Saves document as a JSON file.
         """
         normalizedPages = {}
+
         d = dict(
             class_=self.__class__.__name__,
             name=self.name,
@@ -1509,8 +1514,9 @@ class Document:
             pages=asNormalizedJSON(self.pages),
             view=asNormalizedJSON(self.view),
         )
+
         json = dict2Json(d)
-        f = codecs.open(path, mode="w", encoding="utf-8") # Save the XML as unicode.
+        f = codecs.open(path, mode="w", encoding="utf-8") # Save XML as unicode.
         f.write(json)
         f.close()
 

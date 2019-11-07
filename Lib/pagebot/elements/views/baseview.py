@@ -20,27 +20,35 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 
 class BaseView(Element):
-    """A View is just another kind of container, kept by document to make a certain presentation
-    of the enclosed page/element tree. Views support services, such as answering the size of a formatted
-    string (if possible), how much overflow there is for a certain box, etc. The view is also the only
-    place where the current context should be stored."""
+    """A View is just another kind of container, kept by document to make a
+    certain presentation of the enclosed page / element tree. Views support
+    services, such as answering the size of a formatted string (if possible),
+    how much overflow there is for a certain box, etc. The view is also the
+    only place where the current context should be stored."""
     viewId = 'View'
 
     isView = True
 
-    def __init__(self, w=None, h=None, contect=None, parent=None, context=None, verbose=False, **kwargs):
+    def __init__(self, w=None, h=None, contect=None, parent=None, context=None,
+            verbose=False, **kwargs):
         Element.__init__(self, parent=parent, **kwargs)
 
         if not w and self.parent:
             w = self.parent.w
+
         if not h and self.parent:
             h = self.parent.h
+
         self.w = w
         self.h = h
         self.verbose = verbose # If set to Trye, views may decide to add more information while building.
+
         if context is None:
-            context = self._getContext() # Use the default context for this view, if not defined.
+            # Use the default context for this view, if not defined.
+            context = self._getContext() 
+
         self.context = context
+        self.context.newDocument(self.w, self.h)
         self.setControls()
         # List of collected elements that need to draw their info on top of the main drawing,
         self.elementsNeedingInfo = {}

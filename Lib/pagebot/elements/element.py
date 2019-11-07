@@ -97,12 +97,13 @@ class Element:
         >>> e = Element() # Default element has default proportions
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
-
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.document import Document
-        >>> c = DrawBotContext()
+        >>> c = getContext('Flat')
         >>> size = pt(300, 400)
         >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc.context
+        <FlatContext>
         >>> page = doc[1]
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), pt(0, 0))

@@ -126,6 +126,14 @@ illustration.
 * T-Shirt templates
 * Templates with embedded information for graphic- and typographic education.
 
+## Unit Testing
+
+PageBot uses Python's native `doctest` library to perform unit tests:
+
+* [https://docs.python.org/2/library/doctest.html](https://docs.python.org/2/library/doctest.html)
+
+Note: doctest can be run in Sublime with `cmd-B`   
+
 ## Future Developments
 
 * Element classes supporting various types of graphs, info-graphics, maps,

@@ -92,9 +92,11 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w, h, size=None, doc=None, flipped=True):
-        """Create a new self.doc Flat canvas to draw on. Flipped `y`-axis by
+    def newDocument(self, w=None, h=None, size=None, doc=None, flipped=True):
+        """Creates a new self.doc Flat canvas to draw on. Flipped `y`-axis by
         default to conform to DrawBot's drawing methods.
+
+        NOTE: not to be confused with pagebot.document.Document.
 
         >>> context = FlatContext()
         >>> context.newDocument(100, 100)
@@ -104,8 +106,12 @@ class FlatContext(BaseContext):
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
-        if size is not None:
+        if doc is not None:
+            w = doc.w
+            h = doc.h
+        elif size is not None:
             w, h = size
+
         self.flipped = flipped
 
         # Convert units to point values.
