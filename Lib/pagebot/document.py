@@ -301,11 +301,11 @@ class Document:
     def _get_builder(self):
         """Answers the builder, which should be available from self.context.
 
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
         >>> doc = Document(context=context, title='MySite')
-        >>> doc, doc.context, doc.title
-        (<Document "MySite" Pages=1 Templates=1 Views=1>, <DrawBotContext>, 'MySite')
+        >>> doc, doc.title
+        (<Document "MySite" Pages=1 Templates=1 Views=1>, 'MySite')
         """
 
         """>>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
