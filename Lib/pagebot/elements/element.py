@@ -105,37 +105,18 @@ class Element:
         >>> doc.context
         <FlatContext>
         >>> page = doc[1]
+        >>> page.size
+        (300pt, 400pt)
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), pt(0, 0))
-        >>> e.xy
-        (0pt, 20pt)
+        >>> e.x, e.y, e.xy
+        (0pt, 20pt, (0pt, 20pt))
         >>> e.size
         (300pt, 3pt)
+        >>> e.size3D
+        (300pt, 3pt, 100pt)
         >>> view = doc.getView()
         >>> e.build(view, pt(0, 0))
-        """
-        """
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> from pagebot.document import Document
-        >>> c = FlatContext()
-        >>> size = pt(320, 420)
-        >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
-        >>> page = doc[1] # First page is left 1
-        >>> page.size
-        (320pt, 420pt)
-        >>> pt(12, 20)
-        (12pt, 20pt)
-        >>> e = Element(parent=page, xy=pt(12, 20), w=page.w, h=pt(3))
-        >>> e.x, e.y, e.xy
-        (12pt, 20pt, (12pt, 20pt))
-        >>> e.build(doc.getView(), pt(0, 0))
-
-        >>> e.x, e.y, e.xy
-        (12pt, 20pt, (12pt, 20pt))
-        >>> e.size
-        (320pt, 3pt)
-        >>> e.size3D
-        (320pt, 3pt, 100pt)
         """
         # Optionally set the property for elements that need their own context.
         # Mostly these are only set for views (which are also Elements) If None
