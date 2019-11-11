@@ -15,8 +15,8 @@
 #     basebezierpath.py
 #
 
-from pagebot.errors import PageBotError
 import math
+from pagebot.errors import PageBotError
 
 class BaseBezierPath:
     """Base class with same interface as drawBot Bézier path."""

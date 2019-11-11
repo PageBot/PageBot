@@ -157,7 +157,6 @@ class FlatBezierPath(BaseBezierPath):
 
     def line(self, point1, point2):
         """Adds a line between two given points."""
-        raise NotImplementedError
         self.moveTo(point1)
         self.lineTo(point2)
 
