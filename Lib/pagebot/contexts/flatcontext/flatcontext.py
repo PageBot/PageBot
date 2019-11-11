@@ -17,7 +17,7 @@
 import math
 from re import sub
 from flat import rgb
-from fclist import fclist
+#from fclist import fclist
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -961,9 +961,9 @@ class FlatContext(BaseContext):
 
         # TODO: parse font paths.
         # TODO: check pattern
-        for font in fclist():
-            #print(font.family, font.style, font.file)
-            files.append(font.file)
+        #for font in fclist():
+        #    #print(font.family, font.style, font.file)
+        #    files.append(font.file)
 
         return files
 
