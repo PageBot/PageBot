@@ -21,6 +21,13 @@
 #    drawing instructions.
 #
 
+from os.path import expanduser
+
+HOME = expanduser('~')
+ROOT_FONT_PATHS = {'darwin': ['/System/Library/Fonts', '/Library/Fonts',
+    '%s/Library/Fonts' % HOME], 'linux': ['/usr/share/fonts/',
+        '%s/.local/share/fonts/' % HOME, '/usr/local/share/fonts']}
+
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 DEFAULT_FONT_NAME = 'Roboto-Regular'

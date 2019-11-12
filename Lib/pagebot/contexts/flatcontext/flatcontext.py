@@ -16,8 +16,9 @@
 #
 import math
 from re import sub
+from sys import platform
+from os import listdir
 from flat import rgb
-#from fclist import fclist
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -26,6 +27,7 @@ from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
+from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
@@ -950,6 +952,8 @@ class FlatContext(BaseContext):
     def installedFonts(self, patterns=None):
         """Answers the list of all fonts (name or path) that are installed on the
         OS.
+        TODO: parse font paths.
+        TODO: check pattern
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -959,11 +963,10 @@ class FlatContext(BaseContext):
         """
         files = []
 
-        # TODO: parse font paths.
-        # TODO: check pattern
-        #for font in fclist():
-        #    #print(font.family, font.style, font.file)
-        #    files.append(font.file)
+        paths = ROOT_FONT_PATHS[platform]
+        for path in paths:
+            for f in listdir(path):
+                files.append(path + f)
 
         return files
 
