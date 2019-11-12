@@ -18,6 +18,7 @@ import math
 from re import sub
 from sys import platform
 from os import listdir
+from os.path import exists
 from flat import rgb
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
@@ -965,8 +966,9 @@ class FlatContext(BaseContext):
         paths = ROOT_FONT_PATHS[platform]
 
         for path in paths:
-            for f in listdir(path):
-                files.append(path + f)
+            if exists(path):
+                for f in listdir(path):
+                    files.append(path + f)
 
         return files
 
