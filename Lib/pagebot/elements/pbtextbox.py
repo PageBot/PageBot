@@ -57,8 +57,7 @@ class TextBox(Element):
 
         # Set as property, to make sure there's always a context based
         # Babelstring or None.
-        if bs:
-            self.bs = bs 
+        self.bs = bs 
 
     def _get_bs(self):
         """Answer the stored formatted string. The value can be None.
