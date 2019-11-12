@@ -962,8 +962,8 @@ class FlatContext(BaseContext):
         True
         """
         files = []
-
         paths = ROOT_FONT_PATHS[platform]
+
         for path in paths:
             for f in listdir(path):
                 files.append(path + f)
