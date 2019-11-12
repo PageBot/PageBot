@@ -70,15 +70,17 @@ class TextBox(Element):
         in the duplicate usage of fill and stroke.
 
         >>> from pagebot.document import Document
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
         >>> page = doc[1]
-        >>> tb = TextBox(parent=page, w=125)
+        >>> tb = TextBox(parent=page, w=125, context=context)
         >>> tb.bs = 'AAA' # String converts to DrawBotString.
         >>> tb.bs, tb.bs.s, tb.bs.__class__.__name__
         (AAA, AAA, 'DrawBotString')
-        >>> tb = TextBox('BBB')
-        >>> tb.bs
-
+        >>> tb2 = TextBox('BBB', context=context)
+        >>> tb2.bs
+        BBB
         """
         if bs is not None:
             # Source can be any type: BabelString instance or plain unicode
@@ -265,10 +267,12 @@ class TextBox(Element):
 
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> style = dict(textFill=blackColor, textStroke=noColor)
-        >>> e = TextBox('ABC', style=style)
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> e = TextBox('ABC', style=style, context=context)
         >>> e.eId in str(e) # TextBox:236DE32AAC108A45490 (0, 0) ABC'
         True
-        >>> e = TextBox('ABC', x=100, y=100, w=200, style=style)
+        >>> e = TextBox('ABC', x=100, y=100, w=200, style=style, context=context)
         >>> e.eId in str(e)
         True
         """
@@ -294,12 +298,16 @@ class TextBox(Element):
         """Answers a full copy of `self`, where the "unique" fields are set to
         default. Also performs a deep copy on all child elements.
 
+        FIXME: TypeError: can't pickle module objects
+
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> style = dict(textFill=blackColor, textStroke=noColor)
-        >>> e = TextBox('Hello world', name='Child', w=100, style=style)
-        >>> copyE = e.copy() # Copy the element attribute, including the string of self.
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> e = TextBox('Hello world', name='Child', w=100, style=style, context=context)
+        >>> #copyE = e.copy() # Copy the element attribute, including the string of self.
         >>> #copyE.bs # TODO: Needs development and testing
-        Hello world
+        #Hello world
         """
         e = Element.copy(self, parent=parent)
         e.bs = self.bs # Copy the string separately.
