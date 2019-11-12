@@ -1722,9 +1722,10 @@ class Element:
         """
         if e is None:
             e = self
-        if self.context is not None:
-            return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
-        return None
+
+        assert self.context is not None
+        return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
+        #return None
 
     # Most common properties
 

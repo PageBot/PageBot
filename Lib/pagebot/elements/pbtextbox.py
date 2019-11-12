@@ -27,37 +27,48 @@ from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class TextBox(Element):
-    # Initialize the default behavior tags as different from Element.
-    isText = True  # This element is capable of handling text.
+
+    # Initialize the default behavior tags that are different from Element.
+    # This element is capable of handling text.
+    isText = True  
     isTextBox = True
 
-    TEXT_MIN_WIDTH = 24 # Absolute minumum with of a text box. Avoid endless elastic height.
+    # Absolute minimum width of a text box. Avoid endless elastic height.
+    TEXT_MIN_WIDTH = 24 
 
     def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
         """Creates a TextBox element. Default is the storage of `self.s`.
-        (DrawBot FormattedString or Flat equivalent), but optional it can also
-        be ts (tagged str) if output is mainly through build and HTML/CSS.
-        Since both strings cannot be converted lossless one into the other, it
-        is safer to keep them both if they are available."""
+        (DrawBot FormattedString or Flat equivalent), but optionally it can
+        also be a `ts` (tagged str) if output is mainly through build and
+        HTML / CSS. Because both strings cannot be converted lossless one into
+        the other, it is safer to keep them both if they are available."""
 
         self._textLines = None
-        self._baselines = None # Force initiaize upon first usage.
+
+        # Force initialize upon first usage.
+        self._baselines = None 
 
         if size is not None:
             w, h = size
-        self.w, self.h = w or DEFAULT_WIDTH, h # If h is None, height is elastic size
 
-        self.bs = bs # Set as property, to make sure there's always a context based Babelstring or None
+        # If h is None, height is elastic size.
+        self.w, self.h = w or DEFAULT_WIDTH, h 
+
+        # Set as property, to make sure there's always a context based
+        # Babelstring or None.
+        if bs:
+            self.bs = bs 
 
     def _get_bs(self):
         """Answer the stored formatted string. The value can be None.
         """
         return self._bs
+
     def _set_bs(self, bs):
         """If not None, make sure that this is a formatted string. Otherwise
-        create it with the current style. Note that in case there is potential
-        clash in the double usage of fill and stroke.
+        create it with the current style. Note that there is a potential clash
+        in the duplicate usage of fill and stroke.
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -71,14 +82,18 @@ class TextBox(Element):
 
         """
         if bs is not None:
-            # Source can be any type: BabelString instance or plain unicode string.
+            # Source can be any type: BabelString instance or plain unicode
+            # string.
             bs = self.newString(bs, style=self.style)
-            #assert bs is not None
+            assert bs is not None
+
         self._bs = bs
+
     bs = property(_get_bs, _set_bs)
 
     def clear(self):
-        """Clear the current content of the element. Make a new formatted string with self.style.
+        """Clear the current content of the element. Make a new formatted
+        string with self.style.
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -105,17 +120,20 @@ class TextBox(Element):
         >>> tb.w, tb.w == page[tb.eId].w
         (150pt, True)
         """
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        # In case of relative units, use this as base.
+        base = dict(base=self.parentW, em=self.em) 
         return units(self.css('w'), base=base)
+
     def _set_w(self, w):
         self.style['w'] = units(w or DEFAULT_WIDTH)
         # Note choice for difference in camelCase
         #self._textLines = self._baselines = None # Force reset if being called
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answers the height of the textBox. If self.style['h'] is None, then answer the
-        vertical space that the text needs.
+        """Answers the height of the textBox. If self.style['h'] is None, then
+        answer the vertical space that the text needs.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
@@ -142,14 +160,18 @@ class TextBox(Element):
 
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
-        if h is not None: # If None, then self.h is elastic defined by content
-            h = units(h or DEFAULT_HEIGHT) # Overwrite element local style from here, parent css becomes inaccessable.
+        # If None, then self.h is elastic defined by content.
+        if h is not None: 
+            # Overwrites element local style from here, parent css becomes
+            # inaccessable.
+            h = units(h or DEFAULT_HEIGHT) 
+
         self.style['h'] = h
 
     h = property(_get_h, _set_h)
 
     def _get_y(self):
-        """Answers the y position of self.
+        """Answers the `y`-position of self.
 
         >>> e = Element(y=100, h=400)
         >>> e.x, e.y, e.z
@@ -167,37 +189,44 @@ class TextBox(Element):
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
         return units(self.style.get('y'), base=base)
+
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
         #self._textLines = None # Force recalculation of y values.
+
     y = property(_get_y, _set_y)
 
     def _get_firstColumnIndent(self):
-        """If False or 0, then ignore first line indent of a column on text overflow.
-        Otherwise set to a certain unit. This will cause text being indented by the amount of
-        self.firstLineIndent, probably in mid-sentence. This option is likely never necessary,
-        implemented just in case.
-        """
+        """If False or 0, then ignore first line indent of a column on text
+        overflow. Otherwise set to a certain unit. This will cause text being
+        indented by the amount of self.firstLineIndent, probably midsentence.
+
+        NOTE: probably never necessary, here just in case."""
         return self.css('firstColumnIndent')
+
     def _set_firstColumnIndent(self, indent):
         self.style['firstColumnIndent'] = units(indent)
+
     firstColumnIndent = property(_get_firstColumnIndent, _set_firstColumnIndent)
 
     def _get_firstLineIndent(self):
-        """DrawBot-compatible indent of first line of a paragraph.
-        """
+        """DrawBot-compatible indent of first line of a paragraph."""
         return self.css('firstLineIndent')
+
     def _set_firstLineIndent(self, indent):
         self.style['firstLineIndent'] = units(indent)
+
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
 
     def _get_indent(self):
         """DrawBot-compatible indent of text.
         """
         return self.css('indent')
+
     def _set_indent(self, indent):
         self.style['indent'] = units(indent)
+
     indent = property(_get_indent, _set_indent)
 
     def _get_textLines(self):
@@ -212,6 +241,7 @@ class TextBox(Element):
                     self._baselines[upt(textLine.y)] = textLine
 
         return self._textLines
+
     textLines = property(_get_textLines)
 
     def _get_baselines(self):
@@ -219,6 +249,7 @@ class TextBox(Element):
             #self.textLines # Initialize both self._textLines and self._baselines
             self._get_textLines()
         return self._baselines
+
     baselines = property(_get_baselines)
 
     def __getitem__(self, lineIndex):
@@ -279,7 +310,7 @@ class TextBox(Element):
     # builder types.
 
     def setText(self, bs, style=None):
-        """Set the formatted string to `s`, using `style` or `self.style`. The
+        """Sets the formatted string to `s`, using `style` or `self.style`. The
         `bs` as also be a number, in which case is gets converted into a
         string."""
         if isinstance(bs, (int, float)):
@@ -287,6 +318,7 @@ class TextBox(Element):
 
         if isinstance(bs, str):
             bs = self.newString(bs, e=self, style=style)
+
         self.bs = bs
 
     def _get_text(self):
@@ -357,7 +389,7 @@ class TextBox(Element):
         return bs.textSize(w=self.w)
 
     def getOverflow(self, w=None, h=None):
-        """Figure out what the overflow of the text is, with the given (w, h)
+        """Figures out what the overflow of the text is, with the given (w, h)
         or styled (self.w, self.h) of this text box. If h is None and self.h is
         None then by definintion overflow will allways be empty, as the box is
         elastic."""
@@ -397,6 +429,7 @@ class TextBox(Element):
                     styledLines[-1][-1] += run.string
                 prevStyle = style
         return styledLines
+
     styledLines = property(_get_styledLines)
 
     #   S P E L L  C H E C K
@@ -443,7 +476,7 @@ class TextBox(Element):
         page, then find the page.next with it's target element to continue,
         until all text fits or the element has not nextElement defined.
         Answer the page and result, as the page may have been altered.
-        Overflow is solved by element condition Overflow2Next()
+        Overflow is solved by element condition Overflow2Next().
 
         >>> from pagebot.document import Document
         >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
@@ -466,9 +499,11 @@ class TextBox(Element):
         page = self.getElementPage()
         nextElement = None
         if processed is None:
-            processed = set() # Keep track of what we did, to avoid circular references.
+            # Keep track of what we did, to avoid circular references.
+            processed = set() 
 
-        if overflow and self.nextElement: # If there is text overflow and there is a next element?
+        # If there is text overflow and there is a next element?
+        if overflow and self.nextElement: 
 
             if self.nextPage: # Try to use element on another page?
                 # Try on several types in which the next page can be defined.
@@ -508,8 +543,8 @@ class TextBox(Element):
     #   B U I L D
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        """Draw the text on position (x, y). Draw background rectangle and/or
-        frame if fill and/or stroke are defined."""
+        """Draws the text on position (x, y). Draw background rectangle and / or
+        frame if fill and / or stroke are defined."""
         context = view.context # Get current context
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -519,10 +554,11 @@ class TextBox(Element):
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True.
         view.drawElementFrame(self, p, **kwargs)
+        # Draw optional background, frame or borders.
+        self.buildFrame(view, p) 
 
-        self.buildFrame(view, p) # Draw optional background, frame or borders.
-
-        if self.drawBefore is not None: # Call if defined
+        # Call if defined.
+        if self.drawBefore is not None: 
             self.drawBefore(self, view, p)
 
         # self has its own baseline drawing, derived from the text, instance of
@@ -536,16 +572,19 @@ class TextBox(Element):
             tw, th = 100, 12 # Some value, otherwise fitting will loop.
 
         xOffset = yOffset = 0
+
         if self.css('yTextAlign') == MIDDLE:
             yOffset = units(self.h - self.pb - self.pt - th)/2
         elif self.css('yTextAlign') == BOTTOM:
             yOffset = units(self.h - self.pb - self.pt - th)
+
         if self.css('xTextAlign') == CENTER:
             xOffset = units(self.w - self.pl - self.pr - tw)/2
         elif self.css('xTextAlign') == RIGHT:
             xOffset = units(self.w - self.pl - self.pr - tw)
 
         textShadow = self.textShadow
+
         if textShadow:
             context.saveGraphicState()
             context.setShadow(textShadow)
@@ -668,7 +707,7 @@ class TextBox(Element):
             prevY = y
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
-        """Draw the optional overflow marker, if text doesn't fit in the box."""
+        """Draws the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
         bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=10))
         tw, _ = bs.size
@@ -679,10 +718,10 @@ class TextBox(Element):
     #   B U I L D  I N D E S I G N
 
     def build_inds(self, view, origin=None, drawElements=True, **kwargs):
-        """It is better to have a separate InDesignContext build tree, since we need more
-        information down there than just drawing instructions.
-        This way the InDesignContext just gets the PageBot Element passed over, using
-        it's own API."""
+        """It is better to have a separate InDesignContext build tree, because
+        we need more information down there than just drawing instructions.
+        This way the InDesignContext just gets passed the PageBot Element,
+        using it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
@@ -725,13 +764,12 @@ class TextBox(Element):
         if hasContent:
             b._div() # self.cssClass or self.__class__.__name__
 
-
     #   C O N D I T I O N S
 
     def fitFontSize2Right(self):
-        """Make the right padding of the parent, without
-        moving the left position. Overwriting the default behavior of Element, as we want
-        text to be fiting too.
+        """Make the right padding of the parent, without moving the left
+        position. Overwriting the default behavior of Element, as we want text
+        to be fiting too.
 
         >>> from pagebot import getContext
         >>> from pagebot.conditions import *
@@ -755,8 +793,8 @@ class TextBox(Element):
         return not self.h
 
     def shrink2TextHeight(self, tolerance=0):
-        """Shrink the box vertical to fit the vertical bounding box of the current text.
-        This also tests by e.isShrunkOnTextHeight()
+        """Shrink the box vertical to fit the vertical bounding box of the
+        current text. This also tests by e.isShrunkOnTextHeight()
 
         >>> from pagebot import getContext
         >>> from pagebot.conditions import *
@@ -779,8 +817,8 @@ class TextBox(Element):
         return not self.w
 
     def shrink2TextWidth(self, tolerance=0):
-        """Shrink the box horizontal to fit the horizontal bounding box of the current text.
-        This also tests by e.isShrunkOnTextWidth()
+        """Shrink the box horizontal to fit the horizontal bounding box of the
+        current text. This also tests by e.isShrunkOnTextWidth()
 
         >>> from pagebot import getContext
         >>> from pagebot.conditions import *
@@ -971,8 +1009,8 @@ class TextBox(Element):
         return False
 
     def baseline2Bottom(self, index=None, parent=None):
-        """Move the vertical position of the indexed line to match the positon of self.parent.bottom.
-        """
+        """Move the vertical position of the indexed line to match the positon
+        of self.parent.bottom."""
         baselineY = self.getBaselineY(index, parent)
         if baselineY is not None:
             self.bottom = baselineY
@@ -1000,9 +1038,9 @@ class TextBox(Element):
         pass
 
     def capHeightUp2Grid(self, index=None, parent=None):
-        """Move the text box up (decreasing line.y value, rounding in down direction) in vertical direction,
-        so the baseline of self.textLines[index] matches the parent grid.
-        """
+        """Move the text box up (decreasing line.y value, rounding in down
+        direction) in vertical direction, so the baseline of
+        self.textLines[index] matches the parent grid."""
         if self.textLines and parent is not None:
             assert index in range(len(self.textLines)), \
                 ('%s.capHeightUp2Grid: Index "%d" is not in range of available textLines "%d"' % \
@@ -1013,9 +1051,8 @@ class TextBox(Element):
                 self.top += parent.getDistance2Grid(line.y + textRun.capHeight) + parent.baselineGrid
 
     def capHeightDown2Grid(self, index=0, parent=None):
-        """Move the text box down in vertical direction, so the baseline of self.textLines[index]
-        matches the parent grid.
-        """
+        """Move the text box down in vertical direction, so the baseline of
+        self.textLines[index] matches the parent grid."""
         if parent is None:
             parent = self.parent
         if self.textLines and parent is not None:
@@ -1047,7 +1084,7 @@ class TextBox(Element):
             self.top = self.parent.h - self.parent.pt + line.y - xHeight
 
     def xHeight2Bottom(self, index=None, parent=None):
-        # TODO:Implement
+        # TODO: implement.
         pass
 
     def xHeightUp2Grid(self, index=0, parent=None):
@@ -1084,36 +1121,35 @@ class TextBox(Element):
 
     def ascender2Grid(self, index=None, parent=None):
         # Move the element, so ascender height of index-line is at grid of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
 
     def ascender2Top(self, index=None, parent=None):
         # Move the element, so ascender height of index-line is at top of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
 
     def ascender2Bottom(self, index=None, parent=None):
         # Move the element, so ascender height of index-line is at bottom of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
 
     # Descender conditional testers and movers
 
     def descender2Grid(self, index=None, parent=None):
         # Move the element, so descender of index-line is on grid of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
 
     def descender2Top(self, index=None, parent=None):
         # Move the element, so descender of index-line is on top of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
 
     def descender2Bottom(self, index=None, parent=None):
         # Move the element, so descender of index-line is on bottom of parent."""
-        #TODO:Implement
+        #TODO: implement.
         pass
-
 
 if __name__ == '__main__':
     import doctest
