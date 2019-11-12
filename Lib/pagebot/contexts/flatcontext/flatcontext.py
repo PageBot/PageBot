@@ -474,12 +474,12 @@ class FlatContext(BaseContext):
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
         s = ''
+
         for paragraph in self.placedText.layout.paragraphs:
             for span in paragraph.spans:
                 # maybe also consider span.style?
                 s += span.string
 
-        #print(s)
         return sub(str(fs), '', s)
 
     def textOverflow(self, fs, box, align=LEFT):

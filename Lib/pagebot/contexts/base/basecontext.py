@@ -895,7 +895,7 @@ WaterparkTM which is freely accessible through a private gate.'''
         elif isinstance(r, (tuple, list)):
             # Renders rectangle units to value tuple.
             xpt, ypt, wpt, hpt = upt(r)
-            ypt = ypt - hpt
+            #ypt = ypt - hpt
             box = (xpt, ypt, wpt, hpt)
             tb = self.b.textBox(sOrBs, box, align=None)
         else:
