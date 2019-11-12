@@ -21,7 +21,7 @@ from pagebot.filepaths import *
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
 
-VERSION = '0.9'
+VERSION = '0.9.1'
 STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
