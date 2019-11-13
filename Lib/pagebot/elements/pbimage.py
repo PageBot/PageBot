@@ -487,6 +487,7 @@ class Image(Element):
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType)
             else:
+                #print('====IMAGE', self.path, px, py, self.w, self.h, self.scaleImage)
                 context.image(self.path, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType)

@@ -59,45 +59,45 @@ class Float2Bottom(Condition):
 
 # Sides
 
-class Float2LeftSide(Condition):
+class Float2SideLeft(Condition):
     """Align the element.left with max of all placed element.right or
-    parent.leftSide. Positioning includes the margin of all elements."""
+    parent.sideLeft. Positioning includes the margin of all elements."""
     def test(self, e):
-        return e.isFloatOnLeftSide(self.tolerance)
+        return e.isFloatOnSideLeft(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2LeftSide(), e, score)
+            self.addScore(e.float2SideLeft(), e, score)
 
-class Float2RightSide(Condition):
+class Float2SideRight(Condition):
     """Align the element.right with min of all placed element.left or
-    parent.rightSide. Positioning includes the margin of all elements."""
+    parent.sideRight. Positioning includes the margin of all elements."""
     def test(self, e):
-        return e.isFloatOnRightSide(self.tolerance)
+        return e.isFloatOnSideRight(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2RightSide(), e, score)
+            self.addScore(e.float2SideRight(), e, score)
 
-class Float2TopSide(Condition):
+class Float2SideTop(Condition):
     """Align the element.top with max of all placed element.bottom or
-    parent.topSide. Positioning includes the margin of all elements."""
+    parent.sideTop. Positioning includes the margin of all elements."""
     def test(self, e):
-        return e.isFloatOnTopSide(self.tolerance)
+        return e.isFloatOnSideTop(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2TopSide(), e, score)
+            self.addScore(e.float2SideTop(), e, score)
 
-class Float2BottomSide(Condition):
+class Float2SideBottom(Condition):
     """Align the element.bottom with max of all placed element.top or
-    parent.bottomSide. Positioning includes the margin of all elements."""
+    parent.sideBottom. Positioning includes the margin of all elements."""
     def test(self, e):
-        return e.isFloatOnBottomSide(self.tolerance)
+        return e.isFloatOnSideBottom(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2BottomSide(), e, score)
+            self.addScore(e.float2SideBottom(), e, score)
 
 # Combinations
 
@@ -167,66 +167,66 @@ class Float2BottomRight(Condition):
 
 # Combination sides
 
-class Float2LeftTopSides(Condition):
+class Float2SideLeftTops(Condition):
     def test(self, e):
-        return e.isFloatOnLeftSide(self.tolerance) and e.isFloatOnTopSide(self.tolerance)
+        return e.isFloatOnSideLeft(self.tolerance) and e.isFloatOnSideTop(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2LeftSide() and e.float2TopSide(), e, score)
+            self.addScore(e.float2SideLeft() and e.float2SideTop(), e, score)
 
-class Float2TopLeftSides(Condition):
+class Float2TopSideLefts(Condition):
     def test(self, e):
-        return e.isFloatOnTopSide(self.tolerance) and e.isFloatOnLeftSide(self.tolerance)
+        return e.isFloatOnSideTop(self.tolerance) and e.isFloatOnSideLeft(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2TopSide() and e.float2LeftSide(), e, score)
+            self.addScore(e.float2SideTop() and e.float2SideLeft(), e, score)
 
-class Float2RightTopSides(Condition):
+class Float2SideRightTops(Condition):
     def test(self, e):
-        return e.isFloatOnRightSide(self.tolerance) and e.isFloatOnTopSide(self.tolerance)
+        return e.isFloatOnSideRight(self.tolerance) and e.isFloatOnSideTop(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2RightSide() and e.float2TopSide(), e, score)
+            self.addScore(e.float2SideRight() and e.float2SideTop(), e, score)
 
-class Float2TopRightSides(Condition):
+class Float2TopSideRights(Condition):
     def test(self, e):
-        return e.isFloatOnTopSide(self.tolerance) and e.isFloatOnRightSide(self.tolerance)
+        return e.isFloatOnSideTop(self.tolerance) and e.isFloatOnSideRight(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2TopSide() and e.float2RightSide(), e, score)
+            self.addScore(e.float2SideTop() and e.float2SideRight(), e, score)
 
-class Float2LeftBottomSides(Condition):
+class Float2SideLeftBottoms(Condition):
     def test(self, e):
-        return e.isFloatOnLeftSide(self.tolerance) and e.isFloatOnBottomSide(self.tolerance)
+        return e.isFloatOnSideLeft(self.tolerance) and e.isFloatOnSideBottom(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2LeftSide() and e.float2BottomSide(), e, score)
+            self.addScore(e.float2SideLeft() and e.float2SideBottom(), e, score)
 
-class Float2BottomLeftSides(Condition):
+class Float2BottomSideLefts(Condition):
     def test(self, e):
-        return e.isFloatOnBottomSide(self.tolerance) and e.isFloatOnLeftSide(self.tolerance)
+        return e.isFloatOnSideBottom(self.tolerance) and e.isFloatOnSideLeft(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2BottomSide() and e.float2LeftSide(), e, score)
+            self.addScore(e.float2SideBottom() and e.float2SideLeft(), e, score)
 
-class Float2RightBottomSides(Condition):
+class Float2SideRightBottoms(Condition):
     def test(self, e):
-        return e.isFloatOnRightSide(self.tolerance) and e.isFloatOnBottomSide(self.tolerance)
+        return e.isFloatOnSideRight(self.tolerance) and e.isFloatOnSideBottom(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2RightSide() and e.float2BottomSide(), e, score)
+            self.addScore(e.float2SideRight() and e.float2SideBottom(), e, score)
 
-class Float2BottomRightSides(Condition):
+class Float2BottomSideRights(Condition):
     def test(self, e):
-        return e.isFloatOnBottomSide(self.tolerance) and e.isFloatOnRightSide(self.tolerance)
+        return e.isFloatOnSideBottom(self.tolerance) and e.isFloatOnSideRight(self.tolerance)
 
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
-            self.addScore(e.float2BottomSide() and e.float2RightSide(), e, score)
+            self.addScore(e.float2SideBottom() and e.float2SideRight(), e, score)

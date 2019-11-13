@@ -228,7 +228,7 @@ class Newspaper(Publication):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, w=cw, mr=gutter,
-                conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+                conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         cc = 3 # Column width of this article.
         article = Article(parent=t, h=h/4, w=cc*cwg-gutter, mr=gutter, mb=gutter, pt=gutter,
@@ -250,12 +250,12 @@ class Newspaper(Publication):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter,
-                conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+                conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         # Place article 4 columns with photo
         cc = 4
         article = Article(parent=t, w=cc*cwg, h=h/2, pr=gutter,
-            conditions=[Right2RightSide(), Float2Top(), Float2Left()])
+            conditions=[Right2SideRight(), Float2Top(), Float2Left()])
 
         newRect(h=cc*cw*2/3, mb=gutter, parent=article,
             fill=color(0.8), stroke=color(0), strokeWidth=pt(0.5),
@@ -270,7 +270,7 @@ class Newspaper(Publication):
             if n == 3:
                 newRect(mb=gutter, parent=article, w=cw,
                     fill=color(0.8), stroke=color(0), strokeWidth=pt(0.5),
-                    conditions=[Right2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+                    conditions=[Right2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
             else:
                 dummyArticle = blurb.getBlurb('article', newLines=True)
                 bs = self.view.newString(dummyArticle, style=bodyStyle)
@@ -296,12 +296,12 @@ class Newspaper(Publication):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
-                conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+                conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         cc = 2 # Column width of this article.
         article = Article(parent=t, w=cc*cwg, borderTop=titleLine, mb=gutter,
             borderBottom=titleLine,
-            conditions=[Right2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+            conditions=[Right2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         s = None #u'Tay & Lan’s best moms'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadlineShort, w=cc*cwg-gutter)
@@ -322,7 +322,7 @@ class Newspaper(Publication):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
-                conditions=[Left2RightSide(), Float2Top(), Float2Left(), Fit2Bottom()])
+                conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         self.addTemplate(t.name, t)
 
@@ -344,7 +344,7 @@ class Newspaper(Publication):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.view.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=t, pr=gutter, w=cw+gutter, z=0,
-                conditions=[Right2RightSide(), Float2Top(), Fit2Bottom(), Float2Left()])
+                conditions=[Right2SideRight(), Float2Top(), Fit2Bottom(), Float2Left()])
         self.addTemplate(t.name, t)
 
 if __name__ == '__main__':

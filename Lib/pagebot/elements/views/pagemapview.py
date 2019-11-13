@@ -121,7 +121,7 @@ class PageMapView(BaseView):
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
                 context.fill(fillColor)
-                context.rect(page.leftBleed, page.bottomBleed, pw+br+bl, ph+bt+bb)
+                context.rect(page.bleedLeft, page.bleedBottom, pw+br+bl, ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
