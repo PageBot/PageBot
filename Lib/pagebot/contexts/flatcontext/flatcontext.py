@@ -445,6 +445,21 @@ class FlatContext(BaseContext):
         print the result.
 
         See also drawBot.contexts.baseContext textbox()
+
+        >>> w = 400
+        >>> h = 300
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> context.newDocument()
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> style = {'fontSize': 14}
+        >>> style = makeStyle(style=style)
+        >>> fs = context.newString(40 * 'ABCDEF ', style=style)
+        >>> r = (0, 0, 15, 30)
+        >>> of = context.textBox(fs, r)
+        >>> of # Should be longer
+        ''
         """
         if isinstance(fs, str):
             # Creates a new string with default styles.
@@ -454,36 +469,38 @@ class FlatContext(BaseContext):
         elif not isinstance(fs, FlatString):
             raise PageBotFileFormatError('type is %s' % type(fs))
 
-        '''
-        if hasattr(sOrBs, 's'):
-            # Assume it's a BabelString with a FormattedString inside.
-            sOrBs = sOrBs.s
-        else:
-            # Otherwise convert to string if it isn't already.
-            sOrBs = str(sOrBs)
-
-        if self.flipped:
-            leading = fs.leading
-            textHeight = leading.byBase(fs.fontSize)
-            ypt -= textHeight
-        '''
-
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
         if self.flipped:
+            lineHeight = fs.getLineHeight()
+            ypt -= lineHeight
             ypt = self.doc.height - ypt
 
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
+        s1 = str(fs) # Full text as a string.
+        s2 = self.getPlacedString(self.placedText)
+        return self.getOverflow(s1, s2)
+
+    def getPlacedString(self, placedText):
         s = ''
 
-        for paragraph in self.placedText.layout.paragraphs:
+        for paragraph in placedText.layout.paragraphs:
             for span in paragraph.spans:
                 # maybe also consider span.style?
                 s += span.string
 
-        return sub(str(fs), '', s)
+        return s
+
+    def getOverflow(self, s1, s2):
+        if s1 == s2:
+            return ''
+        else:
+            l = len(s1)
+            return s2[l:]
+
+        #return sub(str(fs), '', s)
 
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
