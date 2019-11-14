@@ -16,7 +16,6 @@
 #
 import math
 import difflib
-from re import sub
 from sys import platform
 from os import listdir
 from os.path import exists
