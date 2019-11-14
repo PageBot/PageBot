@@ -371,7 +371,17 @@ class Image(Element):
         b._div()
 
     def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
+        #print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
+        context = view.context
+        p = pointOffset(self.origin, origin)
+        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        context.image(self.path, p2D, pageNumber=self.index,
+                alpha=self._getAlpha(), w=self.w, h=self.h,
+                scaleType=self.scaleType, e=self)
+
+        if drawElements:
+            for e in self.elements:
+                e.build_flat(view, p2D)
 
     def build_inds(self, view, origin, drawElements=True):
         """It is better to have a separate InDesignContext build tree, since we

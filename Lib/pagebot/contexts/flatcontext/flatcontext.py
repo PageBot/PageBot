@@ -657,7 +657,7 @@ class FlatContext(BaseContext):
         return pt(img.width), pt(img.height)
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None):
+            scaleType=None, e=None):
         """Draws the image. If position is none, sets x and y to the origin. If
         w or h is defined, then scale the image to fit."""
         if p is None:
@@ -670,8 +670,9 @@ class FlatContext(BaseContext):
         img = self.b.image.open(path)
 
         # TODO: calculate other if one is None.
+        # TODO: maybe use PIL for resizing, cache result.
         if not w is None and not h is None:
-            img.resize(width=w.pt, height=h.pt)
+            img.resize(width=int(w.pt), height=int(h.pt))
 
         if self.flipped:
             ypt -= h.pt
