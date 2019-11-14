@@ -36,9 +36,9 @@ class FlatString(BabelString):
     UNITS = 'pt'
 
     def __init__(self, s, context, style=None):
-        """Constructor of the FlatString, which is a wrapper around
-        flat string. Optionally stores the (latest) style that was
-        used to produce the formatted string.
+        """Constructor of the FlatString, which is a wrapper around a Flat
+        `text` class. Optionally stores the (latest) style that was used to
+        produce the formatted string.
 
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> context = FlatContext()
@@ -87,8 +87,8 @@ class FlatString(BabelString):
         return s
 
     def _get_s(self):
-        """Answers the embedded Flat equivalent of a OS X FormattedString by
-        property to enforce checking type of the string."""
+        """Answers the embedded Flat `text` class (the equivalent of a OS X
+        FormattedString) by property to enforce checking type of the string."""
         return self._s
 
     def _set_s(self, s):
@@ -164,14 +164,14 @@ class FlatString(BabelString):
         return str(self.s) # TODO: To be changed to Flat string behavior.
 
     def textSize(self, w=None, h=None):
-        """Answers the (w, h) size for a given width, with the current text."""
-        # TODO: Make this work in Flat same as in DrawBot
+        """Answers the `(w, h)` size tuple for a given width, with the current
+        text."""
+        # FIXME: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
         return 100, 20
 
     def textOverflow(self, w, h, align=LEFT):
-        # TODO: Make this work in Flat same as in DrawBot
-        # TODO: Some stuff needs to get here.
+        # FIXME: Make this work in Flat same as in DrawBot
         return ''
 
     def append(self, s):
@@ -340,7 +340,7 @@ class FlatString(BabelString):
         if tabs:
             fsAttrs['tabs'] = tabs
 
-        # Set the hyphenation flag from style, as in DrawBot this is set by a
+        # Sets the hyphenation flag from style, as in DrawBot this is set by a
         # global function, not as FormattedString attribute.
         # FIX IN DRAWBOT fsAttrs['language'] = bool(css('language', e, style))
         # FIX IN DRAWBOT
@@ -372,8 +372,8 @@ class FlatString(BabelString):
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Answers a FlatString instance from valid attributes in *style*. Set
-        all values after testing their existence, so they can inherit from
+        """Answers a FlatString instance from valid attributes in *style*. Sets
+        all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,
         then *fontSize* is scaled to make the string fit *w* or *h*.
 

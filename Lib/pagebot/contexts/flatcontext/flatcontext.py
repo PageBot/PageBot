@@ -422,18 +422,8 @@ class FlatContext(BaseContext):
         ypt = self.getY(ypt)
 
         if self.flipped:
-            leading = fs.leading
-
-            if isinstance(leading, RelativeUnit):
-                textHeight = fs.fontSize.byBase(leading)
-
-            elif isinstance(leading, Unit):
-                textHeight = leading.pt
-            else:
-                # Leading is scalar?
-                textHeight = leading * fs.fontSize.pt
-
-            ypt -= textHeight
+            lineHeight = fs.getLineHeight()
+            ypt -= lineHeight
 
         if 'textFill' in fs.style:
             c = fs.style['textFill']

@@ -1881,8 +1881,8 @@ class Em(RelativeUnit):
     BASE_KEY = 'em' # Key in optional base of relative units.
 
     def _get_pt(self):
-        """Answers the rendered value in pt. Base value for absolute unit values is ignored.
-        self.base can be a unit or a number.
+        """Answers the rendered value in pt. Base value for absolute unit
+        values is ignored. self.base can be a unit or a number.
 
         >>> u = units('10em', base=12)
         >>> u, u.rv # Answer the rendered value

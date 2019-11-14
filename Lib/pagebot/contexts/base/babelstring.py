@@ -15,7 +15,7 @@
 #     babelstring.py
 #
 from copy import copy
-from pagebot.toolbox.units import pt
+from pagebot.toolbox.units import pt, RelativeUnit, Unit
 from pagebot.constants import LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE
 
 class BabelString:
@@ -162,14 +162,14 @@ class BabelString:
     size = property(_get_size)
 
     def columnStart(self, firstColumnIndent):
-        """Allows the string to set itself to firstLineIndex = firstColumnIndent
-        if that makes sense for inheriting BabelString classes. Default is just
-        to answer self."""
+        """Allows the string to set itself to `firstLineIndex =
+        firstColumnIndent` if that makes sense for inheriting BabelString
+        classes. Default is just to answer `selfz."""
         return self
 
     def getStyleAtIndex(self, index):
-        """Answer the constructed style of the string a position index of chars.
-        """
+        """Answers the constructed style of the string a position index of
+        chars."""
         return {}
 
     @classmethod
@@ -198,6 +198,19 @@ class BabelString:
 
     def getTextLines(self, w, h=None, align=LEFT):
         raise NotImplementedError
+
+    def getLineHeight(self):
+
+        if isinstance(self.leading, RelativeUnit):
+            textHeight = self.leading.byBase(self.fontSize)
+
+        elif isinstance(self.leading, Unit):
+            textHeight = self.leading.pt
+        else:
+            # Leading is scalar?
+            textHeight = self.leading * self.fontSize.pt
+
+        return textHeight
 
 if __name__ == '__main__':
     import doctest
