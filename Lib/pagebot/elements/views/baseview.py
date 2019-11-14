@@ -41,21 +41,24 @@ class BaseView(Element):
 
         self.w = w
         self.h = h
+
         # If set to True, views may decide to add more information while
         # building.
         self.verbose = verbose 
 
         if context is None:
-            # Use the default context for this view, if not defined.
+            # If not defined, use the default context for this view.
             context = self._getContext() 
 
         self.context = context
         self.context.newDocument(self.w, self.h)
         self.setControls()
+
         # List of collected elements that need to draw their info on top of the
         # main drawing.
         self.elementsNeedingInfo = {}
-        # Automatic call self.drawPages if build is called without drawing.
+
+        # Automatically call self.drawPages if build is called without drawing.
         self._isDrawn = False 
 
     def _getContext(self):

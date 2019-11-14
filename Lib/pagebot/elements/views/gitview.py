@@ -29,9 +29,7 @@ class GitView(SiteView):
     #   B U I L D  H T M L  /  C S S
 
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
-        """
-        Default building to non-website media.
-        """
+        """Default building to non-website media."""
         doc = self.doc 
         b = self.context.b
 
@@ -42,9 +40,10 @@ class GitView(SiteView):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
-        # into cache if that file does not already exists. Note that this is done on a page-by-page
-        # level, not a preparation of all
+        # Recursively lets all elements prepare for the upcoming build_html,
+        # e.g. by saving scaled images into cache if that file does not already
+        # exists. Note that this is done on a page-by-page level, not a
+        # preparation of all.
         for pn, pages in doc.pages.items():
             for page in pages:
                 hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
@@ -61,5 +60,3 @@ class GitView(SiteView):
                 
     def getUrl(self, name):
         return 'http://%s/%s' % (name, self.DEFAULT_HTML_FILE)
-
-

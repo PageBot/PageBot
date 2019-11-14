@@ -42,7 +42,7 @@ class SiteView(HtmlView):
         """Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
 
-        # Url's and paths
+        # URL's and paths
         self.siteRootPath = self.SITE_ROOT_PATH
 
         if resourcePaths is None:
@@ -50,7 +50,7 @@ class SiteView(HtmlView):
             resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
         self.resourcePaths = resourcePaths
      
-        # Default WebFonts urls to include:
+        # Default WebFonts URL's to include:
         self.webFontUrls = webFontUrls
 
         # Default CSS urls to inclide 
@@ -66,11 +66,10 @@ class SiteView(HtmlView):
         # Attributes to fill Google data, when pages need to included Google Analytics
         self.googleAdsAccount = None
         self.googleAnalyticsId = None
-    
+
     def copyResources(self, path, removeExisting=False):
-        """If self.resourcePaths are defined, then copy them into the destiation path.
-        If the resources already exist, then delete them before copy.
-        """
+        """If self.resourcePaths are defined, copy them into the destination
+        path. If the resources already exist, delete them before copy."""
         # Copy resources to output
         if self.resourcePaths:
             for resourcePath in self.resourcePaths:
@@ -89,8 +88,7 @@ class SiteView(HtmlView):
                     print('[%s.build] Resource "%s" does not exist.' % (self.__class__.__name__, resourcePath))
 
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
-        """
-        Default building to non-website media.
+        """Default building to non-website media.
 
         >>> from pagebot.document import Document
         >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, padding=(30, 40, 50, 60))
@@ -116,9 +114,10 @@ class SiteView(HtmlView):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        # Recursively let all elements prepare for the upcoming build_html, e.g. by saving scaled images
-        # into cache if that file does not already exists. Note that this is done on a page-by-page
-        # level, not a preparation of all
+        # Recursively lets all elements prepare for the upcoming build_html,
+        # e.g. by saving scaled images into cache if that file does not already
+        # exists. Note that this is done on a page-by-page level, not a
+        # preparation of all.
         for pn, pages in doc.pages.items():
             for page in pages:
                 hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
@@ -145,7 +144,6 @@ class SiteView(HtmlView):
     def getUrl(self, name):
         """Answers the local URL for Mamp Pro to find the copied website."""
         return 'http://localhost:8888/%s/%s' % (name, self.DEFAULT_HTML_FILE)
-
 
 if __name__ == "__main__":
     import sys

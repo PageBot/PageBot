@@ -32,11 +32,11 @@ from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
 class PageMapView(BaseView):
-    """The PageMapView contains the set of Quire instances to export the pages as
-    documents. A View is just another kind of container, kept by a Document to
-    make a certain presentation of the page tree. The PageView typically holds
-    Quire elements that make one-directional links to document pages in order
-    to compose them in spreads or folding compositions."""
+    """The PageMapView contains the set of Quire instances to export the pages
+    as documents. A View is just another kind of container, kept by a Document
+    to make a certain presentation of the page tree. The PageView typically
+    holds Quire elements that make one-directional links to document pages in
+    order to compose them in spreads or folding compositions."""
     viewId = 'Page'
 
     EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
@@ -58,11 +58,13 @@ class PageMapView(BaseView):
         """
         if not path:
             path = self.EXPORT_PATH + self.doc.name + '.pdf' # Default export as PDF.
+
         # If default _export directory does not exist, then create it.
         if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
             os.makedirs(self.EXPORT_PATH)
 
-        context = self.context # Get current context and builder from doc. Can be DrawBot or Flat
+        # Get current context and builder from doc.
+        context = self.context 
 
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
@@ -105,12 +107,15 @@ class PageMapView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            context.newPage(pw, ph) #  Make page in context, actual page may be smaller if showing cropmarks.
-            # If page['frameDuration'] is set and saving as movie or animated gif,
-            # then set the global frame duration.
+            #  Make page in context, actual page may be smaller if showing
+            #  cropmarks.
+            context.newPage(pw, ph) 
+            # If page['frameDuration'] is set and saving as movie or animated
+            # gif, then set the global frame duration.
             context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF
 
-            # View may have defined a background. Build with page bleed, if it is defined.
+            # View may have a background defined. Build with page bleed, if it
+            # is defined.
             fillColor = self.style.get('fill', noColor)
 
             if fillColor is not noColor:
@@ -123,8 +128,9 @@ class PageMapView(BaseView):
 
             self.drawPageMetaInfo(page, origin, background=True)
 
-            # Since self already adjust origin, scale, etc. we don't use the page.build here.
-            # Instead we calle the drawing of its elements too.
+            # Since self already adjusts origin, scale, etc. we don't use the
+            # page.build here. Instead we call the drawing of its elements
+            # as well.
             page.buildChildElements(self, origin)
 
             self.drawPageMetaInfo(page, origin, background=False)
@@ -132,8 +138,9 @@ class PageMapView(BaseView):
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
 
-            # Self.infoElements now may have collected elements needed info to be drawn, after all drawing is done.
-            # So the info boxes don't get covered by regular page content.
+            # Self.infoElements now may have collected elements needed info to
+            # be drawn after all drawing is done, so the info boxes don't get
+            # covered by regular page content.
             for e in self.elementsNeedingInfo.values():
                 self._drawElementsNeedingInfo(e)
 
@@ -167,7 +174,8 @@ class PageMapView(BaseView):
     #   D R A W I N G  P A G E  M E T A  I N F O
 
     def drawPageMetaInfo(self, page, origin, path=None, background=False):
-        """Draw the foreground meta info of the page, depending on the settings of the flags.
+        """Draws the foreground meta info of the page, depending on the settings
+        of the flags.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -192,8 +200,8 @@ class PageMapView(BaseView):
         self.drawBaselines(page, origin, background=background)
 
     def drawFrame(self, e, origin):
-        """Draw the page frame if the the flag is on and  if there ie padding
-        enough to show other meta info.  Otherwise the padding is truncated to
+        """Draws the page frame if the the flag is on and if there is enough
+        padding to show other meta info. Otherwise the padding is truncated to
         0: no use to draw the frame.
 
         >>> from pagebot import getContext
@@ -249,8 +257,8 @@ class PageMapView(BaseView):
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):
-        """Draw additional document information, color markers, page number, date, version, etc.
-        outside the page frame, if drawing crop marks.
+        """Draws additional document information, color markers, page number,
+        date, version, etc. outside the page frame, if drawing crop marks.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -293,8 +301,8 @@ class PageMapView(BaseView):
     #   D R A W I N G  F L O W S
 
     def drawFlowConnections(self, e, origin, b):
-        """If rootStyle.showFlowConnections is True, then draw the flow connections
-        on the page, using their stroke/width settings of the style."""
+        """If rootStyle.showFlowConnections is True, draw the flow connections
+        on the page, using their stroke / width settings of the style."""
         px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
@@ -320,8 +328,9 @@ class PageMapView(BaseView):
                     tbTarget = e.getElement(seq[0].eId)
                     self.drawArrow(e, px+startX+tbStart.w, py+startY, px+tbTarget.x, py+tbTarget.y+tbTarget.h-e.h, 1)
 
-    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None,
-            fill=noColor, stroke=noColor, strokeWidth=None):
+    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False,
+            endMarker=False, fms=None, fmf=None, fill=noColor, stroke=noColor,
+            strokeWidth=None):
         """Draw curved arrow marker between the two points.
         TODO: Add drawing of real arrow-heads, rotated in the right direction."""
         if fms is None:
@@ -384,9 +393,8 @@ class PageMapView(BaseView):
     #   D R A W I N G  E L E M E N T
 
     def drawElementFrame(self, e, origin):
-        """If self.showFrame and e is a page, or if e.showFrame == True, then draw
-        the frame of the element.
-        """
+        """If `self.showFrame` and `e` is a page, or if `e.showFrame == True`,
+        then draw the frame of the element."""
         if (self.showFrame and e.isPage) or e.showFrame:
             x = origin[0]
             y = origin[1]
@@ -405,7 +413,8 @@ class PageMapView(BaseView):
         the main drawing has been done."""
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
+
+        # Drawing outside rotation / scaling mode, so the origin of
         # the element is visible.
         self.drawElementOrigin(e, origin)
 
@@ -513,8 +522,8 @@ class PageMapView(BaseView):
         """When designing templates and pages, this will draw a filled
         rectangle on the element bounding box (if self.css('missingElementFill'
         is defined) and a cross, indicating that this element has missing
-        content (as in unused image frames). Only draw if the list self.showGrid
-        contains proper types of grid names.
+        content (as in unused image frames). Only draw if the list
+        self.showGrid contains proper types of grid names.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -559,12 +568,13 @@ class PageMapView(BaseView):
     #    G R I D
 
     def drawGrid(self, e, origin, background=False):
-        """Draw grid of lines and/or rectangles if colors are set in the style.
-        Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
-        a fixed offset.
+        """Draws grid of lines and / or rectangles if colors are set in the
+        style.  Normally origin is ORIGIN `pt(0, 0, 0)`, but it's possible to
+        give the grid a fixed offset.
+
         If types self.showGrid is set, display the type of grid in forground for
-        (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG,
-        GRID_ROW_BG, GRID_SQR_BG)
+        `(GRID_COL, GRID_ROW, GRID_SQR)` and draw in background for `(GRID_COL_BG,
+        GRID_ROW_BG, GRID_SQR_BG)`.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -664,12 +674,13 @@ class PageMapView(BaseView):
                     x += cw + gx
 
     def drawBaselines(self, e, origin, background=False):
-        """Draw baseline grid if self.showBaselineGrid is True and there is a
-        baseline defined > 0. Use the color from style values viewGridStrokeX and
-        viewGridStrokeWidthX to make a difference with the baselines drawn by TextBox
-        with style values baselineColor and baselineWidth.
-        In this method is called by an element, instead of self, the show attribute
-        is a way to overwrite the setting of self.showBaselineGrid
+        """Draws baseline grid if self.showBaselineGrid is True and there is a
+        baseline defined > 0. Use the color from style values viewGridStrokeX
+        and viewGridStrokeWidthX to make a difference with the baselines drawn
+        by TextBox with style values baselineColor and baselineWidth.
+
+        If this method is called by an element instead of self, the show
+        attribute is a way to overwrite the setting of self.showBaselineGrid.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -771,6 +782,7 @@ class PageMapView(BaseView):
 
     def drawRegistrationMarks(self, e, origin):
         """Draw standard registration mark, to show registration of CMYK colors.
+
         https://en.wikipedia.org/wiki/Printing_registration.
 
         >>> from pagebot import getContext

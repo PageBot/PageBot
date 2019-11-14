@@ -51,23 +51,25 @@ class PageView(BaseView):
         return '<PageView>'
 
     def newQuire(self, folds=None, startPage=None):
-        """Add a new Quire instance to self.elements. A Quire is a container of pages, capable of grouping
-        then in certains way, depending on the folding schema. The most simple one it a single fold,
-        with spread pages on either side.
-        Quire instances are added as sequence to the """
+        """Add a new Quire instance to self.elements. A Quire is a container of
+        pages, capable of grouping then in certains way, depending on the
+        folding schema. The most simple one it a single fold, with spread pages
+        on either side."""
         return Quire(folds=folds, startPage=startPage, parent=self)
 
     def getSortedPages(self):
-        """Get the dictionary of sorted pages from the document. Depending on the self.showSpread
-        flag, the answered dicitionary is the plain self.doc.getSortedPages() result, or wrapped
-        as Quire instances containing positioned spread pages."""
+        """Get the dictionary of sorted pages from the document. Depending on
+        the self.showSpread flag, the answered dicitionary is the plain
+        self.doc.getSortedPages() result, or wrapped as Quire instances
+        containing positioned spread pages."""
         sortedPages = self.doc.getSortedPages()
         if self.showSpread:
             spreads = {} # Key is uneven page number. Value is a Quire, holding spread pages.
 
-            # If flag is set, compose the page dictionary into a dictionary of larger pages, holding
-            # Quire instances that can compose vairous layouts of the pages, including spreads.
-            # page.ml and page.mr define the distance between the spread pages.
+            # If flag is set, compose the page dictionary into a dictionary of
+            # larger pages, holding Quire instances that can compose various
+            # layouts of the pages, including spreads. page.ml and page.mr
+            # define the distance between the spread pages.
             sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
         return sortedPages
 
@@ -101,16 +103,18 @@ class PageView(BaseView):
         w, h, _ = self.doc.getMaxPageSizes(pageSelection)
 
         # Make sure that canvas is empty, there may have been another document
-        # building in this context.
-        self.context.newDocument(w, h, doc=self.doc) # Allow the context to create a new document and page canvas.
+        # building in this context. Allow the context to create a new document
+        # and page canvas.
+        self.context.newDocument(w, h, doc=self.doc) 
         self.context.newDrawing(doc=self.doc)
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
 
-        # Recursively let all element prepare for the upcoming build, e.g. by saving scaled images
-        # into cache if that file does not already exists. Note that this is done on a page-by-page
-        # level, not a preparation of all
+        # Recursively let all element prepare for the upcoming build, e.g. by
+        # saving scaled images into cache if that file does not already exists.
+        # Note that this is done on a page-by-page level, not a preparation of
+        # all
         for pn, pages in sortedPages:
             for page in pages:
                 page.prepare(self)
@@ -120,15 +124,19 @@ class PageView(BaseView):
             #    continue
 
             '''
-            Create a new DrawBot viewport page to draw template + page, if not
+            Creates a new DrawBot viewport page to draw template + page, if not
             already done. In case the document is oversized, then make all
-            pages the size of the document, so the pages can draw their
-            crop marks. Otherwise make DrawBot pages of the size of each page.
-            Size depends on the size of the larges pages + optional document
+            pages the size of the document, so the pages can draw their crop
+            marks. Otherwise make DrawBot pages of the size of each page.  Size
+            depends on the size of the larges pages + optional document
             padding.
             '''
-            page = pages[0] # TODO: make this work for pages that share the same page number
-            pw, ph = w, h  # Copy from main (w, h), since they may be altered, from the orgiinal document size..
+            # TODO: make this work for pages that share the same page number
+            page = pages[0] 
+
+            # Copy from main (w, h), since they may be altered, from the
+            # orgiinal document size.
+            pw, ph = w, h  
 
             if self.pl >= self.viewMinInfoPadding and \
                self.pt >= self.viewMinInfoPadding and \
@@ -145,16 +153,17 @@ class PageView(BaseView):
                 ph = page.h
                 origin = ORIGIN
 
-            # Make page in context, actual page may be smaller if showing cropmarks.
-            # FIXME: newPage doesn't have `e` parameter
+            # Make page in context, actual page may be smaller if showing
+            # cropmarks. FIXME: newPage doesn't have `e` parameter.
             self.context.newPage(w=pw, h=ph)#, e=page)
 
-            # If page['frameDuration'] is set and saving as movie or animated gif,
-            # then set the global frame duration.
-            # Set the duration of this page, in case exporting GIF
+            # If page['frameDuration'] is set and saving as movie or animated
+            # gif, then set the global frame duration. Set the duration of
+            # this page, in case exporting GIF
             self.context.frameDuration(page.frameDuration)
 
-            # View may have defined a background. Build with page bleed, if it is defined.
+            # View may have a background defined. Build with page bleed, if it
+            # is defined.
             fillColor = self.style.get('fill', noColor)
 
             if fillColor is not noColor:
@@ -213,7 +222,8 @@ class PageView(BaseView):
     #   D R A W I N G  P A G E  M E T A  I N F O
 
     def drawPageMetaInfo(self, page, origin, path=None, background=False):
-        """Draw the foreground meta info of the page, depending on the settings of the flags.
+        """Draw the foreground meta info of the page, depending on the settings
+        of the flags.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -241,8 +251,9 @@ class PageView(BaseView):
 
     def drawFrame(self, e, origin):
         """Draw the page frame if the the flag is on and if there ie padding
-        enough to show other meta info.  Otherwise the padding is truncated to
+        enough to show other meta info. Otherwise the padding is truncated to
         0: no use to draw the frame.
+
         Note that drawing a frame around a page or element here is for viewing
         purposes only. Actual frame (stroke) drawing of an element is done
         by the element itself.
@@ -397,7 +408,7 @@ class PageView(BaseView):
     #   D R A W I N G  F L O W S
 
     def drawFlowConnections(self, e, origin):
-        """If rootStyle.showFlowConnections is True, then draw the flow connections
+        """If rootStyle.showFlowConnections is True, draw the flow connections
         on the page, using their stroke/width settings of the style."""
 
         context = self.context
@@ -512,12 +523,13 @@ class PageView(BaseView):
 
     def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info. The css
-        flag "showOrigin" defines if the origin marker of an element is
-        drawn. Collect the (e, origin), so we can later draw all info, after
-        the main drawing has been done.
+        flag "showOrigin" defines if the origin marker of an element is drawn.
+        Collect the (e, origin), so we can later draw all info, after the main
+        drawing has been done.
         
         TODO: finish and test.
         """
+
         '''
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
@@ -529,15 +541,20 @@ class PageView(BaseView):
     def _drawElementsNeedingInfo(self, e):
         b = self.b
         context = self.context
+
         for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.origin, origin)
             p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
             pw, ph = e.w, e.h
+
             if (self.showElementInfo and e.isPage) or e.showElementInfo:
                 # Draw box with element info.
-                bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
-                    fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
+                bs = context.newString(e.getElementInfoString(),
+                        style=dict(font=self.css('viewInfoFont'),
+                            fontSize=self.css('viewInfoFontSize'),
+                            leading=self.css('viewInfoLeading'),
+                            textFill=color(0.1)))
                 tw, th = bs.size
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
@@ -571,10 +588,10 @@ class PageView(BaseView):
                 context.line((px+pw, py - 2*S),   (px+pw-S, py - 2.5*S))
 
                 bs = context.newString(str(pw),
-                                       style=dict(font=self.css('viewInfoFont'),
-                                                  fontSize=self.css('viewInfoFontSize'),
-                                                  leading=self.css('viewInfoLeading'),
-                                                  textFill=color(0.1)))
+                        style=dict(font=self.css('viewInfoFont'),
+                            fontSize=self.css('viewInfoFontSize'),
+                            leading=self.css('viewInfoLeading'),
+                            textFill=color(0.1)))
                 tw, th = bs.size
                 context.text(bs, (px + pw/2 - tw/2, py-1.5*S))
 
@@ -589,10 +606,10 @@ class PageView(BaseView):
                 context.line((px+pw+2*S, py),      (px+pw+1.5*S, py+S))
 
                 bs = context.newString(str(ph),
-                                       style=dict(font=self.css('viewInfoFont'),
-                                                  fontSize=self.css('viewInfoFontSize'),
-                                                  leading=self.css('viewInfoLeading'),
-                                                  textFill=color(0.1)))
+                        style=dict(font=self.css('viewInfoFont'),
+                            fontSize=self.css('viewInfoFontSize'),
+                            leading=self.css('viewInfoLeading'),
+                            textFill=color(0.1)))
                 tw, th = bs.size
                 context.text(bs, (px+pw+2*S-tw/2, py+ph/2))
 
@@ -617,9 +634,12 @@ class PageView(BaseView):
         context.line((px, py-S), (px, py+S))
 
         if (self.showDimensions and e.isPage) or e.showDimensions:
-            bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
-                fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'),
-                textFill=color(0.1)))
+            bs = context.newString(e.xy,
+                    style=dict(font=self.css('viewInfoFont'),
+                        fontSize=self.css('viewInfoFontSize'),
+                        leading=self.css('viewInfoLeading'),
+                        textFill=color(0.1)))
+
             w, h = bs.size
             context.text(bs, (px - w/2, py + S*1.5))
 
@@ -672,13 +692,13 @@ class PageView(BaseView):
     #    G R I D
 
     def drawGrid(self, e, origin, background=False):
-        """Draw grid of lines and/or rectangles if colors are set in the style.
-        Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give the grid
-        a fixed offset.
+        """Draws a grid of lines and / or rectangles if colors are set in the
+        style. Normally origin is ORIGIN pt(0, 0, 0), but it's possible to
+        give the grid a fixed offset.
 
-        If types self.showGrid is set, display the type of grid in forground for
-        (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for (GRID_COL_BG,
-        GRID_ROW_BG, GRID_SQR_BG)
+        If types self.showGrid is set, display the type of grid in forground
+        for (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for
+        (GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG)
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -729,7 +749,7 @@ class PageView(BaseView):
                         context.line((x+cw, y1), (x+cw, y2))
                     x += cw + gx
 
-        # Drawing the grid as horizontal lines. Check on foreground/background flags.
+        # Drawing the grid as horizontal lines. Check foreground / background flags.
         if (background and GRID_ROW_BG in showGrid) or (not background and GRID_ROW in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)
@@ -753,7 +773,7 @@ class PageView(BaseView):
                         context.line((x1, y+ch), (x2, y+ch))
                     y += ch + gy
 
-        # Drawing the grid as rectangles. Check on foreground/background flags.
+        # Drawing the grid as rectangles. Check foreground / background flags.
         if (background and GRID_SQR_BG in showGrid) or (not background and GRID_SQR in showGrid):
             # Set color for grid rectangles
             # Use local element color setting, otherwise find by view.css
@@ -791,7 +811,7 @@ class PageView(BaseView):
         In this method is called by an element, instead of self, the show
         attribute is a way to overwrite the setting of self.showBaselineGrid
 
-        == NOTE == TextBox elements have their own baseline drawing method
+        NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -1029,9 +1049,8 @@ class PageView(BaseView):
                             context.line((x + w + cmRight, y + fy), (x + w + cmRight + cmSize, y + fy))
 
     def drawColorBars(self, e, origin):
-        """Draw the color bars for offset printing color calibration
-        if there is at lest than self.viewMinInfoPadding of space
-        in view left padding..
+        """Draw the color bars for offset printing color calibration if there
+        is less than self.viewMinInfoPadding of space in view left padding.
         """
         # TODO Get this to work for content of the parameter set.
         showColorBars = e.showColorBars or (e.isPage and self.showColorBars)
@@ -1041,7 +1060,8 @@ class PageView(BaseView):
 
         ox, oy = point2D(origin)
 
-        # TODO: Add more types of color bars and switch from scaling PDF to drawing them by script
+        # TODO: Add more types of color bars and switch from scaling PDF to
+        # drawing them by script.
         if ECI_GrayConL in showColorBars:
             path = getResourcesPath() + '/' + ECI_GrayConL
             if COLORBAR_LEFT in showColorBars:
@@ -1054,8 +1074,11 @@ class PageView(BaseView):
     # The context-methods are used, in case the view itself is placed in a layout.
 
     def build_drawBot(self, view, origin, **kwargs):
-        """This method is called if the view is used as a placable element
-        inside another element, such as a Page or Template. """
+        """This method is called if the view is used as a placeable element
+        inside another element, such as a Page or Template.
+        
+        TODO: check OS, check if DrawBot is installed.
+        """
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

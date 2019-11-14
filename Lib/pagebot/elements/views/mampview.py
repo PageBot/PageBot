@@ -14,9 +14,10 @@
 #
 #     mampview.py
 #
-#     The MampView generates the website from the current document, and then copies
-#     the files (including images, CSS, JS, etc.) to the getMampPath()+'/htdocs'
-#     folder. Running local Mamp server application then does test the website.
+#     The MampView generates the website from the current document, and then
+#     copies the files (including images, CSS, JS, etc.) to the
+#     getMampPath()+'/htdocs' folder. Running local Mamp server application
+#     then does test the website.
 #
 import os
 import shutil
@@ -28,8 +29,9 @@ class MampView(SiteView):
 
     viewId = 'Mamp'
 
-    # If the MAMP server application not installed, a browser is opened on the MAMP website to download it.
-    # There is a free demo version can be installed.
+    # If the MAMP server application not installed, a browser is opened on the
+    # MAMP website to download it. There is a free demo version that can be
+    # installed.
     MAMP_SHOP_URL = 'https://www.mamp.info/en/'
     LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
     #SITE_ROOT_PATH = getMampPath()

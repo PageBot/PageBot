@@ -25,9 +25,10 @@ class HtmlView(BaseView):
         return HtmlContext()
 
     def XXXbuild_scss(self, view, origin=None):
-        """Build the CSS for this document. Default behavior is to import the content of the file
-        if there is a path reference, otherwise build the CSS from the available values and parameters
-        in self.style and self.css()."""
+        """Build the CSS for this document. Default behavior is to import the
+        content of the file if there is a path reference, otherwise build the
+        CSS from the available values and parameters in self.style and
+        self.css()."""
         b = view.context.b
         if self.cssCode is not None:
             b.addHtml(self.cssCode)
@@ -40,9 +41,9 @@ class HtmlView(BaseView):
             b.css('body', e=view) # <body> selector and style output
 
     # Alternative view behavior.
-    # Since HTML-pages don't really need or hangle print-view options
+    # Because HTML-pages don't really need or handle print-view options
     # such as crop marks and registrations martk, we'll simply add them
-    # ass comments in the output. So at least they are traceable.
+    # as comments in the output, so at least they will be traceable.
 
     def drawFrame(self, page, origin):
         if self.showFrame:
@@ -83,5 +84,3 @@ class HtmlView(BaseView):
     def drawFlowConnections(self, page, origin):
         if self.showCropMarks:
             self.b.comment('%s.drawFlowConnections on %s' % (self, page))
-
-

@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.toolbox.units import pt, upt, point2D
+from pagebot.toolbox.units import pt, upt, point2D, RelativeUnit, Unit
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -423,13 +423,23 @@ class FlatContext(BaseContext):
 
         if self.flipped:
             leading = fs.leading
-            textHeight = leading.byBase(fs.fontSize)
+
+            if isinstance(leading, RelativeUnit):
+                textHeight = fs.fontSize.byBase(leading)
+
+            elif isinstance(leading, Unit):
+                textHeight = leading.pt
+            else:
+                # Leading is scalar?
+                textHeight = leading * fs.fontSize.pt
+
             ypt -= textHeight
 
         if 'textFill' in fs.style:
             c = fs.style['textFill']
             c = color(rgb=c)
             self.textFill(c)
+
 
         # Renders unit tuple to value tuple.
         self.placedText.position(xpt, ypt)
