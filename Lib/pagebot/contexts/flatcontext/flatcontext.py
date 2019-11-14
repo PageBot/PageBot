@@ -486,7 +486,7 @@ class FlatContext(BaseContext):
         if self.placedText.overflow():
             s1 = self.getPlacedString(self.placedText)
             s2 = str(fs)
-            assert len(s1) < len(s2)
+            assert len(s1) <= len(s2)
             diff0, _ = self.getTextDiff(s1, s2)
             return diff0
         else:
