@@ -461,7 +461,7 @@ class FlatContext(BaseContext):
         >>> fs = context.newString(s, style=style)
         >>> r = (10, 262, 400, 313)
         >>> of = context.textBox(fs, r)
-        >>> of # Should be longer
+        >>> of
         'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
         """
         if isinstance(fs, str):
@@ -511,8 +511,27 @@ class FlatContext(BaseContext):
 
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
-        current context."""
-        #return FlatString(self.b.textOverflow(bs.s, box, align), self)
+        current context.
+        
+        >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> w = 400
+        >>> h = 300
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> context.newDocument()
+        >>> context.newDocument(w, h)
+        >>> context.newPage(w, h)
+        >>> style = {'fontSize': 14}
+        >>> style = makeStyle(style=style)
+        >>> blurb = Blurb()
+        >>> s = blurb.getBlurb('stylewars_bluray')
+        >>> fs = context.newString(s, style=style)
+        >>> r = (10, 262, 400, 313)
+        >>> of = context.textOverflow(fs, r)
+        >>> of
+        'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
+        """
+        # FIXME: this actually shows the text?
         s = self.textBox(fs, r=box, align=align)
         return s
 
