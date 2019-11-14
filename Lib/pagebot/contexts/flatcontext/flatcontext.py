@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.toolbox.units import pt, upt, point2D, RelativeUnit, Unit
+from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
