@@ -486,8 +486,9 @@ class FlatContext(BaseContext):
         if self.placedText.overflow():
             s1 = self.getPlacedString(self.placedText)
             s2 = str(fs)
-
-            return self.getTextDiff(s1, s2)
+            assert len(s1) < len(s2)
+            diff0, _ = self.getTextDiff(s1, s2)
+            return diff0
         else:
             return ''
 
@@ -495,17 +496,18 @@ class FlatContext(BaseContext):
         return ''.join(placedText.lines())
 
     def getTextDiff(self, s1, s2):
-        unusedText = ''
+        textDiff0 = ''
+        textDiff1 = ''
 
         for i, s in enumerate(difflib.ndiff(s2, s1)):
-            if s[0]==' ': continue
+            if s[0]==' ':
+                continue
             elif s[0]=='-':
-                unusedText += s[-1]
-                #print(u'Delete "{}" from position {}'.format(s[-1],i))
+                textDiff0 += s[-1]
             elif s[0]=='+':
-                print(u'Add "{}" to position {}'.format(s[-1],i))
+                textDiff1 += s[-1]
 
-        return unusedText
+        return textDiff0, textDiff1
 
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
