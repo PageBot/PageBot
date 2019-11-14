@@ -15,6 +15,7 @@
 #     flatcontext.py
 #
 import math
+import difflib
 from re import sub
 from sys import platform
 from os import listdir
@@ -417,6 +418,7 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
         self.placedText = self.page.place(fs.s)
+        #print(self.placedText)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
@@ -429,7 +431,6 @@ class FlatContext(BaseContext):
             c = fs.style['textFill']
             c = color(rgb=c)
             self.textFill(c)
-
 
         # Renders unit tuple to value tuple.
         self.placedText.position(xpt, ypt)
@@ -446,6 +447,7 @@ class FlatContext(BaseContext):
 
         See also drawBot.contexts.baseContext textbox()
 
+        >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> w = 400
         >>> h = 300
         >>> from pagebot import getContext
@@ -455,11 +457,13 @@ class FlatContext(BaseContext):
         >>> context.newPage(w, h)
         >>> style = {'fontSize': 14}
         >>> style = makeStyle(style=style)
-        >>> fs = context.newString(40 * 'ABCDEF ', style=style)
-        >>> r = (0, 0, 15, 30)
+        >>> blurb = Blurb()
+        >>> s = blurb.getBlurb('stylewars_bluray')
+        >>> fs = context.newString(s, style=style)
+        >>> r = (10, 262, 400, 313)
         >>> of = context.textBox(fs, r)
         >>> of # Should be longer
-        ''
+        'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
         """
         if isinstance(fs, str):
             # Creates a new string with default styles.
@@ -479,28 +483,30 @@ class FlatContext(BaseContext):
 
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
-        s1 = str(fs) # Full text as a string.
-        s2 = self.getPlacedString(self.placedText)
-        return self.getOverflow(s1, s2)
+
+        if self.placedText.overflow():
+            s1 = self.getPlacedString(self.placedText)
+            s2 = str(fs)
+
+            return self.getTextDiff(s1, s2)
+        else:
+            return ''
 
     def getPlacedString(self, placedText):
-        s = ''
+        return ''.join(placedText.lines())
 
-        for paragraph in placedText.layout.paragraphs:
-            for span in paragraph.spans:
-                # maybe also consider span.style?
-                s += span.string
+    def getTextDiff(self, s1, s2):
+        unusedText = ''
 
-        return s
+        for i, s in enumerate(difflib.ndiff(s2, s1)):
+            if s[0]==' ': continue
+            elif s[0]=='-':
+                unusedText += s[-1]
+                #print(u'Delete "{}" from position {}'.format(s[-1],i))
+            elif s[0]=='+':
+                print(u'Add "{}" to position {}'.format(s[-1],i))
 
-    def getOverflow(self, s1, s2):
-        if s1 == s2:
-            return ''
-        else:
-            l = len(s1)
-            return s2[l:]
-
-        #return sub(str(fs), '', s)
+        return unusedText
 
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
