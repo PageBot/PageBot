@@ -7,9 +7,8 @@ matrix:
     - os: linux
       language: python
       dist: trusty
-      python: 3.6
+      python: 3.7
       before_install:
-        - ruby --version
         - python --version
       install:
         - ./scripts/linux.sh
@@ -19,11 +18,8 @@ matrix:
         - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
     - os: osx
-      rvm:
-        - use 2.6.0
       before_install:
-        - ruby --version
-        - python --version
+        - python3 --version
       install:
         - ./scripts/osx.sh
       language: python3

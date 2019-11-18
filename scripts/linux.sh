@@ -7,7 +7,7 @@ set -ev
 #fi
 python --version
 pyenv versions
-pyenv global system 3.6
+pyenv global system 3.7
 pip install --upgrade pip
 pip install pylint
 pip install -r requirements.txt

@@ -26,6 +26,7 @@ from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.style import css
 from pagebot.toolbox.units import upt, pt, isUnit
 from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color
+from flat.text import text
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
@@ -65,6 +66,7 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
+        assert isinstance(s, text)
 
         self.s = s # Store the Flat equivalent `text` of a DrawBot FormattedString.
 
