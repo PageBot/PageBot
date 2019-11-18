@@ -17,6 +17,7 @@
 
 import os
 import re
+from flat.text import text
 
 from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
@@ -26,7 +27,6 @@ from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.style import css
 from pagebot.toolbox.units import upt, pt, isUnit
 from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color
-from flat.text import text
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
@@ -41,10 +41,10 @@ class FlatString(BabelString):
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
 
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> bs = context.newString('ABC')
-        >>> print(bs)
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
+        >>> print(fs)
         ABC
         >>> #bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
         #('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
@@ -142,28 +142,28 @@ class FlatString(BabelString):
     def __len__(self):
         """Answers the number of characters in self.s
 
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> fs = FlatString('ABC', context)
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
         >>> fs
         ABC
         >>> len(fs)
         3
         """
-        return len(str(self.s))
+        return len(str(self))
 
     def asText(self):
         """Answers as unicode string.
 
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> fs = FlatString('ABC', context)
-        >>> fs.s
-        'ABC'
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
+        >>> isinstance(fs.s, text)
+        True
         >>> fs.asText()
         'ABC'
         """
-        return str(self.s) # TODO: To be changed to Flat string behavior.
+        return str(self) # TODO: To be changed to Flat string behavior.
 
     def textSize(self, w=None, h=None):
         """Answers the `(w, h)` size tuple for a given width, with the current
@@ -258,7 +258,7 @@ class FlatString(BabelString):
                 cFill = color(cFill)
             elif cFill is None:
                 cFill = noColor
-            assert isinstance(cFill, Color), ('FlatString.newString: Fill color "%s" is not Color in style %s' % (cFill, style))
+            assert isinstance(cFill, Color), ('FlatString.getFSAttrs: Fill color "%s" is not Color in style %s' % (cFill, style))
             if cFill is noColor:
                 fsAttrs['fill'] = None
             elif cFill.isCmyk:
@@ -276,7 +276,7 @@ class FlatString(BabelString):
         strokeWidth = css('textStrokeWidth', e, style)
 
         if strokeWidth is not None:
-            assert isUnit(strokeWidth), ('FlatString.newString: strokeWidth %s must of type Unit' % strokeWidth)
+            assert isUnit(strokeWidth), ('FlatString.getFSAttrs: strokeWidth %s must of type Unit' % strokeWidth)
             fsAttrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
 
         if cStroke is not inheritColor:
@@ -285,7 +285,7 @@ class FlatString(BabelString):
             elif cStroke is None:
                 cStroke = noColor
 
-            assert isinstance(cStroke, Color), ('FlatString.newString] Stroke color "%s" is not Color in style %s' % (cStroke, style))
+            assert isinstance(cStroke, Color), ('FlatString.getFSAttrs] Stroke color "%s" is not Color in style %s' % (cStroke, style))
 
             if cStroke is noColor: # None is value to disable stroke drawing
                 fsAttrs['stroke'] = None
@@ -380,14 +380,16 @@ class FlatString(BabelString):
         then *fontSize* is scaled to make the string fit *w* or *h*.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> bs = FlatString.newString('AAA', context, style=dict(fontSize=pt(30)))
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> bs = context.newString('AAA', style=dict(fontSize=pt(30)))
         >>> str(bs) == 'AAA'
         True
         """
         if style is None:
             style = {}
+        else:
+            assert isinstance(style, dict)
 
         fsAttrs = cls.getFSAttrs(s, context, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
