@@ -673,10 +673,8 @@ class Document:
         [(120, 9), (120, 9), (120, 9)]
         """
         return self.rootStyle['gridY']
-
     def _set_gridY(self, gridY):
         self.rootStyle['gridY'] = gridY
-
     gridY = property(_get_gridY, _set_gridY)
 
     def _get_padding(self): # Tuple of paddings in CSS order, direction of clock
@@ -712,7 +710,6 @@ class Document:
             raise ValueError
 
         self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb = padding
-
     padding = property(_get_padding, _set_padding)
 
     def _get_padding3D(self):
@@ -742,7 +739,6 @@ class Document:
         (11pt, 22pt, 33pt, 44pt, 55pt, 66pt)
         """
         return self.pt, self.pr, self.pb, self.pl, self.pzf, self.pzb
-
     padding3D = property(_get_padding3D, _set_padding)
 
     def _get_pt(self): # Padding top
@@ -764,10 +760,8 @@ class Document:
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pt'), base=base)
-
     def _set_pt(self, pt):
         self.rootStyle['pt'] = units(pt)
-
     pt = property(_get_pt, _set_pt)
 
     def _get_pb(self): # Padding bottom
@@ -788,10 +782,8 @@ class Document:
         h = self.h
         base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pb'), base=base)
-
     def _set_pb(self, pb):
         self.rootStyle['pb'] = units(pb)
-
     pb = property(_get_pb, _set_pb)
 
     def _get_pl(self): # Padding left
@@ -811,10 +803,8 @@ class Document:
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pl'), base=base)
-
     def _set_pl(self, pl):
         self.rootStyle['pl'] = units(pl)
-
     pl = property(_get_pl, _set_pl)
 
     def _get_pr(self): # Margin right
@@ -834,10 +824,8 @@ class Document:
         w = self.w
         base = dict(base=w, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pr', 0), base=base)
-
     def _set_pr(self, pr):
         self.rootStyle['pr'] = units(pr)
-
     pr = property(_get_pr, _set_pr)
 
     def _get_pzf(self): # Padding z-axis front
@@ -858,10 +846,8 @@ class Document:
         d = self.d
         base = dict(base=d, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pzf', 0), base=base)
-
     def _set_pzf(self, pzf):
         self.rootStyle['pzf'] = units(pzf)
-
     pzf = property(_get_pzf, _set_pzf)
 
     def _get_pzb(self): # Padding z-axis back
@@ -882,10 +868,8 @@ class Document:
         d = self.d
         base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
         return units(self.rootStyle.get('pzb', 0), base=base)
-
     def _set_pzb(self, pzb):
         self.rootStyle['pzb'] = units(pzb)
-
     pzb = property(_get_pzb, _set_pzb)
 
     #   P A G E  S I Z E S
