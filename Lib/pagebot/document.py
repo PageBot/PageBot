@@ -51,6 +51,9 @@ class Document:
     (3, [1, 2, 3], 1)
     >>> doc.context
     <HtmlContext>
+    >>> doc.solve()
+    Score: 0 Fails: 0
+    >>> doc.build()
     """
 
     # Allows inherited versions of the Page class.
@@ -76,15 +79,13 @@ class Document:
         if size is not None:
             w, h, d = point3D(size) # Set
 
-        # Set position of origin and direction of `y` for self and all inheriting
-        # pages and elements as property. It is not supposed to change.
+        # Set position of origin and direction of `y` for self and all
+        # inheriting pages and elements as property. Not supposed to change.
         self._originTop = originTop
 
         # If no theme is defined, then use the default theme class to create an
-        # instance.
-
-        # Themes hold values and colors, combined in a theme.mood dictionary
-        # that matches functions with parameters.
+        # instance. Themes hold values and colors, combined in a theme.mood
+        # dictionary that matches functions with parameters.
         if theme is None:
             theme = DEFAULT_THEME_CLASS()
 
@@ -117,9 +118,8 @@ class Document:
         if padding is not None:
             self.padding = padding
 
-        # Initialize the dictionary of pages.
-
-        # Key is pageNumber, Value is row list of pages:
+        # Initializes the dictionary of pages. Key is pageNumber, Value is row
+        # list of pages:
         # `self.pages[pn][index] = page`
         self.pages = {}
 
@@ -172,10 +172,12 @@ class Document:
     def _get_docLib(self):
         """Answers the global storage dictionary, used by TypeSetter and others
         to keep track of footnotes, table of content, etc. Some common entries
-        are predefined. In the future this lib could be saved into JSON, in
-        case it needs to be shared between documents. E.g. this could happen if
-        a publication is generated from multiple independents documents, that
-        need to exchange information across applications.
+        are predefined.
+        
+        NOTE: In the future this lib could be saved to JSON in case it needs to
+        be shared between documents. E.g. this could happen if a publication is
+        generated from multiple independents documents, that need to exchange
+        information across applications.
 
         >>> doc = Document(name='TestDoc', docLib=dict(a=12, b=34))
         >>> sorted(doc.docLib.items())

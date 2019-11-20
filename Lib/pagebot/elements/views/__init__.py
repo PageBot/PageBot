@@ -13,13 +13,17 @@
 #
 #     __init__.py
 #
+
 # Page views
 from pagebot.elements.views.pageview import PageView
+
 # Website views
 # Saves in local docs/ folder. Create if it does not exist.
 from pagebot.elements.views.siteview import SiteView
+
 # Saves in local Applications/MAMP/htdocs directory
 from pagebot.elements.views.mampview import MampView
+
 # Saves in local position, so git works as website server.
 from pagebot.elements.views.gitview import GitView
 

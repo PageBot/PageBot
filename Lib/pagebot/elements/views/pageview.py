@@ -40,9 +40,12 @@ class PageView(BaseView):
     make a certain presentation of the page tree. The PageView typically holds
     Quire elements that make one-directional links to document pages in order
     to compose them in spreads or folding compositions."""
+
     viewId = 'Page'
 
-    EXPORT_PATH = '_export/' # Default path for local document export, that does not commit documents to Github.
+    # Default path for local document export, that does not commit documents to
+    # Github.
+    EXPORT_PATH = '_export/' 
 
     DEFAULT_STROKE_COLOR = color(0.2, 0.2, 1)
     DEFAULT_STROKE_WIDTH = pt(0.25)
@@ -63,14 +66,18 @@ class PageView(BaseView):
         self.doc.getSortedPages() result, or wrapped as Quire instances
         containing positioned spread pages."""
         sortedPages = self.doc.getSortedPages()
+
         if self.showSpread:
-            spreads = {} # Key is uneven page number. Value is a Quire, holding spread pages.
+            # Key is uneven page number. Value is a Quire, holding spread
+            # pages.
+            spreads = {} 
 
             # If flag is set, compose the page dictionary into a dictionary of
             # larger pages, holding Quire instances that can compose various
             # layouts of the pages, including spreads. page.ml and page.mr
             # define the distance between the spread pages.
             sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
+
         return sortedPages
 
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
@@ -245,6 +252,7 @@ class PageView(BaseView):
             self.drawRegistrationMarks(page, origin)
             self.drawCropMarks(page, origin)
             self.drawElementOrigin(page, origin)
+
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
         self.drawFlowConnections(page, origin)
@@ -306,6 +314,7 @@ class PageView(BaseView):
         >>> view.drawPadding(e, (0, 0))
         """
         e_pt, e_pr, e_pb, e_pl = e.padding
+
         if ((self.showPadding and e.isPage) or e.showPadding) and (e_pt or e_pr or e_pb or e_pl):
             context = self.context
 
@@ -313,19 +322,18 @@ class PageView(BaseView):
                 p = pointOffset(e.origin, origin)
             else:
                 p = origin
-            px, py = point2D(e._applyScale(self, p))
 
+            px, py = point2D(e._applyScale(self, p))
             viewPaddingStroke = e.viewPaddingStroke or self.viewPaddingStroke or self.DEFAULT_STROKE_COLOR
             viewPaddingStrokeWidth = e.viewPaddingStrokeWidth or self.viewPaddingStrokeWidth or self.DEFAULT_STROKE_WIDTH
-
             context.fill(noColor)
             context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
 
             if e.originTop:
-                #context.rect(px+e_pl, py+e_pb, e.w-e_pl-e_pr, e.h-pt-e_pb)
-                context.rect(px+e_pl, py-e.h+e_pb, e.w-e_pl-e_pr, e.h-e_pt-e_pb)
+                context.rect(px + e_pl, py - e.h + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
             else:
-                context.rect(px+e_pl, py+e_pb, e.w-e_pl-e_pr, e.h-e_pt-e_pb)
+                context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
+
             e._restoreScale(self)
 
     def drawMargin(self, e, origin):
@@ -342,6 +350,7 @@ class PageView(BaseView):
         >>> view.drawMargin(e, (0, 0))
         """
         e_mt, e_mr, e_mb, e_ml = e.margin
+
         if ((self.showMargin and e.isPage) or e.showMargin) and (e_mt or e_mr or e_mb or e_ml):
             context = self.context
 
@@ -349,23 +358,25 @@ class PageView(BaseView):
                 p = pointOffset(e.origin, origin)
             else:
                 p = origin
-            px, py = point2D(e._applyScale(self, p))
 
+            px, py = point2D(e._applyScale(self, p))
             viewMarginStroke = e.viewMarginStroke or self.viewMarginStroke or self.DEFAULT_STROKE_COLOR
             viewMarginStrokeWidth = e.viewMarginStrokeWidth or self.viewMarginStrokeWidth or self.DEFAULT_STROKE_WIDTH
 
             context.fill(noColor)
             context.stroke(viewMarginStroke, viewMarginStrokeWidth)
+
             if e.originTop:
                 #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px-e_ml, py-e.h-e_mb, e.w+e_ml+e_mr, e.h+e_mt+e_mb)
+                context.rect(px - e_ml, py - e.h - e_mb, e.w + e_ml + e_mr, e.h + e_mt + e_mb)
             else:
-                context.rect(px-e_ml, py-e_mb, e.w+e_ml+e_mr, e.h+e_mt+e_mb)
+                context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr, e.h + e_mt + e_mb)
+
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):
-        """Draw additional document information, color markers, page number, date, version, etc.
-        outside the page frame, if drawing crop marks.
+        """Draw additional document information, color markers, page number,
+        date, version, etc.  outside the page frame, if drawing crop marks.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -385,6 +396,7 @@ class PageView(BaseView):
             fontSize = self.css('viewNameFontSize')
             dt = datetime.datetime.now()
             d = dt.strftime("%A, %d. %B %Y %I:%M%p")
+
             if e.isPage and e.parent is not None: # Test if there is a document
                 pn = e.parent.getPageNumber(e)
                 if pn[1] == 0: # First or only page on this page number, then just show pn[0]
@@ -641,7 +653,10 @@ class PageView(BaseView):
                         textFill=color(0.1)))
 
             w, h = bs.size
-            context.text(bs, (px - w/2, py + S*1.5))
+            if e.originTop:
+                context.text(bs, (px - w/2, py - S*1.5))
+            else:
+                context.text(bs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         """When designing templates and pages, this will draw a filled
@@ -693,8 +708,8 @@ class PageView(BaseView):
 
     def drawGrid(self, e, origin, background=False):
         """Draws a grid of lines and / or rectangles if colors are set in the
-        style. Normally origin is ORIGIN pt(0, 0, 0), but it's possible to
-        give the grid a fixed offset.
+        style. Normally origin is ORIGIN pt(0, 0, 0), but it's possible to give
+        the grid a fixed offset.
 
         If types self.showGrid is set, display the type of grid in forground
         for (GRID_COL, GRID_ROW, GRID_SQR) and draw in background for
@@ -725,11 +740,13 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-        # Drawing the grid as vertical lines. Check on foreground/background flags.
+
+        # Drawing the grid as vertical lines. Check on foreground / background
+        # flags.
         if (background and GRID_COL_BG in showGrid) or (not background and GRID_COL in showGrid):
-            # Set color for vertical grid lines
+            # Set color for vertical grid lines.
             context.fill(noColor)
-            # Use local element color setting, otherwise find by view.css
+            # Use local element color setting, otherwise find by view.css.
             gridStrokeColor = e.style.get('viewGridStrokeY', self.css('viewGridStrokeY', noColor))
             gridStrokeWidth = e.style.get('viewGridStrokeWidthY', self.css('viewGridStrokeWidthY', self.DEFAULT_STROKE_WIDTH))
             context.stroke(gridStrokeColor, gridStrokeWidth)
@@ -739,17 +756,21 @@ class PageView(BaseView):
                 x = px+e.pl # Position on left padding of page/e
                 y1 = py+e.pb
                 y2 = y1 + e.ph
+
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
                         cw, gx = cw
                     else:
                         gx = 0
+
                     context.line((x, y1), (x, y2))
+
                     if gx:
                         context.line((x+cw, y1), (x+cw, y2))
                     x += cw + gx
 
-        # Drawing the grid as horizontal lines. Check foreground / background flags.
+        # Drawing the grid as horizontal lines. Check foreground / background
+        # flags.
         if (background and GRID_ROW_BG in showGrid) or (not background and GRID_ROW in showGrid):
             # Set color for vertical grid lines
             context.fill(noColor)

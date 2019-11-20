@@ -1793,7 +1793,7 @@ class Element:
     isLeft = property(_get_isLeft)
 
     def _get_isRight(self):
-        """Normal elements don't know the left/right orientation of the page
+        """Normal elements don't know the left / right orientation of the page
         that they are on. Pass the request on to the parent, until a page is
         reached."""
         if self.parent is not None:
@@ -1802,7 +1802,7 @@ class Element:
     isRight = property(_get_isRight)
 
     def _get_gridX(self):
-        """Answers the grid, depending on the left/right orientation of self.
+        """Answers the grid, depending on the left / right orientation of self.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(w=mm(210), gridX=((mm(60), mm(5)), (mm(80), None)))
@@ -1813,6 +1813,7 @@ class Element:
         ((60mm, 5mm), (80mm, None))
         """
         return units(self.css('gridX'))
+
     def _set_gridX(self, gridX):
         self.style['gridX'] = gridX  # Save locally, blocking CSS parent scope for this param.
     gridX = property(_get_gridX, _set_gridX)
@@ -1829,6 +1830,7 @@ class Element:
         (40pt, 50pt, 60pt)
         """
         return units(self.css('gridY'))
+
     def _set_gridY(self, gridY):
         self.style['gridY'] = gridY  # Save locally, blocking CSS parent scope for this param.
     gridY = property(_get_gridY, _set_gridY)
