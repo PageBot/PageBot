@@ -1473,8 +1473,8 @@ class Document:
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
-        view = self.view = self.views[viewId] = viewClasses[viewId](name=name or viewId,
-                w=self.w, h=self.h, context=context)
+        view = self.view = self.views[viewId] = viewClasses[viewId](name=name
+                or viewId, w=self.w, h=self.h, context=context)
 
         # Just set parent, without all functionality of self.addElement()
         view.setParent(self) 

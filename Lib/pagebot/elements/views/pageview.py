@@ -86,7 +86,8 @@ class PageView(BaseView):
 
         >>> from pagebot.document import Document
         >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
-        >>> doc = Document(size=A4, autoPages=4) # Make 4 pages to be composed as a Quire of 2 spreads
+        >>> # Make 4 pages to be composed as a Quire of 2 spreads.
+        >>> doc = Document(size=A4, autoPages=4) 
         >>> view = doc.view
         >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
@@ -238,7 +239,10 @@ class PageView(BaseView):
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> page = doc[1]
+        >>> #page.view.padding
+        >>> # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> view = doc.getView()
         >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawPageMetaInfo(page, (0, 0), path)
@@ -247,8 +251,12 @@ class PageView(BaseView):
             self.drawFrame(page, origin)
             self.drawMargin(page, origin)
             self.drawPadding(page, origin)
-            self.drawNameInfo(page, origin, path) # Use path to show file name in page meta info.
-            self.drawColorBars(page, origin) # Color bars under registration marks?
+
+            # Use path to show file name in page meta info.
+            self.drawNameInfo(page, origin, path) 
+
+            # Color bars under registration marks?
+            self.drawColorBars(page, origin) 
             self.drawRegistrationMarks(page, origin)
             self.drawCropMarks(page, origin)
             self.drawElementOrigin(page, origin)
@@ -318,10 +326,12 @@ class PageView(BaseView):
         if ((self.showPadding and e.isPage) or e.showPadding) and (e_pt or e_pr or e_pb or e_pl):
             context = self.context
 
+            '''
             if e.isPage:
                 p = pointOffset(e.origin, origin)
             else:
-                p = origin
+            '''
+            p = origin
 
             px, py = point2D(e._applyScale(self, p))
             viewPaddingStroke = e.viewPaddingStroke or self.viewPaddingStroke or self.DEFAULT_STROKE_COLOR
@@ -415,7 +425,10 @@ class PageView(BaseView):
                 s += ' | ' + path.split('/')[-1] # We're only interested in the file name.
             bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
             tw, th = bs.size
-            self.context.textBox(bs, (self.pl + cmDistance, self.pb + e.h + cmSize - fontSize*2, e.pw, th)) # Draw on top of page.
+
+            x = self.pl + cmDistance
+            y = self.pb + e.h - cmSize + fontSize*2
+            self.context.textBox(bs, (x, y, e.pw, th)) # Draw on top of page.
 
     #   D R A W I N G  F L O W S
 
@@ -634,7 +647,7 @@ class PageView(BaseView):
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
 
-        S = e.css('viewInfoOriginMarkerSize', pt(5))
+        S = e.css('viewInfoOriginMarkerSize', pt(3))
         # Draw origin of the element
         fill = e.css('viewInfoOriginMarkerFill', noColor)
         stroke = e.css('viewInfoOriginMarkerStroke', blackColor)
@@ -653,10 +666,11 @@ class PageView(BaseView):
                         textFill=color(0.1)))
 
             w, h = bs.size
+
             if e.originTop:
-                context.text(bs, (px - w/2, py - S*1.5))
+                context.text(bs, (px, py - S*1.5))
             else:
-                context.text(bs, (px - w/2, py + S*1.5))
+                context.text(bs, (px, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         """When designing templates and pages, this will draw a filled
@@ -684,12 +698,13 @@ class PageView(BaseView):
 
             context.saveGraphicState()
             context.setShadow(self.shadow)
-
             sMissingElementFill = self.css('viewMissingElementFill', noColor)
+
             if sMissingElementFill is not noColor:
                 context.fill(sMissingElementFill)
                 context.stroke(noColor)
                 context.rect(px, py, self.w, self.h)
+
             # Draw crossed rectangle.
             context.fill(noColor)
             context.stroke(blackColor, pt(0.5))
@@ -740,22 +755,30 @@ class PageView(BaseView):
         p = self._applyScale(e, p)
         px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-
         # Drawing the grid as vertical lines. Check on foreground / background
         # flags.
-        if (background and GRID_COL_BG in showGrid) or (not background and GRID_COL in showGrid):
+        if (background and GRID_COL_BG in showGrid) or \
+                (not background and GRID_COL in showGrid):
             # Set color for vertical grid lines.
             context.fill(noColor)
-            # Use local element color setting, otherwise find by view.css.
-            gridStrokeColor = e.style.get('viewGridStrokeY', self.css('viewGridStrokeY', noColor))
-            gridStrokeWidth = e.style.get('viewGridStrokeWidthY', self.css('viewGridStrokeWidthY', self.DEFAULT_STROKE_WIDTH))
-            context.stroke(gridStrokeColor, gridStrokeWidth)
 
+            # Use local element color setting, otherwise find by view.css.
+            gridStrokeColor = e.style.get('viewGridStrokeY',
+                    self.css('viewGridStrokeY', noColor))
+            gridStrokeWidth = e.style.get('viewGridStrokeWidthY',
+                    self.css('viewGridStrokeWidthY',
+                        self.DEFAULT_STROKE_WIDTH))
+            context.stroke(gridStrokeColor, gridStrokeWidth)
             gridX = e.gridX
+
             if gridX:
-                x = px+e.pl # Position on left padding of page/e
-                y1 = py+e.pb
+                x = px + e.pl # Position on left padding of page/e
+                y1 = py + e.pb
                 y2 = y1 + e.ph
+                #print(self)
+                #print(e.pl)
+                #print(e.padding)
+                #print(y1)
 
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):

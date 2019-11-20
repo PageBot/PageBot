@@ -101,7 +101,7 @@ def point2D(p=None):
 def pointOffset(point, offset):
     """Answers a new 3D point, shifted by offset.
 
-    Note that in normal usage the elements probably will be Unit instances.
+    NOTE: generally elements will be Unit instances.
 
     >>> pointOffset(pt(20, 30, 10), 12)
     (32pt, 42pt, 22pt)

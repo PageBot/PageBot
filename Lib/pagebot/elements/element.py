@@ -124,22 +124,28 @@ class Element:
         self.context = context
         self._parent = None
 
-        # Set the local self._lib, validate it is a dictionary, otherwise create new dict.
+        # Set the local self._lib, validate it is a dictionary, otherwise
+        # create new dictionary.
         self.lib = lib
 
         # Guaranteed to be unique. Cannot be set.
         self._eId = uniqueID(self)
-        # Optional systen/user/app id, used by external application, such as SketchContext
-        self.sId = sId # Can be None. If used self.findBysid(sId) works recursively
+        # Optional systen/user/app id, used by external application, such as
+        # SketchContext. Can be None. If used self.findBysid(sId) works
+        # recursively
+        self.sId = sId 
 
         # Initialize self._elements and self._eIds.
         self.clearElements()
         self.checkStyleArgs(kwargs)
-        self.style = makeStyle(style, **kwargs) # Make default style for t == 0 from args
+        # Make default style for t == 0 from args
+        self.style = makeStyle(style, **kwargs) 
 
-        # If undefined yAlign and parent has origin on top, then default yAlign to TOP
-        self._originTop = originTop # Local value is overwritten if there is a parent defined.
-        if yAlign is None and self.originTop: # Property seeks parent-->page.originTop value.
+        # If undefined yAlign and parent has origin on top, then default yAlign
+        # to TOP. Local value is overwritten if there is a parent defined.
+        self._originTop = originTop 
+        # Property seeks parent-->page.originTop value.
+        if yAlign is None and self.originTop: 
             yAlign = TOP
         self.xAlign = xAlign
         self.yAlign = yAlign
@@ -156,39 +162,53 @@ class Element:
         if xyz is not None:
             self.xyz = xyz
         elif xy is not None:
-            self.xy = xy # self.z is set to DEFAULT_DEPTH
+            # self.z is set to DEFAULT_DEPTH
+            self.xy = xy 
         else:
             self.xyz = x, y, z
 
-        if whd is not None: # Alternative attributes, to make it intuitive for the caller.
+        # Alternative attributes, to make it intuitive for the caller.
+        if whd is not None: 
             size = whd
         elif wh is not None:
             size = wh
-        if size is not None: # Convenience attribute, setting self.w, self.h, self.d
-            self.size = size # Works for (w, h) and (w, h, d)
-        else: # Otherwise it is assumed that the values are set separately, still default if None.
+
+        # Convenience attribute, setting self.w, self.h, self.d
+        if size is not None: 
+            # Works for (w, h) and (w, h, d)
+            self.size = size 
+        else: 
+            # Otherwise it is assumed that the values are set separately, still
+            # default if None.
             self.w = w
             self.h = h
             self.d = d
 
-        if scale is not None: # Convenience attribute, setting self.scaleX, self.scaleY, self.scaleZ
-            self.scale = scale # Works for (scaleX, scaleY) and (scaleX, scaleY, scaleZ)
+        # Convenience attribute, setting self.scaleX, self.scaleY, self.scaleZ
+        if scale is not None: 
+            # Works for (scaleX, scaleY) and (scaleX, scaleY, scaleZ)
+            self.scale = scale 
         else:
             self.scaleX = scaleX
             self.scaleY = scaleY
             self.scaleZ = scaleZ
 
-        if proportional is not None: # If defined, set after the sizes and scales are set.
-            self.proportional = proportional # Setting True keeps all size and scales proportional now.
+        # If defined, set after the sizes and scales are set.
+        if proportional is not None: 
+            # Setting True keeps all size and scales proportional now.
+            self.proportional = proportional 
 
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
 
         if bleed is not None:
-            self.bleed = bleed # Property tuple (bt, br, bb, bl) ignores to expand into if None
+            # Property tuple (bt, br, bb, bl) ignores to expand into if None
+            self.bleed = bleed 
 
-        # In case these specific position sides are defined, let them overwrite any (x,y)
-        # Since top <--> bottom and left <--> right conflict, we only need to test one of them.
+        # In case these specific position sides are defined, let them overwrite
+        # any (x,y) Since top <--> bottom and left <--> right conflict, we only
+        # need to test one of them.
+
         # to be defined.
         if top is not None:
             self.top = top
@@ -215,7 +235,8 @@ class Element:
         # Shadow and gradient, if defined
         self.shadow = shadow
         self.gradient = gradient
-        self.framePath = framePath # Optiona frame path to draw instead of bounding box element rectangle.
+        # Optional frame path to draw instead of bounding box element rectangle.
+        self.framePath = framePath 
 
         # Set timer of this element.
         # Default TimeMarks from t == now() until arbitrary one day from now().
@@ -238,31 +259,42 @@ class Element:
         if margin is not None:
             self.margin = margin
 
-        # Class and #Id attributes for HtmlContext usage.
-        self.cssClass = cssClass # Optional CSS class name. Ignored if None, not to overwrite cssClass of parents.
-        self.cssId = cssId # Optional id name for use in CSS-output. Ignored if None.
+        # Class and #Id attributes for HtmlContext usage. Optional CSS class
+        # name. Ignored if None, not to overwrite cssClass of parents.
+        self.cssClass = cssClass 
+        # Optional id name for use in CSS-output. Ignored if None.
+        self.cssId = cssId 
 
         # Optional resources that can be included for web output (HtmlContext).
         # Define string or file paths where to read content, instead of
         # constructing by the builder.
-        self.htmlCode = htmlCode # Set to string in case element has HTML as source.
-        self.htmlPaths = htmlPaths # List or paths, in case full element HTML is defined in files.
+        # Set to string in case element has HTML as source.
+        self.htmlCode = htmlCode 
+        # List or paths, in case full element HTML is defined in files.
+        self.htmlPaths = htmlPaths 
 
         # Generic naming and title.
-        self.name = name # Optional name of an element. Used as base for # id in case of HTML/CSS export.
-        self.title = title or name # Optional to make difference between title name, style property
+        # Optional name of an element. Used as base for # id in case of
+        # HTML/CSS export.
+        self.name = name 
+        # Optional to make difference between title name, style property
+        self.title = title or name 
 
         # Element tree
-        self._parent = None # Preset, so it exists for checking when appending parent.
+        # Preset, so it exists for checking when appending parent.
+        self._parent = None 
         if parent is not None:
-            # Add and set weakref to parent element or None, if it is the root. Caller must add self
-            # to its elements separately.
-            self.parent = parent # Set references in both directions. Remove any previous parent links
+            # Add and set weakref to parent element or None, if it is the root.
+            # Caller must add self to its elements separately. Set references
+            # in both directions. Remove any previous parent links.
+            self.parent = parent 
 
-        # Conditional placement stuff
-        if not conditions is None and not isinstance(conditions, (list, tuple)): # Allow singles
+        # Conditional placement stuff. Allow singles.
+        if not conditions is None and not isinstance(conditions, (list, tuple)): 
             conditions = [conditions]
-        # Explicitedly stored local in element, not inheriting from ancesters. Can be None.
+
+        # Explicitedly stored local in element, not inheriting from ancesters.
+        # Can be None.
         self.conditions = conditions
 
         # Optional storage of self.context.BezierPath() to clip the content of
@@ -270,32 +302,55 @@ class Element:
         # which returns a PageBotPath instance, constructed from the position
         # and layout of self.elements
         if clipPath is not None:
-            clipPath = clipPath.copy() # Make a copy, so translates won't affect the original
-        self.clipPath = clipPath # Optional clip path to show the content. None otherwise.
+            # Make a copy, so translates won't affect the original
+            clipPath = clipPath.copy() 
 
-        self.report = [] # Area for conditions and drawing methods to report errors and warnings.
-        # Optional description of this element or its content. Otherwise None. Can be string or BabelString
+        # Optional clip path to show the content. None otherwise.
+        self.clipPath = clipPath 
+
+        # Area for conditions and drawing methods to report errors and
+        # warnings.
+        self.report = [] 
+        # Optional description of this element or its content. Otherwise None.
+        # Can be string or BabelString
         self.description = description
-        self.keyWords = keyWords # Optional used for web pages
-        self.language = language # Optional language code from HTML standard. Otherwise DEFAULT_LANGUAGE.
+        # Optional used for web pages
+        self.keyWords = keyWords 
+        # Optional language code from HTML standard. Otherwise
+        # DEFAULT_LANGUAGE.
+        self.language = language 
         # Save flow reference names
-        self.prevElement = prevElement # Element itself or name of the prev flow element
-        self.nextElement = nextElement # Element itself or name of the next flow element
-        self.nextPage = nextPage # Page element itself or name, identifier or index of the next page that nextElement refers to,
-        self.prevPage = prevPage # if a flow must run over page boundaries.
+        # Element itself or name of the prev flow element
+        self.prevElement = prevElement 
+        # Element itself or name of the next flow element
+        self.nextElement = nextElement 
+        # Page element itself or name, identifier or index of the next page
+        # that nextElement refers to,
+        self.nextPage = nextPage 
+        # if a flow must run over page boundaries.
+        self.prevPage = prevPage 
         # Optional storage for the a thumbnail image path visualizing this element.
-        self.thumbPath = thumbPath # Used by Magazine/PartOfBook and others, to show a predefined thumbnail of a page.
-        # Copy relevant info from template: w, h, elements, style, conditions, next, prev, nextPage
-        # Initialze self.elements, add template elements and values, copy elements if defined.
-        # Note that this does not copy the attributes from template to self.
-        # For that self.applyAttributes(template, elements, <attributeName>) should be called.
+        # Used by Magazine/PartOfBook and others, to show a predefined
+        # thumbnail of a page.
+        self.thumbPath = thumbPath 
+
+        # Copy relevant info from template: w, h, elements, style, conditions,
+        # next, prev, nextPage Initialze self.elements, add template elements
+        # and values, copy elements if defined. Note that this does not copy
+        # the attributes from template to self. For that
+        # self.applyAttributes(template, elements, <attributeName>) should be
+        # called.
         self.applyTemplate(template, elements)
-        # If flag is set, then solve the conditions upon creation of the element (e.g. to define the height)
+
+        # If flag is set, then solve the conditions upon creation of the
+        # element (e.g. to define the height)
         if solve:
             self.solve()
 
-        # View flags, set them as properties, so the right type is expanded (e.g. from bool to list of sides)
-        self.showBaselineGrid = showBaselineGrid # Initialize to default values by property.
+        # View flags, set them as properties, so the right type is expanded
+        # (e.g. from bool to list of sides). Initialize to default values by
+        # property.
+        self.showBaselineGrid = showBaselineGrid 
         self.showCropMarks = showCropMarks
         self.showRegistrationMarks = showRegistrationMarks
         self.showPadding = showPadding
@@ -403,8 +458,10 @@ class Element:
         """Answer the style value self.css('resolution') for the amount of
         DPI."""
         return self.css('resolution')
+
     def _set_resolution(self, resolution):
         self.style['resolution'] = resolution
+
     resolution = property(_get_resolution, _set_resolution)
 
     def _get_resolutionFactors(self):
@@ -414,11 +471,13 @@ class Element:
         write a thumbnail png twice the size it will be used in.
         """
         return self.css('resolutionFactors', default=DEFAULT_RESOLUTION_FACTORS)
+
     def _set_resolutionFactors(self, resolutionFactors):
         if resolutionFactors is None:
             resolutionFactors = DEFAULT_RESOLUTION_FACTORS
         assert isinstance(resolutionFactors, dict)
         self.style['resolutionFactors'] = resolutionFactors
+
     resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
 
     #   T E M P L A T E
@@ -435,11 +494,15 @@ class Element:
         >>> e.x, e.y, e.w, e.h
         (11pt, 12pt, 100pt, 200mm)
         """
-        self.template = template # Set template value by property call, copying all template elements and attributes.
+        # Set template value by property call, copying all template elements
+        # and attributes.
+        self.template = template 
+
         if elements is not None:
             # Add optional list of additional elements.
             for e in elements or []:
-                self.appendElement(e) # Add cross reference searching for eId of elements.
+                # Add cross reference searching for eId of elements.
+                self.appendElement(e) 
 
     def _get_template(self):
         """Property get/set for e.template.
@@ -4627,20 +4690,23 @@ class Element:
         return x
 
     def _applyAlignment(self, p):
-        """Answers the p according to the alignment status in the css."""
+        """Answers point `p` according to the alignment status in the css."""
         px, py, pz = point3D(p)
+
         # Horizontal
         xAlign = self.xAlign
         if xAlign == CENTER:
             px -= self.w/2/self.scaleX
         elif xAlign == RIGHT:
             px -= self.w/self.scaleX
+
         # Vertical
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             py -= self.h/2/self.scaleY
         elif yAlign == TOP:
             py -= self.h/self.scaleY
+
         # Currently no alignment in z-axis implemented
         return px, py, pz
 
@@ -4703,10 +4769,11 @@ class Element:
         """
 
     def spellCheck(self, languages=None, unknown=None, minLength=3):
-        """Recursively spellcheck all child elements for the given languages. Answer a list with
-        unknown words. Default is to do nothing and just pass the call on to child elements.
-        Inheriting classes can redefine _spellCheckWords to check on their on text content.
-        Words with a length smaller than minLength are skipped."""
+        """Recursively spellchecks all child elements for the given languages.
+        Answer a list with unknown words. Default is to do nothing and just
+        pass the call on to child elements. Inheriting classes can redefine
+        _spellCheckWords to check on their on text content. Words with a
+        length smaller than minLength are skipped."""
         if unknown is None:
             unknown = []
         if isinstance(languages, str):
@@ -4721,9 +4788,9 @@ class Element:
     #   C O M P O S I T I O N  S U P P O R T
 
     def compose(self, doc, publication):
-        """Recursively compose Publication, Pages and Elements to compose the document of a publication.
-        Default behavior is to just pass it on to the chidren.
-        """
+        """Recursively composes Publication, Pages and Elements to build the
+        document of a publication. Default behavior is to just pass it on to
+        the chidren."""
         for e in self.elements:
             e.compose(doc, publication)
 
