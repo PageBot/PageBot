@@ -480,7 +480,7 @@ class FlatContext(BaseContext):
             ypt -= lineHeight
             ypt = self.doc.height - ypt
 
-        print('flat context y: %s' % ypt)
+        #print('flat context y: %s' % ypt)
 
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
