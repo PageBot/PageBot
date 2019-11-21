@@ -17,7 +17,6 @@
 
 import os
 import re
-from flat.text import text
 
 from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
@@ -82,18 +81,7 @@ class FlatString(BabelString):
         super().__init__(s, context, style=style)
 
     def __repr__(self):
-        if isinstance(self.s, str):
-            return self.s
-
-        '''
-        s = ''
-
-        for paragraph in self.s.paragraphs:
-            for span in paragraph.spans:
-                s += span.string
-
-        return s
-        '''
+        return self.s
 
     def _get_s(self):
         """Answers the embedded Flat `text` class (the equivalent of a OS X
