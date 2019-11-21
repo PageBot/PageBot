@@ -409,25 +409,22 @@ class PageView(BaseView):
         >>> view.drawNameInfo(e, (0, 0), path)
         """
         if (self.showNameInfo and e.isPage) or e.showNameInfo:
-            context = self.context
             # Position of text is based on crop mark size.
             cmDistance = self.css('viewCropMarkDistance') 
-            cmSize = self.css('viewCropMarkSize') - cmDistance
+            cmSize = self.css('viewCropMarkSize')
+            cmSize -= cmDistance
+            #cmSize = self.css('viewCropMarkSize') - cmDistance
             fontSize = self.css('viewNameFontSize')
             font = self.css('viewNameFont')
-            print(font)
             s = self.getNameString(e, path)
-            bs = context.newString(s, style=dict(font=font,
+            bs = self.context.newString(s, style=dict(font=font,
                 textFill=blackColor, fontSize=fontSize))
             tw, th = bs.size
-            print(tw)
-            print(th)
-            th = 40
 
             # Draw on top of page.
             x = self.pl + cmDistance
-            y = 248 #self.pb + e.h - cmSize + fontSize*2
-            self.context.stroke(registrationColor)
+            y = self.pb + e.h - cmDistance #+ th
+            self.context.stroke(registrationColor, 0.5)
             self.context.line((x, y), (x + tw, y)) 
             self.context.textBox(bs, (x, y, e.pw, th)) 
 

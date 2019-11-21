@@ -33,7 +33,7 @@ from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
-from pagebot.toolbox.color import color, Color, noColor
+from pagebot.toolbox.color import color, Color, noColor, redColor
 from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):
@@ -89,13 +89,13 @@ class FlatContext(BaseContext):
         #self.flatString = None
         self.fileType = DEFAULT_FILETYPE
         self._pages = []
-        self.flipped = True
+        self.originTop = False
         self.transform3D = Transform3D()
         self.placedText = None
 
     #   D O C U M E N T
 
-    def newDocument(self, w=None, h=None, size=None, doc=None, flipped=True):
+    def newDocument(self, w=None, h=None, size=None, doc=None, originTop=False):
         """Creates a new self.doc Flat canvas to draw on. Flipped `y`-axis by
         default to conform to DrawBot's drawing methods.
 
@@ -115,7 +115,7 @@ class FlatContext(BaseContext):
         elif size is not None:
             w, h = size
 
-        self.flipped = flipped
+        self.originTop = originTop
 
         # Convert units to point values.
         wpt, hpt = upt(w, h)
@@ -129,7 +129,7 @@ class FlatContext(BaseContext):
         """Calculates `y`-coordinate based on origin and translation."""
         y = self._oy + y
 
-        if not self.flipped:
+        if self.originTop:
             return y
         else:
             y = self.doc.height - y
@@ -166,7 +166,7 @@ class FlatContext(BaseContext):
         p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
 
-        if self.flipped:
+        if not self.originTop:
             y1 = self.doc.height - y1
 
         return x1, y1
@@ -371,7 +371,7 @@ class FlatContext(BaseContext):
                 path.curveTo((x0, y0), (x1, y1), (x, y))
             elif command == 'component':
                 (x, y), componentGlyph = t
-                if self.flipped:
+                if not self.originTop:
                     y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
 
@@ -421,7 +421,7 @@ class FlatContext(BaseContext):
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
 
-        if self.flipped:
+        if not self.originTop:
             lineHeight = fs.getLineHeight()
             ypt -= lineHeight
 
@@ -474,15 +474,16 @@ class FlatContext(BaseContext):
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
-        if self.flipped:
-            lineHeight = fs.getLineHeight()
-            ypt -= lineHeight
-            ypt = self.doc.height - ypt
+        if self.originTop:
+            ypt = self.doc.height - hpt
+        else:
+            ypt = self.doc.height - ypt - hpt
 
-        #print('flat context y: %s' % ypt)
 
         self.placedText = self.page.place(fs.text)
         self.placedText.frame(xpt, ypt, wpt, hpt)
+
+        #print('flat context y: %s' % ypt)
 
         if self.placedText.overflow():
             s1 = self.getPlacedString(self.placedText)
@@ -672,7 +673,7 @@ class FlatContext(BaseContext):
         if not w is None and not h is None:
             img.resize(width=int(w.pt), height=int(h.pt))
 
-        if self.flipped:
+        if self.originTop:
             ypt -= h.pt
 
         placed = self.page.place(img)
