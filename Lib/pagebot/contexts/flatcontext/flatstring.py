@@ -66,8 +66,13 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
-        assert isinstance(s, text)
-        self.s = s # Store the Flat equivalent `text` of a DrawBot FormattedString.
+
+        # Stores plain string.
+        self.s = s
+        assert isinstance(s, str)
+
+        # Stores the Flat equivalent `text` of a DrawBot FormattedString.
+        self.text = strike.text(s)
 
         if style is None:
             style = {}
@@ -80,6 +85,7 @@ class FlatString(BabelString):
         if isinstance(self.s, str):
             return self.s
 
+        '''
         s = ''
 
         for paragraph in self.s.paragraphs:
@@ -87,6 +93,7 @@ class FlatString(BabelString):
                 s += span.string
 
         return s
+        '''
 
     def _get_s(self):
         """Answers the embedded Flat `text` class (the equivalent of a OS X
@@ -150,7 +157,7 @@ class FlatString(BabelString):
         >>> len(fs)
         3
         """
-        return len(str(self))
+        return len(self.s)
 
     def asText(self):
         """Answers as unicode string.
@@ -163,14 +170,21 @@ class FlatString(BabelString):
         >>> fs.asText()
         'ABC'
         """
-        return str(self) # TODO: To be changed to Flat string behavior.
+        return self.s 
 
     def textSize(self, w=None, h=None):
         """Answers the `(w, h)` size tuple for a given width, with the current
-        text."""
-        # FIXME: Make this work in Flat same as in DrawBot
-        #return self.b.textSize(s)
-        w = self.strike.width(str(self.s))
+        text.
+        
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> fs = context.newString('ABC ', style=style)
+        >>> fs
+        ABC 
+        >>> fs.textSize()
+        """
+        w = self.strike.width(self.s)
         fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         h = leadingPt
@@ -482,7 +496,7 @@ class FlatString(BabelString):
         color = cls.getColor(style)
         rgb = context.getFlatRGB(color)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
-        return cls(strike.text(s), context=context, style=style, strike=strike)
+        return cls(s, context=context, style=style, strike=strike)
 
     def getTextLines(self, w, h=None, align=LEFT):
         return []

@@ -415,7 +415,7 @@ class FlatContext(BaseContext):
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
-        self.placedText = self.page.place(fs.s)
+        self.placedText = self.page.place(fs.text)
         #print(self.placedText)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
@@ -479,9 +479,9 @@ class FlatContext(BaseContext):
             ypt -= lineHeight
             ypt = self.doc.height - ypt
 
-        print('flat context y: %s' % ypt)
+        #print('flat context y: %s' % ypt)
 
-        self.placedText = self.page.place(fs.s)
+        self.placedText = self.page.place(fs.text)
         self.placedText.frame(xpt, ypt, wpt, hpt)
 
         if self.placedText.overflow():
@@ -545,7 +545,8 @@ class FlatContext(BaseContext):
 
         >>> w = h = 500 # Default to pt-units
         >>> x = y = 0
-        >>> context = FlatContext()
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
         >>> print(context)
         <FlatContext>
         >>> context.newDocument(w, h)
@@ -553,9 +554,13 @@ class FlatContext(BaseContext):
         >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
-        >>> bs = context.newString('ABC ' * 100, style=style)
+        >>> bs = context.newString('ABC ', style=style)
         >>> print(type(bs))
         <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
+        >>> #context.textSize(bs)
+        #(201.53pt, 16.8pt)
+        >>> #bs.size
+        #(201.53pt, 16.8pt)
         >>> t = context.page.place(bs.s)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()
@@ -569,15 +574,7 @@ class FlatContext(BaseContext):
         >>> #len(lines)
         35
         """
-        # FIXME! This is a totally wrong boilerplate for now!
-
-        #t = placedtext(bs.s)
-        if not bs.s:
-            return (pt(0), pt(0))
-        elif w is None:
-            return (pt(100), pt(100))
-        else:
-            return (w, w / len(bs))
+        return bs.size
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
