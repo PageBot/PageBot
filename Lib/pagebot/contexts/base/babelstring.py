@@ -156,8 +156,11 @@ class BabelString:
         if hasattr(self.context.b, 'textSize'):
             ts = self.context.b.textSize(self.s)
             return pt(ts)
+        elif hasattr(self, 'textSize'):
+            ts = self.textSize(self.s)
+            return pt(ts)
         else:
-            return pt(0, 0)
+            raise NotImplementedError
 
     size = property(_get_size)
 

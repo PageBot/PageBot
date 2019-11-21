@@ -414,15 +414,21 @@ class PageView(BaseView):
             cmDistance = self.css('viewCropMarkDistance') 
             cmSize = self.css('viewCropMarkSize') - cmDistance
             fontSize = self.css('viewNameFontSize')
+            font = self.css('viewNameFont')
+            print(font)
             s = self.getNameString(e, path)
-            bs = context.newString(s, style=dict(font=self.css('viewNameFont'),
+            bs = context.newString(s, style=dict(font=font,
                 textFill=blackColor, fontSize=fontSize))
-
             tw, th = bs.size
-            x = self.pl + cmDistance
-            y = self.pb + e.h - cmSize + fontSize*2
+            print(tw)
+            print(th)
+            th = 40
 
             # Draw on top of page.
+            x = self.pl + cmDistance
+            y = self.pb + e.h - cmSize + fontSize*2
+            self.context.stroke(registrationColor)
+            self.context.line((x, y), (x + 300, y)) 
             self.context.textBox(bs, (x, y, e.pw, th)) 
 
     def getNameString(self, e, path):

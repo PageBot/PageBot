@@ -389,8 +389,7 @@ class FlatContext(BaseContext):
     def text(self, fs, p):
         """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
-        FlatContext version of the BabelString should contain
-        Flat.text.
+        FlatContext version of the BabelString should contain Flat.text.
 
         NOTE: in the Flat model the position is an attribute of the string,
         therefore strings cannot be reused to be displayed on multiple
@@ -480,7 +479,7 @@ class FlatContext(BaseContext):
             ypt -= lineHeight
             ypt = self.doc.height - ypt
 
-        #print('flat context y: %s' % ypt)
+        print('flat context y: %s' % ypt)
 
         self.placedText = self.page.place(fs.s)
         self.placedText.frame(xpt, ypt, wpt, hpt)
