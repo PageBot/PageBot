@@ -361,7 +361,8 @@ class PageView(BaseView):
         """
         e_mt, e_mr, e_mb, e_ml = e.margin
 
-        if ((self.showMargin and e.isPage) or e.showMargin) and (e_mt or e_mr or e_mb or e_ml):
+        if ((self.showMargin and e.isPage) or e.showMargin) and \
+                (e_mt or e_mr or e_mb or e_ml):
             context = self.context
 
             if e.isPage:
@@ -370,17 +371,23 @@ class PageView(BaseView):
                 p = origin
 
             px, py = point2D(e._applyScale(self, p))
-            viewMarginStroke = e.viewMarginStroke or self.viewMarginStroke or self.DEFAULT_STROKE_COLOR
-            viewMarginStrokeWidth = e.viewMarginStrokeWidth or self.viewMarginStrokeWidth or self.DEFAULT_STROKE_WIDTH
+            viewMarginStroke = e.viewMarginStroke or \
+                    self.viewMarginStroke or \
+                    self.DEFAULT_STROKE_COLOR
+            viewMarginStrokeWidth = e.viewMarginStrokeWidth or \
+                    self.viewMarginStrokeWidth or \
+                    self.DEFAULT_STROKE_WIDTH
 
             context.fill(noColor)
             context.stroke(viewMarginStroke, viewMarginStrokeWidth)
 
             if e.originTop:
                 #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px - e_ml, py - e.h - e_mb, e.w + e_ml + e_mr, e.h + e_mt + e_mb)
+                context.rect(px - e_ml, py - e.h - e_mb, e.w + e_ml + e_mr,
+                        e.h + e_mt + e_mb)
             else:
-                context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr, e.h + e_mt + e_mb)
+                context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr,
+                        e.h + e_mt + e_mb)
 
             e._restoreScale(self)
 
@@ -393,42 +400,81 @@ class PageView(BaseView):
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> path = '_export/PageNameInfo.pdf'
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle() 
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element(style=style) 
         >>> view = PageView(context=context, style=style)
         >>> view.showNameInfo = True
         >>> view.drawNameInfo(e, (0, 0), path)
         """
         if (self.showNameInfo and e.isPage) or e.showNameInfo:
             context = self.context
-            cmDistance = self.css('viewCropMarkDistance') # Position of text is based on crop mark size.
+            # Position of text is based on crop mark size.
+            cmDistance = self.css('viewCropMarkDistance') 
             cmSize = self.css('viewCropMarkSize') - cmDistance
             fontSize = self.css('viewNameFontSize')
-            dt = datetime.datetime.now()
-            d = dt.strftime("%A, %d. %B %Y %I:%M%p")
+            s = self.getNameString(e, path)
+            bs = context.newString(s, style=dict(font=self.css('viewNameFont'),
+                textFill=blackColor, fontSize=fontSize))
 
-            if e.isPage and e.parent is not None: # Test if there is a document
-                pn = e.parent.getPageNumber(e)
-                if pn[1] == 0: # First or only page on this page number, then just show pn[0]
-                    pn = pn[0]
-                if len(e.parent.pages) > 1: # More than one page, then show total
-                    pn = '%s/%d' % (pn, len(e.parent.pages))
-                title = e.parent.title or 'Untitled'
-                s = 'Page %s | %s | %s' % (pn, d, title)
-            else: # Otherwise always page number #1
-                pn = 1
-                title = 'Untitled'
-                s = 'Element %s | %s' % (d, title)
-            if e.name and e.name != 'default':
-                s += ' | ' + e.name
-            if path is not None:
-                s += ' | ' + path.split('/')[-1] # We're only interested in the file name.
-            bs = context.newString(s, style=dict(font=self.css('viewNameFont'), textFill=blackColor, fontSize=fontSize))
             tw, th = bs.size
-
             x = self.pl + cmDistance
             y = self.pb + e.h - cmSize + fontSize*2
-            self.context.textBox(bs, (x, y, e.pw, th)) # Draw on top of page.
+
+            # Draw on top of page.
+            self.context.textBox(bs, (x, y, e.pw, th)) 
+
+    def getNameString(self, e, path):
+        """
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.style import getRootStyle
+        >>> path = '_export/PageNameInfo.pdf'
+        >>> # Get default values.
+        >>> style = getRootStyle() 
+        >>> e = Element(style=style) 
+        >>> e.name = 'ElementName'
+        >>> view = PageView(context=context, style=style)
+        >>> view.showNameInfo = True
+        >>> s = view.getNameString(e, '/test/path')
+        >>> s.endswith('path')
+        True
+        """
+        dt = datetime.datetime.now()
+        d = dt.strftime("%A, %d. %B %Y %I:%M%p")
+
+        if e.isPage and e.parent is not None: 
+            # Test if there is a document.
+            pn = e.parent.getPageNumber(e)
+
+            # First or only page on this page number, then just show pn[0].
+            if pn[1] == 0: 
+                pn = pn[0]
+
+            # More than one page, then show total.
+            if len(e.parent.pages) > 1: 
+                pn = '%s/%d' % (pn, len(e.parent.pages))
+
+            title = e.parent.name or e.parent.title or 'Untitled'
+            s = 'Page %s | %s | %s' % (pn, d, title)
+
+        else: 
+            # Otherwise always page number #1.
+            pn = 1
+            title = 'Untitled'
+            s = 'Element %s | %s' % (d, title)
+
+        if e.name and e.name != 'default':
+            s += ' | %s' % e.name
+
+        if path is not None:
+            # We're only interested in the file name.
+             s += ' | %s' % path.split('/')[-1] 
+
+        return s
+
 
     #   D R A W I N G  F L O W S
 
