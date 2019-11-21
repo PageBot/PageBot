@@ -33,7 +33,7 @@ from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
-from pagebot.toolbox.color import color, Color, noColor, redColor
+from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.units import pt, upt, point2D
 
 class FlatContext(BaseContext):

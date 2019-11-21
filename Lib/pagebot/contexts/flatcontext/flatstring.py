@@ -153,8 +153,6 @@ class FlatString(BabelString):
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> fs = context.newString('ABC')
-        >>> isinstance(fs.s, text)
-        True
         >>> fs.asText()
         'ABC'
         """
@@ -171,11 +169,14 @@ class FlatString(BabelString):
         >>> fs
         ABC 
         >>> fs.textSize()
+        (26.09, 16.8)
         """
         w = self.strike.width(self.s)
         fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         h = leadingPt
+        w = round(w, 2)
+        h = round(h, 2)
         return w, h
 
     def textOverflow(self, w, h, align=LEFT):
