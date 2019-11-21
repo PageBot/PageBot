@@ -426,9 +426,9 @@ class PageView(BaseView):
 
             # Draw on top of page.
             x = self.pl + cmDistance
-            y = self.pb + e.h - cmSize + fontSize*2
+            y = 248 #self.pb + e.h - cmSize + fontSize*2
             self.context.stroke(registrationColor)
-            self.context.line((x, y), (x + 300, y)) 
+            self.context.line((x, y), (x + tw, y)) 
             self.context.textBox(bs, (x, y, e.pw, th)) 
 
     def getNameString(self, e, path):

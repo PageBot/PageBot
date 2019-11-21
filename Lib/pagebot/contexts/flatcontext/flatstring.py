@@ -170,9 +170,11 @@ class FlatString(BabelString):
         text."""
         # FIXME: Make this work in Flat same as in DrawBot
         #return self.b.textSize(s)
-        w = width(self.s)
-
-        return 100, 20
+        w = self.strike.width(str(self.s))
+        fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
+        h = leadingPt
+        return w, h
 
     def textOverflow(self, w, h, align=LEFT):
         # FIXME: Make this work in Flat same as in DrawBot
@@ -392,7 +394,7 @@ class FlatString(BabelString):
 
 
     @classmethod
-    def addCaseToString(cls, s, style):
+    def addCaseToString(cls, s, e, style):
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
@@ -422,7 +424,7 @@ class FlatString(BabelString):
         return fontPath
 
     @classmethod
-    def getRGBColor(cls, style):
+    def getColor(cls, style):
         c = None
 
         if 'textFill' in style:
@@ -442,9 +444,7 @@ class FlatString(BabelString):
             c = DEFAULT_COLOR
 
         assert isinstance(c, Color)
-        rgb = context.getFlatRGB(c)
-
-        return rgb
+        return c
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
@@ -471,15 +471,16 @@ class FlatString(BabelString):
         else:
             assert isinstance(style, dict)
 
-        s = cls.addCaseToString(s, style)
-        fsAttrs = cls.getFSAttrs(s, context, e=e, style=style, w=w, h=h,
-                pixelFit=pixelFit)
+        s = cls.addCaseToString(s, e, style)
+        #fsAttrs = cls.getFSAttrs(s, context, e=e, style=style, w=w, h=h,
+        #        pixelFit=pixelFit)
         fontPath = cls.getFontPath(style)
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(fontPath)
         strike = context.b.strike(flatFont)
-        rgb = cls.getRGBColor(style)
+        color = cls.getColor(style)
+        rgb = context.getFlatRGB(color)
         strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
         return cls(strike.text(s), context=context, style=style, strike=strike)
 
