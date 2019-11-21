@@ -789,8 +789,8 @@ class FontScaler(TTFTraverser):
                         "descent",
                         "lineGap",
                         "advanceWidthMax",
-                        "minLeftSideBearing",
-                        "minRightSideBearing",
+                        "minSideLeftBearing",
+                        "minSideRightBearing",
                         "xMaxExtent",
                         "caretOffset"]
         self._scaleAttrs(table, scaleFunction, attrsToScale)
@@ -800,8 +800,8 @@ class FontScaler(TTFTraverser):
                         "descent",
                         "lineGap",
                         "advanceHeightMax",
-                        "minTopSideBearing",
-                        "minBottomSideBearing",
+                        "minSideTopBearing",
+                        "minSideBottomBearing",
                         "yMaxExtent",
                         "reserved0",  # caretOffset; fontTools uses an old definition
         ]

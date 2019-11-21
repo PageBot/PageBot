@@ -176,8 +176,8 @@ class PageView(BaseView):
 
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
-                self.context.rect(x=page.leftBleed, y=page.bottomBleed, w=pw+br+bl, h=ph+bt+bb,
-                    fillColor=fillColor, e=page)
+                self.context.fill(fillColor)
+                self.context.rect(x=page.bleedLeft, y=page.bleedBottom, w=pw+br+bl, h=ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
