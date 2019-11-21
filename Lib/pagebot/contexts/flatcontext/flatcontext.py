@@ -562,12 +562,12 @@ class FlatContext(BaseContext):
         #(201.53pt, 16.8pt)
         >>> #bs.size
         #(201.53pt, 16.8pt)
-        >>> t = context.page.place(bs.s)
+        >>> t = context.page.place(bs.text)
         >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
         >>> t.overflow()
         False
         >>> bs = context.newString('ABC ' * 100000, style=style)
-        >>> t = context.page.place(bs.s)
+        >>> t = context.page.place(bs.text)
         >>> t = t.frame(x, y, w, h)
         >>> t.overflow()
         True
