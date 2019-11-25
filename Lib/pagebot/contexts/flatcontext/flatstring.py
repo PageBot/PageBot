@@ -30,7 +30,14 @@ from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, colo
 DEFAULT_COLOR = Color(0, 0, 0)
 
 class FlatString(BabelString):
-    """FlatString is a wrapper around the Flat string."""
+    """FlatString is a wrapper around the Flat string that should be
+    functionally compatible with a Cocoa attributed string and the CoreText
+    typeetter.
+    
+    * https://developer.apple.com/documentation/foundation/nsattributedstring
+    * https://developer.apple.com/documentation/coretext/ctframesetter-2eg
+
+    """
 
     BABEL_STRING_TYPE = 'flat'
     UNITS = 'pt'
@@ -45,6 +52,7 @@ class FlatString(BabelString):
         >>> fs = context.newString('ABC')
         >>> print(fs)
         ABC
+        >>> print(fs.style)
         >>> #bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
         #('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
         >>> #'/Verdana'in bs.fontPath
@@ -205,7 +213,9 @@ class FlatString(BabelString):
         return reCompiled.findall(u'%s' % self.s)
 
     @classmethod
-    def getFSAttrs(cls, t, context, e=None, style=None, w=None, h=None, pixelFit=True):
+    def getFSAttrs(cls, t, e=None, style=None, w=None, h=None,
+            pixelFit=True):
+        """Adds some defaults to the style."""
         fsAttrs = {}
 
         # Font selection.
@@ -475,8 +485,8 @@ class FlatString(BabelString):
             assert isinstance(style, dict)
 
         s = cls.addCaseToString(s, e, style)
-        #fsAttrs = cls.getFSAttrs(s, context, e=e, style=style, w=w, h=h,
-        #        pixelFit=pixelFit)
+        style = cls.getFSAttrs(s, e=e, style=style, w=w, h=h,
+                pixelFit=pixelFit)
         fontPath = cls.getFontPath(style)
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)

@@ -254,7 +254,9 @@ class FlatContext(BaseContext):
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
-        # FIXME: test units, page auto-sizes to parent doc.
+
+        NOTE: this generates a flat.page, not to be confused with PageBot page.
+        FIXME: test units, page auto-sizes to parent doc.
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -415,8 +417,10 @@ class FlatContext(BaseContext):
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
+        # TODO: move to flat string, which should keep track of multiple placed
+        # text parts.
+
         self.placedText = self.page.place(fs.text)
-        #print(self.placedText)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
@@ -479,12 +483,13 @@ class FlatContext(BaseContext):
         else:
             ypt = self.doc.height - ypt - hpt
 
+        # TODO: move to flat string, which should keep track of multiple placed
+        # text parts.
 
         self.placedText = self.page.place(fs.text)
         self.placedText.frame(xpt, ypt, wpt, hpt)
 
-        #print('flat context y: %s' % ypt)
-
+        # Calculates text difference when overflow occurs.
         if self.placedText.overflow():
             s1 = self.getPlacedString(self.placedText)
             s2 = str(fs)
@@ -494,9 +499,13 @@ class FlatContext(BaseContext):
         else:
             return ''
 
+    # TODO: move to flat string, which should keep track of multiple placed
+    # text parts.
     def getPlacedString(self, placedText):
         return ''.join(placedText.lines())
 
+    # TODO: move to flat string, which should keep track of multiple placed
+    # text parts.
     def getTextDiff(self, s1, s2):
         textDiff0 = ''
         textDiff1 = ''
@@ -511,6 +520,8 @@ class FlatContext(BaseContext):
 
         return textDiff0, textDiff1
 
+    # TODO: move to flat string, which should keep track of multiple placed
+    # text parts.
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context.
