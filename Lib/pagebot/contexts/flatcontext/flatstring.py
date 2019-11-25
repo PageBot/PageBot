@@ -24,7 +24,7 @@ from pagebot.contexts.base.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.style import css
-from pagebot.toolbox.units import upt, pt, isUnit, em
+from pagebot.toolbox.units import upt, pt, isUnit
 from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color
 
 DEFAULT_COLOR = Color(0, 0, 0)
@@ -61,15 +61,16 @@ class FlatString(BabelString):
         1.4em
         >>> pt(fs.lineHeight)
         16.8pt
-        >>> #fs.fontPath
-        >>> #'/Verdana'in bs.fontPath
-        #True
+        >>> from pagebot.toolbox.units import em
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
         >>> fs = context.newString('Example Text', style=style)
         >>> from pagebot.contexts.base.babelstring import BabelString
         >>> isinstance(fs, BabelString)
         True
-        >>> lines = fs.getTextLines(w=100)
+        >>> #fs.fontPath
+        >>> #'/Verdana'in bs.fontPath
+        #True
+        >>> #lines = fs.getTextLines(w=100)
         >>> #len(lines)
         #9
         >>> #line = lines[0]

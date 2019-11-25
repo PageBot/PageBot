@@ -832,121 +832,32 @@ class BaseContext(AbstractContext):
     # Text.
 
     def text(self, sOrBs, p):
-        """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString at position p.
+        """Draw the sOrBs text string at position p.
 
         NOTE: signature differs from DrawBot.
         """
-        if isinstance(sOrBs, BabelString):
-            # BabelString with a FormattedString inside.
-            s = sOrBs.s 
-            position = point2D(upt(p))
-        else:
-            # Regular string, use global font and size.
-            s = sOrBs
-            position = point2D(upt(p))
-            self.b.fontSize(self._fontSize)
-            self.font(self._font)
-        
-        # Render point units to value tuple
-        self.b.text(s, position) 
+        raise NotImplementedError
 
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
-        """Draw the sOrBs text string, can be a str or BabelString, including a
-        DrawBot FormattedString in rectangle r.
+        """Draws the sOrBs text string in rectangle r.
 
-        NOTE: signature differs from DrawBot.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> context.newDrawing()
-        >>> context.newPage(420, 420)
-        >>> txt = '''The 25-storey Jumeirah Beach Hotel, with its distinctive\
-design in the shape of a wave, has become one of the most successful\
-hotels in the world. Located on Jumeirah Beach, this well-known hotel\
-offers a wonderful holiday experience and a variety of pleasurable\
-activities. The many restaurants, bars and cafés, daily live\
-entertainment and sports facilities will keep you entertained, whilst\
-children will have a great time at the Sinbad’s Kids’ Club or Wild Wadi\
-WaterparkTM which is freely accessible through a private gate.'''
-        >>> bs = context.newString(txt)
-        >>> context.fontSize(14)
-        >>> tb = context.textBox(txt, r=(100, 450, 200, 300))
-        >>> tb = context.textBox(bs, r=(100, 450, 200, 300))
-        >>> #len(tb)
-        #112
-        >>> #tb
-        #'great time at the Sinbad’s Kids’ Club or Wild WadiWaterparkTM which is freely accessible through a private gate.'
-        """
-        tb = None 
-
-        if hasattr(sOrBs, 's'):
-            # Assumes it's a BabelString with a FormattedString inside.
-            sOrBs = sOrBs.s 
-        else:
-            if not isinstance(sOrBs, str):
-                # Otherwise converts to string if it is not already.
-                sOrBs = str(sOrBs) 
-
-        if clipPath is not None:
-            box = clipPath.bp
-            tb = self.b.textBox(sOrBs, clipPath.bp) 
-        elif isinstance(r, (tuple, list)):
-            # Renders rectangle units to value tuple.
-            xpt, ypt, wpt, hpt = upt(r)
-            #ypt = ypt - hpt
-            box = (xpt, ypt, wpt, hpt)
-            tb = self.b.textBox(sOrBs, box, align=None)
-        else:
-            msg = '%s.textBox has no box or clipPath defined' % self.__class__.__name__
-            raise ValueError(msg)
-
-        return tb
+        NOTE: signature differs from DrawBot."""
+        raise NotImplementedError
 
     def textOverflow(self, sOrBs, box, align=None):
-        """Answer the overflow text if flowing it in the box. The sOrBs can be a
-        plain string or a BabelString instance. In case a plain string is given
-        then the current font/fontSize/etc. settings of the builder are used.
-
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> context.newDrawing()
-        >>> context.newPage(420, 420)
-        >>> context.font('Verdana')
-        >>> context.fontSize(12)
-        >>> box = 0, 0, 100, 10
-        >>> s = 'AAA ' * 200
-        >>> len(s)
-        800
-        >>> of = context.textOverflow(s, box)
-        >>> of
-        ''
-        >>> len(of) # Should be 728.
-        0
-        >>> style = dict(font='Verdana', fontSize=12)
-        >>> bs = context.newString('AAA ' * 200, style=style)
-        >>> of = context.textOverflow(bs, box)
-        >>> of
-        ''
-        >>> #len(of) # Should be 740.
-        """
-        if isinstance(sOrBs, str):
-            return self.b.textOverflow(sOrBs, box, align=align) # Plain string
-
-        # Assume here it's a BabelString with a FormattedString inside
-        overflow = self.b.textOverflow(sOrBs.s, box, align=align)
-        bs = self.newString('')
-        bs.s = overflow
-        return bs
+        """Answer the part of the text that doesn't fit in the box. The sOrBs
+        can be a plain string or a BabelString instance. In case a plain string
+        is given then the current font / fontSize / ... settings of the builder
+        are used."""
+        raise NotImplementedError
 
     def textBoxBaselines(self, txt, box, align=None):
-        return self.b.textBoxBaselines(txt, box, align=align)
+        raise NotImplementedError
 
     def textSize(self, bs, w=None, h=None, align=None):
         """Answers the width and height of the formatted string with an
         optional given w or h."""
-        return self.b.textSize(bs.s, width=w, height=h, align=align)
+        raise NotImplementedError
 
     # String.
 
@@ -956,7 +867,7 @@ WaterparkTM which is freely accessible through a private gate.'''
 
     def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
-        `s` (converted to plain unicode string), using e or style as
+        `s` (converted to plain unicode string), using `e` or style as
         typographic parameters. Ignore and just answer `s` if it is already a
         self.STRING_CLASS instance and no style is forced. PageBot function.
         """
@@ -966,6 +877,7 @@ WaterparkTM which is freely accessible through a private gate.'''
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.newString(str(s), context=self, e=e,
                     style=style, w=w, h=h, pixelFit=pixelFit)
+
         assert isinstance(s, self.STRING_CLASS)
         return s
 
@@ -984,6 +896,7 @@ WaterparkTM which is freely accessible through a private gate.'''
             # Otherwise convert s into plain string, from whatever it is now.
             s = self.STRING_CLASS.fitString(str(s), context=self, e=e, style=style,
                 w=w, h=h, pixelFit=pixelFit)
+
         assert isinstance(s, self.STRING_CLASS)
         return s
 
