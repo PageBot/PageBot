@@ -193,6 +193,7 @@ class BabelString:
         raise NotImplementedError
 
     def getLineHeight(self):
+        # FIXME: get from style instead? see FlatString.
 
         if isinstance(self.leading, RelativeUnit):
             textHeight = self.leading.byBase(self.fontSize)

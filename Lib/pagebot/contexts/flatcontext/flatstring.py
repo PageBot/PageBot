@@ -24,7 +24,7 @@ from pagebot.contexts.base.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.style import css
-from pagebot.toolbox.units import upt, pt, isUnit
+from pagebot.toolbox.units import upt, pt, isUnit, em
 from pagebot.toolbox.color import Color, blackColor, inheritColor, noColor, color
 
 DEFAULT_COLOR = Color(0, 0, 0)
@@ -32,7 +32,7 @@ DEFAULT_COLOR = Color(0, 0, 0)
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
     functionally compatible with a Cocoa attributed string and the CoreText
-    typeetter.
+    typesetter.
     
     * https://developer.apple.com/documentation/foundation/nsattributedstring
     * https://developer.apple.com/documentation/coretext/ctframesetter-2eg
@@ -50,19 +50,26 @@ class FlatString(BabelString):
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> fs = context.newString('ABC')
-        >>> print(fs)
+        >>> fs
         ABC
-        >>> print(fs.style)
+        >>> fs.style
+        {'fallbackFont': 'Verdana', 'fontSize': 12, 'lineHeight': 16.8, 'fill': (0, 0, 0), 'stroke': None, 'underline': None}
         >>> #bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
-        #('Verdana', 80pt, 44, 0.55em, 0.73em, 1.01em, -0.21em)
+        >>> fs.fontSize
+        12
+        >>> fs.lineHeight
+        1.4em
+        >>> pt(fs.lineHeight)
+        16.8pt
+        >>> #fs.fontPath
         >>> #'/Verdana'in bs.fontPath
         #True
-        >>> #style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
-        >>> #bs = context.newString('Example Text', style=style)
-        >>> #from pagebot.contexts.base.babelstring import BabelString
-        >>> #isinstance(bs, BabelString)
-        #True
-        >>> #lines = bs.getTextLines(w=100)
+        >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
+        >>> fs = context.newString('Example Text', style=style)
+        >>> from pagebot.contexts.base.babelstring import BabelString
+        >>> isinstance(fs, BabelString)
+        True
+        >>> lines = fs.getTextLines(w=100)
         >>> #len(lines)
         #9
         >>> #line = lines[0]
@@ -108,6 +115,7 @@ class FlatString(BabelString):
     def _set_font(self, fontName):
         if fontName is not None:
             self.context.font(fontName)
+
         self.style['font'] = fontName
 
     font = property(_get_font, _set_font)
@@ -115,6 +123,14 @@ class FlatString(BabelString):
     def _get_fontSize(self):
         """Answers the current state of the fontSize."""
         return self.style.get('fontSize', DEFAULT_FONT_SIZE)
+
+    '''
+    def _get_fontFilePath(self):
+        """Return the path to the file of the current font."""
+        return self.s.fontFilePath()
+
+    fontPath = property(_get_fontFilePath)
+    '''
 
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
@@ -130,6 +146,17 @@ class FlatString(BabelString):
         #return leadingPt 
 
     leading = property(_get_leading)
+
+    def _get_lineHeight(self):
+        """Returns the current line height, based on the current font and
+        fontSize. If a lineHeight is set, this value will be returned."""
+        # FIXME: calculate instead? see BabelString.
+        return self.style.get('leading', DEFAULT_LEADING)
+        #fontSize = upt(self.fontSize)
+        #return em(self.s.fontLineHeight() / fontSize, base=fontSize)
+
+    # Compatibility with DrawBot API.
+    fontLineHeight = lineHeight = property(_get_lineHeight) 
 
     def _get_color(self):
         """Answers the current state of the color."""
@@ -263,7 +290,10 @@ class FlatString(BabelString):
         uLeading = css('leading', e, style)
 
         # Base for em or percent.
-        fsAttrs['lineHeight'] = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
+
+        lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
+        lineHeight = round(lineHeight, 2)
+        fsAttrs['lineHeight'] = lineHeight
 
         # Color values for text fill
         # Color: Fill the text with this color instance
