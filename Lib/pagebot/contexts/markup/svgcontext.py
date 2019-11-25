@@ -307,6 +307,12 @@ class SvgContext(BaseContext):
                                fill=self._svgFill, font_size=upt(self._fontSize), font_family=self._font)
         self._drawing.add(t)
 
+    def textOverflow(self, sOrBs, box, align=None):
+        pass
+
+    def textBoxBaselines(self, txt, box, align=None):
+        pass
+
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""
         self._ox += dx
@@ -317,6 +323,7 @@ class SvgContext(BaseContext):
         self._rotate = angle
 
     def textSize(self, s):
+        # FIXME: this is wrong.
         return pt(100, 20)
 
     #   A N I M A T I O N

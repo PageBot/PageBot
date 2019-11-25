@@ -22,7 +22,6 @@ import xml.etree.ElementTree as ET
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
 from pagebot.contexts.base.abstractcontext import AbstractContext
-from pagebot.contexts.base.babelstring import BabelString
 from pagebot.filepaths import DEFAULT_FONT_NAME
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
