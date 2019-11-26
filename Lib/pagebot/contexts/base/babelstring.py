@@ -23,6 +23,7 @@ class BabelString:
     representations needed for the builder classes.
 
     TODO: add abstract functions for proper inheritance.
+
     >>> from pagebot import getContext
     >>> context = getContext('Flat')
     >>> bla = context.newString('bla')
@@ -40,29 +41,14 @@ class BabelString:
         # Wraps the native string. Encloses the Flat, Drawbot or HTML string
         # in this wrapper.
 
-        '''
-        # Some checking, in case we get something else here.
-        assert style is None or isinstance(style, dict)
-
-        # Optional style to set the context parameters. In case defined, store
-        # current status here as property and set the current FormattedString
-        # for future additions. Also the answered metrics will not be based on
-        # these values.
-        if style is None:
-            style = {}
-
-        self.style = style
-        '''
-
         self.context = context
         self.language = DEFAULT_LANGUAGE
         self.hyphenation = False
 
-        # Filled in case w or h are defined and depending if the font is a
-        # variable font. Set to fitting font size, in case the size iterates
-        # to find width.
+        # In case we are sampling with a Variable Font. Filled in case w or h
+        # are defined and depending on if the font is a variable font. Set to
+        # fitting font size, in case the size iterates to find width.
         self.fittingFontSize = pt(0)
-        # In case we are sampling with a Variable Font.
         self.fittingFont = None
         self.fittingLocation = None
         self.isFitting = False
@@ -75,6 +61,15 @@ class BabelString:
         return self
 
     def __mul__(self, d):
+        """
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
+        >>> fs
+        ABC
+        >>> fs * 3
+        ABCABCABC
+        """
         s = self.s
 
         for n in range(d-1):

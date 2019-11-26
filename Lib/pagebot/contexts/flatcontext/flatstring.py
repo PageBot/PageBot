@@ -89,12 +89,13 @@ class FlatString(BabelString):
         >>> #run.xHeight, run.capHeight
         #(0.55em, 0.73em)
         """
-        self.context = context # Store context, in case we need more of its functions.
+        # Some checking, in case we get something else here.
+        assert style is None or isinstance(style, dict)
+        assert isinstance(s, str)
+    
         if style is None:
             style = {}
 
-        # Stores plain strings.
-        assert isinstance(s, str)
 
         self.data = []
 
@@ -114,15 +115,13 @@ class FlatString(BabelString):
         >>> id(fs) == id(fs2)
         False
         """
+        # FIXME: copy all data, instead of first block.
         s = self.data[0]['s']
         strike = self.data[0]['strike']
         style = self.data[0]['style']
         fs = FlatString(s, self.context, style=style, strike=strike)
         # TODO: copy the rest if there;
         return fs
-
-    def __repr__(self):
-        return self.s
 
     def __getitem__(self, given):
         """Answers a copy of self with a sliced string or with a single indexed
@@ -159,12 +158,21 @@ class FlatString(BabelString):
         fs.s = s[given]
         return fs
 
+    def __repr__(self):
+        return self.s
+
     def _get_s(self):
         """Answers the plain string."""
-        return self.data[0]['s']
+        s = ''
+        for d in self.data:
+            s += d['s']
+        return s
 
-    def _set_s(self, s):
-        self.data[0]['s'] = s
+    def _set_s(self, s, i=0):
+        d = self.data[i]
+        strike = d['strike']
+        d['s'] = s
+        d['text'] = strike.text(s)
 
     s = property(_get_s, _set_s)
 
@@ -344,14 +352,25 @@ class FlatString(BabelString):
         return s
 
     def append(self, s):
-        """Append string or FlatString to self."""
-        # FIXME
-        #try:
-        #    self.s += s.s
-        #except TypeError:
-        #    self.s += repr(s) # Convert to babel string, whatever it is.
-        raise NotImplementedError
+        """
+        Append string or FlatString to self.
 
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> bla = context.newString('bla')
+        >>> bla2 = context.newString('bla2')
+        >>> bla + bla2
+        blabla2
+        """
+        assert isinstance(s, (str, FlatString))
+
+        if isinstance(s, str):
+            fs = self.context.newString(s)
+        else:
+            fs = s
+
+        self.data.extend(fs.data)
+        
     MARKER_PATTERN = '==%s@%s=='
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
 
