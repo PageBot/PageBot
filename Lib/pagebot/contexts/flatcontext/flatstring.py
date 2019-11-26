@@ -55,7 +55,12 @@ class FlatString(BabelString):
         ABC
         >>> fs.style
         {'fallbackFont': 'Verdana', 'fontSize': 12, 'lineHeight': 16.8, 'fill': (0, 0, 0), 'stroke': None, 'underline': None}
-        >>> #bs.font, bs.fontSize, round(upt(bs.xHeight)), bs.xHeight, bs.capHeight, bs.ascender, bs.descender
+        >>> # fs.font
+        >>> # round(upt(fs.xHeight))
+        >>> # fs.xHeight
+        >>> # fs.capHeight
+        >>> # fs.ascender
+        >>> # fs.descender
         >>> fs.fontSize
         12
         >>> fs.lineHeight
@@ -84,33 +89,57 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.context = context # Store context, in case we need more of its functions.
-
-        # Stores plain string.
-        self.s = s
-        assert isinstance(s, str)
-
-        # Stores the Flat equivalent `text` of a DrawBot FormattedString.
-        self.text = strike.text(s)
-
         if style is None:
             style = {}
 
-        self.style = style
-        self.strike = strike
+        # Stores plain strings.
+        assert isinstance(s, str)
+        self.data = {}
+
+        # Stores the Flat equivalent `text` of a DrawBot FormattedString.
+        self.data[0] = dict(s=s, strike=strike, text=strike.text(s),
+                style=style)
+
         super().__init__(s, context, style=style)
 
     def __repr__(self):
-        return self.s
+        return self.data[0]['s']
 
     def _get_s(self):
-        """Answers the embedded Flat `text` class (the equivalent of a OS X
-        FormattedString) by property to enforce checking type of the string."""
-        return self._s
+        """Answers the plain string."""
+        return self.data[0]['s']
 
     def _set_s(self, s):
-        self._s = s
+        self.data[0]['s'] = s
 
     s = property(_get_s, _set_s)
+
+    def _get_style(self):
+        """Answers the style."""
+        return self.data[0]['style']
+
+    def _set_style(self, style):
+        self.data[0]['style'] = style
+
+    style = property(_get_style, _set_style)
+
+    def _get_strike(self):
+        """Answers the strike."""
+        return self.data[0]['strike']
+
+    def _set_strike(self, strike):
+        self.data[0]['strike'] = strike
+
+    strike = property(_get_strike, _set_strike)
+
+    def _get_text(self):
+        """Answers the text."""
+        return self.data[0]['text']
+
+    def _set_text(self, text):
+        self.data[0]['text'] = text
+
+    text = property(_get_text, _set_text)
 
     def _get_font(self):
         """Answers the current state of fontName."""
