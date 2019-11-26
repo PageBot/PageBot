@@ -15,7 +15,6 @@
 #     flatcontext.py
 #
 import math
-import difflib
 from sys import platform
 from os import listdir
 from os.path import exists
@@ -91,7 +90,6 @@ class FlatContext(BaseContext):
         self._pages = []
         self.originTop = False
         self.transform3D = Transform3D()
-        self.placedText = None
 
     #   D O C U M E N T
 
@@ -420,7 +418,7 @@ class FlatContext(BaseContext):
         # TODO: move to flat string, which should keep track of multiple placed
         # text parts.
 
-        self.placedText = self.page.place(fs.text)
+        placedText = self.page.place(fs.text)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
@@ -435,7 +433,7 @@ class FlatContext(BaseContext):
             self.textFill(c)
 
         # Renders unit tuple to value tuple.
-        self.placedText.position(xpt, ypt)
+        placedText.position(xpt, ypt)
 
     def textBox(self, fs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
@@ -475,6 +473,8 @@ class FlatContext(BaseContext):
         elif not isinstance(fs, FlatString):
             raise PageBotFileFormatError('type is %s' % type(fs))
 
+        assert self.page is not None, 'FlatString.text: self.page is not set.'
+
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
@@ -483,45 +483,9 @@ class FlatContext(BaseContext):
         else:
             ypt = self.doc.height - ypt - hpt
 
-        # TODO: move to flat string, which should keep track of multiple placed
-        # text parts.
+        box = (xpt, ypt, wpt, hpt)
+        return fs.textBox(self.page, box)
 
-        self.placedText = self.page.place(fs.text)
-        self.placedText.frame(xpt, ypt, wpt, hpt)
-
-        # Calculates text difference when overflow occurs.
-        if self.placedText.overflow():
-            s1 = self.getPlacedString(self.placedText)
-            s2 = str(fs)
-            assert len(s1) <= len(s2)
-            diff0, _ = self.getTextDiff(s1, s2)
-            return diff0
-        else:
-            return ''
-
-    # TODO: move to flat string, which should keep track of multiple placed
-    # text parts.
-    def getPlacedString(self, placedText):
-        return ''.join(placedText.lines())
-
-    # TODO: move to flat string, which should keep track of multiple placed
-    # text parts.
-    def getTextDiff(self, s1, s2):
-        textDiff0 = ''
-        textDiff1 = ''
-
-        for i, s in enumerate(difflib.ndiff(s2, s1)):
-            if s[0]==' ':
-                continue
-            elif s[0]=='-':
-                textDiff0 += s[-1]
-            elif s[0]=='+':
-                textDiff1 += s[-1]
-
-        return textDiff0, textDiff1
-
-    # TODO: move to flat string, which should keep track of multiple placed
-    # text parts.
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context.
@@ -544,8 +508,9 @@ class FlatContext(BaseContext):
         >>> of
         'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
         """
+        assert self.page is not None, 'FlatString.text: self.page is not set.'
         # FIXME: this actually shows the text?
-        s = self.textBox(fs, r=box, align=align)
+        s = fs.textOverflow(self.page, box, align=align)
         return s
 
     def textSize(self, bs, w=None, h=None):

@@ -17,6 +17,7 @@
 
 import os
 import re
+import difflib
 
 from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
@@ -67,6 +68,8 @@ class FlatString(BabelString):
         >>> from pagebot.contexts.base.babelstring import BabelString
         >>> isinstance(fs, BabelString)
         True
+        >>> fs2 = context.newString('Second Text', style=style)
+        >>> #fs + fs2
         >>> #fs.fontPath
         >>> #'/Verdana'in bs.fontPath
         #True
@@ -215,9 +218,47 @@ class FlatString(BabelString):
         h = round(h, 2)
         return w, h
 
-    def textOverflow(self, w, h, align=LEFT):
+    def textBox(self, page, box, align=LEFT):
+        # TODO: should keep track of multiple text parts.
+        # TODO: implement alignment.
+        x, y, w, h = box
+        placedText = page.place(self.text)
+        placedText.frame(x, y, w, h)
+
+        # Calculates text difference when overflow occurs.
+        if placedText.overflow():
+            s1 = self.getPlacedString(placedText)
+            s2 = str(self)
+            assert len(s1) <= len(s2)
+            diff0, _ = self.getTextDiff(s1, s2)
+            return diff0
+        else:
+            return ''
+
+    def getPlacedString(self, placedText):
+        # TODO: keep track of multiple placed text parts.
+        return ''.join(placedText.lines())
+
+    def getTextDiff(self, s1, s2):
+        # TODO: keep track of multiple placed text parts.
+        textDiff0 = ''
+        textDiff1 = ''
+
+        for i, s in enumerate(difflib.ndiff(s2, s1)):
+            if s[0]==' ':
+                continue
+            elif s[0]=='-':
+                textDiff0 += s[-1]
+            elif s[0]=='+':
+                textDiff1 += s[-1]
+
+        return textDiff0, textDiff1
+
+    #def textOverflow(self, w, h, align=LEFT):
+    def textOverflow(self, page, box, align=LEFT):
         # FIXME: Make this work in Flat same as in DrawBot
-        return ''
+        s = self.textBox(page, box, align=align)
+        return s
 
     def append(self, s):
         """Append string or FlatString to self."""
