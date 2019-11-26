@@ -18,6 +18,7 @@
 import os
 import re
 import difflib
+from copy import deepcopy
 
 from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
@@ -94,16 +95,69 @@ class FlatString(BabelString):
 
         # Stores plain strings.
         assert isinstance(s, str)
-        self.data = {}
+
+        self.data = []
 
         # Stores the Flat equivalent `text` of a DrawBot FormattedString.
-        self.data[0] = dict(s=s, strike=strike, text=strike.text(s),
-                style=style)
+        self.data.append(dict(s=s, strike=strike, text=strike.text(s),
+                style=style))
 
-        super().__init__(s, context, style=style)
+        super().__init__(context)
+
+    def copy(self):
+        """
+
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
+        >>> fs2 = fs.copy()
+        >>> id(fs) == id(fs2)
+        False
+        """
+        s = self.data[0]['s']
+        strike = self.data[0]['strike']
+        style = self.data[0]['style']
+        fs = FlatString(s, self.context, style=style, strike=strike)
+        # TODO: copy the rest if there;
+        return fs
 
     def __repr__(self):
-        return self.data[0]['s']
+        return self.s
+
+    def __getitem__(self, given):
+        """Answers a copy of self with a sliced string or with a single indexed
+        character.
+
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('blablabla')
+        >>> fs
+        blablabla
+        >>> bs = fs[2:]
+        >>> bs
+        ablabla
+        >>> fs
+        blablabla
+        >>> fs[:5]
+        blabl
+        >>> fs[5]
+        a
+        """
+        if isinstance(given, slice):
+            fs = self.copy()
+            s = fs.s
+            fs.s = s[given.start:given.stop]
+            return fs
+
+        # Untouched.
+        if isinstance(given, (list, tuple)):
+            return self 
+
+        # Single index.
+        fs = self.copy()
+        s = fs.s
+        fs.s = s[given]
+        return fs
 
     def _get_s(self):
         """Answers the plain string."""

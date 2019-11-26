@@ -36,11 +36,11 @@ class BabelString:
     (<class 'pagebot.contexts.flatcontext.flatstring.FlatString'>, <class 'pagebot.contexts.base.babelstring.BabelString'>, <class 'object'>)
     """
 
-    def __init__(self, s, context, style=None):
+    def __init__(self, context):
         # Wraps the native string. Encloses the Flat, Drawbot or HTML string
         # in this wrapper.
-        self.s = s
 
+        '''
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
 
@@ -52,6 +52,7 @@ class BabelString:
             style = {}
 
         self.style = style
+        '''
 
         self.context = context
         self.language = DEFAULT_LANGUAGE
@@ -96,21 +97,21 @@ class BabelString:
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> fs = context.newString('blablabla')
-        >>> # [2:]
-        >>> fs[2:]
+        >>> fs
+        blablabla
+        >>> bs = fs[2:]
+        >>> bs
         ablabla
         >>> fs
         blablabla
-        >>> fs[:5]
-        blabl
-        >>> fs[0]
-        b
-        >>> fs[5]
-        a
+        >>> #fs[:5]
+        #blabl
+        >>> #fs[5]
+        #a
         """
         if isinstance(given, slice):
             bs = copy(self)
-            s = repr(bs)
+            s = bs.s
             bs.s = s[given.start:given.stop]
             return bs
 
@@ -120,12 +121,16 @@ class BabelString:
 
         # Single index.
         bs = copy(self)
-        s = repr(bs)
+        s = bs.s
         bs.s = s[given]
         return bs
 
     def append(self, s):
-        """Appends string or BabelString to self."""
+        """Appends string or BabelString to self.
+        
+        TODO: what about differently formatted strings?
+        """
+
         if isinstance(s, str):
             self.s += s
         elif isinstance(s, BabelString):
