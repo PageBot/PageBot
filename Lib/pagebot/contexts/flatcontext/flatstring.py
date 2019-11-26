@@ -18,7 +18,6 @@
 import os
 import re
 import difflib
-from copy import deepcopy
 
 from pagebot.constants import (LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING,
         DEFAULT_FALLBACK_FONT_PATH)
@@ -96,10 +95,11 @@ class FlatString(BabelString):
         if style is None:
             style = {}
 
-
         self.data = []
 
-        # Stores the Flat equivalent `text` of a DrawBot FormattedString.
+        # For each block of text, stores the plain string, the Flat `strike`
+        # stylings and the Flat `text` (which is comparable to the DrawBot
+        # FormattedString which in turn wraps a Cocoa NSAttributedString).
         self.data.append(dict(s=s, strike=strike, text=strike.text(s),
                 style=style))
 

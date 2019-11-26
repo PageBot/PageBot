@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -24,13 +25,17 @@ class HtmlString(BabelString):
     BABEL_STRING_TYPE = 'html'
 
     def __init__(self, s, context, language=None, style=None):
-        self.context = context # Store the context, in case we need it.
+        # Some checking, in case we get something else here.
+        assert style is None or isinstance(style, dict)
+        assert isinstance(s, str)
         self.s = s # Enclose the HTML string
+
         if style is None:
             style = {}
+
         self.style = style
         self.language = language or DEFAULT_LANGUAGE
-        super().__init__(s, context, style=style)
+        super().__init__(context)
 
     def _get_font(self):
         """Answers the current state of fontName."""
