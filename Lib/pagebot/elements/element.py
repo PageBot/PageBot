@@ -1766,21 +1766,12 @@ class Element:
         conversion defined (no reliable way of doing that, they should be created
         in the right context from the beginning).
 
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> e = Element(context=context)
-        """
-
-        """
-        TODO: Get more docTests to work
+        >>> #TODO: Get more docTests to work
         >>> bs = e.newString('ABC')
         >>> str(bs.s)
-        'ABC'
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-        >>> context = FlatContext()
-        >>> e = Element(context=context)
-        >>> bs = e.newString('ABC')
-        >>> #str(bs.s)
         'ABC'
         """
         if e is None:
@@ -1788,7 +1779,6 @@ class Element:
 
         assert self.context is not None
         return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
-        #return None
 
     # Most common properties
 

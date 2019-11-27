@@ -164,6 +164,7 @@ class FlatString(BabelString):
     def _get_s(self):
         """Answers the plain string."""
         s = ''
+
         for d in self.data:
             s += d['s']
         return s
@@ -178,28 +179,35 @@ class FlatString(BabelString):
 
     def _get_style(self):
         """Answers the style."""
+        #for d in self.data:
         return self.data[0]['style']
 
-    def _set_style(self, style):
-        self.data[0]['style'] = style
+    def _set_style(self, style, i=0):
+        self.data[i]['style'] = style
 
     style = property(_get_style, _set_style)
 
     def _get_strike(self):
         """Answers the strike."""
+        #for d in self.data:
         return self.data[0]['strike']
 
-    def _set_strike(self, strike):
-        self.data[0]['strike'] = strike
+    def _set_strike(self, strike, i=0):
+        self.data[i]['strike'] = strike
 
     strike = property(_get_strike, _set_strike)
 
     def _get_text(self):
         """Answers the text."""
-        return self.data[0]['text']
+        #for d in self.data:
+        if len(self.data) == 1:
+            return self.data[0]['text']
+        else:
+            # TODO: needs a delta operator.
+            return self.data[0]['text']
 
-    def _set_text(self, text):
-        self.data[0]['text'] = text
+    def _set_text(self, text, i=0):
+        self.data[i]['text'] = text
 
     text = property(_get_text, _set_text)
 
@@ -310,6 +318,9 @@ class FlatString(BabelString):
         return w, h
 
     def textBox(self, page, box, align=LEFT):
+        """
+        Places text segments.
+        """
         # TODO: should keep track of multiple text parts.
         # TODO: implement alignment.
         x, y, w, h = box

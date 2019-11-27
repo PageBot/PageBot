@@ -344,13 +344,10 @@ class TextBox(Element):
         recalculation as soon as bs.textLines is called again. If bs is not a
         BabelString instance, then create one, defined by the self.context, and
         based on the style of self."""
-        #assert isinstance(bs, (str, self.context.STRING_CLASS))
-        #self.bs += self.newString(bs, e=self, style=style)
         if self.bs is None:
             self.bs = bs
         else:
             self.bs += bs
-        #self.bs = self.newString(bs, e=self, style=style)
 
     def appendMarker(self, markerId, arg=None):
         self.bs.appendMarker(markerId, arg)
@@ -364,28 +361,26 @@ class TextBox(Element):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.name in ('DrawBotContext', 'FlatContext', 'SvgContext')
+        >>> context.name in ('DrawBotContext', 'FlatContext')
         True
-        """
-        """
-        TODO: Get these tests or similar to work.
         >>> font = findFont('Roboto-Regular')
         >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
-        >>> tb = TextBox(bs, w=100, h=None)
+        >>> tb = TextBox(bs, w=100, h=None, context=context)
         >>> tb.bs
         ABC
+        >>> # TODO: verify text sizes.
         >>> tb.getTextSize()[1]
-        436.0
+        173.6pt
         >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(24)))
-        >>> tb = TextBox(bs, w=100, h=None)
+        >>> tb = TextBox(bs, w=100, h=None, context=context)
         >>> tb.getTextSize()[1]
-        28.0
+        33.6pt
         >>> from pagebot import getContext
         >>> c = getContext('Flat')
         >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
-        >>> tb = TextBox(bs, w=100, h=None)
-        >>> tb.getTextSize()[1] # ???
-        73.0
+        >>> tb = TextBox(bs, w=100, h=None, context=context)
+        >>> tb.getTextSize()[1]
+        16.8pt
         """
         if bs is None:
             bs = self.bs
