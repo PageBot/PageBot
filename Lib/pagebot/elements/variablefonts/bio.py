@@ -30,10 +30,10 @@ class Bio(TextBox):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> blurb = Blurb()
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = Letter
         >>> m = 80
         >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)

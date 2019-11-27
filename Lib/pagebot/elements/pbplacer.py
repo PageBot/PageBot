@@ -21,9 +21,9 @@ class Placer(Element):
     """Draw an area showing to be a place holder, e.g. reserved places of images in a template.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+    >>> from pagebot import getContext
     >>> from pagebot.document import Document
-    >>> c = DrawBotContext()
+    >>> c = getContext()
     >>> w, h = pt(300, 400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]

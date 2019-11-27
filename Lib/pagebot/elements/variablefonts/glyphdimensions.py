@@ -29,10 +29,10 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.units import em
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
         >>> style = dict(gh=16, fill=0.95, leading=em(1.4), fontSize=24)
@@ -52,9 +52,8 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import Font
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         >>> from pagebot.conditions import *
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = Letter
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('RobotoDelta-VF')

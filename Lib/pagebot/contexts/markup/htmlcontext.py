@@ -117,8 +117,8 @@ class HtmlContext(BaseContext):
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
         # FIXME: get size with PIL
-        #from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        #return DrawBotContext().imageSize(path)
+        #from pagebot import getContext
+        #return getContext().imageSize(path)
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
@@ -126,8 +126,8 @@ class HtmlContext(BaseContext):
         that we have DrawBotContext available, we need to use another lib, such as PIL.
         For now, we use DrawBotContext"""
         # FIXME: scale with PIL
-        #from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        #return DrawBotContext().scaleImage(path, w, h, index=index,
+        #from pagebot import getContext
+        #return getContext().scaleImage(path, w, h, index=index,
         #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
         #    force=force)
 

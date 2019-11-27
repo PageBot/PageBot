@@ -36,11 +36,11 @@ class Paragraphs(BaseFontShow):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.color import color
         >>> from pagebot.toolbox.units import em
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
         >>> style = dict(gh=16, fill=color(0.95), leading=em(1.4))

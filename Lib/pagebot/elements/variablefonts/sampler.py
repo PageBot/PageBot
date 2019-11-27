@@ -29,11 +29,11 @@ class Sampler(TextBox):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter, RIGHT
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.toolbox.color import color
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
         >>> style = dict(fill=color(0.95), leading=em(1.4), fontSize=48, xTextAlign=RIGHT)

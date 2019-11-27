@@ -34,10 +34,10 @@ class AnimationFrame(Rect):
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter, RIGHT
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.conditions import *
         >>> from pagebot.toolbox.units import em
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = 2040, 1020 # Type Network banners
         >>> duration = 3 # Seconds
         >>> framesPerSecond = 10

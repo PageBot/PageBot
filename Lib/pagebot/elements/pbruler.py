@@ -50,10 +50,10 @@ class Ruler(Element):
     def build(self, view, origin, **kwargs):
         """Build the Ruler in the current context
 
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.document import Document
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = pt(300, 400)
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]

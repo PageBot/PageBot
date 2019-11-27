@@ -17,8 +17,8 @@ from pagebot.elements.element import Element
 
 class UIButton(Element):
     """
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> def buttonCallback(sender):
         ...     print('Callback of', sender)
         >>> e = Button(w=100, h=24, name='My Button', callback=buttonCallback, context=context)

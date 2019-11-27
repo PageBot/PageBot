@@ -30,8 +30,8 @@ class PhotoCalendar(BaseCalendar):
     """Create a photobook with a number of images in a layout and their 
     captions on each page.
 
-    >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-    >>> context = DrawBotContext()
+    >>> from pagebot import getContext
+    >>> context = getContext()
     >>> bk = PhotoCalendar()
     >>> doc = bk.makeSample(context)
     >>> doc.export('_export/PhotoBookSample.pdf')

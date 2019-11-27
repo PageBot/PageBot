@@ -33,7 +33,7 @@ class Image(Element):
     >>> from pagebot import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
-    >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+    >>> #from pagebot import getContext
     >>> from pagebot.constants import A4
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
@@ -511,8 +511,8 @@ class Image(Element):
     def gaussianBlur(self, radius=None):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        >>> context = DrawBotContext()
+        >>> from pagebot import getContext
+        >>> context = getContext()
         >>> from pagebot import getResourcesPath
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
         >>> e = Image(path, context=context)

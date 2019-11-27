@@ -43,11 +43,11 @@ class FontIcon(Element):
         """    
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        >>> from pagebot import getContext
         >>> from pagebot.toolbox.color import color, whiteColor
         >>> from pagebot.elements import newRect
         >>> from pagebot.document import Document
-        >>> c = DrawBotContext()
+        >>> c = getContext()
         >>> w, h = 300, 400
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
