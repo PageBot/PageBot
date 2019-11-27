@@ -303,7 +303,7 @@ class Element:
         self.conditions = conditions
 
         # Optional storage of self.context.BezierPath() to clip the content of
-        # self.  Also note the possibility of the self.childClipPath property,
+        # self. Also note the possibility of the self.childClipPath property,
         # which returns a PageBotPath instance, constructed from the position
         # and layout of self.elements
         if clipPath is not None:
@@ -1016,7 +1016,6 @@ class Element:
 
         >>> from pagebot.conditions import *
         >>> from pagebot import getContext
-        >>> #context = getContext('Flat')
         >>> context = getContext()
         >>> context.newDrawing()
         >>> context.newPage()
@@ -1024,6 +1023,9 @@ class Element:
         >>> e.childClipPath
         <PageBotPath 1>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
+        """
+        """
+        FIXME: we still need to implement boolean operations for Flat.
         >>> len(e.childClipPath)
         7
         >>> e.childClipPath.points
