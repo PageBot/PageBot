@@ -30,7 +30,8 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.elements.paths.pagebotpath import PageBotPath # PageBot generic equivalent of DrawBot.BezierPath
+# PageBot generic equivalent of DrawBot.BezierPath
+from pagebot.elements.paths.pagebotpath import PageBotPath 
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
@@ -49,7 +50,8 @@ class Element:
     isText = False
     isTextBox = False
     #isFlow property answers if nextElement or prevElement is defined.
-    isPage = False # Set to True by Page-like elements.
+    # Set to True by Page-like elements.
+    isPage = False 
     isView = False
     isImage = False
 
@@ -94,7 +96,8 @@ class Element:
         True
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
-        >>> e = Element() # Default element has default proportions
+        >>> # Default element has default proportions
+        >>> e = Element() 
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
         >>> from pagebot import getContext
@@ -130,7 +133,7 @@ class Element:
 
         # Guaranteed to be unique. Cannot be set.
         self._eId = uniqueID(self)
-        # Optional systen/user/app id, used by external application, such as
+        # Optional system / user / app ID, used by external application, such as
         # SketchContext. Can be None. If used self.findBysid(sId) works
         # recursively
         self.sId = sId 
@@ -144,9 +147,11 @@ class Element:
         # If undefined yAlign and parent has origin on top, then default yAlign
         # to TOP. Local value is overwritten if there is a parent defined.
         self._originTop = originTop 
+
         # Property seeks parent-->page.originTop value.
         if yAlign is None and self.originTop: 
             yAlign = TOP
+
         self.xAlign = xAlign
         self.yAlign = yAlign
         self.zAlign = zAlign
@@ -379,7 +384,8 @@ class Element:
             name = ':'+self.title
         elif self.name:
             name = ':'+self.name
-        else: # No naming, show unique self.eId:
+        else: 
+            # No naming, show unique self.eId:
             name = ':'+self.eId
 
         if self.elements:
@@ -392,12 +398,15 @@ class Element:
         """Answers total amount of elements, placed or not. Note the various
         ways units, x, y, w and h can be defined.
 
-        >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) # Set as separate units
+        >>> # Set as separate units.
+        >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) 
         >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
-        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) # E.g. set as tuple of units
+        >>> # E.g. set as tuple of units.
+        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) 
         >>> i1 = e.appendElement(childE1)
         >>> i2 = e.appendElement(childE2)
-        >>> i1, i2, len(e) # Index of appended elements and length of parent
+        >>> # Index of appended elements and length of parent.
+        >>> i1, i2, len(e) 
         (0, 1, 2)
         """
         return len(self.elements)
@@ -423,9 +432,13 @@ class Element:
             return self._theme
         if self.parent is not None:
             return self.parent.theme
-        return None # No theme of parent defined.
+
+        # No theme of parent defined.
+        return None 
+
     def _set_theme(self, theme):
         self._theme = theme
+
     theme = property(_get_theme, _set_theme)
 
     def checkStyleArgs(self, d):
@@ -466,7 +479,7 @@ class Element:
 
     def _get_resolutionFactors(self):
         """Answer the style value self.css('resolutionFactors') for image
-        cacheing size factors.  If set to None, the resolutionFactor defaults
+        cacheing size factors. If set to None, the resolutionFactor defaults
         to DEFAULT_RESOLUTION_FACTORS. This will indicate, e.g. value 2, to
         write a thumbnail png twice the size it will be used in.
         """
@@ -575,7 +588,8 @@ class Element:
 
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', xy=pt(100, 200), size=pt(100, 120))
-        >>> hex2dec(e.eId) > 1000 # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
+        >>> # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
+        >>> hex2dec(e.eId) > 1000 
         True
         """
         return self._eId
@@ -626,13 +640,16 @@ class Element:
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child')
         >>> i = e.appendElement(e1)
-        >>> child = e.get('Child') # Get child element by its name
+        >>> # Get child element by its name
+        >>> child = e.get('Child') 
         >>> child is e1
         True
-        >>> child = e.get(e1.eId) # Get child elements by is eId
+        >>> # Get child elements by is eId
+        >>> child = e.get(e1.eId) 
         >>> child is e1
         True
-        >>> child.name, child.parent.name # Child has e as parent
+        >>> # Child has e as parent
+        >>> child.name, child.parent.name 
         ('Child', 'Parent')
         >>> e.get('OtherName') is None
         True
@@ -671,12 +688,14 @@ class Element:
         >>> e = Element(elements=[e])
         >>> e = Element(elements=[e])
         >>> page = Page(elements=[e])
-        >>> parentPage = eb.getElementPage() # Find page upwards of parent line, starting a lowest e.
+        >>> # Find page upwards of parent line, starting a lowest e.
+        >>> parentPage = eb.getElementPage() 
         >>> page is parentPage
         True
         >>> eb = Element(name='Bottom')
         >>> e = Element(elements=[eb])
-        >>> eb.getElementPage() is None # Element parent line does not contain a page.
+        >>> # Element parent line does not contain a page.
+        >>> eb.getElementPage() is None 
         True
         """
         if self.isPage:
@@ -727,16 +746,19 @@ class Element:
         >>> e2 = Element(name='Deeper')
         >>> e3 = Element(name='Child', elements=[e1, e2])
         >>> e = Element(name='Parent', elements=[e3])
-        >>> child = e.get('Child') # Get child element by its name
+        >>> # Get child element by its name
+        >>> child = e.get('Child') 
         >>> child is e3
         True
-        >>> e.get('Deeper') is e1, e.get('Deeper') is e2 # Find first down the list
+        >>> # Find first down the list
+        >>> e.get('Deeper') is e1, e.get('Deeper') is e2 
         (True, False)
         """
         if self.name == name:
             return self
         for e in self.elements:
-            found = e.getElementByName(name) # Don't search on next page yet.
+            # Don't search on next page yet.
+            found = e.getElementByName(name) 
             if found is not None:
                 return found
         return None
@@ -755,13 +777,16 @@ class Element:
         >>> e2 = Element(name='DeeperChild', elements=[e1])
         >>> e3 = Element(name='Child', elements=[e2])
         >>> e = Element(name='Parent', elements=[e3])
-        >>> elements = e.deepFindAll(name='DeeperChild') # Get all child elements matching name
+        >>> # Get all child elements matching name
+        >>> elements = e.deepFindAll(name='DeeperChild') 
         >>> len(elements)
         2
-        >>> elements = e.deepFindAll(pattern='Child') # Get all child elements matching pattern
+        >>> # Get all child elements matching pattern
+        >>> elements = e.deepFindAll(pattern='Child') 
         >>> len(elements)
         3
-        >>> elements = e.deepFindAll(pattern='XYZ') # Answer empty list if no element can be found
+        >>> # Answer empty list if no element can be found
+        >>> elements = e.deepFindAll(pattern='XYZ') 
         >>> len(elements)
         0
         """
@@ -769,7 +794,8 @@ class Element:
         if result is None:
             result = []
         for e in self.elements:
-            if pattern is not None and pattern in e.name: # Simple pattern match
+            # Simple pattern match
+            if pattern is not None and pattern in e.name: 
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
@@ -790,13 +816,16 @@ class Element:
         >>> e2 = Element(name='OtherChild')
         >>> e3 = Element(name='Child')
         >>> e = Element(name='Parent', elements=[e1, e2, e3])
-        >>> elements = e.findAll(name='OtherChild') # Get all child element matching name
+        >>> # Get all child element matching name
+        >>> elements = e.findAll(name='OtherChild') 
         >>> len(elements)
         2
-        >>> elements = e.findAll(pattern='Child') # Get all child element matching name
+        >>> # Get all child element matching name
+        >>> elements = e.findAll(pattern='Child') 
         >>> len(elements)
         3
-        >>> elements = e.findAll(pattern='XYZ') # Answer empty list if no element can be found
+        >>> # Answer empty list if no element can be found
+        >>> elements = e.findAll(pattern='XYZ') 
         >>> len(elements)
         0
         """
@@ -806,7 +835,8 @@ class Element:
         for e in self.elements:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                  result.append(e)
-            elif pattern is not None and pattern in e.name: # Simple pattern match
+                # Simple pattern match
+            elif pattern is not None and pattern in e.name: 
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
@@ -830,21 +860,27 @@ class Element:
         >>> e2 = Element(name='DeeperChild', parent=e1)
         >>> e3 = Element(name='DeeperChild', parent=e2)
         >>> e4 = Element(name='DeepestChild', parent=e3)
-        >>> element = e.deepFind(name='DeeperChild') # Get all child elements matching name
+        >>> # Get all child elements matching name
+        >>> element = e.deepFind(name='DeeperChild') 
         >>> element is e2
         True
-        >>> element = e.deepFind(pattern='Child') # Get first child elements matching pattern
+        >>> # Get first child elements matching pattern
+        >>> element = e.deepFind(pattern='Child') 
         >>> element is e1
         True
-        >>> e.select(name='child') is None # Search is case-sensitive
+        >>> # Search is case-sensitive
+        >>> e.select(name='child') is None 
         True
-        >>> element = e.deepFind(pattern='Deepest') # Get first child elements matching pattern
+        >>> # Get first child elements matching pattern
+        >>> element = e.deepFind(pattern='Deepest') 
         >>> element is e4
         True
-        >>> element = e.deepFind(pattern='XYZ') # Answer None if element does not exist
+        >>> # Answer None if element does not exist
+        >>> element = e.deepFind(pattern='XYZ') 
         >>> element is None
         True
-        >>> element = e.select(name='DeeperChild') # Get all child elements matching name
+        >>> # Get all child elements matching name
+        >>> element = e.select(name='DeeperChild') 
         >>> element is e2
         True
         """
@@ -861,7 +897,8 @@ class Element:
                 return found
         return None
 
-    select = deepFind # Intuitive name with identical result. Can be used in MarkDown.
+    # Intuitive name with identical result. Can be used in MarkDown.
+    select = deepFind 
 
     def find(self, name=None, pattern=None, cls=None):
         """Perform a dynamic find for the named element(s) in self.elements.
@@ -877,13 +914,16 @@ class Element:
         >>> e1 = Element(name='OtherChild', parent=e)
         >>> e2 = Element(name='OtherChild', parent=e)
         >>> e3 = Element(name='LastChild', parent=e)
-        >>> element = e.find(name='OtherChild') # Get first child element matching name
+        >>> # Get first child element matching name
+        >>> element = e.find(name='OtherChild') 
         >>> element is e1
         True
-        >>> element = e.find(pattern='LastChild') # Get first child element matching name
+        >>> # Get first child element matching name
+        >>> element = e.find(pattern='LastChild') 
         >>> element is e3
         True
-        >>> element = e.find(pattern='XYZ') # Get first child element matching name
+        >>> # Get first child element matching name
+        >>> element = e.find(pattern='XYZ') 
         >>> element is None
         True
         """
@@ -892,7 +932,8 @@ class Element:
         for e in self.elements:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                 return e
-            if pattern is not None and pattern in e.name: # Simple pattern match
+            # Simple pattern match
+            if pattern is not None and pattern in e.name: 
                 return e
             if name is not None and name in (e.cssId, e.name):
                 return e
@@ -943,9 +984,11 @@ class Element:
         >>> copyE = e.copy()
         >>> copyE.name == e.name, copyE.eId == e.eId
         (True, False)
-        >>> copyE is e, copyE['Child'] is e['Child'] # Element tree is copied
+        >>> # Element tree is copied
+        >>> copyE is e, copyE['Child'] is e['Child'] 
         (False, False)
-        >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 # Values are copied
+        >>> # Values are copied
+        >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 
         (True, True, True)
         >>> e.copy().eId != e.eId
         True
@@ -957,8 +1000,10 @@ class Element:
         self._elements = []
         copied = copy.deepcopy(self)
         self._elements = savedElements
+
         # Set some attributes on the copy
         copied._eId = uniqueID()
+
         if parent is not None:
             copied.parent = parent
         for e in self.elements:
@@ -1012,17 +1057,19 @@ class Element:
         >>> e2 = Element(name='Child2')
         >>> e3 = Element(name='Child3')
         >>> e = Element(name='Parent', elements=[e1, e2])
-        >>> index = e.setElementByIndex(e3, 1) #
+        >>> index = e.setElementByIndex(e3, 1)
         >>> e.elements[1] is e3, index == 1
         (True, True)
-        >>> e.setElementByIndex(e2, 20) # Add at end
+        >>> # Add at end
+        >>> e.setElementByIndex(e2, 20) 
         2
         >>> e4 = Element(name='Child4')
         >>> e.setElementByIndex(e2, -2) is None
         True
         """
         if index < 0:
-            return None # Don't accept.
+            # Don't accept.
+            return None 
         if index < len(self.elements):
             self._elements[index] = e
             if self.eId:
@@ -1043,7 +1090,8 @@ class Element:
         >>> e3 = Element(name='Child3', parent=e)
         >>> e.elements[-1] is e3
         True
-        >>> i = e.appendElement(e1) # Append elements that is already child of e
+        >>> # Append elements that is already child of e
+        >>> i = e.appendElement(e1) 
         >>> # Now e1 is at end of list
         >>> e.elements[0] is e2, e.elements[-1] is e1, e.elements[1] is e3
         (True, True, True)
@@ -1081,16 +1129,23 @@ class Element:
         >>> e3 = Element(name='Child3', parent=e)
         >>> e.removeElement(e2)
         <Element:Child2 (0pt, 0pt, 100pt, 100pt)>
-        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None # e2 has no parent now.
+        >>> # e2 has no parent now.
+        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None 
         (True, True, True)
         """
         assert e.parent is self
-        e.setParent(None) # Unlink the parent reference of e
+
+        # Unlink the parent reference of e
+        e.setParent(None) 
+
         if e.eId in self._eIds:
             del self._eIds[e.eId]
+
         if e in self._elements:
             self._elements.remove(e)
-        return e # Answer the unlinked elements for convenience of the caller.
+
+        # Answer the unlinked elements.
+        return e 
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
@@ -1104,13 +1159,16 @@ class Element:
         >>> e = Element(name='Parent', elements=[e1, e2])
         >>> e.getElementsAtPoint((20, 30)) == [e1]
         True
-        >>> e.getElementsAtPoint((None, 40)) == [e2] # Search on wildcard x
+        >>> # Search on wildcard x
+        >>> e.getElementsAtPoint((None, 40)) == [e2] 
         True
-        >>> e.getElementsAtPoint((20, None)) == [e1, e2] # Find both on wildcard y
+        >>> # Find both on wildcard y
+        >>> e.getElementsAtPoint((20, None)) == [e1, e2] 
         True
         """
         elements = []
-        px, py, pz = point3D(point) # Add z if tuple is only (x,y)
+        # Add z if tuple is only (x,y)
+        px, py, pz = point3D(point) 
         for e in self.elements:
             ex, ey, ez = e.xyz
             if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
@@ -1142,7 +1200,8 @@ class Element:
 
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40, w=100)
-        >>> e3 = Element(name='Child3', x=20, y=40, w=200) # Same position, different size.
+        >>> # Same position, different size.
+        >>> e3 = Element(name='Child3', x=20, y=40, w=200) 
         >>> e = Element(name='Parent', elements=[e1, e2, e3])
         >>> e1.xyz, e2.xyz, e3.xyz
         ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt), (20pt, 40pt, 0pt))
@@ -1154,7 +1213,8 @@ class Element:
         """
         positions = {}
         for e in self.elements:
-            rxyz = rv(e.xyz) # Point needs to be tuple to be used a key.
+            # Point needs to be tuple to be used a key.
+            rxyz = rv(e.xyz) 
             if rxyz not in positions:
                 positions[rxyz] = []
             positions[rxyz].append(e)
@@ -1239,17 +1299,20 @@ class Element:
         >>> e2_1 = Element(parent=page, name='e1', nextElement='e2')
         >>> e2_2 = Element(parent=page, name='e2', nextElement='e3')
         >>> e2_3 = Element(parent=page, name='e3')
-        >>> flow = e1_1.getFlow() # Identical to e1_1.flow
+        >>> # Identical to e1_1.flow
+        >>> flow = e1_1.getFlow() 
         >>> len(flow)
         5
         >>> flow[1].page.pn
         (1, 0)
-        >>> flow[3].page.pn # Cross page border
+        >>> # Cross page border
+        >>> flow[3].page.pn 
         (2, 0)
 
         """
         if flow is None:
-            flow = []  # List of elementa.
+            # List of elementa.
+            flow = []  
         e = self
         while e is not None:
             flow.append(e)
@@ -1297,7 +1360,8 @@ class Element:
 
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element()
-        >>> e.baselineGrid is None # Undefined without style or parent style.
+        >>> # Undefined without style or parent style.
+        >>> e.baselineGrid is None 
         True
         >>> e.baselineGrid = 12
         >>> e.baselineGrid
@@ -1309,7 +1373,8 @@ class Element:
         >>> e.baselineGrid
         14pt
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %
+        # In case relative units, use this as base for %
+        base = dict(base=self.parentH, em=self.em) 
         return units(self.css('baselineGrid'), base=base)
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = units(baselineGrid)
@@ -1319,7 +1384,8 @@ class Element:
         """Answers the baseline grid startf, as defined in the (parent)style.
 
         >>> e = Element()
-        >>> e.baselineGridStart is None # Undefined without style or parent style.
+        >>> # Undefined without style or parent style.
+        >>> e.baselineGridStart is None 
         True
         >>> e.baselineGridStart = 17
         >>> e.baselineGridStart
@@ -1328,7 +1394,8 @@ class Element:
         >>> e.baselineGridStart
         15pt
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base for %
+        # In case relative units, use this as base for %
+        base = dict(base=self.parentH, em=self.em) 
         return units(self.css('baselineGridStart'), base=base)
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
