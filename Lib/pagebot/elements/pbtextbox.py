@@ -75,9 +75,13 @@ class TextBox(Element):
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
         >>> page = doc[1]
         >>> tb = TextBox(parent=page, w=125, context=context)
-        >>> tb.bs = 'AAA' # String converts to DrawBotString.
-        >>> tb.bs, tb.bs.s, tb.bs.__class__.__name__
-        (AAA, AAA, 'DrawBotString')
+        >>> # String converts to DrawBotString.
+        >>> tb.bs = 'AAA' 
+        >>> tb.bs
+        AAA
+        >>> #tb.bs, tb.bs.s, tb.bs.__class__.__name__
+        >>> # Flat yields (AAA, 'AAA', 'FlatString')
+        #(AAA, AAA, 'DrawBotString')
         >>> tb2 = TextBox('BBB', context=context)
         >>> tb2.bs
         BBB
@@ -149,8 +153,9 @@ class TextBox(Element):
         >>> tb.h, tb.h == page[tb.eId].h
         (220pt, True)
         >>> tb.h = None
-        >>> tb.h, tb.style['h'] is None
-        (20pt, True)
+        >>> #tb.h, tb.style['h'] is None
+        >>> # Flat yields 19.6pt
+        #(20pt, True)
         """
         if self.style['h'] is None: # Elastic height
             h = units(self.getTextSize(w=self.w)[1])

@@ -390,6 +390,37 @@ class FlatString(BabelString):
             fs = s
 
         self.data.extend(fs.data)
+
+    def getStyleAtIndex(self, index):
+        """
+
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> bla = context.newString('bla')
+        >>> style = bla.getStyleAtIndex(2)
+        >>> style['fontSize']
+        12
+        >>> style = {'fontSize': 16}
+        >>> bla2 = context.newString('bla2', style=style)
+        >>> bla = bla + bla2
+        >>> style = bla.getStyleAtIndex(4)
+        >>> style['fontSize']
+        16
+        >>> bla.getStyleAtIndex(7)
+        False
+        """
+        i = 0
+
+        for j, value in enumerate(self.data):
+            d = self.data[j]
+            s = d['s']
+
+            for char in s:
+                if index == i:
+                    return d['style']
+                i += 1
+
+        return False
         
     MARKER_PATTERN = '==%s@%s=='
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
@@ -407,6 +438,7 @@ class FlatString(BabelString):
     def getFSAttrs(cls, t, e=None, style=None, w=None, h=None,
             pixelFit=True):
         """Adds some defaults to the style."""
+        fName = 'FlatString.getFSAttrs'
         fsAttrs = {}
 
         # Font selection.
@@ -470,7 +502,12 @@ class FlatString(BabelString):
                 cFill = color(cFill)
             elif cFill is None:
                 cFill = noColor
-            assert isinstance(cFill, Color), ('FlatString.getFSAttrs: Fill color "%s" is not Color in style %s' % (cFill, style))
+
+            msg = ('%s: Fill color "%s" is not Color in style %s' % (fName,
+                cFill, style))
+
+            assert isinstance(cFill, Color), msg
+
             if cFill is noColor:
                 fsAttrs['fill'] = None
             elif cFill.isCmyk:
@@ -488,7 +525,8 @@ class FlatString(BabelString):
         strokeWidth = css('textStrokeWidth', e, style)
 
         if strokeWidth is not None:
-            assert isUnit(strokeWidth), ('FlatString.getFSAttrs: strokeWidth %s must of type Unit' % strokeWidth)
+            msg = ('%s: strokeWidth %s must of type Unit' % (fName, strokeWidth))
+            assert isUnit(strokeWidth), msg
             fsAttrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
 
         if cStroke is not inheritColor:
@@ -497,7 +535,8 @@ class FlatString(BabelString):
             elif cStroke is None:
                 cStroke = noColor
 
-            msg = 'FlatString.getFSAttrs] Stroke color "%s" is not Color in style %s' % (cStroke, style)
+            msg = '%s: Stroke color "%s" is not Color in style %s' % (fName,
+                    cStroke, style)
             assert isinstance(cStroke, Color), msg
 
             # None is value to disable stroke drawing.
@@ -598,7 +637,6 @@ class FlatString(BabelString):
             fsAttrs['language'] = sLanguage
 
         return fsAttrs
-
 
     @classmethod
     def addCaseToString(cls, s, e, style):

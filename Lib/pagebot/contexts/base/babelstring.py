@@ -165,15 +165,18 @@ class BabelString:
     size = property(_get_size)
 
     def columnStart(self, firstColumnIndent):
-        """Allows the string to set itself to `firstLineIndex =
-        firstColumnIndent` if that makes sense for inheriting BabelString
-        classes. Default is just to answer `selfz."""
+        """Allows the string to set itself to
+        
+            `firstLineIndex = firstColumnIndent`
+        
+        if that makes sense for inheriting BabelString classes. Default is just
+        to answer `self`."""
         return self
 
     def getStyleAtIndex(self, index):
-        """Answers the constructed style of the string a position index of
+        """Answers the constructed style of the string as position index of
         chars."""
-        return {}
+        raise NotImplementedError
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None,
@@ -205,8 +208,6 @@ class BabelString:
             textHeight = self.leading * self.fontSize.pt
 
         return textHeight
-
-
 
     # To be implemented:
     #def textSize(self, w=None, h=None):
