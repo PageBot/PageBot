@@ -206,6 +206,8 @@ class BabelString:
 
         return textHeight
 
+
+
     # To be implemented:
     #def textSize(self, w=None, h=None):
     #def asText(self):

@@ -356,9 +356,18 @@ class FlatString(BabelString):
 
         return textDiff0, textDiff1
 
-    #def textOverflow(self, w, h, align=LEFT):
     def textOverflow(self, page, box, align=LEFT):
-        # FIXME: Make this work in Flat same as in DrawBot
+        """
+        Calculates the overflowing text using the textBox function.
+
+        NOTE: signature differs from DrawBotString, where the box is calcuted
+        using width and height only.
+
+        def textOverflow(self, page, w, h, align=LEFT):
+            box = (0, 0, w, h)
+            ...
+
+        """
         s = self.textBox(page, box, align=align)
         return s
 
