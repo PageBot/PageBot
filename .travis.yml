@@ -1,8 +1,6 @@
 ---
 #language: python3
 matrix:
-  allow_failures:
-    - os: linux
   include:
     - os: linux
       language: python
