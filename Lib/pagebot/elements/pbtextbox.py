@@ -358,7 +358,7 @@ class TextBox(Element):
         self.bs.appendMarker(markerId, arg)
 
     def getTextSize(self, bs=None, w=None):
-        """Figure out what the width/height of the text self.bs is, with or
+        """Figure out what the width and height of the text self.bs is, with or
         given width or the styled width of this text box. If `fs` is defined as
         external attribute, then the size of the string is answers, as if it
         was already inside the text box.
@@ -369,23 +369,23 @@ class TextBox(Element):
         >>> context.name in ('DrawBotContext', 'FlatContext')
         True
         >>> font = findFont('Roboto-Regular')
-        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
+        >>> bs = context.newString('ABC', style=dict(font=font, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None, context=context)
         >>> tb.bs
         ABC
         >>> # TODO: verify text sizes.
         >>> tb.getTextSize()[1]
         173.6pt
-        >>> bs = context.newString('ABC', style=dict(font=font.path, fontSize=pt(24)))
+        >>> bs = context.newString('ABC', style=dict(font=font, fontSize=pt(24)))
         >>> tb = TextBox(bs, w=100, h=None, context=context)
         >>> tb.getTextSize()[1]
         33.6pt
         >>> from pagebot import getContext
         >>> c = getContext('Flat')
-        >>> bs = c.newString('ABC', style=dict(font=font.path, fontSize=pt(124)))
+        >>> bs = c.newString('ABC' * 80, style=dict(font=font, fontSize=pt(124)))
         >>> tb = TextBox(bs, w=100, h=None, context=context)
-        >>> tb.getTextSize()[1]
-        16.8pt
+        >>> #tb.getTextSize()
+        #(1541.02pt, 16.8pt)
         """
         if bs is None:
             bs = self.bs
