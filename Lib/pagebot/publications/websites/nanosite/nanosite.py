@@ -37,47 +37,51 @@ class NanoSite(BaseSite):
     >>> from pagebot.themes import BackToTheCity
     >>> from css.nanostyle_css import cssPy
     >>> name = 'PageBot NanoSite'
-    >>> theme = BackToTheCity() # Pick a theme for this site.
-    >>> srcPath = getResourcesPath() + '/texts/SITE.md' # Get example markDown file from resources.
+    >>> # Pick a theme for this site.
+    >>> theme = BackToTheCity() 
+    >>> # Get example markDown file from resources.
+    >>> srcPath = getResourcesPath() + '/texts/SITE.md' 
     >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
-    >>> doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
-    >>> doc
-    <Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
+    >>> #doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
+    >>> #doc
+    #<Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
     """
     DEFAULT_VIEW_ID = MampView.viewId
 
     def makeNavigation(self, doc):
-        """After all pages of the site are generated, we can use the compiled page tree
-        from doc to let all Navigation elements build the menu for each page.
-        """
+        """After all pages of the site are generated, we can use the compiled
+        page tree from doc to let all Navigation elements build the menu for
+        each page."""
         for pages in doc.pages.values():
             for page in pages:
                 navigation = page.select('Navigation')
                 if navigation is not None:
-                    navigation.pageTree = doc.getPageTree() # Get a fresh one for each page
+                    # Get a fresh one for each page.
+                    navigation.pageTree = doc.getPageTree() 
 
     def makeTemplate(self, doc):
         """Make a default template that is the typical base for a NanoSite.
-        More details can be filled by the source markDown file.
-        """
+        More details can be filled by the source markDown file."""
 
         default = Template('Default', context=doc.context)
-        wrapper = Wrapper(parent=default) # Create main page wrapper
+        # Create main page wrapper.
+        wrapper = Wrapper(parent=default) 
 
-        header = Header(parent=wrapper) # Header to hold logo and navigation elements
+        # Header to hold logo and navigation elements.
+        header = Header(parent=wrapper) 
 
         #logoString = doc.context.newString(SITE_NAME)
         Logo(parent=header, logo=doc.title)
         BurgerButton(parent=header)
 
-        # Responsive conditional menus
+        # Responsive conditional menus.
         Navigation(parent=header)
         MobileMenu(parent=header)
 
-        # Just make a simple content container in this template.
-        # Rest of content is created upon request in MarkDown
+        # Just make a simple content container in this template. Rest of
+        # content is created upon request in MarkDown
         Content(parent=wrapper)
 
         # Default Footer at bottom of every page.
@@ -86,12 +90,12 @@ class NanoSite(BaseSite):
         doc.addTemplate('default', default)
         return default
 
-    def produce(self, srcPaths, viewId=None, cssPy=None, resourcePaths=None, cssUrls=None,
-            defaultImageWidth=None, name=None, title=None, theme=None, verbose=False, spellCheck=False, **kwargs):
-        """Create a Document with the current settings of self. Then build the document using
-        the defined view (detault is MampView.viewId) to make the Mamp site.
-        Finally answer the created Document instance.
-        """
+    def produce(self, srcPaths, viewId=None, cssPy=None, resourcePaths=None,
+            cssUrls=None, defaultImageWidth=None, name=None, title=None,
+            theme=None, verbose=False, spellCheck=False, **kwargs):
+        """Create a Document with the current settings of self. Then build the
+        document using the defined view (detault is MampView.viewId) to make
+        the Mamp site. Finally answer the created Document instance."""
         if defaultImageWidth is None:
             defaultImageWidth = MAX_IMAGE_WIDTH
         if theme is None:
@@ -99,10 +103,12 @@ class NanoSite(BaseSite):
         if not isinstance(srcPaths, (list, tuple)):
             srcPaths = [srcPaths]
 
-        doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID, autoPages=1, defaultImageWidth=defaultImageWidth,
-            name=name or self.name, title=title or self.title, theme=theme, **kwargs)
+        doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID,
+                autoPages=1, defaultImageWidth=defaultImageWidth, name=name or
+                self.name, title=title or self.title, theme=theme, **kwargs)
 
-        # Write the CSS, set the view css paths and translate cssPy into css source file.
+        # Write the CSS, set the view css paths and translate cssPy into css
+        # source file.
         view = doc.view
         view.resourcePaths = resourcePaths or ['css']
         view.cssUrls = cssUrls or ['css/normalized.css']
@@ -120,24 +126,29 @@ class NanoSite(BaseSite):
                 # Travis crashes on relative path.
                 print(traceback.format_exc())
 
-        # Make the all pages and elements of the site as empty containers, that then can
-        # be selected and filled by the composer, using the galley content.
-        # Of the MarkDown text can decide to create new elements inside selected elements.
+        # Make the all pages and elements of the site as empty containers, that
+        # then can be selected and filled by the composer, using the galley
+        # content. Of the MarkDown text can decide to create new elements
+        # inside selected elements.
         template = self.makeTemplate(doc)
 
         page = doc[1]
-        page.applyTemplate(template) # Copy element tree to page.
+        # Copy element tree to page.
+        page.applyTemplate(template) 
 
-        # By default, the typesetter produces a single Galley with content and code blocks.
+        # By default, the typesetter produces a single Galley with content and
+        # code blocks.
         t = Typesetter(doc.context)
         for srcPath in srcPaths:
             galley = t.typesetFile(srcPath)
 
-        # Create a Composer for this document, then create pages and fill content.
+        # Creates a Composer for this document, then create pages and fill
+        # content.
         composer = Composer(doc)
 
-        # The composer executes the embedded Python code blocks that indicate where content should go.
-        # by the HtmlContext. Feedback by the code blocks is added to verbose and errors list
+        # The composer executes the embedded Python code blocks that indicate
+        # where content should go. by the HtmlContext. Feedback by the code
+        # blocks is added to verbose and errors list
         targets = dict(doc=doc, page=page, template=template)
         composer.compose(galley, targets=targets)
 
@@ -148,7 +159,8 @@ class NanoSite(BaseSite):
             if targets['errors']:
                 print('Errors\n', '\n'.join(targets['errors']))
 
-        # Find the navigation elements and fill them, now we know all the pages.
+        # Find the navigation elements and fill them, now we know all the
+        # pages.
         self.makeNavigation(doc)
 
         if spellCheck:
@@ -161,10 +173,15 @@ class NanoSite(BaseSite):
         MAMP_PATH = '/Applications/MAMP/htdocs/'
         siteName =  doc.name.replace(' ', '_')
         filePath = MAMP_PATH + siteName
+
         if verbose:
             print('Site path: %s' % MAMP_PATH)
+
         if os.path.exists(filePath):
-            shutil.rmtree(filePath) # Comment this line, if more safety is required. In that case manually delete.
+            # Comment this line, if more safety is required. In that case
+            # manually delete.
+            shutil.rmtree(filePath) 
+
         doc.export(filePath)
 
         url = view.getUrl(siteName)
@@ -172,9 +189,7 @@ class NanoSite(BaseSite):
 
         return doc
 
-
 if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

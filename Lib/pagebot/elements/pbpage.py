@@ -475,22 +475,29 @@ class Page(Element):
         >>> page = doc[1]
         >>> page.title = 'Home'
         >>> page.cssCode = 'body {background-color:black}'
-        >>> exportPath = '_export/Home' # No extension for site folder if exporting to a website
+        >>> # No extension for site folder if exporting to a website
+        >>> exportPath = '_export/Home' 
         >>> #doc.export(exportPath)
         >>> #result = os.system('open %s/index.html' % exportPath)
         """
-        context = view.context # Get current context and builder from this view.
-        b = context.b # This is a bit more efficient than self.b once we got the context fixed.
+        # Get current context and builder from this view.
+        context = view.context 
+        # This is a bit more efficient than self.b once we got the context
+        # fixed.
+        b = context.b 
         b.clearHtml()
 
         #b.clearCss()
         #self.build_scss(view)
 
-        if self.htmlCode: # In case the full HTML is here, then just output it.
-            b.addHtml(self.htmlCode) # This is mostly used for debug and new templates.
+        # In case the full HTML is here, then just output it.
+        if self.htmlCode: 
+            # This is mostly used for debug and new templates.
+            b.addHtml(self.htmlCode) 
         elif self.htmlPaths is not None:
             for htmlPath in self.htmlPaths:
-                b.importHtml(htmlPath) # Add HTML content of file, if path is not None and the file exists.
+                # Add HTML content of file, if path is not None and the file exists.
+                b.importHtml(htmlPath) 
         else:
             self.write_html(view, path)
 
@@ -505,12 +512,15 @@ class Page(Element):
             # Make sure that the root path folder of the site is there
             if not path.endswith('/'):
                 path += '/'
-            # Decide to save as folders (in which care relative image/CSS/JS paths
-            # also need to be made relative.
+
+            # Decide to save as folders (in which care relative image/CSS/JS
+            # paths also need to be made relative.
             if not view.saveUrlAsDirectory:
                 url = url.replace('/', '-')
+
             filePath = path + url
             dirPath = path2Dir(filePath)
+
             # Then create the folders that this page needs.
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
