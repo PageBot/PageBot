@@ -118,6 +118,7 @@ class FlatContext(BaseContext):
         # Convert units to point values.
         wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+        self.newPage(self.doc)
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
@@ -264,6 +265,7 @@ class FlatContext(BaseContext):
         if doc is not None:
             w = w or doc.w
             h = h or doc.h
+
         if self.doc is None:
             self.newDocument(w, h)
 
