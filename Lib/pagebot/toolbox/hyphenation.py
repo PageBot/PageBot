@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -47,18 +48,37 @@ def reset():
 
 def hyphenatedWords(language=DEFAULT_LANGUAGE):
     """Answers the dictionary of hyphenated words for this language (default is
-    English)."""
+    English).
+    
+    
+    >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
+    >>> # English hyphenated words in the library.
+    >>> len(hyphenatedWords(LANGUAGE_EN)) 
+    172365
+    >>> # Dutch hyphenated words in the library.
+    >>> len(hyphenatedWords(LANGUAGE_NL)) 
+    235900
+    >>> # Brazilian-Portugese hyphenated words in the library.
+    >>> len(hyphenatedWords(LANGUAGE_PT_BR)) 
+    27437
+    >>> # Danish hyphenated words in the library
+    >>> len(hyphenatedWords(LANGUAGE_DK)) 
+    183426
+    """
     if language not in languages:
         # Not initialized yet, try to read.
-        path = getResourcesPath() + '/languages/%s.txt' % language
+        path = getResourcesPath() + '/languages/%s.txt' % language.lower()
+
         if os.path.exists(path):
             languages[language] = words = {}
             f = codecs.open(path, mode="r", encoding="utf-8")
             hyphenatedLines = f.read().split('\n')
             f.close()
+
             for line in hyphenatedLines:
                 if line.startswith('#'):
                     continue
+
                 words[line.replace('-','')] = line
     return languages.get(language)
 
@@ -69,18 +89,6 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     hyphenated. If all fails, then answer None.
 
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
-    >>> # English hyphenated words in the library
-    >>> len(hyphenatedWords(LANGUAGE_EN)) 
-    172365
-    >>> # Dutch hyphenated words in the library
-    >>> len(hyphenatedWords(LANGUAGE_NL)) 
-    235900
-    >>> # Brazil-Portugeese hyphenated words in the library
-    >>> len(hyphenatedWords(LANGUAGE_PT_BR)) 
-    27437
-    >>> # Danish hyphenated words in the library
-    >>> len(hyphenatedWords(LANGUAGE_DK)) 
-    183426
     >>> # E N G L I S H
     >>> hyphenate('housing', LANGUAGE_EN)
     'hous-ing'
@@ -119,8 +127,6 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     >>> # First [100:105] words of the sorted list of all language words in the dictionary.
     >>> words('nl')[100:105]
     ['aanaardt', 'aanademing', 'aanbad', 'aanbak', 'aanbakken']
-    """
-    """
     >>> # TODO: doctests not working on Linux.
     >>> # P O R T U G E S E
     >>> hyphenate('abarcar', LANGUAGE_PT_BR)
@@ -129,6 +135,8 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     'ce-fa-lor-ra-qui-di-a-no'
     >>> hyphenate('abarcarcefalorraquidiano', LANGUAGE_PT_BR, True)
     'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
+    """
+    """
     >>> # TODO: Unicode not showing well in docTest feedback
     >>> # D A N I S H
     >>> hyphenate('adessiverne', LANGUAGE_DK)
