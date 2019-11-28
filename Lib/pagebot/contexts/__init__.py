@@ -24,10 +24,13 @@ DrawBotContext = None
 CanvasContext = None
 
 if platform == 'darwin':
-    # TODO: check if drawBotContext exists first, ask to install.
-    from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-    from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
-    # from pagebot.contexts.idmlcontext import IdmlContext
+    try:
+        # TODO: check if drawBotContext exists first, ask to install.
+        from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
+    except:
+        print('Please install pagebotcocoa.')
+        print('pip install pagebotcocoa')
 
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None
