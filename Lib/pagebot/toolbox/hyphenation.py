@@ -53,17 +53,20 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
     
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
     >>> # English hyphenated words in the library.
-    >>> len(hyphenatedWords(LANGUAGE_EN)) 
+    >>> words = hyphenatedWords(LANGUAGE_EN)
+    >>> len(words) 
     172365
+    >>> #sorted(words.keys())[10]
+    >>> #sorted(words.values())[10]
     >>> # Dutch hyphenated words in the library.
     >>> len(hyphenatedWords(LANGUAGE_NL)) 
     235900
     >>> # Brazilian-Portugese hyphenated words in the library.
     >>> len(hyphenatedWords(LANGUAGE_PT_BR)) 
-    27437
+    27436
     >>> # Danish hyphenated words in the library
     >>> len(hyphenatedWords(LANGUAGE_DK)) 
-    183426
+    183425
     """
     if language not in languages:
         # Not initialized yet, try to read.
@@ -78,8 +81,12 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
             for line in hyphenatedLines:
                 if line.startswith('#'):
                     continue
+                key = line.replace('-','')
 
-                words[line.replace('-','')] = line
+                if len(key) == 0:
+                    continue
+
+                words[key] = line
     return languages.get(language)
 
 def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
