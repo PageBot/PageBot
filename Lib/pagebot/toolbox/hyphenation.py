@@ -69,19 +69,24 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     hyphenated. If all fails, then answer None.
 
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
-    >>> len(hyphenatedWords(LANGUAGE_EN)) # English hyphenated words in the library
+    >>> # English hyphenated words in the library
+    >>> len(hyphenatedWords(LANGUAGE_EN)) 
     172365
-    >>> len(hyphenatedWords(LANGUAGE_NL)) # Dutch hyphenated words in the library
+    >>> # Dutch hyphenated words in the library
+    >>> len(hyphenatedWords(LANGUAGE_NL)) 
     235900
-    >>> len(hyphenatedWords(LANGUAGE_PT_BR)) # Brazil-Portugeese hyphenated words in the library
+    >>> # Brazil-Portugeese hyphenated words in the library
+    >>> len(hyphenatedWords(LANGUAGE_PT_BR)) 
     27437
-    >>> len(hyphenatedWords(LANGUAGE_DK)) # Danish hyphenated words in the library
+    >>> # Danish hyphenated words in the library
+    >>> len(hyphenatedWords(LANGUAGE_DK)) 
     183426
     >>> # E N G L I S H
     >>> hyphenate('housing', LANGUAGE_EN)
     'hous-ing'
     >>> # Single English words
-    >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN) # English is default
+    >>> # English is default
+    >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN) 
     ('Tut-ankh-a-mun', 'Tut-ankh-a-mun')
     >>> # D U T C H Typically testing the hyphenation of combined Dutch words
     >>> hyphenate('marmerplaatjes', LANGUAGE_NL)
@@ -114,6 +119,9 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     >>> # First [100:105] words of the sorted list of all language words in the dictionary.
     >>> words('nl')[100:105]
     ['aanaardt', 'aanademing', 'aanbad', 'aanbak', 'aanbakken']
+    """
+    """
+    >>> # TODO: doctests not working on Linux.
     >>> # P O R T U G E S E
     >>> hyphenate('abarcar', LANGUAGE_PT_BR)
     'a-bar-car'
@@ -121,9 +129,7 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     'ce-fa-lor-ra-qui-di-a-no'
     >>> hyphenate('abarcarcefalorraquidiano', LANGUAGE_PT_BR, True)
     'a-bar-car-ce-fa-lor-ra-qui-di-a-no'
-    """
-    """
-    TODO: Unicode not showing well in docTest feedback
+    >>> # TODO: Unicode not showing well in docTest feedback
     >>> # D A N I S H
     >>> hyphenate('adessiverne', LANGUAGE_DK)
     'ades-si-ver-ne'
@@ -145,8 +151,10 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
 
     hWords = hyphenatedWords(language) or {} # Empty dictionary if the langueage does not exist.
     hyphenated = hWords.get(word)
+
     if hyphenated is not None: # If exact, then stop searching.
         return hyphenated
+
     # In case the language support combined words, try to find matching parts.
     if checkCombined and len(word) > 4:
         # Checking on combined words (as in 'nl' and 'de').
@@ -154,12 +162,16 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
         for i in range(4, len(word)-4):
             w1 = word[:i]
             hw1 = hyphenate(w1, language, True)
+
             if hw1 is None:
                 continue
+
             w2 = word[i:]
             hw2 = hyphenate(w2, language, True)
+
             if hw2 is None:
                 continue
+
             return hw1 + '-' + hw2
     return None
 
