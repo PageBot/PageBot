@@ -39,35 +39,20 @@ class Rect(Element):
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
     >>> doc.export('_export/TestRect.pdf')
-
     """
-    """ TODO: Get to work in Flat
-    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-    >>> from pagebot.document import Document
-    >>> c = FlatContext()
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
-    >>> page = doc[1]
-    >>> e = Rect(parent=page, x=0, y=20, w=page.w, h=3)
-    >>> # Allow the context to create a new document and page canvas. Normally view does it.
-    >>> c.newPage(w, h)
-    >>> e.build(doc.getView(), (0, 0))
-    >>> e.xy
-    (0pt, 20pt)
-    >>> e.size
-    (300pt, 3pt)
-    """
-
     # No separate build, default behavior is in Element.build()
 
     def build_inds(self, view, origin, drawElements=True):
-        """It is better to have a separate InDesignContext build tree, since we need more
-        information down there than just drawing instructions.
-        This way the InDesignContext just gets the PageBot Element passed over, using
-        it's own API."""
+        """It is better to have a separate InDesignContext build tree, since we
+        need more information down there than just drawing instructions. This
+        way the InDesignContext just gets the PageBot Element passed over,
+        using it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
-        px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        # Ignore z-axis for now.
+        px, py = p2D = point2D(self._applyAlignment(p)) 
         context.rect(px, py, e=self)
+
         if drawElements:
             for e in self.elements:
                 e.build_inds(view, p2D)

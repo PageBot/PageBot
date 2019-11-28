@@ -30,7 +30,6 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
-# PageBot generic equivalent of DrawBot.BezierPath
 from pagebot.elements.paths.pagebotpath import PageBotPath 
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
@@ -41,7 +40,10 @@ from pagebot.toolbox.dating import now
 from pagebot.gradient import Gradient, Shadow
 
 class Element:
-    """The base element object."""
+    """The base element object.
+    
+    FIXME: 8000+ lines, split up into smaller classes.
+    """
 
     # Initializes the default Element behavior flags. These flags can be
     # overwritten by inheriting classes, or dynamically in instances, e.g.
@@ -443,6 +445,7 @@ class Element:
 
     def checkStyleArgs(self, d):
         """Fix style values where necessary.
+        TODO: make sure keys are correct.
 
         >>> e = Element()
         >>> style = dict(fill=(1, 0, 0), stroke=0.5)
@@ -943,8 +946,7 @@ class Element:
     def findBysId(self, sId):
         """If defined, the system self.sId can be used to recursively find self
         or a child. Answer None if nothing can be found that is exactly
-        matching.
-        """
+        matching."""
         if sId is not None:
             if self.sId == sId:
                 return self
@@ -993,8 +995,8 @@ class Element:
         >>> e.copy().eId != e.eId
         True
         """
-        # Deep-copies the element. Set the parent (if defined) and iterate through
-        # the child tree to make a e.eId unique.
+        # Deep-copies the element. Set the parent (if defined) and iterate
+        # through the child tree to make a e.eId unique.
 
         savedElements = self._elements # Avoid deep copy on child elements
         self._elements = []
@@ -1173,7 +1175,9 @@ class Element:
         px, py, pz = point3D(point) 
         for e in self.elements:
             ex, ey, ez = e.xyz
-            if (ex == px or px is None) and (ey == py or py is None) and (ez == pz or pz is None):
+            if (ex == px or px is None) and \
+                    (ey == py or py is None) and \
+                    (ez == pz or pz is None):
                 elements.append(e)
         return elements
 
@@ -1227,8 +1231,9 @@ class Element:
     # If the element is part of a flow, then answer the squence.
 
     def _get_next(self):
-        """If self if part of a flow, answer the next element, defined by self.nextElement.
-        If self.nextPage is defined too, then search on the indicated page.
+        """If self if part of a flow, answer the next element, defined by
+        self.nextElement. If self.nextPage is defined too, then search on the
+        indicated page.
 
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
@@ -1245,33 +1250,46 @@ class Element:
         >>> e3_3 = Element(parent=page, name='e3')
         >>> e1_1.next.name
         'e2'
-        >>> e1_1.next.next == e2_1 # Crosses page borders.
+        >>> # Crosses page borders.
+        >>> e1_1.next.next == e2_1 
         True
-        >>> e2_2.next.next.next.next == e3_3 # Crosses page borders
+        >>> # Crosses page borders
+        >>> e2_2.next.next.next.next == e3_3 
         True
-        >>> e3_2.next.next is None # End of flow
+        >>> # End of flow
+        >>> e3_2.next.next is None 
         True
-        >>> e3_2.prevElement # Gets repaired by the e3_2.next usage
+        >>> # Gets repaired by the e3_2.next usage
+        >>> e3_2.prevElement 
         'e1'
-        >>> e3_1.prevPage # Get repaired by the e3_1.next usage.
+        >>> # Get repaired by the e3_1.next usage.
+        >>> e3_1.prevPage 
         (2, 0)
         """
         nextElement = None
-        if self.nextElement is not None: # If there is a next element reference defined.
+
+        # If there is a next element reference defined.
+        if self.nextElement is not None: 
             if isinstance(self.nextPage, Element):
                 page = self.nextPage
-            elif self.nextPage: # then check if we also make reference to a another page.
+            elif self.nextPage: 
+                # then check if we also make reference to a another page.
                 page = self.doc[self.nextPage]
-            else: # If no next page reference, then refoer to the page of self.
+            else: 
+                # If no next page reference, then refoer to the page of self.
                 page = self.page
-            if page is not None: # Only if a page was found for this element
+
+            # Only if a page was found for this element.
+            if page is not None: 
                 nextElement = page.select(self.nextElement)
                 if nextElement is not None:
-                    nextElement.prevElement = self.name # Repair in case it is broken
+                    # Repair in case it is broken.
+                    nextElement.prevElement = self.name 
                     if self.nextPage:
                         nextElement.prevPage = self.page.pn
 
         return nextElement
+
     next = property(_get_next)
 
     def _get_isFlow(self):
@@ -1289,8 +1307,8 @@ class Element:
     isFlow = property(_get_isFlow)
 
     def getFlow(self, flow=None):
-        """Answers the list of flow element sequences starting on self. In case self.nextPage
-        is defined, then
+        """Answers the list of flow element sequences starting on self. In case
+        self.nextPage is defined, then
 
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
@@ -1331,10 +1349,10 @@ class Element:
     #   If self.nextElement is defined, then check the condition if there is overflow.
 
     def isOverflow(self, tolerance):
-        """Answers if this element needs overflow to be solved.
-        This method is typically called by conditions such as Overflow2Next.
-        This method is redefined by inheriting classed, such as TextBox, that
-        can have overflow of text."""
+        """Answers if this element needs overflow to be solved. This method is
+        typically called by conditions such as Overflow2Next. This method is
+        redefined by inheriting classed, such as TextBox, that can have
+        overflow of text."""
         return False
 
     def overflow2Next(self):
@@ -1346,15 +1364,19 @@ class Element:
     def _get_baselineColor(self):
         """Answer the current setting of the baseline color for this element."""
         return self.css('baselineColor', DEFAULT_BASELINE_COLOR)
+
     def _set_baselineColor(self, baselineColor):
         self.style['baselineColor'] = baselineColor
+
     baselineColor = property(_get_baselineColor, _set_baselineColor)
 
     def _get_baselineWidth(self):
         """Answer the current setting of the baseline width for this element."""
         return self.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
+
     def _set_baselineWidth(self, baselineWidth):
         self.style['baselineWidth'] = baselineWidth
+
     baselineWidth = property(_get_baselineWidth, _set_baselineWidth)
 
     def _get_baselineGrid(self):
@@ -1378,8 +1400,10 @@ class Element:
         # In case relative units, use this as base for %
         base = dict(base=self.parentH, em=self.em) 
         return units(self.css('baselineGrid'), base=base)
+
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = units(baselineGrid)
+
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
 
     def _get_baselineGridStart(self):
@@ -1399,14 +1423,17 @@ class Element:
         # In case relative units, use this as base for %
         base = dict(base=self.parentH, em=self.em) 
         return units(self.css('baselineGridStart'), base=base)
+
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
+
     baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
 
     def baseY(self, lineIndex=0):
-        """Answer the vertical position of line by lineIndex, starting at the top of the element.
-        Note that this top-down measure is independent from the overall doc.originTop settings,
-        as the baseline grid always runs from top of the element or page.
+        """Answer the vertical position of line by lineIndex, starting at the
+        top of the element. Note that this top-down measure is independent
+        from the overall doc.originTop settings, as the baseline grid always
+        runs from top of the element or page.
 
         >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))
         >>> e.baselineGrid, e.baselineGridStart
@@ -2805,21 +2832,25 @@ class Element:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
 
-    def _get_mBottom(self): # Bottom, including bottom margin
+    def _get_mBottom(self): 
+        # Bottom, including bottom margin.
         if self.originTop:
             return self.bottom + self.mb
+
         return self.bottom - self.mb
+
     def _set_mBottom(self, y):
         if self.originTop:
             self.bottom = units(y) - self.mb
         else:
             self.bottom = units(y) + self.mb
+
     mBottom = property(_get_mBottom, _set_mBottom)
 
     # Depth, running  in vertical z-axis dirction. Viewer is origin, positive
-    # value is perpendicular into the screen.
-    # Besides future usage in real 3D rendering, the z-axis is used to compare
-    # conditional status in element layers.
+    # value is perpendicular into the screen. Besides future usage in real 3D
+    # rendering, the z-axis is used to compare conditional status in element
+    # layers.
 
     def _get_front(self):
         zAlign = self.css('zAlign')
@@ -2861,7 +2892,8 @@ class Element:
             self.z = z
     back = property(_get_back, _set_back)
 
-    def _get_mBack(self): # Front, including front margin
+    def _get_mBack(self): 
+        # Front, including front margin.
         return self.back - self.css('mzb')
     def _set_mBack(self, z):
         self.back = units(z) - self.css('mzb')
@@ -2870,13 +2902,15 @@ class Element:
     # Colors for fill and stroke
 
     def _get_fill(self):
-        """Fill color property in style, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Fill color property in style, using self.css to query cascading
+        values. Setting the color will overwrite the cascade, by storing as
+        local value.
 
         >>> e = Element(fill=color('red'))
         >>> e.fill
         Color(name="red")
-        >>> e.fill = 1, 0, 0 # Construct color from tuple
+        >>> # Construct color from tuple.
+        >>> e.fill = 1, 0, 0 
         >>> e.fill
         Color(r=1, g=0, b=0)
         >>> e.fill = 0.5
@@ -2889,8 +2923,9 @@ class Element:
     fill = property(_get_fill, _set_fill)
 
     def _get_stroke(self):
-        """Stroke color property in style, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Stroke color property in style, using self.css to query cascading
+        values. Setting the color will overwrite the cascade, by storing as
+        local value.
 
         >>> e = Element(stroke=color('red'))
         >>> e.stroke
@@ -2908,8 +2943,9 @@ class Element:
     stroke = property(_get_stroke, _set_stroke)
 
     def _get_strokeWidth(self):
-        """Stroke width property in style, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Stroke width property in style, using self.css to query cascading
+        values. Setting the color will overwrite the cascade, by storing as
+        local value.
 
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element(strokeWidth=p(6))
@@ -2925,13 +2961,15 @@ class Element:
     strokeWidth = property(_get_strokeWidth, _set_strokeWidth)
 
     def _get_textFill(self):
-        """Fill color property in style for text, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Fill color property in style for text, using self.css to query
+        cascading values. Setting the color will overwrite the cascade, by
+        storing as local value.
 
         >>> e = Element(textFill=color('red'))
         >>> e.textFill
         Color(name="red")
-        >>> e.textFill = 1, 0, 0 # Construct color from tuple
+        >>> # Construct color from tuple.
+        >>> e.textFill = 1, 0, 0 
         >>> e.textFill
         Color(r=1, g=0, b=0)
         >>> e.textFill = 0.5
@@ -2944,13 +2982,15 @@ class Element:
     textFill = property(_get_textFill, _set_textFill)
 
     def _get_textStroke(self):
-        """Stroke color property in style, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Stroke color property in style, using self.css to query cascading
+        values. Setting the color will overwrite the cascade, by storing as
+        local value.
 
         >>> e = Element(textStroke=color('red'))
         >>> e.textStroke
         Color(name="red")
-        >>> e.textStroke = 1, 0, 0 # Construct color from tuple
+        >>> # Construct color from tuple.
+        >>> e.textStroke = 1, 0, 0 
         >>> e.textStroke
         Color(r=1, g=0, b=0)
         >>> e.textStroke = 0.5
@@ -2963,8 +3003,9 @@ class Element:
     textStroke = property(_get_textStroke, _set_textStroke)
 
     def _get_textStrokeWidth(self):
-        """Stroke width property in style for text, using self.css to query cascading values.
-        Setting the color will overwrite the cascade, by storing as local value.
+        """Stroke width property in style for text, using self.css to query
+        cascading values. Setting the color will overwrite the cascade, by
+        storing as local value.
 
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element(textStrokeWidth=p(6))
@@ -2981,26 +3022,34 @@ class Element:
 
     # Borders (equivalent for element stroke and strokWidth)
 
-    def getBorderDict(self, stroke=None, strokeWidth=None, line=None, dash=None, border=None):
+    def getBorderDict(self, stroke=None, strokeWidth=None, line=None,
+            dash=None, border=None):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
         to create one. Otherwise answer *None*."""
-
         if border is False:
             return {}
+
         if isinstance(border, dict):
             return border
-        if isinstance(border, (int, float)): # If number, assume it is strokeWidth
+
+        # If number, assume it is strokeWidth
+        if isinstance(border, (int, float)): 
             strokeWidth = units(border)
 
         if stroke is None:
             stroke = self.css('stroke', blackColor)
+
+        # Take current stroke width setting in css
         #if strokeWidth is None:
-        #    strokeWidth = self.strokeWidth # Take current stroke width setting in css
+        #    strokeWidth = self.strokeWidth 
+
         if line is None:
             line = ONLINE
+
         # Dash can be None
-        if not strokeWidth: # If 0, then answer an empty dict
+        # If 0, then answer an empty dict.
+        if not strokeWidth: 
             return {}
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
 
@@ -3430,16 +3479,18 @@ class Element:
         """
         parent = self.parent
         if parent is not None:
-            return self.z + parent.rootZ # Add relative self to parents position.
+            # Add relative self to parents position.
+            return self.z + parent.rootZ 
         return self.z
     rootZ = property(_get_rootZ)
 
     # (w, h, d) size of the element.
 
     def _get_proportional(self):
-        """Get/set the proportional style flag as property. If True, setting self.w or self.h
-        will keep the original proportions, but setting the other side as well.
-        By default the self.proportional flag is False for most types of elements.
+        """Get/set the proportional style flag as property. If True, setting
+        self.w or self.h will keep the original proportions, but setting the
+        other side as well. By default the self.proportional flag is False for
+        most types of elements.
 
         >>> e = Element(w=100, h=200, proportional=True)
         >>> e.w = 200
@@ -3540,21 +3591,28 @@ class Element:
         >>> e.h, e.h == DEFAULT_HEIGHT
         (100pt, True)
         """
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        # In case relative units, use this as base.
+        base = dict(base=self.parentH, em=self.em) 
         return units(self.css('h', 0), base=base)
+
     def _set_h(self, h):
         h = units(h or DEFAULT_HEIGHT)
         if self.proportional:
             if self.h:
                 self.style['w'] = h * self.w.pt/self.h.pt
                 self.style['d'] = h * self.d.pt/self.h.pt
-        self.style['h'] = h # Overwrite element local style from here, parent css becomes inaccessable.
+
+        # Overwrite element local style from here, parent css becomes
+        # inaccessable.
+        self.style['h'] = h 
+
     h = property(_get_h, _set_h)
 
-    def _get_mh(self): # Height, including margins
-        """Height property for self.mh style.
-        Note that since the margins are not considered by the self.proportional flag,
-        changed in self.mw, self.mh and self.md may not stay proportional.
+        # Height, including margins
+    def _get_mh(self): 
+        """Height property for self.mh style.  Note that since the margins are
+        not considered by the self.proportional flag, changed in self.mw,
+        self.mh and self.md may not stay proportional.
 
         >>> e = Element(h=10, mt=22, mb=33)
         >>> e.mh
@@ -3575,29 +3633,36 @@ class Element:
         """Answers and set the depth of the element.
 
         >>> e = Element()
-        >>> e.d # Default value
+        >>> # Default value
+        >>> e.d 
         100pt
-        >>> e = Element(d=100) # Set min/max of element with constructor
-        >>> e.d = 101 # Set depth value
+        >>> # Set min/max of element with constructor
+        >>> e = Element(d=100) 
+        >>> # Set depth value
+        >>> e.d = 101 
         >>> e.d
         101pt
         """
-        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
+        # In case relative units, use this as base.
+        base = dict(base=self.parentD, em=self.em) 
         return units(self.css('d', 0), base=base)
+
     def _set_d(self, d):
-        self.style['d'] = units(d or DEFAULT_DEPTH) # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = units(d or DEFAULT_DEPTH) 
         d = units(d or DEFAULT_DEPTH)
         if self.proportional:
             if self.d:
                 self.style['w'] = d * self.w.pt/self.d.pt
                 self.style['h'] = d * self.h/self.d
-        self.style['d'] = d # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes inaccessable.
+        self.style['d'] = d 
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
-        """Width property for self.md style.
-        Note that since the margins are not considered by the self.proportional flag,
-        changed in self.mw, self.mh and self.md may not stay proportional.
+        """Width property for self.md style. Note that since the margins are
+        not considered by the self.proportional flag, changed in self.mw,
+        self.mh and self.md may not stay proportional.
 
         >>> e = Element(d=10, mzb=22, mzf=33)
         >>> e.md
@@ -3615,11 +3680,13 @@ class Element:
     md = property(_get_md, _set_md)
 
     def _get_folds(self):
-        """List if [(x, y), ...] (one of them can be None) that indicate the position of folding lines
-        on a page. In general this is a view parameter (applying to all pages), but it can
-        be overwritten by individual pages or other elements, if their folding pattern is different.
-        The position of folds is ignored by self.w and self.h. It is mostly to show folding markers
-        by PageView. The fold property is stored ins tyle and not inherited."""
+        """List if [(x, y), ...] (one of them can be None) that indicate the
+        position of folding lines on a page. In general this is a view
+        parameter (applying to all pages), but it can be overwritten by
+        individual pages or other elements, if their folding pattern is
+        different. The position of folds is ignored by self.w and self.h. It
+        is mostly to show folding markers by PageView. The fold property is
+        stored in style and not inherited."""
         return self.style.get('folds', []) # Not inherited
     def _set_folds(self, folds):
         self.style['folds'] = folds
@@ -3741,13 +3808,18 @@ class Element:
         >>> e.mt.pt
         50
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        # In case relative units, use this as base.
+        base = dict(base=self.h, em=self.em) 
         return units(self.css('mt', 0), base=base)
+
     def _set_mt(self, mt):
-        self.style['mt'] = units(mt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes
+        # inaccessable.
+        self.style['mt'] = units(mt or 0)  
     mt = property(_get_mt, _set_mt)
 
-    def _get_mb(self): # Margin bottom
+    # Margin bottom
+    def _get_mb(self): 
         """Margin bottom property. Relative unit values refer to the current
         self.h or self.em.
 
@@ -3818,10 +3890,14 @@ class Element:
         >>> e.mr.pt
         50
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        # In case relative units, use this as base.
+        base = dict(base=self.w, em=self.em) 
         return units(self.css('mr', 0), base=base)
+
     def _set_mr(self, mr):
-        self.style['mr'] = units(mr) # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes
+        # inaccessable.
+        self.style['mr'] = units(mr) 
     mr = property(_get_mr, _set_mr)
 
     def _get_mzf(self): # Margin z-axis front
@@ -3868,10 +3944,13 @@ class Element:
         >>> e.mzb.pt
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
+        # In case relative units, use this as base.
+        base = dict(base=self.d, em=self.em) 
         return units(self.css('mzb', 0), base=base)
     def _set_mzb(self, mzb):
-        self.style['mzb'] = units(mzb)  # Overwrite element local style from here, parent css becomes inaccessable.
+        # Overwrite element local style from here, parent css becomes
+        # inaccessable.
+        self.style['mzb'] = units(mzb)  
     mzb = property(_get_mzb, _set_mzb)
 
     # Padding properties
@@ -3918,6 +3997,7 @@ class Element:
         ((15%, 15%, 15%, 15%), (75pt, 75pt, 75pt, 75pt), (75, 75, 75, 75))
         """
         return self.pt, self.pr, self.pb, self.pl
+
     def _set_padding(self, padding):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565]
         assert padding is not None
@@ -3984,16 +4064,19 @@ class Element:
         >>> e = Element(pt=12, h=500)
         >>> e.pt
         12pt
-        >>> e.pt = 13 # Default conversion from numberts to points
+        >>> # Default conversion from numberts to points
+        >>> e.pt = 13 
         >>> e.pt
         13pt
         >>> e.pt = pt(14)
         >>> e.pt
         14pt
-        >>> e.padding # Verify that other padding did not change.
+        >>> # Verify that other padding did not change.
+        >>> e.padding 
         (14pt, 0pt, 0pt, 0pt)
         >>> e.pt = '10%'
-        >>> e.pt, e.pt.pt # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
+        >>> # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
+        >>> e.pt, e.pt.pt 
         (10%, 50)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
@@ -4273,8 +4356,10 @@ class Element:
         (132, 132)
         """
         return self.w, self.h
+
     def _set_size(self, size):
-        saveFlag = self.proportional # Disable the flag, we want to set the values independently
+        # Disable the flag, we want to set the values independently
+        saveFlag = self.proportional 
         self.proportional = False
         if isinstance(size, (tuple, list)):
             assert len(size) in (2,3)
@@ -4285,40 +4370,51 @@ class Element:
         else:
             self.w = self.h = self.d = size
         self.proportional = saveFlag
+
     size = property(_get_size, _set_size)
 
     def _get_size3D(self):
         return self.w, self.h, self.d
-    size3D = property(_get_size3D, _set_size) # Setting is idential for self.size3D and self.size
+
+    # Setting is idential for self.size3D and self.size
+    size3D = property(_get_size3D, _set_size) 
 
     #   S H A D O W   &  G R A D I E N T
 
     def _get_shadow(self):
         return self.css('shadow')
+
     def _set_shadow(self, shadow):
         assert shadow is None or isinstance(shadow, self.SHADOW_CLASS)
         self.style['shadow'] = shadow
+
     shadow = property(_get_shadow, _set_shadow)
 
     def _get_textShadow(self):
         return self.css('textShadow')
+
     def _set_textShadow(self, textShadow):
         assert textShadow is None or isinstance(textShadow, self.SHADOW_CLASS)
         self.style['textShadow'] = textShadow
+
     textShadow = property(_get_textShadow, _set_textShadow)
 
     def _get_gradient(self):
         return self.css('gradient')
+
     def _set_gradient(self, gradient):
         assert gradient is None or isinstance(gradient, self.GRADIENT_CLASS)
         self.style['gradient'] = gradient
+
     gradient = property(_get_gradient, _set_gradient)
 
     def _get_textGradient(self):
         return self.css('textGradient')
+
     def _set_textGradient(self, textGradient):
         assert textGradient is None or isinstance(textGradient, self.GRADIENT_CLASS)
         self.style['textGradient'] = textGradient
+
     textGradient = property(_get_textGradient, _set_textGradient)
 
     def _get_box3D(self):
@@ -4407,8 +4503,9 @@ class Element:
     paddedBox = property(_get_paddedBox)
 
     def _get_paddedBox3D(self):
-        """Calculate the padded position and padded resized box in 3D of the lement, after applying
-        the style padding. Answered format (x, y, z, w, h, d).
+        """Calculate the padded position and padded resized box in 3D of the
+        lement, after applying the style padding. Answered format (x, y, z, w,
+        h, d).
 
         >>> from pagebot.toolbox.units import ru
         >>> e = Element(w=500, h=500, d=500)
@@ -4476,7 +4573,8 @@ class Element:
     block3D = property(_get_block3D)
 
     def _get_block(self):
-        """Answers the vacuum bounding box around all child elements in 2D, including margin
+        """Answers the vacuum bounding box around all child elements in 2D,
+        including margin.
 
         >>> e1 = Element(x=10, y=10, w=100, h=100)
         >>> e2 = Element(x=50, y=50, w=200, h=100)
@@ -4682,8 +4780,8 @@ class Element:
     def getFloatSideBottom(self, previousOnly=True, tolerance=0):
         """Answers the max y that can float to bottom, without overlapping
         previous sibling elements. This means we are just looking at the
-        vertical projection of (self.mLeft, self.mRight). Note that the y may be
-        outside the parent box. Only elements with identical z-value are
+        vertical projection of (self.mLeft, self.mRight). Note that the y may
+        be outside the parent box. Only elements with identical z-value are
         compared. Comparison of available space, includes the margins of the
         elements."""
         if self.originTop:
@@ -5056,59 +5154,64 @@ class Element:
     #   D R A W B O T / F L A T  S U P P O R T
 
     def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.
-        If the original image needs scaling, then prepare the build by letting the context
-        make a new cache file with the scaled images.
-        If the cache file already exists, then ignore, just continue the broadcast
-        towards the child elements.
-        Default behavior is to do nothing. Inheriting Element classes can redefine.
-        """
+        """Respond to the top-down element broadcast to prepare for build.  If
+        the original image needs scaling, then prepare the build by letting the
+        context make a new cache file with the scaled images. If the cache
+        file already exists, then ignore, just continue the broadcast towards
+        the child elements. Default behavior is to do nothing. Inheriting
+        Element classes can redefine."""
         for e in self.elements:
             e.prepare(view)
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p) 
 
         self._applyRotation(view, p)
 
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        # Draw optional frame or borders.
+        self.buildFrame(view, p) 
 
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # background here.
         view.drawPageMetaInfo(self, p, background=True)
 
-        if self.drawBefore is not None: # Call if defined
+        # Call if defined.
+        if self.drawBefore is not None: 
             self.drawBefore(self, view, p)
 
-        # Draw the actual element content.
-        # Inheriting elements classes can redefine just this method to fill in drawing behavior.
-        # @p is the transformed position to draw in the main canvas.
+        # Draw the actual element content.  Inheriting elements classes can
+        # redefine just this method to fill in drawing behavior. @p is the
+        # transformed position to draw in the main canvas.
         self.buildElement(view, p, drawElements, **kwargs)
 
-        if self.drawAfter is not None: # Call if defined
+        if self.drawAfter is not None: 
+            # Call if defined.
             self.drawAfter(self, view, p)
 
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
         view.drawPageMetaInfo(self, p, background=False)
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        # Depends on flag 'view.showElementInfo'.
+        view.drawElementInfo(self, origin) 
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
-        """Main drawing method for elements to draw their content and the content
-        of their children if they exist.
-        @p is the transformed position of the context canvas.
-        To be redefined by inheriting element classes that need to draw more than
-        just their chold elements.
-        """
+        """Main drawing method for elements to draw their content and the
+        content of their children if they exist. @p is the transformed
+        position of the context canvas. To be redefined by inheriting element
+        classes that need to draw more than just their chold elements."""
         if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
+            # If there are child elements, recursively draw them over the pixel
+            # image.
             self.buildChildElements(view, p, **kwargs)
 
     def buildChildElements(self, view, origin=None, **kwargs):
@@ -5116,9 +5219,7 @@ class Element:
         context specific build elements.
 
         If no specific builder_<context.b.PB_ID> is implemented, call default
-        e.build(view, origin)
-
-        """
+        e.build(view, origin). """
         hook = 'build_' + view.context.b.PB_ID
 
         for e in self.elements:
@@ -5816,7 +5917,8 @@ class Element:
         self.bottom += self.getDistance2Grid(self.bottom)
 
     def _get_distance2Grid(self):
-        """Answer the distance to the parent grid, where vertical alignment decides where is measured.
+        """Answer the distance to the parent grid, where vertical alignment
+        decides where is measured.
 
         >>> e1 = Element(baselineGridStart=100, baselineGrid=50, h=1000, originTop=False)
         >>> e2 = Element(y=130, h=200, parent=e1)
@@ -7978,31 +8080,36 @@ class Element:
     #   Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR)
 
     def _get_showGrid(self):
-        """Set value, containing the parts of grid that should be shown. See pagebot.constants
-        for the names of the options."""
-        return set(self.style.get('showGrid') or []) # Not inherited
+        """Set value, containing the parts of grid that should be shown. See
+        pagebot.constants for the names of the options."""
+        # Not inherited
+        return set(self.style.get('showGrid') or []) 
     def _set_showGrid(self, showGrid):
         if not showGrid:
             showGrid = []
         elif not isinstance(showGrid, (set, list, tuple)):
-            if showGrid in GRID_OPTIONS: # In case of single valid option, make into set
+            # In case of single valid option, make into set
+            if showGrid in GRID_OPTIONS: 
                 showGrid = set([showGrid])
             else:
                 showGrid = DEFAULT_GRID
         self.style['showGrid'] = set(showGrid)
     showGrid = property(_get_showGrid, _set_showGrid)
 
-    #   Types of baseline grid to be drawn using conbination set of (BASE_LINE, BASE_INDEX_LEFT)
+    #   Types of baseline grid to be drawn using conbination set of (BASE_LINE,
+    #   BASE_INDEX_LEFT)
 
     def _get_showBaselineGrid(self):
-        """Set value, containing the parts of baseline that should be shown. See pagebot.constants
-        for the names of the options."""
+        """Set value, containing the parts of baseline that should be shown.
+        See pagebot.constants for the names of the options."""
         return set(self.style.get('showBaselineGrid') or []) # Not inherited
+
     def _set_showBaselineGrid(self, showBaselineGrid):
         if not showBaselineGrid:
             showBaselineGrid = []
         elif not isinstance(showBaselineGrid, (set, tuple, list)):
-            if showBaselineGrid in BASE_OPTIONS: # In case of single valid option, make into set
+            # In case of single valid option, make into set
+            if showBaselineGrid in BASE_OPTIONS: 
                 showBaselineGrid = set([showBaselineGrid])
             else:
                 showBaselineGrid = DEFAULT_BASELINE
@@ -8010,8 +8117,10 @@ class Element:
     showBaselineGrid = property(_get_showBaselineGrid, _set_showBaselineGrid)
 
     def _get_showTextLeading(self):
-        """Boolean value. If True show the vertical distance between text lines."""
+        """Boolean value. If True show the vertical distance between text
+        lines."""
         return self.style.get('showTextLeading', False) # Not inherited
+ 
     def _set_showTextLeading(self, showTextLeading):
         self.style['showTextLeading'] = bool(showTextLeading)
     showTextLeading = property(_get_showTextLeading, _set_showTextLeading)
@@ -8026,9 +8135,10 @@ class Element:
     showFlowConnections = property(_get_showFlowConnections, _set_showFlowConnections)
 
     def _get_showTextOverflowMarker(self):
-        """Boolean value. If True a [+] marker is shown where text boxes have overflow,
-        while not connected to another element."""
+        """Boolean value. If True a [+] marker is shown where text boxes have
+        overflow, while not connected to another element."""
         return self.style.get('showTextOverflowMarker', False) # Not inherited
+
     def _set_showTextOverflowMarker(self, showTextOverflowMarker):
         self.style['showTextOverflowMarker'] = bool(showTextOverflowMarker)
     showTextOverflowMarker = property(_get_showTextOverflowMarker, _set_showTextOverflowMarker)
@@ -8036,15 +8146,19 @@ class Element:
     #   Image stuff
 
     def _get_showImageReference(self):
-        """Boolean value. If True, the name/reference of an image element is show."""
+        """Boolean value. If True, the name/reference of an image element is
+        show."""
         return self.style.get('showImageReference', False) # Not inherited
+
     def _set_showImageReference(self, showImageReference):
         self.style['showImageReference'] = bool(showImageReference)
     showImageReference = property(_get_showImageReference, _set_showImageReference)
 
     def _get_showImageLoresMarker(self):
-        """Boolean value. If True, show lores-cache marker on images. This property inherits cascading. """
+        """Boolean value. If True, show lores-cache marker on images. This
+        property inherits cascading. """
         return self.css('showImageLoresMarker', False) # Inherited
+
     def _set_showImageLoresMarker(self, showImageLoresMarker):
         self.style['showImageLoresMarker'] = bool(showImageLoresMarker)
     showImageLoresMarker = property(_get_showImageLoresMarker, _set_showImageLoresMarker)
@@ -8057,17 +8171,20 @@ class Element:
     scaleImage = property(_get_scaleImage, _set_scaleImage)
 
     def _get_scaledImageFactor(self):
-        """If >= (default) 0.8 then don't save cached. Cached images should never enlarge. """
+        """If >= (default) 0.8 then don't save cached. Cached images should
+        never enlarge."""
         return self.css('scaledImageFactor', True) # Inherited
+
     def _set_scaledImageFactor(self, scaledImageFactor):
         self.style['scaledImageFactor'] = bool(scaledImageFactor)
+
     scaledImageFactor = property(_get_scaledImageFactor, _set_scaledImageFactor)
 
     def _get_defaultImageWidth(self):
-        """If set, then use this as default width for scaling images.
-        Used as target for HTML context image scaling.
-        """
+        """If set, then use this as default width for scaling images.  Used as
+        target for HTML context image scaling."""
         return self.css('defaultImageWidth') # Inherited. Can be None
+
     def _set_defaultImageWidth(self, defaultImageWidth):
         self.style['defaultImageWidth'] = defaultImageWidth # Can be None.
     defaultImageWidth = property(_get_defaultImageWidth, _set_defaultImageWidth)
@@ -8084,42 +8201,49 @@ class Element:
     #   Spread stuff
 
     def _get_showImageReference(self):
-        """Boolean value. If True, the name/reference of an image element is show."""
+        """Boolean value. If True, the name or reference of an image element is
+        show."""
         return self.style.get('showImageReference', False) # Not inherited
+
     def _set_showImageReference(self, showImageReference):
         self.style['showImageReference'] = bool(showImageReference)
+
     showImageReference = property(_get_showImageReference, _set_showImageReference)
 
     #   CSS flags
 
     def _get_cssVerbose(self):
-        """Boolean value. If True, adds information comments with original values to
-        CSS export."""
+        """Boolean value. If True, adds information comments with original
+        values to CSS export."""
         return self.css('cssVerbose', False) # Inherited
+
     def _set_cssVerbosee(self, cssVerbose):
         self.style['cssVerbose'] = bool(cssVerbose)
+
     cssVerbose = property(_get_cssVerbose, _set_cssVerbosee)
 
     #   Exporting
 
     def _get_saveUrlAsDirectory(self):
         """Boolean value. Flag to turn off saving self.url pages as directory.
-        Instead, all "/" is replaced by "-". This choice is made for exprot .html
-        paths, where a flat directory is less of a problem than adjusting all relative urls
-        for images/CSS/JS
-        """
+        Instead, all "/" is replaced by "-". This choice is made for exprot
+        .html paths, where a flat directory is less of a problem than adjusting
+        all relative urls for images/CSS/JS"""
         return self.css('saveUrlAsDirectory', False) # Inherited
+
     def _set_saveUrlAsDirectory(self, saveUrlAsDirectory):
         self.style['saveUrlAsDirectory'] = saveUrlAsDirectory
+
     saveUrlAsDirectory = property(_get_saveUrlAsDirectory, _set_saveUrlAsDirectory)
 
     def _get_doExport(self):
-        """Boolean value. Flag to turn off any export, for view, e.g. in case of testing with docTest."""
+        """Boolean value. Flag to turn off any export, for view, e.g. in case
+        of testing with docTest."""
         return self.css('doExport', False)
+
     def _set_doExport(self, doExport):
         self.style['doExport'] = bool(doExport)
     doExport = property(_get_doExport, _set_doExport)
-
 
 if __name__ == '__main__':
     import doctest
