@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     hyphenation/__init__.py
+#     hyphenation.py
 #
 #     TODO:
 #     - Add more languages
