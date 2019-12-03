@@ -27,14 +27,6 @@ pagebot.contributions.filibuster.blurbwriter module
    :undoc-members:
    :show-inheritance:
 
-pagebot.contributions.filibuster.comprehension module
------------------------------------------------------
-
-.. automodule:: pagebot.contributions.filibuster.comprehension
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.contributions.filibuster.example module
 -----------------------------------------------
 

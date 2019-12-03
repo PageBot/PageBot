@@ -188,10 +188,10 @@ pagebot.contributions.filibuster.content.journalism module
    :undoc-members:
    :show-inheritance:
 
-pagebot.contributions.filibuster.content.legal module
------------------------------------------------------
+pagebot.contributions.filibuster.content.legalese module
+--------------------------------------------------------
 
-.. automodule:: pagebot.contributions.filibuster.content.legal
+.. automodule:: pagebot.contributions.filibuster.content.legalese
    :members:
    :undoc-members:
    :show-inheritance:
@@ -312,6 +312,14 @@ pagebot.contributions.filibuster.content.sciences module
 --------------------------------------------------------
 
 .. automodule:: pagebot.contributions.filibuster.content.sciences
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pagebot.contributions.filibuster.content.siliconvalley module
+-------------------------------------------------------------
+
+.. automodule:: pagebot.contributions.filibuster.content.siliconvalley
    :members:
    :undoc-members:
    :show-inheritance:
