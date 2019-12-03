@@ -3,8 +3,8 @@
 
 import codecs
 import os
-from .blurb import Blurb
-from .content import index
+from pagebot.contributions.filibuster.blurb import Blurb
+from pagebot.contributions.filibuster.content import index
 
 # see if we can generate all of them
 w = Blurb()
@@ -35,7 +35,7 @@ for name in names:
     f.write("\nDefined in module %s"%definedIn[0])
     if usedMods:
         k = usedMods.keys()
-        k.sort()
+        list(k).sort()
         f.write("\nUsed in %s"%", ".join(k))
     f.close()
     for i in range(maxTests):
