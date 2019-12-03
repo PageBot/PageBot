@@ -27,11 +27,11 @@ class Blurb:
     >>> isinstance(b.writer.keywords, list)
     True
     >>> len(b.writer.keywords)
-    1092
+    1093
     >>> b.writer.keywords[-1]
     'year_20century'
     >>> len(b.getBlurbTypes())
-    1092
+    1093
     """
 
     reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')

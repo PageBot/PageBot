@@ -166,8 +166,8 @@ class Document:
 
     def initialize(self, **kwargs):
         """Default implementation of publication initialized. Can be redefined
-        by inheriting classed. All **kwargs are available to allow access for
-        inheriting Publication documents."""
+        by inheriting classed. All keyword arguments are available to allow
+        access for inheriting Publication documents."""
 
     def _get_docLib(self):
         """Answers the global storage dictionary, used by TypeSetter and others
@@ -401,10 +401,10 @@ class Document:
             self.addStyle(name, dict(name=name))
 
     def makeRootStyle(self, **kwargs):
-        """Creates a rootStyle, then set the arguments from **kwargs, if their
-        entry name already exists. This is similar (but not identical) to the
-        makeStyle in Elements. There any value entry is copied, even if that is
-        not defined in the root style.
+        """Creates a rootStyle, then set the arguments from keyword arguments,
+        if their entry name already exists. This is similar (but not identical)
+        to the makeStyle in Elements. There any value entry is copied, even if
+        it is not defined in the root style.
 
         >>> doc = Document()
         >>> page = doc[1] # Inheriting from doc
