@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
+#     Contributed by Erik van Blokland and Jonathan Hoefler
+#
+#     FILIBUSTERS
+#
+#     MIT License
+#
 
 """
+No user servicable parts inside.
 
 history
-This is the init code for the Content package.
-No user servicable parts inside.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
  - 3.0.0: split all the content into babycontents
  - evb: note: only one dictionary named 'context' allowed per module

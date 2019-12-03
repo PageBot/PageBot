@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        literature
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+literature
 """
 
 __version__ = '4.0'

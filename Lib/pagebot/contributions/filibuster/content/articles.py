@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
-"""
-        history
-        Article pieces
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-"""
+""" Article pieces """
 
 __version__ = '4.0'
 

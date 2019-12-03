@@ -4,11 +4,7 @@
 # FILIBUSTER.ORG!
 
 """
-        history
-        Superheroes, to spice up the news a bit
-        3.0.0   started it
-        3.0.1   added hero_comic_title with support
---------------------------------------------------------------------
+Superheroes, to spice up the news a bit.
 """
 
 __version__ = '4.0.0'

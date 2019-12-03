@@ -2,8 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        filenames
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+filenames
 """
 
 __version__ = '4.0'

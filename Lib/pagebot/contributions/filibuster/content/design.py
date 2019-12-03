@@ -2,9 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        history
-        A template for new submodules
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+A template for new submodules
 """
 
 __version__ = '4.0'

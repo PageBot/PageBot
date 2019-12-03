@@ -2,9 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 """
-        history
-        Airplanes n things
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Airplanes n things
+
 """
 
 __version__ = '4.0'

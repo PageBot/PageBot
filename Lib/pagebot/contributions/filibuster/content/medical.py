@@ -1,15 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Medical content, elixirs, potions, bloodletting and ailments
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
-4.0    - now with the latest version of JH's tonic module
-evb
+Medical content, elixirs, potions, bloodletting and ailments
 
 """
 

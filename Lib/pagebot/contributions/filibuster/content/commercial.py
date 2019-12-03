@@ -1,12 +1,10 @@
 # -*- coding: UTF-8 -*-
 
 """
-        history
-        A template for new submodules
+A template for new submodules
         
-        A ContentWriter version of the old letterror content module
-        added for compatibility.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+A ContentWriter version of the old letterror content module
+added for compatibility.
 """
 
 __version__ = '4.0'

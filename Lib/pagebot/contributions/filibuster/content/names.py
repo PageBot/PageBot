@@ -1,16 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Names, first names, last names, foreign names.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-4.0    - fixed a bug
-3.0.2    -fixed names_japanese
-3.0.3    - removed the german names from the names_last because it messes up certain things in pagebuster
-evb
+Names, first names, last names, foreign names.
 """
 
 __version__ = '4.0'

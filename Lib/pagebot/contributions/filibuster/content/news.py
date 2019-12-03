@@ -2,17 +2,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        World news headlines, wars, disaster, politics
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
-4.0    - changed location to city in weather
-        - added war_military for ranks
-evb        
-
+World news headlines, wars, disaster, politics
 """
 
 __version__ = '4.0'

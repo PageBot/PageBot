@@ -2,9 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        history
-        Automotive, everything to do with cars
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Automotive, everything to do with cars
 """
 
 __version__ = '4.0'

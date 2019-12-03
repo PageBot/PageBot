@@ -1,13 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Internet related stuff, URL's, domains, email
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
+Internet related stuff, URL's, domains, email
 """
 
 __version__ = '4.0'

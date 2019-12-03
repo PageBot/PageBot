@@ -2,14 +2,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        The World Of Sports
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-4.0    -fixed names_japanese
-evb
+The World Of Sports.
 """
 
 __version__ = '4.0'

@@ -1,13 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Legal content, should offer a lot of fun to write, this is not used so far
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
+Legal content, should offer a lot of fun to write, this is not used so far
 """
 
 __version__ = '4.0'

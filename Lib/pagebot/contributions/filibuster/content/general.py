@@ -1,13 +1,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Generally useful stuff should go here, see content for ideas
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
+Generally useful stuff should go here, see content for ideas
 """
 
 from datetime import date

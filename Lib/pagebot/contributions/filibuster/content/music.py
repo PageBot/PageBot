@@ -1,12 +1,6 @@
 # -*- coding: UTF-8 -*-
 """
-        history
-        Music genres, performers, recordings, venues
---------------------------------------------------------------------
-3.0.0   - split all the content into babycontents
-evb     - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
+Music genres, performers, recordings, venues.
 """
 
 __version__ = '3.0.0'

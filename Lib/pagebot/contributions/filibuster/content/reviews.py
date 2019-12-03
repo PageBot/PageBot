@@ -2,9 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        history
-        A great place for reviews on filibuster
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+A great place for reviews on filibuster.
 """
 
 __version__ = '4.0'

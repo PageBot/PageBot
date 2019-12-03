@@ -3,15 +3,14 @@
 #     Contributed by Erik van Blokland and Jonathan Hoefler
 
 #
-#     FILIBUSTERb
+#     FILIBUSTERS
 #
 #     MIT License
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ---------
 
 """
-        living
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+living
 """
 
 __version__ = '4.0'

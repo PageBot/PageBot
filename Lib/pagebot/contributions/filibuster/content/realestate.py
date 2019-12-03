@@ -2,8 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-        realestate
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Real estate.
 """
 
 __version__ = '4.0'

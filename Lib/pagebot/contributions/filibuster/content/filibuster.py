@@ -2,13 +2,8 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        All the filibuster specific stuff, or things that are shared by all themes like copyright notices etc.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
+All the filibuster specific stuff, or things that are shared by all themes like
+copyright notices etc.
 """
 
 __version__ = '4.0'

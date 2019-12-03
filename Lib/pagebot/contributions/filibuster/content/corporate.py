@@ -2,15 +2,7 @@
 # -*- coding: UTF-8 -*-
 #
 """
-        history
-        Corporation names, corporate related text
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-3.0.0    - split all the content into babycontents
-evb        - note: only one dictionary named 'content' allowed per module
-        this limitation is to speed up loading
-
-4.0    - added some more collected mottos for filibuster
-evb
+Corporation names, corporate related text
 """
 
 __version__ = '4.0'
