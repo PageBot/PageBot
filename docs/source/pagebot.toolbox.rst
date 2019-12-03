@@ -28,10 +28,10 @@ pagebot.toolbox.dating module
    :undoc-members:
    :show-inheritance:
 
-pagebot.toolbox.drawparts module
---------------------------------
+pagebot.toolbox.drawing module
+------------------------------
 
-.. automodule:: pagebot.toolbox.drawparts
+.. automodule:: pagebot.toolbox.drawing
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,14 +40,6 @@ pagebot.toolbox.finder module
 -----------------------------
 
 .. automodule:: pagebot.toolbox.finder
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.toolbox.future module
------------------------------
-
-.. automodule:: pagebot.toolbox.future
    :members:
    :undoc-members:
    :show-inheritance:
@@ -68,26 +60,10 @@ pagebot.toolbox.markers module
    :undoc-members:
    :show-inheritance:
 
-pagebot.toolbox.mathematics module
-----------------------------------
-
-.. automodule:: pagebot.toolbox.mathematics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.toolbox.timemark module
 -------------------------------
 
 .. automodule:: pagebot.toolbox.timemark
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.toolbox.transform3d module
-----------------------------------
-
-.. automodule:: pagebot.toolbox.transform3d
    :members:
    :undoc-members:
    :show-inheritance:

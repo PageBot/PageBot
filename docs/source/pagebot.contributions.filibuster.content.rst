@@ -332,6 +332,14 @@ pagebot.contributions.filibuster.content.staff module
    :undoc-members:
    :show-inheritance:
 
+pagebot.contributions.filibuster.content.stylewars module
+---------------------------------------------------------
+
+.. automodule:: pagebot.contributions.filibuster.content.stylewars
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.contributions.filibuster.content.superheroes module
 -----------------------------------------------------------
 

@@ -20,14 +20,6 @@ pagebot.elements.variablefonts.basefontshow module
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.variablefonts.basefontshow\_dev module
--------------------------------------------------------
-
-.. automodule:: pagebot.elements.variablefonts.basefontshow_dev
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.elements.variablefonts.bio module
 -----------------------------------------
 
@@ -136,14 +128,6 @@ pagebot.elements.variablefonts.variablecube2 module
 ---------------------------------------------------
 
 .. automodule:: pagebot.elements.variablefonts.variablecube2
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.elements.variablefonts.variableeditor module
-----------------------------------------------------
-
-.. automodule:: pagebot.elements.variablefonts.variableeditor
    :members:
    :undoc-members:
    :show-inheritance:

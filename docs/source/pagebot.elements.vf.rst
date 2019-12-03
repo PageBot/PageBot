@@ -100,10 +100,10 @@ pagebot.elements.vf.designspacegraph\_BLACKBOWS module
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.vf.opszglassbanner module
-------------------------------------------
+pagebot.elements.vf.specimen module
+-----------------------------------
 
-.. automodule:: pagebot.elements.vf.opszglassbanner
+.. automodule:: pagebot.elements.vf.specimen
    :members:
    :undoc-members:
    :show-inheritance:

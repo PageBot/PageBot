@@ -14,14 +14,6 @@ Subpackages
 Submodules
 ----------
 
-pagebot.fonttoolbox.REMOVEmutator module
-----------------------------------------
-
-.. automodule:: pagebot.fonttoolbox.REMOVEmutator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.fonttoolbox.fontpaths module
 ------------------------------------
 
@@ -38,26 +30,10 @@ pagebot.fonttoolbox.otlTools module
    :undoc-members:
    :show-inheritance:
 
-pagebot.fonttoolbox.svg2drawbot module
---------------------------------------
-
-.. automodule:: pagebot.fonttoolbox.svg2drawbot
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.fonttoolbox.ttftools module
 -----------------------------------
 
 .. automodule:: pagebot.fonttoolbox.ttftools
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.fonttoolbox.varfontdesignspace module
----------------------------------------------
-
-.. automodule:: pagebot.fonttoolbox.varfontdesignspace
    :members:
    :undoc-members:
    :show-inheritance:

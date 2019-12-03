@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
 
    pagebot.contexts.base
-   pagebot.contexts.flat
-   pagebot.contexts.xml
+   pagebot.contexts.flatcontext
+   pagebot.contexts.markup
 
 Module contents
 ---------------

@@ -6,20 +6,17 @@ Subpackages
 
 .. toctree::
 
-   pagebot.bezierpaths
-   pagebot.color
    pagebot.conditions
    pagebot.contexts
    pagebot.contributions
    pagebot.elements
    pagebot.fonttoolbox
-   pagebot.interaction
+   pagebot.mathematics
    pagebot.mining
    pagebot.publications
    pagebot.readers
    pagebot.resources
    pagebot.server
-   pagebot.strings
    pagebot.templates
    pagebot.themes
    pagebot.toolbox
@@ -67,18 +64,18 @@ pagebot.errors module
    :undoc-members:
    :show-inheritance:
 
-pagebot.gradient module
------------------------
+pagebot.filepaths module
+------------------------
 
-.. automodule:: pagebot.gradient
+.. automodule:: pagebot.filepaths
    :members:
    :undoc-members:
    :show-inheritance:
 
-pagebot.paths module
---------------------
+pagebot.gradient module
+-----------------------
 
-.. automodule:: pagebot.paths
+.. automodule:: pagebot.gradient
    :members:
    :undoc-members:
    :show-inheritance:
