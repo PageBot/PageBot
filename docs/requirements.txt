@@ -3,3 +3,4 @@ pagebot
 fontTools
 markdown
 svgwrite
+flat
