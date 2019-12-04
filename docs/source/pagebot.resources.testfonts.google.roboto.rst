@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-   pagebot.resources.testfonts.google.roboto.@axes
+   pagebot.resources.testfonts.google.roboto.axes
 
 Module contents
 ---------------

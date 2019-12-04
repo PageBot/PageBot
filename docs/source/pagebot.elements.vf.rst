@@ -20,14 +20,6 @@ pagebot.elements.vf.bezieranimation module
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.vf.designspacegraph\-WORKING module
-----------------------------------------------------
-
-.. automodule:: pagebot.elements.vf.designspacegraph-WORKING
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.elements.vf.designspacegraph module
 -------------------------------------------
 
@@ -84,18 +76,26 @@ pagebot.elements.vf.designspacegraph6 module
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.vf.designspacegraph\_ARROWS module
----------------------------------------------------
+pagebot.elements.vf.designspacegrapharrows module
+-------------------------------------------------
 
-.. automodule:: pagebot.elements.vf.designspacegraph_ARROWS
+.. automodule:: pagebot.elements.vf.designspacegrapharrows
    :members:
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.vf.designspacegraph\_BLACKBOWS module
-------------------------------------------------------
+pagebot.elements.vf.designspacegraphblackbows module
+----------------------------------------------------
 
-.. automodule:: pagebot.elements.vf.designspacegraph_BLACKBOWS
+.. automodule:: pagebot.elements.vf.designspacegraphblackbows
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pagebot.elements.vf.designspacegraphworking module
+--------------------------------------------------
+
+.. automodule:: pagebot.elements.vf.designspacegraphworking
    :members:
    :undoc-members:
    :show-inheritance:
