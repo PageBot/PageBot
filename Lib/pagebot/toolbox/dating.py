@@ -1225,6 +1225,8 @@ class Dating:
         week are filled with the days of end of the previous month and the
         start of the next month.
 
+        For example::
+
             [
                 [p01, p02, p03, d01, d02, d03, d04],
                 [d05, d06, d07, d08, d09, d10, d11],
@@ -1258,6 +1260,8 @@ class Dating:
     def _get_calendarYear(self):
         """The calendarYear property answers a list of lists of lists
         containing all calendarMonths of the year.
+
+        For example::
 
             [
             [

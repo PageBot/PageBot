@@ -247,16 +247,16 @@ class Element:
 
         # Set timer of this element.
         # Default TimeMarks from t == now() until arbitrary one day from now().
-        """
-        t0 = now()
-        if timeMarks is None:
-            timeMarks = [TimeMark(t0, {}), TimeMark(t0 + days(1), {})]
-        self.timeMarks = timeMarks
-        if t is None: # Set the current time of this element.
-            t = t0
-        self.t = t # Initialize self.style from t = 0
-        self.timeKeys = INTERPOLATING_TIME_KEYS # List of names of style entries that can interpolate in time.
-        """
+
+        #t0 = now()
+        #if timeMarks is None:
+        #    timeMarks = [TimeMark(t0, {}), TimeMark(t0 + days(1), {})]
+        #self.timeMarks = timeMarks
+        #if t is None: # Set the current time of this element.
+        #    t = t0
+        #self.t = t # Initialize self.style from t = 0
+        # List of names of style entries that can interpolate in time.
+        #self.timeKeys = INTERPOLATING_TIME_KEYS 
         self.t = 0
         self.timeMarks = []
         self.timeKeys = []
@@ -6657,7 +6657,6 @@ class Element:
         >>> success = e2.bottom2Top()
         >>> e2.y, 30
         (30pt, 30)
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.bottom2Top() # Element without parent answers False
         False

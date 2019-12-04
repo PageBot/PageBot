@@ -319,14 +319,16 @@ class PreVarFamily(Family):
         font (therefore not included in the error messages) Answer resulting
         dictionary with Error instances, showing the type of error.
 
-        dict(
-            A=dict(
-                ok=[fontPath1, ...],
-                error=[fontPath2, ...],
-                report=[]
-            ),
-            ...
-        )
+        For example::
+
+            dict(
+                A=dict(
+                    ok=[fontPath1, ...],
+                    error=[fontPath2, ...],
+                    report=[]
+                ),
+                ...
+            )
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto.ttf.designspace'

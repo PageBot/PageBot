@@ -1027,11 +1027,11 @@ def pyAttrName2XmlAttrName(key):
     return key
 
 def xmlAttrName2PyAttrName(key):
-    """The @xmlAttrName2PyAttrName@ method converts the XML attribute name
-    *key* to an appropriate Python attribute identifier. If the *key* is
-    `'class'` then it is translated into 'class_'. If a namespace is defined
-    (to be recognized on {...}, then replace that by prefix `'ns_'`. If there
-    is an HTML5 attribute *data-xxxx* used, then change that to *data_xxxx*."""
+    """Converts the XML attribute name *key* to an appropriate Python attribute
+    identifier. If the *key* is `class` then it is translated into `class_`.
+    If a namespace is defined (to be recognized on {...}, then replace that by
+    prefix `'ns_'`. If there is an HTML5 attribute *data-xxxx* used, then
+    change that to *data_xxxx*."""
     if key == 'class':
         key = 'cssClass'
     elif key == 'id':

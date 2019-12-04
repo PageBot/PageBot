@@ -132,7 +132,9 @@ def makeDocument():
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
 
-    typoIllustration = context.newString('&', style=dict(font=ampersandFont.path, fontSize=300, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
+    typoIllustration = context.newString('&',
+            style=dict(font=ampersandFont.path, fontSize=300,
+                xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
     newTextBox(typoIllustration, parent=page,
             conditions=[Fit2Width(), Center2Center(), Bottom2Bottom()],
             xAlign=CENTER, yAlign=TOP)

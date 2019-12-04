@@ -2,6 +2,7 @@
 # From:
 # https://github.com/adobe-type-tools/kern-dump/blob/master/dumpKernFeatureFromOTF.py
 #
+
 import os
 import sys
 import string
@@ -10,22 +11,27 @@ from .getKerningPairsFromOTF import *
 
 __doc__ ='''\
 
-    This script extracts a viable kern feature file from a compiled OTF.
-    It requires the script 'getKerningPairsFromOTF.py'; which is distributed in the same folder.
+    This script extracts a viable kern feature file from a compiled OTF. It
+    requires the script 'getKerningPairsFromOTF.py'; which is distributed in
+    the same folder.
 
     usage:
     python dumpKernFeatureFromOTF.py font.otf > outputfile
-
     '''
 
 kKernFeatureTag = 'kern'
 compressSinglePairs = True
-# Switch to control if single pairs shall be written plainly, or in a more space-saving notation (using enum).
+
+# Switch to control if single pairs shall be written plainly, or in a more
+# space-saving notation (using enum).
 
 
 def sortGlyphs(glyphlist):
-    # Sort glyphs in a way that glyphs from the exceptionList, or glyphs starting with 'uni' names do not get to be key (first) glyphs.
-    # An infinite loop is avoided, in case there are only glyphs matching above mentioned properties.
+    """
+    Sort glyphs in a way that glyphs from the exceptionList, or glyphs starting
+    with 'uni' names do not get to be key (first) glyphs.  An infinite loop is
+    avoided, in case there are only glyphs matching above mentioned properties.
+    """
     exceptionList = 'dotlessi dotlessj kgreenlandic ae oe AE OE uhorn'.split()
 
     glyphs = sorted(glyphlist)
@@ -57,7 +63,8 @@ def nameClass(glyphlist, flag):
 
 
 def buildOutputList(sourceList, outputList, headlineString):
-    # Basically just a function to create a nice headline before each chunk of kerning data.
+    """Basically just a function to create a nice headline before each chunk of
+    kerning data."""
     if sourceList:
         headline = headlineString
         decoration = '-'*len(headline)
@@ -72,7 +79,10 @@ def buildOutputList(sourceList, outputList, headlineString):
 
 
 def makeKernFeature(fontPath):
-    # Where is ReadKerning()?
+    """
+    FIXME: Where is ReadKerning()?
+    """
+
     '''
     f = ReadKerning(fontPath)
     allClasses = {}

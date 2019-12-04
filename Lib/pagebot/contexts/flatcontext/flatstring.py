@@ -223,10 +223,6 @@ class FlatString(BabelString):
 
     font = property(_get_font, _set_font)
 
-    def _get_fontSize(self):
-        """Answers the current state of the fontSize."""
-        return self.style.get('fontSize', DEFAULT_FONT_SIZE)
-
     '''
     def _get_fontFilePath(self):
         """Return the path to the file of the current font."""
@@ -235,9 +231,14 @@ class FlatString(BabelString):
     fontPath = property(_get_fontFilePath)
     '''
 
+    def _get_fontSize(self):
+        """Answers the current state of the fontSize."""
+        return self.style.get('fontSize', DEFAULT_FONT_SIZE)
+
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.font(fontSize)
+
         self.style['fontSize'] = fontSize
 
     fontSize = property(_get_fontSize, _set_fontSize)
