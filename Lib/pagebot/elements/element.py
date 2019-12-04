@@ -6579,10 +6579,12 @@ class Element:
         alignment type.
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.bottom2SideBottom() # Element without parent answers False
+        >>> # Element without parent answers False.
+        >>> e1.bottom2SideBottom() 
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
+        >>> # Inherited property.
+        >>> e1.originTop, e2.originTop 
         (True, True)
         >>> success = e2.bottom2SideBottom()
         >>> e2.y, 500 - 120
@@ -6595,12 +6597,13 @@ class Element:
         >>> success = e2.bottom2SideBottom()
         >>> e2.y, 500
         (500pt, 500)
-
          >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
-        >>> e1.bottom2SideBottom() # Element without parent answers False
+         >>> # Element without parent answers False.
+        >>> e1.bottom2SideBottom() 
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
+        >>> # Inherited property.
+        >>> e1.originTop, e2.originTop 
         (False, False)
         >>> success = e2.bottom2SideBottom()
         >>> e2.y, 120

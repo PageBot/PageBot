@@ -265,8 +265,8 @@ class APointContext:
         return self.p[0] > self.p1[0]
 
     def isHorizontalExtreme(self, tolerance=0):
-        """The `isHorizontalExtreme</code> method answers if the point context
-        is an extreme (such as the side of an O)."""
+        """The `isHorizontalExtreme` method answers if the point context is an
+        extreme (such as the side of an O)."""
         # Is the point context a vertical and extreme in x-direction?
         # @@@ Also test on non-inflection point.
         return self.isNextVertical(tolerance)\

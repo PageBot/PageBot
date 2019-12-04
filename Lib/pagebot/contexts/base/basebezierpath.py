@@ -171,10 +171,10 @@ class BaseBezierPath:
         Bézier path. If a font path is given the font will be installed and
         used directly.
 
-        - Optionally an alignment can be set. Possible `align` values are:
-        `"left"`, `"center"` and `"right"`.
-        - The default alignment is `left`.
-        - Optionally `txt` can be a `FormattedString`.
+        * Optionally an alignment can be set. Possible `align` values are:
+          `"left"`, `"center"` and `"right"`.
+        * The default alignment is `left`.
+        * Optionally `txt` can be a `FormattedString`.
 
         """
 
@@ -185,11 +185,13 @@ class BaseBezierPath:
         If a font path is given the font will be installed and used directly.
 
         Optionally an alignment can be set.
+
         * Possible `align` values are: `"left"`, `"center"` and `"right"`.
         * The default alignment is `left`.
         * Optionally `hyphenation` can be provided.
         * Optionally `txt` can be a `FormattedString`.
         * Optionally `box` can be a `BezierPath`.
+
         """
 
     # Path operations.

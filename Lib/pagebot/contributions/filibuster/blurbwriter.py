@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-import re
-import random
-from pagebot.contributions.filibuster.titlecase import titlecase
-
-choice = random.choice
-
-
 """
-26 12 99 - added support for 'article' in tags:
+26 12 99 - added support for 'article' in tags::
 
     'this_demonstrates_articles':    ['<#article, demo_fruit#>'],
     'demo_fruit':    ['pear', 'apple', 'olive']
@@ -33,18 +26,16 @@ in theory yes, but somehow netscape doesn't draw the uppercase - odd?
 
 - tag = name of an entry from the Content module
 - formatdict is a dictionary in which style
-    commands that are used in Content are mapped
-    to any arbitrary outside defined stylename.
-    This is to prevent pollution from outside formatting stuff
-    in the content module.
-    For instance, a content tag can say <#!bold, company#>
-    the formatdict can look like this: {'bold':    'CSS_my_specific_bold'}
-    If the style cmd from the tag can be found in the provided formatdict
-    format func is used to format the final resulting text.
-        def formatfunc(text, tagname)
-    This means that Writer and Content should also be able to be used
-    to make RTF, or any other kind of formatted text without making
-    the modules specific to any kind of format, or platform.
+  commands that are used in Content are mapped
+  to any arbitrary outside defined stylename.
+  This is to prevent pollution from outside formatting stuff
+  in the content module. For instance, a content tag can say <#!bold, company#>
+  the formatdict can look like this: `{'bold': 'CSS_my_specific_bold'}`
+  If the style cmd from the tag can be found in the provided formatdict
+  format func is used to format the final resulting text: `def formatfunc(text, tagname)`.
+  This means that Writer and Content should also be able to be used
+  to make RTF, or any other kind of formatted text without making
+  the modules specific to any kind of format, or platform.
 
 3.0 - added support for the Content package, added some UI.
 
@@ -66,6 +57,10 @@ capital of the first letter.
 4.0 - Removed string module import. Added some tests.
 """
 
+import re
+import random
+from pagebot.contributions.filibuster.titlecase import titlecase
+
 __version__ = '4.0'
 
 opentag = '<#'
@@ -78,6 +73,8 @@ FILTERWHITESPACE = 1
 
 randint = random.randint
 vowels = 'aeiuoAEIUO'
+
+choice = random.choice
 
 class BlurbWriter:
     """A very unspecific recursive compiler and randomizer for text."""

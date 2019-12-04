@@ -18,6 +18,24 @@ import operator
 from functools import reduce
 from pagebot.toolbox.units import point2D
 
+#@classmethod # FIXME: cannot be a class method, not in a class.
+def normalizedVector(p, length=1):
+    """Normalizes the vector `(x, y)`. The `length` defines the length of the
+    normalized vector, default is `1`. NOTE: undocumented for FreeType; It seems
+    that it is possible to try to normalize the vector `(0, 0)`. Return
+    immediately.
+    
+    FIXME: upsubscriptable-object error occured, is this still the case? Needs
+    some tests.
+    """
+    assert isinstance(p, tuple)
+    if p[1] == 0:
+        return math.copysign(length, p[0]), 0
+    w = vectorLength(p)
+    if w == 0:
+        return None
+    return 1.0 * p[0] * length / w, 1.0 * p[1] * length / w
+
 def iround(value):
     return min(255, max(0, int(round(value*255.0))))
 
@@ -32,11 +50,14 @@ def lucasRange(a, z, n, minN=None, maxN=None):
     Lucas’ formula.
 
     http://www.lucasfonts.com/about/interpolation-theory/
-    a = minStem
-    z = maxStem
-    n = number of interpolated stems, including the two masters
-    minN = optional minimum value if normalizing, e.g. 0-1000
-    maxN = optional maximum value if normalizing
+
+    ::
+
+        a = minStem
+        z = maxStem
+        n = number of interpolated stems, including the two masters
+        minN = optional minimum value if normalizing, e.g. 0-1000
+        maxN = optional maximum value if normalizing
 
     >>> lucasRange(32, 212, 8)
     [32, 42, 55, 72, 94, 124, 162, 212]
@@ -191,26 +212,6 @@ def scalePointByVector(p, v):
 
 def vectorLength(v):
     return math.sqrt(v[0]**2 + v[1]**2)
-
-@classmethod
-def normalizedVector(p, length=1):
-    """Normalizes the vector `(x, y)`. The *length* defines the length of the
-    normalized vector, default is `1`. 
-
-    NOTE: Freetype: UNDOCUMENTED! It seems that it is possible to try to
-    normalize the vector (0, 0). Return immediately."""
-    assert isinstance(p, tuple)
-    # FIXME: upsubscriptable-object.
-    if p[1] == 0:
-        return math.copysign(length, p[0]), 0
-
-    w = vectorLength(p)
-
-    if w == 0:
-        return None
-
-    # FIXME: upsubscriptable-object.
-    return 1.0 * p[0] * length / w, 1.0 * p[1] * length / w
 
 def normalize(p, length=1):
     if p[1] == 0:
