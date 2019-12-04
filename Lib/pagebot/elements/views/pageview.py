@@ -907,7 +907,7 @@ class PageView(BaseView):
         NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> from pagebot.document import Document
