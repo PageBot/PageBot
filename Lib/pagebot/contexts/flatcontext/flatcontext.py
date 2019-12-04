@@ -118,7 +118,6 @@ class FlatContext(BaseContext):
         # Convert units to point values.
         wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
-        self.newPage(self.doc)
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
@@ -266,22 +265,15 @@ class FlatContext(BaseContext):
             w = w or doc.w
             h = h or doc.h
 
-        if self.doc is None:
-            self.newDocument(w, h)
+
+        # FIXME: recursive?
+        #if self.doc is None:
+        #    self.newDocument(w, h)
 
         self.page = self.doc.addpage()
         self.pages.append(self.page)
 
-    def newDrawing(self, doc=None):
-        """Clear output canvas, start new export file.
-
-        >>> context = FlatContext()
-        >>> w = h = pt(100)
-        >>> context.newDocument(w, h)
-        """
-        # FIXME: needs a width and height, so different from DrawBot?
-        #context = FlatContext()
-        #context.newDrawing(w, h)
+    newDrawing = newDocument
 
     #   S T A T E
 

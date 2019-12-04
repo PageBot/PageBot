@@ -1,10 +1,7 @@
 ﻿#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""
-Airplanes n things
-
-"""
+"""Airplanes'n'things."""
 
 __version__ = '4.0'
 

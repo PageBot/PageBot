@@ -21,9 +21,10 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     """Draw registration mark as position x, y.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-    >>> context = FlatContext()
-    >>> context.newPage(pt(100), pt(100))
+    >>> from pagebot import getContext 
+    >>> context = getContext('Flat')
+    >>> context.newDocument(pt(100), pt(100))
+    >>> context.newPage()
     >>> drawRegistrationMark(context, pt(0,0), pt(20), pt(1), True)
     """
     x, y = origin
@@ -50,10 +51,11 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     https://en.wikipedia.org/wiki/Printing_registration.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-    >>> c = FlatContext()
-    >>> c.newPage(pt(100), pt(100))
-    >>> drawRegistrationMarks(c, pt(0,0), pt(100), pt(100), pt(20), pt(1))
+    >>> from pagebot import getContext 
+    >>> context = getContext('Flat')
+    >>> context.newDocument(pt(100), pt(100))
+    >>> context.newPage()
+    >>> drawRegistrationMarks(context, pt(0,0), pt(100), pt(100), pt(20), pt(1))
     """
     x, y, _ = point3D(origin)
     drawRegistrationMark(context, (x + w/2, y - cmSize), cmSize, cmStrokeWidth, False) # Bottom registration mark
@@ -65,10 +67,11 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
     """If the show flag is set, then draw the cropmarks or page frame.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
-    >>> c = FlatContext()
-    >>> c.newPage(pt(100), pt(100))
-    >>> drawCropMarks(c, pt(0,0), pt(100), pt(100), False, pt(20), pt(1))
+    >>> from pagebot import getContext 
+    >>> context = getContext('Flat')
+    >>> context.newDocument(pt(100), pt(100))
+    >>> context.newPage()
+    >>> drawCropMarks(context, pt(0,0), pt(100), pt(100), False, pt(20), pt(1))
     """
     x, y, _ = point3D(origin) # Ignore z-axus for now.
     context.fill(noColor)

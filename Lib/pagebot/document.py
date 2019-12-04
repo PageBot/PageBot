@@ -152,7 +152,7 @@ class Document:
             docLib = {}
         self._docLib = docLib
 
-        # Document (w, h) size is default from page, but will modified by the
+        # Document `(w, h)` size is default from page, but will modified by the
         # type of display mode.
         if autoPages:
             self.makePages(pageCnt=autoPages, pn=startPage, w=self.w, h=self.h,
@@ -1096,7 +1096,7 @@ class Document:
         """
         del self.pages[pn]
 
-    def makePages(self, pageCnt, pn=None, template=None, name=None, w=None,
+    def makePages(self, pageCnt=1, pn=None, template=None, name=None, w=None,
             h=None, **kwargs):
         """If no "point" is defined as page number `pn`, then we'll continue
         after the maximum value of `page.y` origin position. If template is
@@ -1110,6 +1110,7 @@ class Document:
         """
         if pn is None:
             pn = max(self.pages.keys() or [0])+1
+
         for n in range(pageCnt): # First page is n + pn
             # Parent is forced to self.
             self.newPage(pn=pn+n, template=template, name=name, w=w, h=h, **kwargs)

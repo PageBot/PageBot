@@ -22,7 +22,7 @@ copyright = 'Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens (http://p
 author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, David Crossland'
 
 # The full version, including alpha/beta/rc tags
-release = '0.6-alpha'
+release = '0.9.3-alpha'
 
 # -- General configuration ---------------------------------------------------
 

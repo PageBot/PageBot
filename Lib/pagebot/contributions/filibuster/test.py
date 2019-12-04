@@ -37,7 +37,9 @@ for name in names:
         k = usedMods.keys()
         list(k).sort()
         f.write("\nUsed in %s"%", ".join(k))
+
     f.close()
+
     for i in range(maxTests):
         f = codecs.open(namePath, 'a', 'utf-8')
         result = w.getBlurb(name)

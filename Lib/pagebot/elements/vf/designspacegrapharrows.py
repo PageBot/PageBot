@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     designspacegraph.py
+#     designspacegrapharrows.py
 #
 #     https://github.com/d3/d3-force
 #     https://observablehq.com/@d3/force-directed-graph

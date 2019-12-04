@@ -401,7 +401,8 @@ class BaseContext(AbstractContext):
         >>> # Oval and rect don't draw on self._bezierpath (yet).
         >>> context.oval(160-50, 160-50, 100, 100) 
         >>> context.bezierpath.points
-        [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
+        [(x=110.0, y=-160.0, onCurve=True), (x=160.0, y=-110.0, onCurve=True), (x=210.0, y=-160.0, onCurve=True), (x=160.0, y=-210.0, onCurve=True), (x=110.0, y=-160.0, onCurve=True)]
+        >>> #FIXME: y-coordinate reversed? [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
         >>> #len(context.bezierpath.points) #5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets

@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     designspacegraph.py
+#     designspacegraphworking.py
 #
 from pagebot.elements import Rect
 from pagebot.toolbox.units import pt, upt
