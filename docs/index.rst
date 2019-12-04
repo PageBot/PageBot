@@ -12,6 +12,7 @@ Welcome to PageBot's documentation!
 
    README.md
    GettingStarted.md
+   source/modules
    
 Indices and tables
 ==================
