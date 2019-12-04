@@ -907,12 +907,17 @@ class PageView(BaseView):
         NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
+        >>> from pagebot.document import Document
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
-        >>> view = PageView(context=context, style=style)
+        >>> doc = Document(name='TestDoc', startPage=50, autoPages=100, context=context)
+        >>> page = doc[1]
+        >>> print(page)
+        >>> view = doc.view
+        >>> #view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
         >>> view.drawBaselines(e, pt(0, 0))
         """
