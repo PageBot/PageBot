@@ -45,7 +45,8 @@ class HtmlBuilder(XmlBuilder):
     >>> ''.join(b._cssOut)
     'body {background-color: #FFFF00;}'
     """
-    PB_ID = 'html' # Id to make build_html hook name. Views will be calling e.build_html()
+    # ID to make build_html hook name. Views will be calling e.build_html()
+    PB_ID = 'html' 
 
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
@@ -755,14 +756,13 @@ table {
 
 
     def h1(self, **args):
-        """
-        The h1 to h6 tags define headers. h1 defines the largest header. h6
-        defines the smallest header.
+        """The `h1` to `h6` tags define headers. h1 defines the largest header. h6
+        defines the smallest header.::
 
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
-        self.h1(cssClass='chapter')
-        ...
-        self._h1()
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+            self.h1(cssClass='chapter')
+            ...
+            self._h1()
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -779,7 +779,7 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h1_(self, s, **args):
-        """The h1_ to h6_ tags define headers, combining the opening and
+        """The `h1_` to `h6_` tags define headers, combining the opening and
         closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
@@ -793,14 +793,14 @@ table {
         self._h1()
 
     def h2(self, **args):
-        """The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
+        """The `h1` to `h6` tags define headers. h1 defines the largest header. h6
+        defines the smallest header.::
 
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
 
-        self.h2(cssClass='head')
-        ...
-        self._h2()
+            self.h2(cssClass='head')
+            ...
+            self._h2()
 
 
         >>> b = HtmlBuilder()
@@ -819,7 +819,7 @@ table {
 
     def h2_(self, s, **args):
         """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        The `h1_` to `h6_` tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
@@ -833,15 +833,14 @@ table {
         self._h2()
 
     def h3(self, **args):
-        """
-        The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
+        """The `h1` to `h6` tags define headers. h1 defines the largest header. h6
+        defines the smallest header.::
 
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
 
-        self.h3(cssClass='subhead')
-        ...
-        self._h3()
+            self.h3(cssClass='subhead')
+            ...
+            self._h3()
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -859,7 +858,7 @@ table {
 
     def h3_(self, s, **args):
         """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
+        The `h1_` to `h6_` tags define headers, combining the opening and closing tag
         where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
@@ -873,14 +872,14 @@ table {
         self._h3()
 
     def h4(self, **args):
-        """
-        The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+        """The `h1` to `h6` tags define headers. h1 defines the largest header. h6
+        defines the smallest header.::
 
-        self.h4(cssClass='subsubhead')
-        ...
-        self._h4()
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+
+            self.h4(cssClass='subsubhead')
+            ...
+            self._h4()
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -898,9 +897,8 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h4_(self, s, **args):
-        """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
-        where the s attribute is the block content.
+        """The `h1_` to `h6_` tags define headers, combining the opening and
+        closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -913,15 +911,14 @@ table {
         self._h4()
 
     def h5(self, **args):
-        """
-        The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
+        """The `h1` to `h6` tags define headers.  h1 defines the largest header. h6
+        defines the smallest header.::
 
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
 
-        self.h5(cssClass='caption')
-        ...
-        self._h5()
+            self.h5(cssClass='caption')
+            ...
+            self._h5()
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -937,9 +934,8 @@ table {
         self._closeTag_noWhitespace('h5')
 
     def h5_(self, s, **args):
-        """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
-        where the s attribute is the block content.
+        """The `h1_` to `h6_` tags define headers, combining the opening and
+        closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -952,15 +948,14 @@ table {
         self._h5()
 
     def h6(self, **args):
-        """
-        The h1 to h6 tags define headers.
-        h1 defines the largest header. h6 defines the smallest header.
+        """The `h1` to `h6` tags define headers. h1 defines the largest header. h6
+        defines the smallest header.::
 
-        <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
+            <www href="http://www.w3schools.com/tags/tag_hn.asp" target="external"/>
 
-        self.h6(cssClass='footnote')
-        ...
-        self._h6()
+            self.h6(cssClass='footnote')
+            ...
+            self._h6()
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -976,9 +971,8 @@ table {
         self._closeTag_noWhitespace('h6')
 
     def h6_(self, s, **args):
-        """
-        The h1_ to h6_ tags define headers, combining the opening and closing tag
-        where the s attribute is the block content.
+        """The `h1_` to `h6_` tags define headers, combining the opening and
+        closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -1035,10 +1029,10 @@ table {
         self._closeTag('figcaption')
 
     def hgroup(self, **args):
-        """
-        The hgroup method (HTML5) defines the heading of a section or a document.
-        The hgroup element is used to group headers, <tag>h1</tag> to <tag>h6</tag>, where the largest
-        is the main heading of the section, and the others are sub-headings.
+        """The hgroup method (HTML5) defines the heading of a section or a
+        document. The hgroup element is used to group headers, <tag>h1</tag>
+        to <tag>h6</tag>, where the largest is the main heading of the section,
+        and the others are sub-headings.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True

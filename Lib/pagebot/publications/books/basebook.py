@@ -19,11 +19,16 @@ from pagebot.constants import *
 
 class BaseBook(Publication):
     """Create a default book, with cover, title pages, table of content,
-    chapters and index. Layout and content options defined by external parameters.
-    Subclassed from Document with the following optional attributes:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
-    w=None, h=None, exportPaths=None, **kwargs)"""
+    chapters and index. Layout and content options defined by external
+    parameters. Subclassed from Document with the following optional
+    attributes::
+
+        rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+        title=None, autoPages=1, defaultTemplate=None, templates=None,
+        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        **kwargs)
+    
+    """
 
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
 

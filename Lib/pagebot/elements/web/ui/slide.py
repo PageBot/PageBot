@@ -14,8 +14,11 @@
 #
 #     slide.py
 #
-#     TODO: Extend this "slider-control" (not slide slideshow) into a PageBot Element
-#
+
+"""
+TODO: Extend this "slider-control" (not slide slideshow) into a PageBot Element
+"""
+
 """
 <!DOCTYPE html>
 <html>

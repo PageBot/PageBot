@@ -44,6 +44,63 @@ class AxisDeltas:
     def __getitem__(self, key):
         return self.deltas[key]
 
+"""
+TODO: TTGlyph Functions to implement:
+
+  Methods defined here:
+
+  __getitem__(self, componentIndex)
+
+  __init__(self, data='')
+
+
+  compact(self, glyfTable, recalcBBoxes=True)
+
+  compile(self, glyfTable, recalcBBoxes=True)
+
+  compileComponents(self, glyfTable)
+
+  compileCoordinates(self)
+
+  compileDeltasGreedy(self, flags, deltas)
+
+  compileDeltasOptimal(self, flags, deltas)
+
+  decompileComponents(self, data, glyfTable)
+
+  decompileCoordinates(self, data)
+
+  decompileCoordinatesRaw(self, nCoordinates, data)
+
+  draw(self, pen, glyfTable, offset=0)
+
+  expand(self, glyfTable)
+
+  fromXML(self, name, attrs, content, ttFont)
+
+  getComponentNames(self, glyfTable)
+
+  getCompositeMaxpValues(self, glyfTable, maxComponentDepth=1)
+
+  getCoordinates(self, glyfTable)
+
+  getMaxpValues(self)
+
+  isComposite(self)
+      Can be called on compact or expanded glyph.
+
+  recalcBounds(self, glyfTable)
+
+  removeHinting(self)
+
+  toXML(self, writer, ttFont)
+
+  trim(self, remove_hinting=False)
+      Remove padding and, if requested, hinting, from a glyph.
+      This works on both expanded and compacted glyphs, without
+      expanding it.
+"""
+
 class Glyph:
     """The Glyph class wraps the glyph structure of a TrueType Font and
     extracts data from the raw glyph such as point sequence and type.
@@ -521,63 +578,6 @@ class Glyph:
             self._initialize()
         return self._boundingBox
     boundingBox = property(_get_boundingBox)
-
-    """
-    TTGlyph Functions to implement
-
- |  Methods defined here:
- |
- |  __getitem__(self, componentIndex)
- |
- |  __init__(self, data='')
- |
-  |
- |  compact(self, glyfTable, recalcBBoxes=True)
- |
- |  compile(self, glyfTable, recalcBBoxes=True)
- |
- |  compileComponents(self, glyfTable)
- |
- |  compileCoordinates(self)
- |
- |  compileDeltasGreedy(self, flags, deltas)
- |
- |  compileDeltasOptimal(self, flags, deltas)
- |
- |  decompileComponents(self, data, glyfTable)
- |
- |  decompileCoordinates(self, data)
- |
- |  decompileCoordinatesRaw(self, nCoordinates, data)
- |
- |  draw(self, pen, glyfTable, offset=0)
- |
- |  expand(self, glyfTable)
- |
- |  fromXML(self, name, attrs, content, ttFont)
- |
- |  getComponentNames(self, glyfTable)
- |
- |  getCompositeMaxpValues(self, glyfTable, maxComponentDepth=1)
- |
- |  getCoordinates(self, glyfTable)
- |
- |  getMaxpValues(self)
- |
- |  isComposite(self)
- |      Can be called on compact or expanded glyph.
- |
- |  recalcBounds(self, glyfTable)
- |
- |  removeHinting(self)
- |
- |  toXML(self, writer, ttFont)
- |
- |  trim(self, remove_hinting=False)
- |      Remove padding and, if requested, hinting, from a glyph.
- |      This works on both expanded and compacted glyphs, without
- |      expanding it.
-    """
 
 if __name__ == '__main__':
     import doctest

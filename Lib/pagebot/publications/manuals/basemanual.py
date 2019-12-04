@@ -19,11 +19,13 @@ from pagebot.constants import *
 
 class BaseManual(Publication):
     """Create a default ad, optimized to export as PDF as well as website.
+    Subclassed from Element-->Publication with the following optional
+    attributes::
 
-    Subclassed from Element-->Publication with the following optional attributes:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
-    w=None, h=None, exportPaths=None, **kwargs)
+        rootStyle=None, styles=None, views=None, name=None,
+        cssClass=None, title=None, autoPages=1, defaultTemplate=None,
+        templates=None, originTop=True, startPage=0, w=None, h=None,
+        exportPaths=None, **kwargs)
 
     >>> from pagebot.constants import A4
     >>> br = Brochure()

@@ -17,10 +17,14 @@ from pagebot.constants import *
 
 class BaseIdentity(Publication):
     """Create a default identity, with layout and content options defined by external parameters.
-    Inheriting from Document with the following optional attribures:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None, 
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
-    exportPaths=None, **kwargs)"""
+    Inheriting from Document with the following optional attributes::
+
+        rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+        title=None, autoPages=1, defaultTemplate=None, templates=None,
+        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        **kwargs)
+
+    """
 
     # Default paper sizes that are likely to be used for 
     # identities main page size. For a set of identity publications

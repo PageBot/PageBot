@@ -16,11 +16,14 @@ from pagebot.publications.publication import Publication
 from pagebot.constants import *
 
 class Poster(Publication):
-    """Create a default poster, with layout and content options defined by external parameters.
-    Inheriting from Document with the following optional attribures:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None, 
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None, 
-    exportPaths=None, **kwargs)"""
+    """Create a default poster, with layout and content options defined by
+    external parameters. Inheriting from Document with the following optional
+    attributes::
+
+        rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+        title=None, autoPages=1, defaultTemplate=None, templates=None,
+        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        **kwargs)"""
 
     # Default paper sizes that are likely to be used for 
     # posters in portrait ratio.

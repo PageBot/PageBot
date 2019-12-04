@@ -175,6 +175,7 @@ class BaseBezierPath:
         `"left"`, `"center"` and `"right"`.
         - The default alignment is `left`.
         - Optionally `txt` can be a `FormattedString`.
+
         """
 
     def textBox(self, txt, box, font=None, fontSize=10, align=None,

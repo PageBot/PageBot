@@ -69,23 +69,24 @@ class SlideShow(SlideShowBase):
     Copy the js/jquery.bbslider.min.js to local PageBot site source  in "js/"   
     Add: doc.view.jsUrls = <Other JS files>, js/jquery.bbslider.min.js')
 
-    Fill in MarkDown file with image references as:
+    Fill in MarkDown file with image references as::
 
-    ~~~
-    content = page.select('Content')
-    slideshow = content.newSlideShow(h=300, slideW=300, slideH=300, startIndex=2, 
-        autoHeight=True, dynamicHeight=True, transition='slide', easing=CSS_EASE, 
-        frameDuration=4, duration=0.7, pauseOnHit=True, randomPlay=False)
-    box = slideshow.slides
-    ~~~
+        ~~~
+        content = page.select('Content')
+        slideshow = content.newSlideShow(h=300, slideW=300, slideH=300, startIndex=2, 
+            autoHeight=True, dynamicHeight=True, transition='slide', easing=CSS_EASE, 
+            frameDuration=4, duration=0.7, pauseOnHit=True, randomPlay=False)
+        box = slideshow.slides
+        ~~~
 
-    ![](images/DesignModels2.072.png)
-    ![](images/DesignModels2.073.png)
-    ![](images/DesignModels2.074.png)
+        ![](images/DesignModels2.072.png)
+        ![](images/DesignModels2.073.png)
+        ![](images/DesignModels2.074.png)
 
-    ~~~ 
-    box = slideshow.side
-    ~~~
+        ~~~ 
+        box = slideshow.side
+        ~~~
+
     Slide show side caption here.
 
     """
@@ -185,9 +186,9 @@ class SlideShow(SlideShowBase):
         return js + ', '.join(options) + '});\n\n'
 
     def prepare_html(self, view):
-        """Respond to the top-down element broadcast to prepare for build.
-        Run through all images and make them the same (w, h) as self, by cropping the scaled cache.
-        """
+        """Respond to the top-down element broadcast to prepare for build. Run
+        through all images and make them the same (w, h) as self, by cropping
+        the scaled cache."""
         for e in self.elements:
             e.proportional = self.proportional
             e.prepare_html(view)

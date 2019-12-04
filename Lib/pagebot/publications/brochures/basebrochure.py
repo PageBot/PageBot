@@ -18,15 +18,18 @@ from pagebot.elements import *
 from pagebot.constants import *
 
 class BaseBrochure(Publication):
-    """Create a default brochure, with cover/home page, article pages in different 
-    template layouts, table of content, navigation. Layout and content options defined 
-    by external parameters.
-    The brochure should be optimized to export as PDF as well as website.
+    """Create a default brochure, with cover / home page, article pages in
+    different template layouts, table of content, navigation. Layout and
+    content options defined by external parameters. The brochure should be
+    optimized to export as PDF as well as website.
 
-    Subclassed from Element-->Publication with the following optional attributes:
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0,
-    w=None, h=None, exportPaths=None, **kwargs)
+    Subclassed from Element-->Publication with the following optional
+    attributes::
+
+        rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+        title=None, autoPages=1, defaultTemplate=None, templates=None,
+        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        **kwargs)
 
     >>> from pagebot.constants import A4
     >>> br = Brochure()

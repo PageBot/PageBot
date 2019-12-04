@@ -6,14 +6,13 @@
 #
 #     Made for usage in PageBot, www.pagebot.pro
 #
-"""
-InlineExtension Extension for Python-Markdown
-=======================================
-
-Make PageBot Markdown compatible with default MacDown syntax.
-
 
 """
+InlineExtension Extension for Python-Markdown.
+
+TODO: Make PageBot Markdown compatible with default MacDown syntax.
+"""
+
 from markdown.extensions import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 

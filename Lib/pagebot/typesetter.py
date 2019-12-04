@@ -14,6 +14,7 @@
 #
 #     typesetter.py
 #
+
 import re
 import copy
 import codecs
@@ -75,9 +76,10 @@ class Typesetter:
         li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
+
+    # These extension are needed to make PageBot markdown compatible with
+    # default MacDown behavior.
     MARKDOWN_EXTENSIONS = [
-        # These extension are needed to make PageBot markdown compatible with
-        # default MacDown behavior.
         InlineExtension(),
         FencedCodeExtension(),
         FootnoteExtension(),
@@ -134,7 +136,9 @@ class Typesetter:
 
         if styles is None:
             styles = self.DEFAULT_STYLES
-        self.styles = styles # Style used, in case the current text box does not have them.
+
+        # Style used, in case the current text box does not have them.
+        self.styles = styles 
 
         # Stack of graphic state as cascading styles. Last is template for the
         # next.
@@ -272,8 +276,10 @@ class Typesetter:
             if literatureRefs:
                 for index, p in enumerate(node.findall('./ol/li/p')):
                     if index+1 in literatureRefs:
-                        # Store the content as node, so we can process it with a Typesetter in case of child nodes.
-                        # Spltting fields inside the p content will be done by the calling application or Composer.
+                        # Store the content as node, so we can process it with
+                        # a Typesetter in case of child nodes. Splitting fields
+                        # inside the `p` content will be done by the calling
+                        # application or Composer.
                        literatureRefs[index+1]['p'] = p
                     else:
                         print('### Warning: %d literature reference not found. %s' % (index+1, literatureRefs.keys()))
@@ -296,8 +302,9 @@ class Typesetter:
         context = self.galley.context
         bulletStyle = self.styles.get('bullet') or self.styles.get('li') or self.styles.get('p')
         bullet = bulletStyle.get('listBullet', self.DEFAULT_BULLET)
-        # Only defined for non-HTML.
-        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle) # Get styled string with bullet.
+
+        # Only defined for non-HTML. Get styled string with bullet.
+        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle) 
         if bulletString is not None:
             self.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.
@@ -309,7 +316,7 @@ class Typesetter:
     #   <img src="images/myImage.png" alt="Alt text here"/>
     #   <figcaption>Caption here</figcaption>
     # </figure>
-    #
+  
     IMAGE_CACHE_WIDTH = re.compile('w=([px012345679\\%]*)') # 200px, 100% 
     IMAGE_CACHE_HEIGHT = re.compile('h=([px012345679\\%]*)') # 200px, 100% 
     IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)') # left, center, right 
@@ -320,7 +327,7 @@ class Typesetter:
 
     def node_img(self, node, e):
         """Process the image. adding the img tag or a new image element to the
-        galley.  The alt attribute can contain additional information for the
+        galley. The alt attribute can contain additional information for the
         Image element.  Keep the Image element in self.currentImage, in case we
         need to add captions.
 

@@ -29,11 +29,12 @@ from pagebot.toolbox.color import color
 class Newspaper(Publication):
     """Create a default newspaper, with layout and content options defined by
     external parameters. Inheriting from Document with the following optional
-    attribures:
+    attributes::
 
-    rootStyle=None, styles=None, views=None, name=None, cssClass=None, title=None,
-    autoPages=1, defaultTemplate=None, templates=None, originTop=True, startPage=0, w=None, h=None,
-    exportPaths=None, **kwargs)
+        rootStyle=None, styles=None, views=None, name=None, cssClass=None,
+        title=None, autoPages=1, defaultTemplate=None, templates=None,
+        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        **kwargs)
 
     >>> from pagebot.constants import Broadsheet, GRID_SQR, BASE_LINE
     >>> blurb = Blurb()

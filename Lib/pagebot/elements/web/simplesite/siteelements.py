@@ -164,9 +164,12 @@ class MenuItem(SiteColumn):
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         """
-        <li>
-            <a href="index.html">Home</a>
-        </li>
+        Example output::
+
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+
         """
         b = self.context.b
         if self.current:

@@ -2,12 +2,10 @@
 # -*- coding: UTF-8 -*-
 
 """
-        event
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Event.
 """
 
 __version__ = '4.0'
-
 
 content = {
         # Alternative entries

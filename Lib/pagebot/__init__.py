@@ -108,7 +108,7 @@ class Globals:
         return getattr(self, key)
 
 def getGlobals(scriptId):
-    """In order to let PageBot scripts and/applications exchange information,
+    """In order to let PageBot scripts and applications exchange information,
     without the need to save as files, the pbglobals module supports the
     storage of non-persistent information. This way, applications with Vanilla
     windows can be used as UI for scripts that perform as batch process.  Note

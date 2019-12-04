@@ -194,10 +194,11 @@ def vectorLength(v):
 
 @classmethod
 def normalizedVector(p, length=1):
-    """Normalizes the vector ``(x, y)``. The *length* defines the length of the
-    normalized vector, default is ``1``. Freetype XXX: UNDOCUMENTED! It seems
-    that it is possible to try to normalize the vector (0, 0). Return
-    immediately."""
+    """Normalizes the vector `(x, y)`. The *length* defines the length of the
+    normalized vector, default is `1`. 
+
+    NOTE: Freetype: UNDOCUMENTED! It seems that it is possible to try to
+    normalize the vector (0, 0). Return immediately."""
     assert isinstance(p, tuple)
     # FIXME: upsubscriptable-object.
     if p[1] == 0:

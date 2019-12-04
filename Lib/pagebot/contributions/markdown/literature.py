@@ -7,9 +7,9 @@
 #     Made for usage in PageBot, www.pagebot.pro
 #
 # Copied from <https://github.com/waylan/Python-Markdown>
+
 """
 Literature Extension for Python-Markdown
-=======================================
 
 Adds literature handling to Python-Markdown.
 
@@ -19,7 +19,6 @@ for documentation.
 Copyright The Python Markdown Project
 
 License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
-
 """
 
 import re

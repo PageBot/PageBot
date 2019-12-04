@@ -218,7 +218,10 @@ class Navigation(NanoElement):
                 print('No page or url defined: %s->%s' % (node, node.page))
 
     def build_html(self, view, path, drawElements=True, **kwargs):
-        """Build the recursive nested menu, depending on the structure of the pageTree
+        """Builds the recursively nested menu, depending on the structure of the
+        pageTree.
+
+        For example::
 
             <ul class="main-navigation navmenu">
                 <li><a href="#">Home</a></li>
@@ -255,10 +258,8 @@ class Navigation(NanoElement):
                 </li>
                 <li><a href="#">About Us</a></li>
             </ul>
-        """
-        #print('-'*60)
-        #self.pageTree.show()
 
+        """
         b = self.context.b
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         if view.showIdClass or self.showIdClass:

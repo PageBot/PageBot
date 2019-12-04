@@ -171,9 +171,12 @@ class GlyphAnalyzer:
         return self.spanBlack(m0, m1, step)
 
     def lineOnBlack(self, p0, p1, step=SPANSTEP):
-        """Answers if the line between point p0 and p1
-        is entirely running on black, except for the end point. To
-        test if the line is entirely on black, use **self.lineInBlack()"""
+        """Answers if the line between point p0 and p1 is entirely running on
+        black, except for the end point.
+        
+        FIXME: missing, should be lineOnBlack? 
+        To test if the line is entirely on black, use `self.lineInBlack()`.
+        """
         return self.spanBlack(p0, p1, step)
 
     def onBlack(self, p):
