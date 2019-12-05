@@ -187,7 +187,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
@@ -203,7 +202,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
@@ -217,7 +215,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -243,7 +240,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.newPath()
         <FlatBezierPath>
@@ -259,7 +255,6 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -279,7 +274,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
@@ -303,7 +297,6 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> hasattr(context, 'newPath')
         True
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
@@ -336,7 +329,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> # Creates. a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
@@ -363,7 +355,6 @@ class BaseContext(AbstractContext):
         >>> path = context.newPath()
         >>> path.points
         []
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> # Property self.bezierpath creates a self._bezierpath BezierPath.
         >>> len(context.bezierpath.points) 
@@ -377,8 +368,7 @@ class BaseContext(AbstractContext):
         >>> # Oval and rect don't draw on self._bezierpath (yet).
         >>> context.oval(160-50, 160-50, 100, 100) 
         >>> context.bezierpath.points
-        [(x=110.0, y=-160.0, onCurve=True), (x=160.0, y=-110.0, onCurve=True), (x=210.0, y=-160.0, onCurve=True), (x=160.0, y=-210.0, onCurve=True), (x=110.0, y=-160.0, onCurve=True)]
-        >>> #FIXME: y-coordinate reversed? [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
+        [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
         >>> #len(context.bezierpath.points) #5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets
@@ -465,7 +455,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
@@ -499,7 +488,6 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -541,7 +529,6 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
@@ -683,7 +670,6 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.rotate(40)
         """
@@ -737,7 +723,6 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
         >>> context.newPage(420, 420)
         >>> context.fontSize(pt(12))
         """

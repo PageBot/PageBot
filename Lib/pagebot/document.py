@@ -1047,7 +1047,8 @@ class Document:
         >>> page = doc[1]
         >>> page.size
         (80pt, 120pt)
-        >>> page.originTop # Value copied into the new page setting
+        >>> # Value copied into the new page setting.
+        >>> page.originTop 
         False
         >>> doc = Document(originTop=True)
         >>> page = doc[1]
@@ -1057,9 +1058,12 @@ class Document:
         if isinstance(template, str):
             template = self.templates.get(template)
 
-        if isinstance(template, str): # Find the template with this name.
+        # Find the template with this name.
+        if isinstance(template, str): 
             template = self.getTemplate(template)
-        if template is None: # Not defined or template not found, then use default
+
+    # Not defined or template not found, then use default
+        if template is None: 
             template = self.defaultTemplate
 
         if not name and template is not None:

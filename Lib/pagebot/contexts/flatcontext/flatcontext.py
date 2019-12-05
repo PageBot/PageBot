@@ -76,7 +76,7 @@ class FlatContext(BaseContext):
         """Constructor of Flat context.
 
         >>> context = FlatContext()
-        >>> context.newDrawing(100, 100)
+        >>> context.newPage(100, 100)
         >>> context.drawing.__class__.__name__
         'document'
         """
@@ -99,7 +99,7 @@ class FlatContext(BaseContext):
         conform to DrawBot's drawing methods.
 
         >>> context = FlatContext()
-        >>> context.newDrawing(100, 100)
+        >>> context.newPage(100, 100)
         >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
@@ -134,19 +134,19 @@ class FlatContext(BaseContext):
         """
         FIX
         >>> context.fileType = FILETYPE_JPG
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         # Flat is too strict with color-format match?
         >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG)
         >>> context.fileType = FILETYPE_PDF
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         # Flat is too strict with color-format match?
         >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF)
         >>> context.fileType = FILETYPE_PNG
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PNG)
@@ -207,7 +207,7 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         """
         if self.drawing is None:
             self.newDrawing(w=w, h=h, doc=doc)
@@ -246,7 +246,7 @@ class FlatContext(BaseContext):
         >>> h = 600
         >>> dx = 6 
         >>> dy = 8
-        >>> context.newDrawing(w, h) 
+        >>> context.newPage(w, h) 
         >>> x, y = 4, 5
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
@@ -394,7 +394,7 @@ class FlatContext(BaseContext):
         >>> fs = context.newString('ABC', style=style)
         >>> fs.__class__.__name__
         'FlatString'
-        >>> context.newDrawing(1000, 1000)
+        >>> context.newPage(1000, 1000)
         >>> context.text(fs, (100, 100))
 
         """
@@ -440,7 +440,7 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> style = {'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
@@ -481,7 +481,7 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> style = {'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
@@ -510,7 +510,7 @@ class FlatContext(BaseContext):
         >>> context = getContext('Flat')
         >>> print(context)
         <FlatContext>
-        >>> context.newDrawing(w, h)
+        >>> context.newPage(w, h)
         >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
@@ -887,7 +887,7 @@ class FlatContext(BaseContext):
         >>> w = 800
         >>> h = 600
         >>> angle = 5
-        >>> context.newDrawing(w, h) 
+        >>> context.newPage(w, h) 
         >>> x, y = 40, 50
         >>> context.rotate(angle)
         >>> p1 = context.getTransformed(x, y)

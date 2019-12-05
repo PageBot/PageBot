@@ -1019,9 +1019,10 @@ class Element:
         >>> from pagebot.conditions import *
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> context.newDrawing()
-        >>> context.newPage()
-        >>> e = Element(w=500, h=500, context=context)
+        >>> context.newPage(w=500, h=500)
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=500, h=500, context=context)
+        >>> e = doc[1] #Element(w=500, h=500, context=context)
         >>> e.childClipPath
         <PageBotPath 1>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)

@@ -23,7 +23,7 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getContext 
     >>> context = getContext('Flat')
-    >>> context.newDrawing(pt(100), pt(100))
+    >>> context.newPage(pt(100), pt(100))
     >>> drawRegistrationMark(context, pt(0,0), pt(20), pt(1), True)
     """
     x, y = origin
@@ -52,7 +52,7 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getContext 
     >>> context = getContext('Flat')
-    >>> context.newDrawing(pt(100), pt(100))
+    >>> context.newPage(pt(100), pt(100))
     >>> drawRegistrationMarks(context, pt(0,0), pt(100), pt(100), pt(20), pt(1))
     """
     x, y, _ = point3D(origin)
@@ -67,7 +67,7 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getContext 
     >>> context = getContext('Flat')
-    >>> context.newDrawing(pt(100), pt(100))
+    >>> context.newPage(pt(100), pt(100))
     >>> context.newPage()
     >>> drawCropMarks(context, pt(0,0), pt(100), pt(100), False, pt(20), pt(1))
     """
