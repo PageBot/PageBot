@@ -914,10 +914,15 @@ class PageView(BaseView):
         >>> style = getRootStyle() # Get default values
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> doc = Document(name='TestDoc', startPage=50, autoPages=100, context=context)
-        >>> page = doc[1]
-        >>> print(page)
+        >>> pages = doc.pages
+        >>> len(pages)
+        100
+        >>> page = doc[50]
+        >>> page
+        <Page #50 default (1000pt, 1000pt)>
+        >>> #print('drawBaselines')
         >>> view = doc.view
-        >>> #view = PageView(context=context, style=style)
+        >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
         >>> view.drawBaselines(e, pt(0, 0))
         """
