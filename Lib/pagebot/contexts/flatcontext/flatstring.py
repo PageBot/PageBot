@@ -417,8 +417,11 @@ class FlatString(BabelString):
         print('append %s' % s)
         assert isinstance(s, (str, FlatString))
 
+
         if isinstance(s, str):
-            fs = self.context.newString(s)
+            lastStyle = self.data[-1]['style']
+            print(lastStyle)
+            fs = self.context.newString(s, style=lastStyle)
         else:
             fs = s
 
@@ -520,9 +523,10 @@ class FlatString(BabelString):
 
         # Base for em or percent.
 
-        lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
-        lineHeight = round(lineHeight, 2)
-        fsAttrs['lineHeight'] = lineHeight
+        # FIXME: not an allowed style in the PB approach?
+        #lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
+        #lineHeight = round(lineHeight, 2)
+        #fsAttrs['lineHeight'] = lineHeight
 
         # Color values for text fill
         # Color: Fill the text with this color instance
@@ -583,17 +587,19 @@ class FlatString(BabelString):
                 fsAttrs['stroke'] = cStroke.rgb
 
         # NOTE: xAlign is used for element alignment, not text.
-        sAlign = css('xTextAlign', e, style)
+        #sAlign = css('xTextAlign', e, style)
 
+        # FIXME: not an allowed style in the PB approach?
         # yTextAlign must be solved by parent container element.
-        if sAlign is not None: 
-            fsAttrs['align'] = sAlign
+        #if sAlign is not None: 
+        #    fsAttrs['align'] = sAlign
 
-        sUnderline = css('underline', e, style)
+        # FIXME: not an allowed style in the PB approach?
+        #sUnderline = css('underline', e, style)
 
         # Only these values work in FormattedString.
-        if sUnderline in ('single', None): 
-            fsAttrs['underline'] = sUnderline
+        #if sUnderline in ('single', None): 
+        #    fsAttrs['underline'] = sUnderline
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
 
