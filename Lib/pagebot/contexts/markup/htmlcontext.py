@@ -44,6 +44,8 @@ class HtmlContext(BaseContext):
         self.name = self.__class__.__name__
         self._fill = noColor
 
+    # Drawing.
+
     def newDrawing(self, w=None, h=None, doc=None):
         """PageBot function. Ignore for now in HTMLContext.
 
@@ -52,6 +54,12 @@ class HtmlContext(BaseContext):
         """
 
     def endDrawing(self):
+        pass
+
+    def saveDrawing(self, path):
+        pass
+
+    def getDrawing(self):
         pass
 
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
@@ -169,9 +177,6 @@ class HtmlContext(BaseContext):
 
     def numberOfImages(self):
         return 0
-
-    def saveDocument(self, path):
-        pass
 
     def shadow(self, eShadow, e=None):
         pass

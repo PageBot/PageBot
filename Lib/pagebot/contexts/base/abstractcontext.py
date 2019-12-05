@@ -25,6 +25,8 @@ class AbstractContext:
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
     """
 
+    # Drawing.
+
     def newDrawing(self, w=None, h=None, doc=None):
         """Resets to a clean and empty drawing stack."""
         raise NotImplementedError
@@ -33,6 +35,13 @@ class AbstractContext:
         """Explicitly tells the context that drawing is done. This is advised
         when using DrawBot as a standalone module.  The `doc` attribute is the
         optional Document instance of the caller."""
+        raise NotImplementedError
+
+    def saveDrawing(self, path, multiPage=None):
+        """PageBot function."""
+        raise NotImplementedError
+
+    def getDrawing(self):
         raise NotImplementedError
 
     # Styles

@@ -46,7 +46,7 @@ class SvgContext(BaseContext):
         """Constructor of SvgContext.
 
         >>> context = SvgContext()
-        >>> context.saveDocument('_export/SvgContext.%s' % FILETYPE_SVG)
+        >>> context.saveDrawing('_export/SvgContext.%s' % FILETYPE_SVG)
 
         """
         super().__init__()
@@ -68,6 +68,8 @@ class SvgContext(BaseContext):
         self.newDrawing()
         self._path = None # Hold current open SVG path
 
+    # Drawing.
+
     def newDrawing(self, w=None, h=None, doc=None):
         """The @doc is the optional Document instance of the caller. Clear
         output canvas, start new export file.
@@ -77,7 +79,10 @@ class SvgContext(BaseContext):
         """
         self._drawing = self.b.Drawing(self._filePath, profile='tiny')
 
-    def saveDocument(self, path, multiPage=None):
+    def endDrawing(self):
+        pass
+
+    def saveDrawing(self, path, multiPage=None):
         """Select other than standard DrawBot export builders here. Save the
         current image as path, rendering depending on the extension of the path
         file. In case the path starts with "_export", then create it
@@ -91,10 +96,10 @@ class SvgContext(BaseContext):
         self.checkExportPath(path)
         shutil.move(self._filePath, path)
 
-    saveImage = saveDocument # Compatible API with DrawBot
+    saveImage = saveDrawing # Compatible API with DrawBot
 
-    def getDocument(self):
-        pass
+    def getDrawing(self):
+        return self._drawing
 
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
         """Create a new SVG page.
@@ -120,7 +125,7 @@ class SvgContext(BaseContext):
         >>> context.stroke((0.4, 0.6, 0.1), pt(20))
         >>> context.fill((color(r=0.4, g=0.1, b=0.9)))
         >>> context.rect(pt(300), pt(150), pt(400), pt(600))
-        >>> context.saveDocument(path)
+        >>> context.saveDrawing(path)
         >>> #r = os.system('open %s' % path)
         """
         rect = self._drawing.rect(insert=((self._ox+x).pt, (self._oy+y).pt), size=(w.pt, h.pt),
@@ -140,7 +145,7 @@ class SvgContext(BaseContext):
         >>> context.stroke(blackColor, pt(20))
         >>> context.fill(color(r=0.4, g=0.1, b=0.9))
         >>> context.oval(pt(300), pt(150), pt(400), pt(600))
-        >>> context.saveDocument(path)
+        >>> context.saveDrawing(path)
         >>> #r = os.system('open %s' % path)
         """
         oval = self._drawing.ellipse(center=upt((self._ox+x+w/2),
@@ -160,7 +165,7 @@ class SvgContext(BaseContext):
         >>> context.stroke(blackColor, pt(20))
         >>> context.fill(color(r=0.6, g=0.1, b=0.5))
         >>> context.circle(pt(300), pt(150), pt(200))
-        >>> context.saveDocument(path)
+        >>> context.saveDrawing(path)
         >>> #r = os.system('open %s' % path)
         """
         circle = self._drawing.circle(center=upt((self._ox+x+r),
@@ -177,7 +182,7 @@ class SvgContext(BaseContext):
         >>> context.line((0, 100), (300, 300))
         >>> context.stroke((0.6, 0.1, 0.5), 20)
         >>> context.line((300, 150), (200, 100))
-        >>> context.saveDocument(path)
+        >>> context.saveDrawing(path)
         >>> #r = os.system('open %s' % path)
         """
         line = self._drawing.line(upt((self._ox+p1[0]), (self._oy+p1[1])),
@@ -282,7 +287,7 @@ class SvgContext(BaseContext):
         >>> context.fill(color(r=1, g=0, b=1))
         >>> context.stroke(color(r=0.5, g=0, b=0.5), pt(5))
         >>> context.text('ABCDEF', (pt(100), pt(300)))
-        >>> context.saveDocument(path)
+        >>> context.saveDrawing(path)
         >>> #r = os.system('open %s' % path)
 
         """

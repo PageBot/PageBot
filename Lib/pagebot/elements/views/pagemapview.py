@@ -167,7 +167,7 @@ class PageMapView(BaseView):
         #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
         #    frameDuration(frameDuration)
 
-        context.saveDocument(path, multiPage=multiPage)
+        context.saveDrawing(path, multiPage=multiPage)
 
 
     #   D R A W I N G  P A G E  M E T A  I N F O

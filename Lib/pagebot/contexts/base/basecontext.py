@@ -121,11 +121,6 @@ class BaseContext(AbstractContext):
     language = property(_get_language, _set_language)
     '''
 
-    # Documents.
-
-    def saveDocument(self, path, multiPage=None):
-        """PageBot function."""
-
     # Magic variables.
 
     def width(self):

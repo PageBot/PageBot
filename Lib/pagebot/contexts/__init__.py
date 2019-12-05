@@ -15,6 +15,7 @@
 #     __init__.py
 #
 
+import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
@@ -29,8 +30,10 @@ if platform == 'darwin':
         from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
     except:
-        print('Please install pagebotcocoa.')
-        print('pip install pagebotcocoa')
+        print('Either an error occurred while importing pagebotcocoa or it is missing.')
+        print(traceback.format_exc())
+        print('Please try to (re)install pagebotcocoa.')
+        print('pip install (--upgrade) pagebotcocoa')
 
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None

@@ -224,7 +224,7 @@ class PageView(BaseView):
         #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
         #    frameDuration(frameDuration)
 
-        self.context.saveDocument(path, multiPage=multiPage)
+        self.context.saveDrawing(path, multiPage=multiPage)
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 

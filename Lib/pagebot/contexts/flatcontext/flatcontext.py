@@ -77,7 +77,7 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> context.newDrawing(100, 100)
-        >>> context.doc.__class__.__name__
+        >>> context.drawing.__class__.__name__
         'document'
         """
         super().__init__()
@@ -90,18 +90,17 @@ class FlatContext(BaseContext):
         self._pages = []
         self.originTop = False
         self.transform3D = Transform3D()
+        self.drawing = None
 
-    #   D O C U M E N T
+    #   Drawing.
 
     def newDrawing(self, w=None, h=None, size=None, doc=None, originTop=False):
-        """Creates a new self.doc Flat canvas to draw on. Flipped `y`-axis by
-        default to conform to DrawBot's drawing methods.
-
-        NOTE: not to be confused with pagebot.document.Document.
+        """Creates a new Flat canvas to draw on. Flipped `y`-axis by default to
+        conform to DrawBot's drawing methods.
 
         >>> context = FlatContext()
         >>> context.newDrawing(100, 100)
-        >>> int(context.doc.width), int(context.doc.height)
+        >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
         if doc is not None:
@@ -115,11 +114,101 @@ class FlatContext(BaseContext):
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
-        self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+        self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
         self.newPage()
+
+    def saveDrawing(self, path, multiPage=True):
+        """Save the current document to file(s)
+
+        >>> import os
+        >>> from pagebot import getRootPath
+        >>> from pagebot.toolbox.color import blackColor
+        >>> # _export/* Files are ignored in git.
+        >>> exportPath = getRootPath() + '/_export' 
+        >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
+        >>> context = FlatContext()
+        >>> w = h = pt(100)
+        >>> x = y = pt(0)
+        >>> c = blackColor
+        """
+
+        """
+        FIX
+        >>> context.fileType = FILETYPE_JPG
+        >>> context.newDrawing(w, h)
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        # Flat is too strict with color-format match?
+        >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG)
+        >>> context.fileType = FILETYPE_PDF
+        >>> context.newDrawing(w, h)
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        # Flat is too strict with color-format match?
+        >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF)
+        >>> context.fileType = FILETYPE_PNG
+        >>> context.newDrawing(w, h)
+        >>> context.fill(c)
+        >>> context.rect(x, y, w-20, h-20)
+        >>> context.saveDrawing(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PNG)
+        >>> context.saveDrawing(exportPath + '/MyTextDocument_F.gif')
+        [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
+        """
+        # In case path starts with "_export", make sure that the directory
+        # exists.
+        self.checkExportPath(path)
+        self.fileType = path.split('.')[-1].lower()
+
+        if self.fileType == FILETYPE_PNG:
+            if len(self.pages) == 1 or not multiPage:
+                im = self.pages[0].image(kind=RGB)
+                im.png(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
+                    p.image(kind=RGB).png(pagePath)
+
+        elif self.fileType == FILETYPE_JPG:
+            if len(self.pages) == 1 or not multiPage:
+                self.pages[0].image(kind=RGB).jpeg(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
+                    p.image(kind=RGB).jpeg(pagePath)
+        elif self.fileType == FILETYPE_SVG:
+            if len(self.pages) == 1 or not multiPage:
+                self.pages[0].svg(path)
+            else:
+                for n, p in enumerate(self.pages):
+                    pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
+                    p.svg(pagePath)
+        elif self.fileType == FILETYPE_PDF:
+            self.drawing.pdf(path)
+        elif self.fileType == FILETYPE_GIF:
+            msg = '[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1]
+            print(msg)
+        else:
+            msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
+            raise NotImplementedError(msg)
+
+    # Compatible API with DrawBot.
+    saveImage = saveDrawing 
 
     def endDrawing(self, doc=None):
         pass
+
+    def getDrawing(self):
+        return self.drawing
+    
+    def _get_height(self):
+        return self.drawing.height
+
+    height = property(_get_height)
+
+    def _get_width(self):
+        return self.drawing.width
+
+    width = property(_get_width)
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
@@ -132,7 +221,7 @@ class FlatContext(BaseContext):
         if self.originTop:
             return y
         else:
-            y = self.doc.height - y
+            y = self.height - y
             return y
 
     def getTransformed(self, x, y):
@@ -167,90 +256,12 @@ class FlatContext(BaseContext):
         x1, y1, _ = p1
 
         if not self.originTop:
-            y1 = self.doc.height - y1
+            y1 = self.height - y1
 
         return x1, y1
 
-    def saveDocument(self, path, multiPage=True):
-        """Save the current document to file(s)
-
-        >>> import os
-        >>> from pagebot import getRootPath
-        >>> from pagebot.toolbox.color import blackColor
-        >>> exportPath = getRootPath() + '/_export' # _export/* Files are ignored in git
-        >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
-        >>> context = FlatContext()
-        >>> w = h = pt(100)
-        >>> x = y = pt(0)
-        >>> c = blackColor
-        """
-
-        """
-        FIX
-        >>> context.fileType = FILETYPE_JPG
-        >>> context.newDrawing(w, h)
-        >>> context.fill(c)
-        >>> context.rect(x, y, w-20, h-20)
-        # Flat is too strict with color-format match?
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG)
-        >>> context.fileType = FILETYPE_PDF
-        >>> context.newDrawing(w, h)
-        >>> context.fill(c)
-        >>> context.rect(x, y, w-20, h-20)
-        # Flat is too strict with color-format match?
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF)
-        >>> context.fileType = FILETYPE_PNG
-        >>> context.newDrawing(w, h)
-        >>> context.fill(c)
-        >>> context.rect(x, y, w-20, h-20)
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PNG)
-        >>> context.saveDocument(exportPath + '/MyTextDocument_F.gif')
-        [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
-        """
-        # In case path starts with "_export", make sure that the directory
-        # exists.
-        self.checkExportPath(path)
-        self.fileType = path.split('.')[-1].lower()
-
-        if self.fileType == FILETYPE_PNG:
-            if len(self.pages) == 1 or not multiPage:
-                im = self.pages[0].image(kind=RGB)
-                im.png(path)
-            else:
-                for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
-                    p.image(kind=RGB).png(pagePath)
-
-        elif self.fileType == FILETYPE_JPG:
-            if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind=RGB).jpeg(path)
-            else:
-                for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
-                    p.image(kind=RGB).jpeg(pagePath)
-        elif self.fileType == FILETYPE_SVG:
-            if len(self.pages) == 1 or not multiPage:
-                self.pages[0].svg(path)
-            else:
-                for n, p in enumerate(self.pages):
-                    pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
-                    p.svg(pagePath)
-        elif self.fileType == FILETYPE_PDF:
-            self.doc.pdf(path)
-        elif self.fileType == FILETYPE_GIF:
-            msg = '[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1]
-            print(msg)
-        else:
-            msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
-            raise NotImplementedError(msg)
-
-    saveImage = saveDocument # Compatible API with DrawBot
-
-    def getDocument(self):
-        return self.doc
-
     def newPage(self, w=None, h=None, doc=None):
-        """Other page sizes than default in self.doc, are ignored in Flat.
+        """Other page sizes than default in self.drawing, are ignored in Flat.
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.
         FIXME: test units, page auto-sizes to parent doc.
@@ -263,7 +274,7 @@ class FlatContext(BaseContext):
             w = w or doc.w
             h = h or doc.h
 
-        self.page = self.doc.addpage()
+        self.page = self.drawing.addpage()
         self.pages.append(self.page)
 
     #   S T A T E
@@ -461,9 +472,9 @@ class FlatContext(BaseContext):
         xpt, ypt, wpt, hpt = upt(r)
 
         if self.originTop:
-            ypt = self.doc.height - hpt
+            ypt = self.height - hpt
         else:
-            ypt = self.doc.height - ypt - hpt
+            ypt = self.height - ypt - hpt
 
         box = (xpt, ypt, wpt, hpt)
         return fs.textBox(self.page, box)
