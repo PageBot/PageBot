@@ -87,10 +87,11 @@ class FlatContext(BaseContext):
         self.shape = None # Current open shape
         #self.flatString = None
         self.fileType = DEFAULT_FILETYPE
-        self._pages = []
         self.originTop = False
         self.transform3D = Transform3D()
         self.drawing = None
+        self.w = None
+        self.h = None
 
     #   Drawing.
 
@@ -111,10 +112,21 @@ class FlatContext(BaseContext):
         elif size is not None:
             w, h = size
 
+        if w is None:
+            w = self.w
+        if h is None:
+            h = self.h
+
+        # Dimensions not allowed to be None or Flat document won't render.
+        assert w is not None
+        assert h is not None
+
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
+        #self.drawing.size(wpt, hpt, units=self.UNITS)
+        #self.drawing.pages = []
 
     def saveDrawing(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -159,26 +171,26 @@ class FlatContext(BaseContext):
         self.fileType = path.split('.')[-1].lower()
 
         if self.fileType == FILETYPE_PNG:
-            if len(self.pages) == 1 or not multiPage:
-                im = self.pages[0].image(kind=RGB)
+            if len(self.drawing.pages) == 1 or not multiPage:
+                im = self.drawing.pages[0].image(kind=RGB)
                 im.png(path)
             else:
-                for n, p in enumerate(self.pages):
+                for n, p in enumerate(self.drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).png(pagePath)
 
         elif self.fileType == FILETYPE_JPG:
-            if len(self.pages) == 1 or not multiPage:
-                self.pages[0].image(kind=RGB).jpeg(path)
+            if len(self.drawing.pages) == 1 or not multiPage:
+                self.drawing.pages[0].image(kind=RGB).jpeg(path)
             else:
-                for n, p in enumerate(self.pages):
+                for n, p in enumerate(self.drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).jpeg(pagePath)
         elif self.fileType == FILETYPE_SVG:
-            if len(self.pages) == 1 or not multiPage:
-                self.pages[0].svg(path)
+            if len(self.drawing.pages) == 1 or not multiPage:
+                self.drawing.pages[0].svg(path)
             else:
-                for n, p in enumerate(self.pages):
+                for n, p in enumerate(self.drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
                     p.svg(pagePath)
         elif self.fileType == FILETYPE_PDF:
@@ -194,7 +206,7 @@ class FlatContext(BaseContext):
     saveImage = saveDrawing 
 
     def endDrawing(self, doc=None):
-        pass
+        del self.drawing
 
     def getDrawing(self):
         return self.drawing
@@ -204,16 +216,36 @@ class FlatContext(BaseContext):
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.
         FIXME: test units, page auto-sizes to parent doc.
+        TODO: when size changes, we need to keep track of multiple Flat
+        documents::
+
+            if w != self.w:
+                <add document to stack>
+            if h != self.h
+                <add document to stack>
+
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
+        assert w is not None and w > 0
+        assert h is not None and h > 0
+
+        self.w = w
+        self.h = h
+
         if self.drawing is None:
             self.newDrawing(w=w, h=h, doc=doc)
 
-        self.page = self.drawing.addpage()
-        self.pages.append(self.page)
+        self.drawing.addpage()
+
+    def _get_page(self):
+        if len(self.drawing.pages) == 0:
+            return None
+        return self.drawing.pages[-1]
+
+    page = property(_get_page)
 
     def _get_height(self):
         return self.drawing.height

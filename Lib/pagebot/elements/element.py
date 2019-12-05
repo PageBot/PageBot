@@ -1028,7 +1028,7 @@ class Element:
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         """
         """
-        FIXME: we still need to implement boolean operations for Flat.
+        >>> #FIXME: we still need to implement boolean operations for Flat.
         >>> len(e.childClipPath)
         7
         >>> e.childClipPath.points

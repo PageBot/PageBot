@@ -68,9 +68,7 @@ class BaseContext(AbstractContext):
         # Stack of graphic states.
         self._gState = []
 
-        self.doc = None
-
-        self.page = None
+        #self.page = None
         self._pages = []
         self.style = None # Current style dictionary
         self.units = Pt.UNIT
