@@ -103,19 +103,18 @@ class FlatContext(BaseContext):
         >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
+        self.originTop = originTop
+
         if doc is not None:
             w = doc.w
             h = doc.h
         elif size is not None:
             w, h = size
 
-        self.originTop = originTop
-
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
-        self.newPage()
 
     def saveDrawing(self, path, multiPage=True):
         """Save the current document to file(s)
@@ -200,6 +199,22 @@ class FlatContext(BaseContext):
     def getDrawing(self):
         return self.drawing
     
+    def newPage(self, w=None, h=None, doc=None):
+        """Other page sizes than default in self.drawing, are ignored in Flat.
+
+        NOTE: this generates a flat.page, not to be confused with PageBot page.
+        FIXME: test units, page auto-sizes to parent doc.
+
+        >>> context = FlatContext()
+        >>> w = h = pt(100)
+        >>> context.newDrawing(w, h)
+        """
+        if self.drawing is None:
+            self.newDrawing(w=w, h=h, doc=doc)
+
+        self.page = self.drawing.addpage()
+        self.pages.append(self.page)
+
     def _get_height(self):
         return self.drawing.height
 
@@ -259,23 +274,6 @@ class FlatContext(BaseContext):
             y1 = self.height - y1
 
         return x1, y1
-
-    def newPage(self, w=None, h=None, doc=None):
-        """Other page sizes than default in self.drawing, are ignored in Flat.
-
-        NOTE: this generates a flat.page, not to be confused with PageBot page.
-        FIXME: test units, page auto-sizes to parent doc.
-
-        >>> context = FlatContext()
-        >>> w = h = pt(100)
-        >>> context.newDrawing(w, h)
-        """
-        if doc is not None:
-            w = w or doc.w
-            h = h or doc.h
-
-        self.page = self.drawing.addpage()
-        self.pages.append(self.page)
 
     #   S T A T E
 
