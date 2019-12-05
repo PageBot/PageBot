@@ -169,8 +169,10 @@ class FlatString(BabelString):
             s += d['s']
         return s
 
-    def _set_s(self, s, i=0):
+    def _set_s(self, s, i=0, strike=None):
         d = self.data[i]
+        if strike:
+            d['dstrike'] = strike
         strike = d['strike']
         d['s'] = s
         d['text'] = strike.text(s)
@@ -199,12 +201,13 @@ class FlatString(BabelString):
 
     def _get_text(self):
         """Answers the text."""
-        #for d in self.data:
-        if len(self.data) == 1:
-            return self.data[0]['text']
-        else:
-            # TODO: needs a delta operator.
-            return self.data[0]['text']
+        text = []
+
+        # TODO: needs a ... operator.
+        for d in self.data:
+            text.append(d['text'])
+
+        return text
 
     def _set_text(self, text, i=0):
         self.data[i]['text'] = text
@@ -286,13 +289,19 @@ class FlatString(BabelString):
         """
         return len(self.s)
 
-    def place(self, page, xpt, ypt):
+    def place(self, page, x, y):
         """Places the styled Flat text on a page.
 
         TODO: keep track of multiple text parts.
         """
-        placedText = page.place(self.text)
-        placedText.position(xpt, ypt)
+        for d in self.data:
+            s = d['s']
+            text = d['text']
+            strike =d['strike']
+            w = strike.width(s)
+            placedText = page.place(textPart)
+            placedText.position(x, y)
+            x += w
 
     def asText(self):
         """Answers as unicode string.
@@ -310,18 +319,34 @@ class FlatString(BabelString):
         # TODO: should keep track of multiple text parts.
         # TODO: implement alignment.
         x, y, w, h = box
-        placedText = page.place(self.text)
-        placedText.frame(x, y, w, h)
+
+        for d in self.data:
+            s = d['s']
+            text = d['text']
+            strike =d['strike']
+            w0 = strike.width(s)
+
+            placedText = page.place(text)
+            placedText.frame(x, y, w, h)
+
+            x += w0
+
+            # TODO add x  / y to next textPart.
+
+        diffs = ''
 
         # Calculates text difference when overflow occurs.
-        if placedText.overflow():
-            s1 = self.getPlacedString(placedText)
-            s2 = str(self)
-            assert len(s1) <= len(s2)
-            diff0, _ = self.getTextDiff(s1, s2)
-            return diff0
-        else:
-            return ''
+        # FIXME: test overflow for all text parts.
+        for textPart in self.text:
+            if placedText.overflow():
+                s1 = self.getPlacedString(placedText)
+                s2 = str(self)
+                assert len(s1) <= len(s2)
+                diff0, _ = self.getTextDiff(s1, s2)
+                diffs.append(diff0)
+
+        return diffs
+
 
     def getPlacedString(self, placedText):
         # TODO: keep track of multiple placed text parts.
@@ -389,6 +414,7 @@ class FlatString(BabelString):
         >>> bla + bla2
         blabla2
         """
+        print('append %s' % s)
         assert isinstance(s, (str, FlatString))
 
         if isinstance(s, str):

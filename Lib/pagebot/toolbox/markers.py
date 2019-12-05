@@ -68,7 +68,6 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
     >>> from pagebot import getContext 
     >>> context = getContext('Flat')
     >>> context.newPage(pt(100), pt(100))
-    >>> context.newPage()
     >>> drawCropMarks(context, pt(0,0), pt(100), pt(100), False, pt(20), pt(1))
     """
     x, y, _ = point3D(origin) # Ignore z-axus for now.
