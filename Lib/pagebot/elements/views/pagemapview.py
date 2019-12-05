@@ -76,8 +76,7 @@ class PageMapView(BaseView):
 
         # Make sure that canvas is empty, there may have been another document
         # building in this context.
-        context.newDrawing()
-        context.newDocument(w, h) # Allow the context to create a new document and page canvas.
+        context.newDrawing(w=w, h=h, doc=self.doc)
 
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:

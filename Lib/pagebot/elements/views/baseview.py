@@ -51,7 +51,7 @@ class BaseView(Element):
             context = self._getContext() 
 
         self.context = context
-        self.context.newDocument(self.w, self.h)
+        self.context.newDrawing(self.w, self.h)
         self.setControls()
 
         # List of collected elements that need to draw their info on top of the

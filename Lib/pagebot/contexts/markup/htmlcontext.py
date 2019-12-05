@@ -44,13 +44,11 @@ class HtmlContext(BaseContext):
         self.name = self.__class__.__name__
         self._fill = noColor
 
-    def newDocument(self, w=None, h=None, doc=None):
+    def newDrawing(self, w=None, h=None, doc=None):
         """PageBot function. Ignore for now in HTMLContext.
-        The @doc is the optional Document instance of the caller."""
 
-    def newDrawing(self, doc=None):
-        """Clear output canvas, start new export file. DrawBot function.
-        Ignore for now in HtmlContect.
+        Clear output canvas, start new export file.
+        The @doc is the optional Document instance of the caller.
         """
 
     def endDrawing(self):

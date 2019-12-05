@@ -123,27 +123,8 @@ class BaseContext(AbstractContext):
 
     # Documents.
 
-    def newDocument(self, w=None, h=None, doc=None):
-        """Creates a new native self.doc. Flipped `y`-axis by
-        default to conform to DrawBot's drawing methods.
-
-        NOTE: not to be confused with pagebot.document.Document.
-        PageBot function."""
-
     def saveDocument(self, path, multiPage=None):
         """PageBot function."""
-
-    def newDrawing(self, doc=None):
-        """Clear output canvas, start new export file. DrawBot function.
-
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> context.newDrawing()
-        """
-        self.b.newDrawing(doc)
-
-    def endDrawing(self):
-        pass
 
     # Magic variables.
 

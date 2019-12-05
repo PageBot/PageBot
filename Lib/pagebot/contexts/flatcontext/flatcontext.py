@@ -76,7 +76,7 @@ class FlatContext(BaseContext):
         """Constructor of Flat context.
 
         >>> context = FlatContext()
-        >>> context.newDocument(100, 100)
+        >>> context.newDrawing(100, 100)
         >>> context.doc.__class__.__name__
         'document'
         """
@@ -93,17 +93,14 @@ class FlatContext(BaseContext):
 
     #   D O C U M E N T
 
-    def newDocument(self, w=None, h=None, size=None, doc=None, originTop=False):
+    def newDrawing(self, w=None, h=None, size=None, doc=None, originTop=False):
         """Creates a new self.doc Flat canvas to draw on. Flipped `y`-axis by
         default to conform to DrawBot's drawing methods.
 
         NOTE: not to be confused with pagebot.document.Document.
 
         >>> context = FlatContext()
-        >>> context.newDocument(100, 100)
-        >>> int(context.doc.width), int(context.doc.height)
-        (100, 100)
-        >>> context.newDocument(100, 100)
+        >>> context.newDrawing(100, 100)
         >>> int(context.doc.width), int(context.doc.height)
         (100, 100)
         """
@@ -115,9 +112,14 @@ class FlatContext(BaseContext):
 
         self.originTop = originTop
 
-        # Convert units to point values.
+        # Converts units to point values. Stores width and height information
+        # in Flat document.
         wpt, hpt = upt(w, h)
         self.doc = self.b.document(wpt, hpt, units=self.UNITS)
+        self.newPage()
+
+    def endDrawing(self, doc=None):
+        pass
 
     def getX(self, x):
         """Calculates `x`-coordinate based translation."""
@@ -140,7 +142,7 @@ class FlatContext(BaseContext):
         >>> h = 600
         >>> dx = 6 
         >>> dy = 8
-        >>> context.newDocument(w, h) 
+        >>> context.newDrawing(w, h) 
         >>> x, y = 4, 5
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
@@ -186,22 +188,19 @@ class FlatContext(BaseContext):
         """
         FIX
         >>> context.fileType = FILETYPE_JPG
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         # Flat is too strict with color-format match?
         >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_JPG)
         >>> context.fileType = FILETYPE_PDF
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         # Flat is too strict with color-format match?
         >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PDF)
         >>> context.fileType = FILETYPE_PNG
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> context.fill(c)
         >>> context.rect(x, y, w-20, h-20)
         >>> context.saveDocument(exportPath + '/MyTextDocument_F.%s' % FILETYPE_PNG)
@@ -248,7 +247,7 @@ class FlatContext(BaseContext):
     saveImage = saveDocument # Compatible API with DrawBot
 
     def getDocument(self):
-        pass
+        return self.doc
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.doc, are ignored in Flat.
@@ -258,22 +257,14 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> w = h = pt(100)
-        >>> context.newDocument(w, h)
-        >>> context.newPage()
+        >>> context.newDrawing(w, h)
         """
         if doc is not None:
             w = w or doc.w
             h = h or doc.h
 
-
-        # FIXME: recursive?
-        #if self.doc is None:
-        #    self.newDocument(w, h)
-
         self.page = self.doc.addpage()
         self.pages.append(self.page)
-
-    newDrawing = newDocument
 
     #   S T A T E
 
@@ -394,8 +385,7 @@ class FlatContext(BaseContext):
         >>> fs = context.newString('ABC', style=style)
         >>> fs.__class__.__name__
         'FlatString'
-        >>> context.newDocument(1000, 1000)
-        >>> context.newPage()
+        >>> context.newDrawing(1000, 1000)
         >>> context.text(fs, (100, 100))
 
         """
@@ -446,9 +436,7 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> context.newDocument()
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> style = {'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
@@ -489,9 +477,7 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> context.newDocument()
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> style = {'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
@@ -520,8 +506,7 @@ class FlatContext(BaseContext):
         >>> context = getContext('Flat')
         >>> print(context)
         <FlatContext>
-        >>> context.newDocument(w, h)
-        >>> context.newPage(w, h)
+        >>> context.newDrawing(w, h)
         >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
@@ -680,17 +665,6 @@ class FlatContext(BaseContext):
 
         return shape
 
-    def ensure_page(self):
-        """
-        Flat function?
-        """
-        if not self.doc:
-            # Standardize FlatContext document on pt.
-            self.newDocument(pt(100), pt(100)) 
-
-        if not self.pages:
-            self.newPage(self.doc.width, self.doc.height)
-
     def rect(self, x, y, w, h):
         """Calculates rectangle points by combining (x, y) with width and
         height, then runs the points through the affine transform and passes
@@ -709,7 +683,6 @@ class FlatContext(BaseContext):
             x2, y2 = self.getTransformed(*p2)
             x3, y3 = self.getTransformed(*p3)
             coordinates = (x, y, x1, y1, x2, y2, x3, y3) 
-            self.ensure_page()
             r = shape.polygon(coordinates)
             self.page.place(r)
 
@@ -726,7 +699,6 @@ class FlatContext(BaseContext):
 
         if shape is not None:
             path = self.newPath()
-            self.ensure_page()
 
             # Control point offsets.
             kappa = .5522848
@@ -773,7 +745,6 @@ class FlatContext(BaseContext):
         if shape is not None:
             x, y = self.getTransformed(x, y)
             r = r * self._sx
-            self.ensure_page()
             self.page.place(shape.circle(x, y, r))
 
     def line(self, p0, p1):
@@ -783,7 +754,6 @@ class FlatContext(BaseContext):
         if shape is not None:
             x0, y0 = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
-            self.ensure_page()
             self.page.place(shape.line(x0, y0, x1, y1))
 
     #   P A T H
@@ -799,7 +769,6 @@ class FlatContext(BaseContext):
         shape = self._getShape()
 
         if shape is not None:
-            self.ensure_page()
             self.page.place(shape.path(self._bezierpath.commands))
 
     def moveTo(self, p):
@@ -913,7 +882,7 @@ class FlatContext(BaseContext):
         >>> w = 800
         >>> h = 600
         >>> angle = 5
-        >>> context.newDocument(w, h) 
+        >>> context.newDrawing(w, h) 
         >>> x, y = 40, 50
         >>> context.rotate(angle)
         >>> p1 = context.getTransformed(x, y)

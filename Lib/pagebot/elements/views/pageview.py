@@ -113,8 +113,7 @@ class PageView(BaseView):
         # Make sure that canvas is empty, there may have been another document
         # building in this context. Allow the context to create a new document
         # and page canvas.
-        self.context.newDocument(w, h, doc=self.doc) 
-        self.context.newDrawing(doc=self.doc)
+        self.context.newDrawing(w=w, h=h, doc=self.doc)
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
@@ -907,7 +906,7 @@ class PageView(BaseView):
         NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> from pagebot.document import Document

@@ -68,9 +68,14 @@ class SvgContext(BaseContext):
         self.newDrawing()
         self._path = None # Hold current open SVG path
 
-    def newDocument(self, w=None, h=None, doc=None):
-        """Ignore for SvgContext; Drawing opens automatically if first page
-        is created. The @doc is the optional Document instance of the caller."""
+    def newDrawing(self, w=None, h=None, doc=None):
+        """The @doc is the optional Document instance of the caller. Clear
+        output canvas, start new export file.
+
+        >>> context = SvgContext()
+        >>> context.newDrawing()
+        """
+        self._drawing = self.b.Drawing(self._filePath, profile='tiny')
 
     def saveDocument(self, path, multiPage=None):
         """Select other than standard DrawBot export builders here. Save the
@@ -100,14 +105,6 @@ class SvgContext(BaseContext):
         #if doc is not None:
         #    w = w or doc.w
         #    h = h or doc.h
-
-    def newDrawing(self, doc=None):
-        """Clear output canvas, start new export file.
-
-        >>> context = SvgContext()
-        >>> context.newDrawing()
-        """
-        self._drawing = self.b.Drawing(self._filePath, profile='tiny')
 
     def newPath(self):
         return None
