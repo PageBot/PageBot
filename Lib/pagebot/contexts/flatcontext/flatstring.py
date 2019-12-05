@@ -286,6 +286,14 @@ class FlatString(BabelString):
         """
         return len(self.s)
 
+    def place(self, page, xpt, ypt):
+        """Places the styled Flat text on a page.
+
+        TODO: keep track of multiple text parts.
+        """
+        placedText = page.place(self.text)
+        placedText.position(xpt, ypt)
+
     def asText(self):
         """Answers as unicode string.
 
@@ -297,31 +305,8 @@ class FlatString(BabelString):
         """
         return self.s 
 
-    def textSize(self, w=None, h=None):
-        """Answers the `(w, h)` size tuple for a given width, with the current
-        text.
-        
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> style = dict(font='Roboto-Regular', fontSize=12)
-        >>> fs = context.newString('ABC ', style=style)
-        >>> fs
-        ABC 
-        >>> fs.textSize()
-        (26.09, 16.8)
-        """
-        w = self.strike.width(self.s)
-        fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
-        h = leadingPt
-        w = round(w, 2)
-        h = round(h, 2)
-        return w, h
-
     def textBox(self, page, box, align=LEFT):
-        """
-        Places text segments.
-        """
+        """Places text segments."""
         # TODO: should keep track of multiple text parts.
         # TODO: implement alignment.
         x, y, w, h = box
@@ -371,6 +356,27 @@ class FlatString(BabelString):
         """
         s = self.textBox(page, box, align=align)
         return s
+
+    def textSize(self, w=None, h=None):
+        """Answers the `(w, h)` size tuple for a given width, with the current
+        text.
+        
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> style = dict(font='Roboto-Regular', fontSize=12)
+        >>> fs = context.newString('ABC ', style=style)
+        >>> fs
+        ABC 
+        >>> fs.textSize()
+        (26.09, 16.8)
+        """
+        w = self.strike.width(self.s)
+        fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
+        h = leadingPt
+        w = round(w, 2)
+        h = round(h, 2)
+        return w, h
 
     def append(self, s):
         """

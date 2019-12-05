@@ -410,10 +410,6 @@ class FlatContext(BaseContext):
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
-        # TODO: move to flat string, which should keep track of multiple placed
-        # text parts.
-
-        placedText = self.page.place(fs.text)
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
@@ -427,8 +423,7 @@ class FlatContext(BaseContext):
             c = color(rgb=c)
             self.textFill(c)
 
-        # Renders unit tuple to value tuple.
-        placedText.position(xpt, ypt)
+        fs.place(self.page, xpt, ypt)
 
     def textBox(self, fs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
@@ -628,6 +623,7 @@ class FlatContext(BaseContext):
         if p is None:
             p = 0, 0
 
+        # Renders unit tuple to value tuple.
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
         ypt = self.getY(ypt)
