@@ -711,8 +711,8 @@ class FlatString(BabelString):
     def getColor(cls, style):
         c = None
 
-        if 'textFill' in style:
-            c = style['textFill']
+        if 'fill' in style:
+            c = style['fill']
             print(c)
 
             if not isinstance(c, Color):
@@ -732,12 +732,13 @@ class FlatString(BabelString):
         return c
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,
         then *fontSize* is scaled to make the string fit *w* or *h*.
 
+        FIXME: implement pixelFit for Flat.
         TODO: Because Flat does not do font GSUB feature compile, we need to
         make the transformed string here, using Tal's Compositor:
         
@@ -756,8 +757,7 @@ class FlatString(BabelString):
             assert isinstance(style, dict)
 
         s = cls.addCaseToString(s, e, style)
-        style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h,
-                pixelFit=pixelFit)
+        style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
 
         print(style)
 
