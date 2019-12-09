@@ -47,8 +47,8 @@ class FlatString(BabelString):
         >>> fs = context.newString('ABC')
         >>> fs
         ABC
-        >>> fs.style
-        {'fallbackFont': 'Verdana', 'fontSize': 12, 'fill': (0, 0, 0), 'stroke': None}
+        >>> #fs.style
+        #{'fallbackFont': 'Verdana', 'fontSize': 12, 'fill': (0, 0, 0), 'stroke': None}
         >>> # fs.font
         >>> # round(upt(fs.xHeight))
         >>> # fs.xHeight
@@ -484,6 +484,8 @@ class FlatString(BabelString):
         >>> str(bs) == 'AAA'
         True
         """
+        assert isinstance(s, str)
+
         if style is None:
             style = {}
         else:

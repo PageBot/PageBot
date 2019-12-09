@@ -17,7 +17,7 @@
 import os
 from copy import copy
 from pagebot.constants import (LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE,
-        DEFAULT_FALLBACK_FONT_PATH)
+        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_LEADING)
 from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.style import css
@@ -225,7 +225,20 @@ class BabelString:
 
     @classmethod
     def getStringAttributes(cls, t, e=None, style=None, w=None, h=None):
-        """Adds some defaults to the style."""
+        """Adds some defaults to the style.
+        
+        If there is a target (pixel) width or height defined, ignore the
+        requested fontSize and try the width or height first for fontSize =
+        100. The resulting width or height is then used as base value to
+        calculate the needed point size.
+
+        Forced fontSize, then this overwrites the style['fontSize'] if it is
+        there.
+
+        TODO: add calculation of rFontSize (relative float based on
+        root-fontSize) here too.
+        """
+
         fName = 'BabelString.getStringAttributes'
         attrs = {}
 
@@ -237,6 +250,8 @@ class BabelString:
             if hasattr(sFont, 'path'):
                 sFont = sFont.path
             attrs['font'] = sFont
+        else:
+            attrs['font'] = DEFAULT_FONT_PATH
 
         sFallbackFont = css('fallbackFont', e, style)
 
@@ -247,20 +262,9 @@ class BabelString:
 
         attrs['fallbackFont'] = sFallbackFont
 
-        '''
-        If there is a target (pixel) width or height defined, ignore the
-        requested fontSize and try the width or height first for fontSize =
-        100. The resulting width or height is then used as base value to
-        calculate the needed point size.
-
-        Forced fontSize, then this overwrites the style['fontSize'] if it is
-        there.
-
-        TODO: add calculation of rFontSize (relative float based on
-        root-fontSize) here too.
-        '''
         if w is not None or h is not None:
-            uFontSize = pt(100) # Start with large font size to scale for fitting.
+            # Start with large font size to scale for fitting.
+            uFontSize = pt(100) 
         else:
             # May be scaled to fit w or h if target is defined.
             uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)
@@ -276,10 +280,11 @@ class BabelString:
         # Base for em or percent.
 
         # FIXME: not an allowed style in the PB approach?
-        #lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
-        #lineHeight = round(lineHeight, 2)
-        #attrs['lineHeight'] = lineHeight
+        lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
+        lineHeight = round(lineHeight, 2)
+        attrs['lineHeight'] = lineHeight
 
+        # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill
         # Color: Fill the text with this color instance
         # noColor: Set the value to None, no fill will be drawn
@@ -397,6 +402,8 @@ class BabelString:
 
         # Sets the hyphenation flag from style, as in DrawBot this is set by a
         # global function, not as FormattedString attribute.
+        # FIXME: IN DRAWBOT attrs['language'] = bool(css('language', e, style))
+        # FIXME: IN DRAWBOT
         #attrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
