@@ -20,7 +20,6 @@ import difflib
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString
-from pagebot.style import css
 from pagebot.toolbox.units import upt
 from pagebot.toolbox.color import Color
 
