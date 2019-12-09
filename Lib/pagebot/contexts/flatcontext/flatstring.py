@@ -21,7 +21,6 @@ import difflib
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString
 from pagebot.toolbox.units import upt
-from pagebot.toolbox.color import Color
 
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
