@@ -416,14 +416,15 @@ class FlatString(BabelString):
         """
         assert isinstance(s, (str, FlatString))
 
-
+        # If a plain string is appended, creates a new string with the previous
+        # style.
         if isinstance(s, str):
             lastStyle = self.data[-1]['style']
-            print(lastStyle)
             fs = self.context.newString(s, style=lastStyle)
         else:
             fs = s
 
+        # Now adds it to data list.
         self.data.extend(fs.data)
 
     def getStyleAtIndex(self, index):
@@ -470,11 +471,13 @@ class FlatString(BabelString):
         return reCompiled.findall(u'%s' % self.s)
 
     @classmethod
-    def getFSAttrs(cls, t, e=None, style=None, w=None, h=None,
-            pixelFit=True):
-        """Adds some defaults to the style."""
+    def getStringAttributes(cls, t, e=None, style=None, w=None, h=None):
+        """Adds some defaults to the style.
+
+        TODO: maybe should be a BabelString function?
+        """
         fName = 'FlatString.getFSAttrs'
-        fsAttrs = {}
+        attrs = {}
 
         # Font selection.
         sFont = css('font', e, style)
@@ -483,7 +486,7 @@ class FlatString(BabelString):
             # If the Font instance was supplied, then use it's path.
             if hasattr(sFont, 'path'):
                 sFont = sFont.path
-            fsAttrs['font'] = sFont
+            attrs['font'] = sFont
 
         sFallbackFont = css('fallbackFont', e, style)
 
@@ -492,7 +495,7 @@ class FlatString(BabelString):
         elif sFallbackFont is None:
             sFallbackFont = DEFAULT_FALLBACK_FONT_PATH
 
-        fsAttrs['fallbackFont'] = sFallbackFont
+        attrs['fallbackFont'] = sFallbackFont
 
         '''
         If there is a target (pixel) width or height defined, ignore the
@@ -514,7 +517,7 @@ class FlatString(BabelString):
 
         if uFontSize is not None:
             # Remember as base for relative units.
-            fsAttrs['fontSize'] = fontSizePt = upt(uFontSize)
+            attrs['fontSize'] = fontSizePt = upt(uFontSize)
         else:
             fontSizePt = DEFAULT_FONT_SIZE
 
@@ -525,7 +528,7 @@ class FlatString(BabelString):
         # FIXME: not an allowed style in the PB approach?
         #lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
         #lineHeight = round(lineHeight, 2)
-        #fsAttrs['lineHeight'] = lineHeight
+        #attrs['lineHeight'] = lineHeight
 
         # Color values for text fill
         # Color: Fill the text with this color instance
@@ -545,13 +548,13 @@ class FlatString(BabelString):
             assert isinstance(cFill, Color), msg
 
             if cFill is noColor:
-                fsAttrs['fill'] = None
+                attrs['fill'] = None
             elif cFill.isCmyk:
-                fsAttrs['cmykFill'] = cFill.cmyk
+                attrs['cmykFill'] = cFill.cmyk
             elif cFill.isRgba:
-                fsAttrs['fill'] = cFill.rgba
+                attrs['fill'] = cFill.rgba
             else:
-                fsAttrs['fill'] = cFill.rgb
+                attrs['fill'] = cFill.rgb
 
         # Color values for text stroke.
         # Color: Stroke the text with this color instance.
@@ -563,7 +566,7 @@ class FlatString(BabelString):
         if strokeWidth is not None:
             msg = ('%s: strokeWidth %s must of type Unit' % (fName, strokeWidth))
             assert isUnit(strokeWidth), msg
-            fsAttrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
+            attrs['strokeWidth'] = upt(strokeWidth, base=fontSizePt)
 
         if cStroke is not inheritColor:
             if isinstance(cStroke, (tuple, list, int, float)):
@@ -577,13 +580,13 @@ class FlatString(BabelString):
 
             # None is value to disable stroke drawing.
             if cStroke is noColor: 
-                fsAttrs['stroke'] = None
+                attrs['stroke'] = None
             elif cStroke.isCmyk:
-                fsAttrs['cmykStroke'] = cStroke.cmyk
+                attrs['cmykStroke'] = cStroke.cmyk
             elif cStroke.isRgba:
-                fsAttrs['stroke'] = cStroke.rgba
+                attrs['stroke'] = cStroke.rgba
             else:
-                fsAttrs['stroke'] = cStroke.rgb
+                attrs['stroke'] = cStroke.rgb
 
         # NOTE: xAlign is used for element alignment, not text.
         #sAlign = css('xTextAlign', e, style)
@@ -591,44 +594,44 @@ class FlatString(BabelString):
         # FIXME: not an allowed style in the PB approach?
         # yTextAlign must be solved by parent container element.
         #if sAlign is not None: 
-        #    fsAttrs['align'] = sAlign
+        #    attrs['align'] = sAlign
 
         # FIXME: not an allowed style in the PB approach?
         #sUnderline = css('underline', e, style)
 
         # Only these values work in FormattedString.
         #if sUnderline in ('single', None): 
-        #    fsAttrs['underline'] = sUnderline
+        #    attrs['underline'] = sUnderline
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
 
         if uParagraphTopSpacing is not None:
             # Base for em or percent.
-            fsAttrs['paragraphTopSpacing'] = upt(uParagraphTopSpacing,
+            attrs['paragraphTopSpacing'] = upt(uParagraphTopSpacing,
                     base=fontSizePt) 
 
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
 
         if uParagraphBottomSpacing:
             # Base for em or percent.
-            fsAttrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) 
+            attrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) 
 
         uTracking = css('tracking', e, style)
 
         if uTracking is not None:
             # Base for em or percent.
-            fsAttrs['tracking'] = upt(uTracking, base=fontSizePt) 
+            attrs['tracking'] = upt(uTracking, base=fontSizePt) 
 
         uBaselineShift = css('baselineShift', e, style)
 
         if uBaselineShift is not None:
             # Base for em or percent.
-            fsAttrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt) 
+            attrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt) 
 
         openTypeFeatures = css('openTypeFeatures', e, style)
 
         if openTypeFeatures is not None:
-            fsAttrs['openTypeFeatures'] = openTypeFeatures
+            attrs['openTypeFeatures'] = openTypeFeatures
 
         # Can be [(10, LEFT), ...] or [10, 20, ...]
         tabs = []
@@ -640,13 +643,11 @@ class FlatString(BabelString):
                 tab = upt(tab[0]), tab[1]
             tabs.append(tab)
         if tabs:
-            fsAttrs['tabs'] = tabs
+            attrs['tabs'] = tabs
 
         # Sets the hyphenation flag from style, as in DrawBot this is set by a
         # global function, not as FormattedString attribute.
-        # FIX IN DRAWBOT fsAttrs['language'] = bool(css('language', e, style))
-        # FIX IN DRAWBOT
-        #fsAttrs['hyphenation'] = bool(css('hyphenation', e, style))
+        #attrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
 
@@ -656,25 +657,25 @@ class FlatString(BabelString):
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
             # Base for em or percent.
-            fsAttrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) 
+            attrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) 
 
         uIndent = css('indent', e, style)
 
         if uIndent is not None:
             # Base for em or percent.
-            fsAttrs['indent'] = upt(uIndent, base=fontSizePt) 
+            attrs['indent'] = upt(uIndent, base=fontSizePt) 
 
         uTailIndent = css('tailIndent', e, style)
         if uTailIndent is not None:
             # Base for em or percent.
-            fsAttrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) 
+            attrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) 
 
         sLanguage = css('language', e, style)
 
         if sLanguage is not None:
-            fsAttrs['language'] = sLanguage
+            attrs['language'] = sLanguage
 
-        return fsAttrs
+        return attrs
 
     @classmethod
     def addCaseToString(cls, s, e, style):
@@ -712,6 +713,7 @@ class FlatString(BabelString):
 
         if 'textFill' in style:
             c = style['textFill']
+            print(c)
 
             if not isinstance(c, Color):
                 # TODO: extend list of options, ie rgba, cmyk, etc.
@@ -730,8 +732,7 @@ class FlatString(BabelString):
         return c
 
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None,
-            pixelFit=True):
+    def newString(cls, s, context, e=None, style=None, w=None, h=None):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,
@@ -755,8 +756,11 @@ class FlatString(BabelString):
             assert isinstance(style, dict)
 
         s = cls.addCaseToString(s, e, style)
-        style = cls.getFSAttrs(s, e=e, style=style, w=w, h=h,
+        style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h,
                 pixelFit=pixelFit)
+
+        print(style)
+
         fontPath = cls.getFontPath(style)
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
