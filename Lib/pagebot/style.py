@@ -315,6 +315,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Leading and vertical space
         leading = defaultLeading, # Absolute value (pt) or relative factor (em) to current fontSize.
+        lineHeight = defaultLeading, # TODO
         paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
         paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
 

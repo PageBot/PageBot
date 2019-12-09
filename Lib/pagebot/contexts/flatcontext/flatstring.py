@@ -312,22 +312,42 @@ class FlatString(BabelString):
         # TODO: should keep track of multiple text parts.
         # TODO: implement alignment.
         x, y, w, h = box
+        x0 = x
+        w0 = w
 
         for d in self.data:
             s = d['s']
             text = d['text']
-            strike =d['strike']
-            w0 = strike.width(s)
+            strike = d['strike']
+            style = d['style']
+            fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+            leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
+            w1 = strike.width(s)
 
             placedText = page.place(text)
-            placedText.frame(x, y, w, h)
+            s1 = self.getPlacedString(placedText)
+            placedText.frame(x, y, w, fontSizePt)
+            s2 = self.getPlacedString(placedText)
+            print(self.getOverflow(s1, s2))
 
-            x += w0
+            '''
+            if placedText.overflow():
+                of = self.getOverflow(placedText)
+                #print(of)
+                x0 = x
+                y += fontSizePt
+                h -= fontSizePt
+            '''
+
+            x += w1
+            w -= w1
+
 
             # TODO add x  / y to next textPart.
 
         diffs = ''
 
+        '''
         # Calculates text difference when overflow occurs.
         # FIXME: test overflow for all text parts.
         for textPart in self.text:
@@ -337,9 +357,14 @@ class FlatString(BabelString):
                 assert len(s1) <= len(s2)
                 diff0, _ = self.getTextDiff(s1, s2)
                 diffs += diff0
+        '''
 
         return diffs
 
+    def getOverflow(self, s1, s2):
+        assert len(s2) <= len(s1)
+        diff0, diff1 = self.getTextDiff(s2, s1)
+        return diff0
 
     def getPlacedString(self, placedText):
         # TODO: keep track of multiple placed text parts.
