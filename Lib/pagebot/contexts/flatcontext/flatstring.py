@@ -23,8 +23,6 @@ from pagebot.contexts.base.babelstring import BabelString
 from pagebot.toolbox.units import upt
 from pagebot.toolbox.color import Color
 
-DEFAULT_COLOR = Color(0, 0, 0)
-
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
     functionally compatible with a Cocoa attributed string and the CoreText

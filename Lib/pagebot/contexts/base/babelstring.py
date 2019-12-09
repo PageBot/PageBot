@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python3 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -18,13 +17,15 @@
 import os
 from copy import copy
 from pagebot.constants import (LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE,
-        DEFAULT_FALLBACK_FONT_PATH, DEFAULT_COLOR)
+        DEFAULT_FALLBACK_FONT_PATH)
 from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.style import css
 from pagebot.toolbox.color import (Color, blackColor, inheritColor, noColor,
         color)
 from pagebot.toolbox.units import pt, RelativeUnit, Unit, upt, isUnit
+
+DEFAULT_COLOR = Color(0, 0, 0)
 
 class BabelString:
     """BabelString is the base class of all types of (formatted) string
