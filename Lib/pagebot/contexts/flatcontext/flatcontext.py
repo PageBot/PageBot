@@ -534,37 +534,42 @@ class FlatContext(BaseContext):
         no text is defined. Answers the height of the string if the width w is
         given.
 
-        TODO: returns frame size, not actual text size like DrawBot.
+        FIXME: returns frame size, not actual text size like DrawBot.
+        TODO: update doctests.
 
-        >>> w = h = 500 # Default to pt-units
+        >>> # Default to point units.
+        >>> w = h = 500 
         >>> x = y = 0
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> print(context)
         <FlatContext>
         >>> context.newPage(w, h)
-        >>> style = dict(font='Roboto-Regular', fontSize=12) # Number defaults to pt-unit
+        >>> style = dict(font='Roboto-Regular', fontSize=12)
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ', style=style)
         >>> print(type(bs))
         <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
+        >>> bs.place(context.page, 0, 0)
+        >>> style1 = dict(font='Roboto-Bold', fontSize=14)
+        >>> bs1 = context.newString('DEF', style=style)
+        >>> bs + bs1
+        ABC DEF
         >>> #context.textSize(bs)
         #(201.53pt, 16.8pt)
         >>> #bs.size
         #(201.53pt, 16.8pt)
-        >>> t = context.page.place(bs.text)
-        >>> t = t.frame(x, y, w, h) # Numbers default to pt-units
-        >>> t.overflow()
-        False
-        >>> bs = context.newString('ABC ' * 100000, style=style)
-        >>> t = context.page.place(bs.text)
-        >>> t = t.frame(x, y, w, h)
-        >>> t.overflow()
-        True
-        >>> lines = t.lines()
+        >>> #t = t.frame(x, y, w, h) # Numbers default to pt-units
+        >>> #t.overflow()
+        #False
+        >>> #t = context.page.place(bs.text)
+        >>> #t = t.frame(x, y, w, h)
+        >>> #t.overflow()
+        #True
+        >>> #lines = t.lines()
         >>> #len(lines)
-        35
+        #35
         """
         return bs.size
 

@@ -54,7 +54,7 @@ class FlatString(BabelString):
         >>> fs
         ABC
         >>> fs.style
-        {'fallbackFont': 'Verdana', 'fontSize': 12, 'lineHeight': 16.8, 'fill': (0, 0, 0), 'stroke': None, 'underline': None}
+        {'fallbackFont': 'Verdana', 'fontSize': 12, 'fill': (0, 0, 0), 'stroke': None}
         >>> # fs.font
         >>> # round(upt(fs.xHeight))
         >>> # fs.xHeight
@@ -299,7 +299,7 @@ class FlatString(BabelString):
             text = d['text']
             strike =d['strike']
             w = strike.width(s)
-            placedText = page.place(textPart)
+            placedText = page.place(text)
             placedText.position(x, y)
             x += w
 
@@ -343,7 +343,7 @@ class FlatString(BabelString):
                 s2 = str(self)
                 assert len(s1) <= len(s2)
                 diff0, _ = self.getTextDiff(s1, s2)
-                diffs.append(diff0)
+                diffs += diff0
 
         return diffs
 
@@ -414,7 +414,6 @@ class FlatString(BabelString):
         >>> bla + bla2
         blabla2
         """
-        print('append %s' % s)
         assert isinstance(s, (str, FlatString))
 
 
