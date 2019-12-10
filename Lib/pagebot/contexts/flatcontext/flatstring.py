@@ -20,7 +20,8 @@ import difflib
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString
-from pagebot.toolbox.units import upt
+from pagebot.fonttoolbox.objects.font import Font, getFont
+from pagebot.toolbox.units import upt, px
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
@@ -327,11 +328,24 @@ class FlatString(BabelString):
             strike = d['strike']
             style = d['style']
             w1 = strike.width(s)
-            fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+            #fontPath = cls.getFontPath(style)
+            fontPath = style.get('font')
+            font = Font(fontPath)
+
+            # TODO: move to Font class.
+            table = font.ttFont['hhea']
+            ascender = getattr(table, 'ascent', None)
+            descender = getattr(table, 'descent', None)
+            h = ascender - descender
+            fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+            u = fontSize / h
+            descender = descender * u
+
             leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
+            dl = leading - fontSize - descender
             placedText = page.place(text)
             s0 = self.getPlacedString(placedText)
-            placedText.frame(x, y, w, leading)
+            placedText.frame(x, y + dl, w, leading)
             self.addToLines(x, h0 - (y + leading), placedText)
             # TODO: check h > h0, in that case break.
 
@@ -347,7 +361,7 @@ class FlatString(BabelString):
                 y += leading
                 h -= leading
                 w = w0
-                placedText.frame(x, y, w, leading)
+                placedText.frame(x, y + dl, w, leading)
                 self.addToLines(x, h0 - (y + leading), placedText)
 
                 if not placedText.overflow():

@@ -14,13 +14,12 @@
 #
 #     font.py
 #
-#     Implements a PageBot font style to get info from a TTFont.
-#     The Style instance is a convenience caching storage, similar to RoboFont Font.
-#     Using the Family/Font/Glyph classes, allows page layout in PageBot to access
+#     Implements a PageBot font style to get info from a TTFont. Using the
+#     Family / Font / Glyph classes, allows page layout in PageBot to access
 #     all information in a font purpose of typography and layout.
 #
-#     We'll call this class "Font" instead of "Style" (as in other TypeNetwerk tool code),
-#     to avoid confusion with the PageBot style dictionary, which hold style parameters.
+#     We will call this class "Font" instead of "Style" , to avoid confusion
+#     with the PageBot style dictionary, which hold style parameters.
 #
 import os
 
@@ -964,8 +963,6 @@ class Font:
     def save(self, path=None):
         """Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
-
-
 
 if __name__ == '__main__':
     import doctest
