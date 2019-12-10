@@ -21,6 +21,7 @@ import difflib
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString
 from pagebot.toolbox.units import upt
+from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
@@ -97,6 +98,7 @@ class FlatString(BabelString):
                 style=style))
 
         self._lines = []
+        self._numberOfLines = 0
 
         super().__init__(context)
 
@@ -331,7 +333,7 @@ class FlatString(BabelString):
             placedText = page.place(text)
             s0 = self.getPlacedString(placedText)
             placedText.frame(x, y, w, fontSizePt)
-            self.addToLines(y + fontSizePt, placedText)
+            self.addToLines(x, h0 - (y + fontSizePt), placedText)
             # TODO: check h > h0, in that case break.
 
             # Overflow, looks up difference and creates a new strike.
@@ -347,7 +349,7 @@ class FlatString(BabelString):
                 h -= fontSizePt
                 w = w0
                 placedText.frame(x, y, w, fontSizePt)
-                self.addToLines(y + fontSizePt, placedText)
+                self.addToLines(x, h0 - (y + fontSizePt), placedText)
 
                 if not placedText.overflow():
                     break
@@ -362,9 +364,15 @@ class FlatString(BabelString):
         diffs = ''
         return diffs
 
-    def addToLines(self, y, placedText):
-        line = {'y': y, 'Runs': 1}
+    def addToLines(self, x, y, placedText):
+        for line in self._lines:
+            if y == line.y:
+                line.append(placedText)
+                return
+
+        line = FlatTextLine(self._numberOfLines, x, y, placedText)
         self._lines.append(line)
+        self._numberOfLines += 1
 
     def getDiff(self, s0, s1):
         assert len(s1) <= len(s0)
