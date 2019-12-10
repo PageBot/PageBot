@@ -556,8 +556,8 @@ class TextBox(Element):
     #   B U I L D
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        """Draws the text on position (x, y). Draw background rectangle and / or
-        frame if fill and / or stroke are defined."""
+        """Draws the text on position (x, y). Draw background rectangle and /
+        or frame if fill and / or stroke are defined."""
         context = view.context # Get current context
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)

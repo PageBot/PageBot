@@ -96,6 +96,8 @@ class FlatString(BabelString):
         self.data.append(dict(s=s, strike=strike, text=strike.text(s),
                 style=style))
 
+        self._lines = []
+
         super().__init__(context)
 
     def copy(self):
@@ -329,6 +331,7 @@ class FlatString(BabelString):
             placedText = page.place(text)
             s0 = self.getPlacedString(placedText)
             placedText.frame(x, y, w, fontSizePt)
+            self.addToLines(y + fontSizePt, placedText)
             # TODO: check h > h0, in that case break.
 
             # Overflow, looks up difference and creates a new strike.
@@ -344,6 +347,7 @@ class FlatString(BabelString):
                 h -= fontSizePt
                 w = w0
                 placedText.frame(x, y, w, fontSizePt)
+                self.addToLines(y + fontSizePt, placedText)
 
                 if not placedText.overflow():
                     break
@@ -356,8 +360,11 @@ class FlatString(BabelString):
             # TODO add x  / y to next textPart.
 
         diffs = ''
-
         return diffs
+
+    def addToLines(self, y, placedText):
+        line = {'y': y, 'Runs': 1}
+        self._lines.append(line)
 
     def getDiff(self, s0, s1):
         assert len(s1) <= len(s0)
@@ -526,8 +533,10 @@ class FlatString(BabelString):
         return cls(s, context=context, style=style, strike=strike)
 
     def getTextLines(self, w, h=None, align=LEFT):
-        return []
-        # TODO
+        page = self.context.getTmpPage(w, h)
+        box = (0, 0, w, h)
+        tb = self.textBox(page, box, align=align)
+        return self._lines
 
 if __name__ == '__main__':
     import doctest

@@ -240,6 +240,11 @@ class FlatContext(BaseContext):
 
         self.drawing.addpage()
 
+    def getTmpPage(self, w, h):
+        drawing = self.b.document(w, h, units=self.UNITS)
+        drawing.addpage()
+        return drawing.pages[0]
+
     def _get_page(self):
         if len(self.drawing.pages) == 0:
             return None
