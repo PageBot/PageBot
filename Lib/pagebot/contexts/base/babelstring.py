@@ -237,6 +237,7 @@ class BabelString:
 
         TODO: add calculation of rFontSize (relative float based on
         root-fontSize) here too.
+        TODO: split up into smaller functions.
         """
 
         fName = 'BabelString.getStringAttributes'
@@ -289,7 +290,13 @@ class BabelString:
         # Color: Fill the text with this color instance
         # noColor: Set the value to None, no fill will be drawn
         # inheritColor: Don't set color, inherit the current setting for fill
-        cFill = css('textFill', e, style, default=blackColor)
+
+        if 'textFill' in style:
+            cFill = css('textFill', e, style, default=blackColor)
+        elif 'fill' in style:
+            cFill = css('fill', e, style, default=blackColor)
+        else:
+            cFill = blackColor
 
         if cFill is not inheritColor:
             if isinstance(cFill, (tuple, list, int, float)):

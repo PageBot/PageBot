@@ -327,13 +327,12 @@ class FlatString(BabelString):
             strike = d['strike']
             style = d['style']
             w1 = strike.width(s)
-            fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-            leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
-
+            fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+            leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
             placedText = page.place(text)
             s0 = self.getPlacedString(placedText)
-            placedText.frame(x, y, w, fontSizePt)
-            self.addToLines(x, h0 - (y + fontSizePt), placedText)
+            placedText.frame(x, y, w, leading)
+            self.addToLines(x, h0 - (y + leading), placedText)
             # TODO: check h > h0, in that case break.
 
             # Overflow, looks up difference and creates a new strike.
@@ -345,11 +344,11 @@ class FlatString(BabelString):
                 placedText = page.place(text)
                 s0 = self.getPlacedString(placedText)
                 x = x0
-                y += fontSizePt
-                h -= fontSizePt
+                y += leading
+                h -= leading
                 w = w0
-                placedText.frame(x, y, w, fontSizePt)
-                self.addToLines(x, h0 - (y + fontSizePt), placedText)
+                placedText.frame(x, y, w, leading)
+                self.addToLines(x, h0 - (y + leading), placedText)
 
                 if not placedText.overflow():
                     break
@@ -358,9 +357,7 @@ class FlatString(BabelString):
             x += w1
             w -= w1
 
-
-            # TODO add x  / y to next textPart.
-
+        # TODO: calculate overflow for all textparts.
         diffs = ''
         return diffs
 
