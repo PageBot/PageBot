@@ -332,18 +332,21 @@ class FlatString(BabelString):
             # TODO: check h > h0, in that case break.
 
             # Overflow, looks up difference and creates a new strike.
-            if placedText.overflow():
+            while placedText.overflow():
                 s1 = self.getPlacedString(placedText)
                 diff = self.getDiff(s0, s1)
-                print(diff)
                 text = strike.text(diff)
                 w1 = strike.width(diff)
                 placedText = page.place(text)
+                s0 = self.getPlacedString(placedText)
                 x = x0
                 y += fontSizePt
                 h -= fontSizePt
                 w = w0
                 placedText.frame(x, y, w, fontSizePt)
+
+                if not placedText.overflow():
+                    break
                 # TODO: check h > h0, in that case break.
 
             x += w1
@@ -353,18 +356,6 @@ class FlatString(BabelString):
             # TODO add x  / y to next textPart.
 
         diffs = ''
-
-        '''
-        # Calculates text difference when overflow occurs.
-        # FIXME: test overflow for all text parts.
-        for textPart in self.text:
-            if placedText.overflow():
-                s1 = self.getPlacedString(placedText)
-                s2 = str(self)
-                assert len(s1) <= len(s2)
-                diff0, _ = self.getTextDiff(s1, s2)
-                diffs += diff0
-        '''
 
         return diffs
 
