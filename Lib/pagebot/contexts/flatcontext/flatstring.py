@@ -328,14 +328,13 @@ class FlatString(BabelString):
             strike = d['strike']
             style = d['style']
             w1 = strike.width(s)
+
+            # TODO: store fonts in context cache.
             #fontPath = cls.getFontPath(style)
             fontPath = style.get('font')
             font = Font(fontPath)
-
-            # TODO: move to Font class.
-            table = font.ttFont['hhea']
-            ascender = getattr(table, 'ascent', None)
-            descender = getattr(table, 'descent', None)
+            ascender = font.getAscender()
+            descender = font.getDescender()
             h = ascender - descender
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             u = fontSize / h
