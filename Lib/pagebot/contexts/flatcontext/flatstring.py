@@ -308,36 +308,43 @@ class FlatString(BabelString):
         return self.s 
 
     def textBox(self, page, box, align=LEFT):
-        """Places text segments."""
-        # TODO: should keep track of multiple text parts.
-        # TODO: implement alignment.
-        x, y, w, h = box
-        x0 = x
-        w0 = w
+        """Places text segments
+        TODO: implement alignment.
+        """
+        x0, y0, w0, h0 = box
+        x = x0
+        y = y0
+        w = w0
+        h = 0
 
         for d in self.data:
             s = d['s']
             text = d['text']
             strike = d['strike']
             style = d['style']
+            w1 = strike.width(s)
             fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
             leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
-            w1 = strike.width(s)
 
             placedText = page.place(text)
-            s1 = self.getPlacedString(placedText)
+            s0 = self.getPlacedString(placedText)
             placedText.frame(x, y, w, fontSizePt)
-            s2 = self.getPlacedString(placedText)
-            print(self.getOverflow(s1, s2))
+            # TODO: check h > h0, in that case break.
 
-            '''
+            # Overflow, looks up difference and creates a new strike.
             if placedText.overflow():
-                of = self.getOverflow(placedText)
-                #print(of)
-                x0 = x
+                s1 = self.getPlacedString(placedText)
+                diff = self.getDiff(s0, s1)
+                print(diff)
+                text = strike.text(diff)
+                w1 = strike.width(diff)
+                placedText = page.place(text)
+                x = x0
                 y += fontSizePt
                 h -= fontSizePt
-            '''
+                w = w0
+                placedText.frame(x, y, w, fontSizePt)
+                # TODO: check h > h0, in that case break.
 
             x += w1
             w -= w1
@@ -361,9 +368,9 @@ class FlatString(BabelString):
 
         return diffs
 
-    def getOverflow(self, s1, s2):
-        assert len(s2) <= len(s1)
-        diff0, diff1 = self.getTextDiff(s2, s1)
+    def getDiff(self, s0, s1):
+        assert len(s1) <= len(s0)
+        diff0, diff1 = self.getTextDiff(s1, s0)
         return diff0
 
     def getPlacedString(self, placedText):
