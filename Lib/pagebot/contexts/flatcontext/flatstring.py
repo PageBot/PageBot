@@ -336,7 +336,10 @@ class FlatString(BabelString):
         x = x0
         y = y0
         w = w0
-        h = 0
+
+        fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+        leading0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
+        h = leading0
 
         overflow = ''
 
@@ -350,25 +353,22 @@ class FlatString(BabelString):
 
             # TODO: store fonts in context cache.
             fontPath = getFontPath(style)
-            #fontPath = style.get('font')
             font = Font(fontPath)
             upem = font.getUpem()
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             ascender = font.getAscender()
             descender = font.getDescender()
-            #h = ascender - descender
-
-            #u = fontSize / h
-            #descender = descender * u
-
             descender = ((fontSize / float(upem)) * descender)
-            ascender = ((fontSize / float(upem)) * ascender)
-            print(ascender)
             leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
-            print(leading)
             dl = leading - fontSize
             placedText = page.place(text)
             s0 = plainstring
+
+            if h - descender > h0:
+                s1 = self.getPlacedString(placedText)
+                overflow += self.getDiff(s0, s1)
+                break
+
             placedText.frame(x, y + dl, w, leading)
             baseline = h0 - (y + leading) - descender
             self.addToLines(x, baseline, placedText)
@@ -381,12 +381,15 @@ class FlatString(BabelString):
                 h += leading
                 w = w0
 
-                if h > h0:
+                print(h - descender)
+
+                if h - descender > h0:
                     s1 = self.getPlacedString(placedText)
                     overflow += self.getDiff(s0, s1)
                     break
 
                 s1 = self.getPlacedString(placedText)
+                print(s1)
                 diff = self.getDiff(s0, s1)
                 text = strike.text(diff)
                 w1 = strike.width(diff)
@@ -397,7 +400,9 @@ class FlatString(BabelString):
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
+                    print(self.getPlacedString(placedText))
                     break
+
 
             x += w1
             w -= w1
