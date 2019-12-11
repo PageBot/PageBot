@@ -1004,10 +1004,21 @@ class Font:
         table = self.ttFont['hhea']
         return getattr(table, 'descent', None)
 
-    # TODO; add functions to get these values:
-    # - upem
-    # - xHeight
-    # - capHeight
+    def getUpem(self):
+        table = self.ttFont['head']
+        return getattr(table, 'unitsPerEm', None)
+
+    def getXHeight(self):
+        table = self.ttFont['OS/2']
+        return getattr(table, 'sxHeight', None)
+
+    def getCapHeight(self):
+        table = self.ttFont['OS/2']
+        return getattr(table, 'sCapHeight', None)
+
+    def getItalicAngle(self):
+        table = self.ttFont['post']
+        return getattr(table, 'italicAngle', None)
 
 if __name__ == '__main__':
     import doctest

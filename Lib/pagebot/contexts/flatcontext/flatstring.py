@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -22,6 +23,7 @@ from pagebot.contexts.base.babelstring import BabelString, getFontPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
+from pagebot.toolbox.units import em, pt
 
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
@@ -314,6 +316,21 @@ class FlatString(BabelString):
     def textBox(self, page, box, align=LEFT):
         """Places text segments
         TODO: implement alignment.
+
+        >>> from pagebot import getContext
+        >>> from pagebot.style import makeStyle
+        >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> context = getContext('Flat')
+        >>> context.newPage(800, 600)
+        >>> style = {'fontSize': 14}
+        >>> style = makeStyle(style=style)
+        >>> blurb = Blurb()
+        >>> s = blurb.getBlurb('stylewars_bluray')
+        >>> fs = context.newString(s, style=style)
+        >>> r = (10, 262, 400, 313)
+        >>> of = fs.textBox(context.page, r)
+        >>> of.startswith('without hurting the beautiful sensual quality')
+        True
         """
         x0, y0, w0, h0 = box
         x = x0
@@ -335,18 +352,25 @@ class FlatString(BabelString):
             fontPath = getFontPath(style)
             #fontPath = style.get('font')
             font = Font(fontPath)
+            upem = font.getUpem()
+            fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             ascender = font.getAscender()
             descender = font.getDescender()
-            fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-            u = fontSize / (ascender - descender)
-            descender = descender * u
+            #h = ascender - descender
 
+            #u = fontSize / h
+            #descender = descender * u
+
+            descender = ((fontSize / float(upem)) * descender)
+            ascender = ((fontSize / float(upem)) * ascender)
+            print(ascender)
             leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
-            dl = leading - fontSize - descender
+            print(leading)
+            dl = leading - fontSize
             placedText = page.place(text)
             s0 = plainstring
             placedText.frame(x, y + dl, w, leading)
-            baseline = h0 - (y + leading)
+            baseline = h0 - (y + leading) - descender
             self.addToLines(x, baseline, placedText)
 
             # Overflow, looks up difference and creates a new strike untill
@@ -368,7 +392,7 @@ class FlatString(BabelString):
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
-                baseline = h0 - (y + leading)
+                baseline = h0 - (y + leading) - descender
                 placedText.frame(x, y + dl, w, leading)
                 self.addToLines(x, baseline, placedText)
 
