@@ -472,10 +472,10 @@ class FlatContext(BaseContext):
 
         See also drawBot.contexts.baseContext textbox()
 
+        >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> w = 400
         >>> h = 300
-        >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
         >>> style = {'fontSize': 14}
