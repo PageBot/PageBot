@@ -357,7 +357,6 @@ class FlatString(BabelString):
                 y += leading
                 h += leading
                 w = w0
-                print(h)
 
                 if h > h0:
                     s1 = self.getPlacedString(placedText)
