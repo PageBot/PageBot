@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -19,9 +18,9 @@ import re
 import difflib
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.contexts.base.babelstring import BabelString
-from pagebot.fonttoolbox.objects.font import Font, getFont
-from pagebot.toolbox.units import upt, px
+from pagebot.contexts.base.babelstring import BabelString, getFontPath
+from pagebot.fonttoolbox.objects.font import Font
+from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
@@ -333,8 +332,8 @@ class FlatString(BabelString):
             w1 = strike.width(s)
 
             # TODO: store fonts in context cache.
-            #fontPath = cls.getFontPath(style)
-            fontPath = style.get('font')
+            fontPath = getFontPath(style)
+            #fontPath = style.get('font')
             font = Font(fontPath)
             ascender = font.getAscender()
             descender = font.getDescender()
@@ -548,7 +547,7 @@ class FlatString(BabelString):
 
         s = cls.addCaseToString(s, e, style)
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
-        fontPath = cls.getFontPath(style)
+        fontPath = getFontPath(style)
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(fontPath)

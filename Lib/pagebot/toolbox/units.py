@@ -1296,15 +1296,18 @@ class P(Unit):
     """P (pica) class.
 
     >>> u = P(2)
-    >>> u.v, u.rv # Same value for absolute values
+    >>> # Same value for absolute values
+    >>> u.v, u.rv 
     (2, 2)
     >>> u = p(1)
     >>> u, u+2, u+pt(2), u+pt(100), u*5, u/2
     (1p, 3p, 1p2, 9p4, 5p, 0p6)
-    >>> p('2.5p') # Fraction of pica, not points. Translates to 2p6
+    >>> # Fraction of pica, not points. Translates to 2p6
+    >>> p('2.5p') 
     2p6
     """
-    PT_FACTOR = 12  # 12 points = 1p
+    # 12 points = 1p
+    PT_FACTOR = 12  
     UNIT = 'p'
 
     def _get_p(self):
@@ -1376,13 +1379,17 @@ class Inch(Unit):
     0.20"
     >>> u-0.1
     0.30"
-    >>> inch(10, 11, 12) # Multiple arguments create a list of tuple inch
+    >>> # Multiple arguments create a list of tuple inch.
+    >>> inch(10, 11, 12) 
     (10", 11", 12")
-    >>> inch((10, 11, 12, 13)) # Arguments can be submitted as list or tuple
+    >>> # Arguments can be submitted as list or tuple.
+    >>> inch((10, 11, 12, 13)) 
     (10", 11", 12", 13")
-    >>> inch(mm(5), pt(24), px(5)) # Arguments can be a list of other units types.
+    >>> # Arguments can be a list of other units types.
+    >>> inch(mm(5), pt(24), px(5)) 
     (0.20", 0.33", 0.07")
-    >>> inch('10pt', '11mm') # Arguments can interprete from strings of other units types.
+    >>> # Arguments can interprete from strings of other units types.
+    >>> inch('10pt', '11mm') 
     (0.14", 0.43")
     """
     PT_FACTOR = INCH # 72pt = 1"
@@ -1407,9 +1414,10 @@ class Inch(Unit):
         return '%0.2f%s' % (v, self.UNITC)
 
 class Formula(Unit):
-    """Unit class that contains a sequence of other units and rules how to apply them.
-    This gives users the opportunity to combine absolute and relative measures.
-    The API of a Formula instance is the same as with normal units.
+    """Unit class that contains a sequence of other units and rules how to
+    apply them. This gives users the opportunity to combine absolute and
+    relative measures. The API of a Formula instance is the same as with
+    normal units.
 
     TODO: More rules to be added. Usage of labelled self.units dictionary.
     TODO: The Formula needs more thinking
@@ -1418,7 +1426,8 @@ class Formula(Unit):
     >>> f.f
     'addAll'
     """
-    PT_FACTOR = 1 # Formulas behave as points by default, but that can be changed.
+    # Formulas behave as points by default, but that can be changed.
+    PT_FACTOR = 1 
     UNIT = 'f'
 
     def __init__(self, v=0, base=None, g=0, f=None, units=None):
@@ -1426,7 +1435,7 @@ class Formula(Unit):
         self.f = f
         if units is None:
             units = {}
-        self.units = units # Key is id, value is unit
+        self.units = units # Key is ID, value is unit
 
     def addAll(self):
         result = None
@@ -1454,10 +1463,11 @@ class RelativeUnit(Unit):
     isRelative = True
 
     def _get_rv(self):
-        """Answers the rendered value of self.
-        The value is based on the type of self. For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the value and u.r answers the value rendered by self.base.
-        self.base can be another unit or a dictionary of base unit values.
+        """Answers the rendered value of self. The value is based on the type
+        of self. For absolute units the result of u.v and u.r is identical.
+        For relative units u.v answers the value and u.r answers the value
+        rendered by self.base. self.base can be another unit or a dictionary
+        of base unit values.
 
         >>> u = Inch(2)
         >>> u.v, u.rv
@@ -1467,10 +1477,11 @@ class RelativeUnit(Unit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered value of self, by units type of self.base.
-        For absolute units the result of u.v and u.r is identical.
-        For relative units u.v answers the value and u.r answers the value rendered by self.base.
-        self.base can be another unit or a dictionary of base values.
+        """Answers the rendered value of self, by units type of self.base.  For
+        absolute units the result of u.v and u.r is identical. For relative
+        units u.v answers the value and u.r answers the value rendered by
+        self.base. self.base can be another unit or a dictionary of base
+        values.
 
         >>> uBase = Inch(24)
         >>> uBase
@@ -1574,7 +1585,8 @@ class RelativeUnit(Unit):
         return base * self.v
 
     def _get_g(self):
-        """Optional gutter value as reference for relative units. Save as Unit instance.
+        """Optional gutter value as reference for relative units. Save as Unit
+        instance.
 
         >>> u = col(0.25, base=mm(200), g=mm(6))
         >>> u.base, u.g # Show unit base and gutter
@@ -1624,20 +1636,25 @@ def px(v, *args, **kwargs):
 class Px(RelativeUnit):
     """Answers the px (pixel) instance.
 
-    >>> Px(12) # Direct creation of class instance, only for (int, float, Unit)
+>>> # Direct creation of class instance, only for (int, float, Unit)
+    >>> Px(12) 
     12px
-    >>> px(12) # Through creator function
+    >>> # Through creator function
+    >>> px(12) 
     12px
-    >>> px('12px') # Through creator function, strings are interpreted (int, float, Unit, str)
+    >>> # Through creator function, strings are interpreted (int, float, Unit, str)
+    >>> px('12px') 
     12px
     >>> u = units('12px')
     >>> u
     12px
-    >>> u/2 # Math on Unit create new Unit instance of same type.
+    >>> # Math on Unit create new Unit instance of same type.
+    >>> u/2 
     6px
     >>> u-1
     11px
-    >>> u.pt # Answer pt value, assuming here an 1:1 conversion
+    >>> # Answer pt value, assuming here an 1:1 conversion
+    >>> u.pt 
     12
     """
     PT_FACTOR = 1 # This may not always be 1:1 to points.
@@ -1702,16 +1719,16 @@ class Fr(RelativeUnit):
     >>> u-0.5
     3.5fr
     >>> u.base = 100
-    >>> u, pt(u) # Answer fr value as points, relative to base master value.
+    >>> # Answer fr value as points, relative to base master value.
+    >>> u, pt(u) 
     (4fr, 25pt)
     """
     UNIT = 'fr'
 
     def _get_rv(self):
-        """Answers the rendered value.
-        For absolute inits u.v and u.rv are identical.
-        For relative units u.v answers the value and u.r answers the value rendered by self.base
-        self.base can be a unit or a number.
+        """Answers the rendered value. For absolute inits u.v and u.rv are
+        identical. For relative units u.v answers the value and u.r answers
+        the value rendered by self.base self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
         >>> u.v, u.rv, u.ru, u.mm
@@ -1724,10 +1741,9 @@ class Fr(RelativeUnit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered unit.
-        For absolute inits u and u.ru are identical.
-        For relative units u.rv answers the value and u.ru answers the value rendered by self.base
-        self.base can be a unit or a number.
+        """Answers the rendered unit. For absolute inits u and u.ru are
+        identical. For relative units u.rv answers the value and u.ru answers
+        the value rendered by self.base self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
         >>> u.v, u.rv, u.ru, u.mm
@@ -1796,11 +1812,10 @@ class Col(RelativeUnit):
     UNIT = 'col'
 
     def _get_rv(self):
-        """Answers the rendered value.
-        For absolute inits u.v and u.r are identical.
-        For relative units u.v answers the value and u.r answers the value rendered by self.base
-        self.base can be a unit or a number.
-        self.g can be a unit or a number
+        """Answers the rendered value. For absolute inits u.v and u.r are
+        identical. For relative units u.v answers the value and u.r answers
+        the value rendered by self.base self.base can be a unit or a number.
+        self.g can be a unit or a number.
 
         >>> u = Col(1/2, base=mm(100), g=mm(4))
         >>> u.v, u.rv # (100 + 4)/2 - 4
@@ -1829,12 +1844,17 @@ def em(v, *args, **kwargs):
     """
     u = None
     base = kwargs.get('base', EM_FONT_SIZE)
-    g = kwargs.get('g', 0) # Default not used by Em
-    if args: # If there are more arguments, bind them together in a list.
+    # Default not used by Em.
+    g = kwargs.get('g', 0) 
+
+    # If there are more arguments, bind them together in a list.
+    if args: 
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
-        for uv in v: # Recursively append
+
+        # Recursively append.
+        for uv in v: 
             u.append(em(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
@@ -1845,9 +1865,11 @@ def em(v, *args, **kwargs):
             v = asNumberOrNone(v[:-2])
             if v is not None:
                 u = Em(v, base=base, g=g)
-        else: # Something else, recursively try again
+        # Something else, recursively try again.
+        else: 
             u = units(v, base=base, g=g)
-            assert isinstance(u, Em) # Only makes sense for relative if the same.
+            # Only makes sense for relative if the same.
+            assert isinstance(u, Em) 
     return u
 
 class Em(RelativeUnit):
@@ -1867,7 +1889,8 @@ class Em(RelativeUnit):
     5em
     >>> u-8
     2em
-    >>> u.base = 12 # Caller can set the base reference value
+    >>> # Caller can set the base reference value.
+    >>> u.base = 12 
     >>> pt(u)
     120pt
     >>> u.base = 24
@@ -1878,30 +1901,40 @@ class Em(RelativeUnit):
     """
     isEm = True
     UNIT = 'em'
-    BASE_KEY = 'em' # Key in optional base of relative units.
+    # Key in optional base of relative units.
+    BASE_KEY = 'em' 
 
     def _get_pt(self):
         """Answers the rendered value in pt. Base value for absolute unit
         values is ignored. self.base can be a unit or a number.
 
         >>> u = units('10em', base=12)
-        >>> u, u.rv # Answer the rendered value
+        >>> # Answer the rendered value
+        >>> u, u.rv 
         (10em, 120)
-        >>> u.base = 8 # Alter the base em.
-        >>> u # Full representation
+        >>> # Alter the base em.
+        >>> u.base = 8 
+        >>> # Full representation.
+        >>> u 
         10em
-        >>> u.base # Defined base for the em (often set in pt units)
+        >>> # Defined base for the em (often set in pt units).
+        >>> u.base 
         8pt
-        >>> u.v # Raw stored value
+        >>> # Raw stored value.
+        >>> u.v 
         10
-        >>> u.rv # Render to Pt value
+        >>> # Render to Pt value.
+        >>> u.rv 
         80
-        >>> u.ru # Render to Pt instance
+        >>> # Render to Pt instance
+        >>> u.ru 
         80pt
-        >>> u.pt # Render to points numbe value
+        >>> # Render to points numbe value
+        >>> u.pt 
         80
         """
-        return asIntOrFloat(pt(self.base * self.v).v) # Render and factor to points
+        # Render and factor to points.
+        return asIntOrFloat(pt(self.base * self.v).v) 
 
     def _set_pt(self, v):
         self.v = v / self.base
@@ -1953,7 +1986,8 @@ def perc(v, *args, **kwargs):
     return u
 
 class Perc(RelativeUnit):
-    """Answers the relative percentage unit, if parsing as percentage (ending with % order "perc").
+    """Answers the relative percentage unit, if parsing as percentage (ending
+    with % order "perc").
 
     >>> units('100%')
     100%
@@ -2007,7 +2041,8 @@ class Perc(RelativeUnit):
         return u'%s%%' % asFormatted(v)
 
     def _get_pt(self):
-        """Answers the rendered value in pt. Base value for absolute unit values is ignored.
+        """Answers the rendered value in pt. Base value for absolute unit
+        values is ignored.
 
         >>> u = units('10%', base=120)
         >>> u, pt(u)
@@ -2032,8 +2067,8 @@ UNIT_VALUE = re.compile('[ \t]*([a-zA-Z"%]*)[ \t]*([0-9.-]*)[ \t]*')
 VALUE_PICA = re.compile('[ \t]*([0-9.-]*)[ \t]*(p[0-9.]*)[ \t]*')
 
 def value2Maker(v):
-    """Find maker function best matching v. If no unit/maker/class name can be
-    found, then assume it is pt() requested. Answer the pair of (value,
+    """Find maker function best matching v. If no unit, maker or class name can
+    be found, then assume it is pt() requested. Answer the pair of (value,
     unitName). Otherwise answer None.
 
     >>> value2Maker('123pt') == pt
@@ -2654,14 +2689,17 @@ class Radians(Angle):
     >>> a = radians(0)
     >>> a.degrees, a.radians
     (0, 0)
-    >>> a = radians(0.5) # Add numbers in the context of the angle type.
+    >>> # Add numbers in the context of the angle type.
+    >>> a = radians(0.5) 
     >>> a + 0.5 - 0.25
     0.75rad
-    >>> 20 + a # Reverse addition casts the number into degree value
+    >>> # Reverse addition casts the number into degree value
+    >>> 20 + a 
     20.5rad
     >>> 1.5 - a
     1rad
-    >>> a/2 # Create integer value for whole angles
+    >>> # Create integer value for whole angles
+    >>> a/2 
     0.25rad
     >>> -a
     -0.5rad

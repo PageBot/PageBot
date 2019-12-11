@@ -27,6 +27,20 @@ from pagebot.toolbox.units import pt, RelativeUnit, Unit, upt, isUnit
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
+def getFontPath(style):
+    font = style.get('font')
+
+    if font is not None and not isinstance(font, str):
+        fontPath = font.path
+    else:
+        fontPath = font
+
+    if fontPath is None or not os.path.exists(fontPath):
+        # TODO: get path from base context self._font.
+        fontPath = DEFAULT_FONT_PATH
+
+    return fontPath
+
 class BabelString:
     """BabelString is the base class of all types of (formatted) string
     representations needed for the builder classes.
@@ -455,21 +469,6 @@ class BabelString:
             s = s.capitalize()
 
         return s
-
-    @classmethod
-    def getFontPath(cls, style):
-        font = style.get('font')
-
-        if font is not None and not isinstance(font, str):
-            fontPath = font.path
-        else:
-            fontPath = font
-
-        if fontPath is None or not os.path.exists(fontPath):
-            # TODO: get path from base context self._font.
-            fontPath = DEFAULT_FONT_PATH
-
-        return fontPath
 
     @classmethod
     def getColor(cls, style):
