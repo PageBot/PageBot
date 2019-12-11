@@ -349,30 +349,32 @@ class FlatString(BabelString):
             placedText.frame(x, y + dl, w, leading)
             baseline = h0 - (y + leading)
             self.addToLines(x, baseline, placedText)
-            # TODO: check h > h0, in that case break.
 
             # Overflow, looks up difference and creates a new strike untill
             # there's no more overflow or the textbox is too small.
             while placedText.overflow():
+                x = x0
+                y += leading
+                h += leading
+                w = w0
+                print(h)
+
+                if h > h0:
+                    s1 = self.getPlacedString(placedText)
+                    overflow += self.getDiff(s0, s1)
+                    break
+
                 s1 = self.getPlacedString(placedText)
                 diff = self.getDiff(s0, s1)
                 text = strike.text(diff)
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
-                x = x0
-                y += leading
-                h += leading
-                w = w0
                 baseline = h0 - (y + leading)
                 placedText.frame(x, y + dl, w, leading)
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
-                    break
-                elif h > h0:
-                    s1 = self.getPlacedString(placedText)
-                    overflow += self.getDiff(s0, s1)
                     break
 
             x += w1
