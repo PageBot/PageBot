@@ -322,11 +322,14 @@ class FlatString(BabelString):
         w = w0
         h = 0
 
+        overflow = ''
+
         for d in self.data:
             s = d['s']
             text = d['text']
             strike = d['strike']
             style = d['style']
+            plainstring = d['s']
             w1 = strike.width(s)
 
             # TODO: store fonts in context cache.
@@ -335,44 +338,48 @@ class FlatString(BabelString):
             font = Font(fontPath)
             ascender = font.getAscender()
             descender = font.getDescender()
-            h = ascender - descender
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-            u = fontSize / h
+            u = fontSize / (ascender - descender)
             descender = descender * u
 
             leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
             dl = leading - fontSize - descender
             placedText = page.place(text)
-            s0 = self.getPlacedString(placedText)
+            s0 = plainstring
             placedText.frame(x, y + dl, w, leading)
-            self.addToLines(x, h0 - (y + leading), placedText)
+            baseline = h0 - (y + leading)
+            self.addToLines(x, baseline, placedText)
             # TODO: check h > h0, in that case break.
 
-            # Overflow, looks up difference and creates a new strike.
+            # Overflow, looks up difference and creates a new strike untill
+            # there's no more overflow or the textbox is too small.
             while placedText.overflow():
                 s1 = self.getPlacedString(placedText)
                 diff = self.getDiff(s0, s1)
                 text = strike.text(diff)
                 w1 = strike.width(diff)
                 placedText = page.place(text)
-                s0 = self.getPlacedString(placedText)
+                s0 = diff
                 x = x0
                 y += leading
-                h -= leading
+                h += leading
                 w = w0
+                baseline = h0 - (y + leading)
                 placedText.frame(x, y + dl, w, leading)
-                self.addToLines(x, h0 - (y + leading), placedText)
+                self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
                     break
-                # TODO: check h > h0, in that case break.
+                elif h > h0:
+                    s1 = self.getPlacedString(placedText)
+                    overflow += self.getDiff(s0, s1)
+                    break
 
             x += w1
             w -= w1
 
         # TODO: calculate overflow for all textparts.
-        diffs = ''
-        return diffs
+        return overflow
 
     def addToLines(self, x, y, placedText):
         for line in self._lines:

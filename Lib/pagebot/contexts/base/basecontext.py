@@ -52,6 +52,7 @@ class BaseContext(AbstractContext):
         self._font = findFont(DEFAULT_FONT_NAME).path
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
+        self._fonts = {}
 
         # Origin set by self.translate()
         self._ox = pt(0)
@@ -81,8 +82,8 @@ class BaseContext(AbstractContext):
     pages = property(_get_pages)
 
     def _get_bezierpath(self):
-        """Answers the open drawing self._bezierpath. Creates one if it does not
-        exist.
+        """Answers the open drawing self._bezierpath. Creates one if it does
+        not exist.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
