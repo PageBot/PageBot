@@ -485,8 +485,8 @@ class FlatContext(BaseContext):
         >>> fs = context.newString(s, style=style)
         >>> r = (10, 262, 400, 313)
         >>> of = context.textBox(fs, r)
-        >>> of
-        'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
+        >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
+        True
         """
         if isinstance(fs, str):
             # Creates a new string with default styles.
@@ -526,8 +526,8 @@ class FlatContext(BaseContext):
         >>> fs = context.newString(s, style=style)
         >>> r = (10, 262, 400, 313)
         >>> of = context.textOverflow(fs, r)
-        >>> of
-        'without hurting the beautiful sensual quality of the original film; Gerry Gershman shepherded us through the process of acquiring all the music rights; Philippe Deneree selected the best outtakes and edited them into an exciting new document; Victor Kanefsky contributed the footage of a film bring shot at his studio, Valkhn Films, in 1983 while he and Sam Pollard were editing Style Wars. Victor and Philippe have put together that footage to make a 21 minute film about the editing of Style Wars. Lisa and I are very grateful to the Public Art Films board members, Carlos, Raquel, Sacha and Brian, for the bottomless well of their support for this project. Style Wars, the BluRay, is dedicated to the loving memory of Tony Silver, Burleigh Wartes, Jim Szalapski, Kippy Dee, Dondi, Shy 147, Kase 2, Rammellzee, and Iz the Wiz.'
+        >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
+        True
         """
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         # FIXME: this actually shows the text?

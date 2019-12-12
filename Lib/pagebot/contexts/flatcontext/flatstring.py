@@ -329,7 +329,7 @@ class FlatString(BabelString):
         >>> fs = context.newString(s, style=style)
         >>> r = (10, 262, 400, 313)
         >>> of = fs.textBox(context.page, r)
-        >>> of.startswith('without hurting the beautiful sensual quality')
+        >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
         True
         """
         x0, y0, w0, h0 = box
@@ -381,7 +381,7 @@ class FlatString(BabelString):
                 h += leading
                 w = w0
 
-                print(h - descender)
+                #print(h - descender)
 
                 if h - descender > h0:
                     s1 = self.getPlacedString(placedText)
@@ -389,7 +389,7 @@ class FlatString(BabelString):
                     break
 
                 s1 = self.getPlacedString(placedText)
-                print(s1)
+                #print(s1)
                 diff = self.getDiff(s0, s1)
                 text = strike.text(diff)
                 w1 = strike.width(diff)
@@ -400,7 +400,7 @@ class FlatString(BabelString):
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
-                    print(self.getPlacedString(placedText))
+                    #print(self.getPlacedString(placedText))
                     break
 
 
