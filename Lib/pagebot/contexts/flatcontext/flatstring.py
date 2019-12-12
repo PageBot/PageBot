@@ -312,6 +312,17 @@ class FlatString(BabelString):
         """
         return self.s 
 
+    '''
+    def getVarBounds(self, glyphName, location, parent):
+        # NOTE: bounds are none in case of whitespace.
+        # TODO: test.
+        otfVarGlyph = self.getOTFVarGlyph(glyphName, location)
+        from fontTools.pens.boundsPen import BoundsPen
+        pen = BoundsPen(parent)
+        otfVarGlyph.draw(pen)
+        return pen.bounds
+    '''
+
     def textBox(self, page, box, align=LEFT):
         """Places text segments
         TODO: implement alignment.
@@ -380,15 +391,12 @@ class FlatString(BabelString):
                 h += leading
                 w = w0
 
-                #print(h - descender)
-
                 if h - descender > h0:
                     s1 = self.getPlacedString(placedText)
                     overflow += self.getDiff(s0, s1)
                     break
 
                 s1 = self.getPlacedString(placedText)
-                #print(s1)
                 diff = self.getDiff(s0, s1)
                 text = strike.text(diff)
                 w1 = strike.width(diff)

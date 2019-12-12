@@ -264,8 +264,12 @@ class BabelString:
             # If the Font instance was supplied, then use it's path.
             if hasattr(sFont, 'path'):
                 sFont = sFont.path
+
             attrs['font'] = sFont
+
         else:
+            # TODO: add to logger.
+            #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
             attrs['font'] = DEFAULT_FONT_PATH
 
         sFallbackFont = css('fallbackFont', e, style)
@@ -294,10 +298,10 @@ class BabelString:
 
         # Base for em or percent.
 
-        # FIXME: not an allowed style in the PB approach?
         lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
         lineHeight = round(lineHeight, 2)
         attrs['lineHeight'] = lineHeight
+        print('lh %s' % lineHeight)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill

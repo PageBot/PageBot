@@ -1854,10 +1854,10 @@ class Element:
 
     b = builder = property(_get_builder)
 
-    def newString(self, bs, e=None, style=None, w=None, h=None, pixelFit=True):
+    def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Create a new BabelString, using the current type of self.doc.context,
         or pagebot.contexts.getContext() if not self.doc or self.doc.view defined,
-        if bs is a plain string. Otherwise just answer the BabelString unchanged.
+        if s is a plain string. Otherwise just answer the BabelString unchanged.
         In case of a BabelString, is has to be the same as the current context would
         create, otherwise an error is raised. In other words, there is no BabelString
         conversion defined (no reliable way of doing that, they should be created
@@ -1875,7 +1875,7 @@ class Element:
             e = self
 
         assert self.context is not None
-        return self.context.newString(bs, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
+        return self.context.newString(s, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
     # Most common properties
 
