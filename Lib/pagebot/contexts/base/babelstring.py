@@ -301,7 +301,6 @@ class BabelString:
         lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
         lineHeight = round(lineHeight, 2)
         attrs['lineHeight'] = lineHeight
-        print('lh %s' % lineHeight)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill
