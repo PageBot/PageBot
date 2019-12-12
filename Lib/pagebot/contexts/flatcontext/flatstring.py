@@ -23,7 +23,6 @@ from pagebot.contexts.base.babelstring import BabelString, getFontPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
-from pagebot.toolbox.units import em, pt
 
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
