@@ -323,10 +323,12 @@ class FlatContext(BaseContext):
         True
         >>> context.save()
         >>> boldFont = findFont('Roboto-Bold')
-        >>> context.font(boldFont) # Set by Font instance
+        >>> # Set by Font instance.
+        >>> context.font(boldFont) 
         >>> context._font.endswith('Roboto-Bold.ttf')
         True
-        >>> context.restore() # Restore to original graphic state values
+        >>> # Restore to original graphic state values.
+        >>> context.restore() 
         >>> context._font.endswith('Roboto-Regular.ttf')
         True
         """
@@ -465,10 +467,11 @@ class FlatContext(BaseContext):
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
-        TODO: make clipPath work
-        TODO: make align
+        TODO: make clipPath work.
+        TODO: make align work.
         TODO: wrap placedText so we can derive length of text without overflow and
         print the result.
+        TODO: use PageBot hyphenation.
 
         See also drawBot.contexts.baseContext textbox()
 
@@ -603,13 +606,17 @@ class FlatContext(BaseContext):
         >>> context.font(font.path)
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
-        >>> context.font('OtherFont', 12) # If doesn't exists, path is set to default.
+        >>> # If doesn't exists, path is set to default.
+        >>> context.font('OtherFont', 12) 
         >>> context._font == DEFAULT_FONT_PATH
         True
-        >>> context._fontSize # Renders to pt-unit
+        >>> # Renders to pt-unit.
+        >>> context._fontSize 
         12
         """
-        self._font = getFontPathOfFont(font) # Convert name or path to font path.
+        # Convert name or path to font path. 
+        self._font = getFontPathOfFont(font) 
+
         if fontSize is not None:
             self._fontSize = upt(fontSize)
 
@@ -619,11 +626,15 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.toolbox.units import p
         >>> context = FlatContext()
-        >>> context.fontSize(p(1)) # Set a unit
-        >>> context._fontSize # Defaults to pt-unit
+        >>> # Set a unit.
+        >>> context.fontSize(p(1)) 
+        >>> # Defaults to pt-unit.
+        >>> context._fontSize 
         12
-        >>> context.fontSize(14) # Set a number
-        >>> context._fontSize # Defaults to pt-unit
+        >>> # Set a number.
+        >>> context.fontSize(14) 
+        >>> # Defaults to pt-unit.
+        >>> context._fontSize 
         14
         """
         self._fontSize = upt(fontSize)
@@ -635,7 +646,6 @@ class FlatContext(BaseContext):
         self._language = language
 
     def hyphenation(self, onOff):
-        # TODO: Implementation in Flat should use PageBot hyphenation?
         self._hyphenation = onOff
 
     #   I M A G E
@@ -785,7 +795,8 @@ class FlatContext(BaseContext):
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
         
-        TODO: don't scale width / height but calculate points before transforming.
+        TODO: don't scale width and height but calculate points before
+        transforming.
         """
         shape = self._getShape()
 
@@ -806,7 +817,8 @@ class FlatContext(BaseContext):
     #   P A T H
 
     def newPath(self):
-        """Creates a new Bézier path object to store subsequent path commands."""
+        """Creates a new Bézier path object to store subsequent path
+        commands."""
         self._bezierpath = FlatBezierPath(self.b)
         return self._bezierpath
 
@@ -935,8 +947,10 @@ class FlatContext(BaseContext):
         >>> p1 = context.getTransformed(x, y)
         """
         angle = math.radians(angle)
-        self._rotationCenter = center # Sum of points?
-        self._rotate = self._rotate + angle # Sum?
+        # Sum of points? 
+        self._rotationCenter = center 
+        # Sum? 
+        self._rotate = self._rotate + angle 
 
         if center is None or center == (0, 0):
             self.transform3D = self.transform3D.rotate(angle)
@@ -980,10 +994,10 @@ class FlatContext(BaseContext):
     # System fonts listing, installation, font properties.
 
     def installedFonts(self, patterns=None):
-        """Answers the list of all fonts (name or path) that are installed on the
-        OS.
+        """Answers the list of all fonts (name or path) that are installed on
+        the OS.
         TODO: parse font paths.
-        TODO: check pattern
+        TODO: check patterns.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -1043,8 +1057,6 @@ class FlatContext(BaseContext):
 
     def create_gif(self, filenames, duration):
         """
-        Flat function?
-
         TODO: Not implement yet.
         ::
 

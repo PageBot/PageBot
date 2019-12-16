@@ -17,6 +17,7 @@
 
 import re
 import difflib
+from fontTools.pens.boundsPen import BoundsPen
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString, getFontPath
@@ -255,7 +256,8 @@ class FlatString(BabelString):
     def _get_lineHeight(self):
         """Returns the current line height, based on the current font and
         fontSize. If a lineHeight is set, this value will be returned."""
-        # FIXME: calculate instead? see BabelString.
+        # FIXME: calculate instead? See BabelString.
+        # FIXME: should use base when relative. See BabelString.
         return self.style.get('leading', DEFAULT_LEADING)
         #fontSize = upt(self.fontSize)
         #return em(self.s.fontLineHeight() / fontSize, base=fontSize)
@@ -312,16 +314,13 @@ class FlatString(BabelString):
         """
         return self.s 
 
-    '''
-    def getVarBounds(self, glyphName, location, parent):
+    def getBounds(self, glyphName, location, parent):
         # NOTE: bounds are none in case of whitespace.
         # TODO: test.
-        otfVarGlyph = self.getOTFVarGlyph(glyphName, location)
-        from fontTools.pens.boundsPen import BoundsPen
+        otfGlyph = self.getOTFGlyph(glyphName, location)
         pen = BoundsPen(parent)
-        otfVarGlyph.draw(pen)
+        otfGlyph.draw(pen)
         return pen.bounds
-    '''
 
     def textBox(self, page, box, align=LEFT):
         """Places text segments
@@ -348,8 +347,9 @@ class FlatString(BabelString):
         w = w0
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        leading0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
-        h = leading0
+        from pagebot.toolbox.units import em, pt
+        lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
+        h = lineHeight0
 
         overflow = ''
 
@@ -369,8 +369,8 @@ class FlatString(BabelString):
             ascender = font.getAscender()
             descender = font.getDescender()
             descender = ((fontSize / float(upem)) * descender)
-            leading = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
-            dl = leading - fontSize
+            lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
+            dl = lineHeight - fontSize
             placedText = page.place(text)
             s0 = plainstring
 
@@ -379,16 +379,16 @@ class FlatString(BabelString):
                 overflow += self.getDiff(s0, s1)
                 break
 
-            placedText.frame(x, y + dl, w, leading)
-            baseline = h0 - (y + leading) - descender
+            placedText.frame(x, y + dl, w, lineHeight)
+            baseline = h0 - (y + lineHeight) - descender
             self.addToLines(x, baseline, placedText)
 
             # Overflow, looks up difference and creates a new strike untill
             # there's no more overflow or the textbox is too small.
             while placedText.overflow():
                 x = x0
-                y += leading
-                h += leading
+                y += lineHeight 
+                h += lineHeight 
                 w = w0
 
                 if h - descender > h0:
@@ -402,8 +402,8 @@ class FlatString(BabelString):
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
-                baseline = h0 - (y + leading) - descender
-                placedText.frame(x, y + dl, w, leading)
+                baseline = h0 - (y + lineHeight) - descender
+                placedText.frame(x, y + dl, w, lineHeight)
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
@@ -480,9 +480,9 @@ class FlatString(BabelString):
         (26.09, 16.8)
         """
         w = self.strike.width(self.s)
-        fontSizePt = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        leadingPt = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSizePt)
-        h = leadingPt
+        fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+        lineHeight = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize)
+        h = lineHeight
         w = round(w, 2)
         h = round(h, 2)
         return w, h
@@ -585,12 +585,12 @@ class FlatString(BabelString):
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
         fontPath = getFontPath(style)
         fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-        leadingPt = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
+        lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
         flatFont = context.b.font.open(fontPath)
         strike = context.b.strike(flatFont)
         color = cls.getColor(style)
         rgb = context.getFlatRGB(color)
-        strike.color(rgb).size(fontSizePt, leadingPt, units=cls.UNITS)
+        strike.color(rgb).size(fontSizePt, lineHeight, units=cls.UNITS)
         return cls(s, context=context, style=style, strike=strike)
 
     def getTextLines(self, w, h=None, align=LEFT):
