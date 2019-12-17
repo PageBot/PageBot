@@ -23,7 +23,7 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.style import css
 from pagebot.toolbox.color import (Color, blackColor, inheritColor, noColor,
         color)
-from pagebot.toolbox.units import pt, RelativeUnit, Unit, upt, isUnit
+from pagebot.toolbox.units import em, pt, RelativeUnit, Unit, upt, isUnit
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
@@ -214,19 +214,21 @@ class BabelString:
     def getTextLines(self, w, h=None, align=LEFT):
         raise NotImplementedError
 
-    def getLineHeight(self):
-        # FIXME: get from style instead? see FlatString.
+    def _get_lineHeight(self):
+        """Get line height based on font size and leading."""
 
         if isinstance(self.leading, RelativeUnit):
-            textHeight = self.leading.byBase(self.fontSize)
-
+            lineHeight = self.leading.byBase(self.fontSize)
         elif isinstance(self.leading, Unit):
-            textHeight = self.leading.pt
+            lineHeight = self.leading.pt
         else:
             # Leading is scalar?
-            textHeight = self.leading * self.fontSize.pt
+            lineHeight = self.leading * self.fontSize.pt
 
-        return textHeight
+        return lineHeight
+
+    # Compatibility with DrawBot API.
+    fontLineHeight = lineHeight = property(_get_lineHeight) 
 
     # To be implemented:
     #def textSize(self, w=None, h=None):
@@ -294,13 +296,12 @@ class BabelString:
         else:
             fontSizePt = DEFAULT_FONT_SIZE
 
-        uLeading = css('leading', e, style)
+        uLeading = css('leading', e, style, default=DEFAULT_LEADING)
 
         # Base for em or percent.
 
-        lineHeight = upt(uLeading or DEFAULT_LEADING, base=fontSizePt)
-        lineHeight = round(lineHeight, 2)
-        attrs['lineHeight'] = lineHeight
+        leading = round(uLeading, 2)
+        attrs['leading'] = em(leading)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill
@@ -424,11 +425,7 @@ class BabelString:
         if tabs:
             attrs['tabs'] = tabs
 
-        # Sets the hyphenation flag from style, as in DrawBot this is set by a
-        # global function, not as FormattedString attribute.
-        # FIXME: IN DRAWBOT attrs['language'] = bool(css('language', e, style))
-        # FIXME: IN DRAWBOT
-        #attrs['hyphenation'] = bool(css('hyphenation', e, style))
+        attrs['hyphenation'] = bool(css('hyphenation', e, style))
 
         uFirstLineIndent = css('firstLineIndent', e, style)
 

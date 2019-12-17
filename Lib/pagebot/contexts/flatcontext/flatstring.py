@@ -22,7 +22,7 @@ from fontTools.pens.boundsPen import BoundsPen
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import BabelString, getFontPath
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.toolbox.units import upt
+from pagebot.toolbox.units import upt, RelativeUnit, Unit
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
@@ -84,6 +84,8 @@ class FlatString(BabelString):
         >>> #run.xHeight, run.capHeight
         #(0.55em, 0.73em)
         """
+        self.data = []
+
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
         assert isinstance(s, str)
@@ -91,7 +93,17 @@ class FlatString(BabelString):
         if style is None:
             style = {}
 
-        self.data = []
+        fontPath = getFontPath(style)
+
+        # FIXME: should use s.lineHeight.
+        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        leading = style.get('leading', DEFAULT_LEADING)
+        lineHeight = upt(leading, base=fontSize)
+        flatFont = context.b.font.open(fontPath)
+        strike = context.b.strike(flatFont)
+        color = BabelString.getColor(style)
+        rgb = context.getFlatRGB(color)
+        strike.color(rgb).size(fontSize, lineHeight, units=self.UNITS)
 
         # For each block of text, stores the plain string, the Flat `strike`
         # stylings and the Flat `text` (which is comparable to the DrawBot
@@ -255,12 +267,17 @@ class FlatString(BabelString):
 
     def _get_lineHeight(self):
         """Returns the current line height, based on the current font and
-        fontSize. If a lineHeight is set, this value will be returned."""
-        # FIXME: calculate instead? See BabelString.
-        # FIXME: should use base when relative. See BabelString.
-        return self.style.get('leading', DEFAULT_LEADING)
-        #fontSize = upt(self.fontSize)
-        #return em(self.s.fontLineHeight() / fontSize, base=fontSize)
+        fontSize."""
+        if isinstance(self.leading, RelativeUnit):
+            lineHeight = self.leading.byBase(self.fontSize)
+
+        elif isinstance(self.leading, Unit):
+            lineHeight = self.leading.pt
+        else:
+            # Leading is scalar?
+            lineHeight = self.leading * self.fontSize.pt
+
+        return lineHeight
 
     # Compatibility with DrawBot API.
     fontLineHeight = lineHeight = property(_get_lineHeight) 
@@ -347,7 +364,6 @@ class FlatString(BabelString):
         w = w0
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        from pagebot.toolbox.units import em, pt
         lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
         h = lineHeight0
 
@@ -583,15 +599,7 @@ class FlatString(BabelString):
 
         s = cls.addCaseToString(s, e, style)
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
-        fontPath = getFontPath(style)
-        fontSizePt = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-        lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSizePt)
-        flatFont = context.b.font.open(fontPath)
-        strike = context.b.strike(flatFont)
-        color = cls.getColor(style)
-        rgb = context.getFlatRGB(color)
-        strike.color(rgb).size(fontSizePt, lineHeight, units=cls.UNITS)
-        return cls(s, context=context, style=style, strike=strike)
+        return cls(s, context=context, style=style)
 
     def getTextLines(self, w, h=None, align=LEFT):
         page = self.context.getTmpPage(w, h)
