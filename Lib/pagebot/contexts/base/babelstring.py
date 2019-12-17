@@ -297,11 +297,11 @@ class BabelString:
             fontSizePt = DEFAULT_FONT_SIZE
 
         uLeading = css('leading', e, style, default=DEFAULT_LEADING)
-
+        print(type(uLeading))
         # Base for em or percent.
 
-        leading = round(uLeading, 2)
-        attrs['leading'] = em(leading)
+        #leading = round(uLeading, 2)
+        attrs['leading'] = em(uLeading)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill

@@ -67,6 +67,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
 def getRootStyle(u=None, w=None, h=None, **kwargs):
     """Answers the main root style tha contains all default style attributes of
     PageBot. To be overwritten when needed by calling applications.
+
     CAPITALIZED attribute names are for reference only. Not used directly from
     styles. They can be copied on other style attributes. Note that if the
     overall unit style.u is changed by the calling application, also the
@@ -87,20 +88,28 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
     # Some calculations to show dependencies.
     defaultLeading = DEFAULT_LEADING
     baselineGrid = pt(BASELINE_GRID)
+
     # Indent of lists. Needs to be the same as in tabs, to position rightly
-    # after bullets.
-    listIndent = 0.8 * u # The order or multiplication matters, in case u is a Unit instance.
-    gutter = u # Make default gutter equal to the page unit.
+    # after bullets. The order or multiplication matters, in case u is a Unit
+    # instance.
+    listIndent = 0.8 * u 
+    # Make default gutter equal to the page unit.
+    gutter = u 
 
     pt0 = pt(0) # Standard initialize on Unit zero
     em0 = em(0)
 
-    rs = dict( # Answer the default root style. Style is a clean dictionary
-
-        name = 'root', # Name of the style, key in document.getRootstyle( )
-        cssClass = None, # Optional CSS class of local element. Ignored if None.
-        tag = None, # Optional marker to match the style with the running tag.
-        show = True, # If set to False, then the element does not evaluate in the self.elements loop.
+    # Answer the default root style. Style is a dictionary.
+    rs = dict( 
+        # Name of the style, key in document.getRootstyle( )
+        name = 'root', 
+        # Optional CSS class of local element. Ignored if None.
+        cssClass = None, 
+        # Optional marker to match the style with the running tag.
+        tag = None, 
+        # If set to False, then the element does not evaluate in the
+        # self.elements loop.
+        show = True, 
 
         # Basic page/template/element positions. Can contain number values or
         # Unit instances.
@@ -110,12 +119,21 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Basic page/template/element proportions of box. Can contain number
         # values or Unit instances.
-        w = w, # Default page width, basic size of the document. Point rounding of 210mm, international generic fit.
-        h = h, # Default page height, basic size of the document. 11", international generic fit.
-        d = pt0, # Optional "depth" of an document, page or element. Default has all element in the same z-level.
-        proportional = False, # If True, keep w/h proportional, depending on which of the two is set.
+
+        # Default page width, basic size of the document. Point rounding of
+        # 210mm, international generic fit.
+        w = w, 
+        # Default page height, basic size of the document. 11", international
+        # generic fit.
+        h = h, 
+        # Optional "depth" of an document, page or element. Default has all
+        # element in the same z-level.
+        d = pt0, 
+        # If True, keep w/h proportional, depending on which of the two is set.
+        proportional = False, 
         
-        # For rotation, the point (x+rx, y+ry) is used as rotation center. Default is (x, y).
+        # For rotation, the point (x+rx, y+ry) is used as rotation center.
+        # Default is (x, y).
         rx = pt0,
         ry = pt0,
         angle = degrees(0), # Angle in degrees or radians units.
@@ -131,7 +149,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Resolution in dpi for pixel based publications and elements.
         resolution = pt(72),
-        # Dictionary of multiplation factors for (e.g. thumbnail) image sizes per image type
+        # Dictionary of multiplication factors for (e.g. thumbnail) image sizes
+        # per image type.
         resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
 
         # Optional folds property. Keep None or empty list if no folds.
@@ -144,11 +163,14 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # are aligned by the xTextAlign attribute. xAlign is about the position
         # of the element box.
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
-        # Default alignment for elements like image, that float in their designated space.
-        # Document will set this value default to BOTTOM, in case the Document.originTop
-        # is set to False.
+
+        # Default alignment for elements like image, that float in their
+        # designated space. Document will set this value default to BOTTOM, in
+        # case the Document.originTop is set to False.
         yAlign = TOP, 
-        zAlign = FRONT, # Default alignment in z-axis is in front, closest to the viewer.
+
+        # Default alignment in z-axis is in front, closest to the viewer.
+        zAlign = FRONT, 
 
         # Repeater flag, shaped from CSS image background-repeat value
         # Possible values: CSS_REPEAT:
@@ -199,125 +221,179 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         borderBottom = None, # Border bottom
 
         # Grid definitions, used by static media as well as CSS display: grid;
-        # exports.  gridX, gridY and gridZ are optional lists of grid line
-        # positions, to allow the use of non-repeating grids.  The format is
+        # exports. gridX, gridY and gridZ are optional lists of grid line
+        # positions, to allow the use of non-repeating grids. The format is
         # [(width1, gutter1), (width2, gutter2), (None, 0)] in case different
-        # gutters are needed.  If the format is [width1, width2, (width3,
-        # gutter3)], then the missing gutters are used from gw or gh.  If this
+        # gutters are needed. If the format is [width1, width2, (width3,
+        # gutter3)], then the missing gutters are used from gw or gh. If this
         # paramater is set, then the style values for column width "cw" and
-        # column gutter "gw" are ignored.  If a width is None, it is assumed to
+        # column gutter "gw" are ignored. If a width is None, it is assumed to
         # fill the rest of the available space. If there are multiple widths
         # defined as None, then the remaining width is equally devided from the
         # element.parent.w If the width is a float between 0..1 or a string
         # with format "50%" then these are interpreted as percentages. If
         # there are multiple None widths, then their values are calculated from
-        # an equal division of available space.  It is up to the caller to make
+        # an equal division of available space. It is up to the caller to make
         # sure that the grid values fit the width of the current element.
         #
         # HTML/CSS builders convert to:
-        # grid-template-columns, grid-template-rows, grid-auto-rows, grid-column-gap, grid-row-gap,
+        # grid-template-columns, grid-template-rows, grid-auto-rows,
+        # grid-column-gap, grid-row-gap,
         gridX = None,
-        # Optional list of vertical grid line positions, to force the use of non-repeating grids.
-        # Format is [(height1, gutter1), (None, gutter2), (None, 0)]
+        # Optional list of vertical grid line positions, to force the use of
+        # non-repeating grids. Format is [(height1, gutter1), (None, gutter2),
+        # (None, 0)]
         gridY = None,
         gridZ = None, # Similar to gridX and gridY.
 
-        # Gutter is used a standard distance between columns. Note that when not-justifying, the visual
-        # gutter on the right side of columns seems to be larger. This can be compensated for in the
-        # distance between images.
+        # Gutter is used a standard distance between columns. Note that when
+        # not-justifying, the visual gutter on the right side of columns seems
+        # to be larger. This can be compensated for in the distance between
+        # images.
         gw = gutter, # Main gutter width of page columns. Based on U.
         gh = gutter, # Gutter height
         gd = gutter, # Optional gutter depth, in z-direction
 
-        # The columns with, height and depth are used to fit a certain amount of colums with defined
-        # width on the page padded width (self.pw), using (self.gw, self.gh, self.gd) as gutters.
-        # If (cw, ch, cd) are defined, (gridX, gridY, gridZ) must be None or order to be used.
+        # The columns with, height and depth are used to fit a certain amount
+        # of colums with defined width on the page padded width (self.pw),
+        # using (self.gw, self.gh, self.gd) as gutters. If (cw, ch, cd) are
+        # defined, (gridX, gridY, gridZ) must be None or order to be used.
         cw = None,
-        ch = None, # Approximately square with cw + gutter: 77. Order matters in case u is Unit
-        cd = None, # Optional column "depth"
+        # Approximately square with cw + gutter: 77. Order matters in case u is
+        # Unit
+        ch = None, 
+        # Optional column "depth".
+        cd = None, 
 
-        # Flags indicating on which side of self.pw the columns start. The rest space will be posisioned
-        # on the other side.
+        # Flags indicating on which side of self.pw the columns start. The rest
+        # space will be posisioned on the other side.
         columnAlignX = LEFT,
         columnAlignY = TOP,
 
-        # If gridX and cd are undefined, then use the self.columnsX count and self.gw to fit that number
-        # of columns on page padded width (self.pw), where the column widths are calculated.
-        # If columnsX, etc. are defined, self.cw and self.gridX must be None, in order to be used.
+        # If gridX and cd are undefined, then use the self.columnsX count and
+        # self.gw to fit that number of columns on page padded width (self.pw),
+        # where the column widths are calculated. If columnsX, etc. are
+        # defined, self.cw and self.gridX must be None, in order to be used.
         columnsX = 2,
         columnsY = 1,
         columnsZ = 1,
 
         # Overall content scaling.
-        scaleX = 1, # If set, then the overall scaling of an element draw is done, keeping the (x,y) unscaled.
-        scaleY = 1, # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
-        scaleZ = 1, # Optional scaling in z-direction, depth.
+        # If set, then the overall scaling of an element draw is done, keeping
+        # the (x,y) unscaled.
+        scaleX = 1, 
+        # To be used in pairing of x, y = e._setScale(x, y) and e._resetScale()
+        scaleY = 1, 
+        # Optional scaling in z-direction, depth.
+        scaleZ = 1, 
 
         # Shadow & Gradient
         shadow = None, # Contains options Shadow instance.
         gradient = None, # Contains optional Gradient instance.
 
         # Typographic defaults
-        font = DEFAULT_FONT_PATH, # Default is to avoid existing font and fontSize in the graphic state.
+        # Default is to avoid existing font and fontSize in the graphic state.
+        font = DEFAULT_FONT_PATH, 
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
-        fontSize = DEFAULT_FONT_SIZE, # Default font size in points, related to U. If FIT, size is elastic to width.
-        uppercase = False, # All text in upper case, using s.upper()
-        lowercase = False, # All text in lower case (only if uppercase is False), using s.lower()
-        capitalized = False, # All words with initial capitals. (only of not uppercase and not lowercase), using s.capitalize()
+        # Default font size in points, related to U. If FIT, size is elastic to
+        # width.
+        fontSize = DEFAULT_FONT_SIZE, 
+        # All text in upper case, using s.upper()
+        uppercase = False, 
+        # All text in lower case (only if uppercase is False), using s.lower()
+        lowercase = False, 
+        # All words with initial capitals. (only of not uppercase and not
+        # lowercase), using s.capitalize()
+        capitalized = False, 
 
-        # Axis location of the Variable Font to create the font instance. E.g. dict(wght=45, opsz=12)
+        # Axis location of the Variable Font to create the font instance. E.g.
+        # dict(wght=45, opsz=12)
         variableLocation = None,
-        # If True, round the location values for fitString to whole numbers, to avoid too many cached instances.
+        # If True, round the location values for fitString to whole numbers, to
+        # avoid too many cached instances.
         roundVariableLocation = True,
 
         # List of supported OpenType features.
-        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum, ordn, pnum, rlig, sinf,
-        # smcp, ss01, ss02, ss03, ss04, ss05, ss06, ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14,
-        # ss15, ss16, ss17, ss18, ss19, ss20, subs, sups, swsh, titl, tnum
+        # c2pc, c2sc, calt, case, cpsp, cswh, dlig, frac, liga, lnum, onum,
+        # ordn, pnum, rlig, sinf, smcp, ss01, ss02, ss03, ss04, ss05, ss06,
+        # ss07, ss08, ss09, ss10, ss11, ss12, ss13, ss14, ss15, ss16, ss17,
+        # ss18, ss19, ss20, subs, sups, swsh, titl, tnum
         openTypeFeatures = None,
 
         # Horizontal spacing for absolute and fontsize-related measures.
-        tracking = pt0, # Absolute tracking value. Note that this is different from standard name definition.
+        # Absolute tracking value. Note that this is different from standard
+        # name definition.
+        tracking = pt0, 
 
         # Set tabs,tuples of (float, alignment) Alignment can be “left”,
         # “center”, “right” or any other character. If a character is provided
         # the alignment will be right and centered on the specified character.
-        listTabs = [(listIndent, LEFT)], # Default indent for bullet lists. Copy onto style.tabs for usage.
-        listIndent = listIndent, # Indent for bullet lists, Copy on style.indent for usage in list related styles.
-        listBullet = u'•\t', # Default bullet for bullet list. Can be changed for ordered/numbered lists.
-        tabs = None, # Tabs for FormattedString, copy e.g. from listTabs. [(index, alignment), ...] or [20, 30, 40] for LEFT
-        # DrawBot-FormattedString compatible
-        indent = pt0, # Left indent (for left-right based scripts).
-        tailIndent = pt0, # Tail/right indent (for left-right based scripts)
-        firstLineIndent = pt0, # Indent of first line of a paragraph in a text tag.
-        # PageBot additions, used for textOverflow, in combination with columns
-        firstTagIndent = pt0, # Indent of first line of paragraph in a <p> text tag, where style is different from previous tag.
-        firstColumnIndent = pt0, # Indent of first line in a column, after start of new column (e.g. by overflow)
+        # Default indent for bullet lists. Copy onto style.tabs for usage.
+        listTabs = [(listIndent, LEFT)], 
+        # Indent for bullet lists, Copy on style.indent for usage in list
+        # related styles.
+        listIndent = listIndent, 
+        # Default bullet for bullet list. Can be changed for ordered/numbered
+        # lists.
+        listBullet = u'•\t', 
+        # Tabs for FormattedString, copy e.g. from listTabs. [(index,
+        # alignment), ...] or [20, 30, 40] for LEFT
+        tabs = None, 
 
-        # Strip pre/post white space from e.text and e.tail and substitute by
+        # DrawBot-FormattedString compatibility.
+        # Left indent (for left-right based scripts).
+        indent = pt0, 
+        # Tail / right indent (for left-right based scripts).
+        tailIndent = pt0, 
+        # Indent of first line of a paragraph in a text tag.
+        firstLineIndent = pt0, 
+        # PageBot additions, used for textOverflow, in combination with columns.
+        # Indent of first line of paragraph in a <p> text tag, where style is
+        # different from previous tag.
+        firstTagIndent = pt0, 
+        # Indent of first line in a column, after start of new column (e.g. by
+        # overflow).
+        firstColumnIndent = pt0, 
+
+        # Strip pre / post white space from e.text and e.tail and substitute by
         # respectively prefix and postfix if they are not None. Set to e.g.
         # newline(s) "\n" or empty string, if tags need to glue together.  Make
         # None for no stripping.
-        prefix = '', # Default is to strip white space from a block. Make None for no stripping.
-        postfix = None, # Set to replacement string to strip white space from tail of XML tag block into a single space.
+
+        # Default is to strip white space from a block. Make None for no
+        # stripping.
+        prefix = '', 
+
+        # Set to replacement string to strip white space from tail of XML tag
+        # block into a single space.
+        postfix = None, 
 
         # Vertical spacing of baselines by TextBox. Note that PageView is
         # drawing the baseline grid color as defined by viewGridStrokeX and
-        # viewGridStrokeXWidth
+        # viewGridStrokeXWidth.
         baselineGrid = baselineGrid,
-        baselineGridStart = None, # Optional baselineGridStart if different from top padding page.pt
-        baseLineMarkerSize = pt(8), # FontSize of markers showing base line grid info.
-        baselineShift = pt0, # Absolute baseline shift in points. Positive value is upward.
-        baselineColor = DEFAULT_BASELINE_COLOR, # Baseline color, drawn by PageView and TextBox
-        baselineWidth = pt(DEFAULT_BASELINE_WIDTH), # Baseline width, drawn by TextBox
+        # Optional baselineGridStart if different from top padding page.pt.
+        baselineGridStart = None, 
+        # FontSize of markers showing base line grid info.
+        baseLineMarkerSize = pt(8), 
+        # Absolute baseline shift in points. Positive value is upward.
+        baselineShift = pt0, 
+        # Baseline color, drawn by PageView and TextBox.
+        baselineColor = DEFAULT_BASELINE_COLOR, 
+        # Baseline width, drawn by TextBox.
+        baselineWidth = pt(DEFAULT_BASELINE_WIDTH), 
         baselineGridFit = False,
         firstLineGridFit = True,
 
         # Leading and vertical space
-        leading = defaultLeading, # Absolute value (pt) or relative factor (em) to current fontSize.
-        lineHeight = defaultLeading, # TODO
-        paragraphTopSpacing = pt0, # Only works if there is a prefix style value != 0
-        paragraphBottomSpacing = pt0,  # Only works if there is a postfix style value != 0
+        # Absolute value (pt) or relative factor (em) to current fontSize.
+        leading = defaultLeading, 
+        # TODO
+        lineHeight = defaultLeading, 
+        # Only works if there is a prefix style value != 0
+        paragraphTopSpacing = pt0, 
+        # Only works if there is a postfix style value != 0
+        paragraphBottomSpacing = pt0,  
 
         # Keep all of the lines of the node text block in the same column.
         keepInColumn = False,
@@ -340,38 +416,55 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         display = DISPLAY_INLINE,
 
         # Language and hyphenation
-        language = DEFAULT_LANGUAGE, # Language for hyphenation and spelling. Can be altered per style in FormattedString.
+
+        # Language for hyphenation and spelling. Can be altered per style in
+        # FormattedString.
+        language = DEFAULT_LANGUAGE, 
         encoding  = 'utf-8',
         hyphenation = True,
 
         # Paging
-        pageIdMarker = '#??#', # The text pattern will be replaced by current page id.
+        # The text pattern will be replaced by current page ID.
+        pageIdMarker = '#??#', 
 
         # First page number of the document. Note that “page numbers” can be
         # strings too, as long as pages can define what is “next page”, when
         # referred to by a flow.
         firstPageId = 1, # Needs to be a number.
 
-        # Flag that indicates if errors and warning should be written to the element.report list.
+        # Flag that indicates if errors and warning should be written to the
+        # element.report list.
         verbose = True,
 
         # Element color
-        fill = noColor, # Default is no color for filling rectangle. Instead textFill color is set default black.
-        stroke = noColor, # Default is to have no stroke on drawing elements. Not for text.
-        strokeWidth = None, # Stroke thickness for drawing element, not text.
-        fillDiap = None, # Exception color, in case used as diapositive (foreground/background flipped)
+        # Default is no color for filling rectangle. Instead textFill color is
+        # set default black.
+        fill = noColor, 
+        # Default is to have no stroke on drawing elements. Not for text.
+        stroke = noColor, 
+        # Stroke thickness for drawing element, not text.
+        strokeWidth = None, 
+        # Exception color, in case used as diapositive (foreground/background
+        # flipped)
+        fillDiap = None, 
         fillHover = None,
 
         # Text color, used by context.newString() style
-        textFill = blackColor, # Separate between the fill of a text box and the color of the text itself.
-        textStroke = noColor, # No stroke of color text by default.
-        textStrokeWidth = None, # Width of stroke in units
+        # Separate between the fill of a text box and the color of the text
+        # itself.
+        textFill = blackColor, 
+        # No stroke of color text by default.
+        textStroke = noColor, 
+        # Width of stroke in units
+        textStrokeWidth = None, 
         textShadow = None,
         textGradient = None,
 
-        textFillDiap = None, # Exception color, in case used as diapositive (foreground/background flipped)
+        # Exception color, in case used as diapositive (foreground/background
+        # flipped)
+        textFillDiap = None, 
 
-        # Color by function, depending on context, as filled by themes
+        # Color by function, depending on context, as filled by themes.
         textHed = None, # Optional color for Hed text.
         textDeck = None, # Optional color for Deck text.
         textSubhead = None,
@@ -379,7 +472,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         textBody = None,
         textSupport = None,
 
-        # Alternative functions, support CSS
+        # Alternative functions, support CSS.
         textHover = None,
         textHoverLink = None,
         textHoverDiap = None,
@@ -391,20 +484,27 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         textSubhoverDiap = None,
 
         # Color by order of layer
-        colorMostFront = None, # Layer on a page, most close to the reader.
+        # Layer on a page, most close to the reader.
+        colorMostFront = None, 
         colorMoreFront = None,
         colorFront = None,
         colorMiddle = None,
         colorBack = None,
         colorMoreBack = None,
-        colorMostBack = None, # Layer on a page, most far from the reader.
+        # Layer on a page, most far from the reader.
+        colorMostBack = None, 
         
         # Text alignments
-        xTextAlign = LEFT, # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT, JUSTIFIED), independent of inside FS.
-        yTextAlign = TOP, # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
-        zTextAligh = FRONT, # Alignment of text inside a 3d text box, one of (FRONT, MIDDLE, BACK)
+        # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT,
+        # JUSTIFIED), independent of inside FS.
+        xTextAlign = LEFT, 
+        # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
+        yTextAlign = TOP, 
+        # Alignment of text inside a 3d text box, one of (FRONT, MIDDLE, BACK)
+        zTextAligh = FRONT, 
 
-        underlinePosition = None, # Underline position and thickness of BabelString/FormattedString
+        # Underline position and thickness of BabelString / FormattedString.
+        underlinePosition = None, 
         underlineThickness = None,
 
         # V I E W S
@@ -414,25 +514,35 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # locally change these values. However, in some cases elements
         # may overwrite the settings (e.g. TextBot baseline color).
 
-        isLocked = False, # If True, elements should not changed (TODO: currently not being checked)
-        isVisible = True, # Flag if current element should be shown.
+        # If True, elements should not changed (TODO: currently not being
+        # checked)
+        isLocked = False, 
+        # Flag if current element should be shown.
+        isVisible = True, 
 
         # Paging
+
         showSpread = False, 
-        # If True, show even pages on left of fold, odd on the right. page.ml and page.mr combine as gap
+        # If True, show even pages on left of fold, odd on the right. page.ml
+        # and page.mr combine as gap.
 
         # Document/page/element stuff
-        # Minimum padding needed to show meta info. Otherwise truncated to 0 and not showing meta info.
+
+        # Minimum padding needed to show meta info. Otherwise truncated to 0
+        # and not showing meta info.
         viewMinInfoPadding = DEFAULT_MININFOPADDING, 
-        # See constants for the options to direct the side, postion and size of crop marks.
+
+        # See constants for the options to direct the side, postion and size of
+        # crop marks.
         showCropMarks = False, 
-        # See constants for the options to direct the side, position and size of the registration marks.
+        # See constants for the options to direct the side, position and size
+        # of the registration marks.
         showRegistrationMarks = False, 
-        showOrigin = False, # Show page origin crosshair marker
+        showOrigin = False, # Show page origin crosshair marker.
         showPadding = False, # Show padding rectangle of the element.
         showMargin = False, # Show margin rectangle of the element.
         showFrame = False, # Draw frame on page.size
-        showNameInfo = False, # Show file/name/pagenumber ourside cropping area
+        showNameInfo = False, # Show file, name or pagenumber outside cropping area.
         showPageMetaInfo = False,
         showColorBars = False, # Show color bar on the side for print
 
@@ -442,39 +552,71 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showMissingElement = True,
 
         # Grid stuff using a selected set of (GRID_COL, GRID_ROW, GRID_SQR,
-        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for all types of grid
-        # that can be drawn.
-        showGrid = set(), # If defined, display the type of grid elements on foreground and background
+        # GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG) See pagebot.constants for all
+        # types of grid that can be drawn.
+
+        # If defined, display the type of grid elements on foreground and
+        # background
+        showGrid = set(), 
 
         # Types of baseline grid to be drawn using combination set of
         # set(BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, 
         # BASE_Y_LEFT, BASE_Y_RIGHT, BASE_INSIDE).
-        showBaselineGrid = set(), # If defined, display options defined the type of grid to show.
-        # If set, display options defined the type of grid to show on background.
-        showLeading = False, # Show distance of leading on the side [LEFT, RIGHT]
+
+        # If defined, display options defined the type of grid to show.
+        showBaselineGrid = set(), 
+
+        # If set, display options defined the type of grid to show on
+        # background.
+
+        # Show distance of leading on the side [LEFT, RIGHT]
+        showLeading = False, 
 
         # Flow stuff
         showFlowConnections = False,
-        showTextOverflowMarker = False, # If True, a [+] marker is shown where text boxes have overflow.
+
+        # If True, a [+] marker is shown where text boxes have overflow.
+        showTextOverflowMarker = False, 
 
         # Image stuff
         showImageReference = False,
-        showImageLoresMarker = False, # If True, leave a marker on lores-cached images as warning.
-        # If True (default), then save the image to a scaled version in _scaled/<fileName> and alter self.path name to scaled image.
-        # Do not scale the image, if the cache file already exists, unless forced. If False, then no scaled cache is created.
-        scaleImage = True, # Set to False, e.g. Typesetter MarkDown ![myImage.png noscale](images/myImage.png) will not scale the src image.
-        scaledImageFactor = 0.8, # If between >=0.8 scale, then don't save cached. Cached images should never enlarge.
-        defaultImageWidth = None, # If set, then use this as default width for scaling images (e.g. when used HTML context)
-        defaultImageHeight = None, # If set, then use this as default height for scaling image (e.g. when used HTML context)
+        # If True, leave a marker on lores-cached images as warning.
+        showImageLoresMarker = False, 
+
+        # If True (default), then save the image to a scaled version in
+        # _scaled/<fileName> and alter self.path name to scaled image.
+        # Do not scale the image, if the cache file already exists, unless
+        # forced. If False, then no scaled cache is created.
+        # Set to False, e.g. Typesetter MarkDown ![myImage.png
+        # noscale](images/myImage.png) will not scale the src image.
+        scaleImage = True, 
+
+        # If between >=0.8 scale, then don't save cached. Cached images should
+        # never enlarge.
+        scaledImageFactor = 0.8, 
+
+        # If set, then use this as default width for scaling images (e.g. when
+        # used HTML context)
+        defaultImageWidth = None, 
+
+        # If set, then use this as default height for scaling image (e.g. when
+        # used HTML context)
+        defaultImageHeight = None, 
 
         # CSS flags
-        cssVerbose = True, # Adds information comments with original values to CSS export.
+        # Adds information comments with original values to CSS export.
+        cssVerbose = True, 
 
         # Exporting
-        saveUrlAsDirectory = False, # Flag to set self.url save as directories, insteal of file (replacing '/' by '-')
-        doExport = True, # Flag to turn off any export, e.g. in case of testing with docTest
 
-        # Sketch style parameters
+        # Flag to set self.url save as directories, insteal of file (replacing
+        # '/' by '-')
+        saveUrlAsDirectory = False, 
+
+        # Flag to turn off any export, e.g. in case of testing with docTest
+        doExport = True, 
+
+        # Sketch style parameters.
         startMarkerType = 0,
         endMarkerType =  0,
         miterLimit = 10,
@@ -482,65 +624,105 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         blur = None,
 
         # Grid stuff for showing
-        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), # Fill color for column/row squares.
-        viewGridStrokeX = color(0.7), # Stroke of page grid lines in horizontal direction.
-        viewGridStrokeWidthX = pt(0.5), # Line thickness of grid lines in horizontal direction.
-        viewGridStrokeY = color(0.7), # Stroke of grid lines in vertical direction.
-        viewGridStrokeWidthY = pt(0.5), # Line thickness of grid lines in vertical direction.
+
+        # Fill color for column/row squares.
+        viewGridFill = color(r=200/255.0, g=230/255.0, b=245/255.0, a=0.6), 
+        # Stroke of page grid lines in horizontal direction.
+        viewGridStrokeX = color(0.7), 
+        # Line thickness of grid lines in horizontal direction.
+        viewGridStrokeWidthX = pt(0.5), 
+        # Stroke of grid lines in vertical direction.
+        viewGridStrokeY = color(0.7), 
+        # Line thickness of grid lines in vertical direction.
+        viewGridStrokeWidthY = pt(0.5), 
 
         # View framing display values
-        viewFrameStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page frame, if view.showFrame is True
-        viewFrameStrokeWidth = pt(0.5), # Line thickness of the page frame lines.
-        viewPaddingStroke = color(r=0.4, g=0.4, b=0.7), # Stroke of page padding lines, if view.showPadding is True
-        viewPaddingStrokeWidth = pt(0.5), # Line thickness of the page padding lines.
-        viewMarginStroke = color(r=0.7, g=0.4, b=0.4), # Stroke of page margin lines, if view.showMargin is True
-        viewMarginStrokeWidth = pt(0.5), # Line thickness of the page margin lines.
+
+        # Stroke of page frame, if view.showFrame is True.
+        viewFrameStroke = color(r=0.4, g=0.4, b=0.7), 
+        # Line thickness of the page frame lines.
+        viewFrameStrokeWidth = pt(0.5), 
+        # Stroke of page padding lines, if view.showPadding is True.
+        viewPaddingStroke = color(r=0.4, g=0.4, b=0.7), 
+        # Line thickness of the page padding lines.
+        viewPaddingStrokeWidth = pt(0.5), 
+        # Stroke of page margin lines, if view.showMargin is True.
+        viewMarginStroke = color(r=0.7, g=0.4, b=0.4), 
+        # Line thickness of the page margin lines.
+        viewMarginStrokeWidth = pt(0.5), 
 
         # Draw connection arrows between the flow boxes on a page.
-        viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), # Stroke color of flow lines inside column,
-        viewFlowConnectionStroke2 = color(r=1, g=0, b=0, a=1), # Stroke color of flow lines between columns.
-        viewFlowConnectionStrokeWidth = pt(1.5), # Line width of curved flow lines.
-        viewFlowMarkerFill = color(r=0.8, g=0.8, b=0.8, a=0.5), # Fill of flow curve marker circle.
-        viewFlowMarkerSize = pt(8), # Size of flow marker circle.
-        viewFlowCurvatureFactor = 0.15, # Factor of curved flow lines. 0 = straight lines.
+        # Stroke color of flow lines inside column,
+        viewFlowConnectionStroke1 = color(r=0.2, g=0.5, b=0.1, a=1), 
+        # Stroke color of flow lines between columns.
+        viewFlowConnectionStroke2 = color(r=1, g=0, b=0, a=1), 
+        # Line width of curved flow lines.
+        viewFlowConnectionStrokeWidth = pt(1.5), 
+        # Fill of flow curve marker circle.
+        viewFlowMarkerFill = color(r=0.8, g=0.8, b=0.8, a=0.5), 
+        # Size of flow marker circle.
+        viewFlowMarkerSize = pt(8), 
+        # Factor of curved flow lines. 0 = straight lines.
+        viewFlowCurvatureFactor = 0.15, 
 
-        # Draw page crop marks if document size (docW, docH) is larger than page (w, h)
-        bleedTop = pt0, # Bleeding images or color rectangles over page edge.
+        # Draw page crop marks if document size (docW, docH) is larger than
+        # page (w, h).
+        # Bleeding images or color rectangles over page edge.
+        bleedTop = pt0, 
         bleedBottom = pt0,
         bleedRight = pt0,
         bleedLeft = pt0,
-        viewCropMarkDistance = pt(8),  # Distance of crop-marks from page frame, unless bleed is larger
-        viewCropMarkSize = pt(40), # Length of crop marks, including bleed distance.
-        viewCropMarkStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
-        viewRegistrationMarkDistance = pt(8),  # Distance of crop-marks from page frame, unless bleed is larger
-        viewRegistrationMarkSize = pt(40), # Length of crop marks, including bleed distance.
-        viewCropRegistrationStrokeWidth = pt(0.25), # Stroke width of crop-marks, registration crosses, etc.
+        # Distance of crop-marks from page frame, unless bleed is larger
+        viewCropMarkDistance = pt(8),  
+        # Length of crop marks, including bleed distance.
+        viewCropMarkSize = pt(40), 
+        # Stroke width of crop-marks, registration crosses, etc.
+        viewCropMarkStrokeWidth = pt(0.25), 
+        # Distance of crop-marks from page frame, unless bleed is larger.
+        viewRegistrationMarkDistance = pt(8),  
+        # Length of crop marks, including bleed distance.
+        viewRegistrationMarkSize = pt(40), 
+        # Stroke width of crop-marks, registration crosses, etc.
+        viewCropRegistrationStrokeWidth = pt(0.25), 
 
-        viewNameFont = DEFAULT_FONT_PATH, # Name of the page outside frame.
+        # Name of the page outside frame.
+        viewNameFont = DEFAULT_FONT_PATH, 
         viewNameFontSize = pt(6),
         viewMarkerFont = DEFAULT_MARKER_FONT,
 
         # Element info box
-        viewInfoFont = DEFAULT_FONT_PATH, # Font of text in element infoBox.
-        viewInfoFontSize = pt(4), # Font size of text in element info box.
-        viewInfoLeading = pt(5), # Leading of text in element info box.
-        viewInfoFill = color(r=0.8, g=0.8, b=0.8, a=0.9), # Color of text in element info box.
-        viewInfoTextFill = color(r=0.1, g=0.1, b=0.1), # Color of text in element info box.
+        # Font of text in element infoBox.
+        viewInfoFont = DEFAULT_FONT_PATH, 
+        # Font size of text in element info box.
+        viewInfoFontSize = pt(4), 
+        # Leading of text in element info box.
+        viewInfoLeading = pt(5), 
+        # Color of text in element info box.
+        viewInfoFill = color(r=0.8, g=0.8, b=0.8, a=0.9), 
+        # Color of text in element info box.
+        viewInfoTextFill = color(r=0.1, g=0.1, b=0.1), 
 
         # Origin marker, show for view.show
-        viewInfoOriginMarkerSize = pt(5), # Radius of the info origin crosshair marker.
-        viewInfoOriginMarkerFill = color(0.5, 0.5, 0.5, 0.1), # Color of info origin crosshair marker.
-        viewInfoOriginMarkerStroke = blackColor, # Color of info origin crosshair marker.
+        # Radius of the info origin crosshair marker.
+        viewInfoOriginMarkerSize = pt(5), 
+        # Color of info origin crosshair marker.
+        viewInfoOriginMarkerFill = color(0.5, 0.5, 0.5, 0.1), 
+        # Color of info origin crosshair marker.
+        viewInfoOriginMarkerStroke = blackColor, 
         viewInfoOriginMarkerStrokeWidth = pt(0.25),
 
         # Generic element stuff
-        viewMissingElementFill = color(r=0.7, g=0.7, b=0.7, a=0.8), # Background color of missing element rectangles.
+
+        # Background color of missing element rectangles.
+        viewMissingElementFill = color(r=0.7, g=0.7, b=0.7, a=0.8), 
 
     )
 
-    # Assume all the other arguments overwriting the default values of the root style,
+    # Assume all the other arguments overwriting the default values of the root
+    # style,
     for name, value in kwargs.items():
         rs[name] = value
+
     return rs
 
 def css(name, e=None, styles=None, default=None):
@@ -548,9 +730,12 @@ def css(name, e=None, styles=None, default=None):
     otherwise up the parent tree of styles in element e. Both e and style can
     be None. In that case None is answered. Note that this is a generic
     "Cascading style request", outside the realm of HTML/CSS."""
-    if styles is not None: # Can be single style or stack of styles.
+    # Can be single style or stack of styles.
+    if styles is not None: 
         if not isinstance(styles, (tuple, list)):
-            styles = [styles] # Make stack of styles.
+            # Make stack of styles.
+            styles = [styles] 
+
         for style in styles:
             if name in style:
                 return style[name]
