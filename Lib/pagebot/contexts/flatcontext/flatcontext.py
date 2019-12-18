@@ -452,7 +452,7 @@ class FlatContext(BaseContext):
         ypt = self.getY(ypt)
 
         if not self.originTop:
-            lineHeight = fs.getLineHeight()
+            lineHeight = fs.lineHeight
             ypt -= lineHeight
 
         if 'textFill' in fs.style:
