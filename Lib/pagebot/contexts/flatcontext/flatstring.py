@@ -20,7 +20,7 @@ import difflib
 from fontTools.pens.boundsPen import BoundsPen
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.contexts.base.babelstring import BabelString, getFontPath
+from pagebot.contexts.base.babelstring import getFontPath, getLineHeight, BabelString
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.units import upt, RelativeUnit, Unit
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
@@ -96,9 +96,9 @@ class FlatString(BabelString):
         fontPath = getFontPath(style)
 
         # FIXME: should use s.lineHeight.
-        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
         leading = style.get('leading', DEFAULT_LEADING)
-        lineHeight = upt(leading, base=fontSize)
+        lineHeight = getLineHeight(leading, fontSize)
         flatFont = context.b.font.open(fontPath)
         strike = context.b.strike(flatFont)
         color = BabelString.getColor(style)

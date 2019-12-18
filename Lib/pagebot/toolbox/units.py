@@ -223,7 +223,8 @@ def rv(u, *args, **kwargs):
     return uu
 
 def upt(u, *args, **kwargs):
-    """Renders to pt value(s). If values are numbers, then return them unchanged.
+    """Renders to pt value(s). If values are numbers, then return them
+    unchanged.
 
     >>> upt(50, pt(100), pt(120), (10, pt(20)))
     (50, 100, 120, (10, 20))
@@ -256,6 +257,7 @@ def upt(u, *args, **kwargs):
         return u
 
     uu = units(u, **kwargs)
+
     if uu is not None:
         uu = uu.pt
     return uu
@@ -1224,7 +1226,7 @@ class Pt(Unit):
 #   P(ica)
 
 def p(v, *args, **kwargs):
-    """Create a new instance of P, using v as source value. In case v is
+    """Creates a new instance of P, using v as source value. In case v is
     already a Unit instance, then convert to that P needs, through the amount
     of points.
 
@@ -1388,7 +1390,7 @@ class Inch(Unit):
     >>> # Arguments can be a list of other units types.
     >>> inch(mm(5), pt(24), px(5)) 
     (0.20", 0.33", 0.07")
-    >>> # Arguments can interprete from strings of other units types.
+    >>> # Arguments can interpret from strings of other units types.
     >>> inch('10pt', '11mm') 
     (0.14", 0.43")
     """
@@ -1446,15 +1448,13 @@ class Formula(Unit):
                 result += unit
         return result
 
-
 #   Relative Units (e.g. for use in CSS)
 
 class RelativeUnit(Unit):
-    """Abstract class to avoid artihmetic between absolute and relative units.
+    """Abstract class to avoid arithmetic between absolute and relative units.
     Needs absolute reference to convert to absolute units.
 
     >>> u = units('12%')
-    >>>
     """
     BASE = 1 # Default "base reference for relative units."
     GUTTER = U*2 # Used as default gutter measure for Col units.
@@ -1474,6 +1474,7 @@ class RelativeUnit(Unit):
         (2, 2)
         """
         return asIntOrFloat((self.base * self.v / self.BASE).rv)
+
     rv = property(_get_rv)
 
     def _get_ru(self):
@@ -1491,6 +1492,7 @@ class RelativeUnit(Unit):
         (20%, 20, 4.80", 4.8)
         """
         return self.base * self.v / self.BASE
+
     ru = property(_get_ru)
 
     def _get_pt(self):
@@ -1503,7 +1505,9 @@ class RelativeUnit(Unit):
         >>> u.pt
         144
         """
-        return asIntOrFloat(pt(self.ru).rv) # Render value and cast to points
+        # Renders value and casts it to points.
+        return asIntOrFloat(pt(self.ru).rv) 
+
     pt = property(_get_pt)
 
     def _get_mm(self):
@@ -1513,7 +1517,9 @@ class RelativeUnit(Unit):
         >>> u, u.mm, mm(u)
         (2fr, 5, 5mm)
         """
-        return asIntOrFloat(mm(self.ru).rv) # Rendered value and cast to mm
+        # Renders value and casts it to mm.
+        return asIntOrFloat(mm(self.ru).rv) 
+
     mm = property(_get_mm)
 
     def _get_p(self):
@@ -1526,7 +1532,9 @@ class RelativeUnit(Unit):
         >>> u, u.p, p(u)
         (75%, 54, 54p)
         """
-        return asIntOrFloat(p(self.ru).rv) # Rendered value and factor to mm
+        # Renders value and factors it to mm
+        return asIntOrFloat(p(self.ru).rv) 
+
     p = property(_get_p)
 
     def _get_inch(self):
@@ -1539,7 +1547,9 @@ class RelativeUnit(Unit):
         >>> units('25%', base=inch(10)).inch
         2.5
         """
-        return asIntOrFloat(inch(self.ru).rv) # Rendered value and factor to mm
+        # Renders value and factors it to mm.
+        return asIntOrFloat(inch(self.ru).rv) 
+
     inch = property(_get_inch)
 
     def _get_base(self):
@@ -1612,8 +1622,11 @@ class RelativeUnit(Unit):
 def px(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', Px.BASE)
-    g = kwargs.get('g', 0) # Not used by Px
-    if args: # If there are more arguments, bind them together in a list.
+    # Not used by Px.
+    g = kwargs.get('g', 0) 
+
+    # If there are more arguments, bind them together in a list.
+    if args: 
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
@@ -1628,9 +1641,11 @@ def px(v, *args, **kwargs):
             v = asNumberOrNone(v[:-2])
             if v is not None:
                 u = Px(v, base=base, g=g)
-        else: # Something else, recursively try again
+        else: 
+            # Something else, recursively try again.
             u = units(v, base=base, g=g)
-            assert isinstance(u, Px) # Only makes sense for relative if the same.
+            # Only makes sense for relative if the same.
+            assert isinstance(u, Px) 
     return u
 
 class Px(RelativeUnit):

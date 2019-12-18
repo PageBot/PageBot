@@ -41,6 +41,32 @@ def getFontPath(style):
 
     return fontPath
 
+def getLineHeight(leading, fontSize):
+    """
+    >>> getLineHeight(em(1.5), pt(12))
+    18
+    >>> getLineHeight(pt(15), pt(12))
+    15
+    >>> getLineHeight(pt(19), None)
+    19
+    >>> getLineHeight(15, pt(16))
+    240
+    """
+    assert leading is not None
+
+    if isinstance(leading, RelativeUnit):
+        lineHeight = upt(leading.byBase(fontSize))
+    elif isinstance(leading, Unit):
+        lineHeight = upt(leading)
+    elif isUnit(fontSize):
+        # Leading is scalar?
+        lineHeight = leading * fontSize.pt
+    else:
+        # Both scalar?
+        lineHeight = leading * fontSize
+
+    return lineHeight
+
 class BabelString:
     """BabelString is the base class of all types of (formatted) string
     representations needed for the builder classes.
@@ -216,16 +242,7 @@ class BabelString:
 
     def _get_lineHeight(self):
         """Get line height based on font size and leading."""
-
-        if isinstance(self.leading, RelativeUnit):
-            lineHeight = self.leading.byBase(self.fontSize)
-        elif isinstance(self.leading, Unit):
-            lineHeight = self.leading.pt
-        else:
-            # Leading is scalar?
-            lineHeight = self.leading * self.fontSize.pt
-
-        return lineHeight
+        return getLineHeight(self.leading, self.fontSize)
 
     # Compatibility with DrawBot API.
     fontLineHeight = lineHeight = property(_get_lineHeight) 
@@ -306,6 +323,8 @@ class BabelString:
         #leading = round(uLeading, 2)
         if uLeading:
             attrs['leading'] = em(uLeading)
+
+        assert isUnit(uLeading)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
         # Color values for text fill
