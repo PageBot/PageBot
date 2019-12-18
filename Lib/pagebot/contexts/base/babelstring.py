@@ -315,14 +315,16 @@ class BabelString:
 
         # FIXME: shouldn't become None.
         uLeading = css('leading', e, style, default=DEFAULT_LEADING)
+
+
+        if not isUnit(uLeading):
+            uLeading = em(uLeading)
+
         if uLeading is None:
             uLeading = em(1.0)
-        #print('%s %s' % (uLeading, type(uLeading)))
-        # Base for em or percent.
 
         #leading = round(uLeading, 2)
-        if uLeading:
-            attrs['leading'] = em(uLeading)
+        attrs['leading'] = uLeading
 
         assert isUnit(uLeading)
 
