@@ -22,7 +22,7 @@ from fontTools.pens.boundsPen import BoundsPen
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import getFontPath, getLineHeight, BabelString
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.toolbox.units import pt, upt, RelativeUnit, Unit
+from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
@@ -518,14 +518,12 @@ class FlatString(BabelString):
         >>> fs
         ABC 
         >>> fs.textSize()
-        (26.09, 16.8)
+        (26.091796875, 16.799999999999997)
         """
         w = self.strike.width(self.s)
-        #fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        #lineHeight = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize)
         h = self.lineHeight
-        w = round(w, 2)
-        h = round(h, 2)
+        #w = round(w, 2)
+        #h = round(h, 2)
         return w, h
 
     def append(self, s):
@@ -621,14 +619,14 @@ class FlatString(BabelString):
         upem = font.getUpem()
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         descender = font.getDescender()
-        return ((fontSize / float(upem)) * descender)
+        return (fontSize / float(upem)) * descender
 
     def getAscender(self, style):
         font = self.getFont(style)
         upem = font.getUpem()
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         ascender = font.getAscender()
-        return ((fontSize / float(upem)) * ascender)
+        return (fontSize / float(upem)) * ascender
 
     def getUpem(self, style):
         font = self.getFont(style)
@@ -639,14 +637,14 @@ class FlatString(BabelString):
         upem = font.getUpem()
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         capHeight = font.getCapHeight()
-        return ((fontSize / float(upem)) * capHeight)
+        return (fontSize / float(upem)) * capHeight
 
     def getXHeight(self, style):
         font = self.getFont(style)
         upem = font.getUpem()
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
         xHeight = font.getXHeight()
-        return ((fontSize / float(upem)) * xHeight)
+        return (fontSize / float(upem)) * xHeight
 
     # 
 
