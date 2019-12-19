@@ -519,22 +519,12 @@ class FlatString(BabelString):
         ABC 
         >>> size = fs.textSize()
         >>> size
-        (26.091796875, 16.799999999999997)
-        >>> w = size[0]
-        >>> isinstance(w, float)
-        True
-        >>> type(w)
-        <class 'float'>
-        >>> #import inspect
-        >>> #print(inspect.signature(round))
-        #(number, ndigits=None)
-        >>> round(w, ndigits=3)
-        26.092
+        (26.092, 16.8)
         """
         w = self.strike.width(self.s)
         h = self.lineHeight
-        #w = round(w, 2)
-        #h = round(h, 2)
+        w = round(w, ndigits=3)
+        h = round(h, ndigits=3)
         return w, h
 
     def append(self, s):

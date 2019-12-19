@@ -633,8 +633,9 @@ class Unit:
         """
         return float(self.pt)
 
-    def __round__(self):
+    def __round__(self, ndigits=None):
         """Answers the rounded self as value.
+        TODO: implement number of digits.
 
         >>> u = pt(12.4)
         >>> u.rounded
@@ -2569,8 +2570,9 @@ class Angle:
         """
         return float(self.angle)
 
-    def __round__(self):
+    def __round__(self, ndigits=None):
         """Answers the rounded self as value.
+        TODO: implement number of digits.
 
         >>> round(degrees(30.5))
         30deg

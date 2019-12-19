@@ -323,9 +323,7 @@ class BabelString:
         if uLeading is None:
             uLeading = em(1.0)
 
-        #leading = round(uLeading, 2)
         attrs['leading'] = uLeading
-
         assert isUnit(uLeading)
 
         # TODO: separate colorAttrs function, reuse for fill & stroke.
