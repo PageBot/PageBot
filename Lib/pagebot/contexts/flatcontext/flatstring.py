@@ -22,7 +22,7 @@ from fontTools.pens.boundsPen import BoundsPen
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
 from pagebot.contexts.base.babelstring import getFontPath, getLineHeight, BabelString
 from pagebot.fonttoolbox.objects.font import Font
-from pagebot.toolbox.units import upt, RelativeUnit, Unit
+from pagebot.toolbox.units import pt, upt, RelativeUnit, Unit
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 class FlatString(BabelString):
@@ -43,37 +43,41 @@ class FlatString(BabelString):
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
 
-        >>> from pagebot import getContext
-        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot import getContext, getFontByName
+        >>> from pagebot.toolbox.units import pt, em
         >>> context = getContext('Flat')
-        >>> fs = context.newString('ABC')
+        >>> bungee = getFontByName('Bungee-Regular')
+        >>> style = {'font': bungee, 'fontSize': pt(12), 'leading': em(1.5)}
+        >>> fs = context.newString('ABC', style=style)
         >>> fs
         ABC
         >>> #fs.style
-        #{'fallbackFont': 'Verdana', 'fontSize': 12, 'fill': (0, 0, 0), 'stroke': None}
-        >>> # fs.font
-        >>> # round(upt(fs.xHeight))
-        >>> # fs.xHeight
-        >>> # fs.capHeight
-        >>> # fs.ascender
-        >>> # fs.descender
+        #{'fallbackFont': 'Verdana', 'fontSize': 12, leading: em(1.5), 'fill': (0, 0, 0)}
+        >>> fs.font.endswith('Bungee-Regular.ttf')
+        True
         >>> fs.fontSize
         12
+        >>> fs.leading
+        1.5em
         >>> fs.lineHeight
-        1.4em
+        18.0
         >>> pt(fs.lineHeight)
-        16.8pt
+        18pt
+        >>> # TODO: add these for multiple style, i.e. fs.xHeight[-1]
+        >>> #fs.xHeight
+        >>> #fs.capHeight
+        >>> #fs.ascender
+        >>> fs.descender
+        -1.68
         >>> from pagebot.toolbox.units import em
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
-        >>> fs = context.newString('Example Text', style=style)
+        >>> fs = context.newString('Example text', style=style)
         >>> from pagebot.contexts.base.babelstring import BabelString
         >>> isinstance(fs, BabelString)
         True
-        >>> fs2 = context.newString('Second Text', style=style)
-        >>> #fs + fs2
-        >>> #fs.fontPath
-        >>> #'/Verdana'in bs.fontPath
-        #True
+        >>> fs2 = context.newString(' plus second text', style=style)
+        >>> fs + fs2
+        Example text plus second text
         >>> #lines = fs.getTextLines(w=100)
         >>> #len(lines)
         #9
@@ -113,7 +117,6 @@ class FlatString(BabelString):
 
         self._lines = []
         self._numberOfLines = 0
-
         super().__init__(context)
 
     def copy(self):
@@ -268,19 +271,15 @@ class FlatString(BabelString):
     def _get_lineHeight(self):
         """Returns the current line height, based on the current font and
         fontSize."""
-        if isinstance(self.leading, RelativeUnit):
-            lineHeight = self.leading.byBase(self.fontSize)
-
-        elif isinstance(self.leading, Unit):
-            lineHeight = self.leading.pt
-        else:
-            # Leading is scalar?
-            lineHeight = self.leading * self.fontSize.pt
-
-        return lineHeight
+        return getLineHeight(self.leading, self.fontSize)
 
     # Compatibility with DrawBot API.
     fontLineHeight = lineHeight = property(_get_lineHeight) 
+
+    def _get_descender(self):
+        return self.getDescender(self.style)
+
+    descender = property(_get_descender)
 
     def _get_color(self):
         """Answers the current state of the color."""
@@ -527,8 +526,20 @@ class FlatString(BabelString):
         # Now adds it to data list.
         self.data.extend(fs.data)
 
+
+    def getStyleByIndex(self, index):
+        """Should return style at data index.
+        
+
+        for example:
+
+            ...
+        
+        """
+
     def getStyleAtIndex(self, index):
         """
+        Returns style at character index.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -561,6 +572,8 @@ class FlatString(BabelString):
     MARKER_PATTERN = '==%s@%s=='
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
 
+    # 
+
     def appendMarker(self, markerId, arg):
         """Append an invisible marker string."""
 
@@ -569,6 +582,22 @@ class FlatString(BabelString):
         if reCompiled is None:
             reCompiled= self.FIND_FS_MARKERS
         return reCompiled.findall(u'%s' % self.s)
+
+    # Fonts.
+
+    def getFont(self, style):
+        # TODO: store fonts in context cache.
+        fontPath = getFontPath(style)
+        return Font(fontPath)
+
+    def getDescender(self, style):
+        font = self.getFont(style)
+        upem = font.getUpem()
+        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        descender = font.getDescender()
+        return ((fontSize / float(upem)) * descender)
+
+    # 
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):

@@ -20,6 +20,7 @@ import re
 from pagebot.filepaths import *
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
+from pagebot.fonttoolbox.objects.font import findFont
 
 VERSION = '0.9.3'
 STATUS = 'alpha'
@@ -72,6 +73,9 @@ def getAllContexts():
     for contextType in contextTypes:
         contexts.append(getPlatformContext(contextType=contextType))
     return contexts
+
+def getFontByName(name):
+    return findFont(name)
 
 def getMampPath():
     return getContextMampPath()
