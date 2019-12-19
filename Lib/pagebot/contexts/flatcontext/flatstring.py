@@ -525,7 +525,10 @@ class FlatString(BabelString):
         True
         >>> type(w)
         <class 'float'>
-        >>> #round(w, 3)
+        >>> import inspect
+        >>> print(inspect.signature(round))
+        (number, ndigits=None)
+        >>> #round(w, ndigits=3)
         #26.092
         """
         w = self.strike.width(self.s)
