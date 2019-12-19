@@ -517,8 +517,16 @@ class FlatString(BabelString):
         >>> fs = context.newString('ABC ', style=style)
         >>> fs
         ABC 
-        >>> fs.textSize()
+        >>> size = fs.textSize()
+        >>> size
         (26.091796875, 16.799999999999997)
+        >>> w = size[0]
+        >>> isinstance(w, float)
+        True
+        >>> type(w)
+        <class 'float'>
+        >>> #round(w, 3)
+        #26.092
         """
         w = self.strike.width(self.s)
         h = self.lineHeight
