@@ -64,11 +64,16 @@ class FlatString(BabelString):
         >>> pt(fs.lineHeight)
         18pt
         >>> # TODO: add these for multiple style, i.e. fs.xHeight[-1]
-        >>> #fs.xHeight
-        >>> #fs.capHeight
-        >>> #fs.ascender
         >>> fs.descender
         -1.68
+        >>> fs.ascender
+        10.32
+        >>> fs.upem
+        1000
+        >>> fs.capHeight
+        8.64
+        >>> fs.xHeight
+        6.0
         >>> from pagebot.toolbox.units import em
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
         >>> fs = context.newString('Example text', style=style)
@@ -281,6 +286,26 @@ class FlatString(BabelString):
 
     descender = property(_get_descender)
 
+    def _get_ascender(self):
+        return self.getAscender(self.style)
+
+    ascender = property(_get_ascender)
+
+    def _get_upem(self):
+        return self.getUpem(self.style)
+
+    upem = property(_get_upem)
+
+    def _get_capHeight(self):
+        return self.getCapHeight(self.style)
+
+    capHeight = property(_get_capHeight)
+
+    def _get_xHeight(self):
+        return self.getXHeight(self.style)
+
+    xHeight = property(_get_xHeight)
+
     def _get_color(self):
         """Answers the current state of the color."""
         return self.style.get('color')
@@ -376,14 +401,15 @@ class FlatString(BabelString):
             plainstring = d['s']
             w1 = strike.width(s)
 
+            descender = self.getDescender(style)
             # TODO: store fonts in context cache.
-            fontPath = getFontPath(style)
-            font = Font(fontPath)
-            upem = font.getUpem()
+            #fontPath = getFontPath(style)
+            #font = Font(fontPath)
+            #upem = font.getUpem()
+            #ascender = font.getAscender()
+            #descender = font.getDescender()
+            #descender = ((fontSize / float(upem)) * descender)
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-            ascender = font.getAscender()
-            descender = font.getDescender()
-            descender = ((fontSize / float(upem)) * descender)
             lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
             dl = lineHeight - fontSize
             placedText = page.place(text)
@@ -495,9 +521,9 @@ class FlatString(BabelString):
         (26.09, 16.8)
         """
         w = self.strike.width(self.s)
-        fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-        lineHeight = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize)
-        h = lineHeight
+        #fontSize = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+        #lineHeight = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize)
+        h = self.lineHeight
         w = round(w, 2)
         h = round(h, 2)
         return w, h
@@ -597,7 +623,38 @@ class FlatString(BabelString):
         descender = font.getDescender()
         return ((fontSize / float(upem)) * descender)
 
+    def getAscender(self, style):
+        font = self.getFont(style)
+        upem = font.getUpem()
+        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        ascender = font.getAscender()
+        return ((fontSize / float(upem)) * ascender)
+
+    def getUpem(self, style):
+        font = self.getFont(style)
+        return font.getUpem()
+
+    def getCapHeight(self, style):
+        font = self.getFont(style)
+        upem = font.getUpem()
+        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        capHeight = font.getCapHeight()
+        return ((fontSize / float(upem)) * capHeight)
+
+    def getXHeight(self, style):
+        font = self.getFont(style)
+        upem = font.getUpem()
+        fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+        xHeight = font.getXHeight()
+        return ((fontSize / float(upem)) * xHeight)
+
     # 
+
+    def getTextLines(self, w, h=None, align=LEFT):
+        page = self.context.getTmpPage(w, h)
+        box = (0, 0, w, h)
+        tb = self.textBox(page, box, align=align)
+        return self._lines
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):
@@ -629,12 +686,6 @@ class FlatString(BabelString):
         s = cls.addCaseToString(s, e, style)
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
         return cls(s, context=context, style=style)
-
-    def getTextLines(self, w, h=None, align=LEFT):
-        page = self.context.getTmpPage(w, h)
-        box = (0, 0, w, h)
-        tb = self.textBox(page, box, align=align)
-        return self._lines
 
 if __name__ == '__main__':
     import doctest
