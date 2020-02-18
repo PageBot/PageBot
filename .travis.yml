@@ -5,7 +5,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
-      python: 3.7
+      python: 3.6
       before_install:
         - python --version
       install:
