@@ -5,7 +5,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
-      python: 3.6
+      python: 3.7
       before_install:
         - python --version
       install:
@@ -21,7 +21,7 @@ matrix:
       install:
         - ./scripts/osx.sh
       language: python3
-      python: 3.6
+      python: 3.7
       script:
         - mkdir _export
         - ./scripts/pylint.sh
