@@ -59,7 +59,7 @@ setup(
         'Topic :: Text Processing :: Fonts'],
     install_requires=[
         'booleanOperations',
-        #'flat',
+        'flat',
         'fontTools',
         'libsass',
         'markdown',
