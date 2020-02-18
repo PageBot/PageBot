@@ -22,7 +22,7 @@ from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
 from pagebot.fonttoolbox.objects.font import findFont
 
-VERSION = '0.9.3'
+VERSION = '0.9.4'
 STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
