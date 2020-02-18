@@ -20,14 +20,15 @@ matrix:
       language: sh #python3
       env:
           - HOMEBREW_NO_ANALYTICS=1
-          - HOMEBREW_NO_ANALYTICS=1
+          - HOMEBREW_NO_INSTALL_CLEANUP=1
       addons:
           homebrew:
               update: true
               packages: python3
       before_install:
-        - python3 --version
-        - pip3 install --upgrade pip
+        - python --version
+          #- python3 --version
+          #- pip3 install --upgrade pip
       install:
         - ./scripts/osx.sh
       script:
