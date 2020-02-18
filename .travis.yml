@@ -8,6 +8,7 @@ matrix:
       python: 3.6
       before_install:
         - python --version
+        - pip install --upgrade pip
       install:
         - ./scripts/linux.sh
       script:
@@ -16,12 +17,19 @@ matrix:
         - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
     - os: osx
+      language: sh #python3
+      env:
+          - HOMEBREW_NO_ANALYTICS=1
+          - HOMEBREW_NO_ANALYTICS=1
+      addons:
+          homebrew:
+              update: true
+              packages: python3
       before_install:
         - python3 --version
+        - pip3 install --upgrade pip
       install:
         - ./scripts/osx.sh
-      language: python3
-      python: 3.7
       script:
         - mkdir _export
         - ./scripts/pylint.sh
