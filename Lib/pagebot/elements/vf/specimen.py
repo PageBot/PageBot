@@ -20,7 +20,7 @@
 #     be useful in other sites too.
 #
 from pagebot.conditions import *
-from pagebot.constants import DEFAULT_FONT
+from pagebot.constants import DEFAULT_FONT, FONT_FEATURES
 from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
@@ -204,7 +204,7 @@ class TypeList(Group):
     >>> view.showPadding = True
     >>> page = doc[1]
     >>> page.padding = pt(50)
-    >>> typeList = TypeList(fdl, sampleText=None, fontSize=fontSize, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
+    >>> typeList = TypeList(fontDataList=fdl, sampleText=None, fontSize=fontSize, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> typeList.size
     (495pt, 742pt)
     >>> score = page.solve()
@@ -221,7 +221,7 @@ class TypeList(Group):
     """
     CSS_ID = 'TypeList'
 
-    def __init__(self, fontDataList, parent=None, h=None, fontSize=None,
+    def __init__(self, fontDataList=None, parent=None, h=None, fontSize=None,
             sampleText=None, labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
@@ -236,7 +236,13 @@ class TypeList(Group):
             )
         }
         """
-        super().__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        # super does not work in the right way: multiple values for argument x
+        # (That is the first argument)
+        #super().__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        Group.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+
+        if fontDataList is None:
+            fontDataList = []
         self.fonts = []
         self.fontSize = fontSize
         for fontName, fontData in fontDataList:
@@ -267,6 +273,198 @@ class TypeList(Group):
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
+class TypeFeatures(Group):
+    """Shows a list of type styles in their style.
+    Add information as it is available in the font.
+
+    >>> from pagebot.document import Document
+    >>> from pagebot.constants import A4Rounded
+    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot.toolbox.units import pt
+    >>> context = getDrawBotContext()
+    >>> context
+    <DrawBotContext>
+    >>> W, H = A4Rounded
+    >>> fontSize = pt(32) # Size of main sample
+    >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
+    >>> #adobeUrl = 'https://fonts.adobe.com/fonts/bitcount-mono-double'
+    >>> downloadFontUrl = 'font/Upgrade_Try.zip'
+    >>> typeNetWorkUrl = 'https://store.typenetwork.com/foundry/typetr/fonts/upgrade'
+    >>> seeAlsoUrl = 'https://upgrade.typenetwork.com'
+    >>> fdl = [('PageBot-Book', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl))]
+    >>> fdl.append(('PageBot-Bold', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl)))
+    >>> doc = Document(w=W, h=H, context=context)
+    >>> view = doc.view
+    >>> view.showPadding = True
+    >>> page = doc[1]
+    >>> page.padding = pt(50)
+    >>> typeFeatures = TypeFeatures(fontDataList=fdl, sampleText=None, fontSize=fontSize, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
+    >>> typeFeatures.size
+    (495pt, 742pt)
+    >>> score = page.solve()
+    >>> typeFeatures.fontSize
+    32pt
+    >>> len(typeFeatures.fonts)
+    2
+    >>> doc.export('_export/TypeFeatures.pdf')
+    >>> view = doc.newView('Site')
+    >>> doc.export('_export/TypeFeatures')
+
+    """
+    CSS_ID = 'TypeFeatures'
+
+    # Types of layouts
+    LAYOUT_TAG_DESCRIPTION = 'Description' # Output list of formatted tag-name-description
+    LAYOUT_TAG_LIST = 'TagList' # Just output a comma separated list of tag names
+
+    def __init__(self, fontDataList=None, defaultTags=None, parent=None, h=None, fontSize=None,
+            sampleText=None, labelFont=None, labelFontSize=None, layoutType=None, **kwargs):
+        # super does not work in the right way: multiple values for argument x
+        # (That is the first argument)
+        #super().__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        Group.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+
+        self.fonts = []
+        self.fontSize = fontSize
+        self.defaultTags = defaultTags # Used if not None, to overwrite the font on-board tag list.
+        self.fontDataList = fontDataList or []
+        self.layoutType = layoutType or self.LAYOUT_TAG_DESCRIPTION
+        for fontName, fontData in self.fontDataList:
+            font = findFont(fontName)
+            if font is not None:
+                self.fonts.append(font)
+
+    def build_html(self, view, path, drawElements=True, **kwargs):
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass=self.cssClass)
+        if self.fonts:
+            featureTable = self.fonts[0].ttFont.get('GSUB')
+            tags = []
+            if self.defaultTags is not None: # Overwritten by defaults?
+                tags = self.defaultTags
+            elif featureTable is not None:
+                gsub = featureTable.table
+                for fs in gsub.FeatureList.FeatureRecord:
+                    tags.append(fs.FeatureTag)
+                b.addHtml(''.join(tags))
+            if tags:
+                if self.layoutType == self.LAYOUT_TAG_DESCRIPTION:
+                    for tag in tags:
+                        tagData = FONT_FEATURES.get(tag)
+                        if tagData is None:
+                            b.h5()
+                            b.addHtml('Unknown tag: “%s”' % tag)
+                            b._h5()
+                        else:
+                            b.h5()
+                            b.addHtml('[%s] %s' % (tag, tagData['name']))
+                            b._h5()
+                            b.addHtml(tagData['description'])
+                else: # self.LAYOUT_TAG_LIST
+                    b.addHtml(', '.join(tags))
+            else:
+                b.addHtml('No features defined (yet) in this font.')
+        else:
+            b.addHtml('No font selected.')
+        #b.addHtml(str(self.fonts[0].features))
+        #b.addHtml(str(self.fontDataList))
+        """
+        for fontSize in self.fontSizes:
+            for fontName, _ in self.fontDataList:
+                style = "font-family:%s;font-size:%s;line-height:1.1em;height:%s;width:100%%;" % (fontName, px(fontSize), px(fontSize*1.1))
+                style += "overflow:hidden;text-overflow:ellipsis;"
+                b.div(style=style)
+                b.addHtml('AaBbCcDdEe FfGgHhIiJjKk LlMmNnOoPp QqRrSsTtUu VvWwXxYyZz') #FfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz')
+                b._div()
+        """
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
+
+class TypeGlyphSet(Group):
+    """Shows a list of type styles in their style.
+    Add information as it is available in the font.
+
+    >>> from pagebot.document import Document
+    >>> from pagebot.constants import A4Rounded
+    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot.toolbox.units import pt
+    >>> context = getDrawBotContext()
+    >>> context
+    <DrawBotContext>
+    >>> W, H = A4Rounded
+    >>> fontSize = pt(32) # Size of main sample
+    >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
+    >>> #adobeUrl = 'https://fonts.adobe.com/fonts/bitcount-mono-double'
+    >>> downloadFontUrl = 'font/Upgrade_Try.zip'
+    >>> typeNetWorkUrl = 'https://store.typenetwork.com/foundry/typetr/fonts/upgrade'
+    >>> seeAlsoUrl = 'https://upgrade.typenetwork.com'
+    >>> fdl = [('PageBot-Book', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl))]
+    >>> fdl.append(('PageBot-Bold', dict(description=None, caption=None, adobe=adobeUrl, download=downloadFontUrl, typenetwork=typeNetWorkUrl, seeAlso=seeAlsoUrl)))
+    >>> doc = Document(w=W, h=H, context=context)
+    >>> view = doc.view
+    >>> view.showPadding = True
+    >>> page = doc[1]
+    >>> page.padding = pt(50)
+    >>> typeGlyphSet = TypeGlyphSet(fontDataList=fdl, sampleText=None, fontSize=fontSize, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
+    >>> typeGlyphSet.size
+    (495pt, 742pt)
+    >>> score = page.solve()
+    >>> typeGlyphSet.fontSize
+    32pt
+    >>> len(typeGlyphSet.fonts)
+    2
+    >>> doc.export('_export/TypeGlyphSet.pdf')
+    >>> view = doc.newView('Site')
+    >>> doc.export('_export/TypeGlyphSet')
+
+    """
+    CSS_ID = 'TypeGlyphSet'
+
+    def __init__(self, fontDataList=None, parent=None, h=None, fontSize=None,
+            sampleText=None, labelFont=None, labelFontSize=None, **kwargs):
+        # super does not work in the right way: multiple values for argument x
+        # (That is the first argument)
+        #super().__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+        Group.__init__(self, parent=parent, h=h, fontSize=fontSize, **kwargs)
+
+        self.fonts = []
+        self.fontSize = fontSize
+        self.fontDataList = fontDataList or []
+        for fontName, fontData in self.fontDataList:
+            font = findFont(fontName)
+            if font is not None:
+                self.fonts.append(font)
+
+    def build_html(self, view, path, drawElements=True, **kwargs):
+        b = self.context.b
+        b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
+        b.div(cssId=self.cssId, cssClass=self.cssClass)
+        if self.fonts:
+            glyphSet = []
+            cnt = 0
+            for uni in self.fonts[0].cmap.keys():
+                glyphSet.append(chr(uni))
+                if cnt > 48:
+                    glyphSet.append(' ')
+                    cnt = 0
+                else:
+                    cnt += 1
+            b.addHtml(''.join(glyphSet))
+            """
+            for fontSize in self.fontSizes:
+                for fontName, _ in self.fontDataList:
+                    style = "font-family:%s;font-size:%s;line-height:1.1em;height:%s;width:100%%;" % (fontName, px(fontSize), px(fontSize*1.1))
+                    style += "overflow:hidden;text-overflow:ellipsis;"
+                    b.div(style=style)
+                    b.addHtml('AaBbCcDdEe FfGgHhIiJjKk LlMmNnOoPp QqRrSsTtUu VvWwXxYyZz') #FfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz')
+                    b._div()
+            """
+        else:
+            b.addHtml('No fonts defined.')
+        b._div()
+        b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
+
 class Waterfall(Group):
     """Shows a list of type styles in their style.
     Add information as it is available in the font.
@@ -293,7 +491,7 @@ class Waterfall(Group):
     >>> page = doc[1]
     >>> page.padding = pt(50)
     >>> fontSizes = range(9, 25)
-    >>> typeList = Waterfall(fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
+    >>> typeList = Waterfall(fontDataList=fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> score = page.solve()
     >>> doc.export('_export/Waterfall.pdf')
     >>> view = doc.newView('Site')
@@ -302,7 +500,7 @@ class Waterfall(Group):
     """
     CSS_ID = 'Waterfall'
 
-    def __init__(self, fontDataList, parent=None, fontSizes=None,
+    def __init__(self, fontDataList=None, parent=None, fontSizes=None,
             labelFont=None, labelFontSize=None, **kwargs):
         """
         @fontNames is order and list of findFont(fontName)
@@ -317,9 +515,13 @@ class Waterfall(Group):
             )
         }
         """
-        super().__init__(self, parent=parent, **kwargs)
-        #FIXME: Group is base class, not Element.
-        #Element.__init__(self, parent=parent, **kwargs)
+        # super does not work in the right way: multiple values for argument x
+        # (That is the first argument in Element)
+        #super().__init__(self, parent=parent, **kwargs)
+        Group.__init__(self, parent=parent, **kwargs)
+
+        if fontDataList is None:
+            fontDataList = []
         self.fonts = {}
         if fontSizes is None:
             fontSizes = range(9, 25)

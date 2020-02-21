@@ -105,17 +105,29 @@ class NanoElement(Column):
     def newMovie(self, url, parent=None, **kwargs):
         return Movie(url, parent=self, **kwargs)
 
-    def newTypeList(self, styleNames, parent=None, styleData=None, **kwargs):
+    def newTypeList(self, fontDataList=None, parent=None, styleData=None, **kwargs):
         """Create a list of type specimens, using the web type references as well
         as well as showing information that is embedded into the fonts.
         """
-        return TypeList(styleNames, parent=self, styleData=styleData, **kwargs)
+        return TypeList(fontDataList=fontDataList, parent=self, styleData=styleData, **kwargs)
 
-    def newWaterfall(self, styleNames, parent=None, styleData=None, **kwargs):
+    def newTypeFeatures(self, fontDataList=None, defaultTags=None, parent=None, 
+            styleData=None, **kwargs):
+        """Create an overview of the available features in the font.
+        """
+        return TypeFeatures(fontDataList=fontDataList, defaultTags=defaultTags, parent=self, 
+            styleData=styleData, **kwargs)
+
+    def newTypeGlyphSet(self, fontDataList=None, parent=None, styleData=None, **kwargs):
+        """Create an overview of the available features in the font.
+        """
+        return TypeGlyphSet(fontDataList=fontDataList, parent=self, styleData=styleData, **kwargs)
+
+    def newWaterfall(self, fontDataList=None, parent=None, styleData=None, **kwargs):
         """Create a list of type specimens, using the web type references as well
         as well as showing information that is embedded into the fonts.
         """
-        return Waterfall(styleNames, parent=self, styleData=styleData, **kwargs)
+        return Waterfall(fontDataList=fontDataList, parent=self, styleData=styleData, **kwargs)
 
 class Wrapper(NanoElement):
     """Overall page wrapper, mostly used to get the window-padding to work.

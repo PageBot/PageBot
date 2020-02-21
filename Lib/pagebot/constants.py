@@ -872,11 +872,11 @@ FONT_WEIGHT_MATCHES = { # Alternative names
     'Medium': ('Medium', 'Med', 'Md'),
     'Semibold': ('Semibold', 'SemiBold', 'Demibold', 'Demibld', 'Sbd', 'Sembold', 'SBold', 'Sem', 'Demi', 'Dem'),
     'Bold': ('Bold', 'Bol', 'Bd'),
-    'Extrabold': ('Extrabold', 'XBold', 'XBd'),
+    'Extrabold': ('Extrabold', 'ExtraBold', 'XBold', 'XBd'),
     'Heavy': ('Heavy', 'Hvy'),
     'Black': ('Black', 'Blck', 'Blk', 'Bla', 'Fat'),
-    'Extrablack': ('Extrablack', 'XBlack', 'XBlck', 'XBlk'),
-    'Ultrablack': ('Ultrablack', 'UBlack', 'UBlck', 'UBlk'),
+    'Extrablack': ('Extrablack', 'ExtraBlack', 'XBlack', 'XBlck', 'XBlk'),
+    'Ultrablack': ('Ultrablack', 'UltraBlack', 'UBlack', 'UBlck', 'UBlk'),
 }
 FONT_WEIGHT_RANGES = { # OS/2 standard values and alternative ranges
     'Hairline': range(0, 261), # Upgrade 260
@@ -899,18 +899,18 @@ FONT_WEIGHT_RANGES = { # OS/2 standard values and alternative ranges
 }
 FONT_WIDTH_MATCHES = { # Match on exact alternative
     'Skyline': ('Skyline', 'SkyLine', 1, 100),
-    'Ultracompressed': ('Ultracompressed', 'UCompressed', 'Ucompressed', 'Ucomp', 'UComp', 120),
-    'Extracompressed': ('Extracompressed', 'XCompressed', 'Xcompressed', 'Xcomp', 'XComp', 140),
+    'Ultracompressed': ('Ultracompressed', 'UltraCompressed', 'UCompressed', 'Ucompressed', 'Ucomp', 'UComp', 120),
+    'Extracompressed': ('Extracompressed', 'ExtraCompressed', 'XCompressed', 'Xcompressed', 'Xcomp', 'XComp', 140),
     'Compressed': ('Compressed', 'Compr', 'Comp', 'Cmp', 2, 200),
-    'Ultracondensed': ('Ultracondensed', 'UCondensed', 'UCond', 250),
-    'Extracondensed': ('Extracondensed', 'XCondensed', 'XCond', 3, 300),
+    'Ultracondensed': ('Ultracondensed', 'UltraCondensed', 'UCondensed', 'UCond', 250),
+    'Extracondensed': ('Extracondensed', 'ExtraCondensed', 'XCondensed', 'XCond', 3, 300),
     'Condensed': ('Condensed', 'Cond', 'Cnd', 'Cn', 4, 400),
     'Narrow': ('Narrow', 'Nrrw', 'Narr', 'Nar', 440),
     'Normal': ('Normal', 'Nrm', 'Norm', 'Nrml', 'Nor', 5, 500),
     'Wide': ('Wide', 'Wd', 6, 600),
     'Extended': ('Extended', 'Expanded', 'Expd', 'Exp', 'Ext', 'Extnd', 7, 700),
-    'Extraextended': ('Extraextended', 'Xextended', 'XExtended', 'XExp', 'XExt', 8, 800),
-    'Ultraextended': ('Ultraextended', 'Uextended', 'UExtended', 'XExt', 'UExt', 9, 900),
+    'Extraextended': ('Extraextended', 'ExtraExtended', 'Xextended', 'XExtended', 'XExp', 'XExt', 8, 800),
+    'Ultraextended': ('Ultraextended', 'UltraExtended', 'Uextended', 'UExtended', 'XExt', 'UExt', 9, 900),
 }
 FONT_WIDTH_RANGES = {
     'Skyline': range(11, 110), # 100, Reseve 1-10
@@ -927,6 +927,163 @@ FONT_WIDTH_RANGES = {
     'Extraextended': range(750, 850), # 800
     'Ultraextended': range(850, 999), # 900
 }
+# Standard feature information from https://en.wikipedia.org/wiki/List_of_typographic_features
+# Converts into dictionary.
+FONT_FEATURES = [
+    # Dicionary keys: name                  tag     tagType  description
+    # Features primarily intended for or exclusively required by South-Asian alphasyllabaries (Indic/Brahmic)
+    ('Above-base Forms',                    'abvf', 'S1',   'Replaces the above-base part of a vowel sign. For Khmer and similar scripts.'),
+    ('Above-base Mark Positioning',         'abvm', 'P4,5', 'Positions a mark glyph above a base glyph.'),
+    ('Above-base Substitutions',            'abvs', 'S4',   'Ligates a consonant with an above-mark.'),
+    ('Below-base Forms',                    'blwf', 'S4',   'Replaces halant+consonant combination with a subscript form.'),
+    ('Below-base Mark Positioning',         'blwm', 'P4,5', 'Positions a mark glyph below a base glyph.'),
+    ('Below-base Substitutions',            'blws', 'S4',   'Ligates a consonant with a below-mark.'),
+    ('Pre-base Forms',                      'pref', 'S4',   'Replaces halant+consonant at the end of a consonant cluster with a glyph at the beginning. Khmer, Myanmar, Malayalam, Telugu'),
+    ('Pre-base Substitutions',              'pres', 'S4,5', 'Ligates consonant combinations.'),
+    ('Post-base Substitutions',             'psts', 'S4',   'Ligates a final consonant + consonant.'),
+    ('Post-base Forms',                     'pstf', 'S4',   'Substitutes final halant + consonant with special form. Khmer and Gurmukhi, Malayalam.'),
+    ('Distance',                            'dist', 'P2',   'Adjusts horizontal positioning between glyphs. (Always enabled, as opposed to [kern].)'),
+    ('Akhand',                              'akhn', 'S4',   'Hindi for unbreakable. Ligates consonant+halant+consonant, usually only for k-ss and j-ny combinations.'),
+    ('Halant Forms',                        'haln', 'S4',   'Replaces a glyph for final consonant + halant.'),
+    ('Half Form',                           'half', 'S4',   'Replaces consonant + halant with a half form, indicating it is part of a conjunct.'),
+    ('Nukta Forms',                         'nukt', 'S4',   'Replace consonant + nukta (dot mark) with single glyph.'),
+    ('Rakar Forms',                         'rkrf', 'S4',   'Replaces halant + ra with a rakar glyph, indicating it is part of a conjunct.'),
+    ('Reph Form',                           'rphf', 'S4',   'Replaces initial ra + halant with a final reph mark, indicating part of a conjunct.'),
+    ('Vattu Variants',                      'vatu', 'S4',   'Replaces consonant + rakar combinations with a vattu variant ligature.'),
+    ('Conjunct Forms',                      'cjct', 'S4',   'Ligates consonant + halant + consonant, indicates part of a conjunct.'),
+    ('Conjunct Form After Ro',              'cfar', 'S1',   'Khmer'),
+
+    # Features primarily intended for or exclusively required by East-Asian tetragrams (Chinese, Japanese, Korean)
+    ('Simplified Forms',                    'smpl', 'S1',   'Replaces sinograms with their simplified versions, may be language dependent.'),
+    ('Traditional Forms',                   'trad', 'S1,3', 'Replaces Chinese characters with their traditional versions.'),
+    ('Traditional Name Forms',              'tnam', 'S1',   'Japanese alternates for proper names.'),
+    ('Expert Forms',                        'expt', 'S1',   'Typographic alternatives for some Japanese tetragrams.'),
+    ('Hojo Kanji Forms',                    'hojo', '',     'Hojo alternates for Japanese tetragrams.'),
+    ('NLC Kanji Forms',                     'nlck', '',     'NLC alternates for Japanese tetragrams.'),
+    ('JIS 78 Forms',                        'jp78', 'S1,3', 'JIS C 6226-1978 alternates for Japanese tetragrams, not accessible per Unicode.'),
+    ('JIS 83 Forms',                        'jp83', 'S1',   'JIS X 0208-1983 alternates for Japanese tetragrams, not accessible per Unicode.'),
+    ('JIS 90 Forms',                        'jp90', 'S1',   'JIS X 0208-1990 alternates for Japanese tetragrams, not accessible per Unicode.'),
+    ('JIS 04 Forms',                        'jp04', '',     'JIS 2004 alternates for Japanese tetragrams, not accessible per Unicode.'),
+    ('Hangul',                              'hngl', 'S1,3', 'Transliterates Chinese-style characters with Korean Hangul.'),
+    ('Leading Jamo Forms',                  'ljmo', 'S4',   'Initial group of consonants for a synthesized Korean Hangul tetragram.'),
+    ('Trailing Jamo Forms',                 'tjmo', 'S4',   'Final group of consonants for a synthesized Korean Hangul tetragram.'),
+    ('Vowel Jamo Forms',                    'vjmo', 'S4',   'Medial group of vowels for a synthesized Korean Hangul tetragram.'),
+    ('Full Widths',                         'fwid', 'S1',   'Substitutes proportionally spaced character with full-width versions (esp. for Latin letters within Chinese).'),
+    ('Half Widths',                         'hwid', 'S1,P1','Substitutes uniformly-spaced characters with half-width version.'),
+    ('Alternate Half Widths',               'halt', 'P1',   'Re-positions full-width glyphs on half-width spaces.'),
+    ('Third Widths',                        'twid', 'S1,P1','Substitutes uniformly-spaced character with a version of 1/3 width (punctuation, etc.)'),
+    ('Quarter Widths',                      'qwid', 'S1',   'Replaces uniformly-spaced glyphs with quarter-width ones (punctuation etc.)'),
+    ('Proportional Widths',                 'pwid', 'S1',   'Replaces uniformly-spaced glyphs with proportional ones.'),
+    ('Proportional Alternates',             'palt', 'P1',   'Re-positions otherwise monospace characters according to glyph width.'),
+    ('Proportional Kana',                   'pkna', 'S1',   'Kana for use alongside alphabets, without grid typography.'),
+    ('Ruby Notation Forms',                 'ruby', 'S1',   'Ruby characters, small print.'),
+    ('Horizontal Kana Alternates',          'hkna', 'S1',   'Alternate forms for horizontal kana text, e.g. ー for chōonpu instead of ｜, cf. [vkna].'),
+    ('Vertical Kana',                       'vkna', 'S1',   'Alternate Japanese kana forms for vertical text, e.g. ｜ for chōonpu instead of ー, cf. [hkna].'),
+    ('Centered CJK Punctuation',            'cpct', 'P1',   'Positions punctuation marks vertically and horizontally.'),
+
+    # Features primarily intended for or exclusively required by West-Asian (Semitic, Arabic) and other cursive scripts or fonts
+    ('Cursive Positioning',                 'curs', 'P3',   'Precise positioning of a letter‘s connection to an adjacent one.'),
+    ('Justification Alternates',            'jalt', 'S3',   'User selectable wider and narrower alternates, used especially for justifying.'),
+    ('Mark Positioning via Substitution',   'mset', 'S5',   'Used in Windows 95 for positioning of Arabic marks.'),
+    ('Required Contextual Alternates',      'rclt', 'S6',   'Contextual alternates required for correct text display which differs from the default join for other letters, required especially important by Arabic.'),
+    ('Required Ligatures',                  'rlig', 'S3',   'Ligatures required for correct text display (any script, but in cursive).'),
+    ('Isolated Forms',                      'isol', 'S1',   'Substitutes a special form of a letter occurring outside a word (required by Arabic and Syriac).'),
+    ('Initial Forms',                       'init', 'S1',   'Substitutes a special form of a letter occurring at the beginning of a word (required by Arabic and Syriac).'),
+    ('Medial Forms',                        'medi', 'S1',   'Substitutes a special form of letters between other letters in words (required by Arabic and Syriac).'),
+    ('Medial Form #2',                      'med2', 'S5',   'Syriac.'),
+    ('Terminal Forms',                      'fina', 'S1',   'Substitutes a special form of a letter at end of words (required by Arabic and Syriac).'),
+    ('Terminal Form #2',                    'fin2', 'S5',   'Syriac.'),
+    ('Terminal Form #3',                    'fin3', 'S5',   'Syriac.'),
+    ('Final Glyph on Line Alternates',      'falt', 'S3',   'Replaces final glyph on the line with an alternate.'),
+    ('Stretching Glyph Decomposition',      'stch', 'S2',   'Substitutes a special form of a stretchy glyph onto one or more letters (required by Syriac).'),
+
+    # Features intended for bicameral [cased] alphabets (Latin, Greek, Cyrillic, etc.)
+    ('Small Caps',                          'smcp', 'S1',   'Substitutes lower-case letters with small caps versions.'),
+    ('Capitals to Small Caps',              'c2sc', 'S1',   'Substitutes capital letters with small caps.'),
+    ('Petite Caps',                         'pcap', 'S1',   'Substitute lower-case letters with their petite caps analogs.'),
+    ('Capitals to Petite Caps',             'c2pc', 'S1',   'Substitutes capital letters with petite caps.'),
+    ('Unicase',                             'unic', 'S1',   'Replaces lowercase and uppercase letters with a set of single case glyphs.'),
+    ('Capital Spacing',                     'cpsp', 'P1',   'Adjusts spacing between letters in all-capitals text.'),
+    ('Case Sensitive Forms',                'case', 'P1',   'Replace characters, especially punctuation, with forms better suited for all-capital text, cf. [titl]'),
+    ('Italics',                             'ital', 'S1',   'Replaces letter with corresponding italic glyph.'),
+    ('Ordinals',                            'ordn', 'S6,4', 'Replaces characters with ordinal forms for use after numbers.'),
+
+    # Features depending on writing direction[edit]
+    ('Alternative Vertical Metrics',        'valt', 'P1',   'Positions shorter characters to be centered vertically with full-height characters.'),
+    ('Alternative Vertical Half Metrics',   'vhal', 'P1',   'Positions characters to be centered vertically with half-height characters.'),
+    ('Proportional Alternate Vertical Metrics','vpal','P1', 'Re-positions glyphs vertically to be centered on proportional full-height characters.'),
+    ('Vertical Alternates',                 'vert', 'S1',   'A subset of vrt2: prefer the latter feature.'),
+    ('Vertical Alternates and Rotation',    'vrt2', 'S1',   'Replaces characters with forms suitable for vertical writing, possibly by rotating 90°.'),
+    ('Vertical Alternates for Rotation',    'vrtr', 'S1',   'Replaces characters with forms suitable for vertical writing, possibly by shifting or shape.'),
+    ('Vertical Kerning',                    'vkrn', 'P2,8', 'Fine vertical positioning of characters based on shape.'),
+    ('Left-to-right glyph alternates',      'ltra', 'S1',   'Replaces characters with forms befitting left-to-right presentation (except mirrored forms).'),
+    ('Left-to-right mirrored forms',        'ltrm', 'S1',   'Replaces characters with possibly mirrored forms befitting left-to-right presentation.'),
+    ('Right-to-left glyph alternates',      'rtla', 'S1',   'Replaces characters with forms befitting right-to-left presentation (except mirrored forms).'),
+    ('Right-to-left mirrored forms',        'rtlm', 'S1',   'Replaces characters with possibly mirrored forms befitting right-to-left presentation.'),
+
+    # Features intended for digits and math[edit]
+    ('Lining Figures',                      'lnum', 'S1',   'Replaces numerals with glyphs meant to fit better in all-capitals text, often also [tnum].'),
+    ('Oldstyle Figures',                    'onum', 'S1',   'Replaces numerals with cased old-style numerals, often also [pnum].'),
+    ('Proportional Figures',                'pnum', 'S1',   'Replaces numerals with glyphs of proportional width, often also [onum].'),
+    ('Tabular Figures',                     'tnum', 'S1',   'Replaces numerals with glyphs of uniform width, often also [lnum].'),
+    ('Fractions',                           'frac', 'S4',   'Converts figures separated by slash with diagonal fraction.'),
+    ('Alternative Fractions',               'afrc', 'S4',   'Converts figures separated by slash with alternative stacked fraction form.'),
+    ('Denominator',                         'dnom', 'S1',   'Converts to appropriate fraction denominator form, invoked by [frac].'),
+    ('Numerator',                           'numr', 'S1',   'Converts to appropriate fraction numerator form, invoked by [frac].'),
+    ('Scientific Inferiors',                'sinf', 'S1',   'as in “H2O”, “SOx” or “YCbCr”.'),
+    ('Slashed Zero',                        'zero', 'S1',   'Replaces 0 figure with slashed 0.'),
+    ('Mathematical Greek',                  'mgrk', 'S1',   'Replaces Greek characters with special forms for use in mathematics.'),
+    ('Flattened accent forms',              'flac', '',     ''),
+    ('Dotless Forms',                       'dtls', '',     ''),
+    ('Math script style alternates',        'ssty', '',     ''),
+
+    # Ligation and alternate forms features intended for all scripts[edit]
+    ('Access All Alternates',               'aalt', 'S1,3', 'Special feature: used to present user with choice all alternate forms of the character.'),
+    ('Swash',                               'swsh', 'S1,3', 'Either replaces character with or displays multiple swashed versions.'),
+    ('Contextual Swash',                    'cswh', 'S8',   'Converts letter to a swashed version based on characters around the letter.'),
+    ('Contextual Alternates',               'calt', 'S6',   'Applies a second substitution feature based on a match of a character pattern within a context of surrounding patterns.'),
+    ('Historical Forms',                    'hist', 'S1',   'Obsolete forms of characters to be applied at the user’s discretion, cf. [hlig]'),
+    ('Localized Forms',                     'locl', 'S1',   'Substitutes character with the preferred form based on script language.'),
+    ('Randomize',                           'rand', 'S3',   'Replaces character with random forms (meant to simulate handwriting).'),
+    ('Alternate Annotation Forms',          'nalt', 'S1,3', 'Provides user access to circled digits, inverse letters etc.'),
+    ('Stylistic Alternates',                'salt', 'S1,3', 'Either replaces with, or displays list of, stylistic alternatives for a character.'),
+    #('Character Variant 1–99',              'cvxx', 'S3',   'Multiple variants of a single character, which may not apply to many other characters, see references for voluminous documentation.'),
+    #('Stylistic Set 1–20',                  'ssxx', 'S1',   'Replaces character with one from a font-specific set of stylistic alternatives.'),
+    ('Subscript',                           'subs', 'S1',   'Replaces character with subscript version, cf. [numr]'),
+    ('Superscript',                         'sups', 'S1',   'Replaces character with superscript version, cf. [dnom]'),
+    ('Titling Alternates',                  'titl', 'S1',   'Replaces characters with forms suited for large type, as in titles.'),
+    ('Required Variation Alternates',       'rvrn', 'S1',   'Special variants of a single character, which need apply to specific font variation, required by variable fonts.'),
+    ('Contextual Ligatures',                'clig', 'S8',   'Applies a second ligature feature based on a match of a character pattern within a context of surrounding patterns.'),
+    ('Discretionary Ligatures',             'dlig', 'S4',   'Ligatures to be applied at the user’s discretion.'),
+    ('Historical Ligatures',                'hlig', 'S1',   'Obsolete ligatures to be applied at the user’s discretion.'),
+    ('Standard Ligatures',                  'liga', 'S4',   'Replaces (by default) sequence of characters with a single ligature glyph.'),
+
+    # Positioning features intended for all scripts[edit]
+    ('Glyph Composition/Decomposition',     'ccmp', 'S4,2', 'Either calls a ligature replacement on a sequence of characters or replaces a character with a sequence of glyphs. Provides logic that can for example effectively alter the order of input characters.'),
+    ('Kerning',                             'kern', 'P2,8', 'Fine horizontal positioning of one glyph to the next, based on the shapes of the glyphs.'),
+    ('Mark Positioning',                    'mark', 'P4,5', 'Fine positioning of a mark glyph to a base character.'),
+    ('Mark-to-mark Positioning',            'mkmk', 'P6',   'Fine positioning of a mark glyph to another mark character.'),
+    ('Optical Bounds',                      'opbd', 'P1',   'Re-positions glyphs at beginning and end of line, for precise justification of text.'),
+    ('Left Bounds',                         'lfbd', 'P1',   'Re-positions glyphs at end of line. Called by [opbd].'),
+    ('Right Bounds',                        'rtbd', 'P1',   'Re-positions glyphs at beginning of line. Called by [opbd].'),
+
+    # Special features intended for all scripts[edit]
+    ('Optical size',                        'size', '',     'Not a lookup: feature’s table provides to applications information about the appearance and intent of the font, to aid in font selection.'),
+    ('Ornaments',                           'ornm', 'S3,1', 'Decorative alternates for the bullet character “•”.'),
+]
+# Add the numbered Stylistic Set and Character Variant tag with their full index number
+# so the compiled FONT_FEATURES dictionary can be used with all known tags to 
+# retrieve name and description.
+for ss in range(1, 21):
+    FONT_FEATURES.append(('Stylistic Set #%02d' % ss, 'ss%02d' % ss, 'S1', 'Range 1-20. Replaces character with one from a font-specific set of stylistic alternatives'))
+for ss in range(1, 100):
+    FONT_FEATURES.append(('Character Variant #%02d' % ss, 'cv%02d' % ss, 'S3', 'Range 1-99. Multiple variants of a single character, which may not apply to many other characters, see references for voluminous documentation'))
+
+TMP = {}
+for name, tag, tagType, description in FONT_FEATURES:
+    TMP[tag] = dict(name=name, tag=tag, tagType=tagType, description=description)
+FONT_FEATURES = TMP # Clear the original data
+
 
 FONT_ITALIC_MATCHES = {
     'Italic': ('Italic', 'Ita', 'It'),

@@ -14,3 +14,11 @@
 #
 #     pagebot/apps/__init__.py
 #
+#	  Some example server classes to be developed here, connecting the tornado library
+#     and the PageBot website generating classes.
+#
+#	  Example classes for base servers should include:
+#     - Multiple pages
+#     - Handling of request parameters
+#     - Usage of serving JSON, AJAX, etc.
+#

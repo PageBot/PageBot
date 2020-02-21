@@ -253,11 +253,13 @@ class Image(Element):
     def initImageSize(self):
         """Initialize the image size. Note that this is done with the
         default/current Context, as there may not be a view availabe yet."""
+        # Default, in case Undefined or non-existing, there is no image file.
+        iw = ih = pt(0)
         if self.path is not None and os.path.exists(self.path):
-            self.iw, self.ih = self.context.imageSize(self.path)
-        else:
-            # Undefined or non-existing, there is no image file.
-            self.iw = self.ih = pt(0)
+            imageSize = self.context.imageSize(self.path)
+            if imageSize is not None:
+                iw, ih = imageSize
+        self.iw, self.ih = iw, ih
 
     def _get_imageSize(self):
         """Answers the Point2D image size in pixels."""

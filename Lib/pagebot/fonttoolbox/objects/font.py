@@ -42,34 +42,52 @@ from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 
 def isFontPath(fontPath):
-    """Answers if the path is a font path.
+    """Answers if the path is a font path. Check if there is a matching
+    problem by lower case/upper case. If matching then answer the real path.
+    If no match exists for the defined fontPath, then answer None.
+    Case matching is only tests on the file name, not the whole path.
+
     For now, PageBot only supports ('ttf', 'otf')
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
-    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
-    >>> isFontPath(path)
+    >>> path1 = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
+    >>> path1 == isFontPath(path1) # Path with capitals, nothing changed.
     True
-    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF_XXX.ttf'
-    >>> isFontPath(path)
+    >>> path1_lc = fontPath + '/fontbureau/amstelvar-roman-vf.ttf'
+    >>> path1 == isFontPath(path1_lc) # Matching witn lower case, answers the real path.
+    True
+    >>> path2 = fontPath + '/fontbureau/Amstelvar-Roman-VF_XXX.ttf'
+    >>> path2 == isFontPath(path2)
     False
-    >>> path = fontPath + '/fontbureau/Amstelvar-Roman-VF.UFO'
-    >>> isFontPath(path)
-    False
-    >>> isFontPath(None) is None
-    False
-    >>> isFontPath(123)
-    False
+    >>> path3 = fontPath + '/fontbureau/Amstelvar-Roman-VF.UFO'
+    >>> isFontPath(path3) is None # Font path does not exist
+    True
+    >>> isFontPath(None) is None # Not a valid font path
+    True
+    >>> isFontPath(123) is None # Not a valid font path
+    True
     """
     try:
-        return os.path.exists(fontPath) and path2Extension(fontPath) in ('ttf', 'otf')
-    except TypeError:
-        return False
+        if not path2Extension(fontPath) in ('ttf', 'otf'):
+            return None
+        pathParts = fontPath.split('/')
+        dirPath = '/'.join(pathParts[:-1]) + '/'
+        filePath = pathParts[-1].lower() # Match ignoring case
+        for fn in os.listdir(dirPath):
+            if fn.startswith('.'):
+                continue
+            if filePath == fn.lower():
+                return dirPath + fn
+        return None
+    except AttributeError:
+        pass
+    return None
 
 def getFont(fontOrPath, lazy=True):
-    """Answers the Font instance, that connects to the fontPath. Note that
-    there is no check if there is already anothe Font created on that path, as
-    for PageBot purposes it is most likely for reading only.
+    """Answers the Font instance, that connects to the fontPath. Note that 
+    there is no check if there is already anothe Font created on that path, 
+    as for PageBot purposes it is most likely for reading only.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
@@ -85,7 +103,8 @@ def getFont(fontOrPath, lazy=True):
     try:
         if isinstance(fontOrPath, Font):
             return fontOrPath
-        if not isFontPath(fontOrPath):
+        fontOrPath = isFontPath(fontOrPath) # Find the real path, case corrected.
+        if not fontOrPath:
             return None
         return Font(fontOrPath, lazy=lazy)
     except TTLibError: 
@@ -95,7 +114,6 @@ def getFont(fontOrPath, lazy=True):
 def findFonts(pattern, lazy=True):
     """Answers a list of Font instances where the pattern fits the font path.
     If pattern is a list, all parts should have a match.
-
 
     """
     """
@@ -147,7 +165,7 @@ def findFont(fontPath, default=None, lazy=True):
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath], lazy=lazy)
 
-    # A default is defined. If it's a string, try to find it. Avoid circular
+    # A default is defined. If it's a string, try to find it. Avoid c76ircular
     # calls.
     if isinstance(default, str) and default != fontPath: 
         return findFont(default, lazy=lazy)
@@ -951,6 +969,24 @@ class Font:
             location = self.getDefaultVarLocation()
         return getInstance(self.path, location=location, dstPath=dstPath, opticalSize=opticalSize,
             styleName=styleName, cached=cached, lazy=lazy, kerning=kerning)
+
+    def _get_cmap(self):
+        """Answer the best cmap for this font
+
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = getFont(path, lazy=False)
+        >>> cmap = f.cmap
+        >>> sorted(cmap.items())[0]
+        (32, 'space')
+        >>> len(cmap)
+        1060
+        """
+        if self.ttFont is not None:
+            return self.ttFont.getBestCmap()
+        return None
+    cmap = property(_get_cmap)
 
     def _get_features(self):
         # TODO: Use TTFont for this instead.
