@@ -26,10 +26,13 @@ from pagebot.server.pagebothandler import PageBotHandler
 PORT = 7777
 SSLPORT = 443
 
+regex = r"/([^/]+)"
+
 class PageBotServer:
 
     def __init__(self, args=None, cert=None, key=None):
-        self.handlers = [(r"/([^/]+)", PageBotHandler),]
+        #self.handlers = [('/', PageBotHandler),]
+        self.handlers = [(regex, PageBotHandler),]
 
         if args and '--port' in args:
             try:
@@ -54,7 +57,9 @@ class PageBotServer:
             http_server = tornado.httpserver.HTTPServer(self.app, ssl_options=ssl_options)
             http_server.listen(SSLPORT)
         else:
-            self.app.listen(self.port)
+            http_server = tornado.httpserver.HTTPServer(self.app)
+            http_server.listen(self.port)
+            #self.app.listen(self.port)
 
     def run(self):
         print('Starting PageBot/Tornado web application on port %s' % self.port)

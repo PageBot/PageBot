@@ -16,13 +16,28 @@
 #
 
 import tornado.web
+import json
 
 
 class PageBotHandler(tornado.web.RequestHandler):
 
     def get(self, slug):
-        print('bla')
-        print(slug)
+        print('get %s' % slug)
+        html = self.get_html()
+        self.write(html)
+
+    def post(self, slug):
+        print('post %s' % slug)
+        data = json.loads(self.request.body.decode('utf-8'))
+        print('Got JSON data:', data)
+        self.write({ 'got' : 'your data' })
+
+    def get_html(self):
+        html = ''
+        html += '<html><head><title>PageBot Server</title></head><body>'
+        html += "<h1>Hello world</h1>"
+        html += '</body></html>'
+        return html
 
     def data_received(self):
         pass
