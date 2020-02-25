@@ -12,13 +12,17 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     pagebot/apps/__init__.py
+#     basehandler.py
 #
-#	  Some example server classes to be developed here, connecting the tornado library
-#     and the PageBot website generating classes.
-#
-#	  Example classes for base servers should include:
-#     - Multiple pages
-#     - Handling of request parameters
-#     - Usage of serving JSON, AJAX, etc.
-#
+
+import tornado.web
+
+
+class PageBotHandler(tornado.web.RequestHandler):
+
+    def get(self, slug):
+        print('bla')
+        print(slug)
+
+    def data_received(self):
+        pass

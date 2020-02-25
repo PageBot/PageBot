@@ -17,7 +17,7 @@
 #     https://www.tornadoweb.org
 #
 #     Testing available parameters on the url page call.
-#
+
 import tornado.ioloop
 import tornado.web
 
@@ -56,5 +56,5 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
     app.listen(PORT)
-    print('Starting Tornado server on port %s' % PORT)
+    print('Starting Tornado web application on port %s' % PORT)
     tornado.ioloop.IOLoop.current().start()

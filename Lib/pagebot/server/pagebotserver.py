@@ -12,35 +12,20 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     baseserver.py
-#
-#     https://www.tornadoweb.org
+#     pagebotserver.py
 #
 
 import tornado.ioloop
 import tornado.web
+from pagebot.server.pagebothandler import PageBotHandler
 
-counter = 0
+
+handlers = [(r"/entry/([^/]+)", BaseHandler),]
 
 PORT = 7777
 
-class MainHandler(tornado.web.RequestHandler):
-
-    def get(self):
-        global counter
-        self.write("Hello, %d world" % counter)
-        counter += 1
-
-    def data_received(self):
-        pass
-
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
-
 if __name__ == "__main__":
-    app = make_app()
+    app = tornado.web.Application(handlers)
     app.listen(PORT)
-    print('Starting Tornado web application on port %s' % PORT)
+    print('Started PageBot/Tornado web application on port %s' % PORT)
     tornado.ioloop.IOLoop.current().start()
