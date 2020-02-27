@@ -35,12 +35,12 @@ class PageBotServer:
         self.handlers = [(regex, PageBotHandler),]
 
         if args and '--port' in args:
-            try:
-                port = int(args[-1])
-                self.port = port
-            except Exception as e:
-                self.port = PORT
-                print(e)
+            #try:
+            port = int(args[-1])
+            self.port = port
+            #except Exception as e:
+            #    self.port = PORT
+            #    print(e)
 
         else:
             self.port = PORT

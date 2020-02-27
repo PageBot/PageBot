@@ -15,8 +15,8 @@
 #     basehandler.py
 #
 
-import tornado.web
 import json
+import tornado.web
 
 
 class PageBotHandler(tornado.web.RequestHandler):
