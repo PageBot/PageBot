@@ -16,11 +16,11 @@
 #     https://svgwrite.readthedocs.io/en/master/
 #     sudo pip install svgwrite
 #
-#import svgwrite
-#svgBuilder = svgwrite
+import svgwrite
+svgBuilder = svgwrite
 
 # Id to make builder hook name. Views will try to call e.build_svg()
-#svgBuilder.PB_ID = 'svg'
+svgBuilder.PB_ID = 'svg'
 
 if __name__ == '__main__':
     import doctest

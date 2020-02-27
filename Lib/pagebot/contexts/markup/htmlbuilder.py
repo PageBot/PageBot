@@ -16,7 +16,7 @@
 #
 import os
 import codecs
-#import sass
+import sass
 
 from pagebot.contexts.markup.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
@@ -46,7 +46,7 @@ class HtmlBuilder(XmlBuilder):
     'body {background-color: #FFFF00;}'
     """
     # ID to make build_html hook name. Views will be calling e.build_html()
-    PB_ID = 'html' 
+    PB_ID = 'html'
 
     # Names of attributes that are written without their value.
     # Since this breaks XML validation, this list is empty by default,
@@ -72,16 +72,16 @@ class HtmlBuilder(XmlBuilder):
 
     LABEL_ATTRIBUTES = {'for'}
 
-    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {'accesskey', 'dirname', 'onblur', 
-        'pattern', 'relation', 'onchange', 'type', 'onmouseup', 'value', 'step', 
-        'onmousedown', 'autofocus', 'onkeypress', 'onselect', 'list', 'formnovalidate', 
-        'maxlength', 'onkeyup', 'tabindex', 'autocapitalize', 'autocorrect', 
-        'results', 'min', 'placeholder', 'formtaget', 'inputmode', 'src', 
-        'formaction', 'height', 'formenctype', 'size', 'onmousemove', 'name', 
-        'alt', 'autocomplete', 'onmouseout', 'required', 'onkeydown', 'multiple', 
-        'ondblclick', 'readonly', 'onfocus', 'accept', 'align', 'form', 'max', 
+    BUTTON_ATTRIBUTES = INPUT_ATTRIBUTES = {'accesskey', 'dirname', 'onblur',
+        'pattern', 'relation', 'onchange', 'type', 'onmouseup', 'value', 'step',
+        'onmousedown', 'autofocus', 'onkeypress', 'onselect', 'list', 'formnovalidate',
+        'maxlength', 'onkeyup', 'tabindex', 'autocapitalize', 'autocorrect',
+        'results', 'min', 'placeholder', 'formtaget', 'inputmode', 'src',
+        'formaction', 'height', 'formenctype', 'size', 'onmousemove', 'name',
+        'alt', 'autocomplete', 'onmouseout', 'required', 'onkeydown', 'multiple',
+        'ondblclick', 'readonly', 'onfocus', 'accept', 'align', 'form', 'max',
         'disabled', 'checked', 'formmethod', 'onmouseover'}
-    
+
     INPUT_ATTRIBUTES_DEFAULTS = {'alt':'+', 'disabled': 'false'}
 
     BLOCKQUOTE_ATTRIBUTES = {}
