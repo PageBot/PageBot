@@ -2,9 +2,7 @@ booleanOperations==0.8.2
 fontTools==4.0.2
 libsass==0.19.3
 markdown==3.1.1
-SimpleIDML==1.0.6
 svgwrite==1.3.1
 tornado==6.0.3
-#Tornado-JSON==1.3.4 # still downgrades Tornado to 5.1.
 flat==0.3.1
--e .
+.
