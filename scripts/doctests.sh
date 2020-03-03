@@ -34,8 +34,20 @@ python3 $PWD/contexts/markup/htmlcontext.py
 python3 $PWD/contexts/markup/htmlstring.py
 python3 $PWD/contexts/markup/svgcontext.py
 #TODO: add rest of contributions.
+#python3 $PWD/contributions/adobe/__init__.py
+#python3 $PWD/contributions/adobe/kerndump/__init__.py.py
+#python3 $PWD/contributions/adobe/kerndump/dumpKerningFeatureFromOTF.py.py
+#python3 $PWD/contributions/adobe/kerndump/getKerningPairsFromOTF.py.py.py
+#python3 $PWD/contributions/filibuster/__init__.py
 python3 $PWD/contributions/filibuster/blurb.py
 python3 $PWD/contributions/filibuster/blurbwriter.py
+#python3 $PWD/contributions/filibuster/example.py
+#python3 $PWD/contributions/filibuster/test.py
+#python3 $PWD/contributions/filibuster/titlecase.py
+#python3 $PWD/contributions/markdown/__init__.py
+#python3 $PWD/contributions/markdown/footnotes.py
+#python3 $PWD/contributions/markdown/inline.py
+#python3 $PWD/contributions/markdown/literature.py
 python3 $PWD/document.py
 python3 $PWD/elements/element.py
 python3 $PWD/elements/paths/glyphpath.py
@@ -81,7 +93,6 @@ python3 $PWD/fonttoolbox/unicodes/unicoderanges.py
 python3 $PWD/gradient.py
 python3 $PWD/mathematics/__init__.py
 python3 $PWD/mathematics/transform3d.py
-python3 $PWD/mathematics/numpytransform.py
 python3 $PWD/filepaths.py
 python3 $PWD/publications/typespecimens/__init__.py
 python3 $PWD/publications/typespecimens/basetypespecimen.py
