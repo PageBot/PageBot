@@ -244,14 +244,14 @@ class AbstractContext:
         """Set a blend mode.
 
         Available operations are::
-        
+
             `normal`, `multiply`, `screen`, `overlay`, `darken`, `lighten`,
             `colorDodge`, `colorBurn`, `softLight`, `hardLight`, `difference`,
             `exclusion`, `hue`, `saturation`, `color`, `luminosity`, `clear`,
             `copy`, `sourceIn`, `sourceOut`, `sourceAtop`, `destinationOver`,
             `destinationIn`, `destinationOut`, `destinationAtop`, `xOR`,
             `plusDarker` and `plusLighter`
-            
+
         """
         raise NotImplementedError
 
