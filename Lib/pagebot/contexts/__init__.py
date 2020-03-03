@@ -29,15 +29,8 @@ if platform == 'darwin':
         # TODO: check if drawBotContext exists first, ask to install.
         from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
         hasDrawBot = True
-    except ModuleNotFoundError as e:
+    except:
         hasDrawBot = False
-
-        '''
-        print('Either an error occurred while importing pagebotcocoa or it is missing.')
-        print(traceback.format_exc())
-        print('Please try to (re)install pagebotcocoa.')
-        print('pip install (--upgrade) pagebotcocoa')
-        '''
 
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None
@@ -67,6 +60,8 @@ def getContext(contextType='DrawBot'):
             if contextType == 'DrawBot' and hasDrawBot:
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'DrawBot' and not hasDrawBot:
+                print('Cannot find the pagebotcocoa module.')
+                print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
@@ -78,7 +73,8 @@ def getContext(contextType='DrawBot'):
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
             if contextType in ('DrawBot',):
-                print('Selected context type is not available on this platform: %s for %s' % (contextType, platform))
+                print('DrawBot is not available on platform %s.' % platform)
+                print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
