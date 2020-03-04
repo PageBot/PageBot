@@ -65,4 +65,5 @@ setup(
         'markdown',
         'SimpleIDML',
         'svgwrite',
-        'tornado']
+        'tornado',]
+    )
