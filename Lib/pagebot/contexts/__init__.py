@@ -27,7 +27,7 @@ hasDrawBot = False
 if platform == 'darwin':
     try:
         # TODO: check if drawBotContext exists first, ask to install.
-        from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
+        from pagebotosx.contexts.drawbot.drawbotcontext import DrawBotContext
         hasDrawBot = True
     except:
         hasDrawBot = False
@@ -60,7 +60,7 @@ def getContext(contextType='DrawBot'):
             if contextType == 'DrawBot' and hasDrawBot:
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'DrawBot' and not hasDrawBot:
-                print('Cannot find the pagebotcocoa module.')
+                print('Cannot find the pagebotosx module.')
                 print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
