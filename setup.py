@@ -66,4 +66,3 @@ setup(
         'SimpleIDML',
         'svgwrite',
         'tornado']
-)
