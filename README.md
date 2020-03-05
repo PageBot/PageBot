@@ -2,21 +2,25 @@
 
 **Homepage: [pagebot.io](http://pagebot.io)**
 
-PageBot is a page layout program that enables designers to create high quality
-documents using Python programming. It is available both as Python library
-working with [DrawBot](http://www.drawbot.com) and as part of a collection of
-stand-alone desktop applications. Other contexts such as
-[Flat](http://xxyxyz.org/flat) and InDesign are currently being developed. They
-will allow PageBot to output to print-ready formats and to run in environments
-other than Mac OS X such as Posix web servers. The aim of the developers of
-PageBot is to create a system of scriptable applications to generate
-professionally designed documents that make use of high quality typography.
+PageBot is a page layout environment that enables designers to create high quality
+documents using Python programming. It is available as a Python library with cross-platform support based on [Flat](http://xxyxyz.org/flat) and as a Mac OS X extension that uses [DrawBot](http://www.drawbot.com). Our aim is to create a system of scriptable applications to generate
+professionally designed output in various print-ready formats.
 
 
 
 # Installation
 
+Cross platform installation:
+
     pip install pagebot
+
+Mac OS X installation:
+
+	pip install pagebotosx
+	
+
+See also [github.com/PageBot/PageBotOSX](https://github.com/PageBot/PageBotOSX).
+
 
 # Usage
 
