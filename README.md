@@ -10,11 +10,31 @@ professionally designed output in various print-ready formats.
 
 # Installation
 
+Pagebot runs on Python 3. We recommend updating to version 3.7 / 3.8.
+
+## System Wide
+
 Cross platform installation:
 
     pip install pagebot
+    
+Upgrade to the latest if already installed:
 
-Mac OS X installation:
+    pip install pagebot --upgrade
+
+
+## Virtual Environment
+
+To setup `pagebot` and its requirements in a virtual environemnt environment:
+
+    pip install virtualenv
+    mkdir ~/virtualenvironment
+    virtualenv ~/virtualenvironment/pagebot
+    cd ~/virtualenvironment/pagebot/bin
+    source activate
+    pip-3.8 install pagebot
+
+## Mac OS X
 
 	pip install pagebotosx
 	
@@ -171,3 +191,4 @@ Note: doctest can be run in Sublime with `cmd-B`
 > U.S. Serial Number: 87-457,280
 > Owner: Buro Petr van Blokland + Claudia Mens VOF
 > Docket/Reference Number: 1538-25     
+}{
