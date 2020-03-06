@@ -22,18 +22,15 @@ from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
 DrawBotContext = None
-CanvasContext = None
+hasDrawBot = False
 
 if platform == 'darwin':
     try:
         # TODO: check if drawBotContext exists first, ask to install.
-        from pagebotcocoa.contexts.drawbot.drawbotcontext import DrawBotContext
-        from pagebotcocoa.contexts.canvas.canvascontext import CanvasContext
+        from pagebotosx.contexts.drawbot.drawbotcontext import DrawBotContext
+        hasDrawBot = True
     except:
-        print('Either an error occurred while importing pagebotcocoa or it is missing.')
-        print(traceback.format_exc())
-        print('Please try to (re)install pagebotcocoa.')
-        print('pip install (--upgrade) pagebotcocoa')
+        hasDrawBot = False
 
 DEFAULT_CONTEXT = None
 CONTEXT_TYPE = None
@@ -60,37 +57,29 @@ def getContext(contextType='DrawBot'):
     # FIXME: what about HTMLContext()
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
-            if contextType == 'DrawBot':
+            if contextType == 'DrawBot' and hasDrawBot:
                 DEFAULT_CONTEXT = getDrawBotContext()
+            elif contextType == 'DrawBot' and not hasDrawBot:
+                print('Cannot find the pagebotosx module.')
+                print('Using Flat instead of DrawBot.')
+                DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Canvas':
-                DEFAULT_CONTEXT = getCanvasContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
-            #elif contextType == 'InDesign':
-            #    DEFAULT_CONTEXT = getInDesignContext()
-            #elif contextType == 'idml':
-            #    DEFAULT_CONTEXT = getIdmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
-            #elif contextType == 'SVG':
-            #    DEFAULT_CONTEXT = getSvgContext()
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
             if contextType in ('DrawBot',):
-                print('Selected context type is not available on this platform: %s for %s' % (contextType, platform))
-                # TODO: raise error
+                print('DrawBot is not available on platform %s.' % platform)
+                print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
-            #elif contextType == 'InDesign':
-            #    DEFAULT_CONTEXT = getInDesignContext()
-            #elif contextType == 'idml':
-            #    DEFAULT_CONTEXT = getIdmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
 
@@ -110,17 +99,8 @@ def getDrawBotContext():
 
     return DrawBotContext()
 
-def getCanvasContext():
-    if platform != 'darwin':
-        return None
-
-    return CanvasContext()
-
 def getHtmlContext():
     return HtmlContext()
-
-#def getIdmlContext():
-#    return IdmlContext()
 
 def getSvgContext():
     return SvgContext()

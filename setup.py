@@ -28,7 +28,7 @@ setup(
     url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanches, Dave Crossland',
     author_email = 'r@petr.com',
-    version='0.9.4',
+    version='0.9.6',
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
@@ -65,5 +65,5 @@ setup(
         'markdown',
         'SimpleIDML',
         'svgwrite',
-        'tornado']
-)
+        'tornado',]
+    )

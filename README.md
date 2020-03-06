@@ -1,22 +1,44 @@
-# What is PageBot®?
+# What is PageBot?
 
-**Homepage: [pagebot.io](http://pagebot.io)**
+PageBot® is a page layout environment that enables designers to create high quality
+documents using Python programming. It is available as a Python library with cross-platform support based on [Flat](http://xxyxyz.org/flat) and as a Mac OS X extension that uses [DrawBot](http://www.drawbot.com). Our aim is to create a system of scriptable applications to generate
+professionally designed output in various print-ready formats.
 
-PageBot is a page layout program that enables designers to create high quality
-documents using Python programming. It is available both as Python library
-working with [DrawBot](http://www.drawbot.com) and as part of a collection of
-stand-alone desktop applications. Other contexts such as
-[Flat](http://xxyxyz.org/flat) and InDesign are currently being developed. They
-will allow PageBot to output to print-ready formats and to run in environments
-other than Mac OS X such as Posix web servers. The aim of the developers of
-PageBot is to create a system of scriptable applications to generate
-professionally designed documents that make use of high quality typography.
-
-
+The PageBot homepage is located at [pagebot.io](http://pagebot.io).
 
 # Installation
 
+Pagebot runs on Python 3. We recommend updating to version 3.7 / 3.8.
+
+## System Wide
+
+Cross platform installation:
+
     pip install pagebot
+    
+Upgrade to the latest if already installed:
+
+    pip install pagebot --upgrade
+
+
+## Virtual Environment
+
+To setup `pagebot` and its requirements in a virtual environemnt environment:
+
+    pip install virtualenv
+    mkdir ~/virtualenvironment
+    virtualenv ~/virtualenvironment/pagebot
+    cd ~/virtualenvironment/pagebot/bin
+    source activate
+    pip-3.8 install pagebot
+
+## Mac OS X
+
+	pip install pagebotosx
+	
+
+See also [github.com/PageBot/PageBotOSX](https://github.com/PageBot/PageBotOSX).
+
 
 # Usage
 
@@ -167,3 +189,4 @@ Note: doctest can be run in Sublime with `cmd-B`
 > U.S. Serial Number: 87-457,280
 > Owner: Buro Petr van Blokland + Claudia Mens VOF
 > Docket/Reference Number: 1538-25     
+}{

@@ -2,8 +2,8 @@
 set -ev
 pip3 install --upgrade pip
 pip3 install pylint
-git clone https://github.com/PageBot/PageBotCocoa.git
-cd PageBotCocoa
+git clone https://github.com/PageBot/PageBotOSX.git
+cd PageBotOSX
 pip3 install -r requirements.txt
 cd ..
 pip3 install -r requirements.txt
