@@ -222,7 +222,7 @@ class AbstractContext:
         line."""
         raise NotImplementedError
 
-    def polygon(self, *points, e=None, **kwargs):
+    def polygon(self, *points, **kwargs):
         """Draws a polygon with n-amount of points. Optionally a `close`
         argument can be provided to open or close the path. As default a
         `polygon` is a closed path."""
