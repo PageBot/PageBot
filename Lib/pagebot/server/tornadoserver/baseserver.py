@@ -37,8 +37,6 @@ from tornado.ioloop import IOLoop
 from pagebot.constants import ALL_FILE_TYPES
 from pagebot.toolbox.transformer import asIntOrValue
 
-PORT = 8888
-
 class RequestData:
     """Answer data instance that holds parsed request data from url/path.
     There are two types of arguments that can be mixed:
@@ -161,6 +159,7 @@ class RequestData:
     fileExists = property(_get_fileExists)
 
 class BasicRequestHandler(RequestHandler):
+
     def get(self, *args):
         """Figure out how or handle the request and where to get content from.
         """
@@ -210,20 +209,25 @@ class BaseServer:
     PORT = 8895
     REQUEST_HANDLERS = [('/(.*)', BasicRequestHandler)]
 
-    def __init__(self, requestHandlers=None):
+    def __init__(self, requestHandlers=None, publication=None, port=None):
         if requestHandlers is None:
-            requestHandlers = self.REQUEST_HANDLERS # http://localhost:8889/<args>
+            requestHandlers = self.getRequestHandlers() # http://localhost:8889/<args>
         self.requestHandlers = requestHandlers
+        self.publication = publication # PageBot Publication instance, e.g, Website
+        self.port = port or self.PORT
+
+    def getRequestHandlers(self):
+        return self.REQUEST_HANDLERS
 
     def run(self, port=None):
         app = Application(self.requestHandlers)
-        app.listen(self.PORT)
-        print('Server %s on port %d' % (self.__class__.__name__, self.PORT))
+        app.listen(self.port)
+        print('Server %s on port %d' % (self.__class__.__name__, self.port))
         IOLoop.current().start()
 
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    server = BaseServer()
+    server = BaseServer(port=8990)
     server.run()
