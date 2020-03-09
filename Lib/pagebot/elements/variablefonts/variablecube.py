@@ -22,11 +22,12 @@ from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import blackColor
 
 class VariableCube(Element):
-    # Initialize the default behavior tags as different from Element.
+    """
+    Initialize the default behavior tags as different from Element.
+    """
 
     def __init__(self, font, s=None, point=None, style=None, eId=None,
             dimensions=None, location=None, **kwargs):
-        #self.__init__
         super().__init__()
         self.font = font
         self.eId = eId
@@ -45,12 +46,12 @@ class VariableCube(Element):
         if location is None:
             location = {}
         self.location = copy(location)
-    
+
     def draw(self, view, origin):
         c = self.doc.context
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined
@@ -67,7 +68,7 @@ class VariableCube(Element):
             raise ValueError('Not supporting 1 axis now')
         if len(self.dimensions) > 2:
             raise ValueError('Not supporting >2 axis now')
-        
+
         axisNames = sorted(self.dimensions.keys())
         axisX = axisNames[0]
         sizeX = self.dimensions[axisX]
