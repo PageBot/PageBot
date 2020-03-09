@@ -18,7 +18,8 @@
 #     http://localhost:5555/index.html
 #
 
-import sys, json
+import sys
+import json
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web

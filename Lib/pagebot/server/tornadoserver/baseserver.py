@@ -18,7 +18,7 @@
 #
 #     Testing available parameters on the url page call.
 #     This example server shows how different paths (detected by regular expressions)
-#     are connected to different handlers, ranging from a simple request, reading a static 
+#     are connected to different handlers, ranging from a simple request, reading a static
 #     html page file, getting specific URL arguments (http://localhost:8886/query/aaa?n=100)
 #     or disassembling the URL path by regular expressions.
 #     This means that "parts" of the site can use different handlers than other parts.
@@ -185,6 +185,9 @@ class BasicRequestHandler(RequestHandler):
         self.write('requestData.args: %s' % str(requestData.args))
         self.write('<br>')
         self.write('requestData.fileExists: %s' % str(requestData.fileExists))
+
+    def data_received(self):
+        pass
 
 """
 class StaticRequestHandler(RequestHandler):
