@@ -23,8 +23,8 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from pagebot.server.pagebothandler import PageBotHandler
-from pagebot.publications.websites.nanosite import NanoSite
+from pagebot.publications.websites.nanosite.nanosite import NanoSite
+#from pagebot.server.pagebothandler import PageBotHandler
 from pagebot.contexts import HtmlContext
 
 PORT = 5555
