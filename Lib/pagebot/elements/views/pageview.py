@@ -45,7 +45,7 @@ class PageView(BaseView):
 
     # Default path for local document export, that does not commit documents to
     # Github.
-    EXPORT_PATH = '_export/' 
+    EXPORT_PATH = '_export/'
 
     DEFAULT_STROKE_COLOR = color(0.2, 0.2, 1)
     DEFAULT_STROKE_WIDTH = pt(0.25)
@@ -70,7 +70,7 @@ class PageView(BaseView):
         if self.showSpread:
             # Key is uneven page number. Value is a Quire, holding spread
             # pages.
-            spreads = {} 
+            spreads = {}
 
             # If flag is set, compose the page dictionary into a dictionary of
             # larger pages, holding Quire instances that can compose various
@@ -87,7 +87,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
         >>> # Make 4 pages to be composed as a Quire of 2 spreads.
-        >>> doc = Document(size=A4, autoPages=4) 
+        >>> doc = Document(size=A4, autoPages=4)
         >>> view = doc.view
         >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
@@ -140,11 +140,11 @@ class PageView(BaseView):
             padding.
             '''
             # TODO: make this work for pages that share the same page number
-            page = pages[0] 
+            page = pages[0]
 
             # Copy from main (w, h), since they may be altered, from the
             # orgiinal document size.
-            pw, ph = w, h  
+            pw, ph = w, h
 
             if self.pl >= self.viewMinInfoPadding and \
                self.pt >= self.viewMinInfoPadding and \
@@ -182,13 +182,13 @@ class PageView(BaseView):
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
 
-            self.drawPageMetaInfo(page, origin, background=True)
+            self.drawPageMetaInfoBackground(page, origin)
 
             # Since self already adjust origin, scale, etc. we don't use the
             # page.build here. Instead we calle the drawing of its elements
             # too.
             page.buildChildElements(self, origin, **kwargs)
-            self.drawPageMetaInfo(page, origin, background=False)
+            self.drawPageMetaInfo(page, origin)
 
             if self.drawAfter is not None: # Call if defined
                 self.drawAfter(page, self, origin)
@@ -229,7 +229,7 @@ class PageView(BaseView):
 
     #   D R A W I N G  P A G E  M E T A  I N F O
 
-    def drawPageMetaInfo(self, page, origin, path=None, background=False):
+    def drawPageMetaInfo(self, page, origin, path=None):
         """Draw the foreground meta info of the page, depending on the settings
         of the flags.
 
@@ -247,23 +247,41 @@ class PageView(BaseView):
         >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawPageMetaInfo(page, (0, 0), path)
         """
-        if not background:
-            self.drawFrame(page, origin)
-            self.drawMargin(page, origin)
-            self.drawPadding(page, origin)
+        self.drawFrame(page, origin)
+        self.drawMargin(page, origin)
+        self.drawPadding(page, origin)
 
-            # Use path to show file name in page meta info.
-            self.drawNameInfo(page, origin, path) 
+        # Use path to show file name in page meta info.
+        self.drawNameInfo(page, origin, path)
 
-            # Color bars under registration marks?
-            self.drawColorBars(page, origin) 
-            self.drawRegistrationMarks(page, origin)
-            self.drawCropMarks(page, origin)
-            self.drawElementOrigin(page, origin)
+        # Color bars under registration marks?
+        self.drawColorBars(page, origin)
+        self.drawRegistrationMarks(page, origin)
+        self.drawCropMarks(page, origin)
+        self.drawElementOrigin(page, origin)
 
+    def drawPageMetaInfoBackground(self, page, origin, path=None, background=True):
+        """Draw the foreground meta info of the page, depending on the settings
+        of the flags.
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> from pagebot.document import Document
+        >>> path = '_export/PageMetaInfo.pdf'
+        >>> w, h = 300, 400
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
+        >>> page = doc[1]
+        >>> #page.view.padding
+        >>> # result is (0, 0, 0, 0), shouldn't be 30pt?
+        >>> view = doc.getView()
+        >>> view.showGrid = [GRID_COL, GRID_ROW]
+        >>> view.drawPageMetaInfo(page, (0, 0), path)
+        """
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
         self.drawFlowConnections(page, origin)
+
 
     def drawFrame(self, e, origin):
         """Draw the page frame if the the flag is on and if there ie padding
@@ -401,16 +419,16 @@ class PageView(BaseView):
         >>> from pagebot.style import getRootStyle
         >>> path = '_export/PageNameInfo.pdf'
         >>> # Get default values.
-        >>> style = getRootStyle() 
+        >>> style = getRootStyle()
         >>> # Works on generic elements as well as pages.
-        >>> e = Element(style=style) 
+        >>> e = Element(style=style)
         >>> view = PageView(context=context, style=style)
         >>> view.showNameInfo = True
         >>> view.drawNameInfo(e, (0, 0), path)
         """
         if (self.showNameInfo and e.isPage) or e.showNameInfo:
             # Position of text is based on crop mark size.
-            cmDistance = self.css('viewCropMarkDistance') 
+            cmDistance = self.css('viewCropMarkDistance')
             cmSize = self.css('viewCropMarkSize')
             cmSize -= cmDistance
             #cmSize = self.css('viewCropMarkSize') - cmDistance
@@ -425,8 +443,8 @@ class PageView(BaseView):
             x = self.pl + cmDistance
             y = self.pb + e.h - cmDistance #+ th
             self.context.stroke(registrationColor, 0.5)
-            self.context.line((x, y), (x + tw, y)) 
-            self.context.textBox(bs, (x, y, e.pw, th)) 
+            self.context.line((x, y), (x + tw, y))
+            self.context.textBox(bs, (x, y, e.pw, th))
 
     def getNameString(self, e, path):
         """
@@ -436,8 +454,8 @@ class PageView(BaseView):
         >>> from pagebot.style import getRootStyle
         >>> path = '_export/PageNameInfo.pdf'
         >>> # Get default values.
-        >>> style = getRootStyle() 
-        >>> e = Element(style=style) 
+        >>> style = getRootStyle()
+        >>> e = Element(style=style)
         >>> e.name = 'ElementName'
         >>> view = PageView(context=context, style=style)
         >>> view.showNameInfo = True
@@ -448,22 +466,22 @@ class PageView(BaseView):
         dt = datetime.datetime.now()
         d = dt.strftime("%A, %d. %B %Y %I:%M%p")
 
-        if e.isPage and e.parent is not None: 
+        if e.isPage and e.parent is not None:
             # Test if there is a document.
             pn = e.parent.getPageNumber(e)
 
             # First or only page on this page number, then just show pn[0].
-            if pn[1] == 0: 
+            if pn[1] == 0:
                 pn = pn[0]
 
             # More than one page, then show total.
-            if len(e.parent.pages) > 1: 
+            if len(e.parent.pages) > 1:
                 pn = '%s/%d' % (pn, len(e.parent.pages))
 
             title = e.parent.name or e.parent.title or 'Untitled'
             s = 'Page %s | %s | %s' % (pn, d, title)
 
-        else: 
+        else:
             # Otherwise always page number #1.
             pn = 1
             title = 'Untitled'
@@ -474,7 +492,7 @@ class PageView(BaseView):
 
         if path is not None:
             # We're only interested in the file name.
-             s += ' | %s' % path.split('/')[-1] 
+             s += ' | %s' % path.split('/')[-1]
 
         return s
 
@@ -600,7 +618,7 @@ class PageView(BaseView):
         flag "showOrigin" defines if the origin marker of an element is drawn.
         Collect the (e, origin), so we can later draw all info, after the main
         drawing has been done.
-        
+
         TODO: finish and test.
         """
 
@@ -920,7 +938,6 @@ class PageView(BaseView):
         >>> page = doc[50]
         >>> page
         <Page #50 default (1000pt, 1000pt)>
-        >>> #print('drawBaselines')
         >>> view = doc.view
         >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
@@ -928,7 +945,7 @@ class PageView(BaseView):
         """
         show = e.showBaselineGrid or self.showBaselineGrid
 
-        # Sets the default, in case not drawing or show is True
+        # Sets the default, in case not drawing or show is True.
         if not show:
             return
 
@@ -936,22 +953,38 @@ class PageView(BaseView):
 
         p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
-        px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
+        # Ignore z-axis for now.
+        px, py, _ = e._applyAlignment(p)
 
-        baselineGrid = e.baselineGrid # Get the baseline grid of this element.
-        indexFontSize = max(9, min(16, baselineGrid*0.5)) # Index size depends on baseline.
-        indexGutter = baselineGrid/4 # Gutter between index marker and element padding
+        # Get the baseline grid of this element.
+        baselineGrid = e.baselineGrid
 
-        baselineYs = [] # Collect all baseline positions on e
+        # Index size depends on baseline.
+        indexFontSize = max(9, min(16, baselineGrid*0.5))
+
+        # Gutter between index marker and element padding
+        indexGutter = baselineGrid/4
+
+        # Collect all baseline positions on e.
+        baselineYs = []
+
         if e.originTop:
-            oy = yy = startY = (e.baselineGridStart or e.pt) # Assumes origin at top for context drawing
-            while yy < e.h: # Run over the the padding bottom until page side
+            # Assumes origin at top for context drawing.
+            oy = yy = startY = (e.baselineGridStart or e.pt)
+
+            # Run over the the padding bottom until page side.
+            while yy < e.h:
                 baselineYs.append(yy)
                 yy += baselineGrid
-        else: # Page origin is at the bottom
+
+        # Page origin is at the bottom.
+        else:
             startY = e.h - (e.baselineGridStart or e.pt)
-            oy = yy = startY # Assumes origin at bottom for context drawing.
-            while yy > 0: # Run over the the padding bottom until page side
+            # Assumes origin at bottom for context drawing.
+            oy = yy = startY
+
+            # Run over the the padding bottom until page side
+            while yy > 0:
                 baselineYs.append(yy)
                 yy -= baselineGrid
 
@@ -961,11 +994,13 @@ class PageView(BaseView):
         # Format of line numbers.
         style = dict(font=e.css('viewMarkerFont'), xTextAlign=RIGHT,
             fontSize=indexFontSize, stroke=noColor, textFill=baselineColor)
+
         context.fill(noColor)
         context.stroke(baselineColor, baselineWidth)
 
         for lineIndex, oy in enumerate(baselineYs):
             tl = tr = None
+
             if not background:
                 if BASE_INDEX_LEFT in show: # Shows line baseline index
                     tl = repr(lineIndex)
@@ -1179,7 +1214,7 @@ class PageView(BaseView):
     def build_drawBot(self, view, origin, **kwargs):
         """This method is called if the view is used as a placeable element
         inside another element, such as a Page or Template.
-        
+
         TODO: check OS, check if DrawBot is installed.
         """
         p = pointOffset(self.origin, origin)
