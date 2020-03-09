@@ -59,10 +59,10 @@ class VariableCircle(Element):
     >>> vc = VariableCircle(vfFont, parent=page, x=40, y=40, w=page.pw)
     >>> doc.export('_export/testVFCircle.pdf')
     """
- 
+
     R = 1#2/3 # Fontsize factor to draw glyph markers.
 
-    def __init__(self, font, s=None, draw3D=True, location=None, showAxisNames=True, 
+    def __init__(self, font, s=None, draw3D=True, location=None, showAxisNames=True,
         markerRadius=None, labelFont=None, labelFontSize=None, axisNameFontSize=None, **kwargs):
         Element.__init__(self, **kwargs)
         # Initialize the default Element behavior tags.
@@ -177,7 +177,7 @@ class VariableCircle(Element):
             if angle1 is not None and minValue != defaultValue:
                 markerX, markerY = self._angle2XY(angle1, r)
                 context.circle(mx+markerX, my+markerY, self.markerRadius)
-                
+
                 bs = context.newString(axisName, style=style)
                 tw, th = bs.size
                 context.text(bs, (mx + markerX + upt(markerX)/upt(r) * tw * 1.25 - tw/2, my + markerY + upt(markerY)/upt(r) * th * 1.6 - th/4))
@@ -218,7 +218,7 @@ class VariableCircle(Element):
         context.strokeWidth(self.strokeWidth)
         context.circle(mx, my, self.markerRadius)
 
-        
+
         # Draw axis names and DeltaLocation values
         #if self.showAxisNames:
         for axisName, (minValue, defaultValue, maxValue) in axes.items():

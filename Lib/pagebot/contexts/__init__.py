@@ -23,16 +23,21 @@ from pagebot.contexts.markup.svgcontext import SvgContext
 
 DrawBotContext = None
 hasDrawBot = False
+DEFAULT_CONTEXT = None
 
 if platform == 'darwin':
     try:
-        # TODO: check if drawBotContext exists first, ask to install.
-        from pagebotosx.contexts.drawbot.drawbotcontext import DrawBotContext
+        import drawBot
         hasDrawBot = True
     except:
         hasDrawBot = False
 
-DEFAULT_CONTEXT = None
+    try:
+        # TODO: check if drawBotContext exists first, ask to install.
+        from pagebotosx.contexts.drawbot.drawbotcontext import DrawBotContext
+    except:
+        pass
+
 CONTEXT_TYPE = None
 MAMP_PATH = None
 

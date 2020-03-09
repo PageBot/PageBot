@@ -24,7 +24,7 @@ import tornado.ioloop
 import tornado.web
 
 from pagebot.server.pagebothandler import PageBotHandler
-from pagebot.publications.websites.nanosite.nanotsite import NanoSite
+from pagebot.publications.websites.nanosite import NanoSite
 from pagebot.contexts import HtmlContext
 
 PORT = 5555
@@ -38,7 +38,7 @@ class AdHandler(tornado.web.RequestHandler):
     def get(self, slug):
         print('get %s' % slug)
         html = self.get_html()
-        self.write(html)                                               
+        self.write(html)
 
     def post(self, slug):
         print('post %s' % slug)

@@ -63,7 +63,6 @@ setup(
         'fontTools',
         'libsass',
         'markdown',
-        'SimpleIDML',
         'svgwrite',
         'tornado',]
     )

@@ -21,7 +21,7 @@ from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction
 from pagebot.toolbox.units import pointOffset
 from pagebot.fonttoolbox.objects.font import getInstance
 
-class Cube(BaseFontShow): 
+class Cube(BaseFontShow):
     """Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
@@ -33,7 +33,7 @@ class Cube(BaseFontShow):
 
     """
     def __init__(self, f, label=None, dx=None, dy=None, steps=None, axes=None, **kwargs):
-        """   
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -62,7 +62,7 @@ class Cube(BaseFontShow):
         self.f = f # Font instance
         self.label = label or 'Hn'
         self.steps = steps or 5
-        self.dx = dx 
+        self.dx = dx
         self.dy = dy
         # Set the relation between the axes and the cube ribs
         if axes is None:
@@ -80,7 +80,7 @@ class Cube(BaseFontShow):
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -99,7 +99,7 @@ class Cube(BaseFontShow):
         Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
         if the axis exists.
 
-        TODO: 
+        TODO:
         If the axis does not exist or not selected, do something else with the right column
         Add optional relation between VF-axes and cube ribs
         Automatic calculation of incrementing opsz range
@@ -127,7 +127,7 @@ class Cube(BaseFontShow):
             for yStep in range(self.steps):
                 # Draw right side of the cube.
                 opsz = opszRange[yStep]
-                x = ox + mx + xzStep * dx 
+                x = ox + mx + xzStep * dx
                 y = oy + my + xzStep * dy + 2 * yStep * dy
                 # Calculate the location
                 location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
@@ -138,9 +138,9 @@ class Cube(BaseFontShow):
                 tw, th = bs.size
                 c.text(bs, (x-tw/2, y))
 
-                if xzStep > 0: 
+                if xzStep > 0:
                     # Draw left side of the cube. Avoid double drawing on front axis
-                    x = ox + mx - xzStep * dx 
+                    x = ox + mx - xzStep * dx
                     location = self.getLocation(wght=1, wdth=-xzStep/2+1, opsz=opsz)
                     instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
@@ -151,17 +151,15 @@ class Cube(BaseFontShow):
         # Draw top part of the cube
         for xStep in range(1, self.steps):
             for zStep in range(1, self.steps):
-                    x = ox + mx + xStep * dx - zStep * dx 
+                    x = ox + mx + xStep * dx - zStep * dx
                     y = oy + my + (2 * self.steps - 2) * dy + xStep * dy + zStep * dy
-                    
+
                     location = self.getLocation(wght=-xStep/2+1, wdth=-zStep/2+1, opsz=opsz)
                     instance = getInstance(self.f, location)
                     style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
                     bs = c.newString(self.label, style=style)
                     tw, th = bs.size
                     c.text(bs, (x-tw/2, y))
-
-
 
 
 if __name__ == '__main__':
