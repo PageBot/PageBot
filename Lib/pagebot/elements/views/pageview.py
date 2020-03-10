@@ -444,7 +444,7 @@ class PageView(BaseView):
             y = self.pb + e.h - cmDistance #+ th
             self.context.stroke(registrationColor, 0.5)
             self.context.line((x, y), (x + tw, y))
-            self.context.textBox(bs, (x, y, e.pw, th))
+            self.context.textBox(bs, (x, y, e.pw, th * 1.5))
 
     def getNameString(self, e, path):
         """

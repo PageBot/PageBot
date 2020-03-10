@@ -813,7 +813,6 @@ class BaseContext(AbstractContext):
         self.circle(x, y, 1)
         self.fill(oldFill)
         self.stroke(oldStroke)
-        print('marker!!!')
 
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draws the sOrBs text string in rectangle r.
