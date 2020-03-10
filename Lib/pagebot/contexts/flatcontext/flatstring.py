@@ -398,14 +398,18 @@ class FlatString(BabelString):
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
+        dl0 = lineHeight0 - fontSize0
+        descender0 = self.getDescender(self.style)
+
         assert h0 >= lineHeight0
 
         x = x0
-        y = self.context.height - y0 - h0
+        y = self.context.height - y0 - h0 + dl0
         w = w0
         h = round(lineHeight0)
         h1 = round(lineHeight0)
         overflow = ''
+        baseline = h1 + descender0
 
         for i, d in enumerate(self.data):
             s = d['s']
@@ -429,7 +433,6 @@ class FlatString(BabelString):
                 break
 
             placedText.frame(x, y, w, h1)
-            baseline = y
             self.addToLines(x, baseline, placedText)
 
             # Overflow, looks up difference and creates a new strike until
