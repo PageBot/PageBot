@@ -21,14 +21,12 @@
 
 from math import pi, sin, cos
 
-from pagebot import getContext
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.element import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import pt, upt
 
-context = getContext()
 
 class VariableCircle(Element):
     """Interpret the content of the self.font variable font and draw a circle info graphic on that info.
@@ -109,6 +107,7 @@ class VariableCircle(Element):
 
     def _drawGlyphMarker(self, axisName, mx, my, glyphName, fontSize, location, strokeW=2):
         # Middle circle
+        context = self.context
         context.fill(1)
         context.stroke(0.7)
         context.strokeWidth(strokeW)

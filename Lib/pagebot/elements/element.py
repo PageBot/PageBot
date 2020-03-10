@@ -30,7 +30,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.elements.paths.pagebotpath import PageBotPath 
+from pagebot.elements.paths.pagebotpath import PageBotPath
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
@@ -41,8 +41,9 @@ from pagebot.gradient import Gradient, Shadow
 
 class Element:
     """The base element object.
-    
+
     FIXME: 8000+ lines, split up into smaller classes.
+    TODO: originTop=True disabled, restore and retest.
     """
 
     # Initializes the default Element behavior flags. These flags can be
@@ -53,7 +54,7 @@ class Element:
     isTextBox = False
     #isFlow property answers if nextElement or prevElement is defined.
     # Set to True by Page-like elements.
-    isPage = False 
+    isPage = False
     isView = False
     isImage = False
 
@@ -63,7 +64,7 @@ class Element:
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
-            originTop=False, left=None, top=None, right=None, bottom=None,
+            left=None, top=None, right=None, bottom=None,
             sId=None, lib=None, t=None, timeMarks=None, parent=None,
             context=None, name=None, cssClass=None, cssId=None, title=None,
             description=None, theme=None, keyWords=None, language=None,
@@ -82,7 +83,7 @@ class Element:
             showRegistrationMarks=None, showPadding=None,
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
-            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
+            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None, originTop=False,
             **kwargs):
 
         """Base initialize function for all Element constructors. Element
@@ -99,7 +100,7 @@ class Element:
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (10pt, 20pt, 100pt, 120pt, (22pt, 0pt, 0pt, 11pt), (33pt, 44pt, 55pt, 66pt))
         >>> # Default element has default proportions
-        >>> e = Element() 
+        >>> e = Element()
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
         >>> from pagebot import getContext
@@ -138,20 +139,22 @@ class Element:
         # Optional system / user / app ID, used by external application, such as
         # SketchContext. Can be None. If used self.findBysid(sId) works
         # recursively
-        self.sId = sId 
+        self.sId = sId
 
         # Initialize self._elements and self._eIds.
         self.clearElements()
         self.checkStyleArgs(kwargs)
         # Make default style for t == 0 from args
-        self.style = makeStyle(style, **kwargs) 
+        self.style = makeStyle(style, **kwargs)
 
         # If undefined yAlign and parent has origin on top, then default yAlign
         # to TOP. Local value is overwritten if there is a parent defined.
-        self._originTop = originTop 
+        #self._originTop = originTop
+        # Assuming origin is at the bottom (OS X style) for now.
+        self._originTop = False #originTop
 
         # Property seeks parent-->page.originTop value.
-        if yAlign is None and self.originTop: 
+        if yAlign is None and self.originTop is True:
             yAlign = TOP
 
         self.xAlign = xAlign
@@ -170,21 +173,21 @@ class Element:
             self.xyz = xyz
         elif xy is not None:
             # self.z is set to DEFAULT_DEPTH
-            self.xy = xy 
+            self.xy = xy
         else:
             self.xyz = x, y, z
 
         # Alternative attributes, to make it intuitive for the caller.
-        if whd is not None: 
+        if whd is not None:
             size = whd
         elif wh is not None:
             size = wh
 
         # Convenience attribute, setting self.w, self.h, self.d
-        if size is not None: 
+        if size is not None:
             # Works for (w, h) and (w, h, d)
-            self.size = size 
-        else: 
+            self.size = size
+        else:
             # Otherwise it is assumed that the values are set separately, still
             # default if None.
             self.w = w
@@ -192,25 +195,25 @@ class Element:
             self.d = d
 
         # Convenience attribute, setting self.scaleX, self.scaleY, self.scaleZ
-        if scale is not None: 
+        if scale is not None:
             # Works for (scaleX, scaleY) and (scaleX, scaleY, scaleZ)
-            self.scale = scale 
+            self.scale = scale
         else:
             self.scaleX = scaleX
             self.scaleY = scaleY
             self.scaleZ = scaleZ
 
         # If defined, set after the sizes and scales are set.
-        if proportional is not None: 
+        if proportional is not None:
             # Setting True keeps all size and scales proportional now.
-            self.proportional = proportional 
+            self.proportional = proportional
 
         self.padding = padding or (pt, pr, pb, pl, pzf, pzb)
         self.margin = margin or (mt, mr, mb, ml, mzf, mzb)
 
         if bleed is not None:
             # Property tuple (bt, br, bb, bl) ignores to expand into if None
-            self.bleed = bleed 
+            self.bleed = bleed
 
         # In case these specific position sides are defined, let them overwrite
         # any (x,y) Since top <--> bottom and left <--> right conflict, we only
@@ -243,7 +246,7 @@ class Element:
         self.shadow = shadow
         self.gradient = gradient
         # Optional frame path to draw instead of bounding box element rectangle.
-        self.framePath = framePath 
+        self.framePath = framePath
 
         # Set timer of this element.
         # Default TimeMarks from t == now() until arbitrary one day from now().
@@ -256,7 +259,7 @@ class Element:
         #    t = t0
         #self.t = t # Initialize self.style from t = 0
         # List of names of style entries that can interpolate in time.
-        #self.timeKeys = INTERPOLATING_TIME_KEYS 
+        #self.timeKeys = INTERPOLATING_TIME_KEYS
         self.t = 0
         self.timeMarks = []
         self.timeKeys = []
@@ -268,36 +271,36 @@ class Element:
 
         # Class and #Id attributes for HtmlContext usage. Optional CSS class
         # name. Ignored if None, not to overwrite cssClass of parents.
-        self.cssClass = cssClass 
+        self.cssClass = cssClass
         # Optional id name for use in CSS-output. Ignored if None.
-        self.cssId = cssId 
+        self.cssId = cssId
 
         # Optional resources that can be included for web output (HtmlContext).
         # Define string or file paths where to read content, instead of
         # constructing by the builder.
         # Set to string in case element has HTML as source.
-        self.htmlCode = htmlCode 
+        self.htmlCode = htmlCode
         # List or paths, in case full element HTML is defined in files.
-        self.htmlPaths = htmlPaths 
+        self.htmlPaths = htmlPaths
 
         # Generic naming and title.
         # Optional name of an element. Used as base for # id in case of
         # HTML/CSS export.
-        self.name = name 
+        self.name = name
         # Optional to make difference between title name, style property
-        self.title = title or name 
+        self.title = title or name
 
         # Element tree
         # Preset, so it exists for checking when appending parent.
-        self._parent = None 
+        self._parent = None
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root.
             # Caller must add self to its elements separately. Set references
             # in both directions. Remove any previous parent links.
-            self.parent = parent 
+            self.parent = parent
 
         # Conditional placement stuff. Allow singles.
-        if not conditions is None and not isinstance(conditions, (list, tuple)): 
+        if not conditions is None and not isinstance(conditions, (list, tuple)):
             conditions = [conditions]
 
         # Explicitedly stored local in element, not inheriting from ancesters.
@@ -310,36 +313,36 @@ class Element:
         # and layout of self.elements
         if clipPath is not None:
             # Make a copy, so translates won't affect the original
-            clipPath = clipPath.copy() 
+            clipPath = clipPath.copy()
 
         # Optional clip path to show the content. None otherwise.
-        self.clipPath = clipPath 
+        self.clipPath = clipPath
 
         # Area for conditions and drawing methods to report errors and
         # warnings.
-        self.report = [] 
+        self.report = []
         # Optional description of this element or its content. Otherwise None.
         # Can be string or BabelString
         self.description = description
         # Optional used for web pages
-        self.keyWords = keyWords 
+        self.keyWords = keyWords
         # Optional language code from HTML standard. Otherwise
         # DEFAULT_LANGUAGE.
-        self.language = language 
+        self.language = language
         # Save flow reference names
         # Element itself or name of the prev flow element
-        self.prevElement = prevElement 
+        self.prevElement = prevElement
         # Element itself or name of the next flow element
-        self.nextElement = nextElement 
+        self.nextElement = nextElement
         # Page element itself or name, identifier or index of the next page
         # that nextElement refers to,
-        self.nextPage = nextPage 
+        self.nextPage = nextPage
         # if a flow must run over page boundaries.
-        self.prevPage = prevPage 
+        self.prevPage = prevPage
         # Optional storage for the a thumbnail image path visualizing this element.
         # Used by Magazine/PartOfBook and others, to show a predefined
         # thumbnail of a page.
-        self.thumbPath = thumbPath 
+        self.thumbPath = thumbPath
 
         # Copy relevant info from template: w, h, elements, style, conditions,
         # next, prev, nextPage Initialze self.elements, add template elements
@@ -357,7 +360,7 @@ class Element:
         # View flags, set them as properties, so the right type is expanded
         # (e.g. from bool to list of sides). Initialize to default values by
         # property.
-        self.showBaselineGrid = showBaselineGrid 
+        self.showBaselineGrid = showBaselineGrid
         self.showCropMarks = showCropMarks
         self.showRegistrationMarks = showRegistrationMarks
         self.showPadding = showPadding
@@ -386,7 +389,7 @@ class Element:
             name = ':'+self.title
         elif self.name:
             name = ':'+self.name
-        else: 
+        else:
             # No naming, show unique self.eId:
             name = ':'+self.eId
 
@@ -401,14 +404,14 @@ class Element:
         ways units, x, y, w and h can be defined.
 
         >>> # Set as separate units.
-        >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120)) 
+        >>> e = Element(name='TestElement', x=100, y=200, w=pt(100), h=pt(120))
         >>> childE1 = Element(name='E1', x=pt(0), y=pt(0), size=pt(21, 22))
         >>> # E.g. set as tuple of units.
-        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12)) 
+        >>> childE2 = Element(name='E2', xy=pt(100, 0), size=pt(11, 12))
         >>> i1 = e.appendElement(childE1)
         >>> i2 = e.appendElement(childE2)
         >>> # Index of appended elements and length of parent.
-        >>> i1, i2, len(e) 
+        >>> i1, i2, len(e)
         (0, 1, 2)
         """
         return len(self.elements)
@@ -436,7 +439,7 @@ class Element:
             return self.parent.theme
 
         # No theme of parent defined.
-        return None 
+        return None
 
     def _set_theme(self, theme):
         self._theme = theme
@@ -464,8 +467,10 @@ class Element:
 
     def _get_isLocked(self):
         return self.css('isLocked', False)
+
     def _set_isLocked(self, isLocked):
         self.style['isLocked'] = isLocked
+
     isLocked = property(_get_isLocked, _set_isLocked)
 
     #   I M A G I N G
@@ -512,13 +517,13 @@ class Element:
         """
         # Set template value by property call, copying all template elements
         # and attributes.
-        self.template = template 
+        self.template = template
 
         if elements is not None:
             # Add optional list of additional elements.
             for e in elements or []:
                 # Add cross reference searching for eId of elements.
-                self.appendElement(e) 
+                self.appendElement(e)
 
     def _get_template(self):
         """Property get/set for e.template.
@@ -592,7 +597,7 @@ class Element:
         >>> from pagebot.toolbox.transformer import hex2dec
         >>> e = Element(name='TestElement', xy=pt(100, 200), size=pt(100, 120))
         >>> # Answers unique hex string in self._eId, such as '234FDC09FC10A0FA790'
-        >>> hex2dec(e.eId) > 1000 
+        >>> hex2dec(e.eId) > 1000
         True
         """
         return self._eId
@@ -644,15 +649,15 @@ class Element:
         >>> e1 = Element(name='Child')
         >>> i = e.appendElement(e1)
         >>> # Get child element by its name
-        >>> child = e.get('Child') 
+        >>> child = e.get('Child')
         >>> child is e1
         True
         >>> # Get child elements by is eId
-        >>> child = e.get(e1.eId) 
+        >>> child = e.get(e1.eId)
         >>> child is e1
         True
         >>> # Child has e as parent
-        >>> child.name, child.parent.name 
+        >>> child.name, child.parent.name
         ('Child', 'Parent')
         >>> e.get('OtherName') is None
         True
@@ -692,13 +697,13 @@ class Element:
         >>> e = Element(elements=[e])
         >>> page = Page(elements=[e])
         >>> # Find page upwards of parent line, starting a lowest e.
-        >>> parentPage = eb.getElementPage() 
+        >>> parentPage = eb.getElementPage()
         >>> page is parentPage
         True
         >>> eb = Element(name='Bottom')
         >>> e = Element(elements=[eb])
         >>> # Element parent line does not contain a page.
-        >>> eb.getElementPage() is None 
+        >>> eb.getElementPage() is None
         True
         """
         if self.isPage:
@@ -750,18 +755,18 @@ class Element:
         >>> e3 = Element(name='Child', elements=[e1, e2])
         >>> e = Element(name='Parent', elements=[e3])
         >>> # Get child element by its name
-        >>> child = e.get('Child') 
+        >>> child = e.get('Child')
         >>> child is e3
         True
         >>> # Find first down the list
-        >>> e.get('Deeper') is e1, e.get('Deeper') is e2 
+        >>> e.get('Deeper') is e1, e.get('Deeper') is e2
         (True, False)
         """
         if self.name == name:
             return self
         for e in self.elements:
             # Don't search on next page yet.
-            found = e.getElementByName(name) 
+            found = e.getElementByName(name)
             if found is not None:
                 return found
         return None
@@ -781,15 +786,15 @@ class Element:
         >>> e3 = Element(name='Child', elements=[e2])
         >>> e = Element(name='Parent', elements=[e3])
         >>> # Get all child elements matching name
-        >>> elements = e.deepFindAll(name='DeeperChild') 
+        >>> elements = e.deepFindAll(name='DeeperChild')
         >>> len(elements)
         2
         >>> # Get all child elements matching pattern
-        >>> elements = e.deepFindAll(pattern='Child') 
+        >>> elements = e.deepFindAll(pattern='Child')
         >>> len(elements)
         3
         >>> # Answer empty list if no element can be found
-        >>> elements = e.deepFindAll(pattern='XYZ') 
+        >>> elements = e.deepFindAll(pattern='XYZ')
         >>> len(elements)
         0
         """
@@ -798,7 +803,7 @@ class Element:
             result = []
         for e in self.elements:
             # Simple pattern match
-            if pattern is not None and pattern in e.name: 
+            if pattern is not None and pattern in e.name:
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
@@ -820,15 +825,15 @@ class Element:
         >>> e3 = Element(name='Child')
         >>> e = Element(name='Parent', elements=[e1, e2, e3])
         >>> # Get all child element matching name
-        >>> elements = e.findAll(name='OtherChild') 
+        >>> elements = e.findAll(name='OtherChild')
         >>> len(elements)
         2
         >>> # Get all child element matching name
-        >>> elements = e.findAll(pattern='Child') 
+        >>> elements = e.findAll(pattern='Child')
         >>> len(elements)
         3
         >>> # Answer empty list if no element can be found
-        >>> elements = e.findAll(pattern='XYZ') 
+        >>> elements = e.findAll(pattern='XYZ')
         >>> len(elements)
         0
         """
@@ -839,7 +844,7 @@ class Element:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                  result.append(e)
                 # Simple pattern match
-            elif pattern is not None and pattern in e.name: 
+            elif pattern is not None and pattern in e.name:
                 result.append(e)
             elif name is not None and name in (e.cssId, e.name):
                 result.append(e)
@@ -864,26 +869,26 @@ class Element:
         >>> e3 = Element(name='DeeperChild', parent=e2)
         >>> e4 = Element(name='DeepestChild', parent=e3)
         >>> # Get all child elements matching name
-        >>> element = e.deepFind(name='DeeperChild') 
+        >>> element = e.deepFind(name='DeeperChild')
         >>> element is e2
         True
         >>> # Get first child elements matching pattern
-        >>> element = e.deepFind(pattern='Child') 
+        >>> element = e.deepFind(pattern='Child')
         >>> element is e1
         True
         >>> # Search is case-sensitive
-        >>> e.select(name='child') is None 
+        >>> e.select(name='child') is None
         True
         >>> # Get first child elements matching pattern
-        >>> element = e.deepFind(pattern='Deepest') 
+        >>> element = e.deepFind(pattern='Deepest')
         >>> element is e4
         True
         >>> # Answer None if element does not exist
-        >>> element = e.deepFind(pattern='XYZ') 
+        >>> element = e.deepFind(pattern='XYZ')
         >>> element is None
         True
         >>> # Get all child elements matching name
-        >>> element = e.select(name='DeeperChild') 
+        >>> element = e.select(name='DeeperChild')
         >>> element is e2
         True
         """
@@ -901,7 +906,7 @@ class Element:
         return None
 
     # Intuitive name with identical result. Can be used in MarkDown.
-    select = deepFind 
+    select = deepFind
 
     def find(self, name=None, pattern=None, cls=None):
         """Perform a dynamic find for the named element(s) in self.elements.
@@ -918,15 +923,15 @@ class Element:
         >>> e2 = Element(name='OtherChild', parent=e)
         >>> e3 = Element(name='LastChild', parent=e)
         >>> # Get first child element matching name
-        >>> element = e.find(name='OtherChild') 
+        >>> element = e.find(name='OtherChild')
         >>> element is e1
         True
         >>> # Get first child element matching name
-        >>> element = e.find(pattern='LastChild') 
+        >>> element = e.find(pattern='LastChild')
         >>> element is e3
         True
         >>> # Get first child element matching name
-        >>> element = e.find(pattern='XYZ') 
+        >>> element = e.find(pattern='XYZ')
         >>> element is None
         True
         """
@@ -936,7 +941,7 @@ class Element:
             if cls is not None and (cls == e.__class__.__name__ or isinstance(e, cls)):
                 return e
             # Simple pattern match
-            if pattern is not None and pattern in e.name: 
+            if pattern is not None and pattern in e.name:
                 return e
             if name is not None and name in (e.cssId, e.name):
                 return e
@@ -987,10 +992,10 @@ class Element:
         >>> copyE.name == e.name, copyE.eId == e.eId
         (True, False)
         >>> # Element tree is copied
-        >>> copyE is e, copyE['Child'] is e['Child'] 
+        >>> copyE is e, copyE['Child'] is e['Child']
         (False, False)
         >>> # Values are copied
-        >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100 
+        >>> copyE.name == e.name, copyE.w == e.w == 200, copyE['Child'].w == e['Child'].w == 100
         (True, True, True)
         >>> e.copy().eId != e.eId
         True
@@ -1066,7 +1071,7 @@ class Element:
         >>> e.elements[1] is e3, index == 1
         (True, True)
         >>> # Add at end
-        >>> e.setElementByIndex(e2, 20) 
+        >>> e.setElementByIndex(e2, 20)
         2
         >>> e4 = Element(name='Child4')
         >>> e.setElementByIndex(e2, -2) is None
@@ -1074,7 +1079,7 @@ class Element:
         """
         if index < 0:
             # Don't accept.
-            return None 
+            return None
         if index < len(self.elements):
             self._elements[index] = e
             if self.eId:
@@ -1096,7 +1101,7 @@ class Element:
         >>> e.elements[-1] is e3
         True
         >>> # Append elements that is already child of e
-        >>> i = e.appendElement(e1) 
+        >>> i = e.appendElement(e1)
         >>> # Now e1 is at end of list
         >>> e.elements[0] is e2, e.elements[-1] is e1, e.elements[1] is e3
         (True, True, True)
@@ -1135,13 +1140,13 @@ class Element:
         >>> e.removeElement(e2)
         <Element:Child2 (0pt, 0pt, 100pt, 100pt)>
         >>> # e2 has no parent now.
-        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None 
+        >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None
         (True, True, True)
         """
         assert e.parent is self
 
         # Unlink the parent reference of e
-        e.setParent(None) 
+        e.setParent(None)
 
         if e.eId in self._eIds:
             del self._eIds[e.eId]
@@ -1150,7 +1155,7 @@ class Element:
             self._elements.remove(e)
 
         # Answer the unlinked elements.
-        return e 
+        return e
 
     #   C H I L D  E L E M E N T  P O S I T I O N S
 
@@ -1165,15 +1170,15 @@ class Element:
         >>> e.getElementsAtPoint((20, 30)) == [e1]
         True
         >>> # Search on wildcard x
-        >>> e.getElementsAtPoint((None, 40)) == [e2] 
+        >>> e.getElementsAtPoint((None, 40)) == [e2]
         True
         >>> # Find both on wildcard y
-        >>> e.getElementsAtPoint((20, None)) == [e1, e2] 
+        >>> e.getElementsAtPoint((20, None)) == [e1, e2]
         True
         """
         elements = []
         # Add z if tuple is only (x,y)
-        px, py, pz = point3D(point) 
+        px, py, pz = point3D(point)
         for e in self.elements:
             ex, ey, ez = e.xyz
             if (ex == px or px is None) and \
@@ -1208,7 +1213,7 @@ class Element:
         >>> e1 = Element(name='Child1', x=20, y=30)
         >>> e2 = Element(name='Child2', x=20, y=40, w=100)
         >>> # Same position, different size.
-        >>> e3 = Element(name='Child3', x=20, y=40, w=200) 
+        >>> e3 = Element(name='Child3', x=20, y=40, w=200)
         >>> e = Element(name='Parent', elements=[e1, e2, e3])
         >>> e1.xyz, e2.xyz, e3.xyz
         ((20pt, 30pt, 0pt), (20pt, 40pt, 0pt), (20pt, 40pt, 0pt))
@@ -1221,7 +1226,7 @@ class Element:
         positions = {}
         for e in self.elements:
             # Point needs to be tuple to be used a key.
-            rxyz = rv(e.xyz) 
+            rxyz = rv(e.xyz)
             if rxyz not in positions:
                 positions[rxyz] = []
             positions[rxyz].append(e)
@@ -1252,40 +1257,40 @@ class Element:
         >>> e1_1.next.name
         'e2'
         >>> # Crosses page borders.
-        >>> e1_1.next.next == e2_1 
+        >>> e1_1.next.next == e2_1
         True
         >>> # Crosses page borders
-        >>> e2_2.next.next.next.next == e3_3 
+        >>> e2_2.next.next.next.next == e3_3
         True
         >>> # End of flow
-        >>> e3_2.next.next is None 
+        >>> e3_2.next.next is None
         True
         >>> # Gets repaired by the e3_2.next usage
-        >>> e3_2.prevElement 
+        >>> e3_2.prevElement
         'e1'
         >>> # Get repaired by the e3_1.next usage.
-        >>> e3_1.prevPage 
+        >>> e3_1.prevPage
         (2, 0)
         """
         nextElement = None
 
         # If there is a next element reference defined.
-        if self.nextElement is not None: 
+        if self.nextElement is not None:
             if isinstance(self.nextPage, Element):
                 page = self.nextPage
-            elif self.nextPage: 
+            elif self.nextPage:
                 # then check if we also make reference to a another page.
                 page = self.doc[self.nextPage]
-            else: 
+            else:
                 # If no next page reference, then refoer to the page of self.
                 page = self.page
 
             # Only if a page was found for this element.
-            if page is not None: 
+            if page is not None:
                 nextElement = page.select(self.nextElement)
                 if nextElement is not None:
                     # Repair in case it is broken.
-                    nextElement.prevElement = self.name 
+                    nextElement.prevElement = self.name
                     if self.nextPage:
                         nextElement.prevPage = self.page.pn
 
@@ -1321,19 +1326,19 @@ class Element:
         >>> e2_2 = Element(parent=page, name='e2', nextElement='e3')
         >>> e2_3 = Element(parent=page, name='e3')
         >>> # Identical to e1_1.flow
-        >>> flow = e1_1.getFlow() 
+        >>> flow = e1_1.getFlow()
         >>> len(flow)
         5
         >>> flow[1].page.pn
         (1, 0)
         >>> # Cross page border
-        >>> flow[3].page.pn 
+        >>> flow[3].page.pn
         (2, 0)
 
         """
         if flow is None:
             # List of elementa.
-            flow = []  
+            flow = []
         e = self
         while e is not None:
             flow.append(e)
@@ -1386,7 +1391,7 @@ class Element:
         >>> from pagebot.toolbox.units import mm, p
         >>> e = Element()
         >>> # Undefined without style or parent style.
-        >>> e.baselineGrid is None 
+        >>> e.baselineGrid is None
         True
         >>> e.baselineGrid = 12
         >>> e.baselineGrid
@@ -1399,7 +1404,7 @@ class Element:
         14pt
         """
         # In case relative units, use this as base for %
-        base = dict(base=self.parentH, em=self.em) 
+        base = dict(base=self.parentH, em=self.em)
         return units(self.css('baselineGrid'), base=base)
 
     def _set_baselineGrid(self, baselineGrid):
@@ -1412,7 +1417,7 @@ class Element:
 
         >>> e = Element()
         >>> # Undefined without style or parent style.
-        >>> e.baselineGridStart is None 
+        >>> e.baselineGridStart is None
         True
         >>> e.baselineGridStart = 17
         >>> e.baselineGridStart
@@ -1422,7 +1427,7 @@ class Element:
         15pt
         """
         # In case relative units, use this as base for %
-        base = dict(base=self.parentH, em=self.em) 
+        base = dict(base=self.parentH, em=self.em)
         return units(self.css('baselineGridStart'), base=base)
 
     def _set_baselineGridStart(self, baselineGridStart):
@@ -1455,7 +1460,7 @@ class Element:
         """Answers the distance between y and y rounded to baseline grid.
         This can be a negative number showing the direction of rounding
 
-        >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10, originTop=False)
+        >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10)
         >>> e.getDistance2Grid(pt(40))
         0pt
         >>> e.getDistance2Grid(45)
@@ -1463,7 +1468,7 @@ class Element:
         >>> e.getDistance2Grid(38)
         2pt
         """
-        if self.originTop:
+        if self.originTop is True:
             dy = y - self.baselineGridStart
         else:
             # Calculate the position of top of the grid
@@ -1478,7 +1483,7 @@ class Element:
 
     def isTopOnGrid(self, tolerance=0):
         """Answer True if self.top is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isTopOnGrid()
         True
@@ -1490,7 +1495,7 @@ class Element:
 
     def isBottomOnGrid(self, tolerance=0):
         """Answer True if self.bottom is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isBottomOnGrid()
         True
@@ -1502,7 +1507,7 @@ class Element:
 
     def isMiddleOnGrid(self, tolerance=0):
         """Answer True if self.middle is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isMiddleOnGrid()
         True
@@ -1737,7 +1742,7 @@ class Element:
         """Store the leading in the local style."""
         self.style['leading'] = units(leading)
     leading = property(_get_leading, _set_leading)
-    
+
     def _get_tracking(self):
         """Answers the current tracking value as defined in style. Text based
         inheriting elements may want to implement tracking as the value of the last
@@ -1753,7 +1758,7 @@ class Element:
         """Store the tracking in the local style."""
         self.style['tracking'] = units(tracking)
     tracking = property(_get_tracking, _set_tracking)
-    
+
     def _get_lib(self):
         """Answer the local element.lib dictionary by property, used for custom
         application value storage. Always make sure it is a dictionary.
@@ -1785,11 +1790,11 @@ class Element:
         parent = self.parent
         if parent is not None:
             # Either parent element or document.docLib.
-            return parent.docLib 
+            return parent.docLib
 
         # Document cannot be found, or there is there is no parent defined in
         # the element.
-        return None 
+        return None
     docLib = property(_get_docLib)
 
     def _get_doc(self):
@@ -2744,16 +2749,6 @@ class Element:
     def _get_middle(self):
         """On bounding box, not including margins.
 
-        >>> e = Element(y=100, h=248, yAlign=TOP, originTop=True)
-        >>> e.middle
-        224pt
-        >>> e.yAlign = BOTTOM
-        >>> e.middle
-        -24pt
-        >>> e.yAlign = MIDDLE
-        >>> e.middle
-        100pt
-
         >>> e = Element(y=100, h=248, yAlign=TOP, originTop=False)
         >>> e.yAlign = TOP
         >>> e.middle
@@ -2765,6 +2760,18 @@ class Element:
         >>> e.middle
         100pt
         """
+        """
+        >>> e = Element(y=100, h=248, yAlign=TOP, originTop=True)
+        >>> e.middle
+        224pt
+        >>> e.yAlign = BOTTOM
+        >>> e.middle
+        -24pt
+        >>> e.yAlign = MIDDLE
+        >>> e.middle
+        100pt
+        """
+
         yAlign = self.yAlign
         if yAlign == TOP:
             if self.originTop:
@@ -2793,7 +2800,8 @@ class Element:
 
     def _get_bottom(self):
         """On bounding box, not including margins.
-
+        """
+        """
         >>> e = Element(h=500, originTop=True, yAlign=TOP)
         >>> e.bottom
         500pt
@@ -2833,7 +2841,7 @@ class Element:
             self.y = y
     bottom = property(_get_bottom, _set_bottom)
 
-    def _get_mBottom(self): 
+    def _get_mBottom(self):
         # Bottom, including bottom margin.
         if self.originTop:
             return self.bottom + self.mb
@@ -2893,7 +2901,7 @@ class Element:
             self.z = z
     back = property(_get_back, _set_back)
 
-    def _get_mBack(self): 
+    def _get_mBack(self):
         # Front, including front margin.
         return self.back - self.css('mzb')
     def _set_mBack(self, z):
@@ -2911,7 +2919,7 @@ class Element:
         >>> e.fill
         Color(name="red")
         >>> # Construct color from tuple.
-        >>> e.fill = 1, 0, 0 
+        >>> e.fill = 1, 0, 0
         >>> e.fill
         Color(r=1, g=0, b=0)
         >>> e.fill = 0.5
@@ -2970,7 +2978,7 @@ class Element:
         >>> e.textFill
         Color(name="red")
         >>> # Construct color from tuple.
-        >>> e.textFill = 1, 0, 0 
+        >>> e.textFill = 1, 0, 0
         >>> e.textFill
         Color(r=1, g=0, b=0)
         >>> e.textFill = 0.5
@@ -2991,7 +2999,7 @@ class Element:
         >>> e.textStroke
         Color(name="red")
         >>> # Construct color from tuple.
-        >>> e.textStroke = 1, 0, 0 
+        >>> e.textStroke = 1, 0, 0
         >>> e.textStroke
         Color(r=1, g=0, b=0)
         >>> e.textStroke = 0.5
@@ -3035,7 +3043,7 @@ class Element:
             return border
 
         # If number, assume it is strokeWidth
-        if isinstance(border, (int, float)): 
+        if isinstance(border, (int, float)):
             strokeWidth = units(border)
 
         if stroke is None:
@@ -3043,14 +3051,14 @@ class Element:
 
         # Take current stroke width setting in css
         #if strokeWidth is None:
-        #    strokeWidth = self.strokeWidth 
+        #    strokeWidth = self.strokeWidth
 
         if line is None:
             line = ONLINE
 
         # Dash can be None
         # If 0, then answer an empty dict.
-        if not strokeWidth: 
+        if not strokeWidth:
             return {}
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
 
@@ -3369,7 +3377,9 @@ class Element:
     def _get_bleedOrigin(self):
         """Answers the origin of the element, shifted by the defined bleed and
         and depending the side of alignment.
+        """
 
+        """
         >>> from pagebot.toolbox.units import p
         >>> e = Element(bleed=p(1), xAlign=LEFT, yAlign=TOP, originTop=True)
         >>> e.bleed
@@ -3481,7 +3491,7 @@ class Element:
         parent = self.parent
         if parent is not None:
             # Add relative self to parents position.
-            return self.z + parent.rootZ 
+            return self.z + parent.rootZ
         return self.z
     rootZ = property(_get_rootZ)
 
@@ -3593,7 +3603,7 @@ class Element:
         (100pt, True)
         """
         # In case relative units, use this as base.
-        base = dict(base=self.parentH, em=self.em) 
+        base = dict(base=self.parentH, em=self.em)
         return units(self.css('h', 0), base=base)
 
     def _set_h(self, h):
@@ -3605,12 +3615,12 @@ class Element:
 
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
-        self.style['h'] = h 
+        self.style['h'] = h
 
     h = property(_get_h, _set_h)
 
         # Height, including margins
-    def _get_mh(self): 
+    def _get_mh(self):
         """Height property for self.mh style.  Note that since the margins are
         not considered by the self.proportional flag, changed in self.mw,
         self.mh and self.md may not stay proportional.
@@ -3635,29 +3645,29 @@ class Element:
 
         >>> e = Element()
         >>> # Default value
-        >>> e.d 
+        >>> e.d
         100pt
         >>> # Set min/max of element with constructor
-        >>> e = Element(d=100) 
+        >>> e = Element(d=100)
         >>> # Set depth value
-        >>> e.d = 101 
+        >>> e.d = 101
         >>> e.d
         101pt
         """
         # In case relative units, use this as base.
-        base = dict(base=self.parentD, em=self.em) 
+        base = dict(base=self.parentD, em=self.em)
         return units(self.css('d', 0), base=base)
 
     def _set_d(self, d):
         # Overwrite element local style from here, parent css becomes inaccessable.
-        self.style['d'] = units(d or DEFAULT_DEPTH) 
+        self.style['d'] = units(d or DEFAULT_DEPTH)
         d = units(d or DEFAULT_DEPTH)
         if self.proportional:
             if self.d:
                 self.style['w'] = d * self.w.pt/self.d.pt
                 self.style['h'] = d * self.h/self.d
         # Overwrite element local style from here, parent css becomes inaccessable.
-        self.style['d'] = d 
+        self.style['d'] = d
     d = property(_get_d, _set_d)
 
     def _get_md(self): # Depth, including margin front and margin back in z-axis.
@@ -3810,17 +3820,17 @@ class Element:
         50
         """
         # In case relative units, use this as base.
-        base = dict(base=self.h, em=self.em) 
+        base = dict(base=self.h, em=self.em)
         return units(self.css('mt', 0), base=base)
 
     def _set_mt(self, mt):
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
-        self.style['mt'] = units(mt or 0)  
+        self.style['mt'] = units(mt or 0)
     mt = property(_get_mt, _set_mt)
 
     # Margin bottom
-    def _get_mb(self): 
+    def _get_mb(self):
         """Margin bottom property. Relative unit values refer to the current
         self.h or self.em.
 
@@ -3892,13 +3902,13 @@ class Element:
         50
         """
         # In case relative units, use this as base.
-        base = dict(base=self.w, em=self.em) 
+        base = dict(base=self.w, em=self.em)
         return units(self.css('mr', 0), base=base)
 
     def _set_mr(self, mr):
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
-        self.style['mr'] = units(mr) 
+        self.style['mr'] = units(mr)
     mr = property(_get_mr, _set_mr)
 
     def _get_mzf(self): # Margin z-axis front
@@ -3946,12 +3956,12 @@ class Element:
         50
         """
         # In case relative units, use this as base.
-        base = dict(base=self.d, em=self.em) 
+        base = dict(base=self.d, em=self.em)
         return units(self.css('mzb', 0), base=base)
     def _set_mzb(self, mzb):
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
-        self.style['mzb'] = units(mzb)  
+        self.style['mzb'] = units(mzb)
     mzb = property(_get_mzb, _set_mzb)
 
     # Padding properties
@@ -4066,18 +4076,18 @@ class Element:
         >>> e.pt
         12pt
         >>> # Default conversion from numberts to points
-        >>> e.pt = 13 
+        >>> e.pt = 13
         >>> e.pt
         13pt
         >>> e.pt = pt(14)
         >>> e.pt
         14pt
         >>> # Verify that other padding did not change.
-        >>> e.padding 
+        >>> e.padding
         (14pt, 0pt, 0pt, 0pt)
         >>> e.pt = '10%'
         >>> # e.pt is abbreviation for padding-top. .pt is the property that converts to points.
-        >>> e.pt, e.pt.pt 
+        >>> e.pt, e.pt.pt
         (10%, 50)
         """
         base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
@@ -4314,9 +4324,10 @@ class Element:
         >>> e1 = Element()
         >>> e1.originTop # Undefined by default, means that origin is at bottom left.
         False
-        >>> e1 = Element(originTop=True)
-        >>> e1.originTop
-        True
+
+        >>> #e1 = Element(originTop=True)
+        >>> #e1.originTop
+        #True
         >>> e2 = Element(parent=e1, originTop=False)
         >>> e2.originTop # Overwritten by inherited parent.originTop
         True
@@ -4360,7 +4371,7 @@ class Element:
 
     def _set_size(self, size):
         # Disable the flag, we want to set the values independently
-        saveFlag = self.proportional 
+        saveFlag = self.proportional
         self.proportional = False
         if isinstance(size, (tuple, list)):
             assert len(size) in (2,3)
@@ -4378,7 +4389,7 @@ class Element:
         return self.w, self.h, self.d
 
     # Setting is idential for self.size3D and self.size
-    size3D = property(_get_size3D, _set_size) 
+    size3D = property(_get_size3D, _set_size)
 
     #   S H A D O W   &  G R A D I E N T
 
@@ -5170,20 +5181,20 @@ class Element:
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         # Ignore z-axis for now.
-        px, py, _ = p = self._applyAlignment(p) 
+        px, py, _ = p = self._applyAlignment(p)
 
         self._applyRotation(view, p)
 
         # Draw optional frame or borders.
-        self.buildFrame(view, p) 
+        self.buildFrame(view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True and self.isPage or if self.showFrame. Mark that we are drawing
         # background here.
-        view.drawPageMetaInfo(self, p, background=True)
+        view.drawPageMetaInfoBackground(self, p)#, background=True)
 
         # Call if defined.
-        if self.drawBefore is not None: 
+        if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
         # Draw the actual element content.  Inheriting elements classes can
@@ -5191,19 +5202,19 @@ class Element:
         # transformed position to draw in the main canvas.
         self.buildElement(view, p, drawElements, **kwargs)
 
-        if self.drawAfter is not None: 
+        if self.drawAfter is not None:
             # Call if defined.
             self.drawAfter(self, view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True and self.isPage or if self.showFrame. Mark that we are drawing
         # foreground here.
-        view.drawPageMetaInfo(self, p, background=False)
+        view.drawPageMetaInfo(self, p)
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
         # Depends on flag 'view.showElementInfo'.
-        view.drawElementInfo(self, origin) 
+        view.drawElementInfo(self, origin)
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the
@@ -5674,7 +5685,7 @@ class Element:
             return abs(self.mBottom - (boxY + boxH)) <= tolerance
         return abs(self.mBottom - boxY) <= tolerance
 
-    # Unimplemented here for text operations
+    # Unimplemented here for text operations.
 
     def isShrunkOnTextHeight(self, tolerance=0):
         """For non-text elements, this is always True to satisfy the calling condition."""
@@ -5692,7 +5703,7 @@ class Element:
         """For non-text elements, this is always True to satisfy the calling condition."""
         return True
 
-    # Float conditions to page padding
+    # Float conditions to page padding.
 
     def isFloatOnTop(self, tolerance=0):
         if self.originTop:
@@ -6581,11 +6592,11 @@ class Element:
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> # Element without parent answers False.
-        >>> e1.bottom2SideBottom() 
+        >>> e1.bottom2SideBottom()
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
         >>> # Inherited property.
-        >>> e1.originTop, e2.originTop 
+        >>> e1.originTop, e2.originTop
         (True, True)
         >>> success = e2.bottom2SideBottom()
         >>> e2.y, 500 - 120
@@ -6600,11 +6611,11 @@ class Element:
         (500pt, 500)
          >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
          >>> # Element without parent answers False.
-        >>> e1.bottom2SideBottom() 
+        >>> e1.bottom2SideBottom()
         False
         >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
         >>> # Inherited property.
-        >>> e1.originTop, e2.originTop 
+        >>> e1.originTop, e2.originTop
         (False, False)
         >>> success = e2.bottom2SideBottom()
         >>> e2.y, 120
@@ -6792,24 +6803,6 @@ class Element:
         The position of e2 element origin depends on the vertical
         alignment type.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.middle2Top() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.middle2Top()
-        >>> e2.y, 30 - 120/2
-        (-30pt, -30.0)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.middle2Top()
-        >>> e2.y, 30
-        (30pt, 30)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.middle2Top()
-        >>> e2.y, 30 + 120/2
-        (90pt, 90.0)
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.middle2Top() # Element without parent answers False
         False
@@ -6828,6 +6821,27 @@ class Element:
         >>> e2.y, 500 - 30 - 120/2, e1.h - e1.pt - e2.h/2
         (410pt, 410.0, 410pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30 - 120/2
+        (-30pt, -30.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2Top()
+        >>> e2.y, 30 + 120/2
+        (90pt, 90.0)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -6840,24 +6854,6 @@ class Element:
         """Move middle of the element to the top side of the parent.
         The position of e2 element origin depends on the vertical
         alignment type.
-
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.middle2SideTop() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.middle2SideTop()
-        >>> e2.y, -120/2
-        (-60pt, -60.0)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.middle2SideTop()
-        >>> e2.y
-        0pt
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.middle2SideTop()
-        >>> e2.y, 120/2
-        (60pt, 60.0)
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.middle2SideTop() # Element without parent answers False
@@ -6877,6 +6873,27 @@ class Element:
         >>> e2.y, 500 - 120/2, e1.h - e2.h/2
         (440pt, 440.0, 440pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.middle2SideTop() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.middle2SideTop()
+        >>> e2.y, -120/2
+        (-60pt, -60.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.middle2SideTop()
+        >>> e2.y
+        0pt
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.middle2SideTop()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -6986,24 +7003,6 @@ class Element:
         The position of e2 element origin depends on the vertical
         alignment type.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.top2Middle() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.top2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2
-        (225pt, 225.0)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.top2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120/2
-        (285pt, 285.0)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.top2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120
-        (345pt, 345.0)
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.top2Middle() # Element without parent answers False
         False
@@ -7022,6 +7021,27 @@ class Element:
         >>> e2.y, 80 + (500 - 30 - 80)/2 - 120, e1.pb + (e1.h - e1.pb - e1.pt)/2 - e2.h
         (155pt, 155.0, 155pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120/2
+        (285pt, 285.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2 + 120
+        (345pt, 345.0)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7034,24 +7054,6 @@ class Element:
         """Move top of the element to the middle between sides of the parent.
         The position of e2 element origin depends on the vertical alignment
         type.
-
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.top2MiddleSides() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.top2MiddleSides()
-        >>> e2.y, 500/2
-        (250pt, 250.0)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.top2MiddleSides()
-        >>> e2.y, 500/2 + 120/2
-        (310pt, 310.0)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.top2MiddleSides()
-        >>> e2.y, 500/2 + 120
-        (370pt, 370.0)
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.top2MiddleSides() # Element without parent answers False
@@ -7071,6 +7073,26 @@ class Element:
         >>> e2.y, 500/2 - 120, e1.h/2 - e2.h
         (130pt, 130.0, 130pt)
         """
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2MiddleSides() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2
+        (250pt, 250.0)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 + 120/2
+        (310pt, 310.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2MiddleSides()
+        >>> e2.y, 500/2 + 120
+        (370pt, 370.0)
+        """
+
         if self.parent is None:
             return False
         self.mTop = self.parent.h/2
@@ -7079,15 +7101,6 @@ class Element:
     def origin2Bottom(self):
         """Move origin of the element to the padding bottom of the parent.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.origin2Bottom() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.origin2Bottom()
-        >>> e2.y, 500 - 80
-        (420pt, 420)
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.origin2Bottom() # Element without parent answers False
@@ -7099,6 +7112,16 @@ class Element:
         >>> e2.y, 80, e1.pb
         (80pt, 80, 80pt)
         """
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.origin2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
         if self.parent is None:
             return False
         if self.originTop:
@@ -7106,19 +7129,10 @@ class Element:
         else:
             self.y = self.parent.pb
         return True
+        """
 
     def origin2SideBottom(self):
         """Move origin of the element to the padding bottom of the parent.
-
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.origin2SideBottom() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> e1.originTop, e2.originTop # Inherited property
-        (True, True)
-        >>> success = e2.origin2SideBottom()
-        >>> e2.y
-        500pt
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.origin2SideBottom() # Element without parent answers False
@@ -7130,6 +7144,19 @@ class Element:
         >>> e2.y, 0
         (0pt, 0)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2SideBottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> e1.originTop, e2.originTop # Inherited property
+        (True, True)
+        >>> success = e2.origin2SideBottom()
+        >>> e2.y
+        500pt
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7140,7 +7167,9 @@ class Element:
 
     def origin2Top(self):
         """Move origin of the element to the top padding of the parent.
+        """
 
+        """
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
         >>> e1.origin2Top() # Element without parent answers False
         False
@@ -7169,14 +7198,6 @@ class Element:
     def origin2SideTop(self):
         """Move origin of the element to the top side of the parent.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.origin2SideTop() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1)
-        >>> success = e2.origin2SideTop()
-        >>> e2.y
-        0pt
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.origin2SideTop() # Element without parent answers False
         False
@@ -7185,6 +7206,17 @@ class Element:
         >>> e2.y, e1.h
         (500pt, 500pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2SideTop() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2SideTop()
+        >>> e2.y
+        0pt
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7196,14 +7228,6 @@ class Element:
     def origin2Middle(self):
         """Move origin of the element to the top side of the parent.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.origin2Middle() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1)
-        >>> success = e2.origin2Middle()
-        >>> e2.y, 30 + (500 - 30 - 80)/2
-        (225pt, 225.0)
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.origin2Middle() # Element without parent answers False
         False
@@ -7212,6 +7236,17 @@ class Element:
         >>> e2.y, 80 + (500 - 30 - 80)/2
         (275pt, 275.0)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.origin2Middle() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1)
+        >>> success = e2.origin2Middle()
+        >>> e2.y, 30 + (500 - 30 - 80)/2
+        (225pt, 225.0)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7330,22 +7365,6 @@ class Element:
     def top2Bottom(self):
         """Move margin top of the element to the padding bottom of the parent.
 
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.top2Bottom() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> success = e2.top2Bottom()
-        >>> e2.y, 500 - 80
-        (420pt, 420)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.top2Bottom()
-        >>> e2.y, 500 - 80 + 120/2
-        (480pt, 480.0)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.top2Bottom()
-        >>> e2.y, 500 - 80 + 120
-        (540pt, 540)
-
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.top2Bottom() # Element without parent answers False
         False
@@ -7362,6 +7381,25 @@ class Element:
         >>> e2.y, 80 - 120, e1.pb - e2.h
         (-40pt, -40, -40pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Bottom() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80
+        (420pt, 420)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80 + 120/2
+        (480pt, 480.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Bottom()
+        >>> e2.y, 500 - 80 + 120
+        (540pt, 540)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7372,22 +7410,6 @@ class Element:
 
     def top2Top(self):
         """Move margin top of the element to the padding top of the parent.
-
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.top2Top() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> success = e2.top2Top()
-        >>> e2.y, 30
-        (30pt, 30)
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.top2Top()
-        >>> e2.y, 30 + 120/2
-        (90pt, 90.0)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.top2Top()
-        >>> e2.y, 30 + 120
-        (150pt, 150)
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.top2Top() # Element without parent answers False
@@ -7405,6 +7427,25 @@ class Element:
         >>> e2.y, 500 - 30 - 120, e1.h - e1.pt - e2.h
         (350pt, 350, 350pt)
         """
+
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2Top() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2Top()
+        >>> e2.y, 30
+        (30pt, 30)
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2Top()
+        >>> e2.y, 30 + 120/2
+        (90pt, 90.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2Top()
+        >>> e2.y, 30 + 120
+        (150pt, 150)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -7415,22 +7456,6 @@ class Element:
 
     def top2SideTop(self):
         """Move margin top of the element to the top side of the parent.
-
-        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
-        >>> e1.top2SideTop() # Element without parent answers False
-        False
-        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
-        >>> success = e2.top2SideTop()
-        >>> e2.y
-        0pt
-        >>> e2.yAlign = MIDDLE
-        >>> success = e2.top2SideTop()
-        >>> e2.y, 120/2
-        (60pt, 60.0)
-        >>> e2.yAlign = BOTTOM
-        >>> success = e2.top2SideTop()
-        >>> e2.y, 120
-        (120pt, 120)
 
         >>> e1 = Element(h=500, pt=30, pb=80, originTop=False)
         >>> e1.top2SideTop() # Element without parent answers False
@@ -7448,6 +7473,24 @@ class Element:
         >>> e2.y, 500 - 120, e1.h - e2.h
         (380pt, 380, 380pt)
         """
+        """
+        >>> e1 = Element(h=500, pt=30, pb=80, originTop=True)
+        >>> e1.top2SideTop() # Element without parent answers False
+        False
+        >>> e2 = Element(h=120, parent=e1, yAlign=TOP)
+        >>> success = e2.top2SideTop()
+        >>> e2.y
+        0pt
+        >>> e2.yAlign = MIDDLE
+        >>> success = e2.top2SideTop()
+        >>> e2.y, 120/2
+        (60pt, 60.0)
+        >>> e2.yAlign = BOTTOM
+        >>> success = e2.top2SideTop()
+        >>> e2.y, 120
+        (120pt, 120)
+        """
+
         if self.parent is None:
             return False
         if self.originTop:
@@ -8086,13 +8129,13 @@ class Element:
         """Set value, containing the parts of grid that should be shown. See
         pagebot.constants for the names of the options."""
         # Not inherited
-        return set(self.style.get('showGrid') or []) 
+        return set(self.style.get('showGrid') or [])
     def _set_showGrid(self, showGrid):
         if not showGrid:
             showGrid = []
         elif not isinstance(showGrid, (set, list, tuple)):
             # In case of single valid option, make into set
-            if showGrid in GRID_OPTIONS: 
+            if showGrid in GRID_OPTIONS:
                 showGrid = set([showGrid])
             else:
                 showGrid = DEFAULT_GRID
@@ -8112,7 +8155,7 @@ class Element:
             showBaselineGrid = []
         elif not isinstance(showBaselineGrid, (set, tuple, list)):
             # In case of single valid option, make into set
-            if showBaselineGrid in BASE_OPTIONS: 
+            if showBaselineGrid in BASE_OPTIONS:
                 showBaselineGrid = set([showBaselineGrid])
             else:
                 showBaselineGrid = DEFAULT_BASELINE
@@ -8123,7 +8166,7 @@ class Element:
         """Boolean value. If True show the vertical distance between text
         lines."""
         return self.style.get('showTextLeading', False) # Not inherited
- 
+
     def _set_showTextLeading(self, showTextLeading):
         self.style['showTextLeading'] = bool(showTextLeading)
     showTextLeading = property(_get_showTextLeading, _set_showTextLeading)

@@ -29,7 +29,7 @@ class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
     functionally compatible with a Cocoa attributed string and the CoreText
     typesetter.
-    
+
     * https://developer.apple.com/documentation/foundation/nsattributedstring
     * https://developer.apple.com/documentation/coretext/ctframesetter-2eg
 
@@ -98,7 +98,7 @@ class FlatString(BabelString):
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
         assert isinstance(s, str)
-    
+
         if style is None:
             style = {}
 
@@ -169,7 +169,7 @@ class FlatString(BabelString):
 
         # Untouched.
         if isinstance(given, (list, tuple)):
-            return self 
+            return self
 
         # Single index.
         fs = self.copy()
@@ -269,7 +269,7 @@ class FlatString(BabelString):
         """Answers the current leading value."""
         return self.style.get('leading', DEFAULT_LEADING)
         #leadingPt = upt(self.style.get('leading', DEFAULT_LEADING))
-        #return leadingPt 
+        #return leadingPt
 
     leading = property(_get_leading)
 
@@ -279,7 +279,7 @@ class FlatString(BabelString):
         return getLineHeight(self.leading, self.fontSize)
 
     # Compatibility with DrawBot API.
-    fontLineHeight = lineHeight = property(_get_lineHeight) 
+    fontLineHeight = lineHeight = property(_get_lineHeight)
 
     def _get_descender(self):
         return self.getDescender(self.style)
@@ -353,7 +353,7 @@ class FlatString(BabelString):
         >>> fs.asText()
         'ABC'
         """
-        return self.s 
+        return self.s
 
     def getBounds(self, glyphName, location, parent):
         # NOTE: bounds are none in case of whitespace.
@@ -366,6 +366,14 @@ class FlatString(BabelString):
     def textBox(self, page, box, align=LEFT):
         """Places text segments
         TODO: implement alignment.
+        TODO: store fonts in context cache.
+
+        #fontPath = getFontPath(style)
+        #font = Font(fontPath)
+        #upem = font.getUpem()
+        #ascender = font.getAscender()
+        #descender = font.getDescender()
+        #descender = ((fontSize / float(upem)) * descender)
 
         >>> from pagebot import getContext
         >>> from pagebot.style import makeStyle
@@ -383,56 +391,59 @@ class FlatString(BabelString):
         True
         """
         x0, y0, w0, h0 = box
-        x = x0
-        y = y0
-        w = w0
+        x0 = round(x0)
+        y0 = round(y0)
+        w0 = round(w0)
+        h0 = round(h0)
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
-        h = lineHeight0
+        dl0 = lineHeight0 - fontSize0
+        descender0 = self.getDescender(self.style)
 
+        assert h0 >= lineHeight0
+
+        x = x0
+        y = self.context.height - y0 - h0 + dl0
+        w = w0
+        h = round(lineHeight0)
+        h1 = round(lineHeight0)
         overflow = ''
+        baseline = h1 + descender0
 
-        for d in self.data:
+        for i, d in enumerate(self.data):
             s = d['s']
             text = d['text']
             strike = d['strike']
             style = d['style']
             plainstring = d['s']
             w1 = strike.width(s)
-
             descender = self.getDescender(style)
-            # TODO: store fonts in context cache.
-            #fontPath = getFontPath(style)
-            #font = Font(fontPath)
-            #upem = font.getUpem()
-            #ascender = font.getAscender()
-            #descender = font.getDescender()
-            #descender = ((fontSize / float(upem)) * descender)
+
+
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
             dl = lineHeight - fontSize
             placedText = page.place(text)
             s0 = plainstring
 
-            if h - descender > h0:
+            if h > h0:
                 s1 = self.getPlacedString(placedText)
                 overflow += self.getDiff(s0, s1)
                 break
 
-            placedText.frame(x, y + dl, w, lineHeight)
-            baseline = h0 - (y + lineHeight) - descender
+            placedText.frame(x, y, w, h1)
             self.addToLines(x, baseline, placedText)
 
-            # Overflow, looks up difference and creates a new strike untill
+            # Overflow, looks up difference and creates a new strike until
             # there's no more overflow or the textbox is too small.
             while placedText.overflow():
                 x = x0
-                y += lineHeight 
-                h += lineHeight 
+                y += h1
+                h += h1
                 w = w0
 
-                if h - descender > h0:
+                if h > h0:
                     s1 = self.getPlacedString(placedText)
                     overflow += self.getDiff(s0, s1)
                     break
@@ -443,14 +454,12 @@ class FlatString(BabelString):
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
-                baseline = h0 - (y + lineHeight) - descender
-                placedText.frame(x, y + dl, w, lineHeight)
+                baseline += h1
+                placedText.frame(x, y, w, h1)
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
-                    #print(self.getPlacedString(placedText))
                     break
-
 
             x += w1
             w -= w1
@@ -510,16 +519,16 @@ class FlatString(BabelString):
     def textSize(self, w=None, h=None):
         """Answers the `(w, h)` size tuple for a given width, with the current
         text.
-        
+
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> style = dict(font='Roboto-Regular', fontSize=12)
-        >>> fs = context.newString('ABC ', style=style)
+        >>> fs = context.newString('ABC', style=style)
         >>> fs
-        ABC 
+        ABC
         >>> size = fs.textSize()
         >>> size
-        (26.092, 16.8)
+        (23.115, 16.8)
         """
         w = self.strike.width(self.s)
         h = self.lineHeight
@@ -554,12 +563,12 @@ class FlatString(BabelString):
 
     def getStyleByIndex(self, index):
         """Should return style at data index.
-        
+
 
         for example:
 
             ...
-        
+
         """
 
     def getStyleAtIndex(self, index):
@@ -593,11 +602,11 @@ class FlatString(BabelString):
                 i += 1
 
         return False
-        
+
     MARKER_PATTERN = '==%s@%s=='
     FIND_FS_MARKERS = re.compile('\=\=([a-zA-Z0-9_\:\.]*)\@([^=]*)\=\=')
 
-    # 
+    #
 
     def appendMarker(self, markerId, arg):
         """Append an invisible marker string."""
@@ -647,7 +656,7 @@ class FlatString(BabelString):
         xHeight = font.getXHeight()
         return (fontSize / float(upem)) * xHeight
 
-    # 
+    #
 
     def getTextLines(self, w, h=None, align=LEFT):
         page = self.context.getTmpPage(w, h)
@@ -665,9 +674,9 @@ class FlatString(BabelString):
         * FIXME: implement pixelFit for Flat.
         * TODO: implement GSUB feature compile in Flat; make the transformed
         string using Tal's Compositor::
-        
+
             https://github.com/typesupply/compositor
-        
+
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')

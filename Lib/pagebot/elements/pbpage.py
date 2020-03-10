@@ -39,11 +39,11 @@ class Page(Element):
 
     GALLEY_CLASS = Galley
 
-    def __init__(self, originTop=None, isLeft=None, isRight=None, name=None,
-            htmlCode=None, htmlPath=None, headCode=None, headPath=None,
-            bodyCode=None, bodyPath=None, cssCode=None, cssPaths=None,
-            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None,
-            viewPort=None, favIconUrl=None, fileName=None, url=None,
+    def __init__(self, isLeft=None, isRight=None, name=None, htmlCode=None,
+            htmlPath=None, headCode=None, headPath=None, bodyCode=None,
+            bodyPath=None, cssCode=None, cssPaths=None, cssUrls=None,
+            jsCode=None, jsPaths=None, jsUrls=None, viewPort=None,
+            favIconUrl=None, fileName=None, url=None, originTop=False,
             webFontUrls=None, pn=None, **kwargs):
         """Add specific parameters for a page, besides the parameters for
         standard Elements.
@@ -60,7 +60,9 @@ class Page(Element):
         Element.__init__(self, **kwargs)
 
         # Set property, used by all child elements as reference.
-        self.originTop = originTop
+
+        # Assuming origin is at the bottom (OS X style) for now.
+        self.originTop = False #originTop
 
         # Defined default CSS class for pages.
         self.cssClass = self.cssClass or 'page'
@@ -390,7 +392,7 @@ class Page(Element):
     pn = pageNumber = property(_get_pn, _set_pn)
 
     def _get_index(self):
-        """Answer the index number of this page compared with all pages as 
+        """Answer the index number of this page compared with all pages as
         linear list. This ignores any spread or left/right settings in the document.
         Answer None if there is not parent document.
 
@@ -452,7 +454,7 @@ class Page(Element):
         # If there are child elements, draw them over the text.
         if drawElements:
             # Build child elements, depending in context build implementations.
-            self.buildChildElements(view, p, **kwargs) 
+            self.buildChildElements(view, p, **kwargs)
 
         # Draw addition page info, such as crop-mark, registration crosses,
         # etc. if parameters are set.
@@ -476,28 +478,28 @@ class Page(Element):
         >>> page.title = 'Home'
         >>> page.cssCode = 'body {background-color:black}'
         >>> # No extension for site folder if exporting to a website
-        >>> exportPath = '_export/Home' 
+        >>> exportPath = '_export/Home'
         >>> #doc.export(exportPath)
         >>> #result = os.system('open %s/index.html' % exportPath)
         """
         # Get current context and builder from this view.
-        context = view.context 
+        context = view.context
         # This is a bit more efficient than self.b once we got the context
         # fixed.
-        b = context.b 
+        b = context.b
         b.clearHtml()
 
         #b.clearCss()
         #self.build_scss(view)
 
         # In case the full HTML is here, then just output it.
-        if self.htmlCode: 
+        if self.htmlCode:
             # This is mostly used for debug and new templates.
-            b.addHtml(self.htmlCode) 
+            b.addHtml(self.htmlCode)
         elif self.htmlPaths is not None:
             for htmlPath in self.htmlPaths:
                 # Add HTML content of file, if path is not None and the file exists.
-                b.importHtml(htmlPath) 
+                b.importHtml(htmlPath)
         else:
             self.write_html(view, path)
 

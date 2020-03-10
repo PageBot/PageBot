@@ -135,7 +135,7 @@ class FlatContext(BaseContext):
         >>> from pagebot import getRootPath
         >>> from pagebot.toolbox.color import blackColor
         >>> # _export/* Files are ignored in git.
-        >>> exportPath = getRootPath() + '/_export' 
+        >>> exportPath = getRootPath() + '/_export'
         >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
         >>> w = h = pt(100)
@@ -203,14 +203,14 @@ class FlatContext(BaseContext):
             raise NotImplementedError(msg)
 
     # Compatible API with DrawBot.
-    saveImage = saveDrawing 
+    saveImage = saveDrawing
 
     def endDrawing(self, doc=None):
         del self.drawing
 
     def getDrawing(self):
         return self.drawing
-    
+
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.drawing, are ignored in Flat.
 
@@ -281,9 +281,9 @@ class FlatContext(BaseContext):
         >>> context = FlatContext()
         >>> w = 800
         >>> h = 600
-        >>> dx = 6 
+        >>> dx = 6
         >>> dy = 8
-        >>> context.newPage(w, h) 
+        >>> context.newPage(w, h)
         >>> x, y = 4, 5
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
@@ -299,7 +299,7 @@ class FlatContext(BaseContext):
         True
         >>> p2[1] == h - ((5 * 2) + dy)
         True
-        >>> p2 
+        >>> p2
         (14.0, 582.0)
         """
         z = 0
@@ -324,11 +324,11 @@ class FlatContext(BaseContext):
         >>> context.save()
         >>> boldFont = findFont('Roboto-Bold')
         >>> # Set by Font instance.
-        >>> context.font(boldFont) 
+        >>> context.font(boldFont)
         >>> context._font.endswith('Roboto-Bold.ttf')
         True
         >>> # Restore to original graphic state values.
-        >>> context.restore() 
+        >>> context.restore()
         >>> context._font.endswith('Roboto-Regular.ttf')
         True
         """
@@ -503,19 +503,17 @@ class FlatContext(BaseContext):
 
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
-
-        if self.originTop:
-            ypt = self.height - hpt
-        else:
-            ypt = self.height - ypt - hpt
-
         box = (xpt, ypt, wpt, hpt)
+        self.marker(xpt, ypt)
+        self.stroke((1, 0, 0))
+        self.fill(None)
+        self.rect(xpt, ypt, wpt, hpt)
         return fs.textBox(self.page, box)
 
     def textOverflow(self, fs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context.
-        
+
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> w = 400
         >>> h = 300
@@ -546,7 +544,7 @@ class FlatContext(BaseContext):
         TODO: update doctests.
 
         >>> # Default to point units.
-        >>> w = h = 500 
+        >>> w = h = 500
         >>> x = y = 0
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -607,15 +605,15 @@ class FlatContext(BaseContext):
         >>> context._font.endswith('/Roboto-Regular.ttf')
         True
         >>> # If doesn't exists, path is set to default.
-        >>> context.font('OtherFont', 12) 
+        >>> context.font('OtherFont', 12)
         >>> context._font == DEFAULT_FONT_PATH
         True
         >>> # Renders to pt-unit.
-        >>> context._fontSize 
+        >>> context._fontSize
         12
         """
-        # Convert name or path to font path. 
-        self._font = getFontPathOfFont(font) 
+        # Convert name or path to font path.
+        self._font = getFontPathOfFont(font)
 
         if fontSize is not None:
             self._fontSize = upt(fontSize)
@@ -627,14 +625,14 @@ class FlatContext(BaseContext):
         >>> from pagebot.toolbox.units import p
         >>> context = FlatContext()
         >>> # Set a unit.
-        >>> context.fontSize(p(1)) 
+        >>> context.fontSize(p(1))
         >>> # Defaults to pt-unit.
-        >>> context._fontSize 
+        >>> context._fontSize
         12
         >>> # Set a number.
-        >>> context.fontSize(14) 
+        >>> context.fontSize(14)
         >>> # Defaults to pt-unit.
-        >>> context._fontSize 
+        >>> context._fontSize
         14
         """
         self._fontSize = upt(fontSize)
@@ -739,7 +737,7 @@ class FlatContext(BaseContext):
             x1, y1 = self.getTransformed(*p1)
             x2, y2 = self.getTransformed(*p2)
             x3, y3 = self.getTransformed(*p3)
-            coordinates = (x, y, x1, y1, x2, y2, x3, y3) 
+            coordinates = (x, y, x1, y1, x2, y2, x3, y3)
             r = shape.polygon(coordinates)
             self.page.place(r)
 
@@ -748,7 +746,7 @@ class FlatContext(BaseContext):
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference.
-        
+
         TODO: don't scale width / height but calculate points before
         transforming. Also convert to a path so we can rotate.
         """
@@ -761,7 +759,7 @@ class FlatContext(BaseContext):
             kappa = .5522848
             offsetX = (w / 2) * kappa
             offsetY = (h / 2) * kappa
-       
+
             # Middle and other extreme points.
             x0 = x + (w / 2)
             y0 = y + (h / 2)
@@ -794,7 +792,7 @@ class FlatContext(BaseContext):
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
-        
+
         TODO: don't scale width and height but calculate points before
         transforming.
         """
@@ -941,22 +939,22 @@ class FlatContext(BaseContext):
         >>> w = 800
         >>> h = 600
         >>> angle = 5
-        >>> context.newPage(w, h) 
+        >>> context.newPage(w, h)
         >>> x, y = 40, 50
         >>> context.rotate(angle)
         >>> p1 = context.getTransformed(x, y)
         """
         angle = math.radians(angle)
-        # Sum of points? 
-        self._rotationCenter = center 
-        # Sum? 
-        self._rotate = self._rotate + angle 
+        # Sum of points?
+        self._rotationCenter = center
+        # Sum?
+        self._rotate = self._rotate + angle
 
         if center is None or center == (0, 0):
             self.transform3D = self.transform3D.rotate(angle)
         else:
             cx, cy = center
-            self.translate(cx, cy) 
+            self.translate(cx, cy)
             self.transform3D = self.transform3D.rotate(angle)
             self.translate(-cx, -cy)
 
@@ -975,7 +973,7 @@ class FlatContext(BaseContext):
             self.transform3D = self.transform3D.scale(sx, sy)
         else:
             cx, cy = center
-            self.translate(cx, cy) 
+            self.translate(cx, cy)
             self.transform3D = self.transform3D.scale(sx, sy)
             self.translate(-cx, -cy)
 
@@ -987,7 +985,7 @@ class FlatContext(BaseContext):
             self.transform3D = self.transform3D.skew(angle1, angle2)
         else:
             cx, cy = center
-            self.translate(cx, cy) 
+            self.translate(cx, cy)
             self.transform3D = self.transform3D.skew(angle1, angle2)
             self.translate(-cx, -cy)
 
