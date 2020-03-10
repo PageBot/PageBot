@@ -57,6 +57,12 @@ class Publication(Element):
         if templates is None:
             templates = self.TEMPLATES
         self.templates = templates
+        self.initialize()
+        
+    def initialize(self):
+        """Doing nothing by default. To be redefined by inheriting publications classes
+        for default initialization of document and pages.
+        """
 
     def getAPI(self):
         """Answers the API dictionary for this class that can be used by calling apps,

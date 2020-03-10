@@ -135,6 +135,9 @@ class RequestData:
                         self.args[queryKey] = []
                     self.args[queryKey].append(asIntOrValue(queryValue))
 
+    def __repr__(self):
+        return '<%s uri=%s>' % (self.__class__.__name__, self.uri)
+        
     def _get_path(self):
         path = '/'.join(self.dirs)
         # Test on valid extension
@@ -225,8 +228,12 @@ class BaseServer:
     def run(self, port=None):
         app = Application(self.requestHandlers)
         app.listen(self.port)
-        print('Server %s on port %d' % (self.__class__.__name__, self.port))
+        print('Start server %s on port %d' % (self.__class__.__name__, self.port))
         IOLoop.current().start()
+
+    def stop(self):
+        print('Stop server %s on port %d' % (self.__class__.__name__, self.port))
+        IOLoop.current().stop()
 
 if __name__ == '__main__':
     import doctest
