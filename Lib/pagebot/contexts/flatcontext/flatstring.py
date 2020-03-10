@@ -523,12 +523,12 @@ class FlatString(BabelString):
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> style = dict(font='Roboto-Regular', fontSize=12)
-        >>> fs = context.newString('ABC ', style=style)
+        >>> fs = context.newString('ABC', style=style)
         >>> fs
         ABC
         >>> size = fs.textSize()
         >>> size
-        (26.092, 16.8)
+        (23.115, 16.8)
         """
         w = self.strike.width(self.s)
         h = self.lineHeight
