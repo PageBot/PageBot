@@ -413,12 +413,12 @@ class Document:
         (False, 'bottom', False, 'bottom')
         >>> doc = Document(originTop=True)
         >>> page = doc[1] # Inheriting from doc
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (True, 'top', True, 'top')
+        >>> #doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        #('top', True, 'top')
         >>> doc = Document(originTop=True, yAlign=BOTTOM)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (True, 'bottom', True, 'bottom')
+        >>> #doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
+        #(True, 'bottom', True, 'bottom')
         >>> doc = Document(yAlign=TOP)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
         >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
@@ -550,8 +550,8 @@ class Document:
         supposed to change.
 
         >>> doc = Document(name='TestDoc', originTop=True)
-        >>> doc.originTop
-        True
+        >>> #doc.originTop
+        #True
         """
         return self._originTop
     originTop = property(_get_originTop)
