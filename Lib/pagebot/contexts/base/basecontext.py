@@ -803,7 +803,7 @@ class BaseContext(AbstractContext):
         y = round(y)
         s = '(%s, %s)' % (x, y)
         red = (1, 0, 0)
-        style = dict(font='Roboto-Regular', fontSize=pt(8), textFill=red)
+        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
         bs = self.newString(s, style=style)
         oldStroke = self._stroke
         oldFill = self._fill

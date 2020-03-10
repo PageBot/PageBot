@@ -501,7 +501,7 @@ class PageView(BaseView):
 
     def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, draw the flow connections
-        on the page, using their stroke/width settings of the style."""
+        on the page, using their stroke / width settings of the style."""
 
         context = self.context
         p = pointOffset(e.origin, origin)
@@ -567,6 +567,7 @@ class PageView(BaseView):
         yb1 = ym - onText * (xt - xs) * fmf
         xb2 = xm - onText * (yt - ys) * fmf
         yb2 = ym + onText * (xt - xs) * fmf
+
         # Arrow head position
         arrowSize = 12
         arrowAngle = 0.4
@@ -988,7 +989,7 @@ class PageView(BaseView):
         baselineWidth = e.style.get('baselineWidth', self.css('baselineWidth', DEFAULT_BASELINE_WIDTH))
 
         # Format of line numbers.
-        style = dict(font=e.css('viewMarkerFont'), xTextAlign=RIGHT,
+        style = dict(font=e.css('viewMarkerFont'), #xTextAlign=RIGHT,
             fontSize=indexFontSize, stroke=noColor, textFill=baselineColor)
 
         context.fill(noColor)
@@ -1018,6 +1019,7 @@ class PageView(BaseView):
             twl, thl = bsl.size
             twr, thr = bsr.size
 
+            '''
             if BASE_INSIDE in show:
                 if tl:
                     x = px + e.pl + indexGutter - twl*2
@@ -1030,21 +1032,25 @@ class PageView(BaseView):
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl + 2*indexGutter + twl*2, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
-                if tl:
-                    x = px + e.pl - twl*2 - indexGutter
-                    y = py + oy - thl/5
-                    w = twl*2
-                    h = thl
-                    r = (x, y, w, h)
-                    context.textBox(bsl, r)
-                    context.rect(x, y, w, h) # For debugging.
-                    context.marker(x, y)
+            '''
+            if tl:
+                x = px + e.pl - twl - indexGutter
+                y = py + oy - thl/5
+                w = twl
+                h = thl
+                r = (x, y, w, h)
+                context.fill(None)
+                context.textBox(bsl, r)
+                context.stroke((1, 0, 0))
+                context.rect(x, y, w, h) # For debugging.
+                context.marker(x, y)
 
-                if tr:
-                    context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
+            if tr:
+                context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
 
-                if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
-                    context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
+            if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
+                context.stroke((0, 1, 0))
+                context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
 
     #    M A R K E R S
 

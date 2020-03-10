@@ -30,11 +30,11 @@ class TextBox(Element):
 
     # Initialize the default behavior tags that are different from Element.
     # This element is capable of handling text.
-    isText = True  
+    isText = True
     isTextBox = True
 
     # Absolute minimum width of a text box. Avoid endless elastic height.
-    TEXT_MIN_WIDTH = 24 
+    TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, **kwargs):
         Element.__init__(self,  **kwargs)
@@ -47,17 +47,17 @@ class TextBox(Element):
         self._textLines = None
 
         # Force initialize upon first usage.
-        self._baselines = None 
+        self._baselines = None
 
         if size is not None:
             w, h = size
 
         # If h is None, height is elastic size.
-        self.w, self.h = w or DEFAULT_WIDTH, h 
+        self.w, self.h = w or DEFAULT_WIDTH, h
 
         # Set as property, to make sure there's always a context based
         # Babelstring or None.
-        self.bs = bs 
+        self.bs = bs
 
     def _get_bs(self):
         """Answer the stored formatted string. The value can be None.
@@ -76,7 +76,7 @@ class TextBox(Element):
         >>> page = doc[1]
         >>> tb = TextBox(parent=page, w=125, context=context)
         >>> # String converts to DrawBotString.
-        >>> tb.bs = 'AAA' 
+        >>> tb.bs = 'AAA'
         >>> tb.bs
         AAA
         >>> #tb.bs, tb.bs.s, tb.bs.__class__.__name__
@@ -126,7 +126,7 @@ class TextBox(Element):
         (150pt, True)
         """
         # In case of relative units, use this as base.
-        base = dict(base=self.parentW, em=self.em) 
+        base = dict(base=self.parentW, em=self.em)
         return units(self.css('w'), base=base)
 
     def _set_w(self, w):
@@ -167,10 +167,10 @@ class TextBox(Element):
     def _set_h(self, h):
         # Overwrite style from here, unless self.style['elasticH'] is True
         # If None, then self.h is elastic defined by content.
-        if h is not None: 
+        if h is not None:
             # Overwrites element local style from here, parent css becomes
             # inaccessable.
-            h = units(h or DEFAULT_HEIGHT) 
+            h = units(h or DEFAULT_HEIGHT)
 
         self.style['h'] = h
 
@@ -513,10 +513,10 @@ class TextBox(Element):
         nextElement = None
         if processed is None:
             # Keep track of what we did, to avoid circular references.
-            processed = set() 
+            processed = set()
 
         # If there is text overflow and there is a next element?
-        if overflow and self.nextElement: 
+        if overflow and self.nextElement:
 
             if self.nextPage: # Try to use element on another page?
                 # Try on several types in which the next page can be defined.
@@ -568,10 +568,10 @@ class TextBox(Element):
         # True.
         view.drawElementFrame(self, p, **kwargs)
         # Draw optional background, frame or borders.
-        self.buildFrame(view, p) 
+        self.buildFrame(view, p)
 
         # Call if defined.
-        if self.drawBefore is not None: 
+        if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
         # self has its own baseline drawing, derived from the text, instance of
