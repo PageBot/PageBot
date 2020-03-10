@@ -387,7 +387,6 @@ class FlatString(BabelString):
         y = y0
         w = w0
         h0 = round(h0)
-        print(y0)
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
@@ -425,7 +424,6 @@ class FlatString(BabelString):
             placedText.frame(x, y + descender, 100, 100)
             baseline = h0 - (y - lineHeight) - descender
             self.addToLines(x, baseline, placedText)
-            #print(placedText.overflow())
 
             # Overflow, looks up difference and creates a new strike until
             # there's no more overflow or the textbox is too small.
@@ -451,7 +449,6 @@ class FlatString(BabelString):
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
-                    #print(self.getPlacedString(placedText))
                     break
 
 
