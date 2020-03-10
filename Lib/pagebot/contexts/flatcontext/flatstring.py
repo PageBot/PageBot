@@ -401,9 +401,10 @@ class FlatString(BabelString):
         assert h0 >= lineHeight0
 
         x = x0
-        y = y0
+        y = self.context.height - y0 - h0
         w = w0
         h = round(lineHeight0)
+        h1 = round(lineHeight0)
         overflow = ''
 
         for i, d in enumerate(self.data):
@@ -427,16 +428,16 @@ class FlatString(BabelString):
                 overflow += self.getDiff(s0, s1)
                 break
 
-            placedText.frame(x, y, h, w)
-            baseline = h0 - (y - lineHeight)# - descender
+            placedText.frame(x, y, w, h1)
+            baseline = y
             self.addToLines(x, baseline, placedText)
 
             # Overflow, looks up difference and creates a new strike until
             # there's no more overflow or the textbox is too small.
             while placedText.overflow():
                 x = x0
-                y += lineHeight
-                h += lineHeight
+                y += h1
+                h += h1
                 w = w0
 
                 if h > h0:
@@ -450,14 +451,12 @@ class FlatString(BabelString):
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
-                print('overflow: %s' %s0)
-                baseline = h0 - (y + lineHeight) - descender
-                placedText.frame(x, y + dl, w, lineHeight)
+                baseline += h1
+                placedText.frame(x, y, w, h1)
                 self.addToLines(x, baseline, placedText)
 
                 if not placedText.overflow():
                     break
-
 
             x += w1
             w -= w1
