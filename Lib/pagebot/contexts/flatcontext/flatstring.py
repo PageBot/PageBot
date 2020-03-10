@@ -366,6 +366,14 @@ class FlatString(BabelString):
     def textBox(self, page, box, align=LEFT):
         """Places text segments
         TODO: implement alignment.
+        TODO: store fonts in context cache.
+
+        #fontPath = getFontPath(style)
+        #font = Font(fontPath)
+        #upem = font.getUpem()
+        #ascender = font.getAscender()
+        #descender = font.getDescender()
+        #descender = ((fontSize / float(upem)) * descender)
 
         >>> from pagebot import getContext
         >>> from pagebot.style import makeStyle
@@ -383,15 +391,19 @@ class FlatString(BabelString):
         True
         """
         x0, y0, w0, h0 = box
-        x = x0
-        y = y0
-        w = w0
+        x0 = round(x0)
+        y0 = round(y0)
+        w0 = round(w0)
         h0 = round(h0)
 
         fontSize0 = upt(self.style.get('fontSize', DEFAULT_FONT_SIZE))
         lineHeight0 = upt(self.style.get('leading', DEFAULT_LEADING), base=fontSize0)
-        h = lineHeight0
+        assert h0 >= lineHeight0
 
+        x = x0
+        y = y0
+        w = w0
+        h = round(lineHeight0)
         overflow = ''
 
         for i, d in enumerate(self.data):
@@ -401,15 +413,9 @@ class FlatString(BabelString):
             style = d['style']
             plainstring = d['s']
             w1 = strike.width(s)
-
             descender = self.getDescender(style)
-            # TODO: store fonts in context cache.
-            #fontPath = getFontPath(style)
-            #font = Font(fontPath)
-            #upem = font.getUpem()
-            #ascender = font.getAscender()
-            #descender = font.getDescender()
-            #descender = ((fontSize / float(upem)) * descender)
+
+
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
             dl = lineHeight - fontSize
@@ -421,8 +427,8 @@ class FlatString(BabelString):
                 overflow += self.getDiff(s0, s1)
                 break
 
-            placedText.frame(x, y + descender, 100, 100)
-            baseline = h0 - (y - lineHeight) - descender
+            placedText.frame(x, y, h, w)
+            baseline = h0 - (y - lineHeight)# - descender
             self.addToLines(x, baseline, placedText)
 
             # Overflow, looks up difference and creates a new strike until
@@ -433,7 +439,7 @@ class FlatString(BabelString):
                 h += lineHeight
                 w = w0
 
-                if h - descender > h0:
+                if h > h0:
                     s1 = self.getPlacedString(placedText)
                     overflow += self.getDiff(s0, s1)
                     break
@@ -444,6 +450,7 @@ class FlatString(BabelString):
                 w1 = strike.width(diff)
                 placedText = page.place(text)
                 s0 = diff
+                print('overflow: %s' %s0)
                 baseline = h0 - (y + lineHeight) - descender
                 placedText.frame(x, y + dl, w, lineHeight)
                 self.addToLines(x, baseline, placedText)

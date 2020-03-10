@@ -503,13 +503,11 @@ class FlatContext(BaseContext):
 
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
-
-        if self.originTop:
-            ypt = self.height - hpt
-        else:
-            ypt = self.height - ypt - hpt
-
         box = (xpt, ypt, wpt, hpt)
+        self.marker(xpt, ypt)
+        self.stroke((1, 0, 0))
+        self.fill(None)
+        self.rect(xpt, ypt, wpt, hpt)
         return fs.textBox(self.page, box)
 
     def textOverflow(self, fs, box, align=LEFT):
