@@ -842,10 +842,6 @@ class PageView(BaseView):
                 x = px + e.pl # Position on left padding of page/e
                 y1 = py + e.pb
                 y2 = y1 + e.ph
-                #print(self)
-                #print(e.pl)
-                #print(e.padding)
-                #print(y1)
 
                 for cw in gridX:
                     if isinstance(cw, (tuple, list)):
@@ -950,9 +946,9 @@ class PageView(BaseView):
             return
 
         context = self.context
-
         p = pointOffset(e.origin, origin)
         p = self._applyScale(e, p)
+
         # Ignore z-axis for now.
         px, py, _ = e._applyAlignment(p)
 
@@ -1001,16 +997,20 @@ class PageView(BaseView):
         for lineIndex, oy in enumerate(baselineYs):
             tl = tr = None
 
-            if not background:
-                if BASE_INDEX_LEFT in show: # Shows line baseline index
-                    tl = repr(lineIndex)
-                elif BASE_Y_LEFT in show: # Show vertical position marker
-                    tl = repr(e.h - oy)
+            #if not background:
+            if BASE_INDEX_LEFT in show:
+                # Shows line baseline index.
+                tl = repr(lineIndex)
+            elif BASE_Y_LEFT in show:
+                # Show vertical position marker.
+                tl = repr(e.h - oy)
 
-                if BASE_INDEX_RIGHT in show: # Shows line baseline index
-                    tr = repr(lineIndex)
-                elif BASE_Y_RIGHT in show: # Show vertical position marker
-                    tr = repr(e.h - oy)
+            if BASE_INDEX_RIGHT in show:
+                # Shows line baseline index.
+                tr = repr(lineIndex)
+            elif BASE_Y_RIGHT in show:
+                # Show vertical position marker.
+                tr = repr(e.h - oy)
 
             bsl = context.newString(tl, style=style)
             bsr = context.newString(tr, style=style)
@@ -1020,16 +1020,29 @@ class PageView(BaseView):
 
             if BASE_INSIDE in show:
                 if tl:
-                    context.textBox(bsl, (px + e.pl + indexGutter - twl*2, py + oy - thl/5, twl*2, thl))
+                    x = px + e.pl + indexGutter - twl*2
+                    y = py + oy - thl/5
+                    w = twl*2
+                    h = thl
+                    context.textBox(bsl, (x, y, w, h))
                 if tr:
                     context.textBox(bsr, (px + e.pl + e.pw - twr - indexGutter, py + oy - thr/5, twr*2, thr))
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl + 2*indexGutter + twl*2, py + oy), (px + e.pw - 2*indexGutter - twr, py + oy))
             else:
                 if tl:
-                    context.textBox(bsl, (px + e.pl - twl*2 - indexGutter, py + oy - thl/5, twl*2, thl))
+                    x = px + e.pl - twl*2 - indexGutter
+                    y = py + oy - thl/5
+                    w = twl*2
+                    h = thl
+                    r = (x, y, w, h)
+                    context.textBox(bsl, r)
+                    context.rect(x, y, w, h) # For debugging.
+                    context.marker(x, y)
+
                 if tr:
                     context.textBox(bsr, (px + e.pl + e.pw + indexGutter, py + oy - thr/5, twr*2, thr))
+
                 if (background and BASE_LINE_BG in show) or (not background and BASE_LINE in show):
                     context.line((px + e.pl, py + oy), (px + e.w - e.pr, py + oy))
 

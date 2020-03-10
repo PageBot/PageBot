@@ -99,7 +99,7 @@ class BaseContext(AbstractContext):
         4
         >>> # Adding 2 points.
         >>> path.moveTo((0, 0))
-        >>> path.lineTo((100, 100)) 
+        >>> path.lineTo((100, 100))
         >>> len(context.bezierpath.points)
         4
         """
@@ -234,7 +234,7 @@ class BaseContext(AbstractContext):
         initialize self._bezierpath, which is accessed by the property
         self.bezierpath.  This method is using a BezierPath class path for
         drawing. For a more rich environment use PageBotPath(context) instead.
-        
+
         NOTE: PageBot function.
 
         >>> from pagebot import getContext
@@ -356,7 +356,7 @@ class BaseContext(AbstractContext):
         []
         >>> context.newPage(420, 420)
         >>> # Property self.bezierpath creates a self._bezierpath BezierPath.
-        >>> len(context.bezierpath.points) 
+        >>> len(context.bezierpath.points)
         0
         >>> context.moveTo((10, 10)) # moveTo and lineTo are drawing on context._bezierpath
         >>> context.lineTo((110, 10))
@@ -365,7 +365,7 @@ class BaseContext(AbstractContext):
         >>> context.closePath()
         >>> #len(context.bezierpath.points) #5
         >>> # Oval and rect don't draw on self._bezierpath (yet).
-        >>> context.oval(160-50, 160-50, 100, 100) 
+        >>> context.oval(160-50, 160-50, 100, 100)
         >>> context.bezierpath.points
         [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
         >>> #len(context.bezierpath.points) #5
@@ -402,7 +402,7 @@ class BaseContext(AbstractContext):
             path = self.bezierpath
 
         # If it's a PageBotPath, get the core BezierPath.
-        if hasattr(path, 'bp'): 
+        if hasattr(path, 'bp'):
             bezierPath = path.bp
             # If not forced as attribute, then try to get from the
             # PageBotPath.style.
@@ -414,7 +414,7 @@ class BaseContext(AbstractContext):
                 stroke = path.style.get('strokeWidth')
         else:
             # Otherwise we assume it is a context core BezierPath instance.
-            bezierPath = path 
+            bezierPath = path
 
         self.save()
 
@@ -798,6 +798,22 @@ class BaseContext(AbstractContext):
         """
         raise NotImplementedError
 
+    def marker(self, x, y):
+        x = round(x)
+        y = round(y)
+        s = '(%s, %s)' % (x, y)
+        red = (1, 0, 0)
+        style = dict(font='Roboto-Regular', fontSize=pt(8), textFill=red)
+        bs = self.newString(s, style=style)
+        oldStroke = self._stroke
+        oldFill = self._fill
+        self.text(bs, (x, y))
+        self.fill(red)
+        self.stroke(None)
+        self.circle(x, y, 1)
+        self.fill(oldFill)
+        self.stroke(oldStroke)
+
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draws the sOrBs text string in rectangle r.
 
@@ -970,7 +986,7 @@ class BaseContext(AbstractContext):
     def fontLineHeight(self):
         raise NotImplementedError
 
-    # 
+    #
 
     def BezierPath(self, path=None, glyphSet=None):
         return self.b.BezierPath(path=path, glyphSet=glyphSet)
