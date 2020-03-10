@@ -57,13 +57,13 @@ class Document:
     """
 
     # Allows inherited versions of the Page class.
-    PAGE_CLASS = Page 
+    PAGE_CLASS = Page
     DEFAULT_VIEWID = defaultViewClass.viewId
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
             title=None, pages=None, autoPages=1, template=None, templates=None,
-            originTop=False, startPage=None, sId=None, w=None, h=None, d=None,
-            size=None, wh=None, whd=None, padding=None, docLib=None,
+            startPage=None, sId=None, w=None, h=None, d=None,
+            size=None, wh=None, whd=None, padding=None, docLib=None, originTop=False,
             context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -81,7 +81,8 @@ class Document:
 
         # Set position of origin and direction of `y` for self and all
         # inheriting pages and elements as property. Not supposed to change.
-        self._originTop = originTop
+        # Assuming origin is at the bottom (OS X style) for debugging purposes.
+        self._originTop = False #originTop
 
         # If no theme is defined, then use the default theme class to create an
         # instance. Themes hold values and colors, combined in a theme.mood
@@ -173,7 +174,7 @@ class Document:
         """Answers the global storage dictionary, used by TypeSetter and others
         to keep track of footnotes, table of content, etc. Some common entries
         are predefined.
-        
+
         NOTE: In the future this lib could be saved to JSON in case it needs to
         be shared between documents. E.g. this could happen if a publication is
         generated from multiple independents documents, that need to exchange
@@ -1043,27 +1044,27 @@ class Document:
         the end. If template is undefined, then use self.defaultTemplate to
         initialize the new page.
 
-        >>> doc = Document(w=80, h=120, originTop=False)
+        >>> doc = Document(w=80, h=120)
         >>> page = doc[1]
         >>> page.size
         (80pt, 120pt)
         >>> # Value copied into the new page setting.
-        >>> page.originTop 
-        False
-        >>> doc = Document(originTop=True)
-        >>> page = doc[1]
         >>> page.originTop
-        True
+        False
+        >>> #doc = Document(originTop=True)
+        >>> #page = doc[1]
+        >>> #page.originTop
+        #True
         """
         if isinstance(template, str):
             template = self.templates.get(template)
 
         # Find the template with this name.
-        if isinstance(template, str): 
+        if isinstance(template, str):
             template = self.getTemplate(template)
 
     # Not defined or template not found, then use default
-        if template is None: 
+        if template is None:
             template = self.defaultTemplate
 
         if not name and template is not None:
@@ -1083,7 +1084,7 @@ class Document:
         # Don't set parent to self yet, as this will make the page create a #1.
         # Setting of page.parent is done by self.appendPage, for the right page
         # number.
-        page = self.PAGE_CLASS(w=w, h=h, name=name, originTop=originTop, **kwargs)
+        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs) # originTop=originTop
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
@@ -1130,7 +1131,7 @@ class Document:
         page.
 
         >>> from pagebot.constants import Tabloid
-        >>> doc = Document(autoPages=4, size=Tabloid, originTop=False)
+        >>> doc = Document(autoPages=4, size=Tabloid)
         >>> len(doc.pages), len(doc)
         (4, 4)
         >>> page = doc[2]
@@ -1466,7 +1467,7 @@ class Document:
                 or viewId, w=self.w, h=self.h, context=context)
 
         # Just set parent, without all functionality of self.addElement()
-        view.setParent(self) 
+        view.setParent(self)
         return view
 
     #   S A V E   . J S O N

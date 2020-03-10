@@ -63,7 +63,7 @@ class Element:
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
-            originTop=False, left=None, top=None, right=None, bottom=None,
+            left=None, top=None, right=None, bottom=None,
             sId=None, lib=None, t=None, timeMarks=None, parent=None,
             context=None, name=None, cssClass=None, cssId=None, title=None,
             description=None, theme=None, keyWords=None, language=None,
@@ -82,7 +82,7 @@ class Element:
             showRegistrationMarks=None, showPadding=None,
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
-            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
+            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None, originTop=False,
             **kwargs):
 
         """Base initialize function for all Element constructors. Element
@@ -148,10 +148,12 @@ class Element:
 
         # If undefined yAlign and parent has origin on top, then default yAlign
         # to TOP. Local value is overwritten if there is a parent defined.
-        self._originTop = originTop
+        #self._originTop = originTop
+        # Assuming origin is at the bottom (OS X style) for now.
+        self._originTop = False #originTop
 
         # Property seeks parent-->page.originTop value.
-        if yAlign is None and self.originTop:
+        if yAlign is None and self.originTop is True:
             yAlign = TOP
 
         self.xAlign = xAlign
@@ -1455,7 +1457,7 @@ class Element:
         """Answers the distance between y and y rounded to baseline grid.
         This can be a negative number showing the direction of rounding
 
-        >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10, originTop=False)
+        >>> e = Element(h=500, baselineGridStart=100, baselineGrid=10)
         >>> e.getDistance2Grid(pt(40))
         0pt
         >>> e.getDistance2Grid(45)
@@ -1463,7 +1465,7 @@ class Element:
         >>> e.getDistance2Grid(38)
         2pt
         """
-        if self.originTop:
+        if self.originTop is True:
             dy = y - self.baselineGridStart
         else:
             # Calculate the position of top of the grid
@@ -1478,7 +1480,7 @@ class Element:
 
     def isTopOnGrid(self, tolerance=0):
         """Answer True if self.top is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isTopOnGrid()
         True
@@ -1490,7 +1492,7 @@ class Element:
 
     def isBottomOnGrid(self, tolerance=0):
         """Answer True if self.bottom is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isBottomOnGrid()
         True
@@ -1502,7 +1504,7 @@ class Element:
 
     def isMiddleOnGrid(self, tolerance=0):
         """Answer True if self.middle is on the parent grid.
-        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000, originTop=False)
+        >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isMiddleOnGrid()
         True

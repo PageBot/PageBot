@@ -1221,6 +1221,7 @@ class PageView(BaseView):
         # drawing them by script.
         if ECI_GrayConL in showColorBars:
             path = getResourcesPath() + '/' + ECI_GrayConL
+
             if COLORBAR_LEFT in showColorBars:
                 context.image(path, p=(ox-self.pl+pt(3), oy), h=e.h)
             if COLORBAR_RIGHT in showColorBars: # TODO: Does not generate the right position?
