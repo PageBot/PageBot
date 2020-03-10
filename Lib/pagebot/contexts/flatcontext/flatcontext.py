@@ -506,11 +506,9 @@ class FlatContext(BaseContext):
 
         if self.originTop:
             ypt = self.height - hpt
-
         else:
             ypt = self.height - ypt - hpt
 
-        print(ypt)
         box = (xpt, ypt, wpt, hpt)
         return fs.textBox(self.page, box)
 
