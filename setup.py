@@ -63,6 +63,7 @@ setup(
         'fontTools',
         'libsass',
         'markdown',
+        'Pillow',
         'svgwrite',
         'tornado',]
     )
