@@ -31,4 +31,4 @@ ROOT_FONT_PATHS = {'darwin': ['/System/Library/Fonts', '/Library/Fonts',
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 RESOURCES_PATH = ROOT_PATH + '/resources'
 DEFAULT_FONT_NAME = 'PageBot-Regular'
-DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/google/roboto/%s.ttf' % DEFAULT_FONT_NAME
+DEFAULT_FONT_PATH = RESOURCES_PATH + '/testfonts/typetr/%s.ttf' % DEFAULT_FONT_NAME
