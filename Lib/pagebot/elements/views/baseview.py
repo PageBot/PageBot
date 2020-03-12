@@ -44,14 +44,14 @@ class BaseView(Element):
 
         # If set to True, views may decide to add more information while
         # building.
-        self.verbose = verbose 
+        self.verbose = verbose
 
         if context is None:
             # If not defined, use the default context for this view.
-            context = self._getContext() 
+            context = self._getContext()
 
         self.context = context
-        self.context.newPage(self.w, self.h)
+        #self.context.newPage(self.w, self.h)
         self.setControls()
 
         # List of collected elements that need to draw their info on top of the
@@ -59,11 +59,11 @@ class BaseView(Element):
         self.elementsNeedingInfo = {}
 
         # Automatically call self.drawPages if build is called without drawing.
-        self._isDrawn = False 
+        self._isDrawn = False
 
     def _getContext(self):
         """Answers the best / default context for this type of view."""
-        return getContext() 
+        return getContext()
 
     def setControls(self):
         """Inheriting views can redefine to alter the default showing of

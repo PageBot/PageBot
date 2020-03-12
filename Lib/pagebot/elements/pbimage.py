@@ -50,35 +50,35 @@ class Image(Element):
     >>> e.h *= 1.5
     >>> e.size, e._w, e._h
     ((901.13pt, 1200pt), None, 1200pt)
-    >>> e.size = mm(50), p(100) # Disproportional size setting
+    >>> e.size = mm(50), p(100) # Disproportional size setting.
     >>> e.size
     (50mm, 100p)
-    >>> e.size = None # Force answering the original image size
-    >>> e.size # Initialize from file
+    >>> e.size = None # Force answering the original image size.
+    >>> e.size # Initialize from file.
     (398pt, 530pt)
     >>> page.w = mm(150)
-    >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt
+    >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt.
     >>> doc.solve()
     Score: 2 Fails: 0
     """
     """
-    >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc
+    >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc.
     ((30pt, 286.42mm), (128.83mm, 486.32pt))
     """
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
             size=None, cssSize=None, cssRepeat=None, z=0, mask=None, imo=None,
-            proportional=True, index=1,
-            scaleImage=True, resolutionFactor=None, scaleType=None, **kwargs):
+            proportional=True, index=1, scaleImage=True, resolutionFactor=None,
+            scaleType=None, **kwargs):
         Element.__init__(self, **kwargs)
+        """Initializes the self.im and self.ih sizes of the image file, defined
+        by path. If the path does not exist, then self.im = self.ih = pt(0)
+        This calls self.initImageSize() to set self.im and slef.ih from the
+        image file size.
 
-        # Initializes the self.im and self.ih sizes of the image file, defined
-        # by path. If the path does not exist, then self.im = self.ih = pt(0)
-        # This calls self.initImageSize() to set self.im and slef.ih from
-        # the image file size.
-        # If path is omitted or file does not exist, a gray/crossed rectangle
-        # will be drawn.
+        If path is omitted or file does not exist, a gray rectangle with a
+        cross will be drawn."""
         self.path = path
 
         if self.iw and self.ih:
@@ -372,8 +372,9 @@ class Image(Element):
         # self.cssClass or self.__class__.__name__
         b._div()
 
-    def build_flat(self, view, origin=ORIGIN, drawElements=True):
-        #print('[%s.build_flat] Not implemented yet' % self.__class__.__name__)
+    def build_(self, view, origin=ORIGIN, drawElements=True):
+        print('pbimage.build_flat')
+        '''
         context = view.context
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
@@ -384,6 +385,7 @@ class Image(Element):
         if drawElements:
             for e in self.elements:
                 e.build_flat(view, p2D)
+        '''
 
     def build_inds(self, view, origin, drawElements=True):
         """It is better to have a separate InDesignContext build tree, since we
@@ -419,13 +421,6 @@ class Image(Element):
         If stroke is defined, then use that to draw a frame around the image.
         Note that the (sx, sy) is already scaled to fit the padding position
         and size."""
-
-        # Get current context and builder.
-        context = self.context
-
-        # This is a bit more efficient than self.b once we got context
-        b = context.b
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         # Ignore z-axis for now.
@@ -441,24 +436,25 @@ class Image(Element):
                 print('Warning: cannot find image file %s' % self.path)
             # Draw missing element as cross
             xpt, ypt, wpt, hpt = upt(px, py, self.w, self.h)
-            context.stroke(0.5)
-            context.strokeWidth(0.5)
-            context.fill(None)
-            context.rect(xpt, ypt, wpt, hpt)
-            context.line((xpt, ypt), (xpt+wpt, ypt+hpt))
-            context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
+            self.context.stroke(0.5)
+            self.context.strokeWidth(0.5)
+            self.context.fill(None)
+            self.context.rect(xpt, ypt, wpt, hpt)
+            self.context.line((xpt, ypt), (xpt+wpt, ypt+hpt))
+            self.context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
         else:
-            context.save()
+            self.context.save()
             # Check if scaling exceeds limit, then generate a cached file and
             # update the path and (self.iw, self.ih) accordingly.
 
+            # TODO:
             # If a clipRect is defined, create the Bézier path.
             """
             if self.clipPath is not None:
                 DON'T CALL BUILDER DIRECTLY and don't scale here.
                 Context must do it's own scaling.
 
-                clipRect = context.newPath()
+                clipRect = self.context.newPath()
                 clX, clY, clW, clH = upt(self.clipRect)
                 sclX = clX/sx
                 sclY = clY/sx
@@ -483,19 +479,19 @@ class Image(Element):
             """
             if self.imo is not None:
                 with self.imo:
-                    context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
+                    self.context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
                         w=self.w, h=self.h, scaleType=self.scaleType)
-                context.image(self.imo, (px, py), pageNumber=self.index,
+                self.context.image(self.imo, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType)
             else:
-                #print('====IMAGE', self.path, px, py, self.w, self.h, self.scaleImage)
-                context.image(self.path, (px, py), pageNumber=self.index,
+                #print('pbimage.build()', self.path, px, py, self.w, self.h, self.scaleImage)
+                self.context.image(self.path, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType)
 
             # TODO: Draw optional (transparant) forground color?
-            context.restore()
+            self.context.restore()
 
         # Draw optional frame or borders.
         self.buildFrame(view, p)

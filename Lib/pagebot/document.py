@@ -1373,6 +1373,7 @@ class Document:
         >>> doc.getMaxPageSizes() # Clipped to max size
         (1400pt, 850pt, 100pt)
         """
+
         w = h = d = 0
         for pn, pnPages in self.pages.items():
             if not pageSelection is None and not pn in pageSelection:
@@ -1381,6 +1382,13 @@ class Document:
                 w = max(page.w, w)
                 h = max(page.h, h)
                 d = max(page.d, d)
+
+                '''
+                if page.view.showCropMarks or page.view.showRegistrationMarks:
+                    cmSize = page.view.css('viewCropMarkSize')
+                    w += cmSize
+                    h += cmSize
+                '''
         return w, h, d
 
     #   S P E L L  C H E C K

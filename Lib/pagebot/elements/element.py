@@ -7983,6 +7983,7 @@ class Element:
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks
         around the elemment."""
         return self.style.get('showCropMarks') or {} # Not inherited
+
     def _set_showCropMarks(self, showCropMarks):
         if not showCropMarks:
             showCropMarks = {}
@@ -7990,12 +7991,14 @@ class Element:
             showCropMarks = DEFAULT_CROPMARKS
         assert isinstance(showCropMarks, (set, list, tuple, dict))
         self.style['showCropMarks'] = showCropMarks
+
     showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
 
     def _get_showRegistrationMarks(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         registration  marks around the elemment."""
         return self.style.get('showRegistrationMarks') or {} # Not inherited
+
     def _set_showRegistrationMarks(self, showRegistrationMarks):
         if not showRegistrationMarks:
             showRegistrationMarks = {}
@@ -8003,6 +8006,7 @@ class Element:
             showRegistrationMarks = DEFAULT_REGISTRATIONMARKS
         assert isinstance(showRegistrationMarks, (set, list, tuple, dict))
         self.style['showRegistrationMarks'] = showRegistrationMarks
+
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_viewFrameStroke(self):

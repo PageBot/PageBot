@@ -85,7 +85,6 @@ class FlatContext(BaseContext):
         self.b = flatBuilder
         self.save() # Save current set of values on gState stack.
         self.shape = None # Current open shape
-        #self.flatString = None
         self.fileType = DEFAULT_FILETYPE
         self.originTop = False
         self.transform3D = Transform3D()
@@ -104,7 +103,9 @@ class FlatContext(BaseContext):
         >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
-        self.originTop = originTop
+        assert self.drawing is None
+        #self.originTop = originTop
+        self.originTop = False
 
         if doc is not None:
             w = doc.w
@@ -124,6 +125,9 @@ class FlatContext(BaseContext):
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
+        d = 144
+        wpt += d
+        hpt += d
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
         #self.drawing.size(wpt, hpt, units=self.UNITS)
         #self.drawing.pages = []
@@ -260,14 +264,18 @@ class FlatContext(BaseContext):
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
+        assert self.drawing
         assert w is not None and w > 0
         assert h is not None and h > 0
 
         self.w = w
         self.h = h
 
+        '''
         if self.drawing is None:
+            print('self.drawing is None')
             self.newDrawing(w=w, h=h, doc=doc)
+        '''
 
         self.drawing.addpage()
 
@@ -301,11 +309,11 @@ class FlatContext(BaseContext):
         """Calculates `y`-coordinate based on origin and translation."""
         y = self._oy + y
 
-        if self.originTop:
-            return y
-        else:
-            y = self.height - y
-            return y
+        #if self.originTop:
+        #    return y
+        #else:
+        y = self.height - y
+        return y
 
     def getTransformed(self, x, y):
         """
@@ -679,8 +687,35 @@ class FlatContext(BaseContext):
 
     #   I M A G E
 
-    def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
+            scaleType=None, e=None):
+        """Draws the image. If position is none, sets x and y to the origin. If
+        w or h is defined, then scale the image to fit."""
+        if p is None:
+            p = 0, 0
+
+        # Renders unit tuple to value tuple.
+        xpt, ypt = point2D(upt(p))
+        xpt = self.getX(xpt)
+        self.stroke((1, 0, 0))
+        self.fill(None)
+        self.rect(xpt, ypt, w.pt, h.pt)
+
+        xpt = self.getX(xpt)
+        ypt = self.getY(ypt)
+        self.save()
+        img = self.b.image.open(path)
+
+        # TODO: use PIL for resizing, should be much faster.
+        # TODO: cache result.
+        if not w is None and not h is None:
+            img.resize(width=int(w.pt), height=int(h.pt))
+
+        #ypt = 842 - 180#h.pt
+        ypt -= h.pt
+        placed = self.page.place(img)
+        placed.position(xpt, ypt)
+        self.restore()
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
@@ -695,31 +730,8 @@ class FlatContext(BaseContext):
         # Answer units of the same time as the document.w was defined.
         return pt(img.width), pt(img.height)
 
-    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None, e=None):
-        """Draws the image. If position is none, sets x and y to the origin. If
-        w or h is defined, then scale the image to fit."""
-        if p is None:
-            p = 0, 0
-
-        # Renders unit tuple to value tuple.
-        xpt, ypt = point2D(upt(p))
-        xpt = self.getX(xpt)
-        ypt = self.getY(ypt)
-        self.save()
-        img = self.b.image.open(path)
-
-        # TODO: calculate other if one is None.
-        # TODO: maybe use PIL for resizing, cache result.
-        if not w is None and not h is None:
-            img.resize(width=int(w.pt), height=int(h.pt))
-
-        if self.originTop:
-            ypt -= h.pt
-
-        placed = self.page.place(img)
-        placed.position(xpt, ypt)
-        self.restore()
+    def imagePixelColor(self, path, p):
+        return self.b.imagePixelColor(path, p)
 
     #   D R A W I N G
 

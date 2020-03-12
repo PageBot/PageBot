@@ -113,7 +113,16 @@ class PageView(BaseView):
         # Make sure that canvas is empty, there may have been another document
         # building in this context. Allow the context to create a new document
         # and page canvas.
-        self.context.newDrawing()
+
+        '''
+        cmSize = self.css('viewCropMarkSize')
+
+        if self.showCropMarks or self.showRegistrationMarks:
+            w += cmSize
+            h += cmSize
+        '''
+
+        self.context.newDrawing(w=w, h=h)
         #self.context.newPage(w=w, h=h, doc=self.doc)
 
         # Get dictionary of pages or spreads
@@ -146,24 +155,28 @@ class PageView(BaseView):
             # orgiinal document size.
             pw, ph = w, h
 
+
+
             if self.pl >= self.viewMinInfoPadding and \
                self.pt >= self.viewMinInfoPadding and \
                self.pb >= self.viewMinInfoPadding and \
                self.pr >= self.viewMinInfoPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
+
                 if self.originTop:
                     origin = self.pl, self.pt, pt(0)
                 else:
                     origin = self.pl, self.pb, pt(0)
             else:
-                pw = page.w # No padding defined, follow the size of the page.
+                # No padding defined, follow the size of the page.
+                pw = page.w
                 ph = page.h
                 origin = ORIGIN
 
             # Make page in context, actual page may be smaller if showing
-            # cropmarks. FIXME: newPage doesn't have `e` parameter.
-            self.context.newPage(w=pw, h=ph)#, e=page)
+            # cropmarks.
+            self.context.newPage(w=pw, h=ph)
 
             # If page['frameDuration'] is set and saving as movie or animated
             # gif, then set the global frame duration. Set the duration of

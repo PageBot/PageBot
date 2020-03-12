@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     image.py
+#     imagedata.py
 #
 #     (New version separating the Image-frame and the Image-pixelmap)
 #
