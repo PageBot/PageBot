@@ -125,9 +125,6 @@ class FlatContext(BaseContext):
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
-        d = 144
-        wpt += d
-        hpt += d
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
         #self.drawing.size(wpt, hpt, units=self.UNITS)
         #self.drawing.pages = []

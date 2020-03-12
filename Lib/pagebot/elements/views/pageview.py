@@ -114,13 +114,8 @@ class PageView(BaseView):
         # building in this context. Allow the context to create a new document
         # and page canvas.
 
-        '''
-        cmSize = self.css('viewCropMarkSize')
-
-        if self.showCropMarks or self.showRegistrationMarks:
-            w += cmSize
-            h += cmSize
-        '''
+        w = w + self.pl.pt + self.pr.pt
+        h = h + self.pt.pt + self.pb.pt
 
         self.context.newDrawing(w=w, h=h)
         #self.context.newPage(w=w, h=h, doc=self.doc)
@@ -1053,7 +1048,8 @@ class PageView(BaseView):
                     context.fill(None)
                     of = context.textBox(bsl, r)
                     context.stroke((1, 0, 0))
-                    context.rect(x, y, w, h) # For debugging.
+                    # For debugging.
+                    context.rect(x, y, w, h)
                     #context.marker(x, y)
 
                 if tr:
@@ -1076,9 +1072,13 @@ class PageView(BaseView):
             dx = cmSize
             dy = cmSize/2
         context.fill(noColor)
-        context.stroke(registrationColor, w=cmStrokeWidth) # Draw CMYK all on, color(cmyk=1)
+
+        # Draws CMYK all on, color(cmyk=1).
+        context.stroke(registrationColor, w=cmStrokeWidth)
+
         # Registration circle
         context.circle(x, y, cmSize/4)
+
         # Registration cross, in length of direction.
         context.line((x - dx, y), (x + dx, y)) # Horizontal line.
         context.line((x, y + dy), (x, y - dy)) # Vertical line.
