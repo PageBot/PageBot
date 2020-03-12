@@ -114,11 +114,14 @@ class PageView(BaseView):
         # building in this context. Allow the context to create a new document
         # and page canvas.
 
-        w = w + self.pl.pt + self.pr.pt
-        h = h + self.pt.pt + self.pb.pt
+        if self.pl >= self.viewMinInfoPadding and \
+           self.pt >= self.viewMinInfoPadding and \
+           self.pb >= self.viewMinInfoPadding and \
+           self.pr >= self.viewMinInfoPadding:
+            w += self.pl + self.pr
+            h += self.pt + self.pb
 
         self.context.newDrawing(w=w, h=h)
-        #self.context.newPage(w=w, h=h, doc=self.doc)
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()
@@ -150,24 +153,12 @@ class PageView(BaseView):
             # orgiinal document size.
             pw, ph = w, h
 
-
-
-            if self.pl >= self.viewMinInfoPadding and \
-               self.pt >= self.viewMinInfoPadding and \
-               self.pb >= self.viewMinInfoPadding and \
-               self.pr >= self.viewMinInfoPadding:
-                pw += self.pl + self.pr
-                ph += self.pt + self.pb
-
-                if self.originTop:
-                    origin = self.pl, self.pt, pt(0)
-                else:
-                    origin = self.pl, self.pb, pt(0)
+            '''
+            if self.originTop:
+                origin = self.pl, self.pt, pt(0)
             else:
-                # No padding defined, follow the size of the page.
-                pw = page.w
-                ph = page.h
-                origin = ORIGIN
+            '''
+            origin = self.pl, self.pb, pt(0)
 
             # Make page in context, actual page may be smaller if showing
             # cropmarks.

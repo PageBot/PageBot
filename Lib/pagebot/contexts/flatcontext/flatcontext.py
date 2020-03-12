@@ -83,8 +83,12 @@ class FlatContext(BaseContext):
         super().__init__()
         self.name = self.__class__.__name__
         self.b = flatBuilder
-        self.save() # Save current set of values on gState stack.
-        self.shape = None # Current open shape
+
+        # Save current set of values on gState stack.
+        self.save()
+
+        # Current open shape.
+        self.shape = None
         self.fileType = DEFAULT_FILETYPE
         self.originTop = False
         self.transform3D = Transform3D()
@@ -267,13 +271,6 @@ class FlatContext(BaseContext):
 
         self.w = w
         self.h = h
-
-        '''
-        if self.drawing is None:
-            print('self.drawing is None')
-            self.newDrawing(w=w, h=h, doc=doc)
-        '''
-
         self.drawing.addpage()
 
     def getTmpPage(self, w, h):
