@@ -157,6 +157,18 @@ class BaseContext(AbstractContext):
     def saveImage(self, path, *args, **options):
         return self.b.saveImage(path, *args, **options)
 
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        """
+        TODO: Should scale an image at `path` and save it to another file with Pillow.
+        """
+        # FIXME: scale with PIL
+        #from pagebot import getContext
+        #return getContext().scaleImage(path, w, h, index=index,
+        #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
+        #    force=force)
+
+
     def printImage(self, pdf=None):
         return self.b.printImage(pdf=pdf)
 
