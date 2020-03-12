@@ -448,10 +448,7 @@ class FlatString(BabelString):
             style = d['style']
             fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
             lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
-            dl = lineHeight - fontSize
-            #print(h1)
-            #print(lineHeight)
-            #assert h1 >= lineHeight
+            h1 = round(lineHeight)
 
             strike = d['strike']
             w1 = strike.width(s)
@@ -466,6 +463,11 @@ class FlatString(BabelString):
                 overflow += self.getDiff(s0, s1)
                 break
 
+            # Debugging. If line height / h1 too small, text won't show because
+            # the placed text frame is too low.
+            #print(h1)
+            #print(lineHeight)
+            #assert h1 >= lineHeight
             placedText.frame(x, y, w, h1)
             self.addToLines(x, baseline, placedText)
 
@@ -725,13 +727,13 @@ class FlatString(BabelString):
         True
         """
         assert isinstance(s, str)
+
         if style is None:
             style = {}
         else:
             assert isinstance(style, dict)
 
         s = cls.addCaseToString(s, e, style)
-
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
         return cls(s, context=context, style=style)
 

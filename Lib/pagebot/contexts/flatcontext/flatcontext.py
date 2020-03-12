@@ -19,6 +19,7 @@ from sys import platform
 from os import listdir
 from os.path import exists
 from flat import rgb
+from PIL import Image
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -141,7 +142,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.toolbox.color import blackColor
         >>> # _export/* Files are ignored in git.
         >>> exportPath = getRootPath() + '/_export'
-        >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
+        >>> if not exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> x = y = pt(0)
@@ -214,7 +215,7 @@ class FlatContext(BaseContext):
         # If default _scaled directory does not exist, then create it.
         cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
 
-        if not os.path.exists(cachePath):
+        if not exists(cachePath):
             os.makedirs(cachePath)
         cachedFilePath = cachePath + fileName
 
@@ -537,10 +538,13 @@ class FlatContext(BaseContext):
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
         box = (xpt, ypt, wpt, hpt)
-        self.marker(xpt, ypt)
-        self.stroke((1, 0, 0))
-        self.fill(None)
-        self.rect(xpt, ypt, wpt, hpt)
+
+        # Debugging.
+        #self.marker(xpt, ypt)
+        #self.stroke((1, 0, 0))
+        #self.fill(None)
+        #self.rect(xpt, ypt, wpt, hpt)
+
         return fs.textBox(self.page, box)
 
     def textOverflow(self, fs, box, align=LEFT):
@@ -681,6 +685,12 @@ class FlatContext(BaseContext):
 
     #   I M A G E
 
+    def getResizedPathName(self, path, w, h):
+        parts = path.split('.')
+        pre = '.'.join(parts[:-1])
+        ext = parts[-1]
+        return '%s-%sx%s.%s' % (pre, w, h, ext)
+
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None, e=None):
         """Draws the image. If position is none, sets x and y to the origin. If
@@ -691,25 +701,35 @@ class FlatContext(BaseContext):
         # Renders unit tuple to value tuple.
         xpt, ypt = point2D(upt(p))
         xpt = self.getX(xpt)
-        self.stroke((1, 0, 0))
-        self.fill(None)
-        self.rect(xpt, ypt, w.pt, h.pt)
-
-        xpt = self.getX(xpt)
         ypt = self.getY(ypt)
         self.save()
-        img = self.b.image.open(path)
 
-        # TODO: use PIL for resizing, should be much faster.
+        im = Image.open(path)
+
+
+        # NOTE: using PIL for resizing, much faster than Flat.
         # TODO: cache result.
         if not w is None and not h is None:
-            img.resize(width=int(w.pt), height=int(h.pt))
+            path = self.getResizedPathName(path, w, h)
+            if not exists(path):
+                im = im.resize((w, h))
+                im.save(path, 'jpeg')
+
+        img = self.b.image.open(path)
 
         #ypt = 842 - 180#h.pt
         ypt -= h.pt
         placed = self.page.place(img)
         placed.position(xpt, ypt)
         self.restore()
+
+        # Debugging.
+        #xpt, ypt = point2D(upt(p))
+        #self.marker(xpt, ypt)
+        #self.stroke((1, 0, 0))
+        #self.fill(None)
+        #self.rect(xpt, ypt, w.pt, h.pt)
+
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.

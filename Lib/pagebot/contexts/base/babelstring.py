@@ -24,6 +24,7 @@ from pagebot.style import css
 from pagebot.toolbox.color import (Color, blackColor, inheritColor, noColor,
         color)
 from pagebot.toolbox.units import em, pt, RelativeUnit, Unit, upt, isUnit
+from pagebot.fonttoolbox.objects.font import findFont
 
 DEFAULT_COLOR = Color(0, 0, 0)
 
@@ -161,7 +162,7 @@ class BabelString:
 
         # Untouched.
         if isinstance(given, (list, tuple)):
-            return self 
+            return self
 
         # Single index.
         bs = copy(self)
@@ -171,7 +172,7 @@ class BabelString:
 
     def append(self, s):
         """Appends string or BabelString to self.
-        
+
         TODO: what about differently formatted strings?
         """
 
@@ -215,9 +216,9 @@ class BabelString:
 
     def columnStart(self, firstColumnIndent):
         """Allows the string to set itself to
-        
+
             `firstLineIndex = firstColumnIndent`
-        
+
         if that makes sense for inheriting BabelString classes. Default is just
         to answer `self`."""
         return self
@@ -245,7 +246,7 @@ class BabelString:
         return getLineHeight(self.leading, self.fontSize)
 
     # Compatibility with DrawBot API.
-    fontLineHeight = lineHeight = property(_get_lineHeight) 
+    fontLineHeight = lineHeight = property(_get_lineHeight)
 
     # To be implemented:
     #def textSize(self, w=None, h=None):
@@ -259,7 +260,7 @@ class BabelString:
     @classmethod
     def getStringAttributes(cls, t, e=None, style=None, w=None, h=None):
         """Adds some defaults to the style.
-        
+
         If there is a target (pixel) width or height defined, ignore the
         requested fontSize and try the width or height first for fontSize =
         100. The resulting width or height is then used as base value to
@@ -279,12 +280,33 @@ class BabelString:
         # Font selection.
         sFont = css('font', e, style)
 
+        # TODO: move font lookup to separate function, reuse for fallback font.
+        # FIXME: Use Font object instead of path?
         if sFont is not None:
             # If the Font instance was supplied, then use it's path.
             if hasattr(sFont, 'path'):
-                sFont = sFont.path
+                attrs['font'] = sFont.path
+            else:
+                # If the name was supplied, look it up and use it's path.
 
-            attrs['font'] = sFont
+                #print(font)
+                font = findFont(sFont)
+                #print(font)
+
+                # FIXME: lookup is done twice:
+                # PageBot-Regular
+                # <Font PageBot-Regular>
+                #/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/resources/testfonts/typetr/PageBot-Regular.ttf
+                # None
+
+
+                if font:
+                    attrs['font'] = font.path
+                else:
+                    # Font not found.
+                    # TODO: add to logger.
+                    #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
+                    attrs['font'] = DEFAULT_FONT_PATH
 
         else:
             # TODO: add to logger.
@@ -302,7 +324,7 @@ class BabelString:
 
         if w is not None or h is not None:
             # Start with large font size to scale for fitting.
-            uFontSize = pt(100) 
+            uFontSize = pt(100)
         else:
             # May be scaled to fit w or h if target is defined.
             uFontSize = css('fontSize', e, style, default=DEFAULT_FONT_SIZE)
@@ -382,7 +404,7 @@ class BabelString:
             assert isinstance(cStroke, Color), msg
 
             # None is value to disable stroke drawing.
-            if cStroke is noColor: 
+            if cStroke is noColor:
                 attrs['stroke'] = None
             elif cStroke.isCmyk:
                 attrs['cmykStroke'] = cStroke.cmyk
@@ -396,14 +418,14 @@ class BabelString:
 
         # FIXME: not an allowed style in the PB approach?
         # yTextAlign must be solved by parent container element.
-        #if sAlign is not None: 
+        #if sAlign is not None:
         #    attrs['align'] = sAlign
 
         # FIXME: not an allowed style in the PB approach?
         #sUnderline = css('underline', e, style)
 
         # Only these values work in FormattedString.
-        #if sUnderline in ('single', None): 
+        #if sUnderline in ('single', None):
         #    attrs['underline'] = sUnderline
 
         uParagraphTopSpacing = css('paragraphTopSpacing', e, style)
@@ -411,25 +433,25 @@ class BabelString:
         if uParagraphTopSpacing is not None:
             # Base for em or percent.
             attrs['paragraphTopSpacing'] = upt(uParagraphTopSpacing,
-                    base=fontSizePt) 
+                    base=fontSizePt)
 
         uParagraphBottomSpacing = css('paragraphBottomSpacing', e, style)
 
         if uParagraphBottomSpacing:
             # Base for em or percent.
-            attrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt) 
+            attrs['paragraphBottomSpacing'] = upt(uParagraphBottomSpacing, base=fontSizePt)
 
         uTracking = css('tracking', e, style)
 
         if uTracking is not None:
             # Base for em or percent.
-            attrs['tracking'] = upt(uTracking, base=fontSizePt) 
+            attrs['tracking'] = upt(uTracking, base=fontSizePt)
 
         uBaselineShift = css('baselineShift', e, style)
 
         if uBaselineShift is not None:
             # Base for em or percent.
-            attrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt) 
+            attrs['baselineShift'] = upt(uBaselineShift, base=fontSizePt)
 
         openTypeFeatures = css('openTypeFeatures', e, style)
 
@@ -439,7 +461,7 @@ class BabelString:
         # Can be [(10, LEFT), ...] or [10, 20, ...]
         tabs = []
 
-        for tab in (css('tabs', e, style) or []): 
+        for tab in (css('tabs', e, style) or []):
             if not isinstance(tab, (list, tuple)):
                 tab = upt(tab), LEFT
             else:
@@ -458,18 +480,18 @@ class BabelString:
         # TODO: Use this value instead, if currently on top of a new string.
         if uFirstLineIndent is not None:
             # Base for em or percent.
-            attrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt) 
+            attrs['firstLineIndent'] = upt(uFirstLineIndent, base=fontSizePt)
 
         uIndent = css('indent', e, style)
 
         if uIndent is not None:
             # Base for em or percent.
-            attrs['indent'] = upt(uIndent, base=fontSizePt) 
+            attrs['indent'] = upt(uIndent, base=fontSizePt)
 
         uTailIndent = css('tailIndent', e, style)
         if uTailIndent is not None:
             # Base for em or percent.
-            attrs['tailIndent'] = upt(uTailIndent, base=fontSizePt) 
+            attrs['tailIndent'] = upt(uTailIndent, base=fontSizePt)
 
         sLanguage = css('language', e, style)
 

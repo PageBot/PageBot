@@ -85,8 +85,8 @@ def isFontPath(fontPath):
     return None
 
 def getFont(fontOrPath, lazy=True):
-    """Answers the Font instance, that connects to the fontPath. Note that 
-    there is no check if there is already anothe Font created on that path, 
+    """Answers the Font instance, that connects to the fontPath. Note that
+    there is no check if there is already anothe Font created on that path,
     as for PageBot purposes it is most likely for reading only.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -97,7 +97,7 @@ def getFont(fontOrPath, lazy=True):
     >>> font.path == path
     True
     >>> # Answer the same font, if it is already one.
-    >>> font == getFont(font) 
+    >>> font == getFont(font)
     True
     """
     try:
@@ -107,7 +107,7 @@ def getFont(fontOrPath, lazy=True):
         if not fontOrPath:
             return None
         return Font(fontOrPath, lazy=lazy)
-    except TTLibError: 
+    except TTLibError:
         # Could not open font, due to bad font file.
         return None
 
@@ -115,15 +115,17 @@ def findFonts(pattern, lazy=True):
     """Answers a list of Font instances where the pattern fits the font path.
     If pattern is a list, all parts should have a match.
 
+
+    # TODO: make case insensitive
     """
     """
     >>> findFonts('Roboto-Thi')
     [<Font Roboto-Thin>, <Font Roboto-ThinItalic>]
     >>> # Select on family and name parts.
-    >>> findFonts(('Robo', 'Ita', 'Thi')) 
+    >>> findFonts(('Robo', 'Ita', 'Thi'))
     [<Font Roboto-ThinItalic>]
     >>> # Select on style parts only.
-    >>> findFonts(('Ita', 'Bol', 'Con')) 
+    >>> findFonts(('Ita', 'Bol', 'Con'))
     [<Font RobotoCondensed-BoldItalic>]
     """
     fontPaths = getFontPaths()
@@ -152,11 +154,11 @@ def findFont(fontPath, default=None, lazy=True):
     >>> f is None
     True
     >>> # Default is a font.
-    >>> f = findFont('Skia-cannot-be-found', default=roboto) 
+    >>> f = findFont('Skia-cannot-be-found', default=roboto)
     >>> f is roboto
     True
     >>> # Default is a name.
-    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular') 
+    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular')
     >>> f
     <Font Roboto-Regular>
     """
@@ -167,12 +169,12 @@ def findFont(fontPath, default=None, lazy=True):
 
     # A default is defined. If it's a string, try to find it. Avoid c76ircular
     # calls.
-    if isinstance(default, str) and default != fontPath: 
+    if isinstance(default, str) and default != fontPath:
         return findFont(default, lazy=lazy)
 
     assert default is None or isinstance(default, Font)
     # Otherwise assume it is a Font instance or None.
-    return default 
+    return default
 
 def getMasterPath():
     """Answers the path to read master fonts, which typically is a
@@ -184,7 +186,7 @@ def getInstancePath():
     """Answers the path to write instance fonts, which typically is the
 
     <username>/Fonts/_instances/
-    
+
     folder."""
     return getMasterPath() + '_instances/'
 
@@ -198,7 +200,7 @@ def getScaledValue(vf, tag, value):
     if not value:
         return defaultValue
     # Realative scale between minValue and default
-    if value < 0: 
+    if value < 0:
         return defaultValue + (defaultValue - minValue)*value
     # else wdth > 0:  Relative scale between default and maxValue
     return defaultValue + (maxValue - defaultValue)*value
@@ -302,7 +304,7 @@ def getInstance(pathOrFont, location, dstPath=None, styleName=None,
     The optional *styleName* overwrites the *font.info.styleName* of the
     *ttFont* or the automatic location name."""
     # If forcing flag is undefined, then get info from location.
-    if opticalSize is None: 
+    if opticalSize is None:
         opticalSize = location.get('opsz')
     instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached,
         lazy=lazy, kerning=kerning)
@@ -365,22 +367,22 @@ def makeInstance(pathOrVarFont, location, dstPath=None, normalize=True, cached=T
         platforms=((1, 0, 0), (3, 1, 0x409)) # Macintosh and Windows
 
         for platformID, platEncID, langID in platforms:
-            # 1 Font Family name 
-            familyName = ttFont['name'].getName(1, platformID, platEncID, langID) 
+            # 1 Font Family name
+            familyName = ttFont['name'].getName(1, platformID, platEncID, langID)
             if not familyName:
                 continue
-            # NameRecord to unicode string 
-            familyName = familyName.toUnicode() 
-            # TODO make sure this works in any case 
-            styleName = instanceName 
+            # NameRecord to unicode string
+            familyName = familyName.toUnicode()
+            # TODO make sure this works in any case
+            styleName = instanceName
             fullFontName = " ".join([familyName, styleName])
             postscriptName = fullFontName.replace(" ", "-")
-            # 2 Font Subfamily name 
-            ttFont['name'].setName(styleName, 2, platformID, platEncID, langID) 
-            # 4 Full font name 
-            ttFont['name'].setName(fullFontName, 4, platformID, platEncID, langID) 
-            # 6 Postscript name for the font 
-            ttFont['name'].setName(postscriptName, 6, platformID, platEncID, langID) 
+            # 2 Font Subfamily name
+            ttFont['name'].setName(styleName, 2, platformID, platEncID, langID)
+            # 4 Full font name
+            ttFont['name'].setName(fullFontName, 4, platformID, platEncID, langID)
+            # 6 Postscript name for the font
+            ttFont['name'].setName(postscriptName, 6, platformID, platEncID, langID)
             # Other important name IDs
             # 3 Unique font identifier (e.g. Version 0.000;NONE;Promise Bold Regular)
             # 25 Variables PostScript Name Prefix
@@ -515,7 +517,7 @@ class Font:
     def __repr__(self):
         """
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> str(font)
         '<Font Roboto-Black>'
@@ -526,7 +528,7 @@ class Font:
         """Answers the glyph with glyphName.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> g = font['A']
         >>> g.name, g.width
@@ -540,7 +542,7 @@ class Font:
         """Answers the number of glyphs in the font.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> len(font)
         3387
@@ -565,7 +567,7 @@ class Font:
         string.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> font.nameMatch('Black')
         1.0
@@ -591,29 +593,29 @@ class Font:
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> # We know this exists in the PageBot repository
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> font.info.weightClass
         900
         >>> # Bad match
-        >>> font.weightMatch(0) 
+        >>> font.weightMatch(0)
         0
         >>> # Bad match
-        >>> font.weightMatch(800) 
+        >>> font.weightMatch(800)
         0
         >>> # Exact match
-        >>> font.weightMatch(900) 
+        >>> font.weightMatch(900)
         0
         >>> # Bad match -
-        >>> font.weightMatch(0) 
+        >>> font.weightMatch(0)
         0
         >>> # Black --> Exact match on 900
-        >>> font.weightMatch('Black') 
+        >>> font.weightMatch('Black')
         1.0
         >>> # Light --> No match on 900
-        >>> font.weightMatch('Light') 
+        >>> font.weightMatch('Light')
         0
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf'
         >>> font = getFont(path)
         >>> font.info.weightClass
         400
@@ -623,13 +625,13 @@ class Font:
         TODO: Fix these tests
 
         >>> # Match
-        >>> font.weightMatch(400) 
+        >>> font.weightMatch(400)
         1.0
         >>> # Match
-        >>> font.weightMatch('Regular') 
+        >>> font.weightMatch('Regular')
         1.0
         >>> # Matching with width name has no match.
-        >>> font.weightMatch('Condensed') 
+        >>> font.weightMatch('Condensed')
         0
         """
         if isinstance(weight, (float, int)): # Comparing by numbers
@@ -698,11 +700,11 @@ class Font:
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-BlackItalic.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-BlackItalic.ttf'
         >>> font = getFont(path)
         >>> font.isItalic()
         1
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Bold.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Bold.ttf'
         >>> font = Font(path)
         >>> font.isItalic()
         0
@@ -719,7 +721,7 @@ class Font:
         defined parameters. Only defined values count in the matching.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
-        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' 
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
         >>> font = getFont(path)
         >>> font.info.widthClass, font.info.weightClass
         (5, 900)
@@ -728,7 +730,7 @@ class Font:
         >>> font.match(name='Robo', weight='Black')
         1.0
         >>> # Only match on the name.
-        >>> font.match(name='Robo', weight='Light') 
+        >>> font.match(name='Robo', weight='Light')
         0.5
         >>> font.match(name='Robo', width=5)
         1.0
@@ -921,16 +923,16 @@ class Font:
         """
         if self._variables is None:
             try:
-                # Get the raw fonttools gvar table if it exists. 
-                gvar = self.ttFont['gvar'] 
+                # Get the raw fonttools gvar table if it exists.
+                gvar = self.ttFont['gvar']
                 self._variables = {}
                 for glyphName, tupleVariations in gvar.variations.items():
                     self._variables[glyphName] = axisDeltas = {}
                     for tupleVariation in tupleVariations:
-                        #{'GRAD': (0.0, 1.0, 1.0)} Make unique key, in case multiple 
-                        axisKey = '_'.join(tupleVariation.axes.keys()) 
-                        # ({'GRAD': (0.0, 1.0, 1.0)}, [(0, 0), None, (52, 0), None, None, (89, 0), ...]) 
-                        axisDeltas[axisKey] = tupleVariation.axes, tupleVariation.coordinates 
+                        #{'GRAD': (0.0, 1.0, 1.0)} Make unique key, in case multiple
+                        axisKey = '_'.join(tupleVariation.axes.keys())
+                        # ({'GRAD': (0.0, 1.0, 1.0)}, [(0, 0), None, (52, 0), None, None, (89, 0), ...])
+                        axisDeltas[axisKey] = tupleVariation.axes, tupleVariation.coordinates
             except KeyError:
                 pass # No gvar table, just answer the current self._variables as None.
         return self._variables
