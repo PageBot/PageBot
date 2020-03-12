@@ -25,6 +25,8 @@ from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
+NEWLINE = '<NEWLINE>'
+
 class FlatString(BabelString):
     """FlatString is a wrapper around the Flat string that should be
     functionally compatible with a Cocoa attributed string and the CoreText
@@ -112,6 +114,17 @@ class FlatString(BabelString):
         strike = context.b.strike(flatFont)
         color = BabelString.getColor(style)
         rgb = context.getFlatRGB(color)
+        self._lines = []
+        self._numberOfLines = 0
+
+        parts = []
+
+        if '\n' in s:
+            #for c in s:
+            #    print(c)
+            parts = s.split('\n')
+            s = parts[0]
+
         strike.color(rgb).size(fontSize, lineHeight, units=self.UNITS)
 
         # For each block of text, stores the plain string, the Flat `strike`
@@ -119,10 +132,15 @@ class FlatString(BabelString):
         # FormattedString which in turn wraps a Cocoa NSAttributedString).
         self.data.append(dict(s=s, strike=strike, text=strike.text(s),
                 style=style))
+        self.previousStyle = style
 
-        self._lines = []
-        self._numberOfLines = 0
         super().__init__(context)
+
+        if len(parts) > 0:
+            for part in parts[1:]:
+                self.append(NEWLINE)
+                self.append(part)
+
 
     def copy(self):
         """
@@ -185,7 +203,11 @@ class FlatString(BabelString):
         s = ''
 
         for d in self.data:
-            s += d['s']
+            part = d['s']
+            if part == NEWLINE:
+                s += '\n'
+            else:
+                s += part
         return s
 
     def _set_s(self, s, i=0, strike=None):
@@ -337,6 +359,8 @@ class FlatString(BabelString):
         """
         for d in self.data:
             s = d['s']
+            if s == NEWLINE:
+                continue
             text = d['text']
             strike =d['strike']
             w = strike.width(s)
@@ -413,19 +437,29 @@ class FlatString(BabelString):
 
         for i, d in enumerate(self.data):
             s = d['s']
+
+            if s == NEWLINE:
+                x = x0
+                w = w0
+                y += h1
+                continue
+
             text = d['text']
-            strike = d['strike']
             style = d['style']
-            plainstring = d['s']
+            fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
+            lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
+            dl = lineHeight - fontSize
+            #print(h1)
+            #print(lineHeight)
+            #assert h1 >= lineHeight
+
+            strike = d['strike']
             w1 = strike.width(s)
             descender = self.getDescender(style)
 
 
-            fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-            lineHeight = upt(style.get('leading', DEFAULT_LEADING), base=fontSize)
-            dl = lineHeight - fontSize
             placedText = page.place(text)
-            s0 = plainstring
+            s0 = s
 
             if h > h0:
                 s1 = self.getPlacedString(placedText)
@@ -551,9 +585,15 @@ class FlatString(BabelString):
 
         # If a plain string is appended, creates a new string with the previous
         # style.
+
+        if s == '':
+            return
+        if s == NEWLINE:
+            data = dict(s=NEWLINE)
+            self.data.append(data)
+            return
         if isinstance(s, str):
-            lastStyle = self.data[-1]['style']
-            fs = self.context.newString(s, style=lastStyle)
+            fs = self.context.newString(s, style=self.previousStyle)
         else:
             fs = s
 
@@ -685,13 +725,13 @@ class FlatString(BabelString):
         True
         """
         assert isinstance(s, str)
-
         if style is None:
             style = {}
         else:
             assert isinstance(style, dict)
 
         s = cls.addCaseToString(s, e, style)
+
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
         return cls(s, context=context, style=style)
 
