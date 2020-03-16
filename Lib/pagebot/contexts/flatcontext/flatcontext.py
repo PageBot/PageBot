@@ -273,9 +273,13 @@ class FlatContext(BaseContext):
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
-        assert self.drawing
         assert w is not None and w > 0
         assert h is not None and h > 0
+
+        if not self.drawing:
+            self.newDrawing(w=w, h=h)
+
+        assert self.drawing
 
         self.w = w
         self.h = h
