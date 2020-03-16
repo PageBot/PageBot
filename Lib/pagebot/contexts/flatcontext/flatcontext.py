@@ -366,7 +366,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = FlatContext()
-        >>> context._font.endswith('Roboto-Regular.ttf')
+        >>> context._font.endswith('PageBot-Regular.ttf')
         True
         >>> context.save()
         >>> boldFont = findFont('Roboto-Bold')
@@ -376,7 +376,7 @@ class FlatContext(BaseContext):
         True
         >>> # Restore to original graphic state values.
         >>> context.restore()
-        >>> context._font.endswith('Roboto-Regular.ttf')
+        >>> context._font.endswith('PageBot-Regular.ttf')
         True
         """
         gState = dict(
@@ -528,7 +528,9 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> style = {'fontSize': 14}
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> font = findFont('Roboto-Regular')
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
         >>> s = blurb.getBlurb('stylewars_bluray')
@@ -565,12 +567,14 @@ class FlatContext(BaseContext):
         current context.
 
         >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> w = 400
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> style = {'fontSize': 14}
+        >>> font = findFont('Roboto-Regular')
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
         >>> s = blurb.getBlurb('stylewars_bluray')
