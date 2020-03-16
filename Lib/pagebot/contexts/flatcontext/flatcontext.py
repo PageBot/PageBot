@@ -524,11 +524,11 @@ class FlatContext(BaseContext):
 
         >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> w = 400
         >>> h = 300
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('Roboto-Regular')
         >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)

@@ -402,9 +402,11 @@ class FlatString(BabelString):
         >>> from pagebot import getContext
         >>> from pagebot.style import makeStyle
         >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = getContext('Flat')
         >>> context.newPage(800, 600)
-        >>> style = {'fontSize': 14}
+        >>> font = findFont('Roboto-Regular')
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
         >>> s = blurb.getBlurb('stylewars_bluray')
