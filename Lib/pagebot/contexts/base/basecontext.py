@@ -139,6 +139,10 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
+    def setSize(self, w=None, h=None):
+        # TODO: also add to abstract.
+        pass
+
     def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Creates a new drawbot page.
 

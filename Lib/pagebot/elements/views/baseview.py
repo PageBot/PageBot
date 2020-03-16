@@ -51,6 +51,7 @@ class BaseView(Element):
             context = self._getContext()
 
         self.context = context
+        self.context.setSize(self.w, self.h)
         #self.context.newPage(self.w, self.h)
         self.setControls()
 

@@ -122,6 +122,7 @@ class PageView(BaseView):
             h += self.pt + self.pb
 
         self.context.newDrawing(w=w, h=h)
+        print('build new drawing')
 
         # Get dictionary of pages or spreads
         sortedPages = self.getSortedPages()

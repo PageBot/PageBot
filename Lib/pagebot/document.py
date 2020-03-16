@@ -1471,6 +1471,7 @@ class Document:
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
+
         view = self.view = self.views[viewId] = viewClasses[viewId](name=name
                 or viewId, w=self.w, h=self.h, context=context)
 

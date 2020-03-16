@@ -248,6 +248,13 @@ class FlatContext(BaseContext):
     def getDrawing(self):
         return self.drawing
 
+    def setSize(self, w=None, h=None):
+        assert w is not None and w > 0
+        assert h is not None and h > 0
+
+        self.w = w
+        self.h = h
+
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.drawing, are ignored in Flat.
 
@@ -287,12 +294,14 @@ class FlatContext(BaseContext):
     page = property(_get_page)
 
     def _get_height(self):
-        return self.drawing.height
+        return self.h
+        #return self.drawing.height
 
     height = property(_get_height)
 
     def _get_width(self):
-        return self.drawing.width
+        #return self.drawing.width
+        return self.w
 
     width = property(_get_width)
 
