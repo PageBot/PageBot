@@ -459,9 +459,12 @@ class Element:
         Color(r=0.5, g=0.5, b=0.5)
         """
         fill = d.get('fill')
+
         if fill is not None and not isinstance(fill, Color):
             d['fill'] = color(fill)
+
         stroke = d.get('stroke')
+
         if stroke is not None and not isinstance(stroke, Color):
             d['stroke'] = color(stroke)
 

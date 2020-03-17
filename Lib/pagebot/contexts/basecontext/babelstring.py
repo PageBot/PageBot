@@ -258,25 +258,7 @@ class BabelString:
     #def setStrokeWidth(self, w):
 
     @classmethod
-    def getStringAttributes(cls, t, e=None, style=None, w=None, h=None):
-        """Adds some defaults to the style.
-
-        If there is a target (pixel) width or height defined, ignore the
-        requested fontSize and try the width or height first for fontSize =
-        100. The resulting width or height is then used as base value to
-        calculate the needed point size.
-
-        Forced fontSize, then this overwrites the style['fontSize'] if it is
-        there.
-
-        TODO: add calculation of rFontSize (relative float based on
-        root-fontSize) here too.
-        TODO: split up into smaller functions.
-        """
-
-        fName = 'BabelString.getStringAttributes'
-        attrs = {}
-
+    def getFontAttributes(cls, css, e, style, attrs):
         # Font selection.
         sFont = css('font', e, style)
 
@@ -305,7 +287,7 @@ class BabelString:
                 else:
                     # Font not found.
                     # TODO: add to logger.
-                    #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
+                    print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
                     attrs['font'] = DEFAULT_FONT_PATH
 
         else:
@@ -321,6 +303,30 @@ class BabelString:
             sFallbackFont = DEFAULT_FALLBACK_FONT_PATH
 
         attrs['fallbackFont'] = sFallbackFont
+
+    @classmethod
+    def getStringAttributes(cls, t, e=None, style=None, w=None, h=None):
+        """Adds some defaults to the style.
+
+        If there is a target (pixel) width or height defined, ignore the
+        requested fontSize and try the width or height first for fontSize =
+        100. The resulting width or height is then used as base value to
+        calculate the needed point size.
+
+        Forced fontSize, then this overwrites the style['fontSize'] if it is
+        there.
+
+        TODO: add calculation of rFontSize (relative float based on
+        root-fontSize) here too.
+        TODO: split up into smaller functions.
+        """
+
+        fName = 'BabelString.getStringAttributes'
+        attrs = {}
+
+
+        cls.getFontAttributes(css, e, style, attrs)
+
 
         if w is not None or h is not None:
             # Start with large font size to scale for fitting.
