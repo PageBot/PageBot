@@ -20,7 +20,7 @@ import difflib
 from fontTools.pens.boundsPen import BoundsPen
 
 from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.contexts.base.babelstring import getFontPath, getLineHeight, BabelString
+from pagebot.contexts.basecontext.babelstring import getFontPath, getLineHeight, BabelString
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.toolbox.units import upt
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
@@ -79,7 +79,7 @@ class FlatString(BabelString):
         >>> from pagebot.toolbox.units import em
         >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
         >>> fs = context.newString('Example text', style=style)
-        >>> from pagebot.contexts.base.babelstring import BabelString
+        >>> from pagebot.contexts.basecontext.babelstring import BabelString
         >>> isinstance(fs, BabelString)
         True
         >>> fs2 = context.newString(' plus second text', style=style)

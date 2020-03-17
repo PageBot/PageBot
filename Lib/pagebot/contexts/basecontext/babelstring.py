@@ -84,7 +84,7 @@ class BabelString:
     <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
     >>> import inspect
     >>> inspect.getmro(FlatString)
-    (<class 'pagebot.contexts.flatcontext.flatstring.FlatString'>, <class 'pagebot.contexts.base.babelstring.BabelString'>, <class 'object'>)
+    (<class 'pagebot.contexts.flatcontext.flatstring.FlatString'>, <class 'pagebot.contexts.basecontext.babelstring.BabelString'>, <class 'object'>)
     """
 
     def __init__(self, context):

@@ -23,7 +23,7 @@ from PIL import Image
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
-from pagebot.contexts.base.basecontext import BaseContext
+from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString

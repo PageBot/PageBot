@@ -15,7 +15,7 @@
 #     htmlstring.py
 #
 from pagebot.constants import XXXL, LEFT, DEFAULT_LANGUAGE
-from pagebot.contexts.base.babelstring import BabelString
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.style import css
 from pagebot.toolbox.units import upt
 
