@@ -30,7 +30,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.elements.paths.pagebotpath import PageBotPath
+from pagebot.contexts.basecontext.pagebotpath import PageBotPath
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor

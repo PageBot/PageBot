@@ -19,6 +19,7 @@
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
+from pagebot.contexts.basecontext.pagebotpath import PageBotPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 
 # Simple elements
 from pagebot.elements.pbtext import Text
@@ -42,7 +43,6 @@ from pagebot.elements.pbplacer import Placer
 from pagebot.elements.pbartboard import Artboard
 
 # Path and mask elements
-from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 #OLD from pagebot.elements.paths.pbpath import Path
 #OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath
@@ -107,7 +107,7 @@ def newPlacer(**kwargs):
 def newColumn(**kwargs):
     """Answer a new Column instance, offering a squential paste-board for elements."""
     return Column(**kwargs)
-    
+
 def newTextBox(bs='', **kwargs):
     """Caller must supply formatted string. Note that w and h can also be
     defined in the style."""

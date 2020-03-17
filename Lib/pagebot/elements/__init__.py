@@ -20,6 +20,9 @@
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
+# Path and mask elements. Generic PageBot equivalent of DrawBot.BezierPath.
+from pagebot.contexts.basecontext.pagebotpath import PageBotPath, newRectPath
+
 
 # Simple elements.
 from pagebot.elements.pbtext import Text
@@ -46,9 +49,6 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 
 # Artboard. SketchApp compatible, content element on pages.
 from pagebot.elements.pbartboard import Artboard
-
-# Path and mask elements. Generic PageBot equivalent of DrawBot.BezierPath.
-from pagebot.elements.paths.pagebotpath import PageBotPath, newRectPath
 
 # Element that holds a number of styled PageBotPath instances to draw.
 from pagebot.elements.paths.pbpaths import Paths, Mask
