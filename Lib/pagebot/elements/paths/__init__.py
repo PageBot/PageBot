@@ -13,4 +13,4 @@
 #
 #     __init__.py
 #
-from pagebot.elements.paths.pagebotpath import PageBotPath
+#from pagebot.elements.paths.pagebotpath import PageBotPath

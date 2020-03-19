@@ -49,7 +49,7 @@ See also [github.com/PageBot/PageBotOSX](https://github.com/PageBot/PageBotOSX).
     from pagebot.toolbox.color import color
     
     W, H = pt(500, 400)
-    doc = Document(w=W, h=H, originTop=False, autoPages=1)
+    doc = Document(w=W, h=H, autoPages=1)
     page = doc[1]
     
     # Create a new rectangle element with position conditions

@@ -15,8 +15,8 @@
 #     flatbezierpath.py
 #
 
-from pagebot.contexts.base.basebezierpath import BaseBezierPath
-from pagebot.contexts.base.basepoint import BasePoint
+from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
+from pagebot.contexts.basecontext.basepoint import BasePoint
 
 class FlatBezierPath(BaseBezierPath):
     """Bézier path that implements commands like Flat, but with the same API
@@ -126,7 +126,7 @@ class FlatBezierPath(BaseBezierPath):
         kappa = .5522848
         offsetX = (w / 2) * kappa
         offsetY = (h / 2) * kappa
-   
+
         # Middle and other extreme points.
         x0 = x + (w / 2)
         y0 = y + (h / 2)

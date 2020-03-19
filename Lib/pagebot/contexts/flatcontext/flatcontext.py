@@ -19,10 +19,11 @@ from sys import platform
 from os import listdir
 from os.path import exists
 from flat import rgb
+from PIL import Image
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
-from pagebot.contexts.base.basecontext import BaseContext
+from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString
@@ -83,9 +84,12 @@ class FlatContext(BaseContext):
         super().__init__()
         self.name = self.__class__.__name__
         self.b = flatBuilder
-        self.save() # Save current set of values on gState stack.
-        self.shape = None # Current open shape
-        #self.flatString = None
+
+        # Save current set of values on gState stack.
+        self.save()
+
+        # Current open shape.
+        self.shape = None
         self.fileType = DEFAULT_FILETYPE
         self.originTop = False
         self.transform3D = Transform3D()
@@ -104,7 +108,9 @@ class FlatContext(BaseContext):
         >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
-        self.originTop = originTop
+        assert self.drawing is None
+        #self.originTop = originTop
+        self.originTop = False
 
         if doc is not None:
             w = doc.w
@@ -136,7 +142,7 @@ class FlatContext(BaseContext):
         >>> from pagebot.toolbox.color import blackColor
         >>> # _export/* Files are ignored in git.
         >>> exportPath = getRootPath() + '/_export'
-        >>> if not os.path.exists(exportPath): os.makedirs(exportPath)
+        >>> if not exists(exportPath): os.makedirs(exportPath)
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> x = y = pt(0)
@@ -202,6 +208,37 @@ class FlatContext(BaseContext):
             msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
             raise NotImplementedError(msg)
 
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+
+        '''
+        # If default _scaled directory does not exist, then create it.
+        cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
+
+        if not exists(cachePath):
+            os.makedirs(cachePath)
+        cachedFilePath = cachePath + fileName
+
+        if force or not os.path.exists(cachedFilePath):
+            # Clean the drawing stack.
+            self.newDrawing()
+            self.newPage(w=w, h=h)
+            self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
+            if showImageLoresMarker:
+                bs = self.newString('LO-RES',
+                        style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
+                            fontSize=pt(64), fill=color(0, 1, 1),
+                            textFill=color(1, 0, 0)))
+                tw, th = bs.size
+                self.text(bs, (w/2-tw/2, h/2-th/4))
+            self.saveImage(cachedFilePath)
+
+            # Clean the drawing stack again.
+            self.newDrawing()
+        return cachedFilePath
+        '''
+        return path
+
     # Compatible API with DrawBot.
     saveImage = saveDrawing
 
@@ -210,6 +247,13 @@ class FlatContext(BaseContext):
 
     def getDrawing(self):
         return self.drawing
+
+    def setSize(self, w=None, h=None):
+        assert w is not None and w > 0
+        assert h is not None and h > 0
+
+        self.w = w
+        self.h = h
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.drawing, are ignored in Flat.
@@ -232,12 +276,13 @@ class FlatContext(BaseContext):
         assert w is not None and w > 0
         assert h is not None and h > 0
 
+        if not self.drawing:
+            self.newDrawing(w=w, h=h)
+
+        assert self.drawing
+
         self.w = w
         self.h = h
-
-        if self.drawing is None:
-            self.newDrawing(w=w, h=h, doc=doc)
-
         self.drawing.addpage()
 
     def getTmpPage(self, w, h):
@@ -253,12 +298,14 @@ class FlatContext(BaseContext):
     page = property(_get_page)
 
     def _get_height(self):
-        return self.drawing.height
+        return self.h
+        #return self.drawing.height
 
     height = property(_get_height)
 
     def _get_width(self):
-        return self.drawing.width
+        #return self.drawing.width
+        return self.w
 
     width = property(_get_width)
 
@@ -270,11 +317,11 @@ class FlatContext(BaseContext):
         """Calculates `y`-coordinate based on origin and translation."""
         y = self._oy + y
 
-        if self.originTop:
-            return y
-        else:
-            y = self.height - y
-            return y
+        #if self.originTop:
+        #    return y
+        #else:
+        y = self.height - y
+        return y
 
     def getTransformed(self, x, y):
         """
@@ -319,7 +366,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = FlatContext()
-        >>> context._font.endswith('Roboto-Regular.ttf')
+        >>> context._font.endswith('PageBot-Regular.ttf')
         True
         >>> context.save()
         >>> boldFont = findFont('Roboto-Bold')
@@ -329,7 +376,7 @@ class FlatContext(BaseContext):
         True
         >>> # Restore to original graphic state values.
         >>> context.restore()
-        >>> context._font.endswith('Roboto-Regular.ttf')
+        >>> context._font.endswith('PageBot-Regular.ttf')
         True
         """
         gState = dict(
@@ -477,11 +524,13 @@ class FlatContext(BaseContext):
 
         >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> w = 400
         >>> h = 300
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> style = {'fontSize': 14}
+        >>> font = findFont('Roboto-Regular')
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
         >>> s = blurb.getBlurb('stylewars_bluray')
@@ -504,10 +553,13 @@ class FlatContext(BaseContext):
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
         box = (xpt, ypt, wpt, hpt)
-        self.marker(xpt, ypt)
-        self.stroke((1, 0, 0))
-        self.fill(None)
-        self.rect(xpt, ypt, wpt, hpt)
+
+        # Debugging.
+        #self.marker(xpt, ypt)
+        #self.stroke((1, 0, 0))
+        #self.fill(None)
+        #self.rect(xpt, ypt, wpt, hpt)
+
         return fs.textBox(self.page, box)
 
     def textOverflow(self, fs, box, align=LEFT):
@@ -515,12 +567,14 @@ class FlatContext(BaseContext):
         current context.
 
         >>> from pagebot.contributions.filibuster.blurb import Blurb
+        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> w = 400
         >>> h = 300
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> style = {'fontSize': 14}
+        >>> font = findFont('Roboto-Regular')
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
         >>> blurb = Blurb()
         >>> s = blurb.getBlurb('stylewars_bluray')
@@ -648,8 +702,51 @@ class FlatContext(BaseContext):
 
     #   I M A G E
 
-    def imagePixelColor(self, path, p):
-        return self.b.imagePixelColor(path, p)
+    def getResizedPathName(self, path, w, h):
+        parts = path.split('.')
+        pre = '.'.join(parts[:-1])
+        ext = parts[-1]
+        return '%s-%sx%s.%s' % (pre, w, h, ext)
+
+    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
+            scaleType=None, e=None):
+        """Draws the image. If position is none, sets x and y to the origin. If
+        w or h is defined, then scale the image to fit."""
+        if p is None:
+            p = 0, 0
+
+        # Renders unit tuple to value tuple.
+        xpt, ypt = point2D(upt(p))
+        xpt = self.getX(xpt)
+        ypt = self.getY(ypt)
+        self.save()
+
+        im = Image.open(path)
+
+
+        # NOTE: using PIL for resizing, much faster than Flat.
+        # TODO: cache result.
+        if not w is None and not h is None:
+            path = self.getResizedPathName(path, w, h)
+            if not exists(path):
+                im = im.resize((w, h))
+                im.save(path, 'jpeg')
+
+        img = self.b.image.open(path)
+
+        #ypt = 842 - 180#h.pt
+        ypt -= h.pt
+        placed = self.page.place(img)
+        placed.position(xpt, ypt)
+        self.restore()
+
+        # Debugging.
+        #xpt, ypt = point2D(upt(p))
+        #self.marker(xpt, ypt)
+        #self.stroke((1, 0, 0))
+        #self.fill(None)
+        #self.rect(xpt, ypt, w.pt, h.pt)
+
 
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
@@ -664,31 +761,8 @@ class FlatContext(BaseContext):
         # Answer units of the same time as the document.w was defined.
         return pt(img.width), pt(img.height)
 
-    def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None, e=None):
-        """Draws the image. If position is none, sets x and y to the origin. If
-        w or h is defined, then scale the image to fit."""
-        if p is None:
-            p = 0, 0
-
-        # Renders unit tuple to value tuple.
-        xpt, ypt = point2D(upt(p))
-        xpt = self.getX(xpt)
-        ypt = self.getY(ypt)
-        self.save()
-        img = self.b.image.open(path)
-
-        # TODO: calculate other if one is None.
-        # TODO: maybe use PIL for resizing, cache result.
-        if not w is None and not h is None:
-            img.resize(width=int(w.pt), height=int(h.pt))
-
-        if self.originTop:
-            ypt -= h.pt
-
-        placed = self.page.place(img)
-        placed.position(xpt, ypt)
-        self.restore()
+    def imagePixelColor(self, path, p):
+        return self.b.imagePixelColor(path, p)
 
     #   D R A W I N G
 

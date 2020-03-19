@@ -18,7 +18,7 @@
 #     have its own optional style, that overwrites the generic style of self.
 #
 from pagebot.elements.element import Element
-from pagebot.elements.paths import PageBotPath
+from pagebot.contexts.basecontext.pagebotpath import PageBotPath
 from pagebot.toolbox.units import pointOffset, upt
 
 class Paths(Element):

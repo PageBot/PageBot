@@ -120,6 +120,10 @@ class AbstractContext:
         the framerate is set by page.frameDuration."""
         raise NotImplementedError
 
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        raise NotImplementedError
+
     def printImage(self, pdf=None):
         """Export the canvas to a printing dialog, ready to print. Optionally
         a `pdf` object can be provided."""

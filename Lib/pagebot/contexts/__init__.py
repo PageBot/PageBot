@@ -32,11 +32,13 @@ if platform == 'darwin':
     except:
         hasDrawBot = False
 
-    try:
-        # TODO: check if drawBotContext exists first, ask to install.
-        from pagebotosx.contexts.drawbot.drawbotcontext import DrawBotContext
-    except:
-        pass
+    if hasDrawBot:
+        try:
+            # TODO: check if drawBotContext exists first, ask to install.
+            from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
+        except Exception as e:
+            #print(traceback.format_exc())
+            pass
 
 CONTEXT_TYPE = None
 MAMP_PATH = None
@@ -102,7 +104,8 @@ def getDrawBotContext():
     if platform != 'darwin':
         return None
 
-    return DrawBotContext()
+    if DrawBotContext:
+        return DrawBotContext()
 
 def getHtmlContext():
     return HtmlContext()

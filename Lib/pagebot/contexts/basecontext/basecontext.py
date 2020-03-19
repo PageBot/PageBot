@@ -21,7 +21,7 @@ import xml.etree.ElementTree as ET
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
-from pagebot.contexts.base.abstractcontext import AbstractContext
+from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.filepaths import DEFAULT_FONT_NAME
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
@@ -139,6 +139,10 @@ class BaseContext(AbstractContext):
     def size(self, width, height=None):
         return self.b.size(width, height=height)
 
+    def setSize(self, w=None, h=None):
+        # TODO: also add to abstract.
+        pass
+
     def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Creates a new drawbot page.
 
@@ -156,6 +160,18 @@ class BaseContext(AbstractContext):
 
     def saveImage(self, path, *args, **options):
         return self.b.saveImage(path, *args, **options)
+
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        """
+        TODO: Should scale an image at `path` and save it to another file with Pillow.
+        """
+        # FIXME: scale with PIL
+        #from pagebot import getContext
+        #return getContext().scaleImage(path, w, h, index=index,
+        #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
+        #    force=force)
+
 
     def printImage(self, pdf=None):
         return self.b.printImage(pdf=pdf)

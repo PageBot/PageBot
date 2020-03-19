@@ -14,7 +14,7 @@
 #     htmlcontext.py
 #
 
-from pagebot.contexts.base.basecontext import BaseContext
+from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
 from pagebot.contexts.markup.htmlstring import HtmlString
 from pagebot.toolbox.color import noColor
@@ -125,17 +125,6 @@ class HtmlContext(BaseContext):
         # FIXME: get size with PIL
         #from pagebot import getContext
         #return getContext().imageSize(path)
-
-    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
-            exportExtension=None, force=False):
-        """Scales the images and save to another file. As we cannot assume
-        that we have DrawBotContext available, we need to use another lib, such as PIL.
-        For now, we use DrawBotContext"""
-        # FIXME: scale with PIL
-        #from pagebot import getContext
-        #return getContext().scaleImage(path, w, h, index=index,
-        #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
-        #    force=force)
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
         """Make an HTML image tag by calling the builder"""
