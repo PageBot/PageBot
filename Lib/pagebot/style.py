@@ -147,12 +147,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # In case saving as .mov or .gif, this value defines 1/frames_per_second
         frameDuration = DEFAULT_FRAME_DURATION,
 
-        # Resolution in dpi for pixel based publications and elements.
-        resolution = pt(72),
-        # Dictionary of multiplication factors for (e.g. thumbnail) image sizes
-        # per image type.
-        resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
-
         # Optional folds property. Keep None or empty list if no folds.
         # Otherwise list of [(x1, None), ...] for vertical folds or [(None,
         # y1), ...] for horizontal folds. Also the x and y values can be
@@ -579,6 +573,23 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         showTextOverflowMarker = False,
 
         # Image stuff
+
+        # Resolution in dpi for pixel based publications and elements.
+        resolution = pt(72),
+        # Dictionary of multiplication factors for (e.g. thumbnail) image sizes
+        # per image type.
+        resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
+        # If defined, images are scaled down to fitting this width or height.
+        maxImageWidth = None, 
+        maxImageHeight = None, 
+        # If set, then use this as default width for scaling images (e.g. when
+        # used HTML context)
+        # Overwritten by maxImageWidth and maxImageHeight as:
+        # w = min(maxImageWidth or maxInt, w or 0) or defaultImageWidth or w
+        # h = min(maxImageHeight or maxInt, h or 0) or defaultImageHeight or h
+        defaultImageWidth = None,
+        defaultImageHeight = None,
+
         showImageReference = False,
         # If True, leave a marker on lores-cached images as warning.
         showImageLoresMarker = False,
@@ -594,14 +605,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # If between >=0.8 scale, then don't save cached. Cached images should
         # never enlarge.
         scaledImageFactor = 0.8,
-
-        # If set, then use this as default width for scaling images (e.g. when
-        # used HTML context)
-        defaultImageWidth = None,
-
-        # If set, then use this as default height for scaling image (e.g. when
-        # used HTML context)
-        defaultImageHeight = None,
 
         # CSS flags
         # Adds information comments with original values to CSS export.

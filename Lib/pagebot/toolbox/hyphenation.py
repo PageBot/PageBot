@@ -55,7 +55,7 @@ def hyphenatedWords(language=DEFAULT_LANGUAGE):
     >>> # English hyphenated words in the library.
     >>> words = hyphenatedWords(LANGUAGE_EN)
     >>> len(words) 
-    172365
+    172372
     >>> #sorted(words.keys())[10]
     >>> #sorted(words.values())[10]
     >>> # Dutch hyphenated words in the library.

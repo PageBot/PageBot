@@ -601,6 +601,40 @@ def path2Extension(path):
     """
     return path.split('.')[-1].lower()
 
+def path2ScaledImagePath(path, w=None, h=None, index=None, extension=None, scaledPath=None):
+    """Answer the path where scaled images go to, also altering their name.
+    If extension is different from the path extension, then replace it.
+    If w, h, index or extension are set, then add them to the output name.
+    If basePath is None, then used the default ./scaled/ instead.
+
+    >>> path2ScaledImagePath('images/myImage.jpg')
+    'scaled/myImage.jpg'
+    >>> path2ScaledImagePath('images/myImage.jpg', 100, 200)
+    'scaled/myImage-w100-h200.jpg'
+    >>> path2ScaledImagePath('images/myImage.jpg', 100, 200, 12, 'png')
+    'scaled/myImage-w100-h200-i12.png'
+    >>> path2ScaledImagePath('images/myImage.jpg', 100, 200, 12, 'jpg', scaledPath='anotherPath')
+    'anotherPath/myImage-w100-h200-i12.jpg'
+    """
+    if scaledPath is None:
+        scaledPath = 'scaled/'
+    elif not scaledPath.endswith('/'):
+        scaledPath += '/'
+    if extension is None:
+        extension = path2Extension(path)
+    fileName = '.'.join(path2Name(path).split('.')[:-1])
+    params = []
+    if w:
+        params.append('w%s' % w)
+    if h:
+        params.append('h%s' % h)
+    if index is not None:
+        params.append('i%s' % index)
+    params = '-'.join(params)
+    if params:
+        params = '-' + params
+    return scaledPath + fileName + params + '.' + extension
+
 def path2FontName(path, extensions=None):
     """
     Take that file part of the path, and get the chunk until the first

@@ -15,8 +15,7 @@
 #     pbimage.py
 #
 
-
-import os
+import os, sys
 
 from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL
@@ -33,11 +32,12 @@ class Image(Element):
     >>> from pagebot import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
-    >>> #from pagebot import getContext
+    >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
     >>> from pagebot.constants import A4
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
-    >>> doc = Document(size=A4, originTop=False, padding=30)
+    >>> context = HtmlContext()
+    >>> doc = Document(size=A4, originTop=False, padding=30, context=context)
     >>> page = doc[1]
     >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
     >>> e.xy # Position of the image
@@ -60,11 +60,12 @@ class Image(Element):
     >>> e.conditions = [Top2Top(), Fit2Width()] # Set new condition, fitting on page padding of 30pt.
     >>> doc.solve()
     Score: 2 Fails: 0
+    >>> e.w = 48 # Make the element into a thumbnail, scale the image to it.
+    >>> e._scaleImage(doc.view)
+    >>> e.size # New scaled proportions
+    (48pt, 64pt)
     """
-    """
-    >>> e.xy, e.size # Now disproportionally fitting the full page size of the A4-doc.
-    ((30pt, 286.42mm), (128.83mm, 486.32pt))
-    """
+
     isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
@@ -79,33 +80,46 @@ class Image(Element):
 
         If path is omitted or file does not exist, a gray rectangle with a
         cross will be drawn."""
-        self.path = path
+        self.path = self.srcPath = path
 
         if self.iw and self.ih:
             if proportional:
                 if size is not None:
                     w, h = point2D(size)
+
                 if w is not None:
+                    # Crop the (w, h) if maximum or default sizes are defined.
+                    w = min(self.maxImageWidth or sys.maxsize, upt(w)) or self.defaultImageWidth or w
                     # Brackets: Divide into ratio number before multiplying.
                     uw = units(w)
                     self.size = uw, self.ih/self.iw * uw
                 elif h is not None:
+                    # Crop the (w, h) if maximum or default sizes are defined.
+                    h = min(self.maxImageHeight or sys.maxsize, upt(h)) or self.defaultImageHeight or h
                     # Brackets: Divide into ratio number before multiplying.
                     uh = units(h)
                     self.size = self.iw/self.ih * uh, uh
                 else:
-                    self.size = units(self.iw, self.ih)
+                    iw = min(self.maxImageWidth or sys.maxsize, upt(self.iw)) or self.defaultImageWidth or self.iw
+                    ih = min(self.maxImageHeight or sys.maxsize, upt(self.ih)) or self.defaultImageHeight or self.ih
+                    self.size = units(iw,ih)
             else:
                 # No proportional flag, try to figure out from the supplied
                 # proportions.
                 if size is not None:
                     w, h = point2D(size)
+                    # Crop the (w, h) if maximum or default sizes are defined.
+                    w = min(self.maxImageWidth or sys.maxsize, upt(w)) or self.defaultImageWidth or w
+                    h = min(self.maxImageHeight or sys.maxsize, upt(h)) or self.defaultImageHeight or h
                     self.size = units(w, h)
 
                 # One of the two needs to be defined, the other can be None.
                 # If both are set, then the image scales disproportional.
                 # Disproportional scaling.
                 if size is None and w is not None and h is not None:
+                    # Crop the (w, h) if maximum or default sizes are defined.
+                    w = min(self.maxImageWidth or sys.maxsize, upt(w)) or self.defaultImageWidth or w
+                    h = min(self.maxImageHeight or sys.maxsize, upt(h)) or self.defaultImageHeight or h
                     self.size = units(w, h)
 
         else:
@@ -300,7 +314,7 @@ class Image(Element):
         if self.path is None or not self.scaleImage:
             return
 
-        # Make sure image exists and not zero, to avoid division.
+        # Make sure image exists and not zero size, to avoid division.
         if not self.iw or not self.ih:
             print('Image.scaleImage: %dx%d zero size for image "%s"' % (self.iw, self.ih, self.path))
             return
@@ -322,10 +336,10 @@ class Image(Element):
             # If no real scale reduction, then skip. Never enlarge.
             return
 
-        # Scales the image the cache does not exist already. A new path is
-        # saved for the scaled image file. Resets (self.iw, self.ih).
+        # Scales the image the cache does not exist already. A new self.path is
+        # saved for the scaled image file at self.srcPath. Resets (self.iw, self.ih).
         self.path = self.context.scaleImage(
-            path=self.path.lower(), w=resW, h=resH, index=self.index,
+            path=self.srcPath.lower(), w=resW, h=resH, index=self.index,
             showImageLoresMarker=self.showImageLoresMarker or view.showImageLoresMarker,
             exportExtension=exportExtension
         )
@@ -509,9 +523,9 @@ class Image(Element):
     def gaussianBlur(self, radius=None):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
-        >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> from pagebot import getResourcesPath
+        >>> context = HtmlContext()
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
         >>> e = Image(path, context=context)
         >>> e.gaussianBlur(12)

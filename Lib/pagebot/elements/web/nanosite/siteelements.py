@@ -511,9 +511,10 @@ class Cropped(NanoElement):
             #   background-color: #888;
             #   background-repeat: no-repeat;
             #   background-size:contain;"
-
+            
+            imagePath = image.path or '' # Image probably does not exist. Not the moment here to report the error.
             style = "background-image:url('%s');background-position:%s %s;background-size:%s;" % \
-                (image.path.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
+                (imagePath.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
             if self.fill is not noColor:
                 style += 'background-color:#%s;' % self.fill.hex
             if image.cssRepeat:

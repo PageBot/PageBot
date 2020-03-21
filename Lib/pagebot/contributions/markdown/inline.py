@@ -67,8 +67,6 @@ class InlineExtension(Extension):
         emph_tag = SimpleTagPattern(EMPH_RE, 'emphasis')
         md.inlinePatterns['emphasis'] = emph_tag
 
-
-        del md.inlinePatterns['strong_em']
-        del md.inlinePatterns['em_strong']
-        del md.inlinePatterns['emphasis2']
-
+        #del md.inlinePatterns['strong_em']
+        #del md.inlinePatterns['em_strong']
+        #del md.inlinePatterns['emphasis2']

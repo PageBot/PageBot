@@ -753,6 +753,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()
         >>> context.imageSize(imagePath)
         (398pt, 530pt)

@@ -13,11 +13,15 @@
 #
 #     htmlcontext.py
 #
+import os
 
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
 from pagebot.contexts.markup.htmlstring import HtmlString
+from pagebot.constants import BITMAP_TYPES
 from pagebot.toolbox.color import noColor
+from pagebot.toolbox.units import pt, upt
+from pagebot.toolbox.transformer import path2Extension, path2ScaledImagePath, path2Dir
 
 class HtmlContext(BaseContext):
     """The HtmlContext builds all parts necessary for a website. Most of the
@@ -119,12 +123,64 @@ class HtmlContext(BaseContext):
         #return cls.b.imagePixelColor(path, p)
 
     def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path. As we cannot assume
-        that we have DrawBotContext available, we need to use another lib, such as PIL.
-        For now, we use DrawBotContext"""
-        # FIXME: get size with PIL
-        #from pagebot import getContext
-        #return getContext().imageSize(path)
+        """Answers the pt(w, h) image size of the image file at path. As we cannot assume
+        that we have DrawBotContext available, we are using PIL for size and scaling.
+        
+        Usage:
+        from pagebot import getContext
+        return getContext().imageSize(path)
+
+        >>> from pagebot import getResourcesPath
+        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> context = HtmlContext()
+        >>> context.imageSize(imagePath)
+        (398pt, 530pt)
+        """
+        if not os.path.exists(path):
+            return None
+        if path.split('.')[-1] in BITMAP_TYPES:
+            import PIL
+            im = PIL.Image.open(path)
+            return pt(im.size)
+        return pt(100, 100) # PIL cannot find file size of SVG, At least return a default.
+
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        """
+        >>> from pagebot import getResourcesPath
+        >>> srcPath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> path2ScaledImagePath(srcPath, 100, 200, 0, 'png')
+        'scaled/peppertom_lowres_398x530-w100-h200-i0.png'
+        >>> context = HtmlContext()
+        >>> imagePath = context.scaleImage(srcPath, 100, 200)
+        >>> imagePath
+        'scaled/peppertom_lowres_398x530-w100-h200.png'
+        >>> context.imageSize(imagePath)
+        (100pt, 133pt)
+        """
+        if exportExtension is None:
+            exportExtension = path2Extension(path)
+        exportExtension = exportExtension.lower()
+        # FIXME, for now hard-converted to png, as JPG does not for for PIL now.
+        exportExtension = 'png'
+        # If default ./scaled directory does not exist, then create it.
+        cachedFilePath = path2ScaledImagePath(path, w, h, index, exportExtension)
+        cacheDirPath = path2Dir(cachedFilePath) #
+
+        if not os.path.exists(cacheDirPath):
+            os.makedirs(cacheDirPath)
+
+        if exportExtension in BITMAP_TYPES and path != cachedFilePath:
+            try:
+                if force or not os.path.exists(cachedFilePath):
+                    import PIL
+                    im = PIL.Image.open(path)
+                    im.thumbnail(upt(w, h), PIL.Image.ANTIALIAS)
+                    im.save(cachedFilePath, exportExtension)
+                    print('Scaling %s to (%d, %d)' % (path, w, h))
+            except IOError:
+                print("Cannot create resize image '%s'" % path)
+        return cachedFilePath
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None):
         """Make an HTML image tag by calling the builder"""

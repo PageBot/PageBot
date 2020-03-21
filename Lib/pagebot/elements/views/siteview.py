@@ -47,7 +47,7 @@ class SiteView(HtmlView):
 
         if resourcePaths is None:
             rp = getRootPath() + '/elements/web/simplesite/'
-            resourcePaths = (rp+'js', rp+'images', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
+            resourcePaths = (rp+'js', rp+'scaled', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
         self.resourcePaths = resourcePaths
      
         # Default WebFonts URL's to include:

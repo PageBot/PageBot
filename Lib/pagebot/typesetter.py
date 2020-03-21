@@ -39,7 +39,8 @@ from pagebot.contributions.markdown.inline import InlineExtension
 from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
 from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
-from pagebot.constants import CSS_BACKGROUND_REPEAT, FILETYPE_SVG, FILETYPE_GIF
+from pagebot.constants import (CSS_BACKGROUND_REPEAT, FILETYPE_SVG, FILETYPE_GIF,
+    MAX_IMAGE_WIDTH)
 
 class Typesetter:
     """The Typesetter takes one or more markdown files or a sequence of
@@ -89,7 +90,7 @@ class Typesetter:
 
     def __init__(self, context, styles=None, galley=None, skipTags=None, tryExcept=True,
             return2Space=False, tabs2Space=False, br2Return=True, stripHead=False,
-            stripTail=False):
+            stripTail=False, maxImageWidth=None):
         """The Typesetter instance interprets an XML or Markdown file (.md) and
         converts it into a Galley instance with formatted string depending on
         the current context.
@@ -136,6 +137,9 @@ class Typesetter:
 
         if styles is None:
             styles = self.DEFAULT_STYLES
+
+        # Set the maximum image width, in case scaling test is necessary.
+        self.maxImageWidth = maxImageWidth or MAX_IMAGE_WIDTH
 
         # Style used, in case the current text box does not have them.
         self.styles = styles 
@@ -317,8 +321,10 @@ class Typesetter:
     #   <figcaption>Caption here</figcaption>
     # </figure>
   
-    IMAGE_CACHE_WIDTH = re.compile('w=([px012345679\\%]*)') # 200px, 100% 
-    IMAGE_CACHE_HEIGHT = re.compile('h=([px012345679\\%]*)') # 200px, 100% 
+    IMAGE_CACHE_WIDTHI = re.compile('wi=([px0123456789]*)') # 200, 200px
+    IMAGE_CACHE_HEIGHTI = re.compile('hi=([px0123456789]*)') # 200, 200px
+    IMAGE_CACHE_WIDTH = re.compile('w=([px0123456789\\%]*)') # 200px, 100% 
+    IMAGE_CACHE_HEIGHT = re.compile('h=([px0123456789\\%]*)') # 200px, 100% 
     IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)') # left, center, right 
     IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)') # top, middle, bottom
     IMAGE_CACHE_NOSCALE = re.compile('(noscale|noScale)') # noscale does not create a scaled/ image.
@@ -339,9 +345,9 @@ class Typesetter:
 
         If one or both if (w, h) are defined, then set the imageScale flag accordingly.
 
-        >>> from pagebot import getContext
+        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> from pagebot.toolbox.units import units
-        >>> context = getContext()
+        >>> context = HtmlContext()
         >>> ts = Typesetter(context=context)
         >>> ts.IMAGE_CACHE_NOSCALE.findall('aaa bbb')
         []
@@ -349,12 +355,14 @@ class Typesetter:
         ['noscale']
         >>> units(ts.IMAGE_CACHE_WIDTH.findall('w=100 noscale'))
         (100pt,)
-        >>> units(ts.IMAGE_CACHE_WIDTH.findall('w=50% noscale'))
+        >>> units(ts.IMAGE_CACHE_WIDTH.findall('w=50% wi=800 noscale'))
         (50%,)
+        >>> units(ts.IMAGE_CACHE_WIDTHI.findall('w=50% wi=800 noscale'))
+        (800pt,)
         >>> ts.IMAGE_CACHE_SIZE.findall('w=50% contain')
         ['contain']
         """
-        w = ww = h = hh = xAlign = yAlign = None # Values are optional set by alt content.
+        w = wi = ww = h = hi = hh = xAlign = yAlign = None # Values are optional set by alt content.
         cover = contain = initial = inherit = False
         path = node.attrib.get('src')
         doScale = not path.endswith('.'+FILETYPE_SVG) and not path.endswith('.'+FILETYPE_GIF)
@@ -363,6 +371,8 @@ class Typesetter:
         if alt:
             xAlign = (self.IMAGE_CACHE_XALIGN.findall(alt) or [None])[0] # x=center
             yAlign = (self.IMAGE_CACHE_YALIGN.findall(alt) or [None])[0] # y=top
+            wi = units(self.IMAGE_CACHE_WIDTHI.findall(alt) or [None])[0] # wi=800, wi=100% Defines the scaled cache size
+            hi = units(self.IMAGE_CACHE_HEIGHTI.findall(alt) or [None])[0] # hi=800
             w = units(self.IMAGE_CACHE_WIDTH.findall(alt) or [None])[0] # w=800, w=100%
             h = units(self.IMAGE_CACHE_HEIGHT.findall(alt) or [None])[0] # h=800
             doScale = doScale and not self.IMAGE_CACHE_NOSCALE.findall(alt)
@@ -370,19 +380,20 @@ class Typesetter:
             cssRepeat = (self.IMAGE_CACHE_REPEAT.findall(alt) or [None])[0]
         # doScale = doScale or w is not None or h is not None
         proportional = not (w is not None and h is not None) # Not proportional if both are defined.
-        # auto    Default value. The background image is displayed in its original size
-        # (w, h)  Sets the width and height of the background image.
-        #         The first value sets the width, the second value sets the height.
-        #         If only one value is given, the second is set to "auto". Read about length units
-        #         w and h can be fixed units or pecentage.
-        #         A percentage sets the width and height of the background image in percent of the parent element.
-        #         The first value sets the width, the second value sets the height.
-        #         If only one value is given, the second is set to "auto"   Play it »
-        # cover   Resize the background image to cover the entire container,
-        #         even if it has to stretch the image or cut a little bit off one of the edges Play it »
-        # contain Resize the background image to make sure the image is fully visible Play it »
-        # initial Sets this property to its default value. Read about initial Play it »
-        # inherit Inherits this property from its parent element. Read about inherit
+        # auto     Default value. The background image is displayed in its original size
+        # (iw, ih) Sets the width and height of the scaled cached image file.
+        # (w, h)   Sets the width and height of the background image for CSS.
+        #          The first value sets the width, the second value sets the height.
+        #          If only one value is given, the second is set to "auto". Read about length units
+        #          w and h can be fixed units or pecentage.
+        #          A percentage sets the width and height of the background image in percent of the parent element.
+        #          The first value sets the width, the second value sets the height.
+        #          If only one value is given, the second is set to "auto"   Play it »
+        # cover    Resize the background image to cover the entire container,
+        #          even if it has to stretch the image or cut a little bit off one of the edges Play it »
+        # contain  Resize the background image to make sure the image is fully visible Play it »
+        # initial  Sets this property to its default value. Read about initial Play it »
+        # inherit  Inherits this property from its parent element. Read about inherit
         if not cssSize in ('cover', 'contain', 'initial', 'inherit'):
             if h is not None and w is not None:
                 cssSize = '%s %s' % (w, h)
@@ -397,8 +408,10 @@ class Typesetter:
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
             cssSize=cssSize, # Examples "auto 100%" "100% auto" "cover" "contain" "initial" "inherit"
             cssRepeat=cssRepeat,
-            xAlign=xAlign, yAlign=yAlign, w=w, h=h, alt=alt, proportional=proportional,
-            index=node.attrib.get('index', 0))
+            xAlign=xAlign, yAlign=yAlign, 
+            w=wi or self.maxImageWidth, h=hi, # To alter the scaled image file from source level.
+            alt=alt, proportional=proportional,
+            maxImageWidth=self.maxImageWidth, index=node.attrib.get('index', 0))
 
     def node_caption(self, node, e):
         """If there is a self.currentImage set, then redirect output of the
