@@ -114,6 +114,10 @@ class Element:
         >>> page.size
         (300pt, 400pt)
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
+        >>> doc.build()
+        """
+        """
+        FIXME: should we build separate elements, or only at doc level?
         >>> e.build(doc.getView(), pt(0, 0))
         >>> e.x, e.y, e.xy
         (0pt, 20pt, (0pt, 20pt))
@@ -532,7 +536,7 @@ class Element:
     def _set_maxImageWidth(self, w):
         self.style['maxImageWidth'] = w
     maxImageWidth = property(_get_maxImageWidth, _set_maxImageWidth)
-    
+
     def _get_maxImageHeight(self):
         """Answers the maximum image height. If not None, then images are scaled
         down to fitting (self.maxImageWidth, self.maxImageHeight)
@@ -541,7 +545,7 @@ class Element:
     def _set_maxImageHeight(self, h):
         self.style['maxImageHeight'] = h
     maxImageHeight = property(_get_maxImageHeight, _set_maxImageHeight)
- 
+
     def _get_resolution(self):
         """Answer the style value self.css('resolution') for the amount of
         DPI."""
@@ -563,7 +567,7 @@ class Element:
         assert isinstance(resolutionFactors, dict)
         self.style['resolutionFactors'] = resolutionFactors
     resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
-   
+
     #   T E M P L A T E
 
     def applyTemplate(self, template, elements=None):

@@ -497,8 +497,9 @@ class TextBox(Element):
         >>> s = context.newString('AAA ' * 1000, style=dict(font='Verdana', fontSize=10, leading=12))
         >>> # Fix h to lock elastic height. Overflow is now defined.
         >>> t1 = TextBox(s, name="T1", w=100, h=200, nextElement='T2', parent=page1)
-        >>> t1.bs.getStyleAtIndex(0)['font']
-        'Verdana'
+        >>> font = t1.bs.getStyleAtIndex(0)['font']
+        >>> font.endswith('PageBot-Regular.ttf')
+        True
         >>> #t1.bs.getStyleAtIndex(0)['fontSize']
         #10pt # FIXME: Flat still returns 10
         >>> t2 = TextBox(name="T2", w=100, h=200, nextElement='T1', nextPage=page1.next, parent=page1)

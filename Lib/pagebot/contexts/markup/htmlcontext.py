@@ -174,9 +174,9 @@ class HtmlContext(BaseContext):
             try:
                 if force or not os.path.exists(cachedFilePath):
                     im = Image.open(path)
-                    im.thumbnail(upt(w, h), PIL.Image.ANTIALIAS)
+                    im.thumbnail(upt(w, h), Image.ANTIALIAS)
                     im.save(cachedFilePath, exportExtension)
-                    print('Scaling %s to (%d, %d)' % (path, w, h))
+                    #print('Scaling %s to (%d, %d)' % (path, w, h))
             except IOError:
                 print("Cannot create resize image '%s'" % path)
         return cachedFilePath
