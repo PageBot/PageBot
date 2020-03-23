@@ -15,7 +15,8 @@
 #     pbimage.py
 #
 
-import os, sys
+import os
+import sys
 
 from pagebot.elements.element import Element
 from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL
@@ -1379,5 +1380,4 @@ Attributes: targetImage an Image object, extent a tuple (x, y, w, h), color RGBA
         """
 if __name__ == '__main__':
     import doctest
-    import sys
     sys.exit(doctest.testmod()[0])

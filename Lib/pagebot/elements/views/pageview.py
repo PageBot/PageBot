@@ -24,7 +24,7 @@ from pagebot import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
-from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, ORIGIN, QUIRE_SPREAD,
+from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD, #ORIGIN,
     BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD,
     GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,

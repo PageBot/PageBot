@@ -14,6 +14,7 @@
 #     htmlcontext.py
 #
 import os
+from PIL import Image
 
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
@@ -125,7 +126,7 @@ class HtmlContext(BaseContext):
     def imageSize(self, path):
         """Answers the pt(w, h) image size of the image file at path. As we cannot assume
         that we have DrawBotContext available, we are using PIL for size and scaling.
-        
+
         Usage:
         from pagebot import getContext
         return getContext().imageSize(path)
@@ -139,8 +140,7 @@ class HtmlContext(BaseContext):
         if not os.path.exists(path):
             return None
         if path.split('.')[-1] in BITMAP_TYPES:
-            import PIL
-            im = PIL.Image.open(path)
+            im = Image.open(path)
             return pt(im.size)
         return pt(100, 100) # PIL cannot find file size of SVG, At least return a default.
 
@@ -173,8 +173,7 @@ class HtmlContext(BaseContext):
         if exportExtension in BITMAP_TYPES and path != cachedFilePath:
             try:
                 if force or not os.path.exists(cachedFilePath):
-                    import PIL
-                    im = PIL.Image.open(path)
+                    im = Image.open(path)
                     im.thumbnail(upt(w, h), PIL.Image.ANTIALIAS)
                     im.save(cachedFilePath, exportExtension)
                     print('Scaling %s to (%d, %d)' % (path, w, h))

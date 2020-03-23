@@ -287,7 +287,7 @@ class BabelString:
                 else:
                     # Font not found.
                     # TODO: add to logger.
-                    print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
+                    #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
                     attrs['font'] = DEFAULT_FONT_PATH
 
         else:
