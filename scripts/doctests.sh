@@ -22,7 +22,7 @@ python3 $PWD/contexts/basecontext/basecontext.py
 python3 $PWD/contexts/basecontext/basecontour.py
 python3 $PWD/contexts/basecontext/baseimageobject.py
 python3 $PWD/contexts/basecontext/basepoint.py
-python3 $PWD/contexts/basecontext/pagebotpath.py
+python3 $PWD/contexts/basecontext/basepath.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py

@@ -14,11 +14,11 @@
 #
 #     bppaths.py
 #
-#     The Paths element holds an ordered list of PageBotPath elements, where each can
+#     The Paths element holds an ordered list of BasePath elements, where each can
 #     have its own optional style, that overwrites the generic style of self.
 #
 from pagebot.elements.element import Element
-from pagebot.contexts.basecontext.pagebotpath import PageBotPath
+from pagebot.contexts.basecontext.basepath import BasePath
 from pagebot.toolbox.units import pointOffset, upt
 
 class Paths(Element):
@@ -29,12 +29,12 @@ class Paths(Element):
     >>> from pagebot.toolbox.units import pt, inch
     >>> from pagebot import getContext
     >>> context = getContext()
-    >>> path1 = PageBotPath(context=context)
+    >>> path1 = BasePath(context=context)
     >>> path1.style['fill'] = color(1, 0, 0)
     >>> path1.oval(100, 100, 200, 200)
     >>> context.drawPath(path1)
 
-    >>> path2 = PageBotPath(context=context) # Leaves current self._path untouched
+    >>> path2 = BasePath(context=context) # Leaves current self._path untouched
     >>> path2.style['fill'] = color(rgb='blue') # Add color with the path style.
     >>> len(path2.points)
     0
@@ -66,20 +66,20 @@ class Paths(Element):
     >>>
     """
 
-    PATH_CLASS = PageBotPath
+    PATH_CLASS = BasePath
 
     def __init__(self, paths=None, **kwargs):
         if paths is None:
             paths = []
         elif not isinstance(paths, (tuple, list)):
-            paths = [paths] # Create an ordered list of PageBotPath instances
+            paths = [paths] # Create an ordered list of BasePath instances
         self.paths = paths
         for path in paths:
             assert isinstance(path, self.PATH_CLASS)
         Element.__init__(self, **kwargs)
 
     def rect(self, x, y, w, h):
-        path = PageBotPath(self.context)
+        path = BasePath(self.context)
         path.rect(x, y, w, h)
         self.paths.append(path)
 
@@ -99,9 +99,9 @@ class Paths(Element):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context=context)
+        >>> path1 = BasePath(context=context)
         >>> path1.oval(100, 100, 200, 200)
-        >>> path2 = PageBotPath(context=context)
+        >>> path2 = BasePath(context=context)
         >>> path2.oval(200, 200, 200, 200)
         >>> e = Paths([path1, path2])
         >>> e.w
@@ -131,9 +131,9 @@ class Paths(Element):
 
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> path1 = PageBotPath(context=context)
+        >>> path1 = BasePath(context=context)
         >>> path1.oval(100, 100, 200, 300)
-        >>> path2 = PageBotPath(context=context)
+        >>> path2 = BasePath(context=context)
         >>> path2.oval(200, 200, 200, 500)
         >>> e = Paths([path1, path2])
         >>> e.h

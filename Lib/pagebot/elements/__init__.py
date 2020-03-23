@@ -21,7 +21,7 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 # Path and mask elements. Generic PageBot equivalent of DrawBot.BezierPath.
-from pagebot.contexts.basecontext.pagebotpath import PageBotPath, newRectPath
+from pagebot.contexts.basecontext.basepath import BasePath, newRectPath
 
 
 # Simple elements.
@@ -50,7 +50,7 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 # Artboard. SketchApp compatible, content element on pages.
 from pagebot.elements.pbartboard import Artboard
 
-# Element that holds a number of styled PageBotPath instances to draw.
+# Element that holds a number of styled BasePath instances to draw.
 from pagebot.elements.paths.pbpaths import Paths, Mask
 
 # Table elements
@@ -183,12 +183,12 @@ def newRuler(**kwargs):
     """Create a Ruler element."""
     return Ruler(**kwargs)
 
-def newPageBotPath(**kwargs):
-    return PageBotPath(**kwargs)
+def newBasePath(**kwargs):
+    return BasePath(**kwargs)
 
 def newPaths(paths=None, **kwargs):
-    """Creates a Paths element, holding PageBotPath object(s) in the element
-    frame. The paths can be a single PageBotPath instance or a list / tuple of
+    """Creates a Paths element, holding BasePath object(s) in the element
+    frame. The paths can be a single BasePath instance or a list / tuple of
     instances. Not be confused with the filePath "path" in Image."""
     return Paths(paths, **kwargs)
 

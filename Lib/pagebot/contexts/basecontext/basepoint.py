@@ -19,7 +19,12 @@ class BasePoint:
 
     def __init__(self, x, y, segmentType=None, smooth=False, name=None,
             identifier=None, start=False, onCurve=True):
-        """Point on a Bézier curve."""
+        """Point on a Bézier curve.
+
+        See also
+
+        http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
+        """
         self.x = x
         self.y = y
         self.segmentType = segmentType

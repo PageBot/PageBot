@@ -937,7 +937,8 @@ class PageView(BaseView):
         >>> view = doc.view
         >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
-        >>> view.drawBaselines(e, pt(0, 0))
+        >>> #view.drawBaselines(e, pt(0, 0))
+        >>> doc.build()
         """
         show = e.showBaselineGrid or self.showBaselineGrid
 

@@ -44,7 +44,7 @@ class Newspaper(Publication):
     >>> print(w)
     23.50"
     >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1)
-    >>> view = np.view
+    >>> #view = np.view
     >>> #view.padding = 50
     >>> #view.showCropMarks = True
     >>> #view.showRegistrationMarks = True
