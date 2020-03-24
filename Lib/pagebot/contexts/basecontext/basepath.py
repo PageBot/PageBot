@@ -61,9 +61,10 @@ class BasePath:
     >>> context = getContext()
     >>> style = dict(font=font, fontSize=100)
     >>> p = BasePath(context, style=style)
-    >>> p.text('H')
-    >>> p.bounds()[1] # Baseline position, H has not ascenders
-    0.0
+    >>> # TODO: implement rest of Flat Bézier path functions.
+    >>> #p.text('H')
+    >>> #p.bounds()[1] # Baseline position, H has not ascenders
+    #0.0
     """
 
     def __init__(self, context=None, bezierPath=None, style=None):
@@ -510,10 +511,10 @@ class BasePath:
     def text(self, bs, x=None, y=None, style=None):
         """Draws a txt with a font and fontSize at an offset in the Bézier
         path. If a font path is given the font will be installed and used
-        directly. Style is normal optional PageBot style dictionary.
-        Optionally an alignment can be set. Possible align values are: LEFT,
-        CENTER, RIGHT. The default alignment is left. Optionally txt can be a
-        context-related BabelString.
+        directly. Style is a normal PageBot style dictionary. Optionally an
+        alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
+        The default alignment is left. Optionally txt can be a context-related
+        BabelString.
 
         >>> from pagebot import getContext
         >>> context = getContext()

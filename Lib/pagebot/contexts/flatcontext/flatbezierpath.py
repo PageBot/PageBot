@@ -172,11 +172,29 @@ class FlatBezierPath(BaseBezierPath):
         # TODO: optional close
 
     def text(self, txt, offset=None, font=None, fontSize=10, align=None):
-        raise NotImplementedError
+        """Draws a `txt` with a `font` and `fontSize` at an `offset` in the
+        Bézier path. If a font path is given the font will be installed and
+        used directly.
+
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `txt` can be a `FormattedString`.
+        """
 
     def textBox(self, txt, box, font=None, fontSize=10, align=None,
             hyphenation=None):
-        raise NotImplementedError
+        """Draws a `txt` with a `font` and `fontSize` in a `box` in the Bézier
+        path. If a font path is given the font will be installed and used
+        directly.
+
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `hyphenation` can be provided.
+        - Optionally `txt` can be a `FormattedString`.
+        - Optionally `box` can be a `BezierPath`.
+        """
 
     # Path operations.
 
