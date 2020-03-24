@@ -17,9 +17,10 @@
 
 import math
 from pagebot.errors import PageBotError
+from pagebot.contexts.basecontext.abstractbezierpath import AbstractBezierPath
 
-class BaseBezierPath:
-    """Base class with same interface as drawBot Bézier path."""
+class BaseBezierPath(AbstractBezierPath):
+    """Base class with same interface as DrawBot Bézier path."""
 
     #contourClass = BezierContour
 

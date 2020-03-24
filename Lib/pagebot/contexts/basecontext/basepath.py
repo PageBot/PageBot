@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     pagebotpath.py
+#     basepath.py
 #
 #     The BasePath class is the wrapper around a core BezierPath instance.
 #     The reason to make a generic PageBotPage wrapper class is to add

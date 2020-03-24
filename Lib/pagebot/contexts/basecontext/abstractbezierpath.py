@@ -1,6 +1,7 @@
 class AbstractdBezierPath:
-    """
-    A bezier path object, if you want to draw the same over and over again.
+    """Abstract class with same interface as DrawBot Bézier path:
+
+    a bezier path object, if you want to draw the same over and over again.
     """
 
     def __init__(self, path=None, glyphSet=None):
@@ -9,7 +10,7 @@ class AbstractdBezierPath:
     def __repr__(self):
         raise NotImplementedError
 
-    # pen support
+    # Pen support.
 
     def moveTo(self, point):
         raise NotImplementedError
@@ -29,7 +30,8 @@ class AbstractdBezierPath:
     def beginPath(self, identifier=None):
         raise NotImplementedError
 
-    def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
+    def addPoint(self, point, segmentType=None, smooth=False, name=None,
+            identifier=None, **kwargs):
         raise NotImplementedError
 
     def endPath(self):
@@ -62,13 +64,16 @@ class AbstractdBezierPath:
     def polygon(self, *points, **kwargs):
         raise NotImplementedError
 
-    def text(self, txt, offset=None, font=_FALLBACKFONT, fontSize=10, align=None):
+    def text(self, txt, offset=None, font=_FALLBACKFONT, fontSize=10,
+            align=None):
         raise NotImplementedError
 
-    def textBox(self, txt, box, font=_FALLBACKFONT, fontSize=10, align=None, hyphenation=None):
+    def textBox(self, txt, box, font=_FALLBACKFONT, fontSize=10, align=None,
+            hyphenation=None):
         raise NotImplementedError
 
-    def traceImage(self, path, threshold=.2, blur=None, invert=False, turd=2, tolerance=0.2, offset=None):
+    def traceImage(self, path, threshold=.2, blur=None, invert=False, turd=2,
+            tolerance=0.2, offset=None):
         raise NotImplementedError
 
     #def getNSBezierPath(self):
@@ -96,8 +101,7 @@ class AbstractdBezierPath:
     def appendPath(self, otherPath):
         raise NotImplementedError
 
-
-    # transformations
+    # Transformations.
 
     def translate(self, x=0, y=0):
         raise NotImplementedError
@@ -114,7 +118,7 @@ class AbstractdBezierPath:
     def transform(self, transformMatrix, center=(0, 0)):
         raise NotImplementedError
 
-    # boolean operations
+    # Boolean operations.
 
     def union(self, other):
         raise NotImplementedError
@@ -134,5 +138,6 @@ class AbstractdBezierPath:
     def intersectionPoints(self, other=None):
         raise NotImplementedError
 
-    def expandStroke(self, width, lineCap="round", lineJoin="round", miterLimit=10):
+    def expandStroke(self, width, lineCap="round", lineJoin="round",
+            miterLimit=10):
         raise NotImplementedError
