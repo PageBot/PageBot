@@ -16,7 +16,6 @@
 #
 
 from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
-from pagebot.contexts.basecontext.basepoint import BasePoint
 
 class FlatBezierPath(BaseBezierPath):
     """Bézier path that implements commands like Flat, but with the same API
@@ -25,13 +24,16 @@ class FlatBezierPath(BaseBezierPath):
     >>> import flat
     >>> path = FlatBezierPath(flat)
     >>> path
-    <FlatBezierPath: 1>
+    <FlatBezierPath: 0>
     >>> path.moveTo((0, 0))
+    >>> path
+    <FlatBezierPath: 1>
     >>> path.lineTo((0, 100))
     >>> path.lineTo((100, 100))
     >>> path.lineTo((100, 0))
     >>> path.lineTo((0, 0))
     >>> path.closePath()
+    >>> len(path.contours[-1])
     6
     """
 
@@ -42,15 +44,6 @@ class FlatBezierPath(BaseBezierPath):
 
     def __repr__(self):
         return '<FlatBezierPath: %s>' % len(self._contours)
-
-    def addToPath(self, p, onCurve=True):
-        """Keeps track of Bézier points, needs to be in sync with Flat
-        commands."""
-        x, y = p
-
-        point = BasePoint(x, y, onCurve=onCurve)
-        # TODO: add contour Level.
-        self._contours.append(point)
 
     #def append(self, command):
     #    self.commands.append(command)
@@ -95,9 +88,12 @@ class FlatBezierPath(BaseBezierPath):
     def closePath(self):
         """Closes the path, add the first point to the end of the points
         list."""
+        contour = self.contours[-1]
+        p0 = contour[0]
 
-        p0 = self._path[0]
-        self._path.append(p0)
+        p = p0.x, p0.y
+        onCurve = p0.onCurve
+        self.addToPath(p, onCurve=onCurve)
         self.commands.append(self.b.closepath)
 
     def appendPath(self, path):

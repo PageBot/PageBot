@@ -1019,7 +1019,6 @@ def newOvalPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
     pbp.oval(x, y, w, h)
     return pbp
 
-
 if __name__ == '__main__':
     import doctest
     import sys

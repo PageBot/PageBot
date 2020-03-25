@@ -66,3 +66,8 @@ class BezierContour(list):
         return [point for segment in self for point in segment]
 
     points = property(_get_points, doc="Return a list of all the points making up this contour, regardless of whether they are on curve or off curve.")
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

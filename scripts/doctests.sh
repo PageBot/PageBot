@@ -16,12 +16,14 @@ python3 $PWD/constants.py
 python3 $PWD/contexts/__init__.py
 python3 $PWD/contexts/basecontext/abstractcontext.py
 python3 $PWD/contexts/basecontext/babelstring.py
+python3 $PWD/contexts/basecontext/basebeziercontour.py
 python3 $PWD/contexts/basecontext/basebezierpath.py
 python3 $PWD/contexts/basecontext/basebuilder.py
 python3 $PWD/contexts/basecontext/basecontext.py
 python3 $PWD/contexts/basecontext/basecontour.py
 python3 $PWD/contexts/basecontext/baseimageobject.py
 python3 $PWD/contexts/basecontext/basepoint.py
+python3 $PWD/contexts/basecontext/basecontour.py
 python3 $PWD/contexts/basecontext/basepath.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py

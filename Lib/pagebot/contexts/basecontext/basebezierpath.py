@@ -18,20 +18,44 @@
 import math
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.abstractbezierpath import AbstractBezierPath
-from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
+from pagebot.contexts.basecontext.basebeziercontour import BezierContour
+from pagebot.contexts.basecontext.basepoint import BasePoint
 
 class BaseBezierPath(AbstractBezierPath):
     """Base class with same interface as DrawBot Bézier path."""
 
-    #contourClass = BezierContour
+    contourClass = BezierContour
 
     def __init__(self, path=None, glyphSet=None):
+        """
+
+        >>> path = BaseBezierPath()
+        >>> path
+        <BaseBezierPath: 1>
+        """
+        self._path = []
         self._contours = []
         self._path.append(self._contours)
         self.glyphSet = glyphSet
+        super().__init__()
+
+    def addToPath(self, p, onCurve=True):
+        """Keeps track of Bézier points inside contours."""
+        x, y = p
+
+        point = BasePoint(x, y, onCurve=onCurve)
+
+        if len(self._contours) == 0:
+            contour = self.contourClass()
+            self._contours.append(contour)
+        else:
+            contour = self._contours[-1]
+
+        # TODO: add contour Level.
+        contour.append(point)
 
     def __repr__(self):
-        return "<BaseBezierPath: %s>" % len(self._contours)
+        return "<BaseBezierPath: %s>" % len(self._path)
 
     def _points(self, onCurve=True, offCurve=True):
         # Should be a tuple to conform to DrawBot.
@@ -404,3 +428,8 @@ class BaseBezierPath(AbstractBezierPath):
         * `tolerance`: the precision tolerance of the vector outline
         * `offset`: add the traced vector outline with an offset to the BezierPath
         """
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
