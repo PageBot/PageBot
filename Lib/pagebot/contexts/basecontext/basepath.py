@@ -26,7 +26,7 @@
 import os
 from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH,
         DEFAULT_FONT_SIZE, DEFAULT_WIDTH)
-from pagebot.toolbox.units import upt, pt, degrees, point2D
+from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.basepoint import BasePoint
 
@@ -171,7 +171,7 @@ class BasePath:
     def moveTo(self, p):
         """Moves the path to point `p`.
 
-        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -209,7 +209,7 @@ class BasePath:
     def lineTo(self, p):
         """Makes a line to the path to point `p`.
 
-        >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -227,7 +227,7 @@ class BasePath:
         """Makes a curve to point `p` in the running path. Creates a new path
         if none is open.
 
-        >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = context.newPath()
@@ -247,7 +247,7 @@ class BasePath:
         going clockwise if clockwise is `True` and counter clockwise if clockwise
         is `False`.
 
-        >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -267,7 +267,7 @@ class BasePath:
     def arcTo(self, pt1, pt2, radius):
         """Arc from one point to an other point with a given radius.
 
-        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -467,6 +467,7 @@ class BasePath:
         """Add a rectangle at position `x`, `y` with a size of `w`, `h`.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(10, 10, pt(50), 2*pt(100))
@@ -480,6 +481,7 @@ class BasePath:
         """Add an oval at position `x`, `y` with a size of `w`, `h`.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.oval(10, 10, pt(50), 2*pt(100))
@@ -497,6 +499,7 @@ class BasePath:
         """Adds a circle with middle points at position `x`, `y` with radius `r`.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.circle(10, 10, 2*pt(100))
@@ -517,6 +520,7 @@ class BasePath:
         BabelString.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.text('ABC', style=dict(fontSize=pt(100)))
@@ -554,7 +558,7 @@ class BasePath:
         Optionally txt can be a context-based BabelString. Optionally box can
         be a DrawBotPath.
 
-        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -636,7 +640,7 @@ class BasePath:
     def pointInside(self, p):
         """Check if a point x, y is inside a path.
 
-        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
@@ -769,6 +773,7 @@ class BasePath:
         """Translate the path with a given offset.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 200, 200)
@@ -848,7 +853,7 @@ class BasePath:
     def transform(self, transformMatrix, center=None):
         """Transform a path with a transform matrix (xy, xx, yy, yx, x, y).
 
-        >>> from pagebot.toolbox.units import p
+        >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
