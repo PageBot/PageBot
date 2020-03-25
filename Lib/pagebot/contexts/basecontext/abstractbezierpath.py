@@ -1,8 +1,25 @@
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#     P A G E B O T
+#
+#     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#     www.pagebot.io
+#     Licensed under MIT conditions
+#
+#     Supporting DrawBot, www.drawbot.com
+#     Supporting Flat, xxyxyz.org/flat
+# -----------------------------------------------------------------------------
+#
+#     abstractbezierpath.py
+#
 
+from fontTools.pens.basePen import BasePen
 
 _FALLBACKFONT = "LucidaGrande"
 
-class AbstractBezierPath:
+class AbstractBezierPath(BasePen):
     """Abstract class with same interface as DrawBot Bézier path:
 
     a Bézier path object, if you want to draw the same over and over again.

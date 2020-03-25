@@ -24,22 +24,24 @@ class FlatBezierPath(BaseBezierPath):
 
     >>> import flat
     >>> path = FlatBezierPath(flat)
+    >>> path
+    <FlatBezierPath: 1>
     >>> path.moveTo((0, 0))
     >>> path.lineTo((0, 100))
     >>> path.lineTo((100, 100))
     >>> path.lineTo((100, 0))
     >>> path.lineTo((0, 0))
     >>> path.closePath()
-    >>> len(path.points)
     6
     """
 
-    def __init__(self, b):
+    def __init__(self, b, path=None, glyphSet=None):
         self.b = b
         self.commands = []
+        super().__init__(path=path, glyphSet=glyphSet)
 
     def __repr__(self):
-        return '<FlatBezierPath>'
+        return '<FlatBezierPath: %s>' % len(self._contours)
 
     def addToPath(self, p, onCurve=True):
         """Keeps track of Bézier points, needs to be in sync with Flat
@@ -48,7 +50,7 @@ class FlatBezierPath(BaseBezierPath):
 
         point = BasePoint(x, y, onCurve=onCurve)
         # TODO: add contour Level.
-        self._path.append(point)
+        self._contours.append(point)
 
     #def append(self, command):
     #    self.commands.append(command)
@@ -93,6 +95,7 @@ class FlatBezierPath(BaseBezierPath):
     def closePath(self):
         """Closes the path, add the first point to the end of the points
         list."""
+
         p0 = self._path[0]
         self._path.append(p0)
         self.commands.append(self.b.closepath)

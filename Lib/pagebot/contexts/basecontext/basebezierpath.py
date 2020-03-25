@@ -18,6 +18,7 @@
 import math
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.abstractbezierpath import AbstractBezierPath
+from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 
 class BaseBezierPath(AbstractBezierPath):
     """Base class with same interface as DrawBot Bézier path."""
@@ -25,10 +26,9 @@ class BaseBezierPath(AbstractBezierPath):
     #contourClass = BezierContour
 
     def __init__(self, path=None, glyphSet=None):
-        self._path = []
         self._contours = []
-        self._contours.append(self._path)
-        super().__init__(path=path, glyphSet=glyphSet)
+        self._path.append(self._contours)
+        self.glyphSet = glyphSet
 
     def __repr__(self):
         return "<BaseBezierPath: %s>" % len(self._contours)
@@ -380,7 +380,8 @@ class BaseBezierPath(AbstractBezierPath):
 
     # Various.
 
-    def expandStroke(self, width, lineCap="round", lineJoin="round", miterLimit=10):
+    def expandStroke(self, width, lineCap="round", lineJoin="round",
+            miterLimit=10):
         """Returns a new Bézier path with an expanded stroke around the original path,
         with a given `width`. Note: the new path will not contain the original path.
 
