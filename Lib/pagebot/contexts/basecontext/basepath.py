@@ -29,6 +29,7 @@ from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH,
 from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.basepoint import BasePoint
+from pagebot.contexts.basecontext.basecontour import BaseContour
 
 class BasePath:
     """Implements a wrapper around DrawBot.BezierPath with the same API, while

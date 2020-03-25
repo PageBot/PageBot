@@ -15,6 +15,8 @@
 #     basecontour.py
 #
 
+from pagebot.contexts.basecontext.basecontext import BaseContext
+
 class BaseContour:
     """Wraps a Bézier contour.
 
