@@ -15,14 +15,13 @@
 #     __init__.py
 #
 
-import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
-DrawBotContext = None
 hasDrawBot = False
+DrawBotContext = None
 DEFAULT_CONTEXT = None
 
 if platform == 'darwin':
@@ -32,12 +31,11 @@ if platform == 'darwin':
     except:
         hasDrawBot = False
 
+    # TODO: check if drawBotContext exists first, ask to install.
     if hasDrawBot:
         try:
-            # TODO: check if drawBotContext exists first, ask to install.
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
-        except Exception as e:
-            #print(traceback.format_exc())
+        except:
             pass
 
 CONTEXT_TYPE = None
@@ -101,11 +99,7 @@ def getFlatContext():
     return FlatContext()
 
 def getDrawBotContext():
-    if platform != 'darwin':
-        return None
-
-    if DrawBotContext:
-        return DrawBotContext()
+    return DrawBotContext()
 
 def getHtmlContext():
     return HtmlContext()
