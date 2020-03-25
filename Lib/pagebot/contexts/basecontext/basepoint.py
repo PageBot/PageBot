@@ -35,7 +35,9 @@ class BasePoint:
         self.onCurve = onCurve
 
     def __repr__(self):
-        return '(x=%s, y=%s, onCurve=%s)' % (self.x, self.y, self.onCurve)
+        # TODO: put back later.
+        #return '(x=%s, y=%s, onCurve=%s)' % (self.x, self.y, self.onCurve)
+        return '(%s, %s)' % (self.x, self.y)
 
 
     def __getitem__(self, index):

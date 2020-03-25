@@ -8,12 +8,6 @@ class AbstractBezierPath:
     a Bézier path object, if you want to draw the same over and over again.
     """
 
-    def __init__(self, path=None, glyphSet=None):
-        raise NotImplementedError
-
-    def __repr__(self):
-        raise NotImplementedError
-
     # Pen support.
 
     def moveTo(self, point):

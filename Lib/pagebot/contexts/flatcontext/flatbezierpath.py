@@ -33,10 +33,10 @@ class FlatBezierPath(BaseBezierPath):
     >>> len(path.points)
     6
     """
+
     def __init__(self, b):
         self.b = b
         self.commands = []
-        super().__init__()
 
     def __repr__(self):
         return '<FlatBezierPath>'
@@ -45,7 +45,9 @@ class FlatBezierPath(BaseBezierPath):
         """Keeps track of Bézier points, needs to be in sync with Flat
         commands."""
         x, y = p
+
         point = BasePoint(x, y, onCurve=onCurve)
+        # TODO: add contour Level.
         self._path.append(point)
 
     #def append(self, command):
