@@ -28,6 +28,7 @@ class BaseBezierPath(AbstractBezierPath):
         self._path = []
         self._contours = []
         self._contours.append(self._path)
+        super().__init__(path=path, glyphSet=glyphSet)
 
     def __repr__(self):
         return "<BaseBezierPath>"
