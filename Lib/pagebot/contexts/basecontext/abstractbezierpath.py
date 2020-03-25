@@ -5,7 +5,7 @@ _FALLBACKFONT = "LucidaGrande"
 class AbstractBezierPath:
     """Abstract class with same interface as DrawBot Bézier path:
 
-    a bezier path object, if you want to draw the same over and over again.
+    a Bézier path object, if you want to draw the same over and over again.
     """
 
     def __init__(self, path=None, glyphSet=None):
@@ -79,6 +79,8 @@ class AbstractBezierPath:
     def traceImage(self, path, threshold=.2, blur=None, invert=False, turd=2,
             tolerance=0.2, offset=None):
         raise NotImplementedError
+
+    # These are specific for a DrawBot path, dropping from interface.
 
     #def getNSBezierPath(self):
 

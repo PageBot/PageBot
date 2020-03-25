@@ -15,54 +15,27 @@
 #     basecontour.py
 #
 
-from fontTools.pens.areaPen import AreaPen
+class BaseContour:
+    """Wraps a Bézier contour.
 
-class BezierContour(list):
-    """A Bézier contour object."""
+    FIXME: is this really needed?
+    """
 
-    def __init__(self, *args, **kwargs):
-        super(BezierContour, self).__init__(*args, **kwargs)
-        self.open = True
+    def __init__(self, context=None, bezierContour=None):
+        assert isinstance(context, BaseContext)
+        self.context = context
+        self.bc = bezierContour
 
     def __repr__(self):
-        return "<BezierContour>"
+        return '<%s %d>' % (self.__class__.__name__, len(self.bc or []))
 
-    def _get_clockwise(self):
-        pen = AreaPen()
-        pen.endPath = pen.closePath
-        self.drawToPen(pen)
-        return pen.value < 0
-
-    clockwise = property(_get_clockwise, doc="A boolean representing if the contour has a clockwise direction.")
-
-    def drawToPointPen(self, pointPen):
-        pointPen.beginPath()
-        for i, segment in enumerate(self):
-            if len(segment) == 1:
-                segmentType = "line"
-                if i == 0 and self.open:
-                    segmentType = "move"
-                pointPen.addPoint(segment[0], segmentType=segmentType)
-            else:
-                pointPen.addPoint(segment[0])
-                pointPen.addPoint(segment[1])
-                pointPen.addPoint(segment[2], segmentType="curve")
-        pointPen.endPath()
-
-    def drawToPen(self, pen):
-        for i, segment in enumerate(self):
-            if i == 0:
-                pen.moveTo(*segment)
-            elif len(segment) == 1:
-                pen.lineTo(*segment)
-            else:
-                pen.curveTo(*segment)
-        if self.open:
-            pen.endPath()
-        else:
-            pen.closePath()
+    def __len__(self):
+        return len(self.points)
 
     def _get_points(self):
-        return [point for segment in self for point in segment]
+        if self.bc:
+            return self.bc.points
+        return []
 
-    points = property(_get_points, doc="Return a list of all the points making up this contour, regardless of whether they are on curve or off curve.")
+    points = property(_get_points)
+

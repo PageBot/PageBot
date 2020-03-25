@@ -30,25 +30,6 @@ from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.basepoint import BasePoint
 
-class BaseContour:
-
-    def __init__(self, context=None, bezierContour=None):
-        assert isinstance(context, BaseContext)
-        self.context = context
-        self.bc = bezierContour
-
-    def __repr__(self):
-        return '<%s %d>' % (self.__class__.__name__, len(self.bc or []))
-
-    def __len__(self):
-        return len(self.points)
-
-    def _get_points(self):
-        if self.bc:
-            return self.bc.points
-        return []
-    points = property(_get_points)
-
 class BasePath:
     """Implements a wrapper around DrawBot.BezierPath with the same API, while
     adding knowledge of units and some other additions.
@@ -458,6 +439,7 @@ class BasePath:
             total += (nextP[0] - p[0]) * (nextP[1] + p[1])
 
         return total > 0
+
     clockWise = property(_get_clockWise)
 
 

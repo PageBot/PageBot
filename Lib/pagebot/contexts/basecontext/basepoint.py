@@ -37,3 +37,12 @@ class BasePoint:
     def __repr__(self):
         return '(x=%s, y=%s, onCurve=%s)' % (self.x, self.y, self.onCurve)
 
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        else:
+            # TODO: more expicit message, add to logger.
+            raise TypeError
