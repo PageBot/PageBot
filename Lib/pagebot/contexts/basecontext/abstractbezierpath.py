@@ -1,4 +1,8 @@
-class AbstractdBezierPath:
+
+
+_FALLBACKFONT = "LucidaGrande"
+
+class AbstractBezierPath:
     """Abstract class with same interface as DrawBot Bézier path:
 
     a bezier path object, if you want to draw the same over and over again.
