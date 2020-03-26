@@ -43,7 +43,7 @@ class FlatBezierPath(BaseBezierPath):
         super().__init__(path=path, glyphSet=glyphSet)
 
     def __repr__(self):
-        return '<FlatBezierPath: %s>' % len(self._contours)
+        return '<FlatBezierPath>'
 
     # Drawing.
 

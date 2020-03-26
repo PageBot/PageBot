@@ -31,7 +31,7 @@ class BaseBezierPath(AbstractBezierPath):
 
         >>> path = BaseBezierPath()
         >>> path
-        <BaseBezierPath: 1>
+        <BaseBezierPath>
         """
         self._contours = []
         self.glyphSet = glyphSet
@@ -52,7 +52,7 @@ class BaseBezierPath(AbstractBezierPath):
         contour.append(point)
 
     def __repr__(self):
-        return "<BaseBezierPath: %s>" % len(self._contours)
+        return "<BaseBezierPath>"
 
     def _points(self, onCurve=True, offCurve=True):
         points = []
@@ -158,7 +158,7 @@ class BaseBezierPath(AbstractBezierPath):
         """
 
     def drawToPen(self, pen):
-        """Draws the Bézier path into a pen"""
+        """Draws the Bézier path into a pen."""
 
     def drawToPointPen(self, pointPen):
         """Draws the Bézier path into a point pen."""

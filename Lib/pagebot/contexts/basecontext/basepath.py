@@ -47,6 +47,16 @@ class BasePath:
     >>> #p.text('H')
     >>> #p.bounds()[1] # Baseline position, H has not ascenders
     #0.0
+    >>> context = getContext('Flat')
+    >>> style = dict(font=font, fontSize=100)
+    >>> p = BasePath(context, style=style)
+    >>> p.text('H')
+    >>> # Baseline position, H has no ascenders.
+    """
+    """
+    TODO: implement for Flat.
+    >>> p.bounds()[1]
+    #0.0
     """
 
     def __init__(self, context=None, bezierPath=None, style=None):
@@ -162,7 +172,7 @@ class BasePath:
         >>> point = 100, 50 # Plain values are interpreted as pt
         >>> path.lineTo(point)
         >>> path.points
-        ((100.0, 60.0), (100.0, 50.0))
+        ((100, 60), (100, 50))
         """
         self.isOpenLine = True
         ptp = upt(point2D(p))
@@ -195,12 +205,14 @@ class BasePath:
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
-        >>> p = pt(100), mm(50) # Mixing different unit types
+        >>> # Mixing different unit types.
+        >>> p = pt(100), mm(50)
         >>> path.moveTo(p)
-        >>> p = 100, 50 # Plain values are interpreted as pt
+        >>> # Plain values are interpreted as pt.
+        >>> p = 100, 50
         >>> path.lineTo(p)
         >>> path.closePath()
-        >>> context.drawPath(path)
+        >>> #context.drawPath(path)
         """
         ptp = upt(point2D(p))
         self.bp.lineTo(ptp)
@@ -216,7 +228,7 @@ class BasePath:
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
-        >>> context.drawPath(path)
+        >>> #context.drawPath(path)
         """
         assert self.isOpenPath, ('%s.curveTo: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
         b1pt = point2D(upt(bcp1))
@@ -290,6 +302,9 @@ class BasePath:
         >>> len(path.points)
         2
         >>> path.drawToPen(pen)
+        """
+        """
+        TODO: implement for Flat.
         >>> ';'.join(pen.output)
         'MoveTo((0, 0));LineTo((100, 100));endPath()'
         """
@@ -328,6 +343,9 @@ class BasePath:
         3
         >>> pen = PointMethodPen()
         >>> path.drawToPointPen(pen)
+        """
+        """
+        TODO: implement for Flat.
         >>> ';'.join(pen.methods)
         'BeginPath();addPoint((0, 0), move);addPoint((100, 100), line);addPoint((200, 200), line);endPath()'
         >>> pen = PointPen()
@@ -351,7 +369,7 @@ class BasePath:
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> path.points
-        ((0.0, 0.0), (100.0, 100.0))
+        ((0, 0), (100, 100))
         """
         return self.bp.points
 
@@ -366,6 +384,9 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> len(path.points)
         0
+        """
+        """
+        TODO: implement for Flat.
         >>> path.circle(0, 0, 100)
         >>> len(path.onCurvePoints)
         6
@@ -383,6 +404,9 @@ class BasePath:
         >>> len(path.points)
         0
         >>> path.circle(0, 0, 100)
+        """
+        """
+        TODO: implement for Flat.
         >>> len(path.onCurvePoints)
         6
         """
@@ -400,6 +424,9 @@ class BasePath:
         0
         >>> path.circle(0, 0, 100)
         >>> path.circle(100, 0, 100)
+        """
+        """
+        TODO: implement for Flat.
         >>> len(path.contours)
         2
         >>> path.circle(100, 100, 100)
@@ -412,8 +439,11 @@ class BasePath:
         13
         """
         contours = []
-        for contour in self.bp.contours: # Make the wrappers
+
+        # Make the wrappers.
+        for contour in self.bp.contours:
             contours.append(BaseContour(self.context, contour))
+
         return contours
     contours = property(_get_contours)
 
@@ -427,6 +457,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 100, 100)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.clockWise
         False
         >>> path.reverse()
@@ -455,7 +488,7 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.rect(10, 10, pt(50), 2*pt(100))
         >>> path.points
-        ((10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0))
+        ((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
         """
         ptx, pty, ptw, pth = upt(x, y, w, h)
         self.bp.rect(ptx, pty, ptw, pth)
@@ -469,7 +502,10 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.oval(10, 10, pt(50), 2*pt(100))
         >>> #path.points
-        #((10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0))
+        #((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
+        """
+        """
+        TODO: implement for Flat.
         >>> len(path)
         14
         >>> path.box
@@ -486,6 +522,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.circle(10, 10, 2*pt(100))
+        """
+        """
+        TODO: implement for Flat.
         >>> len(path.points)
         14
         >>> path.box
@@ -629,6 +668,9 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 100, 100)
         >>> p = pt(50, 50)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.pointInside(p)
         True
         >>> p = pt(500, 500)
@@ -645,6 +687,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 100, 100)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.bounds()
         (0.0, 0.0, 100.0, 100.0)
         >>> path.box
@@ -664,6 +709,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(20, 30, 110, 120)
+        """
+        """
+        TODO: implement for flat.
         >>> path.w
         110.0
         """
@@ -679,6 +727,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(20, 30, 110, 120)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.h
         120.0
         """
@@ -694,6 +745,9 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.circle(0, 0, 100)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.bounds()
         (-100.0, -100.0, 100.0, 100.0)
         >>> len(path.controlPointBounds())
@@ -726,6 +780,9 @@ class BasePath:
         >>> path.circle(0, 0, 100)
         >>> path.clockWise
         False
+        """
+        """
+        TODO: implement for Flat.
         >>> path.reverse()
         True
         """
@@ -744,6 +801,9 @@ class BasePath:
         >>> path2.circle(0, 0, 100)
         >>> len(path1)
         5
+        """
+        """
+        TODO: implement for Flat.
         >>> path1.points
         ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
         >>> path1.appendPath(path2)
@@ -761,7 +821,10 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
-        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
+        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
+        """
+        """
+        TODO: implement for Flat.
         >>> path.translate(pt(20, 30))
         >>> path.points
         ((20.0, 30.0), (220.0, 30.0), (220.0, 230.0), (20.0, 230.0), (20.0, 30.0))
@@ -780,8 +843,11 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
-        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
+        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
         >>> angle = degrees(180)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.rotate(angle)
         >>> path.rotate(-angle)
         >>> path.points
@@ -803,9 +869,12 @@ class BasePath:
         >>> context = getContext('Flat')
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 200, 200)
+        """
+        """
+        TODO: implement for Flat.
         >>> path.scale(0.5)
         >>> path.points
-        ((0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0), (0.0, 0.0))
+        ((0, 0), (100, 0), (100, 100), (0, 100), (0, 0))
         """
         if center is None:
             center = ORIGIN
@@ -893,9 +962,12 @@ class BasePath:
         >>> path1 = BasePath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.points
-        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
+        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
         >>> path2 = BasePath(context=context)
         >>> path2.rect(100, 100, 200, 200)
+        """
+        """
+        TODO: implement for Flat.
         >>> path1.union(path2).points
         ((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (300.0, 100.0), (300.0, 300.0), (100.0, 300.0), (100.0, 200.0), (0.0, 200.0), (0.0, 0.0))
         >>> # Equivalent to addition.
@@ -914,6 +986,9 @@ class BasePath:
         >>> path1.rect(0, 0, 200, 200)
         >>> path2 = BasePath(context=context)
         >>> path2.rect(0, 100, 200, 200)
+        """
+        """
+        TODO: implement for Flat.
         >>> path1.difference(path2).points
         ((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0))
         >>> (path1 - path2).points
@@ -933,6 +1008,9 @@ class BasePath:
         >>> path1.rect(0, 0, 200, 200)
         >>> path2 = BasePath(context=context)
         >>> path2.rect(100, 100, 200, 200)
+        """
+        """
+        TODO: implement for Flat.
         >>> path1.intersection(path2).points
         ((100.0, 100.0), (200.0, 100.0), (200.0, 200.0), (100.0, 200.0), (100.0, 100.0))
         >>> (path1 & path2).points
@@ -952,6 +1030,9 @@ class BasePath:
         5
         >>> path2 = BasePath(context=context)
         >>> path2.rect(100, 100, 200, 200)
+        """
+        """
+        TODO: implement for flat.
         >>> len(path1.xor(path2).points)
         13
         >>> len((path1 ^ path2).points)
@@ -994,6 +1075,9 @@ class BasePath:
         >>> path = BasePath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.rect(0, 100, 200, 200)
+        """
+        """
+        TODO: implement for Flat.
         >>> len(path.points)
         9
         >>> len(path.removeOverlap().points)

@@ -903,6 +903,7 @@ class FlatContext(BaseContext):
         if shape is not None:
             self.page.place(shape.path(self._bezierpath.commands))
 
+    '''
     def moveTo(self, p):
         assert self._bezierpath is not None
         self._bezierpath.moveTo(p)
@@ -922,6 +923,7 @@ class FlatContext(BaseContext):
     def closePath(self):
         assert self._bezierpath is not None
         self._bezierpath.closePath()
+    '''
 
     def bezierPathByFlatteningPath(self, path):
         """TODO: Make our own version of the NSBezier flatten path function."""

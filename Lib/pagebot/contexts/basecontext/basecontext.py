@@ -91,10 +91,21 @@ class BaseContext(AbstractContext):
         >>> path is not None
         True
         >>> path
-        <FlatBezierPath: 0>
+        <FlatBezierPath>
         >>> len(path)
         0
-        >>> # Adding 2 points.
+        >>> path.moveTo((0, 0))
+        >>> path.lineTo((100, 100))
+        >>> len(context.bezierpath.points)
+        2
+        >>> context = getContext('DrawBot')
+        >>> path = context.bezierpath
+        >>> path is not None
+        True
+        >>> path
+        <BezierPath>
+        >>> len(path)
+        0
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> len(context.bezierpath.points)
@@ -254,7 +265,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext('Flat')
         >>> context.newPage(420, 420)
         >>> context.newPath()
-        <FlatBezierPath: 0>
+        <FlatBezierPath>
         """
         raise NotImplementedError
         #self._bezierpath = BaseBezierPath(self.b)
@@ -266,7 +277,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -276,6 +287,17 @@ class BaseContext(AbstractContext):
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
         >>> path.closePath()
         >>> context.drawPath(path)
+        >>> context = getContext('DrawBot')
+        >>> context.newPage(420, 420)
+        >>> context.moveTo(pt(100, 100))
+        >>> context.moveTo((100, 100))
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+
         """
         ppt = upt(point2D(p))
         self.bezierpath.moveTo(ppt) # Render units point tuple to tuple of values
@@ -285,7 +307,19 @@ class BaseContext(AbstractContext):
         is open.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
+        >>> context.newPage(420, 420)
+        >>> # Create a new self._bezierpath by property self.bezierpath
+        >>> context.moveTo(pt(100, 100))
+        >>> context.lineTo(pt(100, 200))
+        >>> context.closePath()
+        >>> # Drawing on a separate path
+        >>> path = context.newPath()
+        >>> path.moveTo(pt(100, 100))
+        >>> path.lineTo(pt(100, 200))
+        >>> path.closePath()
+        >>> context.drawPath(path)
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
@@ -363,10 +397,9 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> #context = getContext()
         >>> path = context.newPath()
         >>> path.points
-        []
+        ()
         >>> context.newPage(420, 420)
         >>> # Property self.bezierpath creates a self._bezierpath BezierPath.
         >>> len(context.bezierpath.points)
@@ -380,7 +413,7 @@ class BaseContext(AbstractContext):
         >>> # Oval and rect don't draw on self._bezierpath (yet).
         >>> context.oval(160-50, 160-50, 100, 100)
         >>> context.bezierpath.points
-        [(x=110.0, y=260.0, onCurve=True), (x=160.0, y=310.0, onCurve=True), (x=210.0, y=260.0, onCurve=True), (x=160.0, y=210.0, onCurve=True), (x=110.0, y=260.0, onCurve=True)]
+        ((110.0, 260.0), (160.0, 310.0), (210.0, 260.0), (160.0, 210.0), (110.0, 260.0))
         >>> #len(context.bezierpath.points) #5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets
