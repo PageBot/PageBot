@@ -86,24 +86,12 @@ class BaseContext(AbstractContext):
         not exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext()
         >>> path = context.bezierpath
         >>> path is not None
         True
         >>> path
         <FlatBezierPath>
-        >>> len(path)
-        0
-        >>> path.moveTo((0, 0))
-        >>> path.lineTo((100, 100))
-        >>> len(context.bezierpath.points)
-        2
-        >>> context = getContext('DrawBot')
-        >>> path = context.bezierpath
-        >>> path is not None
-        True
-        >>> path
-        <BezierPath>
         >>> len(path)
         0
         >>> path.moveTo((0, 0))
@@ -277,17 +265,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> context.newPage(420, 420)
-        >>> context.moveTo(pt(100, 100))
-        >>> context.moveTo((100, 100))
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -307,19 +285,7 @@ class BaseContext(AbstractContext):
         is open.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> context.newPage(420, 420)
-        >>> # Create a new self._bezierpath by property self.bezierpath
-        >>> context.moveTo(pt(100, 100))
-        >>> context.lineTo(pt(100, 200))
-        >>> context.closePath()
-        >>> # Drawing on a separate path
-        >>> path = context.newPath()
-        >>> path.moveTo(pt(100, 100))
-        >>> path.lineTo(pt(100, 200))
-        >>> path.closePath()
-        >>> context.drawPath(path)
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
