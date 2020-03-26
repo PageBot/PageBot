@@ -245,7 +245,7 @@ class BaseContext(AbstractContext):
         """Makes a new Bezierpath to draw in and answers it. This will not
         initialize self._bezierpath, which is accessed by the property
         self.bezierpath.  This method is using a BezierPath class path for
-        drawing. For a more rich environment use BasePath(context) instead.
+        drawing. For a more rich environment use BezierPath(context) instead.
 
         NOTE: PageBot function.
 
@@ -413,11 +413,11 @@ class BaseContext(AbstractContext):
         if path is None:
             path = self.bezierpath
 
-        # If it's a BasePath, get the core BezierPath.
+        # If it's a BezierPath, get the core BezierPath.
         if hasattr(path, 'bp'):
             bezierPath = path.bp
             # If not forced as attribute, then try to get from the
-            # BasePath.style.
+            # BezierPath.style.
             if fill is None:
                 fill = path.style.get('fill')
             if stroke is None:
@@ -462,7 +462,7 @@ class BaseContext(AbstractContext):
     def line(self, p1, p2):
         """Draw a line from p1 to p2. This method is using the core BezierPath
         as path to draw on. For a more rich ennvironment use
-        BasePath(context).
+        BezierPath(context).
 
         >>> from pagebot import getContext
         >>> context = getContext()

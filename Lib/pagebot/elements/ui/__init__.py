@@ -19,7 +19,7 @@
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
-from pagebot.contexts.basecontext.basepath import BasePath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
+from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 
 # Simple elements
 from pagebot.elements.pbtext import Text
@@ -46,7 +46,7 @@ from pagebot.elements.pbartboard import Artboard
 #OLD from pagebot.elements.paths.pbpath import Path
 #OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath
-from pagebot.elements.paths.pbpaths import Paths, Mask # Element that holds a number of styled BasePath instances to draw.
+from pagebot.elements.paths.pbpaths import Paths, Mask # Element that holds a number of styled BezierPath instances to draw.
 
 # Table elements
 from pagebot.elements.pbtable import Table
@@ -160,12 +160,12 @@ def newRuler(**kwargs):
     """Create a Ruler element."""
     return Ruler(**kwargs)
 
-def newBasePath(**kwargs):
-    return BasePath(**kwargs)
+def newBezierPath(**kwargs):
+    return BezierPath(**kwargs)
 
 def newPaths(paths=None, **kwargs):
-    """Create a Paths element, holding BasePath object(s) in the element frame.
-    The paths can be a single BasePath instance or a list/tuple of instances.
+    """Create a Paths element, holding BezierPath object(s) in the element frame.
+    The paths can be a single BezierPath instance or a list/tuple of instances.
     Not be confused with the filePath "path" in Image."""
     return Paths(paths, **kwargs)
 

@@ -12,9 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     basepath.py
+#     bezierpath.py
 #
-#     The BasePath class is the wrapper around a core BezierPath instance.
+#     The BezierPath class is the wrapper around a core BezierPath instance.
 #     The reason to make a generic PageBotPage wrapper class is to add
 #     awareness of babelString, units and color and other additional functions
 #     that don't exist in the main DrawBot.BezierPath.
@@ -31,7 +31,7 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.basepoint import BasePoint
 from pagebot.contexts.basecontext.basecontour import BaseContour
 
-class BasePath:
+class BezierPath:
     """Implements a wrapper around DrawBot.BezierPath with the same API, while
     adding knowledge of units and some other additions.
 
@@ -42,14 +42,14 @@ class BasePath:
     <Font Roboto-CondensedBoldItalic>
     >>> context = getContext('Flat')
     >>> style = dict(font=font, fontSize=100)
-    >>> p = BasePath(context, style=style)
+    >>> p = BezierPath(context, style=style)
     >>> # TODO: implement rest of Flat Bézier path functions.
     >>> #p.text('H')
     >>> #p.bounds()[1] # Baseline position, H has not ascenders
     #0.0
     >>> context = getContext('Flat')
     >>> style = dict(font=font, fontSize=100)
-    >>> p = BasePath(context, style=style)
+    >>> p = BezierPath(context, style=style)
     >>> p.text('H')
     >>> # Baseline position, H has no ascenders.
     """
@@ -67,7 +67,7 @@ class BasePath:
             bezierPath = context.newPath()
         else:
             # FIXME: should be aware of BezierPath type, depending on context.
-            assert not isinstance(bezierPath, BasePath)
+            assert not isinstance(bezierPath, BezierPath)
 
         # Optional fill, stroke and strokeWidth options, hard-coding the
         # drawing. Otherwise take the fill/stroke settings already defined in
@@ -93,7 +93,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.beginPath('MyPath')
         >>> len(path)
         0
@@ -110,7 +110,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> len(path)
         0
         >>> path.isOpenPath
@@ -144,7 +144,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.beginPath('MyPath')
         >>> len(path)
         0
@@ -166,7 +166,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> point = pt(100), p(5) # Mixing different unit types
         >>> path.moveTo(point)
         >>> point = 100, 50 # Plain values are interpreted as pt
@@ -183,7 +183,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.moveTo((0, 0))
         >>> path.lineTo((0, 100))
         >>> path.lineTo((100, 100))
@@ -204,7 +204,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> # Mixing different unit types.
         >>> p = pt(100), mm(50)
         >>> path.moveTo(p)
@@ -244,7 +244,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.beginPath()
         >>> path.arc(center=(pt(100), mm(50)), radius=pt(30))
         >>> path.endPath()
@@ -264,7 +264,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.moveTo((0, 0))
         >>> p1 = pt(100), p(6)
         >>> p2 = p(10), pt(200)
@@ -296,7 +296,7 @@ class BasePath:
         ...        self.output.append('endPath()')
         >>> pen = Pen()
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> len(path.points)
@@ -334,7 +334,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.beginPath()
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
@@ -362,7 +362,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> len(path.points)
         0
         >>> path.beginPath()
@@ -381,7 +381,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> len(path.points)
         0
         """
@@ -400,7 +400,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> len(path.points)
         0
         >>> path.circle(0, 0, 100)
@@ -419,7 +419,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> len(path.contours)
         0
         >>> path.circle(0, 0, 100)
@@ -455,7 +455,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         """
         """
@@ -485,7 +485,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(10, 10, pt(50), 2*pt(100))
         >>> path.points
         ((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
@@ -499,7 +499,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.oval(10, 10, pt(50), 2*pt(100))
         >>> #path.points
         #((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
@@ -520,7 +520,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.circle(10, 10, 2*pt(100))
         """
         """
@@ -544,7 +544,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.text('ABC', style=dict(fontSize=pt(100)))
         """
         if hasattr(bs, 's'):
@@ -583,7 +583,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.textBox('ABC', x=10, y=10, w=400, h=400, style=dict(font=DEFAULT_FALLBACK_FONT_PATH, fontSize=pt(100)))
         """
         if hasattr(bs, 's'):
@@ -610,7 +610,7 @@ class BasePath:
 
             clipPathOrBox = x, y, w, h
         else: # Otherwise take size from the string
-            if isinstance(clipPath, BasePath):
+            if isinstance(clipPath, BezierPath):
                 clipPathOrBox = clipPath.bp # It can be another clippath
             else:  # Otherwise, assume it alread is a DrawBot.BezierPath or None
                 clipPathOrBox = clipPath
@@ -642,7 +642,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> imagePath = getResourcesPath() + '/images/cookbot10.jpg'
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.traceImage(imagePath)
         """
         assert os.path.exists(imagePath)
@@ -665,7 +665,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         >>> p = pt(50, 50)
         """
@@ -685,7 +685,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 100, 100)
         """
         """
@@ -707,7 +707,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(20, 30, 110, 120)
         """
         """
@@ -725,7 +725,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(20, 30, 110, 120)
         """
         """
@@ -743,7 +743,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.circle(0, 0, 100)
         """
         """
@@ -761,7 +761,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.circle(0, 0, 100)
         >>> id(path) != id(path.copy())
         True
@@ -776,7 +776,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.circle(0, 0, 100)
         >>> path.clockWise
         False
@@ -795,9 +795,9 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.circle(0, 0, 100)
         >>> len(path1)
         5
@@ -818,7 +818,7 @@ class BasePath:
         >>> from pagebot import getContext
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
         ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
@@ -840,7 +840,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
         ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
@@ -867,7 +867,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         """
         """
@@ -889,7 +889,7 @@ class BasePath:
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> angle = degrees(45)
         >>> path.skew(angle)
@@ -908,7 +908,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p, pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.transform((1, 0, 0, 1, pt(100), p(6)))
         >>> angle = degrees(45)
@@ -959,11 +959,11 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.points
         ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         """
         """
@@ -982,9 +982,9 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.rect(0, 100, 200, 200)
         """
         """
@@ -1004,9 +1004,9 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         """
         """
@@ -1024,11 +1024,11 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> len(path1)
         5
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.rect(100, 100, 200, 200)
         """
         """
@@ -1049,13 +1049,13 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path1 = BasePath(context=context)
+        >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.rect(100, 100, 200, 200)
         >>> # FIXME: coordinates reversed.
         >>> #path1.intersectionPoints()
         #[(200, 100), (100, 200)]
-        >>> path2 = BasePath(context=context)
+        >>> path2 = BezierPath(context=context)
         >>> path2.rect(50, 50, 500, 500)
         >>> # FIXME: coordinates reversed.
         >>> #path1.intersectionPoints(path2)
@@ -1072,7 +1072,7 @@ class BasePath:
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> path = BasePath(context=context)
+        >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.rect(0, 100, 200, 200)
         """
@@ -1086,20 +1086,20 @@ class BasePath:
         bp = self.bp.copy()
         bp = bp.removeOverlap()
         style = self.style.copy()
-        return BasePath(context=self.context, bezierPath=bp, style=style)
+        return BezierPath(context=self.context, bezierPath=bp, style=style)
 
 def newRectPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
-    pbp = BasePath(context=context, bezierPath=bezierPath, style=style)
+    pbp = BezierPath(context=context, bezierPath=bezierPath, style=style)
     pbp.rect(x, y, w, h)
     return pbp
 
 def newCirclePath(context, x=0, y=0, r=100, bezierPath=None, style=None):
-    pbp = BasePath(context=context, bezierPath=bezierPath, style=style)
+    pbp = BezierPath(context=context, bezierPath=bezierPath, style=style)
     pbp.oval(x--r, y--r, 2*r, 2*r)
     return pbp
 
 def newOvalPath(context, x=0, y=0, w=100, h=100, bezierPath=None, style=None):
-    pbp = BasePath(context=context, bezierPath=bezierPath, style=style)
+    pbp = BezierPath(context=context, bezierPath=bezierPath, style=style)
     pbp.oval(x, y, w, h)
     return pbp
 

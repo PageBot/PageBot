@@ -17,7 +17,7 @@
 #
 #    NOTE: should stay at root level, else derived path won't be correct.
 #    Also note that these are file paths, not to be mixed up with
-#    BasePath and DrawBotContext.BezierPath, which are "recorded"
+#    BezierPath and DrawBotContext.BezierPath, which are "recorded"
 #    drawing instructions.
 #
 

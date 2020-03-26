@@ -30,7 +30,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.contexts.basecontext.basepath import BasePath
+from pagebot.contexts.basecontext.bezierpath import BezierPath
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
@@ -60,7 +60,7 @@ class Element:
 
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow
-    PATH_CLASS = BasePath
+    PATH_CLASS = BezierPath
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
@@ -313,7 +313,7 @@ class Element:
 
         # Optional storage of self.context.BezierPath() to clip the content of
         # self. Also note the possibility of the self.childClipPath property,
-        # which returns a BasePath instance, constructed from the position
+        # which returns a BezierPath instance, constructed from the position
         # and layout of self.elements
         if clipPath is not None:
             # Make a copy, so translates won't affect the original
@@ -1096,7 +1096,7 @@ class Element:
         >>> doc = Document(w=500, h=500, context=context)
         >>> e = doc[1] #Element(w=500, h=500, context=context)
         >>> e.childClipPath
-        <BasePath 1>
+        <BezierPath 1>
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         """
         """
@@ -1112,7 +1112,7 @@ class Element:
         >>> e.childClipPath.points
         [(100.0, 0.0), (500.0, 0.0), (500.0, 500.0), (0.0, 500.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0)]
         >>> e.childClipPath.__class__.__name__
-        'BasePath'
+        'BezierPath'
         """
         path = self.PATH_CLASS(self.context)
         path.rect(-self.ml, -self.mb, self.ml + self.w + self.mr, self.mb + self.h + self.mt)
