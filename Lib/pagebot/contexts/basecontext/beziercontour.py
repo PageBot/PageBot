@@ -12,12 +12,13 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     basecontour.py
+#     beziercontour.py
 #
+
 
 from pagebot.contexts.basecontext.basecontext import BaseContext
 
-class BaseContour:
+class BezierContour:
     """Wraps a Bézier contour.
 
     FIXME: is this really needed?

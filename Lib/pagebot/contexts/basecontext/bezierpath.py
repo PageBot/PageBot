@@ -29,11 +29,11 @@ from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH,
 from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.basepoint import BasePoint
-from pagebot.contexts.basecontext.basecontour import BaseContour
+from pagebot.contexts.basecontext.beziercontour import BezierContour
 
 class BezierPath:
-    """Implements a wrapper around DrawBot.BezierPath with the same API, while
-    adding knowledge of units and some other additions.
+    """Implements a wrapper around BaseBezierPath wich has the same interface as the DrawBot
+    Bézier path, adding knowledge of units and the context.
 
     >>> from pagebot import getContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts
@@ -434,7 +434,7 @@ class BezierPath:
         >>> len(path.contours)
         4
         >>> path.contours[0]
-        <BaseContour 5>
+        <BezierContour 5>
         >>> len(path.contours[0].points)
         13
         """
@@ -442,7 +442,7 @@ class BezierPath:
 
         # Make the wrappers.
         for contour in self.bp.contours:
-            contours.append(BaseContour(self.context, contour))
+            contours.append(BezierContour(self.context, contour))
 
         return contours
     contours = property(_get_contours)
@@ -986,15 +986,13 @@ class BezierPath:
         >>> path1.rect(0, 0, 200, 200)
         >>> path2 = BezierPath(context=context)
         >>> path2.rect(0, 100, 200, 200)
-        """
-        """
-        TODO: implement for Flat.
+        >>> TODO: implement for Flat.
         >>> path1.difference(path2).points
         ((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0))
-        >>> (path1 - path2).points
-        ((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0))
-        >>> (path2 - path1).points
-        ((200.0, 300.0), (0.0, 300.0), (0.0, 200.0), (200.0, 200.0), (200.0, 300.0))
+        >>> #(path1 - path2).points
+        #((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0))
+        >>> #(path2 - path1).points
+        #((200.0, 300.0), (0.0, 300.0), (0.0, 200.0), (200.0, 200.0), (200.0, 300.0))
         """
         return self.__class__(self.context, self.bp.difference(path.bp))
 

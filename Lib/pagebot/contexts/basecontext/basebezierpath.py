@@ -16,10 +16,11 @@
 #
 
 import math
+import booleanOperations
 from fontTools.pens.basePen import BasePen
+from fontTools.pens.pointPen import PointToSegmentPen
 from pagebot.errors import PageBotError
-from pagebot.contexts.basecontext.abstractbezierpath import AbstractBezierPath
-from pagebot.contexts.basecontext.basebeziercontour import BezierContour
+from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 from pagebot.contexts.basecontext.basepoint import BasePoint
 
 _FALLBACKFONT = "LucidaGrande"
@@ -27,7 +28,7 @@ _FALLBACKFONT = "LucidaGrande"
 class BaseBezierPath(BasePen):
     """Base class with same interface as DrawBot Bézier path."""
 
-    contourClass = BezierContour
+    contourClass = BaseBezierContour
 
     def __init__(self, path=None, glyphSet=None):
         """
@@ -37,8 +38,8 @@ class BaseBezierPath(BasePen):
         <BaseBezierPath>
         """
         self._contours = []
-        self.glyphSet = glyphSet
-        super().__init__()
+        #super().__init__(glyphSet)
+        BasePen.__init__(self, glyphSet)
 
     def addToPath(self, p, onCurve=True):
         """Keeps track of Bézier points inside contours."""
@@ -265,7 +266,9 @@ class BaseBezierPath(BasePen):
         * `tolerance`: the precision tolerance of the vector outline
         * `offset`: add the traced vector outline with an offset to the BezierPath
         """
-        raise NotImplementedError
+        # TODO: use potrace, see drawBot.context.tools.TraceImage.
+        #raise NotImplementedError
+        pass
 
     def pointInside(self, xy):
         """Checks if a point `x`, `y` is inside a path."""
@@ -334,49 +337,7 @@ class BaseBezierPath(BasePen):
     def transform(self, transformMatrix, center=(0, 0)):
         """Transforms a path with a transform matrix (xy, xx, yy, yx, x, y)."""
 
-    # boolean operations
-
-    def __add__(self, otherPath):
-        #new = self.copy()
-        #new.appendPath(otherPath)
-        #return new
-        pass
-
-    def __iadd__(self, other):
-        self.appendPath(other)
-        return self
-
-
-    def _contoursForBooleanOperations(self):
-        # contours are very temporaly objects
-        # redirect drawToPointPen to drawPoints
-        contours = self.contours
-
-        for contour in contours:
-            contour.drawPoints = contour.drawToPointPen
-            if contour.open:
-                pass
-                #raise PageBotError("open contours are not supported during boolean operations")
-
-        return contours
-
-    def union(self, other):
-        """Returns the union between two Bézier paths."""
-        raise NotImplementedError
-
-    def removeOverlap(self):
-        """Remove all overlaps in a Bézier path."""
-        raise NotImplementedError
-
-    def difference(self, other):
-        """Returns the difference between two Bézier paths."""
-        #subjectContours = self._contoursForBooleanOperations()
-        #clipContours = other._contoursForBooleanOperations()
-        #result = self.__class__()
-        #booleanOperations.difference(subjectContours, clipContours, result)
-        #return result
-        raise NotImplementedError
-        return None
+    # Boolean operations.
 
     def _contoursForBooleanOperations(self):
         # contours are temporary objects
@@ -388,20 +349,62 @@ class BaseBezierPath(BasePen):
                 raise PageBotError("open contours are not supported during boolean operations")
         return contours
 
+
+    def union(self, other):
+        """Returns the union between two Bézier paths."""
+        assert isinstance(other, self.__class__)
+        contours = self._contoursForBooleanOperations() + other._contoursForBooleanOperations()
+        result = self.__class__()
+        booleanOperations.union(contours, result)
+        return result
+
+    def removeOverlap(self):
+        """Remove all overlaps in a Bézier path."""
+        contours = self._contoursForBooleanOperations()
+        result = self.__class__()
+        booleanOperations.union(contours, result)
+        # TODO:
+        #self.setNSBezierPath(result.getNSBezierPath())
+        #self.setBezierPath(result.getBezierPath())
+        return self
+
+    def difference(self, other):
+        """Returns the difference between two Bézier paths.
+        """
+        subjectContours = self._contoursForBooleanOperations()
+        clipContours = other._contoursForBooleanOperations()
+        result = self.__class__()
+        booleanOperations.difference(subjectContours, clipContours, result)
+        return result
+
     def intersection(self, other):
         """Returns the intersection between two Bézier paths."""
-        raise NotImplementedError
+        assert isinstance(other, self.__class__)
+        subjectContours = self._contoursForBooleanOperations()
+        clipContours = other._contoursForBooleanOperations()
+        result = self.__class__()
+        booleanOperations.intersection(subjectContours, clipContours, result)
+        return result
 
     def xor(self, other):
         """Returns the xor between two Bézier paths."""
-        raise NotImplementedError
+        assert isinstance(other, self.__class__)
+        subjectContours = self._contoursForBooleanOperations()
+        clipContours = other._contoursForBooleanOperations()
+        result = self.__class__()
+        booleanOperations.xor(subjectContours, clipContours, result)
+        return result
 
     def intersectionPoints(self, other=None):
         """
         Returns a list of intersection points as `x`, `y` tuples. Optionaly
         provides another path object to find intersection points.
         """
-        raise NotImplementedError
+        contours = self._contoursForBooleanOperations()
+        if other is not None:
+            assert isinstance(other, self.__class__)
+            contours += other._contoursForBooleanOperations()
+        return booleanOperations.getIntersections(contours)
 
     def expandStroke(self, width, lineCap="round", lineJoin="round",
             miterLimit=10):
@@ -413,8 +416,20 @@ class BaseBezierPath(BasePen):
         * `lineJoin`: Possible values are `"bevel"`, `"miter"` or `"round"`
         * `miterLimit`: The miter limit to use for `"miter"` lineJoin option
         """
-        return None
+        # TODO: find cross-platform alternative to Quartz.CGPathCreateCopyByStrokingPath.
+        pass
 
+    #
+
+    def __add__(self, otherPath):
+        #new = self.copy()
+        #new.appendPath(otherPath)
+        #return new
+        pass
+
+    def __iadd__(self, other):
+        self.appendPath(other)
+        return self
 
     def __mod__(self, other):
         return self.difference(other)
@@ -459,7 +474,6 @@ class BaseBezierPath(BasePen):
         #self.setBezierPath(result.getBezierPath())
         #return self
         pass
-
 
 if __name__ == '__main__':
     import doctest
