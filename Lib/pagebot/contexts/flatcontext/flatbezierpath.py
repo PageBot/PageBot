@@ -45,9 +45,6 @@ class FlatBezierPath(BaseBezierPath):
     def __repr__(self):
         return '<FlatBezierPath: %s>' % len(self._contours)
 
-    #def append(self, command):
-    #    self.commands.append(command)
-
     # Drawing.
 
     def moveTo(self, p):

@@ -33,9 +33,7 @@ class BaseBezierPath(AbstractBezierPath):
         >>> path
         <BaseBezierPath: 1>
         """
-        self._path = []
         self._contours = []
-        self._path.append(self._contours)
         self.glyphSet = glyphSet
         super().__init__()
 
@@ -51,26 +49,24 @@ class BaseBezierPath(AbstractBezierPath):
         else:
             contour = self._contours[-1]
 
-        # TODO: add contour Level.
         contour.append(point)
 
     def __repr__(self):
-        return "<BaseBezierPath: %s>" % len(self._path)
+        return "<BaseBezierPath: %s>" % len(self._contours)
 
     def _points(self, onCurve=True, offCurve=True):
-        # Should be a tuple to conform to DrawBot.
-        #points = ()
         points = []
 
-        for index, point in enumerate(self._path):
-            if onCurve:
-                if point.onCurve:
-                    points.append(point)
-            else:
-                if point.onCurve is False:
-                    points.append(point)
+        for contour in self._contours:
+            for j, point in enumerate(contour):
+                if onCurve:
+                    if point.onCurve:
+                        points.append(point)
+                else:
+                    if point.onCurve is False:
+                        points.append(point)
 
-        return points
+        return tuple(points)
 
     def _get_points(self):
         return self._points()

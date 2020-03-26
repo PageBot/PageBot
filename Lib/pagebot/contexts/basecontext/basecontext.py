@@ -91,17 +91,14 @@ class BaseContext(AbstractContext):
         >>> path is not None
         True
         >>> path
-        <FlatBezierPath>
-
-        """
-        """
+        <FlatBezierPath: 0>
         >>> len(path)
-        4
+        0
         >>> # Adding 2 points.
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> len(context.bezierpath.points)
-        4
+        2
         """
         if self._bezierpath is None:
             self._bezierpath = self.newPath()
@@ -257,7 +254,7 @@ class BaseContext(AbstractContext):
         >>> context = getContext('Flat')
         >>> context.newPage(420, 420)
         >>> context.newPath()
-        <FlatBezierPath>
+        <FlatBezierPath: 0>
         """
         raise NotImplementedError
         #self._bezierpath = BaseBezierPath(self.b)
