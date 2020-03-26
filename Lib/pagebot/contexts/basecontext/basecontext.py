@@ -86,18 +86,19 @@ class BaseContext(AbstractContext):
         not exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> path = context.bezierpath
         >>> path is not None
         True
         >>> path
         <FlatBezierPath>
-        >>> len(path)
-        0
+        >>> #len(path.points)
+        #0
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
-        >>> len(context.bezierpath.points)
-        2
+        >>> #len(context.bezierpath.points)
+        >>> #len(path.points)
+        #2
         """
         if self._bezierpath is None:
             self._bezierpath = self.newPath()
