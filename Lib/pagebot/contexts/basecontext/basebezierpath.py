@@ -21,7 +21,7 @@ from fontTools.pens.basePen import BasePen
 from fontTools.pens.pointPen import PointToSegmentPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
-from pagebot.contexts.basecontext.basepoint import BasePoint
+from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
 
 _FALLBACKFONT = "LucidaGrande"
 
@@ -45,7 +45,7 @@ class BaseBezierPath(BasePen):
         """Keeps track of Bézier points inside contours."""
         x, y = p
 
-        point = BasePoint(x, y, onCurve=onCurve)
+        point = BaseBezierPoint(x, y, onCurve=onCurve)
 
         if len(self._contours) == 0:
             contour = self.contourClass()

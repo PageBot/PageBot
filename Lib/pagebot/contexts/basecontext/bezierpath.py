@@ -28,7 +28,7 @@ from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH,
         DEFAULT_FONT_SIZE, DEFAULT_WIDTH)
 from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.basepoint import BasePoint
+from pagebot.contexts.basecontext.basebezierpoint import BasePoint
 from pagebot.contexts.basecontext.beziercontour import BezierContour
 
 class BezierPath:
@@ -128,7 +128,7 @@ class BezierPath:
             self.addPoint(point, **kwargs)
 
     def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
-        assert isinstance(point, (list, tuple, BasePoint)), ('%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__)
+        assert isinstance(point, (list, tuple, BaseBezierPoint)), ('%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__)
         if isinstance(point, (list, tuple)):
             px, py = upt(point2D(point))
         else:
