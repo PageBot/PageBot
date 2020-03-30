@@ -41,20 +41,6 @@ class BaseBezierPath(BasePen):
         #super().__init__(glyphSet)
         BasePen.__init__(self, glyphSet)
 
-    def addToPath(self, p, onCurve=True):
-        """Keeps track of Bézier points inside contours."""
-        x, y = p
-
-        point = BaseBezierPoint(x, y, onCurve=onCurve)
-
-        if len(self._contours) == 0:
-            contour = self.contourClass()
-            self._contours.append(contour)
-        else:
-            contour = self._contours[-1]
-
-        contour.append(point)
-
     def __repr__(self):
         return "<BaseBezierPath>"
 
@@ -90,6 +76,7 @@ class BaseBezierPath(BasePen):
     def _get_contours(self):
         return self._contours
 
+
     contours = property(_get_contours, doc="Return a list of contours with all point coordinates sorted in segments. A contour object has an `open` attribute.")
 
     def __len__(self):
@@ -106,6 +93,21 @@ class BaseBezierPath(BasePen):
             contour = contours[index]
             yield contour
             index += 1
+
+
+    def addToPath(self, p, onCurve=True):
+        """Keeps track of Bézier points inside contours."""
+        x, y = p
+
+        point = BaseBezierPoint(x, y, onCurve=onCurve)
+
+        if len(self._contours) == 0:
+            contour = self.contourClass()
+            self._contours.append(contour)
+        else:
+            contour = self._contours[-1]
+
+        contour.append(point)
 
     # Drawing.
 

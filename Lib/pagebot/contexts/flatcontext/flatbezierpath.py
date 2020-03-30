@@ -15,6 +15,8 @@
 #     flatbezierpath.py
 #
 
+from fontTools.pens.pointPen import PointToSegmentPen
+from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
 
 class FlatBezierPath(BaseBezierPath):
@@ -44,6 +46,65 @@ class FlatBezierPath(BaseBezierPath):
 
     def __repr__(self):
         return '<FlatBezierPath>'
+
+    # FontTools PointToSegmentePen.
+
+    def beginPath(self, identifier=None):
+        """Begin using the path as a so called point pen and start a new subpath."""
+        self._pointToSegmentPen = PointToSegmentPen(self)
+        self._pointToSegmentPen.beginPath()
+
+    def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
+        """Use the path as a point pen and add a point to the current subpath.
+        `beginPath` must have been called prior to adding points with
+        `addPoint` calls."""
+        if not hasattr(self, "_pointToSegmentPen"):
+            raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
+        self._pointToSegmentPen.addPoint(
+            point,
+            segmentType=segmentType,
+            smooth=smooth,
+            name=name,
+            identifier=identifier,
+            **kwargs
+        )
+
+    def endPath(self):
+        """End the current subpath. Calling this method has two distinct
+        meanings depending on the context:
+
+        When the Bézier path is used as a segment pen (using `moveTo`,
+        `lineTo`, etc.), the current subpath will be finished as an open
+        contour.
+
+        When the Bézier path is used as a point pen (using `beginPath`,
+        `addPoint` and `endPath`), the path will process all the points added
+        with `addPoint`, finishing the current subpath."""
+        if hasattr(self, "_pointToSegmentPen"):
+            # its been uses in a point pen world
+            pointToSegmentPen = self._pointToSegmentPen
+            del self._pointToSegmentPen
+            pointToSegmentPen.endPath()
+        else:
+            raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
+
+    def drawToPen(self, pen):
+        """
+        Draw the bezier path into a pen
+        """
+        contours = self.contours
+
+        for contour in contours:
+            contour.drawToPen(pen)
+
+    def drawToPointPen(self, pointPen):
+        """
+        Draw the bezier path into a point pen.
+        """
+        contours = self.contours
+
+        for contour in contours:
+            contour.drawToPointPen(pointPen)
 
     # Drawing.
 

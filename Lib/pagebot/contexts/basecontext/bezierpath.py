@@ -137,6 +137,7 @@ class BezierPath:
             segmentType = segmentType or point.segmentType
             smooth = smooth or point.smooth
             identifier = identifier or point.identifier
+
         self.bp.addPoint((px, py), segmentType=segmentType, smooth=smooth, name=name, identifier=identifier, **kwargs)
 
     def endPath(self):
@@ -157,6 +158,7 @@ class BezierPath:
         assert self.isOpenPath, ('%s.endPath: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
         self.isOpenPath = False
         self.bp.endPath()
+
 
     #   P A T H  M E T H O D S
 

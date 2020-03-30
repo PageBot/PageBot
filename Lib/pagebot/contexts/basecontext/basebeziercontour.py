@@ -33,10 +33,11 @@ class BaseBezierContour(list):
         self.drawToPen(pen)
         return pen.value < 0
 
-    clockwise = property(_get_clockwise, doc="A boolean representing if the contour has a clockwise direction.")
+    clockwise = property(_get_clockwise, doc="A Boolean representing if the contour has a clockwise direction.")
 
     def drawToPointPen(self, pointPen):
         pointPen.beginPath()
+
         for i, segment in enumerate(self):
             if len(segment) == 1:
                 segmentType = "line"
@@ -47,6 +48,7 @@ class BaseBezierContour(list):
                 pointPen.addPoint(segment[0])
                 pointPen.addPoint(segment[1])
                 pointPen.addPoint(segment[2], segmentType="curve")
+
         pointPen.endPath()
 
     def drawToPen(self, pen):
@@ -57,6 +59,7 @@ class BaseBezierContour(list):
                 pen.lineTo(*segment)
             else:
                 pen.curveTo(*segment)
+
         if self.open:
             pen.endPath()
         else:
