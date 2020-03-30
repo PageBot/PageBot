@@ -28,7 +28,7 @@ from pagebot.constants import (ORIGIN, DEFAULT_FALLBACK_FONT_PATH,
         DEFAULT_FONT_SIZE, DEFAULT_WIDTH)
 from pagebot.toolbox.units import upt, degrees, point2D
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.basebezierpoint import BasePoint
+from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
 from pagebot.contexts.basecontext.beziercontour import BezierContour
 
 class BezierPath:
