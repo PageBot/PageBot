@@ -12,10 +12,10 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     babelpoint.py
+#     basebezierpoint.py
 #
 
-class BasePoint:
+class BaseBezierPoint:
 
     def __init__(self, x, y, segmentType=None, smooth=False, name=None,
             identifier=None, start=False, onCurve=True):
