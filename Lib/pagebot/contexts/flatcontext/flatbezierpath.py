@@ -133,6 +133,10 @@ class FlatBezierPath(BaseBezierPath):
         """
         self.commands.append(self.b.curveto(cp1[0], cp1[1], cp2[0], cp2[1],
             p[0], p[1]))
+        cpoint1 = self.getPoint(cp1, onCurve=False)
+        cpoint2 = self.getPoint(cp2, onCurve=False)
+        point = self.getPoint(p)
+        #self.addSegment(cpoint1, cpoint2, point)
         self.addToPath(cp1, onCurve=False)
         self.addToPath(cp2, onCurve=False)
         self.addToPath(p)

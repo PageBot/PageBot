@@ -56,7 +56,20 @@ class BaseBezierPath(BasePen):
                     if point.onCurve is False:
                         points.append(point)
 
+        '''
+        if not onCurve and not offCurve:
+            return points
+        for index in range(self._path.elementCount()):
+            instruction, pts = self._path.elementAtIndex_associatedPoints_(index)
+            if not onCurve:
+                pts = pts[:-1]
+            elif not offCurve:
+                pts = pts[-1:]
+            points.extend([(p.x, p.y) for p in pts])
+        '''
+
         return tuple(points)
+
 
     def _get_points(self):
         return self._points()
@@ -94,19 +107,32 @@ class BaseBezierPath(BasePen):
             yield contour
             index += 1
 
+    def addSegment(self, cp1, cp2, p):
+        segment = []
+        segment.append(cp1)
+        segment.append(cp2)
+        segment.append(p)
+        contour = self.getContour()
+        contour.append(segment)
 
-    def addToPath(self, p, onCurve=True):
-        """Keeps track of Bézier points inside contours."""
-        x, y = p
-
-        point = BaseBezierPoint(x, y, onCurve=onCurve)
-
+    def getContour(self):
         if len(self._contours) == 0:
             contour = self.contourClass()
             self._contours.append(contour)
         else:
             contour = self._contours[-1]
 
+        return contour
+
+    def getPoint(self, p, onCurve=True):
+        x, y = p
+        point = BaseBezierPoint(x, y, onCurve=onCurve)
+        return point
+
+    def addToPath(self, p, onCurve=True):
+        """Keeps track of Bézier points inside contours."""
+        point = self.getPoint(p, onCurve=onCurve)
+        contour = self.getContour()
         contour.append(point)
 
     # Drawing.
