@@ -47,6 +47,8 @@ class BaseBezierPath(BasePen):
         return "<BaseBezierPath>"
 
     def _points(self, onCurve=True, offCurve=True):
+        """Internal points representation, corresponding to the DrawBot Bézier
+        path."""
         points = []
 
         if not onCurve and not offCurve:
@@ -80,11 +82,10 @@ class BaseBezierPath(BasePen):
     offCurvePoints = property(_get_offCurvePoints, doc="Return a list of all off curve points.")
 
     def _get_contours(self):
+        """Internal contour representation, corresponding to the DrawBot Bézier path."""
         contours = []
         for contour in self._contours:
             for segment in contour:
-
-
                 if segment.instruction == MOVETO:
                     contours.append(BaseBezierContour())
                 if segment.instruction == CLOSEPATH:
@@ -119,14 +120,6 @@ class BaseBezierPath(BasePen):
         segment = BaseBezierSegment(instruction, points)
         contour = self.getContour()
         contour.append(segment)
-
-    '''
-    def addToPath(self, p, onCurve=True):
-        """Keeps track of Bézier points inside contours."""
-        point = self.getPoint(p, onCurve=onCurve)
-        contour = self.getContour()
-        contour.append(point)
-    '''
 
     def getContour(self):
         """Gets the current contour if it exists, else make one."""

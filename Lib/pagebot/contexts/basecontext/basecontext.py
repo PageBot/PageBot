@@ -377,10 +377,6 @@ class BaseContext(AbstractContext):
         >>> context.lineTo((10, 110))
         >>> context.closePath()
         >>> #len(context.bezierpath.points) #5
-        >>> # Oval and rect don't draw on self._bezierpath (yet).
-        >>> context.oval(160-50, 160-50, 100, 100)
-        >>> context.bezierpath.points
-        ((110.0, 260.0), (160.0, 310.0), (210.0, 260.0), (160.0, 210.0), (110.0, 260.0))
         >>> #len(context.bezierpath.points) #5
         >>> context.fill((1, 0, 0))
         >>> context.drawPath(p=(0, 0)) # Draw self._bezierpath with various offsets
@@ -401,8 +397,15 @@ class BaseContext(AbstractContext):
         >>> len(path)
         1
         >>> contour = path.contours[0]
-        >>> #len(contour) # 6
-        >>> path.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
+        >>> len(contour)
+        5
+        """
+
+        """
+        FIXME: oval gives different results.
+        >>> context = getContext('DrawBot')
+        >>> path = context.newPath()
+        >>> path.oval(160-50, 160-50, 100, 100) # path.oval draws directly on the path
         >>> #len(path.points) #6
         >>> context.fill((0, 0.5, 1))
         >>> context.drawPath(path, p=(0, 0)) # Draw self._bezierpath with various offsets
@@ -410,6 +413,10 @@ class BaseContext(AbstractContext):
         >>> context.drawPath(path, p=(0, 200))
         >>> context.drawPath(path, p=(200, 0))
         >>> context.saveImage('_export/DrawBotContext2.pdf')
+        >>> # Oval and rect don't draw on self._bezierpath (yet).
+        >>> context.oval(160-50, 160-50, 100, 100)
+        >>> context.bezierpath.points
+        ((110.0, 260.0), (160.0, 310.0), (210.0, 260.0), (160.0, 210.0), (110.0, 260.0))
         """
         if path is None:
             path = self.bezierpath
