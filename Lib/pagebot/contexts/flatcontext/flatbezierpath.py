@@ -27,17 +27,17 @@ class FlatBezierPath(BaseBezierPath):
     >>> import flat
     >>> path = FlatBezierPath(flat)
     >>> path
-    <FlatBezierPath: 0>
+    <FlatBezierPath>
     >>> path.moveTo((0, 0))
     >>> path
-    <FlatBezierPath: 1>
+    <FlatBezierPath>
     >>> path.lineTo((0, 100))
     >>> path.lineTo((100, 100))
     >>> path.lineTo((100, 0))
     >>> path.lineTo((0, 0))
     >>> path.closePath()
     >>> len(path.contours[-1])
-    6
+    5
     """
 
     def __init__(self, b, path=None, glyphSet=None):
