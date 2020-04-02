@@ -23,6 +23,7 @@ from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
 from pagebot.contexts.basecontext.basebeziersegment import BaseBezierSegment
+from pagebot.constants import MOVETO, CLOSEPATH
 
 _FALLBACKFONT = "LucidaGrande"
 
@@ -47,17 +48,6 @@ class BaseBezierPath(BasePen):
 
     def _points(self, onCurve=True, offCurve=True):
         points = []
-
-        '''
-        for contour in self._contours:
-            for j, point in enumerate(contour):
-                if onCurve:
-                    if point.onCurve:
-                        points.append(point)
-                else:
-                    if point.onCurve is False:
-                        points.append(point)
-        '''
 
         if not onCurve and not offCurve:
             return points
@@ -90,8 +80,22 @@ class BaseBezierPath(BasePen):
     offCurvePoints = property(_get_offCurvePoints, doc="Return a list of all off curve points.")
 
     def _get_contours(self):
-        return self._contours
+        contours = []
+        for contour in self._contours:
+            for segment in contour:
 
+
+                if segment.instruction == MOVETO:
+                    contours.append(BaseBezierContour())
+                if segment.instruction == CLOSEPATH:
+                    contours[-1].open = False
+                if segment.points:
+                    contours[-1].append([(p.x, p.y) for p in segment.points])
+
+        if len(contours) >= 2 and len(contours[-1]) == 1 and contours[-1][0] == contours[-2][0]:
+            contours.pop()
+
+        return tuple(contours)
 
     contours = property(_get_contours, doc="Return a list of contours with all point coordinates sorted in segments. A contour object has an `open` attribute.")
 

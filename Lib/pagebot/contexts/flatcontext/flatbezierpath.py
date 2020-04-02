@@ -18,6 +18,7 @@
 from fontTools.pens.pointPen import PointToSegmentPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
+from pagebot.constants import MOVETO, LINETO, CURVETO, CLOSEPATH
 
 class FlatBezierPath(BaseBezierPath):
     """Bézier path that implements commands like Flat, but with the same API
@@ -47,7 +48,7 @@ class FlatBezierPath(BaseBezierPath):
     def __repr__(self):
         return '<FlatBezierPath>'
 
-    # FontTools PointToSegmentePen.
+    # FontTools PointToSegmentPen routines..
 
     def beginPath(self, identifier=None):
         """Begin using the path as a so called point pen and start a new subpath."""
@@ -70,7 +71,7 @@ class FlatBezierPath(BaseBezierPath):
         )
 
     def endPath(self):
-        """End the current subpath. Calling this method has two distinct
+        """Ends the current subpath. Calling this method has two distinct
         meanings depending on the context:
 
         When the Bézier path is used as a segment pen (using `moveTo`,
@@ -89,18 +90,14 @@ class FlatBezierPath(BaseBezierPath):
             raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
 
     def drawToPen(self, pen):
-        """
-        Draw the bezier path into a pen
-        """
+        """Draws the Bézier path into a pen."""
         contours = self.contours
 
         for contour in contours:
             contour.drawToPen(pen)
 
     def drawToPointPen(self, pointPen):
-        """
-        Draw the bezier path into a point pen.
-        """
+        """Draws the Bézier path into a point pen."""
         contours = self.contours
 
         for contour in contours:
@@ -110,25 +107,22 @@ class FlatBezierPath(BaseBezierPath):
 
     def moveTo(self, p):
         self.commands.append(self.b.moveto(p[0], p[1]))
-        #self.addToPath(p)
         point = self.getPoint(p)
-        self.addSegment('moveto', [point])
+        self.addSegment(MOVETO, [point])
 
     def lineTo(self, p):
         self.commands.append(self.b.lineto(p[0], p[1]))
-        #self.addToPath(p)
         point = self.getPoint(p)
-        self.addSegment('lineto', [point])
+        self.addSegment(LINETO, [point])
 
     def quadTo(self, cp, p):
         """
         * cp: control point, off curve.
         * p: on curve point.
         """
-        self.commands.append(self.b.quadto(cp[0], cp[1], p[0], p[1]))
-        # FIXME: as segment, see BasePen.
-        #self.addToPath(cp, onCurve=False)
-        #self.addToPath(p)
+        #self.commands.append(self.b.quadto(cp[0], cp[1], p[0], p[1]))
+        # FIXME: add as segment, see BasePen.
+        raise NotImplementedError
 
     def curveTo(self, cp1, cp2, p):
         """
@@ -142,29 +136,23 @@ class FlatBezierPath(BaseBezierPath):
         cpoint2 = self.getPoint(cp2, onCurve=False)
         point = self.getPoint(p)
         points = [cpoint1, cpoint2, point]
-        self.addSegment('curveto', points)
-        #self.addToPath(cp1, onCurve=False)
-        #self.addToPath(cp2, onCurve=False)
-        #self.addToPath(p)
+        self.addSegment(CURVETO, points)
 
     def qCurveTo(self, *points):
         """Draws an entire string of quadratic curve segments. The last point
         specified is on-curve, all others are off-curve (control) points.
         """
+        # FIXME: add as segment, see BasePen.
         raise NotImplementedError
 
     def closePath(self):
         """Closes the path, add the first point to the end of the points
         list."""
         contour = self.contours[-1]
-        segment = contour[0]
-        p0 = segment.points[0]
-        p = p0.x, p0.y
-        onCurve = p0.onCurve
-        point = self.getPoint(p, p0.onCurve)
-        #self.addToPath(p, onCurve=onCurve)
-        self.addSegment('closepath', [])
-        self.addSegment('moveto', [point])
+        p0 = contour[0][0]
+        point = self.getPoint(p0)
+        self.addSegment(CLOSEPATH, [])
+        self.addSegment(MOVETO, [point])
         self.commands.append(self.b.closepath)
 
     def appendPath(self, path):
@@ -241,7 +229,7 @@ class FlatBezierPath(BaseBezierPath):
         for point in points[1:]:
             self.lineTo(point)
 
-        # TODO: optional close
+        # TODO: optionally close.
 
     def text(self, txt, offset=None, font=None, fontSize=10, align=None):
         """Draws a `txt` with a `font` and `fontSize` at an `offset` in the

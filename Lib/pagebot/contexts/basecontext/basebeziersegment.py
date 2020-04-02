@@ -15,11 +15,7 @@
 #     basebeziersegment.py
 #
 
-MOVETO = 'moveto'
-LINETO = 'lineto'
-CURVETO = 'curveto'
-CLOSEPATH = 'closepath'
-INSTRUCTIONS = (MOVETO, LINETO, CURVETO, CLOSEPATH)
+from pagebot.constants import INSTRUCTIONS
 
 class BaseBezierSegment:
     """Instruction and points that should behave like a segment in a NSPath."""
@@ -34,4 +30,4 @@ class BaseBezierSegment:
         return len(self.points)
 
     def __repr__(self):
-        return "<BaseBezierSegment: %s -- %s>" % (self.instruction, str(self.points))
+        return str(self.points)

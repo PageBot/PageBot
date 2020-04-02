@@ -25,8 +25,8 @@ class BaseBezierPoint:
 
         http://www.drawbot.com/content/shapes/bezierPath.html#drawBot.context.baseContext.BezierPath.addPoint
         """
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
         self.segmentType = segmentType
         self.smooth = smooth
         self.name = name

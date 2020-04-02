@@ -799,7 +799,7 @@ DEFAULT_FILETYPE = FILETYPE_PDF
 # Commonly used groups of file types.
 IMAGE_TYPES = (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_SVG,
     FILETYPE_GIF, FILETYPE_TIF, FILETYPE_TIFF, FILETYPE_BMP, FILETYPE_ICO, FILETYPE_ICNS)
-BITMAP_TYPES = (FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_GIF, FILETYPE_TIF, 
+BITMAP_TYPES = (FILETYPE_JPG, FILETYPE_JPEG, FILETYPE_PNG, FILETYPE_GIF, FILETYPE_TIF,
     FILETYPE_TIFF, FILETYPE_BMP, FILETYPE_ICO, FILETYPE_ICNS)
 MOVIE_TYPES = (FILETYPE_MOV, FILETYPE_MP4)
 FONT_TYPES = (FILETYPE_UFO, FILETYPE_TTF, FILETYPE_OTF)
@@ -1079,7 +1079,7 @@ FONT_FEATURES = [
     ('Ornaments',                           'ornm', 'S3,1', 'Decorative alternates for the bullet character “•”.'),
 ]
 # Add the numbered Stylistic Set and Character Variant tag with their full index number
-# so the compiled FONT_FEATURES dictionary can be used with all known tags to 
+# so the compiled FONT_FEATURES dictionary can be used with all known tags to
 # retrieve name and description.
 for ss in range(1, 21):
     FONT_FEATURES.append(('Stylistic Set #%02d' % ss, 'ss%02d' % ss, 'S1', 'Range 1-20. Replaces character with one from a font-specific set of stylistic alternatives'))
@@ -2649,6 +2649,14 @@ SPOT_RGB = {
 # Replace integers by float numbers.
 for spot, (r, g, b) in SPOT_RGB.items():
     SPOT_RGB[spot] = r/255, g/255, b/255
+
+
+MOVETO = 'moveto'
+LINETO = 'lineto'
+CURVETO = 'curveto'
+CLOSEPATH = 'closepath'
+INSTRUCTIONS = (MOVETO, LINETO, CURVETO, CLOSEPATH)
+
 
 if __name__ == '__main__':
     import doctest
