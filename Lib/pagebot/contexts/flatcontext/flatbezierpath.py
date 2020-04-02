@@ -110,11 +110,15 @@ class FlatBezierPath(BaseBezierPath):
 
     def moveTo(self, p):
         self.commands.append(self.b.moveto(p[0], p[1]))
-        self.addToPath(p)
+        #self.addToPath(p)
+        point = self.getPoint(p)
+        self.addSegment('moveto', [point])
 
     def lineTo(self, p):
         self.commands.append(self.b.lineto(p[0], p[1]))
-        self.addToPath(p)
+        #self.addToPath(p)
+        point = self.getPoint(p)
+        self.addSegment('lineto', [point])
 
     def quadTo(self, cp, p):
         """
@@ -122,8 +126,9 @@ class FlatBezierPath(BaseBezierPath):
         * p: on curve point.
         """
         self.commands.append(self.b.quadto(cp[0], cp[1], p[0], p[1]))
-        self.addToPath(cp, onCurve=False)
-        self.addToPath(p)
+        # FIXME: as segment, see BasePen.
+        #self.addToPath(cp, onCurve=False)
+        #self.addToPath(p)
 
     def curveTo(self, cp1, cp2, p):
         """
@@ -136,10 +141,11 @@ class FlatBezierPath(BaseBezierPath):
         cpoint1 = self.getPoint(cp1, onCurve=False)
         cpoint2 = self.getPoint(cp2, onCurve=False)
         point = self.getPoint(p)
-        #self.addSegment(cpoint1, cpoint2, point)
-        self.addToPath(cp1, onCurve=False)
-        self.addToPath(cp2, onCurve=False)
-        self.addToPath(p)
+        points = [cpoint1, cpoint2, point]
+        self.addSegment('curveto', points)
+        #self.addToPath(cp1, onCurve=False)
+        #self.addToPath(cp2, onCurve=False)
+        #self.addToPath(p)
 
     def qCurveTo(self, *points):
         """Draws an entire string of quadratic curve segments. The last point
@@ -151,11 +157,14 @@ class FlatBezierPath(BaseBezierPath):
         """Closes the path, add the first point to the end of the points
         list."""
         contour = self.contours[-1]
-        p0 = contour[0]
-
+        segment = contour[0]
+        p0 = segment.points[0]
         p = p0.x, p0.y
         onCurve = p0.onCurve
-        self.addToPath(p, onCurve=onCurve)
+        point = self.getPoint(p, p0.onCurve)
+        #self.addToPath(p, onCurve=onCurve)
+        self.addSegment('closepath', [])
+        self.addSegment('moveto', [point])
         self.commands.append(self.b.closepath)
 
     def appendPath(self, path):

@@ -22,6 +22,7 @@ from fontTools.pens.pointPen import PointToSegmentPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
+from pagebot.contexts.basecontext.basebeziersegment import BaseBezierSegment
 
 _FALLBACKFONT = "LucidaGrande"
 
@@ -47,6 +48,7 @@ class BaseBezierPath(BasePen):
     def _points(self, onCurve=True, offCurve=True):
         points = []
 
+        '''
         for contour in self._contours:
             for j, point in enumerate(contour):
                 if onCurve:
@@ -55,21 +57,22 @@ class BaseBezierPath(BasePen):
                 else:
                     if point.onCurve is False:
                         points.append(point)
-
         '''
+
         if not onCurve and not offCurve:
             return points
-        for index in range(self._path.elementCount()):
-            instruction, pts = self._path.elementAtIndex_associatedPoints_(index)
-            if not onCurve:
-                pts = pts[:-1]
-            elif not offCurve:
-                pts = pts[-1:]
-            points.extend([(p.x, p.y) for p in pts])
-        '''
+
+        for contour in self._contours:
+            for segment in contour:
+                pts = segment.points
+
+                if not onCurve:
+                    pts = pts[:-1]
+                elif not offCurve:
+                    pts = pts[-1:]
+                points.extend([(p.x, p.y) for p in pts])
 
         return tuple(points)
-
 
     def _get_points(self):
         return self._points()
@@ -107,15 +110,22 @@ class BaseBezierPath(BasePen):
             yield contour
             index += 1
 
-    def addSegment(self, cp1, cp2, p):
-        segment = []
-        segment.append(cp1)
-        segment.append(cp2)
-        segment.append(p)
+    def addSegment(self, instruction, points):
+        """Adds a new segment to the current contour."""
+        segment = BaseBezierSegment(instruction, points)
         contour = self.getContour()
         contour.append(segment)
 
+    '''
+    def addToPath(self, p, onCurve=True):
+        """Keeps track of Bézier points inside contours."""
+        point = self.getPoint(p, onCurve=onCurve)
+        contour = self.getContour()
+        contour.append(point)
+    '''
+
     def getContour(self):
+        """Gets the current contour if it exists, else make one."""
         if len(self._contours) == 0:
             contour = self.contourClass()
             self._contours.append(contour)
@@ -128,12 +138,6 @@ class BaseBezierPath(BasePen):
         x, y = p
         point = BaseBezierPoint(x, y, onCurve=onCurve)
         return point
-
-    def addToPath(self, p, onCurve=True):
-        """Keeps track of Bézier points inside contours."""
-        point = self.getPoint(p, onCurve=onCurve)
-        contour = self.getContour()
-        contour.append(point)
 
     # Drawing.
 

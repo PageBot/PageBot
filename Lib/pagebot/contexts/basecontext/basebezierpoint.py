@@ -39,10 +39,6 @@ class BaseBezierPoint:
         #return '(x=%s, y=%s, onCurve=%s)' % (self.x, self.y, self.onCurve)
         return '(%s, %s)' % (self.x, self.y)
 
-    def __len__(self):
-        # TODO
-        return 1
-
     def __getitem__(self, index):
         if index == 0:
             return self.x
