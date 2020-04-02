@@ -119,6 +119,9 @@ class BezierPath:
         >>> path.addPoints((0, 0), (100, 100), (200, 200))
         >>> path.isOpenPath # Set by self.
         True
+        >>> path.moveTo((0, 0))
+        >>> len(path)
+        1
         >>> path.endPath()
         >>> path.isOpenPath
         False
@@ -151,6 +154,9 @@ class BezierPath:
         0
         >>> path.isOpenPath
         True
+        >>> path.moveTo((0, 0))
+        >>> len(path)
+        1
         >>> path.endPath()
         >>> #path.isOpenPath
         #False

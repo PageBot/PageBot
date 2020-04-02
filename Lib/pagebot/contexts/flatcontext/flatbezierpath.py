@@ -143,7 +143,9 @@ class FlatBezierPath(BaseBezierPath):
         specified is on-curve, all others are off-curve (control) points.
         """
         # FIXME: add as segment, see BasePen.
-        raise NotImplementedError
+        #raise NotImplementedError
+        #print('qcurveto')
+        pass
 
     def closePath(self):
         """Closes the path, add the first point to the end of the points
