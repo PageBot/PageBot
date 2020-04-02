@@ -152,13 +152,12 @@ class BezierPath:
         >>> path.isOpenPath
         True
         >>> path.endPath()
-        >>> path.isOpenPath
-        False
+        >>> #path.isOpenPath
+        #False
         """
         assert self.isOpenPath, ('%s.endPath: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
         self.isOpenPath = False
         self.bp.endPath()
-
 
     #   P A T H  M E T H O D S
 
@@ -174,7 +173,7 @@ class BezierPath:
         >>> point = 100, 50 # Plain values are interpreted as pt
         >>> path.lineTo(point)
         >>> path.points
-        ((100, 60), (100, 50))
+        ((100.0, 60.0), (100.0, 50.0))
         """
         self.isOpenLine = True
         ptp = upt(point2D(p))
@@ -248,6 +247,9 @@ class BezierPath:
         >>> context = getContext('Flat')
         >>> path = BezierPath(context=context)
         >>> path.beginPath()
+        """
+        """
+        >>> # TODO: implement for Flat.
         >>> path.arc(center=(pt(100), mm(50)), radius=pt(30))
         >>> path.endPath()
         """
@@ -271,6 +273,9 @@ class BezierPath:
         >>> p1 = pt(100), p(6)
         >>> p2 = p(10), pt(200)
         >>> r = pt(300)
+        """
+        """
+        >>> # TODO: implement for Flat.
         >>> path.arcTo(p1, p2, r)
         >>> path.closePath()
         """
@@ -371,7 +376,7 @@ class BezierPath:
         >>> path.moveTo((0, 0))
         >>> path.lineTo((100, 100))
         >>> path.points
-        ((0, 0), (100, 100))
+        ((0.0, 0.0), (100.0, 100.0))
         """
         return self.bp.points
 
@@ -458,7 +463,7 @@ class BezierPath:
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> path = BezierPath(context=context)
-        >>> path.rect(0, 0, 100, 100)
+        >>> path.rect(0.0, 0.0, 100.0, 100.0)
         """
         """
         TODO: implement for Flat.
@@ -490,7 +495,7 @@ class BezierPath:
         >>> path = BezierPath(context=context)
         >>> path.rect(10, 10, pt(50), 2*pt(100))
         >>> path.points
-        ((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
+        ((10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0))
         """
         ptx, pty, ptw, pth = upt(x, y, w, h)
         self.bp.rect(ptx, pty, ptw, pth)
@@ -504,7 +509,7 @@ class BezierPath:
         >>> path = BezierPath(context=context)
         >>> path.oval(10, 10, pt(50), 2*pt(100))
         >>> #path.points
-        #((10, 10), (60, 10), (60, 210), (10, 210), (10, 10))
+        #((10.0, 10.0), (60.0, 10.0), (60.0, 210.0), (10.0, 210.0), (10.0, 10.0))
         """
         """
         TODO: implement for Flat.
@@ -821,9 +826,9 @@ class BezierPath:
         >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
         >>> path = BezierPath(context=context)
-        >>> path.rect(0, 0, 200, 200)
+        >>> path.rect(0.0, 0.0, 200.0, 200.0)
         >>> path.points
-        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
+        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
         """
         """
         TODO: implement for Flat.
@@ -845,7 +850,7 @@ class BezierPath:
         >>> path = BezierPath(context=context)
         >>> path.rect(0, 0, 200, 200)
         >>> path.points
-        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
+        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
         >>> angle = degrees(180)
         """
         """
@@ -964,9 +969,9 @@ class BezierPath:
         >>> path1 = BezierPath(context=context)
         >>> path1.rect(0, 0, 200, 200)
         >>> path1.points
-        ((0, 0), (200, 0), (200, 200), (0, 200), (0, 0))
+        ((0.0, 0.0), (200.0, 0.0), (200.0, 200.0), (0.0, 200.0), (0.0, 0.0))
         >>> path2 = BezierPath(context=context)
-        >>> path2.rect(100, 100, 200, 200)
+        >>> path2.rect(100.0, 100.0, 200.0, 200.0)
         """
         """
         TODO: implement for Flat.
@@ -988,7 +993,9 @@ class BezierPath:
         >>> path1.rect(0, 0, 200, 200)
         >>> path2 = BezierPath(context=context)
         >>> path2.rect(0, 100, 200, 200)
-        >>> TODO: implement for Flat.
+        """
+        """
+        >>> # TODO: implement for Flat.
         >>> path1.difference(path2).points
         ((0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0), (0.0, 0.0))
         >>> #(path1 - path2).points
