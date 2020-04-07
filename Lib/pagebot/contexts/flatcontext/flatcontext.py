@@ -438,7 +438,7 @@ class FlatContext(BaseContext):
             elif command == 'component':
                 (x, y), componentGlyph = t
                 #if not self.originTop:
-                    y = -y
+                y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
 
         return path
