@@ -309,20 +309,6 @@ class FlatContext(BaseContext):
 
     width = property(_get_width)
 
-    def getX(self, x):
-        """Calculates `x`-coordinate based translation."""
-        return self._ox + x
-
-    def getY(self, y):
-        """Calculates `y`-coordinate based on origin and translation."""
-        y = self._oy + y
-
-        #if self.originTop:
-        #    return y
-        #else:
-        y = self.height - y
-        return y
-
     def getTransformed(self, x, y):
         """
         >>> context = FlatContext()
@@ -354,8 +340,8 @@ class FlatContext(BaseContext):
         p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
 
-        if not self.originTop:
-            y1 = self.height - y1
+        #if not self.originTop:
+        y1 = self.height - y1
 
         return x1, y1
 
@@ -451,7 +437,7 @@ class FlatContext(BaseContext):
                 path.curveTo((x0, y0), (x1, y1), (x, y))
             elif command == 'component':
                 (x, y), componentGlyph = t
-                if not self.originTop:
+                #if not self.originTop:
                     y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
 
@@ -494,13 +480,11 @@ class FlatContext(BaseContext):
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
-        xpt, ypt = point2D(upt(p))
-        xpt = self.getX(xpt)
-        ypt = self.getY(ypt)
+        xpt, ypt = self.translatePoint(p)
 
-        if not self.originTop:
-            lineHeight = fs.lineHeight
-            ypt -= lineHeight
+        #if not self.originTop:
+        lineHeight = fs.lineHeight
+        ypt -= lineHeight
 
         if 'textFill' in fs.style:
             c = fs.style['textFill']
@@ -716,9 +700,7 @@ class FlatContext(BaseContext):
             p = 0, 0
 
         # Renders unit tuple to value tuple.
-        xpt, ypt = point2D(upt(p))
-        xpt = self.getX(xpt)
-        ypt = self.getY(ypt)
+        xpt, ypt = self.translatePoint(p)
         self.save()
 
         im = Image.open(path)
@@ -906,11 +888,8 @@ class FlatContext(BaseContext):
     def translatePoint(self, p):
         x, y = point2D(upt(p))
         x = self._ox + x
-        x = self.getX(x)
         y = self._oy + y
-        #if self.originTop:
-        # TODO: don't flip
-        # else:
+        #if not self.originTop:
         y = self.height - y
         return (x, y)
 
