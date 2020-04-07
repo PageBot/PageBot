@@ -328,12 +328,15 @@ class BaseContext(AbstractContext):
         self.bezierpath.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
 
     def qCurveTo(self, *points):
+        # TODO: call on self.bezierpath.
         return self.b.qCurveTo(*points)
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
+        # TODO: call on self.bezierpath.
         return self.b.arc(center, radius, startAngle, endAngle, clockwise)
 
     def arcTo(self, xy1, xy2, radius):
+        # TODO: call on self.bezierpath.
         return self.b.arcTo(xy1, xy2, radius)
 
     def closePath(self):

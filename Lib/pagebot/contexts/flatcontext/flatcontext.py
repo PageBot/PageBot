@@ -903,27 +903,36 @@ class FlatContext(BaseContext):
         if shape is not None:
             self.page.place(shape.path(self._bezierpath.commands))
 
-    '''
+    def translatePoint(self, p):
+        x, y = point2D(upt(p))
+        x = self._ox + x
+        x = self.getX(x)
+        y = self._oy + y
+        #if self.originTop:
+        # TODO: don't flip
+        # else:
+        y = self.height - y
+        return (x, y)
+
+
     def moveTo(self, p):
-        assert self._bezierpath is not None
-        self._bezierpath.moveTo(p)
-
-    def lineTo(self, p):
-        assert self._bezierpath is not None
-        self._bezierpath.lineTo(p)
-
-    def quadTo(self, bcp, p):
-        assert self._bezierpath is not None
-        self._bezierpath.quadTo(bcp, p)
+        p = self.translatePoint(p)
+        super().moveTo(p)
 
     def curveTo(self, bcp1, bcp2, p):
-        assert self._bezierpath is not None
-        self._bezierpath.curveTo(bcp1, bcp2, p)
+        bcp1 = self.translatePoint(bcp1)
+        bcp2 = self.translatePoint(bcp2)
+        p = self.translatePoint(p)
+        super().curveTo(bcp1, bcp2, p)
 
-    def closePath(self):
-        assert self._bezierpath is not None
-        self._bezierpath.closePath()
-    '''
+    def lineTo(self, p):
+        p = self.translatePoint(p)
+        super().lineTo(p)
+
+    def quadTo(self, bcp, p):
+        bcp = self.translatePoint(bcp)
+        p = self.translatePoint(p)
+        super().quadTo(bcp, p)
 
     def bezierPathByFlatteningPath(self, path):
         """TODO: Make our own version of the NSBezier flatten path function."""
