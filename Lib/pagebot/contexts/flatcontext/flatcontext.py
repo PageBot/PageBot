@@ -296,7 +296,7 @@ class FlatContext(BaseContext):
         return drawing.pages[0]
 
     def _get_page(self):
-        if len(self.drawing.pages) == 0:
+        if self.drawing and hasattr(self.drawing, 'pages') and len(self.drawing.pages) == 0:
             return None
         return self.drawing.pages[-1]
 
