@@ -103,28 +103,19 @@ class FlatBezierPath(BaseBezierPath):
         for contour in contours:
             contour.drawToPointPen(pointPen)
 
-    # Drawing.
+    # Curve.
 
-    def moveTo(self, p):
+    def _moveTo(self, p):
         self.commands.append(self.b.moveto(p[0], p[1]))
         point = self.getPoint(p)
         self.addSegment(MOVETO, [point])
 
-    def lineTo(self, p):
+    def _lineTo(self, p):
         self.commands.append(self.b.lineto(p[0], p[1]))
         point = self.getPoint(p)
         self.addSegment(LINETO, [point])
 
-    def quadTo(self, cp, p):
-        """
-        * cp: control point, off curve.
-        * p: on curve point.
-        """
-        #self.commands.append(self.b.quadto(cp[0], cp[1], p[0], p[1]))
-        # FIXME: add as segment, see BasePen.
-        raise NotImplementedError
-
-    def curveTo(self, cp1, cp2, p):
+    def _curveToOne(self, cp1, cp2, p):
         """
         * cp1: control point 1, off curve.
         * cp2: control point 2, off curve.
@@ -137,15 +128,6 @@ class FlatBezierPath(BaseBezierPath):
         point = self.getPoint(p)
         points = [cpoint1, cpoint2, point]
         self.addSegment(CURVETO, points)
-
-    def qCurveTo(self, *points):
-        """Draws an entire string of quadratic curve segments. The last point
-        specified is on-curve, all others are off-curve (control) points.
-        """
-        # FIXME: add as segment, see BasePen.
-        #raise NotImplementedError
-        #print('qcurveto')
-        pass
 
     def closePath(self):
         """Closes the path, add the first point to the end of the points

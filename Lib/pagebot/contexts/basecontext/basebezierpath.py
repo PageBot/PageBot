@@ -18,7 +18,6 @@
 import math
 import booleanOperations
 from fontTools.pens.basePen import BasePen
-from fontTools.pens.pointPen import PointToSegmentPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
@@ -137,31 +136,6 @@ class BaseBezierPath(BasePen):
         return point
 
     # Drawing.
-
-    def moveTo(self, point):
-        """Move to a point `x`, `y`."""
-        raise NotImplementedError
-
-    def lineTo(self, point):
-        """Line to a point `x`, `y`."""
-        raise NotImplementedError
-
-    def curveTo(self, *points):
-        """Draws a cubic Bézier with an arbitrary number of control points. The
-        last point specified is on-curve, all others are off-curve (control)
-        points.
-        """
-        raise NotImplementedError
-
-    def qCurveTo(self, *points):
-        """Draws an entire string of quadratic curve segments. The last point
-        specified is on-curve, all others are off-curve (control) points.
-        """
-        raise NotImplementedError
-
-    def closePath(self):
-        """Close the path."""
-        raise NotImplementedError
 
     def beginPath(self, identifier=None):
         """Begins the path as a point pen and starts a new subpath."""
@@ -296,8 +270,6 @@ class BaseBezierPath(BasePen):
         * `offset`: add the traced vector outline with an offset to the BezierPath
         """
         # TODO: use potrace, see drawBot.context.tools.TraceImage.
-        #raise NotImplementedError
-        pass
 
     def pointInside(self, xy):
         """Checks if a point `x`, `y` is inside a path."""
@@ -446,7 +418,6 @@ class BaseBezierPath(BasePen):
         * `miterLimit`: The miter limit to use for `"miter"` lineJoin option
         """
         # TODO: find cross-platform alternative to Quartz.CGPathCreateCopyByStrokingPath.
-        pass
 
     #
 

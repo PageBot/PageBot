@@ -302,6 +302,9 @@ class BaseContext(AbstractContext):
         ppt = upt(point2D(p))
         self.bezierpath.lineTo(ppt) # Render units point tuple to tuple of values
 
+
+    # FIXME: should get n points, add curveToOne(bcp1, bcp2, p).
+    #def curveTo(self, *points):
     def curveTo(self, bcp1, bcp2, p):
         """Curve to point p i nthe open path. Create a new path if none is
         open.
@@ -325,11 +328,19 @@ class BaseContext(AbstractContext):
         b1pt = upt(point2D(bcp1))
         b2pt = upt(point2D(bcp2))
         ppt = upt(point2D(p))
-        self.bezierpath.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+        self.bezierpath.curveTo(b1pt, b2pt, ppt)
 
     def qCurveTo(self, *points):
         # TODO: call on self.bezierpath.
         return self.b.qCurveTo(*points)
+
+    '''
+    def quadTo(self, bcp, p):
+        # TODO: Convert to Bezier with 0.6 rule
+        # What's difference with qCurveTo()?
+        return self.b.quadTo(bcp, p)
+    '''
+
 
     def arc(self, center, radius, startAngle, endAngle, clockwise):
         # TODO: call on self.bezierpath.
@@ -487,11 +498,6 @@ class BaseContext(AbstractContext):
 
     def polygon(self, *points, **kwargs):
         return self.b.polygon(*points, **kwargs)
-
-    def quadTo(self, bcp, p):
-        # TODO: Convert to Bezier with 0.6 rule
-        # What's difference with qCurveTo()?
-        return self.b.quadTo(bcp, p)
 
     # Color
 

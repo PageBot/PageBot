@@ -40,6 +40,8 @@ class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
 
+    TODO: merge getTransformed() and translatePoint()?
+
     * xxyxyz.org/flat
 
     Text behavior:
@@ -904,14 +906,26 @@ class FlatContext(BaseContext):
         p = self.translatePoint(p)
         super().curveTo(bcp1, bcp2, p)
 
-    def lineTo(self, p):
-        p = self.translatePoint(p)
-        super().lineTo(p)
 
+    '''
     def quadTo(self, bcp, p):
         bcp = self.translatePoint(bcp)
         p = self.translatePoint(p)
         super().quadTo(bcp, p)
+    '''
+
+    def qCurveTo(self, *points):
+        pass
+
+    def arc(self, center, radius, startAngle, endAngle, clockwise):
+        pass
+
+    def arcTo(self, xy1, xy2, radius):
+        pass
+
+    def lineTo(self, p):
+        p = self.translatePoint(p)
+        super().lineTo(p)
 
     def bezierPathByFlatteningPath(self, path):
         """TODO: Make our own version of the NSBezier flatten path function."""
