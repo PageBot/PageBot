@@ -272,6 +272,17 @@ class FlatBezierPath(BaseBezierPath):
         """Append a path."""
         return None
 
+    # TODO
+
+    def addComponent(self, glyphName, transformation):
+        pass
+
+    def arc(self, center, radius, startAngle, endAngle, clockwise):
+        pass
+
+    def arcTo(self, point1, point2, radius):
+        pass
+
 if __name__ == '__main__':
     import doctest
     import sys
