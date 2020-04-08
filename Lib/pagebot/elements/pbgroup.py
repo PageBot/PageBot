@@ -23,7 +23,7 @@ class Group(Rect):
     >>> from pagebot import getContext
     >>> from pagebot.elements.element import Element
     >>> from pagebot.document import Document
-    >>> c = getContext('Flat')
+    >>> c = getContext()
     >>> w, h = pt(300), pt(400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
