@@ -278,7 +278,6 @@ class FlatContext(BaseContext):
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
-        print('new Page')
         assert w is not None and w > 0
         assert h is not None and h > 0
 
