@@ -1542,11 +1542,13 @@ class Document:
     def export(self, path=None, multiPage=True, **kwargs):
         """Export the document, using the `document.view` for export.
 
+        >>> from pagebot import getContext
         >>> from pagebot.elements import newRect
         >>> from pagebot.toolbox.color import redColor, noColor, color
         >>> from pagebot.conditions import *
         >>> w = h = 400 # Auto-convert plain numbers to default pt-units.
-        >>> doc = Document(name='TestDoc', size=(w, h), autoPages=1, padding=40)
+        >>> context = getContext()
+        >>> doc = Document(name='TestDoc', size=(w, h), autoPages=1, padding=40, context=context)
         >>> r = newRect(fill=color(1, 0, 0), stroke=noColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
