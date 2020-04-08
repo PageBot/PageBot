@@ -162,6 +162,7 @@ class PageView(BaseView):
 
             # Make page in context, actual page may be smaller if showing
             # cropmarks.
+            print('bla')
             self.context.newPage(w=pw, h=ph)
 
             # If page['frameDuration'] is set and saving as movie or animated

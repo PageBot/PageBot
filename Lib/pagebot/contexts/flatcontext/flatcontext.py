@@ -278,6 +278,7 @@ class FlatContext(BaseContext):
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
+        print('new Page')
         assert w is not None and w > 0
         assert h is not None and h > 0
 
@@ -296,6 +297,8 @@ class FlatContext(BaseContext):
         return drawing.pages[0]
 
     def _get_page(self):
+        if self.drawing is None:
+            return None
         if self.drawing and hasattr(self.drawing, 'pages') and len(self.drawing.pages) == 0:
             return None
         return self.drawing.pages[-1]

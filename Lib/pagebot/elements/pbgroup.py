@@ -23,21 +23,23 @@ class Group(Rect):
     >>> from pagebot import getContext
     >>> from pagebot.elements.element import Element
     >>> from pagebot.document import Document
-    >>> c = getContext()
+    >>> c = getContext('Flat')
     >>> w, h = pt(300), pt(400)
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
+    >>> page
+    <Page #1 default (300pt, 400pt)>
     >>> e1, e2, e3 = Element(w=123),Element(w=234),Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
+
+    """
+    """
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy,  e.size
     ((0pt, 20pt), (300pt, 100pt))
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
-
-    >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
     >>> from pagebot.document import Document
-    >>> c = FlatContext()
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
     >>> page = doc[1]
     >>> e1, e2, e3 = Element(w=123), Element(w=234), Element(w=345)
