@@ -245,7 +245,7 @@ class FlatContext(BaseContext):
     saveImage = saveDrawing
 
     def endDrawing(self, doc=None):
-        del self.drawing
+        self.drawing = None
 
     def clear(self):
         self.endDrawing()
