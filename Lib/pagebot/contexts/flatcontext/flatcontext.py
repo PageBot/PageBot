@@ -247,6 +247,9 @@ class FlatContext(BaseContext):
     def endDrawing(self, doc=None):
         del self.drawing
 
+    def clear(self):
+        self.endDrawing()
+
     def getDrawing(self):
         return self.drawing
 

@@ -176,6 +176,9 @@ class BaseContext(AbstractContext):
     def pdfImage(self):
         return self.b.pdfImage()
 
+    def clear(self):
+        pass
+
     # Graphics state.
 
     def save(self):
