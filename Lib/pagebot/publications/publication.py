@@ -28,7 +28,9 @@ class Publication(Element):
 
     >>> from pagebot.constants import A4
     >>> from pagebot.filepaths import RESOURCES_PATH
-    >>> p = Publication(RESOURCES_PATH) # Finder created from path
+    >>> from pagebot import getContext
+    >>> context = getContext()
+    >>> p = Publication(RESOURCES_PATH, context=context) # Finder created from path
     """
     FINDER_CLASS = Finder
 
@@ -58,7 +60,7 @@ class Publication(Element):
             templates = self.TEMPLATES
         self.templates = templates
         self.initialize()
-        
+
     def initialize(self):
         """Doing nothing by default. To be redefined by inheriting publications classes
         for default initialization of document and pages.
@@ -144,7 +146,9 @@ class Publication(Element):
         If it does not exist and he force flag is set, then create a new document
         and wrap it as child of self.
 
-        >>> pub = Publication(name='MyPublication', w=500, h=700)
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> pub = Publication(name='MyPublication', w=500, h=700, context=context)
         >>> doc = pub.document
         >>> doc
         <Document "MyPublication" Pages=1 Templates=1 Views=1>

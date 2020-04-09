@@ -43,7 +43,9 @@ class Newspaper(Publication):
     >>>
     >>> print(w)
     23.50"
-    >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1)
+    >>> from pagebot import getContext
+    >>> context = getContext()
+    >>> np = Newspaper(w=w, h=h, title=name, autoPages=1, context=context)
     >>> #view = np.view
     >>> #view.padding = 50
     >>> #view.showCropMarks = True
@@ -103,7 +105,7 @@ class Newspaper(Publication):
             s = Blurb().getBlurb('news_headline', cnt=cnt)
             while s and s[-1] in '.,:;-':
                 s = s[:-1]
-        formattedHeadline = self.view.newString(s, style=style, w=w)
+        formattedHeadline = self.context.newString(s, style=style, w=w)
         return formattedHeadline
 
     def getAnkeiler(self, cnt=None):
@@ -117,6 +119,7 @@ class Newspaper(Publication):
 
     def initialize(self, padding=None, gutter=None, columns=None, **kwargs):
         """Initialize the generic book templates. """
+        assert self.context
         blurb = Blurb()
 
         # TODO: Solve for left/right templates.
@@ -153,13 +156,17 @@ class Newspaper(Publication):
         h1Font = 'Upgrade Medium'
         bodyFont = 'Upgrade Book'
 
-        titleStyle = dict(font=newspaperTitleFont, fontSize=pt(140), w=(columns-2)*cw, textFill=color(0))
+        titleStyle = dict(font=newspaperTitleFont, fontSize=pt(140),
+                w=(columns-2)*cw, textFill=color(0))
         h1Style = dict(font=h1Font, fontSize=pt(90), leading=pt(90), textFill=color(0))
         h2Style = dict(font=h1Font, fontSize=pt(60), leading=pt(60), textFill=color(0))
         bodyStyle = dict(font=bodyFont, fontSize=pt(14), hyphenation=True,
-                leading=pt(18), textFill=color(0), firstTagIndent=2*gutter, firstLineIndent=pt(gutter))
-        h1IntroStyle = dict(font=bodyFont, fontSize=pt(45), hyphenation=True, leading=pt(52), textFill=color(0))
-        h2IntroStyle = dict(font=bodyFont, fontSize=pt(30), hyphenation=True, leading=pt(36), textFill=color(0))
+                leading=pt(18), textFill=color(0), firstTagIndent=2*gutter,
+                firstLineIndent=pt(gutter))
+        h1IntroStyle = dict(font=bodyFont, fontSize=pt(45), hyphenation=True,
+                leading=pt(52), textFill=color(0))
+        h2IntroStyle = dict(font=bodyFont, fontSize=pt(30), hyphenation=True,
+                leading=pt(36), textFill=color(0))
 
         titleLine = dict(strokeWidth=pt(1), stroke=color(0))
 
@@ -172,18 +179,20 @@ class Newspaper(Publication):
 
         # Template 'Front'
 
-        t = Template(w=w, h=h, name='Front', padding=padding, gridX=gridX, gridY=gridY)
+        t = Template(w=w, h=h, name='Front', padding=padding, gridX=gridX,
+                gridY=gridY, context=self.context)
 
         # Newspaper name with border lines on top and bottom
         #self.title = 'NORTHAMPTON GLOBE'
-        bs = self.view.newString(self.title.upper(), style=titleStyle)
+        bs = self.context.newString(self.title.upper(), style=titleStyle)
         _, nameHeight = bs.size
 
         title = Title(parent=t, mb=2*gutter, h=nameHeight,
-            conditions=[Top2Top(), Fit2Width()])
-        tb = newTextBox(bs, parent=title, h=nameHeight, xTextAlign=CENTER, pt=gutter,
-            borderTop=titleLine, borderBottom=titleLine,
-            conditions=[Fit2Width()])
+                conditions=[Top2Top(), Fit2Width()])
+
+        tb = newTextBox(bs, parent=title, h=nameHeight, xTextAlign=CENTER,
+                pt=gutter, borderTop=titleLine, borderBottom=titleLine,
+                conditions=[Fit2Width()])
 
         # Place article 3 columns
 
@@ -197,14 +206,14 @@ class Newspaper(Publication):
             fill=fillColor2, conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
-        bs = self.view.newString(intro, style=h2IntroStyle)
+        bs = self.context.newString(intro, style=h2IntroStyle)
         newTextBox(bs, parent=article, w=cc*cwg-gutter, mt=gutter, mb=gutter,
             fill=fillColor3,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, w=cw, mr=gutter, h=10,
                 fill=fillColor4,
                 conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
@@ -221,13 +230,13 @@ class Newspaper(Publication):
             conditions=[Left2Left(), Float2Top()])
 
         intro = blurb.getBlurb('article_ankeiler', cnt=maxAnkeiler)
-        bs = self.view.newString(intro, style=h2IntroStyle)
+        bs = self.context.newString(intro, style=h2IntroStyle)
         newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, w=cw, mr=gutter,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
@@ -243,13 +252,13 @@ class Newspaper(Publication):
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
-        bs = self.view.newString(intro, style=h2IntroStyle)
+        bs = self.context.newString(intro, style=h2IntroStyle)
         newTextBox(bs, parent=article, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
@@ -274,7 +283,7 @@ class Newspaper(Publication):
                     conditions=[Right2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
             else:
                 dummyArticle = blurb.getBlurb('article', newLines=True)
-                bs = self.view.newString(dummyArticle, style=bodyStyle)
+                bs = self.context.newString(dummyArticle, style=bodyStyle)
                 newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter, h=10,
                     conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
 
@@ -289,13 +298,13 @@ class Newspaper(Publication):
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
-        bs = self.view.newString(intro, style=h2IntroStyle)
+        bs = self.context.newString(intro, style=h2IntroStyle)
         newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
@@ -310,7 +319,7 @@ class Newspaper(Publication):
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
-        bs = self.view.newString(intro, style=h2IntroStyle)
+        bs = self.context.newString(intro, style=h2IntroStyle)
         newTextBox(bs, parent=article, pr=gutter, w=cc*cwg-gutter,
             mr=gutter, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
@@ -321,15 +330,17 @@ class Newspaper(Publication):
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=article, pr=gutter, w=cwg,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
-        self.addTemplate(t.name, t)
+        # doc.addTemplate() ?
+        #self.addTemplate(t.name, t)
 
         # Template 'MainPage'
 
-        t = Template(w=w, h=h, name='MainPage', padding=padding, gridX=gridX, gridY=gridY)
+        t = Template(w=w, h=h, name='MainPage', padding=padding, gridX=gridX,
+                gridY=gridY, context=self.context)
 
         for n in range(columns):
             if n == 0:
@@ -338,15 +349,17 @@ class Newspaper(Publication):
                 newTextBox(headLine, parent=t, pr=gutter, w=cc*cwg,
                     conditions=[Left2Left(), Float2Top()])
                 intro = self.getAnkeiler(cnt=maxAnkeiler)
-                bs = self.view.newString(intro, style=h2IntroStyle)
+                bs = self.context.newString(intro, style=h2IntroStyle)
                 newTextBox(bs, parent=t, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
                     conditions=[Left2Left(), Float2Top()])
 
             dummyArticle = blurb.getBlurb('article', newLines=True)
-            bs = self.view.newString(dummyArticle, style=bodyStyle)
+            bs = self.context.newString(dummyArticle, style=bodyStyle)
             newTextBox(bs, parent=t, pr=gutter, w=cw+gutter, z=0,
                 conditions=[Right2SideRight(), Float2Top(), Fit2Bottom(), Float2Left()])
-        self.addTemplate(t.name, t)
+
+        # doc.addTemplate() ?
+        #self.addTemplate(t.name, t)
 
 if __name__ == '__main__':
     import doctest

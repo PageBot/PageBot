@@ -64,27 +64,27 @@ class Element:
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
-            left=None, top=None, right=None, bottom=None,
-            sId=None, lib=None, t=None, timeMarks=None, parent=None,
-            context=None, name=None, cssClass=None, cssId=None, title=None,
-            description=None, theme=None, keyWords=None, language=None,
-            style=None, conditions=None, solve=False, framePath=None,
-            elements=None, template=None, nextElement=None, prevElement=None,
-            nextPage=None, clipPath=None, prevPage=None, thumbPath=None,
-            bleed=None, padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0,
-            margin=None, mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, scaleX=1,
-            scaleY=1, scaleZ=1, scale=None, borders=None, borderTop=None,
-            borderRight=None, borderBottom=None, borderLeft=None, shadow=None,
-            gradient=None, drawBefore=None, radius=None, drawAfter=None,
-            htmlCode=None, htmlPaths=None, xAlign=None, yAlign=None,
-            zAlign=None, proportional=None,
+            left=None, top=None, right=None, bottom=None, sId=None, lib=None,
+            t=None, timeMarks=None, parent=None, context=None, name=None,
+            cssClass=None, cssId=None, title=None, description=None,
+            theme=None, keyWords=None, language=None, style=None,
+            conditions=None, solve=False, framePath=None, elements=None,
+            template=None, nextElement=None, prevElement=None, nextPage=None,
+            clipPath=None, prevPage=None, thumbPath=None, bleed=None,
+            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None,
+            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1,
+            scale=None, borders=None, borderTop=None, borderRight=None,
+            borderBottom=None, borderLeft=None, shadow=None, gradient=None,
+            drawBefore=None, radius=None, drawAfter=None, htmlCode=None,
+            htmlPaths=None, xAlign=None, yAlign=None, zAlign=None,
+            proportional=None,
             # Viewing parameters, local overwrite on self.doc.view parameters
             showBaselineGrid=None, showCropMarks=None,
             showRegistrationMarks=None, showPadding=None,
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
-            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None, originTop=False,
-            **kwargs):
+            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
+            originTop=False, **kwargs):
 
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -131,7 +131,7 @@ class Element:
         # Optionally set the property for elements that need their own context.
         # Mostly these are only set for views (which are also Elements) If None
         # the property will query parent --> root document --> view.
-        self.context = context
+        self._context = context
         self._parent = None
 
         # Set the local self._lib, validate it is a dictionary, otherwise
@@ -297,6 +297,7 @@ class Element:
         # Element tree
         # Preset, so it exists for checking when appending parent.
         self._parent = None
+
         if parent is not None:
             # Add and set weakref to parent element or None, if it is the root.
             # Caller must add self to its elements separately. Set references
