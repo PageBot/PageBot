@@ -98,6 +98,7 @@ class FlatContext(BaseContext):
         self.drawing = None
         self.w = None
         self.h = None
+        self.numberOfPages = 0
 
     #   Drawing.
 
@@ -249,6 +250,7 @@ class FlatContext(BaseContext):
 
     def clear(self):
         self.endDrawing()
+        self.numberOfPages = 0
 
     def getDrawing(self):
         return self.drawing
@@ -288,6 +290,7 @@ class FlatContext(BaseContext):
 
         self.w = w
         self.h = h
+        self.numberOfPages += 1
         self.drawing.addpage()
 
     def getTmpPage(self, w, h):
@@ -296,10 +299,17 @@ class FlatContext(BaseContext):
         return drawing.pages[0]
 
     def _get_page(self):
+        W = 800
+        H = 600
+
         if self.drawing is None:
-            return None
-        if self.drawing and hasattr(self.drawing, 'pages') and len(self.drawing.pages) == 0:
-            return None
+            self.newDrawing(w=W, h=H)
+            #return None
+        if self.numberOfPages == 0:
+            self.newPage(w=W, h=H)
+
+        assert self.drawing
+        assert self.drawing.pages
         return self.drawing.pages[-1]
 
     page = property(_get_page)
@@ -775,7 +785,6 @@ class FlatContext(BaseContext):
             shape.fill(self.getFlatRGB(self._fill))
         else:
             shape.nofill()
-
 
         if self._stroke and self._stroke != noColor:
             shape.stroke(self.getFlatRGB(self._stroke)).width(self._strokeWidth)

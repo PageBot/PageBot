@@ -73,16 +73,15 @@ class Line(Element):
         >>> e.x, e.y, e.w, e.h
         (0pt, 20pt, 300pt, 0pt)
         >>> e.build(doc.getView(), pt(0, 0))
+        >>> #e.build(doc, pt(0, 0))
         >>> e.xy
         (0pt, 20pt)
         >>> e.size
         (300pt, 0pt)
         >>> view = doc.getView()
         >>> e.build(view, pt(0, 0))
-
-        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.document import Document
-        >>> c = FlatContext()
+        >>> c = getContext()
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=3)
