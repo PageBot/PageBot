@@ -28,7 +28,9 @@ class BaseCalendar(Publication):
 
     >>> from pagebot.toolbox.dating import now
     >>> year = now().year
-    >>> calendar = BaseCalendar(year)
+    >>>
+    year
+    >>> calendar = BaseCalendar(year=year)
     >>> calendar.year == now().year
     True
     >>> calendar.size # A3Square
@@ -71,14 +73,13 @@ class BaseCalendar(Publication):
 
         if year is None:
             year = now().year
+
+        self.year = year
         if name is None:
             name = 'Calendar %d' % year
         if w is None and h is None and size is None:
             w, h = self.PAGE_SIZES[self.DEFAULT_PAGE_SIZE_NAME]
         Publication.__init__(self, name=name, w=w, h=h, size=size, **kwargs)
-
-        self.year = year
-
         self.initialize()
 
     def initialize(self):
