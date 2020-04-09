@@ -230,7 +230,7 @@ def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
         fontSize=fontSize,
         tracking=tracking,
         leading=leading,
-        pt=padding, pr=padding, pb=padding, pl=padding, padding=padding,
+        pt=padding, pr=padding, pb=padding, pl=padding,
         mt=margin, mr=margin, mb=margin, ml=margin,
         strokeWidth=pt(0),
         xAlign=LEFT,
@@ -285,7 +285,7 @@ class BaseTheme:
 
     >>> from pagebot.style import makeStyle
     >>> # Using default mood and default palette.
-    >>> theme = BaseTheme('dark') 
+    >>> theme = BaseTheme('dark')
     >>> theme.mood
     <Mood dark>
     >>> theme = BaseTheme()
