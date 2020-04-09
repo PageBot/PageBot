@@ -577,7 +577,7 @@ class TextBox(Element):
 
         # self has its own baseline drawing, derived from the text, instance of
         # self.baselineGrid.
-        self.drawBaselines(view, px, py, background=True) # In case there is baseline at the back
+        self.drawBaselines(view, px, py, background=True) # In case there is a baseline at the back
 
         # Draw the text with horizontal and vertical alignment.
         if self.bs:
@@ -680,6 +680,7 @@ class TextBox(Element):
 
         c.stroke(baselineColor, baselineWidth)
         prevY = 0
+
         for textLine in self.textLines:
             y = self.h - textLine.y
 

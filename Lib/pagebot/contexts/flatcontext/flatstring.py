@@ -427,7 +427,12 @@ class FlatString(BabelString):
         dl0 = lineHeight0 - fontSize0
         descender0 = self.getDescender(self.style)
 
-        assert h0 >= lineHeight0
+        #assert h0 >= lineHeight0
+        # Just set minimum height to line height to make sure the first line
+        # isn't truncated entirely.
+        if h0 < lineHeight0:
+            h0 = lineHeight0
+
 
         x = x0
         y = self.context.height - y0 - h0 + dl0
