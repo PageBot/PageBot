@@ -111,7 +111,10 @@ class FlatContext(BaseContext):
         >>> int(context.drawing.width), int(context.drawing.height)
         (100, 100)
         """
-        assert self.drawing is None
+
+        if self.drawing:
+            self.clear()
+
         #self.originTop = originTop
         self.originTop = False
 

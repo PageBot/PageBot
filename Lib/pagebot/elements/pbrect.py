@@ -50,7 +50,7 @@ class Rect(Element):
         context = view.context
         p = pointOffset(self.origin, origin)
         # Ignore z-axis for now.
-        px, py = p2D = point2D(self._applyAlignment(p)) 
+        px, py = p2D = point2D(self._applyAlignment(p))
         context.rect(px, py, e=self)
 
         if drawElements:
