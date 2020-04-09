@@ -66,15 +66,15 @@ class Typesetter:
     # supply a better set.
     DEFAULT_STYLES = dict(
         document=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
-        dropcap=dict(font='Verdana', fontSize=pt(64), leading=em(1.2), textFill=color(1, 0, 0)),
-        h1=dict(font='Verdana', fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
-        h2=dict(font='Verdana', fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
+        dropcap=dict(fontSize=pt(64), leading=em(1.2), textFill=color(1, 0, 0)),
+        h1=dict(fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
+        h2=dict(fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
         h3=dict(font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
         h4=dict(font='Georgia', fontSize=pt(12), leading=em(1.2), textFill=color(0, 1, 1)),
         h5=dict(font='Georgia-Bold', fontSize=pt(10), leading=em(1.2), textFill=(1, 0, 1)),
         p=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
         bullet=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
-        li=dict(font='Verdana', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
+        li=dict(fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
         em=dict(font='Georgia-Bold'),
     )
 
@@ -100,10 +100,10 @@ class Typesetter:
         >>> from pagebot.toolbox.color import color, blackColor
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> context = HtmlContext()
-        >>> h1Style = dict(font='Verdana', fontSize=pt(24), textFill=color(1, 0, 0))
+        >>> h1Style = dict(fontSize=pt(24), textFill=color(1, 0, 0))
         >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
         >>> h3Style = dict(font='Georgia', fontSize=pt(14), textFill=color(0, 1, 0))
-        >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
+        >>> pStyle = dict(fontSize=pt(10), leading=em(1.4), textFill=blackColor)
         >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
         >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this context
         >>> mdText = '''
@@ -142,7 +142,7 @@ class Typesetter:
         self.maxImageWidth = maxImageWidth or MAX_IMAGE_WIDTH
 
         # Style used, in case the current text box does not have them.
-        self.styles = styles 
+        self.styles = styles
 
         # Stack of graphic state as cascading styles. Last is template for the
         # next.
@@ -308,7 +308,7 @@ class Typesetter:
         bullet = bulletStyle.get('listBullet', self.DEFAULT_BULLET)
 
         # Only defined for non-HTML. Get styled string with bullet.
-        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle) 
+        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle)
         if bulletString is not None:
             self.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.
@@ -320,12 +320,12 @@ class Typesetter:
     #   <img src="images/myImage.png" alt="Alt text here"/>
     #   <figcaption>Caption here</figcaption>
     # </figure>
-  
+
     IMAGE_CACHE_WIDTHI = re.compile('wi=([px0123456789]*)') # 200, 200px
     IMAGE_CACHE_HEIGHTI = re.compile('hi=([px0123456789]*)') # 200, 200px
-    IMAGE_CACHE_WIDTH = re.compile('w=([px0123456789\\%]*)') # 200px, 100% 
-    IMAGE_CACHE_HEIGHT = re.compile('h=([px0123456789\\%]*)') # 200px, 100% 
-    IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)') # left, center, right 
+    IMAGE_CACHE_WIDTH = re.compile('w=([px0123456789\\%]*)') # 200px, 100%
+    IMAGE_CACHE_HEIGHT = re.compile('h=([px0123456789\\%]*)') # 200px, 100%
+    IMAGE_CACHE_XALIGN = re.compile('x=([a-z]*)') # left, center, right
     IMAGE_CACHE_YALIGN = re.compile('y=([a-z]*)') # top, middle, bottom
     IMAGE_CACHE_NOSCALE = re.compile('(noscale|noScale)') # noscale does not create a scaled/ image.
     IMAGE_CACHE_SIZE = re.compile('(cover|contain|initial|inherit)')
@@ -399,7 +399,7 @@ class Typesetter:
                 cssSize = '%s %s' % (w, h)
             elif w is not None:
                 cssSize = '%s auto' % w
-            elif h is not None: 
+            elif h is not None:
                 cssSize = 'auto %s' % h
             else:
                 cssSize = 'auto'
@@ -408,7 +408,7 @@ class Typesetter:
             scaleImage=doScale, # Scale the image if one or both (w, h) is defined.
             cssSize=cssSize, # Examples "auto 100%" "100% auto" "cover" "contain" "initial" "inherit"
             cssRepeat=cssRepeat,
-            xAlign=xAlign, yAlign=yAlign, 
+            xAlign=xAlign, yAlign=yAlign,
             w=wi or self.maxImageWidth, h=hi, # To alter the scaled image file from source level.
             alt=alt, proportional=proportional,
             maxImageWidth=self.maxImageWidth, index=node.attrib.get('index', 0))

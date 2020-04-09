@@ -83,7 +83,7 @@ class HtmlString(BabelString):
         >>> from pagebot.toolbox.units import mm, uRound, pt
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> context = HtmlContext()
-        >>> style = dict(font='Verdana', fontSize=pt(12))
+        >>> style = dict(fontSize=pt(12))
         >>> bs = context.newString('Example Text ' * 10, style=style)
         >>> lines = bs.getTextLines(w=200)
         >>> #FIX en(lines)

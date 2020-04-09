@@ -494,7 +494,7 @@ class TextBox(Element):
         >>> page1 = doc[1]
         >>> page1
         <Page #1 default (1000pt, 1000pt)>
-        >>> s = context.newString('AAA ' * 1000, style=dict(font='Verdana', fontSize=10, leading=12))
+        >>> s = context.newString('AAA ' * 1000, style=dict(fontSize=10, leading=12))
         >>> # Fix h to lock elastic height. Overflow is now defined.
         >>> t1 = TextBox(s, name="T1", w=100, h=200, nextElement='T2', parent=page1)
         >>> font = t1.bs.getStyleAtIndex(0)['font']
@@ -724,7 +724,7 @@ class TextBox(Element):
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draws the optional overflow marker, if text doesn't fit in the box."""
         b = self.b # Get current builder from self.doc.context.b
-        bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='Verdana-Bold', fontSize=10))
+        bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='PageBot-Bold', fontSize=10))
         tw, _ = bs.size
         # FIX: Should work work self.bottom
         #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
@@ -790,7 +790,7 @@ class TextBox(Element):
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(20)))
+        >>> bs = context.newString('Test', style=dict(fontSize=pt(20)))
         >>> tb = TextBox(bs, parent=e, conditions=(Left2Left(), Fit2Width()))
         >>> result = e.solve()
         >>> tb.w
@@ -815,7 +815,7 @@ class TextBox(Element):
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(50)))
+        >>> bs = context.newString('Test', style=dict(fontSize=pt(50)))
         >>> tb = TextBox(bs, parent=e, conditions=[Shrink2TextHeight()])
         >>> result = e.solve()
         >>> tb.h
@@ -839,7 +839,7 @@ class TextBox(Element):
         >>> from pagebot.conditions import *
         >>> context = getContext()
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(100)))
+        >>> bs = context.newString('Test', style=dict(fontSize=pt(100)))
         >>> tb = TextBox(bs, parent=e, conditions=[Shrink2TextWidth()])
         >>> result = e.solve()
         >>> #round(tb.w)
@@ -914,7 +914,7 @@ class TextBox(Element):
         >>> e = Element(padding=pt(30), w=1000, h=1000, context=context)
         >>> e.baselineGrid = pt(24)
         >>> e.baselineStart = pt(44)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
+        >>> bs = context.newString('Test', style=dict(fontSize=pt(150)))
         >>> tb = TextBox(bs, parent=e)
         >>> tb.baseline2Grid()
         >>> #tb.y
@@ -970,7 +970,7 @@ class TextBox(Element):
         >>> from pagebot.constants import *
         >>> context = getContext()
         >>> e = Element(padding=100, w=1000, h=1000, context=context)
-        >>> bs = context.newString('Test', style=dict(font='Verdana', fontSize=pt(150)))
+        >>> bs = context.newString('Test', style=dict(fontSize=pt(150)))
         >>> tb = TextBox(bs, parent=e, yAlign=TOP, conditions=[Shrink2TextBounds(), Top2Top()])
         >>> result = tb.solve()
         """

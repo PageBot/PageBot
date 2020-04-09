@@ -219,16 +219,16 @@ class SvgContext(BaseContext):
         """Save the current graphic state.
 
         >>> context = SvgContext()
-        >>> context.font('Verdana')
+        >>> context.font('PageBot-Regular')
         >>> context._font
-        'Verdana'
+        'PageBot-Regular'
         >>> context.save()
-        >>> context.font('Verdana-Bold')
+        >>> context.font('PageBot-Bold')
         >>> context._font
-        'Verdana-Bold'
+        'PageBot-Bold'
         >>> context.restore()
         >>> context._font
-        'Verdana'
+        'PageBot-Regular'
         """
         gState = dict(
             font=self._font,
@@ -281,7 +281,7 @@ class SvgContext(BaseContext):
         >>> path = '_export/SvgContext_text.svg'
         >>> context = SvgContext()
         >>> context.fontSize(pt(100))
-        >>> context.font('Verdana-Bold') # TODO: Match with font path.
+        >>> context.font('PageBot-Bold') # TODO: Match with font path.
         >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.text('ABCDEF', pt(100, 200))
         >>> context.fill(color(r=1, g=0, b=1))

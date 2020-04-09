@@ -227,7 +227,7 @@ class VariableCircle(Element):
             axisNameFontSize = self.style.get('axisNameFontSize', 8)
             markerX, markerY = self._angle2XY(angle, r/2)
             bs = context.newString(self.makeAxisName(axisName),
-                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                             style=dict(font=self.style.get('labelFont'),
                                         fontSize=axisNameFontSize,
                                         fill=self.style.get('axisNameColor', 0)))
             tw, th = bs.size
@@ -242,7 +242,7 @@ class VariableCircle(Element):
             else:
                 sMaxValue = repr(int(round(maxValue)))
             bs = context.newString(sMaxValue,
-                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                             style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
             tw, th = bs.size
@@ -258,7 +258,7 @@ class VariableCircle(Element):
             else:
                 sValue = repr(int(round(interpolationValue)))
             bs = context.newString(sValue,
-                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                             style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
             tw, th = bs.size
@@ -273,7 +273,7 @@ class VariableCircle(Element):
             else:
                 sValue = repr(int(round(minValue)))
             bs = context.newString(sValue,
-                             style=dict(font=self.style.get('labelFont', 'Verdana'),
+                             style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
             tw, th = bs.size

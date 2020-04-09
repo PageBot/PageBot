@@ -73,7 +73,7 @@ class Placer(Element):
     def _drawNameLabel(self, aa, view, p):
         x, y = point2D(p)
         context = self.context
-        bs = context.newString(self.name, style=dict(font='Verdana', fontSize=18,
+        bs = context.newString(self.name, style=dict(fontSize=18,
             textFill=(1, 0, 0)))
         tw, th = bs.size
         M = pt(8)

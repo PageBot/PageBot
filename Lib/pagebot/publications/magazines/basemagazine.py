@@ -34,7 +34,7 @@ class ThumbPage(Element):
         self.pageNumber = pageNumber
 
         if style is None:
-            style = dict(font='Verdana', fontSize=pt(7))
+            style = dict(fontSize=pt(7))
         # Name of the page or spread
         bs = context.newString(page.name, style=style)
         tb1 = newTextBox(bs, w=self.w, y=self.h-self.gh/2, h=self.gh/2, parent=self, stroke=noColor)

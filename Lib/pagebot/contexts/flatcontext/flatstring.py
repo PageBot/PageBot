@@ -48,13 +48,10 @@ class FlatString(BabelString):
         >>> from pagebot import getContext, getFontByName
         >>> from pagebot.toolbox.units import pt, em
         >>> context = getContext('Flat')
-        >>> bungee = getFontByName('Bungee-Regular')
-        >>> style = {'font': bungee, 'fontSize': pt(12), 'leading': em(1.5)}
+        >>> style = {'font': 'Bungee-Regular', 'fontSize': pt(12), 'leading': em(1.5)}
         >>> fs = context.newString('ABC', style=style)
         >>> fs
         ABC
-        >>> #fs.style
-        #{'fallbackFont': 'Verdana', 'fontSize': 12, leading: em(1.5), 'fill': (0, 0, 0)}
         >>> fs.font.endswith('Bungee-Regular.ttf')
         True
         >>> fs.fontSize
@@ -77,7 +74,7 @@ class FlatString(BabelString):
         >>> fs.xHeight
         6.0
         >>> from pagebot.toolbox.units import em
-        >>> style = dict(font='Verdana', fontSize=pt(100), leading=em(1.4))
+        >>> style = dict(fontSize=pt(100), leading=em(1.4))
         >>> fs = context.newString('Example text', style=style)
         >>> from pagebot.contexts.basecontext.babelstring import BabelString
         >>> isinstance(fs, BabelString)
