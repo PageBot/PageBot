@@ -49,11 +49,11 @@ class Palette:
         base4=BASE_COLOR.darker(0.75), # Supporter 1
         base5=BASE_COLOR.lighter(0.75), # Supporter 2
     )
-    FACTOR_DARKEST = 0.15
+    FACTOR_DARKEST = 0.15  # Factor between 0 <---> current color
     FACTOR_DARKER = 0.4
     FACTOR_DARK = 0.7
 
-    FACTOR_LIGHT = 0.3
+    FACTOR_LIGHT = 0.3 # Factor between current color <---> 1
     FACTOR_LIGHTER = 0.6
     FACTOR_LIGHTEST = 0.85
 
@@ -230,8 +230,8 @@ def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
         fontSize=fontSize,
         tracking=tracking,
         leading=leading,
-        pt=padding, pr=padding, pb=padding, pl=padding,
-        mt=margin, mr=margin, mb=margin, ml=margin,
+        pt=padding, pr=padding, pb=padding, pl=padding, padding=padding,
+        mt=margin, mr=margin, mb=margin, ml=margin, margin=margin,
         strokeWidth=pt(0),
         xAlign=LEFT,
     )
