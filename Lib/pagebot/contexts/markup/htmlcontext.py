@@ -14,7 +14,13 @@
 #     htmlcontext.py
 #
 import os
-from PIL import Image
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    HAS_PIL = False
 
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
@@ -139,9 +145,11 @@ class HtmlContext(BaseContext):
         """
         if not os.path.exists(path):
             return None
-        if path.split('.')[-1] in BITMAP_TYPES:
-            im = Image.open(path)
-            return pt(im.size)
+
+        if HAS_PIL:
+            if path.split('.')[-1] in BITMAP_TYPES:
+                im = Image.open(path)
+                return pt(im.size)
         return pt(100, 100) # PIL cannot find file size of SVG, At least return a default.
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
@@ -173,10 +181,11 @@ class HtmlContext(BaseContext):
         if exportExtension in BITMAP_TYPES and path != cachedFilePath:
             try:
                 if force or not os.path.exists(cachedFilePath):
-                    im = Image.open(path)
-                    im.thumbnail(upt(w, h), Image.ANTIALIAS)
-                    im.save(cachedFilePath, exportExtension)
-                    #print('Scaling %s to (%d, %d)' % (path, w, h))
+                    if HAS_PIL:
+                        im = Image.open(path)
+                        im.thumbnail(upt(w, h), Image.ANTIALIAS)
+                        im.save(cachedFilePath, exportExtension)
+                        #print('Scaling %s to (%d, %d)' % (path, w, h))
             except IOError:
                 print("Cannot create resize image '%s'" % path)
         return cachedFilePath

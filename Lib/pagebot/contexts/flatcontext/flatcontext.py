@@ -19,7 +19,15 @@ from sys import platform
 from os import listdir
 from os.path import exists
 from flat import rgb
-from PIL import Image
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    HAS_PIL = False
+
+
 
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
@@ -723,16 +731,21 @@ class FlatContext(BaseContext):
         xpt, ypt = self.translatePoint(p)
         self.save()
 
-        im = Image.open(path)
+        if HAS_PIL:
+            # TODO: move to scaleImage.
+            im = Image.open(path)
 
 
-        # NOTE: using PIL for resizing, much faster than Flat.
-        # TODO: cache result.
-        if not w is None and not h is None:
-            path = self.getResizedPathName(path, w, h)
-            if not exists(path):
-                im = im.resize((w, h))
-                im.save(path, 'jpeg')
+            # NOTE: using PIL for resizing, much faster than Flat.
+            # TODO: cache result.
+            if not w is None and not h is None:
+                path = self.getResizedPathName(path, w, h)
+                if not exists(path):
+                    im = im.resize((w, h))
+                    im.save(path, 'jpeg')
+        else:
+            # TODO: slow scale with Flat.
+            pass
 
         img = self.b.image.open(path)
 
