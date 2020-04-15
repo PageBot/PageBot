@@ -230,8 +230,8 @@ def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
         fontSize=fontSize,
         tracking=tracking,
         leading=leading,
-        pt=padding, pr=padding, pb=padding, pl=padding, padding=padding,
-        mt=margin, mr=margin, mb=margin, ml=margin, margin=margin,
+        pt=padding, pr=padding, pb=padding, pl=padding, 
+        mt=margin, mr=margin, mb=margin, ml=margin, 
         strokeWidth=pt(0),
         xAlign=LEFT,
     )
