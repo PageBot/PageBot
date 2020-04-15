@@ -644,8 +644,7 @@ class TextBox(Element):
             context.restoreGraphicState()
 
         if drawElements:
-            # If there are child elements, recursively draw them over the pixel
-            # image.
+            # If there are child elements, recursively draw them over the pixel image.
             self.buildChildElements(view, p)
 
         # self has its own baseline drawing, derived from the text, instace of
