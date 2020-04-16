@@ -1548,7 +1548,6 @@ class Document:
         >>> from pagebot.conditions import *
         >>> w = h = 400 # Auto-convert plain numbers to default pt-units.
         >>> context = getContext()
-        >>> context.clear()
         >>> doc = Document(name='TestDoc', size=(w, h), autoPages=1, padding=40, context=context)
         >>> r = newRect(fill=color(1, 0, 0), stroke=noColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()

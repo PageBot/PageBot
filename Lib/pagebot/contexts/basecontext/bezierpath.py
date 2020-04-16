@@ -69,8 +69,8 @@ class BezierPath:
             # FIXME: should be aware of BezierPath type, depending on context.
             assert not isinstance(bezierPath, BezierPath)
 
-        # Optional fill, stroke and strokeWidth options, hard-coding the
-        # drawing. Otherwise take the fill/stroke settings already defined in
+        # Fill, stroke and strokeWidth options, hard-coding the
+        # drawing. Otherwise take the fill / stroke settings already defined in
         # the context.
         if style is None:
             style = {} # Make sure that there is at least an empty style dictionary
@@ -224,7 +224,7 @@ class BezierPath:
         ptp = upt(point2D(p))
         self.bp.lineTo(ptp)
 
-    def curveTo(self, bcp1, bcp2, p):
+    def curveTo(self, *points):
         """Makes a curve to point `p` in the running path. Creates a new path
         if none is open.
 
@@ -238,10 +238,7 @@ class BezierPath:
         >>> #context.drawPath(path)
         """
         assert self.isOpenPath, ('%s.curveTo: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
-        b1pt = point2D(upt(bcp1))
-        b2pt = point2D(upt(bcp2))
-        ppt = point2D(upt(p))
-        self.bp.curveTo(b1pt, b2pt, ppt) # Render units tuples to value tuples
+        self.bp.curveTo(*points) # Render units tuples to value tuples
 
     def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
         """Arc with center and a given radius, from `startAngle` to `endAngle`,
@@ -549,9 +546,9 @@ class BezierPath:
     def text(self, bs, x=None, y=None, style=None):
         """Draws a txt with a font and fontSize at an offset in the Bézier
         path. If a font path is given the font will be installed and used
-        directly. Style is a normal PageBot style dictionary. Optionally an
-        alignment can be set. Possible align values are: LEFT, CENTER, RIGHT.
-        The default alignment is left. Optionally txt can be a context-related
+        directly. Style is a PageBot style dictionary. Optionally an alignment
+        can be set. Possible align values are: LEFT, CENTER, RIGHT. The
+        default alignment is left. Optionally txt can be a context-elated
         BabelString.
 
         >>> from pagebot import getContext
@@ -577,7 +574,8 @@ class BezierPath:
 
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
 
-        if hasattr(font, 'path'): # In case it is a Font instance, extract the path.
+        # In case it is a Font instance, extract the path.
+        if hasattr(font, 'path'):
             font = font.path
 
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
@@ -613,7 +611,7 @@ class BezierPath:
                 y = 0
             if w is None:
                 w = tw - tx
-                # TODO: condider to re-render the line to see if there is wrapping from w.
+                # TODO re-render the line to see if there is wrapping from w.
                 #if hasattr(bs, 's'):
                 #    h = bs.getSize(w=w)[1]
                 #else:
@@ -630,11 +628,14 @@ class BezierPath:
 
         if style is None:
             style = {}
+
         font = style.get('font', DEFAULT_FALLBACK_FONT_PATH)
+
         if hasattr(font, 'path'): # In case it is a Font instance, extract the path.
             font = font.path
+
         fontSize = upt(style.get('fontSize', DEFAULT_FONT_SIZE))
-        align = style.get('align') # Can be None for default LEFT
+        align = style.get('align')
         hyphenation = style.get('hyphenation', False)
         self.bp.textBox(s, clipPathOrBox, font=font, fontSize=fontSize, align=align, hyphenation=hyphenation)
 

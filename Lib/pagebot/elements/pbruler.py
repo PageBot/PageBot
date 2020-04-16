@@ -65,7 +65,6 @@ class Ruler(Element):
         (300pt, 3pt)
         >>> view = doc.getView()
         >>> e.build(view, (0, 0))
-
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()

@@ -79,9 +79,8 @@ class TextBox(Element):
         >>> tb.bs = 'AAA'
         >>> tb.bs
         AAA
-        >>> #tb.bs, tb.bs.s, tb.bs.__class__.__name__
-        >>> # Flat yields (AAA, 'AAA', 'FlatString')
-        #(AAA, AAA, 'DrawBotString')
+        >>> tb.bs.s
+        AAA
         >>> tb2 = TextBox('BBB', context=context)
         >>> tb2.bs
         BBB
