@@ -121,6 +121,12 @@ class HtmlString(BabelString):
         marker = self.MARKER_PATTERN % (markerId, arg or '')
         self.append(marker)
 
+    # String methods.
+
+    def asPageBotString(self):
+        # TODO: to be implemented.
+        pass
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None,
             pixelFit=None, tagName=None):
@@ -142,11 +148,6 @@ class HtmlString(BabelString):
 
     @classmethod
     def fromPageBotString(cls, pbs):
-        # TODO: to be implemented.
-        pass
-
-    @classmethod
-    def asPageBotString(cls):
         # TODO: to be implemented.
         pass
 

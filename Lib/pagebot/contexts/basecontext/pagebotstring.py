@@ -19,6 +19,7 @@
 #
 
 from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.constants import LEFT
 
 class PageBotRun:
     def __init__(self, s, style=None):
@@ -33,7 +34,7 @@ class PageBotRun:
 
 class PageBotString(BabelString):
     """PageBotString is the generic intermediate string, that can be used
-    for other context string classes to convert from and to.
+    for other context string classes to convert to and from.
 
     >>> pbs = PageBotString('ABCD', style=dict(fontSize=12))
     >>> pbs.runs
@@ -52,6 +53,7 @@ class PageBotString(BabelString):
         dictionary compatible with the document root style keys."""
         self.runs = [PageBotRun(s, style)]
         self.context = context
+        super().__init__(context)
 
     def __add__(self, pbs):
         """If pbs is a plain string, then just add it to the last run."""
@@ -70,11 +72,12 @@ class PageBotString(BabelString):
             s.append(run.s)
         return ''.join(s)
 
-    def _set_s(self):
+    def _set_s(self, s):
         if self.runs:
             style = self.runs[-1].style
         else:
             style = None
+
         self.runs = [PageBotRun(s, style)]
 
     s = property(_get_s, _set_s)
@@ -85,6 +88,19 @@ class PageBotString(BabelString):
         return None
 
     style = property(_get_style)
+
+    def getStyleAtIndex(self, index):
+        # TODO: to be implemented.
+        pass
+
+    def getTextLines(self, w, h=None, align=LEFT):
+        # TODO: to be implemented.
+        pass
+
+    def asPageBotString(self):
+        """Construct a formatted PageBotString.newString() from self. Since
+        self is already a PageBotString, answer self"""
+        return self
 
     @classmethod
     def newString(cls, s, context=None, e=None, style=None, w=None, h=None,
@@ -110,11 +126,6 @@ class PageBotString(BabelString):
         Since pbs is already a PageBotString, answer it unchanged."""
         assert isinstance(pbs, PageBotString)
         return pbs
-
-    def asPageBotString(self):
-        """Construct a formatted PageBotString.newString() from self. Since
-        self is already a PageBotString, answer self"""
-        return self
 
 if __name__ == '__main__':
     import doctest

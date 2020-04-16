@@ -708,7 +708,11 @@ class FlatString(BabelString):
         tb = self.textBox(page, box, align=align)
         return self._lines
 
-    # String class methods.
+    # String methods.
+
+    def asPageBotString(self):
+        # TODO: to be implemented.
+        pass
 
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):
@@ -743,11 +747,6 @@ class FlatString(BabelString):
 
     @classmethod
     def fromPageBotString(cls, pbs):
-        # TODO: to be implemented.
-        pass
-
-    @classmethod
-    def asPageBotString(cls):
         # TODO: to be implemented.
         pass
 
