@@ -62,7 +62,7 @@ def getContext(contextType='DrawBot'):
     # FIXME: what about HTMLContext()
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
-            if contextType == 'DrawBot' and hasDrawBot:
+            if contextType == 'DrawBot' and hasDrawBot and DrawBotContext is not None:
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'DrawBot' and not hasDrawBot:
                 print('Cannot find the pagebotosx module.')
