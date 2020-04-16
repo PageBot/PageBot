@@ -79,8 +79,6 @@ class TextBox(Element):
         >>> tb.bs = 'AAA'
         >>> tb.bs
         AAA
-        >>> tb.bs.s
-        AAA
         >>> tb2 = TextBox('BBB', context=context)
         >>> tb2.bs
         BBB

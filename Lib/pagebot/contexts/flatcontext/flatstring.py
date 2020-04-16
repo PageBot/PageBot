@@ -203,6 +203,7 @@ class FlatString(BabelString):
                 s += '\n'
             else:
                 s += part
+
         return s
 
     def _set_s(self, s, i=0, strike=None):
