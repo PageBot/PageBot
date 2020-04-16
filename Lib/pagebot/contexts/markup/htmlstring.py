@@ -140,6 +140,16 @@ class HtmlString(BabelString):
 
         return cls(s, context)
 
+    @classmethod
+    def fromPageBotString(cls, pbs):
+        # TODO: to be implemented.
+        pass
+
+    @classmethod
+    def asPageBotString(cls):
+        # TODO: to be implemented.
+        pass
+
 if __name__ == '__main__':
     import doctest
     import sys

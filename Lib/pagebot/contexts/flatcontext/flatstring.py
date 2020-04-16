@@ -34,7 +34,6 @@ class FlatString(BabelString):
 
     * https://developer.apple.com/documentation/foundation/nsattributedstring
     * https://developer.apple.com/documentation/coretext/ctframesetter-2eg
-
     """
 
     BABEL_STRING_TYPE = 'flat'
@@ -137,7 +136,6 @@ class FlatString(BabelString):
             for part in parts[1:]:
                 self.append(NEWLINE)
                 self.append(part)
-
 
     def copy(self):
         """
@@ -710,6 +708,8 @@ class FlatString(BabelString):
         tb = self.textBox(page, box, align=align)
         return self._lines
 
+    # String class methods.
+
     @classmethod
     def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):
         """Answers a FlatString instance from valid attributes in *style*. Sets
@@ -740,6 +740,16 @@ class FlatString(BabelString):
         s = cls.addCaseToString(s, e, style)
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
         return cls(s, context=context, style=style)
+
+    @classmethod
+    def fromPageBotString(cls, pbs):
+        # TODO: to be implemented.
+        pass
+
+    @classmethod
+    def asPageBotString(cls):
+        # TODO: to be implemented.
+        pass
 
 if __name__ == '__main__':
     import doctest

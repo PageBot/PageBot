@@ -551,15 +551,14 @@ class BabelString:
 
     @classmethod
     def fromPageBotString(cls, pbs):
-        """Construct a formatted cls.newString() from PageBotString instance. 
+        """Construct a formatted cls.newString() from PageBotString instance.
         To be implemented by inheriting BabelString classes.
         """
         raise NotImplementedError
-  
+
     def asPageBotString(self):
-        """Construct a formatted PageBotString.newString() from self.
-        To be implemented by inheriting BabelString classes.
-        """
+        """Construct a formatted PageBotString.newString() from self. To be
+        implemented by inheriting BabelString classes."""
         raise NotImplementedError
 
 if __name__ == '__main__':

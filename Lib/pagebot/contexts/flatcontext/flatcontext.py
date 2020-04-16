@@ -20,15 +20,6 @@ from os import listdir
 from os.path import exists
 from flat import rgb
 
-HAS_PIL = True
-
-try:
-    from PIL import Image
-except:
-    HAS_PIL = False
-
-
-
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
@@ -43,6 +34,13 @@ from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.units import pt, upt, point2D
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    HAS_PIL = False
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
