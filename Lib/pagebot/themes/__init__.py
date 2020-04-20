@@ -29,13 +29,13 @@ ThemeClasses = {}
 
 for themeClass in (
     BaseTheme,
-    BackToTheCity, 
-    BusinessAsUsual, 
-    FairyTales, 
-    FreshAndShiny, 
-    IntoTheWoods, 
-    SeasoningTheDish, 
-    SomethingInTheAir, 
+    BackToTheCity,
+    BusinessAsUsual,
+    FairyTales,
+    FreshAndShiny,
+    IntoTheWoods,
+    SeasoningTheDish,
+    SomethingInTheAir,
     WordlyWise,
     HappyHolidays):
         ThemeClasses[themeClass.NAME] = themeClass

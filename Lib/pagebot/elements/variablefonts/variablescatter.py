@@ -51,7 +51,7 @@ class VariableScatter(Element):
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
-    
+
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
@@ -78,7 +78,7 @@ class VariableScatter(Element):
         c = self.doc.context
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

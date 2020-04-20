@@ -25,7 +25,7 @@ class Poster(Publication):
         originTop=True, startPage=0, w=None, h=None, exportPaths=None,
         **kwargs)"""
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # posters in portrait ratio.
     PAGE_SIZES = {
         'A0': A0,

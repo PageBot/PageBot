@@ -46,4 +46,4 @@ class SimpleSpecimen(BaseTypeSpecimen):
         page.solve()
         return doc
 
-   
+

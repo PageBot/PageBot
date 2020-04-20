@@ -59,7 +59,7 @@ class Shrink2TextBounds(Condition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.shrink2TextHeight(), e, score)
             self.addScore(e.shrink2TextWidth(), e, score)
-        
+
 class Shrink2TextHeight(Condition):
     def test(self, e):
         return e.isShrunkOnTextHeight(self.tolerance)
@@ -67,7 +67,7 @@ class Shrink2TextHeight(Condition):
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.shrink2TextHeight(), e, score)
-        
+
 class Shrink2TextWidth(Condition):
     def test(self, e):
         return e.isShrunkOnTextWidth(self.tolerance)
@@ -75,7 +75,7 @@ class Shrink2TextWidth(Condition):
     def solve(self, e, score):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.shrink2TextWidth(), e, score)
-        
+
 # Baseline alignmenets
 
 class Baseline2Grid(BaselineCondition):
@@ -160,7 +160,7 @@ class XHeight2Bottom(BaselineCondition):
         if not self.test(e): # Only try to solve if condition test fails.
             self.addScore(e.xHeight2Bottom(index=self.index), e, score)
 
-''' 
+'''
 class Baseline2Bottom(Condition):
     def test(self, e):
         return e.isBaselineOnBottom(self.tolerance)

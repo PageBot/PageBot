@@ -580,8 +580,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # per image type.
         resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
         # If defined, images are scaled down to fitting this width or height.
-        maxImageWidth = None, 
-        maxImageHeight = None, 
+        maxImageWidth = None,
+        maxImageHeight = None,
         # If set, then use this as default width for scaling images (e.g. when
         # used HTML context)
         # Overwritten by maxImageWidth and maxImageHeight as:

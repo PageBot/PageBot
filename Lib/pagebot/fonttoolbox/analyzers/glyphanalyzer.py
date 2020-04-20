@@ -173,8 +173,8 @@ class GlyphAnalyzer:
     def lineOnBlack(self, p0, p1, step=SPANSTEP):
         """Answers if the line between point p0 and p1 is entirely running on
         black, except for the end point.
-        
-        FIXME: missing, should be lineOnBlack? 
+
+        FIXME: missing, should be lineOnBlack?
         To test if the line is entirely on black, use `self.lineInBlack()`.
         """
         return self.spanBlack(p0, p1, step)
@@ -729,7 +729,7 @@ class GlyphAnalyzer:
         return (not pc0Ext and min(p0x) <= pc1.p.x and pc1.p.x <= max(p0x))\
             or (not pc1Ext and min(p1x) <= pc0.p.x and pc0.p.x <= max(p1x))
 
-    # self.allBars  
+    # self.allBars
     # Answers the combination dict of bars and round bars.
     def _get_allBars(self):
         """Collect all bars in the dictionary with their value as key.

@@ -15,6 +15,6 @@ from pagebot.elements.web.simplesite.siteelements import *
 
 def newHeader(**kwargs):
     return Header(**kwargs)
-    
+
 def newBanner(**kwargs):
     return Banner(**kwargs)

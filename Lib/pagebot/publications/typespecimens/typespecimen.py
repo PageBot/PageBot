@@ -18,7 +18,7 @@ from pagebot.elements import *
 from pagebot.conditions import *
 
 class TypeSpecimen(BaseTypeSpecimen):
-    
+
 
     def newSampleDocument(self, autoPages=None, theme=None, **kwargs):
 
@@ -31,4 +31,4 @@ class TypeSpecimen(BaseTypeSpecimen):
         newRect(parent=page, fill=c)
         return doc
 
-  
+

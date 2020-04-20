@@ -15,7 +15,7 @@
 #
 
 class TimeMark:
-    """TimeMarks are used by elements to keep style attributes masters sorted 
+    """TimeMarks are used by elements to keep style attributes masters sorted
     in a time line, and to interpolate (blend) between them."""
     def __init__(self, t, style):
         self.t = t
@@ -40,7 +40,7 @@ class TimeMark:
         return self.t == tm.t
 
     def blend(self, tm, t, name):
-        """Answers the blended value between self and tm at time t for 
+        """Answers the blended value between self and tm at time t for
         the name attribute of self.style.
 
 

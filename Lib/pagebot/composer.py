@@ -38,13 +38,13 @@ class Composer:
 
         Targets contains the resources for the composition, such as the doc,
         current page, current box and other info that the MarkDown assumes to
-        be available. If targets is omitted, then a default target dictionary 
+        be available. If targets is omitted, then a default target dictionary
         is created by the Composer and answered at the end.
-        """        
+        """
         if targets is None:
             if page is None:
                 page = self.doc[1]
-            
+
             targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles,
                 newTextBox=newTextBox)
 

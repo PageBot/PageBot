@@ -176,7 +176,7 @@ content = {
             'Nashville',
             'Detroit',
             'Kansas City'
-            ],           
+            ],
     'abbr_cities_USmajor':[
             'New York', 'NYC',
             'Boston',
@@ -374,7 +374,7 @@ content = {
 if __name__ == "__main__":
     def test():
             """
-                >>> from pagebot.contributions.filibuster.blurb import blurb 
+                >>> from pagebot.contributions.filibuster.blurb import blurb
                 >>> #blurb.getBlurb('address')
             """
     import doctest

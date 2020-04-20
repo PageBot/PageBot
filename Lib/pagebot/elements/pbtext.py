@@ -27,13 +27,13 @@ class Text(TextBox):
     def _set_w(self, w):
         pass # Ignore
     w = property(_get_w, _set_w)
-   
+
     def _get_h(self):
         return pt(self.getTextSize()[1])
     def _set_h(self, h):
         pass # Ignore
     h = property(_get_h, _set_h)
-        
+
     def getTextSize(self, w=None):
         """Figure out what the width/height of the text self.fs is."""
         return self.bs.textSize(w=w)

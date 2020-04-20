@@ -85,7 +85,7 @@ content = {
 if __name__ == "__main__":
     def test():
         """
-            >>> from pagebot.contributions.filibuster.blurb import blurb 
+            >>> from pagebot.contributions.filibuster.blurb import blurb
             >>> #blurb.getBlurb('position')
         """
     import doctest

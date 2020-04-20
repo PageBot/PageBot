@@ -18,17 +18,17 @@ from pagebot.elements import TextBox
 from pagebot.constants import RIGHT
 from pagebot.toolbox.units import em
 
-class Title(TextBox): 
-    """Showing the specified (variable) font with its name as headline 
+class Title(TextBox):
+    """Showing the specified (variable) font with its name as headline
     and designer name.
 
     """
     BODY_SIZE = 11
     NAME_SIZE = 24
 
-    def __init__(self, f, foundryName=None, designer=None, foundryStyle=None, 
+    def __init__(self, f, foundryName=None, designer=None, foundryStyle=None,
             fontNameStyle=None, designerStyle=None, **kwargs):
-        """    
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter

@@ -84,7 +84,7 @@ class Blurb:
 blurb = Blurb()
 
 if __name__ == '__main__':
-    
+
     def printString(s):
         try:
             print(s)

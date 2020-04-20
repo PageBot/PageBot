@@ -26,7 +26,7 @@ class HappyHolidays(BaseTheme):
         base4=color(0, 1, 0),
         base5=color(0.55, 0.5, 0.5),
     )
-    
+
 if __name__ == "__main__":
     import doctest
     import sys

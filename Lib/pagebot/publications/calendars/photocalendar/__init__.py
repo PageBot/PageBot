@@ -27,7 +27,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
 
 class PhotoCalendar(BaseCalendar):
-    """Create a photobook with a number of images in a layout and their 
+    """Create a photobook with a number of images in a layout and their
     captions on each page.
 
     >>> from pagebot import getContext
@@ -38,7 +38,7 @@ class PhotoCalendar(BaseCalendar):
 
     """
     def makeSample(self, context, name=None):
-        padding = mm(40) 
+        padding = mm(40)
         w, h = A4Square
         styles = {}
         sampleContent = SampleContent()

@@ -21,7 +21,7 @@ def drawRegistrationMark(context, origin, cmSize, cmStrokeWidth, vertical):
     """Draw registration mark as position x, y.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot import getContext 
+    >>> from pagebot import getContext
     >>> context = getContext('Flat')
     >>> context.newPage(pt(100), pt(100))
     >>> drawRegistrationMark(context, pt(0,0), pt(20), pt(1), True)
@@ -50,7 +50,7 @@ def drawRegistrationMarks(context, origin, w, h, cmSize, cmStrokeWidth):
     https://en.wikipedia.org/wiki/Printing_registration.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot import getContext 
+    >>> from pagebot import getContext
     >>> context = getContext('Flat')
     >>> context.newPage(pt(100), pt(100))
     >>> drawRegistrationMarks(context, pt(0,0), pt(100), pt(100), pt(20), pt(1))
@@ -65,7 +65,7 @@ def drawCropMarks(context, origin, w, h, bleed, cmSize, cmStrokeWidth, folds=Non
     """If the show flag is set, then draw the cropmarks or page frame.
 
     >>> from pagebot.toolbox.units import pt
-    >>> from pagebot import getContext 
+    >>> from pagebot import getContext
     >>> context = getContext('Flat')
     >>> context.newPage(pt(100), pt(100))
     >>> drawCropMarks(context, pt(0,0), pt(100), pt(100), False, pt(20), pt(1))

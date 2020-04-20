@@ -31,7 +31,7 @@ class Waterfall(TextBox):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot import getContext
         >>> from pagebot.conditions import *
-        >>> from pagebot.toolbox.color import color        
+        >>> from pagebot.toolbox.color import color
         >>> c = getContext()
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)

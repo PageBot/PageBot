@@ -9,32 +9,32 @@ __author__ = "someone"
 # ------------------------------------------------------
 #   music
 #
-content = {     
+content = {
         'pop_genre':    [
-                '<#pop_genre_px#><#pop_genre_sx#>', 
-                '<#pop_genre_px#><#pop_genre_sx#>', 
-                '<#pop_genre_px#><#pop_genre_sx#>', 
-                '<#pop_genre_px#>-<#pop_genre_sx#>', 
-                '<#pop_genre_px#>-<#pop_genre_sx#>', 
-                '<#pop_genre_px#>-<#pop_genre_sx#>', 
-                '<#pop_genre_px#><#pop_genre_sx#><#pop_genre_sx2#>', 
-                '<#pop_genre_px#>-<#pop_genre_px#>-<#pop_genre_sx#>', 
+                '<#pop_genre_px#><#pop_genre_sx#>',
+                '<#pop_genre_px#><#pop_genre_sx#>',
+                '<#pop_genre_px#><#pop_genre_sx#>',
+                '<#pop_genre_px#>-<#pop_genre_sx#>',
+                '<#pop_genre_px#>-<#pop_genre_sx#>',
+                '<#pop_genre_px#>-<#pop_genre_sx#>',
+                '<#pop_genre_px#><#pop_genre_sx#><#pop_genre_sx2#>',
+                '<#pop_genre_px#>-<#pop_genre_px#>-<#pop_genre_sx#>',
                 ],
         'pop_location': [
                 "New York",
                 "London",
                 "Liverpool",
                 "Amsterdam",
-                'Berlin', 
+                'Berlin',
                 'Chicago',
                 'Ibiza',
                 ],
         'pop_instrument':   [
-                'sings', 
+                'sings',
                 'drums', "congas",
                 'bass', 'acoustic bass',
-                'guitar', 'mandolin', 
-                
+                'guitar', 'mandolin',
+
                 ],
         'pop_names_people': [
                 '<#pop_names_first#>'
@@ -58,30 +58,30 @@ content = {
                 'Things', 'Stopsigns', 'Accidents', 'Replacements',
                 'Village People', 'Monsters', 'Madmen', 'Rangers', 'Cosmonauts',
                 'Presidents',
-                
+
                 ],
         'pop_genre_px':     [
             'easy', 'cosy', 'cuddly', 'classic',
             "ambient", "bleep", "beat", "brit", "chicago", "death", "def", "druggy", "disco", "dub", "electro", "extended",
-            "feedback", "folk", "fox", "fresh", "garage", "industrial", "jangle", "jazz", 'casiotone', 'sample', 'digital', 
+            "feedback", "folk", "fox", "fresh", "garage", "industrial", "jangle", "jazz", 'casiotone', 'sample', 'digital',
             "maxi", "mega", "metal", "MIDI", "new", "old-school", "super", "speed", "street", "surf",
             "synth", "twang", ],
         'pop_genre_sx':     [
-                "house", "dance", "acid", "sound", "wave", "techno", 
+                "house", "dance", "acid", "sound", "wave", "techno",
                 "thrash", "trash", "rap", "roots", "rock", 'hiphop', 'bebop'
                 "glam", "goth", ],
         'pop_genre_sx2':    [
-            "-adelic", "-core", "-pop", 
+            "-adelic", "-core", "-pop",
             ],
-        
+
         'classic_genre':    [],
         'classic_oevrecounter': ['No.<-randint(1, 20)->'],
         'classic_opus': ['op.<-randint(1, 20)->'],
         'classic_work_nickname':    ['Taras Bulba', 'Moonlight', 'Seguidilla', 'Unvolendete'],
         'classic_work_name':    [
                 '"<#!^,time_seasons#>"',
-                '"<#!^,lit_mythology#>"', 
-                '"<#!^,sci_astro_planets#>"', 
+                '"<#!^,lit_mythology#>"',
+                '"<#!^,sci_astro_planets#>"',
                 '"<#!^,classic_work_nickname#>"',
                 ],
         'classic_work': [
@@ -92,9 +92,9 @@ content = {
                 ],
         'classic_composer': [
                 # insert russian names here!
-                'Prokofiev', 
+                'Prokofiev',
                 '<#name_french#>',
-                'Beethoven', 'Bach', 'Mozart', 'Monteverdi', 'Schostakovitch', 
+                'Beethoven', 'Bach', 'Mozart', 'Monteverdi', 'Schostakovitch',
                 'Satie', 'Rachmaninov', 'Hindemith', 'Janacek', 'Satie', 'Sousa',
                 'Telemann', 'Vivaldi', 'Paganini', 'Puccini', 'Moussorgski',
                 'Wagner', 'Sibelius', 'Villa-Lobos'
@@ -102,7 +102,7 @@ content = {
         'classic_classification':       ['', '', '', '', '', '', '', '', '', 'BWV<-randint(100,300)->', 'KV<-randint(100,300)->'],
         'classic_instrument':   ['<#classic_instrument_traditional#>','<#classic_instrument_traditional#>','<#classic_instrument_odd#>',],
         'classic_instrument_traditional':   [
-                'orchestra', 'piano', 'violin', 'horn', 'flute', 'organ', 
+                'orchestra', 'piano', 'violin', 'horn', 'flute', 'organ',
                 'harp', 'harpsichord', 'choir', 'boys choir'
                  ],
         'classic_instrument_odd':   [
@@ -110,12 +110,12 @@ content = {
                  ],
         'classic_work_section': [
                 'suite', 'overture', 'presto',
-                'largo<#classic_work_interjection#>', 
-                'adagio<#classic_work_interjection#>', 
-                'scherzo<#classic_work_interjection#>', 
-                'allegro<#classic_work_interjection#>', 
+                'largo<#classic_work_interjection#>',
+                'adagio<#classic_work_interjection#>',
+                'scherzo<#classic_work_interjection#>',
+                'allegro<#classic_work_interjection#>',
                 ],
-        'classic_work_interjection':    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 
+        'classic_work_interjection':    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
                 ' ma non troppo,', ' molto vivace,', ' molto e cantabile,', ' un poco maestoso,'],
         'classic_work_numbered':    [
                 '<#^,num_ord#> <#classic_work_kind#>',
@@ -129,10 +129,10 @@ content = {
                 ],
         'classic_work_kind':    [
                 'rhapsody',
-                'symphony', 
-                'sonata', 
-                'etude', 
-                'concerto', 
+                'symphony',
+                'sonata',
+                'etude',
+                'concerto',
                 ],
         'classic_chord':    ['A', 'B', 'C', 'D', 'E', 'F'],
         'classic_key':      ['<#classic_chord#>-short', '<#classic_chord#>-major', '<#classic_chord#>-minor', '<#classic_chord#>'],
@@ -185,7 +185,7 @@ content = {
                 'The <#classic_composer#> Collection',
                 '<#classic_composer#>: The Works',
                 '<#classic_orchestra#> Music For Commuters',
-                
+
                 ],
 }
 

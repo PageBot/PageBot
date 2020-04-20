@@ -28,8 +28,8 @@ DATA_PATH = 'code/2-masters-1-axis.json'
 #DATA_PATH = 'code/miserables.json'
 
 class DesignSpace(Rect):
-    """Generic base DesignSpace Element class to show the content and topology of a 
-    VF-designspace. Reading can be done from a standard design space file or from 
+    """Generic base DesignSpace Element class to show the content and topology of a
+    VF-designspace. Reading can be done from a standard design space file or from
     a Variable Font.
     """
 
@@ -52,7 +52,7 @@ class DesignSpaceGraph(DesignSpace):
         DesignSpace.__init__(self, w=w, h=h, **kwargs)
         self.font = font
         self.path = path
-        
+
     def _get_cssId(self):
         return self._cssId or self.CSS_ID or self.eId
     def _set_cssId(self, cssId):
@@ -93,7 +93,7 @@ d3.json("%(path)s", function(error, graph) {
     var nodes = graph.nodes;
     // links between nodes
     var links = graph.links;
-    
+
     // add the curved links to our graphic
     var link = svg.selectAll(".link")
         .data(links)

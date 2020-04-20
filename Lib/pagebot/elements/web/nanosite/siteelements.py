@@ -89,7 +89,7 @@ class NanoElement(Column):
 
     def newSides(self, parent=None, **kwargs):
         return Sides(parent=self, **kwargs)
-        
+
     def newSide(self, parent=None, **kwargs):
         return Side(parent=self, **kwargs)
 
@@ -111,11 +111,11 @@ class NanoElement(Column):
         """
         return TypeList(fontDataList=fontDataList, parent=self, styleData=styleData, **kwargs)
 
-    def newTypeFeatures(self, fontDataList=None, defaultTags=None, parent=None, 
+    def newTypeFeatures(self, fontDataList=None, defaultTags=None, parent=None,
             styleData=None, **kwargs):
         """Create an overview of the available features in the font.
         """
-        return TypeFeatures(fontDataList=fontDataList, defaultTags=defaultTags, parent=self, 
+        return TypeFeatures(fontDataList=fontDataList, defaultTags=defaultTags, parent=self,
             styleData=styleData, **kwargs)
 
     def newTypeGlyphSet(self, fontDataList=None, parent=None, styleData=None, **kwargs):
@@ -171,7 +171,7 @@ class Logo(NanoElement):
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
         b.a(href='index.html')
         if self.url is not None:
@@ -188,7 +188,7 @@ class Logo(NanoElement):
 #   N A V I G A T I O N
 
 class Navigation(NanoElement):
-    """Navigation is the container that hold several conditional menus. 
+    """Navigation is the container that hold several conditional menus.
     """
     CSS_ID = 'Navigation'
 
@@ -200,7 +200,7 @@ class Navigation(NanoElement):
         if pageTree is None:
             pageTree = []
         self.pageTree = pageTree
-  
+
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
 
@@ -212,7 +212,7 @@ class Navigation(NanoElement):
                 else:
                     currentClass = None
 
-                #b.li(cssClass=currentClass, onmouseover="toggleMenu('%s', true);" % navChildId, 
+                #b.li(cssClass=currentClass, onmouseover="toggleMenu('%s', true);" % navChildId,
                 #    onmouseout="toggleMenu('%s', false);")
                 b.li(cssClass=currentClass)
                 b.a(href=node.page.flatUrl, cssClass=currentClass)
@@ -288,7 +288,7 @@ class Navigation(NanoElement):
             b._div()
             b._nav()
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
-       
+
 class MobileMenu(NanoElement):
     """MobileMenu lives outside the regular Navigation, made to expand on clicking/tapping
     on a BurgerButton.
@@ -306,7 +306,7 @@ class MobileMenu(NanoElement):
 
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
         for pageNode in pageTree.children: # These are real Page instances
             if pageNode.page is not None and pageNode.page.url:
@@ -332,14 +332,14 @@ class BurgerButton(NanoElement):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function toggleMobileMenu(eId){
-            var x = document.getElementById(eId);  
+            var x = document.getElementById(eId);
             if (x.style.display != "block") {
                 x.style.display = "block";
             } else {
                 x.style.display = "none";
             }
         }\n\n""", name=MobileMenu.TARGET_CSSID)
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         b.h1(onclick="toggleMobileMenu('%s')" % MobileMenu.TARGET_CSSID)
         b.addHtml(self.BURGER)
         b._h1()
@@ -355,7 +355,7 @@ class RandomSelector(NanoElement):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function randomSelect(){
-            var x = document.getElementById("%(cssId)s");  
+            var x = document.getElementById("%(cssId)s");
             var children = x.getElementsByClassName('%(cssClass)s-select');
             var selectedIndex = Math.floor(Math.random()*children.length)
             for (i = 0; i < children.length; i++){
@@ -375,7 +375,7 @@ class RandomSelector(NanoElement):
 
 class Collection(NanoElement):
     """ Container for a defined group of elements.
-        Behavior depends on the selected layout, defined view-parameters and 
+        Behavior depends on the selected layout, defined view-parameters and
         amound of available elements.
     """
     def prepare_html(self, view):
@@ -456,21 +456,21 @@ class Info(NanoElement):
         # Add JS for this element. Add self.cssId as name to avoid double export
         # in case there are multiple of these element on the same page.
         b.addJs("""function toggleInfo(eId1, eId2){
-            var e1 = document.getElementById(eId2).style.display = "block";  
-            var e2 = document.getElementById(eId1).style.display = "none"; 
+            var e1 = document.getElementById(eId2).style.display = "block";
+            var e2 = document.getElementById(eId1).style.display = "none";
         }\n\n""", name=self.__class__.__name__)
 
         # Overall container
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
 
-        closedId = self.eId+'-closed' # Use unique eId for inline JS reference. 
-        openedId = self.eId+'-opened' # Use unique eId for inline JS reference. 
+        closedId = self.eId+'-closed' # Use unique eId for inline JS reference.
+        openedId = self.eId+'-opened' # Use unique eId for inline JS reference.
 
         # Container with open button
         b.div(cssId=closedId, cssClass='%s-closed clearfix' % self.cssClass)
         b.div(cssClass='%s-doopen' % self.cssClass,
-            onclick="toggleInfo('%s', '%s');" % (closedId, openedId)) 
+            onclick="toggleInfo('%s', '%s');" % (closedId, openedId))
         b.addHtml(self.infoOpen)
         b._div()
         b._div()
@@ -478,7 +478,7 @@ class Info(NanoElement):
         # Container with content en close button
         b.div(cssId=openedId, cssClass='%s-opened clearfix' % self.cssClass)
         b.div(cssClass='%s-doclose' % self.cssClass,
-            onclick="toggleInfo('%s', '%s');" % (openedId, closedId)) 
+            onclick="toggleInfo('%s', '%s');" % (openedId, closedId))
         b.addHtml(self.infoClose)
         b._div()
         for e in self.elements: # Find all child images inside the tree
@@ -489,9 +489,9 @@ class Info(NanoElement):
 
 
 class Cropped(NanoElement):
-    """The Cropped element takes any amount of content elements. The first Image element in the 
-    list of child elements will be used as background for the Cropped element. 
-    And then that image will be skipped while processing the other child elements. 
+    """The Cropped element takes any amount of content elements. The first Image element in the
+    list of child elements will be used as background for the Cropped element.
+    And then that image will be skipped while processing the other child elements.
     This way the Picture element can be used as growing background container. But is also can
     be used for normal content, that should be positions on a background image.
     """
@@ -511,7 +511,7 @@ class Cropped(NanoElement):
             #   background-color: #888;
             #   background-repeat: no-repeat;
             #   background-size:contain;"
-            
+
             imagePath = image.path or '' # Image probably does not exist. Not the moment here to report the error.
             style = "background-image:url('%s');background-position:%s %s;background-size:%s;" % \
                 (imagePath.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
@@ -521,7 +521,7 @@ class Cropped(NanoElement):
                 style += 'background-repeat:%s;' % image.cssRepeat
         else:
             style = None
-        b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style) 
+        b.div(cssId=self.cssId, cssClass=self.cssClass+' clearfix', style=style)
         for e in self.elements: # Add all elements to the content.
             if images and images[0].eId != e.eId: # Skip the first image, as it was used as background.
                 e.build_html(view, path, **kwargs)

@@ -26,7 +26,7 @@ from pagebot.elements.views.htmlview import HtmlView
 from pagebot.constants import URL_JQUERY
 
 class SiteView(HtmlView):
-    
+
     viewId = 'Site'
 
     #   B U I L D  H T M L  /  C S S
@@ -37,7 +37,7 @@ class SiteView(HtmlView):
     SCSS_VARIABLES_PATH = u'css/variables.scss'
 
     def __init__(self, resourcePaths=None, cssCode=None, cssPaths=None,
-            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None, 
+            cssUrls=None, jsCode=None, jsPaths=None, jsUrls=None, webFontUrls=None,
             **kwargs):
         """Abstract class for views that build websites."""
         HtmlView.__init__(self, **kwargs)
@@ -47,15 +47,15 @@ class SiteView(HtmlView):
 
         if resourcePaths is None:
             rp = getRootPath() + '/elements/web/simplesite/'
-            resourcePaths = (rp+'js', rp+'scaled', rp+'fonts', rp+'css') # Directories to be copied to Mamp.        
+            resourcePaths = (rp+'js', rp+'scaled', rp+'fonts', rp+'css') # Directories to be copied to Mamp.
         self.resourcePaths = resourcePaths
-     
+
         # Default WebFonts URL's to include:
         self.webFontUrls = webFontUrls
 
-        # Default CSS urls to inclide 
+        # Default CSS urls to inclide
         self.cssCode = cssCode # Optional CSS code to be added to all pages.
-        self.cssUrls = cssUrls # List of CSS urls, added as links in the page <head>. Could be [self.SCSS_CSS_PATH] 
+        self.cssUrls = cssUrls # List of CSS urls, added as links in the page <head>. Could be [self.SCSS_CSS_PATH]
         self.cssPaths = cssPaths # File content added as <style>...</style> in the page <head>
 
         # Default JS Urls to include
@@ -80,7 +80,7 @@ class SiteView(HtmlView):
                     print('[%s.build] Copy %s --> %s' % (self.__class__.__name__, resourcePath, dstPath))
                 if removeExisting and os.path.exists(dstPath):
                     # Safety check, only run on relative paths
-                    #assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath) 
+                    #assert dstPath.startswith('/tmp/') or not dstPath.startswith('/'), ('Path must be relative: "%s"' % dstPath)
                     shutil.rmtree(dstPath)
                 if os.path.exists(resourcePath):
                     shutil.copytree(resourcePath, dstPath)
@@ -104,7 +104,7 @@ class SiteView(HtmlView):
         >>> #'class="MyGeneratedPage"' in ''.join(view.b._htmlOut) # Page div contains this class attribute.
         True
         """
-        doc = self.doc 
+        doc = self.doc
         b = self.context.b
 
         if path is None:
@@ -131,7 +131,7 @@ class SiteView(HtmlView):
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
-                
+
         # Deprecated
         # TODO: Make this automatic, depending on extension of CSS file.
         #if self.useXXXScss:
