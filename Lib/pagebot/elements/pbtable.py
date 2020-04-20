@@ -192,6 +192,3 @@ class Table(Element):
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-
-

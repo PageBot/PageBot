@@ -376,10 +376,7 @@ class Footer(SiteColumn):
         b._footer()
         b.comment('End %s' % cssId)
 
-
-
 if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

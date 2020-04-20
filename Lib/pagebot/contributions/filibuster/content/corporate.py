@@ -718,4 +718,3 @@ content = {
         'shows',
         'demonstrates',
     ],    }
-

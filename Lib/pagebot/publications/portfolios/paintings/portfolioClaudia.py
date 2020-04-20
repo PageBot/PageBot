@@ -6,4 +6,3 @@ name = 'Portfolio Claudia Mens'
 pf = BasePortfolio(cols=3, rows=4, padding=30, resolution=2,
     originTop=False, size=A4, name=name)
 pf.export(name, path='_export/PortFolio.pdf')
-

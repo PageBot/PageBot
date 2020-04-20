@@ -36,4 +36,3 @@ class AContour:
 
     def append(self, p):
         self.points.append(p)
-

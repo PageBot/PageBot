@@ -29,4 +29,3 @@ class GoogleAppsView(HtmlView):
     the HtmlContext as HTML/CSS generator.
     """
     viewId = 'GoogleApps'
-

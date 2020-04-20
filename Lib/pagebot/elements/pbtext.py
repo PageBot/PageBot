@@ -37,5 +37,3 @@ class Text(TextBox):
     def getTextSize(self, w=None):
         """Figure out what the width/height of the text self.fs is."""
         return self.bs.textSize(w=w)
-
-

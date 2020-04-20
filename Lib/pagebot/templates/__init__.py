@@ -20,4 +20,3 @@
 #     Templates will be defined in Publications
 #
 #from .stackedtypography import StackedTypography
-

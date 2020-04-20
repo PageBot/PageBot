@@ -88,4 +88,3 @@ content = {
 
         'tonic'                :    ['<#tonic_ad_intro#><#tonic_remedy#>. <#tonic_ad_pitch#> <#tonic_cures#> <#tonic_close#>']
 }
-

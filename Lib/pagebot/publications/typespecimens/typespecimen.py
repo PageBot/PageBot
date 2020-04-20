@@ -30,5 +30,3 @@ class TypeSpecimen(BaseTypeSpecimen):
         page = doc[1]
         newRect(parent=page, fill=c)
         return doc
-
-

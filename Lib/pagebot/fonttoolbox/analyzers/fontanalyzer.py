@@ -91,4 +91,3 @@ class FontAnalyzer:
             self._bars = self['H'].bars
         return self._bars
     bars = property(_get_bars)
-

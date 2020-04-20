@@ -24,5 +24,3 @@ content = {
     'legal_profession': ['lawyer', 'judge', 'member of the jury', 'solicitor','police officer'],
     'legal_professions': ['lawyers', 'judges', 'members of the jury', 'solicitors','police officers'],
         }
-
-

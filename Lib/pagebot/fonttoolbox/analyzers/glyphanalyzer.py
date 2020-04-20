@@ -812,5 +812,3 @@ class GlyphAnalyzer:
     def _get_minX(self):
         return self.glyph.minX
     minX = property(_get_minX)
-
-

@@ -29,4 +29,3 @@ class GoogleCloudView(HtmlView):
     server generating HTML/CSS pages.
     """
     viewId = 'GoogleCloud'
-

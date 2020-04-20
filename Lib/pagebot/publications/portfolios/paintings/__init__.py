@@ -19,4 +19,3 @@
 #     that get transfered to a new created Document during composition.
 #
 #from pagebot.publications.portfolios.portfolio import Portfolio
-

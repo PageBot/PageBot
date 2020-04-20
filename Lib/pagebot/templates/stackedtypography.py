@@ -37,4 +37,3 @@ class StackedTypography(Template):
                 x=random()*(self.w-S),
                 y=random()*(self.h-S), w=S, h=S,
                 fill=color(random(), random(), random(), 0.5))
-

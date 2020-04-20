@@ -269,4 +269,3 @@ class Overshoot:
         return self.pc.p.y - self.reference.y
 
     size = property(_get_size)
-

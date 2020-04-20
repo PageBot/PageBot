@@ -41,4 +41,3 @@ for themeClass in (
         ThemeClasses[themeClass.NAME] = themeClass
 
 DEFAULT_THEME_CLASS = FreshAndShiny
-

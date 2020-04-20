@@ -94,4 +94,3 @@ content = {
             '<#names_last_patrician#>, <#names_last_patrician#> and <#names_last_patrician#> of <#location#>',
             '<#names_last_patrician#>, <#names_last_patrician#> & <#names_last_patrician#>'],
 }
-
