@@ -20,9 +20,8 @@ from math import radians, sin, cos
 import xml.etree.ElementTree as ET
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, DEFAULT_FONT_NAME)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
-from pagebot.filepaths import DEFAULT_FONT_NAME
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)

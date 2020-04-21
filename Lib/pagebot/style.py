@@ -24,7 +24,7 @@ from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
         DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH)
-from pagebot.filepaths import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox import getDefaultFontPath
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 
@@ -287,7 +287,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Typographic defaults
         # Default is to avoid existing font and fontSize in the graphic state.
-        font = DEFAULT_FONT_PATH,
+        font = getDefaultFontPath(),
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
         # Default font size in points, related to U. If FIT, size is elastic to
         # width.
@@ -689,13 +689,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewCropRegistrationStrokeWidth = pt(0.25),
 
         # Name of the page outside frame.
-        viewNameFont = DEFAULT_FONT_PATH,
+        viewNameFont = getDefaultFontPath(),
         viewNameFontSize = pt(6),
         viewMarkerFont = DEFAULT_MARKER_FONT,
 
         # Element info box
         # Font of text in element infoBox.
-        viewInfoFont = DEFAULT_FONT_PATH,
+        viewInfoFont = getDefaultFontPath(),
         # Font size of text in element info box.
         viewInfoFontSize = pt(4),
         # Leading of text in element info box.

@@ -17,33 +17,33 @@
 
 from sys import platform
 import re
-from pagebot.filepaths import *
+import os.path
+from pagebot.constants import DEFAULT_FONT_NAME
+from pagebot.filepaths import ROOT_PATH
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
+from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 
 VERSION = '0.9.9'
 STATUS = 'alpha'
+ispy2app = False
+
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')#, 'InDesign', 'idml')
+contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')
 
 def getRootPath():
     """Answers the root path of the PageBot module for the current platform."""
     return ROOT_PATH
 
-def getResourcesPath():
-    """Answers the resources path within the PageBot module for the current
-    platform."""
-    return RESOURCES_PATH
-
 def getDefaultFontPath():
     """Answers the default font path within the PageBot module for the current
     platform."""
-    return DEFAULT_FONT_PATH
+    return getDefaultFontPath()
 
-def getContext(contextType=None):
+def getContext(contextType=None, resourcesPath=None):
     """Returns a single context."""
 
     # Sets the default for both supported platforms.
@@ -122,6 +122,13 @@ def getGlobals(scriptId):
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
     return pbGlobals[scriptId]
+
+def setPy2App():
+    "Resets some path globals if in Py2App mode."""
+    ispy2app = True
+    #RESOURCES_PATH = ROOT_PATH + '/resources'
+    #getDefaultFontPath() = RESOURCES_PATH + '/testfonts/typetr/%s.ttf' % DEFAULT_FONT_NAME
+
 
 if __name__ == '__main__':
     import doctest

@@ -19,7 +19,7 @@ import os
 from copy import copy
 from pagebot.constants import (LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_LEADING)
-from pagebot.filepaths import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.style import css
 from pagebot.toolbox.color import (Color, blackColor, inheritColor, noColor,
@@ -39,7 +39,7 @@ def getFontPath(style):
 
     if fontPath is None or not os.path.exists(fontPath):
         # TODO: get path from base context self._font.
-        fontPath = DEFAULT_FONT_PATH
+        fontPath = getDefaultFontPath()
 
     return fontPath
 
@@ -288,13 +288,13 @@ class BabelString:
                 else:
                     # Font not found.
                     # TODO: add to logger.
-                    #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
-                    attrs['font'] = DEFAULT_FONT_PATH
+                    #print('Warning: defaulting to %s' % getDefaultFontPath())
+                    attrs['font'] = getDefaultFontPath()
 
         else:
             # TODO: add to logger.
-            #print('Warning: defaulting to %s' % DEFAULT_FONT_PATH)
-            attrs['font'] = DEFAULT_FONT_PATH
+            #print('Warning: defaulting to %s' % getDefaultFontPath())
+            attrs['font'] = getDefaultFontPath()
 
         sFallbackFont = css('fallbackFont', e, style)
 

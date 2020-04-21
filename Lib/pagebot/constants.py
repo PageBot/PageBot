@@ -684,12 +684,12 @@ URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 #URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries.js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
-# DEFAULT_FONT_PATH comes from import pagebot.filepaths
-DEFAULT_FONT = 'PageBot-Regular' # We know for sure this one can be found.
+DEFAULT_FONT_NAME = 'PageBot-Regular'
+DEFAULT_FOUNDRY = 'typetr'
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_TRACKING = em(0)
-DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
+DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # Fallback font for DrawBot.
 
 # Default element names
 DEFAULT_GALLEY_NAME = 'Galley' # Used for page.galley default content storage while no layou defined.

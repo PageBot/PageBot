@@ -21,7 +21,7 @@ from pagebot.contexts.markup.svgbuilder import svgBuilder
 from pagebot.contexts.markup.htmlstring import HtmlString
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
-from pagebot.filepaths import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox import getDefaultFontPath
 from pagebot.toolbox.color import noColor, color
 from pagebot.toolbox.dating import seconds
 from pagebot.toolbox.transformer import uniqueID
@@ -59,7 +59,7 @@ class SvgContext(BaseContext):
         self._strokeWidth = pt(0)
         self._frameDuration = seconds(1)
         self._fontSize = DEFAULT_FONT_SIZE
-        self._font = DEFAULT_FONT_PATH
+        self._font = getDefaultFontPath()
         self._ox = pt(0) # Origin set by self.translate()
         self._oy = pt(0)
         self._rotate = 0

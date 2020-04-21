@@ -25,7 +25,7 @@ from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,
         object2SpacedString, value2Bool)
 from pagebot.toolbox.units import upt
 from pagebot.fonttoolbox.objects.font import findFont
-from pagebot.constants import DEFAULT_FONT
+from pagebot.constants import DEFAULT_FONT_NAME
 
 class HtmlBuilder(XmlBuilder):
     """The HtmlBuilder class implements the standard XHTML tag set with all
@@ -502,7 +502,7 @@ table {
         if e.css('font') is not None:
             font = e.css('font')
             if not hasattr(font, 'path'):  # In case it is not a PageBot Font instance.
-                font = findFont(font, default=DEFAULT_FONT)
+                font = findFont(font, default=DEFAULT_FONT_NAME)
             assert font is not None
             scss[scssId+'-font-family'] = '"%s"' % font.info.fullName
         if e.css('fontSize') is not None:
