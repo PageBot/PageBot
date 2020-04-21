@@ -22,7 +22,8 @@ from pagebot.filepaths import RESOURCES_PATH, DEFAULT_FONT_PATH
 
 TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
 
-# Dictionary with all available font paths on the platform, key is the single file name.
+# Dictionary with all available font paths on the platform, key is the single
+# file name.
 FONT_PATHS = {}
 
 def getTestFontsPath():
@@ -90,6 +91,7 @@ def getFontPaths(extraPaths=None):
 
     Locally defined fonts with the same file name will overwrite the font files
     that  are located deeper.
+    TODO: also check app resources path.
 
     >>> import os
     >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf')

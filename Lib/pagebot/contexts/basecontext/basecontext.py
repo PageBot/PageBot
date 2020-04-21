@@ -49,7 +49,8 @@ class BaseContext(AbstractContext):
         self._textFill = blackColor
         self._textStroke = noColor
         self._textStrokeWidth = 0
-        self._font = findFont(DEFAULT_FONT_NAME).path
+        font = findFont(DEFAULT_FONT_NAME)
+        self._font = font.path
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
         self._fonts = {}
