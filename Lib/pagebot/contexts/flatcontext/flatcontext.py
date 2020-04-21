@@ -655,7 +655,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
-        >>> from pagebot.fonttoolbox import getDefaultFontPath
+        >>> from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         59
@@ -764,7 +764,7 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()

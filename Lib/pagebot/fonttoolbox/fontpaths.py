@@ -16,7 +16,7 @@
 import os
 import os.path
 from pagebot.toolbox.transformer import path2FontName
-from pagebot.filepaths import ROOT_PATH, BASE_PATH
+from pagebot.filepaths import getResourcesPath
 from pagebot.constants import DEFAULT_FONT_NAME, DEFAULT_FOUNDRY
 
 #   P A T H S
@@ -26,18 +26,6 @@ from pagebot.constants import DEFAULT_FONT_NAME, DEFAULT_FOUNDRY
 # file name.
 FONT_PATHS = {}
 
-
-def getResourcesPath():
-    # First check inside PageBot package.
-    path = '%s/%s' % (ROOT_PATH, 'resources')
-
-    if os.path.exists(path):
-        return path
-
-    # Check base in case of separate resources folder (Py2app).
-    path = '%s/%s' % (BASE_PATH, 'resources')
-    return path
-
 def getTestFontsPath():
     """Answers the path of the PageBot test fonts."""
     resourcesPath = getResourcesPath()
@@ -45,7 +33,7 @@ def getTestFontsPath():
 
 def getDefaultFontPath():
     testFontsPath = getTestFontsPath()
-    path = '%s/%s/%s.ttf' % (testFontsPath, DEFAULT_FOUNDRY, DEFAULT_FONT_NAME)
+    return '%s/%s/%s.ttf' % (testFontsPath, DEFAULT_FOUNDRY, DEFAULT_FONT_NAME)
 
 def getFontPathOfFont(font, default=None):
     """Answers the path that is source of the given font name.

@@ -1,5 +1,5 @@
->>> from pagebot import getResourcesPath
 >>> from pagebot.constants import A4
+>>> from pagebot.filepaths import getResourcesPath
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
 >>> from pagebot.elements import TextBox

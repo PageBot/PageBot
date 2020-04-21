@@ -36,8 +36,8 @@
 
 import os
 import codecs
-from pagebot import getResourcesPath
 from pagebot.constants import DEFAULT_LANGUAGE
+from pagebot.filepaths import getResourcesPath
 
 # Key is language ID (2 letters), value is dictionary of word --> hyphenated.
 languages = {}

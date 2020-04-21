@@ -95,7 +95,7 @@ class Typesetter:
         converts it into a Galley instance with formatted string depending on
         the current context.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext

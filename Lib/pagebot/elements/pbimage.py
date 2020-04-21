@@ -30,7 +30,7 @@ class Image(Element):
     can be (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
-    >>> from pagebot import getResourcesPath
+    >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
@@ -525,7 +525,7 @@ class Image(Element):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> context = HtmlContext()
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
         >>> e = Image(path, context=context)

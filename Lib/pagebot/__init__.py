@@ -126,9 +126,6 @@ def getGlobals(scriptId):
 def setPy2App():
     "Resets some path globals if in Py2App mode."""
     ispy2app = True
-    #RESOURCES_PATH = ROOT_PATH + '/resources'
-    #getDefaultFontPath() = RESOURCES_PATH + '/testfonts/typetr/%s.ttf' % DEFAULT_FONT_NAME
-
 
 if __name__ == '__main__':
     import doctest

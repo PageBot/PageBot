@@ -19,7 +19,7 @@ import os
 from copy import copy
 from pagebot.constants import (LEFT, DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_LEADING)
-from pagebot.fonttoolbox import getDefaultFontPath
+from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import Font
 from pagebot.style import css
 from pagebot.toolbox.color import (Color, blackColor, inheritColor, noColor,

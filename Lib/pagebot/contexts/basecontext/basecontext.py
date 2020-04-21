@@ -1026,8 +1026,8 @@ class BaseContext(AbstractContext):
     def ImageObject(self, path=None):
         """Answers an ImageObject that knows about image filters.
 
-        >>> from pagebot import getResourcesPath
         >>> from pagebot import getContext
+        >>> from pagebot.filepaths import getResourcesPath
         >>> context = getContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> #imo = context.getImageObject(path)

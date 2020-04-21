@@ -30,3 +30,14 @@ ROOT_FONT_PATHS = {'darwin': ['/System/Library/Fonts', '/Library/Fonts',
 # DrawBotContext.BezierPath, which are "recorded" drawing instructions.
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 BASE_PATH = os.path.abspath('.')
+
+def getResourcesPath():
+    # First check inside PageBot package.
+    path = '%s/%s' % (ROOT_PATH, 'resources')
+
+    if os.path.exists(path):
+        return path
+
+    # Check base in case of separate resources folder (Py2app).
+    path = '%s/%s' % (BASE_PATH, 'resources')
+    return path

@@ -43,7 +43,7 @@ class ImageData(Element):
     def initializeImageSize(self):
         """Initialize self._iw and self._ih from the size of the image file if it exists.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
         >>> path = getResourcesPath() + imageFilePath
         >>> e = ImageData(path)
@@ -158,7 +158,7 @@ class Image(Element):
     """Image is that frame container of a PixelMap, supporting the clipRect, clipPath,
     size, rotation and position.
 
-    >>> from pagebot import getResourcesPath
+    >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> path = getResourcesPath() + imageFilePath
     >>> e = Image(path)
@@ -191,7 +191,7 @@ class Image(Element):
     def _get_imageData(self):
         """Answers the first (and suppedly only) ImageData element that is in the child element list.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> e = Image(path)
         >>> e.imageData.box # Answer the size of the plain image.
