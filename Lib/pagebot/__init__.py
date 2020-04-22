@@ -27,7 +27,6 @@ from pagebot.fonttoolbox.objects.font import findFont
 
 VERSION = '0.9.9'
 STATUS = 'alpha'
-ispy2app = False
 
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
@@ -122,10 +121,6 @@ def getGlobals(scriptId):
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
     return pbGlobals[scriptId]
-
-def setPy2App():
-    "Resets some path globals if in Py2App mode."""
-    ispy2app = True
 
 if __name__ == '__main__':
     import doctest
