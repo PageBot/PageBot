@@ -371,25 +371,32 @@ class Element:
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(name='TestElement', x=10, y=20, w=100, h=120)
         >>> repr(e)
-        '<Element:TestElement (10pt, 20pt, 100pt, 120pt)>'
+        '<Element "TestElement" x=10pt y=20pt w=100pt h=120pt>'
         >>> e.title = 'MyTitle'
         >>> e.x, e.y = 100, mm(200)
-        >>> repr(e)
-        '<Element:MyTitle (100pt, 200mm, 100pt, 120pt)>'
+        >>> e
+        <Element "MyTitle" x=100pt y=200mm w=100pt h=120pt>
+        >>> e.title = None
+        >>> e.x = e.y = e.h = 0
+        >>> e     
+        <Element w=100pt>
         """
+        s = '<%s' % self.__class__.__name__
+
         if self.title:
-            name = ':'+self.title
-        elif self.name:
-            name = ':'+self.name
-        else:
-            # No naming, show unique self.eId:
-            name = ':'+self.eId
+            s += ' "%s"' % self.title
 
         if self.elements:
-            elements = ' E(%d)' % len(self.elements)
-        else:
-            elements = ''
-        return '<%s%s (%s, %s, %s, %s)%s>' % (self.__class__.__name__, name, self.x, self.y, self.w, self.h, elements)
+            s += ' e=%d' % len(self.elements)
+        if self.x:
+            s += ' x=%s' % self.x
+        if self.y:
+            s += ' y=%s' % self.y
+        if self.w: 
+            s += ' w=%s' % self.w
+        if self.h:
+            s += ' h=%s' % self.h
+        return s+'>'
 
     def __len__(self):
         """Answers total amount of elements, placed or not. Note the various
@@ -1233,7 +1240,7 @@ class Element:
         >>> e2 = Element(name='Child2', parent=e)
         >>> e3 = Element(name='Child3', parent=e)
         >>> e.removeElement(e2)
-        <Element:Child2 (0pt, 0pt, 100pt, 100pt)>
+        <Element "Child2" w=100pt h=100pt>
         >>> # e2 has no parent now.
         >>> e.elements[0] is e1, e.elements[1] is e3, e2.parent is None
         (True, True, True)
@@ -3595,10 +3602,9 @@ class Element:
         return units(self.css('w'), base=base)
     def _set_w(self, w):
         w = units(w or DEFAULT_WIDTH)
-        if self.proportional:
-            if self.w:
-                self.style['h'] = w * self.h.pt/self.w.pt
-                self.style['d'] = w * self.d.pt/self.w.pt
+        if self.proportional and self.w:
+            self.style['h'] = w * self.h.pt/self.w.pt
+            self.style['d'] = w * self.d.pt/self.w.pt
         self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
 
     w = property(_get_w, _set_w)
@@ -3642,20 +3648,16 @@ class Element:
         >>> child.h = '4.5em' # Multiplication with current e.style['fontSize']
         >>> child.h, child.h.pt
         (4.5em, 54)
-        >>> e.h = 0 # Zero height expands to DEFAULT_HEIGHT (100)
-        >>> e.h, e.h == DEFAULT_HEIGHT
-        (100pt, True)
         """
         # In case relative units, use this as base.
         base = dict(base=self.parentH, em=self.em)
         return units(self.css('h', 0), base=base)
 
     def _set_h(self, h):
-        h = units(h or DEFAULT_HEIGHT)
-        if self.proportional:
-            if self.h:
-                self.style['w'] = h * self.w.pt/self.h.pt
-                self.style['d'] = h * self.d.pt/self.h.pt
+        h = units(h)
+        if self.proportional and self.h:
+            self.style['w'] = h * self.w.pt/self.h.pt
+            self.style['d'] = h * self.d.pt/self.h.pt
 
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
@@ -3703,13 +3705,10 @@ class Element:
         return units(self.css('d', 0), base=base)
 
     def _set_d(self, d):
-        # Overwrite element local style from here, parent css becomes inaccessable.
-        self.style['d'] = units(d or DEFAULT_DEPTH)
-        d = units(d or DEFAULT_DEPTH)
-        if self.proportional:
-            if self.d:
-                self.style['w'] = d * self.w.pt/self.d.pt
-                self.style['h'] = d * self.h/self.d
+        d = units(d)
+        if self.proportional and self.d:
+            self.style['w'] = d * self.w.pt/self.d.pt
+            self.style['h'] = d * self.h/self.d
         # Overwrite element local style from here, parent css becomes inaccessable.
         self.style['d'] = d
     d = property(_get_d, _set_d)

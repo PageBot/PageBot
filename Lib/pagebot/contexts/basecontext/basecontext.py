@@ -36,9 +36,7 @@ class BaseContext(AbstractContext):
     # Tells Typesetter that by default tags should not be included in output.
     useTags = False
 
-    DEFAULT_STRING_CLASS = BabelString # Default string type in PageBot elements.
-    # To be redefined by inheriting context classes.
-    STRING_CLASS = DEFAULT_STRING_CLASS
+    STRING_CLASS = BabelString
     EXPORT_TYPES = None
 
     def __init__(self):
@@ -903,12 +901,12 @@ class BaseContext(AbstractContext):
         """
         style = makeStyle(style=style) # Check style for illegal keys.
 
-        if not isinstance(bs, self.DEFAULT_STRING_CLASS):
+        if not isinstance(bs, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             # Set the babelString.context as self.
-            bs = self.DEFAULT_STRING_CLASS(bs, style=style, e=e, context=self)
+            bs = self.STRING_CLASS(str(bs), style=style, e=e, context=self)
 
-        assert isinstance(bs, self.DEFAULT_STRING_CLASS)
+        assert isinstance(bs, self.STRING_CLASS)
         return bs
 
     def XXXXFormattedString(self, *args, **kwargs):

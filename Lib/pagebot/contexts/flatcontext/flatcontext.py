@@ -26,7 +26,7 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
-from pagebot.contexts.flatcontext.flatstring import FlatString
+#from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
@@ -75,8 +75,6 @@ class FlatContext(BaseContext):
 
     """
 
-    # Used by the generic BaseContext.newString( )
-    STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
     # Default is point document, should not be changed. Units render to points.
@@ -491,7 +489,7 @@ class FlatContext(BaseContext):
         """
         if s is None:
             s = ''
-        if isinstance(s, (str, BabelString)):
+        if isinstance(s, (str, self.STRING_CLASS)): # Str or BabelString
             s = self.fromBabelString(s)
         assert isinstance(s, self.STRING_CLASS), '%s.newString needs %s, not %s' % (
             self.__class__.__name__, 
