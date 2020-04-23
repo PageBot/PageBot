@@ -31,6 +31,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
 from pagebot import DEFAULT_FONT_PATH
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         asFormatted, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
@@ -61,11 +62,12 @@ class Element:
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow
     PATH_CLASS = BezierPath
+    STRING_CLASS = BabelString
 
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
             left=None, top=None, right=None, bottom=None, sId=None, lib=None,
-            t=None, timeMarks=None, parent=None, context=None, name=None,
+            t=None, timeMarks=None, parent=None, name=None,
             cssClass=None, cssId=None, title=None, description=None,
             theme=None, keyWords=None, language=None, style=None,
             conditions=None, solve=False, framePath=None, elements=None,
@@ -103,35 +105,20 @@ class Element:
         >>> e = Element()
         >>> e.x, e.y, e.w, e.h, e.padding, e.margin
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
-        >>> from pagebot import getContext
         >>> from pagebot.document import Document
-        >>> c = getContext('Flat')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('Flat')
         >>> size = pt(300, 400)
-        >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=c)
-        >>> doc.context
-        <FlatContext>
+        >>> doc = Document(size=size, autoPages=1, padding=30, originTop=False, context=context)
         >>> page = doc[1]
         >>> page.size
         (300pt, 400pt)
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
+        >>> e.context
+        <FlatContext>
         >>> doc.build()
+
         """
-        """
-        FIXME: should we build separate elements, or only at doc level?
-        >>> e.build(doc.getView(), pt(0, 0))
-        >>> e.x, e.y, e.xy
-        (0pt, 20pt, (0pt, 20pt))
-        >>> e.size
-        (300pt, 3pt)
-        >>> e.size3D
-        (300pt, 3pt, 100pt)
-        >>> view = doc.getView()
-        >>> e.build(view, pt(0, 0))
-        """
-        # Optionally set the property for elements that need their own context.
-        # Mostly these are only set for views (which are also Elements) If None
-        # the property will query parent --> root document --> view.
-        self._context = context
         self._parent = None
 
         # Set the local self._lib, validate it is a dictionary, otherwise
@@ -420,6 +407,46 @@ class Element:
         (0, 1, 2)
         """
         return len(self.elements)
+
+    def _get_context(self):
+        """Answer the doc.view.context if it exists.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.contexts import getContext
+        >>> e = Element()
+        >>> e.context is None
+        True
+        >>> context = getContext('Flat')
+        >>> doc = Document(context=context) # Stored as doc.view.context
+        >>> doc.view.context
+        <FlatContext>
+        >>> e = Element(parent=doc[1])
+        >>> e.doc.view.context
+        <FlatContext>
+        >>> e.context
+        <FlatContext>
+        >>> e.context is doc.view.context is context
+        True
+        """
+        doc = self.doc
+        if doc is not None and doc.view is not None:
+            return doc.view.context
+        return None
+    context = property(_get_context)
+
+    def _get_view(self):
+        """Answer the doc.view if it exists.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('Flat')
+        >>> doc = Document(context=context) # Stored as doc.view.context
+        >>> e = Element(parent=doc[1])
+        >>> e.view, doc.view, e.view is doc.view
+        (<PageView>, <PageView>, True)
+        """
+        return self.doc.view
+    view = property(_get_view)
 
     def _get_theme(self):
         """Answer the theme of this element. If undefined, answer the theme of self.parent.
@@ -1115,7 +1142,7 @@ class Element:
         >>> e.childClipPath.__class__.__name__
         'BezierPath'
         """
-        path = self.PATH_CLASS(self.context)
+        path = self.PATH_CLASS(self.view.context)
         path.rect(-self.ml, -self.mb, self.ml + self.w + self.mr, self.mb + self.h + self.mt)
 
         for e in self.elements:
@@ -1895,60 +1922,9 @@ class Element:
             return self.parent.page
         return None
 
-    def _get_view(self):
-        """Answers the self.doc.view, currently set for reference and building
-        this element."""
-        doc = self.doc
-        if doc is not None:
-            return doc.view
-        return None
-    view = property(_get_view)
-
-    def _get_context(self):
-        """Answers the context of this element. In general the self._context
-        will be None, to allow searching the parents --> document --> view. But
-        there may be exceptions where elements+children need their own."""
-        if self._context is not None:
-            return self._context
-        # Context not defined for this element, try parent.
-        if self.parent is not None:
-            return self.parent.context
-        # No context defined and no parent, we cannot do any better now than
-        # answering None here.
-        return None
-
-    def _set_context(self, context):
-        self._context = context
-
-    context = property(_get_context, _set_context)
-
     def _get_builder(self):
-        return self.context.b
-
+        return self.view.context.b
     b = builder = property(_get_builder)
-
-    def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Create a new BabelString, using the current type of self.doc.context,
-        or pagebot.contexts.getContext() if not self.doc or self.doc.view defined,
-        if s is a plain string. Otherwise just answer the BabelString unchanged.
-        In case of a BabelString, is has to be the same as the current context would
-        create, otherwise an error is raised. In other words, there is no BabelString
-        conversion defined (no reliable way of doing that, they should be created
-        in the right context from the beginning).
-
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> e = Element(context=context)
-        >>> #TODO: Get more docTests to work
-        >>> bs = e.newString('ABC')
-        >>> str(bs.s)
-        'ABC'
-        """
-        if e is None:
-            e = self
-
-        assert self.context is not None
-        return self.context.newString(s, e=e, style=style, w=w, h=h, pixelFit=pixelFit)
 
     # Most common properties
 
@@ -1965,7 +1941,7 @@ class Element:
     def _get_parent(self):
         """Answers the parent of the element, if it exists, by weakref
         reference. Answer None of there is not parent defined or if the parent
-        not longer exdef ists."""
+        not longer exists."""
         if self._parent is not None:
             return self._parent()
         return None
@@ -4616,7 +4592,8 @@ class Element:
     # https://www.prepressure.com/pdf/basics/page-boxes
 
     # "Box" is bounding box on a single element.
-    # "Block" is here used as bounding box of a group of elements or otherwise the wrapped bounding box on self context.
+    # "Block" is here used as bounding box of a group of elements 
+    # or otherwise the wrapped bounding box on self.
 
     def _get_block3D(self):
         """Answers the vacuum 3D bounding box around all child elements, including margin.
@@ -4960,14 +4937,16 @@ class Element:
     def _applyRotation(self, view, p):
         """Apply the rotation for angle, where (mx, my) is the rotation center."""
         if self.angle:
+            # FIXME: Not something for the context to do? Unless in build modus.
             px, py, _ = point3D(p)
-            self.context.rotate(self.angle, center=(px+self.rx, py+self.ry))
+            self.view.context.rotate(self.angle, center=(px+self.rx, py+self.ry))
 
     def _restoreRotation(self, view, p):
         """Reset graphics state from rotation mode."""
         if self.angle:
+            # FIXME: Not something for the context to do? Unless in build modus.
             px, py, _ = point3D(p)
-            self.context.rotate(-self.angle, center=(px+self.rx, py+self.ry))
+            self.view.context.rotate(-self.angle, center=(px+self.rx, py+self.ry))
 
     def _applyScale(self, view, p):
         """Internal method to apply the scale, if both *self.scaleX* and
@@ -4982,7 +4961,8 @@ class Element:
 
         # Make sure these are value scale values.
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
-            self.context.saveGraphicState()
+            # FIXME: Not something for the context to do? Unless in build modus.
+            self.view.context.saveGraphicState()
             view.scale = sx, sy
             # Scale point in 3 dimensions.
             p = (p[0] / sx, p[1] / sy, p[2] / sz)
@@ -4992,11 +4972,12 @@ class Element:
         """Reset graphics state from svaed scale mode. Make sure to match the
         call of self._applyScale. If one of (self.scaleX, self.scaleY,
         self.scaleZ) is not 0 or 1, then do the restore."""
+        # FIXME: Not something for the context to do? Unless in build modus.
         sx = self.scaleX
         sy = self.scaleY
         sz = self.scaleZ
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
-            self.context.restoreGraphicState()
+            self.view.context.restoreGraphicState()
 
     #   S P E L L  C H E C K
 
@@ -5283,6 +5264,9 @@ class Element:
         self._restoreScale(view)
         # Depends on flag 'view.showElementInfo'.
         view.drawElementInfo(self, origin)
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, p)
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the
@@ -5298,7 +5282,7 @@ class Element:
         """Draws child elements, dispatching depends on the implementation of
         context specific build elements.
 
-        If no specific builder_<context.b.PB_ID> is implemented, call default
+        If no specific builder_<view.context.b.PB_ID> is implemented, call default
         e.build(view, origin). """
         hook = 'build_' + view.context.b.PB_ID
 

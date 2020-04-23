@@ -30,10 +30,12 @@ class DocWrap(Element):
 
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
-        >>> doc1 = Document(name='Placed Document', w=300, h=400)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> doc1 = Document(name='Placed Document', w=300, h=400, context=context)
         >>> page = doc1[1]
         >>> e = Rect(parent=page, fill='red')
-        >>> doc2 = Document(name='Canvas Document')
+        >>> doc2 = Document(name='Canvas Document', context=context)
         >>> page = doc2[1]
         >>> e = DocWrap(doc1, parent=page, x=100, y=200, fill=0.5)
         >>> doc2.export('_export/ExampleDocWrap.pdf')

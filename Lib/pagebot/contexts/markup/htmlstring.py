@@ -86,8 +86,8 @@ class HtmlString(BabelString):
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> context = HtmlContext()
         >>> style = dict(fontSize=pt(12))
-        >>> bs = context.newString('Example Text ' * 10, style=style)
-        >>> lines = bs.getTextLines(w=200)
+        >>> hs = context.newString('Example Text ' * 10, style=style)
+        >>> lines = hs.getTextLines(w=200)
         >>> #FIX en(lines)
         0
         >>> #FIX line = lines[0]
@@ -125,17 +125,10 @@ class HtmlString(BabelString):
 
     # String methods.
 
-    def asPageBotString(self):
-        # TODO: to be implemented.
-        pass
-
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, fontSize=None, styleName=None,
-            pixelFit=None, tagName=None):
-        """Answers a FlatString instance from valid attributes in *style*. Set all values after testing
-        their existence, so they can inherit from previous style formats.
-        If target width *w* or height *h* is defined, then *fontSize* is scaled to make the string fit *w* or *h*."""
-
+    def newString(cls, pbs=None, style=None):
+        """Answers a FlatString instance from valid attributes in *style*."""
+        '''
         sUpperCase = css('uppercase', e, style)
         sLowercase = css('lowercase', e, style)
         sCapitalized = css('capitalized', e, style)
@@ -145,13 +138,17 @@ class HtmlString(BabelString):
             s = s.lower()
         elif sCapitalized:
             s = s.capitalize()
-
+        '''
         return cls(s, context)
 
-    @classmethod
-    def fromPageBotString(cls, pbs):
+    def asBabelString(self):
         # TODO: to be implemented.
-        pass
+        raise NotImplementedError
+
+    @classmethod
+    def fromBabelString(cls, pbs):
+        # TODO: to be implemented.
+        raise NotImplementedError
 
 if __name__ == '__main__':
     import doctest

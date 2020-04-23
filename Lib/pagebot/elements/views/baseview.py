@@ -46,14 +46,12 @@ class BaseView(Element):
         # building.
         self.verbose = verbose
 
-        if context is None:
-            # If not defined, use the default context for this view.
-            context = self._getContext()
+        self.context = context # Set the self._context property.
+        if context is not None:
+            self.context.setSize(self.w, self.h)
 
-        self.context = context
-        #self.context.newPage(self.w, self.h)
-        self.context.setSize(self.w, self.h)
-        self.setControls()
+        # Optional implemented by inheriting view classes to preset parameters
+        self.setControls() 
 
         # List of collected elements that need to draw their info on top of the
         # main drawing.
@@ -63,9 +61,38 @@ class BaseView(Element):
         self._isDrawn = False
 
     def _getContext(self):
-        """Answers the best / default context for this type of view."""
-        return getContext()
+        """Answers the best / default context for this type of view. To be 
+        redefined by inheriting view classes."""
+        raise NotImplementedError
+
+    def _get_context(self):
+        """The views are the main (and only) keepers of a context reference.
+        The Document and all child element must refer to this context if they
+        need functions that are context dependent, such are the rendering size
+        of a text.
+
+        >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
+        >>> context = FlatContext()
+        >>> view = BaseView()
+        >>> view.context is None
+        True
+        >>> view.context = context
+        >>> view.context
+        <FlatContext>
+        >>> view = BaseView(context=context)
+        >>> view.context
+        <FlatContext>
+        """
+        return self._context
+    def _set_context(self, context):
+        self._context = context
+    context = property(_get_context, _set_context)
 
     def setControls(self):
         """Inheriting views can redefine to alter the default showing of
         parameters."""
+
+if __name__ == "__main__":
+    import sys
+    import doctest
+    sys.exit(doctest.testmod()[0])

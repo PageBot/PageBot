@@ -36,21 +36,27 @@ if platform == 'darwin':
         try:
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
         except:
-            pass
+            print('Cannot import DrawBotContext')
 
 CONTEXT_TYPE = None
 MAMP_PATH = None
 
-def getContext(contextType='DrawBot'):
+def getContext(contextType):
     """Determines which context is used:
-     * DrawBotContext
-     * FlatContext
-     * HtmlContext
-     * InDesignContext
-     * SvgContext
+     * DrawBotContext --> 'DrawBot'
+     * FlatContext --> 'Flat'
+     * HtmlContext --> 'Html'
+     * InDesignContext --> 'InDesign'
+     * SvgContext --> 'Svg'
+     * SketchContext --> 'Sketch'
 
     NOTE: the global DEFAULT_CONTEXT sets the last loaded context to default
     for caching purposes. Switching context type will reload it.
+
+    >>> getContext('Flat')
+    <FlatContext>
+    >>> getContext('DrawBot')
+    <DrawBotContext>
     """
     global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
 
