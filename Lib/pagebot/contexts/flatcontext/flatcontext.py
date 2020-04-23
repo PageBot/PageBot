@@ -700,7 +700,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
-        >>> from pagebot.filepaths import DEFAULT_FONT_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         59
@@ -715,7 +715,7 @@ class FlatContext(BaseContext):
         True
         >>> # If doesn't exists, path is set to default.
         >>> context.font('OtherFont', 12)
-        >>> context._font == DEFAULT_FONT_PATH
+        >>> context._font == getDefaultFontPath()
         True
         >>> # Renders to pt-unit.
         >>> context._fontSize
@@ -809,7 +809,7 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()

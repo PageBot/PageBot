@@ -20,7 +20,7 @@ from math import radians, sin, cos
 import xml.etree.ElementTree as ET
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, DEFAULT_FONT_NAME)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.filepaths import DEFAULT_FONT_NAME
@@ -49,7 +49,8 @@ class BaseContext(AbstractContext):
         self._textFill = blackColor
         self._textStroke = noColor
         self._textStrokeWidth = 0
-        self._font = findFont(DEFAULT_FONT_NAME).path
+        font = findFont(DEFAULT_FONT_NAME)
+        self._font = font.path
         self._fontSize = DEFAULT_FONT_SIZE
         self._frameDuration = 0
         self._fonts = {}
@@ -774,7 +775,7 @@ class BaseContext(AbstractContext):
     def asBabelString(self, bs):
         assert isinstance(bs, self.STRING_CLASS)
         return bs
-        
+
     # ...
 
     def lineHeight(self, value):
@@ -886,10 +887,10 @@ class BaseContext(AbstractContext):
     def newString(self, bs=None, style=None, e=None):
         """Creates a new BabelString instance of self.STRING_CLASS from
         `bs` (converted to plain unicode string), using style as
-        typographic parameters or `e` as cascading style source. 
-        Ignore and just answer `bs` if it is already a self.STRING_CLASS 
+        typographic parameters or `e` as cascading style source.
+        Ignore and just answer `bs` if it is already a self.STRING_CLASS
         instance and no style is forced. PageBot function.
-        
+
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.elements import *
         >>> from pagebot.contexts import getContext
@@ -1050,8 +1051,8 @@ class BaseContext(AbstractContext):
     def ImageObject(self, path=None):
         """Answers an ImageObject that knows about image filters.
 
-        >>> from pagebot import getResourcesPath
         >>> from pagebot import getContext
+        >>> from pagebot.filepaths import getResourcesPath
         >>> context = getContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> #imo = context.getImageObject(path)

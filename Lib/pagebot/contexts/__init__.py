@@ -15,31 +15,38 @@
 #     __init__.py
 #
 
+import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
 hasDrawBot = False
+hasSketch = False
 DrawBotContext = None
 DEFAULT_CONTEXT = None
+CONTEXT_TYPE = None
+MAMP_PATH = None
 
-if platform == 'darwin':
+def testDrawBot():
     try:
         import drawBot
         hasDrawBot = True
     except:
         hasDrawBot = False
 
-    # TODO: check if drawBotContext exists first, ask to install.
     if hasDrawBot:
         try:
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
         except:
-            print('Cannot import DrawBotContext')
+            print(traceback.format_exc())
 
-CONTEXT_TYPE = None
-MAMP_PATH = None
+def testSketch():
+    pass
+
+if platform == 'darwin':
+    testDrawBot()
+    testSketch()
 
 def getContext(contextType):
     """Determines which context is used:
@@ -68,7 +75,7 @@ def getContext(contextType):
     # FIXME: what about HTMLContext()
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
-            if contextType == 'DrawBot' and hasDrawBot and DrawBotContext is not None:
+            if contextType == 'DrawBot' and hasDrawBot:# and DrawBotContext is not None:
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'DrawBot' and not hasDrawBot:
                 print('Cannot find the pagebotosx module.')
@@ -76,6 +83,8 @@ def getContext(contextType):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
+            elif contextType == 'Sketch' and hasSketch:
+                DEFAULT_CONTEXT = getSketchContext()
             elif contextType == 'HTML':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
@@ -83,7 +92,7 @@ def getContext(contextType):
 
             MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
-            if contextType in ('DrawBot',):
+            if contextType in ('DrawBot', 'Sketch'):
                 print('DrawBot is not available on platform %s.' % platform)
                 print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
@@ -112,6 +121,9 @@ def getHtmlContext():
 
 def getSvgContext():
     return SvgContext()
+
+def getSketchContext():
+    return SketchContext()
 
 def getContextMampPath():
     """Make sure MAMP_PATH is initialized depending on the context."""

@@ -14,20 +14,26 @@
 #     fontpaths.py
 #
 import os
-
+import os.path
 from pagebot.toolbox.transformer import path2FontName
-from pagebot.filepaths import RESOURCES_PATH, DEFAULT_FONT_PATH
+from pagebot.filepaths import getResourcesPath
+from pagebot.constants import DEFAULT_FONT_NAME, DEFAULT_FOUNDRY
 
 #   P A T H S
 
-TEST_FONTS_PATH = RESOURCES_PATH + '/testfonts'
 
-# Dictionary with all available font paths on the platform, key is the single file name.
+# Dictionary with all available font paths on the platform, key is the single
+# file name.
 FONT_PATHS = {}
 
 def getTestFontsPath():
     """Answers the path of the PageBot test fonts."""
-    return TEST_FONTS_PATH
+    resourcesPath = getResourcesPath()
+    return '%s/%s' % (resourcesPath, 'testfonts')
+
+def getDefaultFontPath():
+    testFontsPath = getTestFontsPath()
+    return '%s/%s/%s.ttf' % (testFontsPath, DEFAULT_FOUNDRY, DEFAULT_FONT_NAME)
 
 def getFontPathOfFont(font, default=None):
     """Answers the path that is source of the given font name.
@@ -49,8 +55,8 @@ def getFontPathOfFont(font, default=None):
     >>> path = getFontPathOfFont('Roboto-Regular') # Set as font name
     >>> path.endswith('/Roboto-Regular.ttf')
     True
-    >>> path = getFontPathOfFont('UnknowFont.ttf') # Unknown font is set to DEFAULT_FONT_PATH
-    >>> path == DEFAULT_FONT_PATH
+    >>> path = getFontPathOfFont('UnknowFont.ttf') # Unknown font is set to getDefaultFontPath()
+    >>> path == getDefaultFontPath()
     True
     """
     if hasattr(font, 'path'): # In case it is a Font instance, get its path.
@@ -58,7 +64,7 @@ def getFontPathOfFont(font, default=None):
     if font is not None and not os.path.exists(font):
         font = getFontPaths().get(font)
     if font is None:
-        font = default or DEFAULT_FONT_PATH
+        font = default or getDefaultFontPath()
     return font
 
 def _recursivelyCollectFontPaths(path, collectedFontPaths):
@@ -78,7 +84,8 @@ def _recursivelyCollectFontPaths(path, collectedFontPaths):
 
 def getPageBotFontPaths():
     paths = {}
-    _recursivelyCollectFontPaths(TEST_FONTS_PATH, paths)
+    testFontsPath = getTestFontsPath()
+    _recursivelyCollectFontPaths(testFontsPath, paths)
     return paths
 
 def getFontPaths(extraPaths=None):
@@ -90,20 +97,22 @@ def getFontPaths(extraPaths=None):
 
     Locally defined fonts with the same file name will overwrite the font files
     that  are located deeper.
+    TODO: also check app resources path.
 
     >>> import os
-    >>> os.path.exists(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf')
+    >>> testFontsPath = getTestFontsPath()
+    >>> os.path.exists(testFontsPath + '/fontbureau/Amstelvar-Roman-VF.ttf')
     True
     >>> fontPaths = getFontPaths() # Only default paths on the platform
     >>> 'Amstelvar-Roman-VF' in fontPaths
     True
-    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf') # As single extra path
+    >>> fontPaths = getFontPaths(testFontsPath + '/fontbureau/Amstelvar-Roman-VF.ttf') # As single extra path
     >>> 'Amstelvar-Roman-VF' in fontPaths
     True
-    >>> fontPaths = getFontPaths([TEST_FONTS_PATH + '/fontbureau/Amstelvar-Roman-VF.ttf']) # As list of extra paths
+    >>> fontPaths = getFontPaths([testFontsPath + '/fontbureau/Amstelvar-Roman-VF.ttf']) # As list of extra paths
     >>> 'Amstelvar-Roman-VF' in fontPaths
     True
-    >>> fontPaths = getFontPaths(TEST_FONTS_PATH + '/OtherFont.ttf')
+    >>> fontPaths = getFontPaths(testFontsPath + '/OtherFont.ttf')
     >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.
     False
     """
@@ -137,7 +146,8 @@ def getFontPaths(extraPaths=None):
         # Add PageBot repository fonts, they always exist in this context. But
         # they can be overwritten by fonts with the same (file) name in the
         # extraPaths.
-        _recursivelyCollectFontPaths(TEST_FONTS_PATH, FONT_PATHS)
+        testFontsPath = getTestFontsPath()
+        _recursivelyCollectFontPaths(testFontsPath, FONT_PATHS)
 
         if extraPaths is not None:
             if not isinstance(extraPaths, (list, tuple)):

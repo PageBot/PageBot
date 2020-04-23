@@ -13,8 +13,8 @@
 #
 #     books/photobook/__init__.py
 #
-from pagebot import getResourcesPath
 from pagebot.conditions import *
+from pagebot.filepaths import getResourcesPath
 from pagebot.elements import *
 from pagebot.constants import *
 from pagebot.publications.books.basebook import BaseBook

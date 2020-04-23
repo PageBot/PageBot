@@ -15,7 +15,7 @@
 from random import choice
 
 from pagebot.constants import *
-from pagebot.filepaths import DEFAULT_FONT_NAME
+from pagebot.constants import DEFAULT_FONT_NAME
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spotColor, rgbColor, whiteColor, blackColor, grayColor
 

@@ -28,7 +28,7 @@ from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
         DEFAULT_TRACKING, DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH, DEFAULT_MININFOPADDING,
         VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
-from pagebot import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
 from pagebot.contexts.basecontext.babelstring import BabelString
@@ -1820,7 +1820,7 @@ class Element:
         >>> e.font.info.cssName
         'Roboto-Regular'
         """
-        font = self.css('font', DEFAULT_FONT_PATH)
+        font = self.css('font', getDefaultFontPath())
         if isinstance(font, str):
             font = findFont(font)
         return font

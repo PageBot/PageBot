@@ -651,7 +651,7 @@ class BezierPath:
         tolerance: the precision tolerance of the vector outline
         offset: add the traced vector outline with an offset to the BezierPath
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> from pagebot.toolbox.units import p
         >>> from pagebot import getContext
         >>> context = getContext('Flat')

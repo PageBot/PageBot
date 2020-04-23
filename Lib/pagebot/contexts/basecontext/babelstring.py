@@ -19,7 +19,7 @@
 #     implementing context.fromBabelString and context.asBabelString.
 #
 from copy import copy, deepcopy
-import weakref 
+import weakref
 
 from pagebot.constants import DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT, LEFT
 from pagebot.fonttoolbox.objects.font import findFont, Font
@@ -178,7 +178,7 @@ class BabelString:
     e = property(_get_e, _set_e)
 
     def appendMarker(self, markerId, arg):
-        """Add a marker to the last run. Code can run through the 
+        """Add a marker to the last run. Code can run through the
         self.runs to mark a run with additional information.
         """
         if self.runs:
@@ -211,7 +211,7 @@ class BabelString:
         if context is None:
             e = self.e
             if e:
-                context = e.context 
+                context = e.context
         return context
     def _set_context(self, context):
         if context is not None:
@@ -260,7 +260,7 @@ class BabelString:
         """Answers a copy of self with a sliced string or with a single indexed
         character. We can't just slice the concatenated string, as there may be
         overlapping runs and styles.
-        Note that the styles are copied within slice range. No cascading 
+        Note that the styles are copied within slice range. No cascading
         style values are taken from previous runs.
 
         >>> from pagebot.toolbox.units import pt
@@ -299,7 +299,7 @@ class BabelString:
             for run in self.runs:
                 style = copy(run.style)
                 l = len(run)
-                if i + l < start: 
+                if i + l < start:
                     i += len(run)
                     continue # Not yet there
                 if i < start:
@@ -335,7 +335,7 @@ class BabelString:
         return None
 
     def __repr__(self):
-        """Answer the identifier string with format $ABCD$, to show the 
+        """Answer the identifier string with format $ABCD$, to show the
         difference with the actual string. Abbreviate with ... if the
         concatenated string is longer than 10 characers.
 
@@ -365,7 +365,7 @@ class BabelString:
         (15, 2)
         """
         # If styles are matching, then just add.
-        if self.runs and (style is None or self.style == style): 
+        if self.runs and (style is None or self.style == style):
             self.runs[-1].s += str(s)
         else: # With incompatible styles, make a new run.
             self.runs.append(BabelRun(s, style))
@@ -394,7 +394,7 @@ class BabelString:
         >>> bs1 = BabelString('ABCD', dict(fontSize=pt(18)))
         >>> bs2 = BabelString('EFGH', dict(fontSize=pt(18)))
         >>> bs3 = bs1 + bs2 # Create new instance, concatenated from both
-        >>> bs1 is not bs2 and bs1 is not bs3 and bs2 is not bs3 
+        >>> bs1 is not bs2 and bs1 is not bs3 and bs2 is not bs3
         True
         """
         bsResult = BabelString()
@@ -421,7 +421,7 @@ class BabelString:
         >>> bs2 == bs3
         False
         >>> bs4 = bs1 + bs3
- 
+
         """
         if not isinstance(bs, self.__class__):
             return False
@@ -449,12 +449,14 @@ class BabelString:
         for run in self.runs:
             s.append(run.s)
         return ''.join(s)
+
     def _set_s(self, s):
         if self.runs:
             style = self.runs[-1].style # Keep last style if it exists
         else:
             style = None
         self.runs = [BabelRun(s, style)]
+
     s = property(_get_s, _set_s)
 
     #  Attributes, based on current style (not cascading)
@@ -469,7 +471,7 @@ class BabelString:
         if self.runs:
             self.runs[-1].style = style
         else: # No runs, create a new one, with style and empty string.
-            self.runs.append(BabelRun(style=style)) 
+            self.runs.append(BabelRun(style=style))
     style = property(_get_style, _set_style)
 
     def _get_language(self):
@@ -484,6 +486,7 @@ class BabelString:
         'nl'
         """
         return self.style.get('language', DEFAULT_LANGUAGE)
+
     def _set_language(self, language):
         self.style['language'] = language # Set in current style
     language = property(_get_language, _set_language)
@@ -499,14 +502,16 @@ class BabelString:
         'en'
         """
         return (self.style or {}).get('hyphenation', False)
+
     def _set_hyphenation(self, hyphenation):
         (self.style or {})['hyphenation'] = hyphenation
+
     hyphenation = property(_get_hyphenation, _set_hyphenation)
 
     def _get_font(self):
         """Answer the font that is defined in the current style.
         If the font is just a string, then find the font and answer it.
-        Answer the default font, if the font name cannot be found. 
+        Answer the default font, if the font name cannot be found.
 
         >>> bs = BabelString('ABCD', dict(font='PageBot-Regular'))
         >>> bs.font
@@ -539,9 +544,11 @@ class BabelString:
         12pt
         """
         return units(self.style.get('fontSize', DEFAULT_FONT_SIZE))
+
     def _set_fontSize(self, fontSize):
         # Set the fontSize in the current style
-        self.style['fontSize'] = units(fontSize) 
+        self.style['fontSize'] = units(fontSize)
+
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_leading(self):
@@ -561,9 +568,11 @@ class BabelString:
         30pt
         """
         return units(self.style.get('leading', 0), base=self.fontSize)
+
     def _set_leading(self, leading):
         # Set the leading in the current style
         self.style['leading'] = units(leading, base=self.fontSize)
+
     leading = property(_get_leading, _set_leading)
 
     def _get_tracking(self):
@@ -583,9 +592,11 @@ class BabelString:
         30pt
         """
         return units(self.style.get('tracking', 0), base=self.fontSize)
+
     def _set_tracking(self, tracking):
         # Set the tracking in the current style
         self.style['tracking'] = units(tracking, base=self.fontSize)
+
     tracking = property(_get_tracking, _set_tracking)
 
     def _get_xAlign(self):
@@ -601,8 +612,10 @@ class BabelString:
         'right'
         """
         return self.style.get('xAlign', LEFT)
+
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = xAlign
+
     xAlign = property(_get_xAlign, _set_xAlign)
 
     def _get_baselineShift(self):
@@ -622,6 +635,7 @@ class BabelString:
         return units(self.style.get('baselineShift', 0), base=self.fontSize)
     def _set_baselineShift(self, baselineShift):
         self.style['baselineShift'] = units(baselineShift, base=self.fontSize)
+
     baselineShift = property(_get_baselineShift, _set_baselineShift)
 
     def _get_openTypeFeatures(self):
@@ -640,6 +654,7 @@ class BabelString:
         return self.style.get('openTypeFeatures', {})
     def _set_openTypeFeatures(self, openTypeFeatures):
         self.style['openTypeFeatures'] = openTypeFeatures
+
     openTypeFeatures = property(_get_openTypeFeatures, _set_openTypeFeatures)
 
     def _get_underline(self):
@@ -654,8 +669,10 @@ class BabelString:
         False
         """
         return self.style.get('underline', False)
+
     def _set_underline(self, underline):
         self.style['underline'] = underline
+
     underline = property(_get_underline, _set_underline)
 
     def _get_indent(self):
@@ -673,8 +690,10 @@ class BabelString:
         True
         """
         return units(self.style.get('indent', 0), base=self.fontSize)
+
     def _set_indent(self, indent):
         self.style['indent'] = units(indent, base=self.fontSize)
+
     indent = property(_get_indent, _set_indent)
 
     def _get_tailIndent(self):
@@ -692,8 +711,10 @@ class BabelString:
         True
         """
         return units(self.style.get('tailIndent', 0), base=self.fontSize)
+
     def _set_tailIndent(self, tailIndent):
         self.style['tailIndent'] = units(tailIndent, base=self.fontSize)
+
     tailIndent = property(_get_tailIndent, _set_tailIndent)
 
     def _get_firstLineIndent(self):
@@ -711,8 +732,10 @@ class BabelString:
         True
         """
         return units(self.style.get('firstLineIndent', 0), base=self.fontSize)
+
     def _set_firstLineIndent(self, firstLineIndent):
         self.style['firstLineIndent'] = units(firstLineIndent, base=self.fontSize)
+
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
 
 
@@ -731,8 +754,10 @@ class BabelString:
         Color(r=0.25, g=0.25, b=0.25)
         """
         return color(self.style.get('textFill', 0))
+
     def _set_textFill(self, textFill):
         self.style['textFill'] = color(textFill)
+
     textFill = property(_get_textFill, _set_textFill)
 
     def _get_textStroke(self):
@@ -750,8 +775,10 @@ class BabelString:
         Color(r=0.25, g=0.25, b=0.25)
         """
         return color(self.style.get('textStroke', 0))
+
     def _set_textStroke(self, textStroke):
         self.style['textStroke'] = color(textStroke)
+
     textStroke = property(_get_textStroke, _set_textStroke)
 
     def _get_textStrokeWidth(self):
@@ -768,8 +795,10 @@ class BabelString:
         0.5pt
         """
         return units(self.style.get('textStrokeWidth', 0))
+
     def _set_textStrokeWidth(self, textStrokeWidth):
         self.style['textStrokeWidth'] = units(textStrokeWidth)
+
     textStrokeWidth = property(_get_textStrokeWidth, _set_textStrokeWidth)
 
     def _get_capHeight(self):
@@ -791,6 +820,7 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.capHeight / font.info.unitsPerEm
+
     capHeight = property(_get_capHeight)
 
     def _get_xHeight(self):
@@ -812,6 +842,7 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.xHeight / font.info.unitsPerEm
+
     xHeight = property(_get_xHeight)
 
     def _get_ascender(self):
@@ -833,6 +864,7 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.ascender / font.info.unitsPerEm
+
     ascender = property(_get_ascender)
 
     def _get_descender(self):
@@ -854,6 +886,7 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.descender / font.info.unitsPerEm
+
     descender = property(_get_descender)
 
 

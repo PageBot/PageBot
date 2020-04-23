@@ -30,7 +30,7 @@ class Image(Element):
     can be (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
-    >>> from pagebot import getResourcesPath
+    >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
