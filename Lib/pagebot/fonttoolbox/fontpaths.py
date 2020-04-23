@@ -17,7 +17,7 @@ import os
 import os.path
 from pagebot.toolbox.transformer import path2FontName
 from pagebot.filepaths import getResourcesPath
-from pagebot.constants import DEFAULT_FONT_NAME, DEFAULT_FOUNDRY
+from pagebot.constants import DEFAULT_FONT, DEFAULT_FOUNDRY
 
 #   P A T H S
 
@@ -33,7 +33,7 @@ def getTestFontsPath():
 
 def getDefaultFontPath():
     testFontsPath = getTestFontsPath()
-    return '%s/%s/%s.ttf' % (testFontsPath, DEFAULT_FOUNDRY, DEFAULT_FONT_NAME)
+    return '%s/%s/%s.ttf' % (testFontsPath, DEFAULT_FOUNDRY, DEFAULT_FONT)
 
 def getFontPathOfFont(font, default=None):
     """Answers the path that is source of the given font name.

@@ -20,7 +20,7 @@
 #     be useful in other sites too.
 #
 from pagebot.conditions import *
-from pagebot.constants import DEFAULT_FONT_NAME, FONT_FEATURES
+from pagebot.constants import DEFAULT_FONT, FONT_FEATURES
 from pagebot.elements.element import Element
 from pagebot.elements.pbgroup import Group
 from pagebot.fonttoolbox.objects.font import findFont
@@ -67,7 +67,7 @@ class TypeListLine(Element):
 
         # Fonts
         if font is None:
-            font = findFont(DEFAULT_FONT_NAME)
+            font = findFont(DEFAULT_FONT)
             print('Cannot find font %s' % fontData)
         self.font = font
         if labelFont is None:

@@ -15,7 +15,7 @@
 from random import choice
 
 from pagebot.constants import *
-from pagebot.constants import DEFAULT_FONT_NAME
+from pagebot.constants import DEFAULT_FONT
 from pagebot.toolbox.units import pt
 from pagebot.toolbox.color import spotColor, rgbColor, whiteColor, blackColor, grayColor
 
@@ -226,7 +226,7 @@ def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
     padding = pt(12) # Must be pt, to convert automatic in CSS, for now.
     margin = 0
     return dict(
-        font=DEFAULT_FONT_NAME,
+        font=DEFAULT_FONT,
         fontSize=fontSize,
         tracking=tracking,
         leading=leading,

@@ -684,7 +684,7 @@ URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 #URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries.js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
-DEFAULT_FONT_NAME = 'PageBot-Regular'
+DEFAULT_FONT = 'PageBot-Regular'
 DEFAULT_FOUNDRY = 'typetr'
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)

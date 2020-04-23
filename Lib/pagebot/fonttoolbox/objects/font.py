@@ -34,7 +34,6 @@ except:
     from fontTools.varLib.mutator import iup_delta
 
 from pagebot.constants import *
-from pagebot.filepaths import DEFAULT_FONT_PATH
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.toolbox.transformer import path2FontName, path2Extension
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
@@ -181,16 +180,23 @@ def findFont(fontPath, default=None, lazy=True):
     return default
 
 def getFontPath(font):
+    """Answer the font file path for @font.
 
-    if font is not None and not isinstance(font, str):
-        fontPath = font.path
-    else:
-        fontPath = font
+    >>> path = getFontPath('PageBot-Regular')
+    >>> path.endswith('PageBot-Regular.ttf')
+    True
 
-    if fontPath is None or not os.path.exists(fontPath):
-        # TODO: get path from base context self._font.
-        fontPath = DEFAULT_FONT_PATH
-
+    """
+    fontPath = None
+    if font is not None:
+        if isinstance(font, str):
+            f = findFont(font)
+            if f is not None:
+                fontPath =  f.path
+    if not os.path.exists(fontPath):
+        f = findFont(DEFAULT_FONT)
+        if f is not None:
+            fontPath = font.path
     return fontPath
 
 def getLineHeight(leading, fontSize):

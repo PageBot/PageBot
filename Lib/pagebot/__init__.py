@@ -18,7 +18,7 @@
 from sys import platform
 import re
 import os.path
-from pagebot.constants import DEFAULT_FONT_NAME
+from pagebot.constants import DEFAULT_FONT
 from pagebot.filepaths import ROOT_PATH
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
