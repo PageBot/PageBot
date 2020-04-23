@@ -22,6 +22,8 @@ import xml.etree.ElementTree as ET
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, DEFAULT_FONT_NAME)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
+from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.filepaths import DEFAULT_FONT_NAME
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
@@ -34,8 +36,9 @@ class BaseContext(AbstractContext):
     # Tells Typesetter that by default tags should not be included in output.
     useTags = False
 
+    DEFAULT_STRING_CLASS = BabelString # Default string type in PageBot elements.
     # To be redefined by inheriting context classes.
-    STRING_CLASS = None
+    STRING_CLASS = DEFAULT_STRING_CLASS
     EXPORT_TYPES = None
 
     def __init__(self):
@@ -86,12 +89,14 @@ class BaseContext(AbstractContext):
         not exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext('DrawBot')
+        >>> context
+        <DrawBotContext>
         >>> path = context.bezierpath
         >>> path is not None
         True
         >>> path
-        <FlatBezierPath>
+        <BezierPath>
         >>> #len(path.points)
         #0
         >>> path.moveTo((0, 0))
@@ -145,7 +150,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import px
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(pt(100), pt(100))
         >>> #context.newPage(100, 100)
         """
@@ -201,7 +206,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
@@ -216,7 +221,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
@@ -229,7 +234,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -254,10 +259,10 @@ class BaseContext(AbstractContext):
         NOTE: PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.newPath()
-        <FlatBezierPath>
+        <BezierPath>
         """
         raise NotImplementedError
         #self._bezierpath = BaseBezierPath(self.b)
@@ -269,7 +274,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -289,7 +294,7 @@ class BaseContext(AbstractContext):
         is open.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
@@ -313,7 +318,7 @@ class BaseContext(AbstractContext):
         open.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> hasattr(context, 'newPath')
         True
         >>> context.newPage(420, 420)
@@ -358,7 +363,7 @@ class BaseContext(AbstractContext):
         PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> # Creates. a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
@@ -380,7 +385,7 @@ class BaseContext(AbstractContext):
         order. Use self._bezierpath if path is omitted. PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext('DrawBot')
         >>> path = context.newPath()
         >>> path.points
         ()
@@ -490,7 +495,7 @@ class BaseContext(AbstractContext):
         BezierPath(context).
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
@@ -518,7 +523,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -700,7 +705,7 @@ class BaseContext(AbstractContext):
         then convert.
 
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.rotate(40)
         """
@@ -753,13 +758,25 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> context.newPage(420, 420)
         >>> context.fontSize(pt(12))
         """
         fspt = upt(fontSize)
         self._fontSize = fspt
         self.b.fontSize(fspt) # Render fontSize unit to value
+
+    # Babelstring
+
+    def fromBabelString(self, bs):
+        """Since the BabelString is native format for the BaseContext,
+        we can just return it."""
+        assert isinstance(bs, self.STRING_CLASS)
+        return bs
+
+    def asBabelString(self, bs):
+        assert isinstance(bs, self.STRING_CLASS)
+        return bs
 
     # ...
 
@@ -869,30 +886,40 @@ class BaseContext(AbstractContext):
 
     # String.
 
-    def FormattedString(self, *args, **kwargs):
+    def newString(self, bs=None, style=None, e=None):
+        """Creates a new BabelString instance of self.STRING_CLASS from
+        `bs` (converted to plain unicode string), using style as
+        typographic parameters or `e` as cascading style source.
+        Ignore and just answer `bs` if it is already a self.STRING_CLASS
+        instance and no style is forced. PageBot function.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.elements import *
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> e = Element(name='Test', w=500, h=200) # Ref can be any type of element
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)), e=e)
+        >>> bs, bs.__class__.__name__, bs.e.name, bs.context
+        ($ABCD$, 'BabelString', 'Test', <DrawBotContext>)
+        """
+        style = makeStyle(style=style) # Check style for illegal keys.
+
+        if not isinstance(bs, self.DEFAULT_STRING_CLASS):
+            # Otherwise convert s into plain string, from whatever it is now.
+            # Set the babelString.context as self.
+            bs = self.DEFAULT_STRING_CLASS(bs, style=style, e=e, context=self)
+
+        assert isinstance(bs, self.DEFAULT_STRING_CLASS)
+        return bs
+
+    def XXXXFormattedString(self, *args, **kwargs):
         # Refer to BabelString?
         return self.b.FormattedString(*args, **kwargs)
-
-    def newString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
-        """Creates a new styles BabelString instance of self.STRING_CLASS from
-        `s` (converted to plain unicode string), using `e` or style as
-        typographic parameters. Ignore and just answer `s` if it is already a
-        self.STRING_CLASS instance and no style is forced. PageBot function.
-        """
-        style = makeStyle(style=style)
-
-        if not isinstance(s, self.STRING_CLASS):
-            # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.newString(str(s), context=self, e=e,
-                    style=style, w=w, h=h, pixelFit=pixelFit)
-
-        assert isinstance(s, self.STRING_CLASS)
-        return s
 
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, e=e, style=style)
 
-    def fitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
+    def XXXfitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
         s assuming that style['font'] is a Variable Font instnace, or a path
         pointing to one. If the for is not a VF, then behavior is the same as
@@ -908,7 +935,7 @@ class BaseContext(AbstractContext):
         assert isinstance(s, self.STRING_CLASS)
         return s
 
-    def newText(self, textStyles, e=None, w=None, h=None, newLine=False):
+    def newText(self, textStyles, e=None, newLine=False):
         """Answers a BabelString as a combination of all text and styles in
         textStyles, which is should have format:
 
@@ -926,7 +953,7 @@ class BaseContext(AbstractContext):
         for t, style in textStyles:
             if newLine or (style and style.get('display') == DISPLAY_BLOCK):
                 t += '\n'
-            bs = self.newString(t, style=style, e=e, w=w, h=h)
+            bs = self.newString(t, style=style, e=e)
             if s is None:
                 s = bs
             else:

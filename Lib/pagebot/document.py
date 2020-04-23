@@ -29,7 +29,8 @@ from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
         BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
-    """A Document is a container of pages.
+    """A Document is a container of pages, independent from any context.
+    Any predefined context is stored as view, not as document attribute.
 
     >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
@@ -45,12 +46,14 @@ class Document:
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300pt, 400pt, 260pt, 360pt, 20pt, 20pt, 20pt, 20pt, 'default')
 
+    >>> from pagebot.contexts import getContext
+    >>> context = getContext('Flat')
     >>> pages = (Page(), Page(), Page())
-    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp')
+    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp', context=context)
     >>> len(doc), sorted(doc.pages.keys()), len(doc.pages[1])
     (3, [1, 2, 3], 1)
-    >>> doc.context
-    <HtmlContext>
+    >>> doc.view.context
+    <FlatContext>
     >>> doc.solve()
     Score: 0 Fails: 0
     >>> doc.build()
@@ -229,13 +232,6 @@ class Document:
 
     doc = property(_get_doc)
 
-    def _get_context(self):
-        """Answers the context of the current view to allow searching the
-        parents --> document --> view."""
-        return self.view.context
-
-    context = property(_get_context)
-
     # Document[12] answers a list of pages where page.y == 12. This is
     # different from regular elements, who want the page.eId as key.
 
@@ -305,21 +301,6 @@ class Document:
         glossary.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
         glossary.append('\tLib: %s' % ', '.join(self.docLib.keys()))
         return '\n'.join(glossary)
-
-    def _get_builder(self):
-        """Answers the builder, which should be available from self.context.
-
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> doc = Document(context=context, title='MySite')
-        >>> doc, doc.title
-        (<Document "MySite" Pages=1 Templates=1 Views=1>, 'MySite')
-        >>> doc.context
-        <FlatContext>
-        """
-        return self.context.b
-
-    b = builder = property(_get_builder)
 
     #   T E M P L A T E
 
@@ -1454,20 +1435,16 @@ class Document:
         """Create a new view instance and set self.view default view, that will
         be used for checking on view parameters, before any element rendering
         is done, such as layout conditions and creating the right type of
-        strings. If context is not defined, then use the result of getView().
+        strings. 
 
         >>> from pagebot.elements.views import viewClasses
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)
         >>> sorted(viewClasses.keys())
         ['Git', 'Mamp', 'Page', 'Site']
         >>> view = doc.newView('Page', 'myView')
-        >>> str(view.context) in ('<DrawBotContext>', '<FlatContext>')
-        True
         >>> view.w, view.h
         (300pt, 400pt)
         >>> view = doc.newView('Site')
-        >>> view.context
-        <HtmlContext>
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID

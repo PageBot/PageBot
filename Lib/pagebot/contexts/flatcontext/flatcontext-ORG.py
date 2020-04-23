@@ -479,28 +479,7 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def XXXXnewString(self, s=None, style=None):
-        """Answer the @s converted into a self.STRING_CLASS instance.
-        @s can be of type (None, str, BabelString)
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = FlatContext()
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
-        >>> bs
-        $ABCD$
-        """
-        if s is None:
-            s = ''
-        if isinstance(s, (str, BabelString)):
-            s = self.fromBabelString(s)
-        assert isinstance(s, self.STRING_CLASS), '%s.newString needs %s, not %s' % (
-            self.__class__.__name__, 
-            self.STRING_CLASS.__name__, 
-            s.__class__.__name__)
-        s.context = self
-        return s            
-
-    def text(self, bs, p):
+    def text(self, pbs, p):
         """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
@@ -511,19 +490,17 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
-        >>> bs = context.newString('ABCD', style=style)
-        >>> bs, bs.__class__.__name__
-        ($ABCD$, 'BabelString')
-        >>> fs = context.fromBabelString(bs)
-        >>> fs
+        >>> fs = context.newString('ABC', style=style)
+        >>> fs.__class__.__name__
+        'FlatString'
         >>> context.newPage(1000, 1000)
-        >>> context.text(bs, (100, 100))
+        >>> context.text(fs, (100, 100))
 
         """
-        fs = self.fromBabelString(bs)
+        fs = self.fromBabelString(pbs)
         if isinstance(fs, str):
             # Creates a new string with default styles.
-            style = dict(fontSize=self._fontSize)
+            style = {'fontSize': self._fontSize}
             style = makeStyle(style=style)
             fs = self.newString(fs, style=style)
         elif not isinstance(fs, FlatString):
@@ -564,17 +541,16 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
-        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean hendrerit auctor dolor eu interdum. '
         >>> font = findFont('Roboto-Regular')
-        >>> style = dict(font=font, fontSize=pt(20))
+        >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style)
-        >>> fs = context.newString(txt * 7, style=style)
-        >>> fs
-        $Lorem ipsu...$
-        >>> r = (10, 262, 200, 300)
-        >>> of = context.textBox(fs, r) # Calculate overflow in the box
-        >>> of
-        'dolor eu interdum. '
+        >>> blurb = Blurb()
+        >>> s = blurb.getBlurb('stylewars_bluray')
+        >>> fs = context.newString(s, style=style)
+        >>> r = (10, 262, 400, 313)
+        >>> of = context.textBox(fs, r)
+        >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
+        True
         """
         if isinstance(fs, str):
             # Creates a new string with default styles.
@@ -598,7 +574,7 @@ class FlatContext(BaseContext):
 
         return fs.textBox(self.page, box)
 
-    def textOverflow(self, bsOrFs, box, align=LEFT):
+    def textOverflow(self, pbsOrFs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context.
 
@@ -612,8 +588,9 @@ class FlatContext(BaseContext):
         >>> style = {'font': font, 'fontSize': 14}
         >>> style = makeStyle(style=style) # Check for unsupported names
         >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin venenatis sit amet libero at finibus. '
-        >>> bs = context.newString(txt * 4, style)
-        >>> of = context.textOverflow(bs, r)
+        >>> pbs = BabelString(txt * 4, style)
+        >>> of = context.textOverflow(pbs, r)
+        >>> of
         """
 
         """
@@ -625,12 +602,12 @@ class FlatContext(BaseContext):
         True
         """
         assert self.page is not None, 'FlatString.text: self.page is not set.'
-        fs = self.fromBabelString(bsOrFs)
+        fs = self.fromBabelString(pbsOrFs)
         # FIXME: this actually shows the text?
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def textSize(self, bs, w=None, h=None):
+    def textSize(self, pbs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
         no text is defined. Answers the height of the string if the width w is
         given.
@@ -650,15 +627,13 @@ class FlatContext(BaseContext):
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ', style=style)
-
-        """
-
-        """
+        >>> print(type(bs))
+        <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
         >>> bs.place(context.page, 0, 0)
         >>> style1 = dict(font='Roboto-Bold', fontSize=14)
         >>> bs1 = context.newString('DEF', style=style)
         >>> bs + bs1
-        $ABC DEF$
+        ABC DEF
         >>> #context.textSize(bs)
         #(201.53pt, 16.8pt)
         >>> #bs.size
@@ -674,24 +649,22 @@ class FlatContext(BaseContext):
         >>> #len(lines)
         #35
         """
-        fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
-        return fs.textSize(w=w, h=h)
+        fs = self.fromBabelString(pbs) # pbs can be FlatString or BabelString
+        return pbs.size
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
 
-    def fromBabelString(self, bsOrFs):
-        if isinstance(bsOrFs, FlatString):
-            return bsOrFs
-        if isinstance(bsOrFs, str):
-            return self.STRING_CLASS(bsOrFs)
-        if isinstance(bsOrFs, BabelString):
-            fs = self.STRING_CLASS(e=bsOrFs.e)
-            for run in bsOrFs.runs:
-                fs += self.STRING_CLASS(run.s, style=run.style, e=pbsOrFs.e, context=bsOrFs.context)
-            return fs
-        raise ValueError('%s.fromBabelString: String type %s not supported' % 
-            (self.__class__.__name__, pbsOrFs.__class__.__name__))
+    def fromBabelString(self, pbsOrFs):
+        if isinstance(pbsOrFs, FlatString):
+            return pbsOrFs
+        if not isinstance(pbsOrFs, BabelString):
+            raise ValueError('%s.text: String type %s not supported' % 
+                (self.__class__.__name__, pbsOrFs.__class__.__name__))
+        fs = self.newString()
+        for run in pbsOrFs.runs:
+            fs += self.newString(run.string, style=run.style)
+        return fs
 
     #   F O N T
 
@@ -702,7 +675,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
-        >>> from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
+        >>> from pagebot.filepaths import DEFAULT_FONT_PATH
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         59
@@ -717,7 +690,7 @@ class FlatContext(BaseContext):
         True
         >>> # If doesn't exists, path is set to default.
         >>> context.font('OtherFont', 12)
-        >>> context._font == getDefaultFontPath()
+        >>> context._font == DEFAULT_FONT_PATH
         True
         >>> # Renders to pt-unit.
         >>> context._fontSize
@@ -811,7 +784,7 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
 
-        >>> from pagebot.filepaths import getResourcesPath
+        >>> from pagebot import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()

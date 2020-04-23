@@ -25,8 +25,7 @@ from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath
 
 
 # Simple elements.
-from pagebot.elements.pbtext import Text
-from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.pbtext import Text # TextBox is no longer a separate element class.
 from pagebot.elements.pbrect import Rect
 from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line
@@ -89,7 +88,7 @@ def elementFromPath(path, name=None, **kwargs):
     elif extension in TEXT_TYPES:
         # TODO: Answer TextBox on the parsed content of the file, instead of
         # the path.
-        e = newTextBox(path, name=name, **kwargs)
+        e = newText(path, name=name, **kwargs)
     else:
         # If no extension-->element can be found.
         e = None
@@ -130,17 +129,11 @@ def newColumn(**kwargs):
     elements."""
     return Column(**kwargs)
 
-def newTextBox(bs='', **kwargs):
-    """Caller must supply a formatted string. Note that w and h can also be
-    defined in the style."""
-    return TextBox(bs, **kwargs)
-
 def newText(bs='', **kwargs):
-    """Create a Text element. Normally we don't need w and h here, as it is
-    made by the text and style combinations. But in case the defined font is a
-    Variable Font, then we can use the width and height to interpolate a font
-    that fits the space for the given string and weight. Caller must supply
-    formatted string. Support both (x, y) and x, y as position."""
+    """Create a Text element. If w and h are not defined, then the Text is
+    and elastic rectangle, base on the size of the content.
+    If w is defined, thatn the Text element has regular “TextBox” behavior.
+    """
     return Text(bs, **kwargs)
 
 def newRect(**kwargs):

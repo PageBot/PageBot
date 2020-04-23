@@ -62,7 +62,7 @@ class PageView(BaseView):
 
     def getSortedPages(self):
         """Get the dictionary of sorted pages from the document. Depending on
-        the self.showSpread flag, the answered dicitionary is the plain
+        the self.showSpread flag, the answered dictionary is the plain
         self.doc.getSortedPages() result, or wrapped as Quire instances
         containing positioned spread pages."""
         sortedPages = self.doc.getSortedPages()
@@ -104,7 +104,9 @@ class PageView(BaseView):
 
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
-        self.context.fileType = path.split('.')[-1]
+        context = self.context
+        assert context is not None
+        context.fileType = path.split('.')[-1]
 
         # Find the maximum document page size to this in all page sizes of the
         # document.
@@ -436,7 +438,7 @@ class PageView(BaseView):
             s = self.getNameString(e, path)
             bs = self.context.newString(s, style=dict(font=font,
                 textFill=blackColor, fontSize=fontSize))
-            tw, th = bs.size
+            tw, th = bs.textSize
 
             # Draw on top of page.
             x = self.pl + cmDistance
@@ -614,8 +616,7 @@ class PageView(BaseView):
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementInfo(self, e, origin):
-        """For debugging this will make the elements show their info. The css
-        flag "showOrigin" defines if the origin marker of an element is drawn.
+        """For debugging this will make the elements show their info. 
         Collect the (e, origin), so we can later draw all info, after the main
         drawing has been done.
 
@@ -625,9 +626,6 @@ class PageView(BaseView):
         '''
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
-        self.drawElementOrigin(e, origin)
         '''
 
     def _drawElementsNeedingInfo(self, e):

@@ -24,7 +24,6 @@ python3 $PWD/contexts/basecontext/basecontext.py
 python3 $PWD/contexts/basecontext/baseimageobject.py
 python3 $PWD/contexts/basecontext/beziercontour.py
 python3 $PWD/contexts/basecontext/bezierpath.py
-python3 $PWD/contexts/basecontext/pagebotstring.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py
