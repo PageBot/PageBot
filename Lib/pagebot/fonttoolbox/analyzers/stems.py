@@ -49,28 +49,28 @@ class Stem:
     # self.size
     def _get_size(self):
         """Note that size can be negative, to indicate the direction of the arrow, as in the top blueBar."""
-        return self.point[0] - self.parent[0] 
+        return self.point[0] - self.parent[0]
     size = property(_get_size)
 
-    # self.xSpan    # Answers the span tuple of both x value, shifted by x-offset 
+    # self.xSpan    # Answers the span tuple of both x value, shifted by x-offset
     def _get_xSpan(self):
         dx = self.offset[0]
         return self.parent[0] + dx, self.point[0] + dx
     xSpan = property(_get_xSpan)
-    
-    # self.x    Answers parent.x, shifted by x-offset   
+
+    # self.x    Answers parent.x, shifted by x-offset
     def _get_x(self):
         dx = self.offset[0]
         return self.parent[0] + dx
     x = property(_get_x)
-    
-    # self.ys    Answers the span tuple of both y values, shifted by y-offset   
+
+    # self.ys    Answers the span tuple of both y values, shifted by y-offset
     def _get_ySpan(self):
         dy = self.offset[1]
         return self.parent[1] + dy, self.point[1] + dy
     ySpan = property(_get_ySpan)
-    
-    # self.y    Answers parent.y, shifted by y-offset   
+
+    # self.y    Answers parent.y, shifted by y-offset
     def _get_y(self):
         dy = self.offset[1]
         return self.parent[1] + dy
@@ -79,7 +79,7 @@ class Stem:
     def isWhite(self):
         return False
 
-    # self.nearestPoint   
+    # self.nearestPoint
     def _get_nearestPoint(self):
         """
         The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
@@ -98,7 +98,7 @@ class Stem:
                 nearp = self.point.p_1
         return nearp
     nearestPoint = property(_get_nearestPoint)
-    
+
     def isTerminal(self):
         """The stem is also a terminal, if the end of the parallel lines also are connected point contexts."""
         return False
@@ -116,33 +116,33 @@ class Width(Stem):
     def __init__(self, pc, value=None, offset=None):
         Stem.__init__(self, None, pc, offset=offset)
         self.value = value
-    
+
     # self.size
-    
+
     def _get_size(self):
         if self.value is not None:
             return self.value
         return self.point.p.x
     size = property(_get_size)
-    
+
 class Height(Width):
 
     # self.size
-    
+
     def _get_size(self):
         if self.value is not None:
             return self.value
         return self.point.p.y
     size = property(_get_size)
-    
+
 class Bar(Stem):
 
     # self.size
-    
+
     def _get_size(self):
         return abs(self.parent[1] - self.point[1])
     size = property(_get_size)
-    
+
     def _get_nearestPoint(self):
         """
         The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
@@ -175,11 +175,11 @@ class VerticalCounter(Bar):
         return True
 
 class DiagonalStem(Stem):
-    
+
     # self.run answers the horizontal run of the diagonal.
 
     # self.nearestPoint
-    
+
     def _get_nearestPoint(self):
         """The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
         to <code>self.parent</code>. Default for a diagonal is always to answer <code>self.point.p</code>.
@@ -187,34 +187,34 @@ class DiagonalStem(Stem):
         return self.point.p
 
     nearestPoint = property(_get_nearestPoint)
-    
+
     # self.size    Average distance between the diagonal projected line segments.
-    
+
     def _get_size(self):
         d = 0
         projectionLines = self.projectionLines
         for p, projectedP in projectionLines: # p is PointContext instance, projectP is Point instance.
             d += distance([p.x, p.y], [projectedP.x, projectedP.y])
         return int(round(d/len(projectionLines)))
-        
+
     size = property(_get_size)
 
-    """A diagonal is a special kind of <b>Stem</b>, as it also is able to calculate 
+    """A diagonal is a special kind of <b>Stem</b>, as it also is able to calculate
     the projected window points."""
-    
-    # self.projectionLines    Answer the list of valid projection lines (tuple of point + projected point) 
-    
+
+    # self.projectionLines    Answer the list of valid projection lines (tuple of point + projected point)
+
     def _get_projectionLines(self):
         projectionLines = []
         for projectionLine in self.point.getProjectedWindowLines(self.parent):
             if not None in projectionLine:
                 projectionLines.append(projectionLine)
         return projectionLines
-    
+
     projectionLines = property(_get_projectionLines)
-    
+
     # self.perpendicularMiddleLine     Answer the line that is average perpendicular and in the middle of the projected window
-    
+
     def _get_perpendicularMiddleLine(self):
         # Calculate the average middle from the projections
         mx = my = 0
@@ -227,11 +227,11 @@ class DiagonalStem(Stem):
         #FIXME: I'm not sure if APoint (from apoint.py) is the correct object to use here:
         m = APoint(mx/count, my/count)
 
-        # Now project this window middle points on the two lines again. 
+        # Now project this window middle points on the two lines again.
         pp0 = self.point.getProjectedPoint(m)
         pp1 = self.parent.getProjectedPoint(m)
         return pp0, pp1
-    
+
     perpendicularMiddleLine = property(_get_perpendicularMiddleLine)
 
     # self.perpendicularLines   Answer the relevant perpendicular lines (start, middle, end) of the projectionLines.
@@ -258,7 +258,7 @@ class Serif(Stem):
         #return bb
         return 0, 0, 0, 0
     boundingBox = property(_get_boundingBox)
-    
+
 class Overshoot:
 
     def __init__(self, pc, reference):
@@ -269,4 +269,3 @@ class Overshoot:
         return self.pc.p.y - self.reference.y
 
     size = property(_get_size)
-

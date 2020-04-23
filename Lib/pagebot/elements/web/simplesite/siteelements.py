@@ -22,13 +22,13 @@ class Site(Publication):
     """
 
 class SiteColumn(Column):
-    """Abstract class for site elements. Keep the self.cssId in case there is 
-    more than one SiteElement of the same class, so the caller needs to supply 
-    a unique id. If omitted, the self.cssId is the class name. 
+    """Abstract class for site elements. Keep the self.cssId in case there is
+    more than one SiteElement of the same class, so the caller needs to supply
+    a unique id. If omitted, the self.cssId is the class name.
 
     Since SiteElements are wrappers around TextBox, Image and other elements,
-    theirs naming should be different. 
-    The label is used to differentiate between the cssId of a SiteElement as 
+    theirs naming should be different.
+    The label is used to differentiate between the cssId of a SiteElement as
     wrapper and contained elements. E.g. Logo-->Logo_T
     """
     def _get_cssId(self):
@@ -92,7 +92,7 @@ class Navigation(SiteColumn):
             if pages:
                 menu = Menu(parent=menuItem)
                 self.makeMenu(menu, pageInfo['pages'], True) # Second level shows error to submenu
-  
+
     def build(self, view, path, **kwargs):
         """Navigation is only supposed to show in interactive web-context."""
 
@@ -149,7 +149,7 @@ class MenuItem(SiteColumn):
         self.href = href
         self.label = label
 
-    def copy(self, parent=None, attrNames=None): 
+    def copy(self, parent=None, attrNames=None):
         """Copy self into a new instance, adding the attributes that the
         generic SiteElement.copy does not copy."""
         #copiedMenuItem = SiteColumn.copy(self, attrNames=attrNames)
@@ -307,7 +307,7 @@ class Content(SiteColumn):
 
 class ContentSide(SiteColumn):
     """Wide content column and narrow side column. Goes stacked on mobile.
-    Column id naming is 
+    Column id naming is
     Content: (cssId + '_Content') or 'ContentOfSide'
     Side: (cssId + '_Side') or 'SideOfContent'
     """
@@ -320,11 +320,11 @@ class ContentSide(SiteColumn):
 
 class ColoredSection(SiteColumn):
     """Colored section with header and 3 columns.
-    Column id naming is 
+    Column id naming is
     Content: (cssId + '_Content') or 'ContentOfSide'
     Side: (cssId + '_Side') or 'SideOfContent'
     If cssIndex is defined, then add that number to the cssId's
-    """    
+    """
     def __init__(self, sectionCount=3, **kwargs):
         SiteColumn.__init__(self, **kwargs) # Set self.cssId to value or None
         cssId = self.getCssId()
@@ -376,10 +376,7 @@ class Footer(SiteColumn):
         b._footer()
         b.comment('End %s' % cssId)
 
-
-
 if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

@@ -37,4 +37,3 @@ class AComponent:
 
     def __repr__(self):
         return 'Cmp(%s, %s, %s)' % (self.baseGlyph, asFormatted(self.x), asFormatted(self.y))
-

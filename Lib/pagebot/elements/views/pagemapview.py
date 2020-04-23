@@ -64,7 +64,7 @@ class PageMapView(BaseView):
             os.makedirs(self.EXPORT_PATH)
 
         # Get current context and builder from doc.
-        context = self.context 
+        context = self.context
 
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
@@ -108,7 +108,7 @@ class PageMapView(BaseView):
 
             #  Make page in context, actual page may be smaller if showing
             #  cropmarks.
-            context.newPage(pw, ph) 
+            context.newPage(pw, ph)
             # If page['frameDuration'] is set and saving as movie or animated
             # gif, then set the global frame duration.
             context.frameDuration(page.frameDuration) # Set the duration of this page, in case exporting GIF

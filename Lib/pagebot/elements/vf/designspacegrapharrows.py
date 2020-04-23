@@ -25,8 +25,8 @@ DATA_PATH = 'code/2-masters-1-axis.json'
 #DATA_PATH = 'code/miserables.json'
 
 class DesignSpace(Rect):
-    """Generic base DesignSpace Element class to show the content and topology of a 
-    VF-designspace. Reading can be done from a standard design space file or from 
+    """Generic base DesignSpace Element class to show the content and topology of a
+    VF-designspace. Reading can be done from a standard design space file or from
     a Variable Font.
     """
 
@@ -38,7 +38,7 @@ class DesignSpaceGraph(DesignSpace):
     DEFAULT_W = pt(400)
     DEFAULT_H = pt(400)
 
-    def __init__(self, font=None, path=None, w=None, h=None, radius=None, 
+    def __init__(self, font=None, path=None, w=None, h=None, radius=None,
         labelFontSize=None, **kwargs):
         """
         """
@@ -219,8 +219,8 @@ class DesignSpaceGraph(DesignSpace):
 //        d.fy = undefined;
 //    }
 
-        """ % dict(path=self.path or DATA_PATH, radius=upt(self.radius), 
-            labelOffsetX=upt(self.radius*1.5), 
+        """ % dict(path=self.path or DATA_PATH, radius=upt(self.radius),
+            labelOffsetX=upt(self.radius*1.5),
             labelOffsetY=upt(self.labelFontSize/4)))
 
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style="width:100%; height=400px; padding:auto")

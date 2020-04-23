@@ -197,4 +197,3 @@ content = {
         'contemplate',
         'pay close attention to',
     ],    }
-

@@ -37,7 +37,7 @@ content = {
     ],
     'name_english': [
         'Gibbs', 'McLaren', 'Miller', 'Kwon', 'Little', 'Reage', 'Keaney', 'Muller', 'Chou',
-        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh', 
+        'Lamberti', 'Feldman', 'Michaelson', 'Cho', 'Davis', 'Hoffman', 'Marsh', 'Suh',
         #'Trump', Oh no, no longer getting that attention
         'Fernandez', 'Fitzpatrick', 'Lin', 'Vanderbeck', 'Lee', 'Larssen','Vanderkeere',
         'Nobelman','Frime','Mustcado','Fnimble','Handersjen','Devries','Naaktgeboren',
@@ -668,43 +668,43 @@ content = {
         'Foster',
     ],
     'names_px_scientific': [
-        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 
-        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 
+        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ',
+        'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ', 'Prof. ',
         'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ',
         'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ', 'Dr. ',
         # See https://degree.studentnews.eu/s/4113/77169-Degree-abbreviations.htm
-        'DArts. ',          # Doctor of Art      
-        'DBMS. ',           # Biomedical Science        
-        'DBEnv. ',          # Built Environment    
-        'DBA ', 'D.B.A. ',  # Doctor of Business Administration   
-        'DCL. ',            # Doctor of Civil Law  
-        'DCaM. ',           # Doctor of Coaching and Mentoring        
-        'DCommEd. ',        # Doctor of Community Learning & Development   
-        'DDes. ',           # Doctor of Design        
-        'DEd. ', 'EdD. ',   # Doctor of Education 
-        'EntD. ',           # Doctor of Enterprise        
-        'JD. ',             # Doctor of Jurisprudence  
-        'LLD. ',            # Doctor of Laws   
-        'MusD. ', 'DMus. ', # Doctor of Music     
-        'PhD. ', 'DPhil. ', # Doctor of Philosophy   
-        'DPS. ',            # Doctor of Professional Studies  
-        'DSc. ', 'ScD. ',   # Doctor of Science   
-        'MBA. ', 'EMBA. ',  # Executive MBA   
-        'FdA. ', 'FDA. ', 
-        'FDArts. ',         # Foundation of Arts (Foundation degree)  
-        'FdSc. ',           # Foundation of Sciences (Foundation degree)      
+        'DArts. ',          # Doctor of Art
+        'DBMS. ',           # Biomedical Science
+        'DBEnv. ',          # Built Environment
+        'DBA ', 'D.B.A. ',  # Doctor of Business Administration
+        'DCL. ',            # Doctor of Civil Law
+        'DCaM. ',           # Doctor of Coaching and Mentoring
+        'DCommEd. ',        # Doctor of Community Learning & Development
+        'DDes. ',           # Doctor of Design
+        'DEd. ', 'EdD. ',   # Doctor of Education
+        'EntD. ',           # Doctor of Enterprise
+        'JD. ',             # Doctor of Jurisprudence
+        'LLD. ',            # Doctor of Laws
+        'MusD. ', 'DMus. ', # Doctor of Music
+        'PhD. ', 'DPhil. ', # Doctor of Philosophy
+        'DPS. ',            # Doctor of Professional Studies
+        'DSc. ', 'ScD. ',   # Doctor of Science
+        'MBA. ', 'EMBA. ',  # Executive MBA
+        'FdA. ', 'FDA. ',
+        'FDArts. ',         # Foundation of Arts (Foundation degree)
+        'FdSc. ',           # Foundation of Sciences (Foundation degree)
         'Mart',             # Master in Arts  MART    Mart
-        'MArch', 
-        'M.Arch. ',         # Master of Architecture  
-        'MA. ', 'M.A. ',    # Master of Arts  
+        'MArch',
+        'M.Arch. ',         # Master of Architecture
+        'MA. ', 'M.A. ',    # Master of Arts
         'MComp. ',          # Master of Computing
-        'MLA. ',            # Master of Liberal Arts   
-        'MMath. ',          # Master of Mathematics     
-        'MSc', 'MSci', 
-        'M.S. ', 'MS. ', 
-        'M.Sc. ', 'M.Sci. ', 
-        'S.M. ', 'Sc.M. ', 
-        'Sci.M. ',          # Master of Science 
+        'MLA. ',            # Master of Liberal Arts
+        'MMath. ',          # Master of Mathematics
+        'MSc', 'MSci',
+        'M.S. ', 'MS. ',
+        'M.Sc. ', 'M.Sci. ',
+        'S.M. ', 'Sc.M. ',
+        'Sci.M. ',          # Master of Science
     ],
     'names_sx': [
         ', Jr.',
@@ -729,10 +729,9 @@ content = {
 if __name__ == "__main__":
     def test():
         """
-            >>> from pagebot.contributions.filibuster.blurb import blurb 
+            >>> from pagebot.contributions.filibuster.blurb import blurb
             >>> blurb.getBlurb('name')
         """
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

@@ -13,4 +13,3 @@
 #
 # 	  The publication-related elements, define larger blocks to fill the page
 #     with a specialized purpose. Often they are implemented as a group.
-

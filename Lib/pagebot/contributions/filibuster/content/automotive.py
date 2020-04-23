@@ -184,6 +184,3 @@ content = {
                 'Forget your <#car_busts#>, my <#car_hotrod_modifier#> <#car_hot_rods#> has a <#car_engine_modifiers#> <#car_engine_type#> thatll leave you <#car_blow_doors#>.',
                 ],
         }
-
-
-

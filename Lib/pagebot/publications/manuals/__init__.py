@@ -14,5 +14,5 @@
 #     __init__.py
 #
 MANUAL_CLASSES = {
-	
+
 }

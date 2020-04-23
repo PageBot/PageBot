@@ -183,7 +183,7 @@ function y(d) { return d.y; }
 """)
         b.div(cssId="vis", style="width:100%;background-color:red")
         b._div()
- 
+
 def newBezierAnimation(**kwargs):
     return BezierAnimation(**kwargs)
 

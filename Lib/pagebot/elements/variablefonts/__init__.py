@@ -15,7 +15,7 @@
 #     Special elements to show Variable Font info-graphics
 #
 #     D E P R E C A T E D
-# 
+#
 #     Elements are moved to elements/vf after testing.
 #
 from pagebot.elements.variablefonts.variablecircle import VariableCircle

@@ -67,7 +67,7 @@ class PartOfBook(Element):
                     thumbPath = self.thumbPath % (n+1)
                 else:
                     thumbPath = None
-                self.appendElement(Page(name=name or self.__class__.__name__, 
+                self.appendElement(Page(name=name or self.__class__.__name__,
                     w=self.w, h=self.h, thumbPath=thumbPath))
 
     def __len__(self):
@@ -91,7 +91,7 @@ class PartOfBook(Element):
                     spreads.append([])
                 spreads[-1].append(e)
             else:
-                e.getSpreads(spreads) 
+                e.getSpreads(spreads)
         return spreads
 
     def _get_spreads(self):
@@ -132,13 +132,13 @@ class CoverBack(PartOfBook):
 
 class Front(PartOfBook):
     pass
-    
+
 class TableOfContent(PartOfBook):
     pass
 
 class MastHead(PartOfBook):
     pass
-    
+
 class Ad(PartOfBook):
     pass
 

@@ -16,5 +16,5 @@
 from pagebot.publications.brochures.basebrochure import BaseBrochure
 
 BROCHURE_CLASSES = {
-	
+
 }

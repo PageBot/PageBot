@@ -20,7 +20,7 @@ from pagebot.toolbox.color import noColor
 class DocWrap(Element):
     """The DocWrap is used to create a watershed between a Document instance
     (which is not an Element by itself) and the Document that self is part of.
-    This way we can avoid the mixing between rootStyles and also it allows 
+    This way we can avoid the mixing between rootStyles and also it allows
     the output of documents to be cached and places on a page, independent from
     the parent page settings itself.
     """
@@ -52,16 +52,16 @@ class DocWrap(Element):
         # Ignore setting of w, entirely defined by contained self.document.block[2]
         pass
     w = property(_get_w, _set_w)
-    
+
     def _get_h(self):
         return self.wrappedDocument.block[3]
     def _set_h(self, h):
         # Ignore setting of h, entirely defined by contained self.document.block[3]
-        pass        
+        pass
     h = property(_get_h, _set_h)
- 
+
     def buildElement(self, view, p, drawElements=True, **kwargs):
-        """Find the referred page of self.wrappedDocument and continue the 
+        """Find the referred page of self.wrappedDocument and continue the
         building there. Since the page does not change parent, all local styles
         and references are exactly the same, as if the wrapped document is building.
         """

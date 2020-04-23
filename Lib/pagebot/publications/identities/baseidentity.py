@@ -26,7 +26,7 @@ class BaseIdentity(Publication):
 
     """
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # identities main page size. For a set of identity publications
     # ad number of more page sizes should be selected.
     PAGE_SIZES = {

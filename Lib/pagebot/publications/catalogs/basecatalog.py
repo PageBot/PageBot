@@ -27,7 +27,7 @@ class BaseCatalog(Publication):
 
     """
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # catalogs in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,

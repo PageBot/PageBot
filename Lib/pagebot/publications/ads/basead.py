@@ -20,7 +20,7 @@ from pagebot.constants import *
 class BaseAd(Publication):
     """Create a default base publication of this type, optimized to be exported
     in most PageBot formats, such as PDF or website.
-    
+
     """
     # Default paper sizes that are likely to be used for magazines in portrait ratio
     PAGE_SIZES = {

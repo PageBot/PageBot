@@ -33,7 +33,6 @@ class AContour:
     def _get_clockWise(self):
         return self._clockWise
     clockWise = property(_get_clockWise)
-    
+
     def append(self, p):
         self.points.append(p)
-

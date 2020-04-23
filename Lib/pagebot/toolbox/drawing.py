@@ -69,4 +69,3 @@ def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=Fa
     b.drawPath()
     if endMarker:
         context.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
-

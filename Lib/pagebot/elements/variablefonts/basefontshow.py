@@ -47,8 +47,8 @@ class BaseFontShow(Element):
             return {}
 
         # Get real axis values.
-        wght = self.getAxisValue('wght', wght)        
-        wdth = self.getAxisValue('wdth', wdth)        
+        wght = self.getAxisValue('wght', wght)
+        wdth = self.getAxisValue('wdth', wdth)
 
         if not opsz and 'opsz' in vf.axes:
             opsz = vf.axes['opsz'][1] # Use default value

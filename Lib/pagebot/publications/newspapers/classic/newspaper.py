@@ -65,7 +65,7 @@ class Newspaper(Publication):
     GUTTER = 18
     PADDING = 48
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # newspapers in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
@@ -350,4 +350,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

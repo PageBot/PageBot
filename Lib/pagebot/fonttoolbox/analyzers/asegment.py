@@ -43,4 +43,3 @@ class ASegment:
 
     def append(self, p):
         self.points.append(p)
-

@@ -56,4 +56,3 @@ content = {
     'navigation_alt_music':        ['Music', 'CD store', "CD's", 'Audio', 'Sound',],
 
 }
-

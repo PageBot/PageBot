@@ -45,7 +45,7 @@ class Finder:
     def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
         """Answer the list of full file paths, that match the parameters.
-        Matching both name.lower() and pattern.lower() 
+        Matching both name.lower() and pattern.lower()
         """
         if paths is None:
             paths = []

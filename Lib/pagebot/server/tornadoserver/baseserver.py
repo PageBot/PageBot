@@ -137,7 +137,7 @@ class RequestData:
 
     def __repr__(self):
         return '<%s uri=%s>' % (self.__class__.__name__, self.uri)
-        
+
     def _get_path(self):
         path = '/'.join(self.dirs)
         # Test on valid extension

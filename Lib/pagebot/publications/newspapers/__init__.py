@@ -14,5 +14,5 @@
 #     newspapers/__init__.py
 #
 NEWSPAPER_CLASSES = {
-	
+
 }

@@ -30,7 +30,7 @@ class GitView(SiteView):
 
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """Default building to non-website media."""
-        doc = self.doc 
+        doc = self.doc
         b = self.context.b
 
         if path is None:
@@ -57,6 +57,6 @@ class GitView(SiteView):
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
                 getattr(page, hook)(self, path) # Typically calling page.build_html
-                
+
     def getUrl(self, name):
         return 'http://%s/%s' % (name, self.DEFAULT_HTML_FILE)
