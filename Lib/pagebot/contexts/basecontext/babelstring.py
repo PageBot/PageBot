@@ -21,7 +21,7 @@
 from copy import copy, deepcopy
 import weakref
 
-from pagebot.constants import DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT, LEFT
+from pagebot.constants import DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME, LEFT
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units
 from pagebot.toolbox.color import color
