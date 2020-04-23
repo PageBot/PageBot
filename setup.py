@@ -22,13 +22,13 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pagebot',
+    use_scm_version=True,
     description='Scripted page layout framework for Python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/PageBot/PageBot",
     author = 'Petr van Blokland, Michiel Kauw-A-Tjoe, Felipe Sanches, Dave Crossland',
     author_email = 'r@petr.com',
-    version='0.9.9',
     package_dir={'': 'Lib'},
     packages=find_packages('Lib'),
     include_package_data=True,
