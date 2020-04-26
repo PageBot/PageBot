@@ -445,7 +445,7 @@ class PageView(BaseView):
             y = self.pb + e.h - cmDistance + th * 1.5
             #self.context.stroke(registrationColor, 0.5)
             #self.context.line((x, y), (x + tw, y))
-            self.context.textBox(bs, (x, y, e.pw, th * 1.5))
+            self.context.drawString(bs, (x, y, e.pw, th * 1.5))
 
     def getNameString(self, e, path):
         """
@@ -919,7 +919,7 @@ class PageView(BaseView):
         NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext('DrawBot')
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> from pagebot.document import Document
@@ -1014,8 +1014,8 @@ class PageView(BaseView):
             bsl = context.newString(tl, style=style)
             bsr = context.newString(tr, style=style)
 
-            twl, thl = bsl.size
-            twr, thr = bsr.size
+            twl, thl = bsl.textSize
+            twr, thr = bsr.textSize
 
             if BASE_INSIDE in show:
                 if tl:

@@ -29,17 +29,19 @@ CONTEXT_TYPE = None
 MAMP_PATH = None
 
 def testDrawBot():
+    global hasDrawBot, DrawBotContext
     try:
         import drawBot
         hasDrawBot = True
-    except:
+    except ImportError:
         hasDrawBot = False
 
     if hasDrawBot:
         try:
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
-        except:
+        except ImportError:
             print(traceback.format_exc())
+
 
 def testSketch():
     pass

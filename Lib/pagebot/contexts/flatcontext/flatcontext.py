@@ -26,7 +26,7 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
-#from pagebot.contexts.flatcontext.flatstring import FlatString
+from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
@@ -524,8 +524,8 @@ class FlatContext(BaseContext):
             style = dict(fontSize=self._fontSize)
             style = makeStyle(style=style)
             fs = self.newString(fs, style=style)
-        elif not isinstance(fs, FlatString):
-            raise PageBotFileFormatError('type is %s' % type(fs))
+        #elif not isinstance(fs, FlatString):
+        #    raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
@@ -678,15 +678,15 @@ class FlatContext(BaseContext):
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
 
-    def fromBabelString(self, bsOrFs):
-        if isinstance(bsOrFs, FlatString):
-            return bsOrFs
-        if isinstance(bsOrFs, str):
+    def fromBabelString(self, bs):
+        #if isinstance(bs, FlatString):
+        #    return bs
+        if isinstance(bs, str):
             return self.STRING_CLASS(bsOrFs)
-        if isinstance(bsOrFs, BabelString):
-            fs = self.STRING_CLASS(e=bsOrFs.e)
-            for run in bsOrFs.runs:
-                fs += self.STRING_CLASS(run.s, style=run.style, e=pbsOrFs.e, context=bsOrFs.context)
+        if isinstance(bs, BabelString):
+            fs = self.STRING_CLASS(e=bs.e)
+            for run in bs.runs:
+                fs += self.STRING_CLASS(run.s, style=run.style, e=bs.e, context=bs.context)
             return fs
         raise ValueError('%s.fromBabelString: String type %s not supported' % 
             (self.__class__.__name__, pbsOrFs.__class__.__name__))

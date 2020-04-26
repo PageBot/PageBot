@@ -15,7 +15,6 @@
 #     filepaths.py
 #
 #
-#
 import os.path
 
 HOME = os.path.expanduser('~')

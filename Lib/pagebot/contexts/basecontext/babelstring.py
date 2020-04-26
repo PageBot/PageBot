@@ -14,39 +14,44 @@
 #
 #     babelstring.py
 #
-#     BabelString is an intermediate conversion string format that the
-#     various contexts should be able to convert from and to, by
-#     implementing context.fromBabelString and context.asBabelString.
+#     BabelString is a generic string format, that stores a string or
+#     text as a list of BabelRun instances. Those runs can be manipulated
+#     without the setting of a context, as long as the methods don't need
+#     rendering of the rest flow.
+#     A number of operation requires a context to return a rendered native
+#     format, such as size, line positions and overflow.
+#     For efficiency that rendered string and meta information (such as 
+#     position of lines) are calculate upon request and stored in the
+#     BabelString for later use. Changes to the runs will reset this cache.
 #
 from copy import copy, deepcopy
 import weakref
 
-from pagebot.constants import DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT_NAME, LEFT
+from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT, 
+    DEFAULT_COL_WIDTH, LEFT, XXXL)
 from pagebot.fonttoolbox.objects.font import findFont, Font
-from pagebot.toolbox.units import units
+from pagebot.toolbox.units import units, pt, em
 from pagebot.toolbox.color import color
 
 class BabelRun:
-    def __init__(self, s=None, style=None):
+    def __init__(self, s, style=None):
         """Answer the storage for string + style in BabelString.
-        Note that the styles values of sequential runs are *not* cascading.
+        Note that the style values of sequential runs are *not* cascading.
         This is similar to the behavior of the DrawBot FormattedString attributes.
 
         >>> from pagebot.elements import *
         >>> BabelRun('ABCD', dict(font='PageBot-Regular'))
-        <BabelRun ABCD>
-        >>> BabelRun() # String with empty runs is allowed.
-        <BabelRun>
+        <BabelRun "ABCD">
         >>> BabelRun('ABCD'*10) # Abbreviated for string > 10 characters.
-        <BabelRun ABCDABCDAB...>
+        <BabelRun "ABCDABCDAB...">
         >>> len(BabelRun('ABCD'*10))
         40
         """
-        self.s = str(s or '')
+        assert isinstance(s, str)
+        self.s = s
         if style is None:
             style = {}
         self.style = style
-        self.markers = {} # Place to store user defined info, such as a marker in the text.
 
     def __len__(self):
         return len(self.s)
@@ -68,48 +73,46 @@ class BabelRun:
 
     def __repr__(self):
         r = '<%s' % self.__class__.__name__
-        s = self.s[:10]
-        if s:
+        if self.s:
+            s = self.s[:10]
             if s != self.s:
                 s += '...'
-            r += ' '+s
-        r += '>'
-        return r
+            r += ' "%s"' % s.replace('\n',' ')
+        return r + '>'
 
-class BabelLine:
-    """BabelLine holds the BabelString with some additional information
-    when generating a Text.textLines list.
 
-    """
-    def __init__(self, bs, x, y, index):
-        self.bs = bs # Holding the BabelRuns of this text line.
-        self.x = units(x) # Relative position inside a Text element.
-        self.y = units(y) # Relative from top of text box
-        self.index = index # Vertical line index in Text.textLines list.
+class BabelLineInfo:
+    def __init__(self, x, y, cLine, context):
+        self.x = units(x)
+        self.y = units(y)
+        self.runs = []
+        self.cLine = cLine # Native context line (e.g. CTLine instance.
+        self.context = context # Just in case it is needed.
 
     def __repr__(self):
-        s = '<%s #%s' % (self.__class__.__name__, self.index)
-        if self.x:
-            s += ' x=%s' % self.x
-        if self.y:
-            s += ' y=%s' % self.y
-        return s + '>'
+        return '<%s x=%s y=%s runs=%d>' % (self.__class__.__name__, self.x, self.y, len(self.runs))
 
-    def __len__(self):
-        return len(self.bs)
+class BabelRunInfo:
+    def __init__(self, s, style):
+        assert isinstance(s, str)
+        self.s = s
+        self.style = style
+
+    def __repr__(self):
+        return '<%s "%s">' % (self.__class__.__name__, self.s)
 
 class BabelString:
-    """BabelString is the generic intermediate string, that can be used
-    for other context string classes to convert to and from.
+    """BabelString is a generic string format, that stores a string or
+    text as a list of BabelRun instances. 
     Note that the styles values of sequential runs are *not* cascading.
     This is similar to the behavior of the DrawBot FormattedString attributes.
 
     >>> bs1 = BabelString('ABCD', style=dict(fontSize=12))
     >>> bs1.runs
-    [<BabelRun ABCD>]
+    [<BabelRun "ABCD">]
     >>> bs2 = BabelString('ABCD', style=dict(fontSize=12))
     >>> bs2.runs
-    [<BabelRun ABCD>]
+    [<BabelRun "ABCD">]
     >>> bs1 == bs2, bs1 is bs2
     (True, False)
     >>> bs2 = BabelString('EFGH', style=dict(fontSize=16))
@@ -117,14 +120,18 @@ class BabelString:
     >>> bs3
     $ABCDEFGH$
     >>> bs3.runs
-    [<BabelRun ABCD>, <BabelRun EFGH>]
+    [<BabelRun "ABCD">, <BabelRun "EFGH">]
     """
-    def __init__(self, s=None, style=None, e=None, context=None):
+    def __init__(self, s=None, style=None, w=None, h=None, context=None):
         """Constructor of BabelString. @s is a plain string, style is a
         dictionary compatible with the document root style keys to add one
         PageBotRun as default. Otherwise self.runs is created as empty list.
         @s should be a plain string, but gets cast by str(s) otherwise.
-        @e is a optional reference for cascading style, proportion and context
+        Optional @w and @h make the difference if this BabelString behaves
+        as a plain string (answering it's own size) or a text (answering
+        the defined size and overflow).
+        Some methods only work if context is defined (e.g. self.textSize,
+        self.lines and self.overflow)
 
         >>> bs = BabelString()
         >>> len(bs.runs)
@@ -135,66 +142,22 @@ class BabelString:
         >>> bs.add('EFGH') # Without style, adding to the last run
         >>> len(bs), len(bs.runs)
         (8, 1)
-        >>> bs = BabelString(style=dict(font='Roboto'))
-        >>> bs.s
-        ''
-        >>> from pagebot.elements import Element
-        >>> e = Element(name='Test')
-        >>> bs = BabelString('ABCD', e=e)
-        >>> bs.e.name
-        'Test'
-        >>> e = None # Delete original element
-        >>> bs.e is None # Weakref property now answers None
-        True
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot') 
+        >>> bs = context.newString('ABCD')
+        >>> bs.context
+        <DrawBotContext>
         """
-        # Context instance @context and Element instance @e
-        # are used for text size rendering methods.
-        self.e = e # Store optional reference as weakref property.
-        self.context = context # Store optional as weakref property.
+        # Context instance @context is used for text size rendering methods.
         self.runs = [] # List of BabelRun instances.
-        if s is not None or style is not None or e is not None:
+        if s is not None or style is not None:
             self.runs.append(BabelRun(s, style))
-
-    def _get_e(self):
-        """Answer the optional weakref element, for use of cascading style,
-        proportions and context.
-
-        >>> from pagebot.elements import Element
-        >>> e = Element(name='Test')
-        >>> bs = BabelString('ABCD', e=e)
-        >>> bs.e.name
-        'Test'
-        >>> e = None # Delete element reference
-        >>> bs.e is None
-        True
-        """
-        if self._e is not None:
-            return self._e()
-        return None
-    def _set_e(self, e):
-        if e is not None:
-            e = weakref.ref(e)
-        self._e = e
-    e = property(_get_e, _set_e)
-
-    def appendMarker(self, markerId, arg):
-        """Add a marker to the last run. Code can run through the
-        self.runs to mark a run with additional information.
-        """
-        if self.runs:
-            self.runs[-1].markers[markerId] = arg
-
-    def getMarkerRuns(self, markerId):
-        """Answer the list of filtered runs that contain the marker.
-        """
-        runs = []
-        for run in self.runs:
-            if markerId in run.markers:
-                runs.append(run)
-        return run
+        self.context = context # Store optional as weakref property. Clears cache.
+        self._w = w # Set source value of the properties, not need clear cache again.
+        self._h = h
 
     def _get_context(self):
-        """Answer the context if it is defined by self.e.context.
+        """Answer the weakref context if it is defined.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
@@ -208,53 +171,277 @@ class BabelString:
         context = None
         if self._context is not None:
             context = self._context()
-        if context is None:
-            e = self.e
-            if e:
-                context = e.context
         return context
     def _set_context(self, context):
         if context is not None:
             context = weakref.ref(context)
         self._context = context
+        self.reset() # Clear context cache
     context = property(_get_context, _set_context)
+
+    def reset(self):
+        """Clear the context cache, in case the string source changed,
+        to force new calculation of context dependent wrapping.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
+        >>> bs.cs is not None # Trigger rendering of the FormattedString
+        True
+        >>> bs.reset() # Reset the caching
+        >>> bs._cs is None
+        True
+        """
+        self._cs = None # Cache of native context string (e.g. FormattedString)
+        self._lines = None # Cache of calculated meta info after line wrapping.
+        self._twh = None # Cache of calculated text width (self.tw, self.th)
+        self._pwh = None # Cache of calculated pixel width (self.pw, self.ph)
+
+    def _get_w(self):
+        """Answer the optional width of this string. If the value if self._w
+        is not defined, then answer the width of the rendered context string.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=pt(100)), w=pt(1000), context=context)
+        >>> bs.w
+        1000pt
+        >>> bs.tw
+        250.9pt
+        """
+        return self._w
+    def _set_w(self, w):
+        self._w = units(w)
+        self.reset() # Force context wrapping to be recalculated.
+    w = property(_get_w, _set_w)
+
+    def _get_h(self):
+        """Answer the optional height of this string. If the value if self._w
+        is not defined, then answer the width of the rendered context string.
+        """
+        return self._h
+    def _set_h(self, h):
+        self._h = units(h)
+        self.reset() # Force context wrapping to be recalculated.
+    h = property(_get_h, _set_h)
+
+    def _get_tw(self):
+        """Answer the cached calculated context width
+        """
+        if self._twh is None:
+            self._twh = self.context.textSize(self.cs, w=self.w, h=self.h)
+        return self._twh[0]
+    tw = property(_get_tw)
+
+    def _get_th(self):
+        """Answer the cached calculated context height
+        """
+        if self._twh is None:
+            self._twh = self.context.textSize(self.cs, w=self.w, h=self.h)
+        return self._twh[1]
+    th = property(_get_th)
+        
+    def _get_cs(self):
+        """Answer the native formatted string of the context. If it does
+        not exist, then ask the context to render it before answering.
+        Cache the result in self._cs.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
+        >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
+        (ABCD, 'FormattedString')
+        """
+        if self._cs is None:
+            self._cs = self.context.fromBabelString(self)
+        return self._cs
+    cs = property(_get_cs)
+
+    def _get_lines(self):
+        """Answer the list of BabelLine instances, with meta information about
+        the line wrapping done by the context. If it does not exist, then ask
+        the context to render it before answersing. 
+        Cache the result in self._lines.
+
+        >>> from pagebot.toolbox.lorumipsum import lorumipsum
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+        >>> bs = BabelString(lorumipsum(), style, w=pt(500), context=context)
+        >>> lines = bs.lines
+        >>> len(lines)
+        113
+        """
+        if self._lines is None:
+            self._lines = self.context.textLines(self.cs, w=self.w, h=self.h)
+        return self._lines
+    lines = property(_get_lines)
+
+    def _get_firstLineAscender(self):
+        """Answer the largest ascender height in the first line.
+
+        >>> from pagebot.toolbox.lorumipsum import lorumipsum
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('ABCD', style, context=context)
+        >>> bs.firstLineAscender
+        74.8pt
+        >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
+        >>> bs.runs
+        [<BabelRun "ABCD">, <BabelRun "EFGH ">]
+        >>> bs.lines[0].runs
+        [<DBRunInfo "ABCD">, <DBRunInfo "EFGH">]
+        >>> bs.firstLineAscender # First line ascender height increased
+        149.6pt
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        >>> bs.firstLineAscender # First line ascender height increased
+        149.6pt
+        """
+        firstLineAscender = 0
+        if self.lines:
+            for run in self.lines[0].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                firstLineAscender = max(firstLineAscender, fontSize * font.info.typoAscender / font.info.unitsPerEm)
+        return firstLineAscender
+    firstLineAscender = property(_get_firstLineAscender)
+
+    def _get_firstLineCapHeight(self):
+        """Answer the largest capHeight in the first line. The height is
+        derived from the fonts, independent if there are actually capitals 
+        in the first line.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+        >>> bs.firstLineCapHeight
+        65.8pt
+        >>> bs.add('EFGH\\n', dict(fontSize=200))
+        >>> bs.firstLineCapHeight # First line capheight increased
+        131.6pt
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        >>> bs.firstLineCapHeight # First line capHeight increased        
+        131.6pt
+        """
+        firstLineCapHeight = 0
+        if self.lines:
+            for run in self.lines[0].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                firstLineCapHeight = max(firstLineCapHeight, fontSize * font.info.capHeight / font.info.unitsPerEm)
+        return firstLineCapHeight
+    firstLineCapHeight = property(_get_firstLineCapHeight)
+
+    def _get_firstLineXHeight(self):
+        """Answer the largest xHeight in the first line. The height is
+        derived from the fonts, independent if there are actually lower case 
+        in the first line.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+        >>> bs.firstLineXHeight
+        46.6pt
+        >>> bs.add('EFGH\\n', dict(fontSize=200))
+        >>> bs.firstLineXHeight # First line xHeight increased
+        93.2pt
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        >>> bs.firstLineXHeight # First line xHeight increased        
+        93.2pt
+        """
+        firstLineXHeight = 0
+        if self.lines:
+            for run in self.lines[0].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                firstLineXHeight = max(firstLineXHeight, fontSize * font.info.xHeight / font.info.unitsPerEm)
+        return firstLineXHeight
+    firstLineXHeight = property(_get_firstLineXHeight)
+
+    def _get_lastLineDescender(self):
+        """Answer the largest abs(descender) in the last line. The height is
+        derived from the fonts, independent if there are actually lower case 
+        in the first line. The value answered is a position (negative number),
+        not a distance, relative to the baseline of the last line.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+        >>> bs.lastLineDescender
+        -25.2pt
+        >>> bs.add('EFGH', dict(fontSize=1000))
+        >>> bs.lastLineDescender # Last line descender increased
+        -252pt
+        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
+        >>> bs.lastLineDescender # Last line descender increased        
+        -12.6pt
+        >>> bs.lines[1]
+        <DBLineInfo x=0pt y=135pt runs=1>
+        """
+        lastLineDescender = 0
+        if self.lines:
+            for run in self.lines[-1].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                lastLineDescender = min(lastLineDescender, fontSize * font.info.typoDescender / font.info.unitsPerEm)
+        return lastLineDescender
+    lastLineDescender = property(_get_lastLineDescender)
+
+
+    def addMarker(self, markerId, arg):
+        """Add a marker as a new run. Code can run through the
+        self.runs to mark a run with additional information.
+        A marker is a tiny piece of string in transparant color,
+        that can its positions traced back in a rendered BabelText
+        instance.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=20)
+        >>> bs = context.newString('ABCD', style)
+        >>> bs.addMarker('M1', 'abcd')
+        >>> bs.getMarkerRuns('M1')
+        [<BabelRun "[[M1::abcd...">]
+        >>> bs.addMarker('M2', 'abcd')
+        >>> bs.addMarker('M2', 'efgh')
+        >>> bs.getMarkerRuns('M2')
+        [<BabelRun "[[M2::abcd...">, <BabelRun "[[M2::efgh...">]
+        >>> bs.getMarkerRuns('M1')
+        [<BabelRun "[[M1::abcd...">]
+        """
+        # Transparant white extremely small string added in the output.
+        style = dict(fontSize=pt(0.0000001), textFill=color(1, 1, 1, 0))
+        self.runs.append(BabelRun('[[%s::%s]]' % (markerId, arg), style))
+
+    def getMarkerRuns(self, markerId):
+        """Answer the list of filtered runs that contain the marker.
+        In general this query is applied on rendered BabelText instances.
+        """
+        marker = '[[%s::' % markerId
+        runs = []
+        for run in self.runs:
+            if marker in run.s:
+                runs.append(run)
+        return runs
+
 
     def _get_textSize(self):
         """Answer the text size of self, rendered by the defined context.
         Raise an error if the context is not defined.
 
-        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(100))
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style)
         >>> bs.textSize
-        (250.9pt, 140pt)
+        (250.9pt, 100pt)
         """
-        context = self.context
-        assert context is not None
-        return context.textSize(self)
+        return self.tw, self.th 
     textSize = property(_get_textSize)
-
-    def textLines(self, w=None, h=None):
-        """Answer the dictionary of Babelstring, as result of wrapping the self
-        on colomn width @w. If the width is not defined, thatn take the with
-        if self.e.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(12))
-        >>> bs = context.newString('ABCD '*100, style)
-        >>> bs.textLines(w=300)[0]
-        <BabelLine #0 y=487.2pt>
-        """
-        context = self.context
-        assert context is not None
-        if w is None:
-            if self.e is not None and self.e.w:
-                w = self.e.w
-        return context.textLines(self, w=w, h=h)
 
     def __getitem__(self, given):
         """Answers a copy of self with a sliced string or with a single indexed
@@ -273,19 +460,19 @@ class BabelString:
         >>> bs # Show concatinated string, spanning the 2 styles
         $ABCDEFGHIJ...$
         >>> bs[3], bs[3].runs # Take indexed character from the first run
-        ($D$, [<BabelRun D>])
+        ($D$, [<BabelRun "D">])
         >>> bs[7], bs[7].runs # Spanning into the second run
-        ($H$, [<BabelRun H>])
+        ($H$, [<BabelRun "H">])
         >>> bs[2:], bs[2:].runs
-        ($CDEFGHIJKL$, [<BabelRun CD>, <BabelRun EFGH>, <BabelRun IJKL>])
+        ($CDEFGHIJKL$, [<BabelRun "CD">, <BabelRun "EFGH">, <BabelRun "IJKL">])
         >>> bs[:5], bs[:5].runs
-        ($ABCDE$, [<BabelRun ABCD>, <BabelRun E>])
+        ($ABCDE$, [<BabelRun "ABCD">, <BabelRun "E">])
         >>> bs[2:9], bs[2:9].runs
-        ($CDEFGHI$, [<BabelRun CD>, <BabelRun EFGH>, <BabelRun I>])
+        ($CDEFGHI$, [<BabelRun "CD">, <BabelRun "EFGH">, <BabelRun "I">])
         >>> bs[2:-5], bs[2:-5].runs
-        ($CDEFG$, [<BabelRun CD>, <BabelRun EFG>])
+        ($CDEFG$, [<BabelRun "CD">, <BabelRun "EFG">])
         >>> bs[-6:-2], bs[-6:-2].runs
-        ($GHIJ$, [<BabelRun GH>, <BabelRun IJ>])
+        ($GHIJ$, [<BabelRun "GH">, <BabelRun "IJ">])
         """
         if isinstance(given, slice):
             start = given.start or 0
@@ -294,7 +481,7 @@ class BabelString:
             stop = given.stop or len(self)+1
             if stop < 0:
                 stop += len(self)
-            slicedBs = BabelString(e=self.e, context=self.context)
+            slicedBs = self.__class__(context=self.context) # Context can be None
             i = 0
             for run in self.runs:
                 style = copy(run.style)
@@ -331,7 +518,7 @@ class BabelString:
             if i+l < given:
                 i += l
                 continue
-            return BabelString(run.s[given-i], copy(run.style))
+            return BabelString(run.s[given-i], copy(run.style), context=self.context)
         return None
 
     def __repr__(self):
@@ -347,28 +534,42 @@ class BabelString:
         s = self.s[:10]
         if s != self.s:
             s += '...'
-        return '$%s$' % s
+        return '$%s$' % s.replace('\n',' ')
 
     def add(self, s, style=None):
         """Create a new PabeBotRun instance and add it to self.runs.
 
         >>> from pagebot.toolbox.units import pt
+        >>> style0 = dict(fontSize=pt(12))
         >>> style1 = dict(fontSize=pt(12))
         >>> style2 = dict(fontSize=pt(18))
-        >>> bs = BabelString('ABCD', style1)
+        >>> bs = BabelString('AB', style0)
         >>> bs.style
         {'fontSize': 12pt}
-        >>> bs.add('EFGH') # No style, adds to the last run
-        >>> bs.add('IJKL') # Same style, adds to the last run
+        >>> bs.add('CD') # No style, adds to the last run
+        >>> bs
+        $ABCD$
+        >>> bs.runs
+        [<BabelRun "ABCD">]
+        >>> bs.add('EF', style=style0) # Identical style, adds to the last run
+        >>> bs.runs
+        [<BabelRun "ABCDEF">]
+        >>> bs.add('GH', style=style1) # Similar style, adds to the last run
+        >>> bs.runs
+        [<BabelRun "ABCDEFGH">]
         >>> bs.add('XYZ', style2) # Different style creates a new run
+        >>> bs.runs
+        [<BabelRun "ABCDEFGH">, <BabelRun "XYZ">]
         >>> len(bs), len(bs.runs) # Total number of characters and number of runs
-        (15, 2)
+        (11, 2)
         """
-        # If styles are matching, then just add.
-        if self.runs and (style is None or self.style == style):
-            self.runs[-1].s += str(s)
-        else: # With incompatible styles, make a new run.
-            self.runs.append(BabelRun(s, style))
+        if s:
+            if self.runs and (style is None or self.style == style):
+                # If styles are matching, then just add.
+                self.runs[-1].s += str(s)
+            else: # With incompatible styles, make a new run.
+                self.runs.append(BabelRun(s, style))
+            self.reset() # As we changed the content, cache needs to recalculate.
 
     def __len__(self):
         """Answer total string length.
@@ -392,12 +593,14 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import pt
         >>> bs1 = BabelString('ABCD', dict(fontSize=pt(18)))
-        >>> bs2 = BabelString('EFGH', dict(fontSize=pt(18)))
+        >>> bs2 = BabelString('EFGH', dict(fontSize=pt(24)))
         >>> bs3 = bs1 + bs2 # Create new instance, concatenated from both
         >>> bs1 is not bs2 and bs1 is not bs3 and bs2 is not bs3
         True
+        >>> bs3.runs
+        [<BabelRun "ABCD">, <BabelRun "EFGH">]
         """
-        bsResult = BabelString()
+        bsResult = BabelString(context=self.context) # Context can be None
         for run in self.runs:
             bsResult.runs.append(deepcopy(run))
         if isinstance(bs, str):
@@ -407,6 +610,7 @@ class BabelString:
                 bsResult.runs.append(deepcopy(run))
         else:
             raise ValueError("@bs must be string or other %s" % self.__class__.__name__)
+        bsResult.reset()
         return bsResult
 
     def __eq__(self, bs):
@@ -416,12 +620,12 @@ class BabelString:
         >>> bs1 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)))
         >>> bs2 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)))
         >>> bs3 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(20)))
-        >>> bs1 == bs2, bs1 is bs2
-        (True, False)
-        >>> bs2 == bs3
+        >>> bs1 == bs2 # Compares True, even for identical, but not the same styles.
+        True
+        >>> bs1 is bs2 # Although equal, they are not the same instance.
         False
-        >>> bs4 = bs1 + bs3
-
+        >>> bs2 == bs3 # Not equal, due to difference in style.
+        False
         """
         if not isinstance(bs, self.__class__):
             return False
@@ -527,6 +731,7 @@ class BabelString:
     def _set_font(self, font):
         assert isinstance(font, (str, Font))
         self.style['font'] = font # Set the font in the current style
+        self.reset() # Make sure context cache recalculates.
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
@@ -544,11 +749,10 @@ class BabelString:
         12pt
         """
         return units(self.style.get('fontSize', DEFAULT_FONT_SIZE))
-
     def _set_fontSize(self, fontSize):
         # Set the fontSize in the current style
         self.style['fontSize'] = units(fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_leading(self):
@@ -568,11 +772,10 @@ class BabelString:
         30pt
         """
         return units(self.style.get('leading', 0), base=self.fontSize)
-
     def _set_leading(self, leading):
         # Set the leading in the current style
         self.style['leading'] = units(leading, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     leading = property(_get_leading, _set_leading)
 
     def _get_tracking(self):
@@ -592,11 +795,10 @@ class BabelString:
         30pt
         """
         return units(self.style.get('tracking', 0), base=self.fontSize)
-
     def _set_tracking(self, tracking):
         # Set the tracking in the current style
         self.style['tracking'] = units(tracking, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     tracking = property(_get_tracking, _set_tracking)
 
     def _get_xAlign(self):
@@ -612,10 +814,9 @@ class BabelString:
         'right'
         """
         return self.style.get('xAlign', LEFT)
-
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = xAlign
-
+        self.reset() # Make sure context cache recalculates.
     xAlign = property(_get_xAlign, _set_xAlign)
 
     def _get_baselineShift(self):
@@ -635,7 +836,7 @@ class BabelString:
         return units(self.style.get('baselineShift', 0), base=self.fontSize)
     def _set_baselineShift(self, baselineShift):
         self.style['baselineShift'] = units(baselineShift, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     baselineShift = property(_get_baselineShift, _set_baselineShift)
 
     def _get_openTypeFeatures(self):
@@ -654,7 +855,7 @@ class BabelString:
         return self.style.get('openTypeFeatures', {})
     def _set_openTypeFeatures(self, openTypeFeatures):
         self.style['openTypeFeatures'] = openTypeFeatures
-
+        self.reset() # Make sure context cache recalculates.
     openTypeFeatures = property(_get_openTypeFeatures, _set_openTypeFeatures)
 
     def _get_underline(self):
@@ -669,10 +870,9 @@ class BabelString:
         False
         """
         return self.style.get('underline', False)
-
     def _set_underline(self, underline):
         self.style['underline'] = underline
-
+        self.reset() # Make sure context cache recalculates.
     underline = property(_get_underline, _set_underline)
 
     def _get_indent(self):
@@ -690,10 +890,9 @@ class BabelString:
         True
         """
         return units(self.style.get('indent', 0), base=self.fontSize)
-
     def _set_indent(self, indent):
         self.style['indent'] = units(indent, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     indent = property(_get_indent, _set_indent)
 
     def _get_tailIndent(self):
@@ -711,10 +910,9 @@ class BabelString:
         True
         """
         return units(self.style.get('tailIndent', 0), base=self.fontSize)
-
     def _set_tailIndent(self, tailIndent):
         self.style['tailIndent'] = units(tailIndent, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     tailIndent = property(_get_tailIndent, _set_tailIndent)
 
     def _get_firstLineIndent(self):
@@ -732,12 +930,10 @@ class BabelString:
         True
         """
         return units(self.style.get('firstLineIndent', 0), base=self.fontSize)
-
     def _set_firstLineIndent(self, firstLineIndent):
         self.style['firstLineIndent'] = units(firstLineIndent, base=self.fontSize)
-
+        self.reset() # Make sure context cache recalculates.
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
-
 
     def _get_textFill(self):
         """Answer the textFill as defined in the current style.
@@ -754,10 +950,8 @@ class BabelString:
         Color(r=0.25, g=0.25, b=0.25)
         """
         return color(self.style.get('textFill', 0))
-
     def _set_textFill(self, textFill):
         self.style['textFill'] = color(textFill)
-
     textFill = property(_get_textFill, _set_textFill)
 
     def _get_textStroke(self):
@@ -775,10 +969,8 @@ class BabelString:
         Color(r=0.25, g=0.25, b=0.25)
         """
         return color(self.style.get('textStroke', 0))
-
     def _set_textStroke(self, textStroke):
         self.style['textStroke'] = color(textStroke)
-
     textStroke = property(_get_textStroke, _set_textStroke)
 
     def _get_textStrokeWidth(self):
@@ -795,10 +987,8 @@ class BabelString:
         0.5pt
         """
         return units(self.style.get('textStrokeWidth', 0))
-
     def _set_textStrokeWidth(self, textStrokeWidth):
         self.style['textStrokeWidth'] = units(textStrokeWidth)
-
     textStrokeWidth = property(_get_textStrokeWidth, _set_textStrokeWidth)
 
     def _get_capHeight(self):
@@ -820,7 +1010,6 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.capHeight / font.info.unitsPerEm
-
     capHeight = property(_get_capHeight)
 
     def _get_xHeight(self):
@@ -842,53 +1031,55 @@ class BabelString:
         """
         font = self.font
         return self.fontSize * font.info.xHeight / font.info.unitsPerEm
-
     xHeight = property(_get_xHeight)
 
     def _get_ascender(self):
         """Answer the font ascender as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
+        Use the self.info.typoAscender (from the [OS/2] table) instead of
+        the self.info.ascender (which some from the [hhea] table.)
 
         >>> from pagebot.toolbox.units import mm
-        >>> style = dict(font='PageBot-Regular', fontSize=12)
+        >>> style = dict(font='PageBot-Regular', fontSize=1000)
         >>> bs = BabelString('ABCD', style=style)
         >>> bs.ascender # Converts to absolute units
-        10.78pt
+        748pt
         >>> bs.fontSize = 100
         >>> bs.ascender
-        89.8pt
+        74.8pt
         >>> bs.fontSize = mm(50)
         >>> bs.ascender # xheight converts to absolute mm.
-        44.9mm
+        37.4mm
         """
         font = self.font
-        return self.fontSize * font.info.ascender / font.info.unitsPerEm
-
+        return self.fontSize * font.info.typoAscender / font.info.unitsPerEm
     ascender = property(_get_ascender)
 
     def _get_descender(self):
         """Answer the font descender as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
+        Use the self.info.typoDescender (from the [OS/2] table) instead of
+        the self.info.ascender (which some from the [hhea] table.)
+        Note that the descender is a position, not a distance, so it is
+        a negative value.
 
         >>> from pagebot.toolbox.units import mm
-        >>> style = dict(font='PageBot-Regular', fontSize=12)
+        >>> style = dict(font='PageBot-Regular', fontSize=1000)
         >>> bs = BabelString('ABCD', style=style)
         >>> bs.descender # Converts to absolute units
-        -3.62pt
+        -252pt
         >>> bs.fontSize = 100
         >>> bs.descender
-        -30.2pt
+        -25.2pt
         >>> bs.fontSize = mm(50)
         >>> bs.descender # xheight converts to absolute mm.
-        -15.1mm
+        -12.6mm
         """
         font = self.font
-        return self.fontSize * font.info.descender / font.info.unitsPerEm
-
+        return self.fontSize * font.info.typoDescender / font.info.unitsPerEm
     descender = property(_get_descender)
-
 
     def getStyleAtIndex(self, index):
         """Answer the style at character index. If a run style is None,

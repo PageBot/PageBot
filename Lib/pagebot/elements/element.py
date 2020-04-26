@@ -2287,7 +2287,7 @@ class Element:
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('x'), base=base)
+        return units(self.style.get('x', 0), base=base)
 
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
@@ -2313,7 +2313,7 @@ class Element:
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('y'), base=base)
+        return units(self.style.get('y', 0), base=base)
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
@@ -2344,12 +2344,10 @@ class Element:
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
         base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('z'), base=base)
-
+        return units(self.style.get('z', 0), base=base)
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
         self.style['z'] = units(z)
-
     z = property(_get_z, _set_z)
 
     def _get_xy(self):

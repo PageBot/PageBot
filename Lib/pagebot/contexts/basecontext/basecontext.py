@@ -883,7 +883,7 @@ class BaseContext(AbstractContext):
 
     # String.
 
-    def newString(self, bs=None, style=None, e=None):
+    def newString(self, bs=None, style=None, w=None, h=None):
         """Creates a new BabelString instance of self.STRING_CLASS from
         `bs` (converted to plain unicode string), using style as
         typographic parameters or `e` as cascading style source.
@@ -891,20 +891,20 @@ class BaseContext(AbstractContext):
         instance and no style is forced. PageBot function.
 
         >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.elements import *
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
-        >>> e = Element(name='Test', w=500, h=200) # Ref can be any type of element
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)), e=e)
-        >>> bs, bs.__class__.__name__, bs.e.name, bs.context
-        ($ABCD$, 'BabelString', 'Test', <DrawBotContext>)
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
+        >>> bs, bs.__class__.__name__, bs.context
+        ($ABCD$, 'BabelString', <DrawBotContext>)
         """
         style = makeStyle(style=style) # Check style for illegal keys.
 
+        if not bs:
+            bs = ''
         if not isinstance(bs, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
             # Set the babelString.context as self.
-            bs = self.STRING_CLASS(str(bs), style=style, e=e, context=self)
+            bs = self.STRING_CLASS(bs, style=style, w=w, h=h, context=self)
 
         assert isinstance(bs, self.STRING_CLASS)
         return bs
@@ -926,7 +926,7 @@ class BaseContext(AbstractContext):
         """
         if not isinstance(s, self.STRING_CLASS):
             # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.fitString(str(s), context=self, e=e, style=style,
+            s = self.STRING_CLASS.fitString(str(s), context=self, style=style,
                 w=w, h=h, pixelFit=pixelFit)
 
         assert isinstance(s, self.STRING_CLASS)

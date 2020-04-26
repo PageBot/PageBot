@@ -29,13 +29,17 @@ ONLINE = 'online'
 INLINE = 'inline'
 OUTLINE = 'outline'
 
+# xAlign options for Elements and Text
 LEFT = 'left'
 RIGHT = 'right'
 CENTER = 'center'
-MIDDLE = 'middle'
 JUSTIFIED = 'justified'
+
+# yAlign Vertical alignments for Elements and Text
 TOP = 'top'
 BOTTOM = 'bottom'
+MIDDLE = 'middle' # yALign, vertical centered on box
+
 # Align in front, z-axis, nearest to view, perpendicular to the screen.
 FRONT = 'front'
 # Align in back, z-axis, nearest to view, perpendicular to the screen.
@@ -409,11 +413,14 @@ ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 # Min/max values for element sizes. Makes sure that elements dimensions for
 # (w,h) never get 0.
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
+XXH = 10000000 # Default “infinite” height for BabelText columns.
 
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
+DEFAULT_COL_WIDTH = pt(300) # Default width for Text elements and BabelText renders.
+
 # Default size for windows, e.g. created with VanillaContext
 DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
@@ -721,11 +728,18 @@ BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element 
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
 BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT,
     BASE_Y_RIGHT, BASE_INSIDE}
+
+# Additional vertical alignment for Text elements
 BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of origin (for TextBox)
 BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
+XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
+MIDDLE_CAP = 'middleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
+MIDDLE_X = 'middleXHeight' # yALign, vertical centered on xHeight
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, MIDDLE, CENTER, BASE_TOP, BASE_BOTTOM} # "middle" is PageBot. "center" is CSS.
+YALIGNS = {None, TOP, BOTTOM, MIDDLE, CENTER, BASE_TOP, BASE_BOTTOM, CAPHEIGHT, XHEIGHT,
+    MIDDLE_CAP, MIDDLE_X} # "middle" is PageBot. "center" is CSS.
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 # Flags where to draw crop marks on folds.

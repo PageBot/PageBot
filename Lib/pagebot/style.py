@@ -46,7 +46,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
 
         for key, value in style.items():
             if key not in rs:
-                warning = '[makeStyle] %s not allowed in (root) style!' % key
+                warning = '[makeStyle] Attribute “%s” not allowed in (root) style!' % key
                 if raiseError:
                     raise ValueError(warning)
                 print(warning)

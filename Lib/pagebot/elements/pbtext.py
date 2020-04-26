@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     text.py
+#     pbtext.py
 #
 #     The Text element is the simplest version of text elements. If no width
 #     e.w is defined, it handles single line of text (unless there are hard coded \n
@@ -23,15 +23,12 @@
 import re
 from copy import deepcopy
 
-from pagebot.constants import (LEFT, RIGHT, CENTER, MIDDLE, BOTTOM,
-    DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_BASELINE_COLOR,
-    DEFAULT_BASELINE_WIDTH, BASE_LINE_BG, BASE_LINE, BASE_INDEX_LEFT,
-    BASE_Y_LEFT, BASE_INDEX_RIGHT, BASE_Y_RIGHT)
+from pagebot.constants import *
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.style import makeStyle
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset, point2D, pt, units, uRound, upt
-from pagebot.toolbox.color import color, noColor
+from pagebot.toolbox.units import pointOffset, point2D, point3D, pt, units, upt
+from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class Text(Element):
@@ -61,20 +58,29 @@ class Text(Element):
     TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None, 
-            parent=None, padding=None, **kwargs):
-        self._bs = None
+            parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
+        self._bs = None # BabelString source for this Text element.
+        self._bt = None # BabelText render in case @w width is defined.
 
-        Element.__init__(self, parent=parent, padding=padding, **kwargs)
+        # Adjust the attributes in **kwargs, so their keys are part of the
+        # rootstyle, in order to do automatic conversion with makeStyle()
+        Element.__init__(self, parent=parent, padding=padding, 
+            conditions=conditions, **kwargs)
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
-        self._textLines = None # Cache storage of self.textLined property
+        # Can be one of BASELINE (default), TOP (equivalent to ascender height
+        # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
+        # MIDDLE and BOTTOM
+        assert yAlign in YALIGNS
+        if yAlign is None:
+            yAlign = BASE_TOP # By default align on baseline of first line
 
         # Combine rootStyle, optional self.style and **kwargs attributes.
         # Note that the final style is stored in the BabelString instance
         # self.bs. self.style is used as template, in the content is defined
         # as plain string.
-        self.style = makeStyle(style, **kwargs)
+        self.style = makeStyle(style, yAlign=yAlign, **kwargs)
 
         # If self._w is None, behave as Text. Otherwise behave as “TextBox”.
         # This change in behavior makes that we don’t have a separate TextBox class.
@@ -86,7 +92,6 @@ class Text(Element):
             self._w = units(w)
         if h is not None:
             self._h = units(h)
-
         # Set as property, to make sure there's always a generic BabelString
         # instance or None. Needs to be done before element initialize, as
         # some attributes (Text.xAlign) may need the string style as reference.
@@ -111,13 +116,6 @@ class Text(Element):
         >>> t.bs = 'AAA'
         >>> t.bs
         $AAA$
-        >>> len(t.textLines) # Make new self._textLines render with context
-        1
-        >>> t._textLines is not None
-        True
-        >>> t.bs = context.newString('ABCD')
-        >>> t._textLines is None # Setting of BabelString clears textLines cache
-        True
         >>> t
         <Text $ABCD$ w=125pt>
         """
@@ -125,35 +123,9 @@ class Text(Element):
         if bs is None:
             bs = ''
         if isinstance(bs, str):
-            if self.context is not None:
-                bs = self.context.newString(bs, self.style)
-            else:
-                bs = BabelString(bs, self.style) # Otherwise without context, for now.
-        #assert isinstance(bs, BabelString)
-        self._textLines = None # Force re-render on self.textLines property call.
+            bs = BabelString(bs, self.style, context=self.context) # Otherwise without context, for now.
         self._bs = bs
     bs = property(_get_bs, _set_bs)
-
-    def clear(self):
-        """Clear the current content of the element. Make a new formatted
-        string with self.style.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
-        >>> doc = Document(w=300, h=400, autoPages=1, padding=30, context=context)
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(12))
-        >>> page = doc[1]
-        >>> bs = context.newString('ABCD', style)
-        >>> tb = Text(bs, parent=page, w=125)
-        >>> tb.bs
-        $ABCD$
-        >>> tb.clear()
-        >>> not tb.bs.s
-        True
-        """
-        self.bs = None # Also clear the cached self._textLines
 
     def _get_w(self): # Width
         """Property for self._w, holding the width of the textbox.
@@ -213,31 +185,6 @@ class Text(Element):
         self._h = h
     h = property(_get_h, _set_h)
 
-    def _get_y(self):
-        """Answers the `y`-position of self.
-
-        >>> e = Element(y=100, h=400)
-        >>> e.x, e.y, e.z
-        (0pt, 100pt, 0pt)
-        >>> e.y = 200
-        >>> e.x, e.y, e.z
-        (0pt, 200pt, 0pt)
-        >>> child = Element(y='40%', parent=e)
-        >>> child.y, child.y.pt # 40% of 400
-        (40%, 160)
-        >>> e.h = 500
-        >>> child.y, child.y.pt # 40% of 500 dynamic calculation
-        (40%, 200)
-        """
-        # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('y'), base=base)
-    def _set_y(self, y):
-        """Convert to units, if y is not already a Unit instance."""
-        self.style['y'] = units(y)
-        #self._textLines = None # Force recalculation of y values.
-    y = property(_get_y, _set_y)
-
     def _get_firstColumnIndent(self):
         """If False or 0, then ignore first line indent of a column on text
         overflow. Otherwise set to a certain unit. This will cause text being
@@ -263,13 +210,6 @@ class Text(Element):
     def _set_indent(self, indent):
         self.style['indent'] = units(indent)
     indent = property(_get_indent, _set_indent)
-
-    def _get_textLines(self):
-        context = self.context
-        assert context is not None
-        self._textLines = context.textLines(self.bs)
-        return self._textLines
-    textLines = property(_get_textLines)
 
     def _get_baselines(self):
         if self._baselines is None:
@@ -582,92 +522,63 @@ class Text(Element):
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
         >>> from pagebot.contexts import getContext
-        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.toolbox.units import pt, em
         >>> context = getContext('DrawBot')
-        >>> doc = Document(w=500, h=100, context=context)
+        >>> W, H = 500, 400
+        >>> doc = Document(w=W, h=H, context=context)
+        >>> page = doc[1]
+        >>> fontSize = pt(100)
+        >>> style = dict(font='PageBot-Regular', fontSize=fontSize, leading=fontSize, textFill=(1, 0, 0), xAlign=CENTER)
+        >>> bs = context.newString('Hkpx\\nHkpx', style) 
+        >>> t = Text(bs, x=W/2, y=H/2, parent=page, showOrigin=True, fill=0.9, yAlign=MIDDLE)
+        >>> l = Line(x=t.x-t.w/2, y=t.y, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.capHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.ascender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.xHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.descender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> doc.export('_export/Text-build1.pdf')
+
+        >>> W, H = 700, 100
+        >>> doc = Document(w=W, h=H, context=context)
         >>> view = doc.view
         >>> view.showOrigin = True
         >>> view.padding = pt(30)
         >>> view.showCropMarks = True
         >>> view.showFrame = True
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(18), textFill=(1, 0, 0), xAlign=CENTER)
+        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(18), textFill=(0, 0, 0.5), xAlign=CENTER)
         >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit valim mecto trambor.'
         >>> bs = context.newString(txt, style) # Creates a BabelString with context reference.
         >>> bs.context is context
         True
-        >>> t = Text(bs, x=100, y=50, parent=doc[1])
-        
+        >>> t = Text(bs, x=W/2, y=H/2, parent=doc[1], yAlign=MIDDLE_X)        
         >>> t.context is context
         True
-        >>> doc.export('_export/Text-build.pdf')
+        >>> doc.export('_export/Text-build2.pdf')
         """
-        context = view.context # Get current context
-
+        context = self.context
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
+        tx, _, _, = p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        context = view.context # Get current context
         self._applyRotation(view, p)
+
+        # TODO: Add Element clipping stuff here
 
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
         # Draw optional background, frame or borders.
-        self.buildFrame(view, (self.left, self.bottom, self.w, self.h))
+        self.buildFrame(view, (px, py-self.h+self.bs.ascender, self.w, self.h))
 
-        # Call if defined.
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
-        # self has its own baseline drawing, derived from the text, instance of
-        # self.baselineGrid.
-        #self.drawBaselines(view, px, py, background=True) # In case there is a baseline at the back
-
-        textShadow = self.textShadow
-
-        if textShadow:
-            context.saveGraphicState()
-            context.setShadow(textShadow)
-
-        box = clipPath = None
-
-        if self.clipPath is not None: # Use the elements as clip path:
-            clipPath = self.clipPath
-            clipPath.translate((px, py))
-            context.text(self.bs, clipPath=clipPath)
-
-        elif clipPath is None:
-            # If there are child elements, then these are used as layout for
-            # the clipping path.
-            if 0 and self.elements:
-                # Construct the clip path, so we don't need to restore
-                # translate.
-                clipPath = self.childClipPath
-                if clipPath is not None:
-                    clipPath.translate((self.pl, self.pb))
-                clipPath.translate((self.pl, self.pb))
-                context.text(self.bs, clipPath=clipPath)
-            else:
-                # One of box or clipPath are now defined.
-                context.text(self.bs, (px+self.pl, py+self.pb))
-
-        if textShadow:
-            context.restoreGraphicState()
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
-
-        if view.showTextOverflowMarker and self.isOverflow():
-            # TODO: Make this work for FlatContext too
-            self._drawOverflowMarker_drawBot(view, px, py)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
+        if self._w:
+            context.drawText(self.textLines, (tx, py))
+        else: # Draw a single string at this position.
+            context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-        view.drawElementOrigin(self, p)
-
+        view.drawElementOrigin(self, origin)
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draws the optional overflow marker, if text doesn't fit in the box."""
@@ -677,6 +588,78 @@ class Text(Element):
         # FIX: Should work work self.bottom
         #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
         b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
+
+    def _applyAlignment(self, p):
+        """Answers point `p` according to the alignment status in the css
+        and alignment of the text."""
+        px, py, pz = point3D(p)
+        return self._applyHorizontalAlignment(px), self._applyVerticalAlignment(py), pz
+
+    def _applyHorizontalAlignment(self, x):
+        # Horizontal alignment is done by the text
+        xAlign = self.xAlign
+        if xAlign == CENTER:
+            x -= self.w/2/self.scaleX
+        elif xAlign == RIGHT:
+            x -= self.w/self.scaleX
+        return x
+
+    def _applyVerticalAlignment(self, y):
+        # Adjust vertical alignments for the text,
+        # assuming that the default origin of drawing in on text baseline.
+        yAlign = self.yAlign
+        if yAlign == MIDDLE:
+            y += self.h/2 - self.textLines[0].bs.firstLineAscender
+        elif yAlign == CAPHEIGHT:
+            y -= self.textLines[0].bs.firstLineCapHeight
+        elif yAlign == XHEIGHT:
+            y -= self.textLines[0].bs.firstLineXHeight
+        elif yAlign == MIDDLE_CAP:
+            y -= self.textLines[0].bs.firstLineCapHeight/2
+        elif yAlign == MIDDLE_X:
+            y -= self.textLines[0].bs.firstLineXHeight/2
+        elif yAlign == TOP:
+            y -= self.textLines[0].bs.firstLineAscender
+        elif yAlign == BASE_BOTTOM:
+            y -= self.textLines[-1].bs.lastLineDescender
+        elif yAlign == BOTTOM:
+            y += self.h - self.textLines[0].bs.firstLineAscender
+        #else BASE_TOP, None is default
+        return y
+
+    def _get_bottom(self):
+        """Bottom position of bounding box, not including margins.
+
+        """
+        return self.top - self.h
+    def _set_bottom(self, y):
+        self.top = y + self.h
+    bottom = property(_get_bottom, _set_bottom)
+
+    def _get_top(self):
+        """Bottom position of bounding box, not including margins.
+
+        >>> from pagebot.constants import A4
+        >>> from pagebot.document import Document
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(size=A4, context=context)
+        >>> page = doc[1]
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(20)))
+        >>> t = Text(bs, parent=page)
+        >>> t.top
+        14.96pt
+        >>> t.top = 100
+        >>> t.top, t.y
+        (100pt, 85.04pt)
+        >>> t.y += 100
+        >>> t.top, t.y
+        (200pt, 185.04pt)
+        """
+        return self._applyVerticalAlignment(self.y) + self.bs.firstLineAscender 
+    def _set_top(self, y):
+        self.y = self._applyVerticalAlignment(y) - self.textLines[0].bs.firstLineAscender
+    top = property(_get_top, _set_top)
 
     #   B U I L D  I N D E S I G N
 
