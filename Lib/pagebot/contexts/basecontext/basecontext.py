@@ -914,9 +914,9 @@ class BaseContext(AbstractContext):
         return self.b.FormattedString(*args, **kwargs)
 
     def newBulletString(self, bullet, e=None, style=None):
-        return self.newString(bullet, e=e, style=style)
+        return self.newString(bullet, style=style)
 
-    def XXXfitString(self, s, e=None, style=None, w=None, h=None, pixelFit=True):
+    def XXXfitString(self, s, style=None, w=None, h=None, pixelFit=True):
         """Creates a new styles BabelString instance of self.STRING_CLASS from
         s assuming that style['font'] is a Variable Font instnace, or a path
         pointing to one. If the for is not a VF, then behavior is the same as

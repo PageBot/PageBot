@@ -230,7 +230,7 @@ class BabelString:
         """Answer the cached calculated context width
         """
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self.w, h=self.h)
+            self._twh = self.context.textSize(self.cs, w=self.w)
         return self._twh[0]
     tw = property(_get_tw)
 
@@ -238,7 +238,7 @@ class BabelString:
         """Answer the cached calculated context height
         """
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self.w, h=self.h)
+            self._twh = self.context.textSize(self.cs, w=self.w)
         return self._twh[1]
     th = property(_get_th)
         
@@ -608,6 +608,8 @@ class BabelString:
         elif isinstance(bs, BabelString):
             for run in bs.runs:
                 bsResult.runs.append(deepcopy(run))
+            bsResult.w = bs.w
+            bsResult.h = bs.h
         else:
             raise ValueError("@bs must be string or other %s" % self.__class__.__name__)
         bsResult.reset()

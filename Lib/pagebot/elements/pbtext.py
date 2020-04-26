@@ -565,10 +565,8 @@ class Text(Element):
         # Draw optional background, frame or borders.
         self.buildFrame(view, (px, py+self.bs.lastLineDescender, self.bs.tw, self.bs.th))
 
-        if self._w:
-            context.drawText(self.textLines, (tx, py))
-        else: # Draw a single string at this position.
-            context.drawString(self.bs, (tx, py))
+        print('=d=dd=d=', self.bs, self.bs.w, self.bs.h)
+        context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
