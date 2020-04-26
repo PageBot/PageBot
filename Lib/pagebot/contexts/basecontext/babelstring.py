@@ -293,7 +293,7 @@ class BabelString:
         >>> bs.runs
         [<BabelRun "ABCD">, <BabelRun "EFGH ">]
         >>> bs.lines[0].runs
-        [<DBRunInfo "ABCD">, <DBRunInfo "EFGH">]
+        [<BabelRunInfo "ABCD">, <BabelRunInfo "EFGH">]
         >>> bs.firstLineAscender # First line ascender height increased
         149.6pt
         >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
@@ -379,7 +379,7 @@ class BabelString:
         >>> bs.lastLineDescender # Last line descender increased        
         -12.6pt
         >>> bs.lines[1]
-        <DBLineInfo x=0pt y=135pt runs=1>
+        <BabelLineInfo x=0pt y=798pt runs=1>
         """
         lastLineDescender = 0
         if self.lines:

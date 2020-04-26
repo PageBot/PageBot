@@ -445,7 +445,8 @@ class PageView(BaseView):
             y = self.pb + e.h - cmDistance + th * 1.5
             #self.context.stroke(registrationColor, 0.5)
             #self.context.line((x, y), (x + tw, y))
-            self.context.drawString(bs, (x, y, e.pw, th * 1.5))
+            cropmarkDistance = self.css('viewCropMarkDistance', pt(12))
+            self.context.drawString(bs, (x, y+cropmarkDistance, bs.tw, bs.th))
 
     def getNameString(self, e, path):
         """

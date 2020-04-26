@@ -132,12 +132,6 @@ class Element:
         # recursively
         self.sId = sId
 
-        # Initialize self._elements and self._eIds.
-        self.clearElements()
-        self.checkStyleArgs(kwargs)
-        # Make default style for t == 0 from args
-        self.style = makeStyle(style, **kwargs)
-
         # If undefined yAlign and parent has origin on top, then default yAlign
         # to TOP. Local value is overwritten if there is a parent defined.
         #self._originTop = originTop
@@ -148,9 +142,14 @@ class Element:
         if yAlign is None and self.originTop is True:
             yAlign = TOP
 
-        self.xAlign = xAlign
-        self.yAlign = yAlign
-        self.zAlign = zAlign
+        # Initialize self._elements and self._eIds.
+        self.clearElements()
+        self.checkStyleArgs(kwargs)
+        # Make default style for t == 0 from args
+        self.style = makeStyle(style, **kwargs)
+        self.style['xAlign'] = xAlign
+        self.style['yAlign'] = yAlign
+        self.style['zAlign'] = zAlign
 
         # An element can have it's own theme (e.g. color palette). Set as property
         # If not defined, then use the parent theme

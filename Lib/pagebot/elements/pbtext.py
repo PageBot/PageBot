@@ -59,9 +59,6 @@ class Text(Element):
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None, 
             parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
-        self._bs = None # BabelString source for this Text element.
-        self._bt = None # BabelText render in case @w width is defined.
-
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, parent=parent, padding=padding, 
@@ -82,6 +79,11 @@ class Text(Element):
         # as plain string.
         self.style = makeStyle(style, yAlign=yAlign, **kwargs)
 
+        # Set as property, to make sure there's always a generic BabelString
+        # instance or None. Needs to be done before element initialize, as
+        # some attributes (Text.xAlign) may need the string style as reference.
+        self.bs = bs # BabelString source for this Text element.
+
         # If self._w is None, behave as Text. Otherwise behave as “TextBox”.
         # This change in behavior makes that we don’t have a separate TextBox class.
         # If self._h is defined, the overflow is detected.
@@ -92,18 +94,14 @@ class Text(Element):
             self._w = units(w)
         if h is not None:
             self._h = units(h)
-        # Set as property, to make sure there's always a generic BabelString
-        # instance or None. Needs to be done before element initialize, as
-        # some attributes (Text.xAlign) may need the string style as reference.
-        self.bs = bs
 
     def _get_bs(self):
         """Answer the stored formatted BabelString. The value can be None.
         """
         return self._bs
     def _set_bs(self, bs):
-        """If not None, make sure that this is a formatted BabelString. 
-        Otherwise create it with the current style. Note that there is a potential clash
+        """Make sure that this is a formatted BabelString. 
+        Otherwise create it from string with the current style. Note that there is a potential clash
         in the duplicate usage of fill and stroke.
 
         >>> from pagebot.document import Document
@@ -113,18 +111,19 @@ class Text(Element):
         >>> page = doc[1]
         >>> t = Text(parent=page, w=125)
         >>> # String converts to DrawBotString.
-        >>> t.bs = 'AAA'
+        >>> t.bs = 'ABCD'
         >>> t.bs
-        $AAA$
+        $ABCD$
         >>> t
         <Text $ABCD$ w=125pt>
         """
-        # Source can be None, a string or a BabelString.
         if bs is None:
             bs = ''
         if isinstance(bs, str):
-            bs = BabelString(bs, self.style, context=self.context) # Otherwise without context, for now.
+            bs = BabelString(bs, self.style, w=self.w, h=self.h) 
+        assert isinstance(bs, BabelString)
         self._bs = bs
+        bs.context = self.context
     bs = property(_get_bs, _set_bs)
 
     def _get_w(self): # Width
@@ -140,13 +139,10 @@ class Text(Element):
         >>> t.w, t.w == page[t.eId].w
         (150pt, True)
         """
-        # In case of relative units, use this as base.
+        base = dict(base=self.parentW, em=self.em) # In case relative units, use parent as base.
         if self._w is not None:
-            base = dict(base=self.parentW, em=self.em) # In case relative units, use parent as base.
             return units(self._w, base=base)
-        if self.bs is not None:
-            return self.bs.textSize[0]
-        return None
+        return units(self.bs.w or self.bs.tw, base=base)
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if w is not None:
@@ -300,33 +296,32 @@ class Text(Element):
         external attribute, then the size of the string is answers, as if it
         was already inside the text box.
 
-        >>> from pagebot.fonttoolbox.objects.font import findFont
+
+        >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
         >>> context = getContext('DrawBot')
         >>> doc = Document(context=context)
-        >>> font = findFont('Roboto-Regular')
-        >>> bs = BabelString('ABC', dict(font=font, fontSize=pt(124)))
-        >>> t = Text(bs, parent=doc[1], w=100, h=None)
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('ABC', style)
+        >>> t = Text(bs, parent=doc[1], w=500)
         >>> t.bs
         $ABC$
         >>> t.bs == bs
         True
         >>> t.context
         <DrawBotContext>
-        >>> tw, th = t.context.textSize(bs) # FIXME: Right value?
+        >>> tw, th = t.getTextSize(bs) # FIXME: Right value?
         >>> tw.rounded, th.rounded
-        (239pt, 174pt)
+        (182pt, 100pt)
         """
-        context = self.context
-        assert context is not None
         if bs is None: # If defined, test with other string than inside.
             bs = self.bs
         if bs is None: # Still None? Don't know what to do.
             return 0, 0
         if w is None:
-            return context.textSize(bs, w=w)
-        return context.textSize(bs, w=self.w)
+            w = self.w
+        return self.context.textSize(bs.cs, w=self.w)
 
     def getOverflow(self, w=None, h=None):
         """Figures out what the overflow of the text is, with the given (w, h)
@@ -568,7 +563,7 @@ class Text(Element):
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
         # Draw optional background, frame or borders.
-        self.buildFrame(view, (px, py-self.h+self.bs.ascender, self.w, self.h))
+        self.buildFrame(view, (px, py+self.bs.lastLineDescender, self.bs.tw, self.bs.th))
 
         if self._w:
             context.drawText(self.textLines, (tx, py))
@@ -609,21 +604,21 @@ class Text(Element):
         # assuming that the default origin of drawing in on text baseline.
         yAlign = self.yAlign
         if yAlign == MIDDLE:
-            y += self.h/2 - self.textLines[0].bs.firstLineAscender
+            y += self.h/2 - self.bs.firstLineAscender
         elif yAlign == CAPHEIGHT:
-            y -= self.textLines[0].bs.firstLineCapHeight
+            y -= self.bs.firstLineCapHeight
         elif yAlign == XHEIGHT:
-            y -= self.textLines[0].bs.firstLineXHeight
+            y -= self.bs.firstLineXHeight
         elif yAlign == MIDDLE_CAP:
-            y -= self.textLines[0].bs.firstLineCapHeight/2
+            y -= self.bs.firstLineCapHeight/2
         elif yAlign == MIDDLE_X:
-            y -= self.textLines[0].bs.firstLineXHeight/2
+            y -= self.bs.firstLineXHeight/2
         elif yAlign == TOP:
-            y -= self.textLines[0].bs.firstLineAscender
+            y -= self.bs.firstLineAscender
         elif yAlign == BASE_BOTTOM:
-            y -= self.textLines[-1].bs.lastLineDescender
+            y -= self.bs.lastLineDescender
         elif yAlign == BOTTOM:
-            y += self.h - self.textLines[0].bs.firstLineAscender
+            y += self.h - self.bs.firstLineAscender
         #else BASE_TOP, None is default
         return y
 
@@ -658,7 +653,7 @@ class Text(Element):
         """
         return self._applyVerticalAlignment(self.y) + self.bs.firstLineAscender 
     def _set_top(self, y):
-        self.y = self._applyVerticalAlignment(y) - self.textLines[0].bs.firstLineAscender
+        self.y = self._applyVerticalAlignment(y) - self.bs.firstLineAscender
     top = property(_get_top, _set_top)
 
     #   B U I L D  I N D E S I G N
