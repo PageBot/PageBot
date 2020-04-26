@@ -562,11 +562,22 @@ class Text(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
-        # Draw optional background, frame or borders.
-        self.buildFrame(view, (px, py+self.bs.lastLineDescender, self.bs.tw, self.bs.th))
-
-        print('=d=dd=d=', self.bs, self.bs.w, self.bs.h)
-        context.drawString(self.bs, (tx, py))
+        #print('-;f;f;f', self.bs, self.bs.w, self.bs.h, self.bs.tw, self.bs.th)
+        
+        if self.bs.w is not None or self.bs.h is not None:
+            # Draw optional background, frame or borders.
+            self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.bs.tw, self.bs.th))
+            # No size defined, just draw the string with it's own (bs.tw, bs.th)
+            # Note that there still can be multiple lines in the the string if
+            # it contains '\n' characters.
+            # it contains '\n' characters.
+            context.drawText(self.bs, (tx, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
+        
+        else: # Draw as string from its own width
+            # Draw optional background, frame or borders.
+            #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
+            self.buildFrame(view, (px, py+self.bs.lastLineDescender, self.bs.tw, self.bs.th))
+            context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)

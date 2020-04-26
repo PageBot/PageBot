@@ -15,8 +15,8 @@ content = {
     '_ankeiler': ['<#article_ankeiler#>',],
     '_summary': ['<#article_summary#>',],
 
-    'creditarticle' : ['<p class="writer"> <#article_writer#></p><#article_content#> '],
-    'article' : ['<#article_content#>'],
+    'creditarticle': ['<p class="writer"> <#article_writer#></p><#article_content#> '],
+    'article': ['<#article_content#>'],
     'article_ankeiler': [
         '<#article_p1#> ','<#article_p2#> ','<#article_p3#> ',
         '<#article_p4#> ','<#article_p5#> ','<#article_p6#> ',
@@ -36,51 +36,51 @@ content = {
         '<#^,book_headline#> '
     ],
     'article_summary': [
-        '<p class="start summary"><#article_start#> </p><p><#article_p1#> <#article_p3#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p2#> <#article_p4#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p3#> <#article_p5#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p4#> <#article_p6#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p5#> <#article_p7#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p6#> <#article_p8#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p7#> <#article_p9#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p8#> <#article_p10#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#da_text#> <#article_p10#> </p>', # Fake design text once in a while.
+        '<p class="start summary"><#article_start#></p> <p><#article_p1#> <#article_p3#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p2#> <#article_p4#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p3#> <#article_p5#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p4#> <#article_p6#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p5#> <#article_p7#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p6#> <#article_p8#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p7#> <#article_p9#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p8#> <#article_p10#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#da_text#> <#article_p10#></p> ', # Fake design text once in a while.
     ],
     'article_shortsummary': [
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p1#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p2#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p3#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p4#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p5#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p6#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p7#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p8#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p9#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p10#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#da_text#> </p>', # Fake design text once in a while.
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p1#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p2#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p3#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p4#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p5#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p6#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p7#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p8#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p9#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p10#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#da_text#></p> ', # Fake design text once in a while.
     ],
     'article_deck': [
         '<#article_start#>',
      ],
-    'article_content' : [
+    'article_content': [
         """<p class="start"><#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
         """<p class="start"><span class="place"><#city#> (<#tv#>)</span> <#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
         """<p class="start"><span class="place">(<#tv#>)</span> <#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
     ],
-    'article_paragraphs' : [
-        '<p><#article_p1#> </p><p><#article_p2#> </p><p><#article_p3#> </p><p><#article_p4#> </p> <#article_pullquote#> <p><#article_p5#></p><p><#article_p6#></p>',
-        '<p><#article_p1#> </p><p><#article_p3#> </p><p><#article_p5#> </p><p><#article_p6#> </p>',
-        '<p><#article_p1#> </p><p><#article_p2#> </p> <#article_pullquote#> <p><#article_p3#> <#article_p5#></p>',
-        '<p><#article_p3#> </p><p><#article_p4#> </p><p><#article_p6#> <#article_p9#> </p>',
-        '<p><#article_p1#> </p><p><#article_p6#> <#article_p7#> </p><p><#article_p10#> </p>',
-        '<p><#article_p2#> </p><p><#article_p3#> <#article_p4#> </p><p><#article_p7#></p><p><#article_p9#> </p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p4#> </p> <#article_pullquote#> <p><#article_p6#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p>',
-        '<p><#article_p1#> <#article_p2#> <#article_p3#></p><p><#article_p5#> </p><p><#article_p6#> </p><p><#article_p7#> <#article_p8#> <#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p5#> </p> <#article_pullquote#> <p><#article_p6#> <#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p5#> </p> <#article_pullquote#> <p><#article_p6#></p><p><#article_p8#> <#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p4#> </p><p><#article_p5#> </p><p><#article_p6#></p><p><#article_p8#> <#article_p9#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> </p><p><#article_p4#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> </p><p><#article_p3#> </p> <#article_pullquote#> <p><#article_p4#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
+    'article_paragraphs': [
+        '<p><#article_p1#></p> <p><#article_p2#></p> <p><#article_p3#></p> <p><#article_p4#></p> <#article_pullquote#> <p><#article_p5#></p> <p><#article_p6#></p>',
+        '<p><#article_p1#></p> <p><#article_p3#></p> <p><#article_p5#></p> <p><#article_p6#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#></p> <#article_pullquote#> <p><#article_p3#> <#article_p5#></p> ',
+        '<p><#article_p3#></p> <p><#article_p4#></p> <p><#article_p6#> <#article_p9#></p> ',
+        '<p><#article_p1#></p> <p><#article_p6#> <#article_p7#></p> <p><#article_p10#></p> ',
+        '<p><#article_p2#></p> <p><#article_p3#> <#article_p4#></p> <p><#article_p7#></p> <p><#article_p9#></p> <p><#article_p10#></p>',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p4#></p> <#article_pullquote#> <p><#article_p6#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> ',
+        '<p><#article_p1#> <#article_p2#> <#article_p3#></p> <p><#article_p5#></p> <p><#article_p6#></p> <p><#article_p7#> <#article_p8#> <#article_p10#></p>',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p5#></p> <#article_pullquote#> <p><#article_p6#> <#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p5#></p> <#article_pullquote#> <p><#article_p6#></p> <p><#article_p8#> <#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p4#></p> <p><#article_p5#></p> <p><#article_p6#></p> <p><#article_p8#> <#article_p9#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#></p> <p><#article_p4#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#></p> <p><#article_p3#></p> <#article_pullquote#> <p><#article_p4#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
     ],
     'article_writer': ['By <#name#>'],
     'article_pullquote': [
@@ -138,8 +138,8 @@ content = {
         """<#figs_multiple#> scenarios for <#country#> after <#name#>""",
         """Phone-hacking scandal.""",
         """Hacking whistle-blower found dead.""",
-        """<#names_first#>'s Sun paper hit by hackers.""",
-        """Hacking scandal's far-reaching tentacles.""",
+        """<#names_first#>’s Sun paper hit by hackers.""",
+        """Hacking scandal’s far-reaching tentacles.""",
     ],
     'article_binder':['Meanwhile,','On the other hand,','Also,','Ignoring the fact that','This enhances the idea that','Furthermore,',
         'Considering the fact that', 'Maybe that is true, but', '<#article_question#> It seems a valid assumption, but',
@@ -161,13 +161,13 @@ content = {
         Two entire shifts of employees come and go while I down <#amount_small#> shots of espresso.""",
         """The game was first suggested by then-White House Press Secretary <#name#> shortly after Republicans officially
         took control of the House in <#time_months#>. <#names_last#> signed on that month, saying he’d be happy to play 18 holes with the president -
-        although, he told one interviewer, he was "sure I'll have to give the President 18 strokes!""",
+        although, he told one interviewer, he was "sure I’ll have to give the President 18 strokes!""",
         """Political revolutions in <#country#> and <#country#> not only inspired other regional uprisings – they sparked a
         flurry of ideas about how to help revolutionaries better communicate when their governments pull the plug on the World Wide Web.""",
         """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share
         the connection with others on the network.""",
         """<#article_binder#> protesters in <#country#> call for the return of the Internet on <#time_months#> 1st after the government shut it down.""",
-        """The <#cities_USmajor#>-based airline blamed the computer malfunction on "a network connectivity issue" <#time_days#> night.""",
+        """The <#cities_USmajor#>-based airline blamed the computer malfunction on “a network connectivity issue” <#time_days#> night.""",
         """The clip, called "STUCK," was posted this week on <#i_host_users#> by a user identifying himself as <#name#>.""",
         """With his unending support I had the courage to make the big moves in my career, and I always had a clear vision of where I wanted to end up.”""",
         """Often only accessible from the sea, these so-called “floatels” are the sailing equivalent of a roadside inn, only much cooler.""",
@@ -334,7 +334,7 @@ content = {
        """It’s a grand slam of sorts already for <#name#> and the <#figs_rand_2digit#>th <#cities_UK#> Open has only just begun. With his imperious opening effort of
        <#figs_rand_2digit#> at <#cities_UK#> Country Club, he has now contended in all four Majors, and all in the space of the last <#figs_multiple#> months.
        Despite his notorious capitulation at this year’s Masters, here is a player moving to new level in his career.""",
-       """"I want to use technology to bring freedom to the Mideast," says <#names_last#>, one of <#figs_rand_2digit#> of <#name#>’s U.N.
+       """“I want to use technology to bring freedom to the Mideast,” says <#names_last#>, one of <#figs_rand_2digit#> of <#name#>’s U.N.
        And <#names_last#>’s latest startup, <#^,company#>, would do just that.""",
        """It is obvious that can create a free community unbound by topographical and state barriers. <#^,num_card#> ways they got around the censors.""",
        """<#article_binder#> according to <#company#>, “Using HTTPS means that you are creating a more secure <#j_adjective#> channel over an unsecure <#j_adjective#> network,

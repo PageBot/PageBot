@@ -179,10 +179,10 @@ content = {
 
     'war_militias':    ['airforces', 'troops', 'marines',
             'tanks', 'rebels', 'resistance fighters',
-            "guerilla's", 'police', 'paramilitary war_forces',
+            'guerilla’s', 'police', 'paramilitary war_forces',
             'paras', 'protestants', 'spies', 'catholics',
             'muslims', 'infiltrants', 'students', 'Hezbollah',
-            "Mulah’s", 'members', 'navy seals',
+            'Mulah’s', 'members', 'navy seals',
             'corporals', 'officers',
             'dissidents', 'mobs', 'generals', 'chiefs of staff',
             'bosses', 'party leaders', 'weapons inspectors',
