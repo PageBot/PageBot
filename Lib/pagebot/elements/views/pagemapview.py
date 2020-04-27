@@ -97,10 +97,7 @@ class PageMapView(BaseView):
                self.pr >= self.viewMinInfoPadding:
                 pw += self.pl + self.pr
                 ph += self.pt + self.pb
-                if self.originTop:
-                    origin = self.pl, self.pt, pt(0)
-                else:
-                    origin = self.pl, self.pb, pt(0)
+                origin = self.pl, self.pb, pt(0)
             else:
                 pw = page.w # No padding defined, follow the size of the page.
                 ph = page.h
@@ -181,7 +178,7 @@ class PageMapView(BaseView):
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=context)
         >>> page = doc[1]
         >>> view = doc.getView()
         >>> view.showGrid = [GRID_COL, GRID_ROW]
@@ -248,11 +245,7 @@ class PageMapView(BaseView):
             context.fill(noColor)
             context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPaddingStrokeWidth', 0.5))
-            if e.originTop:
-                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                #context.rect(px+pl, py+page.h-pb, page.w-pl-pr, page.h-pt-pb)
-            else:
-                context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+            context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):

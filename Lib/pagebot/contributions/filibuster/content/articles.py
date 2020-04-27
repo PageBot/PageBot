@@ -358,7 +358,7 @@ content = {
        But passengers were not allowed to get off.""",
        """“It’s important to note that security agents observed the <#num_card_multiple#> filmmakers at several points during the making of the video.
        Because the filmmakers were presenting no threat to themselves, to others or to flight safety, and were causing no damage,
-       there was no imperative to curtail their activities," <#names_last#> said in a statement.""",
+       there was no imperative to curtail their activities,” <#names_last#> said in a statement.""",
        """“It’s not funny. It’s not going to happen again as far as I’m concerned. It should not have happened because it gives
        the perception the place is sitting out there unguarded and that’s why I was concerned, and am still concerned,” <#name#> told the station.""",
        """<#article_question#> Is there someone you’d like to see in the hot seat? Let us know in the comments below and if we agree, we’ll do our best to chase ’em down.""",

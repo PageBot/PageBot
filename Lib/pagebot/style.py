@@ -20,7 +20,7 @@
 #
 
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
-        DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
+        DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, BOTTOM, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
         DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH)
@@ -159,9 +159,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
 
         # Default alignment for elements like image, that float in their
-        # designated space. Document will set this value default to BOTTOM, in
-        # case the Document.originTop is set to False.
-        yAlign = TOP,
+        # designated space. The origin-top feature is discontinued (it never
+        # properly worked). Origin of all elements is at bottom-left.
+        yAlign = BOTTOM,
 
         # Default alignment in z-axis is in front, closest to the viewer.
         zAlign = FRONT,

@@ -40,10 +40,7 @@ def y2cy(y, e):
     ch = e.css('ch', 0)
     cy = 0
     if ch + gh: # Check on division by 0
-        if e.originTop:
-            paddingY = e.pt
-        else:
-            paddingY = e.pb
+        paddingY = e.pb
         cy = (y - paddingY) / (ch + gh)
     return cy
 
@@ -53,10 +50,7 @@ def cy2y(cy, e):
     if cy is None:
         y = 0
     else:
-        if e.originTop:
-            paddingY = e.pt
-        else:
-            paddingY = e.pb
+        paddingY = e.pb
         y = paddingY + cy * (e.css('ch', 0) + e.gh)
     return y
 

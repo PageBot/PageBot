@@ -403,11 +403,7 @@ ECI_GrayConS = 'color/ECI_GrayConS_FOGRA52_v3.pdf'
 DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
 
 # Default initialize point as long as elements don't have a defined position.
-# Actual location depends on value of e.originTop flag.
-# If document.originTop == True (or page.originTop == True),
-# origin is on top-left of the page. Y-positive direction is down.
-# If document.originTop == False (or page.originTop == False),
-# origin is on bottom-left of the page. Y-positive direction is up.
+# The origin is located a bottom-left, for default alignment.
 ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for

@@ -44,8 +44,7 @@ class PhotoCalendar(BaseCalendar):
         sampleContent = SampleContent()
         imagePath0 = sampleContent.imagePaths[0]
         imagePath1 = sampleContent.imagePaths[1]
-        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, originTop=False,
-            context=context)
+        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, context=context)
         # Book cover
         page = doc[1]
         fontLight = findFont('PageBot-Light')

@@ -13,7 +13,7 @@
 >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
 >>> from pagebot import getContext
 >>> context = getContext('Flat')
->>> doc = Document(size=A4, styles=styles, autoPages=numPages, originTop=True, context=context)
+>>> doc = Document(size=A4, styles=styles, autoPages=numPages, context=context)
 >>> doc.context
 <FlatContext>
 >>> t = Typesetter(doc.context, styles=styles)

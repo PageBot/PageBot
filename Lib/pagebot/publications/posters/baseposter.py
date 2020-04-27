@@ -22,7 +22,7 @@ class Poster(Publication):
 
         rootStyle=None, styles=None, views=None, name=None, cssClass=None,
         title=None, autoPages=1, defaultTemplate=None, templates=None,
-        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        startPage=0, w=None, h=None, exportPaths=None,
         **kwargs)"""
 
     # Default paper sizes that are likely to be used for

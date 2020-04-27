@@ -155,11 +155,6 @@ class PageView(BaseView):
             # orgiinal document size.
             pw, ph = w, h
 
-            '''
-            if self.originTop:
-                origin = self.pl, self.pt, pt(0)
-            else:
-            '''
             origin = self.pl, self.pb, pt(0)
 
             # Make page in context, actual page may be smaller if showing
@@ -239,7 +234,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=context)
         >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> page = doc[1]
         >>> #page.view.padding
@@ -270,7 +265,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=context)
         >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> page = doc[1]
         >>> #page.view.padding
@@ -358,10 +353,7 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
 
-            if e.originTop:
-                context.rect(px + e_pl, py - e.h + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
-            else:
-                context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
+            context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
 
             e._restoreScale(self)
 
@@ -400,12 +392,7 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(viewMarginStroke, viewMarginStrokeWidth)
 
-            if e.originTop:
-                #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px - e_ml, py - e.h - e_mb, e.w + e_ml + e_mr,
-                        e.h + e_mt + e_mb)
-            else:
-                context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr,
+            context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr,
                         e.h + e_mt + e_mb)
 
             e._restoreScale(self)
@@ -733,10 +720,7 @@ class PageView(BaseView):
 
             w, h = bs.size
 
-            if e.originTop:
-                context.text(bs, (px, py - S*1.5))
-            else:
-                context.text(bs, (px, py + S*1.5))
+            context.text(bs, (px, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         """When designing templates and pages, this will draw a filled
@@ -964,25 +948,15 @@ class PageView(BaseView):
         # Collect all baseline positions on e.
         baselineYs = []
 
-        if e.originTop:
-            # Assumes origin at top for context drawing.
-            oy = yy = startY = (e.baselineGridStart or e.pt)
-
-            # Run over the the padding bottom until page side.
-            while yy < e.h:
-                baselineYs.append(yy)
-                yy += baselineGrid
-
         # Page origin is at the bottom.
-        else:
-            startY = e.h - (e.baselineGridStart or e.pt)
-            # Assumes origin at bottom for context drawing.
-            oy = yy = startY
+        startY = e.h - (e.baselineGridStart or e.pt)
+        # Assumes origin at bottom for context drawing.
+        oy = yy = startY
 
-            # Run over the the padding bottom until page side
-            while yy > 0:
-                baselineYs.append(yy)
-                yy -= baselineGrid
+        # Run over the the padding bottom until page side
+        while yy > 0:
+            baselineYs.append(yy)
+            yy -= baselineGrid
 
         baselineColor = e.style.get('baselineColor', self.css('baselineColor', DEFAULT_BASELINE_COLOR))
         baselineWidth = e.style.get('baselineWidth', self.css('baselineWidth', DEFAULT_BASELINE_WIDTH))

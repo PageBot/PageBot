@@ -100,7 +100,6 @@ class FlatContext(BaseContext):
         # Current open shape.
         self.shape = None
         self.fileType = DEFAULT_FILETYPE
-        self.originTop = False
         self.transform3D = Transform3D()
         self.drawing = None
         self.w = None
@@ -109,7 +108,7 @@ class FlatContext(BaseContext):
 
     #   Drawing.
 
-    def newDrawing(self, w=None, h=None, size=None, doc=None, originTop=False):
+    def newDrawing(self, w=None, h=None, size=None, doc=None):
         """Creates a new Flat canvas to draw on. Flipped `y`-axis by default to
         conform to DrawBot's drawing methods.
 
@@ -123,7 +122,7 @@ class FlatContext(BaseContext):
             self.clear()
 
         #self.originTop = originTop
-        self.originTop = False
+        #self.originTop = False
 
         if doc is not None:
             w = doc.w

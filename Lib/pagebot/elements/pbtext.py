@@ -59,6 +59,7 @@ class Text(Element):
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None, 
             parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
+
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, parent=parent, padding=padding, 
@@ -66,23 +67,25 @@ class Text(Element):
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
-        # Can be one of BASELINE (default), TOP (equivalent to ascender height
-        # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
-        # MIDDLE and BOTTOM
-        assert yAlign in YALIGNS
-        if yAlign is None:
-            yAlign = BASELINE # By default align on baseline of first line
-
         # Combine rootStyle, optional self.style and **kwargs attributes.
         # Note that the final style is stored in the BabelString instance
         # self.bs. self.style is used as template, in the content is defined
         # as plain string.
-        self.style = makeStyle(style, yAlign=yAlign, **kwargs)
+        if style is not None:
+            self.style = makeStyle(style, **kwargs)
 
         # Set as property, to make sure there's always a generic BabelString
         # instance or None. Needs to be done before element initialize, as
         # some attributes (Text.xAlign) may need the string style as reference.
         self.bs = bs # BabelString source for this Text element.
+
+        # Can be one of BASELINE (default), TOP (equivalent to ascender height
+        # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
+        # MIDDLE and BOTTOM
+        if yAlign is not None:
+            assert yAlign in YALIGNS
+            # Overwite value in self.bs.style
+            self.yAlign = yAlign
 
         # If self._w is None, behave as Text. Otherwise behave as “TextBox”.
         # This change in behavior makes that we don’t have a separate TextBox class.
@@ -368,11 +371,9 @@ class Text(Element):
         return styledLines
     styledLines = property(_get_styledLines)
 
-    # No separate yAlign property, since this is part of the regular Text element placement.
-
     def _get_xAlign(self): 
         """Answer the type of x-alignment. Since the orienation of the box is equivalent to the
-        on the alignment of the text, it is stored as self.style, referring to the current run.
+        on the alignment of the text, it is stored as self.bs.xAlign, referring to the current run style.
         That is why we redefine the default element.xAlign propety.
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
@@ -393,6 +394,32 @@ class Text(Element):
         if self._bs is not None:
             self.bs.xAlign = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     xAlign = property(_get_xAlign, _set_xAlign)
+
+    def _get_yAlign(self): 
+        """Answer the type of y-alignment. Since the orienation of the box is equivalent to the
+        on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
+        That is why we redefine the default element.yAlign propety.
+
+        >>> from pagebot.constants import MIDDLE
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = context.newString('ABCD')
+        >>> bs.yAlign
+        'top'
+        >>> bs.yAlign = MIDDLE
+        >>> bs.yAlign
+        'middle'
+        >>> bs.yAlign == bs.runs[-1].style['yAlign']
+        True
+        >>> t = Text(bs)
+        >>> t.yAlign
+        'middle'
+        """
+        return self._validateYAlign(self.bs.yAlign)
+    def _set_yAlign(self, yAlign):
+        if self._bs is not None:
+            self.bs.yAlign = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
+    yAlign = property(_get_yAlign, _set_yAlign)
 
     #   S P E L L  C H E C K
 
@@ -575,10 +602,11 @@ class Text(Element):
             # it contains '\n' characters.
             context.drawText(self.bs, (tx, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
         
-        else: # Draw as string from its own width
+        else: # No width or height defined.
+            # Draw as string using its own width (there may be embedded newlines)
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
-            self.buildFrame(view, (px, py+self.bs.bottomLineDescender, self.bs.tw, self.bs.th))
+            self.buildFrame(view, (px, py-self.bs.th+self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
             context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
@@ -629,7 +657,7 @@ class Text(Element):
         elif yAlign == BOTTOM:
             y += self.h - self.bs.topLineAscender
         elif yAlign == BASE_BOTTOM:
-            y -= self.bs.bottomLineDescender
+            y += self.h + self.bs.bottomLineDescender - self.bs.topLineAscender
         #else BASELINE, None is default
         return y
 
@@ -637,9 +665,9 @@ class Text(Element):
         """Bottom position of bounding box, not including margins.
 
         """
-        return self.top - self.h
+        return self.top - (self.h or self.th)
     def _set_bottom(self, y):
-        self.top = y + self.h
+        self.top = y + (self.h or self.th)
     bottom = property(_get_bottom, _set_bottom)
 
     def _get_top(self):
@@ -651,10 +679,10 @@ class Text(Element):
         >>> context = getContext('DrawBot')
         >>> doc = Document(size=A4, context=context)
         >>> page = doc[1]
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(20)))
-        >>> t = Text(bs, parent=page)
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
+        >>> t = Text(bs, parent=page, y=pt(300), yAlign=TOP)
         >>> t.top
-        14.96pt
+        300pt
         >>> t.top = 100
         >>> t.top, t.y
         (100pt, 85.04pt)

@@ -49,7 +49,7 @@ class FontIcon(Element):
         >>> from pagebot.document import Document
         >>> c = getContext()
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)

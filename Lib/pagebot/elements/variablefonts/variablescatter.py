@@ -28,7 +28,7 @@ class VariableScatter(Element):
     >>> from pagebot.document import Document
     >>> vfFont = findFont('RobotoDelta_v2-VF')
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> doc = Document(w=500, h=500, autoPages=1)
     >>> page = doc[1]
     >>> page.padding = 40
     >>> vc = VariableScatter(vfFont, parent=page, x=40, y=40, w=page.pw)

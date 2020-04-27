@@ -37,8 +37,8 @@ class Document:
     (50, 12, 61)
 
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
-    >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
-    ('TestDoc', 300pt, 400pt, False, 2)
+    >>> doc.name, doc.w, doc.h, len(doc)
+    ('TestDoc', 300pt, 400pt, 2)
     >>> doc.padding
     (30pt, 40pt, 50pt, 60pt)
     >>> page = doc[1] # First page is on the right
@@ -66,7 +66,7 @@ class Document:
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
             title=None, pages=None, autoPages=1, template=None, templates=None,
             startPage=None, sId=None, w=None, h=None, d=None,
-            size=None, wh=None, whd=None, padding=None, docLib=None, originTop=False,
+            size=None, wh=None, whd=None, padding=None, docLib=None, 
             context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -81,11 +81,6 @@ class Document:
         # Also accept size tuples.
         if size is not None:
             w, h, d = point3D(size) # Set
-
-        # Set position of origin and direction of `y` for self and all
-        # inheriting pages and elements as property. Not supposed to change.
-        # Assuming origin is at the bottom (OS X style) for debugging purposes.
-        self._originTop = False #originTop
 
         # If no theme is defined, then use the default theme class to create an
         # instance. Themes hold values and colors, combined in a theme.mood
@@ -390,20 +385,20 @@ class Document:
 
         >>> doc = Document()
         >>> page = doc[1] # Inheriting from doc
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (False, 'bottom', False, 'bottom')
-        >>> doc = Document(originTop=True)
+        >>> doc.rootStyle['yAlign'], page.yAlign
+        ('bottom', 'bottom')
+        >>> doc = Document()
         >>> page = doc[1] # Inheriting from doc
-        >>> #doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        #('top', True, 'top')
-        >>> doc = Document(originTop=True, yAlign=BOTTOM)
+        >>> #doc.rootStyle['yAlign'], page.yAlign
+        #('top', 'top')
+        >>> doc = Document(yAlign=BOTTOM)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
-        >>> #doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        #(True, 'bottom', True, 'bottom')
+        >>> #doc.rootStyle['yAlign'], page.yAlign
+        #('bottom', 'bottom')
         >>> doc = Document(yAlign=TOP)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (False, 'top', False, 'top')
+        >>> doc.rootStyle['yAlign'], page.yAlign
+        ('top', 'top')
         """
         rootStyle = getRootStyle()
         for name, v in kwargs.items():
@@ -412,7 +407,7 @@ class Document:
         # Adjust the default vertical origin position from self.origin, if not already defined
         # by **kwargs
         if 'yAlign' not in kwargs:
-            yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
+            yAlign = TOP
             rootStyle['yAlign'] = yAlign
         return rootStyle
 
@@ -525,17 +520,6 @@ class Document:
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
 
     #   D E F A U L T  A T T R I B U T E S
-
-    def _get_originTop(self):
-        """Answers the document flag if origin is on top. This value is not
-        supposed to change.
-
-        >>> doc = Document(name='TestDoc', originTop=True)
-        >>> #doc.originTop
-        #True
-        """
-        return self._originTop
-    originTop = property(_get_originTop)
 
     def _get_frameDuration(self):
         """Answers the document frameDuration parameters, used for
@@ -1017,8 +1001,7 @@ class Document:
 
     isRight = isLeft = False
 
-    def newPage(self, pn=None, template=None, w=None, h=None, name=None,
-            originTop=None, **kwargs):
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         """Creates a new page with size `(self.w, self.h)` unless defined
         otherwise. Add the pages in the row of pn, if defined, otherwise create
         a new row of pages at pn. If `pn` is undefined, add a new page row at
@@ -1029,13 +1012,6 @@ class Document:
         >>> page = doc[1]
         >>> page.size
         (80pt, 120pt)
-        >>> # Value copied into the new page setting.
-        >>> page.originTop
-        False
-        >>> #doc = Document(originTop=True)
-        >>> #page = doc[1]
-        >>> #page.originTop
-        #True
         """
         if isinstance(template, str):
             template = self.templates.get(template)
@@ -1058,14 +1034,10 @@ class Document:
         if h is None:
             h = self.h
 
-        # If not defined, then use the self.origin instead.
-        if originTop is None:
-            originTop = self.originTop
-
         # Don't set parent to self yet, as this will make the page create a #1.
         # Setting of page.parent is done by self.appendPage, for the right page
         # number.
-        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs) # originTop=originTop
+        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
@@ -1129,8 +1101,6 @@ class Document:
         >>> next = doc.nextPage(next) # Creating new page of makeNew is True
         >>> doc.getPageNumber(next)
         (5, 0)
-        >>> next.originTop
-        False
         """
         found = False
         for pn, pnPages in sorted(self.pages.items()):
@@ -1141,7 +1111,7 @@ class Document:
                     found = True # Trigger to select the next page in the loop.
         # Not found, create new one?
         if makeNew:
-            return self.newPage() # Uses setting of self.originTop as page default.
+            return self.newPage() 
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):

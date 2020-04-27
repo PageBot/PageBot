@@ -41,7 +41,7 @@ class Stacked(BaseFontShow):
         >>> from pagebot.toolbox.units import em
         >>> c = getContext()
         >>> w, h = Letter
-        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> conditions = [Fit()]
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')

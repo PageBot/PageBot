@@ -38,7 +38,7 @@ class Image(Element):
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
     >>> context = HtmlContext()
-    >>> doc = Document(size=A4, originTop=False, padding=30, context=context)
+    >>> doc = Document(size=A4, padding=30, context=context)
     >>> page = doc[1]
     >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
     >>> e.xy # Position of the image

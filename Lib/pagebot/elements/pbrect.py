@@ -28,7 +28,7 @@ class Rect(Element):
     >>> from pagebot.document import Document
     >>> c = getContext()
     >>> w, h = pt(300, 400)
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
     >>> e = Rect(parent=page, xy=(0, 20), size=(page.w, '3p2'), fill=color(1, 0, 0))
     >>> e.build(doc.getView(), (0, 0))

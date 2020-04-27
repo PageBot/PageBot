@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT, 
-    DEFAULT_COL_WIDTH, LEFT, XXXL)
+    DEFAULT_COL_WIDTH, TOP, LEFT, XXXL)
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt, em
 from pagebot.toolbox.color import color
@@ -820,6 +820,24 @@ class BabelString:
         self.style['xAlign'] = xAlign
         self.reset() # Make sure context cache recalculates.
     xAlign = property(_get_xAlign, _set_xAlign)
+
+    def _get_yAlign(self):
+        """Answer the yAlign attribute, as defined in the current style.
+        Note that this only refers to the alignments of the last run.
+
+        >>> from pagebot.constants import CENTER, RIGHT
+        >>> bs = BabelString('ABCD', dict(yAlign=CENTER))
+        >>> bs.yAlign
+        'center'
+        >>> bs.yAlign = RIGHT
+        >>> bs.yAlign
+        'right'
+        """
+        return self.style.get('yAlign', TOP)
+    def _set_yAlign(self, yAlign):
+        self.style['yAlign'] = yAlign
+        self.reset() # Make sure context cache recalculates.
+    yAlign = property(_get_yAlign, _set_yAlign)
 
     def _get_baselineShift(self):
         """Answer the baselineShift attribute, as defined in the current style.
