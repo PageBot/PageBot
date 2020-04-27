@@ -71,7 +71,7 @@ class Text(Element):
         # MIDDLE and BOTTOM
         assert yAlign in YALIGNS
         if yAlign is None:
-            yAlign = BASE_TOP # By default align on baseline of first line
+            yAlign = BASELINE # By default align on baseline of first line
 
         # Combine rootStyle, optional self.style and **kwargs attributes.
         # Note that the final style is stored in the BabelString instance
@@ -368,6 +368,8 @@ class Text(Element):
         return styledLines
     styledLines = property(_get_styledLines)
 
+    # No separate yAlign property, since this is part of the regular Text element placement.
+
     def _get_xAlign(self): 
         """Answer the type of x-alignment. Since the orienation of the box is equivalent to the
         on the alignment of the text, it is stored as self.style, referring to the current run.
@@ -576,7 +578,7 @@ class Text(Element):
         else: # Draw as string from its own width
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
-            self.buildFrame(view, (px, py+self.bs.lastLineDescender, self.bs.tw, self.bs.th))
+            self.buildFrame(view, (px, py+self.bs.bottomLineDescender, self.bs.tw, self.bs.th))
             context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
@@ -613,22 +615,22 @@ class Text(Element):
         # assuming that the default origin of drawing in on text baseline.
         yAlign = self.yAlign
         if yAlign == MIDDLE:
-            y += self.h/2 - self.bs.firstLineAscender
+            y += self.h/2 - self.bs.topLineAscender
         elif yAlign == CAPHEIGHT:
-            y -= self.bs.firstLineCapHeight
+            y -= self.bs.topLineCapHeight
         elif yAlign == XHEIGHT:
-            y -= self.bs.firstLineXHeight
+            y -= self.bs.topLineXHeight
         elif yAlign == MIDDLE_CAP:
-            y -= self.bs.firstLineCapHeight/2
+            y -= self.bs.topLineCapHeight/2
         elif yAlign == MIDDLE_X:
-            y -= self.bs.firstLineXHeight/2
+            y -= self.bs.topLineXHeight/2
         elif yAlign == TOP:
-            y -= self.bs.firstLineAscender
-        elif yAlign == BASE_BOTTOM:
-            y -= self.bs.lastLineDescender
+            y -= self.bs.topLineAscender
         elif yAlign == BOTTOM:
-            y += self.h - self.bs.firstLineAscender
-        #else BASE_TOP, None is default
+            y += self.h - self.bs.topLineAscender
+        elif yAlign == BASE_BOTTOM:
+            y -= self.bs.bottomLineDescender
+        #else BASELINE, None is default
         return y
 
     def _get_bottom(self):
@@ -660,9 +662,9 @@ class Text(Element):
         >>> t.top, t.y
         (200pt, 185.04pt)
         """
-        return self._applyVerticalAlignment(self.y) + self.bs.firstLineAscender 
+        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender 
     def _set_top(self, y):
-        self.y = self._applyVerticalAlignment(y) - self.bs.firstLineAscender
+        self.y = self._applyVerticalAlignment(y) - self.bs.topLineAscender
     top = property(_get_top, _set_top)
 
     #   B U I L D  I N D E S I G N

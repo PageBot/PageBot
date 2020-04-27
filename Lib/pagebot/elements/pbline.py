@@ -100,6 +100,8 @@ class Line(Element):
         s = self.stroke
         w = self.strokeWidth
 
+        # TODO: Add dashed line drawing here.
+        
         context.stroke(s, w)
         context.line((px, py), (px + self.w, py + self.h))
 

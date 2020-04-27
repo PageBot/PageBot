@@ -78,9 +78,10 @@ class Image(Element):
         by path. If the path does not exist, then self.im = self.ih = pt(0)
         This calls self.initImageSize() to set self.im and slef.ih from the
         image file size.
-
+        
         If path is omitted or file does not exist, a gray rectangle with a
         cross will be drawn."""
+        print('dsdsdddd', self.doc, self.context)
         self.path = self.srcPath = path
 
         if self.iw and self.ih:
@@ -525,7 +526,7 @@ class Image(Element):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
         >>> from pagebot.contexts import getContext
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> from pagebot.document import Document
         >>> context = getContext('DrawBot')
         >>> doc = Document(context=context) # Stored in doc.view.context

@@ -269,46 +269,29 @@ content = {
         only for their technique but also on the relationships behind each dish. That same philosophy exists in the dining room.""",
     ],
     'article_p6': [
-        """It’s a new role for <#towns_USgeneric#> and its <#figs_nonzero#><#figs#>,000-some inhabitants.
-        They’ll be the voice of places like <#island#> and <#island#>, tiny islands that might well be erased by rising oceans;
-        tiny islands trying to make the case to the world at large to cut emissions and extend the <#country#> Protocol, lest the ocean swallow them up.""",
-        """Bear in mind how difficult the set-up of a typical <#cities_UK#> Open course is, typically lengthened to over <#figs_rand_4digit#>
-        yards and change, with narrow fairways, punishing rough and fast greens with tricky pins and then consider how
-        it was reduced by <#names_last#> as he went in search of birdies, according to <#paper_financial#>.""",
+        """It’s a new role for <#towns_USgeneric#> and its <#figs_nonzero#><#figs#>,000-some inhabitants. They’ll be the voice of places like <#island#> and <#island#>, tiny islands that might well be erased by rising oceans; tiny islands trying to make the case to the world at large to cut emissions and extend the <#country#> Protocol, lest the ocean swallow them up.""",
+        """Bear in mind how difficult the set-up of a typical <#cities_UK#> Open course is, typically lengthened to over <#figs_rand_4digit#> yards and change, with narrow fairways, punishing rough and fast greens with tricky pins and then consider how it was reduced by <#names_last#> as he went in search of birdies, according to <#paper_financial#>.""",
         """<#^,tonic_disorders#> technology would have enabled those connected to share their connections along the network.""",
         """<#article_binder#> the program has also been used in <#country#>. You can listen to the messages on <#i_socialmedia#> through @speak2tweet.""",
-        """HTTPS Everywhere encrypts communications between its users and major websites, including <#i_socialmedia#>.
-        The <#^,p_technologies#> extension was created by the <#^,news_company#> Project and the Electronic <#p_technologies#> Foundation.""",
-        """"We were on the runway when the pilot came on the P.A. and said they had lost contact with the company
-        computer system which measured the weight of the plane," <#names_last#> said.""",
-        """"We’re pretty easy going people. We travel a lot. We understand that problems happen," <#name#> told <#tv#>.
-        “I just think there would be a little more information. All they say is ‘we have a computer problem.’
-        By the time you get to hour three, it gets a little frustrating.”""",
+        """HTTPS Everywhere encrypts communications between its users and major websites, including <#i_socialmedia#>. The <#^,p_technologies#> extension was created by the <#^,news_company#> Project and the Electronic <#p_technologies#> Foundation.""",
+        """“We were on the runway when the pilot came on the P.A. and said they had lost contact with the company computer system which measured the weight of the plane,” <#names_last#> said.""",
+        """"We’re pretty easy going people. We travel a lot. We understand that problems happen," <#name#> told <#tv#>. “I just think there would be a little more information. All they say is ‘we have a computer problem.’ By the time you get to hour three, it gets a little frustrating.”""",
         """<#towns_USgeneric#> Tavern will always be the benchmark <#cities_USgeneric#> restaurant for me.”""",
         """<#article_binder#> the <#sea#> Hotel contrasts the extreme wilderness on its back door with the extraordinary luxury of its interior.""",
     ],
     'article_p7': [
-        """A U.N. climate change panel in <#time_lastyear#> estimated the sea level would rise more than half a meter by <#time_nextyear#>,
-        but recent reports have indicated that ice sheets may be melting even more quickly, threatening places like <#island#>,
-        where most of the population lives in a low-lying band around the perimeter of the island.""",
+        """A U.N. climate change panel in <#time_lastyear#> estimated the sea level would rise more than half a meter by <#time_nextyear#>, but recent reports have indicated that ice sheets may be melting even more quickly, threatening places like <#island#>, where most of the population lives in a low-lying band around the perimeter of the island.""",
         """“I birdied the <#num_ord#> hole, hit a <#figs_nonzero#>-wood and a sand wedge just like, I don’t know, <#num_card#> feet past the hole (<#figs_rand_3digit#> yards).” <#name#> explained.""",
         """“I birdied <#amount_small#>. I hit a <#figs_nonzero#>-iron and an <#figs_nonzero#>-iron to ten feet (<#figs_rand_3digit#> yards).” <#name#> explained to the reporter.""",
         """“Then I birdied the <#num_ord#>, hit a driver and an <#figs_nonzero#>-iron pin high left about <#figs_nonzero#>, <#figs_rand_2digit#> feet, holed that <#figs_rand_3digit#>.” <#name#> explained.""",
         """“Then hit a <#figs_nonzero#>-wood and a lob wedge into the 1st to six feet (<#figs_rand_3digit#> yards).” <#name#> explained.""",
         """“I birdied the <#num_ord#>, hit a driver and a wedge to four feet just above the pin (<#figs_rand_3digit#> yards!).” he told reporters.""",
-        """“Birdied <#figs_nonzero#>, I hit a driver and a 3<#figs_nonzero#>-iron just to the back fringe maybe <#figs_rand_2digit#> feet and
-        two-putted that (<#figs_rand_3digit#> yards with water on the right of the green!)," he told reporters.""",
-        """<#article_binder#> by enabling groups of individuals with the physical hardware to work around any state-imposed firewall,
-        <#names_last#> plans to give freedom-seeking people the tools to “eradicate dictatorships” throughout the planet.""",
-        """<#names_last#> and <#names_last#> are automotive photographers who had $<#figs_rand_2digit#>,000 worth of camera equipment
-        with them when they were stuck so they decided to make the most of it, according to <#i_host_users#>,
-        a website that covers the automotive industry and interviewed the men.""",
-        """“<#name#> has been an amazing mentor for young chefs and restaurateurs coming up in the business over the last <#num_card_few#> decades.
-        He has been influential in reviving neighborhoods through restaurants, food carts and local charity events.""",
-        """Built in the local Mon style in the bosom of a tropical forest, the accommodation is set across <#amount_more#> floating wings, with
-        <#figs_rand_2digit#> bamboo twin-rooms perched on each.""",
-        """The “floatel,” which opened in 19<#figs_rand_2digit#>, has no electricity – so the rooms are all “romantically” lit with traditional oil
-        lamps and cooled by the river flowing beneath."""
+        """“Birdied <#figs_nonzero#>, I hit a driver and a 3<#figs_nonzero#>-iron just to the back fringe maybe <#figs_rand_2digit#> feet and two-putted that (<#figs_rand_3digit#> yards with water on the right of the green!)," he told reporters.""",
+        """<#article_binder#> by enabling groups of individuals with the physical hardware to work around any state-imposed firewall, <#names_last#> plans to give freedom-seeking people the tools to “eradicate dictatorships” throughout the planet.""",
+        """<#names_last#> and <#names_last#> are automotive photographers who had $<#figs_rand_2digit#>,000 worth of camera equipment with them when they were stuck so they decided to make the most of it, according to <#i_host_users#>, a website that covers the automotive industry and interviewed the men.""",
+        """“<#name#> has been an amazing mentor for young chefs and restaurateurs coming up in the business over the last <#num_card_few#> decades. He has been influential in reviving neighborhoods through restaurants, food carts and local charity events.""",
+        """Built in the local Mon style in the bosom of a tropical forest, the accommodation is set across <#amount_more#> floating wings, with <#figs_rand_2digit#> bamboo twin-rooms perched on each.""",
+        """The “floatel,” which opened in 19<#figs_rand_2digit#>, has no electricity – so the rooms are all “romantically” lit with traditional oil lamps and cooled by the river flowing beneath."""
     ],
     'article_p8': [
        """In a lot of ways, <#island#> is something like a canary in a coal mine: It’s a tiny place with more than
