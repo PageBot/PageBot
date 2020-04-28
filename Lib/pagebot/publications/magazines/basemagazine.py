@@ -37,7 +37,7 @@ class ThumbPage(Element):
             style = dict(fontSize=pt(7))
         # Name of the page or spread
         bs = context.newString(page.name, style=style)
-        tb1 = newTextBox(bs, w=self.w, y=self.h-self.gh/2, h=self.gh/2, parent=self, stroke=noColor)
+        tb1 = newText(bs, w=self.w, y=self.h-self.gh/2, h=self.gh/2, parent=self, stroke=noColor)
         # Thumbnail of the page
         if page.thumbPath is not None:
             im = newImage(path=page.thumbPath, y=self.gh/2, w=self.w, parent=self, borders=pt(0.5))
@@ -51,7 +51,7 @@ class ThumbPage(Element):
             style['xTextAlign'] = LEFT
 
         bs = context.newString(pageNumber, style=style)
-        tb2 = newTextBox(bs, w=self.w, h=self.gh/2, parent=self, stroke=noColor)
+        tb2 = newText(bs, w=self.w, h=self.gh/2, parent=self, stroke=noColor)
 
 
 class PageSpread(Element):
@@ -159,7 +159,7 @@ class BaseMagazine(Publication):
                 # Create a new header text box for each page.
                 # TODO: This could contain more info from self, number of pager, etc.
                 bs = self.context.newString('Map %s' % self.name, style=headStyle)
-                newTextBox(bs, x=page.pl, y=page.pb + page.ph - headerH, w=page.pw, h=headerH, parent=page)
+                newText(bs, x=page.pl, y=page.pb + page.ph - headerH, w=page.pw, h=headerH, parent=page)
 
                 # Set coordinate of the first spread thumbnail to be positioned.
                 x = page.pl

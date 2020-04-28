@@ -55,7 +55,7 @@ class Galley(Element):
         """Adds the string to the last text box. Creates a new textbox if not
         found."""
         if self.lastTextBox is None:
-            self.newTextBox(bs) # Also sets self.lastTextBox
+            self.newText(bs) # Also sets self.lastTextBox
         else:
             self.lastTextBox.append(bs)
 
@@ -103,7 +103,7 @@ class Galley(Element):
             return None
         return elements[-1]
 
-    def newTextBox(self, bs):
+    def newText(self, bs):
         """Creates a new *self.TEXTBOX_CLASS* instance, filled with the *fs*
         BabelString. The actual type of string depends on the current content.
         Appends the element to *self* (also setting self.lastTextBox) and

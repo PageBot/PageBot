@@ -50,7 +50,7 @@ class MampView(SiteView):
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> article = Blurb().getBlurb('da_text') # Answer random text of design article
         >>> from pagebot.toolbox.color import color
-        >>> from pagebot.elements import newTextBox
+        >>> from pagebot.elements import newText
         >>> from pagebot.document import Document
         >>> siteName = 'TestDoc'
         >>> sitePath = '_export/' + siteName

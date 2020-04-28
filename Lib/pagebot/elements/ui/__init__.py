@@ -70,7 +70,7 @@ def elementFromPath(path, name=None, **kwargs):
     elif extension in MOVIE_TYPES:
         e = None # TODO: Answer a MovieElement instance (to be developed)
     elif extension in TEXT_TYPES:
-        e = newTextBox(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
+        e = newText(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
     else:
         e = None # If no extension-->element can be found.
 
@@ -108,7 +108,7 @@ def newColumn(**kwargs):
     """Answer a new Column instance, offering a squential paste-board for elements."""
     return Column(**kwargs)
 
-def newTextBox(bs='', **kwargs):
+def newText(bs='', **kwargs):
     """Caller must supply formatted string. Note that w and h can also be
     defined in the style."""
     return TextBox(bs, **kwargs)

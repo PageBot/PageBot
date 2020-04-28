@@ -35,7 +35,7 @@ from pagebot.document import Document
 
 # Import element layout conditions.
 from pagebot.conditions import *
-from pagebot.elements import newRect, newTextBox
+from pagebot.elements import newRect, newText
 from pagebot.toolbox.units import em
 
 # For clarity, most of the MakeABookCover.py example document is setup
@@ -128,12 +128,12 @@ def makeDocument():
     title = context.newString(title+'\n\n', style=titleStyle)
     title += context.newString(subTitle + '\n\n', style=subTitleStyle)
     title += context.newString(authorName, style=authorStyle)
-    newTextBox(title, parent=colorRect2, name='Other element',
+    newText(title, parent=colorRect2, name='Other element',
             conditions=[Fit2Width(), Center2Center(), Top2Top()],
             xAlign=CENTER, yAlign=TOP)
 
     typoIllustration = context.newString('&', style=dict(font=ampersandFont.path, fontSize=300, xTextAlign=CENTER, textFill=(1, 0.5, 1,0.7)))
-    newTextBox(typoIllustration, parent=page,
+    newText(typoIllustration, parent=page,
             conditions=[Fit2Width(), Center2Center(), Bottom2Bottom()],
             xAlign=CENTER, yAlign=TOP)
 

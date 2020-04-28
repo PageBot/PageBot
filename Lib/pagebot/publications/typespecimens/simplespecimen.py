@@ -42,6 +42,6 @@ class SimpleSpecimen(BaseTypeSpecimen):
                 break
             bs += bs1
 
-        newTextBox(bs, parent=page, fill=c, h=th, conditions=[Left2Left(), Fit2Width(), Top2Top()])
+        newText(bs, parent=page, fill=c, h=th, conditions=[Left2Left(), Fit2Width(), Top2Top()])
         page.solve()
         return doc

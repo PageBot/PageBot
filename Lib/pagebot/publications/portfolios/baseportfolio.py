@@ -117,7 +117,7 @@ class BasePortfolio(Publication):
             if title != prevTitle:
                 bs = doc.context.newString(title, style=self.styles['title'])
                 tw, th = bs.size
-                newTextBox(bs, conditions=[Left2Left(), Fit2Width(), Float2Top()], h=1.5*th, parent=page)
+                newText(bs, conditions=[Left2Left(), Fit2Width(), Float2Top()], h=1.5*th, parent=page)
                 prevTitle = title
 
             for imagePath in sorted(imagePaths):

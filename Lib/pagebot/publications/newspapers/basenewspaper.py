@@ -18,7 +18,7 @@ from pagebot.publications.publication import Publication
 from pagebot.publications.newspapers.classic.title import Title
 from pagebot.publications.newspapers.classic.article import Article
 from pagebot.constants import *
-from pagebot.elements import newRect, newTextBox
+from pagebot.elements import newRect, newText
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.elements.pbpage import Template
 from pagebot.conditions import *
@@ -190,7 +190,7 @@ class Newspaper(Publication):
         title = Title(parent=t, mb=2*gutter, h=nameHeight,
                 conditions=[Top2Top(), Fit2Width()])
 
-        tb = newTextBox(bs, parent=title, h=nameHeight, xTextAlign=CENTER,
+        tb = newText(bs, parent=title, h=nameHeight, xTextAlign=CENTER,
                 pt=gutter, borderTop=titleLine, borderBottom=titleLine,
                 conditions=[Fit2Width()])
 
@@ -202,19 +202,19 @@ class Newspaper(Publication):
 
         s = None #'Happy birthday, Jill'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-gutter)
-        newTextBox(headLine, parent=article, w=cc*cwg-gutter,
+        newText(headLine, parent=article, w=cc*cwg-gutter,
             fill=fillColor2, conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
         bs = self.context.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, w=cc*cwg-gutter, mt=gutter, mb=gutter,
+        newText(bs, parent=article, w=cc*cwg-gutter, mt=gutter, mb=gutter,
             fill=fillColor3,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, w=cw, mr=gutter, h=10,
+            newText(bs, parent=article, w=cw, mr=gutter, h=10,
                 fill=fillColor4,
                 conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
 
@@ -226,18 +226,18 @@ class Newspaper(Publication):
 
         s = None #'Explore Northampton in spring'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-2*gutter)
-        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg,
+        newText(headLine, parent=article, pr=gutter, w=cc*cwg,
             conditions=[Left2Left(), Float2Top()])
 
         intro = blurb.getBlurb('article_ankeiler', cnt=maxAnkeiler)
         bs = self.context.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
+        newText(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, w=cw, mr=gutter,
+            newText(bs, parent=article, w=cw, mr=gutter,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         cc = 3 # Column width of this article.
@@ -248,18 +248,18 @@ class Newspaper(Publication):
 
         s = None #'Mothersday for Sara & Jill'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadline, w=cc*cwg-2*gutter)
-        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg,
+        newText(headLine, parent=article, pr=gutter, w=cc*cwg,
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
         bs = self.context.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, w=cc*cwg, mt=gutter, mb=gutter,
+        newText(bs, parent=article, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter,
+            newText(bs, parent=article, pr=gutter, w=cw, mr=gutter,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         # Place article 4 columns with photo
@@ -273,7 +273,7 @@ class Newspaper(Publication):
 
         s = None #'Petr & Claudia visiting soon'
         headLine = self.getHeadline(s, h1Style, cnt=5, w=cc*cwg-2*gutter)
-        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pb=gutter,
+        newText(headLine, parent=article, pr=gutter, w=cc*cwg, pb=gutter,
             conditions=[Left2Left(), Float2Top(), Fit2Width()])
 
         for n in range(cc):
@@ -284,7 +284,7 @@ class Newspaper(Publication):
             else:
                 dummyArticle = blurb.getBlurb('article', newLines=True)
                 bs = self.context.newString(dummyArticle, style=bodyStyle)
-                newTextBox(bs, parent=article, pr=gutter, w=cw, mr=gutter, h=10,
+                newText(bs, parent=article, pr=gutter, w=cw, mr=gutter, h=10,
                     conditions=[Right2Right(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         cc = 2 # Column width of this article.
@@ -294,18 +294,18 @@ class Newspaper(Publication):
 
         s = None #'AirB&B stock up 450%'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadlineShort, w=cc*cwg-gutter)
-        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
+        newText(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
         bs = self.context.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
+        newText(bs, parent=article, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, pr=gutter, w=cwg,
+            newText(bs, parent=article, pr=gutter, w=cwg,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         cc = 2 # Column width of this article.
@@ -315,12 +315,12 @@ class Newspaper(Publication):
 
         s = None #u'Tay & Lan’s best moms'
         headLine = self.getHeadline(s, h2Style, cnt=maxHeadlineShort, w=cc*cwg-gutter)
-        newTextBox(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
+        newText(headLine, parent=article, pr=gutter, w=cc*cwg, pt=gutter,
             conditions=[Left2Left(), Float2Top()])
 
         intro = self.getAnkeiler(cnt=maxAnkeiler)
         bs = self.context.newString(intro, style=h2IntroStyle)
-        newTextBox(bs, parent=article, pr=gutter, w=cc*cwg-gutter,
+        newText(bs, parent=article, pr=gutter, w=cc*cwg-gutter,
             mr=gutter, mt=gutter, mb=gutter,
             conditions=[Left2Left(), Float2Top()])
 
@@ -331,7 +331,7 @@ class Newspaper(Publication):
         for n in range(cc):
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=article, pr=gutter, w=cwg,
+            newText(bs, parent=article, pr=gutter, w=cwg,
                 conditions=[Left2SideRight(), Float2Top(), Float2Left(), Fit2Bottom()])
 
         # doc.addTemplate() ?
@@ -346,16 +346,16 @@ class Newspaper(Publication):
             if n == 0:
                 cc = 3
                 headLine = self.getHeadline(None, h2Style, cnt=maxHeadline)
-                newTextBox(headLine, parent=t, pr=gutter, w=cc*cwg,
+                newText(headLine, parent=t, pr=gutter, w=cc*cwg,
                     conditions=[Left2Left(), Float2Top()])
                 intro = self.getAnkeiler(cnt=maxAnkeiler)
                 bs = self.context.newString(intro, style=h2IntroStyle)
-                newTextBox(bs, parent=t, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
+                newText(bs, parent=t, pr=gutter, w=cc*cwg, mt=gutter, mb=gutter,
                     conditions=[Left2Left(), Float2Top()])
 
             dummyArticle = blurb.getBlurb('article', newLines=True)
             bs = self.context.newString(dummyArticle, style=bodyStyle)
-            newTextBox(bs, parent=t, pr=gutter, w=cw+gutter, z=0,
+            newText(bs, parent=t, pr=gutter, w=cw+gutter, z=0,
                 conditions=[Right2SideRight(), Float2Top(), Fit2Bottom(), Float2Left()])
 
         # doc.addTemplate() ?
