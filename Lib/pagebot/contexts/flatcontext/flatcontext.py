@@ -682,7 +682,7 @@ class FlatContext(BaseContext):
         #if isinstance(bs, FlatString):
         #    return bs
         if isinstance(bs, str):
-            return self.STRING_CLASS(bsOrFs)
+            return self.STRING_CLASS(bs)
         if isinstance(bs, BabelString):
             fs = self.STRING_CLASS(e=bs.e)
             for run in bs.runs:

@@ -2,7 +2,7 @@
 >>> from pagebot.constants import A4
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
->>> from pagebot.elements import TextBox
+>>> from pagebot.elements import Text
 >>> from pagebot.typesetter import Typesetter
 >>> from pagebot.document import Document
 >>> numPages = 4
@@ -18,7 +18,7 @@
 <FlatContext>
 >>> t = Typesetter(doc.context, styles=styles)
 >>> # Create a "main" textbox in each page.
->>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
+>>> a = [Text(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
 >>> galley = t.typesetFile(path)
 >>> #galley
 >>> #c = Composer(doc)
@@ -28,6 +28,6 @@
 >>> #page = doc[1]
 >>> #box = page.select('main') # Get the box of this page.
 >>> #box
-#TextBox:main ([100pt, 100pt], [400pt, 500pt]) E(2)
+#Text:main ([100pt, 100pt], [400pt, 500pt]) E(2)
 >>> #doc.export('_export/ComposerTest.pdf')
 

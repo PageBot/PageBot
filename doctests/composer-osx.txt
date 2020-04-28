@@ -2,7 +2,7 @@
 >>> from pagebot.filepaths import getResourcesPath
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
->>> from pagebot.elements import TextBox
+>>> from pagebot.elements import Text
 >>> from pagebot.typesetter import Typesetter
 >>> from pagebot.document import Document
 >>> from pagebot.composer import Composer
@@ -17,7 +17,7 @@
 >>> doc = Document(size=A4, styles=styles, autoPages=numPages, context=context)
 >>> t = Typesetter(doc.context, styles=styles)
 >>> # Create a "main" textbox in each page.
->>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
+>>> a = [Text(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
 >>> galley = t.typesetFile(path)
 >>> c = Composer(doc)
 >>> targets = c.compose(galley)
@@ -26,6 +26,6 @@
 >>> page = doc[1]
 >>> box = page.select('main') # Get the box of this page.
 >>> box
-TextBox:main ([100pt, 100pt], [400pt, 500pt]) E(2)
+Text:main ([100pt, 100pt], [400pt, 500pt]) E(2)
 >>> # FIXME: endless recursion?
 >>> #doc.export('_export/ComposerTest.pdf')
