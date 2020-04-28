@@ -400,7 +400,7 @@ class Text(Element):
         on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
         That is why we redefine the default element.yAlign propety.
 
-        >>> from pagebot.constants import MIDDLE
+        >>> from pagebot.constants import MIDDLE, DESCENDER
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD')
@@ -414,6 +414,9 @@ class Text(Element):
         >>> t = Text(bs)
         >>> t.yAlign
         'middle'
+        >>> t.yAlign = DESCENDER
+        >>> t.yAlign, t.bs.yAlign
+        ('Descender', 'Descender')
         """
         return self._validateYAlign(self.bs.yAlign)
     def _set_yAlign(self, yAlign):
@@ -639,8 +642,35 @@ class Text(Element):
         return x
 
     def _applyVerticalAlignment(self, y):
-        # Adjust vertical alignments for the text,
-        # assuming that the default origin of drawing in on text baseline.
+        """Adjust vertical alignments for the text,
+        assuming that the default origin of drawing in on text baseline.
+
+        >>> from pagebot.constants import A4
+        >>> from pagebot.elements import newLine
+        >>> from pagebot.document import Document
+        >>> from pagebot.constants import MIDDLE_CAP, TOP
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(size=A4, context=context)
+        >>> page = doc[1]
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
+        >>> t = Text(bs, parent=page, x=pt(100), y=pt(500), yAlign=TOP, fill=0.8)
+        >>> l = newLine(x=0, y=500, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> t.top
+        500pt
+        >>> doc.export('_export/_applyVerticalAlignment-top-500.pdf')
+        >>> t.top = 300
+        >>> t.top, t.y # Same value, as aligned on top
+        (300pt, 300pt)
+        >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> doc.export('_export/_applyVerticalAlignment-top-300.pdf')
+        >>> t.yAlign = MIDDLE_CAP
+        >>> t.y -= 100
+        >>> t.top, t.y # Same value as aligned on middleCapHeight
+        (200pt, 200pt)
+        >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> doc.export('_export/_applyVerticalAlignment-middleCap-200.pdf')
+        """
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
@@ -668,40 +698,6 @@ class Text(Element):
 
         #else BASELINE, None is default
         return y
-
-    def _get_bottom(self):
-        """Bottom position of bounding box, not including margins.
-
-        """
-        return self.top - (self.h or self.th)
-    def _set_bottom(self, y):
-        self.top = y + (self.h or self.th)
-    bottom = property(_get_bottom, _set_bottom)
-
-    def _get_top(self):
-        """Bottom position of bounding box, not including margins.
-
-        >>> from pagebot.constants import A4
-        >>> from pagebot.document import Document
-        >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
-        >>> doc = Document(size=A4, context=context)
-        >>> page = doc[1]
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
-        >>> t = Text(bs, parent=page, y=pt(300), yAlign=TOP)
-        >>> t.top
-        300pt
-        >>> t.top = 100
-        >>> t.top, t.y
-        (100pt, 85.04pt)
-        >>> t.y += 100
-        >>> t.top, t.y
-        (200pt, 185.04pt)
-        """
-        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender 
-    def _set_top(self, y):
-        self.y = self._applyVerticalAlignment(y) - self.bs.topLineAscender
-    top = property(_get_top, _set_top)
 
     #   B U I L D  I N D E S I G N
 
