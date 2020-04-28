@@ -117,16 +117,16 @@ class Specimens():
         # New text box for the Title
         maintitle = self.context.newString(t0, style=dict(font=headerStyle,
             xTextAlign=CENTER, fontSize=pt(96), leading=pt(115)))
-        newTextBox(maintitle, w=PW, h=PH, parent=page, columnAlignY = TOP,
+        newText(maintitle, w=PW, h=PH, parent=page, columnAlignY = TOP,
                 xTextAlign=CENTER, conditions=(Center2Center(), Top2Top()))
 
         subtitle = dict(font=bodyStyle, fontSize=pt(18), leading=pt(28))
         subtitle2 = dict(font=defaultFont, fontSize=pt(18), leading=pt(28))
 
-        newTextBox(pageNumber, w=W-100, pt=-20, h=PH+100, parent=page,
+        newText(pageNumber, w=W-100, pt=-20, h=PH+100, parent=page,
                 xAlign=RIGHT, xTextAlign=RIGHT, style=subtitle2,
                 conditions=(Center2Center(), Top2Top()))
-        newTextBox(t1, style=subtitle, pt = pt(100),
+        newText(t1, style=subtitle, pt = pt(100),
                 w=PW, h=PH, parent=page, columnAlignY = BOTTOM,
                 xTextAlign=CENTER, conditions=(Center2Center(),
                     Bottom2Bottom()))
@@ -141,12 +141,12 @@ class Specimens():
         CW2 = (PW - (G*2)) # Column width
         style3 = dict(font=bodyStyle, fontSize=pt(60), leading=pt(69),
                 hyphenation=None, prefix= None, postfix=None)
-        newTextBox(centertext, style=style3, w=CW, h=heightCol, pt = pt(158),
+        newText(centertext, style=style3, w=CW, h=heightCol, pt = pt(158),
                 xTextAlign=CENTER, parent=page, conditions=[Center2Center(),
                     Top2Top()])
 
         style4 = dict(font=bodyStyle, fontSize=pt(28), leading=pt(34))
-        newTextBox(t4, style=style4, xTextAlign=JUSTIFIED, w=CW2+26,
+        newText(t4, style=style4, xTextAlign=JUSTIFIED, w=CW2+26,
                 h=pt(380), parent=page, pt=pt(174), conditions=[Right2Right(),
                     Bottom2Bottom()])
 
@@ -154,11 +154,11 @@ class Specimens():
         b = (t5)
         c = (t6)
 
-        newTextBox('60pt/72pt' ,fontSize=pt(10), parent=page, w=CW-60,
+        newText('60pt/72pt' ,fontSize=pt(10), parent=page, w=CW-60,
                 h=heightCol, font=bodyStyle,
                 pt=pt(146),conditions=[Center2Center(),Top2Top()])
 
-        newTextBox('28pt/34pt' ,fontSize=pt(10), parent=page, w=CW2,
+        newText('28pt/34pt' ,fontSize=pt(10), parent=page, w=CW2,
                 h=pt(380),font=bodyStyle,
                 pt=pt(160),conditions=[Left2Left(),Bottom2Bottom()])
 
@@ -184,7 +184,7 @@ class Specimens():
             s += self.context.newString('%s/%s\n' % (str(fontSize), str(leading)),
                     style=dict(font=defaultFont, fontSize=10, leading=leading2))
 
-        newTextBox(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
+        newText(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
                 nextElement='e2', conditions=[Left2Left(), Top2Top(),
                     Overflow2Next()])
 
@@ -209,5 +209,5 @@ class Specimens():
             s += self.context.newString(msg, style=dict(font=defaultFont,
                 fontSize=10, leading=leading2))
 
-        newTextBox(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
+        newText(s, parent=page, w=CW2, h=pt(700), font=fontStyle, pt=pt(160),
                 conditions=[Right2Right(), Top2Top()])

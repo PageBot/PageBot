@@ -15,7 +15,7 @@
 #     books/photobook/titlepage.py
 #
 from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
-#from pagebot.elements import newTextBox # gives cyclic import error.
+#from pagebot.elements import newText # gives cyclic import error.
 from pagebot.elements.pbtextbox import TextBox
 
 def makeTitlePage(page, title=None, text=None):

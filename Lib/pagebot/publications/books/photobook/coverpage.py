@@ -26,8 +26,8 @@ def makeCoverPage(page, imagePath=None, title=None, author=None, fill=None):
         newImage(imagePath, x=page.pl, y=page.pb, w=page.pw, h=page.ph, parent=page)
     if title is not None:
         tw, _ = title.size
-        newTextBox(title, parent=page, w=tw, conditions=[Center2Center(), Bottom2Top()])
+        newText(title, parent=page, w=tw, conditions=[Center2Center(), Bottom2Top()])
     if author is not None:
         tw, _ = author.size
-        newTextBox(author, parent=page, w=tw, stroke=(0, 1, 0), conditions=[Center2Center(), Top2Bottom()])
+        newText(author, parent=page, w=tw, stroke=(0, 1, 0), conditions=[Center2Center(), Top2Bottom()])
     page.solve()

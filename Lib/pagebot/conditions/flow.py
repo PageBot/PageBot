@@ -27,8 +27,8 @@ class Overflow2Next(Condition):
 
     >>> from pagebot import getContext
     >>> context = getContext()
-    >>> from pagebot.elements import newTextBox, Element
-    >>> e1 = newTextBox('ABC ' * 4, w=200, h=200, context=context)
+    >>> from pagebot.elements import newText, Element
+    >>> e1 = newText('ABC ' * 4, w=200, h=200, context=context)
     >>> e2 = Element(x=10, y=10, w=200, h=200, name='Root', elements=[e1])
     >>> e1.parent.name
     'Root'

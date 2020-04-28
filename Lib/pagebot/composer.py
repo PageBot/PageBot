@@ -14,7 +14,7 @@
 #
 #     composer.py
 #
-from pagebot.elements import newTextBox
+from pagebot.elements import newText
 from pagebot.elements import CodeBlock
 
 class Composer:
@@ -46,7 +46,7 @@ class Composer:
                 page = self.doc[1]
 
             targets = dict(composer=self, doc=self.doc, page=page, style=self.doc.styles,
-                newTextBox=newTextBox)
+                newText=newText)
 
             if page is not None:
                 targets['box'] = page.select('main')

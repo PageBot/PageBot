@@ -731,13 +731,13 @@ class FlatString(BabelString):
         """Calculating the flow of text lines is context dependent.
         This method can only be rendered if self.e.context is defined.
 
-        >>> from pagebot.elements import newTextBox
+        >>> from pagebot.elements import newText
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
         >>> context = getContext('Flat')
         >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultricies, tellus sed vehicula ornare. '
         >>> doc = Document(context=context) # Stored as doc.view.context
-        >>> tb = newTextBox(txt, w=500, h=200, parent=doc[1])
+        >>> tb = newText(txt, w=500, h=200, parent=doc[1])
         >>> tb.pbs # Converted to a BabelString
         $Lorem ipsu...$
         >>> tb.pbs.textLines()

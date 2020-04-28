@@ -73,7 +73,7 @@ class BaseBrochure(Publication):
 
         t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY)
         newRect(parent=t, conditions=[Fit2Sides()], name='Cover', fill=coverBackgroundFill)
-        newTextBox(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200)
+        newText(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200)
         self.addTemplate(t.name, t)
         score = t.solve()
 

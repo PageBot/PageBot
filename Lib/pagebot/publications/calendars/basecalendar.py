@@ -98,7 +98,7 @@ class BaseCalendar(Publication):
             page.padding = padding
             newRect(parent=page, x=-bleed, y=page.h/2, w=page.w+2*bleed, h=page.h/2+bleed,
                 fill=gray)
-            newTextBox('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName),
+            newText('%d %s' % (self.year, Dating(year=self.year, month=month).fullMonthName),
                 fontSize=48, parent=page, w=page.pw, x=page.pl, y=page.h-page.pt-20)
             weekH = page.ph/2
             weekW = page.pw
@@ -114,7 +114,7 @@ class BaseCalendar(Publication):
                         fontSize = 9
                     e = newRect(parent=page, w=dayW, h=dayH, fill=fill,
                         x=page.pl+dIndex*dayW, y=page.pb+page.ph/2-(wIndex+1)*dayH)
-                    newTextBox(day.fullDayName + '\n' + day.date, fontSize=fontSize, parent=e,
+                    newText(day.fullDayName + '\n' + day.date, fontSize=fontSize, parent=e,
                         w=dayW-10, x=10, y=dayH-20, fill=noColor)
 
 
