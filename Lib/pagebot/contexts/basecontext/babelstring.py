@@ -309,6 +309,37 @@ class BabelString:
         return topLineAscender
     topLineAscender = property(_get_topLineAscender)
 
+    def _get_topLineAscender_h(self):
+        """Answer the largest ascender height for /h in the first line.
+
+        >>> from pagebot.toolbox.lorumipsum import lorumipsum
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('ABCD', style, context=context)
+        >>> bs.topLineAscender_h
+        72pt
+        >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
+        >>> bs.runs
+        [<BabelRun "ABCD">, <BabelRun "EFGH ">]
+        >>> bs.lines[0].runs
+        [<BabelRunInfo "ABCD">, <BabelRunInfo "EFGH">]
+        >>> bs.topLineAscender_h # First line ascender height increased
+        144pt
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        >>> bs.topLineAscender_h # First line ascender height increased
+        144pt
+        """
+        topLineAscender_h = 0
+        if self.lines:
+            for run in self.lines[0].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                ascender_h = font['h'].maxY
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                topLineAscender_h = max(topLineAscender_h, fontSize * ascender_h / font.info.unitsPerEm)
+        return topLineAscender_h
+    topLineAscender_h = property(_get_topLineAscender_h)
+
     def _get_topLineCapHeight(self):
         """Answer the largest capHeight in the first line. The height is
         derived from the fonts, independent if there are actually capitals 
@@ -389,6 +420,34 @@ class BabelString:
                 bottomLineDescender = min(bottomLineDescender, fontSize * font.info.typoDescender / font.info.unitsPerEm)
         return bottomLineDescender
     bottomLineDescender = property(_get_bottomLineDescender)
+
+    def _get_bottomLineDescender_p(self):
+        """Answer the largest abs(descender) for /p in the bottom line. The height is
+        derived from the fonts, independent if there are actually lower case 
+        in the first line. The value answered is a position (negative number),
+        not a distance, relative to the baseline of the last line.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+        >>> bs.bottomLineDescender_p
+        -21.2pt
+        >>> bs.add('EFGH', dict(fontSize=1000))
+        >>> bs.bottomLineDescender_p # Last line descender increased
+        -212pt
+        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
+        >>> bs.bottomLineDescender_p # Last line descender decreased        
+        -10.6pt
+        """
+        bottomLineDescender_p = 0
+        if self.lines:
+            for run in self.lines[-1].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                descender_p = font['p'].minY
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                bottomLineDescender_p = min(bottomLineDescender_p, fontSize * descender_p / font.info.unitsPerEm)
+        return bottomLineDescender_p
+    bottomLineDescender_p = property(_get_bottomLineDescender_p)
 
 
     def addMarker(self, markerId, arg):

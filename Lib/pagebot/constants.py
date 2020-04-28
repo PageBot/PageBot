@@ -733,9 +733,11 @@ CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
 XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
 MIDDLE_CAP = 'MiddleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
 MIDDLE_X = 'MiddleXHeight' # yALign, vertical centered on xHeight
+ASCENDER = 'Ascender' # Aligns with the largest ascender /h in the top line
+DESCENDER = 'Descender' # Aligns with the largest descender /p in the bottom line
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, BASELINE,  
+YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
     MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
     BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X} 
 ZALIGNS = {None, FRONT, MIDDLE, BACK}

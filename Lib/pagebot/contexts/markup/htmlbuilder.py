@@ -16,7 +16,10 @@
 #
 import os
 import codecs
-import sass
+try:
+    import sass
+except ImportError:
+    print('Cannot import sass')
 
 from pagebot.contexts.markup.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now

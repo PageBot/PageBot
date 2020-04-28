@@ -135,7 +135,7 @@ class Text(Element):
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
         >>> page = doc[1]
-        >>> t = Text(parent=page, w=125) # Width forces “TextBox” behavior
+        >>> t = Text('ABCD', parent=page, w=125) # Width forces “TextBox” behavior
         >>> page[t.eId].w
         125pt
         >>> t.w = 150
@@ -644,6 +644,7 @@ class Text(Element):
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
+
         elif yAlign == CAPHEIGHT:
             y -= self.bs.topLineCapHeight
         elif yAlign == XHEIGHT:
@@ -652,12 +653,19 @@ class Text(Element):
             y -= self.bs.topLineCapHeight/2
         elif yAlign == MIDDLE_X:
             y -= self.bs.topLineXHeight/2
+
         elif yAlign == TOP:
             y -= self.bs.topLineAscender
+        elif yAlign == ASCENDER: # Position of /h ascender
+            y -= self.bs.topLineAscender_h
+
+        elif yAlign == DESCENDER: # Position of /p descender
+            y += self.h - self.bs.topLineAscender - self.bs.bottomLineDescender_p + self.bs.bottomLineDescender
         elif yAlign == BOTTOM:
             y += self.h - self.bs.topLineAscender
         elif yAlign == BASE_BOTTOM:
             y += self.h + self.bs.bottomLineDescender - self.bs.topLineAscender
+
         #else BASELINE, None is default
         return y
 
