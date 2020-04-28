@@ -16,7 +16,7 @@
     from pagebot.fonttoolbox.objects.font import findFont
 
     f = findFont('Roboto-Bold')
-    doc = Document(w=800, h=190, originTop=False) 
+    doc = Document(w=800, h=190) 
     page = doc[1] 
     newText('Hello World', x=30, y=0, font=f, fontSize=140, 
         textFill=0.2, parent=page)

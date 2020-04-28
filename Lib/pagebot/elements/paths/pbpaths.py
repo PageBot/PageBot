@@ -55,7 +55,7 @@ class Paths(Element):
     >>> context.saveImage('_export/DrawBotPath1.pdf')
 
     >>> size = pt(1000, 1000)
-    >>> doc = Document(size=size, padding=30, originTop=False, context=context)
+    >>> doc = Document(size=size, padding=30, context=context)
     >>> view = doc.view
     >>> view.padding = inch(1)
     >>> view.showPadding = True

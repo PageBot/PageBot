@@ -1031,7 +1031,7 @@ def bash(cmd, cwd=None):
     if retVal == ['']:
         return 0
     else:
-        return retVal 
+        return retVal
 
 # ----------------------------------------------------------------------------------------------------------
 # XML  transformers.

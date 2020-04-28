@@ -27,10 +27,10 @@ class Publication(Element):
     the Publication class is now an independent base class, holding multiple documents.
 
     >>> from pagebot.constants import A4
-    >>> from pagebot.filepaths import RESOURCES_PATH
+    >>> from pagebot.filepaths import getResourcesPath
     >>> from pagebot import getContext
     >>> context = getContext()
-    >>> p = Publication(RESOURCES_PATH, context=context) # Finder created from path
+    >>> p = Publication(getResourcesPath(), context=context) # Finder created from path
     """
     FINDER_CLASS = Finder
 
@@ -77,10 +77,9 @@ class Publication(Element):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting publication classes."""
 
-    def newDocument(self, name=None, autoPages=None, w=None, h=None, originTop=None,
-            makeCurrent=True, padding=None, theme=None, gw=None, gh=None,
-            gridX=None, gridY=None, baselineGrid=None, baselineGridStart=None,
-            **kwargs):
+    def newDocument(self, name=None, autoPages=None, w=None, h=None, makeCurrent=True, 
+            padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None, 
+            baselineGrid=None, baselineGridStart=None, **kwargs):
         """Answer a new Document instance for this publication, to be filled by the
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
@@ -115,7 +114,7 @@ class Publication(Element):
             baselineGrid = self.baselineGrid
         if theme is None:
             theme = self.theme
-        document = Document(name=name, w=w, h=h, originTop=originTop, padding=padding,
+        document = Document(name=name, w=w, h=h, padding=padding,
             theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
             baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart,
             **kwargs)
@@ -216,5 +215,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-
-

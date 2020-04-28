@@ -20,10 +20,10 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, em, upt
 from pagebot.toolbox.color import noColor, blackColor
 
-class FontIcon(Element): 
-    """Showing the specified font(sub variable font) in the form of an icon 
+class FontIcon(Element):
+    """Showing the specified font(sub variable font) in the form of an icon
     showing optional information in different sizes and styles.
-    
+
     >>> from pagebot.fonttoolbox.objects.font import getFont
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
@@ -41,7 +41,7 @@ class FontIcon(Element):
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=noColor,
             earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
             labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
-        """    
+        """
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot import getContext
@@ -50,7 +50,7 @@ class FontIcon(Element):
         >>> from pagebot.toolbox.color import color, whiteColor, blackColor
         >>> c = getContext()
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Regular.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
@@ -65,8 +65,8 @@ class FontIcon(Element):
         Element.__init__(self,  **kwargs)
         self.f = f # Font instance
         if title is not None:
-            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName) 
-        self.titleFont = titleFont, labelFont or f 
+            self.title = title or "%s %s" % (f.info.familyName, f.info.styleName)
+        self.titleFont = titleFont, labelFont or f
         self.titleFontSize = 28
         self.labelFont = labelFont or f
         self.labelFontSize = labelFontSize or 10
@@ -85,7 +85,7 @@ class FontIcon(Element):
         self.earLeft = earLeft
         if earFill is None:
             earFill = self.css("fill")
-        self.earFill = earFill 
+        self.earFill = earFill
 
 
     def build(self, view, origin, drawElements=True, **kwargs):
@@ -121,11 +121,11 @@ class FontIcon(Element):
 
         c.newPath()
         c.moveTo((0, 0))
-        if self.earLeft: 
+        if self.earLeft:
             c.lineTo((0, h-e))
             c.lineTo((e, h))
             c.lineTo((w, h))
-            
+
         else:
             c.lineTo((0, h))
             c.lineTo((w-e, h))

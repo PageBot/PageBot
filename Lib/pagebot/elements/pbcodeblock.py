@@ -14,10 +14,10 @@
 #
 #     codeblock.py
 #
-from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.pbtext import Text
 from pagebot.toolbox.color import noColor, color
 
-class CodeBlock(TextBox):
+class CodeBlock(Text):
 
     DEFAULT_CODE_STYLE = dict(font='Courier', fontSize=9, textFill=0.2, textStroke=noColor)
 
@@ -29,7 +29,7 @@ class CodeBlock(TextBox):
             if style is None:
                 style = self.DEFAULT_CODE_STYLE
         # Use a TextBox to store the code on the parent galley.
-        TextBox.__init__(self, bs=code, fill=fill, style=style, **kwargs)
+        Text.__init__(self, bs=code, fill=fill, style=style, **kwargs)
         assert isinstance(code, str)
         self.code = code
         self.tryExcept = False# tryExcept

@@ -29,13 +29,17 @@ ONLINE = 'online'
 INLINE = 'inline'
 OUTLINE = 'outline'
 
+# xAlign options for Elements and Text
 LEFT = 'left'
 RIGHT = 'right'
 CENTER = 'center'
-MIDDLE = 'middle'
 JUSTIFIED = 'justified'
+
+# yAlign Vertical alignments for Elements and Text
 TOP = 'top'
 BOTTOM = 'bottom'
+MIDDLE = 'middle' # yALign, vertical centered on box
+
 # Align in front, z-axis, nearest to view, perpendicular to the screen.
 FRONT = 'front'
 # Align in back, z-axis, nearest to view, perpendicular to the screen.
@@ -399,21 +403,20 @@ ECI_GrayConS = 'color/ECI_GrayConS_FOGRA52_v3.pdf'
 DEFAULT_COLOR_BARS = (ECI_GrayConL, COLORBAR_LEFT)
 
 # Default initialize point as long as elements don't have a defined position.
-# Actual location depends on value of e.originTop flag.
-# If document.originTop == True (or page.originTop == True),
-# origin is on top-left of the page. Y-positive direction is down.
-# If document.originTop == False (or page.originTop == False),
-# origin is on bottom-left of the page. Y-positive direction is up.
+# The origin is located a bottom-left, for default alignment.
 ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 
 # Min/max values for element sizes. Makes sure that elements dimensions for
 # (w,h) never get 0.
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
+XXH = 10000000 # Default “infinite” height for BabelText columns.
 
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
+DEFAULT_COL_WIDTH = pt(300) # Default width for Text elements and BabelText renders.
+
 # Default size for windows, e.g. created with VanillaContext
 DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
@@ -684,12 +687,12 @@ URL_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'
 #URL_MEDIA = 'http://code.google.com/p/css3-mediaqueries.js'
 URL_D3 = 'https://d3js.org/d3.v5.min.js'
 
-# DEFAULT_FONT_PATH comes from import pagebot.filepaths
-DEFAULT_FONT = 'PageBot-Regular' # We know for sure this one can be found.
+DEFAULT_FONT = 'PageBot-Regular'
+DEFAULT_FOUNDRY = 'typetr'
 DEFAULT_FONT_SIZE = pt(EM_FONT_SIZE)
 DEFAULT_LEADING = em(1.4, base=DEFAULT_FONT_SIZE)
 DEFAULT_TRACKING = em(0)
-DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # We know for sure this one is there.
+DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # Fallback font for DrawBot.
 
 # Default element names
 DEFAULT_GALLEY_NAME = 'Galley' # Used for page.galley default content storage while no layou defined.
@@ -721,11 +724,22 @@ BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element 
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
 BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT,
     BASE_Y_RIGHT, BASE_INSIDE}
-BASE_TOP = 'BaselineTop' # Use first baseline position as vertical position of origin (for TextBox)
+
+# Additional vertical alignment for Text elements
+# Also TOP for ascender alignment and BOTTOM for descender alignment of bottom line
+BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for TextBox)
 BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
+XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
+MIDDLE_CAP = 'MiddleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
+MIDDLE_X = 'MiddleXHeight' # yALign, vertical centered on xHeight
+ASCENDER = 'Ascender' # Aligns with the largest ascender /h in the top line
+DESCENDER = 'Descender' # Aligns with the largest descender /p in the bottom line
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, MIDDLE, CENTER, BASE_TOP, BASE_BOTTOM} # "middle" is PageBot. "center" is CSS.
+YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
+    MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
+    BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X} 
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 # Flags where to draw crop marks on folds.

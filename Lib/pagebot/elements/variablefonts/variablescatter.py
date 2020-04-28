@@ -28,7 +28,7 @@ class VariableScatter(Element):
     >>> from pagebot.document import Document
     >>> vfFont = findFont('RobotoDelta_v2-VF')
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> doc = Document(w=500, h=500, autoPages=1)
     >>> page = doc[1]
     >>> page.padding = 40
     >>> vc = VariableScatter(vfFont, parent=page, x=40, y=40, w=page.pw)
@@ -51,7 +51,7 @@ class VariableScatter(Element):
         # Make sure that this is a formatted string. Otherwise create it with the current style.
         # Note that in case there is potential clash in the double usage of fill and stroke.
         self.glyphNames = s or 'e'
-    
+
     def location2Recipe(self, location, start=0, end=3):
         recipe = ''
         if self.recipeAxes:
@@ -78,7 +78,7 @@ class VariableScatter(Element):
         c = self.doc.context
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         if self.drawBefore is not None: # Call if defined

@@ -31,10 +31,10 @@ class Waterfall(TextBox):
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot import getContext
         >>> from pagebot.conditions import *
-        >>> from pagebot.toolbox.color import color        
+        >>> from pagebot.toolbox.color import color
         >>> c = getContext()
         >>> w, h = Letter
-        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> style = dict(fill=color(0.95), leading=em(1.3), fontSize=48, xTextAlign=RIGHT)
         >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
         >>> page = doc[1]

@@ -42,9 +42,9 @@ class FontInfo:
     """Read-only access to font information, such as names, character set and supported
     OpenType features.
 
-    >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
     >>> from pagebot.fonttoolbox.objects.font import getFont
-    >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+    >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+    >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf'
     >>> font = getFont(path)
     >>> font.info.copyright
     'Copyright 2011 Google Inc. All Rights Reserved.'
@@ -76,9 +76,9 @@ class FontInfo:
         This is often wrong: return self._getNameTableEntry(4)
         So construct from self.familyName + ' ' + self.styleName
 
-        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.fullName
         'Roboto Black'
@@ -94,9 +94,9 @@ class FontInfo:
         The first hyphen in the name is the split between family name and style name.
         Replace underscores in the name by spaces.
 
-        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.familyName
         'Roboto'
@@ -118,9 +118,9 @@ class FontInfo:
         We take the first hyphen part as family name, and fill the rest here under style.
         So we add rest of family.
 
-        >>> from pagebot.fonttoolbox.fontpaths import TEST_FONTS_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> from pagebot.fonttoolbox.objects.font import getFont
-        >>> path = TEST_FONTS_PATH + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
+        >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
         >>> font = getFont(path)
         >>> font.info.styleName
         'Black'

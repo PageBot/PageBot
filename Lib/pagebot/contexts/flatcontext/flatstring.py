@@ -17,12 +17,15 @@
 
 import re
 import difflib
+import weakref
+from copy import deepcopy
 from fontTools.pens.boundsPen import BoundsPen
 
-from pagebot.constants import LEFT, DEFAULT_FONT_SIZE, DEFAULT_LEADING
-from pagebot.contexts.basecontext.babelstring import getFontPath, getLineHeight, BabelString
-from pagebot.fonttoolbox.objects.font import Font
+from pagebot.constants import *
 from pagebot.toolbox.units import upt
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.fonttoolbox.objects.font import Font, getFont, getFontPath, getLineHeight
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 NEWLINE = '<NEWLINE>'
@@ -34,33 +37,39 @@ class FlatString(BabelString):
 
     * https://developer.apple.com/documentation/foundation/nsattributedstring
     * https://developer.apple.com/documentation/coretext/ctframesetter-2eg
-
     """
 
     BABEL_STRING_TYPE = 'flat'
     UNITS = 'pt'
 
-    def __init__(self, s, context, style=None, strike=None):
+    def __init__(self, s=None, style=None, e=None):
         """Constructor of the FlatString, which is a wrapper around a Flat
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
+        FlatStrings are intended for drawing into a Flat canvas, write-only. 
 
         >>> from pagebot import getContext, getFontByName
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import Element # Reference does not need to be textBox
         >>> from pagebot.toolbox.units import pt, em
         >>> context = getContext('Flat')
-        >>> style = {'font': 'Bungee-Regular', 'fontSize': pt(12), 'leading': em(1.5)}
-        >>> fs = context.newString('ABC', style=style)
+        >>> doc = Document(context=context) # Stored as doc.view.context
+        >>> e = Element(w=500, h=200, parent=doc[1])
+        >>> style = dict(font='Bungee-Regular', fontSize=pt(12), leading=em(1.5))
+        >>> fs = context.newString('ABC', style, e=e)
+        >>> fs.e.context # Context is stored in the string as weakref property
+        <FlatContext>
         >>> fs
-        ABC
-        >>> fs.font.endswith('Bungee-Regular.ttf')
-        True
+        $ABC$
+        >>> fs.font
+        'Bungee-Regular'
         >>> fs.fontSize
-        12
+        12pt
         >>> fs.leading
         1.5em
-        >>> fs.lineHeight
+        >>> fs.lineHeight 
         18.0
-        >>> pt(fs.lineHeight)
+        >>> pt(fs.lineHeight) # Should be 18pt
         18pt
         >>> # TODO: add these for multiple style, i.e. fs.xHeight[-1]
         >>> fs.descender
@@ -76,12 +85,11 @@ class FlatString(BabelString):
         >>> from pagebot.toolbox.units import em
         >>> style = dict(fontSize=pt(100), leading=em(1.4))
         >>> fs = context.newString('Example text', style=style)
-        >>> from pagebot.contexts.basecontext.babelstring import BabelString
-        >>> isinstance(fs, BabelString)
+        >>> fs, fs.type
         True
         >>> fs2 = context.newString(' plus second text', style=style)
         >>> fs + fs2
-        Example text plus second text
+        $Example te...$
         >>> #lines = fs.getTextLines(w=100)
         >>> #len(lines)
         #9
@@ -93,24 +101,33 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.data = []
+        self.e = e # Store weakref to referring context as property
+
+        if s is None:
+            s = ''
 
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
-        assert isinstance(s, str)
+        assert e is None or isinstance(e, Element)
+        assert isinstance(s, (str, BabelString)), '%s: Needs one of (str, BabelString), not %s' % (self.__class__.__name__, s.__class__.__name__)
 
         if style is None:
             style = {}
 
-        fontPath = getFontPath(style)
+        fontPath = getFontPath(style.get('font'))
 
         # FIXME: should use s.lineHeight.
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
         leading = style.get('leading', DEFAULT_LEADING)
-        lineHeight = getLineHeight(leading, fontSize)
-        flatFont = context.b.font.open(fontPath)
-        strike = context.b.strike(flatFont)
-        color = BabelString.getColor(style)
-        rgb = context.getFlatRGB(color)
+        # FIXME: Don't get lineheight from the font.
+        # It is either a fixed value (e.g. pt(12), or relative to the fontSize em(1.5))
+        # Values inside fonts are unreliable
+        #lineHeight = getLineHeight(leading, fontSize)
+        lineHeight = leading
+        flatFont = findFont(fontPath)
+        strike = self.context.b.strike(flatFont)
+        color = self.context.b.getColor(style)
+        rgb = self.context.getFlatRGB(color)
         self._lines = []
         self._numberOfLines = 0
 
@@ -138,24 +155,26 @@ class FlatString(BabelString):
                 self.append(NEWLINE)
                 self.append(part)
 
-
     def copy(self):
         """
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
         >>> fs = context.newString('ABC')
+        >>> fs.context # Stored as weakref property
+        <FlatContext>
         >>> fs2 = fs.copy()
         >>> id(fs) == id(fs2)
         False
         """
+        return deepcopy(self)
         # FIXME: copy all data, instead of first block.
-        s = self.data[0]['s']
-        strike = self.data[0]['strike']
-        style = self.data[0]['style']
-        fs = FlatString(s, self.context, style=style, strike=strike)
+        #s = self.data[0]['s']
+        #strike = self.data[0]['strike']
+        #style = self.data[0]['style']
+        #fs = self.__class__(s, style=style, context=self.context) #, strike=strike)
         # TODO: copy the rest if there;
-        return fs
+        #return fs
 
     def __getitem__(self, given):
         """Answers a copy of self with a sliced string or with a single indexed
@@ -165,16 +184,16 @@ class FlatString(BabelString):
         >>> context = getContext('Flat')
         >>> fs = context.newString('blablabla')
         >>> fs
-        blablabla
-        >>> bs = fs[2:]
-        >>> bs
-        ablabla
+        $blablabla$
+        >>> fs2 = fs[2:]
+        >>> fs2
+        $ablabla$
         >>> fs
-        blablabla
+        $blablabla$
         >>> fs[:5]
-        blabl
+        $blabl$
         >>> fs[5]
-        a
+        $a$
         """
         if isinstance(given, slice):
             fs = self.copy()
@@ -192,9 +211,6 @@ class FlatString(BabelString):
         fs.s = s[given]
         return fs
 
-    def __repr__(self):
-        return self.s
-
     def _get_s(self):
         """Answers the plain string."""
         s = ''
@@ -205,6 +221,7 @@ class FlatString(BabelString):
                 s += '\n'
             else:
                 s += part
+
         return s
 
     def _set_s(self, s, i=0, strike=None):
@@ -221,20 +238,16 @@ class FlatString(BabelString):
         """Answers the style."""
         #for d in self.data:
         return self.data[0]['style']
-
     def _set_style(self, style, i=0):
         self.data[i]['style'] = style
-
     style = property(_get_style, _set_style)
 
     def _get_strike(self):
         """Answers the strike."""
         #for d in self.data:
         return self.data[0]['strike']
-
     def _set_strike(self, strike, i=0):
         self.data[i]['strike'] = strike
-
     strike = property(_get_strike, _set_strike)
 
     def _get_text(self):
@@ -273,15 +286,19 @@ class FlatString(BabelString):
     '''
 
     def _get_fontSize(self):
-        """Answers the current state of the fontSize."""
+        """Answers the current state of the fontSize.
+        
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.units import em
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABCD', dict(fontSize=em(1.5)))
+        >>> fs.style
+        """
         return self.style.get('fontSize', DEFAULT_FONT_SIZE)
-
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.font(fontSize)
-
         self.style['fontSize'] = fontSize
-
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_leading(self):
@@ -343,7 +360,7 @@ class FlatString(BabelString):
         >>> context = getContext('Flat')
         >>> fs = context.newString('ABC')
         >>> fs
-        ABC
+        $ABC$
         >>> len(fs)
         3
         """
@@ -430,9 +447,10 @@ class FlatString(BabelString):
         if h0 < lineHeight0:
             h0 = lineHeight0
 
-
         x = x0
-        y = self.context.height - y0 - h0 + dl0
+        #y = self.context.height - y0 - h0 + dl0
+        y = page.height - y0 - h0 + dl0
+        
         w = w0
         h = round(lineHeight0)
         h1 = round(lineHeight0)
@@ -565,10 +583,10 @@ class FlatString(BabelString):
         >>> style = dict(font='Roboto-Regular', fontSize=12)
         >>> fs = context.newString('ABC', style=style)
         >>> fs
-        ABC
+        $ABC$
         >>> size = fs.textSize()
         >>> size
-        (23.115, 16.8)
+        (22pt, 16.8)
         """
         w = self.strike.width(self.s)
         h = self.lineHeight
@@ -585,7 +603,7 @@ class FlatString(BabelString):
         >>> bla = context.newString('bla')
         >>> bla2 = context.newString('bla2')
         >>> bla + bla2
-        blabla2
+        $blabla2$
         """
         assert isinstance(s, (str, FlatString))
 
@@ -622,18 +640,23 @@ class FlatString(BabelString):
         Returns style at character index.
 
         >>> from pagebot import getContext
+        >>> from pagebot.toolbox.units import pt
         >>> context = getContext('Flat')
-        >>> bla = context.newString('bla')
-        >>> style = bla.getStyleAtIndex(2)
+        >>> fs = context.newString('bla', dict(fontSize=pt(12)))
+        >>> style = fs.getStyleAtIndex(2)
+        >>> style
+
         >>> style['fontSize']
         12
         >>> style = {'fontSize': 16}
-        >>> bla2 = context.newString('bla2', style=style)
-        >>> bla = bla + bla2
-        >>> style = bla.getStyleAtIndex(4)
+        >>> fs2 = context.newString('bla2', style=style)
+        >>> fs = fs + fs2
+        >>> fs
+        $blabla2$
+        >>> style = fs.getStyleAtIndex(4)
         >>> style['fontSize']
         16
-        >>> bla.getStyleAtIndex(7)
+        >>> fs.getStyleAtIndex(7)
         False
         """
         i = 0
@@ -704,14 +727,39 @@ class FlatString(BabelString):
 
     #
 
-    def getTextLines(self, w, h=None, align=LEFT):
+    def textLines(self, w=None, h=None):
+        """Calculating the flow of text lines is context dependent.
+        This method can only be rendered if self.e.context is defined.
+
+        >>> from pagebot.elements import newTextBox
+        >>> from pagebot.document import Document
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('Flat')
+        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultricies, tellus sed vehicula ornare. '
+        >>> doc = Document(context=context) # Stored as doc.view.context
+        >>> tb = newTextBox(txt, w=500, h=200, parent=doc[1])
+        >>> tb.pbs # Converted to a BabelString
+        $Lorem ipsu...$
+        >>> tb.pbs.textLines()
+        """
+        assert self.e is not None and self.e.context is not None
+        if w is None: 
+            w = self.e.w # Use width of the referenced element
+        if h is None:
+            h = 1000000 # No vertical limit
         page = self.context.getTmpPage(w, h)
         box = (0, 0, w, h)
-        tb = self.textBox(page, box, align=align)
+        tb = self.textBox(page, box, align=LEFT)
         return self._lines
 
+    # String methods.
+
+    def asBabelString(self):
+        # TODO: to be implemented.
+        pass
+
     @classmethod
-    def newString(cls, s, context, e=None, style=None, w=None, h=None, **kwargs):
+    def newString(cls, pbs=None, style=None, e=None):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,
@@ -726,11 +774,14 @@ class FlatString(BabelString):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
-        >>> bs = context.newString('AAA', style=dict(fontSize=pt(30)))
-        >>> str(bs) == 'AAA'
-        True
+        >>> fs = context.newString('AAA', style=dict(fontSize=pt(30)))
+        >>> fs.context
+        <FlatContext>
+        >>> fs
+        $AAA$
         """
         assert isinstance(s, str)
+        self.e = e
 
         if style is None:
             style = {}
@@ -739,7 +790,7 @@ class FlatString(BabelString):
 
         s = cls.addCaseToString(s, e, style)
         style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
-        return cls(s, context=context, style=style)
+        return cls(s, style=style, context=context)
 
 if __name__ == '__main__':
     import doctest

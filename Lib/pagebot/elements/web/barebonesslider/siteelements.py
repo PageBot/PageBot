@@ -62,19 +62,19 @@ class SlideShow(SlideShowBase):
     that ratio. Will remaining area by color refined by self.fill or blackColor.
 
     Usage:
-    
+
     Copy the css/jquery.bbslider.css to local PageBot site source in "css/".
     Add: doc.view.cssUrls = (<Other CSS files>, 'css/jquery.bbslider.css')
-    
-    Copy the js/jquery.bbslider.min.js to local PageBot site source  in "js/"   
+
+    Copy the js/jquery.bbslider.min.js to local PageBot site source  in "js/"
     Add: doc.view.jsUrls = <Other JS files>, js/jquery.bbslider.min.js')
 
     Fill in MarkDown file with image references as::
 
         ~~~
         content = page.select('Content')
-        slideshow = content.newSlideShow(h=300, slideW=300, slideH=300, startIndex=2, 
-            autoHeight=True, dynamicHeight=True, transition='slide', easing=CSS_EASE, 
+        slideshow = content.newSlideShow(h=300, slideW=300, slideH=300, startIndex=2,
+            autoHeight=True, dynamicHeight=True, transition='slide', easing=CSS_EASE,
             frameDuration=4, duration=0.7, pauseOnHit=True, randomPlay=False)
         box = slideshow.slides
         ~~~
@@ -83,7 +83,7 @@ class SlideShow(SlideShowBase):
         ![](images/DesignModels2.073.png)
         ![](images/DesignModels2.074.png)
 
-        ~~~ 
+        ~~~
         box = slideshow.side
         ~~~
 
@@ -91,15 +91,15 @@ class SlideShow(SlideShowBase):
 
     """
 
-    def __init__(self, slideW=None, slideH=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True, 
-        easing=None, transition=None, auto=True, loop=True, pager=False, carousel=False, 
+    def __init__(self, slideW=None, slideH=None, autoHeight=True, startIndex=None, duration=None, dynamicHeight=True,
+        easing=None, transition=None, auto=True, loop=True, pager=False, carousel=False,
         controls=False, controlsText=None, pauseOnHit=True, touch=False, touchOffset=None,
-        dragControls=False, dragOffset=None, randomPlay=False, maskImage=None, 
+        dragControls=False, dragOffset=None, randomPlay=False, maskImage=None,
         jsCallbackStart=None, jsCallbackBefore=None, jsCallbackAfter=None, jsCallbackUpdate=None,
-        useCssBackground=True, proportional=True, 
+        useCssBackground=True, proportional=True,
         **kwargs):
         SlideShowBase.__init__(self, **kwargs)
-        # The (self.w, self.h) combination and ration defines the size and ratio that child 
+        # The (self.w, self.h) combination and ration defines the size and ratio that child
         # elements will be scaled/cropped
 
         self.slideW = units(slideW)
@@ -132,9 +132,9 @@ class SlideShow(SlideShowBase):
         self.jsCallbackAfter = jsCallbackAfter # Function to call after every slide
         self.jsCallbackUpdate = jsCallbackUpdate # Function to call whenever the update method is called
 
-        # One of: ease, linear, ease-in, ease-out, ease-in-out, easeInQuad, easeInCubic, easeInQuart, 
-        # easeInQuint, easeInSine, easeInExpo, easeInCirc, easeInBack, easeOutQuad, easeOutCubic, easeOutQuart, 
-        # easeOutQuint, easeOutSine, easeOutExpo, easeOutCirc, easeOutBack, easeInOutQuad, easeInOutCubic, 
+        # One of: ease, linear, ease-in, ease-out, ease-in-out, easeInQuad, easeInCubic, easeInQuart,
+        # easeInQuint, easeInSine, easeInExpo, easeInCirc, easeInBack, easeOutQuad, easeOutCubic, easeOutQuart,
+        # easeOutQuint, easeOutSine, easeOutExpo, easeOutCirc, easeOutBack, easeInOutQuad, easeInOutCubic,
         # easeInOutQuart, easeInOutQuint, easeInOutSine, easeInOutExpo, easeInOutCirc, easeInOutBack
         self.easing = easing or CSS_EASE
         # One of: none, fade, slide, slideVert, blind, mask
@@ -213,10 +213,10 @@ class SlideShow(SlideShowBase):
 
 class SlideShowGroup(SlideShowBase):
     def build_html(self, view, path, drawElements=True, **kwargs):
-        
+
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
@@ -228,7 +228,7 @@ class SlideSide(SlideShowBase):
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass) 
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
         self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
@@ -239,4 +239,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

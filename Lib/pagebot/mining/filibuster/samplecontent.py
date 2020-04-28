@@ -16,7 +16,7 @@
 #
 #     To be developed here: functions that do data mining from external sources.
 #
-from pagebot import getResourcesPath
+from pagebot.filepaths import getResourcesPath
 from pagebot.contributions.filibuster.blurb import Blurb
 
 class SampleContent:

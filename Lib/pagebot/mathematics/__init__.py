@@ -24,7 +24,7 @@ def normalizedVector(p, length=1):
     normalized vector, default is `1`. NOTE: undocumented for FreeType; It seems
     that it is possible to try to normalize the vector `(0, 0)`. Return
     immediately.
-    
+
     FIXME: upsubscriptable-object error occured, is this still the case? Needs
     some tests.
     """
@@ -106,7 +106,7 @@ def isBetween(p1, p2, p):
     crossproduct = (py - y1) * (x2 - x1) - (px - x1) * (y2 - y1)
     if abs(crossproduct) > epsilon:
         # (or != 0 if using integers)
-        return False 
+        return False
 
     dotproduct = (px - x1) * (x2 - x1) + (py - y1)*(y2 - y1)
     if dotproduct < 0:

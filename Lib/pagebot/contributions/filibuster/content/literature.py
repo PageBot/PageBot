@@ -248,4 +248,3 @@ content = {
         'Consolation',
     ],
 }
-

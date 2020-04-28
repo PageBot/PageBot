@@ -13,8 +13,8 @@
 #
 #     books/photobook/__init__.py
 #
-from pagebot import getResourcesPath
 from pagebot.conditions import *
+from pagebot.filepaths import getResourcesPath
 from pagebot.elements import *
 from pagebot.constants import *
 from pagebot.publications.books.basebook import BaseBook
@@ -26,7 +26,7 @@ from pagebot.toolbox.color import Color, blackColor, whiteColor
 from pagebot.fonttoolbox.objects.font import findFont
 
 class PhotoBook(BaseBook):
-    """Create a photobook with a number of images in a layout and their 
+    """Create a photobook with a number of images in a layout and their
     captions on each page.
 
     >>> from pagebot import getContext
@@ -37,14 +37,13 @@ class PhotoBook(BaseBook):
 
     """
     def makeSample(self, context, name=None):
-        padding = mm(40) 
+        padding = mm(40)
         w, h = A4Square
         styles = {}
         sampleContent = SampleContent()
         imagePath0 = sampleContent.imagePaths[0]
         imagePath1 = sampleContent.imagePaths[1]
-        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, originTop=False,
-            context=context)
+        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, context=context)
         # Book cover
         page = doc[1]
         fontLight = findFont('PageBot-Light')
@@ -60,11 +59,11 @@ class PhotoBook(BaseBook):
         makeTitlePage(page, bookTitle, bookAuthor)
         # Page with color square
         page = page.next
-        newImage(imagePath0, w=page.pw, h=page.ph, parent=page, strokeWidth=6, stroke=Color(0x273818), 
+        newImage(imagePath0, w=page.pw, h=page.ph, parent=page, strokeWidth=6, stroke=Color(0x273818),
             conditions=[Fit()])
         # Page with full untouched photo
         page = page.next
-        newImage(imagePath0, x=padding, y=padding, 
+        newImage(imagePath0, x=padding, y=padding,
             w=page.pw, h=page.ph, parent=page, conditions=[Fit()])
         # Page with filtered photos
         page = page.next
@@ -74,7 +73,7 @@ class PhotoBook(BaseBook):
             (Left2Left(), Bottom2Bottom()),
             (Right2Right(), Bottom2Bottom())
         ):
-            newImage(imagePath0, x=padding, y=padding, 
+            newImage(imagePath0, x=padding, y=padding,
                 w=page.pw/2, h=page.ph/2, parent=page, conditions=conditions)
         doc.solve()
 

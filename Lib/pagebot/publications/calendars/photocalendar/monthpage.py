@@ -24,4 +24,3 @@ def makeMonthPage(page, month, year=None):
     if year is None:
         year = now().year
     CalendarMonth(Dating(month=month, year=year), parent=page, fill=0.5, conditions=[Fit()])
-

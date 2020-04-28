@@ -15,13 +15,6 @@
 #
 import os
 
-HAS_PIL = True
-
-try:
-    from PIL import Image
-except:
-    HAS_PIL = False
-
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
 from pagebot.contexts.markup.htmlstring import HtmlString
@@ -29,6 +22,13 @@ from pagebot.constants import BITMAP_TYPES
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.transformer import path2Extension, path2ScaledImagePath, path2Dir
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    HAS_PIL = False
 
 class HtmlContext(BaseContext):
     """The HtmlContext builds all parts necessary for a website. Most of the
@@ -137,7 +137,7 @@ class HtmlContext(BaseContext):
         from pagebot import getContext
         return getContext().imageSize(path)
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = HtmlContext()
         >>> context.imageSize(imagePath)
@@ -155,7 +155,7 @@ class HtmlContext(BaseContext):
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
         """
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> srcPath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> path2ScaledImagePath(srcPath, 100, 200, 0, 'png')
         'scaled/peppertom_lowres_398x530-w100-h200-i0.png'

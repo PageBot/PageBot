@@ -27,7 +27,7 @@ class VariableCube2(Element):
     >>> from pagebot.document import Document
     >>> vfFont = findFont('RobotoDelta_v2-VF')
     >>> from pagebot.fonttoolbox.objects.font import findFont
-    >>> doc = Document(w=500, h=500, originTop=False, autoPages=1)
+    >>> doc = Document(w=500, h=500, autoPages=1)
     >>> page = doc[1]
     >>> page.padding = 40
     >>> vc = VariableCube2(vfFont, parent=page, x=40, y=40, w=page.pw)
@@ -35,8 +35,8 @@ class VariableCube2(Element):
     # Initialize the default behavior tags as different from Element.
 
     def __init__(self, font, point=None, parent=None, style=None,
-                 name=None, captionStyle=None, caption=None, 
-                 location=None, dimensions=None, 
+                 name=None, captionStyle=None, caption=None,
+                 location=None, dimensions=None,
                  clipRect=None, mask=None, imo=None, **kwargs):
         Element.__init__(self, point=point, parent=parent, style=style,
                          name=name, **kwargs)
@@ -61,12 +61,12 @@ class VariableCube2(Element):
         if location is None:
             location = {}
         self.location = copy(location)
-    
+
     def draw(self, view, origin):
         c = self.doc.context
 
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)    
+        p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
         fillColor = self.style.get('fill')
@@ -79,7 +79,7 @@ class VariableCube2(Element):
             raise ValueError('Not supporting 1 axis now')
         if len(self.dimensions) > 2:
             raise ValueError('Not supporting >2 axis now')
-        
+
         axisNames = sorted(self.dimensions.keys())
         axisX = axisNames[0]
         sizeX = self.dimensions[axisX]

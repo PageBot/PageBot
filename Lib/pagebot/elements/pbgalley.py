@@ -16,7 +16,7 @@
 #
 from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.pbtext import Text
 from pagebot.elements.pbruler import Ruler
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import color
@@ -31,7 +31,7 @@ class Galley(Element):
     slicing, adding or removing elements by the Composer. Because the Galley is
     an Element, it can contain other galley instances recursively."""
 
-    TEXTBOX_CLASS = TextBox
+    TEXTBOX_CLASS = Text
     RULER_CLASS = Ruler
     OLD_PAPER_COLOR = color(rgb=0xF8ECC2) # Color of old paper: #F8ECC2
 

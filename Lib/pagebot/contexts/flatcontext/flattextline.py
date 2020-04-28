@@ -25,7 +25,7 @@ class FlatTextLine:
         self.placedTexts.append(placedText)
 
     def __repr__(self):
-        return '<FlatTextLine #%s y:%s Runs:%d>' % (self.i, self.y, len(self.placedTexts))
+        return '<%s #%s y:%s Runs:%d>' % (self.__class__.__name__, self.i, self.y, len(self.placedTexts))
 
     def append(self, placedText):
         self.placedTexts.append(placedText)

@@ -29,15 +29,16 @@ from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
         BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
-    """A Document is a container of pages.
+    """A Document is a container of pages, independent from any context.
+    Any predefined context is stored as view, not as document attribute.
 
     >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
     (50, 12, 61)
 
     >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
-    >>> doc.name, doc.w, doc.h, doc.originTop, len(doc)
-    ('TestDoc', 300pt, 400pt, False, 2)
+    >>> doc.name, doc.w, doc.h, len(doc)
+    ('TestDoc', 300pt, 400pt, 2)
     >>> doc.padding
     (30pt, 40pt, 50pt, 60pt)
     >>> page = doc[1] # First page is on the right
@@ -45,12 +46,14 @@ class Document:
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300pt, 400pt, 260pt, 360pt, 20pt, 20pt, 20pt, 20pt, 'default')
 
+    >>> from pagebot.contexts import getContext
+    >>> context = getContext('Flat')
     >>> pages = (Page(), Page(), Page())
-    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp')
+    >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp', context=context)
     >>> len(doc), sorted(doc.pages.keys()), len(doc.pages[1])
     (3, [1, 2, 3], 1)
-    >>> doc.context
-    <HtmlContext>
+    >>> doc.view.context
+    <FlatContext>
     >>> doc.solve()
     Score: 0 Fails: 0
     >>> doc.build()
@@ -63,7 +66,7 @@ class Document:
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
             title=None, pages=None, autoPages=1, template=None, templates=None,
             startPage=None, sId=None, w=None, h=None, d=None,
-            size=None, wh=None, whd=None, padding=None, docLib=None, originTop=False,
+            size=None, wh=None, whd=None, padding=None, docLib=None, 
             context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -78,11 +81,6 @@ class Document:
         # Also accept size tuples.
         if size is not None:
             w, h, d = point3D(size) # Set
-
-        # Set position of origin and direction of `y` for self and all
-        # inheriting pages and elements as property. Not supposed to change.
-        # Assuming origin is at the bottom (OS X style) for debugging purposes.
-        self._originTop = False #originTop
 
         # If no theme is defined, then use the default theme class to create an
         # instance. Themes hold values and colors, combined in a theme.mood
@@ -229,13 +227,6 @@ class Document:
 
     doc = property(_get_doc)
 
-    def _get_context(self):
-        """Answers the context of the current view to allow searching the
-        parents --> document --> view."""
-        return self.view.context
-
-    context = property(_get_context)
-
     # Document[12] answers a list of pages where page.y == 12. This is
     # different from regular elements, who want the page.eId as key.
 
@@ -305,21 +296,6 @@ class Document:
         glossary.append('\tStyles: %s' % ', '.join(sorted(self.styles.keys())))
         glossary.append('\tLib: %s' % ', '.join(self.docLib.keys()))
         return '\n'.join(glossary)
-
-    def _get_builder(self):
-        """Answers the builder, which should be available from self.context.
-
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> doc = Document(context=context, title='MySite')
-        >>> doc, doc.title
-        (<Document "MySite" Pages=1 Templates=1 Views=1>, 'MySite')
-        >>> doc.context
-        <FlatContext>
-        """
-        return self.context.b
-
-    b = builder = property(_get_builder)
 
     #   T E M P L A T E
 
@@ -409,20 +385,20 @@ class Document:
 
         >>> doc = Document()
         >>> page = doc[1] # Inheriting from doc
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (False, 'bottom', False, 'bottom')
-        >>> doc = Document(originTop=True)
+        >>> doc.rootStyle['yAlign'], page.yAlign
+        ('bottom', 'bottom')
+        >>> doc = Document()
         >>> page = doc[1] # Inheriting from doc
-        >>> #doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        #('top', True, 'top')
-        >>> doc = Document(originTop=True, yAlign=BOTTOM)
+        >>> #doc.rootStyle['yAlign'], page.yAlign
+        #('top', 'top')
+        >>> doc = Document(yAlign=BOTTOM)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
-        >>> #doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        #(True, 'bottom', True, 'bottom')
+        >>> #doc.rootStyle['yAlign'], page.yAlign
+        #('bottom', 'bottom')
         >>> doc = Document(yAlign=TOP)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
-        >>> doc.originTop, doc.rootStyle['yAlign'], page.originTop, page.yAlign
-        (False, 'top', False, 'top')
+        >>> doc.rootStyle['yAlign'], page.yAlign
+        ('top', 'top')
         """
         rootStyle = getRootStyle()
         for name, v in kwargs.items():
@@ -431,7 +407,7 @@ class Document:
         # Adjust the default vertical origin position from self.origin, if not already defined
         # by **kwargs
         if 'yAlign' not in kwargs:
-            yAlign = {True: TOP, False: BOTTOM, None: BOTTOM}[self.originTop]
+            yAlign = TOP
             rootStyle['yAlign'] = yAlign
         return rootStyle
 
@@ -544,17 +520,6 @@ class Document:
         return self.replaceStyle(kwargs['name'], dict(**kwargs))
 
     #   D E F A U L T  A T T R I B U T E S
-
-    def _get_originTop(self):
-        """Answers the document flag if origin is on top. This value is not
-        supposed to change.
-
-        >>> doc = Document(name='TestDoc', originTop=True)
-        >>> #doc.originTop
-        #True
-        """
-        return self._originTop
-    originTop = property(_get_originTop)
 
     def _get_frameDuration(self):
         """Answers the document frameDuration parameters, used for
@@ -1036,8 +1001,7 @@ class Document:
 
     isRight = isLeft = False
 
-    def newPage(self, pn=None, template=None, w=None, h=None, name=None,
-            originTop=None, **kwargs):
+    def newPage(self, pn=None, template=None, w=None, h=None, name=None, **kwargs):
         """Creates a new page with size `(self.w, self.h)` unless defined
         otherwise. Add the pages in the row of pn, if defined, otherwise create
         a new row of pages at pn. If `pn` is undefined, add a new page row at
@@ -1048,13 +1012,6 @@ class Document:
         >>> page = doc[1]
         >>> page.size
         (80pt, 120pt)
-        >>> # Value copied into the new page setting.
-        >>> page.originTop
-        False
-        >>> #doc = Document(originTop=True)
-        >>> #page = doc[1]
-        >>> #page.originTop
-        #True
         """
         if isinstance(template, str):
             template = self.templates.get(template)
@@ -1077,14 +1034,10 @@ class Document:
         if h is None:
             h = self.h
 
-        # If not defined, then use the self.origin instead.
-        if originTop is None:
-            originTop = self.originTop
-
         # Don't set parent to self yet, as this will make the page create a #1.
         # Setting of page.parent is done by self.appendPage, for the right page
         # number.
-        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs) # originTop=originTop
+        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.
@@ -1148,8 +1101,6 @@ class Document:
         >>> next = doc.nextPage(next) # Creating new page of makeNew is True
         >>> doc.getPageNumber(next)
         (5, 0)
-        >>> next.originTop
-        False
         """
         found = False
         for pn, pnPages in sorted(self.pages.items()):
@@ -1160,7 +1111,7 @@ class Document:
                     found = True # Trigger to select the next page in the loop.
         # Not found, create new one?
         if makeNew:
-            return self.newPage() # Uses setting of self.originTop as page default.
+            return self.newPage() 
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):
@@ -1454,20 +1405,16 @@ class Document:
         """Create a new view instance and set self.view default view, that will
         be used for checking on view parameters, before any element rendering
         is done, such as layout conditions and creating the right type of
-        strings. If context is not defined, then use the result of getView().
+        strings. 
 
         >>> from pagebot.elements.views import viewClasses
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)
         >>> sorted(viewClasses.keys())
         ['Git', 'Mamp', 'Page', 'Site']
         >>> view = doc.newView('Page', 'myView')
-        >>> str(view.context) in ('<DrawBotContext>', '<FlatContext>')
-        True
         >>> view.w, view.h
         (300pt, 400pt)
         >>> view = doc.newView('Site')
-        >>> view.context
-        <HtmlContext>
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
@@ -1548,7 +1495,6 @@ class Document:
         >>> from pagebot.conditions import *
         >>> w = h = 400 # Auto-convert plain numbers to default pt-units.
         >>> context = getContext()
-        >>> context.clear()
         >>> doc = Document(name='TestDoc', size=(w, h), autoPages=1, padding=40, context=context)
         >>> r = newRect(fill=color(1, 0, 0), stroke=noColor, parent=doc[1], conditions=[Fit()])
         >>> score = doc.solve()

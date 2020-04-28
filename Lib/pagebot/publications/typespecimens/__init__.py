@@ -16,7 +16,7 @@
 #     If we revive type from the past, why not type specimens of the past?
 #     Take an old book from the shelf, measure the relevant parameters
 #     and design their relational algorythms.
-#     The TypeSpecimen class (or other lists on this default page) may be 
+#     The TypeSpecimen class (or other lists on this default page) may be
 #     a starting point of thinking or even can be used as class to inherit from.
 #     More revivals will be added over time.
 #     And more new types of type speciimens will be developed as well.

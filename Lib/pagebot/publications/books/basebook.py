@@ -25,14 +25,13 @@ class BaseBook(Publication):
 
         rootStyle=None, styles=None, views=None, name=None, cssClass=None,
         title=None, autoPages=1, defaultTemplate=None, templates=None,
-        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
-        **kwargs)
-    
+        startPage=0, w=None, h=None, exportPaths=None, **kwargs)
+
     """
 
     DEFAULT_COVERBACKGROUND = (0.3, 0.6, 0.3)
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # books in portrait ratio.
     PAGE_SIZES = {
         'A4': A4,

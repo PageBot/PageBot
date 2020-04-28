@@ -36,7 +36,7 @@ class Bio(TextBox):
         >>> c = getContext()
         >>> w, h = Letter
         >>> m = 80
-        >>> doc = Document(w=w, h=h, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, padding=30, context=c)
         >>> page = doc[1]
         >>> font = findFont('AmstelvarAlpha-VF')
         >>> foundryName = 'Google Fonts'

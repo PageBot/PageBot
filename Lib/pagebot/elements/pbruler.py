@@ -55,7 +55,7 @@ class Ruler(Element):
         >>> from pagebot.document import Document
         >>> c = getContext()
         >>> w, h = pt(300, 400)
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), pt(0, 0))
@@ -65,11 +65,10 @@ class Ruler(Element):
         (300pt, 3pt)
         >>> view = doc.getView()
         >>> e.build(view, (0, 0))
-
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.document import Document
         >>> c = FlatContext()
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
@@ -116,7 +115,7 @@ class Ruler(Element):
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> from pagebot.document import Document
         >>> c = HtmlContext()
-        >>> doc = Document(w=300, h=400, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=300, h=400, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), (0, 0))

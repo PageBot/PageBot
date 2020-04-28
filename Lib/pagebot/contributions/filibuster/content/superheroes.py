@@ -19,12 +19,12 @@ content = {
                 '<#robot#> slain by <#hero_protagonist#>!',
                 '<#hero_protagonist#> defeats <#hero_antagonist#>'
                 ],
-                
-                
+
+
         'hero_outfit':      ['<#hero_brand#>suit', '<#hero_brand#>outfit', '<#hero_brand#>armor', '<#hero_brand#>leotard'],
         'hero_moan':            ['Aaargh', 'Argh', 'Humph!', 'Glaglgalga!'],
         'hero_onomatopaea': ['BLAST', 'KAPOW', 'WHAM', 'ZAP', 'ZOT', 'KRAZOOM', 'ZZZZZOOM'],
-        
+
         'hero_comic_title': [
                 '#<-randint(1,320)-> "<#!^,hero_antagonist#> vs. <#!^,hero_protagonist#>" (<#hero_comic_publisher#>)',
                 '<#!^,hero_antagonist#> SERIES <-randint(1,320)->',
@@ -40,9 +40,9 @@ content = {
                 '<#hero_comic_publisher#> series'],
         'hero_comic_year':  ['<-randint(1930,2200)->'],
         'hero_antagonist':  [
-                '<#hero_adj_evil#> <#hero_name#>', 
+                '<#hero_adj_evil#> <#hero_name#>',
                 '<#hero_adj_evil#> <#heroin_name#>',
-                '<#hero_name#>', 
+                '<#hero_name#>',
                 '<#heroin_name#>'
                 ],
         'hero_protagonist': [
@@ -55,7 +55,7 @@ content = {
         'hero_altcarreer':  [
                 'journalist for the <#paper_US#>',
                 'bar tender at the <#pub_name#>',
-                'fisherman', 'surgeon', 
+                'fisherman', 'surgeon',
                 'teacher at the <#university_dept#>',
                 'scientist at the <#university_dept#>',
                 'a <#sci_disciplines#> teacher',
@@ -76,17 +76,17 @@ content = {
         'supersized':   ['Super', 'Hyper', 'Ultra', 'Mini', 'Maxi', 'Macro', 'Micro',],
         'hero_brand':   [
                 '<#supersized#>','<#supersized#>','<#supersized#>',
-                'Omni', 'God', 
+                'Omni', 'God',
                 'Vacuum',
                 'Particle', 'Universe', 'Cosmos',
                 'Rocket', 'Hydro',
-                'Atom', 
+                'Atom',
                 '<#robot_px#><#robot_sx_robotic#>',
                 '<#hero_pets#>',
                 '<#sci_transition_metals#>',
                 ],
         'hero_pets':    [
-                'Cat', 'Bat', 
+                'Cat', 'Bat',
                 'Hawk',
                 'Wolf', 'Lion',
                 'Aardvark',
@@ -171,19 +171,19 @@ content = {
                 'mysterious', '<#hero_brand#>',
                 '<#robot_px#><#robot_sx_robotic#>',
                 'nuclear', 'atomic', 'static',
-                'mathematical', 'physical', 'democratic', 
+                'mathematical', 'physical', 'democratic',
                 ],
         'hero_material':    ['<#hero_material_adj#><#robot_px#>tronium', '<#hero_material_adj#><#sci_noble_gasses#>ite', ],
         'hero_material_adj':    [
                 '','','','','','','','','',
-                'deadly ', 'valuable ', 'priceless ', 'poisenous ', 'illegal ', 'addictive ',  
+                'deadly ', 'valuable ', 'priceless ', 'poisenous ', 'illegal ', 'addictive ',
                 ],
         'hero_material_description':    [
                 'one <#hero_quantity#> of the material is enough to <#hero_damage#>',
                 'one <#hero_quantity#> is sufficient to <#hero_damage#>',
                 ],
 
-        'hero_adj': [ 
+        'hero_adj': [
                 '','','',
                 '<#hero_adj_good#>',
                 '<#hero_adj_evil#>',
@@ -216,20 +216,20 @@ content = {
         #------------------------------------------------------------------------------
         #
         #       stuff for robot names
-        #   
+        #
         'robot':    [
                 '<#robot_px#><#robot_sx_robotic#><#robot_number#>',
                 '<#robot_px#><#robot_sx_robotic#><#robot_number#>',
                 '<#robot_px#><#robot_sx_computer#><#robot_number#>',
                 ],
         'robot_px': [
-                'Experimen', 'Galac', 'Destru', 'Infec', 'Demen', 'Demon', 
+                'Experimen', 'Galac', 'Destru', 'Infec', 'Demen', 'Demon',
                 'Domina', 'Digi', 'Compu', 'Killa','Radia', 'Atom',
                 'Nucleo', 'Urania', 'Proto', 'Neutro', 'Geno', 'Photo', 'Magneto',
                 'Quanto', 'Manix', 'Crypto', 'Analy', 'Trans',
                 'Op', 'Pho', 'Spec', 'Zy',
                 'Robo',
-                '<#supersized#>', '<#supersized#>','<#supersized#>', 
+                '<#supersized#>', '<#supersized#>','<#supersized#>',
                 '<#hero_city_px#>',  '<#hero_city_px#>',
                 ],
         'robot_sx_robotic': [
@@ -249,8 +249,8 @@ content = {
                 '-<-randint(1,10)->', '-<-randint(1,10)->', '-<-randint(1,10)->',
                 ],
 
-        
-        
+
+
         #------------------------------------------------------------------------------
         #
         #       and now putting it all in action:
@@ -280,7 +280,7 @@ content = {
                 <#hero_onomatopaea#>
                 <#hero_onomatopaea#>
                 <#hero_onomatopaea#>
-                "<#hero_moan#>! <#hero2#>, I.. don't.. understand..." said <#villain#>. 
+                "<#hero_moan#>! <#hero2#>, I.. don't.. understand..." said <#villain#>.
                 "Haha! You wonder why your <#poison#> does not harm me?-
                 I am in fact <#r2d2=robot#><#r2d2#>! Your powers cannot touch me! and your <#hero_superpowers#> is no match for my <#hero_superpowers#>!"
                 The citizens of <#dumpytown#> were overjoyed and made <#r2d2#> alias <#hero2#> <#jobs_jr_directors#> for life.

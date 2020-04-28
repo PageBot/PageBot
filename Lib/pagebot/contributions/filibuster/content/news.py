@@ -25,16 +25,16 @@ content = {
         ],
     'news_newspapername':['The Morning Daily', 'The Morning Post', 'The Evening Post',
         'The Morning News', 'The Evening News', 'The Evening Globe', 'The Morning Globe',
-        'The Sunday News', 
-        'The Sunday Post', 
-        'The Sunday Paper', 
+        'The Sunday News',
+        'The Sunday Post',
+        'The Sunday Paper',
         'The Sunday Update',
-        'The <#^,time_days#> News', 
-        'The <#^,time_days#> News', 
-        'The <#^,time_days#> Post', 
-        'The <#^,time_days#> Post', 
-        'The <#^,time_days#> Paper', 
-        'The <#^,time_days#> Paper', 
+        'The <#^,time_days#> News',
+        'The <#^,time_days#> News',
+        'The <#^,time_days#> Post',
+        'The <#^,time_days#> Post',
+        'The <#^,time_days#> Paper',
+        'The <#^,time_days#> Paper',
         'The <#^,time_days#> Update',
         'The <#^,time_days#> Update',
         'The Daily News', 'The Daily Update', 'The World Updated', 'The Updated World',
@@ -129,7 +129,7 @@ content = {
 
     'news_disaster_earthquake':                ['<#news_disasterlocation#> <#news_disasterverb#> <#news_disaster_earthquake_magnitude#>'],
     'news_disaster_earthquake_magnitude':    ['minor tremors', 'earthquake', 'massive earthquake'],
-    
+
     'news_disastertype':                    ['<#news_disaster_earthquake#>', 'flooded', 'stricken'],
     'news_disasternoun':                    ['<#news_disaster_earthquake#>', 'flood', '<#news_disaster_storm#>', '<#news_disaster_fire#>'],
     'news_disasterlocation':                ['south of France', 'northern California', 'Indonesia', 'India', 'Florida', 'the Carribean', 'Bangladesh', 'Los Angeles', 'San Francisco', 'Kobe, Japan,', 'Tokyo', 'Turkey'],
@@ -139,7 +139,7 @@ content = {
     'news_disaster_storm_magnitude':        ['Hurricane <#news_disaster_stormname#>', 'Severe flooding', 'Typhoon', 'Tornadoes', 'tsunami', 'torrential rains'],
     'news_disaster_stormname':                ['Lucas', 'Harvey', 'Cynthia', 'Bruno'],
     'news_disaster_stormverb':                ['hit by', 'smashed by', 'flooded by', '<#news_disasterverb#>'],
-            
+
     'news_disaster_fire':                    ['<#news_disaster_fire_magnitude#> <#news_disaster_fire_type#>, <#news_disaster_firecause#>, <#news_disasterlocation#>'],
     'news_disaster_fire_type':                ['fire', 'fires'],
     'news_disaster_fire_magnitude':            ['severe', 'persisting', 'forest'],
@@ -172,17 +172,17 @@ content = {
             '<#politics_euro_nationality#> hooligans',
             '<#sports_soccer_teams#> hooligans'
             ],
-            
+
     'war_affiliation':    ['UN', 'Communist', 'Chechen', 'RAF', 'IRA', 'KGB', 'Mossad', 'NATO', '<#politics_euro_nationality#>', 'CIA', 'Israeli', 'US',
             'Khmer Rouge', 'Zapatista', 'cartel', 'western', 'drug', 'corrupt', 'Palestinian', 'right wing', 'left wing', 'Rwandan', 'Iraqi', 'Kuwaiti', 'Arab',
             'Chinese', 'Allied', 'Russian'],
-            
+
     'war_militias':    ['airforces', 'troops', 'marines',
             'tanks', 'rebels', 'resistance fighters',
-            "guerilla's", 'police', 'paramilitary war_forces',
+            'guerilla’s', 'police', 'paramilitary war_forces',
             'paras', 'protestants', 'spies', 'catholics',
             'muslims', 'infiltrants', 'students', 'Hezbollah',
-            "Mulah’s", 'members', 'navy seals',
+            'Mulah’s', 'members', 'navy seals',
             'corporals', 'officers',
             'dissidents', 'mobs', 'generals', 'chiefs of staff',
             'bosses', 'party leaders', 'weapons inspectors',
@@ -192,9 +192,9 @@ content = {
             'paratroops', 'infantry', '<#war_affiliation#>-<#war_affiliation#> allience',
             'militia',
             'mercenaries'],
-            
+
     'war_verb_action':    ['<#war_verb_action_present#>', '<#war_verb_action_future#>'],
-    
+
     'war_verb_action_present':    ['begin talks on', 'named in <#war_target#> <#politics_scandal#>',
             'infiltrate', 'seek', 'defend', 'help',
             'deny existence of', 'raid', 'force',
@@ -202,7 +202,7 @@ content = {
             'engage', 'loot', 'discuss possible',
             'deny alleged', 'strike against',
             'threaten', 'bomb', 'destroyed by'],
-            
+
     'war_verb_action_future':    ['to start talks on', 'strike deal on',
             'expose', 'seek', 'renew talks on',
             'surround', 'advise', 'to help',
@@ -210,7 +210,7 @@ content = {
             'split up over', 'to engage', 'discuss possible',
             'strike against', 'threaten',
             'bomb', 'destroy', 'deny existence'],
-            
+
     'war_target':    ['<#war_affiliatedtarget#>', '<#war_affiliatedtarget#>', '<#war_affiliatedtarget#>', '<#war_affiliatedtarget#>', '<#war_affiliatedtarget#>', '<#war_affiliatedtarget#>', '<#war_othertarget#>'],
     'war_othertarget':    [
             '<#politics_treaty#>',
@@ -221,7 +221,7 @@ content = {
             '<#tv#> crew',
             'press',
             ],
-            
+
     'war_affiliatedtarget':    ['safe areas',
             'troops',
             'oil',
@@ -250,5 +250,5 @@ content = {
             'university',
             'shops',
             ],
-            
+
 }

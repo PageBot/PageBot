@@ -30,7 +30,7 @@ class Image(Element):
     can be (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
-    >>> from pagebot import getResourcesPath
+    >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
     >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
@@ -38,7 +38,7 @@ class Image(Element):
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
     >>> context = HtmlContext()
-    >>> doc = Document(size=A4, originTop=False, padding=30, context=context)
+    >>> doc = Document(size=A4, padding=30, context=context)
     >>> page = doc[1]
     >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
     >>> e.xy # Position of the image
@@ -78,9 +78,10 @@ class Image(Element):
         by path. If the path does not exist, then self.im = self.ih = pt(0)
         This calls self.initImageSize() to set self.im and slef.ih from the
         image file size.
-
+        
         If path is omitted or file does not exist, a gray rectangle with a
         cross will be drawn."""
+        print('dsdsdddd', self.doc, self.context)
         self.path = self.srcPath = path
 
         if self.iw and self.ih:
@@ -524,11 +525,13 @@ class Image(Element):
     def gaussianBlur(self, radius=None):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
-        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
-        >>> from pagebot import getResourcesPath
-        >>> context = HtmlContext()
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.filepaths import getResourcesPath
+        >>> from pagebot.document import Document
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(context=context) # Stored in doc.view.context
         >>> path = getResourcesPath() + '/images/cookbot1.jpg'
-        >>> e = Image(path, context=context)
+        >>> e = Image(path, parent=doc[1])
         >>> e.gaussianBlur(12)
         """
         if self.imo is None:

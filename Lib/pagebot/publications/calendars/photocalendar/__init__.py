@@ -13,7 +13,7 @@
 #
 #     books/photobook/__init__.py
 #
-from pagebot import getResourcesPath
+from pagebot.filepaths import getResourcesPath
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.constants import *
@@ -27,7 +27,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
 
 class PhotoCalendar(BaseCalendar):
-    """Create a photobook with a number of images in a layout and their 
+    """Create a photobook with a number of images in a layout and their
     captions on each page.
 
     >>> from pagebot import getContext
@@ -38,14 +38,13 @@ class PhotoCalendar(BaseCalendar):
 
     """
     def makeSample(self, context, name=None):
-        padding = mm(40) 
+        padding = mm(40)
         w, h = A4Square
         styles = {}
         sampleContent = SampleContent()
         imagePath0 = sampleContent.imagePaths[0]
         imagePath1 = sampleContent.imagePaths[1]
-        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, originTop=False,
-            context=context)
+        doc = self.newDocument(w=w, h=h, autoPages=1, padding=padding, context=context)
         # Book cover
         page = doc[1]
         fontLight = findFont('PageBot-Light')

@@ -22,8 +22,8 @@ class Finder:
     starting at a give root path. The Finder().find( ) allows optional
     searches such as matching name, name pattern, extension, etc.
 
-    >>> from pagebot.filepaths import RESOURCES_PATH
-    >>> finder = Finder(RESOURCES_PATH)
+    >>> from pagebot.filepaths import getResourcesPath
+    >>> finder = Finder(getResourcesPath())
     >>> imagePaths = finder.findPaths(extension='png')
     >>> imagePaths[0].endswith('png') # PageBot resources contain at least one .png
     True
@@ -45,7 +45,7 @@ class Finder:
     def findPaths(self, name=None, pattern=None, extension=None, ignorePatterns=None,
             path=None, paths=None):
         """Answer the list of full file paths, that match the parameters.
-        Matching both name.lower() and pattern.lower() 
+        Matching both name.lower() and pattern.lower()
         """
         if paths is None:
             paths = []

@@ -43,7 +43,7 @@ class Cube(BaseFontShow):
         >>> from pagebot.toolbox.color import color
         >>> c = getContext()
         >>> w, h = Letter
-        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> style = dict(fill=color(0.95), leading=em(1.4), fontSize=28)
         >>> conditions = [Fit()]
         >>> page = doc[1]

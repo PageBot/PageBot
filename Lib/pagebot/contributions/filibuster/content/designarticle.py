@@ -29,4 +29,3 @@ content = {
                 '<#^,design_claim#>. <#^,design_argument#>. <#^,design_counterclaim#>. <#^,design_conclusion#>.<#da_illustration#>',
                 ],
         }
-

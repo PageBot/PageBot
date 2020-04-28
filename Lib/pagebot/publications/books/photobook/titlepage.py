@@ -25,5 +25,5 @@ def makeTitlePage(page, title=None, text=None):
         TextBox(title, parent=page, h=th, conditions=[Fit2Width(), Top2Top()])
     if text is not None:
         tw, th = text.size
-        TextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0), 
+        TextBox(text, parent=page, w=page.pw, h=th, stroke=(0, 1, 0),
             conditions=[Center2Center(), Bottom2Bottom()])

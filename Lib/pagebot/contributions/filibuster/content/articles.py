@@ -15,8 +15,8 @@ content = {
     '_ankeiler': ['<#article_ankeiler#>',],
     '_summary': ['<#article_summary#>',],
 
-    'creditarticle' : ['<p class="writer"> <#article_writer#></p><#article_content#> '],
-    'article' : ['<#article_content#>'],
+    'creditarticle': ['<p class="writer"> <#article_writer#></p><#article_content#> '],
+    'article': ['<#article_content#>'],
     'article_ankeiler': [
         '<#article_p1#> ','<#article_p2#> ','<#article_p3#> ',
         '<#article_p4#> ','<#article_p5#> ','<#article_p6#> ',
@@ -36,51 +36,51 @@ content = {
         '<#^,book_headline#> '
     ],
     'article_summary': [
-        '<p class="start summary"><#article_start#> </p><p><#article_p1#> <#article_p3#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p2#> <#article_p4#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p3#> <#article_p5#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p4#> <#article_p6#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p5#> <#article_p7#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p6#> <#article_p8#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p7#> <#article_p9#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#article_p8#> <#article_p10#> </p>',
-        '<p class="start summary"><#article_start#> </p><p><#da_text#> <#article_p10#> </p>', # Fake design text once in a while.
+        '<p class="start summary"><#article_start#></p> <p><#article_p1#> <#article_p3#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p2#> <#article_p4#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p3#> <#article_p5#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p4#> <#article_p6#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p5#> <#article_p7#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p6#> <#article_p8#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p7#> <#article_p9#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#article_p8#> <#article_p10#></p> ',
+        '<p class="start summary"><#article_start#></p> <p><#da_text#> <#article_p10#></p> ', # Fake design text once in a while.
     ],
     'article_shortsummary': [
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p1#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p2#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p3#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p4#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p5#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p6#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p7#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p8#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p9#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#article_p10#> </p>',
-        '<p class="start shortsummary"><#article_start#> </p><p><#da_text#> </p>', # Fake design text once in a while.
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p1#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p2#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p3#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p4#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p5#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p6#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p7#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p8#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p9#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#article_p10#></p> ',
+        '<p class="start shortsummary"><#article_start#></p> <p><#da_text#></p> ', # Fake design text once in a while.
     ],
     'article_deck': [
         '<#article_start#>',
      ],
-    'article_content' : [
+    'article_content': [
         """<p class="start"><#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
         """<p class="start"><span class="place"><#city#> (<#tv#>)</span> <#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
         """<p class="start"><span class="place">(<#tv#>)</span> <#article_start#></p> <#article_paragraphs#> <p class="end"><#article_end#></p>""",
     ],
-    'article_paragraphs' : [
-        '<p><#article_p1#> </p><p><#article_p2#> </p><p><#article_p3#> </p><p><#article_p4#> </p> <#article_pullquote#> <p><#article_p5#></p><p><#article_p6#></p>',
-        '<p><#article_p1#> </p><p><#article_p3#> </p><p><#article_p5#> </p><p><#article_p6#> </p>',
-        '<p><#article_p1#> </p><p><#article_p2#> </p> <#article_pullquote#> <p><#article_p3#> <#article_p5#></p>',
-        '<p><#article_p3#> </p><p><#article_p4#> </p><p><#article_p6#> <#article_p9#> </p>',
-        '<p><#article_p1#> </p><p><#article_p6#> <#article_p7#> </p><p><#article_p10#> </p>',
-        '<p><#article_p2#> </p><p><#article_p3#> <#article_p4#> </p><p><#article_p7#></p><p><#article_p9#> </p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p4#> </p> <#article_pullquote#> <p><#article_p6#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p>',
-        '<p><#article_p1#> <#article_p2#> <#article_p3#></p><p><#article_p5#> </p><p><#article_p6#> </p><p><#article_p7#> <#article_p8#> <#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p5#> </p> <#article_pullquote#> <p><#article_p6#> <#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p5#> </p> <#article_pullquote#> <p><#article_p6#></p><p><#article_p8#> <#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> <#article_p4#> </p><p><#article_p5#> </p><p><#article_p6#></p><p><#article_p8#> <#article_p9#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> <#article_p3#> </p><p><#article_p4#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
-        '<p><#article_p1#> </p><p><#article_p2#> </p><p><#article_p3#> </p> <#article_pullquote#> <p><#article_p4#></p><p><#article_p7#></p><p><#article_p8#></p><p><#article_p9#></p><p><#article_p10#></p>',
+    'article_paragraphs': [
+        '<p><#article_p1#></p> <p><#article_p2#></p> <p><#article_p3#></p> <p><#article_p4#></p> <#article_pullquote#> <p><#article_p5#></p> <p><#article_p6#></p>',
+        '<p><#article_p1#></p> <p><#article_p3#></p> <p><#article_p5#></p> <p><#article_p6#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#></p> <#article_pullquote#> <p><#article_p3#> <#article_p5#></p> ',
+        '<p><#article_p3#></p> <p><#article_p4#></p> <p><#article_p6#> <#article_p9#></p> ',
+        '<p><#article_p1#></p> <p><#article_p6#> <#article_p7#></p> <p><#article_p10#></p> ',
+        '<p><#article_p2#></p> <p><#article_p3#> <#article_p4#></p> <p><#article_p7#></p> <p><#article_p9#></p> <p><#article_p10#></p>',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p4#></p> <#article_pullquote#> <p><#article_p6#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> ',
+        '<p><#article_p1#> <#article_p2#> <#article_p3#></p> <p><#article_p5#></p> <p><#article_p6#></p> <p><#article_p7#> <#article_p8#> <#article_p10#></p>',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p5#></p> <#article_pullquote#> <p><#article_p6#> <#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p5#></p> <#article_pullquote#> <p><#article_p6#></p> <p><#article_p8#> <#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#> <#article_p4#></p> <p><#article_p5#></p> <p><#article_p6#></p> <p><#article_p8#> <#article_p9#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#> <#article_p3#></p> <p><#article_p4#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
+        '<p><#article_p1#></p> <p><#article_p2#></p> <p><#article_p3#></p> <#article_pullquote#> <p><#article_p4#></p> <p><#article_p7#></p> <p><#article_p8#></p> <p><#article_p9#></p> <p><#article_p10#></p> ',
     ],
     'article_writer': ['By <#name#>'],
     'article_pullquote': [
@@ -138,8 +138,8 @@ content = {
         """<#figs_multiple#> scenarios for <#country#> after <#name#>""",
         """Phone-hacking scandal.""",
         """Hacking whistle-blower found dead.""",
-        """<#names_first#>'s Sun paper hit by hackers.""",
-        """Hacking scandal's far-reaching tentacles.""",
+        """<#names_first#>’s Sun paper hit by hackers.""",
+        """Hacking scandal’s far-reaching tentacles.""",
     ],
     'article_binder':['Meanwhile,','On the other hand,','Also,','Ignoring the fact that','This enhances the idea that','Furthermore,',
         'Considering the fact that', 'Maybe that is true, but', '<#article_question#> It seems a valid assumption, but',
@@ -161,13 +161,13 @@ content = {
         Two entire shifts of employees come and go while I down <#amount_small#> shots of espresso.""",
         """The game was first suggested by then-White House Press Secretary <#name#> shortly after Republicans officially
         took control of the House in <#time_months#>. <#names_last#> signed on that month, saying he’d be happy to play 18 holes with the president -
-        although, he told one interviewer, he was "sure I'll have to give the President 18 strokes!""",
+        although, he told one interviewer, he was "sure I’ll have to give the President 18 strokes!""",
         """Political revolutions in <#country#> and <#country#> not only inspired other regional uprisings – they sparked a
         flurry of ideas about how to help revolutionaries better communicate when their governments pull the plug on the World Wide Web.""",
         """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share
         the connection with others on the network.""",
         """<#article_binder#> protesters in <#country#> call for the return of the Internet on <#time_months#> 1st after the government shut it down.""",
-        """The <#cities_USmajor#>-based airline blamed the computer malfunction on "a network connectivity issue" <#time_days#> night.""",
+        """The <#cities_USmajor#>-based airline blamed the computer malfunction on “a network connectivity issue” <#time_days#> night.""",
         """The clip, called "STUCK," was posted this week on <#i_host_users#> by a user identifying himself as <#name#>.""",
         """With his unending support I had the courage to make the big moves in my career, and I always had a clear vision of where I wanted to end up.”""",
         """Often only accessible from the sea, these so-called “floatels” are the sailing equivalent of a roadside inn, only much cooler.""",
@@ -269,46 +269,29 @@ content = {
         only for their technique but also on the relationships behind each dish. That same philosophy exists in the dining room.""",
     ],
     'article_p6': [
-        """It’s a new role for <#towns_USgeneric#> and its <#figs_nonzero#><#figs#>,000-some inhabitants.
-        They’ll be the voice of places like <#island#> and <#island#>, tiny islands that might well be erased by rising oceans;
-        tiny islands trying to make the case to the world at large to cut emissions and extend the <#country#> Protocol, lest the ocean swallow them up.""",
-        """Bear in mind how difficult the set-up of a typical <#cities_UK#> Open course is, typically lengthened to over <#figs_rand_4digit#>
-        yards and change, with narrow fairways, punishing rough and fast greens with tricky pins and then consider how
-        it was reduced by <#names_last#> as he went in search of birdies, according to <#paper_financial#>.""",
+        """It’s a new role for <#towns_USgeneric#> and its <#figs_nonzero#><#figs#>,000-some inhabitants. They’ll be the voice of places like <#island#> and <#island#>, tiny islands that might well be erased by rising oceans; tiny islands trying to make the case to the world at large to cut emissions and extend the <#country#> Protocol, lest the ocean swallow them up.""",
+        """Bear in mind how difficult the set-up of a typical <#cities_UK#> Open course is, typically lengthened to over <#figs_rand_4digit#> yards and change, with narrow fairways, punishing rough and fast greens with tricky pins and then consider how it was reduced by <#names_last#> as he went in search of birdies, according to <#paper_financial#>.""",
         """<#^,tonic_disorders#> technology would have enabled those connected to share their connections along the network.""",
         """<#article_binder#> the program has also been used in <#country#>. You can listen to the messages on <#i_socialmedia#> through @speak2tweet.""",
-        """HTTPS Everywhere encrypts communications between its users and major websites, including <#i_socialmedia#>.
-        The <#^,p_technologies#> extension was created by the <#^,news_company#> Project and the Electronic <#p_technologies#> Foundation.""",
-        """"We were on the runway when the pilot came on the P.A. and said they had lost contact with the company
-        computer system which measured the weight of the plane," <#names_last#> said.""",
-        """"We’re pretty easy going people. We travel a lot. We understand that problems happen," <#name#> told <#tv#>.
-        “I just think there would be a little more information. All they say is ‘we have a computer problem.’
-        By the time you get to hour three, it gets a little frustrating.”""",
+        """HTTPS Everywhere encrypts communications between its users and major websites, including <#i_socialmedia#>. The <#^,p_technologies#> extension was created by the <#^,news_company#> Project and the Electronic <#p_technologies#> Foundation.""",
+        """“We were on the runway when the pilot came on the P.A. and said they had lost contact with the company computer system which measured the weight of the plane,” <#names_last#> said.""",
+        """"We’re pretty easy going people. We travel a lot. We understand that problems happen," <#name#> told <#tv#>. “I just think there would be a little more information. All they say is ‘we have a computer problem.’ By the time you get to hour three, it gets a little frustrating.”""",
         """<#towns_USgeneric#> Tavern will always be the benchmark <#cities_USgeneric#> restaurant for me.”""",
         """<#article_binder#> the <#sea#> Hotel contrasts the extreme wilderness on its back door with the extraordinary luxury of its interior.""",
     ],
     'article_p7': [
-        """A U.N. climate change panel in <#time_lastyear#> estimated the sea level would rise more than half a meter by <#time_nextyear#>,
-        but recent reports have indicated that ice sheets may be melting even more quickly, threatening places like <#island#>,
-        where most of the population lives in a low-lying band around the perimeter of the island.""",
+        """A U.N. climate change panel in <#time_lastyear#> estimated the sea level would rise more than half a meter by <#time_nextyear#>, but recent reports have indicated that ice sheets may be melting even more quickly, threatening places like <#island#>, where most of the population lives in a low-lying band around the perimeter of the island.""",
         """“I birdied the <#num_ord#> hole, hit a <#figs_nonzero#>-wood and a sand wedge just like, I don’t know, <#num_card#> feet past the hole (<#figs_rand_3digit#> yards).” <#name#> explained.""",
         """“I birdied <#amount_small#>. I hit a <#figs_nonzero#>-iron and an <#figs_nonzero#>-iron to ten feet (<#figs_rand_3digit#> yards).” <#name#> explained to the reporter.""",
         """“Then I birdied the <#num_ord#>, hit a driver and an <#figs_nonzero#>-iron pin high left about <#figs_nonzero#>, <#figs_rand_2digit#> feet, holed that <#figs_rand_3digit#>.” <#name#> explained.""",
         """“Then hit a <#figs_nonzero#>-wood and a lob wedge into the 1st to six feet (<#figs_rand_3digit#> yards).” <#name#> explained.""",
         """“I birdied the <#num_ord#>, hit a driver and a wedge to four feet just above the pin (<#figs_rand_3digit#> yards!).” he told reporters.""",
-        """“Birdied <#figs_nonzero#>, I hit a driver and a 3<#figs_nonzero#>-iron just to the back fringe maybe <#figs_rand_2digit#> feet and
-        two-putted that (<#figs_rand_3digit#> yards with water on the right of the green!)," he told reporters.""",
-        """<#article_binder#> by enabling groups of individuals with the physical hardware to work around any state-imposed firewall,
-        <#names_last#> plans to give freedom-seeking people the tools to “eradicate dictatorships” throughout the planet.""",
-        """<#names_last#> and <#names_last#> are automotive photographers who had $<#figs_rand_2digit#>,000 worth of camera equipment
-        with them when they were stuck so they decided to make the most of it, according to <#i_host_users#>,
-        a website that covers the automotive industry and interviewed the men.""",
-        """“<#name#> has been an amazing mentor for young chefs and restaurateurs coming up in the business over the last <#num_card_few#> decades.
-        He has been influential in reviving neighborhoods through restaurants, food carts and local charity events.""",
-        """Built in the local Mon style in the bosom of a tropical forest, the accommodation is set across <#amount_more#> floating wings, with
-        <#figs_rand_2digit#> bamboo twin-rooms perched on each.""",
-        """The “floatel,” which opened in 19<#figs_rand_2digit#>, has no electricity – so the rooms are all “romantically” lit with traditional oil
-        lamps and cooled by the river flowing beneath."""
+        """“Birdied <#figs_nonzero#>, I hit a driver and a 3<#figs_nonzero#>-iron just to the back fringe maybe <#figs_rand_2digit#> feet and two-putted that (<#figs_rand_3digit#> yards with water on the right of the green!)," he told reporters.""",
+        """<#article_binder#> by enabling groups of individuals with the physical hardware to work around any state-imposed firewall, <#names_last#> plans to give freedom-seeking people the tools to “eradicate dictatorships” throughout the planet.""",
+        """<#names_last#> and <#names_last#> are automotive photographers who had $<#figs_rand_2digit#>,000 worth of camera equipment with them when they were stuck so they decided to make the most of it, according to <#i_host_users#>, a website that covers the automotive industry and interviewed the men.""",
+        """“<#name#> has been an amazing mentor for young chefs and restaurateurs coming up in the business over the last <#num_card_few#> decades. He has been influential in reviving neighborhoods through restaurants, food carts and local charity events.""",
+        """Built in the local Mon style in the bosom of a tropical forest, the accommodation is set across <#amount_more#> floating wings, with <#figs_rand_2digit#> bamboo twin-rooms perched on each.""",
+        """The “floatel,” which opened in 19<#figs_rand_2digit#>, has no electricity – so the rooms are all “romantically” lit with traditional oil lamps and cooled by the river flowing beneath."""
     ],
     'article_p8': [
        """In a lot of ways, <#island#> is something like a canary in a coal mine: It’s a tiny place with more than
@@ -334,7 +317,7 @@ content = {
        """It’s a grand slam of sorts already for <#name#> and the <#figs_rand_2digit#>th <#cities_UK#> Open has only just begun. With his imperious opening effort of
        <#figs_rand_2digit#> at <#cities_UK#> Country Club, he has now contended in all four Majors, and all in the space of the last <#figs_multiple#> months.
        Despite his notorious capitulation at this year’s Masters, here is a player moving to new level in his career.""",
-       """"I want to use technology to bring freedom to the Mideast," says <#names_last#>, one of <#figs_rand_2digit#> of <#name#>’s U.N.
+       """“I want to use technology to bring freedom to the Mideast,” says <#names_last#>, one of <#figs_rand_2digit#> of <#name#>’s U.N.
        And <#names_last#>’s latest startup, <#^,company#>, would do just that.""",
        """It is obvious that can create a free community unbound by topographical and state barriers. <#^,num_card#> ways they got around the censors.""",
        """<#article_binder#> according to <#company#>, “Using HTTPS means that you are creating a more secure <#j_adjective#> channel over an unsecure <#j_adjective#> network,
@@ -375,7 +358,7 @@ content = {
        But passengers were not allowed to get off.""",
        """“It’s important to note that security agents observed the <#num_card_multiple#> filmmakers at several points during the making of the video.
        Because the filmmakers were presenting no threat to themselves, to others or to flight safety, and were causing no damage,
-       there was no imperative to curtail their activities," <#names_last#> said in a statement.""",
+       there was no imperative to curtail their activities,” <#names_last#> said in a statement.""",
        """“It’s not funny. It’s not going to happen again as far as I’m concerned. It should not have happened because it gives
        the perception the place is sitting out there unguarded and that’s why I was concerned, and am still concerned,” <#name#> told the station.""",
        """<#article_question#> Is there someone you’d like to see in the hot seat? Let us know in the comments below and if we agree, we’ll do our best to chase ’em down.""",

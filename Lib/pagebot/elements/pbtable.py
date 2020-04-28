@@ -18,7 +18,7 @@ from pagebot.constants import CENTER, ORIGIN, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
-from pagebot.elements.pbtextbox import TextBox
+from pagebot.elements.pbtext import Text
 from pagebot.toolbox.color import whiteColor, blackColor, color
 
 class Row(Element):
@@ -32,7 +32,7 @@ class Header(Row):
     """The Table header is a special kind of row. The header holds the titles
     of the columns and is reference for their widthts."""
 
-class Cell(TextBox):
+class Cell(Text):
     def __init__(self, fs, minW=None, w=None, h=None, colSpan=1, rowSpan=1, **kwargs):
         TextBox.__init__(self,  fs, minW=minW, w=w, h=h, **kwargs)
         self.colSpan = colSpan
@@ -192,6 +192,3 @@ class Table(Element):
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-
-
-

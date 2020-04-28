@@ -1,5 +1,5 @@
->>> from pagebot import getResourcesPath
 >>> from pagebot.constants import A4
+>>> from pagebot.filepaths import getResourcesPath
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
 >>> from pagebot.elements import TextBox
@@ -14,7 +14,7 @@
 >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
 >>> from pagebot import getContext
 >>> context = getContext()
->>> doc = Document(size=A4, styles=styles, autoPages=numPages, originTop=True, context=context)
+>>> doc = Document(size=A4, styles=styles, autoPages=numPages, context=context)
 >>> t = Typesetter(doc.context, styles=styles)
 >>> # Create a "main" textbox in each page.
 >>> a = [TextBox(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]

@@ -36,7 +36,7 @@ from pagebot.contributions.markdown.literature import LiteratureExtension
 from pagebot.contributions.markdown.footnotes import FootnoteExtension
 from pagebot.contributions.markdown.inline import InlineExtension
 
-from pagebot.elements import Galley, Image, Ruler, TextBox, CodeBlock
+from pagebot.elements import Galley, Image, Ruler, Text, CodeBlock
 from pagebot.toolbox.units import pt, em, units
 from pagebot.toolbox.color import color, blackColor
 from pagebot.constants import (CSS_BACKGROUND_REPEAT, FILETYPE_SVG, FILETYPE_GIF,
@@ -50,7 +50,7 @@ class Typesetter:
     BabelStrings), ruler elements and other nested galleys. Mostly used by the
     Composer."""
     IMAGE_CLASS = Image
-    TEXTBOX_CLASS = TextBox
+    TEXTBOX_CLASS = Text
     RULER_CLASS = Ruler
     GALLEY_CLASS = Galley
     CODEBLOCK_CLASS = CodeBlock
@@ -95,7 +95,7 @@ class Typesetter:
         converts it into a Galley instance with formatted string depending on
         the current context.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> from pagebot.toolbox.units import em, pt
         >>> from pagebot.toolbox.color import color, blackColor
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
@@ -105,7 +105,7 @@ class Typesetter:
         >>> h3Style = dict(font='Georgia', fontSize=pt(14), textFill=color(0, 1, 0))
         >>> pStyle = dict(fontSize=pt(10), leading=em(1.4), textFill=blackColor)
         >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
-        >>> t = Typesetter(context, styles=styles) # Create a new typesetter for this context
+        >>> ts = Typesetter(context, styles=styles) # Create a new typesetter for this context
         >>> mdText = '''
         ... ~~~Python
         ... box = page.select['content']
@@ -123,7 +123,7 @@ class Typesetter:
         ... ^Sup
         ... !!Sub
         ... '''
-        >>> galley = t.typesetMarkdown(mdText)
+        >>> galley = ts.typesetMarkdown(mdText)
         >>> len(galley.elements)
         3
         """

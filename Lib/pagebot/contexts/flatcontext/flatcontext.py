@@ -20,18 +20,10 @@ from os import listdir
 from os.path import exists
 from flat import rgb
 
-HAS_PIL = True
-
-try:
-    from PIL import Image
-except:
-    HAS_PIL = False
-
-
-
 from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString
@@ -43,6 +35,13 @@ from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.units import pt, upt, point2D
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    HAS_PIL = False
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
@@ -76,8 +75,6 @@ class FlatContext(BaseContext):
 
     """
 
-    # Used by the generic BaseContext.newString( )
-    STRING_CLASS = FlatString
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
     # Default is point document, should not be changed. Units render to points.
@@ -101,7 +98,7 @@ class FlatContext(BaseContext):
         # Current open shape.
         self.shape = None
         self.fileType = DEFAULT_FILETYPE
-        self.originTop = False
+        #self.originTop = False
         self.transform3D = Transform3D()
         self.drawing = None
         self.w = None
@@ -110,7 +107,7 @@ class FlatContext(BaseContext):
 
     #   Drawing.
 
-    def newDrawing(self, w=None, h=None, size=None, doc=None, originTop=False):
+    def newDrawing(self, w=None, h=None, size=None, doc=None):
         """Creates a new Flat canvas to draw on. Flipped `y`-axis by default to
         conform to DrawBot's drawing methods.
 
@@ -124,7 +121,7 @@ class FlatContext(BaseContext):
             self.clear()
 
         #self.originTop = originTop
-        self.originTop = False
+        #self.originTop = False
 
         if doc is not None:
             w = doc.w
@@ -480,7 +477,28 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def text(self, fs, p):
+    def XXXXnewString(self, s=None, style=None):
+        """Answer the @s converted into a self.STRING_CLASS instance.
+        @s can be of type (None, str, BabelString)
+
+        >>> from pagebot.toolbox.units import pt
+        >>> context = FlatContext()
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
+        >>> bs
+        $ABCD$
+        """
+        if s is None:
+            s = ''
+        if isinstance(s, (str, self.STRING_CLASS)): # Str or BabelString
+            s = self.fromBabelString(s)
+        assert isinstance(s, self.STRING_CLASS), '%s.newString needs %s, not %s' % (
+            self.__class__.__name__, 
+            self.STRING_CLASS.__name__, 
+            s.__class__.__name__)
+        s.context = self
+        return s            
+
+    def text(self, bs, p):
         """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
@@ -491,20 +509,23 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
-        >>> fs = context.newString('ABC', style=style)
-        >>> fs.__class__.__name__
-        'FlatString'
+        >>> bs = context.newString('ABCD', style=style)
+        >>> bs, bs.__class__.__name__
+        ($ABCD$, 'BabelString')
+        >>> fs = context.fromBabelString(bs)
+        >>> fs
         >>> context.newPage(1000, 1000)
-        >>> context.text(fs, (100, 100))
+        >>> context.text(bs, (100, 100))
 
         """
+        fs = self.fromBabelString(bs)
         if isinstance(fs, str):
             # Creates a new string with default styles.
-            style = {'fontSize': self._fontSize}
+            style = dict(fontSize=self._fontSize)
             style = makeStyle(style=style)
             fs = self.newString(fs, style=style)
-        elif not isinstance(fs, FlatString):
-            raise PageBotFileFormatError('type is %s' % type(fs))
+        #elif not isinstance(fs, FlatString):
+        #    raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
@@ -541,16 +562,17 @@ class FlatContext(BaseContext):
         >>> h = 300
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
+        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean hendrerit auctor dolor eu interdum. '
         >>> font = findFont('Roboto-Regular')
-        >>> style = {'font': font, 'fontSize': 14}
+        >>> style = dict(font=font, fontSize=pt(20))
         >>> style = makeStyle(style=style)
-        >>> blurb = Blurb()
-        >>> s = blurb.getBlurb('stylewars_bluray')
-        >>> fs = context.newString(s, style=style)
-        >>> r = (10, 262, 400, 313)
-        >>> of = context.textBox(fs, r)
-        >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
-        True
+        >>> fs = context.newString(txt * 7, style=style)
+        >>> fs
+        $Lorem ipsu...$
+        >>> r = (10, 262, 200, 300)
+        >>> of = context.textBox(fs, r) # Calculate overflow in the box
+        >>> of
+        'dolor eu interdum. '
         """
         if isinstance(fs, str):
             # Creates a new string with default styles.
@@ -574,29 +596,34 @@ class FlatContext(BaseContext):
 
         return fs.textBox(self.page, box)
 
-    def textOverflow(self, fs, box, align=LEFT):
+    def textOverflow(self, bsOrFs, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the
         current context.
 
-        >>> from pagebot.contributions.filibuster.blurb import Blurb
-        >>> from pagebot.fonttoolbox.objects.font import findFont
-        >>> w = 400
-        >>> h = 300
         >>> from pagebot import getContext
+        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> w, h = 400, 300
+        >>> r = (10, 262, 400, 313)
         >>> context = getContext('Flat')
         >>> context.newPage(w, h)
         >>> font = findFont('Roboto-Regular')
         >>> style = {'font': font, 'fontSize': 14}
-        >>> style = makeStyle(style=style)
-        >>> blurb = Blurb()
-        >>> s = blurb.getBlurb('stylewars_bluray')
-        >>> fs = context.newString(s, style=style)
-        >>> r = (10, 262, 400, 313)
+        >>> style = makeStyle(style=style) # Check for unsupported names
+        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin venenatis sit amet libero at finibus. '
+        >>> bs = context.newString(txt * 4, style)
+        >>> of = context.textOverflow(bs, r)
+        """
+
+        """
+        >>> fs = context.newString(pbs, style=style)
         >>> of = context.textOverflow(fs, r)
+        >>> of
+
         >>> of.startswith('fortune, we engaged Chris Woods who did the digital restoration')
         True
         """
         assert self.page is not None, 'FlatString.text: self.page is not set.'
+        fs = self.fromBabelString(bsOrFs)
         # FIXME: this actually shows the text?
         s = fs.textOverflow(self.page, box, align=align)
         return s
@@ -621,13 +648,15 @@ class FlatContext(BaseContext):
         >>> print(style)
         {'font': 'Roboto-Regular', 'fontSize': 12}
         >>> bs = context.newString('ABC ', style=style)
-        >>> print(type(bs))
-        <class 'pagebot.contexts.flatcontext.flatstring.FlatString'>
+
+        """
+
+        """
         >>> bs.place(context.page, 0, 0)
         >>> style1 = dict(font='Roboto-Bold', fontSize=14)
         >>> bs1 = context.newString('DEF', style=style)
         >>> bs + bs1
-        ABC DEF
+        $ABC DEF$
         >>> #context.textSize(bs)
         #(201.53pt, 16.8pt)
         >>> #bs.size
@@ -643,10 +672,24 @@ class FlatContext(BaseContext):
         >>> #len(lines)
         #35
         """
-        return bs.size
+        fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
+        return fs.textSize(w=w, h=h)
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
+
+    def fromBabelString(self, bs):
+        #if isinstance(bs, FlatString):
+        #    return bs
+        if isinstance(bs, str):
+            return self.STRING_CLASS(bsOrFs)
+        if isinstance(bs, BabelString):
+            fs = self.STRING_CLASS(e=bs.e)
+            for run in bs.runs:
+                fs += self.STRING_CLASS(run.s, style=run.style, e=bs.e, context=bs.context)
+            return fs
+        raise ValueError('%s.fromBabelString: String type %s not supported' % 
+            (self.__class__.__name__, pbsOrFs.__class__.__name__))
 
     #   F O N T
 
@@ -657,7 +700,7 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.fonttoolbox.fontpaths import *
-        >>> from pagebot.filepaths import DEFAULT_FONT_PATH
+        >>> from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
         >>> pbFonts = getPageBotFontPaths()
         >>> print(len(pbFonts))
         59
@@ -672,7 +715,7 @@ class FlatContext(BaseContext):
         True
         >>> # If doesn't exists, path is set to default.
         >>> context.font('OtherFont', 12)
-        >>> context._font == DEFAULT_FONT_PATH
+        >>> context._font == getDefaultFontPath()
         True
         >>> # Renders to pt-unit.
         >>> context._fontSize
@@ -766,7 +809,7 @@ class FlatContext(BaseContext):
     def imageSize(self, path):
         """Answers the (w, h) image size of the image file at path.
 
-        >>> from pagebot import getResourcesPath
+        >>> from pagebot.filepaths import getResourcesPath
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> context = FlatContext()

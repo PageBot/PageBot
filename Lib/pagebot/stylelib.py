@@ -30,7 +30,7 @@ MARGIN = (0, 0, px(10), 0)
 default = {
     'body': dict(
         font='Verdana, sans',
-        fontStyle='normal', 
+        fontStyle='normal',
         fontWeight='normal',
         tracking=0,
         fontSize=px(12),

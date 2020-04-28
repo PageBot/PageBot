@@ -29,12 +29,12 @@ python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py
 python3 $PWD/contexts/flatcontext/flatstring.py
 python3 $PWD/contexts/markup/htmlbuilder.py
-python3 $PWD/contexts/markup/svgbuilder.py
-python3 $PWD/contexts/markup/sitebuilder.py
-python3 $PWD/contexts/markup/xmlbuilder.py
 python3 $PWD/contexts/markup/htmlcontext.py
+python3 $PWD/contexts/markup/sitebuilder.py
 python3 $PWD/contexts/markup/htmlstring.py
+python3 $PWD/contexts/markup/svgbuilder.py
 python3 $PWD/contexts/markup/svgcontext.py
+python3 $PWD/contexts/markup/xmlbuilder.py
 #TODO: add rest of contributions.
 #python3 $PWD/contributions/adobe/__init__.py
 #python3 $PWD/contributions/adobe/kerndump/__init__.py.py

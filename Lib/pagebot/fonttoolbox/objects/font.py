@@ -33,13 +33,14 @@ try:
 except:
     from fontTools.varLib.mutator import iup_delta
 
-from pagebot.constants import FONT_WEIGHT_MATCHES, FONT_WIDTH_MATCHES, FONT_ITALIC_MATCHES
+from pagebot.constants import *
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.toolbox.transformer import path2FontName, path2Extension
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
+from pagebot.fonttoolbox.fontpaths import getDefaultFontPath, getFontPaths
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
-from pagebot.fonttoolbox.fontpaths import getFontPaths
+from pagebot.toolbox.units import RelativeUnit, Unit, upt, isUnit
 
 def isFontPath(fontPath):
     """Answers if the path is a font path. Check if there is a matching
@@ -147,23 +148,25 @@ def findFonts(pattern, lazy=True):
 def findFont(fontPath, default=None, lazy=True):
     """Answers the font the has name fontName.
 
-    >>> roboto = findFont('Roboto-Regular')
-    >>> roboto
+    >>> f = findFont('Roboto-Regular')
+    >>> f
     <Font Roboto-Regular>
-    >>> f = findFont('Skia-cannot-be-found')
-    >>> f is None
+    >>> notSkiaFont = findFont('Skia-cannot-be-found')
+    >>> notSkiaFont is None
     True
     >>> # Default is a font.
-    >>> f = findFont('Skia-cannot-be-found', default=roboto)
-    >>> f is roboto
+    >>> notSkiaFont = findFont('Skia-cannot-be-found', default=f) # Set RobotoFont as default
+    >>> notSkiaFont is f # Found robotoFont instead
     True
     >>> # Default is a name.
-    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular')
+    >>> f = findFont('Skia-cannot-be-found', default='Roboto-Regular') # Found default RobotoFont instead
     >>> f
     <Font Roboto-Regular>
     """
-    fontPaths = getFontPaths()
+    if isinstance(fontPath, Font): # It's already a Font instance, just answer it.
+        return fontPath
 
+    fontPaths = getFontPaths() # Otherwise, let's see if we can find it by name.
     if fontPath in fontPaths:
         return getFont(fontPaths[fontPath], lazy=lazy)
 
@@ -175,6 +178,54 @@ def findFont(fontPath, default=None, lazy=True):
     assert default is None or isinstance(default, Font)
     # Otherwise assume it is a Font instance or None.
     return default
+
+def getFontPath(font):
+    """Answer the font file path for @font.
+
+    >>> path = getFontPath('PageBot-Regular')
+    >>> path.endswith('PageBot-Regular.ttf')
+    True
+
+    """
+    fontPath = None
+    if font is not None:
+        if isinstance(font, str):
+            f = findFont(font)
+            if f is not None:
+                fontPath =  f.path
+    if not os.path.exists(fontPath):
+        f = findFont(DEFAULT_FONT)
+        if f is not None:
+            fontPath = font.path
+    return fontPath
+
+def getLineHeight(leading, fontSize):
+    """
+
+    >>> from pagebot.toolbox.units import pt, em
+    >>> getLineHeight(em(1.5), pt(12))
+    18
+    >>> getLineHeight(pt(15), pt(12))
+    15
+    >>> getLineHeight(pt(19), None)
+    19
+    >>> getLineHeight(15, pt(16))
+    240
+    """
+    assert leading is not None
+
+    if isinstance(leading, RelativeUnit):
+        lineHeight = upt(leading.byBase(fontSize))
+    elif isinstance(leading, Unit):
+        lineHeight = upt(leading)
+    elif isUnit(fontSize):
+        # Leading is scalar?
+        lineHeight = leading * fontSize.pt
+    else:
+        # Both scalar?
+        lineHeight = leading * fontSize
+
+    return lineHeight
 
 def getMasterPath():
     """Answers the path to read master fonts, which typically is a

@@ -42,7 +42,7 @@ class AnimationFrame(Rect):
         >>> duration = 3 # Seconds
         >>> framesPerSecond = 10
         >>> frames = duration * framesPerSecond
-        >>> doc = Document(w=w, h=h, padding=10, originTop=False, glyphName='Agrave', frameDuration=1/framesPerSecond, autoPages=frames, context=c)
+        >>> doc = Document(w=w, h=h, padding=10, glyphName='Agrave', frameDuration=1/framesPerSecond, autoPages=frames, context=c)
         >>> font = findFont('RobotoDelta-VF')
         >>> sample = 'PageBot'
         >>> for pn in range(1, frames+1):

@@ -30,14 +30,14 @@
 #
 #     For other ISO language codes, see pagebot.constants.
 #
-#     For English hyphenation words: 
+#     For English hyphenation words:
 #     https://www.hyphenation24.com/?term=xxxx
 #
 
 import os
 import codecs
-from pagebot import getResourcesPath
 from pagebot.constants import DEFAULT_LANGUAGE
+from pagebot.filepaths import getResourcesPath
 
 # Key is language ID (2 letters), value is dictionary of word --> hyphenated.
 languages = {}
@@ -49,23 +49,23 @@ def reset():
 def hyphenatedWords(language=DEFAULT_LANGUAGE):
     """Answers the dictionary of hyphenated words for this language (default is
     English).
-    
-    
+
+
     >>> from pagebot.constants import LANGUAGE_EN, LANGUAGE_NL, LANGUAGE_DK, LANGUAGE_PT_BR
     >>> # English hyphenated words in the library.
     >>> words = hyphenatedWords(LANGUAGE_EN)
-    >>> len(words) 
+    >>> len(words)
     172372
     >>> #sorted(words.keys())[10]
     >>> #sorted(words.values())[10]
     >>> # Dutch hyphenated words in the library.
-    >>> len(hyphenatedWords(LANGUAGE_NL)) 
+    >>> len(hyphenatedWords(LANGUAGE_NL))
     235900
     >>> # Brazilian-Portugese hyphenated words in the library.
-    >>> len(hyphenatedWords(LANGUAGE_PT_BR)) 
+    >>> len(hyphenatedWords(LANGUAGE_PT_BR))
     27436
     >>> # Danish hyphenated words in the library
-    >>> len(hyphenatedWords(LANGUAGE_DK)) 
+    >>> len(hyphenatedWords(LANGUAGE_DK))
     183425
     """
     if language not in languages:
@@ -101,7 +101,7 @@ def hyphenate(word, language=DEFAULT_LANGUAGE, checkCombined=False):
     'hous-ing'
     >>> # Single English words
     >>> # English is default
-    >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN) 
+    >>> hyphenate('Tutankhamun'), hyphenate('Tutankhamun', LANGUAGE_EN)
     ('Tut-ankh-a-mun', 'Tut-ankh-a-mun')
     >>> # D U T C H Typically testing the hyphenation of combined Dutch words
     >>> hyphenate('marmerplaatjes', LANGUAGE_NL)

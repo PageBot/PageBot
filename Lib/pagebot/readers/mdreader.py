@@ -52,4 +52,3 @@ def readMD(path):
     """Read the markdown from path and answer the compiled etree."""
     xmlPath = markDown2XMLFile(path)
     return readXML(xmlPath)
-

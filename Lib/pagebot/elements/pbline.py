@@ -67,7 +67,7 @@ class Line(Element):
         >>> from pagebot.document import Document
         >>> c = getContext()
         >>> w, h = pt(300, 400)
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=0)
         >>> e.x, e.y, e.w, e.h
@@ -82,7 +82,7 @@ class Line(Element):
         >>> e.build(view, pt(0, 0))
         >>> from pagebot.document import Document
         >>> c = getContext()
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
@@ -100,6 +100,8 @@ class Line(Element):
         s = self.stroke
         w = self.strokeWidth
 
+        # TODO: Add dashed line drawing here.
+        
         context.stroke(s, w)
         context.line((px, py), (px + self.w, py + self.h))
 

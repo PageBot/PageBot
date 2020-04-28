@@ -75,7 +75,7 @@ class Oval(Element):
                 e.build_inds(view, p2D)
 
 class Circle(Oval):
-    def __init__(self, r=None, x=None, y=None, w=None, h=None, 
+    def __init__(self, r=None, x=None, y=None, w=None, h=None,
             xAlign=None, yAlign=None, **kwargs):
         """Draw the oval in the current context canvas.
 

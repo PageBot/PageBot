@@ -20,7 +20,7 @@ from pagebot.constants import LEFT
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.units import pointOffset
 
-class Paragraphs(BaseFontShow): 
+class Paragraphs(BaseFontShow):
     """Showing the specified (variable) font as full page with a matrix
     of all glyphs in the font.
 
@@ -32,7 +32,7 @@ class Paragraphs(BaseFontShow):
 
     """
     def __init__(self, f, words=None, labelSize=None, **kwargs):
-        """   
+        """
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter
@@ -42,7 +42,7 @@ class Paragraphs(BaseFontShow):
         >>> from pagebot.toolbox.units import em
         >>> c = getContext()
         >>> w, h = Letter
-        >>> doc = Document(w=w, h=h, padding=80, originTop=False, autoPages=2, context=c)
+        >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> style = dict(gh=16, fill=color(0.95), leading=em(1.4))
         >>> conditions = [Fit()]
         >>> page = doc[1]
@@ -79,7 +79,7 @@ class Paragraphs(BaseFontShow):
         self.buildFrame(view, p) # Draw optional background fill, frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        view.drawElementFrame(self, p) 
+        view.drawElementFrame(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -126,16 +126,16 @@ class Paragraphs(BaseFontShow):
             if not s1[-1] in ',.!?':
                 s1 += '.'
             s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-            x, _ = self.buildTextBox(s1, s2, origin, x, y, 
-                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
-                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE, 
-                Bwght=0.4, Bwdth=-0.1)       
+            x, _ = self.buildTextBox(s1, s2, origin, x, y,
+                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh,
+                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE,
+                Bwght=0.4, Bwdth=-0.1)
 
             # Same text in same fontSize, without optical size axis used
-            _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y, 
-                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh, 
-                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE, 
-                label='No optical size axis used.\n\n', Bwght=0.6, Bwdth=-0.1, useOpsz=False)        
+            _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y,
+                w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh,
+                fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE,
+                label='No optical size axis used.\n\n', Bwght=0.6, Bwdth=-0.1, useOpsz=False)
 
 
 

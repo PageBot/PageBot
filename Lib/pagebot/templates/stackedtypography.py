@@ -15,7 +15,7 @@
 #
 #     D E P R E C A T E D
 #     Don't use or develop here.
-#     
+#
 #     Templates will be defined in Publications
 
 from random import random
@@ -37,4 +37,3 @@ class StackedTypography(Template):
                 x=random()*(self.w-S),
                 y=random()*(self.h-S), w=S, h=S,
                 fill=color(random(), random(), random(), 0.5))
-

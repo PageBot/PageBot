@@ -33,7 +33,7 @@ class NanoSite(BaseSite):
     to inherit from or as example how to make website publication classes.
 
     >>> import os
-    >>> from pagebot import getResourcesPath
+    >>> from pagebot.filepaths import getResourcesPath
     >>> from pagebot.themes import BackToTheCity
     >>> from css.nanostyle_css import cssPy
     >>> name = 'PageBot NanoSite'

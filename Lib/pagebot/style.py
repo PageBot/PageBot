@@ -20,11 +20,11 @@
 #
 
 from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
-        DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, FRONT,
+        DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, BOTTOM, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
         DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
         DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH)
-from pagebot.filepaths import DEFAULT_FONT_PATH
+from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 
@@ -46,7 +46,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
 
         for key, value in style.items():
             if key not in rs:
-                warning = '[makeStyle] %s not allowed in (root) style!' % key
+                warning = '[makeStyle] Attribute “%s” not allowed in (root) style!' % key
                 if raiseError:
                     raise ValueError(warning)
                 print(warning)
@@ -159,9 +159,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
 
         # Default alignment for elements like image, that float in their
-        # designated space. Document will set this value default to BOTTOM, in
-        # case the Document.originTop is set to False.
-        yAlign = TOP,
+        # designated space. The origin-top feature is discontinued (it never
+        # properly worked). Origin of all elements is at bottom-left.
+        yAlign = BOTTOM,
 
         # Default alignment in z-axis is in front, closest to the viewer.
         zAlign = FRONT,
@@ -287,7 +287,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Typographic defaults
         # Default is to avoid existing font and fontSize in the graphic state.
-        font = DEFAULT_FONT_PATH,
+        font = getDefaultFontPath(),
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
         # Default font size in points, related to U. If FIT, size is elastic to
         # width.
@@ -580,8 +580,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # per image type.
         resolutionFactors = DEFAULT_RESOLUTION_FACTORS,
         # If defined, images are scaled down to fitting this width or height.
-        maxImageWidth = None, 
-        maxImageHeight = None, 
+        maxImageWidth = None,
+        maxImageHeight = None,
         # If set, then use this as default width for scaling images (e.g. when
         # used HTML context)
         # Overwritten by maxImageWidth and maxImageHeight as:
@@ -689,13 +689,13 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         viewCropRegistrationStrokeWidth = pt(0.25),
 
         # Name of the page outside frame.
-        viewNameFont = DEFAULT_FONT_PATH,
+        viewNameFont = getDefaultFontPath(),
         viewNameFontSize = pt(6),
         viewMarkerFont = DEFAULT_MARKER_FONT,
 
         # Element info box
         # Font of text in element infoBox.
-        viewInfoFont = DEFAULT_FONT_PATH,
+        viewInfoFont = getDefaultFontPath(),
         # Font size of text in element info box.
         viewInfoFontSize = pt(4),
         # Leading of text in element info box.

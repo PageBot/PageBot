@@ -33,7 +33,7 @@ class Newspaper(Publication):
 
         rootStyle=None, styles=None, views=None, name=None, cssClass=None,
         title=None, autoPages=1, defaultTemplate=None, templates=None,
-        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        startPage=0, w=None, h=None, exportPaths=None,
         **kwargs)
 
     >>> from pagebot.constants import Broadsheet, GRID_SQR, BASE_LINE
@@ -41,7 +41,7 @@ class Newspaper(Publication):
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Broadsheet
     >>>
-    >>> np = Newspaper(w=w, h=h, title=name, originTop=False, autoPages=1, template='MainPage')
+    >>> np = Newspaper(w=w, h=h, title=name, autoPages=1, template='MainPage')
     >>> view = np.view
     >>> view.padding = 50
     >>> view.showCropMarks = True
@@ -65,7 +65,7 @@ class Newspaper(Publication):
     GUTTER = 18
     PADDING = 48
 
-    # Default paper sizes that are likely to be used for 
+    # Default paper sizes that are likely to be used for
     # newspapers in portrait ratio.
     PAGE_SIZES = {
         'A2': A2,
@@ -350,4 +350,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

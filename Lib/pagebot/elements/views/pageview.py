@@ -20,7 +20,7 @@ from random import random
 from datetime import datetime
 from math import atan2, radians, degrees, cos, sin
 
-from pagebot import getResourcesPath
+from pagebot.filepaths import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.pbquire import Quire
@@ -62,7 +62,7 @@ class PageView(BaseView):
 
     def getSortedPages(self):
         """Get the dictionary of sorted pages from the document. Depending on
-        the self.showSpread flag, the answered dicitionary is the plain
+        the self.showSpread flag, the answered dictionary is the plain
         self.doc.getSortedPages() result, or wrapped as Quire instances
         containing positioned spread pages."""
         sortedPages = self.doc.getSortedPages()
@@ -104,7 +104,9 @@ class PageView(BaseView):
 
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
-        self.context.fileType = path.split('.')[-1]
+        context = self.context
+        assert context is not None
+        context.fileType = path.split('.')[-1]
 
         # Find the maximum document page size to this in all page sizes of the
         # document.
@@ -153,11 +155,6 @@ class PageView(BaseView):
             # orgiinal document size.
             pw, ph = w, h
 
-            '''
-            if self.originTop:
-                origin = self.pl, self.pt, pt(0)
-            else:
-            '''
             origin = self.pl, self.pb, pt(0)
 
             # Make page in context, actual page may be smaller if showing
@@ -237,7 +234,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=context)
         >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> page = doc[1]
         >>> #page.view.padding
@@ -268,7 +265,7 @@ class PageView(BaseView):
         >>> from pagebot.document import Document
         >>> path = '_export/PageMetaInfo.pdf'
         >>> w, h = 300, 400
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=context)
+        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=context)
         >>> #doc.view.padding # result is (0, 0, 0, 0), shouldn't be 30pt?
         >>> page = doc[1]
         >>> #page.view.padding
@@ -356,10 +353,7 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
 
-            if e.originTop:
-                context.rect(px + e_pl, py - e.h + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
-            else:
-                context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
+            context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
 
             e._restoreScale(self)
 
@@ -398,12 +392,7 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(viewMarginStroke, viewMarginStrokeWidth)
 
-            if e.originTop:
-                #context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
-                context.rect(px - e_ml, py - e.h - e_mb, e.w + e_ml + e_mr,
-                        e.h + e_mt + e_mb)
-            else:
-                context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr,
+            context.rect(px - e_ml, py - e_mb, e.w + e_ml + e_mr,
                         e.h + e_mt + e_mb)
 
             e._restoreScale(self)
@@ -436,14 +425,15 @@ class PageView(BaseView):
             s = self.getNameString(e, path)
             bs = self.context.newString(s, style=dict(font=font,
                 textFill=blackColor, fontSize=fontSize))
-            tw, th = bs.size
+            tw, th = bs.textSize
 
             # Draw on top of page.
             x = self.pl + cmDistance
-            y = self.pb + e.h - cmDistance #+ th
-            self.context.stroke(registrationColor, 0.5)
-            self.context.line((x, y), (x + tw, y))
-            self.context.textBox(bs, (x, y, e.pw, th * 1.5))
+            y = self.pb + e.h - cmDistance + th * 1.5
+            #self.context.stroke(registrationColor, 0.5)
+            #self.context.line((x, y), (x + tw, y))
+            cropmarkDistance = self.css('viewCropMarkDistance', pt(12))
+            self.context.drawString(bs, (x, y+cropmarkDistance, bs.tw, bs.th))
 
     def getNameString(self, e, path):
         """
@@ -614,8 +604,7 @@ class PageView(BaseView):
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementInfo(self, e, origin):
-        """For debugging this will make the elements show their info. The css
-        flag "showOrigin" defines if the origin marker of an element is drawn.
+        """For debugging this will make the elements show their info. 
         Collect the (e, origin), so we can later draw all info, after the main
         drawing has been done.
 
@@ -625,9 +614,6 @@ class PageView(BaseView):
         '''
         if not e.eId in self.elementsNeedingInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
-        self.drawElementOrigin(e, origin)
         '''
 
     def _drawElementsNeedingInfo(self, e):
@@ -734,10 +720,7 @@ class PageView(BaseView):
 
             w, h = bs.size
 
-            if e.originTop:
-                context.text(bs, (px, py - S*1.5))
-            else:
-                context.text(bs, (px, py + S*1.5))
+            context.text(bs, (px, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         """When designing templates and pages, this will draw a filled
@@ -921,7 +904,7 @@ class PageView(BaseView):
         NOTE: TextBox elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
-        >>> context = getContext('Flat')
+        >>> context = getContext('DrawBot')
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
         >>> from pagebot.document import Document
@@ -965,25 +948,15 @@ class PageView(BaseView):
         # Collect all baseline positions on e.
         baselineYs = []
 
-        if e.originTop:
-            # Assumes origin at top for context drawing.
-            oy = yy = startY = (e.baselineGridStart or e.pt)
-
-            # Run over the the padding bottom until page side.
-            while yy < e.h:
-                baselineYs.append(yy)
-                yy += baselineGrid
-
         # Page origin is at the bottom.
-        else:
-            startY = e.h - (e.baselineGridStart or e.pt)
-            # Assumes origin at bottom for context drawing.
-            oy = yy = startY
+        startY = e.h - (e.baselineGridStart or e.pt)
+        # Assumes origin at bottom for context drawing.
+        oy = yy = startY
 
-            # Run over the the padding bottom until page side
-            while yy > 0:
-                baselineYs.append(yy)
-                yy -= baselineGrid
+        # Run over the the padding bottom until page side
+        while yy > 0:
+            baselineYs.append(yy)
+            yy -= baselineGrid
 
         baselineColor = e.style.get('baselineColor', self.css('baselineColor', DEFAULT_BASELINE_COLOR))
         baselineWidth = e.style.get('baselineWidth', self.css('baselineWidth', DEFAULT_BASELINE_WIDTH))
@@ -1016,8 +989,8 @@ class PageView(BaseView):
             bsl = context.newString(tl, style=style)
             bsr = context.newString(tr, style=style)
 
-            twl, thl = bsl.size
-            twr, thr = bsr.size
+            twl, thl = bsl.textSize
+            twr, thr = bsr.textSize
 
             if BASE_INSIDE in show:
                 if tl:

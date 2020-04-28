@@ -33,7 +33,7 @@ class Newspaper(Publication):
 
         rootStyle=None, styles=None, views=None, name=None, cssClass=None,
         title=None, autoPages=1, defaultTemplate=None, templates=None,
-        originTop=True, startPage=0, w=None, h=None, exportPaths=None,
+        startPage=0, w=None, h=None, exportPaths=None,
         **kwargs)
 
     >>> from pagebot.constants import Newspaper_Broadsheet, GRID_SQR, BASE_LINE
@@ -365,4 +365,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-

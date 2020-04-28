@@ -411,4 +411,3 @@ content = {
         '<#search_details#>',
     ],
     }
-

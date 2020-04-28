@@ -40,7 +40,7 @@ class Group(Rect):
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
     >>> from pagebot.document import Document
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
     >>> e1, e2, e3 = Element(w=123), Element(w=234), Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))

@@ -25,7 +25,7 @@ class Placer(Element):
     >>> from pagebot.document import Document
     >>> c = getContext()
     >>> w, h = pt(300, 400)
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
     >>> e = Placer(parent=page, x=0, y=20, w=page.w, h=3)
     >>> e.build(doc.getView(), (0, 0))
@@ -45,7 +45,7 @@ class Placer(Element):
     >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
     >>> from pagebot.document import Document
     >>> c = FlatContext()
-    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, originTop=False, context=c)
+    >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
     >>> page = doc[1]
     >>> e = Placer(parent=page, x=0, y=20, w=page.w, h=3)
     >>> # Allow the context to create a new document and page canvas. Normally view does it.

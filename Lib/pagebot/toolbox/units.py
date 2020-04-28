@@ -456,7 +456,7 @@ class Unit:
         'Mm'
         """
         return self.__class__.__name__
-    
+
     name = property(_get_name)
 
     def _get_rounded(self):
@@ -1300,17 +1300,17 @@ class P(Unit):
 
     >>> u = P(2)
     >>> # Same value for absolute values
-    >>> u.v, u.rv 
+    >>> u.v, u.rv
     (2, 2)
     >>> u = p(1)
     >>> u, u+2, u+pt(2), u+pt(100), u*5, u/2
     (1p, 3p, 1p2, 9p4, 5p, 0p6)
     >>> # Fraction of pica, not points. Translates to 2p6
-    >>> p('2.5p') 
+    >>> p('2.5p')
     2p6
     """
     # 12 points = 1p
-    PT_FACTOR = 12  
+    PT_FACTOR = 12
     UNIT = 'p'
 
     def _get_p(self):
@@ -1383,16 +1383,16 @@ class Inch(Unit):
     >>> u-0.1
     0.30"
     >>> # Multiple arguments create a list of tuple inch.
-    >>> inch(10, 11, 12) 
+    >>> inch(10, 11, 12)
     (10", 11", 12")
     >>> # Arguments can be submitted as list or tuple.
-    >>> inch((10, 11, 12, 13)) 
+    >>> inch((10, 11, 12, 13))
     (10", 11", 12", 13")
     >>> # Arguments can be a list of other units types.
-    >>> inch(mm(5), pt(24), px(5)) 
+    >>> inch(mm(5), pt(24), px(5))
     (0.20", 0.33", 0.07")
     >>> # Arguments can interpret from strings of other units types.
-    >>> inch('10pt', '11mm') 
+    >>> inch('10pt', '11mm')
     (0.14", 0.43")
     """
     PT_FACTOR = INCH # 72pt = 1"
@@ -1430,7 +1430,7 @@ class Formula(Unit):
     'addAll'
     """
     # Formulas behave as points by default, but that can be changed.
-    PT_FACTOR = 1 
+    PT_FACTOR = 1
     UNIT = 'f'
 
     def __init__(self, v=0, base=None, g=0, f=None, units=None):
@@ -1507,7 +1507,7 @@ class RelativeUnit(Unit):
         144
         """
         # Renders value and casts it to points.
-        return asIntOrFloat(pt(self.ru).rv) 
+        return asIntOrFloat(pt(self.ru).rv)
 
     pt = property(_get_pt)
 
@@ -1519,7 +1519,7 @@ class RelativeUnit(Unit):
         (2fr, 5, 5mm)
         """
         # Renders value and casts it to mm.
-        return asIntOrFloat(mm(self.ru).rv) 
+        return asIntOrFloat(mm(self.ru).rv)
 
     mm = property(_get_mm)
 
@@ -1534,7 +1534,7 @@ class RelativeUnit(Unit):
         (75%, 54, 54p)
         """
         # Renders value and factors it to mm
-        return asIntOrFloat(p(self.ru).rv) 
+        return asIntOrFloat(p(self.ru).rv)
 
     p = property(_get_p)
 
@@ -1549,7 +1549,7 @@ class RelativeUnit(Unit):
         2.5
         """
         # Renders value and factors it to mm.
-        return asIntOrFloat(inch(self.ru).rv) 
+        return asIntOrFloat(inch(self.ru).rv)
 
     inch = property(_get_inch)
 
@@ -1624,10 +1624,10 @@ def px(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', Px.BASE)
     # Not used by Px.
-    g = kwargs.get('g', 0) 
+    g = kwargs.get('g', 0)
 
     # If there are more arguments, bind them together in a list.
-    if args: 
+    if args:
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
@@ -1642,35 +1642,35 @@ def px(v, *args, **kwargs):
             v = asNumberOrNone(v[:-2])
             if v is not None:
                 u = Px(v, base=base, g=g)
-        else: 
+        else:
             # Something else, recursively try again.
             u = units(v, base=base, g=g)
             # Only makes sense for relative if the same.
-            assert isinstance(u, Px) 
+            assert isinstance(u, Px)
     return u
 
 class Px(RelativeUnit):
     """Answers the px (pixel) instance.
 
 >>> # Direct creation of class instance, only for (int, float, Unit)
-    >>> Px(12) 
+    >>> Px(12)
     12px
     >>> # Through creator function
-    >>> px(12) 
+    >>> px(12)
     12px
     >>> # Through creator function, strings are interpreted (int, float, Unit, str)
-    >>> px('12px') 
+    >>> px('12px')
     12px
     >>> u = units('12px')
     >>> u
     12px
     >>> # Math on Unit create new Unit instance of same type.
-    >>> u/2 
+    >>> u/2
     6px
     >>> u-1
     11px
     >>> # Answer pt value, assuming here an 1:1 conversion
-    >>> u.pt 
+    >>> u.pt
     12
     """
     PT_FACTOR = 1 # This may not always be 1:1 to points.
@@ -1736,7 +1736,7 @@ class Fr(RelativeUnit):
     3.5fr
     >>> u.base = 100
     >>> # Answer fr value as points, relative to base master value.
-    >>> u, pt(u) 
+    >>> u, pt(u)
     (4fr, 25pt)
     """
     UNIT = 'fr'
@@ -1861,16 +1861,16 @@ def em(v, *args, **kwargs):
     u = None
     base = kwargs.get('base', EM_FONT_SIZE)
     # Default not used by Em.
-    g = kwargs.get('g', 0) 
+    g = kwargs.get('g', 0)
 
     # If there are more arguments, bind them together in a list.
-    if args: 
+    if args:
         v = [v]+list(args)
     if isinstance(v, (tuple, list)):
         u = []
 
         # Recursively append.
-        for uv in v: 
+        for uv in v:
             u.append(em(uv, base=base, g=g))
         u = tuple(u)
     elif isinstance(v, (int, float, RelativeUnit)):
@@ -1882,10 +1882,10 @@ def em(v, *args, **kwargs):
             if v is not None:
                 u = Em(v, base=base, g=g)
         # Something else, recursively try again.
-        else: 
+        else:
             u = units(v, base=base, g=g)
             # Only makes sense for relative if the same.
-            assert isinstance(u, Em) 
+            assert isinstance(u, Em)
     return u
 
 class Em(RelativeUnit):
@@ -1906,7 +1906,7 @@ class Em(RelativeUnit):
     >>> u-8
     2em
     >>> # Caller can set the base reference value.
-    >>> u.base = 12 
+    >>> u.base = 12
     >>> pt(u)
     120pt
     >>> u.base = 24
@@ -1918,7 +1918,7 @@ class Em(RelativeUnit):
     isEm = True
     UNIT = 'em'
     # Key in optional base of relative units.
-    BASE_KEY = 'em' 
+    BASE_KEY = 'em'
 
     def _get_pt(self):
         """Answers the rendered value in pt. Base value for absolute unit
@@ -1926,31 +1926,31 @@ class Em(RelativeUnit):
 
         >>> u = units('10em', base=12)
         >>> # Answer the rendered value
-        >>> u, u.rv 
+        >>> u, u.rv
         (10em, 120)
         >>> # Alter the base em.
-        >>> u.base = 8 
+        >>> u.base = 8
         >>> # Full representation.
-        >>> u 
+        >>> u
         10em
         >>> # Defined base for the em (often set in pt units).
-        >>> u.base 
+        >>> u.base
         8pt
         >>> # Raw stored value.
-        >>> u.v 
+        >>> u.v
         10
         >>> # Render to Pt value.
-        >>> u.rv 
+        >>> u.rv
         80
         >>> # Render to Pt instance
-        >>> u.ru 
+        >>> u.ru
         80pt
         >>> # Render to points numbe value
-        >>> u.pt 
+        >>> u.pt
         80
         """
         # Render and factor to points.
-        return asIntOrFloat(pt(self.base * self.v).v) 
+        return asIntOrFloat(pt(self.base * self.v).v)
 
     def _set_pt(self, v):
         self.v = v / self.base
@@ -2707,16 +2707,16 @@ class Radians(Angle):
     >>> a.degrees, a.radians
     (0, 0)
     >>> # Add numbers in the context of the angle type.
-    >>> a = radians(0.5) 
+    >>> a = radians(0.5)
     >>> a + 0.5 - 0.25
     0.75rad
     >>> # Reverse addition casts the number into degree value
-    >>> 20 + a 
+    >>> 20 + a
     20.5rad
     >>> 1.5 - a
     1rad
     >>> # Create integer value for whole angles
-    >>> a/2 
+    >>> a/2
     0.25rad
     >>> -a
     -0.5rad
