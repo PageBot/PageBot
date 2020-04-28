@@ -714,27 +714,27 @@ DEFAULT_COLS = 2
 DEFAULT_BASELINE_COLOR = 0.7
 DEFAULT_BASELINE_WIDTH = pt(0.5)
 
-BASE_LINE = 'Baseline' # Show baseline grid as lines
-BASE_LINE_BG = 'BaselineBackground' # Show baseline grid as lines on background
-BASE_INDEX_LEFT = 'BaseIndexLeft' # Show baseline grid index numbers on left side
-BASE_INDEX_RIGHT = 'BaseIndexRight' # Show baseline grid index numbers on right side
-BASE_Y_LEFT = 'BaseYLeft' # Show baseline grid line marker as y-position on left side
-BASE_Y_RIGHT = 'BaseYRight' # Show baseline grid line marker as y-position on right side
-BASE_INSIDE = 'BaseInside' # Show grid index or y-position on inside of element border.
+BASE_LINE = 'baseline' # Show baseline grid as lines
+BASE_LINE_BG = 'baselineBackground' # Show baseline grid as lines on background
+BASE_INDEX_LEFT = 'baseIndexLeft' # Show baseline grid index numbers on left side
+BASE_INDEX_RIGHT = 'baseIndexRight' # Show baseline grid index numbers on right side
+BASE_Y_LEFT = 'baseYLeft' # Show baseline grid line marker as y-position on left side
+BASE_Y_RIGHT = 'baseYRight' # Show baseline grid line marker as y-position on right side
+BASE_INSIDE = 'baseInside' # Show grid index or y-position on inside of element border.
 DEFAULT_BASELINE = {BASE_LINE_BG, BASE_INDEX_LEFT}
 BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE_Y_LEFT,
     BASE_Y_RIGHT, BASE_INSIDE}
 
 # Additional vertical alignment for Text elements
 # Also TOP for ascender alignment and BOTTOM for descender alignment of bottom line
-BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for TextBox)
-BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+BASELINE = 'baseline' # Use first baseline position as vertical position of origin (for TextBox)
+BASE_BOTTOM = 'baselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
 CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
 XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
-MIDDLE_CAP = 'MiddleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
-MIDDLE_X = 'MiddleXHeight' # yALign, vertical centered on xHeight
-ASCENDER = 'Ascender' # Aligns with the largest ascender /h in the top line
-DESCENDER = 'Descender' # Aligns with the largest descender /p in the bottom line
+MIDDLE_CAP = 'middleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
+MIDDLE_X = 'middleXHeight' # yALign, vertical centered on xHeight
+ASCENDER = 'ascender' # Aligns with the largest ascender /h in the top line
+DESCENDER = 'descender' # Aligns with the lowest descender /p in the bottom line
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
