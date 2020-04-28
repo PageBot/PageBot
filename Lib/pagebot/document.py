@@ -26,7 +26,7 @@ from pagebot.toolbox.transformer import (obj2StyleId, path2Url, json2Dict,
     dict2Json, asNormalizedJSON)
 from pagebot.toolbox.units import units, isUnit, point3D
 from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
-        BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
     """A Document is a container of pages, independent from any context.

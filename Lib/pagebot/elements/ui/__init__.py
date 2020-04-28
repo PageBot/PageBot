@@ -23,7 +23,6 @@ from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath # Pa
 
 # Simple elements
 from pagebot.elements.pbtext import Text
-from pagebot.elements.pbtextbox import Text
 from pagebot.elements.pbrect import Rect
 from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line

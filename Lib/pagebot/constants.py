@@ -739,7 +739,7 @@ DESCENDER = 'Descender' # Aligns with the largest descender /p in the bottom lin
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
     MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
-    BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X} 
+    BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 # Flags where to draw crop marks on folds.

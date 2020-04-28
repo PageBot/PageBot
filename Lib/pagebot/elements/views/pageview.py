@@ -604,7 +604,7 @@ class PageView(BaseView):
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementInfo(self, e, origin):
-        """For debugging this will make the elements show their info. 
+        """For debugging this will make the elements show their info.
         Collect the (e, origin), so we can later draw all info, after the main
         drawing has been done.
 

@@ -16,7 +16,7 @@
 #
 from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
 #from pagebot.elements import newText # gives cyclic import error.
-from pagebot.elements.pbtextbox import Text
+from pagebot.elements.pbtext import Text
 
 def makeTitlePage(page, title=None, text=None):
     """Cover template for photo books."""

@@ -698,7 +698,7 @@ class BabelString:
         return True
 
     def __ne__(self, bs):
-        return not (self == bs)
+        return not self == bs
 
     def _get_s(self):
         """Set/get the of the last run.

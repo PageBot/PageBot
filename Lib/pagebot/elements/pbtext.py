@@ -278,7 +278,7 @@ class Text(Element):
     def append(self, bs, style=None):
         """Appends to the current BabelString instance self.bs.
         """
-        if not isintance(bs, BabelString):
+        if not isinstance(bs, BabelString):
             bs = BabelString(str(bs), style, context=self.context)
         if self.bs is None:
             self.bs = bs

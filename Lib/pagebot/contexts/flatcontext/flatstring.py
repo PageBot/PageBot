@@ -17,7 +17,7 @@
 
 import re
 import difflib
-import weakref
+#import weakref
 from copy import deepcopy
 from fontTools.pens.boundsPen import BoundsPen
 
@@ -25,7 +25,7 @@ from pagebot.constants import *
 from pagebot.toolbox.units import upt
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.babelstring import BabelString
-from pagebot.fonttoolbox.objects.font import Font, getFont, getFontPath, getLineHeight
+from pagebot.fonttoolbox.objects.font import Font, getFontPath, getLineHeight
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 NEWLINE = '<NEWLINE>'
