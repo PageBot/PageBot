@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-# -----------------------------------------------------------------------------
-#
+# -*- coding: UTF-8 -*- # ----------------------------------------------------------------------------- #
 #     P A G E B O T
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -22,11 +20,10 @@ from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
 from pagebot.fonttoolbox.objects.font import findFont
 
-VERSION = '0.9.8'
+VERSION = '0.9.9'
 STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
-
 contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')#, 'InDesign', 'idml')
 
 def getRootPath():
