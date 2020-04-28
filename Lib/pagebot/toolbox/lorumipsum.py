@@ -23,11 +23,11 @@ from random import shuffle
 
 def lorumipsum(doShuffle=False, words=None):
     """Answer random lorum ipsum text. Default is not to shuffle,
-    self doc test always get the same result.
+    self doc test always gets the same result.
 
     >>> lorumipsum()[:50]
     'Lorem ipsum dolor sit amet, consectetur adipiscing'
-    >>> lorumipsum(words=4)
+    >>> lorumipsum(words=4) # Cutting of at word count, always ending with a period.
     'Lorem ipsum dolor sit.'
     """
     lorum = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et sapien tempor, tincidunt turpis tincidunt, bibendum arcu. Proin nec erat ut dui auctor aliquam egestas sit amet urna. Fusce auctor varius viverra. Morbi augue sapien, auctor et egestas vitae, venenatis et mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin bibendum diam id dapibus maximus. Curabitur et odio tincidunt, fermentum velit eget, iaculis augue. Duis faucibus sapien id massa facilisis pretium ut non tortor.
