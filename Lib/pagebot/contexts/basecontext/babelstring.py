@@ -295,6 +295,7 @@ class BabelString:
     def _get_topLineAscender(self):
         """Answer the largest ascender height in the first line.
 
+        >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
@@ -324,6 +325,7 @@ class BabelString:
     def _get_topLineAscender_h(self):
         """Answer the largest ascender height for /h in the first line.
 
+        >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))

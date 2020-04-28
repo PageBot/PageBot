@@ -52,13 +52,13 @@ class Text(Element):
     <Text $ABCD$>
     """
     isText = True
-    isText = True
 
     # Absolute minimum width of a text box. Avoid endless elastic height.
     TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
-            parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
+            parent=None, padding=None, conditions=None, xAlign=None,
+            yAlign=None, **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
     
@@ -80,6 +80,10 @@ class Text(Element):
         # instance or None. Needs to be done before element initialize, as
         # some attributes (Text.xAlign) may need the string style as reference.
         self.bs = bs # BabelString source for this Text element.
+
+        if xAlign is not None:
+            assert xAlign in XALIGNS
+            self.xAlign = xAlign
 
         # Can be one of BASELINE (default), TOP (equivalent to ascender height
         # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
@@ -222,6 +226,22 @@ class Text(Element):
     def __repr__(self):
         """Answers the representation string of the element.
 
+        >>> from pagebot.document import Document
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.color import blackColor, noColor
+        >>> style = dict(textFill=blackColor, textStroke=noColor)
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(context=context)
+        >>> bs = context.newString('ABCD', style)
+        >>> e = Text(bs, parent=doc[1])
+        >>> e
+        <Text $ABCD$ w=30.11pt h=12pt>
+        >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
+        >>> e
+        <Text $ABCD$ x=100pt y=100pt w=200pt h=12pt>
+
+        """
+        """
         >>> from pagebot.document import Document
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.toolbox.color import blackColor, noColor
