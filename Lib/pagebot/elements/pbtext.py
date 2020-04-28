@@ -113,7 +113,7 @@ class Text(Element):
         >>> t.bs
         $ABCD$
         >>> t
-        <Text $ABCD$ w=125pt>
+        <Text $ABCD$ w=125pt h=12pt>
         """
         if bs is None:
             bs = ''
@@ -588,7 +588,8 @@ class Text(Element):
 
         if self.bs.w is not None or self.bs.h is not None:
             # Draw optional background, frame or borders.
-            self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.bs.tw, self.bs.th))
+            # Width is padded with of self.
+            self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.pw or self.bs.tw, self.bs.th))
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the the string if
             # it contains '\n' characters.
@@ -716,7 +717,7 @@ class Text(Element):
         >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> doc.export('_export/Text-top-200.pdf')
         """
-        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender 
+        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender
     def _set_top(self, y):
         self.y += y - self.top # Trick to reverse vertical alignment.
     top = property(_get_top, _set_top)
