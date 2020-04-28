@@ -24,12 +24,14 @@ from pagebot.contexts.markup.svgcontext import SvgContext
 hasDrawBot = False
 hasSketch = False
 DrawBotContext = None
+SketchContext = None
 DEFAULT_CONTEXT = None
+DEFAULT_CONTEXT_TYPE = 'Flat'
 CONTEXT_TYPE = None
 MAMP_PATH = None
 
-def testDrawBot():
-    global hasDrawBot, DrawBotContext
+if platform == 'darwin':
+
     try:
         import drawBot
         hasDrawBot = True
@@ -42,15 +44,20 @@ def testDrawBot():
         except ImportError:
             print(traceback.format_exc())
 
+    try:
+        import sketchapp2py
+        hasSketch = True
+    except ImportError:
+        hasSketch = False
 
-def testSketch():
-    pass
+    if hasSketch:
+        try:
+            from sketchContext.context import SketchContext
+        except ImportError:
+            print(traceback.format_exc())
 
-if platform == 'darwin':
-    testDrawBot()
-    testSketch()
 
-def getContext(contextType):
+def getContext(contextType=None):
     """Determines which context is used:
      * DrawBotContext --> 'DrawBot'
      * FlatContext --> 'Flat'
@@ -68,6 +75,8 @@ def getContext(contextType):
     <DrawBotContext>
     """
     global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
+    if contextType is None:
+        contextType = DEFAULT_CONTEXT_TYPE
 
     if CONTEXT_TYPE and contextType != CONTEXT_TYPE:
         # Switching contexts, so resetting the buffered global object.

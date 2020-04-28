@@ -13,12 +13,12 @@
 #
 #     headers.py
 #
-from pagebot.elements import Rect, TextBox
+from pagebot.elements import Rect, Text
 
 class TopHeaderDate(Rect):
     pass
 
-class Title(TextBox):
+class Title(Text):
     pass
 
 if __name__ == '__main__':

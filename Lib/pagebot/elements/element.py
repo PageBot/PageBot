@@ -48,10 +48,10 @@ class Element:
 
     # Initializes the default Element behavior flags. These flags can be
     # overwritten by inheriting classes, or dynamically in instances, e.g.
-    # where the settings of TextBox.nextBox and TextBox.nextPage define if a
-    # TextBox instance can operate as a flow.
+    # where the settings of Text.nextBox and Text.nextPage define if a
+    # Text instance can operate as a flow.
     isText = False
-    isTextBox = False
+    isText = False
     #isFlow property answers if nextElement or prevElement is defined.
     # Set to True by Page-like elements.
     isPage = False
@@ -374,7 +374,7 @@ class Element:
         <Element "MyTitle" x=100pt y=200mm w=100pt h=120pt>
         >>> e.title = None
         >>> e.x = e.y = e.h = 0
-        >>> e     
+        >>> e
         <Element w=100pt>
         """
         s = '<%s' % self.__class__.__name__
@@ -388,7 +388,7 @@ class Element:
             s += ' x=%s' % self.x
         if self.y:
             s += ' y=%s' % self.y
-        if self.w: 
+        if self.w:
             s += ' w=%s' % self.w
         if self.h:
             s += ' h=%s' % self.h
@@ -1455,13 +1455,13 @@ class Element:
     def isOverflow(self, tolerance):
         """Answers if this element needs overflow to be solved. This method is
         typically called by conditions such as Overflow2Next. This method is
-        redefined by inheriting classed, such as TextBox, that can have
+        redefined by inheriting classed, such as Text, that can have
         overflow of text."""
         return False
 
     def overflow2Next(self):
         """Try to fix if there is overflow. Default behavior is to do nothing.
-        This method is redefined by inheriting classed, such as TextBox, that
+        This method is redefined by inheriting classed, such as Text, that
         can have overflow of text."""
         return False
 
@@ -2409,9 +2409,9 @@ class Element:
     origin = property(_get_origin)
 
     def _applyOrigin(self, p):
-        # Nothing for now, as origin-top function removed.  
+        # Nothing for now, as origin-top function removed.
         return p
-    
+
     def _get_angle(self):
         """Answers the rotation angle.
 
@@ -2745,7 +2745,7 @@ class Element:
         return self.y
     def _set_top(self, y):
         """Shift the element so `self.top == y`. Where the "top" is, depends on
-        the setting of `self.yAlign`. If `self.isTextBox`, then vertical
+        the setting of `self.yAlign`. If `self.isText`, then vertical
         position can also be defined by the top or bottom position of the
         baseline."""
         yAlign = self.yAlign
@@ -4486,7 +4486,7 @@ class Element:
     # https://www.prepressure.com/pdf/basics/page-boxes
 
     # "Box" is bounding box on a single element.
-    # "Block" is here used as bounding box of a group of elements 
+    # "Block" is here used as bounding box of a group of elements
     # or otherwise the wrapped bounding box on self.
 
     def _get_block3D(self):
@@ -7347,7 +7347,7 @@ class Element:
 
     def fit2Right(self):
         """Make the right side of self fit the right padding of the parent,
-        without moving the left position. TextBox implements it's own method
+        without moving the left position. Text implements it's own method
         to make the text fit by adjusting the size.
 
         >>> e1 = Element(x=100, y=20, w=100, h=50)

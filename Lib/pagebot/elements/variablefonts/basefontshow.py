@@ -82,7 +82,7 @@ class BaseFontShow(Element):
         c.text(stackLine, (ox+x-tx, oy+y-capHeight))
         return x, y-capHeight+ty-self.gh
 
-    def buildTextBox(self, s1, s2, origin, x, y, w, h, fontSize, alignment=None,
+    def buildText(self, s1, s2, origin, x, y, w, h, fontSize, alignment=None,
             labelSize=None, label=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0, useOpsz=True):
         """Makes a new instance for the bold and roman locations (if self.f is
         a Variable Font). Draws a textbox fitting the content ot otherwise

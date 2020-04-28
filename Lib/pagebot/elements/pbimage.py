@@ -78,7 +78,7 @@ class Image(Element):
         by path. If the path does not exist, then self.im = self.ih = pt(0)
         This calls self.initImageSize() to set self.im and slef.ih from the
         image file size.
-        
+
         If path is omitted or file does not exist, a gray rectangle with a
         cross will be drawn."""
         print('dsdsdddd', self.doc, self.context)

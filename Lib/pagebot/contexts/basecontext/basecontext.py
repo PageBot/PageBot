@@ -950,7 +950,8 @@ class BaseContext(AbstractContext):
         for t, style in textStyles:
             if newLine or (style and style.get('display') == DISPLAY_BLOCK):
                 t += '\n'
-            bs = self.newString(t, style=style, e=e)
+
+            bs = self.newString(t, style=style)
             if s is None:
                 s = bs
             else:

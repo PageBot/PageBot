@@ -72,7 +72,7 @@ class Composer:
                 e.run(targets) # Keep same targets, so code blocks share sequence of altered globals.
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
 
-            elif targets.get('box') is not None and targets.get('box').isTextBox and targets.get('box').bs is not None and e.isTextBox:
+            elif targets.get('box') is not None and targets.get('box').isText and targets.get('box').bs is not None and e.isText:
                 # If new content and last content are both text boxes, then merge the string.
                 targets.get('box').bs += e.bs
 

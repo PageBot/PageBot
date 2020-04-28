@@ -126,13 +126,13 @@ class Paragraphs(BaseFontShow):
             if not s1[-1] in ',.!?':
                 s1 += '.'
             s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
-            x, _ = self.buildTextBox(s1, s2, origin, x, y,
+            x, _ = self.buildText(s1, s2, origin, x, y,
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh,
                 fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE,
                 Bwght=0.4, Bwdth=-0.1)
 
             # Same text in same fontSize, without optical size axis used
-            _, y = self.buildTextBox(s1, s2, origin, x+(self.pw+self.gw)/2, y,
+            _, y = self.buildText(s1, s2, origin, x+(self.pw+self.gw)/2, y,
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh,
                 fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE,
                 label='No optical size axis used.\n\n', Bwght=0.6, Bwdth=-0.1, useOpsz=False)

@@ -37,7 +37,7 @@ from pagebot.constants import *
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
 from pagebot.toolbox.transformer import path2FontName, path2Extension
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
-from pagebot.fonttoolbox.fontpaths import getDefaultFontPath, getFontPaths
+from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.units import RelativeUnit, Unit, upt, isUnit

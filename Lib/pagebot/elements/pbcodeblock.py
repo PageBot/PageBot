@@ -21,14 +21,14 @@ class CodeBlock(Text):
 
     DEFAULT_CODE_STYLE = dict(font='Courier', fontSize=9, textFill=0.2, textStroke=noColor)
 
-    isTextBox = False # It's not a normal text box, even while inheriting functionnally from TextBox
+    isText = False # It's not a normal text box, even while inheriting functionnally from Text
 
     def __init__(self, code, tryExcept=True, fill=None, style=None, **kwargs):
         if fill is None:
             fill = color(0.9)
             if style is None:
                 style = self.DEFAULT_CODE_STYLE
-        # Use a TextBox to store the code on the parent galley.
+        # Use a Text to store the code on the parent galley.
         Text.__init__(self, bs=code, fill=fill, style=style, **kwargs)
         assert isinstance(code, str)
         self.code = code
@@ -43,7 +43,7 @@ class CodeBlock(Text):
         if not view.showSourceCode:
             self.run()
         else:
-            TextBox.build(self, view, origin, drawElements, **kwargs)
+            Text.build(self, view, origin, drawElements, **kwargs)
 
     def run(self, targets=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,

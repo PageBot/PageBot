@@ -669,7 +669,7 @@ class PageMapView(BaseView):
         """Draws baseline grid if self.showBaselineGrid is True and there is a
         baseline defined > 0. Use the color from style values viewGridStrokeX
         and viewGridStrokeWidthX to make a difference with the baselines drawn
-        by TextBox with style values baselineColor and baselineWidth.
+        by Text with style values baselineColor and baselineWidth.
 
         If this method is called by an element instead of self, the show
         attribute is a way to overwrite the setting of self.showBaselineGrid.

@@ -16,9 +16,9 @@
 #
 
 
-from pagebot.elements import TextBox
+from pagebot.elements import Text
 
-class Sampler(TextBox):
+class Sampler(Text):
     """Showing the specified (variable) font as full page with a samples of glyphs.
 
     """
@@ -37,7 +37,7 @@ class Sampler(TextBox):
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> style = dict(fill=color(0.95), leading=em(1.4), fontSize=48, xTextAlign=RIGHT)
-        >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
+        >>> conditions = [Fit()] # FIX: Does not seem to work for Text
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> gs = Sampler(font1, parent=page, conditions=conditions, padding=20, style=style, w=page.pw, h=page.ph, context=c)
@@ -52,7 +52,7 @@ class Sampler(TextBox):
 
         TODO: Make self.css('xTextAlign') work for CENTER
         """
-        TextBox.__init__(self, **kwargs)
+        Text.__init__(self, **kwargs)
         c = self.context
         style = self.style.copy()
         style['font'] = f.path

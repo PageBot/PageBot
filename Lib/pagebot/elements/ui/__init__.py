@@ -23,7 +23,6 @@ from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath # Pa
 
 # Simple elements
 from pagebot.elements.pbtext import Text
-from pagebot.elements.pbtextbox import TextBox
 from pagebot.elements.pbrect import Rect
 from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line
@@ -70,7 +69,7 @@ def elementFromPath(path, name=None, **kwargs):
     elif extension in MOVIE_TYPES:
         e = None # TODO: Answer a MovieElement instance (to be developed)
     elif extension in TEXT_TYPES:
-        e = newText(path, name=name, **kwargs) # TODO: Answer TextBox on the parsed content of the file, instead of the path.
+        e = newText(path, name=name, **kwargs) # TODO: Answer Text on the parsed content of the file, instead of the path.
     else:
         e = None # If no extension-->element can be found.
 
@@ -111,7 +110,7 @@ def newColumn(**kwargs):
 def newText(bs='', **kwargs):
     """Caller must supply formatted string. Note that w and h can also be
     defined in the style."""
-    return TextBox(bs, **kwargs)
+    return Text(bs, **kwargs)
 
 def newText(bs='', **kwargs):
     """Create a Text element. Normally we don't need w and h here, as it is

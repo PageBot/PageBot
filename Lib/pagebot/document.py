@@ -26,7 +26,7 @@ from pagebot.toolbox.transformer import (obj2StyleId, path2Url, json2Dict,
     dict2Json, asNormalizedJSON)
 from pagebot.toolbox.units import units, isUnit, point3D
 from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
-        BOTTOM, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
     """A Document is a container of pages, independent from any context.
@@ -66,7 +66,7 @@ class Document:
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
             title=None, pages=None, autoPages=1, template=None, templates=None,
             startPage=None, sId=None, w=None, h=None, d=None,
-            size=None, wh=None, whd=None, padding=None, docLib=None, 
+            size=None, wh=None, whd=None, padding=None, docLib=None,
             context=None, path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
@@ -1111,7 +1111,7 @@ class Document:
                     found = True # Trigger to select the next page in the loop.
         # Not found, create new one?
         if makeNew:
-            return self.newPage() 
+            return self.newPage()
         return None # No next page found and none created.
 
     def prevPage(self, page, prevPage=1):
@@ -1405,7 +1405,7 @@ class Document:
         """Create a new view instance and set self.view default view, that will
         be used for checking on view parameters, before any element rendering
         is done, such as layout conditions and creating the right type of
-        strings. 
+        strings.
 
         >>> from pagebot.elements.views import viewClasses
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)

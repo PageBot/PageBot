@@ -17,14 +17,14 @@
 #     sudo pip install svgwrite
 #
 try:
-	import svgwrite
-	svgBuilder = svgwrite
-	# Id to make builder hook name. Views will try to call e.build_svg()
-	svgBuilder.PB_ID = 'svg'
+    import svgwrite
+    svgBuilder = svgwrite
+    # Id to make builder hook name. Views will try to call e.build_svg()
+    svgBuilder.PB_ID = 'svg'
 
 except ImportError:
-	print('Cannot import svgwrite')
-	svgBuilder = None
+    print('Cannot import svgwrite')
+    svgBuilder = None
 
 if __name__ == '__main__':
     import doctest

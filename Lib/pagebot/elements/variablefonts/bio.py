@@ -14,10 +14,10 @@
 #
 #     bio.py
 #
-from pagebot.elements import TextBox
+from pagebot.elements import Text
 from pagebot.toolbox.units import em
 
-class Bio(TextBox):
+class Bio(Text):
     """Showing the specified (variable) font with its name as headline
     with the bio text about the font.
 
@@ -46,7 +46,7 @@ class Bio(TextBox):
         >>> bio.y = (h - th)*2/3
         >>> doc.export('_export/TypeNetworkBio.pdf')
         """
-        TextBox.__init__(self, '', **kwargs)
+        Text.__init__(self, '', **kwargs)
 
         c = self.context
         if foundryStyle is None:

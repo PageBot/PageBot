@@ -555,9 +555,9 @@ class Typesetter:
 
     def append(self, bs):
         """Append the string (or BabelString instance) to the last textbox in
-        galley, if it exists. Otherwise create a new TextBox and add it to
+        galley, if it exists. Otherwise create a new Text and add it to
         self.galley."""
-        if self.galley.elements and self.galley.elements[-1].isTextBox:
+        if self.galley.elements and self.galley.elements[-1].isText:
             box = self.galley.elements[-1]
             if box.bs is None:
                 box.bs = bs

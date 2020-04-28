@@ -727,8 +727,8 @@ BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE
 
 # Additional vertical alignment for Text elements
 # Also TOP for ascender alignment and BOTTOM for descender alignment of bottom line
-BASELINE = 'baseline' # Use first baseline position as vertical position of origin (for TextBox)
-BASE_BOTTOM = 'baselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for Text)
+BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for Text)
 CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
 XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
 MIDDLE_CAP = 'middleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
@@ -739,7 +739,7 @@ DESCENDER = 'descender' # Aligns with the lowest descender /p in the bottom line
 XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
 YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
     MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
-    BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X} 
+    BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X}
 ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 # Flags where to draw crop marks on folds.

@@ -26,7 +26,7 @@ class SiteColumn(Column):
     more than one SiteElement of the same class, so the caller needs to supply
     a unique id. If omitted, the self.cssId is the class name.
 
-    Since SiteElements are wrappers around TextBox, Image and other elements,
+    Since SiteElements are wrappers around Text, Image and other elements,
     theirs naming should be different.
     The label is used to differentiate between the cssId of a SiteElement as
     wrapper and contained elements. E.g. Logo-->Logo_T

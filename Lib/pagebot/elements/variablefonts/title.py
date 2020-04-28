@@ -14,11 +14,11 @@
 #
 #	  title.py
 #
-from pagebot.elements import TextBox
+from pagebot.elements import Text
 from pagebot.constants import RIGHT
 from pagebot.toolbox.units import em
 
-class Title(TextBox):
+class Title(Text):
     """Showing the specified (variable) font with its name as headline
     and designer name.
 
@@ -49,7 +49,7 @@ class Title(TextBox):
         >>> title.y = (h - th)*2/3
         >>> doc.export('_export/%sTitle.pdf' % font.info.familyName)
         """
-        TextBox.__init__(self, '', **kwargs)
+        Text.__init__(self, '', **kwargs)
 
         c = self.context
         if foundryStyle is None:

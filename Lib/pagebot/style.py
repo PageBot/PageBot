@@ -362,7 +362,7 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # block into a single space.
         postfix = None,
 
-        # Vertical spacing of baselines by TextBox. Note that PageView is
+        # Vertical spacing of baselines by Text. Note that PageView is
         # drawing the baseline grid color as defined by viewGridStrokeX and
         # viewGridStrokeXWidth.
         baselineGrid = baselineGrid,
@@ -372,9 +372,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         baseLineMarkerSize = pt(8),
         # Absolute baseline shift in points. Positive value is upward.
         baselineShift = pt0,
-        # Baseline color, drawn by PageView and TextBox.
+        # Baseline color, drawn by PageView and Text.
         baselineColor = DEFAULT_BASELINE_COLOR,
-        # Baseline width, drawn by TextBox.
+        # Baseline width, drawn by Text.
         baselineWidth = pt(DEFAULT_BASELINE_WIDTH),
         baselineGridFit = False,
         firstLineGridFit = True,

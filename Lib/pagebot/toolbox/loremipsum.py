@@ -12,25 +12,26 @@
 #     https://pypi.org/project/python-lorem/
 # -----------------------------------------------------------------------------
 #
-#     lorum.py
+#     lorem.py
 #
-#     Answer a random lorum ipsum text.
+#     Answer a random lorem ipsum text.
 #
-# FIXME: import does not seem to work after install.
-#import lorum
+#
+
+#import lorem
 
 from random import shuffle
 
-def lorumipsum(doShuffle=False, words=None):
+def loremipsum(doShuffle=False, words=None):
     """Answer random lorum ipsum text. Default is not to shuffle,
     self doc test always gets the same result.
 
-    >>> lorumipsum()[:50]
+    >>> loremipsum()[:50]
     'Lorem ipsum dolor sit amet, consectetur adipiscing'
-    >>> lorumipsum(words=4) # Cutting of at word count, always ending with a period.
+    >>> loremipsum(words=4) # Cutting of at word count, always ending with a period.
     'Lorem ipsum dolor sit.'
     """
-    lorum = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et sapien tempor, tincidunt turpis tincidunt, bibendum arcu. Proin nec erat ut dui auctor aliquam egestas sit amet urna. Fusce auctor varius viverra. Morbi augue sapien, auctor et egestas vitae, venenatis et mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin bibendum diam id dapibus maximus. Curabitur et odio tincidunt, fermentum velit eget, iaculis augue. Duis faucibus sapien id massa facilisis pretium ut non tortor.
+    lorem = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et sapien tempor, tincidunt turpis tincidunt, bibendum arcu. Proin nec erat ut dui auctor aliquam egestas sit amet urna. Fusce auctor varius viverra. Morbi augue sapien, auctor et egestas vitae, venenatis et mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin bibendum diam id dapibus maximus. Curabitur et odio tincidunt, fermentum velit eget, iaculis augue. Duis faucibus sapien id massa facilisis pretium ut non tortor.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ullamcorper laoreet arcu at semper. Donec hendrerit eros quis nulla auctor, a feugiat quam viverra. Morbi urna tortor, mattis et volutpat non, auctor non turpis. Maecenas maximus justo eget eros feugiat ultrices. Sed enim enim, dictum non bibendum vel, tincidunt faucibus eros. Sed id felis viverra, feugiat urna et, suscipit ipsum. Praesent laoreet nunc eros, et hendrerit elit vestibulum vel. Aliquam in malesuada sapien. Etiam sit amet lorem eget diam consectetur malesuada.
 Suspendisse potenti. Integer faucibus quam non scelerisque blandit. Mauris sollicitudin facilisis ex mollis accumsan. Aenean ligula diam, condimentum et lacus sed, iaculis cursus ligula. Maecenas vestibulum varius tellus, at auctor diam placerat at. Vivamus vel urna ligula. Ut turpis nunc, pharetra non arcu in, tincidunt sagittis lectus. Proin aliquet purus vitae nulla tincidunt, placerat sollicitudin mauris tempus. Quisque sapien turpis, auctor ac blandit id, hendrerit et enim. Cras condimentum dolor in fringilla dapibus.
 Cras ac ligula molestie, condimentum nunc vel, luctus massa. In elementum semper fermentum. Fusce porttitor non ex mollis laoreet. Fusce aliquam ultricies enim vitae consequat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam vitae fringilla risus. Etiam suscipit suscipit ante, at ultrices urna ullamcorper in. Integer ac felis volutpat, sollicitudin augue a, tincidunt est. Mauris varius velit est, vitae facilisis tortor viverra id. Donec et nisl quam. Aliquam erat volutpat. Praesent eu consequat risus, sed dapibus erat. Aenean ullamcorper, lorem et viverra consequat, mauris arcu luctus arcu, sed interdum elit nisl ac purus.
@@ -42,16 +43,17 @@ Pellentesque blandit at diam sed suscipit. Curabitur dapibus feugiat dolor quis 
 Morbi id tincidunt sapien, eget molestie neque. Phasellus bibendum venenatis leo ultrices facilisis. Nam vitae dui leo. Nunc posuere efficitur tellus, eu aliquam diam vulputate a. Proin faucibus aliquet mi, ac cursus odio viverra facilisis. Fusce commodo nisi id maximus mollis. Vivamus iaculis augue non magna ullamcorper, eu blandit libero tincidunt."""
 
     if doShuffle:
-        lines = txt.replace('\n', ' \n').split('. ')
+        lines = lorem.replace('\n', ' \n').split('. ')
         shuffle(lines)
-        lorum = '. '.join(lines)+'.'
-        while lorum.startswith('\n'):
-            lorum = lorum[1:]
+        lorem = '. '.join(lines)+'.'
+        while lorem.startswith('\n'):
+            lorem = lorem[1:]
+
     if words is not None:
-        lorum = ' '.join(lorum.split(' ')[:words])
-        if not lorum.endswith('.'):
-            lorum += '.'
-    return lorum
+        lorem = ' '.join(lorem.split(' ')[:words])
+        if not lorem.endswith('.'):
+            lorem += '.'
+    return lorem
 
 if __name__ == "__main__":
     import doctest

@@ -34,7 +34,7 @@ class Header(Row):
 
 class Cell(Text):
     def __init__(self, fs, minW=None, w=None, h=None, colSpan=1, rowSpan=1, **kwargs):
-        TextBox.__init__(self,  fs, minW=minW, w=w, h=h, **kwargs)
+        Text.__init__(self,  fs, minW=minW, w=w, h=h, **kwargs)
         self.colSpan = colSpan
         self.rowSpan = rowSpan
 
