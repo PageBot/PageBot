@@ -12,18 +12,16 @@
 #     https://pypi.org/project/python-lorem/
 # -----------------------------------------------------------------------------
 #
-#     lorem.py
+#     loremipsum.py
 #
 #     Answer a random lorem ipsum text.
 #
-#
-
 #import lorem
 
 from random import shuffle
 
 def loremipsum(doShuffle=False, words=None):
-    """Answer random lorem ipsum text. Default is not to shuffle,
+    """Answer random lorum ipsum text. Default is not to shuffle,
     self doc test always gets the same result.
 
     >>> loremipsum()[:50]
@@ -43,12 +41,11 @@ Pellentesque blandit at diam sed suscipit. Curabitur dapibus feugiat dolor quis 
 Morbi id tincidunt sapien, eget molestie neque. Phasellus bibendum venenatis leo ultrices facilisis. Nam vitae dui leo. Nunc posuere efficitur tellus, eu aliquam diam vulputate a. Proin faucibus aliquet mi, ac cursus odio viverra facilisis. Fusce commodo nisi id maximus mollis. Vivamus iaculis augue non magna ullamcorper, eu blandit libero tincidunt."""
 
     if doShuffle:
-        lines = lorem.replace('\n', ' \n').split('. ')
+        lines = txt.replace('\n', ' \n').split('. ')
         shuffle(lines)
         lorem = '. '.join(lines)+'.'
         while lorem.startswith('\n'):
             lorem = lorem[1:]
-
     if words is not None:
         lorem = ' '.join(lorem.split(' ')[:words])
         if not lorem.endswith('.'):

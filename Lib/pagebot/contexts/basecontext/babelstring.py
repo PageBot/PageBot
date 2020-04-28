@@ -229,14 +229,27 @@ class BabelString:
     def _get_tw(self):
         """Answer the cached calculated context width
         """
+        if self.context is None: # Required context to be defined.
+            return None
         if self._twh is None:
             self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
         return self._twh[0]
     tw = property(_get_tw)
 
     def _get_th(self):
-        """Answer the cached calculated context height
+        """Answer the cached calculated context height.
+
+        >>> from pagebot.contexts import getContext
+        >>> bs = BabelString('ABCD')
+        >>> bs.tw is None
+        True
+        >>> context = getContext('DrawBot')
+        >>> bs = context.newString('ABCD', w=500)
+        >>> bs.w
+
         """
+        if self.context is None: # Required context to be defined
+            return None
         if self._twh is None:
             self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
         return self._twh[1]
@@ -264,12 +277,12 @@ class BabelString:
         the context to render it before answersing.
         Cache the result in self._lines.
 
-        >>> from pagebot.toolbox.lorumipsum import lorumipsum
+        >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = BabelString(lorumipsum(), style, w=pt(500), context=context)
+        >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> lines = bs.lines
         >>> len(lines)
         113
@@ -282,7 +295,6 @@ class BabelString:
     def _get_topLineAscender(self):
         """Answer the largest ascender height in the first line.
 
-        >>> from pagebot.toolbox.lorumipsum import lorumipsum
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
@@ -312,7 +324,6 @@ class BabelString:
     def _get_topLineAscender_h(self):
         """Answer the largest ascender height for /h in the first line.
 
-        >>> from pagebot.toolbox.lorumipsum import lorumipsum
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
