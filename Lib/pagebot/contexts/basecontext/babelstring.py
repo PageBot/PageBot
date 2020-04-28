@@ -106,21 +106,20 @@ class BabelString:
     text as a list of BabelRun instances. 
     Note that the styles values of sequential runs are *not* cascading.
     This is similar to the behavior of the DrawBot FormattedString attributes.
+    Plain numbers are by default converted to points.
+    Attribute properties refer to the style of the last run.
 
-    >>> bs1 = BabelString('ABCD', style=dict(fontSize=12))
-    >>> bs1.runs
+    >>> from pagebot.toolbox.units import pt, mm
+    >>> bs = BabelString('ABCD', style=dict(fontSize=12))
+    >>> bs.fontSize
+    12pt
+    >>>
+    >>> bs.fontSize = mm(24)
+    >>> bs.fontSize, bs.runs[0].style['fontSize']
+    (24mm, 24mm)
+    >>> bs.runs # Without context a BabelString can do all that does not need rendering.
     [<BabelRun "ABCD">]
-    >>> bs2 = BabelString('ABCD', style=dict(fontSize=12))
-    >>> bs2.runs
-    [<BabelRun "ABCD">]
-    >>> bs1 == bs2, bs1 is bs2
-    (True, False)
-    >>> bs2 = BabelString('EFGH', style=dict(fontSize=16))
-    >>> bs3 = bs1 + bs2
-    >>> bs3
-    $ABCDEFGH$
-    >>> bs3.runs
-    [<BabelRun "ABCD">, <BabelRun "EFGH">]
+
     """
     def __init__(self, s=None, style=None, w=None, h=None, context=None):
         """Constructor of BabelString. @s is a plain string, style is a
@@ -144,7 +143,8 @@ class BabelString:
         (8, 1)
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot') 
-        >>> bs = context.newString('ABCD')
+        >>> bs = context.newString('ABCD') 
+        >>> # Equivalent do BabelString('ABCD', context=context)
         >>> bs.context
         <DrawBotContext>
         """
@@ -210,17 +210,17 @@ class BabelString:
         >>> bs.tw
         250.9pt
         """
-        return self._w
+        return self._w or self.tw
     def _set_w(self, w):
         self._w = units(w)
         self.reset() # Force context wrapping to be recalculated.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answer the optional height of this string. If the value if self._w
-        is not defined, then answer the width of the rendered context string.
+        """Answer the optional height of this string. If the value if self._h
+        is not defined, then answer the height of the rendered context string.
         """
-        return self._h
+        return self._h or self.th
     def _set_h(self, h):
         self._h = units(h)
         self.reset() # Force context wrapping to be recalculated.
@@ -230,7 +230,7 @@ class BabelString:
         """Answer the cached calculated context width
         """
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self.w)
+            self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
         return self._twh[0]
     tw = property(_get_tw)
 
@@ -238,7 +238,7 @@ class BabelString:
         """Answer the cached calculated context height
         """
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self.w)
+            self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
         return self._twh[1]
     th = property(_get_th)
         
@@ -410,7 +410,7 @@ class BabelString:
         >>> bs.bottomLineDescender # Last line descender increased        
         -12.6pt
         >>> bs.lines[1]
-        <BabelLineInfo x=0pt y=798pt runs=1>
+        <BabelLineInfo x=0pt y=135pt runs=1>
         """
         bottomLineDescender = 0
         if self.lines:
@@ -509,13 +509,15 @@ class BabelString:
         Note that the styles are copied within slice range. No cascading
         style values are taken from previous runs.
 
+        >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
+        >>> context = getContext('DrawBot')
         >>> style1 = dict(fontSize=pt(12))
         >>> style2 = dict(fontSize=pt(18))
         >>> style3 = dict(fontSize=pt(24))
-        >>> bs = BabelString('ABCD', style1)
-        >>> bs += BabelString('EFGH', style2)
-        >>> bs += BabelString('IJKL', style3)
+        >>> bs = context.newString('ABCD', style1)
+        >>> bs += context.newString('EFGH', style2) # Adding needs context
+        >>> bs += context.newString('IJKL', style3)
         >>> bs # Show concatinated string, spanning the 2 styles
         $ABCDEFGHIJ...$
         >>> bs[3], bs[3].runs # Take indexed character from the first run
@@ -650,9 +652,11 @@ class BabelString:
         """If pbs is a plain string, then just add it to the last run.
         Otherwise create a new BabelString and copy all runs there.
 
+        >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
-        >>> bs1 = BabelString('ABCD', dict(fontSize=pt(18)))
-        >>> bs2 = BabelString('EFGH', dict(fontSize=pt(24)))
+        >>> context = getContext('DrawBot')
+        >>> bs1 = context.newString('ABCD', dict(fontSize=pt(18)))
+        >>> bs2 = context.newString('EFGH', dict(fontSize=pt(24)))
         >>> bs3 = bs1 + bs2 # Create new instance, concatenated from both
         >>> bs1 is not bs2 and bs1 is not bs3 and bs2 is not bs3
         True

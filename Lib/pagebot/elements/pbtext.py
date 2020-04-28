@@ -60,6 +60,8 @@ class Text(Element):
     def __init__(self, bs=None, w=None, h=None, size=None, style=None, 
             parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
 
+        self._bs = None # Placeholder, ignoring self.w and self.h until defined.
+    
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, parent=parent, padding=padding, 
@@ -87,16 +89,9 @@ class Text(Element):
             # Overwite value in self.bs.style
             self.yAlign = yAlign
 
-        # If self._w is None, behave as Text. Otherwise behave as “TextBox”.
-        # This change in behavior makes that we don’t have a separate TextBox class.
-        # If self._h is defined, the overflow is detected.
-        self._w = self._h = None
-        if size is not None:
-            w, h = size
-        if w is not None:
-            self._w = units(w)
-        if h is not None:
-            self._h = units(h)
+        # Now there is a self._bs, set it's width and height (can be None)
+        self.w = w
+        self.h = h
 
     def _get_bs(self):
         """Answer the stored formatted BabelString. The value can be None.
@@ -142,15 +137,15 @@ class Text(Element):
         >>> t.w, t.w == page[t.eId].w
         (150pt, True)
         """
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use parent as base.
-        if self._w is not None:
-            return units(self._w, base=base)
-        return units(self.bs.w or self.bs.tw, base=base)
+        if self._bs is None:
+            return None
+        return self.bs.w
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
-        if w is not None:
-            w = units(w)
-        self._w = w
+        if self._bs is not None:
+            if w is not None:
+                w = units(w)
+            self.bs.w = w
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -171,17 +166,15 @@ class Text(Element):
         (220pt, True)
         >>> t.h = None
         """
-        if self._h is not None:
-            base = dict(base=self.parentH, em=self.em) # In case relative units, use parent as base.
-            return units(self._h, base=base)
-        if self.bs is not None:
-            return self.bs.textSize[1]
-        return None
+        if self._bs is None:
+            return None
+        return self.bs.h
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
-        if h is not None:
-            h = units(h)
-        self._h = h
+        if self._bs is not None:
+            if h is not None:
+                h = units(h)
+            self.bs.h = h
     h = property(_get_h, _set_h)
 
     def _get_firstColumnIndent(self):
@@ -250,10 +243,10 @@ class Text(Element):
             s += ' x=%s' % self.x
         if self.y:
             s += ' y=%s' % self.y
-        if self._w is not None: # Behave a text box with defined width
-            s += ' w=%s' % self._w
-        if self._h is not None: # Behave as text box with defined height
-            s += ' h=%s' % self._h
+        if self.w is not None: # Behave a text box with defined width
+            s += ' w=%s' % self.w
+        if self.h is not None: # Behave as text box with defined height
+            s += ' h=%s' % self.h
         return s+'>'
 
     def copy(self, parent=None):
@@ -685,9 +678,12 @@ class Text(Element):
         >>> t.bottom, t.y # Identical, as aligned on bottom
         (300pt, 300pt)
         """
-        return self.top - (self.h or self.th)
+        if self._bs is None:
+            return None
+        return self.top - (self.bs.h or self.bs.th)
     def _set_bottom(self, y):
-        self.top = y + (self.h or self.th)
+        if self._bs is not None:
+            self.top = y + (self.bs.h or self.bs.th)
     bottom = property(_get_bottom, _set_bottom)
 
     def _get_top(self):
