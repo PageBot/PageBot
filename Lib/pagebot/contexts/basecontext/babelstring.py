@@ -20,17 +20,17 @@
 #     rendering of the rest flow.
 #     A number of operation requires a context to return a rendered native
 #     format, such as size, line positions and overflow.
-#     For efficiency that rendered string and meta information (such as 
+#     For efficiency that rendered string and meta information (such as
 #     position of lines) are calculate upon request and stored in the
 #     BabelString for later use. Changes to the runs will reset this cache.
 #
 from copy import copy, deepcopy
 import weakref
 
-from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT, 
-    DEFAULT_COL_WIDTH, TOP, LEFT, XXXL)
+from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
+    TOP, LEFT)
 from pagebot.fonttoolbox.objects.font import findFont, Font
-from pagebot.toolbox.units import units, pt, em
+from pagebot.toolbox.units import units, pt
 from pagebot.toolbox.color import color
 
 class BabelRun:
@@ -103,7 +103,7 @@ class BabelRunInfo:
 
 class BabelString:
     """BabelString is a generic string format, that stores a string or
-    text as a list of BabelRun instances. 
+    text as a list of BabelRun instances.
     Note that the styles values of sequential runs are *not* cascading.
     This is similar to the behavior of the DrawBot FormattedString attributes.
 
@@ -143,7 +143,7 @@ class BabelString:
         >>> len(bs), len(bs.runs)
         (8, 1)
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot') 
+        >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD')
         >>> bs.context
         <DrawBotContext>
@@ -241,7 +241,7 @@ class BabelString:
             self._twh = self.context.textSize(self.cs, w=self.w)
         return self._twh[1]
     th = property(_get_th)
-        
+
     def _get_cs(self):
         """Answer the native formatted string of the context. If it does
         not exist, then ask the context to render it before answering.
@@ -261,7 +261,7 @@ class BabelString:
     def _get_lines(self):
         """Answer the list of BabelLine instances, with meta information about
         the line wrapping done by the context. If it does not exist, then ask
-        the context to render it before answersing. 
+        the context to render it before answersing.
         Cache the result in self._lines.
 
         >>> from pagebot.toolbox.lorumipsum import lorumipsum
@@ -342,7 +342,7 @@ class BabelString:
 
     def _get_topLineCapHeight(self):
         """Answer the largest capHeight in the first line. The height is
-        derived from the fonts, independent if there are actually capitals 
+        derived from the fonts, independent if there are actually capitals
         in the first line.
 
         >>> from pagebot.contexts import getContext
@@ -354,7 +354,7 @@ class BabelString:
         >>> bs.topLineCapHeight # First line capheight increased
         131.6pt
         >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        >>> bs.topLineCapHeight # First line capHeight increased        
+        >>> bs.topLineCapHeight # First line capHeight increased
         131.6pt
         """
         topLineCapHeight = 0
@@ -368,7 +368,7 @@ class BabelString:
 
     def _get_topLineXHeight(self):
         """Answer the largest xHeight in the first line. The height is
-        derived from the fonts, independent if there are actually lower case 
+        derived from the fonts, independent if there are actually lower case
         in the first line.
 
         >>> from pagebot.contexts import getContext
@@ -380,7 +380,7 @@ class BabelString:
         >>> bs.topLineXHeight # First line xHeight increased
         93.2pt
         >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        >>> bs.topLineXHeight # First line xHeight increased        
+        >>> bs.topLineXHeight # First line xHeight increased
         93.2pt
         """
         topLineXHeight = 0
@@ -394,7 +394,7 @@ class BabelString:
 
     def _get_bottomLineDescender(self):
         """Answer the largest abs(descender) in the bottom line. The height is
-        derived from the fonts, independent if there are actually lower case 
+        derived from the fonts, independent if there are actually lower case
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
 
@@ -407,7 +407,7 @@ class BabelString:
         >>> bs.bottomLineDescender # Last line descender increased
         -252pt
         >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender # Last line descender increased        
+        >>> bs.bottomLineDescender # Last line descender increased
         -12.6pt
         >>> bs.lines[1]
         <BabelLineInfo x=0pt y=798pt runs=1>
@@ -423,7 +423,7 @@ class BabelString:
 
     def _get_bottomLineDescender_p(self):
         """Answer the largest abs(descender) for /p in the bottom line. The height is
-        derived from the fonts, independent if there are actually lower case 
+        derived from the fonts, independent if there are actually lower case
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
 
@@ -436,7 +436,7 @@ class BabelString:
         >>> bs.bottomLineDescender_p # Last line descender increased
         -212pt
         >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender_p # Last line descender decreased        
+        >>> bs.bottomLineDescender_p # Last line descender decreased
         -10.6pt
         """
         bottomLineDescender_p = 0
@@ -499,7 +499,7 @@ class BabelString:
         >>> bs.textSize
         (250.9pt, 100pt)
         """
-        return self.tw, self.th 
+        return self.tw, self.th
     textSize = property(_get_textSize)
 
     def __getitem__(self, given):

@@ -46,7 +46,7 @@ class FlatString(BabelString):
         """Constructor of the FlatString, which is a wrapper around a Flat
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
-        FlatStrings are intended for drawing into a Flat canvas, write-only. 
+        FlatStrings are intended for drawing into a Flat canvas, write-only.
 
         >>> from pagebot import getContext, getFontByName
         >>> from pagebot.document import Document
@@ -67,7 +67,7 @@ class FlatString(BabelString):
         12pt
         >>> fs.leading
         1.5em
-        >>> fs.lineHeight 
+        >>> fs.lineHeight
         18.0
         >>> pt(fs.lineHeight) # Should be 18pt
         18pt
@@ -287,7 +287,7 @@ class FlatString(BabelString):
 
     def _get_fontSize(self):
         """Answers the current state of the fontSize.
-        
+
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import em
         >>> context = getContext('Flat')
@@ -450,7 +450,7 @@ class FlatString(BabelString):
         x = x0
         #y = self.context.height - y0 - h0 + dl0
         y = page.height - y0 - h0 + dl0
-        
+
         w = w0
         h = round(lineHeight0)
         h1 = round(lineHeight0)
@@ -743,7 +743,7 @@ class FlatString(BabelString):
         >>> tb.pbs.textLines()
         """
         assert self.e is not None and self.e.context is not None
-        if w is None: 
+        if w is None:
             w = self.e.w # Use width of the referenced element
         if h is None:
             h = 1000000 # No vertical limit

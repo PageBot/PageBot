@@ -77,8 +77,8 @@ class Publication(Element):
         """Produce the publication, using the viewId as target. To be implemented by
         inheriting publication classes."""
 
-    def newDocument(self, name=None, autoPages=None, w=None, h=None, makeCurrent=True, 
-            padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None, 
+    def newDocument(self, name=None, autoPages=None, w=None, h=None, makeCurrent=True,
+            padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None,
             baselineGrid=None, baselineGridStart=None, **kwargs):
         """Answer a new Document instance for this publication, to be filled by the
         publication composer, using existing data and pages. Set autoPages to 0,

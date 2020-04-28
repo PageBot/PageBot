@@ -896,12 +896,12 @@ class PageView(BaseView):
         """Draw baseline grid if self.showBaselineGrid is True and there is a
         baseline defined > 0. Use the color from style values viewGridStrokeX
         and viewGridStrokeWidthX to make a difference with the baselines drawn
-        by TextBox with style values baselineColor and baselineWidth.
+        by Text with style values baselineColor and baselineWidth.
 
         In this method is called by an element, instead of self, the show
         attribute is a way to overwrite the setting of self.showBaselineGrid
 
-        NOTE: TextBox elements have their own baseline drawing method.
+        NOTE: Text elements have their own baseline drawing method.
 
         >>> from pagebot import getContext
         >>> context = getContext('DrawBot')

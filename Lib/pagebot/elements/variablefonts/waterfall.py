@@ -14,11 +14,11 @@
 #
 #     waterfall.py
 #
-from pagebot.elements import TextBox
+from pagebot.elements import Text
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 from pagebot.toolbox.units import em, asFormatted, pt
 
-class Waterfall(TextBox):
+class Waterfall(Text):
     """Showing the specified (variable) font as waterfall.
 
     """
@@ -36,7 +36,7 @@ class Waterfall(TextBox):
         >>> w, h = Letter
         >>> doc = Document(w=w, h=h, padding=80, autoPages=2, context=c)
         >>> style = dict(fill=color(0.95), leading=em(1.3), fontSize=48, xTextAlign=RIGHT)
-        >>> conditions = [Fit()] # FIX: Does not seem to work for TextBox
+        >>> conditions = [Fit()] # FIX: Does not seem to work for Text
         >>> page = doc[1]
         >>> font1 = findFont('AmstelvarAlpha-VF')
         >>> loc = dict(wght=1)
@@ -55,7 +55,7 @@ class Waterfall(TextBox):
 
         TODO: Make self.css('xTextAlign') work for CENTER
         """
-        TextBox.__init__(self, **kwargs)
+        Text.__init__(self, **kwargs)
         c = self.context
         self.useOpsz = useOpsz # Only for the sample lines. Labels always have opsz.
         self.f = f

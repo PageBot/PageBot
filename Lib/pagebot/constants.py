@@ -727,8 +727,8 @@ BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE
 
 # Additional vertical alignment for Text elements
 # Also TOP for ascender alignment and BOTTOM for descender alignment of bottom line
-BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for TextBox)
-BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for TextBox)
+BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for Text)
+BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for Text)
 CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
 XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
 MIDDLE_CAP = 'MiddleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)

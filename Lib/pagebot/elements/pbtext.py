@@ -34,16 +34,16 @@ from pagebot.toolbox.hyphenation import hyphenatedWords
 class Text(Element):
     """
     Since PageBot stores text by the internal BabelString format, with
-    full control on the position of lines, the rendering as “TextBox”
+    full control on the position of lines, the rendering as “Text”
     if not DrawBot.textbox. The problem with text boxes in general, is
     that they position text from “above the ascender of the top line”,
     without much control on the position of baselines. Larger type in
     the first line will push the whole content of the box down.
-    Therefor TextBox.build uses context.textLines() as render engine, 
+    Therefor Text.build uses context.textLines() as render engine,
     and implements the drawing separate text lines by context.text(bs),
     which always tenders text on baseline position.
     This way different contexts also have more similar behavior.
-    
+
     >>> t = Text('ABCD')
     >>> t
     <Text $ABCD$>
@@ -52,17 +52,17 @@ class Text(Element):
     <Text $ABCD$>
     """
     isText = True
-    isTextBox = True
+    isText = True
 
     # Absolute minimum width of a text box. Avoid endless elastic height.
     TEXT_MIN_WIDTH = 24
 
-    def __init__(self, bs=None, w=None, h=None, size=None, style=None, 
+    def __init__(self, bs=None, w=None, h=None, size=None, style=None,
             parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
 
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
-        Element.__init__(self, parent=parent, padding=padding, 
+        Element.__init__(self, parent=parent, padding=padding,
             conditions=conditions, **kwargs)
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
@@ -87,8 +87,8 @@ class Text(Element):
             # Overwite value in self.bs.style
             self.yAlign = yAlign
 
-        # If self._w is None, behave as Text. Otherwise behave as “TextBox”.
-        # This change in behavior makes that we don’t have a separate TextBox class.
+        # If self._w is None, behave as Text. Otherwise behave as “Text”.
+        # This change in behavior makes that we don’t have a separate Text class.
         # If self._h is defined, the overflow is detected.
         self._w = self._h = None
         if size is not None:
@@ -103,7 +103,7 @@ class Text(Element):
         """
         return self._bs
     def _set_bs(self, bs):
-        """Make sure that this is a formatted BabelString. 
+        """Make sure that this is a formatted BabelString.
         Otherwise create it from string with the current style. Note that there is a potential clash
         in the duplicate usage of fill and stroke.
 
@@ -123,7 +123,7 @@ class Text(Element):
         if bs is None:
             bs = ''
         if isinstance(bs, str):
-            bs = BabelString(bs, self.style, w=self.w, h=self.h) 
+            bs = BabelString(bs, self.style, w=self.w, h=self.h)
         assert isinstance(bs, BabelString)
         self._bs = bs
         bs.context = self.context
@@ -135,7 +135,7 @@ class Text(Element):
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
         >>> page = doc[1]
-        >>> t = Text('ABCD', parent=page, w=125) # Width forces “TextBox” behavior
+        >>> t = Text('ABCD', parent=page, w=125) # Width forces “Text” behavior
         >>> page[t.eId].w
         125pt
         >>> t.w = 150
@@ -154,7 +154,7 @@ class Text(Element):
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answers the height of the textBox if defined. 
+        """Answers the height of the textBox if defined.
         Otherwise answer the height of self.bs.textSize
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -268,7 +268,7 @@ class Text(Element):
         >>> bs = context.newString('Hello world', style)
         >>> t = Text(bs, name='Child', w=100)
         >>> copyE = t.copy() # Copy the element attribute, including the string of self.
-        >>> copyE.bs 
+        >>> copyE.bs
         $Hello worl...$
         """
         e = Element.copy(self, parent=parent)
@@ -283,12 +283,12 @@ class Text(Element):
         if self.bs is None:
             self.bs = bs
         else:
-            self.bs += bs   
-            self._textLines = None # Force new rendering on self.textLines call. 
+            self.bs += bs
+            self._textLines = None # Force new rendering on self.textLines call.
 
     def appendMarker(self, markerId, arg=None):
         """Append a marker at the end of the last BabelString.runs[-1].
-        This can be used by page composers to see what the status of a certain 
+        This can be used by page composers to see what the status of a certain
         text has become, after rendering textLines.
         """
         self.bs.appendMarker(markerId, arg)
@@ -371,7 +371,7 @@ class Text(Element):
         return styledLines
     styledLines = property(_get_styledLines)
 
-    def _get_xAlign(self): 
+    def _get_xAlign(self):
         """Answer the type of x-alignment. Since the orienation of the box is equivalent to the
         on the alignment of the text, it is stored as self.bs.xAlign, referring to the current run style.
         That is why we redefine the default element.xAlign propety.
@@ -395,7 +395,7 @@ class Text(Element):
             self.bs.xAlign = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     xAlign = property(_get_xAlign, _set_xAlign)
 
-    def _get_yAlign(self): 
+    def _get_yAlign(self):
         """Answer the type of y-alignment. Since the orienation of the box is equivalent to the
         on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
         That is why we redefine the default element.yAlign propety.
@@ -556,7 +556,7 @@ class Text(Element):
         >>> page = doc[1]
         >>> fontSize = pt(100)
         >>> style = dict(font='PageBot-Regular', fontSize=fontSize, leading=fontSize, textFill=(1, 0, 0), xAlign=CENTER)
-        >>> bs = context.newString('Hkpx\\nHkpx', style) 
+        >>> bs = context.newString('Hkpx\\nHkpx', style)
         >>> t = Text(bs, x=W/2, y=H/2, parent=page, showOrigin=True, fill=0.9, yAlign=MIDDLE)
         >>> l = Line(x=t.x-t.w/2, y=t.y, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
         >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.capHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
@@ -577,7 +577,7 @@ class Text(Element):
         >>> bs = context.newString(txt, style) # Creates a BabelString with context reference.
         >>> bs.context is context
         True
-        >>> t = Text(bs, x=W/2, y=H/2, parent=doc[1], yAlign=MIDDLE_X)        
+        >>> t = Text(bs, x=W/2, y=H/2, parent=doc[1], yAlign=MIDDLE_X)
         >>> t.context is context
         True
         >>> doc.export('_export/Text-build2.pdf')
@@ -595,7 +595,7 @@ class Text(Element):
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
         #print('-;f;f;f', self.bs, self.bs.w, self.bs.h, self.bs.tw, self.bs.th)
-        
+
         if self.bs.w is not None or self.bs.h is not None:
             # Draw optional background, frame or borders.
             self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.bs.tw, self.bs.th))
@@ -604,7 +604,7 @@ class Text(Element):
             # it contains '\n' characters.
             # it contains '\n' characters.
             context.drawText(self.bs, (tx, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
-        
+
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)
             # Draw optional background, frame or borders.
@@ -749,7 +749,7 @@ class Text(Element):
             b._div() # self.cssClass or self.__class__.__name__
 
 
- 
+
 if __name__ == '__main__':
     import doctest
     import sys

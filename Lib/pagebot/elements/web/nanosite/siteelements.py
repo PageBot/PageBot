@@ -166,7 +166,7 @@ class Logo(NanoElement):
         self.url = url
         if logo is None:
             logo = 'Name Here'
-        t = TextBox(logo, parent=self)
+        t = Text(logo, parent=self)
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b

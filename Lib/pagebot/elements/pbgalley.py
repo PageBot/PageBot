@@ -54,10 +54,10 @@ class Galley(Element):
     def append(self, bs):
         """Adds the string to the last text box. Creates a new textbox if not
         found."""
-        if self.lastTextBox is None:
-            self.newText(bs) # Also sets self.lastTextBox
+        if self.lastText is None:
+            self.newText(bs) # Also sets self.lastText
         else:
-            self.lastTextBox.append(bs)
+            self.lastText.append(bs)
 
     def appendElement(self, e):
         """Add element to the list of child elements. Note that elements can be
@@ -72,9 +72,9 @@ class Galley(Element):
         e.setParent(self) # Set parent of element without calling this method again.
         if e.eId: # Store the element by unique element id, if it is defined.
             self._eIds[e.eId] = e
-        # If this is a text box, then set self.lastTextBox
-        if e.isTextBox:
-            self.lastTextBox = e
+        # If this is a text box, then set self.lastText
+        if e.isText:
+            self.lastText = e
         return len(self._elements)-1 # Answer the element index for e.
 
     def getSize(self):
@@ -106,10 +106,10 @@ class Galley(Element):
     def newText(self, bs):
         """Creates a new *self.TEXTBOX_CLASS* instance, filled with the *fs*
         BabelString. The actual type of string depends on the current content.
-        Appends the element to *self* (also setting self.lastTextBox) and
+        Appends the element to *self* (also setting self.lastText) and
         answer the element."""
         tb = self.TEXTBOX_CLASS(bs, parent=self)
-        self.appendElement(tb) # Will set the self.lastTextBox by local self.appendElement(tb)
+        self.appendElement(tb) # Will set the self.lastText by local self.appendElement(tb)
         return tb
 
     def newRuler(self, style):

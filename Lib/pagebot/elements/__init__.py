@@ -25,7 +25,7 @@ from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath
 
 
 # Simple elements.
-from pagebot.elements.pbtext import Text # TextBox is no longer a separate element class.
+from pagebot.elements.pbtext import Text
 from pagebot.elements.pbrect import Rect
 from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line
@@ -86,7 +86,7 @@ def elementFromPath(path, name=None, **kwargs):
         # TODO: Answer a MovieElement instance (to be developed)
         e = None
     elif extension in TEXT_TYPES:
-        # TODO: Answer TextBox on the parsed content of the file, instead of
+        # TODO: Answer Text on the parsed content of the file, instead of
         # the path.
         e = newText(path, name=name, **kwargs)
     else:
@@ -132,7 +132,7 @@ def newColumn(**kwargs):
 def newText(bs='', **kwargs):
     """Create a Text element. If w and h are not defined, then the Text is
     and elastic rectangle, base on the size of the content.
-    If w is defined, thatn the Text element has regular “TextBox” behavior.
+    If w is defined, thatn the Text element has regular “Text” behavior.
     """
     return Text(bs, **kwargs)
 

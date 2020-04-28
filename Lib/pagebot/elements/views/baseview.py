@@ -12,10 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     view.py
+#     baseview.py
 #
 
-from pagebot import getContext
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 
@@ -47,11 +46,12 @@ class BaseView(Element):
         self.verbose = verbose
 
         self.context = context # Set the self._context property.
+
         if context is not None:
             self.context.setSize(self.w, self.h)
 
         # Optional implemented by inheriting view classes to preset parameters
-        self.setControls() 
+        self.setControls()
 
         # List of collected elements that need to draw their info on top of the
         # main drawing.
@@ -61,7 +61,7 @@ class BaseView(Element):
         self._isDrawn = False
 
     def _getContext(self):
-        """Answers the best / default context for this type of view. To be 
+        """Answers the best / default context for this type of view. To be
         redefined by inheriting view classes."""
         raise NotImplementedError
 
@@ -84,8 +84,10 @@ class BaseView(Element):
         <FlatContext>
         """
         return self._context
+
     def _set_context(self, context):
         self._context = context
+
     context = property(_get_context, _set_context)
 
     def setControls(self):

@@ -492,11 +492,11 @@ class FlatContext(BaseContext):
         if isinstance(s, (str, self.STRING_CLASS)): # Str or BabelString
             s = self.fromBabelString(s)
         assert isinstance(s, self.STRING_CLASS), '%s.newString needs %s, not %s' % (
-            self.__class__.__name__, 
-            self.STRING_CLASS.__name__, 
+            self.__class__.__name__,
+            self.STRING_CLASS.__name__,
             s.__class__.__name__)
         s.context = self
-        return s            
+        return s
 
     def text(self, bs, p):
         """Places the babelstring instance at position p. The position can be
@@ -688,7 +688,7 @@ class FlatContext(BaseContext):
             for run in bs.runs:
                 fs += self.STRING_CLASS(run.s, style=run.style, e=bs.e, context=bs.context)
             return fs
-        raise ValueError('%s.fromBabelString: String type %s not supported' % 
+        raise ValueError('%s.fromBabelString: String type %s not supported' %
             (self.__class__.__name__, pbsOrFs.__class__.__name__))
 
     #   F O N T
