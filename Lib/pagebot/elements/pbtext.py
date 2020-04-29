@@ -623,7 +623,7 @@ class Text(Element):
         """
         context = self.context
         p = pointOffset(self.origin, origin)
-        tx, _, _, = p = self._applyScale(view, p)
+        tx, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         context = view.context # Get current context
@@ -649,7 +649,7 @@ class Text(Element):
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
             self.buildFrame(view, (px, py+self.bs.th-self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
-            context.drawString(self.bs, (px, py))
+            context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
