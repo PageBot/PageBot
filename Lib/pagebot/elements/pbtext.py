@@ -385,8 +385,8 @@ class Text(Element):
     styledLines = property(_get_styledLines)
 
     def _get_xTextAlign(self):
-        """Answer the type of x-alignment. 
-        
+        """Answer the type of x-alignment.
+
         Note that self.xAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
         and self.xTextAlign is equivalnent.
@@ -409,11 +409,11 @@ class Text(Element):
         return self._validateXAlign(self.bs.xTextAlign)
     def _set_xTextAlign(self, xTextAlign):
         if self._bs is not None:
-            self.bs.xTextAlign = self._validateXAlign(xTextAlign) 
+            self.bs.xTextAlign = self._validateXAlign(xTextAlign)
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
     def _get_yTextAlign(self):
-        """Answer the type of y-alignment. 
+        """Answer the type of y-alignment.
 
         Note that self.yAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasHeight == False), then the behavior of self.yAlign

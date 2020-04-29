@@ -155,21 +155,21 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
 
         # Alignment of origin on element, one of (None, LEFT, CENTER, RIGHT),
         # as defined in constants.XALIGNS.
-        # Note that formatted text string flows are aligned by the xTextAlign attribute. 
+        # Note that formatted text string flows are aligned by the xTextAlign attribute.
         # xAlign is about the position of the element box.
         xAlign = LEFT, # Default alignment,
 
         # Default alignment for elements like image, that float in their
-        # designated space, on of: (None, TOP, BOTTOM, MIDDLE, CENTER, 
+        # designated space, on of: (None, TOP, BOTTOM, MIDDLE, CENTER,
         # ("middle" is PageBot. "center" is CSS) as defined in constants.YALIGNS
-        # The origin-top feature is discontinued (it never properly worked). 
+        # The origin-top feature is discontinued (it never properly worked).
         # Origin of all elements is at bottom-left.
         yAlign = BOTTOM,
- 
+
         # Default alignment in z-axis is in front, closest to the viewer.
         zAlign = FRONT,
 
-        # Alignment of text inside text boxes, one of (None, LEFT, CENTER, 
+        # Alignment of text inside text boxes, one of (None, LEFT, CENTER,
         # RIGHT, JUSTIFIED), as defined in constants.XALIGNS
         # For Text elements with undefined width (behaving as a string, the
         # width comes from the rendered unwrapped text width), xAlign and
@@ -177,12 +177,12 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         xTextAlign = LEFT,
 
         # Default alignment for elements like image, that float in their
-        # designated space, on of: (None, TOP, BOTTOM, BASELINE, ASCENDER, 
+        # designated space, on of: (None, TOP, BOTTOM, BASELINE, ASCENDER,
         # DESCENDER, MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
         # BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X) as defined
         # in constants.YALIGNS
-        # For Text elements with undefined height, xAlign and xTextAlign 
-        # are equivalent. 
+        # For Text elements with undefined height, xAlign and xTextAlign
+        # are equivalent.
         yTextAlign = BASELINE,
 
         # There is no zTextAlign
