@@ -104,8 +104,7 @@ class PageBotString(BabelString):
         return self
 
     @classmethod
-    def newString(cls, s, context=None, e=None, style=None, w=None, h=None,
-            pixelFit=True):
+    def newString(cls, s, style=None):
         """Answer a new PageBotString instance.
 
         >>> from pagebot.toolbox.units import pt

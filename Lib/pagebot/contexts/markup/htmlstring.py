@@ -125,7 +125,7 @@ class HtmlString(BabelString):
     # String methods.
 
     @classmethod
-    def newString(cls, pbs=None, style=None):
+    def newString(cls, s=None, context=None, style=None):
         """Answers a FlatString instance from valid attributes in *style*."""
         '''
         sUpperCase = css('uppercase', e, style)
@@ -138,7 +138,7 @@ class HtmlString(BabelString):
         elif sCapitalized:
             s = s.capitalize()
         '''
-        return cls(s, context)
+        return cls(s=s, context=context, style=style)
 
     def asBabelString(self):
         # TODO: to be implemented.
