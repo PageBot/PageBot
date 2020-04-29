@@ -4934,7 +4934,7 @@ class Element:
         else:
             c.fill(eFill)
 
-        if eStroke in (None, noColor): 
+        if eStroke in (None, noColor):
             c.stroke(None)
         else: # Separate from border behavior if set.
             c.stroke(eStroke, self.strokeWidth)

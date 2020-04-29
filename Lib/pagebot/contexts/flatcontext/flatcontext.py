@@ -690,8 +690,9 @@ class FlatContext(BaseContext):
                 pass
                 #fs += self.STRING_CLASS(run.s, style=run.style, context=bs.context)
             return fs
+
         raise ValueError('%s.fromBabelString: String type %s not supported' %
-            (self.__class__.__name__, pbsOrFs.__class__.__name__))
+            (self.__class__.__name__, bs.__class__.__name__))
 
     #   F O N T
 
