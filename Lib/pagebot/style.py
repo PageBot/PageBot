@@ -153,6 +153,14 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # combined as in [(x1, y1), ...]
         folds = None,
 
+        # Alignment of text inside text boxes, one of (None, LEFT, CENTER, 
+        # RIGHT, JUSTIFIED), as defined in constants.XTEXTALIGNS
+        # For Text elements with undefined width (behaving as a string, the
+        # width comes from the rendered unwrapped text width), xAlign and
+        # xTextAlign are equivalent.
+        # There is no separate yTextAlign and zTextAlign
+        xTextAlign = LEFT,
+
         # Alignment of origin on element, one of (None, LEFT, CENTER, RIGHT),
         # as defined in constants.XALIGNS.
         # Note that formatted text string flows are aligned by the xTextAlign attribute. 
@@ -164,28 +172,16 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # ("middle" is PageBot. "center" is CSS) as defined in constants.YALIGNS
         # The origin-top feature is discontinued (it never properly worked). 
         # Origin of all elements is at bottom-left.
+        #
+        # Default alignment for Text elements the range of vertical 
+        # alignments is: (None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER, 
+        # MIDDLE, CENTER – "middle" is PageBot. "center" is CSS
+        # BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X) as defined
+        # in constants.YTEXTALIGNS
         yAlign = BOTTOM,
  
         # Default alignment in z-axis is in front, closest to the viewer.
         zAlign = FRONT,
-
-        # Alignment of text inside text boxes, one of (None, LEFT, CENTER, 
-        # RIGHT, JUSTIFIED), as defined in constants.XALIGNS
-        # For Text elements with undefined width (behaving as a string, the
-        # width comes from the rendered unwrapped text width), xAlign and
-        # xTextAlign are equivalent.
-        xTextAlign = LEFT,
-
-        # Default alignment for elements like image, that float in their
-        # designated space, on of: (None, TOP, BOTTOM, BASELINE, ASCENDER, 
-        # DESCENDER, MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
-        # BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X) as defined
-        # in constants.YALIGNS
-        # For Text elements with undefined height, xAlign and xTextAlign 
-        # are equivalent. 
-        yTextAlign = BASELINE,
-
-        # There is no zTextAlign
 
         # Repeater flag, shaped from CSS image background-repeat value
         # Possible values: CSS_REPEAT:

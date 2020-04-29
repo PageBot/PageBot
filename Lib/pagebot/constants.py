@@ -698,12 +698,12 @@ DEFAULT_FALLBACK_FONT_PATH = 'Verdana' # Fallback font for DrawBot.
 DEFAULT_GALLEY_NAME = 'Galley' # Used for page.galley default content storage while no layou defined.
 
 # Types of grid set can be used in the view.showGrid set.
-GRID_SQR = 'GridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
-GRID_COL = 'GridColumns' # Show grid as columns, ignoring rows.
-GRID_ROW = 'GridRows' # Show grid as row, ignoring columns.
-GRID_SQR_BG = 'GridSquareBackground' # Draw grid at background
-GRID_COL_BG = 'GridColumnBackground' # Drag grid as columns at background
-GRID_ROW_BG = 'GridRowBackground' # Drag grid as row
+GRID_SQR = 'gridSquare' # Type of grid, drawing as rectangles on columns and rows crossings.
+GRID_COL = 'gridColumns' # Show grid as columns, ignoring rows.
+GRID_ROW = 'gridRows' # Show grid as row, ignoring columns.
+GRID_SQR_BG = 'gridSquareBackground' # Draw grid at background
+GRID_COL_BG = 'gridColumnBackground' # Drag grid as columns at background
+GRID_ROW_BG = 'gridRowBackground' # Drag grid as row
 DEFAULT_GRID = {GRID_COL, GRID_ROW} # If full grid should be shown on top of all elements.
 DEFAULT_GRID_BG = {GRID_COL_BG, GRID_ROW_BG} # If full grid should be shown at the back of all elements.
 GRID_OPTIONS = {GRID_SQR, GRID_COL, GRID_ROW, GRID_SQR_BG, GRID_COL_BG, GRID_ROW_BG}
@@ -727,20 +727,27 @@ BASE_OPTIONS = {BASE_LINE, BASE_LINE_BG, BASE_INDEX_LEFT, BASE_INDEX_RIGHT, BASE
 
 # Additional vertical alignment for Text elements
 # Also TOP for ascender alignment and BOTTOM for descender alignment of bottom line
-BASELINE = 'Baseline' # Use first baseline position as vertical position of origin (for Text)
-BASE_BOTTOM = 'BaselineBottom' # Use last baseline position as vertical position of origin (for Text)
+BASELINE = 'baseline' # Use first baseline position as vertical position of origin (for Text)
+BASE_BOTTOM = 'baselineBottom' # Use last baseline position as vertical position of origin (for Text)
 CAPHEIGHT = 'capHeight' # Aligns with the largest capHeight of first textline.
 XHEIGHT = 'xHeight' # Aligns with the largest xHeight of the first textline
 MIDDLE_CAP = 'middleCapHeight' # yALign, vertical centered on capHeight (of first line of a BabelString)
 MIDDLE_X = 'middleXHeight' # yALign, vertical centered on xHeight
 ASCENDER = 'ascender' # Aligns with the largest ascender /h in the top line
 DESCENDER = 'descender' # Aligns with the lowest descender /p in the bottom line
+
 # Types of alignments
-XALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
-YALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
+XALIGNS = {None, LEFT, RIGHT, CENTER}
+YALIGNS = {None, TOP, BOTTOM, 
+    MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
+}
+ZALIGNS = {None, FRONT, MIDDLE, BACK}
+
+# Types of text alignments
+XTEXTALIGNS = {None, LEFT, RIGHT, CENTER, JUSTIFIED}
+YTEXTALIGNS = {None, TOP, BOTTOM, BASELINE, ASCENDER, DESCENDER,
     MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
     BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X}
-ZALIGNS = {None, FRONT, MIDDLE, BACK}
 
 # Flags where to draw crop marks on folds.
 TOP_FOLD = TOP+'Fold'

@@ -82,7 +82,7 @@ class Table(Element):
             else:
                 colName = None
             self.HEADERCELL_CLASS(bs, parent=header, w=self.DEFAULT_W, h=self.DEFAULT_H,
-                xTextAlign=CENTER, yTextAlign=MIDDLE, name=colName,
+                xAlign=CENTER, yAlign=MIDDLE, name=colName,
                 borders=self.borders, fill=color(0.4), conditions=cellConditions)
 
         bs = self.newString('abc', style=dict(textFill=blackColor, fontSize=10))
@@ -90,7 +90,7 @@ class Table(Element):
             row = self.ROW_CLASS(parent=self, h=self.DEFAULT_H, conditions=rowConditions)
             for colIndex in range(cols):
                 self.CELL_CLASS(bs, parent=row, w=self.DEFAULT_W, h=self.DEFAULT_H, borders=self.borders,
-                    xTextAlign=CENTER, yTextAlign=MIDDLE, conditions=cellConditions)
+                    xAlign=CENTER, yAlign=MIDDLE, conditions=cellConditions)
 
     def getHeader(self):
         return self.elements[0]
