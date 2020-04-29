@@ -58,14 +58,13 @@ class Text(Element):
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
             parent=None, padding=None, conditions=None, xTextAlign=None,
-            xAlign=None, yAlign=None, **kwargs):
+            xAlign=None, yAlign=None, margin=None, **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
 
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
-        Element.__init__(self, parent=parent, padding=padding,
-            conditions=conditions, **kwargs)
+        Element.__init__(self, parent=parent, conditions=conditions, **kwargs)
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
@@ -87,6 +86,11 @@ class Text(Element):
             self.xAlign = xAlign
         if yAlign is not None:
             self.yAlign = yAlign
+
+        if padding is not None:
+            self.padding = padding
+        if margin is not None:
+            self.margin = margin
 
         # Now there is a self._bs, set it's width and height (can be None)
         self.w = w
@@ -124,7 +128,7 @@ class Text(Element):
     bs = property(_get_bs, _set_bs)
 
     def _get_w(self): # Width
-        """Property for self._w, holding the width of the textbox.
+        """Property for self.bs.w, holding the width of the textbox.
 
         >>> from pagebot.document import Document
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
@@ -138,7 +142,7 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        return self.bs.w
+        return self.bs.w + self.bs.indent + self.bs.tailIndent
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
@@ -195,12 +199,50 @@ class Text(Element):
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
 
     def _get_indent(self):
-        """DrawBot-compatible indent of text.
+        """DrawBot-compatible indent of text. Equivalent to padding-left pl.
+
+        >>> t = Text('ABCD')
+        >>> t.indent, t.pl, t.bs.indent
+        (0pt, 0pt, 0pt)
+        >>> t.indent = mm(5)
+        >>> t.indent, t.pl, t.bs.indent
+        (5mm, 5mm, 5mm)
+        >>> t.pl = pt(16)
+        >>> t.indent, t.pl, t.bs.indent
+        (16pt, 16pt, 16pt)
         """
+        if self._bs is not None:
+            return self.bs.indent
         return self.css('indent')
     def _set_indent(self, indent):
-        self.style['indent'] = units(indent)
-    indent = property(_get_indent, _set_indent)
+        indent = units(indent)
+        if self._bs:
+            self.bs.indent = indent
+        self.style['indent'] = indent
+    indent = pl = property(_get_indent, _set_indent)
+
+    def _get_tailIndent(self):
+        """DrawBot-compatible indent of text. Equivalent to padding-right pr.
+
+        >>> t = Text('ABCD')
+        >>> t.tailIndent, t.pr, t.bs.tailIndent
+        (0pt, 0pt, 0pt)
+        >>> t.tailIndent = mm(5)
+        >>> t.tailIndent, t.pr, t.bs.tailIndent
+        (5mm, 5mm, 5mm)
+        >>> t.pr = pt(16)
+        >>> t.tailIndent, t.pr, t.bs.tailIndent
+        (16pt, 16pt, 16pt)
+        """
+        if self._bs is not None:
+            return self.bs.tailIndent
+        return self.css('tailIndent')
+    def _set_tailIndent(self, tailIndent):
+        tailIndent = units(tailIndent)
+        if self._bs:
+            self.bs.tailIndent = tailIndent
+        self.style['tailIndent'] = tailIndent
+    tailIndent = pr = property(_get_tailIndent, _set_tailIndent)
 
     def _get_baselines(self):
         if self._baselines is None:
@@ -636,19 +678,33 @@ class Text(Element):
 
         if self.bs.hasWidth or self.bs.hasHeight:
             # Forced width and/or height set, behave as a textbox.
+            frameY = py-self.h+self.bs.lines[0].y
             # Draw optional background, frame or borders.
             # Width is padded width of self.
-            self.buildFrame(view, (px, py-self.h+self.bs.lines[0].y, self.pw or self.bs.tw, self.bs.th))
-            # No size defined, just draw the string with it's own (bs.tw, bs.th)
-            # Note that there still can be multiple lines in the the string if
-            # it contains '\n' characters.
+            self.buildFrame(view, (px, frameY, self.pw or self.bs.tw, self.bs.th))
+
+            if self.showMargin:
+                view.drawMargin(self, (px, frameY))
+            if self.showPadding:
+                view.drawPadding(self, (px, frameY))
+
+            # Draw text as box
             context.drawText(self.bs, (tx, py-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)
+            frameY = py-self.bs.th+self.bs.topLineAscender
             # Draw optional background, frame or borders.
-            #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
-            self.buildFrame(view, (px, py+self.bs.th-self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
+            self.buildFrame(view, (px, frameY, self.bs.tw, self.h))
+
+            if self.showMargin:
+                view.drawMargin(self, (px, frameY))
+            if self.showPadding:
+                view.drawPadding(self, (px, frameY))
+
+            # No size defined, just draw the string with it's own (bs.tw, bs.th)
+            # Note that there still can be multiple lines in the string if
+            # it contains '\n' characters.
             context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)

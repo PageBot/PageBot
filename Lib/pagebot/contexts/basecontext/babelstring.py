@@ -283,7 +283,10 @@ class BabelString:
         if self.context is None: # Required context to be defined.
             return None
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
+            w = self._w
+            if w is not None:
+                w += self.indent + self.tailIndent
+            self._twh = self.context.textSize(self.cs, w=w, h=self._h)
         return self._twh[0]
     tw = property(_get_tw)
 
