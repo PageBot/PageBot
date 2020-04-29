@@ -385,10 +385,7 @@ class Text(Element):
     styledLines = property(_get_styledLines)
 
     def _get_xTextAlign(self):
-        """Answer the type of x-alignment. Since the orienation of the box is equivalent 
-        to the on the alignment of the text, it is stored as self.bs.xTextAlign, referring 
-        to the current run style.
-        That is why we redefine the default element.xTextAlign propety.
+        """Answer the type of x-alignment. 
         
         Note that self.xAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
@@ -408,7 +405,6 @@ class Text(Element):
         'right'
         >>> bs.xTextAlign == bs.runs[-1].style['xTextAlign']
         True
-
         """
         return self._validateXAlign(self.bs.xTextAlign)
     def _set_xTextAlign(self, xTextAlign):
@@ -417,15 +413,19 @@ class Text(Element):
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
     def _get_yTextAlign(self):
-        """Answer the type of y-alignment. Since the orienation of the box is equivalent to the
-        on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
-        That is why we redefine the default element.yAlign and element.yTextAlign propeties.
-        For vertical alignment self.yAlign and self.yTextAlign are identical.
+        """Answer the type of y-alignment. 
+
+        Note that self.yAlign defines the position of the box. If the BabelString is
+        used in plain text mode (bs.hasHeight == False), then the behavior of self.yAlign
+        and self.yTextAlign is equivalnent.
+        If the BabelString has a height defined (bs.hasHeight == True), then the self.yAlign
+        defines the alignment of the box and self.yTextAlign defines the alignment of
+        the text inside the box.
 
         >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
-        >>> bs = context.newString('ABCD')
+        >>> bs = context.newString('ABCD') # No height defined.
         >>> bs.yTextAlign
         'top'
         >>> bs.yTextAlign = MIDDLE
@@ -435,13 +435,13 @@ class Text(Element):
         True
         >>> t = Text(bs)
         >>> t.yTextAlign, t.yAlign
-        ('middle', 'middle')
+        ('middle', 'bottom')
         """
         return self._validateYAlign(self.bs.yTextAlign)
     def _set_yTextAlign(self, yTextAlign):
         if self._bs is not None:
             self.bs.yTextAlign = self._validateYAlign(yTextAlign) # Save locally, blocking CSS parent scope for this param.
-    yAlign = yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
+    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
 
     #   S P E L L  C H E C K
 
@@ -740,7 +740,7 @@ class Text(Element):
         (300pt, 300pt)
         >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> doc.export('_export/Text-top-300.pdf')
-        >>> t.yTextAlign = MIDDLE_CAP # Equivalent to t.yAlign
+        >>> t.yTextAlign = MIDDLE_CAP # For Text this is quivalent to t.yAlign
         >>> t.y -= 100
         >>> t.top, t.y # Different now, with other alignment.
         (241.9pt, 200pt)

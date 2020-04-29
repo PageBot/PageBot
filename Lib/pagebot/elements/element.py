@@ -3133,7 +3133,7 @@ class Element:
         return self._validateXAlign(self.css('xAlign'))
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
-    xAlign = align property(_get_xAlign, _set_xAlign)
+    xAlign = property(_get_xAlign, _set_xAlign)
 
     def _get_yAlign(self): # Answer the type of y-alignment.
         return self._validateYAlign(self.css('yAlign'))
@@ -3158,6 +3158,9 @@ class Element:
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
     def _get_yTextAlign(self): # Answer the type of y-alignment.
+        """Answer the type of y-alignment for text strings. 
+        Only defined for inheriting Text elements.
+        """
         raise NotImplementedError
     def _set_yTextAlign(self, yTextAlign):
         raise NotImplementedError
