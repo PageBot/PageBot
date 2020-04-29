@@ -606,22 +606,22 @@ class Text(Element):
         view.drawElementFrame(self, p, **kwargs)
         #print('-;f;f;f', self.bs, self.bs.w, self.bs.h, self.bs.tw, self.bs.th)
 
-        if self.bs.w is not None or self.bs.h is not None:
+        if self.bs.hasWidth or self.bs.hasHeight:
+            # Forced width and/or height set, behave as a textbox.
             # Draw optional background, frame or borders.
-            # Width is padded with of self.
-            self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.pw or self.bs.tw, self.bs.th))
+            # Width is padded width of self.
+            self.buildFrame(view, (px, py-self.h+self.bs.lines[0].y, self.pw or self.bs.tw, self.bs.th))
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the the string if
             # it contains '\n' characters.
-            # it contains '\n' characters.
-            context.drawText(self.bs, (tx, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
+            context.drawText(self.bs, (tx, py-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
-            self.buildFrame(view, (px, py-self.bs.th+self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
-            context.drawString(self.bs, (tx, py))
+            self.buildFrame(view, (px, py+self.bs.th-self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
+            context.drawString(self.bs, (px, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
@@ -644,7 +644,8 @@ class Text(Element):
         return self._applyHorizontalAlignment(px), self._applyVerticalAlignment(py), pz
 
     def _applyHorizontalAlignment(self, x):
-        # Horizontal alignment is done by the text
+        # Horizontal alignment is done by the text itself. This is just for other elements,
+        # such as the frame.
         xAlign = self.xAlign
         if xAlign == CENTER:
             x -= self.w/2/self.scaleX

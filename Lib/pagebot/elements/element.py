@@ -4895,7 +4895,7 @@ class Element:
         return s
 
     def buildFrame(self, view, p):
-        """Draw fill of the rectangular element space. The self.css('fill')
+        """Draw fill of the rectangular element space. The self.fill
         defines the color of the element background. Instead of the DrawBot
         stroke and strokeWidth attributes, use borders or (borderTop,
         borderRight, borderBottom, borderLeft) attributes.
@@ -4919,12 +4919,12 @@ class Element:
         if eGradient: # Gradient overwrites setting of fill.
             # TODO: Make bleed work here too.
             c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
-        elif eFill is noColor:
+        elif eFill in (None, noColor):
             c.fill(None)
         else:
             c.fill(eFill)
 
-        if eStroke is noColor: 
+        if eStroke in (None, noColor): 
             c.stroke(None)
         else: # Separate from border behavior if set.
             c.stroke(eStroke, self.strokeWidth)
@@ -4933,6 +4933,9 @@ class Element:
             c.drawPath(self.framePath)
         c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
 
+        c.fill(None)
+        c.stroke(None)
+        
         c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.

@@ -93,7 +93,7 @@ class Line(Element):
         >>> e.size3D
         (300pt, 3pt, 100pt)
         """
-        context = self.context # Get current context and builder.
+        c = self.context # Get current context and builder.
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -102,9 +102,10 @@ class Line(Element):
 
         # TODO: Add dashed line drawing here.
 
-        context.stroke(s, w)
-        context.line((px, py), (px + self.w, py + self.h))
-
+        c.stroke(s, w)
+        c.line((px, py), (px + self.w, py + self.h))
+        c.stroke(None)
+        
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 

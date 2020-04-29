@@ -164,8 +164,7 @@ content = {
         although, he told one interviewer, he was "sure I’ll have to give the President 18 strokes!""",
         """Political revolutions in <#country#> and <#country#> not only inspired other regional uprisings – they sparked a
         flurry of ideas about how to help revolutionaries better communicate when their governments pull the plug on the World Wide Web.""",
-        """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share
-        the connection with others on the network.""",
+        """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share the connection with others on the network.""",
         """<#article_binder#> protesters in <#country#> call for the return of the Internet on <#time_months#> 1st after the government shut it down.""",
         """The <#cities_USmajor#>-based airline blamed the computer malfunction on “a network connectivity issue” <#time_days#> night.""",
         """The clip, called “STUCK,” was posted this week on <#i_host_users#> by a user identifying himself as <#name#>.""",
