@@ -3133,7 +3133,7 @@ class Element:
         return self._validateXAlign(self.css('xAlign'))
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
-    xAlign = property(_get_xAlign, _set_xAlign)
+    xAlign = align property(_get_xAlign, _set_xAlign)
 
     def _get_yAlign(self): # Answer the type of y-alignment.
         return self._validateYAlign(self.css('yAlign'))
@@ -3146,6 +3146,22 @@ class Element:
     def _set_zAlign(self, zAlign):
         self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
     zAlign = property(_get_zAlign, _set_zAlign)
+
+
+    def _get_xTextAlign(self): 
+        """Answer the type of x-alignment for text strings. 
+        Only defined for inheriting Text elements.
+        """
+        raise NotImplementedError
+    def _set_xTextAlign(self, xTextAlign):
+        raise NotImplementedError
+    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
+
+    def _get_yTextAlign(self): # Answer the type of y-alignment.
+        raise NotImplementedError
+    def _set_yTextAlign(self, yTextAlign):
+        raise NotImplementedError
+    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
 
 
     def _get_gw(self): # Gutter width
@@ -4935,7 +4951,7 @@ class Element:
 
         c.fill(None)
         c.stroke(None)
-        
+
         c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.

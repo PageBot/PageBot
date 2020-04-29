@@ -57,7 +57,7 @@ class Text(Element):
     TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
-            parent=None, padding=None, conditions=None, xAlign=None,
+            parent=None, padding=None, conditions=None, xTextAlign=None,
             yAlign=None, **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
@@ -78,12 +78,12 @@ class Text(Element):
 
         # Set as property, to make sure there's always a generic BabelString
         # instance or None. Needs to be done before element initialize, as
-        # some attributes (Text.xAlign) may need the string style as reference.
+        # some attributes (Text.xTextAlign) may need the string style as reference.
         self.bs = bs # BabelString source for this Text element.
 
-        if xAlign is not None:
-            assert xAlign in XALIGNS
-            self.xAlign = xAlign
+        if xTextAlign is not None:
+            assert xTextAlign in XALIGNS
+            self.xTextAlign = xTextAlign
 
         # Can be one of BASELINE (default), TOP (equivalent to ascender height
         # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
@@ -384,55 +384,64 @@ class Text(Element):
         return styledLines
     styledLines = property(_get_styledLines)
 
-    def _get_xAlign(self):
-        """Answer the type of x-alignment. Since the orienation of the box is equivalent to the
-        on the alignment of the text, it is stored as self.bs.xAlign, referring to the current run style.
-        That is why we redefine the default element.xAlign propety.
+    def _get_xTextAlign(self):
+        """Answer the type of x-alignment. Since the orienation of the box is equivalent 
+        to the on the alignment of the text, it is stored as self.bs.xTextAlign, referring 
+        to the current run style.
+        That is why we redefine the default element.xTextAlign propety.
+        
+        Note that self.xAlign defines the position of the box. If the BabelString is
+        used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
+        and self.xTextAlign is equivalnent.
+        If the BabelString has a width defined (bs.hasWidth == True), then the self.xAlign
+        defines the alignment of the box and self.xTextAlign defines the alignment of
+        the text inside the box.
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
-        >>> bs = context.newString('ABCD', dict(xAlign=CENTER))
-        >>> bs.xAlign
+        >>> bs = context.newString('ABCD', dict(xTextAlign=CENTER))
+        >>> bs.xTextAlign
         'center'
-        >>> bs.xAlign = RIGHT
-        >>> bs.xAlign
+        >>> bs.xTextAlign = RIGHT
+        >>> bs.xTextAlign
         'right'
-        >>> bs.xAlign == bs.runs[-1].style['xAlign']
+        >>> bs.xTextAlign == bs.runs[-1].style['xTextAlign']
         True
 
         """
-        return self._validateXAlign(self.bs.xAlign)
-    def _set_xAlign(self, xAlign):
+        return self._validateXAlign(self.bs.xTextAlign)
+    def _set_xTextAlign(self, xTextAlign):
         if self._bs is not None:
-            self.bs.xAlign = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
-    xAlign = property(_get_xAlign, _set_xAlign)
+            self.bs.xTextAlign = self._validateXAlign(xTextAlign) 
+    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
-    def _get_yAlign(self):
+    def _get_yTextAlign(self):
         """Answer the type of y-alignment. Since the orienation of the box is equivalent to the
         on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
-        That is why we redefine the default element.yAlign propety.
+        That is why we redefine the default element.yAlign and element.yTextAlign propeties.
+        For vertical alignment self.yAlign and self.yTextAlign are identical.
 
         >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD')
-        >>> bs.yAlign
+        >>> bs.yTextAlign
         'top'
-        >>> bs.yAlign = MIDDLE
-        >>> bs.yAlign
+        >>> bs.yTextAlign = MIDDLE
+        >>> bs.yTextAlign
         'middle'
-        >>> bs.yAlign == bs.runs[-1].style['yAlign']
+        >>> bs.yTextAlign == bs.runs[-1].style['yTextAlign']
         True
         >>> t = Text(bs)
-        >>> t.yAlign
-        'middle'
+        >>> t.yTextAlign, t.yAlign
+        ('middle', 'middle')
         """
-        return self._validateYAlign(self.bs.yAlign)
-    def _set_yAlign(self, yAlign):
+        return self._validateYAlign(self.bs.yTextAlign)
+    def _set_yTextAlign(self, yTextAlign):
         if self._bs is not None:
-            self.bs.yAlign = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
-    yAlign = property(_get_yAlign, _set_yAlign)
+            self.bs.yTextAlign = self._validateYAlign(yTextAlign) # Save locally, blocking CSS parent scope for this param.
+    yAlign = yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
 
     #   S P E L L  C H E C K
 
@@ -693,7 +702,7 @@ class Text(Element):
         >>> context = getContext('DrawBot')
         >>> doc = Document(size=A4, context=context)
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
-        >>> t = Text(bs, x=pt(100), y=pt(500), yAlign=BOTTOM, fill=0.8, parent=doc[1])
+        >>> t = Text(bs, x=pt(100), y=pt(500), yTextAlign=BOTTOM, fill=0.8, parent=doc[1])
         >>> t.bottom, t.y
         (500pt, 500pt)
         >>> t.bottom = 300
@@ -731,7 +740,7 @@ class Text(Element):
         (300pt, 300pt)
         >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> doc.export('_export/Text-top-300.pdf')
-        >>> t.yAlign = MIDDLE_CAP
+        >>> t.yTextAlign = MIDDLE_CAP # Equivalent to t.yAlign
         >>> t.y -= 100
         >>> t.top, t.y # Different now, with other alignment.
         (241.9pt, 200pt)
