@@ -14,15 +14,15 @@
 #
 #     babelstring.py
 #
-#     BabelString is a generic string format, that stores a string or
-#     text as a list of BabelRun instances. Those runs can be manipulated
-#     without the setting of a context, as long as the methods don't need
-#     rendering of the rest flow.
-#     A number of operation requires a context to return a rendered native
-#     format, such as size, line positions and overflow.
-#     For efficiency that rendered string and meta information (such as
-#     position of lines) are calculate upon request and stored in the
-#     BabelString for later use. Changes to the runs will reset this cache.
+#     BabelString is a generic string format that stores a string or text as a
+#     list of BabelRun instances. runs can be manipulated independent of the
+#     context as long as rendering of the rest flow isn't required.
+#
+#     A number of operations require a context to return a rendered native
+#     format, such as size, line positions and overflow. For efficiency that
+#     rendered string and meta information (such as position of lines) are
+#     calculate upon request and stored in the BabelString for later use.
+#     Changes to the runs will reset this cache.
 #
 from copy import copy, deepcopy
 import weakref
@@ -34,10 +34,11 @@ from pagebot.toolbox.units import units, pt
 from pagebot.toolbox.color import color
 
 class BabelRun:
+
     def __init__(self, s, style=None):
-        """Answer the storage for string + style in BabelString.
-        Note that the style values of sequential runs are *not* cascading.
-        This is similar to the behavior of the DrawBot FormattedString attributes.
+        """Answer the storage for string + style in BabelString. Note that the
+        style values of sequential runs are *not* cascading. This is similar
+        to the behavior of the DrawBot FormattedString attributes.
 
         >>> from pagebot.elements import *
         >>> BabelRun('ABCD', dict(font='PageBot-Regular'))
@@ -79,7 +80,6 @@ class BabelRun:
                 s += '...'
             r += ' "%s"' % s.replace('\n',' ')
         return r + '>'
-
 
 class BabelLineInfo:
     def __init__(self, x, y, cLine, context):
@@ -807,11 +807,14 @@ class BabelString:
         if self.runs:
             return self.runs[-1].style
         return {}
+
     def _set_style(self, style):
         if self.runs:
             self.runs[-1].style = style
-        else: # No runs, create a new one, with style and empty string.
+        else:
+            # No runs, create a new one, with style and empty string.
             self.runs.append(BabelRun(style=style))
+
     style = property(_get_style, _set_style)
 
     def _get_language(self):

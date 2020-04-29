@@ -17,7 +17,6 @@
 
 import re
 import difflib
-#import weakref
 from copy import deepcopy
 from fontTools.pens.boundsPen import BoundsPen
 
@@ -759,7 +758,7 @@ class FlatString(BabelString):
         pass
 
     @classmethod
-    def newString(cls, pbs=None, style=None, e=None):
+    def newString(cls, s=None, style=None):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,
