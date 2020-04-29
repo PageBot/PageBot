@@ -684,9 +684,11 @@ class FlatContext(BaseContext):
         if isinstance(bs, str):
             return self.STRING_CLASS(bs)
         if isinstance(bs, BabelString):
-            fs = self.STRING_CLASS(e=bs.e)
+            fs = self.STRING_CLASS()
             for run in bs.runs:
-                fs += self.STRING_CLASS(run.s, style=run.style, e=bs.e, context=bs.context)
+                # @@@@@@@ FIXME: Recursion error
+                pass
+                #fs += self.STRING_CLASS(run.s, style=run.style, context=bs.context)
             return fs
         raise ValueError('%s.fromBabelString: String type %s not supported' %
             (self.__class__.__name__, pbsOrFs.__class__.__name__))

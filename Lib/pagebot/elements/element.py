@@ -4338,39 +4338,39 @@ class Element:
     #   S H A D O W   &  G R A D I E N T
 
     def _get_shadow(self):
-        return self.css('shadow')
+        """Answer the Shadow instance of self.
 
+        >>> from pagebot.gradient import Shadow
+        >>> e = Element()
+        >>> e.shadow = Shadow(offset=pt(6, -6), blur=pt(6), color=0)
+        >>> e.shadow
+        <Shadow offset=(6pt, -6pt) blur=6pt Color(r=0, g=0, b=0)>
+        """
+        return self.css('shadow')
     def _set_shadow(self, shadow):
         assert shadow is None or isinstance(shadow, self.SHADOW_CLASS)
         self.style['shadow'] = shadow
-
     shadow = property(_get_shadow, _set_shadow)
 
     def _get_textShadow(self):
         return self.css('textShadow')
-
     def _set_textShadow(self, textShadow):
         assert textShadow is None or isinstance(textShadow, self.SHADOW_CLASS)
         self.style['textShadow'] = textShadow
-
     textShadow = property(_get_textShadow, _set_textShadow)
 
     def _get_gradient(self):
         return self.css('gradient')
-
     def _set_gradient(self, gradient):
         assert gradient is None or isinstance(gradient, self.GRADIENT_CLASS)
         self.style['gradient'] = gradient
-
     gradient = property(_get_gradient, _set_gradient)
 
     def _get_textGradient(self):
         return self.css('textGradient')
-
     def _set_textGradient(self, textGradient):
         assert textGradient is None or isinstance(textGradient, self.GRADIENT_CLASS)
         self.style['textGradient'] = textGradient
-
     textGradient = property(_get_textGradient, _set_textGradient)
 
     def _get_box3D(self):
@@ -4895,42 +4895,48 @@ class Element:
         return s
 
     def buildFrame(self, view, p):
-        """Draw fill of the rectangular element space. The self.css('fill')
+        """Draw fill of the rectangular element space. The self.fill
         defines the color of the element background. Instead of the DrawBot
         stroke and strokeWidth attributes, use borders or (borderTop,
         borderRight, borderBottom, borderLeft) attributes.
         """
         c = view.context
         eShadow = self.shadow
-
         if eShadow:
             c.saveGraphicState()
             c.setShadow(eShadow)
             c.rect(p[0], p[1], self.w, self.h)
             c.restoreGraphicState()
 
-        eFill = self.fill # Default is npColor
-        eStroke = self.css('stroke', default=noColor)
+        eFill = self.fill # Default is noColor
+        eStroke = self.stroke #self.css('stroke', default=noColor)
         eGradient = self.gradient
 
-        if eStroke is not noColor or eFill is not noColor or eGradient:
-            c.saveGraphicState()
+        #if eStroke is not noColor or eFill is not noColor or eGradient:
+        c.saveGraphicState()
 
-            # Drawing element fill and/or frame
-            if eGradient: # Gradient overwrites setting of fill.
-                # TODO: Make bleed work here too.
-                c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
-            else:
-                c.fill(eFill)
+        # Drawing element fill and/or frame
+        if eGradient: # Gradient overwrites setting of fill.
+            # TODO: Make bleed work here too.
+            c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
+        elif eFill in (None, noColor):
+            c.fill(None)
+        else:
+            c.fill(eFill)
 
-            if eStroke is not noColor: # Separate from border behavior if set.
-                c.stroke(eStroke, self.css('strokeWidth', pt(1)))
+        if eStroke in (None, noColor): 
+            c.stroke(None)
+        else: # Separate from border behavior if set.
+            c.stroke(eStroke, self.strokeWidth)
 
-            if self.framePath is not None: # In case defined, use instead of bounding box.
-                c.drawPath(self.framePath)
-            c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
+        if self.framePath is not None: # In case defined, use instead of bounding box.
+            c.drawPath(self.framePath)
+        c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
 
-            c.restoreGraphicState()
+        c.fill(None)
+        c.stroke(None)
+        
+        c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop

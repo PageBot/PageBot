@@ -164,11 +164,10 @@ content = {
         although, he told one interviewer, he was "sure I’ll have to give the President 18 strokes!""",
         """Political revolutions in <#country#> and <#country#> not only inspired other regional uprisings – they sparked a
         flurry of ideas about how to help revolutionaries better communicate when their governments pull the plug on the World Wide Web.""",
-        """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share
-        the connection with others on the network.""",
+        """If one individual within the <#j_adjective#> network is able to connect to the outside world, that person can share the connection with others on the network.""",
         """<#article_binder#> protesters in <#country#> call for the return of the Internet on <#time_months#> 1st after the government shut it down.""",
         """The <#cities_USmajor#>-based airline blamed the computer malfunction on “a network connectivity issue” <#time_days#> night.""",
-        """The clip, called "STUCK," was posted this week on <#i_host_users#> by a user identifying himself as <#name#>.""",
+        """The clip, called “STUCK,” was posted this week on <#i_host_users#> by a user identifying himself as <#name#>.""",
         """With his unending support I had the courage to make the big moves in my career, and I always had a clear vision of where I wanted to end up.”""",
         """Often only accessible from the sea, these so-called “floatels” are the sailing equivalent of a roadside inn, only much cooler.""",
         """But <#name_male#> also urged <#legal_professions#> to set up an oversight council, and makers to set up an of monitoring and addressing
@@ -187,7 +186,7 @@ content = {
         and form their own life raft to “make what no government can ever block.”""",
         """<#article_binder#> the new <#j_adjective#> network technology is not new, nor is it the only work-around to disabled wireless and Internet communications.""",
         """U.S. Secretary of State <#name#> said restrictions on Internet activity that prohibit free expression are among the most worrisome trends concerning human rights.""",
-        """<#article_binder#> the problem, "was resolved through troubleshooting procedures and restored at midnight," wrote <#air_carrier#> spokesman <#name#> in an e-mail to <#tv#>.""",
+        """<#article_binder#> the problem, “was resolved through troubleshooting procedures and restored at midnight,” wrote <#air_carrier#> spokesman <#name#> in an e-mail to <#tv#>.""",
         """<#article_binder#> long lines of people could be seen at airports in cities across the country, including <#cities_USmajor#>, <#cities_USmajor#> and
         <#cities_USmajor#>. Many passengers sat on the floor as they waited.""",
         """“While on our way home from Formula Drift <#towns_USgeneric#>, <#name#> and I found ourselves stranded over night in the
@@ -298,11 +297,11 @@ content = {
        its share of troubles, most of them the kind that might have been prevented. <#island#> is battling a failed economy,
        widespread poor health and a natural environment ruined from the inside. They’re the kinds of things that aren’t altogether
        different from what’s facing many of the rest of us, but they’re magnified in a place that’s only a <#num_ord_010_019#> the size of <#state_name#>.""",
-       """<#names_last#> revealed that <#name#> wanted to "kick his backside" after the implosion at the Masters, maybe come
+       """<#names_last#> revealed that <#name#> wanted to “kick his backside” after the implosion at the Masters, maybe come
        <#time_days#> the former great will be wanting to pat <#names_last#> on the back following a famous win...""",
        """<#article_binder#> many hard-line governments will attempt to drown out dissent by controlling the Internet with kill switches and
        firewalls. But with a phone – or a $<#figs_rand_2digit#> router the size of one – an individual can link to thousands of others,
-       creating a private <#j_adjective#> network harnessing the firepower of the Internet. """,
+       creating a private <#j_adjective#> network harnessing the firepower of the Internet.""",
        """Additionally, the report says, although <#^,company#> provides privacy, it does not give its users “full anonymity,
        since the proxy server will log all client activity.”""",
        """“It was definitely the most fun I’ve had in this place," <#names_last#> told the site. “I wasn’t actually going out to steal beer,”
@@ -345,7 +344,7 @@ content = {
        """<#article_question#> What are the most important lessons you have learned in the kitchen, and who taught you? Share your wisdom in the comments.""",
     ],
     'article_end':[
-       """<#name#>, a "hacktivist" based in <#country#>, describes <#^,tonic_disorders#> as a program that enables you to
+       """<#name#>, a “hacktivist” based in <#country#>, describes <#^,tonic_disorders#> as a program that enables you to
        “circumvent the central service of censorship by using a computer from someone else in the world.”
        It played a crucial role, he says, because social media pages sharing information about the protests were
        “systematically censored so you could not access them without censorship circumvention tools.”

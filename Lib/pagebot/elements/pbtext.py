@@ -52,14 +52,16 @@ class Text(Element):
     <Text $ABCD$>
     """
     isText = True
-    isText = True
 
     # Absolute minimum width of a text box. Avoid endless elastic height.
     TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
-            parent=None, padding=None, conditions=None, yAlign=None, **kwargs):
+            parent=None, padding=None, conditions=None, xAlign=None,
+            yAlign=None, **kwargs):
 
+        self._bs = None # Placeholder, ignoring self.w and self.h until defined.
+    
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, parent=parent, padding=padding,
@@ -79,6 +81,10 @@ class Text(Element):
         # some attributes (Text.xAlign) may need the string style as reference.
         self.bs = bs # BabelString source for this Text element.
 
+        if xAlign is not None:
+            assert xAlign in XALIGNS
+            self.xAlign = xAlign
+
         # Can be one of BASELINE (default), TOP (equivalent to ascender height
         # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
         # MIDDLE and BOTTOM
@@ -87,16 +93,9 @@ class Text(Element):
             # Overwite value in self.bs.style
             self.yAlign = yAlign
 
-        # If self._w is None, behave as Text. Otherwise behave as “Text”.
-        # This change in behavior makes that we don’t have a separate Text class.
-        # If self._h is defined, the overflow is detected.
-        self._w = self._h = None
-        if size is not None:
-            w, h = size
-        if w is not None:
-            self._w = units(w)
-        if h is not None:
-            self._h = units(h)
+        # Now there is a self._bs, set it's width and height (can be None)
+        self.w = w
+        self.h = h
 
     def _get_bs(self):
         """Answer the stored formatted BabelString. The value can be None.
@@ -118,7 +117,7 @@ class Text(Element):
         >>> t.bs
         $ABCD$
         >>> t
-        <Text $ABCD$ w=125pt>
+        <Text $ABCD$ w=125pt h=12pt>
         """
         if bs is None:
             bs = ''
@@ -142,15 +141,15 @@ class Text(Element):
         >>> t.w, t.w == page[t.eId].w
         (150pt, True)
         """
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use parent as base.
-        if self._w is not None:
-            return units(self._w, base=base)
-        return units(self.bs.w or self.bs.tw, base=base)
+        if self._bs is None:
+            return None
+        return self.bs.w
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
-        if w is not None:
-            w = units(w)
-        self._w = w
+        if self._bs is not None:
+            if w is not None:
+                w = units(w)
+            self.bs.w = w
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -171,17 +170,15 @@ class Text(Element):
         (220pt, True)
         >>> t.h = None
         """
-        if self._h is not None:
-            base = dict(base=self.parentH, em=self.em) # In case relative units, use parent as base.
-            return units(self._h, base=base)
-        if self.bs is not None:
-            return self.bs.textSize[1]
-        return None
+        if self._bs is None:
+            return None
+        return self.bs.h
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
-        if h is not None:
-            h = units(h)
-        self._h = h
+        if self._bs is not None:
+            if h is not None:
+                h = units(h)
+            self.bs.h = h
     h = property(_get_h, _set_h)
 
     def _get_firstColumnIndent(self):
@@ -230,6 +227,22 @@ class Text(Element):
         """Answers the representation string of the element.
 
         >>> from pagebot.document import Document
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.color import blackColor, noColor
+        >>> style = dict(textFill=blackColor, textStroke=noColor)
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(context=context)
+        >>> bs = context.newString('ABCD', style)
+        >>> e = Text(bs, parent=doc[1])
+        >>> e
+        <Text $ABCD$ w=30.11pt h=12pt>
+        >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
+        >>> e
+        <Text $ABCD$ x=100pt y=100pt w=200pt h=12pt>
+
+        """
+        """
+        >>> from pagebot.document import Document
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> style = dict(textFill=blackColor, textStroke=noColor)
@@ -250,10 +263,10 @@ class Text(Element):
             s += ' x=%s' % self.x
         if self.y:
             s += ' y=%s' % self.y
-        if self._w is not None: # Behave a text box with defined width
-            s += ' w=%s' % self._w
-        if self._h is not None: # Behave as text box with defined height
-            s += ' h=%s' % self._h
+        if self.w is not None: # Behave a text box with defined width
+            s += ' w=%s' % self.w
+        if self.h is not None: # Behave as text box with defined height
+            s += ' h=%s' % self.h
         return s+'>'
 
     def copy(self, parent=None):
@@ -400,7 +413,7 @@ class Text(Element):
         on the alignment of the text, it is stored as self.bs.yAlign, referring to the current run style.
         That is why we redefine the default element.yAlign propety.
 
-        >>> from pagebot.constants import MIDDLE, DESCENDER
+        >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD')
@@ -414,9 +427,6 @@ class Text(Element):
         >>> t = Text(bs)
         >>> t.yAlign
         'middle'
-        >>> t.yAlign = DESCENDER
-        >>> t.yAlign, t.bs.yAlign
-        ('Descender', 'Descender')
         """
         return self._validateYAlign(self.bs.yAlign)
     def _set_yAlign(self, yAlign):
@@ -596,21 +606,22 @@ class Text(Element):
         view.drawElementFrame(self, p, **kwargs)
         #print('-;f;f;f', self.bs, self.bs.w, self.bs.h, self.bs.tw, self.bs.th)
 
-        if self.bs.w is not None or self.bs.h is not None:
+        if self.bs.hasWidth or self.bs.hasHeight:
+            # Forced width and/or height set, behave as a textbox.
             # Draw optional background, frame or borders.
-            self.buildFrame(view, (px, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.bs.tw, self.bs.th))
+            # Width is padded width of self.
+            self.buildFrame(view, (px, py-self.h+self.bs.lines[0].y, self.pw or self.bs.tw, self.bs.th))
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the the string if
             # it contains '\n' characters.
-            # it contains '\n' characters.
-            context.drawText(self.bs, (tx, py-(self.h or self.bs.h) + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
+            context.drawText(self.bs, (tx, py-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
-            self.buildFrame(view, (px, py-self.bs.th+self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
-            context.drawString(self.bs, (tx, py))
+            self.buildFrame(view, (px, py+self.bs.th-self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
+            context.drawString(self.bs, (px, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
@@ -633,7 +644,8 @@ class Text(Element):
         return self._applyHorizontalAlignment(px), self._applyVerticalAlignment(py), pz
 
     def _applyHorizontalAlignment(self, x):
-        # Horizontal alignment is done by the text
+        # Horizontal alignment is done by the text itself. This is just for other elements,
+        # such as the frame.
         xAlign = self.xAlign
         if xAlign == CENTER:
             x -= self.w/2/self.scaleX
@@ -642,35 +654,8 @@ class Text(Element):
         return x
 
     def _applyVerticalAlignment(self, y):
-        """Adjust vertical alignments for the text,
-        assuming that the default origin of drawing in on text baseline.
-
-        >>> from pagebot.constants import A4
-        >>> from pagebot.elements import newLine
-        >>> from pagebot.document import Document
-        >>> from pagebot.constants import MIDDLE_CAP, TOP
-        >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
-        >>> doc = Document(size=A4, context=context)
-        >>> page = doc[1]
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
-        >>> t = Text(bs, parent=page, x=pt(100), y=pt(500), yAlign=TOP, fill=0.8)
-        >>> l = newLine(x=0, y=500, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
-        >>> t.top
-        500pt
-        >>> doc.export('_export/_applyVerticalAlignment-top-500.pdf')
-        >>> t.top = 300
-        >>> t.top, t.y # Same value, as aligned on top
-        (300pt, 300pt)
-        >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
-        >>> doc.export('_export/_applyVerticalAlignment-top-300.pdf')
-        >>> t.yAlign = MIDDLE_CAP
-        >>> t.y -= 100
-        >>> t.top, t.y # Same value as aligned on middleCapHeight
-        (200pt, 200pt)
-        >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
-        >>> doc.export('_export/_applyVerticalAlignment-middleCap-200.pdf')
-        """
+        # Adjust vertical alignments for the text,
+        # assuming that the default origin of drawing in on text baseline.
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
@@ -698,6 +683,65 @@ class Text(Element):
 
         #else BASELINE, None is default
         return y
+
+    def _get_bottom(self):
+        """Bottom position of bounding box, not including margins.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.constants import BOTTOM
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(size=A4, context=context)
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
+        >>> t = Text(bs, x=pt(100), y=pt(500), yAlign=BOTTOM, fill=0.8, parent=doc[1])
+        >>> t.bottom, t.y
+        (500pt, 500pt)
+        >>> t.bottom = 300
+        >>> t.bottom, t.y # Identical, as aligned on bottom
+        (300pt, 300pt)
+        """
+        if self._bs is None:
+            return None
+        return self.top - (self.bs.h or self.bs.th)
+    def _set_bottom(self, y):
+        if self._bs is not None:
+            self.top = y + (self.bs.h or self.bs.th)
+    bottom = property(_get_bottom, _set_bottom)
+
+    def _get_top(self):
+        """Bottom position of bounding box, not including margins.
+        This must be different from the regular Element top property,
+        as the default origin is at the baseline of the top text line.
+
+        >>> from pagebot.constants import A4, MIDDLE_CAP, TOP
+        >>> from pagebot.elements import newLine
+        >>> from pagebot.document import Document
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(size=A4, context=context)
+        >>> page = doc[1]
+        >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
+        >>> t = Text(bs, parent=page, x=pt(100), y=pt(500), yAlign=TOP, fill=0.8)
+        >>> l = newLine(x=0, y=500, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> t.top
+        500pt
+        >>> doc.export('_export/Text-top-500.pdf')
+        >>> t.top = 300
+        >>> t.top, t.y # Same value, as aligned on top
+        (300pt, 300pt)
+        >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> doc.export('_export/Text-top-300.pdf')
+        >>> t.yAlign = MIDDLE_CAP
+        >>> t.y -= 100
+        >>> t.top, t.y # Different now, with other alignment.
+        (241.9pt, 200pt)
+        >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
+        >>> doc.export('_export/Text-top-200.pdf')
+        """
+        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender
+    def _set_top(self, y):
+        self.y += y - self.top # Trick to reverse vertical alignment.
+    top = property(_get_top, _set_top)
 
     #   B U I L D  I N D E S I G N
 
