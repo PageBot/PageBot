@@ -940,41 +940,41 @@ class BabelString:
         self.reset() # Make sure context cache recalculates.
     tracking = property(_get_tracking, _set_tracking)
 
-    def _get_xAlign(self):
-        """Answer the xAlign attribute, as defined in the current style.
+    def _get_xTextAlign(self):
+        """Answer the xTextAlign attribute, as defined in the current style.
         Note that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT
-        >>> bs = BabelString('ABCD', dict(xAlign=CENTER))
-        >>> bs.xAlign
+        >>> bs = BabelString('ABCD', dict(xTextAlign=CENTER))
+        >>> bs.xTextAlign
         'center'
-        >>> bs.xAlign = RIGHT
-        >>> bs.xAlign
+        >>> bs.xTextAlign = RIGHT
+        >>> bs.xTextAlign
         'right'
         """
-        return self.style.get('xAlign', LEFT)
-    def _set_xAlign(self, xAlign):
-        self.style['xAlign'] = xAlign
+        return self.style.get('xTextAlign', LEFT)
+    def _set_xTextAlign(self, xTextAlign):
+        self.style['xTextAlign'] = xTextAlign
         self.reset() # Make sure context cache recalculates.
-    xAlign = property(_get_xAlign, _set_xAlign)
+    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
-    def _get_yAlign(self):
-        """Answer the yAlign attribute, as defined in the current style.
+    def _get_yTextAlign(self):
+        """Answer the yTextAlign attribute, as defined in the current style.
         Note that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT
-        >>> bs = BabelString('ABCD', dict(yAlign=CENTER))
-        >>> bs.yAlign
+        >>> bs = BabelString('ABCD', dict(yTextAlign=CENTER))
+        >>> bs.yTextAlign
         'center'
-        >>> bs.yAlign = RIGHT
-        >>> bs.yAlign
+        >>> bs.yTextAlign = RIGHT
+        >>> bs.yTextAlign
         'right'
         """
-        return self.style.get('yAlign', TOP)
-    def _set_yAlign(self, yAlign):
-        self.style['yAlign'] = yAlign
+        return self.style.get('yTextAlign', TOP)
+    def _set_yTextAlign(self, yTextAlign):
+        self.style['yTextAlign'] = yTextAlign
         self.reset() # Make sure context cache recalculates.
-    yAlign = property(_get_yAlign, _set_yAlign)
+    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
 
     def _get_baselineShift(self):
         """Answer the baselineShift attribute, as defined in the current style.

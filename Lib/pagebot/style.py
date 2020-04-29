@@ -19,7 +19,7 @@
 #     used local in an element or string.
 #
 
-from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE,
+from pagebot.constants import (DISPLAY_INLINE, DEFAULT_LANGUAGE, BASELINE,
         DEFAULT_LEADING, DEFAULT_FRAME_DURATION, LEFT, TOP, BOTTOM, FRONT,
         DEFAULT_FALLBACK_FONT_PATH, DEFAULT_FONT_SIZE, DEFAULT_MARKER_FONT,
         DEFAULT_RESOLUTION_FACTORS, DEFAULT_MININFOPADDING,
@@ -153,18 +153,39 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # combined as in [(x1, y1), ...]
         folds = None,
 
-        # Alignment of origin on element. Note that formatted text string flows
-        # are aligned by the xTextAlign attribute. xAlign is about the position
-        # of the element box.
-        xAlign = LEFT, # Default alignment, one of ('left', 'center'. 'right')
+        # Alignment of origin on element, one of (None, LEFT, CENTER, RIGHT),
+        # as defined in constants.XALIGNS.
+        # Note that formatted text string flows are aligned by the xTextAlign attribute. 
+        # xAlign is about the position of the element box.
+        xAlign = LEFT, # Default alignment,
 
         # Default alignment for elements like image, that float in their
-        # designated space. The origin-top feature is discontinued (it never
-        # properly worked). Origin of all elements is at bottom-left.
+        # designated space, on of: (None, TOP, BOTTOM, MIDDLE, CENTER, 
+        # ("middle" is PageBot. "center" is CSS) as defined in constants.YALIGNS
+        # The origin-top feature is discontinued (it never properly worked). 
+        # Origin of all elements is at bottom-left.
         yAlign = BOTTOM,
-
+ 
         # Default alignment in z-axis is in front, closest to the viewer.
         zAlign = FRONT,
+
+        # Alignment of text inside text boxes, one of (None, LEFT, CENTER, 
+        # RIGHT, JUSTIFIED), as defined in constants.XALIGNS
+        # For Text elements with undefined width (behaving as a string, the
+        # width comes from the rendered unwrapped text width), xAlign and
+        # xTextAlign are equivalent.
+        xTextAlign = LEFT,
+
+        # Default alignment for elements like image, that float in their
+        # designated space, on of: (None, TOP, BOTTOM, BASELINE, ASCENDER, 
+        # DESCENDER, MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
+        # BASE_BOTTOM, CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X) as defined
+        # in constants.YALIGNS
+        # For Text elements with undefined height, xAlign and xTextAlign 
+        # are equivalent. 
+        yTextAlign = BASELINE,
+
+        # There is no zTextAlign
 
         # Repeater flag, shaped from CSS image background-repeat value
         # Possible values: CSS_REPEAT:
@@ -487,15 +508,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         colorMoreBack = None,
         # Layer on a page, most far from the reader.
         colorMostBack = None,
-
-        # Text alignments
-        # Alignment of text inside text boxes, one of (LEFT, CENTER, RIGHT,
-        # JUSTIFIED), independent of inside FS.
-        xTextAlign = LEFT,
-        # Alignment of text inside text boxes, one of (TOP, MIDDLE, BOTTOM)
-        yTextAlign = TOP,
-        # Alignment of text inside a 3d text box, one of (FRONT, MIDDLE, BACK)
-        zTextAligh = FRONT,
 
         # Underline position and thickness of BabelString / FormattedString.
         underlinePosition = None,

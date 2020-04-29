@@ -3148,6 +3148,25 @@ class Element:
     zAlign = property(_get_zAlign, _set_zAlign)
 
 
+    def _get_xTextAlign(self): 
+        """Answer the type of x-alignment for text strings. 
+        Only defined for inheriting Text elements.
+        """
+        raise NotImplementedError
+    def _set_xTextAlign(self, xTextAlign):
+        raise NotImplementedError
+    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
+
+    def _get_yTextAlign(self): # Answer the type of y-alignment.
+        """Answer the type of y-alignment for text strings. 
+        Only defined for inheriting Text elements.
+        """
+        raise NotImplementedError
+    def _set_yTextAlign(self, yTextAlign):
+        raise NotImplementedError
+    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
+
+
     def _get_gw(self): # Gutter width
         return self.css('gw', 0)
     def _set_gw(self, gw):

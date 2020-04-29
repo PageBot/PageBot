@@ -12,7 +12,7 @@
 #     https://pypi.org/project/python-lorem/
 # -----------------------------------------------------------------------------
 #
-#     lorem.py
+#     loremipsum.py
 #
 #     Answer a random lorem ipsum text.
 #
