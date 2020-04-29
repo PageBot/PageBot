@@ -52,7 +52,7 @@ if platform == 'darwin':
 
     # FIXME: Circular import, PageBot is also imported from SketchContext
     # Get SketchContext inside PageBot?
-    
+
     #if hasSketch:
     #    try:
     #        from sketchcontext.context import SketchContext

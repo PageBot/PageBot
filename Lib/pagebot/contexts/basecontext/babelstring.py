@@ -142,8 +142,8 @@ class BabelString:
         >>> len(bs), len(bs.runs)
         (8, 1)
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot') 
-        >>> bs = context.newString('ABCD') 
+        >>> context = getContext('DrawBot')
+        >>> bs = context.newString('ABCD')
         >>> # Equivalent do BabelString('ABCD', context=context)
         >>> bs.context
         <DrawBotContext>
@@ -157,14 +157,14 @@ class BabelString:
         self._h = units(h) # Set to points, if not already a Unit instance.
         # Cache is initialize by the self.context-->self.reset() property call.
         # In case there is overflow for a given width and height, the overflow indiced
-        # store the slice in self.lines for the current everflow render by the context. 
+        # store the slice in self.lines for the current everflow render by the context.
         # _overflowStart Line index where overflow starts.
-        # _overflowEnd Line (non-inclusive) 
+        # _overflowEnd Line (non-inclusive)
         # _cs  Cache of native context string (e.g. FormattedString)
         # _lines Cache of calculated meta info after line wrapping.
         # _twh Cache of calculated text width (self.tw, self.th)
         # _pwh Cache of calculated pixel width (self.pw, self.ph)
-        
+
     def _get_context(self):
         """Answer the weakref context if it is defined.
 
@@ -206,11 +206,11 @@ class BabelString:
         self._twh = None # Cache of calculated text width (self.tw, self.th)
         self._pwh = None # Cache of calculated pixel width (self.pw, self.ph)
         self._overflowStart = None # Line index where overflow starts.
-        self._overflowEnd = None # Line (non-inclusive) 
+        self._overflowEnd = None # Line (non-inclusive)
 
     def _get_w(self):
         """Answer the width of this string. If the value if self._w
-        is not defined, then answer the self.tw width of the rendered 
+        is not defined, then answer the self.tw width of the rendered
         context string.
 
         >>> from pagebot.toolbox.units import pt
@@ -251,7 +251,7 @@ class BabelString:
         """
         return self._w is not None
     hasWidth = property(_get_hasWidth)
-    
+
     def _get_hasHeight(self):
         """Answer the boolean flag if self has a height defined (True) or gets
         its height from the rendered self.th text height.
@@ -265,7 +265,7 @@ class BabelString:
         """
         return self._h is not None
     hasHeight = property(_get_hasHeight)
-    
+
     def _get_tw(self):
         """Answer the cached calculated context width
 

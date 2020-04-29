@@ -61,7 +61,7 @@ class Text(Element):
             yAlign=None, **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
-    
+
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, parent=parent, padding=padding,

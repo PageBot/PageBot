@@ -780,15 +780,14 @@ class FlatString(BabelString):
         $AAA$
         """
         assert isinstance(s, str)
-        self.e = e
 
         if style is None:
             style = {}
         else:
             assert isinstance(style, dict)
 
-        s = cls.addCaseToString(s, e, style)
-        style = cls.getStringAttributes(s, e=e, style=style, w=w, h=h)
+        #s = cls.addCaseToString(s, style)
+        style = cls.getStringAttributes(s, style=style, w=w, h=h)
         return cls(s, style=style, context=context)
 
 if __name__ == '__main__':
