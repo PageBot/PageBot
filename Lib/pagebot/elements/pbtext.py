@@ -58,7 +58,7 @@ class Text(Element):
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
             parent=None, padding=None, conditions=None, xTextAlign=None,
-            yAlign=None, **kwargs):
+            xAlign=None, yAlign=None, **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
 
@@ -82,15 +82,10 @@ class Text(Element):
         self.bs = bs # BabelString source for this Text element.
 
         if xTextAlign is not None:
-            assert xTextAlign in XALIGNS
             self.xTextAlign = xTextAlign
-
-        # Can be one of BASELINE (default), TOP (equivalent to ascender height
-        # of first text line), CAPHEIGHT, XHEIGHT, MIDDLE_CAP, MIDDLE_X,
-        # MIDDLE and BOTTOM
+        if xAlign is not None:
+            self.xAlign = xAlign
         if yAlign is not None:
-            assert yAlign in YALIGNS
-            # Overwite value in self.bs.style
             self.yAlign = yAlign
 
         # Now there is a self._bs, set it's width and height (can be None)
@@ -397,17 +392,20 @@ class Text(Element):
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
-        >>> bs = context.newString('ABCD', dict(xTextAlign=CENTER))
-        >>> bs.xTextAlign
+        >>> bs = context.newString('ABCD', dict(xAlign=CENTER))
+        >>> bs.xAlign
         'center'
-        >>> bs.xTextAlign = RIGHT
-        >>> bs.xTextAlign
+        >>> bs.xAlign = RIGHT
+        >>> bs.xAlign
         'right'
-        >>> bs.xTextAlign == bs.runs[-1].style['xTextAlign']
+        >>> bs.xAlign == bs.runs[-1].style['xAlign']
         True
         """
-        return self._validateXAlign(self.bs.xTextAlign)
+        if self._bs is not None:
+            return self.bs.xAlign
+        return self.css('xTextAlign', LEFT)
     def _set_xTextAlign(self, xTextAlign):
+        self.style['xTextAlign'] = xTextAlign = self._validateXTextAlign(xTextAlign)
         if self._bs is not None:
             self.bs.xTextAlign = self._validateXAlign(xTextAlign)
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
@@ -426,22 +424,28 @@ class Text(Element):
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD') # No height defined.
-        >>> bs.yTextAlign
-        'top'
-        >>> bs.yTextAlign = MIDDLE
-        >>> bs.yTextAlign
-        'middle'
-        >>> bs.yTextAlign == bs.runs[-1].style['yTextAlign']
-        True
-        >>> t = Text(bs)
-        >>> t.yTextAlign, t.yAlign
-        ('middle', 'bottom')
+        >>> bs.yAlign
+        'baseline'
+        >>> t = Text(bs, yAlign=BOTTOM)
+        >>> t.yAlign
+        'bottom'
         """
-        return self._validateYAlign(self.bs.yTextAlign)
-    def _set_yTextAlign(self, yTextAlign):
+        if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
+            return self.bs.yAlign
+        return self.css('yAlign')
+    def _set_yAlign(self, yAlign):
+        # Save locally, blocking CSS parent scope for this param.
+        self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
-            self.bs.yTextAlign = self._validateYAlign(yTextAlign) # Save locally, blocking CSS parent scope for this param.
-    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
+            self.bs.yAlign = yAlign
+    yAlign = property(_get_yAlign, _set_yAlign)
+
+    def _validateXTextAlign(self, xAlign): # Check and answer value
+        assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
+        return xAlign
+    def _validateYTextAlign(self, yAlign): # Check and answer value
+        assert yAlign in YTEXTALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
+        return yAlign
 
     #   S P E L L  C H E C K
 
@@ -603,7 +607,7 @@ class Text(Element):
         """
         context = self.context
         p = pointOffset(self.origin, origin)
-        tx, _, _, = p = self._applyScale(view, p)
+        tx, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         context = view.context # Get current context
@@ -613,7 +617,6 @@ class Text(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
-        #print('-;f;f;f', self.bs, self.bs.w, self.bs.h, self.bs.tw, self.bs.th)
 
         if self.bs.hasWidth or self.bs.hasHeight:
             # Forced width and/or height set, behave as a textbox.
@@ -630,7 +633,7 @@ class Text(Element):
             # Draw optional background, frame or borders.
             #print('......', (px, py-self.bs.th, self.bs.tw, self.bs.th))
             self.buildFrame(view, (px, py+self.bs.th-self.bs.topLineAscender, self.bs.tw, self.bs.th+self.bs.topLineAscender))
-            context.drawString(self.bs, (px, py))
+            context.drawString(self.bs, (tx, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
@@ -645,6 +648,7 @@ class Text(Element):
         # FIX: Should work work self.bottom
         #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
         b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
+
 
     def _applyAlignment(self, p):
         """Answers point `p` according to the alignment status in the css
@@ -702,7 +706,7 @@ class Text(Element):
         >>> context = getContext('DrawBot')
         >>> doc = Document(size=A4, context=context)
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
-        >>> t = Text(bs, x=pt(100), y=pt(500), yTextAlign=BOTTOM, fill=0.8, parent=doc[1])
+        >>> t = Text(bs, x=pt(100), y=pt(500), yAlign=BOTTOM, fill=0.8, parent=doc[1])
         >>> t.bottom, t.y
         (500pt, 500pt)
         >>> t.bottom = 300
@@ -740,7 +744,7 @@ class Text(Element):
         (300pt, 300pt)
         >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> doc.export('_export/Text-top-300.pdf')
-        >>> t.yTextAlign = MIDDLE_CAP # For Text this is quivalent to t.yAlign
+        >>> t.yAlign = MIDDLE_CAP # For Text this is quivalent to t.yAlign
         >>> t.y -= 100
         >>> t.top, t.y # Different now, with other alignment.
         (241.9pt, 200pt)

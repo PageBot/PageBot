@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
-    DEFAULT_LEADING, TOP, LEFT)
+    DEFAULT_LEADING, TOP, LEFT, BASELINE)
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt
 from pagebot.toolbox.color import color
@@ -277,8 +277,8 @@ class BabelString:
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
-        >>> bs.w, bs.tw, bs.h, bs.th
-        (500pt, 250.9pt, 100pt, 100pt)
+        >>> bs.w, bs.tw, bs.h, bs.th # Difference between given height and text height.
+        (250.9pt, 250.9pt, 500pt, 100pt)
         """
         if self.context is None: # Required context to be defined.
             return None
@@ -303,8 +303,8 @@ class BabelString:
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> style = dict(font='PageBot-Regular', fontSize=pt(10), leading=em(1))
         >>> bs = context.newString(loremipsum(), style, w=500)
-        >>> bs.w, bs.tw, bs.h, bs.th
-        (500pt, 250.9pt, 100pt, 100pt)
+        >>> bs.w, bs.tw, bs.h, bs.th # Difference between box with and text width
+        (500pt, 499.09pt, 500pt, 500pt)
         """
         if self.context is None: # Required context to be defined
             return None
@@ -940,41 +940,50 @@ class BabelString:
         self.reset() # Make sure context cache recalculates.
     tracking = property(_get_tracking, _set_tracking)
 
-    def _get_xTextAlign(self):
-        """Answer the xTextAlign attribute, as defined in the current style.
+    def _get_xAlign(self):
+        """Answer the xAlign attribute, as defined in the current style.
         Note that this only refers to the alignments of the last run.
 
-        >>> from pagebot.constants import CENTER, RIGHT
+        >>> from pagebot.constants import CENTER, RIGHT, XHEIGHT
         >>> bs = BabelString('ABCD', dict(xTextAlign=CENTER))
-        >>> bs.xTextAlign
+        >>> bs.xAlign
         'center'
-        >>> bs.xTextAlign = RIGHT
-        >>> bs.xTextAlign
+        >>> bs = BabelString('ABCD', dict(xAlign=XHEIGHT))
+        >>> bs.xAlign
+        'xHeight'
+        >>> bs.xAlign = RIGHT
+        >>> bs.xAlign
         'right'
         """
-        return self.style.get('xTextAlign', LEFT)
-    def _set_xTextAlign(self, xTextAlign):
-        self.style['xTextAlign'] = xTextAlign
+        xAlign = self.style.get('xTextAlign')
+        if xAlign is None: # If not defined, try xAlign instead.
+            xAlign = self.style.get('xAlign', LEFT) # Copy from box alignment 
+        return xAlign
+    def _set_xAlign(self, xAlign):
+        self.style['xAlign'] = xAlign
         self.reset() # Make sure context cache recalculates.
-    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
+    xAlign = property(_get_xAlign, _set_xAlign)
 
-    def _get_yTextAlign(self):
-        """Answer the yTextAlign attribute, as defined in the current style.
+    def _get_yAlign(self):
+        """Answer the yAlign attribute, as defined in the current style.
         Note that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT
-        >>> bs = BabelString('ABCD', dict(yTextAlign=CENTER))
-        >>> bs.yTextAlign
+        >>> bs = BabelString('ABCD')
+        >>> bs.yAlign
+        'baseline'
+        >>> bs = BabelString('ABCD', dict(yAlign=CENTER))
+        >>> bs.yAlign
         'center'
-        >>> bs.yTextAlign = RIGHT
-        >>> bs.yTextAlign
+        >>> bs.yAlign = RIGHT
+        >>> bs.yAlign
         'right'
         """
-        return self.style.get('yTextAlign', TOP)
-    def _set_yTextAlign(self, yTextAlign):
-        self.style['yTextAlign'] = yTextAlign
+        return self.style.get('yAlign', BASELINE)
+    def _set_yAlign(self, yAlign):
+        self.style['yAlign'] = yAlign
         self.reset() # Make sure context cache recalculates.
-    yTextAlign = property(_get_yTextAlign, _set_yTextAlign)
+    yAlign = property(_get_yAlign, _set_yAlign)
 
     def _get_baselineShift(self):
         """Answer the baselineShift attribute, as defined in the current style.
