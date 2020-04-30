@@ -27,7 +27,7 @@ STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')
+contextTypes = ('DrawBot', 'Flat', 'Html', 'svg')
 
 def getContext(contextType=None, resourcesPath=None):
     """Returns a single context."""

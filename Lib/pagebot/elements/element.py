@@ -21,13 +21,14 @@ import copy
 from pagebot.conditions.score import Score
 from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
-        BACK, XALIGNS, YALIGNS, ZALIGNS, DEFAULT_FONT_SIZE, DEFAULT_WIDTH,
-        DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, DEFAULT_LANGUAGE, ONLINE, INLINE,
-        DEFAULT_RESOLUTION_FACTORS, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
-        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS, DEFAULT_LEADING,
-        DEFAULT_TRACKING, DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
-        DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH, DEFAULT_MININFOPADDING,
-        VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
+        BACK, XALIGNS, YALIGNS, ZALIGNS, XTEXTALIGNS, YTEXTALIGNS, 
+        DEFAULT_FONT_SIZE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, 
+        DEFAULT_LANGUAGE, ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS, OUTLINE, 
+        GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE, 
+        DEFAULT_COLOR_BARS, DEFAULT_LEADING, DEFAULT_TRACKING, 
+        DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS, DEFAULT_BASELINE_COLOR, 
+        DEFAULT_BASELINE_WIDTH, DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, 
+        VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
@@ -84,7 +85,7 @@ class Element:
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
             showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
-            **kwargs):
+            context=None, **kwargs):
 
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -112,12 +113,15 @@ class Element:
         >>> page.size
         (300pt, 400pt)
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
-        >>> e.context
-        <FlatContext>
+        >>> e.context, e.context is doc.view.context
+        (<FlatContext>, True)
         >>> doc.build()
 
         """
         self._parent = None
+
+        # If not None, it overwrites property of searching up the parent tree.
+        self._context = context
 
         # Set the local self._lib, validate it is a dictionary, otherwise
         # create new dictionary.
@@ -411,7 +415,8 @@ class Element:
         return len(self.elements)
 
     def _get_context(self):
-        """Answer the doc.view.context if it exists.
+        """Answer the self._context if it is defined. Otherwise search
+        for the doc.view.context if it exists.
 
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
@@ -430,10 +435,13 @@ class Element:
         >>> e.context is doc.view.context is context
         True
         """
-        doc = self.doc
-        if doc is not None and doc.view is not None:
-            return doc.view.context
-        return None
+        if self._context is None:
+            doc = self.doc
+            if doc is not None and doc.view is not None:
+                return doc.view.context
+        return self._context
+    def _set_context(self, context):
+        self._context = context # Can be None to reset the search tree.
     context = property(_get_context)
 
     def _get_view(self):
@@ -3147,16 +3155,24 @@ class Element:
     zAlign = property(_get_zAlign, _set_zAlign)
 
 
-    def _get_xTextAlign(self):
-        """Answer the type of x-alignment for text strings.
-        Only defined for inheriting Text elements.
+    # Validation to be used by text supporting subclasses
+    def _validateXTextAlign(self, xAlign): # Check and answer value
+        assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
+        return xAlign
+    def _validateYTextAlign(self, yAlign): # Check and answer value
+        assert yAlign in YTEXTALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
+        return yAlign
+
+    def _get_xTextAlign(self): 
+        """Answer the type of x-alignment for text strings. Mostly used for elements that support text.
+
+        >>> e = Element()
+        >>> e.xTextAlign is None
+        True
         """
-        #raise NotImplementedError
-
+        return self._validateXTextAlign(self.css('xTextAlign'))
     def _set_xTextAlign(self, xTextAlign):
-        pass
-        #raise NotImplementedError
-
+        self.style['xTextAlign'] = self._validateXTextAlign(xTextAlign) # Save locally, blocking CSS parent scope for this param.
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
 

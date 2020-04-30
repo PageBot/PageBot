@@ -10,7 +10,7 @@ Doctests for context functions on OSX.
 >>> context = getContext('Flat')
 >>> print(context)
 <FlatContext>
->>> context = getContext('HTML')
+>>> context = getContext('Html')
 >>> print(context)
 <HtmlContext>
 >>> context = getContext('svg')

@@ -15,10 +15,10 @@
 #
 import os
 
+from pagebot.constants import BITMAP_TYPES
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
-from pagebot.contexts.markup.htmlstring import HtmlString
-from pagebot.constants import BITMAP_TYPES
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.transformer import path2Extension, path2ScaledImagePath, path2Dir
@@ -46,7 +46,7 @@ class HtmlContext(BaseContext):
     useTags = True
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = HtmlString
+    STRING_CLASS = BabelString
     EXPORT_TYPES = ('html', 'css', 'js')
 
     def __init__(self):
@@ -83,6 +83,17 @@ class HtmlContext(BaseContext):
         pass
 
     #   T E X T
+
+    # Babelstring
+
+    def fromBabelString(self, bs):
+        """Needs to be implemented by inheriting context class."""
+        #print(bs.s)
+        return bs.s
+
+    def asBabelString(self, bs):
+        """Needs to be implemented by inheriting context class."""
+        raise NotImplementedError
 
     def text(self, sOrBs, p):
         pass

@@ -18,12 +18,12 @@ from pagebot.constants import XXXL, LEFT, DEFAULT_LANGUAGE
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.toolbox.units import upt
 
-class HtmlString(BabelString):
+class XXXXHtmlString(BabelString):
     """HtmlString is a wrapper around an HTML tagged string."""
 
     BABEL_STRING_TYPE = 'html'
 
-    def __init__(self, s, context, language=None, style=None):
+    def XXX__init__(self, s, style=None, w=w, h=h, context=context):
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
         assert isinstance(s, str)

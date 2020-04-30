@@ -766,14 +766,12 @@ class BaseContext(AbstractContext):
     # Babelstring
 
     def fromBabelString(self, bs):
-        """Since the BabelString is native format for the BaseContext,
-        we can just return it."""
-        assert isinstance(bs, self.STRING_CLASS)
-        return bs
+        """Needs to be implemented by inheriting context class."""
+        raise NotImplementedError
 
     def asBabelString(self, bs):
-        assert isinstance(bs, self.STRING_CLASS)
-        return bs
+        """Needs to be implemented by inheriting context class."""
+        raise NotImplementedError
 
     # ...
 
