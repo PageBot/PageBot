@@ -149,7 +149,7 @@ class Text(Element):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
-                w = units(w) +  self.pl - self.pr
+                w = units(w) - self.pl - self.pr # Correct for padding
             self.bs.w = w
     w = property(_get_w, _set_w)
 
@@ -173,12 +173,14 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        return self.bs.h
+        if self.bs.h is not None:
+            return self.bs.h + self.pt + self.pb # Correct for padding
+        return None
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
         if self._bs is not None:
             if h is not None:
-                h = units(h)
+                h = units(h) - self.pt - self.pb # Correct for padding
             self.bs.h = h
     h = property(_get_h, _set_h)
 
@@ -274,10 +276,10 @@ class Text(Element):
         >>> bs = context.newString('ABCD', style)
         >>> e = Text(bs, parent=doc[1])
         >>> e
-        <Text $ABCD$ w=30.11pt h=12pt>
+        <Text $ABCD$ w=30.11pt>
         >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
         >>> e
-        <Text $ABCD$ x=100pt y=100pt w=200pt h=12pt>
+        <Text $ABCD$ x=100pt y=100pt w=200pt>
 
         """
         """
