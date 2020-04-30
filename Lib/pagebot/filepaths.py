@@ -16,6 +16,7 @@
 #
 #
 import os.path
+from sys import platform
 
 HOME = os.path.expanduser('~')
 
@@ -44,3 +45,19 @@ def getResourcesPath():
     # Check base in case of separate resources folder (Py2app).
     path = '%s/%s' % (BASE_PATH, 'resources')
     return path
+
+def getMampPath():
+    return getContextMampPath()
+
+def getContextMampPath():
+    """Make sure MAMP_PATH is initialized depending on the context."""
+    MAMP_PATH = None
+
+    if platform == 'darwin':
+        MAMP_PATH = '/Applications/MAMP/htdocs/'
+
+    elif platform == 'linux':
+        # TODO: What's the actual path on Linux?
+        MAMP_PATH = '/tmp/MAMP_PATH/'
+
+    return MAMP_PATH

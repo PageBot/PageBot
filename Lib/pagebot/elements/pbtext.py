@@ -658,7 +658,7 @@ class Text(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
-        
+
         if self.bs.hasWidth or self.bs.hasHeight:
             # Forced width and/or height set, behave as a textbox.
             frameY = py-self.h+self.bs.lines[0].y

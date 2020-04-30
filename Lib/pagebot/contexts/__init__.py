@@ -28,7 +28,6 @@ SketchContext = None
 DEFAULT_CONTEXT = None
 DEFAULT_CONTEXT_TYPE = 'Flat'
 CONTEXT_TYPE = None
-MAMP_PATH = None
 
 if platform == 'darwin':
 
@@ -76,7 +75,7 @@ def getContext(contextType=None):
     >>> getContext('DrawBot')
     <DrawBotContext>
     """
-    global DEFAULT_CONTEXT, MAMP_PATH, CONTEXT_TYPE
+    global DEFAULT_CONTEXT, CONTEXT_TYPE
     if contextType is None:
         contextType = DEFAULT_CONTEXT_TYPE
 
@@ -84,7 +83,6 @@ def getContext(contextType=None):
         # Switching contexts, so resetting the buffered global object.
         DEFAULT_CONTEXT = None
 
-    # FIXME: what about MAMP_PATH is None?
     # FIXME: what about HTMLContext()
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
@@ -103,7 +101,6 @@ def getContext(contextType=None):
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
 
-            MAMP_PATH = '/Applications/MAMP/htdocs/'
         else:
             if contextType in ('DrawBot', 'Sketch'):
                 print('DrawBot is not available on platform %s.' % platform)
@@ -115,9 +112,6 @@ def getContext(contextType=None):
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
-
-            # TODO: What's the actual path on Linux?
-            MAMP_PATH = '/tmp/MAMP_PATH/'
 
         CONTEXT_TYPE = contextType
 
@@ -137,12 +131,6 @@ def getSvgContext():
 
 def getSketchContext():
     return SketchContext()
-
-def getContextMampPath():
-    """Make sure MAMP_PATH is initialized depending on the context."""
-    if MAMP_PATH is None:
-        getContext()
-    return MAMP_PATH
 
 if __name__ == '__main__':
     import doctest

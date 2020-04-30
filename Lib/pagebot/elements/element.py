@@ -21,13 +21,13 @@ import copy
 from pagebot.conditions.score import Score
 from pagebot.style import makeStyle, getRootStyle
 from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
-        BACK, XALIGNS, YALIGNS, ZALIGNS, XTEXTALIGNS, YTEXTALIGNS, 
-        DEFAULT_FONT_SIZE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL, 
-        DEFAULT_LANGUAGE, ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS, OUTLINE, 
-        GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE, 
-        DEFAULT_COLOR_BARS, DEFAULT_LEADING, DEFAULT_TRACKING, 
-        DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS, DEFAULT_BASELINE_COLOR, 
-        DEFAULT_BASELINE_WIDTH, DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, 
+        BACK, XALIGNS, YALIGNS, ZALIGNS, XTEXTALIGNS, YTEXTALIGNS,
+        DEFAULT_FONT_SIZE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
+        DEFAULT_LANGUAGE, ONLINE, INLINE, DEFAULT_RESOLUTION_FACTORS, OUTLINE,
+        GRID_OPTIONS, BASE_OPTIONS, DEFAULT_GRID, DEFAULT_BASELINE,
+        DEFAULT_COLOR_BARS, DEFAULT_LEADING, DEFAULT_TRACKING,
+        DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS, DEFAULT_BASELINE_COLOR,
+        DEFAULT_BASELINE_WIDTH, DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2,
         VIEW_DEBUG, VIEW_DEBUG2, VIEW_FLOW)
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
@@ -3163,7 +3163,7 @@ class Element:
         assert yAlign in YTEXTALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
         return yAlign
 
-    def _get_xTextAlign(self): 
+    def _get_xTextAlign(self):
         """Answer the type of x-alignment for text strings. Mostly used for elements that support text.
 
         >>> e = Element()

@@ -22,7 +22,7 @@
 import os
 import shutil
 
-from pagebot import getMampPath
+from pagebot.filepaths import getMampPath
 from pagebot.elements.views.siteview import SiteView
 
 class MampView(SiteView):
@@ -34,7 +34,6 @@ class MampView(SiteView):
     # installed.
     MAMP_SHOP_URL = 'https://www.mamp.info/en/'
     LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
-    #SITE_ROOT_PATH = getMampPath()
 
     DEFAULT_HTML_FILE = 'index.html'
     #DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
