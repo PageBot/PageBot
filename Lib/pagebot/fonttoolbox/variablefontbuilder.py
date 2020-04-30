@@ -28,7 +28,7 @@ from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
 from fontTools.varLib.mutator import iup_delta
 
-from pagebot import getContext
+from pagebot.contexts import getContext
 from pagebot.fonttoolbox.objects.font import getFont
 from pagebot.toolbox.color import blackColor
 
