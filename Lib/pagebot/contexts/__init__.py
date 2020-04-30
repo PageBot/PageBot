@@ -99,7 +99,7 @@ def getContext(contextType=None):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Sketch' and hasSketch:
                 DEFAULT_CONTEXT = getSketchContext()
-            elif contextType == 'HTML':
+            elif contextType == 'Html':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
@@ -112,7 +112,7 @@ def getContext(contextType=None):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'HTML':
+            elif contextType == 'Html':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()

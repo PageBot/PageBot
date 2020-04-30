@@ -411,7 +411,8 @@ class Typesetter:
             xAlign=xAlign, yAlign=yAlign,
             w=wi or self.maxImageWidth, h=hi, # To alter the scaled image file from source level.
             alt=alt, proportional=proportional,
-            maxImageWidth=self.maxImageWidth, index=node.attrib.get('index', 0))
+            maxImageWidth=self.maxImageWidth, index=node.attrib.get('index', 0),
+            context=self.context)
 
     def node_caption(self, node, e):
         """If there is a self.currentImage set, then redirect output of the
@@ -646,7 +647,7 @@ class Typesetter:
             firstTagIndent = nodeStyle.get('firstTagIndent')
             if firstTagIndent is not None and len(self.tagHistory) > 2 and self.tagHistory[-2] != '_'+node.tag:
                 nodeStyle['firstLineIndent'] = firstTagIndent
-            bs = self.context.newString(nodeText, e=e, style=nodeStyle)
+            bs = self.context.newString(nodeText, nodeStyle)
             self.append(bs)
 
         self.tagStack.append(node.tag) # Add current node to the stack
@@ -673,7 +674,7 @@ class Typesetter:
 
             if childTail: # Any tail left after stripping, then append to the galley.
                 # Don't cache the context from self.galley as variable, as it may become dynamically updated by code blocks.
-                bs = self.context.newString(childTail, e=e, style=nodeStyle)
+                bs = self.context.newString(childTail, nodeStyle)
                 self.append(bs)
 
         self.tagStack.pop() # Pop current node from the list.

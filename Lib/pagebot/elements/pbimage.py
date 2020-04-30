@@ -81,7 +81,6 @@ class Image(Element):
 
         If path is omitted or file does not exist, a gray rectangle with a
         cross will be drawn."""
-        print('dsdsdddd', self.doc, self.context)
         self.path = self.srcPath = path
 
         if self.iw and self.ih:

@@ -18,8 +18,8 @@
 
 import shutil
 from pagebot.contexts.markup.svgbuilder import svgBuilder
-from pagebot.contexts.markup.htmlstring import HtmlString
 from pagebot.contexts.basecontext.basecontext import BaseContext
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.toolbox.color import noColor, color
@@ -39,7 +39,7 @@ class SvgContext(BaseContext):
     TMP_PATH = '/tmp/pagebot%s.' + FILETYPE_SVG
 
     # Used by the generic BaseContext.newString( )
-    STRING_CLASS = HtmlString
+    STRING_CLASS = BabelString
     EXPORT_TYPES = (FILETYPE_SVG,)
 
     def __init__(self):
