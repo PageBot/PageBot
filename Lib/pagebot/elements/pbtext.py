@@ -843,10 +843,7 @@ class Text(Element):
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         if hasContent:
             b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
-            if html.startswith('$'):
-                print('ASASAASSASASA &%s&, **%s**' % (self.bs.s, html))
-            else:
-                b.addHtml(html) # Get HTML from BabelString in HtmlString context.
+            b.addHtml(html) # Get HTML from BabelString in HtmlString context.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)

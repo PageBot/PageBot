@@ -568,7 +568,7 @@ class Typesetter:
             else:
                 box.bs += bs
         elif hasattr(bs, 's'):
-            s = repr(bs)
+            s = bs.s
             while s and s[0] in ' \t\n\r':
                 s = s[1:]
             bs.s = s
