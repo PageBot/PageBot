@@ -142,9 +142,7 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        if self.bs.w is not None:
-            return self.bs.w + self.pl + self.pr
-        return None
+        return self.bs.w + self.pl + self.pr
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
@@ -173,9 +171,7 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        if self.bs.h is not None:
-            return self.bs.h + self.pt + self.pb # Correct for padding
-        return None
+        return self.bs.h + self.pt + self.pb # Correct for padding
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
         if self._bs is not None:
