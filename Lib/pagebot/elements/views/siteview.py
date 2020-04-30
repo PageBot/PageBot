@@ -21,7 +21,7 @@
 import os
 import shutil
 
-from pagebot import getRootPath
+from pagebot.filepaths import getRootPath
 from pagebot.elements.views.htmlview import HtmlView
 from pagebot.constants import URL_JQUERY
 

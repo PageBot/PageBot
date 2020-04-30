@@ -17,10 +17,8 @@ from sys import platform
 import re
 import os.path
 from pagebot.constants import DEFAULT_FONT
-from pagebot.filepaths import ROOT_PATH
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.contexts import getContextMampPath
-from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 
 VERSION = '0.9.9'
@@ -30,15 +28,6 @@ __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
 contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')
-
-def getRootPath():
-    """Answers the root path of the PageBot module for the current platform."""
-    return ROOT_PATH
-
-def getDefaultFontPath():
-    """Answers the default font path within the PageBot module for the current
-    platform."""
-    return getDefaultFontPath()
 
 def getContext(contextType=None, resourcesPath=None):
     """Returns a single context."""

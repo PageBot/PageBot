@@ -149,7 +149,7 @@ class FlatContext(BaseContext):
         """Save the current document to file(s)
 
         >>> import os
-        >>> from pagebot import getRootPath
+        >>> from pagebot.filepaths import getRootPath
         >>> from pagebot.toolbox.color import blackColor
         >>> # _export/* Files are ignored in git.
         >>> exportPath = getRootPath() + '/_export'
