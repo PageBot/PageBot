@@ -456,7 +456,7 @@ class Text(Element):
             self.bs.xTextAlign = self._validateXAlign(xTextAlign)
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
-    def _get_yTextAlign(self):
+    def _get_yAlign(self):
         """Answer the type of y-alignment.
 
         Note that self.yAlign defines the position of the box. If the BabelString is
@@ -479,14 +479,12 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
         return self.css('yAlign')
-
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
-    #yAlign = property(_get_yAlign, _set_yAlign)
-    yAlign = property(_set_yAlign)
+    yAlign = property(_get_yAlign, _set_yAlign)
 
     #   S P E L L  C H E C K
 
@@ -838,14 +836,17 @@ class Text(Element):
 
         if self.bs is not None:
             html = context.fromBabelString(self.bs)
-            hasContent = html and html.strip() # Check if there is content, besides white space
+            hasContent = bool(html and html.strip()) # Check if there is any content, besides white space
         else:
             hasContent = False
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         if hasContent:
             b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
-            b.addHtml(html) # Get HTML from BabelString in HtmlString context.
+            if html.startswith('$'):
+                print('ASASAASSASASA &%s&, **%s**' % (self.bs.s, html))
+            else:
+                b.addHtml(html) # Get HTML from BabelString in HtmlString context.
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view)

@@ -14,6 +14,9 @@
 #
 #     typesetter.py
 #
+#     FIXME: Use the bs.cs for rendered native HTML tagged text and the bs.runs
+#     for plain text + styles, so the BabelString can also be used to convert
+#     to other contexts."""
 
 import re
 import copy

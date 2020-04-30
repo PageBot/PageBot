@@ -87,13 +87,18 @@ class HtmlContext(BaseContext):
     # Babelstring
 
     def fromBabelString(self, bs):
-        """Needs to be implemented by inheriting context class."""
-        #print(bs.s)
+        """For now, Typesetter put tagged text into bs.s, so it works for current
+        website generators. 
+        FIXME: Use the bs.cs for rendered native HTML tagged text and the bs.runs
+        for plain text + styles, so the BabelString can also be used to convert
+        to other contexts."""
         return bs.s
 
     def asBabelString(self, bs):
-        """Needs to be implemented by inheriting context class."""
-        raise NotImplementedError
+        """FIXME: Needs to be better implemented using tags and styles."""
+        if isinstance(bs, BabelString):
+            return bs
+        return self.newString(str(bs))
 
     def text(self, sOrBs, p):
         pass
