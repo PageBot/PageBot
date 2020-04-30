@@ -149,7 +149,7 @@ class Text(Element):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
-                w = units(w) +  self.pl - self.pr
+                w = units(w) - self.pl - self.pr # Correct for padding
             self.bs.w = w
     w = property(_get_w, _set_w)
 
@@ -173,12 +173,14 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        return self.bs.h
+        if self.bs.h is not None:
+            return self.bs.h + self.pt + self.pb # Correct for padding
+        return None
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
         if self._bs is not None:
             if h is not None:
-                h = units(h)
+                h = units(h) - self.pt - self.pb # Correct for padding
             self.bs.h = h
     h = property(_get_h, _set_h)
 
@@ -274,10 +276,10 @@ class Text(Element):
         >>> bs = context.newString('ABCD', style)
         >>> e = Text(bs, parent=doc[1])
         >>> e
-        <Text $ABCD$ w=30.11pt h=12pt>
+        <Text $ABCD$ w=30.11pt>
         >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
         >>> e
-        <Text $ABCD$ x=100pt y=100pt w=200pt h=12pt>
+        <Text $ABCD$ x=100pt y=100pt w=200pt>
 
         """
         """
@@ -456,7 +458,7 @@ class Text(Element):
             self.bs.xTextAlign = self._validateXAlign(xTextAlign)
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
-    def _get_yTextAlign(self):
+    def _get_yAlign(self):
         """Answer the type of y-alignment.
 
         Note that self.yAlign defines the position of the box. If the BabelString is
@@ -479,14 +481,12 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
         return self.css('yAlign')
-
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
-    #yAlign = property(_get_yAlign, _set_yAlign)
-    yAlign = property(_set_yAlign)
+    yAlign = property(_get_yAlign, _set_yAlign)
 
     #   S P E L L  C H E C K
 
@@ -838,7 +838,7 @@ class Text(Element):
 
         if self.bs is not None:
             html = context.fromBabelString(self.bs)
-            hasContent = html and html.strip() # Check if there is content, besides white space
+            hasContent = bool(html and html.strip()) # Check if there is any content, besides white space
         else:
             hasContent = False
 

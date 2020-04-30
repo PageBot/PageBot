@@ -14,6 +14,9 @@
 #
 #     typesetter.py
 #
+#     FIXME: Use the bs.cs for rendered native HTML tagged text and the bs.runs
+#     for plain text + styles, so the BabelString can also be used to convert
+#     to other contexts."""
 
 import re
 import copy
@@ -565,7 +568,7 @@ class Typesetter:
             else:
                 box.bs += bs
         elif hasattr(bs, 's'):
-            s = repr(bs)
+            s = bs.s
             while s and s[0] in ' \t\n\r':
                 s = s[1:]
             bs.s = s
