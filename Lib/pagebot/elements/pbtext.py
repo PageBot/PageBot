@@ -296,7 +296,9 @@ class Text(Element):
         <Text $ABCD$ x=100pt y=100pt w=200pt>
         """
         s = '<%s' % self.__class__.__name__
-        if self.bs is not None and len(self.bs):
+        # C1801: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (len-as-condition)
+        if self.bs is not None:# and len(self.bs):
+        #if self.bs is not None and len(self.bs):
             s += ' %s' % self.bs
         if self.x:
             s += ' x=%s' % self.x
@@ -424,8 +426,8 @@ class Text(Element):
     styledLines = property(_get_styledLines)
 
     def _get_xTextAlign(self):
-        """Answer the type of x-alignment. 
-        
+        """Answer the type of x-alignment.
+
         Note that self.xAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
         and self.xTextAlign is equivalnent.
@@ -451,27 +453,11 @@ class Text(Element):
     def _set_xTextAlign(self, xTextAlign):
         self.style['xTextAlign'] = xTextAlign = self._validateXTextAlign(xTextAlign)
         if self._bs is not None:
-            self.bs.xAlign = xTextAlign
+            self.bs.xTextAlign = self._validateXAlign(xTextAlign)
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
-    def _get_xAlign(self): 
-        """Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
-        """
-        if self._bs is not None and not self.bs.hasWidth: 
-            # Behave as string, then xAlign and bs.xTextAlign are equivalent
-            return self.bs.xAlign
-        return self.css('xAlign')
-    def _set_xAlign(self, xAlign):
-        """Save locally, blocking CSS parent scope for this param.
-        If self.bs has not width defined, then save in self.bs.xTextAlign as well.
-        """
-        self.style['xAlign'] = xAlign = self._validateXTextAlign(xAlign)
-        if self._bs is not None and not self.bs.hasWidth:
-            self.bs.xAlign = xAlign 
-    xAlign = align = property(_get_xAlign, _set_xAlign)
-
-    def _get_yAlign(self):
-        """Answer the type of y-alignment. 
+    def _get_yTextAlign(self):
+        """Answer the type of y-alignment.
 
         Note that self.yAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasHeight == False), then the behavior of self.yAlign
@@ -493,12 +479,15 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
         return self.css('yAlign')
+
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
-    yAlign = property(_get_yAlign, _set_yAlign)
+
+    #yAlign = property(_get_yAlign, _set_yAlign)
+    yAlign = property(_set_yAlign)
 
     def _validateXTextAlign(self, xAlign): # Check and answer value
         assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)

@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
-    DEFAULT_LEADING, TOP, LEFT, BASELINE)
+    DEFAULT_LEADING, LEFT, BASELINE)
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt
 from pagebot.toolbox.color import color
@@ -817,7 +817,7 @@ class BabelString:
             self.runs[-1].style = style
         else:
             # No runs, create a new one, with style and empty string.
-            self.runs.append(BabelRun(style=style))
+            self.runs.append(BabelRun(s='', style=style))
 
     style = property(_get_style, _set_style)
 
@@ -961,7 +961,7 @@ class BabelString:
         """
         xAlign = self.style.get('xTextAlign')
         if xAlign is None: # If not defined, try xAlign instead.
-            xAlign = self.style.get('xAlign', LEFT) # Copy from box alignment 
+            xAlign = self.style.get('xAlign', LEFT) # Copy from box alignment
         return xAlign
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = xAlign

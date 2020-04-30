@@ -60,11 +60,6 @@ class BaseView(Element):
         # Automatically call self.drawPages if build is called without drawing.
         self._isDrawn = False
 
-    def _getContext(self):
-        """Answers the best / default context for this type of view. To be
-        redefined by inheriting view classes."""
-        raise NotImplementedError
-
     def _get_context(self):
         """The views are the main (and only) keepers of a context reference.
         The Document and all child element must refer to this context if they

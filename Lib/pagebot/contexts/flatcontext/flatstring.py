@@ -41,7 +41,7 @@ class FlatString(BabelString):
     BABEL_STRING_TYPE = 'flat'
     UNITS = 'pt'
 
-    def __init__(self, s=None, style=None, e=None):
+    def __init__(self, s=None, style=None, w=None, h=None, context=None):
         """Constructor of the FlatString, which is a wrapper around a Flat
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
@@ -49,14 +49,12 @@ class FlatString(BabelString):
 
         >>> from pagebot import getContext, getFontByName
         >>> from pagebot.document import Document
-        >>> from pagebot.elements import Element # Reference does not need to be textBox
         >>> from pagebot.toolbox.units import pt, em
         >>> context = getContext('Flat')
         >>> doc = Document(context=context) # Stored as doc.view.context
-        >>> e = Element(w=500, h=200, parent=doc[1])
         >>> style = dict(font='Bungee-Regular', fontSize=pt(12), leading=em(1.5))
-        >>> fs = context.newString('ABC', style, e=e)
-        >>> fs.e.context # Context is stored in the string as weakref property
+        >>> fs = context.newString(s='ABC', style=style, context=context)
+        >>> fs.context # Context is stored in the string as weakref property
         <FlatContext>
         >>> fs
         $ABC$
@@ -100,14 +98,12 @@ class FlatString(BabelString):
         #(0.55em, 0.73em)
         """
         self.data = []
-        self.e = e # Store weakref to referring context as property
 
         if s is None:
             s = ''
 
         # Some checking, in case we get something else here.
         assert style is None or isinstance(style, dict)
-        assert e is None or isinstance(e, Element)
         assert isinstance(s, (str, BabelString)), '%s: Needs one of (str, BabelString), not %s' % (self.__class__.__name__, s.__class__.__name__)
 
         if style is None:
@@ -147,7 +143,7 @@ class FlatString(BabelString):
                 style=style))
         self.previousStyle = style
 
-        super().__init__(context)
+        super().__init__(s=s, context=context, w=w, h=h)
 
         if len(parts) > 0:
             for part in parts[1:]:
@@ -758,7 +754,7 @@ class FlatString(BabelString):
         pass
 
     @classmethod
-    def newString(cls, s=None, style=None):
+    def newString(cls, s=None, style=None, context=None, w=None, h=None):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,

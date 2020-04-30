@@ -413,20 +413,20 @@ class AbstractContext:
 
     # Drawing text.
 
-    def text(self, sOrBs, p):
+    def text(self, s, p):
         raise NotImplementedError
 
     def textOverflow(self, txt, box, align=None):
         raise NotImplementedError
 
-    def textBox(self, sOrBs, r=None, clipPath=None):
-        raise NotImplementedError
+    #def textBox(self, s, r=None, clipPath=None):
+    #    raise NotImplementedError
 
     def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError
 
-    def FormattedString(self, *args, **kwargs):
-        raise NotImplementedError
+    #def FormattedString(self, *args, **kwargs):
+    #    raise NotImplementedError
 
     # Images
 
