@@ -159,7 +159,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # width comes from the rendered unwrapped text width), xAlign and
         # xTextAlign are equivalent.
         # There is no separate yTextAlign and zTextAlign
-        xTextAlign = LEFT,
+        # FIXME: keyword argument repeated.
+        #xTextAlign = LEFT,
 
         # Alignment of origin on element, one of (None, LEFT, CENTER, RIGHT),
         # as defined in constants.XALIGNS.

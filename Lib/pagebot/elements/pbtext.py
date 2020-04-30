@@ -294,7 +294,9 @@ class Text(Element):
         <Text $ABCD$ x=100pt y=100pt w=200pt>
         """
         s = '<%s' % self.__class__.__name__
-        if self.bs is not None and len(self.bs):
+        # C1801: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (len-as-condition)
+        if self.bs is not None:# and len(self.bs):
+        #if self.bs is not None and len(self.bs):
             s += ' %s' % self.bs
         if self.x:
             s += ' x=%s' % self.x
@@ -475,12 +477,15 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
         return self.css('yAlign')
+
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
-    yAlign = property(_get_yAlign, _set_yAlign)
+
+    #yAlign = property(_get_yAlign, _set_yAlign)
+    yAlign = property(_set_yAlign)
 
     def _validateXTextAlign(self, xAlign): # Check and answer value
         assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)

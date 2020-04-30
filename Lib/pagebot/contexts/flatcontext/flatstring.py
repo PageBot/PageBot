@@ -754,7 +754,7 @@ class FlatString(BabelString):
         pass
 
     @classmethod
-    def newString(cls, s=None, style=None, context=none, w=None, h=None):
+    def newString(cls, s=None, style=None, context=None, w=None, h=None):
         """Answers a FlatString instance from valid attributes in *style*. Sets
         all values after testing their existence so they can inherit from
         previous style formats. If target width *w* or height *h* is defined,

@@ -738,7 +738,7 @@ DESCENDER = 'descender' # Aligns with the lowest descender /p in the bottom line
 
 # Types of alignments
 XALIGNS = {None, LEFT, RIGHT, CENTER}
-YALIGNS = {None, TOP, BOTTOM, 
+YALIGNS = {None, TOP, BOTTOM,
     MIDDLE, CENTER, # "middle" is PageBot. "center" is CSS.
 }
 ZALIGNS = {None, FRONT, MIDDLE, BACK}

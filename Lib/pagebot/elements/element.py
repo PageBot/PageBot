@@ -66,19 +66,18 @@ class Element:
     def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
             h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
             left=None, top=None, right=None, bottom=None, sId=None, lib=None,
-            t=None, timeMarks=None, parent=None, name=None,
-            cssClass=None, cssId=None, title=None, description=None,
-            theme=None, keyWords=None, language=None, style=None,
-            conditions=None, solve=False, framePath=None, elements=None,
-            template=None, nextElement=None, prevElement=None, nextPage=None,
-            clipPath=None, prevPage=None, thumbPath=None, bleed=None,
-            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None,
-            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1,
-            scale=None, borders=None, borderTop=None, borderRight=None,
-            borderBottom=None, borderLeft=None, shadow=None, gradient=None,
-            drawBefore=None, radius=None, drawAfter=None, htmlCode=None,
-            htmlPaths=None, xAlign=None, yAlign=None, zAlign=None,
-            proportional=None,
+            t=None, timeMarks=None, parent=None, name=None, cssClass=None,
+            cssId=None, title=None, description=None, theme=None,
+            keyWords=None, language=None, style=None, conditions=None,
+            solve=False, framePath=None, elements=None, template=None,
+            nextElement=None, prevElement=None, nextPage=None, clipPath=None,
+            prevPage=None, thumbPath=None, bleed=None, padding=None, pt=0,
+            pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
+            ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
+            borders=None, borderTop=None, borderRight=None, borderBottom=None,
+            borderLeft=None, shadow=None, gradient=None, drawBefore=None,
+            radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
+            xAlign=None, yAlign=None, zAlign=None, proportional=None,
             # Viewing parameters, local overwrite on self.doc.view parameters
             showBaselineGrid=None, showCropMarks=None,
             showRegistrationMarks=None, showPadding=None,
@@ -3148,15 +3147,18 @@ class Element:
     zAlign = property(_get_zAlign, _set_zAlign)
 
 
-    def _get_xTextAlign(self): 
-        """Answer the type of x-alignment for text strings. 
+    def _get_xTextAlign(self):
+        """Answer the type of x-alignment for text strings.
         Only defined for inheriting Text elements.
         """
-        raise NotImplementedError
+        #raise NotImplementedError
+
     def _set_xTextAlign(self, xTextAlign):
-        raise NotImplementedError
+        pass
+        #raise NotImplementedError
+
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
-    
+
 
     def _get_gw(self): # Gutter width
         return self.css('gw', 0)

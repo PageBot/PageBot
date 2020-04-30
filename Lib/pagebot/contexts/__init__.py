@@ -50,14 +50,13 @@ if platform == 'darwin':
     except ImportError:
         hasSketch = False
 
-    # FIXME: Circular import, PageBot is also imported from SketchContext
-    # Get SketchContext inside PageBot?
+    # FIXME: Circular import, see SketchContext.
 
-    #if hasSketch:
-    #    try:
-    #        from sketchcontext.context import SketchContext
-    #    except ImportError:
-    #        print(traceback.format_exc())
+    if hasSketch:
+        try:
+            from sketchcontext.context import SketchContext
+        except ImportError:
+            print(traceback.format_exc())
 
 
 def getContext(contextType=None):

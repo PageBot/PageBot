@@ -105,7 +105,7 @@ class Line(Element):
         c.stroke(s, w)
         c.line((px, py), (px + self.w, py + self.h))
         c.stroke(None)
-        
+
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
