@@ -44,7 +44,9 @@ class Text(Element):
     which always tenders text on baseline position.
     This way different contexts also have more similar behavior.
 
-    >>> t = Text('ABCD')
+    >>> from pagebot.contexts import getContext
+    >>> context = getContext('DrawBot')
+    >>> t = Text('ABCD', context=context)
     >>> t
     <Text $ABCD$>
     >>> t = Text('ABCD')
@@ -130,8 +132,10 @@ class Text(Element):
     def _get_w(self): # Width
         """Property for self.bs.w, holding the width of the textbox.
 
+        >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(w=300, h=400, autoPages=1, context=context)
         >>> page = doc[1]
         >>> t = Text('ABCD', parent=page, w=125) # Width forces “Text” behavior
         >>> page[t.eId].w
@@ -155,12 +159,12 @@ class Text(Element):
         """Answers the height of the textBox if defined.
         Otherwise answer the height of self.bs.textSize
 
-        >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> doc = Document(w=300, h=400, autoPages=1, padding=30)
+        >>> context = getContext('DrawBot')
+        >>> doc = Document(w=300, h=400, autoPages=1, context=context)
         >>> page = doc[1]
-        >>> font = findFont('Roboto-Regular')
-        >>> style = dict(font=font.path, fontSize=14)
+        >>> style = dict(font='PageBot-Regular', fontSize=14)
         >>> t = Text('This is content', parent=page, style=style, w=100, h=220)
         >>> page[t.eId].h
         220pt
@@ -272,7 +276,7 @@ class Text(Element):
         >>> bs = context.newString('ABCD', style)
         >>> e = Text(bs, parent=doc[1])
         >>> e
-        <Text $ABCD$ w=30.11pt>
+        <Text $ABCD$>
         >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
         >>> e
         <Text $ABCD$ x=100pt y=100pt w=200pt>
@@ -302,11 +306,12 @@ class Text(Element):
             s += ' x=%s' % self.x
         if self.y:
             s += ' y=%s' % self.y
-        if self.w is not None: # Behave a text box with defined width
-            s += ' w=%s' % self.w
-        if self.h is not None: # Behave as text box with defined height
-            s += ' h=%s' % self.h
-        return s+'>'
+        # Always show width and height if defined.
+        if self.bs.hasWidth:
+            s += ' w=%s' % self.bs.w
+        if self.bs.hasHeight:
+            s += ' h=%s' % self.bs.h
+        return s+'>' 
 
     def copy(self, parent=None):
         """Answers a full copy of `self`, where the "unique" fields are set to
@@ -424,11 +429,43 @@ class Text(Element):
     styledLines = property(_get_styledLines)
 
     def _get_xTextAlign(self):
-        """Answer the type of x-alignment.
+        """Answer the type of x-alignment for the string.
 
         Note that self.xAlign defines the position of the box. If the BabelString is
         used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
-        and self.xTextAlign is equivalnent.
+        and self.xTextAlign is equivalent.
+        If the BabelString has a width defined (bs.hasWidth == True), then the self.xAlign
+        defines the alignment of the box and self.xTextAlign defines the alignment of
+        the text inside the box.
+
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('DrawBot')
+        >>> bs = context.newString('ABCD', dict(xTextAlign=CENTER))
+        >>> bs.xAlign, bs.hasWidth
+        ('center', False)
+        >>> t = Text(bs, context=context)
+        >>> t.xTextAlign, t.xAlign, t.bs.xAlign # If no width defined, those are identical.
+        ('center', 'center', 'center')
+        >>> t.xTextAlign = RIGHT
+        >>> t.style['xTextAlign'], t.xTextAlign, t.xAlign, t.bs.xAlign # If no width defined, those are identical.
+        ('right', 'right', 'right', 'right')
+        """
+        if self._bs is None:
+            self.css('xTextAlign') or self.css('xAlign', LEFT)
+        return self.bs.xAlign
+    def _set_xTextAlign(self, xTextAlign):
+        self.style['xTextAlign'] = xTextAlign = self._validateXTextAlign(xTextAlign)
+        if self._bs is not None:
+            self.bs.xAlign = xTextAlign
+    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
+
+    def _get_xAlign(self):
+        """Answer the type of x-alignment of the box.
+
+        Note that self.xAlign defines the position of the box. If the BabelString is
+        used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
+        and self.xTextAlign is equivalent.
         If the BabelString has a width defined (bs.hasWidth == True), then the self.xAlign
         defines the alignment of the box and self.xTextAlign defines the alignment of
         the text inside the box.
@@ -437,6 +474,7 @@ class Text(Element):
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> bs = context.newString('ABCD', dict(xAlign=CENTER))
+        >>> t = Text(bs)
         >>> bs.xAlign
         'center'
         >>> bs.xAlign = RIGHT
@@ -445,14 +483,15 @@ class Text(Element):
         >>> bs.xAlign == bs.runs[-1].style['xAlign']
         True
         """
-        if self._bs is not None:
+        if self._bs is not None and not self.bs.hasWidth:
             return self.bs.xAlign
-        return self.css('xTextAlign', LEFT)
-    def _set_xTextAlign(self, xTextAlign):
-        self.style['xTextAlign'] = xTextAlign = self._validateXTextAlign(xTextAlign)
-        if self._bs is not None:
-            self.bs.xTextAlign = self._validateXAlign(xTextAlign)
-    xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
+        return self.css('xAlign', LEFT)
+    def _set_xAlign(self, xAlign):
+        self.style['xAlign'] = xAlign = self._validateXTextAlign(xAlign)
+        if self._bs is not None and not self.bs.hasWidth:
+            self.style['xTextAlign'] = self.bs.xAlign = xAlign
+    xAlign = property(_get_xAlign, _set_xAlign)
+
 
     def _get_yAlign(self):
         """Answer the type of y-alignment.
@@ -476,7 +515,7 @@ class Text(Element):
         """
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
-        return self.css('yAlign')
+        return self.css('yAlign', BASELINE)
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
@@ -806,6 +845,7 @@ class Text(Element):
     def _set_top(self, y):
         self.y += y - self.top # Trick to reverse vertical alignment.
     top = property(_get_top, _set_top)
+
 
     #   B U I L D  I N D E S I G N
 

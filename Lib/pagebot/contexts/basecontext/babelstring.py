@@ -959,12 +959,11 @@ class BabelString:
         >>> bs.xAlign
         'right'
         """
-        xAlign = self.style.get('xTextAlign')
-        if xAlign is None: # If not defined, try xAlign instead.
-            xAlign = self.style.get('xAlign', LEFT) # Copy from box alignment
-        return xAlign
+        style = self.style # Style of current run
+        return style.get('xTextAlign') or style.get('xAlign', LEFT)
     def _set_xAlign(self, xAlign):
-        self.style['xAlign'] = xAlign
+        style = self.style
+        style['xTextAlign'] = style['xAlign'] = xAlign
         self.reset() # Make sure context cache recalculates.
     xAlign = property(_get_xAlign, _set_xAlign)
 
