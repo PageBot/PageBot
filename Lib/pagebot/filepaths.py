@@ -30,6 +30,10 @@ ROOT_FONT_PATHS = {'darwin': ['/System/Library/Fonts', '/Library/Fonts',
 ROOT_PATH = '/'.join(__file__.split('/')[:-1])
 BASE_PATH = os.path.abspath('.')
 
+def getRootPath():
+    """Answers the root path of the PageBot module for the current platform."""
+    return ROOT_PATH
+
 def getResourcesPath():
     # First check inside PageBot package.
     path = '%s/%s' % (ROOT_PATH, 'resources')
