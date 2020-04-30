@@ -485,16 +485,8 @@ class Text(Element):
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
-
     #yAlign = property(_get_yAlign, _set_yAlign)
     yAlign = property(_set_yAlign)
-
-    def _validateXTextAlign(self, xAlign): # Check and answer value
-        assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
-        return xAlign
-    def _validateYTextAlign(self, yAlign): # Check and answer value
-        assert yAlign in YTEXTALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
-        return yAlign
 
     #   S P E L L  C H E C K
 
