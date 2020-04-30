@@ -54,7 +54,7 @@ if platform == 'darwin':
 
     if hasSketch:
         try:
-            from sketchcontext.context import SketchContext
+            from pagebotsketch.sketchcontext import SketchContext
         except ImportError:
             print(traceback.format_exc())
 
