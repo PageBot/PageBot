@@ -84,7 +84,7 @@ class Element:
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
             showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
-            **kwargs):
+            context=None, **kwargs):
 
         """Base initialize function for all Element constructors. Element
         always have a location, even if not defined here. Values that are
@@ -112,12 +112,15 @@ class Element:
         >>> page.size
         (300pt, 400pt)
         >>> e = Element(parent=page, x=0, y=20, w=page.w, h=3)
-        >>> e.context
-        <FlatContext>
+        >>> e.context, e.context is doc.view.context
+        (<FlatContext>, True)
         >>> doc.build()
 
         """
         self._parent = None
+
+        # If not None, it overwrites property of searching up the parent tree.
+        self._context = context
 
         # Set the local self._lib, validate it is a dictionary, otherwise
         # create new dictionary.
@@ -411,7 +414,8 @@ class Element:
         return len(self.elements)
 
     def _get_context(self):
-        """Answer the doc.view.context if it exists.
+        """Answer the self._context if it is defined. Otherwise search
+        for the doc.view.context if it exists.
 
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
@@ -430,10 +434,13 @@ class Element:
         >>> e.context is doc.view.context is context
         True
         """
-        doc = self.doc
-        if doc is not None and doc.view is not None:
-            return doc.view.context
-        return None
+        if self._context is None:
+            doc = self.doc
+            if doc is not None and doc.view is not None:
+                return doc.view.context
+        return self._context
+    def _set_context(self, context):
+        self._context = context # Can be None to reset the search tree.
     context = property(_get_context)
 
     def _get_view(self):
@@ -3147,16 +3154,12 @@ class Element:
     zAlign = property(_get_zAlign, _set_zAlign)
 
 
-    def _get_xTextAlign(self):
-        """Answer the type of x-alignment for text strings.
-        Only defined for inheriting Text elements.
+    def _get_xTextAlign(self): 
+        """Answer the type of x-alignment for text strings. 
         """
-        #raise NotImplementedError
-
+        return self._validateXTestAlign(self.css('xTextAlign'))
     def _set_xTextAlign(self, xTextAlign):
-        pass
-        #raise NotImplementedError
-
+        self.style['xTextAlign'] = self._validateXTestAlign(xTextAlign) # Save locally, blocking CSS parent scope for this param.
     xTextAlign = property(_get_xTextAlign, _set_xTextAlign)
 
 

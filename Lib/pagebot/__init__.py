@@ -29,7 +29,7 @@ STATUS = 'alpha'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('DrawBot', 'Flat', 'HTML', 'svg')
+contextTypes = ('DrawBot', 'Flat', 'Html', 'svg')
 
 def getRootPath():
     """Answers the root path of the PageBot module for the current platform."""

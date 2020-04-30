@@ -79,7 +79,7 @@ class Publication(Element):
 
     def newDocument(self, name=None, autoPages=None, w=None, h=None, makeCurrent=True,
             padding=None, theme=None, gw=None, gh=None, gridX=None, gridY=None,
-            baselineGrid=None, baselineGridStart=None, **kwargs):
+            baselineGrid=None, baselineGridStart=None, context=None, **kwargs):
         """Answer a new Document instance for this publication, to be filled by the
         publication composer, using existing data and pages. Set autoPages to 0,
         so all pages are appended by the publication.
@@ -114,7 +114,7 @@ class Publication(Element):
             baselineGrid = self.baselineGrid
         if theme is None:
             theme = self.theme
-        document = Document(name=name, w=w, h=h, padding=padding,
+        document = Document(name=name, w=w, h=h, padding=padding, context=context,
             theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
             baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart,
             **kwargs)

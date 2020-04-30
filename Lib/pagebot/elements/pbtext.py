@@ -142,12 +142,14 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        return self.bs.w + self.bs.indent + self.bs.tailIndent
+        if self.bs.w is not None:
+            return self.bs.w + self.pl + self.pr
+        return None
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
-                w = units(w)
+                w = units(w) +  self.pl - self.pr
             self.bs.w = w
     w = property(_get_w, _set_w)
 
@@ -664,7 +666,7 @@ class Text(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
-
+        
         if self.bs.hasWidth or self.bs.hasHeight:
             # Forced width and/or height set, behave as a textbox.
             frameY = py-self.h+self.bs.lines[0].y
