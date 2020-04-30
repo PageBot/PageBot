@@ -88,7 +88,7 @@ class HtmlContext(BaseContext):
 
     def fromBabelString(self, bs):
         """Needs to be implemented by inheriting context class."""
-        print(bs.s)
+        #print(bs.s)
         return bs.s
 
     def asBabelString(self, bs):
