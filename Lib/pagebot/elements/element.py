@@ -4095,7 +4095,11 @@ class Element:
         >>> e.pt, e.pt.pt
         (10%, 50)
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        # Copy from self.h --> self._get_h to avoid circular reference to self.h
+        # in case _get_h is redefined by inheriting classes (such as Text)
+        base = dict(base=self.parentH, em=self.em) 
+        h = units(self.css('h', 0), base=base)
+        base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.css('pt', 0), base=base)
     def _set_pt(self, pt):
         self.style['pt'] = units(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
@@ -4126,7 +4130,11 @@ class Element:
         >>> e.pb.pt # 10% of base 500pt
         50
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        # Copy from self.h --> self._get_h to avoid circular reference to self.h
+        # in case _get_h is redefined by inheriting classes (such as Text)
+        base = dict(base=self.parentH, em=self.em) 
+        h = units(self.css('h', 0), base=base)
+        base = dict(base=h, em=self.em) # In case relative units, use this as base.
         return units(self.css('pb', 0), base=base)
     def _set_pb(self, pb):
         self.style['pb'] = units(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.

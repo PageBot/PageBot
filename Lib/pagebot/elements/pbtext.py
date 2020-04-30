@@ -672,7 +672,7 @@ class Text(Element):
                 view.drawPadding(self, (px, frameY))
 
             # Draw text as box
-            context.drawText(self.bs, (tx, py-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
+            context.drawText(self.bs, (tx, py-self.pt-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)
@@ -688,7 +688,7 @@ class Text(Element):
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the string if
             # it contains '\n' characters.
-            context.drawString(self.bs, (tx, py))
+            context.drawString(self.bs, (tx-self.pt, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
