@@ -18,7 +18,6 @@ import re
 import os.path
 from pagebot.constants import DEFAULT_FONT
 from pagebot.contexts import getContext as getPlatformContext
-from pagebot.contexts import getContextMampPath
 from pagebot.fonttoolbox.objects.font import findFont
 
 VERSION = '0.9.9'
@@ -62,9 +61,6 @@ def getAllContexts():
 
 def getFontByName(name):
     return findFont(name)
-
-def getMampPath():
-    return getContextMampPath()
 
 '''
 In order to let PageBot scripts and applications exchange information without
