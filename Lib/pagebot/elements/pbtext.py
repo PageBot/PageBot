@@ -60,7 +60,8 @@ class Text(Element):
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
             parent=None, padding=None, conditions=None, xTextAlign=None,
-            xAlign=None, yAlign=None, margin=None, **kwargs):
+            xAlign=None, yAlign=None, margin=None, top=None, bottom=None,
+            **kwargs):
 
         self._bs = None # Placeholder, ignoring self.w and self.h until defined.
 
@@ -82,6 +83,7 @@ class Text(Element):
         # some attributes (Text.xTextAlign) may need the string style as reference.
         self.bs = bs # BabelString source for this Text element.
 
+        # These need the self.bs to be defined.
         if xTextAlign is not None:
             self.xTextAlign = xTextAlign
         if xAlign is not None:
@@ -94,6 +96,11 @@ class Text(Element):
         if margin is not None:
             self.margin = margin
 
+        if top is not None:
+            self.top = top
+        if bottom is not None:
+            self.bottom = bottom
+            
         # Now there is a self._bs, set it's width and height (can be None)
         self.w = w
         self.h = h
