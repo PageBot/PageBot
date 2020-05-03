@@ -712,13 +712,13 @@ class PageView(BaseView):
         context.line((px, py-S), (px, py+S))
 
         if (self.showDimensions and e.isPage) or e.showDimensions:
-            bs = context.newString(e.xy,
+            bs = context.newString(str(e.xy),
                     style=dict(font=self.css('viewInfoFont'),
                         fontSize=self.css('viewInfoFontSize'),
                         leading=self.css('viewInfoLeading'),
                         textFill=color(0.1)))
 
-            w, h = bs.size
+            w, h = bs.textSize
 
             context.text(bs, (px, py + S*1.5))
 
