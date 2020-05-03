@@ -18,6 +18,7 @@
 import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
+from pagebot.contexts.sketchcontext.sketchcontext import SketchContext
 from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
@@ -40,20 +41,6 @@ if platform == 'darwin':
     if hasDrawBot:
         try:
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
-        except ImportError:
-            print(traceback.format_exc())
-
-    try:
-        import sketchapp2py
-        hasSketch = True
-    except ImportError:
-        hasSketch = False
-
-    # FIXME: Circular import, see SketchContext.
-
-    if hasSketch:
-        try:
-            from pagebotsketch.sketchcontext import SketchContext
         except ImportError:
             print(traceback.format_exc())
 
