@@ -720,7 +720,7 @@ class PageView(BaseView):
 
             w, h = bs.textSize
 
-            context.text(bs, (px, py + S*1.5))
+            context.drawString(bs, (px, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):
         """When designing templates and pages, this will draw a filled
