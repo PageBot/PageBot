@@ -118,7 +118,7 @@ class SketchContext(BaseContext):
     def newDocument(self, w, h):
         pass
 
-    def newDrawing(self):
+    def newDrawing(self, w=None, h=None, doc=None):
         pass
 
     def newPage(self, w, h):

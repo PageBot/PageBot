@@ -16,11 +16,14 @@
 #
 
 import os
+import PIL
 from math import radians, sin, cos
 import xml.etree.ElementTree as ET
+from PyPDF2 import PdfFileReader
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, DEFAULT_FONT)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, FILETYPE_PDF,
+        DEFAULT_FONT)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import findFont
@@ -966,14 +969,57 @@ class BaseContext(AbstractContext):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
             w=w, h=h, scaleType=scaleType, e=e)
 
-    def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path. If the path
-        is an SVG image, then determine by parsing the SVG-XML."""
+    def numberOfPages(self, path):
+        """Answer the number of pages, if the image paths points to a PDF.
+        https://www.journaldev.com/33281/pypdf2-python-library-for-pdf-files
+        
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.transformer import path2Dir
+        >>> context = getContext('Flat')
+        >>> doc = Document(w=100, h=100, context=context, autoPages=12)
+        >>> filePath = '_export/TestPDFPages.pdf'
+        >>> doc.export(filePath)
+        >>> context.numberOfPages(filePath)
+        12
+        """
+        if path.lower().endswith('.'+FILETYPE_PDF):
+            with open(path, 'rb') as f:
+                pdf = PdfFileReader(f)
+                information = pdf.getDocumentInfo()
+                return pdf.getNumPages()
+        return None
+
+    def imageSize(self, path, index=0):
+        """Answer the images size of path.
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.transformer import path2Dir
+        >>> context = getContext('Flat')
+        >>> doc = Document(w=123, h=345, context=context, autoPages=1)
+        >>> filePathPng = '_export/TestPngImageSize.png'
+        >>> filePathPdf = '_export/TestPdfImageSize.pdf'
+        >>> doc.export(filePathPng)
+        >>> doc.export(filePathPdf)
+        >>> context.imageSize(filePathPng)   
+        (123pt, 345pt)
+        >>> context.imageSize(filePathPdf)   
+        (123pt, 345pt)
+        """
+        if path.lower().endswith(FILETYPE_PDF):
+            im = PdfFileReader(open(path, 'rb'))
+            r = im.getPage(0).mediaBox # RectangleObject([0, 0, w, h])
+            return pt(r.getWidth(), r.getHeight())
+
         if path.lower().endswith('.'+FILETYPE_SVG):
             svgTree = ET.parse(path)
+            # FIXME: Answer the real size from the XML tree
             return pt(1000, 1000)
 
-        return pt(self.b.imageSize(path))
+        # Using Pillow for other image formats
+        image = PIL.Image.open(path)
+        return pt(image.size)
 
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)

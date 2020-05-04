@@ -23,9 +23,7 @@ from pagebot.contexts.markup.htmlcontext import HtmlContext
 from pagebot.contexts.markup.svgcontext import SvgContext
 
 hasDrawBot = False
-hasSketch = False
 DrawBotContext = None
-SketchContext = None
 DEFAULT_CONTEXT = None
 DEFAULT_CONTEXT_TYPE = 'Flat'
 CONTEXT_TYPE = None
@@ -81,7 +79,7 @@ def getContext(contextType=None):
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'Flat':
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Sketch' and hasSketch:
+            elif contextType == 'Sketch':
                 DEFAULT_CONTEXT = getSketchContext()
             elif contextType == 'Html':
                 DEFAULT_CONTEXT = getHtmlContext()

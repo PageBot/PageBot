@@ -808,21 +808,6 @@ class FlatContext(BaseContext):
         #self.fill(None)
         #self.rect(xpt, ypt, w.pt, h.pt)
 
-
-    def imageSize(self, path):
-        """Answers the (w, h) image size of the image file at path.
-
-        >>> from pagebot.filepaths import getResourcesPath
-        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-        >>> context = FlatContext()
-        >>> context.imageSize(imagePath)
-        (398pt, 530pt)
-        """
-        img = self.b.image.open(path)
-        # Answer units of the same time as the document.w was defined.
-        return pt(img.width), pt(img.height)
-
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)
 
