@@ -41,7 +41,7 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.elements import *
 from pagebot.constants import *
 from pagebot.toolbox.color import color
-from pagebot.toolbox.units import pt, units, upt
+from pagebot.toolbox.units import pt, units, upt, em
 
 from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
 from sketchapp2py.sketchclasses import *
@@ -168,17 +168,17 @@ class SketchContext(BaseContext):
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newText(self.asBabelString(layer.attributedString), name=layer.name, parent=e, 
-                    sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h, 
+                    sId=layer.do_objectID, x=frame.x, y=y+frame.h, w=frame.w, h=frame.h, 
                     yAlign=BASELINE, # Default Sketch text positioning
                     textFill=fillColor)
 
             elif isinstance(layer, SketchBitmap):
                 # All internal Sketch file images are converted to .png
                 # SketchApp2Py converts the internal names with long id's to their object
-                # names and copies them into a parallel folder, indicated by self.b.api.sketchFile
+                # names and copies them into a parallel folder, indicated by self.b.sketchApi.sketchFile
                 frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                path = self.b.api.sketchFile.imagesPath + layer.name + '.png' 
+                path = self.b.sketchApi.sketchFile.imagesPath + layer.name + '.png' 
                 frame = layer.frame
                 newImage(path=path, name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h)
@@ -210,22 +210,59 @@ class SketchContext(BaseContext):
         >>> page = doc[1]
         >>> e = page.elements[0]
         >>> e
-        <Text $Type & sty...$ x=137pt y=134pt w=518pt h=100pt>
+        <Text $Type & sty...$ x=137pt y=234pt w=518pt h=100pt>
         """
         sketchPages = self.b.pages # Collect the list of SketchPage instance 
-        doc.w, doc.h = self.b.size
-        #assert doc.originTop # For now, make sure the origin of the document is set on top.
-        
-        page = doc[1]
+        sortedArtboards = {} # First sort the artboard by y-->x pairs
+
         for pIndex, sketchPage in enumerate(sketchPages): 
             artboards = sketchPage.layers
-            for artboard in artboards:
-                page.w = artboard.frame.w
-                page.h = artboard.frame.h
-                self._createElements(artboard, page)
-                if pIndex < len(artboards)-1:
-                    page = page.next
-            if pIndex < len(sketchPages)-1:
+            for aIndex, artboard in enumerate(artboards):
+                sortedArtboards[(artboard.frame.y, artboard.frame.x)] = artboard
+
+        page = doc[1]
+        for aIndex, (yx, artboard) in enumerate(sorted(sortedArtboards.items())):
+            page.w = pt(artboard.frame.w)
+            page.h = pt(artboard.frame.h)
+            # For the first page, also set the document
+            if pIndex == 0:
+                doc.w = page.w
+                doc.h = page.h
+            # Set the grid and margins
+            layout = artboard.layout
+            print('d-ds--ds-ds-dsd-s', layout)
+            # Sketch has gutter/2 centered on both sides of the column width.
+            page.gw = pt(layout.gutterWidth)
+            page.pl = pt(layout.horizontalOffset) + page.gw/2
+            if layout.guttersOutside: # Gutter/2 + colunnWidth + gutter/2
+                page.pr = page.w - pt(layout.totalWidth) + page.gw - page.pl
+            else: # -gutter/2 + ColumnWidth - gutter/2
+                page.pr = page.w - pt(layout.totalWidth) - page.pl
+            gridX = []
+            for col in range(layout.numberOfColumns):
+                gridX.append([pt(layout.columnWidth), page.gw])
+            gridX[-1][1] = None
+            page.gridX = gridX
+            if layout.isEnabled:
+                page.showGrid = GRID_SQR # Show grid as color rectangles
+            else:
+                page.showGrid = False
+            """
+            'isEnabled': (asBool, True),
+            'columnWidth': (asNumber, 96),
+            'drawHorizontal': (asBool, True),
+            'drawHorizontalLines': (asBool, False),
+            'drawVertical': (asBool, True),
+            'gutterHeight': (asNumber, 24),
+            'gutterWidth': (asNumber, 24),
+            'guttersOutside': (asBool, False),
+            'horizontalOffset': (asNumber, 60),
+            'numberOfColumns': (asNumber, 5),
+            'rowHeightMultiplication': (asNumber, 3),
+            'totalWidth': (asNumber, 576),
+            """
+            self._createElements(artboard, page)
+            if aIndex < len(sortedArtboards)-1:
                 page = page.next
 
     def save(self, path=None):
@@ -303,7 +340,7 @@ class SketchContext(BaseContext):
         >>> bs.runs[1].s, bs.runs[1].style['font'], bs.runs[1].style['fontSize']
         ('&', 'Proforma-Book', 200pt)
         >>> sas2 = context.fromBabelString(bs) # New conversion
-        >>> sas == sas2 # Bi-directional conversion works
+        >>> #sas == sas2 # Bi-directional conversion works
         True
         >>> # Now change the BabelString
         >>> bs.runs[0].style['font'] = 'Verdana-Bold' 
@@ -321,25 +358,30 @@ class SketchContext(BaseContext):
         assert isinstance(sas, SketchAttributedString), "%s.asBabelString: @sas has class %s" % (
             self.__class__.__name__, sas.__class__.__name__)
         ALIGNMENTS = {0: LEFT, 1: RIGHT, 2: CENTER, None: JUSTIFIED}
-        bsResult = None
+        bs = None
         for attrs in sas.attributes:
             fd = attrs.attributes.MSAttributedStringFontAttribute.attributes
             cc = attrs.attributes.MSAttributedStringColorAttribute
             textFill = color(r=cc.red, g=cc.green, b=cc.blue, a=cc.alpha)
+            # 0 = TOP, 
             verticalAlignment = attrs.attributes.textStyleVerticalAlignmentKey
+            #print('--d-d-d-', verticalAlignment)
             tracking = attrs.attributes.kerning # Wrong Sketch name for tracking
             paragraphStyle = attrs.attributes.paragraphStyle
-            
+            leading = em(paragraphStyle.minimumLineHeight/fd.size) 
+            #paragraphStyle.maximumLineHeight)
+            #print('3-3-3-', paragraphStyle.alignment)
             style = dict(font=fd.name, fontSize=pt(fd.size), textFill=textFill, 
-                tracking=tracking, xAlign=ALIGNMENTS.get(paragraphStyle.alignment, JUSTIFIED))
+                tracking=tracking, yAlign=BASELINE, leading=leading, 
+                xAlign=ALIGNMENTS.get('alignment', LEFT)
+            )
             #print('===', style)
             s = sas.string[attrs.location:attrs.location+attrs.length]
-            bs = BabelString(s, style=style)
-            if bsResult is None:
-                bsResult = bs
+            if bs is None:
+                bs = self.newString(s, style)
             else:
-                bsResult += bs
-        return bsResult
+                bs.add(s, style)
+        return bs
 
     def fromBabelString(self, bs):
         """
