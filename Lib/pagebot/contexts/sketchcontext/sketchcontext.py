@@ -60,17 +60,25 @@ class SketchContext(BaseContext):
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
         >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
-        >>> context = getContext('Sketch') # Context now interacts with the file.
+        >>> context = SketchContext(path) # Instead of context = getContext('Sketch') 
+        >>> # Context now interacts with the file.
         >>> # Create a PageBot Document instance, reading the Sketch file data as source.
         >>> doc = Document(context=context)
-
-        """
-        """
         >>> context.readDocument(doc)
         >>> page = doc[1]
         >>> page
         <Page #1 default (576pt, 783pt) E(7)>
+        """
 
+        """
+        >>> # FIXME: Try reading the PageBot elements library
+        >>> import pagebot
+        >>> path = path2Dir(pagebot.__file__) + '/resources/sketchapp/PageBotElements.sketch'
+        >>> context = SketchContext(path) # Instead of context = getContext('Sketch') 
+        >>> # Context now interacts with the file.
+        >>> # Create a PageBot Document instance, reading the Sketch file data as source.
+        >>> doc = Document(context=context)
+        >>> context.readDocument(doc)
         """
         super().__init__()
         self.name = self.__class__.__name__
@@ -132,25 +140,32 @@ class SketchContext(BaseContext):
 
         """
         for layer in sketchLayer.layers:
-            frame = layer.frame
-            y = e.h - frame.h - frame.y # Flip the y-axis
+
             if isinstance(layer, (SketchGroup, SketchShapeGroup)):
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(layer)
                 child = newGroup(name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h)
                 self._createElements(layer, child)
             
             elif isinstance(layer, SketchRectangle):
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newRect(name=layer.name, parent=e, sId=layer.do_objectID, 
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
             
             elif isinstance(layer, SketchOval):
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newOval(name=layer.name, parent=e, sId=layer.do_objectID, 
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
             
             elif isinstance(layer, SketchText):
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newText(self.asBabelString(layer.attributedString), name=layer.name, parent=e, 
                     sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h, 
@@ -161,6 +176,8 @@ class SketchContext(BaseContext):
                 # All internal Sketch file images are converted to .png
                 # SketchApp2Py converts the internal names with long id's to their object
                 # names and copies them into a parallel folder, indicated by self.b.api.sketchFile
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 path = self.b.api.sketchFile.imagesPath + layer.name + '.png' 
                 frame = layer.frame
                 newImage(path=path, name=layer.name, parent=e, sId=layer.do_objectID,
@@ -169,12 +186,13 @@ class SketchContext(BaseContext):
             elif isinstance(layer, SketchSymbolInstance):
                 # For now only show the Symbol name.
                 frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 newText('[%s]' % layer.name, name=layer.name, parent=e, 
                     sId=layer.do_objectID, fill=0.9, textFill=0, font='PageBot-Regular', fontSize=12,
                     x=frame.x, y=y, w=frame.w, h=frame.h, yAligh=BASELINE)
 
             else:
-                print('Unsupported layer type', layer)
+                print('Unsupported layer type', layer.__class__.__name__)
 
     def readDocument(self, doc):
         """Read Page/Element instances from the SketchApi and fill the Document
