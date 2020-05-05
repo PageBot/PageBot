@@ -19,7 +19,8 @@ import os
 import sys
 
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL
+from pagebot.constants import (ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL,
+    BITMAP_TYPES)
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import path2Extension
@@ -314,6 +315,8 @@ class Image(Element):
         """
         if self.path is None or not self.scaleImage:
             return
+        if not path2Extension(self.path) in BITMAP_TYPES:
+            return
 
         # Make sure image exists and not zero size, to avoid division.
         if not self.iw or not self.ih:
@@ -509,7 +512,8 @@ class Image(Element):
             self.context.restore()
 
         # Draw optional frame or borders.
-        self.buildFrame(view, p)
+        if self.iw and self.ih:
+            self.buildFrame(view, p)
 
         #if drawElements:
         #    self.buildChildElements(view, p)

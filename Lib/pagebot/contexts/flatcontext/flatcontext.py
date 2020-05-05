@@ -103,7 +103,7 @@ class FlatContext(BaseContext):
         self.drawing = None
         self.w = None
         self.h = None
-        self.numberOfPages = 0
+        self._numberOfPages = 0
 
     #   Drawing.
 
@@ -258,7 +258,7 @@ class FlatContext(BaseContext):
 
     def clear(self):
         self.endDrawing()
-        self.numberOfPages = 0
+        self._numberOfPages = 0
 
     def getDrawing(self):
         return self.drawing
@@ -298,7 +298,7 @@ class FlatContext(BaseContext):
 
         self.w = w
         self.h = h
-        self.numberOfPages += 1
+        self._numberOfPages += 1
         self.drawing.addpage()
 
     def getTmpPage(self, w, h):
@@ -313,7 +313,7 @@ class FlatContext(BaseContext):
         if self.drawing is None:
             self.newDrawing(w=W, h=H)
             #return None
-        if self.numberOfPages == 0:
+        if self._numberOfPages == 0:
             self.newPage(w=W, h=H)
 
         assert self.drawing

@@ -28,7 +28,7 @@
 #  Document.pages    SketchArtBoard[]
 #  Page.elements     SketchArtBoard.layers
 #
-#  The SketchContext is, similar to the HDMLContext, capable of reading and
+#  The SketchContext is, together with the HDMLContext, capable of reading and
 #  writing data into the designated file format.
 #
 import os
@@ -43,7 +43,7 @@ from pagebot.constants import *
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import pt, units, upt
 
-from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
+from sketchcontext.builder import SketchBuilder
 from sketchapp2py.sketchclasses import *
 
 class SketchContext(BaseContext):
@@ -58,14 +58,10 @@ class SketchContext(BaseContext):
         >>> import sketchapp2py
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
-        >>> from pagebot.contexts import getContext
         >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
-        >>> context = getContext('Sketch') # Context now interacts with the file.
+        >>> context = SketchContext(path) # Context now interacts with the file.
         >>> # Create a PageBot Document instance, reading the Sketch file data as source.
-        >>> doc = Document(context=context)
-
-        """
-        """
+        >>> doc = Document()
         >>> context.readDocument(doc)
         >>> page = doc[1]
         >>> page
@@ -96,11 +92,11 @@ class SketchContext(BaseContext):
         self.h = units(h)
 
     def setPath(self, path):
-        """Set the self.b builder to SketchBuilder(path), answering self.b.sketchApi.
+        """Set the self.b builder to SketchBuilder(parth), answering self.b.api.
 
         >>> import sketchapp2py
         >>> context = SketchContext() # Context now interacts with the default Resource file.
-        >>> context.b.sketchApi.filePath.split('/')[-1]
+        >>> context.b.api.filePath.split('/')[-1]
         'Template.sketch'
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
@@ -109,7 +105,7 @@ class SketchContext(BaseContext):
         'TemplateSquare.sketch'
         """
         self.b = SketchBuilder(path)
-        return self.b.sketchApi
+        return self.b.api
 
     def getNameTree(self, layer, t=None, tab=0):
         if t is None:
@@ -182,6 +178,7 @@ class SketchContext(BaseContext):
         Sketch Artboards as PageBot pages.
 
         >>> import sketchapp2py
+        >>> from pagebot.document import Document
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
         >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateText.sketch'
@@ -229,7 +226,7 @@ class SketchContext(BaseContext):
         """
         if path is None:
             path = self.b.sketchApi.filePath
-        self.b.sketchApi.save(path)
+        self.b.api.save(path)
 
     def newDocument(self, w, h):
         pass
@@ -373,3 +370,149 @@ if __name__ == '__main__':
   import sys
   sys.exit(doctest.testmod()[0])
 
+
+
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+# -----------------------------------------------------------------------------
+#
+#  P A G E B O T
+#
+#  Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
+#  www.pagebot.io
+#  Licensed under MIT conditions
+#
+#  Supporting DrawBot, www.drawbot.com
+#  Supporting Flat, xxyxyz.org/flat
+#  Supporting Sketch, https://github.com/Zahlii/python_sketch_api
+# -----------------------------------------------------------------------------
+#
+#  sketchcontext.py
+#
+#  Inspace sketch file:
+#  https://xaviervia.github.io/sketch2json/
+#
+#  https://gist.github.com/xaviervia/edbea95d321feacaf0b5d8acd40614b2
+#  This description is not complete.
+#  Additions made where found in the Reading specification of this context.
+#
+#  Eqivalent classes on PageBot <--> SketchApp2Py
+#  Publication       Sketch file
+#  Document          SketchApi
+#  Page              SketchPage
+#  Page.elements     SketchPage.layers = ArtBoards
+#  Page.elements     SketchArtBoard.layers
+#
+#  The SketchContext is, together with the 
+from pagebot.constants import FILETYPE_SKETCH, A4
+from pagebot.contexts.basecontext.basecontext import BaseContext
+from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
+#from pagebot.toolbox.color import color
+#from pagebot.toolbox.units import asNumber, pt
+#from pagebot.toolbox.transformer import path2Dir, path2Extension
+from pagebot.elements import *
+from sketchapp2py.sketchapi import *
+
+class SketchContext(BaseContext):
+
+    W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
+
+    def __init__(self, path=None):
+        """Constructor of Sketch context.
+
+        >>> import sketchapp2py
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.transformer import path2Dir
+        >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> context = getContext('Sketch')
+        """
+        """
+        >>> doc = context.getDocument()
+        >>> doc.w, doc.h
+        (300pt, 400pt)
+        """
+        super().__init__()
+        self.name = self.__class__.__name__
+        self.b = SketchBuilder(path)
+        self.shape = None # Current open shape
+        self.fileType = FILETYPE_SKETCH
+
+    def read(self, path):
+        """
+        >>>
+        """
+        self.b = SketchBuilder(path)
+        return self.b
+
+    def _createElements(self, sketchLayer, e):
+        """Copy the attributes of the sketchLayer into the element where
+        necessary.
+
+        """
+        pass
+        '''
+        if isinstance(sketchLayer, (SketchArtboard, SketchPage)):
+            e.w = artboard.width
+            e.h = artboard.height
+        elif isinstance(sketchLayer, SketchFramed):
+            e.x = artboard.x
+            e.y = artboard.y
+            e.w = artboard.width
+            e.h = artboard.height
+
+        if isinstance(sketchLayer, SketchLayer): # There are child layers
+            for layer in sketchLayer.layers:
+                if isinstance(SketchShapeGroup):
+                    self._createElements(layer, newGroup(parent=e))
+        '''
+
+    def XXXgetDocument(self):
+        """Create a new tree of Document/Page/Element instances, interpreting
+        Sketch Artboards as pages.
+
+    
+        sketchPages = self.b.getArtBoards()
+        doc = None
+        page = None
+        for artboard in self.b.getArtBoards():
+            if page is None:
+                doc = Document(w=artboard.width, h=artboard.height)
+                page = doc[1]
+            else:
+                page = page.next
+            # Create the element, and copy data from the artboard layers where necessary.
+            self._createElements(page, artboard)
+        """
+        return doc
+
+    def save(self):
+        pass
+
+    def newDocument(self, w, h):
+        pass
+
+    def newDrawing(self, w=None, h=None, doc=None):
+        pass
+
+    def newPage(self, w, h):
+        pass
+
+    def image(self, path, p, w=None, h=None, alpha=None, pageNumber=0, scaleType=False):
+        pass
+
+    def getFlattenedPath(self, path=None):
+        pass
+
+    def getFlattenedContours(self, path=None):
+        pass
+
+    def getGlyphPath(self, glyph, p=None, path=None):
+        pass
+
+    def saveDrawing(self, path, multiPage=False):
+        pass
+   
+if __name__ == '__main__':
+  import doctest
+  import sys
+  sys.exit(doctest.testmod()[0])

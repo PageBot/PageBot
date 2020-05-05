@@ -145,29 +145,6 @@ class HtmlContext(BaseContext):
         return 0
         #return cls.b.imagePixelColor(path, p)
 
-    def imageSize(self, path):
-        """Answers the pt(w, h) image size of the image file at path. As we cannot assume
-        that we have DrawBotContext available, we are using PIL for size and scaling.
-
-        Usage:
-        from pagebot import getContext
-        return getContext().imageSize(path)
-
-        >>> from pagebot.filepaths import getResourcesPath
-        >>> imagePath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
-        >>> context = HtmlContext()
-        >>> context.imageSize(imagePath)
-        (398pt, 530pt)
-        """
-        if not os.path.exists(path):
-            return None
-
-        if HAS_PIL:
-            if path.split('.')[-1] in BITMAP_TYPES:
-                im = Image.open(path)
-                return pt(im.size)
-        return pt(100, 100) # PIL cannot find file size of SVG, At least return a default.
-
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
         """

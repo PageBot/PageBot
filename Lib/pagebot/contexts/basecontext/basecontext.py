@@ -29,6 +29,7 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
+from pagebot.toolbox.transformer import path2Extension
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.style import makeStyle
 
@@ -961,9 +962,6 @@ class BaseContext(AbstractContext):
 
     # Images
 
-    def numberOfImages(self, path):
-        pass
-
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None, e=None):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
@@ -1007,12 +1005,15 @@ class BaseContext(AbstractContext):
         >>> context.imageSize(filePathPdf)   
         (123pt, 345pt)
         """
-        if path.lower().endswith(FILETYPE_PDF):
+        extension = path2Extension(path)
+        if extension == FILETYPE_PDF:
             im = PdfFileReader(open(path, 'rb'))
             r = im.getPage(0).mediaBox # RectangleObject([0, 0, w, h])
-            return pt(r.getWidth(), r.getHeight())
+            w = float(r.getWidth())
+            h = float(r.getHeight())
+            return pt(w, h)
 
-        if path.lower().endswith('.'+FILETYPE_SVG):
+        if extension == FILETYPE_SVG:
             svgTree = ET.parse(path)
             # FIXME: Answer the real size from the XML tree
             return pt(1000, 1000)
@@ -1023,9 +1024,6 @@ class BaseContext(AbstractContext):
 
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)
-
-    def numberOfPages(self, path):
-        return self.b.numberOfPages(path)
 
     # Mov.
 
