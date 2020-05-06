@@ -230,21 +230,22 @@ class SketchContext(BaseContext):
                 doc.h = page.h
             # Set the grid and margins
             layout = artboard.layout
-            print('d-ds--ds-ds-dsd-s', layout)
+
             # Sketch has gutter/2 centered on both sides of the column width.
             page.gw = pt(layout.gutterWidth)
             page.pl = pt(layout.horizontalOffset) + page.gw/2
             if layout.guttersOutside: # Gutter/2 + colunnWidth + gutter/2
                 page.pr = page.w - pt(layout.totalWidth) + page.gw - page.pl
-            else: # -gutter/2 + ColumnWidth - gutter/2
+            else: # -gutter/2 + columnWidth - gutter/2
                 page.pr = page.w - pt(layout.totalWidth) - page.pl
             gridX = []
             for col in range(layout.numberOfColumns):
                 gridX.append([pt(layout.columnWidth), page.gw])
             gridX[-1][1] = None
             page.gridX = gridX
+
             if layout.isEnabled:
-                page.showGrid = GRID_SQR # Show grid as color rectangles
+                page.showGrid = DEFAULT_GRID # Show grid as lines
             else:
                 page.showGrid = False
             """

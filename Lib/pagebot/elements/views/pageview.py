@@ -178,12 +178,17 @@ class PageView(BaseView):
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
 
+            # If there is meta info requested for the background,
+            # then draw that now here.
             self.drawPageMetaInfoBackground(page, origin)
 
             # Since self already adjust origin, scale, etc. we don't use the
             # page.build here. Instead we calle the drawing of its elements
             # too.
             page.buildChildElements(self, origin, **kwargs)
+
+            # If there is meta info request at the foreground,
+            # then draw that here now.
             self.drawPageMetaInfo(page, origin)
 
             if self.drawAfter is not None: # Call if defined
@@ -255,6 +260,9 @@ class PageView(BaseView):
         self.drawRegistrationMarks(page, origin)
         self.drawCropMarks(page, origin)
         self.drawElementOrigin(page, origin)
+
+        self.drawGrid(page, origin, background=False)
+        self.drawBaselines(page, origin, background=False)
 
     def drawPageMetaInfoBackground(self, page, origin, path=None, background=True):
         """Draw the foreground meta info of the page, depending on the settings
@@ -836,7 +844,9 @@ class PageView(BaseView):
 
                     if gx:
                         context.line((x+cw, y1), (x+cw, y2))
-                    x += cw + gx
+                        x += cw + gx
+                    else:
+                        x += cw
 
         # Drawing the grid as horizontal lines. Check foreground / background
         # flags.
@@ -861,7 +871,9 @@ class PageView(BaseView):
                     context.line((x1, y), (x2, y))
                     if gy:
                         context.line((x1, y+ch), (x2, y+ch))
-                    y += ch + gy
+                        y += ch + gy
+                    else:
+                        y += ch
 
         # Drawing the grid as rectangles. Check foreground / background flags.
         if (background and GRID_SQR_BG in showGrid) or (not background and GRID_SQR in showGrid):
