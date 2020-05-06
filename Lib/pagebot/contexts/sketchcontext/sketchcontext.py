@@ -262,7 +262,23 @@ class SketchContext(BaseContext):
             'rowHeightMultiplication': (asNumber, 3),
             'totalWidth': (asNumber, 576),
             """
+            # Recursively create all elements on the page, interpreting
+            # the objects found on the artboard.
             self._createElements(artboard, page)
+
+            # Since there is not really vertical margins defined,
+            # we'll try to guess is here from the top and bottom position 
+            # of the elements.
+            topY = 0
+            bottomY = page.h
+            for e in page.elements:
+                if e.top < page.h:
+                    topY = max(topY, e.top)
+                if e.bottom > 0:
+                    bottomY = min(bottomY, e.bottom)
+            page.pb = bottomY
+            page.pt = page.h - topY
+
             if aIndex < len(sortedArtboards)-1:
                 page = page.next
 
@@ -361,22 +377,51 @@ class SketchContext(BaseContext):
         ALIGNMENTS = {0: LEFT, 1: RIGHT, 2: CENTER, None: JUSTIFIED}
         bs = None
         for attrs in sas.attributes:
+            # Font, fontSize and tracking are easy to extract.
+            # More difficult is the leading, as Skype does not really keep
+            # runs with styles and leading.
             fd = attrs.attributes.MSAttributedStringFontAttribute.attributes
+            tracking = attrs.attributes.kerning # Wrong Sketch name for tracking
+
+            print('----', attrs)
+            # attrs = SketchStringAttribute
+            #   location
+            #   length
+            #   attributes = SketchAttributes
+            #       MSAttributedStringFontAttribute
+            #       MSAttributedStringColorAttribute
+            #       textStyleVerticalAlignmentKey
+            #       kerning
+            #       paragraphStyle = SketchParagraphStyle
+            #           alignment
+            #           minimumLineHeight
+            #           maximumLineHeight
+            #           paragraphSpacing
+            print('----', sas.string[attrs.location:attrs.location+attrs.length])
+            print('fontSize:', fd.name, fd.size)
+            print('minimumLineHeight:', attrs.attributes.paragraphStyle.minimumLineHeight)
+            print('maximumLineHeight:', attrs.attributes.paragraphStyle.maximumLineHeight)
+            print('paragraphSpacing:', attrs.attributes.paragraphStyle.paragraphSpacing)
+            print('...')
+
+            #print('--d-d-d-', verticalAlignment)
+            #paragraphStyle.maximumLineHeight)
+            #print('3-3-3-', paragraphStyle.alignment)
+
+            paragraphStyle = attrs.attributes.paragraphStyle
+            leading = em(paragraphStyle.minimumLineHeight/fd.size) 
+
+            # Fill color of the this run.
             cc = attrs.attributes.MSAttributedStringColorAttribute
             textFill = color(r=cc.red, g=cc.green, b=cc.blue, a=cc.alpha)
             # 0 = TOP, 
             verticalAlignment = attrs.attributes.textStyleVerticalAlignmentKey
-            #print('--d-d-d-', verticalAlignment)
-            tracking = attrs.attributes.kerning # Wrong Sketch name for tracking
-            paragraphStyle = attrs.attributes.paragraphStyle
-            leading = em(paragraphStyle.minimumLineHeight/fd.size) 
-            #paragraphStyle.maximumLineHeight)
-            #print('3-3-3-', paragraphStyle.alignment)
+            # Construct the run style from the extracted parameters.
             style = dict(font=fd.name, fontSize=pt(fd.size), textFill=textFill, 
                 tracking=tracking, yAlign=BASELINE, leading=leading, 
                 xAlign=ALIGNMENTS.get('alignment', LEFT)
             )
-            #print('===', style)
+            # Get the string, using the location and length in the full string.
             s = sas.string[attrs.location:attrs.location+attrs.length]
             if bs is None:
                 bs = self.newString(s, style)
