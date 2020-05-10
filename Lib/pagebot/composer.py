@@ -31,6 +31,7 @@ class Composer:
     def __init__(self, doc):
         self.doc = doc
 
+
     def compose(self, galley=None, targets=None, page=None):
         """Compose the galley element, based on code blocks in the galley.
 

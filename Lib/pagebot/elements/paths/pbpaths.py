@@ -189,40 +189,8 @@ class Paths(Element):
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
-class Mask(Paths):
-
-    def build(self, view, origin, drawElements=True, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
-
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        self._applyRotation(view, p)
-
-        self.b.save()
-
-        unifiedPath = None
-        for path in self.paths:
-            if unifiedPath is None:
-                unifiedPath = path
-            else:
-                unifiedPath = unifiedPath.union(path)
-
-        if unifiedPath is not None:
-            self.b.translate(upt(px), upt(py))
-            #self.b.fill(1, 0, 0)
-            #self.b.drawPath(unifiedPath.bp)
-            self.b.clipPath(unifiedPath.bp)
-
-            self.b.translate(upt(-px), upt(-py))
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p, **kwargs)
-
-        self.b.restore()
+# class Mask(Paths) is deprecated.
+# Use Mask(Polygon) instead.
 
 if __name__ == '__main__':
     import doctest

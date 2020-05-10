@@ -703,18 +703,20 @@ class Text(Element):
 
         if self.bs.hasWidth or self.bs.hasHeight:
             # Forced width and/or height set, behave as a textbox.
-            frameY = py-self.h+self.bs.lines[0].y
-            # Draw optional background, frame or borders.
-            # Width is padded width of self.
-            self.buildFrame(view, (px, frameY, self.pw or self.bs.tw, self.bs.th))
+            # Only if there is content
+            if self.bs.lines:
+                frameY = py-self.h+self.bs.lines[0].y
+                # Draw optional background, frame or borders.
+                # Width is padded width of self.
+                self.buildFrame(view, (px, frameY, self.pw or self.bs.tw, self.bs.th))
 
-            if self.showMargin:
-                view.drawMargin(self, (px, frameY))
-            if self.showPadding:
-                view.drawPadding(self, (px, frameY))
+                if self.showMargin:
+                    view.drawMargin(self, (px, frameY))
+                if self.showPadding:
+                    view.drawPadding(self, (px, frameY))
 
-            # Draw text as box
-            context.drawText(self.bs, (tx, py-self.pt-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
+                # Draw text as box
+                context.drawText(self.bs, (tx, py-self.pt-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
         else: # No width or height defined.
             # Draw as string using its own width (there may be embedded newlines)

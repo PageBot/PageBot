@@ -40,8 +40,10 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.elements import *
 from pagebot.constants import *
+from pagebot.typesetter import Typesetter
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import pt, units, upt, em
+from pagebot.toolbox.transformer import asIntOrNone
 
 from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
 from sketchapp2py.sketchclasses import *
@@ -131,8 +133,20 @@ class SketchContext(BaseContext):
     def _extractFill(self, layer):
         if hasattr(layer, 'style') and hasattr(layer.style, 'fills') and layer.style.fills:
             sketchColor = layer.style.fills[0].color
-            return color(r=sketchColor.red, g=sketchColor.green, b=sketchColor.blue)
+            return color(r=sketchColor.red, g=sketchColor.green, b=sketchColor.blue, a=sketchColor.alpha)
         return color(0.5)
+
+    def _layerName2FilePathIndex(self, name):
+        """Answer the path of a referenced file and the index in the overflow sequence.
+        Format: "MyContextFile.md #1"
+        """
+        parts = name.split('#')
+        if len(parts) == 2:
+            filePath = parts[0].strip()
+            index = asIntOrNone(parts[1].strip())
+            if os.path.exists(filePath) and index is not None:
+                return filePath, index
+        return None, None
 
     def _createElements(self, sketchLayer, e):
         """Copy the attributes of the sketchLayer into the element where
@@ -141,30 +155,39 @@ class SketchContext(BaseContext):
         """
         for layer in sketchLayer.layers:
 
-            if isinstance(layer, (SketchGroup, SketchShapeGroup)):
+            frame = layer.frame
+
+            if layer.name == 'Mask':
+                """Will be used as mask by images that have the same parent."""
+                frame = layer.frame
+                y = e.h - frame.h - frame.y # Flip the y-axis
+                mask = newMask(name=layer.name, parent=e, sId=layer.do_objectID,
+                    x=frame.x, y=y, w=frame.w, h=frame.h)
+                mask.rect(0, 0, frame.w, frame.h) # For now, only rectangle masks.
+                # Mask has no children.
+   
+            elif isinstance(layer, (SketchGroup, SketchShapeGroup, SketchSlice)):
                 frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(layer)
                 child = newGroup(name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h)
                 self._createElements(layer, child)
-            
+        
             elif isinstance(layer, SketchRectangle):
-                frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newRect(name=layer.name, parent=e, sId=layer.do_objectID, 
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
-            
+        
             elif isinstance(layer, SketchOval):
-                frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newOval(name=layer.name, parent=e, sId=layer.do_objectID, 
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
             
             elif isinstance(layer, SketchText):
-                frame = layer.frame
+                # FIXME: Positioning of text still to be finalized.
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
                 newText(self.asBabelString(layer.attributedString), name=layer.name, parent=e, 
@@ -176,16 +199,19 @@ class SketchContext(BaseContext):
                 # All internal Sketch file images are converted to .png
                 # SketchApp2Py converts the internal names with long id's to their object
                 # names and copies them into a parallel folder, indicated by self.b.sketchApi.sketchFile
-                frame = layer.frame
+                # If there are Mask elements with the same parent, then use it as clip path
                 y = e.h - frame.h - frame.y # Flip the y-axis
+                # We use the layer.name here, which can be tricky if the user changes it,
+                # or if Sketch replaced the image by another. But we don't have another
+                # way to trace the original image name, since Sketch converted it to an internal
+                # unique id. So there is some responsibility of the designer here.
                 path = self.b.sketchApi.sketchFile.imagesPath + layer.name + '.png' 
-                frame = layer.frame
                 newImage(path=path, name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h)
+                # The Image element does not have child elements.
             
             elif isinstance(layer, SketchSymbolInstance):
                 # For now only show the Symbol name.
-                frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 newText('[%s]' % layer.name, name=layer.name, parent=e, 
                     sId=layer.do_objectID, fill=0.9, textFill=0, font='PageBot-Regular', fontSize=12,
@@ -269,6 +295,7 @@ class SketchContext(BaseContext):
             # Since there is not really vertical margins defined,
             # we'll try to guess is here from the top and bottom position 
             # of the elements.
+            """
             topY = 0
             bottomY = page.h
             for e in page.elements:
@@ -278,7 +305,7 @@ class SketchContext(BaseContext):
                     bottomY = min(bottomY, e.bottom)
             page.pb = bottomY
             page.pt = page.h - topY
-
+            """
             if aIndex < len(sortedArtboards)-1:
                 page = page.next
 
@@ -383,7 +410,7 @@ class SketchContext(BaseContext):
             fd = attrs.attributes.MSAttributedStringFontAttribute.attributes
             tracking = attrs.attributes.kerning # Wrong Sketch name for tracking
 
-            print('----', attrs)
+            #print('----', attrs)
             # attrs = SketchStringAttribute
             #   location
             #   length
@@ -397,12 +424,12 @@ class SketchContext(BaseContext):
             #           minimumLineHeight
             #           maximumLineHeight
             #           paragraphSpacing
-            print('----', sas.string[attrs.location:attrs.location+attrs.length])
-            print('fontSize:', fd.name, fd.size)
-            print('minimumLineHeight:', attrs.attributes.paragraphStyle.minimumLineHeight)
-            print('maximumLineHeight:', attrs.attributes.paragraphStyle.maximumLineHeight)
-            print('paragraphSpacing:', attrs.attributes.paragraphStyle.paragraphSpacing)
-            print('...')
+            #print('----', sas.string[attrs.location:attrs.location+attrs.length])
+            #print('fontSize:', fd.name, fd.size)
+            #print('minimumLineHeight:', attrs.attributes.paragraphStyle.minimumLineHeight)
+            #print('maximumLineHeight:', attrs.attributes.paragraphStyle.maximumLineHeight)
+            #print('paragraphSpacing:', attrs.attributes.paragraphStyle.paragraphSpacing)
+            #print('...')
 
             #print('--d-d-d-', verticalAlignment)
             #paragraphStyle.maximumLineHeight)

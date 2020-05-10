@@ -259,12 +259,11 @@ class PageView(BaseView):
         self.drawColorBars(page, origin)
         self.drawRegistrationMarks(page, origin)
         self.drawCropMarks(page, origin)
-        self.drawElementOrigin(page, origin)
 
         self.drawGrid(page, origin, background=False)
         self.drawBaselines(page, origin, background=False)
 
-    def drawPageMetaInfoBackground(self, page, origin, path=None, background=True):
+    def drawPageMetaInfoBackground(self, page, origin, path=None):
         """Draw the foreground meta info of the page, depending on the settings
         of the flags.
 
@@ -282,8 +281,8 @@ class PageView(BaseView):
         >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawPageMetaInfo(page, (0, 0), path)
         """
-        self.drawGrid(page, origin, background=background)
-        self.drawBaselines(page, origin, background=background)
+        self.drawGrid(page, origin, background=True)
+        self.drawBaselines(page, origin, background=True)
         self.drawFlowConnections(page, origin)
 
 
@@ -707,6 +706,10 @@ class PageView(BaseView):
 
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
+        #px, py, _ = pointOffset(origin, e.origin)
+        #px, py = point2D(origin)
+        #px, py = point2D(e.origin)
+        #px, py = point2D(e.xy)
 
         S = e.css('viewInfoOriginMarkerSize', pt(3))
         # Draw origin of the element

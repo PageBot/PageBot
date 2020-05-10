@@ -18,7 +18,7 @@
 import os
 import sys
 
-from pagebot.elements.element import Element
+from pagebot.elements import Element, Mask
 from pagebot.constants import (ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL,
     BITMAP_TYPES)
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
@@ -446,12 +446,18 @@ class Image(Element):
 
         self._applyRotation(view, p)
 
-        if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
-            # TODO: Also show error, in case the image does not exist, to
-            # differentiate from empty box.
+        # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
+        view.drawPageMetaInfoBackground(self, p)
 
+        if self.drawBefore is not None: # Call if defined
+            self.drawBefore(self, view, p)
+
+        if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
+            # Missing image, show as framed grey rectangles and cross.
             if self.path is not None and not os.path.exists(self.path):
                 print('Warning: cannot find image file %s' % self.path)
+
             # Draw missing element as cross
             xpt, ypt, wpt, hpt = upt(px, py, self.w, self.h)
             self.context.stroke(0.5)
@@ -460,53 +466,24 @@ class Image(Element):
             self.context.rect(xpt, ypt, wpt, hpt)
             self.context.line((xpt, ypt), (xpt+wpt, ypt+hpt))
             self.context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
-        else:
+        
+        else: # There is a valid image path,
             self.context.save()
             # Check if scaling exceeds limit, then generate a cached file and
             # update the path and (self.iw, self.ih) accordingly.
 
-            # TODO:
-            # If a clipRect is defined, create the Bézier path.
-            """
-            if self.clipPath is not None:
-                DON'T CALL BUILDER DIRECTLY and don't scale here.
-                Context must do it's own scaling.
-
-                clipRect = self.context.newPath()
-                clX, clY, clW, clH = upt(self.clipRect)
-                sclX = clX/sx
-                sclY = clY/sx
-                sclW = clW/sx
-                sclH = clH/sy
-                # move to a point
-                clipRect.moveTo((sclX, sclY))
-                # line to a point
-                clipRect.lineTo((sclX, sclY+sclH))
-                clipRect.lineTo((sclX+sclW, sclY+sclH))
-                clipRect.lineTo((sclX+sclW, sclY))
-                # close the path
-                clipRect.closePath()
-                # set the path as a clipping path
-                b.clipPath(clipRect)
-                # the image will be clipped inside the path
-                #b.fill(0, 0, 0.5, 0.5)
-                #b.drawPath(clipRect)
-            elif self.clipPath is not None:
-                #Otherwise if there is a clipPath, then use it.
-                b.clipPath(self.clipPath)
-            """
             if self.imo is not None:
                 with self.imo:
                     self.context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
                         w=self.w, h=self.h, scaleType=self.scaleType)
                 self.context.image(self.imo, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
-                        scaleType=self.scaleType)
+                        scaleType=self.scaleType, clipPath=self.clipPath)
             else:
                 #print('pbimage.build()', self.path, px, py, self.w, self.h, self.scaleImage)
                 self.context.image(self.path, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
-                        scaleType=self.scaleType)
+                        scaleType=self.scaleType, clipPath=self.clipPath)
 
             # TODO: Draw optional (transparant) forground color?
             self.context.restore()
@@ -517,6 +494,22 @@ class Image(Element):
 
         #if drawElements:
         #    self.buildChildElements(view, p)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame == True
+        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, origin)
 
         self._restoreRotation(view, p)
 

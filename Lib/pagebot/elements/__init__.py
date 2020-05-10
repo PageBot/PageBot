@@ -30,7 +30,7 @@ from pagebot.elements.pbrect import Rect
 from pagebot.elements.pbgroup import Group
 from pagebot.elements.pbline import Line
 from pagebot.elements.pbruler import Ruler
-from pagebot.elements.pbpolygon import Polygon
+from pagebot.elements.pbpolygon import Polygon, Mask
 from pagebot.elements.pboval import Oval
 from pagebot.elements.pboval import Circle
 from pagebot.elements.pbdocwrap import DocWrap
@@ -50,7 +50,7 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 from pagebot.elements.pbartboard import Artboard
 
 # Element that holds a number of styled BezierPath instances to draw.
-from pagebot.elements.paths.pbpaths import Paths, Mask
+from pagebot.elements.paths.pbpaths import Paths
 
 # Table elements
 from pagebot.elements.pbtable import Table
@@ -171,6 +171,10 @@ def newLine(**kwargs):
 def newPolygon(points=None, **kwargs):
     """Create a Polygon element."""
     return Polygon(points=points, **kwargs)
+
+def newMask(points=None, **kwargs):
+    """Create a Mask element."""
+    return Mask(points=points, **kwargs)
 
 def newRuler(**kwargs):
     """Create a Ruler element."""

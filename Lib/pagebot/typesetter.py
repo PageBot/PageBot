@@ -738,7 +738,7 @@ class Typesetter:
         #os.remove(tmpPath)
         return self.galley
 
-    def typesetFile(self, fileName, e=None, xPath=None):
+    def typesetFile(self, fileName, e=None, xPath=None, patterns=None):
         """Read the XML document and parse it into a tree of document-chapter
         nodes. Make the typesetter start at page pageNumber and find the name
         of the flow in the page template.  The optional filter can be a list of
@@ -749,12 +749,21 @@ class Typesetter:
         cascading force all child elements. Answer the root node for
         convenience of the caller."""
         fileExtension = fileName.split('.')[-1]
-        if fileExtension == 'md':
+        if fileExtension.lower() == 'md':
             # If we have MarkDown content, convert to XML (XHTML)
             f = codecs.open(fileName, mode="r", encoding="utf-8")
             mdText = f.read() # Read the raw MarkDown source
             f.close()
+
+            # Pre-filtering, to replace easier (for authors) patterns by ~~~...~~~ 
+            # Python instructions.
+            if patterns is not None:
+                for pattern, pythonCode in patterns:
+                    mdText = mdText.replace(pattern, pythonCode)
+
+            #print(mdText)
             fileName = self.markDown2XmlFile(fileName, mdText) # Translate MarkDown to HTML and save in file.
+
         tree = ET.parse(fileName)
         self.root = tree.getroot() # Get the root element of the tree and store for later retrieval.
 
@@ -770,6 +779,9 @@ class Typesetter:
             # page/flow nodes results get positioned (e.g. for toc-head
             # reference, image index and footnote placement.
             self.typesetNode(self.root, e)
+
+        # Remember this galley where it came from.
+        self.galley.name = fileName
 
         # Answer the self.galley as convenience for the caller.
         return self.galley
