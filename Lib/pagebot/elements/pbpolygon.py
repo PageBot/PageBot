@@ -140,7 +140,7 @@ class Polygon(Element):
         self.closePath = True
 
     def _get_block(self):
-        """Answer the bounding box of the contained points, 
+        """Answer the bounding box of the contained points,
         relative to (self.x, self.y).
 
         >>> e = Polygon(x=125, y=230)

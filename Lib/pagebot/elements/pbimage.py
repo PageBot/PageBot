@@ -474,7 +474,7 @@ class Image(Element):
 
             clipPath = self.clipPath
             if clipPath is not None:
-                clipPath.translate(view.pl, view.pb) # 
+                clipPath.translate(view.pl, view.pb) #
 
             if self.imo is not None:
                 with self.imo:

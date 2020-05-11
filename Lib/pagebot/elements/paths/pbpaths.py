@@ -19,7 +19,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.contexts.basecontext.bezierpath import BezierPath
-from pagebot.toolbox.units import pointOffset, upt
+from pagebot.toolbox.units import pointOffset#, upt
 
 class Paths(Element):
     """Draw rectangle, default identical to Element itself.
