@@ -15,14 +15,16 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.constants import XXXL
+from pagebot.constants import XXXL, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import point2D, units, pt
 
 class Polygon(Element):
     """The Polygon element is a simple implementation of the polygon DrawBot
-    function. More complex path-like elements inherit from the Path element."""
+    function. More complex path-like elements inherit from the Path element.
+    The (w, y) dependent on the point positions in the self.points list.
+    The (x, y) position defines the relative position of the path on output."""
 
     def __init__(self, points=None, closed=True, **kwargs):
         self.closed = closed
@@ -35,27 +37,6 @@ class Polygon(Element):
         p = units(point2D(p))
         assert p is not None
         self.points.append(p)
-
-    def _get_x(self):
-        """
-        >>> pn = Polygon()
-        >>> pn.rect(10, 10, 200, 360)
-        >>> pn.x, pn.left
-        (10pt, 10pt)
-        >>> pn.x = 300
-        >>> pn.x, pn.left, pn.box
-        (300pt, 300pt, (300pt, 10pt, 200pt, 360pt))
-        """
-        return self.box[0]
-    def _set_x(self, x):
-        self.move((x - self.x, 0))
-    x = property(_get_x, _set_x)
-
-    def _get_y(self):
-        return self.box[1]
-    def _set_y(self, y):
-        self.move((0, y - self.y))
-    y = property(_get_y, _set_y)
 
     def _get_w(self):
         return self.box[2]
@@ -72,18 +53,22 @@ class Polygon(Element):
         """Scale horizontal to w
         """
         if self.h:
-            self.scale(1, h/self.h)
+            self.scale(1, newH/self.h)
     h = property(_get_h, _set_h)
 
-    def move(self, p):
+    def translate(self, p):
         """
-        >>> pn = Polygon()
+        >>> pn = Polygon(x=120, y=130)
         >>> pn.rect(10, 10, 200, 360)
         >>> pn.x, pn.left
-        (10pt, 10pt)
-        >>> pn.move((120, 10))
-        >>> pn.x, pn.left, pn.box
-        (130pt, 130pt, (130pt, 20pt, 200pt, 360pt))
+        (120pt, 120pt)
+        >>> pn.box
+        (130pt, 140pt, 200pt, 360pt)
+        >>> pn.translate((120, 10)) # Move the position of the embedded points, not (self.x, self.y)
+        >>> pn.x, pn.left
+        (120pt, 120pt)
+        >>> pn.box
+        (250pt, 150pt, 200pt, 360pt)
         """
         dx, dy = point2D(p)
         points = []
@@ -93,21 +78,24 @@ class Polygon(Element):
 
     def scale(self, sx, sy=None):
         """
-        >>> pn = Polygon()
+        >>> pn = Polygon(x=33, y=44)
         >>> pn.rect(10, 10, 200, 360)
         >>> pn.x, pn.left
-        (10pt, 10pt)
+        (33pt, 33pt)
+        >>> pn.box # Element position + point positions
+        (43pt, 54pt, 200pt, 360pt)
         >>> pn.scale(0.6)
-        >>> pn.x, pn.left, pn.box
-        (10pt, 10pt, (10pt, 10pt, 80pt, 144pt))
+        >>> pn.x, pn.left
+        (33pt, 33pt)
+        >>> pn.box
+        (39pt, 50pt, 120pt, 216pt)
         """
         if sy is None:
             sy = sx
-        x, y, w, h = self.box
         points = []
         for point in self.points:
-            px = (x - point[0]) * sx + point[0]
-            py = (y - point[1]) * sy + point[1]
+            px = point[0] * sx # Scale relative to (self.x, self.y) origin
+            py = point[1] * sy
             points.append((px, py))
         self.points = points
 
@@ -127,11 +115,11 @@ class Polygon(Element):
         if not self.points:
             return pt(0, 0, 0, 0)
         for point in self.points:
-            x = min(x, point[0])
-            y = min(y, point[1])
-            w = max(w, point[0]-x)
-            h = max(h, point[1]-y)
-        return x, y, w, h
+            x = min(x, self.x+point[0])
+            y = min(y, self.y+point[1])
+            w = max(w, self.x+point[0]-x)
+            h = max(h, self.y+point[1]-y)
+        return x, y, w, h # (x, y) including (self.x, self.y)
     box = property(_get_box)
 
     def rect(self, x, y, w, h):
@@ -145,16 +133,17 @@ class Polygon(Element):
         (220pt, 330pt)
         """
         self.points = []
-        self.append((x, y))
+        self.append((x, y)) # Relative offset to (self.x, self.y)
         self.append((x, y+h))
         self.append((x+w, y+h))
         self.append((x+w, y))
         self.closePath = True
 
     def _get_block(self):
-        """Answer the bounding box of the containted points.
+        """Answer the bounding box of the contained points, 
+        relative to (self.x, self.y).
 
-        >>> e = Polygon()
+        >>> e = Polygon(x=125, y=230)
         >>> e.append((0, 0))
         >>> e.append((100, 0))
         >>> e.append((50, 80))
@@ -174,12 +163,12 @@ class Polygon(Element):
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
         >>> e = Polygon(context=context)
-        >>> e.rect(100, 100, 300, 400)
+        >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
         >>> e.getBezierPath((150, 150))
         <BezierPath>
         """
         if p is None:
-            p = (0, 0)
+            p = self.x, self.y
         """
         # create a bezier path
         path = self.context.b.BezierPath()
@@ -197,18 +186,17 @@ class Polygon(Element):
         # temporarily
         return path
         """
-        context = self.context # Should be None
+        context = self.context # Should not be None
         assert context is not None
-        path = context.b.BezierPath()
+        path = context.newPath()
         if self.points:
             for pIndex, point in enumerate(self.points):
-                print('dssdsdds', p)
-                x = point[0] + p[0]
-                y = point[1] + p[1]
+                px = point[0] + p[0]
+                py = point[1] + p[1]
                 if pIndex == 0:
-                    path.moveTo((x, y))
+                    path.moveTo((px, py))
                 else:
-                    path.lineTo((x, y))
+                    path.lineTo((px, py))
         path.closePath()
         return path
 
@@ -227,20 +215,20 @@ class Polygon(Element):
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
-        view.drawPageMetaInfo(self, p)
+        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
+        view.drawPageMetaInfoBackground(self, p)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
         #context.fill(self.css('fill'))
         #context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-        #bezierPath = self.getBezierPath(p)
-        #b.drawPath(bezierPath)
+        bezierPath = self.getBezierPath(p)
+        b.drawPath(bezierPath)
 
         # Debugging where it moved.
-        context.b.fill(0, 0, 1, 0.5)
-        context.b.rect(px, py, self.w, self.h)
+        #context.b.fill(0, 0, 1, 0.5)
+        #context.b.rect(px, py, self.w, self.h)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
@@ -249,9 +237,14 @@ class Polygon(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
-        view.drawPageMetaInfoBackground(self, p)
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, origin)
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
@@ -266,11 +259,59 @@ class Polygon(Element):
         # TODO: Needs a solution, SVG or pixels?
 
 class Mask(Polygon):
-    """Masks don't draw by themselves. They get interpreted by sibling elements,
+    """Masks don't draw by themselves, unless a fill color or stroke color
+    is defined for debugging. Masks get interpreted by sibling elements,
     such as Image.
     """
-    def XXXbuild(self, view, origin, drawElements=True, **kwargs):
-        pass
+    def __init__(self, points=None, w=None, h=None, **kwargs):
+        if points is None:
+            if w is None:
+                w = DEFAULT_WIDTH
+            if h is None:
+                h = DEFAULT_HEIGHT
+            # If no points, then initialize as default rectangle.
+            points = [(0, 0), (0, h), (w, h), (w, 0)]
+        Polygon.__init__(self, points=points, w=w, h=h, **kwargs)
+
+    def build(self, view, origin, drawElements=True, **kwargs):
+        context = self.context # Get current context and builder.
+        b = context.b # This is a bit more efficient than self.b once we got context
+
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(view, p)
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+
+        self._applyRotation(view, p)
+
+        doDraw = False
+        if not self.fill in (None, noColor):
+            context.fill(self.fill)
+            doDraw = True
+
+        if not self.stroke in (None, noColor) and self.strokeWidth:
+            context.stroke(self.stroke)
+            context.strokeWidth(self.strokeWidth)
+            doDraw = True
+
+        if doDraw:
+            context.rect(px, py, self.w, self.h)
+
+        if self.drawAfter is not None: # Call if defined
+            self.drawAfter(self, view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, origin)
+
+        self._restoreRotation(view, p)
+        self._restoreScale(view)
+        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+
 
 if __name__ == "__main__":
     import doctest
