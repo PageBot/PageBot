@@ -113,7 +113,7 @@ class Polygon(Element):
 
     def _get_box(self):
         """ Get the (x, y, w, h) box of all points.
-    
+
         >>> e = Polygon()
         >>> e.rect(100, 100, 220, 330)
         >>> e.points

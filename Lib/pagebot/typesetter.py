@@ -755,7 +755,7 @@ class Typesetter:
             mdText = f.read() # Read the raw MarkDown source
             f.close()
 
-            # Pre-filtering, to replace easier (for authors) patterns by ~~~...~~~ 
+            # Pre-filtering, to replace easier (for authors) patterns by ~~~...~~~
             # Python instructions.
             if patterns is not None:
                 for pattern, pythonCode in patterns:
