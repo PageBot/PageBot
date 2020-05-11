@@ -9,4 +9,5 @@ Pillow==7.0.0
 PyPDF2==1.26.0
 uharfbuzz
 python-lorem==1.1.2
+git+https://github.com/PageBot/SketchApp2Py.git
 .
