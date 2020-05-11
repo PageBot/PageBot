@@ -547,6 +547,7 @@ class FlatContext(BaseContext):
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
+        FIXME: DEPRECATED
         TODO: make clipPath work.
         TODO: make align work.
         TODO: wrap placedText so we can derive length of text without overflow and

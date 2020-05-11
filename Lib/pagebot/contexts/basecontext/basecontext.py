@@ -863,11 +863,13 @@ class BaseContext(AbstractContext):
         self.fill(oldFill)
         self.stroke(oldStroke)
 
+    '''
     def textBox(self, sOrBs, r=None, clipPath=None, align=None):
         """Draws the sOrBs text string in rectangle r.
 
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
+    '''
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the part of the text that doesn't fit in the box. The sOrBs
