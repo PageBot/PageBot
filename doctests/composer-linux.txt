@@ -1,10 +1,10 @@
->>> from pagebot import getResourcesPath
 >>> from pagebot.constants import A4
+>>> from pagebot.document import Document
+>>> from pagebot.elements import Text
+>>> from pagebot.filepaths import getResourcesPath
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
->>> from pagebot.elements import Text
 >>> from pagebot.typesetter import Typesetter
->>> from pagebot.document import Document
 >>> numPages = 4
 >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
 >>> h1Style = dict(font='Verdana', fontSize=pt(36), textFill=color(1, 0, 0))
