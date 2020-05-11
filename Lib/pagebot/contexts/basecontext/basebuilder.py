@@ -14,6 +14,7 @@
 #
 #     basebuilder.py
 #
+import os
 from pagebot.toolbox.transformer import path2Name
 
 class BaseBuilder:

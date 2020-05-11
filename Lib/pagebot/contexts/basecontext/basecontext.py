@@ -16,10 +16,9 @@
 #
 
 import os
-import PIL
 from math import radians, sin, cos
 import xml.etree.ElementTree as ET
-from PyPDF2 import PdfFileReader
+import PIL
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, FILETYPE_PDF,
@@ -32,6 +31,8 @@ from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.style import makeStyle
+
+from PyPDF2 import PdfFileReader
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.

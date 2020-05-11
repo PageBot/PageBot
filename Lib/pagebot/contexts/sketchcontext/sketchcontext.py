@@ -49,7 +49,6 @@ from sketchapp2py.sketchclasses import *
 class SketchContext(BaseContext):
 
     '''
-    Lib/pagebot/contexts/sketchcontext/sketchcontext.py:508:0: C0305: Trailing newlines (trailing-newlines)
     Lib/pagebot/contexts/sketchcontext/sketchcontext.py:254:15: W0631: Using possibly undefined loop variable 'pIndex' (undefined-loop-variable)
     '''
 
@@ -96,6 +95,7 @@ class SketchContext(BaseContext):
 
     def installedFonts(self, patterns=None):
         # TODO: share with Flat context.
+        pass
 
     def setStyles(self, styles):
         pass
@@ -138,6 +138,7 @@ class SketchContext(BaseContext):
         pass
 
     def endDrawing(self, doc=None):
+        pass
 
     def fontAscender(self):
         pass
@@ -571,4 +572,3 @@ if __name__ == '__main__':
   import doctest
   import sys
   sys.exit(doctest.testmod()[0])
-
