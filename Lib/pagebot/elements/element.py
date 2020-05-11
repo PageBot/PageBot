@@ -1154,9 +1154,10 @@ class Element:
             # by Sketch. Then use that element to create a clipPath
             mask = self.parent.find(cls="Mask")
             if mask is not None:
-                # Answer the clipPath in absolute coordinates, based
-                # on the position of self.
-                return mask.getBezierPath((self.x, self.y))
+                # Answer the clipPath in coordinates, based
+                # on the position of mask. Self still needs to self.translate
+                # the clipPath to the current position upon usage.
+                self._clipPath = mask.getBezierPath()
         return self._clipPath
     def _set_clipPath(self, clipPath):
         self._clipPath = clipPath
@@ -4566,7 +4567,8 @@ class Element:
     # or otherwise the wrapped bounding box on self.
 
     def _get_block3D(self):
-        """Answers the vacuum 3D bounding box around all child elements, including margin.
+        """Answers the vacuum 3D bounding box around all child elements, 
+        including margin, relative to (self.x, self.y)
 
         >>> e1 = Element(x=10, y=52, z=14, w=100, h=110, d=801)
         >>> e2 = Element(x=50, y=12, z=54, w=200, h=210, d=401)

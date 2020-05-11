@@ -472,18 +472,22 @@ class Image(Element):
             # Check if scaling exceeds limit, then generate a cached file and
             # update the path and (self.iw, self.ih) accordingly.
 
+            clipPath = self.clipPath
+            if clipPath is not None:
+                clipPath.translate(view.pl, view.pb) # 
+
             if self.imo is not None:
                 with self.imo:
                     self.context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
                         w=self.w, h=self.h, scaleType=self.scaleType)
                 self.context.image(self.imo, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
-                        scaleType=self.scaleType, clipPath=self.clipPath)
+                        scaleType=self.scaleType, clipPath=clipPath)
             else:
                 #print('pbimage.build()', self.path, px, py, self.w, self.h, self.scaleImage)
                 self.context.image(self.path, (px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
-                        scaleType=self.scaleType, clipPath=self.clipPath)
+                        scaleType=self.scaleType, clipPath=clipPath)
 
             # TODO: Draw optional (transparant) forground color?
             self.context.restore()
