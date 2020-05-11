@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.toolbox.units import pt, upt, point2D
+from pagebot.toolbox.units import upt, point2D
 
 HAS_PIL = True
 
@@ -547,6 +547,7 @@ class FlatContext(BaseContext):
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
+        FIXME: DEPRECATED
         TODO: make clipPath work.
         TODO: make align work.
         TODO: wrap placedText so we can derive length of text without overflow and

@@ -20,7 +20,7 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
 from pagebot.toolbox.color import noColor
-from pagebot.toolbox.units import pt, upt
+from pagebot.toolbox.units import upt
 from pagebot.toolbox.transformer import path2Extension, path2ScaledImagePath, path2Dir
 
 HAS_PIL = True
@@ -88,7 +88,7 @@ class HtmlContext(BaseContext):
 
     def fromBabelString(self, bs):
         """For now, Typesetter put tagged text into bs.s, so it works for current
-        website generators. 
+        website generators.
         FIXME: Use the bs.cs for rendered native HTML tagged text and the bs.runs
         for plain text + styles, so the BabelString can also be used to convert
         to other contexts."""

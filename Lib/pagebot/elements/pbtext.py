@@ -100,7 +100,7 @@ class Text(Element):
             self.top = top
         if bottom is not None:
             self.bottom = bottom
-            
+
         # Now there is a self._bs, set it's width and height (can be None)
         self.w = w
         self.h = h
@@ -318,7 +318,7 @@ class Text(Element):
             s += ' w=%s' % self.bs.w
         if self.bs.hasHeight:
             s += ' h=%s' % self.bs.h
-        return s+'>' 
+        return s+'>'
 
     def copy(self, parent=None):
         """Answers a full copy of `self`, where the "unique" fields are set to
@@ -452,15 +452,19 @@ class Text(Element):
         >>> bs.xAlign, bs.hasWidth
         ('center', False)
         >>> t = Text(bs, context=context)
-        >>> t.xTextAlign, t.xAlign, t.bs.xAlign # If no width defined, those are identical.
+        >>> # If no width defined, these are identical.
+        >>> t.xTextAlign, t.xAlign, t.bs.xAlign
         ('center', 'center', 'center')
         >>> t.xTextAlign = RIGHT
-        >>> t.style['xTextAlign'], t.xTextAlign, t.xAlign, t.bs.xAlign # If no width defined, those are identical.
+        >>>  # If no width defined, these are identical.
+        >>> t.style['xTextAlign'], t.xTextAlign, t.xAlign, t.bs.xAlign
         ('right', 'right', 'right', 'right')
         """
         if self._bs is None:
+            # W0106: Expression "self.css('xTextAlign') or self.css('xAlign', LEFT)" is assigned to nothing (expression-not-assigned)
             self.css('xTextAlign') or self.css('xAlign', LEFT)
         return self.bs.xAlign
+
     def _set_xTextAlign(self, xTextAlign):
         self.style['xTextAlign'] = xTextAlign = self._validateXTextAlign(xTextAlign)
         if self._bs is not None:
@@ -493,10 +497,12 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasWidth:
             return self.bs.xAlign
         return self.css('xAlign', LEFT)
+
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = xAlign = self._validateXTextAlign(xAlign)
         if self._bs is not None and not self.bs.hasWidth:
             self.style['xTextAlign'] = self.bs.xAlign = xAlign
+
     xAlign = property(_get_xAlign, _set_xAlign)
 
 
@@ -523,11 +529,13 @@ class Text(Element):
         if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
             return self.bs.yAlign
         return self.css('yAlign', BASELINE)
+
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
         self.style['yAlign'] = yAlign = self._validateYTextAlign(yAlign)
         if self._bs is not None:
             self.bs.yAlign = yAlign
+
     yAlign = property(_get_yAlign, _set_yAlign)
 
     #   S P E L L  C H E C K

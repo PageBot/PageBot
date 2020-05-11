@@ -18,7 +18,7 @@
 import os
 import sys
 
-from pagebot.elements import Element, Mask
+from pagebot.elements import Element#, Mask
 from pagebot.constants import (ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL,
     BITMAP_TYPES)
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt
@@ -466,7 +466,7 @@ class Image(Element):
             self.context.rect(xpt, ypt, wpt, hpt)
             self.context.line((xpt, ypt), (xpt+wpt, ypt+hpt))
             self.context.line((xpt+wpt, ypt), (xpt, ypt+hpt))
-        
+
         else: # There is a valid image path,
             self.context.save()
             # Check if scaling exceeds limit, then generate a cached file and
@@ -474,7 +474,7 @@ class Image(Element):
 
             clipPath = self.clipPath
             if clipPath is not None:
-                clipPath.translate(view.pl, view.pb) # 
+                clipPath.translate(view.pl, view.pb) #
 
             if self.imo is not None:
                 with self.imo:
