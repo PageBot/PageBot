@@ -32,7 +32,6 @@
 #  writing data into the designated file format.
 #
 import os
-from random import random
 
 from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4
@@ -40,7 +39,6 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.elements import *
 from pagebot.constants import *
-from pagebot.typesetter import Typesetter
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import pt, units, upt, em
 from pagebot.toolbox.transformer import asIntOrNone
@@ -49,6 +47,11 @@ from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
 from sketchapp2py.sketchclasses import *
 
 class SketchContext(BaseContext):
+
+    '''
+    Lib/pagebot/contexts/sketchcontext/sketchcontext.py:508:0: C0305: Trailing newlines (trailing-newlines)
+    Lib/pagebot/contexts/sketchcontext/sketchcontext.py:254:15: W0631: Using possibly undefined loop variable 'pIndex' (undefined-loop-variable)
+    '''
 
     W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
 
@@ -90,6 +93,69 @@ class SketchContext(BaseContext):
         self.fileType = FILETYPE_SKETCH
         self.shape = None # Current open shape
         self.w = self.h = None # Optional default context size, overwriting the Sketch document.
+
+    def installedFonts(self, patterns=None):
+        # TODO: share with Flat context.
+
+    def setStyles(self, styles):
+        pass
+
+    def newPath(self):
+        pass
+
+    def text(self, bs, p):
+        pass
+
+    def textSize(self, bs, w=None, h=None):
+        pass
+
+    def textOverflow(self, bsOrFs, box, align=LEFT):
+        pass
+
+    def textBox(self, fs, r=None, clipPath=None, align=None):
+        pass
+
+    def getDrawing(self):
+        pass
+
+    def installFont(self, fontOrName):
+        """Should install the font in the context. fontOrName can be a Font
+        instance (in which case the path is used) or a full font path."""
+
+    def uninstallFont(self, fontOrName):
+        pass
+
+    def fontContainsCharacters(self, characters):
+        pass
+
+    def fontContainsGlyph(self, glyphName):
+        pass
+
+    def fontFilePath(self):
+        pass
+
+    def listFontGlyphNames(self):
+        pass
+
+    def endDrawing(self, doc=None):
+
+    def fontAscender(self):
+        pass
+
+    def fontDescender(self):
+        pass
+
+    def fontXHeight(self):
+        pass
+
+    def fontCapHeight(self):
+        pass
+
+    def fontLeading(self):
+        pass
+
+    def fontLineHeight(self):
+        pass
 
     def setSize(self, w=None, h=None):
         """Optional default document size. If not None, overwriting the size of the

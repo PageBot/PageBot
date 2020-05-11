@@ -77,6 +77,7 @@ class Polygon(Element):
         self.points = points
 
     def scale(self, sx, sy=None):
+        # FIXME: E0202: An attribute defined in pagebot.elements.element line 190 hides this method (method-hidden)
         """
         >>> pn = Polygon(x=33, y=44)
         >>> pn.rect(10, 10, 200, 360)
@@ -90,13 +91,16 @@ class Polygon(Element):
         >>> pn.box
         (39pt, 50pt, 120pt, 216pt)
         """
+        points = []
+
         if sy is None:
             sy = sx
-        points = []
+
         for point in self.points:
             px = point[0] * sx # Scale relative to (self.x, self.y) origin
             py = point[1] * sy
             points.append((px, py))
+
         self.points = points
 
     def _get_box(self):
@@ -284,11 +288,11 @@ class Mask(Polygon):
         self._applyRotation(view, p)
 
         doDraw = False
-        if not self.fill in (None, noColor):
+        if self.fill not in (None, noColor):
             context.fill(self.fill)
             doDraw = True
 
-        if not self.stroke in (None, noColor) and self.strokeWidth:
+        if self.stroke not in (None, noColor) and self.strokeWidth:
             context.stroke(self.stroke)
             context.strokeWidth(self.strokeWidth)
             doDraw = True

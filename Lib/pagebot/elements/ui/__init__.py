@@ -45,7 +45,9 @@ from pagebot.elements.pbartboard import Artboard
 #OLD from pagebot.elements.paths.pbpath import Path
 #OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath
-from pagebot.elements.paths.pbpaths import Paths, Mask # Element that holds a number of styled BezierPath instances to draw.
+
+# Element that holds a number of styled BezierPath instances to draw.
+from pagebot.elements.paths.pbpaths import Paths
 
 # Table elements
 from pagebot.elements.pbtable import Table
