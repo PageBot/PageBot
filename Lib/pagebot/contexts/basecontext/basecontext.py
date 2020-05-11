@@ -970,7 +970,7 @@ class BaseContext(AbstractContext):
     def numberOfPages(self, path):
         """Answer the number of pages, if the image paths points to a PDF.
         https://www.journaldev.com/33281/pypdf2-python-library-for-pdf-files
-        
+
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
         >>> from pagebot.toolbox.transformer import path2Dir
@@ -1000,9 +1000,9 @@ class BaseContext(AbstractContext):
         >>> filePathPdf = '_export/TestPdfImageSize.pdf'
         >>> doc.export(filePathPng)
         >>> doc.export(filePathPdf)
-        >>> context.imageSize(filePathPng)   
+        >>> context.imageSize(filePathPng)
         (123pt, 345pt)
-        >>> context.imageSize(filePathPdf)   
+        >>> context.imageSize(filePathPdf)
         (123pt, 345pt)
         """
         extension = path2Extension(path)
