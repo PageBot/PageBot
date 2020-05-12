@@ -413,14 +413,24 @@ class AbstractContext:
 
     # Drawing text.
 
-    def text(self, s, p):
+    def drawString(self, bs, p):
+        raise NotImplementedError
+
+     def drawText(self, bs, box):
+        raise NotImplementedError
+
+    def text(self, s, p, align=None):
+        """Draw the text string at position p."""
         raise NotImplementedError
 
     def textOverflow(self, txt, box, align=None):
         raise NotImplementedError
 
-    #def textBox(self, s, r=None, clipPath=None):
-    #    raise NotImplementedError
+    def textBox(self, s, r=None, clipPath=None, align=None):
+        """Draws the text string in rectangle r.
+
+        NOTE: signature differs from DrawBot."""
+        raise NotImplementedError
 
     def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError

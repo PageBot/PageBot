@@ -840,13 +840,6 @@ class BaseContext(AbstractContext):
 
     # Text.
 
-    def text(self, sOrBs, p):
-        """Draw the sOrBs text string at position p.
-
-        NOTE: signature differs from DrawBot.
-        """
-        raise NotImplementedError
-
     def marker(self, x, y):
         x = round(x)
         y = round(y)
@@ -862,14 +855,6 @@ class BaseContext(AbstractContext):
         self.circle(x, y, 1)
         self.fill(oldFill)
         self.stroke(oldStroke)
-
-    '''
-    def textBox(self, sOrBs, r=None, clipPath=None, align=None):
-        """Draws the sOrBs text string in rectangle r.
-
-        NOTE: signature differs from DrawBot."""
-        raise NotImplementedError
-    '''
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the part of the text that doesn't fit in the box. The sOrBs
