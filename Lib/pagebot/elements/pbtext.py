@@ -15,11 +15,12 @@
 #     pbtext.py
 #
 #     The Text element is the simplest version of text elements. If no width
-#     e.w is defined, it handles single line of text (unless there are hard coded \n
-#     newlines embedded in the text.)
-#     If e.w is defined, then the element behaves as a text box, where lines are
-#     hyphenated, wrapped and alignment by lines.
+#     e.w is defined, it handles a single line of text, unless there are hard
+#     coded \n newlines embedded in the string.
 #
+#     If e.w is defined, the element behaves as a text box; the lines are
+#     hyphenated, wrapped and aligned.
+
 import re
 from copy import deepcopy
 
@@ -32,17 +33,17 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class Text(Element):
-    """
-    Since PageBot stores text by the internal BabelString format, with
-    full control on the position of lines, the rendering as “Text”
-    if not DrawBot.textbox. The problem with text boxes in general, is
-    that they position text from “above the ascender of the top line”,
-    without much control on the position of baselines. Larger type in
-    the first line will push the whole content of the box down.
-    Therefor Text.build uses context.textLines() as render engine,
-    and implements the drawing separate text lines by context.text(bs),
-    which always tenders text on baseline position.
-    This way different contexts also have more similar behavior.
+    """PageBot stores text by the internal BabelString format with full
+    control of the line positions
+
+    NOTE: we now use the `Text` class instead of (DrawBot) textboxes. The
+    problem with text boxes is that they position text from “above the ascender
+    of the top line”, without much control on the position of baselines. Larger
+    type in the first line will push the whole content of the box down. That is
+    why Text.build starts out with the  context.textLines()  and implements
+    drawing the separate text lines by context.text(bs), which always renders
+    text on the baseline position. As a result different contexts have more
+    similar output.
 
     >>> from pagebot.contexts import getContext
     >>> context = getContext('DrawBot')
@@ -63,7 +64,8 @@ class Text(Element):
             xAlign=None, yAlign=None, margin=None, top=None, bottom=None,
             **kwargs):
 
-        self._bs = None # Placeholder, ignoring self.w and self.h until defined.
+        # Placeholder, ignoring self.w and self.h until defined.
+        self._bs = None
 
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
@@ -79,8 +81,9 @@ class Text(Element):
             self.style = makeStyle(style, **kwargs)
 
         # Set as property, to make sure there's always a generic BabelString
-        # instance or None. Needs to be done before element initialize, as
-        # some attributes (Text.xTextAlign) may need the string style as reference.
+        # instance or None. Needs to be done before element initialisation,
+        # because some attributes (Text.xTextAlign) may need the string style
+        # as reference.
         self.bs = bs # BabelString source for this Text element.
 
         # These need the self.bs to be defined.
@@ -106,13 +109,16 @@ class Text(Element):
         self.h = h
 
     def _get_bs(self):
-        """Answer the stored formatted BabelString. The value can be None.
-        """
+        """Answers the stored formatted BabelString. The value can be None."""
+
         return self._bs
+
     def _set_bs(self, bs):
-        """Make sure that this is a formatted BabelString.
-        Otherwise create it from string with the current style. Note that there is a potential clash
-        in the duplicate usage of fill and stroke.
+        """Makes sure that this is a formatted BabelString. Otherwise creates
+        it from string with the current style.
+
+        NOTE: there is a potential clash in the duplicate usage of fill and
+        stroke.
 
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
@@ -134,6 +140,7 @@ class Text(Element):
         assert isinstance(bs, BabelString)
         self._bs = bs
         bs.context = self.context
+
     bs = property(_get_bs, _set_bs)
 
     def _get_w(self): # Width
@@ -153,18 +160,21 @@ class Text(Element):
         """
         if self._bs is None:
             return None
+
         return self.bs.w + self.pl + self.pr
+
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
                 w = units(w) - self.pl - self.pr # Correct for padding
             self.bs.w = w
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answers the height of the textBox if defined.
-        Otherwise answer the height of self.bs.textSize
+        """Answers the height of the textBox if defined. Otherwise answers the
+        height of self.bs.textSize
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
@@ -183,34 +193,40 @@ class Text(Element):
         if self._bs is None:
             return None
         return self.bs.h + self.pt + self.pb # Correct for padding
+
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.
         if self._bs is not None:
             if h is not None:
                 h = units(h) - self.pt - self.pb # Correct for padding
             self.bs.h = h
+
     h = property(_get_h, _set_h)
 
     def _get_firstColumnIndent(self):
-        """If False or 0, then ignore first line indent of a column on text
-        overflow. Otherwise set to a certain unit. This will cause text being
+        """If False or 0, ignores first line indent of a column on text
+        overflow. Otherwise sets it to a certain unit. The text will then be
         indented by the amount of self.firstLineIndent, probably midsentence.
 
         NOTE: probably never necessary, here just in case."""
         return self.css('firstColumnIndent')
+
     def _set_firstColumnIndent(self, indent):
         self.style['firstColumnIndent'] = units(indent)
+
     firstColumnIndent = property(_get_firstColumnIndent, _set_firstColumnIndent)
 
     def _get_firstLineIndent(self):
         """DrawBot-compatible indent of first line of a paragraph."""
         return self.css('firstLineIndent')
+
     def _set_firstLineIndent(self, indent):
         self.style['firstLineIndent'] = units(indent)
+
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
 
     def _get_indent(self):
-        """DrawBot-compatible indent of text. Equivalent to padding-left pl.
+        """DrawBot-compatible indent of text. Equivalent to padding-left `pl`.
 
         >>> t = Text('ABCD')
         >>> t.indent, t.pl, t.bs.indent
@@ -225,15 +241,17 @@ class Text(Element):
         if self._bs is not None:
             return self.bs.indent
         return self.css('indent')
+
     def _set_indent(self, indent):
         indent = units(indent)
         if self._bs:
             self.bs.indent = indent
         self.style['indent'] = indent
+
     indent = pl = property(_get_indent, _set_indent)
 
     def _get_tailIndent(self):
-        """DrawBot-compatible indent of text. Equivalent to padding-right pr.
+        """DrawBot-compatible indent of text. Equivalent to padding-right `pr`.
 
         >>> t = Text('ABCD')
         >>> t.tailIndent, t.pr, t.bs.tailIndent
@@ -248,11 +266,13 @@ class Text(Element):
         if self._bs is not None:
             return self.bs.tailIndent
         return self.css('tailIndent')
+
     def _set_tailIndent(self, tailIndent):
         tailIndent = units(tailIndent)
         if self._bs:
             self.bs.tailIndent = tailIndent
         self.style['tailIndent'] = tailIndent
+
     tailIndent = pr = property(_get_tailIndent, _set_tailIndent)
 
     def _get_baselines(self):
@@ -260,6 +280,7 @@ class Text(Element):
             #self.textLines # Initialize both self._textLines and self._baselines
             self._get_textLines()
         return self._baselines
+
     baselines = property(_get_baselines)
 
     def __getitem__(self, lineIndex):
@@ -289,6 +310,7 @@ class Text(Element):
         <Text $ABCD$ x=100pt y=100pt w=200pt>
 
         """
+        # FIXME: restore tests.
         """
         >>> from pagebot.document import Document
         >>> from pagebot.contexts.flatcontext.flatcontext import FlatContext
@@ -305,19 +327,23 @@ class Text(Element):
         <Text $ABCD$ x=100pt y=100pt w=200pt>
         """
         s = '<%s' % self.__class__.__name__
-        # C1801: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (len-as-condition)
-        if self.bs is not None:# and len(self.bs):
-        #if self.bs is not None and len(self.bs):
+
+        if self.bs is not None:
             s += ' %s' % self.bs
+
         if self.x:
             s += ' x=%s' % self.x
+
         if self.y:
             s += ' y=%s' % self.y
+
         # Always show width and height if defined.
         if self.bs.hasWidth:
             s += ' w=%s' % self.bs.w
+
         if self.bs.hasHeight:
             s += ' h=%s' % self.bs.h
+
         return s+'>'
 
     def copy(self, parent=None):
@@ -438,12 +464,13 @@ class Text(Element):
     def _get_xTextAlign(self):
         """Answer the type of x-alignment for the string.
 
-        Note that self.xAlign defines the position of the box. If the BabelString is
-        used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
-        and self.xTextAlign is equivalent.
-        If the BabelString has a width defined (bs.hasWidth == True), then the self.xAlign
-        defines the alignment of the box and self.xTextAlign defines the alignment of
-        the text inside the box.
+        NOTE: self.xAlign defines the position of the box. If the BabelString
+        is used in plain text mode (bs.hasWidth == False), then the behavior of
+        self.xAlign and self.xTextAlign is equivalent.
+
+        If the BabelString has a width defined (bs.hasWidth == True), then the
+        self.xAlign defines the alignment of the box and self.xTextAlign
+        defines the alignment of the text inside the box.
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
@@ -474,12 +501,13 @@ class Text(Element):
     def _get_xAlign(self):
         """Answer the type of x-alignment of the box.
 
-        Note that self.xAlign defines the position of the box. If the BabelString is
-        used in plain text mode (bs.hasWidth == False), then the behavior of self.xAlign
-        and self.xTextAlign is equivalent.
-        If the BabelString has a width defined (bs.hasWidth == True), then the self.xAlign
-        defines the alignment of the box and self.xTextAlign defines the alignment of
-        the text inside the box.
+        NOTE: self.xAlign defines the position of the box. If the BabelString
+        is used in plain text mode (bs.hasWidth == False), then the behavior of
+        self.xAlign and self.xTextAlign is equivalent.
+
+        If the BabelString has a width defined (bs.hasWidth == True), then the
+        self.xAlign defines the alignment of the box and self.xTextAlign
+        defines the alignment of the text inside the box.
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
@@ -509,12 +537,13 @@ class Text(Element):
     def _get_yAlign(self):
         """Answer the type of y-alignment.
 
-        Note that self.yAlign defines the position of the box. If the BabelString is
-        used in plain text mode (bs.hasHeight == False), then the behavior of self.yAlign
-        and self.yTextAlign is equivalnent.
-        If the BabelString has a height defined (bs.hasHeight == True), then the self.yAlign
-        defines the alignment of the box and self.yTextAlign defines the alignment of
-        the text inside the box.
+        NOTE: self.yAlign defines the position of the box. If the BabelString
+        is used in plain text mode (bs.hasHeight == False), then the behavior
+        of self.yAlign and self.yTextAlign is equivalnent.
+
+        If the BabelString has a height defined (bs.hasHeight == True), then
+        the self.yAlign defines the alignment of the box and self.yTextAlign
+        defines the alignment of the text inside the box.
 
         >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
@@ -764,8 +793,8 @@ class Text(Element):
         return self._applyHorizontalAlignment(px), self._applyVerticalAlignment(py), pz
 
     def _applyHorizontalAlignment(self, x):
-        # Horizontal alignment is done by the text itself. This is just for other elements,
-        # such as the frame.
+        """Horizontal alignment is done by the text itself. This is just for
+        other elements, such as the frame."""
         xAlign = self.xAlign
         if xAlign == CENTER:
             x -= self.w/2/self.scaleX
@@ -774,8 +803,8 @@ class Text(Element):
         return x
 
     def _applyVerticalAlignment(self, y):
-        # Adjust vertical alignments for the text,
-        # assuming that the default origin of drawing in on text baseline.
+        """Adjust vertical alignments for the text, assuming that the default
+        origin of drawing in on text baseline."""
         yAlign = self.yAlign
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
@@ -912,8 +941,6 @@ class Text(Element):
 
         if hasContent:
             b._div() # self.cssClass or self.__class__.__name__
-
-
 
 if __name__ == '__main__':
     import doctest
