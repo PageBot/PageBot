@@ -478,14 +478,14 @@ class Image(Element):
 
             if self.imo is not None:
                 with self.imo:
-                    self.context.image(self.path, (0, 0), pageNumber=1, alpha=self._getAlpha(),
+                    self.context.image(self.path, p=(0, 0), pageNumber=1, alpha=self._getAlpha(),
                         w=self.w, h=self.h, scaleType=self.scaleType)
-                self.context.image(self.imo, (px, py), pageNumber=self.index,
+                self.context.image(self.imo, p=(px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType, clipPath=clipPath)
             else:
                 #print('pbimage.build()', self.path, px, py, self.w, self.h, self.scaleImage)
-                self.context.image(self.path, (px, py), pageNumber=self.index,
+                self.context.image(self.path, p=(px, py), pageNumber=self.index,
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType, clipPath=clipPath)
 
