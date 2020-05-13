@@ -519,6 +519,7 @@ class FlatContext(BaseContext):
 
         """
         fs = self.fromBabelString(bs)
+
         if isinstance(fs, str):
             # Creates a new string with default styles.
             style = dict(fontSize=self._fontSize)
@@ -597,9 +598,9 @@ class FlatContext(BaseContext):
 
         return fs.textBox(self.page, box)
 
-    def textOverflow(self, bsOrFs, box, align=LEFT):
-        """Answers the the box overflow as a new FlatString in the
-        current context.
+    def textOverflow(self, s, box, align=LEFT):
+        """Answers the the box overflow as a new FlatString in the current
+        context.
 
         >>> from pagebot import getContext
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -609,7 +610,7 @@ class FlatContext(BaseContext):
         >>> context.newPage(w, h)
         >>> font = findFont('Roboto-Regular')
         >>> style = {'font': font, 'fontSize': 14}
-        >>> style = makeStyle(style=style) # Check for unsupported names
+        >>> style = makeStyle(style=style)
         >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin venenatis sit amet libero at finibus. '
         >>> bs = context.newString(txt * 4, style)
         >>> of = context.textOverflow(bs, r)
@@ -624,7 +625,8 @@ class FlatContext(BaseContext):
         True
         """
         assert self.page is not None, 'FlatString.text: self.page is not set.'
-        fs = self.fromBabelString(bsOrFs)
+        fs = self.fromBabelString(s)
+
         # FIXME: this actually shows the text?
         s = fs.textOverflow(self.page, box, align=align)
         return s
@@ -723,13 +725,15 @@ class FlatContext(BaseContext):
             (self.__class__.__name__, bs.__class__.__name__))
         '''
 
-        fs = self.b.FormattedString()
+        #fs = self.b.FormattedString()
+        fs = FlatString(context=self)
+
         for run in bs.runs:
             # Instead of using e.g. bs.tracking, we need to process the
             # styles of all runs, not just the last one.
             style = run.style
             # DrawBot-OSX, setting the hyphenation is global, before a FormattedString is created.
-            self.b.hyphenation(style.get('hyphenation', False))
+            self.hyphenation(style.get('hyphenation', False))
 
             # In case there is an error in these parameters, DrawBot ignors all.
             #print('FS-style attributes:', run.s, fontPath,

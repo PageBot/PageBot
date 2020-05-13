@@ -22,14 +22,16 @@ from fontTools.pens.boundsPen import BoundsPen
 
 from pagebot.constants import *
 from pagebot.toolbox.units import upt
+from pagebot.toolbox.color import color
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.fonttoolbox.objects.font import Font, getFontPath, getLineHeight
 from pagebot.contexts.flatcontext.flattextline import FlatTextLine
 
 NEWLINE = '<NEWLINE>'
+BLACK_COLOR = color(0, 0, 0)
 
-class FlatString(BabelString):
+class FlatString():
     """FlatString is a wrapper around the Flat string that should be
     functionally compatible with a Cocoa attributed string and the CoreText
     typesetter.
@@ -45,7 +47,9 @@ class FlatString(BabelString):
         """Constructor of the FlatString, which is a wrapper around a Flat
         `text` class. Optionally stores the (latest) style that was used to
         produce the formatted string.
-        FlatStrings are intended for drawing into a Flat canvas, write-only.
+
+        NOTE: FlatStrings are intended for drawing into a Flat canvas,
+        write-only.
 
         >>> from pagebot import getContext, getFontByName
         >>> from pagebot.document import Document
@@ -109,11 +113,18 @@ class FlatString(BabelString):
         if style is None:
             style = {}
 
-        fontPath = getFontPath(style.get('font'))
+        # TODO: FlatString no longer inherits from BabelString.
+        # TODO: remove context dependency, values are determined when run is rendered / drawn.
+        #super().__init__(s=s, context=context, w=w, h=h)
+        self.context = context
+
+        #fontPath = getFontPath(style.get('font'))
+        fontPath = findFont(style.get('font', DEFAULT_FONT))
 
         # FIXME: should use s.lineHeight.
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
         leading = style.get('leading', DEFAULT_LEADING)
+
         # FIXME: Don't get lineheight from the font.
         # It is either a fixed value (e.g. pt(12), or relative to the fontSize em(1.5))
         # Values inside fonts are unreliable
@@ -121,7 +132,8 @@ class FlatString(BabelString):
         lineHeight = leading
         flatFont = findFont(fontPath)
         strike = self.context.b.strike(flatFont)
-        color = self.context.b.getColor(style)
+        color = style.get('textFill', BLACK_COLOR)
+        #color = self.context.b.getColor(style)
         rgb = self.context.getFlatRGB(color)
         self._lines = []
         self._numberOfLines = 0
@@ -143,7 +155,6 @@ class FlatString(BabelString):
                 style=style))
         self.previousStyle = style
 
-        super().__init__(s=s, context=context, w=w, h=h)
 
         if len(parts) > 0:
             for part in parts[1:]:

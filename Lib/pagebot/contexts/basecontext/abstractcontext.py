@@ -88,12 +88,6 @@ class AbstractContext:
 
     # Public callbacks.
 
-    def size(self, w, h=None):
-        """Sets the width and height of the current page. Standardize on
-        PageBot `(w, h)` for consistent naming, instead of DrawBot (width,
-        height)."""
-        raise NotImplementedError
-
     def newPage(self, w=None, h=None, page=None, **kwargs):
         """Optional width and height if defined. Standardize on PageBot `(w,
         h)` for consistent naming, instead of DrawBot (width, height).
@@ -107,6 +101,12 @@ class AbstractContext:
         other than for the DrawBot context to make it compatible."""
         raise NotImplementedError
     pages = property(_get_pages)
+
+    def size(self, w, h=None):
+        """Sets the width and height of the current page. Standardize on
+        PageBot `(w, h)` for consistent naming, instead of DrawBot (width,
+        height)."""
+        raise NotImplementedError
 
     def saveImage(self, path, *args, **options):
         """Save or export the canvas to a specified format. The `path`
@@ -167,10 +167,10 @@ class AbstractContext:
         be used by the context to extract width and height."""
         raise NotImplementedError
 
-    # Path.
+    # Paths.
 
     def newPath(self):
-        """Create a new path."""
+        """Create a new Bézier path."""
         raise NotImplementedError
 
     def moveTo(self, p):
@@ -232,7 +232,26 @@ class AbstractContext:
         `polygon` is a closed path."""
         raise NotImplementedError
 
-    # Color.
+    # Path drawing behavior.
+
+    def strokeWidth(self, w):
+        """Sets stroke width."""
+        raise NotImplementedError
+
+    def miterLimit(self, value):
+        """Set a miter limit. Used on corner points."""
+        raise NotImplementedError
+
+    def lineJoin(self, value):
+        raise NotImplementedError
+
+    def lineCap(self, value):
+        raise NotImplementedError
+
+    def lineDash(self, value):
+        raise NotImplementedError
+
+    # Colors.
 
     def colorSpace(self, colorSpace):
         """Set the color space. Options are `genericRGB`, `adobeRGB1998`,
@@ -328,26 +347,7 @@ class AbstractContext:
     radialGradient = linearGradient
     cmykRadialGradient = radialGradient
 
-    # Path drawing behavior.
-
-    def strokeWidth(self, w):
-        """Sets stroke width."""
-        raise NotImplementedError
-
-    def miterLimit(self, value):
-        """Set a miter limit. Used on corner points."""
-        raise NotImplementedError
-
-    def lineJoin(self, value):
-        raise NotImplementedError
-
-    def lineCap(self, value):
-        raise NotImplementedError
-
-    def lineDash(self, value):
-        raise NotImplementedError
-
-    # Transform.
+    # Transformation.
 
     def transform(self, matrix, center=(0, 0)):
         raise NotImplementedError
@@ -364,7 +364,7 @@ class AbstractContext:
     def skew(self, angle1, angle2=0, center=(0, 0)):
         raise NotImplementedError
 
-    # Text.
+    # Text properties.
 
     def font(self, fontName, fontSize=None):
         raise NotImplementedError

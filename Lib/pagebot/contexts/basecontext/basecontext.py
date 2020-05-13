@@ -840,21 +840,32 @@ class BaseContext(AbstractContext):
 
     # Text.
 
-    def marker(self, x, y):
-        x = round(x)
-        y = round(y)
-        s = '(%s, %s)' % (x, y)
-        red = (1, 0, 0)
-        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
-        bs = self.newString(s, style=style)
-        oldStroke = self._stroke
-        oldFill = self._fill
-        self.text(bs, (x, y))
-        self.fill(red)
-        self.stroke(None)
-        self.circle(x, y, 1)
-        self.fill(oldFill)
-        self.stroke(oldStroke)
+    def drawString(self, bs, p):
+        """Draws the BabelString at position p.
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.units import pt, em
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import *
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('Hkpx'+chr(10)+'Hkpx', style, context=context)
+        >>> context.drawString(bs, pt(100, 100))
+        """
+        assert isinstance(bs, BabelString),\
+            'drawString needs str or BabelString: %s' % (bs.__class__.__name__)
+        if bs._w is None and bs._h is None:
+            self.text(bs.cs, point2D(upt(p)))
+        else:
+            x, y = point2D(upt(p))
+            box = (x, y, bs.w or DEFAULT_WIDTH, bs.h or 1000)
+            self.textBox(bs.cs, box)
+
+    def drawText(self, bs, box):
+        """ Draw the text block, in case there is a width or heigh defined."""
+        assert isinstance(bs, BabelString),\
+            'drawText needs str or BabelString: %s' % (bs.__class__.__name__)
+        self.textBox(bs.cs, upt(box))
 
     def textOverflow(self, sOrBs, box, align=None):
         """Answer the part of the text that doesn't fit in the box. The sOrBs
@@ -870,6 +881,22 @@ class BaseContext(AbstractContext):
         """Answers the width and height of the formatted string with an
         optional given w or h."""
         raise NotImplementedError
+
+    def marker(self, x, y):
+        x = round(x)
+        y = round(y)
+        s = '(%s, %s)' % (x, y)
+        red = (1, 0, 0)
+        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
+        bs = self.newString(s, style=style)
+        oldStroke = self._stroke
+        oldFill = self._fill
+        self.text(bs, (x, y))
+        self.fill(red)
+        self.stroke(None)
+        self.circle(x, y, 1)
+        self.fill(oldFill)
+        self.stroke(oldStroke)
 
     # String.
 
@@ -899,28 +926,8 @@ class BaseContext(AbstractContext):
         assert isinstance(bs, self.STRING_CLASS)
         return bs
 
-    def XXXXFormattedString(self, *args, **kwargs):
-        # Refer to BabelString?
-        return self.b.FormattedString(*args, **kwargs)
-
     def newBulletString(self, bullet, e=None, style=None):
         return self.newString(bullet, style=style)
-
-    def XXXfitString(self, s, style=None, w=None, h=None, pixelFit=True):
-        """Creates a new styles BabelString instance of self.STRING_CLASS from
-        s assuming that style['font'] is a Variable Font instnace, or a path
-        pointing to one. If the for is not a VF, then behavior is the same as
-        newString. (converted to plain unicode string), using e or style as
-        typographic parameters. Ignore and just answer s if it is already a
-        `self.STRING_CLASS` instance. PageBot function.
-        """
-        if not isinstance(s, self.STRING_CLASS):
-            # Otherwise convert s into plain string, from whatever it is now.
-            s = self.STRING_CLASS.fitString(str(s), context=self, style=style,
-                w=w, h=h, pixelFit=pixelFit)
-
-        assert isinstance(s, self.STRING_CLASS)
-        return s
 
     def newText(self, textStyles, e=None, newLine=False):
         """Answers a BabelString as a combination of all text and styles in
