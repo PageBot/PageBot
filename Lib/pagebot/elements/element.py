@@ -145,7 +145,8 @@ class Element:
         # Initialize self._elements and self._eIds.
         self.clearElements()
         self.checkStyleArgs(kwargs)
-        # Make default style for t == 0 from args
+        # Make default style for t == 0 from remaining args
+        # such as fill, stroke, strokeWidth, textFill, textStroke, textStrokewidth
         self.style = makeStyle(style, **kwargs)
         self.style['xAlign'] = xAlign
         self.style['yAlign'] = yAlign
@@ -5006,16 +5007,17 @@ class Element:
             c.fill(eFill)
 
         if eStroke in (None, noColor):
-            c.stroke(None)
+            c.stroke(None, 0)
         else: # Separate from border behavior if set.
             c.stroke(eStroke, self.strokeWidth)
 
         if self.framePath is not None: # In case defined, use instead of bounding box.
             c.drawPath(self.framePath)
+        # Then draw the rectangle with the defined color/stroke/strokeWidth
         c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
 
         c.fill(None)
-        c.stroke(None)
+        c.stroke(None, 0)
 
         c.restoreGraphicState()
 
