@@ -680,6 +680,33 @@ class FlatContext(BaseContext):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
+        """Convert the BabelString into a DrawBot FormattedString
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.units import pt, em
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import *
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('Hkpx', style, context=context)
+        >>> bs.textStrokeWidth = pt(4)
+        >>> bs.textStroke = (1, 0, 0)
+        >>> tw, th = bs.textSize
+        >>> tw, th
+        (209.7pt, 100pt)
+        >>> fs = context.fromBabelString(bs) # DrawBot.FormattedString
+        >>> fs, fs.__class__.__name__
+        (Hkpx, 'FormattedString')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(30), leading=em(1))
+        >>> bs = context.newString('Hkpx'+chr(10)+'Hkpx', style)
+        >>> bs.textStrokeWidth = pt(4)
+        >>> bs.textStroke = (1, 0, 0)
+        >>> doc = Document(w=tw+50, h=th+100, context=context)
+        >>> e = newText(bs, x=20, y=120, parent=doc[1])
+        >>> doc.export('_export/DrawBotContext-fromBabelString.pdf')
+        """
+
+        '''
         #if isinstance(bs, FlatString):
         #    return bs
         if isinstance(bs, str):
@@ -694,6 +721,75 @@ class FlatContext(BaseContext):
 
         raise ValueError('%s.fromBabelString: String type %s not supported' %
             (self.__class__.__name__, bs.__class__.__name__))
+        '''
+
+        fs = self.b.FormattedString()
+        for run in bs.runs:
+            # Instead of using e.g. bs.tracking, we need to process the
+            # styles of all runs, not just the last one.
+            style = run.style
+            # DrawBot-OSX, setting the hyphenation is global, before a FormattedString is created.
+            self.b.hyphenation(style.get('hyphenation', False))
+
+            # In case there is an error in these parameters, DrawBot ignors all.
+            #print('FS-style attributes:', run.s, fontPath,
+            #    upt(fontSize), upt(leading, base=fontSize),
+            #    textColor.rgba, align)
+
+            # Create the style for this text run.
+            font = findFont(style.get('font', DEFAULT_FONT))
+            if font is None:
+                fontPath = DEFAULT_FONT
+            else:
+                fontPath = font.path
+            fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
+            leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
+            fsStyle = dict(
+                font=fontPath,
+                fontSize=upt(fontSize),
+                lineHeight=upt(leading, base=fontSize),
+                align=style.get('xTextAlign') or style.get('xAlign', LEFT),
+                tracking=upt(style.get('tracking', 0), base=fontSize),
+                strokeWidth=upt(style.get('strokeWidth')),
+                baselineShift=upt(style.get('baselineShift'), base=fontSize),
+                language=style.get('language', DEFAULT_LANGUAGE),
+                indent=upt(style.get('indent', 0), base=fontSize),
+                tailIndent=-abs(upt(style.get('tailIndent', 0), base=fontSize)), # DrawBot wants negative number)
+                firstLineIndent=upt(style.get('firstLineIndent', 0), base=fontSize),
+                underline={True:'single', False:None}.get(style.get('underline', False)),
+                # Increasing value moves text up, decreasing the leading.
+                paragraphTopSpacing=upt(style.get('paragraphTopSpacing', 0), base=fontSize),
+                paragraphBottomSpacing=upt(style.get('paragraphBottomSpacing', 0), base=fontSize),
+            )
+            if 'textFill' in style:
+                textFill = style['textFill']
+                if textFill is not None:
+                    textFill = color(textFill)
+                if textFill.isCmyk:
+                    fsStyle['cmykFill'] = textFill.cmyk
+                else:
+                    fsStyle['fill'] = textFill.rgba
+            if 'textStroke' in style:
+                textStroke = style['textStroke']
+                if textStroke is not None:
+                    textStroke = color(textStroke)
+                if textStroke.isCmyk:
+                    fsStyle['cmykStroke'] = textStroke.cmyk
+                else:
+                   fsStyle['stroke'] = textStroke.rgba
+            if 'openTypeFeatures' in style:
+                fsStyle['openTypeFeatures'] = style['openTypeFeatures']
+            if 'fontVariations' in style:
+                fsStyle['fontVariantions'] = style['fontVariations']
+            if 'tabs' in style:
+                tabs = [] # Render the tab values to points.
+                for tx, alignment in style.get('tabs', []):
+                    tabs.append((upt(tx, base=fontSize), alignment))
+                fsStyle['tabs'] = tabs
+
+            fs.append(run.s, **fsStyle)
+        return fs
+
 
     #   F O N T
 
