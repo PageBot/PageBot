@@ -118,8 +118,13 @@ class FlatString():
         #super().__init__(s=s, context=context, w=w, h=h)
         self.context = context
 
-        #fontPath = getFontPath(style.get('font'))
-        fontPath = findFont(style.get('font', DEFAULT_FONT))
+
+        # PageBot Font to Flat Font.
+        # TODO: make into function.
+        fontName = style.get('font', DEFAULT_FONT)
+        font = findFont(fontName)
+        fontPath = getFontPath(font)
+        flatFont = self.context.b.font.open(fontPath)
 
         # FIXME: should use s.lineHeight.
         fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
@@ -130,7 +135,7 @@ class FlatString():
         # Values inside fonts are unreliable
         #lineHeight = getLineHeight(leading, fontSize)
         lineHeight = leading
-        flatFont = findFont(fontPath)
+        #flatFont = findFont(fontPath)
         strike = self.context.b.strike(flatFont)
         color = style.get('textFill', BLACK_COLOR)
         #color = self.context.b.getColor(style)

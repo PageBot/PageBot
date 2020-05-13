@@ -20,7 +20,8 @@ from os import listdir
 from os.path import exists
 from flat import rgb
 
-from pagebot.constants import (FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
+from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE,
+        DEFAULT_LANGUAGE, FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
@@ -30,11 +31,12 @@ from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
+from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
-from pagebot.toolbox.units import upt, point2D
+from pagebot.toolbox.units import em, upt, point2D
 
 HAS_PIL = True
 
@@ -708,24 +710,6 @@ class FlatContext(BaseContext):
         >>> doc.export('_export/DrawBotContext-fromBabelString.pdf')
         """
 
-        '''
-        #if isinstance(bs, FlatString):
-        #    return bs
-        if isinstance(bs, str):
-            return self.STRING_CLASS(bs)
-        if isinstance(bs, BabelString):
-            fs = self.STRING_CLASS()
-            for run in bs.runs:
-                # @@@@@@@ FIXME: Recursion error
-                pass
-                #fs += self.STRING_CLASS(run.s, style=run.style, context=bs.context)
-            return fs
-
-        raise ValueError('%s.fromBabelString: String type %s not supported' %
-            (self.__class__.__name__, bs.__class__.__name__))
-        '''
-
-        #fs = self.b.FormattedString()
         fs = FlatString(context=self)
 
         for run in bs.runs:
@@ -791,7 +775,10 @@ class FlatContext(BaseContext):
                     tabs.append((upt(tx, base=fontSize), alignment))
                 fsStyle['tabs'] = tabs
 
-            fs.append(run.s, **fsStyle)
+            fs0 = FlatString(s=run.s, style=fsStyle, context=self)
+
+            fs.append(fs0)
+            #fs.append(run.s, **fsStyle)
         return fs
 
 

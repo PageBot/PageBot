@@ -187,13 +187,16 @@ def getFontPath(font):
     True
 
     """
+    #assert isinstance(font, Font)
+
     fontPath = None
     if font is not None:
         if isinstance(font, str):
             f = findFont(font)
             if f is not None:
                 fontPath =  f.path
-    if not os.path.exists(fontPath):
+
+    if not fontPath or not os.path.exists(fontPath):
         f = findFont(DEFAULT_FONT)
         if f is not None:
             fontPath = font.path
