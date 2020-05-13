@@ -440,6 +440,7 @@ class Image(Element):
         Note that the (sx, sy) is already scaled to fit the padding position
         and size."""
         p = pointOffset(self.origin, origin)
+        ox, oy = point2D(p)
         p = self._applyScale(view, p)
         # Ignore z-axis for now.
         px, py, _ = p = self._applyAlignment(p)
@@ -474,7 +475,7 @@ class Image(Element):
 
             clipPath = self.clipPath
             if clipPath is not None:
-                clipPath.translate(view.pl, view.pb) #
+                clipPath.translate(origin[0], origin[1]) 
 
             if self.imo is not None:
                 with self.imo:

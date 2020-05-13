@@ -1141,12 +1141,15 @@ class Element:
         """Answer the self._clipPath value. It not set, then look for a sibling
         element, named "Mask" and render that as clipPath. Answer None otherwise.
 
+        """
+
+        """
         >>> from pagebot.conditions import *
         >>> from pagebot import getContext
         >>> from pagebot.document import Document
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> doc = Document(w=500, h=500, context=context)
-
+        
         """
         if self._clipPath is None:
             # Check if there is a sibling (share the same parent)
@@ -1164,7 +1167,7 @@ class Element:
     clipPath = property(_get_clipPath, _set_clipPath)
 
     def _get_childClipPath(self):
-        """Answer the clipping context.BezierPath, derived from the bouding box of
+        """Answer the clipping BezierPath, derived from the bouding box of
         child elements.
 
         >>> from pagebot.conditions import *

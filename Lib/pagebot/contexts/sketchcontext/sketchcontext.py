@@ -42,6 +42,7 @@ from pagebot.constants import *
 from pagebot.toolbox.color import color
 from pagebot.toolbox.units import pt, units, upt, em
 from pagebot.toolbox.transformer import asIntOrNone
+from pagebot.fonttoolbox.objects.font import findFont
 
 from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
 from sketchapp2py.sketchclasses import *
@@ -225,13 +226,11 @@ class SketchContext(BaseContext):
             frame = layer.frame
 
             if layer.name == 'Mask':
-                """Will be used as mask by images that have the same parent."""
+                """Will be used as mask by images that have the same parent.
+                (x,y) is defined in the parent group e."""
                 frame = layer.frame
-                y = e.h - frame.h - frame.y # Flip the y-axis
                 mask = newMask(name=layer.name, parent=e, sId=layer.do_objectID,
-                    x=frame.x, y=y, w=frame.w, h=frame.h)
-                mask.rect(0, 0, frame.w, frame.h) # For now, only rectangle masks.
-                # Mask has no children.
+                    x=0, y=0, w=frame.w, h=frame.h)
 
             elif isinstance(layer, (SketchGroup, SketchShapeGroup, SketchSlice)):
                 frame = layer.frame
@@ -253,13 +252,57 @@ class SketchContext(BaseContext):
                 newOval(name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
 
-            elif isinstance(layer, SketchText):
-                # FIXME: Positioning of text still to be finalized.
+            elif isinstance(layer, SketchShapePath):
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
-                newText(self.asBabelString(layer.attributedString), name=layer.name, parent=e,
+                if len(layer.points):
+                    p1 = layer.points[0].point
+                    p2 = layer.points[-1].point
+                    print('sdsdsdsdsd', p1, p2)
+                    Line(parent=e, x=p1.x, y=p1.x, w=p2.x - p1.x, h=p2.y - p1.y,
+                            stroke=fillColor, strokeWidth=0.5)
+
+                # '_class': 'shapePath', 
+                # '_parent': None, 
+                #'booleanOperation': -1, 
+                #'isFixedToViewport': False, 
+                #'isFlippedVertical': False, 
+                #'resizingConstraint': 63, 
+                #'resizingType': 0, 
+                #'rotation': 0, 
+                #'shouldBreakMaskChain': False, 
+                #'edited': True, 
+                #'isClosed': False, 
+                #'pointRadiusBehaviour': 1, 
+                #'points': [
+                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0017391304347826092, 0.66666666666666674}', 'curveMode': 1, 'curveTo': '{0.0017391304347826092, 0.66666666666666674}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.0008695652173913046, 0.50000000000000022}'}, 
+                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0034782608695652184, 0.99999999999999978}', 'curveMode': 1, 'curveTo': '{0.0034782608695652184, 0.99999999999999978}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.99913043478260866, 0.50000000000000022}'}], 
+                # 'do_objectID': '5C6D85ED-3C55-4C54-B081-F713A7AF5CD8', 
+                #'exportOptions': <SketchExportOptions>, 
+                #'frame': <SketchRect x=0 y=0 w=575 h=0.5>, 
+                #'isFlippedHorizontal': False, 
+                #'isLocked': False, 
+                #'isVisible': True, 
+                #'layerListExpandedType': 0, 
+                #'name': 'Path', 
+                #'nameIsFixed': False, 
+                #'resizing': False, 
+                #'path': None
+
+            elif isinstance(layer, SketchText):
+                # https://blog.sketchapp.com/typesetting-in-sketch-dc870fc334fc
+                # FIXME: Vertical positioning of text still to be finalized.
+                bs = self.asBabelString(layer.attributedString)
+                style = bs.runs[0].style
+                font = style.get('font')
+                fontSize = style.get('fontSize')
+                ascender = fontSize * font.info.ascender/font.info.unitsPerEm
+                yOffset = upt(style.get('leading'), base=fontSize) - ascender
+                y = e.h - frame.h - frame.y - yOffset # Flip the y-axis
+                fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
+                newText(bs, name=layer.name, parent=e,
                     sId=layer.do_objectID, x=frame.x, y=y+frame.h, w=frame.w, h=frame.h,
-                    yAlign=BASELINE, # Default Sketch text positioning
+                    yAlign=ASCENDER, # Default Sketch text positioning
                     textFill=fillColor)
 
             elif isinstance(layer, SketchBitmap):
@@ -303,7 +346,7 @@ class SketchContext(BaseContext):
         >>> page = doc[1]
         >>> e = page.elements[0]
         >>> e
-        <Text $Type & sty...$ x=137pt y=234pt w=518pt h=100pt>
+        <Text $Type & sty...$ x=137pt y=201.5pt w=518pt h=100pt>
         """
         sketchPages = self.b.pages # Collect the list of SketchPage instance
         sortedArtboards = {} # First sort the artboard by y-->x pairs
@@ -323,38 +366,38 @@ class SketchContext(BaseContext):
                 doc.h = page.h
             # Set the grid and margins
             layout = artboard.layout
+            if layout is not None:
+                # Sketch has gutter/2 centered on both sides of the column width.
+                page.gw = pt(layout.gutterWidth)
+                page.pl = pt(layout.horizontalOffset) + page.gw/2
+                if layout.guttersOutside: # Gutter/2 + colunnWidth + gutter/2
+                    page.pr = page.w - pt(layout.totalWidth) + page.gw - page.pl
+                else: # -gutter/2 + columnWidth - gutter/2
+                    page.pr = page.w - pt(layout.totalWidth) - page.pl
+                gridX = []
+                for col in range(layout.numberOfColumns):
+                    gridX.append([pt(layout.columnWidth), page.gw])
+                gridX[-1][1] = None
+                page.gridX = gridX
 
-            # Sketch has gutter/2 centered on both sides of the column width.
-            page.gw = pt(layout.gutterWidth)
-            page.pl = pt(layout.horizontalOffset) + page.gw/2
-            if layout.guttersOutside: # Gutter/2 + colunnWidth + gutter/2
-                page.pr = page.w - pt(layout.totalWidth) + page.gw - page.pl
-            else: # -gutter/2 + columnWidth - gutter/2
-                page.pr = page.w - pt(layout.totalWidth) - page.pl
-            gridX = []
-            for col in range(layout.numberOfColumns):
-                gridX.append([pt(layout.columnWidth), page.gw])
-            gridX[-1][1] = None
-            page.gridX = gridX
-
-            if layout.isEnabled:
-                page.showGrid = DEFAULT_GRID # Show grid as lines
-            else:
-                page.showGrid = False
-            """
-            'isEnabled': (asBool, True),
-            'columnWidth': (asNumber, 96),
-            'drawHorizontal': (asBool, True),
-            'drawHorizontalLines': (asBool, False),
-            'drawVertical': (asBool, True),
-            'gutterHeight': (asNumber, 24),
-            'gutterWidth': (asNumber, 24),
-            'guttersOutside': (asBool, False),
-            'horizontalOffset': (asNumber, 60),
-            'numberOfColumns': (asNumber, 5),
-            'rowHeightMultiplication': (asNumber, 3),
-            'totalWidth': (asNumber, 576),
-            """
+                if layout.isEnabled:
+                    page.showGrid = DEFAULT_GRID # Show grid as lines
+                else:
+                    page.showGrid = False
+                """
+                'isEnabled': (asBool, True),
+                'columnWidth': (asNumber, 96),
+                'drawHorizontal': (asBool, True),
+                'drawHorizontalLines': (asBool, False),
+                'drawVertical': (asBool, True),
+                'gutterHeight': (asNumber, 24),
+                'gutterWidth': (asNumber, 24),
+                'guttersOutside': (asBool, False),
+                'horizontalOffset': (asNumber, 60),
+                'numberOfColumns': (asNumber, 5),
+                'rowHeightMultiplication': (asNumber, 3),
+                'totalWidth': (asNumber, 576),
+                """
             # Recursively create all elements on the page, interpreting
             # the objects found on the artboard.
             self._createElements(artboard, page)
@@ -447,9 +490,12 @@ class SketchContext(BaseContext):
         >>> bs # Represented by joining text strings of all runs
         $Type & sty...$
         >>> bs.runs[0].s, bs.runs[0].style['font'], bs.runs[0].style['fontSize']
-        ('Type ', 'Proforma-Book', 90pt)
+        ('Type ', <Font Proforma-Book>, 90)
         >>> bs.runs[1].s, bs.runs[1].style['font'], bs.runs[1].style['fontSize']
-        ('&', 'Proforma-Book', 200pt)
+        ('&', <Font Proforma-Book>, 200)
+        """
+
+        """
         >>> sas2 = context.fromBabelString(bs) # New conversion
         >>> #sas == sas2 # Bi-directional conversion works
         True
@@ -475,7 +521,11 @@ class SketchContext(BaseContext):
             # More difficult is the leading, as Skype does not really keep
             # runs with styles and leading.
             fd = attrs.attributes.MSAttributedStringFontAttribute.attributes
-            tracking = attrs.attributes.kerning # Wrong Sketch name for tracking
+            font = findFont(fd.name)
+            if font is None: # If not found (e.g. OSX name, then keep the name)
+                font = fd.name
+            fontSize = fd.size
+            tracking = em(attrs.attributes.kerning/fontSize) # Wrong Sketch name for tracking
 
             #print('----', attrs)
             # attrs = SketchStringAttribute
@@ -503,15 +553,21 @@ class SketchContext(BaseContext):
             #print('3-3-3-', paragraphStyle.alignment)
 
             paragraphStyle = attrs.attributes.paragraphStyle
-            leading = em(paragraphStyle.minimumLineHeight/fd.size)
+            leading = em(paragraphStyle.minimumLineHeight/fontSize)
 
+            #minLeading = paragraphStyle.minimumLineHeight
+            #axLeading = paragraphStyle.maximumLineHeight
+            #paragraphSpacing = paragraphStyle.paragraphSpacing
+
+            #print('vvvvvv', font, fontSize, leading, paragraphStyle, tracking)
+            #print('xxxxxx', minLeading, maxLeading, paragraphSpacing)
             # Fill color of the this run.
             cc = attrs.attributes.MSAttributedStringColorAttribute
             textFill = color(r=cc.red, g=cc.green, b=cc.blue, a=cc.alpha)
             # 0 = TOP,
             verticalAlignment = attrs.attributes.textStyleVerticalAlignmentKey
             # Construct the run style from the extracted parameters.
-            style = dict(font=fd.name, fontSize=pt(fd.size), textFill=textFill,
+            style = dict(font=font, fontSize=fontSize, textFill=textFill,
                 tracking=tracking, yAlign=BASELINE, leading=leading,
                 xAlign=ALIGNMENTS.get('alignment', LEFT)
             )
@@ -528,6 +584,10 @@ class SketchContext(BaseContext):
 
         >>> bs = BabelString('abcd', style=dict(font='Roboto-Regular', fontSize=pt(18)))
         >>> context = SketchContext()
+
+        """
+
+        """
         >>> sas1 = context.fromBabelString(bs)
         >>> sas1
         <SketchAttributedString>
@@ -551,17 +611,19 @@ class SketchContext(BaseContext):
             sas.string += run.s
             cIndex += ssa.length
 
-            ssa.attributes = SketchAttributes()
-            ssa.attributes.kerning = style.get('tracking', 0)
-            ssa.attributes.textStyleVerticalAlignmentKey = 0 # ???
-            ssa.attributes.paragraphStyle = SketchParagraphStyle()
-            ssa.attributes.paragraphStyle.alignment = ALIGNMENTS.get(style.get('xAlign', JUSTIFIED))
-
             ssa.attributes.MSAttributedStringFontAttribute = SketchFontDescriptor()
             fd = ssa.attributes.MSAttributedStringFontAttribute.attributes
             fd.name = run.style.get('font', 'Verdana')
             fd.size = upt(run.style.get('fontSize', 12))
             tc = run.style.get('textFill', color(0))
+
+            # Leading is a special thing in Sketch!
+            ssa.attributes = SketchAttributes()
+            ssa.attributes.kerning = upt(style.get('tracking', 0), base=fd.size)
+            ssa.attributes.textStyleVerticalAlignmentKey = 0 # ???
+            ssa.attributes.paragraphStyle = SketchParagraphStyle()
+            ssa.attributes.paragraphStyle.alignment = ALIGNMENTS.get(style.get('xAlign', JUSTIFIED))
+
 
             ssa.attributes.MSAttributedStringColorAttribute = SketchColor(red=tc.r, green=tc.g, blue=tc.b, alpha=tc.a)
             attrs.append(ssa)

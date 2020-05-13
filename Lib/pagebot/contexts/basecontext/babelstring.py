@@ -348,6 +348,8 @@ class BabelString:
         >>> lines = bs.lines
         >>> len(lines)
         113
+        >>> lines[0].__class__.__name__
+        'BabelLineInfo'
         """
         if self._lines is None:
             self._lines = self.context.textLines(self.cs, w=self.w, h=self.h)
