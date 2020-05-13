@@ -633,7 +633,7 @@ class FlatContext(BaseContext):
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def textSize(self, bs, w=None, h=None):
+    def textSize(self, s, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
         no text is defined. Answers the height of the string if the width w is
         given.
@@ -677,8 +677,9 @@ class FlatContext(BaseContext):
         >>> #len(lines)
         #35
         """
-        fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
-        return fs.textSize(w=w, h=h)
+        # FIXME: is a FlatString, should BabelString also be possible?
+        #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
+        return s.textSize(w=w, h=h)
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
@@ -710,6 +711,8 @@ class FlatContext(BaseContext):
         >>> doc.export('_export/DrawBotContext-fromBabelString.pdf')
         """
 
+        assert isinstance(bs, BabelString)
+
         fs = FlatString(context=self)
 
         for run in bs.runs:
@@ -726,14 +729,19 @@ class FlatContext(BaseContext):
 
             # Create the style for this text run.
             font = findFont(style.get('font', DEFAULT_FONT))
+
+            '''
             if font is None:
                 fontPath = DEFAULT_FONT
             else:
                 fontPath = font.path
+            '''
+
             fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
             leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
+
             fsStyle = dict(
-                font=fontPath,
+                font=font,
                 fontSize=upt(fontSize),
                 lineHeight=upt(leading, base=fontSize),
                 align=style.get('xTextAlign') or style.get('xAlign', LEFT),
@@ -749,14 +757,17 @@ class FlatContext(BaseContext):
                 paragraphTopSpacing=upt(style.get('paragraphTopSpacing', 0), base=fontSize),
                 paragraphBottomSpacing=upt(style.get('paragraphBottomSpacing', 0), base=fontSize),
             )
+
             if 'textFill' in style:
                 textFill = style['textFill']
+
                 if textFill is not None:
                     textFill = color(textFill)
                 if textFill.isCmyk:
                     fsStyle['cmykFill'] = textFill.cmyk
                 else:
                     fsStyle['fill'] = textFill.rgba
+
             if 'textStroke' in style:
                 textStroke = style['textStroke']
                 if textStroke is not None:
@@ -765,10 +776,13 @@ class FlatContext(BaseContext):
                     fsStyle['cmykStroke'] = textStroke.cmyk
                 else:
                    fsStyle['stroke'] = textStroke.rgba
+
             if 'openTypeFeatures' in style:
                 fsStyle['openTypeFeatures'] = style['openTypeFeatures']
+
             if 'fontVariations' in style:
                 fsStyle['fontVariantions'] = style['fontVariations']
+
             if 'tabs' in style:
                 tabs = [] # Render the tab values to points.
                 for tx, alignment in style.get('tabs', []):

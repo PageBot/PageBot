@@ -282,11 +282,15 @@ class BabelString:
         """
         if self.context is None: # Required context to be defined.
             return None
+
         if self._twh is None:
             self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
+
         if self._twh is not None:
             return self._twh[0]
+
         return None
+
     tw = property(_get_tw)
 
     def _get_th(self):
@@ -330,7 +334,9 @@ class BabelString:
         """
         if self._cs is None:
             self._cs = self.context.fromBabelString(self)
+
         return self._cs
+
     cs = property(_get_cs)
 
     def _get_lines(self):
@@ -353,7 +359,9 @@ class BabelString:
         """
         if self._lines is None:
             self._lines = self.context.textLines(self.cs, w=self.w, h=self.h)
+
         return self._lines
+
     lines = property(_get_lines)
 
     def _get_topLineAscender(self):
