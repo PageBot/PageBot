@@ -416,7 +416,7 @@ class AbstractContext:
     def drawString(self, bs, p):
         raise NotImplementedError
 
-     def drawText(self, bs, box):
+    def drawText(self, bs, box):
         raise NotImplementedError
 
     def text(self, s, p, align=None):

@@ -255,8 +255,13 @@ class SketchContext(BaseContext):
             elif isinstance(layer, SketchShapePath):
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
-                for point in layer.points:
-                    print(point.curveFrom, point.curveTo, point.point)
+                if len(layer.points):
+                    p1 = layer.points[0].point
+                    p2 = layer.points[-1].point
+                    print('sdsdsdsdsd', p1, p2)
+                    Line(parent=e, x=p1.x, y=p1.x, w=p2.x - p1.x, h=p2.y - p1.y,
+                            stroke=fillColor, strokeWidth=0.5)
+
                 # '_class': 'shapePath', 
                 # '_parent': None, 
                 #'booleanOperation': -1, 
