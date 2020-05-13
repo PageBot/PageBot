@@ -30,7 +30,7 @@ import weakref
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
     DEFAULT_LEADING, LEFT, BASELINE)
 from pagebot.fonttoolbox.objects.font import findFont, Font
-from pagebot.toolbox.units import units, pt
+from pagebot.toolbox.units import units, pt, em, upt
 from pagebot.toolbox.color import color
 
 class BabelRun:
@@ -50,8 +50,10 @@ class BabelRun:
         """
         assert isinstance(s, str)
         self.s = s
+
         if style is None:
             style = {}
+
         self.style = style
 
     def __len__(self):
@@ -81,7 +83,81 @@ class BabelRun:
             r += ' "%s"' % s.replace('\n',' ')
         return r + '>'
 
+    def getFSStyle(self):
+        # Instead of using e.g. bs.tracking, we need to process the styles
+        # of all runs, not just the last one.
+        style = self.style
+
+        # DrawBot-OSX, setting the hyphenation is global, before a
+        # FormattedString is created.
+        hyphenation = style.get('hyphenation', False)
+
+        # In case there is an error in these parameters, DrawBot ignors all.
+        #print('FS-style attributes:', run.s, fontPath,
+        #    upt(fontSize), upt(leading, base=fontSize),
+        #    textColor.rgba, align)
+
+        # Create the style for this text run.
+        font = findFont(style.get('font', DEFAULT_FONT))
+        if font is None:
+            fontPath = DEFAULT_FONT
+        else:
+            fontPath = font.path
+        fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
+        leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
+
+        fsStyle = dict(
+            font=fontPath,
+            fontSize=upt(fontSize),
+            lineHeight=upt(leading, base=fontSize),
+            align=style.get('xTextAlign') or style.get('xAlign', LEFT),
+            tracking=upt(style.get('tracking', 0), base=fontSize),
+            strokeWidth=upt(style.get('strokeWidth')),
+            baselineShift=upt(style.get('baselineShift'), base=fontSize),
+            language=style.get('language', DEFAULT_LANGUAGE),
+            indent=upt(style.get('indent', 0), base=fontSize),
+            tailIndent=-abs(upt(style.get('tailIndent', 0), base=fontSize)), # DrawBot wants negative number)
+            firstLineIndent=upt(style.get('firstLineIndent', 0), base=fontSize),
+            underline={True:'single', False:None}.get(style.get('underline', False)),
+            # Increasing value moves text up, decreasing the leading.
+            paragraphTopSpacing=upt(style.get('paragraphTopSpacing', 0), base=fontSize),
+            paragraphBottomSpacing=upt(style.get('paragraphBottomSpacing', 0), base=fontSize),
+        )
+
+        if 'textFill' in style:
+            textFill = style['textFill']
+            if textFill is not None:
+                textFill = color(textFill)
+            if textFill.isCmyk:
+                fsStyle['cmykFill'] = textFill.cmyk
+            else:
+                fsStyle['fill'] = textFill.rgba
+
+        if 'textStroke' in style:
+            textStroke = style['textStroke']
+            if textStroke is not None:
+                textStroke = color(textStroke)
+            if textStroke.isCmyk:
+                fsStyle['cmykStroke'] = textStroke.cmyk
+            else:
+               fsStyle['stroke'] = textStroke.rgba
+
+        if 'openTypeFeatures' in style:
+            fsStyle['openTypeFeatures'] = style['openTypeFeatures']
+
+        if 'fontVariations' in style:
+            fsStyle['fontVariantions'] = style['fontVariations']
+
+        if 'tabs' in style:
+            tabs = [] # Render the tab values to points.
+            for tx, alignment in style.get('tabs', []):
+                tabs.append((upt(tx, base=fontSize), alignment))
+            fsStyle['tabs'] = tabs
+
+        return fsStyle, hyphenation
+
 class BabelLineInfo:
+
     def __init__(self, x, y, cLine, context):
         self.x = units(x)
         self.y = units(y)
@@ -93,6 +169,7 @@ class BabelLineInfo:
         return '<%s x=%s y=%s runs=%d>' % (self.__class__.__name__, self.x, self.y, len(self.runs))
 
 class BabelRunInfo:
+
     def __init__(self, s, style):
         assert isinstance(s, str)
         self.s = s

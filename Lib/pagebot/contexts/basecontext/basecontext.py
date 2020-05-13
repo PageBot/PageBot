@@ -955,7 +955,7 @@ class BaseContext(AbstractContext):
                 s += bs
         return s
 
-    # Images
+    # Images.
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None, e=None):
@@ -1097,11 +1097,6 @@ class BaseContext(AbstractContext):
 
     getImageObject = ImageObject
 
-    def Variable(self, variables, workSpace):
-        """Offers interactive global value manipulation in DrawBot. Can be
-        ignored in most contexts except DrawBot for now.
-        """
-
     # Glyphs.
 
     def drawGlyphPath(self, glyph):
@@ -1201,7 +1196,7 @@ class BaseContext(AbstractContext):
     def getFlattenedContours(self, path=None):
         raise NotImplementedError
 
-    # Export.
+    # File export.
 
     def checkExportPath(self, path):
         """If the path starts with "_export" make sure it exists, otherwise
@@ -1220,10 +1215,16 @@ class BaseContext(AbstractContext):
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
 
-    #   S C R E E N
+    # User interface.
 
     def screenSize(self):
         """Answers the current screen size. PageBot function."""
+
+    def Variable(self, variables, workSpace):
+        """Offers interactive global value manipulation. Requires access to a
+        UI toolkit sush as Cocoa or QT. Can be ignored in most contexts except
+        DrawBot for now.  """
+
 
 if __name__ == '__main__':
     import doctest

@@ -24,7 +24,7 @@ from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE,
         DEFAULT_LANGUAGE, FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
         FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.contexts.flatcontext.flatstring import FlatString
@@ -37,6 +37,7 @@ from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor
 from pagebot.toolbox.units import em, upt, point2D
+
 
 HAS_PIL = True
 
@@ -680,6 +681,12 @@ class FlatContext(BaseContext):
         # FIXME: is a FlatString, should BabelString also be possible?
         #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
         return s.textSize(w=w, h=h)
+
+    def textLines(self, fs, w=None, h=None):
+        textLines = []
+        lineInfo = BabelLineInfo(0, 0, None, self)
+        textLines.append(lineInfo)
+        return textLines
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
