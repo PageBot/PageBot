@@ -686,7 +686,7 @@ class FlatContext(BaseContext):
         #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
         return s.textSize(w=w, h=h)
 
-    def textLines(self, fs, w=None, h=None):
+    def getTextLines(self, fs, w=None, h=None):
         textLines = []
         lineInfo = BabelLineInfo(0, 0, None, self)
         textLines.append(lineInfo)

@@ -875,29 +875,11 @@ class BaseContext(AbstractContext):
         are used."""
         raise NotImplementedError
 
-    def textBoxBaselines(self, txt, box, align=None):
-        raise NotImplementedError
-
     def textSize(self, bs, w=None, h=None, align=None):
         """Answers the width and height of the formatted string with an
         optional given w or h."""
         raise NotImplementedError
 
-    def marker(self, x, y):
-        x = round(x)
-        y = round(y)
-        s = '(%s, %s)' % (x, y)
-        red = (1, 0, 0)
-        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
-        bs = self.newString(s, style=style)
-        oldStroke = self._stroke
-        oldFill = self._fill
-        self.text(bs, (x, y))
-        self.fill(red)
-        self.stroke(None)
-        self.circle(x, y, 1)
-        self.fill(oldFill)
-        self.stroke(oldStroke)
 
     # String.
 
@@ -1020,6 +1002,75 @@ class BaseContext(AbstractContext):
 
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)
+
+    # Some drawing macros.
+
+    def marker(self, x, y):
+        # TODO: move to elements.
+        x = round(x)
+        y = round(y)
+        s = '(%s, %s)' % (x, y)
+        red = (1, 0, 0)
+        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
+        bs = self.newString(s, style=style)
+        oldStroke = self._stroke
+        oldFill = self._fill
+        self.text(bs, (x, y))
+        self.fill(red)
+        self.stroke(None)
+        self.circle(x, y, 1)
+        self.fill(oldFill)
+        self.stroke(oldStroke)
+
+    def bluntCornerRect(self, x, y, w, h, offset=5):
+        """Draws a rectangle in the canvas. This method is using the Bézier
+        path to draw on.
+
+        TODO: move to elements.
+
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> context.bluntCornerRect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.bluntCornerRect(0, 0, 100, 100)
+        """
+
+        xPt, yPt, wPt, hPt, offsetPt = upt(x, y, w, h, offset)
+        path = self.newPath() #
+        path.moveTo((xPt+offsetPt, yPt))
+        path.lineTo((xPt+wPt-offsetPt, yPt))
+        path.lineTo((xPt+wPt, yPt+offsetPt))
+        path.lineTo((xPt+wPt, yPt+hPt-offsetPt))
+        path.lineTo((xPt+w-offsetPt, y+hPt))
+        path.lineTo((xPt+offsetPt, y+hPt))
+        path.lineTo((xPt, yPt+h-offsetPt))
+        path.lineTo((xPt, yPt+offsetPt))
+        self.closePath()
+        self.drawPath(path)
+
+    def roundedRect(self, x, y, w, h, offset=25):
+        """Draw a rectangle in the canvas. This method is using the Bézier path
+        as path to draw on.
+
+        TODO: move to elements.
+
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> context.roundedRect(pt(0), pt(0), pt(100), pt(100))
+        >>> context.roundedRect(0, 0, 100, 100)
+        """
+        xPt, yPt, wPt, hPt, offsetPt = upt(x, y, w, h, offset)
+        path = self.newPath()
+        path.moveTo((xPt+offsetPt, yPt))
+        path.lineTo((xPt+wPt-offsetPt, yPt))
+        path.curveTo((xPt+wPt, yPt), (xPt+wPt, yPt), (xPt+wPt, yPt+offsetPt))
+        path.lineTo((xPt+wPt, yPt+hPt-offsetPt))
+        path.curveTo((xPt+wPt, yPt+hPt), (xPt+wPt, yPt+hPt), (xPt+wPt-offsetPt, yPt+hPt))
+        path.lineTo((xPt+offsetPt, yPt+hPt))
+        path.curveTo((xPt, yPt+hPt), (xPt, yPt+hPt), (xPt, yPt+hPt-offsetPt))
+        path.lineTo((xPt, yPt+offsetPt))
+        path.curveTo((xPt, yPt), (xPt, yPt), (xPt+offsetPt, yPt))
+        self.closePath()
+        self.drawPath(path)
 
     # Mov.
 

@@ -432,6 +432,9 @@ class AbstractContext:
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
 
+    def getTextLines(self, fs, w=None, h=None):
+        raise NotImplementedError
+
     def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError
 
