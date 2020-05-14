@@ -64,10 +64,15 @@ def makeStyle(style=None, raiseError=True, **kwargs):
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
 
+        # FIXME: defaults cause Cocoa error, need to do some more conversions:
+        # File "/../pdfContext.py", line 371, in _nsColorToCGColor
+        # if c.numberOfComponents() == 5:
+        # AttributeError: 'NSNull' object has no attribute 'numberOfComponents'
+        #
         # Add missing as defaults from root style.
-        for name, v in rs.items():
-            if name not in new and v is not None:
-                new[name] = v
+        #for name, v in rs.items():
+        #    if name not in new and v is not None:
+        #        new[name] = v
 
     return new
 

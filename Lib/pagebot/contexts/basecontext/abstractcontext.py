@@ -472,6 +472,8 @@ class AbstractContext:
     # Helpers.
 
     def textSize(self, bs, w=None, h=None, align=None):
+        """Answers the width and height of a BabelString with an
+        optional given w or h."""
         raise NotImplementedError
 
     def installedFonts(self, patterns=None):

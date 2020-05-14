@@ -868,18 +868,44 @@ class BaseContext(AbstractContext):
             'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         self.textBox(bs.cs, upt(box))
 
-    def textOverflow(self, sOrBs, box, align=None):
-        """Answer the part of the text that doesn't fit in the box. The sOrBs
-        can be a plain string or a BabelString instance. In case a plain string
-        is given then the current font / fontSize / ... settings of the builder
-        are used."""
-        raise NotImplementedError
+    def textOverflow(self, bt, h, align=None):
+        """Answers the part of the text that doesn't fit in the box.
 
-    def textSize(self, bs, w=None, h=None, align=None):
-        """Answers the width and height of the formatted string with an
-        optional given w or h."""
-        raise NotImplementedError
+        >>> from pagebot.toolbox.loremipsum import loremipsum
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+        >>> bs = context.newString(loremipsum(), style)
+        >>> lines = bs.lines # Same as context.getTextLines(bs.cs, bs.w)
+        >>> #of = context.textOverflow(lines, h=pt(100))
+        >>> #of[1]
+        <BabelLine $consectetu...$ x=0pt y=24pt *DrawBotContext>
+        """
+        # TODO: move to base context.
+        assert isinstance(bt, BabelText) # Container of BabelLine instances.
+        overflow = []
 
+        if bt.lines:
+            originY = bt.lines[0].y
+
+        for line in bt.lines:
+            y = line.y - originY
+            if y > h:
+                break
+            line.y -= originY
+            overflow.append(line)
+
+        return overflow
+
+    def textBoxBaselines(self, bs, w, h=None):
+        """Answers the list of relative baseline positions."""
+        baselines = {}
+
+        for textLine in self.getTextLines(bs, w, h=h):
+            baselines[textLine.y] = textLine
+
+        return baselines
 
     # String.
 

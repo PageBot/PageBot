@@ -435,7 +435,7 @@ class BabelString:
         'BabelLineInfo'
         """
         if self._lines is None:
-            self._lines = self.context.textLines(self.cs, w=self.w, h=self.h)
+            self._lines = self.context.getTextLines(self.cs, w=self.w, h=self.h)
 
         return self._lines
 
