@@ -652,7 +652,7 @@ def path2FontName(path, extensions=None):
     'Agency_FB-Bold'
     """
     if extensions is None:
-        extensions = ('ttf', 'otf')
+        extensions = ('ttf', 'otf', 'ttc')
     if path2Extension(path) in extensions:
         name = path2Name(path)
         if name is not None:

@@ -123,7 +123,6 @@ def getFontPaths(extraPaths=None):
     >>> fontPaths = getFontPaths()
     >>> fontPaths['Georgia-Bold'] == fontPaths['Georgia Bold'] # Works both
     True
-    >>> fontPaths['AgencyFB-Regular']
     """
     global FONT_PATHS
     if extraPaths is not None:

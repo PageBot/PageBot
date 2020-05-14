@@ -328,16 +328,17 @@ class SketchContext(BaseContext):
                 if bs.leading.v <= 0.60: # Magic Sketch switch of leading behavior?
                     yOffset = 0
                 else:
-                    print('3-3-3-3--33-', font)
                     ascender = fontSize * font.info.ascender/font.info.unitsPerEm
                     descender = fontSize * font.info.descender/font.info.unitsPerEm
-                    print('vvcv', fontSize, ascender, descender, ascender-descender)
-                    ascender = fontSize * font.info.typoAscender/font.info.unitsPerEm
-                    descender = fontSize * font.info.typoDescender/font.info.unitsPerEm
-                    yOffset = (upt(bs.leading, base=fontSize) - fontSize)/2 + ascender/2
-                    print('vvcv', fontSize, ascender, descender, ascender-descender)
+                    #print('vvcv', fontSize, ascender, descender, ascender-descender)
+                    typoAscender = fontSize * font.info.typoAscender/font.info.unitsPerEm
+                    typoDescender = fontSize * font.info.typoDescender/font.info.unitsPerEm
+                    leading = upt(bs.leading, base=fontSize)
+                    yOffset = (leading - ascender)/2# - (upt(bs.leading, base=fontSize) - fontSize - typoDescender)/2
+                    #print('vvcv', fontSize, ascender, descender, ascender-descender)
+                    print('.....', font, ascender, descender, ascender/-descender, 200/130)
 
-                y = e.h - frame.h - frame.y # Flip the y-axis
+                y = e.h - frame.h - frame.y - yOffset # Flip the y-axis
                 fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newText(bs, name=layer.name, parent=e,
                     sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h,
@@ -565,6 +566,7 @@ class SketchContext(BaseContext):
             font = findFont(fd.name)
             if font is None: # If not found (e.g. OSX name, then keep the name)
                 font = fd.name
+                print('### Font not found "%s"' % fd.name)
             fontSize = fd.size
             tracking = em(attrs.attributes.kerning/fontSize) # Wrong Sketch name for tracking
 
