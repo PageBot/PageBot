@@ -701,7 +701,8 @@ class FlatString():
 
     def getFont(self, style):
         # TODO: store fonts in context cache.
-        fontPath = getFontPath(style)
+        fontName = style.get('font', DEFAULT_FONT)
+        fontPath = getFontPath(fontName)
         return Font(fontPath)
 
     def getDescender(self, style):
