@@ -39,7 +39,7 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.elements import *
 from pagebot.constants import *
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.units import pt, units, upt, em
 from pagebot.toolbox.transformer import asIntOrNone
 from pagebot.fonttoolbox.objects.font import findFont
@@ -198,11 +198,26 @@ class SketchContext(BaseContext):
                 self.getNameTree(child, t, tab+1)
         return t
 
-    def _extractFill(self, layer):
-        if hasattr(layer, 'style') and hasattr(layer.style, 'fills') and layer.style.fills:
-            sketchColor = layer.style.fills[0].color
-            return color(r=sketchColor.red, g=sketchColor.green, b=sketchColor.blue, a=sketchColor.alpha)
-        return color(0.5)
+    def _extractColor(self, layer):
+        fillColor = noColor
+        if layer.style.fills:
+            fill = layer.style.fills[0]
+            if fill.isEnabled: # In Sketch colors can be defined, and still be disabled.
+                sketchColor = fill.color
+                fillColor = color(r=sketchColor.red, g=sketchColor.green, b=sketchColor.blue, a=sketchColor.alpha)
+
+        strokeColor = noColor
+        strokeWidth = 0
+        sketchBorders = layer.style.borders
+        if sketchBorders:
+            # TODO: Extract element border info here too
+            sketchBorder = sketchBorders[0]
+            if sketchBorder.isEnabled: # In Sketch colors can be defined, and still be disabled.
+                sketchColor = sketchBorder.color
+                strokeColor = color(r=sketchColor.red, g=sketchColor.green, b=sketchColor.blue, a=sketchColor.alpha)
+                strokeWidth = pt(sketchBorder.thickness)
+
+        return fillColor, strokeColor, strokeWidth
 
     def _layerName2FilePathIndex(self, name):
         """Answer the path of a referenced file and the index in the overflow sequence.
@@ -235,30 +250,32 @@ class SketchContext(BaseContext):
             elif isinstance(layer, (SketchGroup, SketchShapeGroup, SketchSlice)):
                 frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor = self._extractFill(layer)
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 child = newGroup(name=layer.name, parent=e, sId=layer.do_objectID,
-                    x=frame.x, y=y, w=frame.w, h=frame.h)
+                    x=frame.x, y=y, w=frame.w, h=frame.h, fillColor=fillColor,
+                    stroke=strokeColor, strokeWidth=strokeWidth)
                 self._createElements(layer, child)
 
             elif isinstance(layer, SketchRectangle):
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newRect(name=layer.name, parent=e, sId=layer.do_objectID,
-                    x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
+                    x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor,
+                    stroke=strokeColor, strokeWidth=strokeWidth)
 
             elif isinstance(layer, SketchOval):
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newOval(name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h, fill=fillColor)
 
             elif isinstance(layer, SketchShapePath):
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 if len(layer.points):
                     p1 = layer.points[0].point
                     p2 = layer.points[-1].point
-                    print('sdsdsdsdsd', p1, p2)
+                    # FIXME: This doesn't work yet.
                     Line(parent=e, x=p1.x, y=p1.x, w=p2.x - p1.x, h=p2.y - p1.y,
                             stroke=fillColor, strokeWidth=0.5)
 
@@ -291,19 +308,30 @@ class SketchContext(BaseContext):
 
             elif isinstance(layer, SketchText):
                 # https://blog.sketchapp.com/typesetting-in-sketch-dc870fc334fc
-                # FIXME: Vertical positioning of text still to be finalized.
+                # https://www.toptal.com/designers/sketch/typography-design-tutorial-in-sketch
+                # FIXME: Vertical positioning of text still is a bit fuzzy.
                 bs = self.asBabelString(layer.attributedString)
+
                 style = bs.runs[0].style
                 font = style.get('font')
                 fontSize = style.get('fontSize')
-                ascender = fontSize * font.info.ascender/font.info.unitsPerEm
-                yOffset = upt(style.get('leading'), base=fontSize) - ascender
-                y = e.h - frame.h - frame.y - yOffset # Flip the y-axis
-                fillColor = self._extractFill(sketchLayer) # Sketch color is defined in parent
+
+                # We need to "guess the position of the baseline."
+                if bs.leading.v <= 0.60: # Magic Sketch switchs of leading behavior?
+                    print('dsdddddd,,,,,', bs, bs.leading, bs.leading.v)
+                    yOffset = 0
+                else:
+                    ascender = fontSize * font.info.ascender/font.info.unitsPerEm
+                    descender = fontSize * font.info.descender/font.info.unitsPerEm
+                    yOffset = (upt(bs.leading, base=fontSize) - fontSize)/2 - descender*2/3
+                    print('vvcv', ascender/descender,descender/ascender)
+
+                y = e.h - frame.h - frame.y + yOffset # Flip the y-axis
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newText(bs, name=layer.name, parent=e,
-                    sId=layer.do_objectID, x=frame.x, y=y+frame.h, w=frame.w, h=frame.h,
-                    yAlign=ASCENDER, # Default Sketch text positioning
-                    textFill=fillColor)
+                    sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h,
+                    yAlign=BASELINE, # Default Sketch text positioning
+                    textFill=fillColor, textStroke=strokeColor, textStrokeWidth=strokeWidth)
 
             elif isinstance(layer, SketchBitmap):
                 # All internal Sketch file images are converted to .png
@@ -318,13 +346,15 @@ class SketchContext(BaseContext):
                 path = self.b.sketchApi.sketchFile.imagesPath + layer.name + '.png'
                 newImage(path=path, name=layer.name, parent=e, sId=layer.do_objectID,
                     x=frame.x, y=y, w=frame.w, h=frame.h)
-                # The Image element does not have child elements.
+                # The SketchBitmap element does not have child elements/layers.
 
             elif isinstance(layer, SketchSymbolInstance):
                 # For now only show the Symbol name.
+                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 newText('[%s]' % layer.name, name=layer.name, parent=e,
-                    sId=layer.do_objectID, fill=0.9, textFill=0, font='PageBot-Regular', fontSize=12,
+                    sId=layer.do_objectID, fill=fillColor, stroke=strokeColor, 
+                    strokeWidth=strokeWidth, font='PageBot-Regular', fontSize=12,
                     x=frame.x, y=y, w=frame.w, h=frame.h, yAligh=BASELINE)
 
             else:
@@ -553,10 +583,9 @@ class SketchContext(BaseContext):
             #print('3-3-3-', paragraphStyle.alignment)
 
             paragraphStyle = attrs.attributes.paragraphStyle
-            leading = em(paragraphStyle.minimumLineHeight/fontSize)
-
+            leading = em(paragraphStyle.maximumLineHeight/fontSize)
             #minLeading = paragraphStyle.minimumLineHeight
-            #axLeading = paragraphStyle.maximumLineHeight
+            #maxLeading = paragraphStyle.maximumLineHeight
             #paragraphSpacing = paragraphStyle.paragraphSpacing
 
             #print('vvvvvv', font, fontSize, leading, paragraphStyle, tracking)
@@ -577,6 +606,9 @@ class SketchContext(BaseContext):
                 bs = self.newString(s, style)
             else:
                 bs.add(s, style)
+
+            #bs.MIN = paragraphStyle.minimumLineHeight
+            #bs.MAX = paragraphStyle.maximumLineHeight
         return bs
 
     def fromBabelString(self, bs):
