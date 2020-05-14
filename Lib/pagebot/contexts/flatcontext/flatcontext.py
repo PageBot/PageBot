@@ -501,7 +501,7 @@ class FlatContext(BaseContext):
         s.context = self
         return s
 
-    def text(self, bs, p):
+    def text(self, s, p):
         """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
@@ -521,15 +521,18 @@ class FlatContext(BaseContext):
         >>> context.text(bs, (100, 100))
 
         """
-        fs = self.fromBabelString(bs)
+        if isinstance(s, BabelString):
+            fs = self.fromBabelString(s)
 
-        if isinstance(fs, str):
+        elif isinstance(s, FlatString):
+            fs = s
+        elif isinstance(s, str):
             # Creates a new string with default styles.
             style = dict(fontSize=self._fontSize)
             style = makeStyle(style=style)
-            fs = self.newString(fs, style=style)
-        #elif not isinstance(fs, FlatString):
-        #    raise PageBotFileFormatError('type is %s' % type(fs))
+            fs = self.newString(s, style=style)
+        else:
+            raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 

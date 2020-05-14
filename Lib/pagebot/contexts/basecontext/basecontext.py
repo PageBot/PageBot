@@ -853,7 +853,8 @@ class BaseContext(AbstractContext):
         >>> context.drawString(bs, pt(100, 100))
         """
         assert isinstance(bs, BabelString),\
-            'drawString needs str or BabelString: %s' % (bs.__class__.__name__)
+            'drawString needs a BabelString: %s' % (bs.__class__.__name__)
+
         if bs._w is None and bs._h is None:
             self.text(bs.cs, point2D(upt(p)))
         else:
@@ -864,7 +865,7 @@ class BaseContext(AbstractContext):
     def drawText(self, bs, box):
         """ Draw the text block, in case there is a width or heigh defined."""
         assert isinstance(bs, BabelString),\
-            'drawText needs str or BabelString: %s' % (bs.__class__.__name__)
+            'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         self.textBox(bs.cs, upt(box))
 
     def textOverflow(self, sOrBs, box, align=None):
