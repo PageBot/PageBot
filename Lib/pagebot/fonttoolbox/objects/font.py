@@ -46,7 +46,7 @@ def isFontPath(fontPath):
     """Answers if the path is a font path. Check if there is a matching
     problem by lower case/upper case. If matching then answer the real path.
     If no match exists for the defined fontPath, then answer None.
-    Case matching is only tests on the file name, not the whole path.
+    Case matching is only tested on the file name, not the whole path.
 
     For now, PageBot only supports ('ttf', 'otf')
 

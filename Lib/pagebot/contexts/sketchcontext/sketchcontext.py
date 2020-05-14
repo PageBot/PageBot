@@ -309,6 +309,10 @@ class SketchContext(BaseContext):
             elif isinstance(layer, SketchText):
                 # https://blog.sketchapp.com/typesetting-in-sketch-dc870fc334fc
                 # https://www.toptal.com/designers/sketch/typography-design-tutorial-in-sketch
+
+                # https://medium.com/sketch-app-sources/demystifying-line-height-on-the-web-part-1-c4a0c1328e4d
+                # https://medium.com/sketch-app-sources/demystifying-line-height-on-the-web-part-2-415355648dd4
+
                 # FIXME: Vertical positioning of text still is a bit fuzzy.
                 bs = self.asBabelString(layer.attributedString)
 
@@ -317,16 +321,23 @@ class SketchContext(BaseContext):
                 fontSize = style.get('fontSize')
 
                 # We need to "guess the position of the baseline."
-                if bs.leading.v <= 0.60: # Magic Sketch switchs of leading behavior?
-                    print('dsdddddd,,,,,', bs, bs.leading, bs.leading.v)
+                # For leading > 60% the difference of leading - fontSize is split
+                # equallly on top and bottom, as (leading - fontSize)/2.
+                # For leading <=60% the difference is only added to the top,
+                # so the baseline is then at the bottom of the leading.
+                if bs.leading.v <= 0.60: # Magic Sketch switch of leading behavior?
                     yOffset = 0
                 else:
+                    print('3-3-3-3--33-', font)
                     ascender = fontSize * font.info.ascender/font.info.unitsPerEm
                     descender = fontSize * font.info.descender/font.info.unitsPerEm
-                    yOffset = (upt(bs.leading, base=fontSize) - fontSize)/2 - descender*2/3
-                    print('vvcv', ascender/descender,descender/ascender)
+                    print('vvcv', fontSize, ascender, descender, ascender-descender)
+                    ascender = fontSize * font.info.typoAscender/font.info.unitsPerEm
+                    descender = fontSize * font.info.typoDescender/font.info.unitsPerEm
+                    yOffset = (upt(bs.leading, base=fontSize) - fontSize)/2 + ascender/2
+                    print('vvcv', fontSize, ascender, descender, ascender-descender)
 
-                y = e.h - frame.h - frame.y + yOffset # Flip the y-axis
+                y = e.h - frame.h - frame.y # Flip the y-axis
                 fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newText(bs, name=layer.name, parent=e,
                     sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h,
