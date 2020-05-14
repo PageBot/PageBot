@@ -528,8 +528,7 @@ class FlatContext(BaseContext):
         elif isinstance(s, str):
             # Creates a new string with default styles.
             style = dict(fontSize=self._fontSize)
-            style = makeStyle(style=style)
-            bs = self.newString(s, style=style)
+            bs = self.asBabelString(s, style=style)
             fs = self.fromBabelString(bs)
         else:
             raise PageBotFileFormatError('type is %s' % type(fs))
@@ -696,7 +695,7 @@ class FlatContext(BaseContext):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Convert the BabelString into a DrawBot FormattedString
+        """Convert the BabelString into a FlatString.
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt, em

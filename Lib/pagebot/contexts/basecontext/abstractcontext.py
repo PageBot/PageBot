@@ -438,6 +438,15 @@ class AbstractContext:
     def textBoxBaselines(self, txt, box, align=None):
         raise NotImplementedError
 
+    def fromBabelString(self, s):
+        """Converts BabelString to correct attributed string class for the
+        context."""
+        raise NotImplementedError
+
+    def asBabelString(self, s):
+        """Converts  another string based class to BabelString."""
+        raise NotImplementedError
+
     #def FormattedString(self, *args, **kwargs):
     #    raise NotImplementedError
 

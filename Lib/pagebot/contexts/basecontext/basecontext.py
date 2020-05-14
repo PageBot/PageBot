@@ -770,13 +770,15 @@ class BaseContext(AbstractContext):
 
     # Babelstring
 
-    def fromBabelString(self, bs):
-        """Needs to be implemented by inheriting context class."""
-        raise NotImplementedError
-
-    def asBabelString(self, bs):
-        """Needs to be implemented by inheriting context class."""
-        raise NotImplementedError
+    def asBabelString(self, s, style=None):
+        """Converts  another string based class to BabelString."""
+        if isinstance(s, str):
+            # Creates a new string with default styles.
+            style = makeStyle(style=style)
+            bs = self.newString(s, style=style)
+            return bs
+        else:
+            raise PageBotFileFormatError('type is %s' % type(fs))
 
     # ...
 
@@ -852,8 +854,10 @@ class BaseContext(AbstractContext):
         >>> bs = BabelString('Hkpx'+chr(10)+'Hkpx', style, context=context)
         >>> context.drawString(bs, pt(100, 100))
         """
-        assert isinstance(bs, BabelString),\
-            'drawString needs a BabelString: %s' % (bs.__class__.__name__)
+        # TODO: convert plain string to BabelString first.
+        if not isinstance(bs, BabelString):
+            bs = self.asBabelString(bs)
+
 
         if bs._w is None and bs._h is None:
             self.text(bs.cs, point2D(upt(p)))
