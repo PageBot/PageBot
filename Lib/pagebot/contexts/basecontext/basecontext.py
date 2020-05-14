@@ -915,7 +915,7 @@ class BaseContext(AbstractContext):
         >>> bs, bs.__class__.__name__, bs.context
         ($ABCD$, 'BabelString', <DrawBotContext>)
         """
-        style = makeStyle(style=style) # Check style for illegal keys.
+        style = makeStyle(style=style)
 
         if not bs:
             bs = ''

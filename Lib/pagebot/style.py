@@ -44,6 +44,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
         rs = getRootStyle()
         new = dict()
 
+        # Check for illegal arguments.
         for key, value in style.items():
             if key not in rs:
                 warning = '[makeStyle] Attribute “%s” not allowed in (root) style!' % key
@@ -53,6 +54,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
             else:
                 new[key] = value
 
+        # Add kwargs.
         for name, v in kwargs.items():
             if name not in rs:
                 warning = '[makeStyle] %s not allowed in (root) style!' % name
@@ -61,6 +63,11 @@ def makeStyle(style=None, raiseError=True, **kwargs):
                 print(warning)
             else:
                 new[name] = v  # Overwrite value by any arguments, if defined.
+
+        # Add missing as defaults from root style.
+        for name, v in rs.items():
+            if name not in new and v is not None:
+                new[name] = v
 
     return new
 

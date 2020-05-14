@@ -118,7 +118,6 @@ class FlatString():
         #super().__init__(s=s, context=context, w=w, h=h)
         self.context = context
 
-
         # PageBot Font to Flat Font.
         # TODO: make into function.
         fontName = style.get('font', DEFAULT_FONT)
@@ -306,6 +305,7 @@ class FlatString():
         >>> fs.style
         """
         return self.style.get('fontSize', DEFAULT_FONT_SIZE)
+
     def _set_fontSize(self, fontSize):
         if fontSize is not None:
             self.context.font(fontSize)

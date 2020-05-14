@@ -521,19 +521,20 @@ class FlatContext(BaseContext):
         >>> context.text(bs, (100, 100))
 
         """
-        if isinstance(s, BabelString):
-            fs = self.fromBabelString(s)
-
-        elif isinstance(s, FlatString):
+        if isinstance(s, FlatString):
             fs = s
+        elif isinstance(s, BabelString):
+            fs = self.fromBabelString(s)
         elif isinstance(s, str):
             # Creates a new string with default styles.
             style = dict(fontSize=self._fontSize)
             style = makeStyle(style=style)
-            fs = self.newString(s, style=style)
+            bs = self.newString(s, style=style)
+            fs = self.fromBabelString(bs)
         else:
             raise PageBotFileFormatError('type is %s' % type(fs))
 
+        assert isinstance(fs, FlatString)
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
         xpt, ypt = self.translatePoint(p)
@@ -740,12 +741,9 @@ class FlatContext(BaseContext):
             # Create the style for this text run.
             font = findFont(style.get('font', DEFAULT_FONT))
 
-            '''
+            # FIXME: {'font': None} yields None, not DEFAULT_FONT.
             if font is None:
-                fontPath = DEFAULT_FONT
-            else:
-                fontPath = font.path
-            '''
+                font = DEFAULT_FONT
 
             fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
             leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
@@ -802,7 +800,6 @@ class FlatContext(BaseContext):
             fs0 = FlatString(s=run.s, style=fsStyle, context=self)
 
             fs.append(fs0)
-            #fs.append(run.s, **fsStyle)
         return fs
 
 
