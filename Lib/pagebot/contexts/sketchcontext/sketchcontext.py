@@ -34,7 +34,7 @@
 import os
 
 from pagebot.document import Document
-from pagebot.constants import FILETYPE_SKETCH, A4
+from pagebot.constants import FILETYPE_SKETCH, A4, DEFAULT_FONT
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.elements import *
@@ -313,6 +313,9 @@ class SketchContext(BaseContext):
                 # https://medium.com/sketch-app-sources/demystifying-line-height-on-the-web-part-1-c4a0c1328e4d
                 # https://medium.com/sketch-app-sources/demystifying-line-height-on-the-web-part-2-415355648dd4
 
+                # https://www.smashingmagazine.com/2012/12/css-baseline-the-good-the-bad-and-the-ugly/
+                # https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align
+                
                 # FIXME: Vertical positioning of text still is a bit fuzzy.
                 bs = self.asBabelString(layer.attributedString)
 
@@ -321,24 +324,12 @@ class SketchContext(BaseContext):
                 fontSize = style.get('fontSize')
 
                 # We need to "guess the position of the baseline."
-                # For leading > 60% the difference of leading - fontSize is split
-                # equallly on top and bottom, as (leading - fontSize)/2.
-                # For leading <=60% the difference is only added to the top,
-                # so the baseline is then at the bottom of the leading.
-                if bs.leading.v <= 0.60: # Magic Sketch switch of leading behavior?
-                    yOffset = 0
-                else:
-                    ascender = fontSize * font.info.ascender/font.info.unitsPerEm
-                    descender = fontSize * font.info.descender/font.info.unitsPerEm
-                    #print('vvcv', fontSize, ascender, descender, ascender-descender)
-                    typoAscender = fontSize * font.info.typoAscender/font.info.unitsPerEm
-                    typoDescender = fontSize * font.info.typoDescender/font.info.unitsPerEm
-                    leading = upt(bs.leading, base=fontSize)
-                    yOffset = (leading - ascender)/2# - (upt(bs.leading, base=fontSize) - fontSize - typoDescender)/2
-                    #print('vvcv', fontSize, ascender, descender, ascender-descender)
-                    print('.....', font, ascender, descender, ascender/-descender, 200/130)
-
-                y = e.h - frame.h - frame.y - yOffset # Flip the y-axis
+                descender = fontSize * font.info.descender/font.info.unitsPerEm
+                lineHeight = upt(bs.leading, base=fontSize)
+                # In CSS-world, the extra lineHeight is equally divided on top an bottom.
+                yOffset = max(0, (lineHeight - fontSize)/2 - descender) # Offset can not go over baseline
+                y = e.h - frame.h - frame.y + yOffset # Flip the y-axis
+                
                 fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newText(bs, name=layer.name, parent=e,
                     sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h,
@@ -565,8 +556,8 @@ class SketchContext(BaseContext):
             fd = attrs.attributes.MSAttributedStringFontAttribute.attributes
             font = findFont(fd.name)
             if font is None: # If not found (e.g. OSX name, then keep the name)
-                font = fd.name
-                print('### Font not found "%s"' % fd.name)
+                print('### Font not found or not supported type (.ttc) "%s", using "%s" instead' % (fd.name, DEFAULT_FONT))
+                font = findFont(DEFAULT_FONT)
             fontSize = fd.size
             tracking = em(attrs.attributes.kerning/fontSize) # Wrong Sketch name for tracking
 
@@ -629,10 +620,6 @@ class SketchContext(BaseContext):
 
         >>> bs = BabelString('abcd', style=dict(font='Roboto-Regular', fontSize=pt(18)))
         >>> context = SketchContext()
-
-        """
-
-        """
         >>> sas1 = context.fromBabelString(bs)
         >>> sas1
         <SketchAttributedString>
@@ -658,7 +645,16 @@ class SketchContext(BaseContext):
 
             ssa.attributes.MSAttributedStringFontAttribute = SketchFontDescriptor()
             fd = ssa.attributes.MSAttributedStringFontAttribute.attributes
-            fd.name = run.style.get('font', 'Verdana')
+            fontName = run.style.get('fontName')
+            font = run.style.get('font')
+            if fontName is None:
+                if isinstance(font, str):
+                    fontName = font
+                elif isinstance(font, Font):
+                    fontName = font.name
+            if fontName is None:
+                fontName = DEFAULT_FONT
+            fd.name = fontName            
             fd.size = upt(run.style.get('fontSize', 12))
             tc = run.style.get('textFill', color(0))
 

@@ -42,7 +42,7 @@ from pagebot.fonttoolbox.objects.glyph import Glyph
 from pagebot.fonttoolbox.objects.fontinfo import FontInfo
 from pagebot.toolbox.units import RelativeUnit, Unit, upt, isUnit
 
-def isFontPath(fontPath):
+def asFontPath(fontPath):
     """Answers if the path is a font path. Check if there is a matching
     problem by lower case/upper case. If matching then answer the real path.
     If no match exists for the defined fontPath, then answer None.
@@ -53,25 +53,27 @@ def isFontPath(fontPath):
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
     >>> fontPath = getTestFontsPath()
     >>> path1 = fontPath + '/fontbureau/Amstelvar-Roman-VF.ttf'
-    >>> path1 == isFontPath(path1) # Path with capitals, nothing changed.
+    >>> path1 == asFontPath(path1) # Path with capitals, nothing changed.
     True
     >>> path1_lc = fontPath + '/fontbureau/amstelvar-roman-vf.ttf'
-    >>> path1 == isFontPath(path1_lc) # Matching witn lower case, answers the real path.
+    >>> path1 == asFontPath(path1_lc) # Matching witn lower case, answers the real path.
     True
     >>> path2 = fontPath + '/fontbureau/Amstelvar-Roman-VF_XXX.ttf'
-    >>> path2 == isFontPath(path2)
+    >>> path2 == asFontPath(path2)
     False
     >>> path3 = fontPath + '/fontbureau/Amstelvar-Roman-VF.UFO'
-    >>> isFontPath(path3) is None # Font path does not exist
+    >>> asFontPath(path3) is None # Font path does not exist
     True
-    >>> isFontPath(None) is None # Not a valid font path
+    >>> asFontPath(None) is None # Not a valid font path
     True
-    >>> isFontPath(123) is None # Not a valid font path
+    >>> asFontPath(123) is None # Not a valid font path
     True
     """
     try:
         if not path2Extension(fontPath) in ('ttf', 'otf'):
+            #print('asFontPath: Unsupported font type:', fontPath)
             return None
+         
         pathParts = fontPath.split('/')
         dirPath = '/'.join(pathParts[:-1]) + '/'
         filePath = pathParts[-1].lower() # Match ignoring case
@@ -101,12 +103,14 @@ def getFont(fontOrPath, lazy=True):
     >>> font == getFont(font)
     True
     """
+    if isinstance(fontOrPath, Font):
+        return fontOrPath
+
+    fontOrPath = asFontPath(fontOrPath) # Find the real path, case corrected.
+    if not fontOrPath:
+        return None
+
     try:
-        if isinstance(fontOrPath, Font):
-            return fontOrPath
-        fontOrPath = isFontPath(fontOrPath) # Find the real path, case corrected.
-        if not fontOrPath:
-            return None
         return Font(fontOrPath, lazy=lazy)
     except TTLibError:
         # Could not open font, due to bad font file.
@@ -168,7 +172,13 @@ def findFont(fontPath, default=None, lazy=True):
 
     fontPaths = getFontPaths() # Otherwise, let's see if we can find it by name.
     if fontPath in fontPaths:
-        return getFont(fontPaths[fontPath], lazy=lazy)
+        font = getFont(fontPaths[fontPath], lazy=lazy)
+        if font is not None:
+            return font
+
+    font = getFont(fontPath)
+    if font is not None:
+        return font
 
     # A default is defined. If it's a string, try to find it. Avoid c76ircular
     # calls.
@@ -538,6 +548,7 @@ class Font:
         >>> f
         <Font Untitled Untitled>
         """
+
         if path is None and ttFont is None:
             self.ttFont = TTFont()
             self.path = '%d' % id(ttFont) # In case no path, use unique id instead.
@@ -1088,17 +1099,25 @@ class Font:
         """Save the font to optional path or to self.path."""
         self.ttFont.save(path or self.path)
 
-    def getAscender(self):
-        table = self.ttFont['hhea']
-        return getattr(table, 'ascent', None)
+    def getAscender(self): # DrawBot compatible
+        """Answer the ascender value in em-units from [hhea] table, as use by browser.
 
-    def getDescender(self):
-        table = self.ttFont['hhea']
-        return getattr(table, 'descent', None)
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = getFont(path, lazy=False)
+        >>> f.getAscender()
+        860
+        """
+        return self.info.ascender # From self.ttFont['hhea'] table
 
-    def getUpem(self):
-        table = self.ttFont['head']
-        return getattr(table, 'unitsPerEm', None)
+    def getDescender(self): # DrawBot compatible
+        return self.info.descender # From self.ttFont['hhea'] table
+
+    def getUpem(self): # DrawBot compatible
+        return self.info.unitsPerEm
 
     def getXHeight(self):
         table = self.ttFont['OS/2']
