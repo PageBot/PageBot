@@ -28,7 +28,6 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
-from pagebot.contexts.flatcontext.flatstring import FlatString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
@@ -602,9 +601,9 @@ class FlatContext(BaseContext):
             # Creates a new string with default styles.
             style = {'fontSize': self._fontSize}
             style = makeStyle(style=style)
-            fs = self.newString(fs, style=style)
-        elif not isinstance(fs, FlatString):
-            raise PageBotFileFormatError('type is %s' % type(fs))
+            bs = self.newString(fs, style=style)
+        #elif not isinstance(fs, FlatString):
+        #    raise PageBotFileFormatError('type is %s' % type(fs))
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
 
@@ -618,7 +617,7 @@ class FlatContext(BaseContext):
         #self.fill(None)
         #self.rect(xpt, ypt, wpt, hpt)
 
-        return fs.textBox(self.page, box)
+        return bs.textBox(self.page, box)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
