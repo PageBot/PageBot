@@ -57,7 +57,7 @@ def getVariableAxisFonts(varFont, axisName,
         return minInstance, maxInstance
     return varFont, varFont
 
-def fitVariableWidth(varFont, s, w, fontSize, condensedLocation, wideLocation,
+def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLocation,
         fixedSize=True, tracking=None, cached=True, lazy=True):
     """Answers the font instance that makes string s width on the given width *w* for the given *fontSize*.
     The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)

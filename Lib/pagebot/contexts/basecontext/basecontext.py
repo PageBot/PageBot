@@ -21,10 +21,11 @@ import xml.etree.ElementTree as ET
 import PIL
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG, FILETYPE_PDF,
-        DEFAULT_FONT)
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
+        FILETYPE_PDF, DEFAULT_FONT)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
-from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.contexts.basecontext.babelstring import BabelString, BabelText
+from pagebot.errors import PageBotFileFormatError
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
@@ -781,7 +782,7 @@ class BaseContext(AbstractContext):
             bs = self.newString(s, style=style)
             return bs
         else:
-            raise PageBotFileFormatError('type is %s' % type(fs))
+            raise PageBotFileFormatError('type is %s' % type(bs))
 
     # ...
 

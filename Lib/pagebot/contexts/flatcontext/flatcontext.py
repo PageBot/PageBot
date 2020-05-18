@@ -20,15 +20,13 @@ from os import listdir
 from os.path import exists
 from flat import rgb
 
-from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE,
-        DEFAULT_LANGUAGE, FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
-        FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB,
-        )
+from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
+        FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
+        DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
-from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.fonttoolbox.objects.font import findFont
@@ -36,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor, blackColor
-from pagebot.toolbox.units import em, upt, point2D, pt
+from pagebot.toolbox.units import em, upt, point2D
 
 
 HAS_PIL = True
