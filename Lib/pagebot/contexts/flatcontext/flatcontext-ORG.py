@@ -22,8 +22,7 @@ from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE,
         DEFAULT_LANGUAGE, FILETYPE_PDF, FILETYPE_JPG, FILETYPE_SVG,
-        FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB,
-        )
+        FILETYPE_PNG, FILETYPE_GIF, LEFT, DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
@@ -36,8 +35,8 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
-from pagebot.toolbox.color import color, Color, noColor, blackColor
-from pagebot.toolbox.units import em, upt, point2D, pt
+from pagebot.toolbox.color import color, Color, noColor
+from pagebot.toolbox.units import em, upt, point2D
 
 
 HAS_PIL = True
@@ -108,7 +107,6 @@ class FlatContext(BaseContext):
         self.w = None
         self.h = None
         self._numberOfPages = 0
-        self._flatFonts = {} # Caching of {font.path:flatFont}
 
     #   Drawing.
 
@@ -324,14 +322,19 @@ class FlatContext(BaseContext):
         assert self.drawing
         assert self.drawing.pages
         return self.drawing.pages[-1]
+
     page = property(_get_page)
 
     def _get_height(self):
         return self.h
+        #return self.drawing.height
+
     height = property(_get_height)
 
     def _get_width(self):
+        #return self.drawing.width
         return self.w
+
     width = property(_get_width)
 
     def getTransformed(self, x, y):
@@ -477,91 +480,28 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def newString(self, s=None, style=None):
-        """Answer a new BabelString with self as context.
+    def XXXXnewString(self, s=None, style=None):
+        """Answer the @s converted into a self.STRING_CLASS instance.
+        @s can be of type (None, str, BabelString)
 
         >>> from pagebot.toolbox.units import pt
         >>> context = FlatContext()
         >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
         >>> bs
         $ABCD$
-        >>> bs.context
-        <FlatContext>
         """
-        return BabelString(s, style, context=self)
+        if s is None:
+            s = ''
+        if isinstance(s, (str, self.STRING_CLASS)): # Str or BabelString
+            s = self.fromBabelString(s)
+        assert isinstance(s, self.STRING_CLASS), '%s.newString needs %s, not %s' % (
+            self.__class__.__name__,
+            self.STRING_CLASS.__name__,
+            s.__class__.__name__)
+        s.context = self
+        return s
 
-    def text(self, bs, p):
-        """Places the Babelstring instance at position p. The position can be
-        any 2D or 3D points tuple. Currently the z-axis is ignored. The
-        FlatContext version of the BabelString should contain Flat.text.
-
-        >>> context = FlatContext()
-        >>> style1 = dict(font='PageBot-Regular', fontSize=pt(100), textFill=(1, 0, 0))
-        >>> style2 = dict(font='PageBot-Bold', fontSize=pt(50), textFill=(0, 1, 0.5))
-        >>> bs = context.newString('ABCD', style=style1)
-        >>> bs.add('EFGH', style=style2)
-        >>> bs, bs.__class__.__name__
-        ($ABCDEFGH$, 'BabelString')
-        >>> context.fromBabelString(bs) is bs
-        True
-        >>> context.newPage(1000, 1000)
-        >>> context.fill(None)
-        >>> context.stroke(0, 0.5)
-        >>> context.rect(10, 500, 20, 20)
-        >>> context.text(bs, (10, 500))
-        >>> context.saveDrawing('_export/Flat-Text.pdf')
-        """
-        assert self.page is not None, 'FlatString.text: self.page is not set.'
-        xpt, ypt = self.translatePoint(p)
-        self._place(bs, xpt, ypt)
-
-    def _getFlatFont(self, font):
-        """Answer the (cache) FlatFont that corresponds with font.
-
-        >>> import flat
-        >>> context = FlatContext()
-        >>> font = findFont('PageBot-Regular')
-        >>> context._getFlatFont(font)[0].__class__.__name__
-        'font'
-        """
-        if isinstance(font, str):
-            font = findFont(font)
-        if font is None:
-            font = findFont(DEFAULT_FONT)
-        if not font.path in self._flatFonts:
-            self._flatFonts[font.path] = self.b.font.open(font.path)
-        return self._flatFonts[font.path], font
-
-    def _place(self, bs, x, y):
-        """Places the styled Flat text on a page, transform vertical
-        position to position on baseline.
-
-        """
-        spans = []
-        maxAscender = 0
-        maxFontSize = 0
-        for run in bs.runs:
-            flatFont, font = self._getFlatFont(run.style.get('font'))
-            fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
-            ascender = fontSize*font.info.typoAscender/font.info.unitsPerEm
-            leading = upt(run.style.get('leading',em(1.2)), base=fontSize)
-            textColor = color(run.style.get('textFill', blackColor))
-            flatColor = rgb(*self._asFlatColor(textColor))
-            strike = self.b.strike(flatFont).size(fontSize, leading).color(flatColor)
-            spans.append(strike.span(run.s))
-
-            maxAscender = max(maxAscender, ascender)
-            maxFontSize = max(maxFontSize, fontSize)
-        paragraphs = [self.b.paragraph(spans)]
-        placedText = self.page.place(self.b.text(paragraphs))
-        placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
-
-    def _asFlatColor(self, pbColor):
-        # Make this dependent on type of export.
-        r, g, b = pbColor.rgb
-        return r*256, g*256, b*256
-
-    def XXXtext(self, s, p):
+    def text(self, s, p):
         """Places the babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
@@ -569,8 +509,7 @@ class FlatContext(BaseContext):
         NOTE: in the Flat model the position is an attribute of the string,
         therefore strings cannot be reused to be displayed on multiple
         positions.
-        """
-        """
+
         >>> context = FlatContext()
         >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
         >>> bs = context.newString('ABCD', style=style)
@@ -622,9 +561,6 @@ class FlatContext(BaseContext):
         print the result.
         TODO: use PageBot hyphenation.
 
-        """
-
-        """
         See also drawBot.contexts.baseContext textbox()
 
         >>> from pagebot import getContext
@@ -671,9 +607,7 @@ class FlatContext(BaseContext):
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
         context.
-        """
 
-        """
         >>> from pagebot import getContext
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> w, h = 400, 300
@@ -761,16 +695,8 @@ class FlatContext(BaseContext):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Answer the Babelstring, which is native in Flat.
-        """
-        return bs
-
-    def XXXfromBabelString(self, bs):
         """Convert the BabelString into a FlatString.
 
-        """
-
-        """
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.document import Document

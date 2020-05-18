@@ -32,7 +32,10 @@ from pagebot.toolbox.transformer import path2Extension
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
 from pagebot.style import makeStyle
 
-from PyPDF2 import PdfFileReader
+try:
+    from PyPDF2 import PdfFileReader
+except ImportError:
+    pass
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.

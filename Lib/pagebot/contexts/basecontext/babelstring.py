@@ -53,8 +53,8 @@ class BabelRun:
 
         if style is None:
             style = {}
-
         self.style = style
+        self._cr = None # Optional cache of native context string (e.g. Flat.strike)
 
     def __len__(self):
         return len(self.s)
@@ -84,6 +84,15 @@ class BabelRun:
         return r + '>'
 
     def getFSStyle(self):
+        # D E P R I C A T E D
+        # FIXME-Petr A BabelString should not know anything about contexts,
+        # except that it can exececute text, textBox, textSize and textLines.
+        # Styles in runs are not cascading. self.leading gives the last,
+        # because that is the attribute value if plain text gets appended.
+        # PIXME-Petr The question is if we need to convert to FlatString at all.
+        # Can't we just use the main data in Babelstring, until processing into
+        # lines or text?
+
         # Instead of using e.g. bs.tracking, we need to process the styles
         # of all runs, not just the last one.
         style = self.style
@@ -167,6 +176,7 @@ class BabelLineInfo:
 
     def __repr__(self):
         return '<%s x=%s y=%s runs=%d>' % (self.__class__.__name__, self.x, self.y, len(self.runs))
+
 
 class BabelRunInfo:
 
@@ -263,6 +273,8 @@ class BabelString:
             context = weakref.ref(context)
         self._context = context
         self.reset() # Clear context cache
+        for run in self.runs: # Reset the run contxt too.
+            run.context = context
     context = property(_get_context, _set_context)
 
     def reset(self):

@@ -250,10 +250,8 @@ class SketchContext(BaseContext):
             elif isinstance(layer, (SketchGroup, SketchShapeGroup, SketchSlice)):
                 frame = layer.frame
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 child = newGroup(name=layer.name, parent=e, sId=layer.do_objectID,
-                    x=frame.x, y=y, w=frame.w, h=frame.h, fillColor=fillColor,
-                    stroke=strokeColor, strokeWidth=strokeWidth)
+                    x=frame.x, y=y, w=frame.w, h=frame.h)
                 self._createElements(layer, child)
 
             elif isinstance(layer, SketchRectangle):
@@ -271,13 +269,13 @@ class SketchContext(BaseContext):
 
             elif isinstance(layer, SketchShapePath):
                 y = e.h - frame.h - frame.y # Flip the y-axis
-                fillColor, strokeColor, strokeWidth = self._extractColor(layer)
+                #fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 if len(layer.points):
                     p1 = layer.points[0].point
                     p2 = layer.points[-1].point
                     # FIXME: This doesn't work yet.
                     Line(parent=e, x=p1.x, y=p1.x, w=p2.x - p1.x, h=p2.y - p1.y,
-                            stroke=fillColor, strokeWidth=0.5)
+                            strokeWidth=0.5)
 
                 # '_class': 'shapePath', 
                 # '_parent': None, 
