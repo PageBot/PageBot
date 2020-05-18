@@ -42,7 +42,7 @@ from pagebot.constants import *
 from pagebot.toolbox.color import color, noColor
 from pagebot.toolbox.units import pt, units, upt, em
 from pagebot.toolbox.transformer import asIntOrNone
-from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.font import findFont, Font
 
 from pagebot.contexts.sketchcontext.sketchbuilder import SketchBuilder
 from sketchapp2py.sketchclasses import *
@@ -105,6 +105,9 @@ class SketchContext(BaseContext):
         pass
 
     def text(self, bs, p):
+        pass
+
+    def getTextLines(self, fs, w=None, h=None):
         pass
 
     def textSize(self, bs, w=None, h=None):
@@ -270,38 +273,38 @@ class SketchContext(BaseContext):
             elif isinstance(layer, SketchShapePath):
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 #fillColor, strokeColor, strokeWidth = self._extractColor(layer)
-                if len(layer.points):
+                if layer.points:
                     p1 = layer.points[0].point
                     p2 = layer.points[-1].point
                     # FIXME: This doesn't work yet.
                     Line(parent=e, x=p1.x, y=p1.x, w=p2.x - p1.x, h=p2.y - p1.y,
                             strokeWidth=0.5)
 
-                # '_class': 'shapePath', 
-                # '_parent': None, 
-                #'booleanOperation': -1, 
-                #'isFixedToViewport': False, 
-                #'isFlippedVertical': False, 
-                #'resizingConstraint': 63, 
-                #'resizingType': 0, 
-                #'rotation': 0, 
-                #'shouldBreakMaskChain': False, 
-                #'edited': True, 
-                #'isClosed': False, 
-                #'pointRadiusBehaviour': 1, 
+                # '_class': 'shapePath',
+                # '_parent': None,
+                #'booleanOperation': -1,
+                #'isFixedToViewport': False,
+                #'isFlippedVertical': False,
+                #'resizingConstraint': 63,
+                #'resizingType': 0,
+                #'rotation': 0,
+                #'shouldBreakMaskChain': False,
+                #'edited': True,
+                #'isClosed': False,
+                #'pointRadiusBehaviour': 1,
                 #'points': [
-                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0017391304347826092, 0.66666666666666674}', 'curveMode': 1, 'curveTo': '{0.0017391304347826092, 0.66666666666666674}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.0008695652173913046, 0.50000000000000022}'}, 
-                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0034782608695652184, 0.99999999999999978}', 'curveMode': 1, 'curveTo': '{0.0034782608695652184, 0.99999999999999978}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.99913043478260866, 0.50000000000000022}'}], 
-                # 'do_objectID': '5C6D85ED-3C55-4C54-B081-F713A7AF5CD8', 
-                #'exportOptions': <SketchExportOptions>, 
-                #'frame': <SketchRect x=0 y=0 w=575 h=0.5>, 
-                #'isFlippedHorizontal': False, 
-                #'isLocked': False, 
-                #'isVisible': True, 
-                #'layerListExpandedType': 0, 
-                #'name': 'Path', 
-                #'nameIsFixed': False, 
-                #'resizing': False, 
+                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0017391304347826092, 0.66666666666666674}', 'curveMode': 1, 'curveTo': '{0.0017391304347826092, 0.66666666666666674}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.0008695652173913046, 0.50000000000000022}'},
+                #   {'_class': 'curvePoint', 'cornerRadius': 0, 'curveFrom': '{0.0034782608695652184, 0.99999999999999978}', 'curveMode': 1, 'curveTo': '{0.0034782608695652184, 0.99999999999999978}', 'hasCurveFrom': False, 'hasCurveTo': False, 'point': '{0.99913043478260866, 0.50000000000000022}'}],
+                # 'do_objectID': '5C6D85ED-3C55-4C54-B081-F713A7AF5CD8',
+                #'exportOptions': <SketchExportOptions>,
+                #'frame': <SketchRect x=0 y=0 w=575 h=0.5>,
+                #'isFlippedHorizontal': False,
+                #'isLocked': False,
+                #'isVisible': True,
+                #'layerListExpandedType': 0,
+                #'name': 'Path',
+                #'nameIsFixed': False,
+                #'resizing': False,
                 #'path': None
 
             elif isinstance(layer, SketchText):
@@ -313,7 +316,7 @@ class SketchContext(BaseContext):
 
                 # https://www.smashingmagazine.com/2012/12/css-baseline-the-good-the-bad-and-the-ugly/
                 # https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align
-                
+
                 # FIXME: Vertical positioning of text still is a bit fuzzy.
                 bs = self.asBabelString(layer.attributedString)
 
@@ -327,7 +330,7 @@ class SketchContext(BaseContext):
                 # In CSS-world, the extra lineHeight is equally divided on top an bottom.
                 yOffset = max(0, (lineHeight - fontSize)/2 - descender) # Offset can not go over baseline
                 y = e.h - frame.h - frame.y + yOffset # Flip the y-axis
-                
+
                 fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 newText(bs, name=layer.name, parent=e,
                     sId=layer.do_objectID, x=frame.x, y=y, w=frame.w, h=frame.h,
@@ -354,7 +357,7 @@ class SketchContext(BaseContext):
                 fillColor, strokeColor, strokeWidth = self._extractColor(layer)
                 y = e.h - frame.h - frame.y # Flip the y-axis
                 newText('[%s]' % layer.name, name=layer.name, parent=e,
-                    sId=layer.do_objectID, fill=fillColor, stroke=strokeColor, 
+                    sId=layer.do_objectID, fill=fillColor, stroke=strokeColor,
                     strokeWidth=strokeWidth, font='PageBot-Regular', fontSize=12,
                     x=frame.x, y=y, w=frame.w, h=frame.h, yAligh=BASELINE)
 
@@ -652,7 +655,7 @@ class SketchContext(BaseContext):
                     fontName = font.name
             if fontName is None:
                 fontName = DEFAULT_FONT
-            fd.name = fontName            
+            fd.name = fontName
             fd.size = upt(run.style.get('fontSize', 12))
             tc = run.style.get('textFill', color(0))
 
