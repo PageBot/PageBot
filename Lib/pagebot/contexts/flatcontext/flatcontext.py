@@ -511,7 +511,7 @@ class FlatContext(BaseContext):
         >>> context.text(bs, (10, 500))
         >>> context.saveDrawing('_export/Flat-Text.pdf')
         """
-        assert self.page is not None, 'FlatString.text: self.page is not set.'
+        assert self.page is not None, 'FlatContext.text: self.page is not set.'
         xpt, ypt = self.translatePoint(p)
         self._place(bs, xpt, ypt)
 
@@ -540,18 +540,19 @@ class FlatContext(BaseContext):
         spans = []
         maxAscender = 0
         maxFontSize = 0
+
         for run in bs.runs:
             flatFont, font = self._getFlatFont(run.style.get('font'))
             fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
-            ascender = fontSize*font.info.typoAscender/font.info.unitsPerEm
+            ascender = fontSize * font.info.typoAscender / font.info.unitsPerEm
             leading = upt(run.style.get('leading',em(1.2)), base=fontSize)
             textColor = color(run.style.get('textFill', blackColor))
             flatColor = rgb(*self._asFlatColor(textColor))
             strike = self.b.strike(flatFont).size(fontSize, leading).color(flatColor)
             spans.append(strike.span(run.s))
-
             maxAscender = max(maxAscender, ascender)
             maxFontSize = max(maxFontSize, fontSize)
+
         paragraphs = [self.b.paragraph(spans)]
         placedText = self.page.place(self.b.text(paragraphs))
         placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
@@ -560,55 +561,6 @@ class FlatContext(BaseContext):
         # Make this dependent on type of export.
         r, g, b = pbColor.rgb
         return r*256, g*256, b*256
-
-    def XXXtext(self, s, p):
-        """Places the babelstring instance at position p. The position can be
-        any 2D or 3D points tuple. Currently the z-axis is ignored. The
-        FlatContext version of the BabelString should contain Flat.text.
-
-        NOTE: in the Flat model the position is an attribute of the string,
-        therefore strings cannot be reused to be displayed on multiple
-        positions.
-        """
-        """
-        >>> context = FlatContext()
-        >>> style = dict(font='Roboto-Regular', fontSize=pt(12))
-        >>> bs = context.newString('ABCD', style=style)
-        >>> bs, bs.__class__.__name__
-        ($ABCD$, 'BabelString')
-        >>> fs = context.fromBabelString(bs)
-        >>> fs
-        >>> context.newPage(1000, 1000)
-        >>> context.text(bs, (100, 100))
-
-        """
-        if isinstance(s, FlatString):
-            fs = s
-        elif isinstance(s, BabelString):
-            fs = self.fromBabelString(s)
-        elif isinstance(s, str):
-            # Creates a new string with default styles.
-            style = dict(fontSize=self._fontSize)
-            bs = self.asBabelString(s, style=style)
-            fs = self.fromBabelString(bs)
-        else:
-            raise PageBotFileFormatError('type is %s' % type(fs))
-
-        assert isinstance(fs, FlatString)
-        assert self.page is not None, 'FlatString.text: self.page is not set.'
-
-        xpt, ypt = self.translatePoint(p)
-
-        #if not self.originTop:
-        lineHeight = fs.lineHeight
-        ypt -= lineHeight
-
-        if 'textFill' in fs.style:
-            c = fs.style['textFill']
-            c = color(rgb=c)
-            self.textFill(c)
-
-        fs.place(self.page, xpt, ypt)
 
     def textBox(self, fs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
@@ -764,117 +716,6 @@ class FlatContext(BaseContext):
         """Answer the Babelstring, which is native in Flat.
         """
         return bs
-
-    def XXXfromBabelString(self, bs):
-        """Convert the BabelString into a FlatString.
-
-        """
-
-        """
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.toolbox.units import pt, em
-        >>> from pagebot.document import Document
-        >>> from pagebot.elements import *
-        >>> context = getContext('DrawBot')
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
-        >>> bs = BabelString('Hkpx', style, context=context)
-        >>> bs.textStrokeWidth = pt(4)
-        >>> bs.textStroke = (1, 0, 0)
-        >>> tw, th = bs.textSize
-        >>> tw, th
-        (209.7pt, 100pt)
-        >>> fs = context.fromBabelString(bs) # DrawBot.FormattedString
-        >>> fs, fs.__class__.__name__
-        (Hkpx, 'FormattedString')
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(30), leading=em(1))
-        >>> bs = context.newString('Hkpx'+chr(10)+'Hkpx', style)
-        >>> bs.textStrokeWidth = pt(4)
-        >>> bs.textStroke = (1, 0, 0)
-        >>> doc = Document(w=tw+50, h=th+100, context=context)
-        >>> e = newText(bs, x=20, y=120, parent=doc[1])
-        >>> doc.export('_export/DrawBotContext-fromBabelString.pdf')
-        """
-
-        assert isinstance(bs, BabelString)
-
-        fs = FlatString(context=self)
-
-        for run in bs.runs:
-            # Instead of using e.g. bs.tracking, we need to process the
-            # styles of all runs, not just the last one.
-            style = run.style
-            # DrawBot-OSX, setting the hyphenation is global, before a FormattedString is created.
-            self.hyphenation(style.get('hyphenation', False))
-
-            # In case there is an error in these parameters, DrawBot ignors all.
-            #print('FS-style attributes:', run.s, fontPath,
-            #    upt(fontSize), upt(leading, base=fontSize),
-            #    textColor.rgba, align)
-
-            # Create the style for this text run.
-            font = findFont(style.get('font', DEFAULT_FONT))
-
-            # FIXME: {'font': None} yields None, not DEFAULT_FONT.
-            if font is None:
-                font = DEFAULT_FONT
-
-            fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
-            leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
-
-            fsStyle = dict(
-                font=font,
-                fontSize=upt(fontSize),
-                lineHeight=upt(leading, base=fontSize),
-                align=style.get('xTextAlign') or style.get('xAlign', LEFT),
-                tracking=upt(style.get('tracking', 0), base=fontSize),
-                strokeWidth=upt(style.get('strokeWidth')),
-                baselineShift=upt(style.get('baselineShift'), base=fontSize),
-                language=style.get('language', DEFAULT_LANGUAGE),
-                indent=upt(style.get('indent', 0), base=fontSize),
-                tailIndent=-abs(upt(style.get('tailIndent', 0), base=fontSize)), # DrawBot wants negative number)
-                firstLineIndent=upt(style.get('firstLineIndent', 0), base=fontSize),
-                underline={True:'single', False:None}.get(style.get('underline', False)),
-                # Increasing value moves text up, decreasing the leading.
-                paragraphTopSpacing=upt(style.get('paragraphTopSpacing', 0), base=fontSize),
-                paragraphBottomSpacing=upt(style.get('paragraphBottomSpacing', 0), base=fontSize),
-            )
-
-            if 'textFill' in style:
-                textFill = style['textFill']
-
-                if textFill is not None:
-                    textFill = color(textFill)
-                if textFill.isCmyk:
-                    fsStyle['cmykFill'] = textFill.cmyk
-                else:
-                    fsStyle['fill'] = textFill.rgba
-
-            if 'textStroke' in style:
-                textStroke = style['textStroke']
-                if textStroke is not None:
-                    textStroke = color(textStroke)
-                if textStroke.isCmyk:
-                    fsStyle['cmykStroke'] = textStroke.cmyk
-                else:
-                   fsStyle['stroke'] = textStroke.rgba
-
-            if 'openTypeFeatures' in style:
-                fsStyle['openTypeFeatures'] = style['openTypeFeatures']
-
-            if 'fontVariations' in style:
-                fsStyle['fontVariantions'] = style['fontVariations']
-
-            if 'tabs' in style:
-                tabs = [] # Render the tab values to points.
-                for tx, alignment in style.get('tabs', []):
-                    tabs.append((upt(tx, base=fontSize), alignment))
-                fsStyle['tabs'] = tabs
-
-            fs0 = FlatString(s=run.s, style=fsStyle, context=self)
-
-            fs.append(fs0)
-        return fs
-
 
     #   F O N T
 
