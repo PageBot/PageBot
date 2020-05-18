@@ -1132,11 +1132,12 @@ class PageView(BaseView):
         >>> view.folds = [(mm(40), mm(60))]
         >>> view.drawCropMarks(e, pt(0, 0))
         """
-        # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags
+        # Answers a set of {TOP, RIGHT, BOTTOM, LEFT} flags.
         if e.isPage and self.showCropMarks:
             showCropMarks = self.showCropMarks
         else:
             showCropMarks = e.showCropMarks
+
         if showCropMarks:
             context = self.context
 
@@ -1159,28 +1160,37 @@ class PageView(BaseView):
             context.fill(noColor)
             context.stroke(registrationColor, w=cmStrokeWidth) # For CMYK, draw all colors color(cmyk=1))
 
-            # Calculate distances, comparing to bleeds
+            # Calculate distances, comparing to bleeds.
             cmLeft = max(e.bleedLeft, self.bleedLeft, cmDistance)
             cmRight = max(e.bleedRight, self.bleedRight, cmDistance)
             cmBottom = max(e.bleedBottom, self.bleedBottom, cmDistance)
             cmTop = max(e.bleedTop, self.bleedTop, cmDistance)
 
-            # Left
+            # Left.
             if LEFT in showCropMarks:
-                context.line((x - cmLeft, y), (x - cmLeft - cmSize, y))
-                context.line((x - cmLeft, y + h), (x - cmLeft - cmSize, y + h))
-            # Bottom
+                x0  = x - cmLeft
+                x1 = x - cmLeft - cmSize
+                context.line((x0, y), (x1, y))
+                context.line((x0, y + h), (x1, y + h))
+
+            # Bottom.
             if BOTTOM in showCropMarks:
                 context.line((x, y - cmBottom), (x, y - cmBottom - cmSize))
                 context.line((x + w, y - cmBottom), (x + w, y - cmBottom - cmSize))
-            # Right
+
+            # Right.
             if RIGHT in showCropMarks:
-                context.line((x + w + cmRight, y), (x + w + cmRight + cmSize, y))
-                context.line((x + w + cmRight, y + h), (x + w + cmRight + cmSize, y + h))
-            # Top
+                x0 = x + w + cmRight
+                x1 = x + w + cmRight + cmSize
+                context.line((x0, y), (x1, y))
+                context.line((x0, y + h), (x1, y + h))
+
+            # Top.
             if TOP in showCropMarks:
-                context.line((x, y + h + cmTop), (x, y + h + cmTop + cmSize))
-                context.line((x + w, y + h + cmTop), (x + w, y + h + cmTop + cmSize))
+                y0 = y + h + cmTop
+                y1 = y + h + cmTop + cmSize
+                context.line((x, y0), (x, y0))
+                context.line((x + w, y0), (x + w, y1))
 
             # Any fold lines to draw on the page?
             if folds is not None:
