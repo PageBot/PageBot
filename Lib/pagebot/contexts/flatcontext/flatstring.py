@@ -57,18 +57,18 @@ class FlatString():
         >>> context = getContext('Flat')
         >>> doc = Document(context=context) # Stored as doc.view.context
         >>> style = dict(font='Bungee-Regular', fontSize=pt(12), leading=em(1.5))
-        >>> fs = context.newString(s='ABC', style=style, context=context)
-        >>> fs.context # Context is stored in the string as weakref property
+        >>> bs = context.newString('ABC', style=style)
+        >>> bs.context # Context is stored in the string as weakref property
         <FlatContext>
-        >>> fs
+        >>> bs
         $ABC$
-        >>> fs.font
-        'Bungee-Regular'
-        >>> fs.fontSize
+        >>> bs.font
+        <Font Bungee-Regular>
+        >>> bs.fontSize
         12pt
-        >>> fs.leading
+        >>> bs.leading
         1.5em
-        >>> fs.lineHeight
+        >>> bs.lineHeight
         18.0
         >>> pt(fs.lineHeight) # Should be 18pt
         18pt
@@ -165,6 +165,17 @@ class FlatString():
                 self.append(NEWLINE)
                 self.append(part)
 
+    def __repr__(self):
+        """
+
+        >>> from pagebot import getContext
+        >>> context = getContext('Flat')
+        >>> fs = context.newString('ABC')
+        >>> fs
+
+        """
+        return 'FS:%s' % self.s
+
     def copy(self):
         """
 
@@ -233,7 +244,6 @@ class FlatString():
                 s += part
 
         return s
-
     def _set_s(self, s, i=0, strike=None):
         d = self.data[i]
         if strike:
@@ -241,7 +251,6 @@ class FlatString():
         strike = d['strike']
         d['s'] = s
         d['text'] = strike.text(s)
-
     s = property(_get_s, _set_s)
 
     def _get_style(self):

@@ -16,6 +16,7 @@
 #
 #     Implements info functions on font info.
 #
+from pagebot.toolbox.units import em
 #from pagebot.fonttoolbox.ttftools import getBestCmap
 
 class cached_property:
@@ -223,13 +224,36 @@ class FontInfo:
     def glyphSet(self):
         return sorted(self.ttFont.getGlyphOrder())
 
-    @cached_property
-    def typoDescender(self):
-        return self.ttFont["OS/2"].sTypoDescender
-
+    # About these settings in the font:
+    # https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
+    
     @cached_property
     def typoAscender(self):
+        """Answer the relative typoAscender in em units.
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, lazy=False)
+        >>> f.info.typoAscender
+        860
+        """
         return self.ttFont["OS/2"].sTypoAscender
+
+    @cached_property
+    def typoDescender(self):
+        """Answer the relative typoDescender in em units.
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, lazy=False)
+        >>> f.info.typoDescender
+        -140
+        """
+        return self.ttFont["OS/2"].sTypoDescender
 
     @cached_property
     def descender(self):
@@ -237,15 +261,54 @@ class FontInfo:
 
     @cached_property
     def ascender(self):
+        """Answer the ascender in unitsPerEm.
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font, findFont
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, lazy=False)
+        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm 
+        (860, -140, True)
+        >>> f = findFont('PageBot-Regular')
+        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm 
+        (748, -252, True)
+        """
         return self.ttFont["hhea"].ascent
 
     @cached_property
     def xHeight(self):
-        return self.ttFont["OS/2"].sxHeight
+        """Answer the relative xHeight in em units.
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, lazy=False)
+        >>> f.info.xHeight
+        500
+        """
+        try:
+            return self.ttFont["OS/2"].sxHeight
+        except AttributeError:
+            return 0
 
     @cached_property
     def capHeight(self):
-        return self.ttFont["OS/2"].sCapHeight
+        """Answer the relative xHeight in em units.
+        >>> from pagebot.toolbox.transformer import *
+        >>> from pagebot.fonttoolbox.objects.font import Font
+        >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
+        >>> fontPath = getTestFontsPath()
+        >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
+        >>> f = Font(path, lazy=False)
+        >>> f.info.capHeight
+        720
+        """
+        try:
+            return self.ttFont["OS/2"].sCapHeight
+        except AttributeError:
+            return 0
 
     @cached_property
     def subscriptYOffset(self):
@@ -332,13 +395,13 @@ class FontInfo:
 
     def _get_metrics(self):
         """Small collection of font metrics info data as dictionary."""
-        # @@@ TODO Review this!
-        return dict(typoDescender=self.typoDescender,
-                    typoAscender=self.typoAscender,
-                    descender=self.descender,
+        return dict(typoAscender=self.typoAscender,
                     ascender=self.ascender,
-                    xHeight=self.xHeight,
                     capHeight=self.capHeight,
+                    xHeight=self.xHeight,
+                    descender=self.descender,
+                    typoDescender=self.typoDescender,
+                    
                     subscriptYOffset=self.subscriptYOffset,
                     lineGap=self.lineGap,
                     superscriptXSize=self.superscriptXSize,

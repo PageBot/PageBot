@@ -337,6 +337,8 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # Default is to avoid existing font and fontSize in the graphic state.
         font = getDefaultFontPath(),
         fallbackFont = DEFAULT_FALLBACK_FONT_PATH,
+        # Optional font name, as read from externa files, such as Sketch
+        fontName = None, # Family name + style name
         # Default font size in points, related to U. If FIT, size is elastic to
         # width.
         fontSize = DEFAULT_FONT_SIZE,

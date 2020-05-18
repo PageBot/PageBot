@@ -18,6 +18,7 @@ import os.path
 from pagebot.toolbox.transformer import path2FontName
 from pagebot.filepaths import getResourcesPath
 from pagebot.constants import DEFAULT_FONT, DEFAULT_FOUNDRY
+from pagebot.fonttoolbox.fontnames import FONT_NAME_2_FILE_NAME
 
 #   P A T H S
 
@@ -58,6 +59,10 @@ def getFontPathOfFont(font, default=None):
     >>> path = getFontPathOfFont('UnknowFont.ttf') # Unknown font is set to getDefaultFontPath()
     >>> path == getDefaultFontPath()
     True
+    >>> getFontPathOfFont('Georgia Bold') == getFontPathOfFont('Georgia-Bold') # Can find both
+    True
+    >>> #getFontPathOfFont('AgencyFB-Regular')
+
     """
     if hasattr(font, 'path'): # In case it is a Font instance, get its path.
         font = font.path
@@ -115,6 +120,9 @@ def getFontPaths(extraPaths=None):
     >>> fontPaths = getFontPaths(testFontsPath + '/OtherFont.ttf')
     >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.
     False
+    >>> fontPaths = getFontPaths()
+    >>> fontPaths['Georgia-Bold'] == fontPaths['Georgia Bold'] # Works both
+    True
     """
     global FONT_PATHS
     if extraPaths is not None:
@@ -137,11 +145,22 @@ def getFontPaths(extraPaths=None):
             for path in paths:
                 if os.path.exists(path):
                     _recursivelyCollectFontPaths(path, FONT_PATHS)
+
         elif os.name in ('nt', 'os2', 'ce', 'java', 'riscos'):
             # Add other typical Windows font folders here to look at.
             pass
         else:
             raise NotImplementedError('Unknown platform type "%s"' % os.name)
+
+        # Add the name name:fileName combinations from the predefined
+        # dictionary (made with DrawBot.installedFonts())
+        for fontName, fileName in FONT_NAME_2_FILE_NAME.items():
+            if not fontName in FONT_PATHS:
+                for path in paths:
+                    fontPath = path + '/' + fileName
+                    if os.path.exists(fontPath):
+                        FONT_PATHS[fontName] = fontPath
+                        break
 
         # Add PageBot repository fonts, they always exist in this context. But
         # they can be overwritten by fonts with the same (file) name in the
@@ -154,6 +173,7 @@ def getFontPaths(extraPaths=None):
                 extraPaths = [extraPaths]
             for extraPath in extraPaths:
                 _recursivelyCollectFontPaths(extraPath, FONT_PATHS)
+
 
     return FONT_PATHS
 
