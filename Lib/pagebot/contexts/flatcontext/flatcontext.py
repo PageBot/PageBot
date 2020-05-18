@@ -761,7 +761,7 @@ class FlatContext(BaseContext):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Answer the Babelstring, which is native in Flat.
+        """Answer the unchanged Babelstring, which is native in Flat.
         """
         return bs
 

@@ -260,9 +260,11 @@ class BabelString:
         >>> bs = BabelString('ABCD', context=context)
         >>> bs.context
         <DrawBotContext>
-        >>> context = None # Delete context reference
-        >>> bs.context # But weakref to global context remains
-        <DrawBotContext>
+        >>> bs.cs # Context put FormattedString cache data there
+        ABCD
+        >>> bs.context = None # Delete context reference
+        >>> bs.cs is None # Old context cache cleared too
+        True
         """
         context = None
         if self._context is not None:
@@ -272,8 +274,8 @@ class BabelString:
         if context is not None:
             context = weakref.ref(context)
         self._context = context
-        self.reset() # Clear context cache
-        for run in self.runs: # Reset the run contxt too.
+        self.reset() # Clear cache of previous context
+        for run in self.runs: # Reset the run context too.
             run.context = context
     context = property(_get_context, _set_context)
 
@@ -289,8 +291,12 @@ class BabelString:
         >>> bs.reset() # Reset the caching
         >>> bs._cs is None
         True
+        >>> bs.context = getContext('Flat')
+        >>> #bs.cs
         """
-        self._cs = None # Cache of native context string (e.g. FormattedString)
+        # Cache of native context string (e.g. Drawbot.FormattedString
+        # or Flat Strike/Paragraph/Text instances.
+        self._cs = None 
         self._lines = None # Cache of calculated meta info after line wrapping.
         self._twh = None # Cache of calculated text width (self.tw, self.th)
         self._pwh = None # Cache of calculated pixel width (self.pw, self.ph)
@@ -421,7 +427,7 @@ class BabelString:
         >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
         (ABCD, 'FormattedString')
         """
-        if self._cs is None:
+        if self._cs is None and self.context is not None:
             self._cs = self.context.fromBabelString(self)
 
         return self._cs

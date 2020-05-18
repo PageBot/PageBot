@@ -594,7 +594,7 @@ class FlatString():
         s = self.textBox(page, box, align=align)
         return s
 
-    def textSize(self, w=None, h=None):
+    def textSize(self, bs, w=None, h=None):
         """Answers the `(w, h)` size tuple for a given width, with the current
         text.
 
