@@ -5,14 +5,16 @@
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
 >>> from pagebot.typesetter import Typesetter
+>>> from pagebot import getContext
 >>> numPages = 4
 >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
 >>> h1Style = dict(font='Verdana', fontSize=pt(36), textFill=color(1, 0, 0))
 >>> h2Style = dict(font='Georgia', fontSize=pt(18), textFill=color(1, 0, 0.5))
 >>> pStyle = dict(font='Verdana', fontSize=pt(10), leading=em(1.4), textFill=blackColor)
 >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
->>> from pagebot import getContext
 >>> context = getContext('Flat')
+>>> print(context)
+<FlatContext>
 >>> doc = Document(size=A4, styles=styles, autoPages=numPages, context=context)
 >>> doc.context
 <FlatContext>

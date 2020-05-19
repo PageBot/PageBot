@@ -24,7 +24,7 @@ from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
         DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.filepaths import ROOT_FONT_PATHS

@@ -65,9 +65,9 @@ class Document:
 
     def __init__(self, styles=None, theme=None, viewId=None, name=None,
             title=None, pages=None, autoPages=1, template=None, templates=None,
-            startPage=None, sId=None, w=None, h=None, d=None,
-            size=None, wh=None, whd=None, padding=None, docLib=None,
-            context=None, path=None, exportPaths=None, **kwargs):
+            startPage=None, sId=None, w=None, h=None, d=None, size=None,
+            wh=None, whd=None, padding=None, docLib=None, context=None,
+            path=None, exportPaths=None, **kwargs):
         """Contains a set of Page elements and other elements used for display
         in thumbnail mode. Used to compose the pages without the need to send
         them directly to the output for asynchronous page filling."""
@@ -185,6 +185,12 @@ class Document:
         return self._docLib
 
     docLib = property(_get_docLib)
+
+    def _get_context(self):
+        if hasattr(self, 'view') and hasattr(self.view, 'context'):
+            return self.view.context
+
+    context = property(_get_context)
 
     def __len__(self):
         """Answers the amount of pages in the document.
