@@ -23,27 +23,6 @@
 #     We just store the fileName, the path where to find fonts is still
 #     guessed by getFontPathOfFont(fontName)
 
-def makeFontName2FileName():
-    """Generate the source code of the FONT_NAME_2_FILE_NAME below.
-
-    >>> #makeFontName2FileName()
-    """
-    from pagebot.fonttoolbox.objects.font import findFont
-    from pagebot.contexts import getContext
-    context = getContext('DrawBot')
-    t = ['FONT_NAME_2_FILE_NAME = {']
-
-    for name in context.b.installedFonts():
-        context.b.font(name)
-        fileName = context.b.fontFilePath().split('/')[-1]
-        if fileName.lower().split('.')[-1] in ('ttf', 'otf'):
-            t.append("\t'%s': '%s'," % (name, fileName))
-        else: # Currently only support for TTF and OTF
-            t.append("\t#'%s': '%s'," % (name, fileName))
-
-    t.append('}')
-    return '\n'.join(t)
-
 FONT_NAME_2_FILE_NAME = {
     #'.AlBayanPUA': 'AlBayan.ttc',
     #'.AlBayanPUA-Bold': 'AlBayan.ttc',
