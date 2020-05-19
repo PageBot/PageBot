@@ -871,7 +871,7 @@ class BaseContext(AbstractContext):
             self.textBox(bs.cs, box)
 
     def drawText(self, bs, box):
-        """ Draw the text block, in case there is a width or heigh defined."""
+        """Draws the text block, in case there is a width or heigh defined."""
         assert isinstance(bs, BabelString),\
             'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         self.textBox(bs.cs, upt(box))
@@ -913,6 +913,22 @@ class BaseContext(AbstractContext):
             baselines[textLine.y] = textLine
 
         return baselines
+
+    def getTextLines(self, bs, w=None, h=None):
+        textLines = []
+
+        for run in bs.runs:
+            # Add something to textLines...
+            pass
+
+        lineInfo = BabelLineInfo(0, 0, None, self)
+        textLines.append(lineInfo)
+        return textLines
+
+    def fromBabelString(self, bs):
+        """Answers the unchanged Babelstring, which is native in a context
+        unless implemented otherwise."""
+        return bs
 
     # String.
 

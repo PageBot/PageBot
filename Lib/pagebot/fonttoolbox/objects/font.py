@@ -73,7 +73,7 @@ def asFontPath(fontPath):
         if not path2Extension(fontPath) in ('ttf', 'otf'):
             #print('asFontPath: Unsupported font type:', fontPath)
             return None
-         
+
         pathParts = fontPath.split('/')
         dirPath = '/'.join(pathParts[:-1]) + '/'
         filePath = pathParts[-1].lower() # Match ignoring case

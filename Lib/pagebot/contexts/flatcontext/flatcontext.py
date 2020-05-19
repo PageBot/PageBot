@@ -700,19 +700,8 @@ class FlatContext(BaseContext):
         #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
         return s.textSize(w=w, h=h)
 
-    def getTextLines(self, fs, w=None, h=None):
-        textLines = []
-        lineInfo = BabelLineInfo(0, 0, None, self)
-        textLines.append(lineInfo)
-        return textLines
-
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
-
-    def fromBabelString(self, bs):
-        """Answer the unchanged Babelstring, which is native in Flat.
-        """
-        return bs
 
     #   F O N T
 
