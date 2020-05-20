@@ -24,7 +24,7 @@ from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
         DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.filepaths import ROOT_FONT_PATHS
@@ -730,19 +730,13 @@ class FlatContext(BaseContext):
         #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
         return s.textSize(w=w, h=h)
 
-    def getTextLines(self, fs, w=None, h=None):
-        textLines = []
-        lineInfo = BabelLineInfo(0, 0, None, self)
-        textLines.append(lineInfo)
-        return textLines
-
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
         """Answer None, to indicate that the original @bs is already native format.
+        We cannot store bs in its own bs._cs.
         """
-        print('dadsdasads', bs.__class__.__name__)
         assert isinstance(bs, BabelString)
         return None
 

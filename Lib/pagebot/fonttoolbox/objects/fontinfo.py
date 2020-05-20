@@ -16,7 +16,6 @@
 #
 #     Implements info functions on font info.
 #
-from pagebot.toolbox.units import em
 #from pagebot.fonttoolbox.ttftools import getBestCmap
 
 class cached_property:
@@ -226,7 +225,7 @@ class FontInfo:
 
     # About these settings in the font:
     # https://silnrsi.github.io/FDBP/en-US/Line_Metrics.html
-    
+
     @cached_property
     def typoAscender(self):
         """Answer the relative typoAscender in em units.
@@ -268,10 +267,10 @@ class FontInfo:
         >>> fontPath = getTestFontsPath()
         >>> path = fontPath + '/djr/bungee/Bungee-Regular.ttf'
         >>> f = Font(path, lazy=False)
-        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm 
+        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm
         (860, -140, True)
         >>> f = findFont('PageBot-Regular')
-        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm 
+        >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm
         (748, -252, True)
         """
         return self.ttFont["hhea"].ascent
@@ -401,7 +400,7 @@ class FontInfo:
                     xHeight=self.xHeight,
                     descender=self.descender,
                     typoDescender=self.typoDescender,
-                    
+
                     subscriptYOffset=self.subscriptYOffset,
                     lineGap=self.lineGap,
                     superscriptXSize=self.superscriptXSize,
@@ -416,8 +415,6 @@ class FontInfo:
                     superscriptYSize=self.superscriptYSize,
                     unitsPerEm=self.unitsPerEm,)
     metrics = property(_get_metrics)
-
-
 
 if __name__ == '__main__':
     import doctest

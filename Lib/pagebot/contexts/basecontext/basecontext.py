@@ -95,7 +95,7 @@ class BaseContext(AbstractContext):
         not exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context
         <DrawBotContext>
         >>> path = context.bezierpath
@@ -156,7 +156,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import px
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(pt(100), pt(100))
         >>> context.newPage(100, 100)
         """
@@ -212,7 +212,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
@@ -227,7 +227,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
@@ -240,7 +240,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
@@ -265,7 +265,7 @@ class BaseContext(AbstractContext):
         NOTE: PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.newPath()
         <BezierPath>
@@ -280,7 +280,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
@@ -300,7 +300,7 @@ class BaseContext(AbstractContext):
         is open.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> # Create a new self._bezierpath by property self.bezierpath
         >>> context.moveTo(pt(100, 100))
@@ -324,7 +324,7 @@ class BaseContext(AbstractContext):
         open.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> hasattr(context, 'newPath')
         True
         >>> context.newPage(420, 420)
@@ -369,7 +369,7 @@ class BaseContext(AbstractContext):
         PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> # Creates. a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
@@ -391,7 +391,7 @@ class BaseContext(AbstractContext):
         order. Use self._bezierpath if path is omitted. PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> path = context.newPath()
         >>> path.points
         ()
@@ -431,7 +431,7 @@ class BaseContext(AbstractContext):
 
         """
         FIXME: oval gives different results.
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> path = context.newPath()
         >>> path.oval(160-50, 160-50, 100, 100) # path.oval draws directly on the path
         >>> #len(path.points) #6
@@ -501,7 +501,7 @@ class BaseContext(AbstractContext):
         BezierPath(context).
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
@@ -529,7 +529,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -711,7 +711,7 @@ class BaseContext(AbstractContext):
         then convert.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.rotate(40)
         """
@@ -764,7 +764,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.newPage(420, 420)
         >>> context.fontSize(pt(12))
         """
@@ -853,7 +853,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = BabelString('Hkpx'+chr(10)+'Hkpx', style, context=context)
         >>> context.drawString(bs, pt(100, 100))
@@ -871,7 +871,7 @@ class BaseContext(AbstractContext):
             self.textBox(bs.cs, box)
 
     def drawText(self, bs, box):
-        """ Draw the text block, in case there is a width or heigh defined."""
+        """Draws the text block, in case there is a width or heigh defined."""
         assert isinstance(bs, BabelString),\
             'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         self.textBox(bs.cs, upt(box))
@@ -882,7 +882,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
         >>> bs.w
@@ -952,6 +952,14 @@ class BaseContext(AbstractContext):
 
         return baselines
 
+    # Must be implemented by inheriting context class
+    # getTextLines(self, bs, w=None, h=None) 
+
+    def fromBabelString(self, bs):
+        """Answers the unchanged Babelstring, which is native in a context
+        unless implemented otherwise."""
+        return bs
+
     # String.
 
     def newString(self, bs=None, style=None, w=None, h=None):
@@ -963,7 +971,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
         >>> bs, bs.__class__.__name__, bs.context
         ($ABCD$, 'BabelString', <DrawBotContext>)
@@ -1100,7 +1108,7 @@ class BaseContext(AbstractContext):
         TODO: move to elements.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.bluntCornerRect(pt(0), pt(0), pt(100), pt(100))
         >>> context.bluntCornerRect(0, 0, 100, 100)
         """
@@ -1125,7 +1133,7 @@ class BaseContext(AbstractContext):
         TODO: move to elements.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> context.roundedRect(pt(0), pt(0), pt(100), pt(100))
         >>> context.roundedRect(0, 0, 100, 100)
         """

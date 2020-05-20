@@ -1150,7 +1150,7 @@ class Element:
         >>> from pagebot.document import Document
         >>> context = getContext('DrawBot')
         >>> doc = Document(w=500, h=500, context=context)
-        
+
         """
         if self._clipPath is None:
             # Check if there is a sibling (share the same parent)

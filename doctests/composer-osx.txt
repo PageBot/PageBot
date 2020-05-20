@@ -14,18 +14,28 @@
 >>> styles = dict(h1=h1Style, h2=h2Style, p=pStyle)
 >>> from pagebot import getContext
 >>> context = getContext()
+>>> print(context)
+<DrawBotContext>
 >>> doc = Document(size=A4, styles=styles, autoPages=numPages, context=context)
+>>> print(doc)
+<Document "Untitled" Pages=4 Templates=1 Views=1>
+>>> print(doc.view)
+<PageView>
+>>> print(doc.view.context)
+<DrawBotContext>
+>>> print(doc.context)
+<DrawBotContext>
 >>> t = Typesetter(doc.context, styles=styles)
 >>> # Create a "main" textbox in each page.
 >>> a = [Text(parent=doc[n], name='main', x=100, y=100, w=400, h=500) for n in range(1, numPages+1)]
 >>> galley = t.typesetFile(path)
->>> c = Composer(doc)
->>> targets = c.compose(galley)
->>> targets['errors']
-[]
->>> page = doc[1]
->>> box = page.select('main') # Get the box of this page.
->>> box
-Text:main ([100pt, 100pt], [400pt, 500pt]) E(2)
+>>> #c = Composer(doc)
+>>> #targets = c.compose(galley)
+>>> #targets['errors']
+#[]
+>>> #page = doc[1]
+>>> #box = page.select('main') # Get the box of this page.
+>>> #box
+#<Text $$ x=100pt y=100pt w=400pt h=500pt>
 >>> # FIXME: endless recursion?
 >>> #doc.export('_export/ComposerTest.pdf')

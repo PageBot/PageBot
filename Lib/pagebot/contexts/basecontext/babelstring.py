@@ -231,7 +231,7 @@ class BabelString:
         >>> len(bs), len(bs.runs)
         (8, 1)
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> bs = context.newString('ABCD')
         >>> # Equivalent do BabelString('ABCD', context=context)
         >>> bs.context
@@ -258,7 +258,7 @@ class BabelString:
         """Answer the weakref context if it is defined.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> bs = BabelString('ABCD', context=context)
         >>> bs.context
         <DrawBotContext>
@@ -286,7 +286,7 @@ class BabelString:
         to force new calculation of context dependent wrapping.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
         >>> bs.cs is not None # Trigger rendering of the FormattedString
         True
@@ -298,7 +298,7 @@ class BabelString:
         """
         # Cache of native context string (e.g. Drawbot.FormattedString
         # or Flat Strike/Paragraph/Text instances.
-        self._cs = None 
+        self._cs = None
         self._lines = None # Cache of calculated meta info after line wrapping.
         self._twh = None # Cache of calculated text width (self.tw, self.th)
         self._pwh = None # Cache of calculated pixel width (self.pw, self.ph)
@@ -312,7 +312,7 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=pt(100)), w=pt(1000), context=context)
         >>> bs.w
         1000pt
@@ -371,7 +371,7 @@ class BabelString:
         >>> bs = BabelString('ABCD') # No context, cannot render.
         >>> bs.th is None
         True
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
         >>> bs.w, bs.tw, bs.h, bs.th # Difference between given height and text height.
@@ -398,7 +398,7 @@ class BabelString:
         >>> bs = BabelString('ABCD') # No context, cannot render.
         >>> bs.th is None
         True
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
         >>> bs.w, bs.tw, bs.h, bs.th # Not width defined, comes from bs.tw
@@ -426,7 +426,7 @@ class BabelString:
         the native string of the context is a BabelString. Just answer self then.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
         >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
         (ABCD, 'FormattedString')
@@ -448,7 +448,7 @@ class BabelString:
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> lines = bs.lines
@@ -468,7 +468,7 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = BabelString('ABCD', style, context=context)
         >>> bs.topLineAscender
@@ -498,7 +498,7 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = BabelString('ABCD', style, context=context)
         >>> bs.topLineAscender_h
@@ -530,7 +530,7 @@ class BabelString:
         in the first line.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.topLineCapHeight
         65.8pt
@@ -556,7 +556,7 @@ class BabelString:
         in the first line.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.topLineXHeight
         46.6pt
@@ -583,7 +583,7 @@ class BabelString:
         not a distance, relative to the baseline of the last line.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.bottomLineDescender
         -25.2pt
@@ -612,7 +612,7 @@ class BabelString:
         not a distance, relative to the baseline of the last line.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.bottomLineDescender_p
         -21.2pt
@@ -642,7 +642,7 @@ class BabelString:
         instance.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> style = dict(font='PageBot-Regular', fontSize=20)
         >>> bs = context.newString('ABCD', style)
         >>> bs.addMarker('M1', 'abcd')
@@ -677,7 +677,7 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style)
         >>> bs.textSize
@@ -695,7 +695,7 @@ class BabelString:
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> style1 = dict(fontSize=pt(12))
         >>> style2 = dict(fontSize=pt(18))
         >>> style3 = dict(fontSize=pt(24))
@@ -838,7 +838,7 @@ class BabelString:
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
-        >>> context = getContext('DrawBot')
+        >>> context = getContext
         >>> bs1 = context.newString('ABCD', dict(fontSize=pt(18)))
         >>> bs2 = context.newString('EFGH', dict(fontSize=pt(24)))
         >>> bs3 = bs1 + bs2 # Create new instance, concatenated from both
