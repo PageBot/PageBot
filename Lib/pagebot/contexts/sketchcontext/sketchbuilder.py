@@ -17,16 +17,16 @@
 #
 from pagebot.contexts.basecontext.basebuilder import BaseBuilder
 from pagebot.toolbox.units import upt
-from sketchapp2py.sketchapi import SketchApi
+from pysketch.sketchapi import SketchApi
 
 class SketchBuilder(BaseBuilder):
     PB_ID = 'Sketch'
 
     def __init__(self, path=None, **kwargs):
         """
-        >>> import sketchapp2py
+        >>> import pysketch
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
         >>> b = SketchBuilder(path)
         >>> b
         <SketchBuilder path=TemplateSquare.sketch>
@@ -54,9 +54,9 @@ class SketchBuilder(BaseBuilder):
     def _get_pages(self):
         """Answer the list of all SketchPage instances.
 
-        >>> import sketchapp2py
+        >>> import pysketch
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
         >>> b = SketchBuilder(path)
         >>> b.pages
         [<SketchPage name=Page 1>]
@@ -67,9 +67,9 @@ class SketchBuilder(BaseBuilder):
     def _get_artboards(self):
         """Answer a list with all artboards on the current selected page.
 
-        >>> import sketchapp2py
+        >>> import pysketch
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> path = path2Dir(sketchapp2py.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
         >>> b = SketchBuilder(path)
         >>> b.artboards
         [<SketchArtboard name=Artboard 1 w=576 h=783>]
