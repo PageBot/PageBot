@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor, blackColor
-from pagebot.toolbox.units import em, upt, point2D
+from pagebot.toolbox.units import pt, em, upt, point2D
 
 
 HAS_PIL = True
@@ -151,6 +151,7 @@ class FlatContext(BaseContext):
         """Save the current document to file(s)
 
         >>> import os
+        >>> from pagebot.toolbox.units import pt
         >>> from pagebot.filepaths import getRootPath
         >>> from pagebot.toolbox.color import blackColor
         >>> # _export/* Files are ignored in git.
@@ -285,7 +286,7 @@ class FlatContext(BaseContext):
             if h != self.h
                 <add document to stack>
 
-
+        >>> from pagebot.toolbox.units import pt
         >>> context = FlatContext()
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
@@ -474,24 +475,12 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def newString(self, s=None, style=None):
-        """Answer a new BabelString with self as context.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = FlatContext()
-        >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
-        >>> bs
-        $ABCD$
-        >>> bs.context
-        <FlatContext>
-        """
-        return BabelString(s, style, context=self)
-
     def text(self, bs, p):
         """Places the Babelstring instance at position p. The position can be
         any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
+        >>> from pagebot.toolbox.units import pt
         >>> context = FlatContext()
         >>> style1 = dict(font='PageBot-Regular', fontSize=pt(100), textFill=(1, 0, 0))
         >>> style2 = dict(font='PageBot-Bold', fontSize=pt(50), textFill=(0, 1, 0.5))
@@ -559,7 +548,7 @@ class FlatContext(BaseContext):
         r, g, b = pbColor.rgb
         return r*256, g*256, b*256
 
-    def textBox(self, fs, r=None, clipPath=None, align=None):
+    def textBox(self, bs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
@@ -571,11 +560,9 @@ class FlatContext(BaseContext):
         print the result.
         TODO: use PageBot hyphenation.
 
-        """
-
-        """
         See also drawBot.contexts.baseContext textbox()
 
+        >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> from pagebot.fonttoolbox.objects.font import findFont
@@ -587,19 +574,19 @@ class FlatContext(BaseContext):
         >>> font = findFont('Roboto-Regular')
         >>> style = dict(font=font, fontSize=pt(20))
         >>> style = makeStyle(style=style)
-        >>> fs = context.newString(txt * 7, style=style)
-        >>> fs
+        >>> bs = context.newString(txt * 7, style=style)
+        >>> bs
         $Lorem ipsu...$
         >>> r = (10, 262, 200, 300)
-        >>> of = context.textBox(fs, r) # Calculate overflow in the box
+        >>> of = context.textBox(bs, r) # Calculate overflow in the box
         >>> of
         'dolor eu interdum. '
         """
-        if isinstance(fs, str):
+        if isinstance(bs, str):
             # Creates a new string with default styles.
             style = {'fontSize': self._fontSize}
             style = makeStyle(style=style)
-            bs = self.newString(fs, style=style)
+            bs = self.newString(bs, style=style)
         #elif not isinstance(fs, FlatString):
         #    raise PageBotFileFormatError('type is %s' % type(fs))
 
@@ -615,7 +602,7 @@ class FlatContext(BaseContext):
         #self.fill(None)
         #self.rect(xpt, ypt, wpt, hpt)
 
-        return bs.textBox(self.page, box)
+        #return bs.textBox(self.page, box)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -652,7 +639,52 @@ class FlatContext(BaseContext):
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def textSize(self, s, w=None, h=None):
+    def textSize(self, bs, w=None, h=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.elements import *
+        >>> context = getContext('Flat')
+        >>> # Make the string, we can adapt the document/page size to it.
+        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(100))
+        >>> bs = context.newString('Hkpx', style)
+        >>> tw, th = context.textSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
+        >>> (tw, th) == bs.textSize
+        True
+        >>> m = 50
+        >>> doc = Document(w=tw+2*m, h=th+m, context=context)
+        >>> page = doc[1]
+        >>> tw, th, bs.fontSize, bs.ascender, bs.descender
+        (209.7pt, 100pt, 100pt, 74.8pt, -25.2pt)
+        >>> e = newText(bs, x=m, y=m, parent=page)
+        >>> e = newRect(x=m, y=m+bs.descender, w=tw, h=th, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m+bs.xHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m+bs.capHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> doc.export('_export/DrawBotContext-textSize.pdf')
+
+        >>> bs = context.newString('Hkpx', style)
+        >>> tw, th = context.textSize(bs.cs, w=bs.w, h=bs.h) # Answering point units. Same as bs.textSize
+        >>> tw.rounded, th.rounded
+        (210pt, 100pt)
+        >>> bs.fontSize *= 0.5 # Same as bs.runs[0].style['fontSize'] *= 0.5 to scale by 50%
+        >>> tw, th = context.textSize(bs.cs, w=bs.w, h=bs.h) # Render to FormattedString for new size.
+        >>> tw.rounded, th.rounded
+        (105pt, 50pt)
+        >>>
+        """
+        if w is not None:
+            return pt(self.b.textSize(bs.cs, width=w, align=LEFT))
+
+        if h is not None:
+            return pt(self.b.textSize(bs.cs, height=h, align=LEFT))
+
+        return pt(self.b.textSize(bs.cs, align=LEFT))
+
+    def XXXtextSize(self, bs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
         no text is defined. Answers the height of the string if the width w is
         given.
@@ -668,10 +700,8 @@ class FlatContext(BaseContext):
         >>> print(context)
         <FlatContext>
         >>> context.newPage(w, h)
-        >>> style = dict(font='Roboto-Regular', fontSize=12)
-        >>> print(style)
-        {'font': 'Roboto-Regular', 'fontSize': 12}
-        >>> bs = context.newString('ABC ', style=style)
+        >>> style = dict(font='PageBot-Regular', fontSize=12)
+        >>> bs = context.newString('ABC ', style)
 
         """
 
@@ -710,9 +740,11 @@ class FlatContext(BaseContext):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Answer the unchanged Babelstring, which is native in Flat.
+        """Answer None, to indicate that the original @bs is already native format.
         """
-        return bs
+        print('dadsdasads', bs.__class__.__name__)
+        assert isinstance(bs, BabelString)
+        return None
 
     #   F O N T
 

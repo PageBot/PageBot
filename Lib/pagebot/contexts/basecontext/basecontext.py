@@ -22,9 +22,9 @@ import PIL
 
 from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
-        FILETYPE_PDF, DEFAULT_FONT)
+        FILETYPE_PDF, DEFAULT_FONT, XXXL)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
-from pagebot.contexts.basecontext.babelstring import BabelString, BabelText
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
@@ -876,7 +876,7 @@ class BaseContext(AbstractContext):
             'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         self.textBox(bs.cs, upt(box))
 
-    def textOverflow(self, bt, h, align=None):
+    def textOverflow(self, lines, h, align=None):
         """Answers the part of the text that doesn't fit in the box.
 
         >>> from pagebot.toolbox.loremipsum import loremipsum
@@ -884,20 +884,26 @@ class BaseContext(AbstractContext):
         >>> from pagebot import getContext
         >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = context.newString(loremipsum(), style)
+        >>> bs = context.newString(loremipsum(), style, w=pt(400))
+        >>> bs.w
+        400pt
         >>> lines = bs.lines # Same as context.getTextLines(bs.cs, bs.w)
-        >>> #of = context.textOverflow(lines, h=pt(100))
-        >>> #of[1]
-        <BabelLine $consectetu...$ x=0pt y=24pt *DrawBotContext>
+        >>> len(lines)
+        144
+        >>> len(context.textOverflow(lines, h=None))
+        144
+        >>> of = context.textOverflow(lines, h=pt(100))
+        >>> of[1]
+        <BabelLineInfo x=0pt y=24pt runs=1>
         """
-        # TODO: move to base context.
-        assert isinstance(bt, BabelText) # Container of BabelLine instances.
+        if h is None:
+            return lines
+
         overflow = []
+        if lines:
+            originY = lines[0].y
 
-        if bt.lines:
-            originY = bt.lines[0].y
-
-        for line in bt.lines:
+        for line in lines:
             y = line.y - originY
             if y > h:
                 break
@@ -906,12 +912,43 @@ class BaseContext(AbstractContext):
 
         return overflow
 
-    def textBoxBaselines(self, bs, w, h=None):
-        """Answers the list of relative baseline positions."""
-        baselines = {}
+    def getBaselines(self, bs, w=None, h=None):
+        """Answers the dictionary of baseline positions, relative
+        to the firstline. If @h is defined, the clip on the height.
 
-        for textLine in self.getTextLines(bs, w, h=h):
-            baselines[textLine.y] = textLine
+        >>> from pagebot.toolbox.loremipsum import loremipsum
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot import getContext
+        >>> context = getContext('DrawBot')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+        >>> bs = context.newString(loremipsum(), style, w=pt(400))
+        >>> bs.w
+        400pt
+        >>> baselines = context.getBaselines(bs, h=pt(100))
+        >>> sorted(baselines.keys())
+        [0, 24, 48, 72, 96]
+        >>> context = getContext('Flat')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+        >>> bs = context.newString(loremipsum(), style, w=pt(400))
+        >>> bs.w
+        400pt
+        >>> baselines = context.getBaselines(bs, h=pt(100))
+        >>> sorted(baselines.keys())
+        [0, 24, 48, 72, 96]
+        """
+        if h is None:
+            h = XXXL
+        baselines = {}
+        if w is not None:
+            lines = self.getTextLines(bs.cs, w, h=h)
+        else:
+            lines = bs.lines
+        if lines:
+            y = lines[0].y
+        for lineInfo in lines:
+            if lineInfo.y - y > h:
+                break
+            baselines[upt(lineInfo.y - y)] = lineInfo
 
         return baselines
 

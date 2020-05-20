@@ -42,6 +42,9 @@ class AbstractContext:
         raise NotImplementedError
 
     def getDrawing(self):
+        """Answers the current drawing stack/canvas. Note that the result is
+        native to the context, no standard API can be applied to this object.
+        """
         raise NotImplementedError
 
     # Styles
@@ -414,9 +417,16 @@ class AbstractContext:
     # Drawing text.
 
     def drawString(self, bs, p):
+        """Draw the BabelString on position @p at baseline.
+        No wrapping is done, but the string can contain newlines.
+        """
         raise NotImplementedError
 
     def drawText(self, bs, box):
+        """Draw the BabelString @bs wrapped in the box. Baseline of
+        the text is at top of the box, minus the largest ascender in the
+        top line. If the box is less high than the number of wrapped lines,
+        answer a list of overflowing."""
         raise NotImplementedError
 
     def text(self, s, p, align=None):
@@ -432,19 +442,38 @@ class AbstractContext:
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
 
-    def getTextLines(self, fs, w=None, h=None):
+    def getTextLines(self, bs, w=None, h=None):
+        """Answer a list of BabelLineInfo instances, containing 
+        the native line description of the context. If the cached
+        bs._lines exists for the given @w and @h, then answer the
+        cached list. In case @w is defined, then wrap the @bs on 
+        this width. If @h is defined, then crop the number of 
+        lines on that height.
+        """
         raise NotImplementedError
 
-    def textBoxBaselines(self, txt, box, align=None):
+    def getBaselines(self, bs, box, align=None):
+        """Answer a dictionary of BabelLineInfo instances, 
+        containing the native line descriptions of the context. 
+        If the cached bs._baselines exits for the given @w and @h,
+        then answer the cached list. In case @w is defined, then
+        wrap the @bs on this width. If @h is defined, then crop
+        the lines on that height.
+        """
         raise NotImplementedError
 
-    def fromBabelString(self, s):
-        """Converts BabelString to correct attributed string class for the
-        context."""
+    def fromBabelString(self, bs):
+        """Converts BabelString to correct attributed string 
+        class for the context. The result is typically stored in
+        bs._cs. For DrawBot this format is the FormattedString.
+        For Flat it is None, to indicate that the main @bs should
+        be used. In Flat the BabelString is the native string
+        representation.
+        """
         raise NotImplementedError
 
-    def asBabelString(self, s):
-        """Converts  another string based class to BabelString."""
+    def asBabelString(self, s, style):
+        """Converts  another string based class into BabelString."""
         raise NotImplementedError
 
     #def FormattedString(self, *args, **kwargs):
