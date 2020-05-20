@@ -37,6 +37,7 @@ from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4, DEFAULT_FONT
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.filepaths import getResourcesPath
 from pagebot.elements import *
 from pagebot.constants import *
 from pagebot.toolbox.color import color, noColor
@@ -86,6 +87,8 @@ class SketchContext(BaseContext):
         >>> context.readDocument(doc)
         """
         super().__init__()
+        if path is None:
+            path = getResourcesPath() + '/sketch/Template.sketch'
         self.name = self.__class__.__name__
         # Keep open connector to the file data. If path is None, a default resource
         # file is opened.
