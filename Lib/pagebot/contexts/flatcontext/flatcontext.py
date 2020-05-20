@@ -90,7 +90,6 @@ class FlatContext(BaseContext):
         'document'
         """
         super().__init__()
-        self.name = self.__class__.__name__
         self.b = flatBuilder
 
         # Save current set of values on gState stack.

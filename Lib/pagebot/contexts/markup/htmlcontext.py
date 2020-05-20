@@ -52,7 +52,6 @@ class HtmlContext(BaseContext):
     def __init__(self):
         super().__init__()
         self.b = HtmlBuilder()
-        self.name = self.__class__.__name__
         self._fill = noColor
 
     # Drawing.
