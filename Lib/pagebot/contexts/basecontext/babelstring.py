@@ -168,10 +168,12 @@ class BabelRun:
 class BabelLineInfo:
 
     def __init__(self, x, y, cLine, context):
+        """Container for line info, after text wrapping by context."""
         self.x = units(x)
         self.y = units(y)
         self.runs = []
-        self.cLine = cLine # Native context line (e.g. CTLine instance.
+        # Native context line (e.g. DrawBot-->CTLine instance. Flat-->BabelString)
+        self.cLine = cLine 
         self.context = context # Just in case it is needed.
 
     def __repr__(self):
@@ -247,10 +249,10 @@ class BabelString:
         # store the slice in self.lines for the current everflow render by the context.
         # _overflowStart Line index where overflow starts.
         # _overflowEnd Line (non-inclusive)
-        # _cs  Cache of native context string (e.g. FormattedString)
-        # _lines Cache of calculated meta info after line wrapping.
-        # _twh Cache of calculated text width (self.tw, self.th)
-        # _pwh Cache of calculated pixel width (self.pw, self.ph)
+        # _cs Cache of native context string (e.g. DrawBot.FormattedString or None for Flat)
+        # _lines Cache of calculated meta info after line wrapping BabelLine
+        # _twh Cached tuple of calculated text width (self.tw, self.th)
+        # _pwh Cached tuple of calculated pixel width (self.pw, self.ph)
 
     def _get_context(self):
         """Answer the weakref context if it is defined.
@@ -292,7 +294,7 @@ class BabelString:
         >>> bs._cs is None
         True
         >>> bs.context = getContext('Flat')
-        >>> #bs.cs
+        >>> bs.cs
         """
         # Cache of native context string (e.g. Drawbot.FormattedString
         # or Flat Strike/Paragraph/Text instances.
@@ -379,7 +381,7 @@ class BabelString:
             return None
 
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
+            self._twh = self.context.textSize(self, w=self._w, h=self._h)
 
         if self._twh is not None:
             return self._twh[0]
@@ -410,7 +412,7 @@ class BabelString:
         if self.context is None: # Required context to be defined
             return None
         if self._twh is None:
-            self._twh = self.context.textSize(self.cs, w=self._w, h=self._h)
+            self._twh = self.context.textSize(self, w=self._w, h=self._h)
         if self._twh is not None:
             return self._twh[1]
         return None
@@ -419,7 +421,9 @@ class BabelString:
     def _get_cs(self):
         """Answer the native formatted string of the context. If it does
         not exist, then ask the context to render it before answering.
-        Cache the result in self._cs.
+        Cache the result in self._cs. 
+        If the result is None (as with Flat.fromBabelString(self)), then
+        the native string of the context is a BabelString. Just answer self then.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
@@ -429,13 +433,14 @@ class BabelString:
         """
         if self._cs is None and self.context is not None:
             self._cs = self.context.fromBabelString(self)
-
+        if self._cs is None: # Which is the case for Flat.fromBabelString.
+            return self # BabelString is native format for this context.
         return self._cs
 
     cs = property(_get_cs)
 
     def _get_lines(self):
-        """Answer the list of BabelLine instances, with meta information about
+        """Answer the list of BabelLineInfo instances, with meta information about
         the line wrapping done by the context. If it does not exist, then ask
         the context to render it before answersing.
         Cache the result in self._lines.
@@ -456,7 +461,6 @@ class BabelString:
             self._lines = self.context.getTextLines(self.cs, w=self.w, h=self.h)
 
         return self._lines
-
     lines = property(_get_lines)
 
     def _get_topLineAscender(self):
@@ -634,7 +638,7 @@ class BabelString:
         """Add a marker as a new run. Code can run through the
         self.runs to mark a run with additional information.
         A marker is a tiny piece of string in transparant color,
-        that can its positions traced back in a rendered BabelText
+        that can its positions traced back in a rendered BabelString
         instance.
 
         >>> from pagebot.contexts import getContext
@@ -657,7 +661,7 @@ class BabelString:
 
     def getMarkerRuns(self, markerId):
         """Answer the list of filtered runs that contain the marker.
-        In general this query is applied on rendered BabelText instances.
+        In general this query is applied on rendered BabelString instances.
         """
         marker = '[[%s::' % markerId
         runs = []

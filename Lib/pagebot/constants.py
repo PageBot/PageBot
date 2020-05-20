@@ -409,13 +409,13 @@ ORIGIN = pt(0, 0, 0) # Default origin if location is omitted.
 # Min/max values for element sizes. Makes sure that elements dimensions for
 # (w,h) never get 0.
 XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
-XXH = 10000000 # Default “infinite” height for BabelText columns.
+XXH = 10000000 # Default “infinite” height for BabelString columns.
 
 # For document, using imaginary depth for layers and shadow
 DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, DEFAULT_DOC_DEPTH = pt(1000, 1000, 100)
 # For elements, using imaginary depth for layers and shadow
 DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH = pt(100, 100, 100)
-DEFAULT_COL_WIDTH = pt(300) # Default width for Text elements and BabelText renders.
+DEFAULT_COL_WIDTH = pt(300) # Default width for Text elements and BabelString renders.
 
 # Default size for windows, e.g. created with VanillaContext
 DEFAULT_WINX, DEFAULT_WINY, DEFAULT_WINW, DEFAULT_WINH = pt(50, 50, DEFAULT_WIDTH, DEFAULT_HEIGHT)
