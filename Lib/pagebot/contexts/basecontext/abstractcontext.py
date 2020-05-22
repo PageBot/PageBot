@@ -170,6 +170,16 @@ class AbstractContext:
         be used by the context to extract width and height."""
         raise NotImplementedError
 
+    def circle(self, x, y, r=None, e=None):
+        """Draw an circle, with middle point on position `(x, y)`, with the optional 
+        given `r` radius. Otherwise the optional PageBot Element instance `e` can
+        be used by the context to extract width as @r."""
+        raise NotImplementedError
+
+    def line(self, x1, y1, x2, y2):
+        """Draw a line from `(x1, y1)` to `(x2, y2)`"""
+        raise NotImplementedError
+
     # Paths.
 
     def newPath(self):
@@ -429,15 +439,15 @@ class AbstractContext:
         answer a list of overflowing."""
         raise NotImplementedError
 
-    def text(self, s, p, align=None):
+    def text(self, bs, p, align=None):
         """Draw the text string at position p."""
         raise NotImplementedError
 
-    def textOverflow(self, txt, box, align=None):
+    def textOverflow(self, bs, box, align=None):
         raise NotImplementedError
 
-    def textBox(self, s, r=None, clipPath=None, align=None):
-        """Draws the text string in rectangle r.
+    def textBox(self, bs, box, clipPath=None, align=None):
+        """Draws the text string in rectangle box.
 
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
@@ -445,9 +455,9 @@ class AbstractContext:
     def getTextLines(self, bs, w=None, h=None):
         """Answer a list of BabelLineInfo instances, containing 
         the native line description of the context. If the cached
-        bs._lines exists for the given @w and @h, then answer the
-        cached list. In case @w is defined, then wrap the @bs on 
-        this width. If @h is defined, then crop the number of 
+        bs._lines exists for the given `w` and `h`, then answer the
+        cached list. In case `w` is defined, then wrap the `bs` on 
+        this width. If `h` is defined, then crop the number of 
         lines on that height.
         """
         raise NotImplementedError
@@ -455,9 +465,9 @@ class AbstractContext:
     def getBaselines(self, bs, box, align=None):
         """Answer a dictionary of BabelLineInfo instances, 
         containing the native line descriptions of the context. 
-        If the cached bs._baselines exits for the given @w and @h,
-        then answer the cached list. In case @w is defined, then
-        wrap the @bs on this width. If @h is defined, then crop
+        If the cached `bs._baselines` exits for the given `w` and `h`,
+        then answer the cached list. In case `w` is defined, then
+        wrap the `bs` on this width. If `h` is defined, then crop
         the lines on that height.
         """
         raise NotImplementedError
@@ -465,8 +475,8 @@ class AbstractContext:
     def fromBabelString(self, bs):
         """Converts BabelString to correct attributed string 
         class for the context. The result is typically stored in
-        bs._cs. For DrawBot this format is the FormattedString.
-        For Flat it is None, to indicate that the main @bs should
+        `bs._cs`. For DrawBot this format is the FormattedString.
+        For Flat it is None, to indicate that the main `bs` should
         be used. In Flat the BabelString is the native string
         representation.
         """

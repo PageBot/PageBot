@@ -458,7 +458,7 @@ class BabelString:
         'BabelLineInfo'
         """
         if self._lines is None:
-            self._lines = self.context.getTextLines(self.cs, w=self.w, h=self.h)
+            self._lines = self.context.getTextLines(self, w=self.w, h=self.h)
 
         return self._lines
     lines = property(_get_lines)
@@ -838,7 +838,7 @@ class BabelString:
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
-        >>> context = getContext
+        >>> context = getContext()
         >>> bs1 = context.newString('ABCD', dict(fontSize=pt(18)))
         >>> bs2 = context.newString('EFGH', dict(fontSize=pt(24)))
         >>> bs3 = bs1 + bs2 # Create new instance, concatenated from both

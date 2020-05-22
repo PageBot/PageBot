@@ -225,8 +225,8 @@ class BaseContext(AbstractContext):
         self.b.rect(xpt, ypt, wpt, hpt)
 
     def oval(self, x, y, w, h):
-        """Draw an oval in rectangle where (x, y) is the bottom-left and size
-        (w, h).
+        """Draw an oval in rectangle where `(x, y)` is the bottom-left and size
+        `(w, h)`.
         TODO: draw as path?
 
         >>> from pagebot import getContext
@@ -236,10 +236,10 @@ class BaseContext(AbstractContext):
         >>> context.oval(0, 0, 100, 100)
         """
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
-        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points for DrawBot.
+        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points.
 
     def circle(self, x, y, r):
-        """Circle draws a DrawBot oval with (x, y) as middle point and radius r.
+        """Circle draws a `circle` with (x, y) as middle point and radius r.
         TODO: draw as path?
 
         >>> from pagebot import getContext
@@ -249,7 +249,19 @@ class BaseContext(AbstractContext):
         >>> context.circle(100, 200, 50)
         """
         xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points for DrawBot.
+        self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points.
+
+    def line(self, x1, y1, x2, y2):
+        """Draw a line from `(x1, y1)` to `(x2, y2)`.
+
+        >>> from pagebot import getContext
+        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context.newPage(420, 420)
+        >>> context.line(pt(100), pt(200), pt(200), pt(300))
+        >>> context.line(100, 200, 200, 300)
+        """
+        x1pt, y1pt, x2pt, y2pt = upt(x1, y1, x2, y2)
+        self.b.line(x1pt, y1pt, x2pt, y2pt) # Render units to points.
 
     # Path.
 

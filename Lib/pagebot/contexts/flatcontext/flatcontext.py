@@ -666,22 +666,17 @@ class FlatContext(BaseContext):
         >>> doc.export('_export/DrawBotContext-textSize.pdf')
 
         >>> bs = context.newString('Hkpx', style)
-        >>> tw, th = context.textSize(bs.cs, w=bs.w, h=bs.h) # Answering point units. Same as bs.textSize
+        >>> tw, th = context.textSize(bs, w=bs.w, h=bs.h) # Answering point units. Same as bs.textSize
         >>> tw.rounded, th.rounded
         (210pt, 100pt)
         >>> bs.fontSize *= 0.5 # Same as bs.runs[0].style['fontSize'] *= 0.5 to scale by 50%
-        >>> tw, th = context.textSize(bs.cs, w=bs.w, h=bs.h) # Render to FormattedString for new size.
+        >>> tw, th = context.textSize(bs, w=bs.w, h=bs.h) # Render to FormattedString for new size.
         >>> tw.rounded, th.rounded
         (105pt, 50pt)
         >>>
         """
-        if w is not None:
-            return pt(self.b.textSize(bs.cs, width=w, align=LEFT))
-
-        if h is not None:
-            return pt(self.b.textSize(bs.cs, height=h, align=LEFT))
-
-        return pt(self.b.textSize(bs.cs, align=LEFT))
+        if w is None and h is None:
+            return bs.cs.width, bs.cs.height
 
     def XXXtextSize(self, bs, w=None, h=None):
         """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
