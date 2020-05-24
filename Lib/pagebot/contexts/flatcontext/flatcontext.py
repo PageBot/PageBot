@@ -44,6 +44,27 @@ try:
 except:
     HAS_PIL = False
 
+class FlatBabelData:
+    """Class to store cached information in BabelString._cs."""
+    def __init__(self, doc, page, tx, pt, runs):
+        self.doc = doc
+        self.page = page
+        self.tx = tx
+        self.pt = pt
+        self.runs = runs
+
+    def __repr__(self):
+        return '<%s runs=%d>' % (self.__class__.__name__, len(self.runs))
+
+class FlatRunData:
+    """Class to store cached information in FlatBabelData.runs."""
+    def __init__(self, st, pars):
+        self.st = st # Current strike for this run
+        self.pars = pars # Current list of paragraphs that share the same strike
+    
+    def __repr__(self):
+        return '<%s>' % self.__class__.__name__
+
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
@@ -487,8 +508,7 @@ class FlatContext(BaseContext):
         >>> bs.add('EFGH', style=style2)
         >>> bs, bs.__class__.__name__
         ($ABCDEFGH$, 'BabelString')
-        >>> context.fromBabelString(bs) is bs
-        True
+
         >>> context.newPage(1000, 1000)
         >>> context.fill(None)
         >>> context.stroke(0, 0.5)
@@ -675,64 +695,46 @@ class FlatContext(BaseContext):
         (105pt, 50pt)
         >>>
         """
-        if w is None and h is None:
-            return bs.cs.width, bs.cs.height
+        placedText = bs.cs.pt.frame(0, 0, w or bs.w or 100, h or bs.h or 100)
+        return pt(placedText.width, placedText.height)
 
-    def XXXtextSize(self, bs, w=None, h=None):
-        """Answers the size tuple (w, h) of the current text. Answer (0, 0) if
-        no text is defined. Answers the height of the string if the width w is
-        given.
-
-        FIXME: returns frame size, not actual text size like DrawBot.
-        TODO: update doctests.
-
-        >>> # Default to point units.
-        >>> w = h = 500
-        >>> x = y = 0
-        >>> from pagebot import getContext
-        >>> context = getContext('Flat')
-        >>> print(context)
-        <FlatContext>
-        >>> context.newPage(w, h)
-        >>> style = dict(font='PageBot-Regular', fontSize=12)
-        >>> bs = context.newString('ABC ', style)
-
-        """
-
-        """
-        >>> bs.place(context.page, 0, 0)
-        >>> style1 = dict(font='Roboto-Bold', fontSize=14)
-        >>> bs1 = context.newString('DEF', style=style)
-        >>> bs + bs1
-        $ABC DEF$
-        >>> #context.textSize(bs)
-        #(201.53pt, 16.8pt)
-        >>> #bs.size
-        #(201.53pt, 16.8pt)
-        >>> #t = t.frame(x, y, w, h) # Numbers default to pt-units
-        >>> #t.overflow()
-        #False
-        >>> #t = context.page.place(bs.text)
-        >>> #t = t.frame(x, y, w, h)
-        >>> #t.overflow()
-        #True
-        >>> #lines = t.lines()
-        >>> #len(lines)
-        #35
-        """
-        # FIXME: is a FlatString, should BabelString also be possible?
-        #fs = self.fromBabelString(bs) # pbs can be FlatString or BabelString
-        return s.textSize(w=w, h=h)
+    def textLines(self, bs, w=None, h=None):
+        pass
 
     def textBoxBaseLines(self, txt, box):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Answer None, to indicate that the original @bs is already native format.
-        We cannot store bs in its own bs._cs.
+        """Convert the "public" data in BabelString to FlatStringData instance
+        and FlatRunData for each run in bs.runs. Then answer it, probably to 
+        be stored in bs._cs.
+        We are storing the Flat parts in cache, to avoid building them up again.
         """
-        assert isinstance(bs, BabelString)
-        return None
+        fDoc = self.b.document(100, 100, 'pt') # Create a dummy document
+        fPage = fDoc.addpage() # Create a dummy page, used for measuring on placedText
+        fParagraphs = []
+        fRuns = []
+        for run in bs.runs:
+            font = findFont(bs.style.get('font', DEFAULT_FONT))
+            flatFont = self.b.font.open(font.path)
+            fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
+            leading = upt(bs.style.get('leading', em(1.2)), base=fontSize)
+            # Keep as multiplication factor to fontSize for Flat.
+            tracking = em(bs.style.get('tracking', 0)).v
+            st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
+            st.tracking(tracking)
+            textFill = bs.style.get('textFill', blackColor)
+            st.color(rgb(*textFill.rgb))
+            # Now we have a strike that represents the style of this run.
+            pars = []
+            for txt in run.s.split('\n'):
+                par = st.paragraph(txt)
+                pars.append(par)
+                fParagraphs.append(par)
+            fRuns.append(FlatRunData(st=st, pars=pars))
+        tx = self.b.text(fParagraphs)
+        pt = fPage.place(tx)
+        return FlatBabelData(doc=fDoc, page=fPage, tx=tx, pt=pt, runs=fRuns)
 
     #   F O N T
 

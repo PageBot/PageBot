@@ -110,7 +110,7 @@ class SketchContext(BaseContext):
     def text(self, bs, p):
         pass
 
-    def getTextLines(self, fs, w=None, h=None):
+    def textLines(self, fs, w=None, h=None):
         pass
 
     def textSize(self, bs, w=None, h=None):

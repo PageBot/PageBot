@@ -896,7 +896,7 @@ class BaseContext(AbstractContext):
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
         >>> bs.w
         400pt
-        >>> lines = bs.lines # Same as context.getTextLines(bs.cs, bs.w)
+        >>> lines = bs.lines # Same as context.textLines(bs.cs, bs.w)
         >>> len(lines)
         144
         >>> len(context.textOverflow(lines, h=None))
@@ -949,7 +949,7 @@ class BaseContext(AbstractContext):
             h = XXXL
         baselines = {}
         if w is not None:
-            lines = self.getTextLines(bs.cs, w, h=h)
+            lines = self.textLines(bs.cs, w, h=h)
         else:
             lines = bs.lines
         if lines:
@@ -962,7 +962,7 @@ class BaseContext(AbstractContext):
         return baselines
 
     # Must be implemented by inheriting context class
-    # getTextLines(self, bs, w=None, h=None) 
+    # textLines(self, bs, w=None, h=None) 
 
     def fromBabelString(self, bs):
         """Answers the unchanged Babelstring, which is native in a context
