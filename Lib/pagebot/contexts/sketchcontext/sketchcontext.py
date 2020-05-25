@@ -30,7 +30,7 @@
 #
 #  The SketchContext is, similar to the HDMLContext, capable of reading and
 #  writing data into the designated file format.
-#
+
 import os
 
 from pagebot.document import Document

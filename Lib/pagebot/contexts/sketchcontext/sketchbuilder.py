@@ -51,6 +51,10 @@ class SketchBuilder(BaseBuilder):
     def fill(self, e, g, b, alpha=None):
         pass
 
+
+    def rect(self, x, y, w=None, h=None, **kwargs):
+        self.sketchApi.rect(x=x, y=y, w=w, h=h, **kwargs)
+
     def _get_pages(self):
         """Answer the list of all SketchPage instances.
 
@@ -58,7 +62,7 @@ class SketchBuilder(BaseBuilder):
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
         >>> b = SketchBuilder(path)
-        >>> b.pages
+        >>> b.page
         [<SketchPage name=Page 1>]
         """
         return self.sketchApi.getPages()

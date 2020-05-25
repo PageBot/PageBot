@@ -962,7 +962,7 @@ class BaseContext(AbstractContext):
         return baselines
 
     # Must be implemented by inheriting context class
-    # textLines(self, bs, w=None, h=None) 
+    # textLines(self, bs, w=None, h=None)
 
     def fromBabelString(self, bs):
         """Answers the unchanged Babelstring, which is native in a context
