@@ -45,7 +45,7 @@ class Article:
         >>> from pagebot.constants import A4
         >>> from pagebot import getContext
         >>> context = getContext()
-        >>> doc = Document(size=A4)
+        >>> doc = Document(size=A4, context=context)
         >>> ad = 'First page has a large headline and one column text. If text overfill, continue on the second page in 2 full height columns.'
         >>> md = '''# This is a head\\n## This is a subhead\\nThis is plain text.'''
         >>> a = Article(doc, ad, mdText=md, context=context)

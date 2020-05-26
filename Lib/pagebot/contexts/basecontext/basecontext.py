@@ -43,7 +43,6 @@ class BaseContext(AbstractContext):
     """
     # Tells Typesetter that by default tags should not be included in output.
     useTags = False
-
     STRING_CLASS = BabelString
     EXPORT_TYPES = None
 
