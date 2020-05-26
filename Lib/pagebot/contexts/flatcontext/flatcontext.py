@@ -788,7 +788,7 @@ class FlatContext(BaseContext):
         """
         self._fontSize = upt(fontSize)
 
-    def newBulletString(self, bullet, e=e, style=None):
+    def newBulletString(self, bullet, style=None):
         return self.newString(bullet, style=style)
 
     def language(self, language):

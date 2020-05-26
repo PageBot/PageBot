@@ -158,19 +158,19 @@ class AbstractContext:
 
     # Basic shapes.
 
-    def rect(self, x, y, w=None, h=None):
+    def rect(self, x, y, w, h):
         """Draw a rectangle at position `(x, y)`, with the optional given `w`
         width and `h` height. Otherwise the optional PageBot Element instance
         `e` can be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def oval(self, x, y, w=None, h=None):
+    def oval(self, x, y, w, h):
         """Draw an oval at position `(x, y)`, with the optional given `w` width
         and `h` height. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def circle(self, x, y, r=None):
+    def circle(self, x, y, r):
         """Draw an circle, with middle point on position `(x, y)`, with the optional
         given `r` radius. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width as @r."""

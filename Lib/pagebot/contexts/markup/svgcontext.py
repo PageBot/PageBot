@@ -312,7 +312,7 @@ class SvgContext(BaseContext):
     def textOverflow(self, sOrBs, box, align=None):
         pass
 
-    def textBoxBaselines(self, txt, box, align=None):
+    def baselines(self, bs, box, align=None):
         pass
 
     def translate(self, dx, dy):

@@ -210,7 +210,7 @@ class BaseContext(AbstractContext):
 
     # Basic shapes.
 
-    def rect(self, x, y, w, h):
+    def rect(self, x, y, w=None, h=None):
         """Draws a rectangle in the canvas.
         TODO: draw as path?
 
@@ -224,7 +224,7 @@ class BaseContext(AbstractContext):
         # Render units to points for DrawBot.
         self.b.rect(xpt, ypt, wpt, hpt)
 
-    def oval(self, x, y, w, h):
+    def oval(self, x, y, w=None, h=None):
         """Draw an oval in rectangle where `(x, y)` is the bottom-left and size
         `(w, h)`.
         TODO: draw as path?
@@ -238,7 +238,7 @@ class BaseContext(AbstractContext):
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
         self.b.oval(xpt, ypt, wpt, hpt) # Render units to points.
 
-    def circle(self, x, y, r):
+    def circle(self, x, y, r=None):
         """Circle draws a `circle` with (x, y) as middle point and radius r.
         TODO: draw as path?
 
@@ -1030,8 +1030,8 @@ class BaseContext(AbstractContext):
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None):
-        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
-            w=w, h=h, scaleType=scaleType, e=e)
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w,
+                h=h, scaleType=scaleType)
 
     def numberOfPages(self, path):
         """Answer the number of pages, if the image paths points to a PDF.
