@@ -452,14 +452,6 @@ class AbstractContext:
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
 
-    def textLines(self, bs, w=None, h=None):
-        """Answer a list of BabelLineInfo instances, containing the native line
-        description of the context. If the cached bs._lines exists for the
-        given `w` and `h`, then answer the cached list. In case `w` is defined,
-        then wrap the `bs` on this width. If `h` is defined, then crop the
-        number of lines on that height."""
-        raise NotImplementedError
-
     def baselines(self, bs, box, align=None):
         """Answers a dictionary of BabelLineInfo instances, containing the
         native line descriptions of the context. If the cached `bs._baselines`
@@ -469,13 +461,11 @@ class AbstractContext:
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Converts BabelString to correct attributed string
-        class for the context. The result is typically stored in
-        `bs._cs`. For DrawBot this format is the FormattedString.
-        For Flat it is None, to indicate that the main `bs` should
-        be used. In Flat the BabelString is the native string
-        representation.
-        """
+        """Converts BabelString to correct attributed string class for the
+        context. The result is typically stored in `bs._cs`. For DrawBot this
+        format is the FormattedString.  For Flat it is None, to indicate that
+        the main `bs` should be used. In Flat the BabelString is the native
+        string representation. """
         raise NotImplementedError
 
     def asBabelString(self, s, style):

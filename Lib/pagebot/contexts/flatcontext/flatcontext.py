@@ -698,11 +698,8 @@ class FlatContext(BaseContext):
         placedText = bs.cs.pt.frame(0, 0, w or bs.w or 100, h or bs.h or 100)
         return pt(placedText.width, placedText.height)
 
-    def textLines(self, bs, w=None, h=None):
+    def baselines(self, bs, box, alignment=None):
         pass
-
-    def textBoxBaseLines(self, txt, box):
-        raise NotImplementedError
 
     def fromBabelString(self, bs):
         """Convert the "public" data in BabelString to FlatStringData instance
