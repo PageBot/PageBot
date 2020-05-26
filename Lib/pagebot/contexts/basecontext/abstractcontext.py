@@ -171,7 +171,7 @@ class AbstractContext:
         raise NotImplementedError
 
     def circle(self, x, y, r=None, e=None):
-        """Draw an circle, with middle point on position `(x, y)`, with the optional 
+        """Draw an circle, with middle point on position `(x, y)`, with the optional
         given `r` radius. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width as @r."""
         raise NotImplementedError
@@ -453,27 +453,23 @@ class AbstractContext:
         raise NotImplementedError
 
     def textLines(self, bs, w=None, h=None):
-        """Answer a list of BabelLineInfo instances, containing 
-        the native line description of the context. If the cached
-        bs._lines exists for the given `w` and `h`, then answer the
-        cached list. In case `w` is defined, then wrap the `bs` on 
-        this width. If `h` is defined, then crop the number of 
-        lines on that height.
-        """
+        """Answer a list of BabelLineInfo instances, containing the native line
+        description of the context. If the cached bs._lines exists for the
+        given `w` and `h`, then answer the cached list. In case `w` is defined,
+        then wrap the `bs` on this width. If `h` is defined, then crop the
+        number of lines on that height."""
         raise NotImplementedError
 
     def baselines(self, bs, box, align=None):
-        """Answer a dictionary of BabelLineInfo instances, 
-        containing the native line descriptions of the context. 
-        If the cached `bs._baselines` exits for the given `w` and `h`,
-        then answer the cached list. In case `w` is defined, then
-        wrap the `bs` on this width. If `h` is defined, then crop
-        the lines on that height.
-        """
+        """Answers a dictionary of BabelLineInfo instances, containing the
+        native line descriptions of the context. If the cached `bs._baselines`
+        exists for the given `w` and `h`, then answer the cached list. In case
+        `w` is defined, then wrap the `bs` on this width. If `h` is defined,
+        then crop the lines on that height."""
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Converts BabelString to correct attributed string 
+        """Converts BabelString to correct attributed string
         class for the context. The result is typically stored in
         `bs._cs`. For DrawBot this format is the FormattedString.
         For Flat it is None, to indicate that the main `bs` should
