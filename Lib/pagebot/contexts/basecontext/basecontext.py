@@ -210,7 +210,7 @@ class BaseContext(AbstractContext):
 
     # Basic shapes.
 
-    def rect(self, x, y, w=None, h=None):
+    def rect(self, x, y, w, h):
         """Draws a rectangle in the canvas.
         TODO: draw as path?
 
@@ -224,7 +224,7 @@ class BaseContext(AbstractContext):
         # Render units to points for DrawBot.
         self.b.rect(xpt, ypt, wpt, hpt)
 
-    def oval(self, x, y, w=None, h=None):
+    def oval(self, x, y, w, h):
         """Draw an oval in rectangle where `(x, y)` is the bottom-left and size
         `(w, h)`.
         TODO: draw as path?
@@ -238,7 +238,7 @@ class BaseContext(AbstractContext):
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
         self.b.oval(xpt, ypt, wpt, hpt) # Render units to points.
 
-    def circle(self, x, y, r=None):
+    def circle(self, x, y, r):
         """Circle draws a `circle` with (x, y) as middle point and radius r.
         TODO: draw as path?
 
