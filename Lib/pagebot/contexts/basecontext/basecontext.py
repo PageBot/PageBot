@@ -619,7 +619,7 @@ class BaseContext(AbstractContext):
 
     setStrokeColor = stroke
 
-    def shadow(self, eShadow, e=None):
+    def shadow(self, eShadow):
         """Set the graphics state for shadow if parameters are set."""
         if eShadow is not None and eShadow.offset is not None:
             if eShadow.color.isCmyk:
@@ -1004,10 +1004,10 @@ class BaseContext(AbstractContext):
         assert isinstance(bs, self.STRING_CLASS)
         return bs
 
-    def newBulletString(self, bullet, e=None, style=None):
+    def newBulletString(self, bullet, style=None):
         return self.newString(bullet, style=style)
 
-    def XXXnewText(self, textStyles, e=None, newLine=False):
+    def XXXnewText(self, textStyles, newLine=False):
         """Answers a BabelString as a combination of all text and styles in
         textStyles, which is should have format:
 
@@ -1036,9 +1036,9 @@ class BaseContext(AbstractContext):
     # Images.
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None, e=None):
-        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber,
-            w=w, h=h, scaleType=scaleType, e=e)
+            scaleType=None):
+        return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w,
+                h=h, scaleType=scaleType)
 
     def numberOfPages(self, path):
         """Answer the number of pages, if the image paths points to a PDF.

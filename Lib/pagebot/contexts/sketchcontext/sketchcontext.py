@@ -30,7 +30,7 @@
 #
 #  The SketchContext is, similar to the HDMLContext, capable of reading and
 #  writing data into the designated file format.
-#
+
 import os
 
 from pagebot.document import Document
@@ -55,7 +55,6 @@ class SketchContext(BaseContext):
     '''
 
     W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
-
     DOCUMENT_CLASS = Document
 
     def __init__(self, path=None):

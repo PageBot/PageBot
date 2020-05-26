@@ -36,7 +36,7 @@ from pagebot.toolbox.color import color
 class BabelRun:
 
     def __init__(self, s, style=None):
-        """Answer the storage for string + style in BabelString. Note that the
+        """Answers the storage for string + style in BabelString. Note that the
         style values of sequential runs are *not* cascading. This is similar
         to the behavior of the DrawBot FormattedString attributes.
 
@@ -84,12 +84,12 @@ class BabelRun:
         return r + '>'
 
     def getFSStyle(self):
-        # D E P R I C A T E D
-        # FIXME-Petr A BabelString should not know anything about contexts,
+        # D E P R E C A T E D
+        # FIXME - Petr A BabelString should not know anything about contexts,
         # except that it can exececute text, textBox, textSize and textLines.
         # Styles in runs are not cascading. self.leading gives the last,
         # because that is the attribute value if plain text gets appended.
-        # PIXME-Petr The question is if we need to convert to FlatString at all.
+        # FIXME - Petr The question is if we need to convert to FlatString at all.
         # Can't we just use the main data in Babelstring, until processing into
         # lines or text?
 
@@ -196,12 +196,14 @@ class BabelRunInfo:
         return '<%s "%s">' % (self.__class__.__name__, self.s)
 
 class BabelString:
-    """BabelString is a generic string format, that stores a string or
-    text as a list of BabelRun instances.
-    Note that the styles values of sequential runs are *not* cascading.
-    This is similar to the behavior of the DrawBot FormattedString attributes.
-    Plain numbers are by default converted to points.
-    Attribute properties refer to the style of the last run.
+    """BabelString is a generic string format, that stores a string or text as
+    a list of BabelRun instances.
+
+    NOTE:
+    - The styles values of sequential runs are *not* cascading. This is
+      similar to the behavior of the DrawBot FormattedString attributes.
+    - Plain numbers are by default converted to points.
+    - Attribute properties refer to the style of the last run.
 
     >>> from pagebot.toolbox.units import pt, mm
     >>> bs = BabelString('ABCD', style=dict(fontSize=12))
@@ -220,9 +222,10 @@ class BabelString:
         dictionary compatible with the document root style keys to add one
         PageBotRun as default. Otherwise self.runs is created as empty list.
         @s should be a plain string, but gets cast by `str(s)` otherwise.
-        Optional `w` and `h` make the difference if this BabelString behaves
-        as a plain string (answering it's own size) or a text (answering
-        the defined size and overflow).
+        Optional `w` and `h` make the difference if this BabelString behaves as
+        a plain string (answering it's own size) or a text (answering the
+        defined size and overflow).
+
         Some methods only work if context is defined (e.g. self.textSize,
         self.lines and self.overflow)
 
@@ -260,7 +263,7 @@ class BabelString:
         # _pwh Cached tuple of calculated pixel width (self.pw, self.ph)
 
     def _get_context(self):
-        """Answer the weakref context if it is defined.
+        """Answers the weakref context if it is defined.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
@@ -290,8 +293,8 @@ class BabelString:
     context = property(_get_context, _set_context)
 
     def reset(self):
-        """Clear the context cache, in case the string source changed,
-        to force new calculation of context dependent wrapping.
+        """Clears the context cache, in case the string source changed, to
+        force new calculation of context dependent wrapping.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
@@ -307,7 +310,7 @@ class BabelString:
         """
         # Cache of native context string (e.g. Drawbot.FormattedString
         # or FlatStringData, containing Strike/Paragraph/Text instances.
-        self._cs = None 
+        self._cs = None
         self._lines = None # Cache of calculated meta info after line wrapping.
         self._twh = None # Cache of calculated text width (self.tw, self.th)
         self._pwh = None # Cache of calculated pixel width (self.pw, self.ph)
@@ -315,9 +318,9 @@ class BabelString:
         self._overflowEnd = None # Line (non-inclusive)
 
     def _get_w(self):
-        """Answer the request width of this string. If None, there is not 
-        width defined, so not wrapping is done and `self.tw` will just 
-        answer the natural width of the string.
+        """Answers the request width of this string. If None, there is not
+        width defined, so not wrapping is done and `self.tw` will just answer
+        the natural width of the string.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
@@ -334,20 +337,19 @@ class BabelString:
         250.9pt
         """
         return self._w # Can be None
+
     def _set_w(self, w):
-        """Answer the request width of this string. If None, there is no 
-        width defined, so no wrapping is done and `self.tw` will just 
-        answer the natural width of the string.
-        """
+        """Answers the requested width of this string. If None, there is no
+        width defined, so no wrapping is done and `self.tw` will just answer
+        the natural width of the string."""
         self._w = units(w)
         self.reset() # Force context wrapping for self.tw to be recalculated.
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answer the requested height of this string. If None, there is no 
-        height defined, so not overlap checking done and `self.th` will just 
-        answer the natural height of the string.
-        """
+        """Answers the requested height of this string. If None, there is no
+        height defined, so not overlap checking done and `self.th` will just
+        answer the natural height of the string."""
         return self._h
     def _set_h(self, h):
         self._h = units(h)
@@ -355,8 +357,8 @@ class BabelString:
     h = property(_get_h, _set_h)
 
     def _get_hasWidth(self):
-        """Answer the boolean flag if self has a width defined (True) or gets
-        its width from the rendered self.tw text width.
+        """Answers if self has a defined width (True) or gets its width from the
+        rendered self.tw text width.
 
         >>> bs = BabelString('ABCD')
         >>> bs.hasWidth
@@ -369,8 +371,8 @@ class BabelString:
     hasWidth = property(_get_hasWidth)
 
     def _get_hasHeight(self):
-        """Answer the boolean flag if self has a height defined (True) or gets
-        its height from the rendered self.th text height.
+        """Answers if self has a defined height (True) or gets its height from
+        the rendered self.th text height.
 
         >>> bs = BabelString('ABCD')
         >>> bs.hasHeight
@@ -383,7 +385,7 @@ class BabelString:
     hasHeight = property(_get_hasHeight)
 
     def _get_tw(self):
-        """Answer the cached calculated context width
+        """Answers the cached calculated context width.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -414,7 +416,7 @@ class BabelString:
     tw = property(_get_tw)
 
     def _get_th(self):
-        """Answer the cached calculated context height.
+        """Answers the cached calculated context height.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -445,9 +447,9 @@ class BabelString:
     th = property(_get_th)
 
     def _get_cs(self):
-        """Answer the native formatted string of the context. If it does
-        not exist, then ask the context to render it before answering.
-        Cache the result in self._cs. 
+        """Answers the native formatted string of the context. If it does not
+        exist, then ask the context to render it before answering. Caches the
+        result in self._cs.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
@@ -465,10 +467,10 @@ class BabelString:
     cs = property(_get_cs)
 
     def _get_lines(self):
-        """Answer the list of BabelLineInfo instances, with meta information about
-        the line wrapping done by the context. If it does not exist, then ask
-        the context to render it before answersing.
-        Cache the result in self._lines.
+        """Answers the list of BabelLineInfo instances, with meta information
+        about the line wrapping done by the context. If it does not exist, then
+        ask the context to render it before answering. Caches the result in
+        self._lines.
 
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
@@ -504,7 +506,7 @@ class BabelString:
         return self.context.getTextLines(self, w=w, h=h)
 
     def _get_topLineAscender(self):
-        """Answer the largest ascender height in the first line.
+        """Answers the largest ascender height in the first line.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -534,7 +536,7 @@ class BabelString:
     topLineAscender = property(_get_topLineAscender)
 
     def _get_topLineAscender_h(self):
-        """Answer the largest ascender height for /h in the first line.
+        """Answers the largest ascender height for /h in the first line.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -565,8 +567,8 @@ class BabelString:
     topLineAscender_h = property(_get_topLineAscender_h)
 
     def _get_topLineCapHeight(self):
-        """Answer the largest capHeight in the first line. The height is
-        derived from the fonts, independent if there are actually capitals
+        """Answers the largest capHeight in the first line. The height is
+        derived from the fonts, independent of if there are actually capitals
         in the first line.
 
         >>> from pagebot.contexts import getContext
@@ -591,9 +593,9 @@ class BabelString:
     topLineCapHeight = property(_get_topLineCapHeight)
 
     def _get_topLineXHeight(self):
-        """Answer the largest xHeight in the first line. The height is
-        derived from the fonts, independent if there are actually lower case
-        in the first line.
+        """Answers the largest xHeight in the first line. The height is derived
+        from the fonts, independent of if there are actually lower case in the
+        first line.
 
         """
         """
@@ -619,8 +621,8 @@ class BabelString:
     topLineXHeight = property(_get_topLineXHeight)
 
     def _get_bottomLineDescender(self):
-        """Answer the largest abs(descender) in the bottom line. The height is
-        derived from the fonts, independent if there are actually lower case
+        """Answers the largest abs(descender) in the bottom line. The height is
+        derived from the fonts, independent of if there are actually lower case
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
 
@@ -650,10 +652,11 @@ class BabelString:
     bottomLineDescender = property(_get_bottomLineDescender)
 
     def _get_bottomLineDescender_p(self):
-        """Answer the largest abs(descender) for /p in the bottom line. The height is
-        derived from the fonts, independent if there are actually lower case
-        in the first line. The value answered is a position (negative number),
-        not a distance, relative to the baseline of the last line.
+        """Answers the largest abs(descender) for /p in the bottom line. The
+        height is derived from the fonts, independent of if there are actually
+        lower case in the first line. The value answered is a position
+        (negative number), not a distance, relative to the baseline of the last
+        line.
 
         """
         """
@@ -681,11 +684,10 @@ class BabelString:
 
 
     def addMarker(self, markerId, arg):
-        """Add a marker as a new run. Code can run through the
-        self.runs to mark a run with additional information.
-        A marker is a tiny piece of string in transparant color,
-        that can its positions traced back in a rendered BabelString
-        instance.
+        """Adds a marker as a new run. Code can run through the self.runs to
+        mark a run with additional information. A marker is a tiny piece of
+        string in transparant color, that can its positions traced back in a
+        rendered BabelString instance.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('DrawBot')
@@ -706,9 +708,8 @@ class BabelString:
         self.runs.append(BabelRun('[[%s::%s]]' % (markerId, arg), style))
 
     def getMarkerRuns(self, markerId):
-        """Answer the list of filtered runs that contain the marker.
-        In general this query is applied on rendered BabelString instances.
-        """
+        """Answers the list of filtered runs that contain the marker. In
+        general this query is applied on rendered BabelString instances."""
         marker = '[[%s::' % markerId
         runs = []
         for run in self.runs:
@@ -768,7 +769,7 @@ class BabelString:
         return twh
 
     def _get_textSize(self):
-        """Answer the text size of self, rendered by the defined context.
+        """Answers the text size of self, rendered by the defined context.
         Raise an error if the context is not defined.
 
         >>> from pagebot.toolbox.units import pt, em
@@ -869,7 +870,7 @@ class BabelString:
         return None
 
     def __repr__(self):
-        """Answer the identifier string with format $ABCD$, to show the
+        """Answers the identifier string with format $ABCD$, to show the
         difference with the actual string. Abbreviate with ... if the
         concatenated string is longer than 10 characers.
 
@@ -884,7 +885,7 @@ class BabelString:
         return '$%s$' % s.replace('\n',' ')
 
     def add(self, s, style=None):
-        """Create a new PabeBotRun instance and add it to self.runs.
+        """Creates a new PabeBotRun instance and add it to self.runs.
 
         >>> from pagebot.toolbox.units import pt
         >>> style0 = dict(fontSize=pt(12))
@@ -919,7 +920,7 @@ class BabelString:
             self.reset() # As we changed the content, cache needs to recalculate.
 
     def __len__(self):
-        """Answer total string length.
+        """Answers total string length.
 
         >>> from pagebot.toolbox.units import pt
         >>> bs = BabelString('ABCD')
@@ -935,8 +936,8 @@ class BabelString:
         return len(self.s)
 
     def __add__(self, bs):
-        """If pbs is a plain string, then just add it to the last run.
-        Otherwise create a new BabelString and copy all runs there.
+        """If pbs is a plain string, just adds it to the last run. Otherwise
+        creates a new BabelString and copy all runs there.
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
@@ -965,7 +966,7 @@ class BabelString:
         return bsResult
 
     def __eq__(self, bs):
-        """Compare @bs with self.
+        """Compares @bs with self.
 
         >>> from pagebot.toolbox.units import pt
         >>> bs1 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)))
@@ -991,7 +992,7 @@ class BabelString:
         return not self == bs
 
     def _get_s(self):
-        """Set/get the of the last run.
+        """Set / get the last run.
 
         >>> bs = BabelString('ABCD')
         >>> bs, bs.runs[0].s
@@ -1014,9 +1015,8 @@ class BabelString:
 
     s = property(_get_s, _set_s)
 
-    #  Attributes, based on current style (not cascading)
-    #  If the current style does not include the attributes,
-    #  then answer the default for that value.
+    #  Attributes, based on current style (not cascading) If the current style
+    #  does not include the attributes, then answer the default for that value.
 
     def _get_style(self):
         if self.runs:
@@ -1033,7 +1033,7 @@ class BabelString:
     style = property(_get_style, _set_style)
 
     def _get_language(self):
-        """Answer the langauge value of the current style.
+        """Answers the langauge value of the current style.
 
         >>> from pagebot.constants import LANGUAGE_NL
         >>> bs = BabelString('ABCD', dict(font='Roboto'))
@@ -1050,7 +1050,7 @@ class BabelString:
     language = property(_get_language, _set_language)
 
     def _get_hyphenation(self):
-        """Answer the hyphenation value of the current style.
+        """Answers the hyphenation value of the current style.
 
         >>> bs = BabelString('ABCD', dict(font='Roboto'))
         >>> bs.hyphenation
@@ -1067,9 +1067,9 @@ class BabelString:
     hyphenation = property(_get_hyphenation, _set_hyphenation)
 
     def _get_font(self):
-        """Answer the font that is defined in the current style.
-        If the font is just a string, then find the font and answer it.
-        Answer the default font, if the font name cannot be found.
+        """Answers the font that is defined in the current style.  If the font
+        is just a string, then find the font and answer it. Answers the default
+        font, if the font name cannot be found.
 
         >>> bs = BabelString('ABCD', dict(font='PageBot-Regular'))
         >>> bs.font
@@ -1089,7 +1089,7 @@ class BabelString:
     font = property(_get_font, _set_font)
 
     def _get_fontSize(self):
-        """Answer the fontSize that is defined in the current style.
+        """Answers the fontSize that is defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
         >>> bs = BabelString('ABCD', dict(fontSize=12))
@@ -1110,9 +1110,9 @@ class BabelString:
     fontSize = property(_get_fontSize, _set_fontSize)
 
     def _get_leading(self):
-        """Answer the leading that is defined in the current style.
-        Render relative leading units with self.fontSize as base.
-        Note that this only refers to the leading of the last run.
+        """Answers the leading that is defined in the current style.  Render
+        relative leading units with self.fontSize as base. Note that this only
+        refers to the leading of the last run.
 
         >>> from pagebot.toolbox.units import pt, em
         >>> bs = BabelString('ABCD', dict(leading=em(1), fontSize=pt(100)))
@@ -1133,9 +1133,9 @@ class BabelString:
     leading = property(_get_leading, _set_leading)
 
     def _get_tracking(self):
-        """Answer the tracking that is defined in the current style.
-        Render relative tracking units with self.fontSize as base.
-        Note that this only refers to the tracking of the last run.
+        """Answers the tracking that is defined in the current style.  Render
+        relative tracking units with self.fontSize as base. Note that this
+        only refers to the tracking of the last run.
 
         >>> from pagebot.toolbox.units import pt, em
         >>> bs = BabelString('ABCD', dict(tracking=em(0.1), fontSize=pt(100)))
@@ -1156,8 +1156,8 @@ class BabelString:
     tracking = property(_get_tracking, _set_tracking)
 
     def _get_xAlign(self):
-        """Answer the xAlign attribute, as defined in the current style.
-        Note that this only refers to the alignments of the last run.
+        """Answers the xAlign attribute, as defined in the current style. Note
+        that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT, XHEIGHT
         >>> bs = BabelString('ABCD', dict(xTextAlign=CENTER))
@@ -1179,8 +1179,8 @@ class BabelString:
     xAlign = property(_get_xAlign, _set_xAlign)
 
     def _get_yAlign(self):
-        """Answer the yAlign attribute, as defined in the current style.
-        Note that this only refers to the alignments of the last run.
+        """Answers the yAlign attribute, as defined in the current style. Note
+        that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT
         >>> bs = BabelString('ABCD')
@@ -1200,8 +1200,9 @@ class BabelString:
     yAlign = property(_get_yAlign, _set_yAlign)
 
     def _get_baselineShift(self):
-        """Answer the baselineShift attribute, as defined in the current style.
-        Note that this only refers to the baselineShift of the last run.
+        """Answers the baselineShift attribute, as defined in the current
+        style. Note that this only refers to the baselineShift of the last
+        run.
 
         >>> from pagebot.toolbox.units import em, pt
         >>> bs = BabelString('ABCD', dict(baselineShift=em(0.2), fontSize=pt(100)))
@@ -1220,8 +1221,9 @@ class BabelString:
     baselineShift = property(_get_baselineShift, _set_baselineShift)
 
     def _get_openTypeFeatures(self):
-        """Answer the openTypeFeatures attribute, as defined in the current style.
-        Note that this only refers to the openTypeFeatures of the last run.
+        """Answers the openTypeFeatures attribute, as defined in the current
+        style. Note that this only refers to the openTypeFeatures of the last
+        run.
 
         >>> bs = BabelString('ABCD', dict(openTypeFeatures=dict(smcp=True)))
         >>> bs.openTypeFeatures
@@ -1239,7 +1241,7 @@ class BabelString:
     openTypeFeatures = property(_get_openTypeFeatures, _set_openTypeFeatures)
 
     def _get_underline(self):
-        """Answer the underline attribute, as defined in the current style.
+        """Answers the underline attribute, as defined in the current style.
         Note that this only refers to the underline of the last run.
 
         >>> bs = BabelString('ABCD', dict(underline=True))
@@ -1256,8 +1258,8 @@ class BabelString:
     underline = property(_get_underline, _set_underline)
 
     def _get_indent(self):
-        """Answer the indent attribute, as defined in the current style.
-        Note that this only refers to the indent of the last run.
+        """Answers the indent attribute, as defined in the current style. Note
+        that this only refers to the indent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
         >>> bs = BabelString('ABCD', dict(indent=em(0.2), fontSize=pt(100)))
@@ -1276,7 +1278,7 @@ class BabelString:
     indent = property(_get_indent, _set_indent)
 
     def _get_tailIndent(self):
-        """Answer the tailIndent attribute, as defined in the current style.
+        """Answers the tailIndent attribute, as defined in the current style.
         Note that this only refers to the tailIndent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
@@ -1296,7 +1298,7 @@ class BabelString:
     tailIndent = property(_get_tailIndent, _set_tailIndent)
 
     def _get_firstLineIndent(self):
-        """Answer the tailIndent attribute, as defined in the current style.
+        """Answers the tailIndent attribute, as defined in the current style.
         Note that this only refers to the tailIndent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
@@ -1316,7 +1318,7 @@ class BabelString:
     firstLineIndent = property(_get_firstLineIndent, _set_firstLineIndent)
 
     def _get_textFill(self):
-        """Answer the textFill as defined in the current style.
+        """Answers the textFill as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
         >>> bs = BabelString('ABCD', dict(textFill=color(1, 0, 0)))
@@ -1335,7 +1337,7 @@ class BabelString:
     textFill = property(_get_textFill, _set_textFill)
 
     def _get_textStroke(self):
-        """Answer the textStroke as defined in the current style.
+        """Answers the textStroke as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
         >>> bs = BabelString('ABCD', dict(textStroke=color(1, 0, 0)))
@@ -1354,7 +1356,7 @@ class BabelString:
     textStroke = property(_get_textStroke, _set_textStroke)
 
     def _get_textStrokeWidth(self):
-        """Answer the textStrokeWidth as defined in the current style.
+        """Answers the textStrokeWidth as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
         >>> bs = BabelString('ABCD', dict(textStrokeWidth=2))
@@ -1372,7 +1374,7 @@ class BabelString:
     textStrokeWidth = property(_get_textStrokeWidth, _set_textStrokeWidth)
 
     def _get_capHeight(self):
-        """Answer the font capHeight as defined in the current style,
+        """Answers the font capHeight as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
 
@@ -1393,7 +1395,7 @@ class BabelString:
     capHeight = property(_get_capHeight)
 
     def _get_xHeight(self):
-        """Answer the font capHeight as defined in the current style,
+        """Answers the font capHeight as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
 
@@ -1414,7 +1416,7 @@ class BabelString:
     xHeight = property(_get_xHeight)
 
     def _get_ascender(self):
-        """Answer the font ascender as defined in the current style,
+        """Answers the font ascender as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
         Use the self.info.typoAscender (from the [OS/2] table) instead of
@@ -1437,7 +1439,7 @@ class BabelString:
     ascender = property(_get_ascender)
 
     def _get_descender(self):
-        """Answer the font descender as defined in the current style,
+        """Answers the font descender as defined in the current style,
         in absolute measures, by calculating self.font.info.unisPerEm
         and self.fontSize ratio.
         Use the self.info.typoDescender (from the [OS/2] table) instead of
@@ -1462,7 +1464,7 @@ class BabelString:
     descender = property(_get_descender)
 
     def getStyleAtIndex(self, index):
-        """Answer the style at character index. If a run style is None,
+        """Answers the style at character index. If a run style is None,
         then answer the latest defined style.
 
         >>> from pagebot.toolbox.units import pt

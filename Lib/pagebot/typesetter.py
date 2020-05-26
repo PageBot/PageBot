@@ -311,7 +311,7 @@ class Typesetter:
         bullet = bulletStyle.get('listBullet', self.DEFAULT_BULLET)
 
         # Only defined for non-HTML. Get styled string with bullet.
-        bulletString = context.newBulletString(bullet+'\t', e=e, style=bulletStyle)
+        bulletString = context.newBulletString(bullet+'\t', style=bulletStyle)
         if bulletString is not None:
             self.append(bulletString) # Append the bullet as defined in the style.
         # Typeset the block of the tag.

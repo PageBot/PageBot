@@ -158,20 +158,20 @@ class AbstractContext:
 
     # Basic shapes.
 
-    def rect(self, x, y, w=None, h=None, e=None):
+    def rect(self, x, y, w, h):
         """Draw a rectangle at position `(x, y)`, with the optional given `w`
         width and `h` height. Otherwise the optional PageBot Element instance
         `e` can be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def oval(self, x, y, w=None, h=None, e=None):
+    def oval(self, x, y, w, h):
         """Draw an oval at position `(x, y)`, with the optional given `w` width
         and `h` height. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def circle(self, x, y, r=None, e=None):
-        """Draw an circle, with middle point on position `(x, y)`, with the optional 
+    def circle(self, x, y, r):
+        """Draw an circle, with middle point on position `(x, y)`, with the optional
         given `r` radius. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width as @r."""
         raise NotImplementedError
@@ -233,7 +233,7 @@ class AbstractContext:
         the example."""
         raise NotImplementedError
 
-    def line(self, p1=None, p2=None, e=None):
+    def line(self, p1=None, p2=None):
         """Draws a line between two given points `p1` and `p`. Use optional
         calling Element `e` for points and additional drawing settings of the
         line."""
@@ -326,7 +326,7 @@ class AbstractContext:
 
     cmykShadow = shadow
 
-    def linearGradient(self, gradient, origin, w, h, e=None):
+    def linearGradient(self, gradient, origin, w, h):
         """A linear Gradient `gradient` instance fill with:
 
         * `startPoint` as (x, y)
@@ -473,13 +473,11 @@ class AbstractContext:
         raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Converts BabelString to correct attributed string 
-        class for the context. The result is typically stored in
-        `bs._cs`. For DrawBot this format is the FormattedString.
-        For Flat it is None, to indicate that the main `bs` should
-        be used. In Flat the BabelString is the native string
-        representation.
-        """
+        """Converts BabelString to correct attributed string class for the
+        context. The result is typically stored in `bs._cs`. For DrawBot this
+        format is the FormattedString.  For Flat it is None, to indicate that
+        the main `bs` should be used. In Flat the BabelString is the native
+        string representation. """
         raise NotImplementedError
 
     def asBabelString(self, s, style):
@@ -492,7 +490,7 @@ class AbstractContext:
     # Images
 
     def image(self, path, p, alpha=1, pageNumber=None,
-            w=None, h=None, scaleType=None, e=None):
+            w=None, h=None, scaleType=None):
         raise NotImplementedError
 
     def imageSize(self, path):

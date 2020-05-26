@@ -108,7 +108,7 @@ class HtmlContext(BaseContext):
     def textOverflow(self, sOrBs, box, align=None):
         pass
 
-    def textBoxBaselines(self, txt, box, align=None):
+    def baselines(self, bs, box, align=None):
         pass
 
     def textSize(self, bs, w=None, h=None, align=None):

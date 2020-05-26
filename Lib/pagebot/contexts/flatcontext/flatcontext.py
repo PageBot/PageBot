@@ -61,7 +61,7 @@ class FlatRunData:
     def __init__(self, st, pars):
         self.st = st # Current strike for this run
         self.pars = pars # Current list of paragraphs that share the same strike
-    
+
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
@@ -692,7 +692,7 @@ class FlatContext(BaseContext):
 
     def fromBabelString(self, bs):
         """Convert the "public" data in BabelString to FlatStringData instance
-        and FlatRunData for each run in bs.runs. Then answer it, probably to 
+        and FlatRunData for each run in bs.runs. Then answer it, probably to
         be stored in bs._cs.
         We are storing the Flat parts in cache, to avoid building them up again.
         """
