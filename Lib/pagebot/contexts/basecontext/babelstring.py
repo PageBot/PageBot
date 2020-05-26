@@ -54,7 +54,7 @@ class BabelRun:
         if style is None:
             style = {}
         self.style = style
-        self._cr = None # Optional cache of native context string (e.g. FlatRunData)
+        self._cr = None # Optional cache of native context run (e.g. CTRun or FlatRunData)
 
     def __len__(self):
         return len(self.s)
@@ -167,25 +167,30 @@ class BabelRun:
 
 class BabelLineInfo:
 
-    def __init__(self, x, y, cLine, context):
+    def __init__(self, x, y, context, cLine=None):
         """Container for line info, after text wrapping by context."""
         self.x = units(x)
         self.y = units(y)
-        self.runs = []
-        # Native context line (e.g. DrawBot-->CTLine instance. Flat-->BabelString)
-        self.cLine = cLine
+        self.runs = [] # List of BabelRunInfo instances
         self.context = context # Just in case it is needed.
+        # Optional native "context line" 
+        # (e.g. DrawBot-->CTLine instance. Flat-->)
+        self.cLine = cLine 
 
     def __repr__(self):
-        return '<%s x=%s y=%s runs=%d>' % (self.__class__.__name__, self.x, self.y, len(self.runs))
+        return '<%s y=%s>' % (self.__class__.__name__, self.y)
 
 
 class BabelRunInfo:
 
-    def __init__(self, s, style):
+    def __init__(self, s, style, context, cRun=None):
         assert isinstance(s, str)
-        self.s = s
-        self.style = style
+        self.s = s # Reconstructed string, may not be input for e.g. OT-features
+        self.style = style # Reconstructed style of the run.
+        self.context = context # Just in case it is needed
+        # Optional native "context run"
+        # (e.g. DrawBot-->CTRun instance. Flat-->)
+        self.cRun = cRun
 
     def __repr__(self):
         return '<%s "%s">' % (self.__class__.__name__, self.s)
@@ -261,7 +266,7 @@ class BabelString:
         """Answers the weakref context if it is defined.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext
+        >>> context = getContext('DrawBot')
         >>> bs = BabelString('ABCD', context=context)
         >>> bs.context
         <DrawBotContext>
@@ -270,6 +275,9 @@ class BabelString:
         >>> bs.context = None # Delete context reference
         >>> bs.cs is None # Old context cache cleared too
         True
+        >>> bs.context = getContext('Flat') # Reset the context to Flat
+        >>> bs.cs # Context put FormattedString cache data there
+        <FlatBabelData>
         """
         context = None
         if self._context is not None:
@@ -297,8 +305,8 @@ class BabelString:
         >>> bs._cs is None
         True
         >>> bs.context = getContext('Flat')
-        >>> bs.cs.__class__.__name__
-        FlatStringData
+        >>> bs.cs
+        <FlatBabelData>
         """
         # Cache of native context string (e.g. Drawbot.FormattedString
         # or FlatStringData, containing Strike/Paragraph/Text instances.
@@ -399,7 +407,7 @@ class BabelString:
             return None
 
         if self._twh is None:
-            self._twh = self.context.textSize(self, w=self.w, h=self.h)
+            self._twh = self.getTextSize() # Same as self.textSize
 
         if self._twh is not None:
             return self._twh[0]
@@ -428,10 +436,13 @@ class BabelString:
         """
         if self.context is None: # Required context to be defined
             return None
+
         if self._twh is None:
-            self._twh = self.context.textSize(self, w=self.w, h=self.h)
+            self._twh = self.getTextSize() # Same as self.textSize
+        
         if self._twh is not None:
             return self._twh[1]
+        
         return None
     th = property(_get_th)
 
@@ -445,13 +456,13 @@ class BabelString:
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
         >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
         (ABCD, 'FormattedString')
-        >>> context = getContext('Flat')
-        >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
-        >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
-        (ABCD, 'FlatStringData')
+        >>> bs.context = getContext('Flat')
+        >>> bs.cs # Answer Flat cache.
+        <FlatBabelData>
         """
         if self._cs is None:
-            self._cs = self.context.fromBabelString(self)
+            if self.context is not None:
+                self._cs = self.context.fromBabelString(self)
         return self._cs
     cs = property(_get_cs)
 
@@ -464,20 +475,35 @@ class BabelString:
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext()
+        >>> context = getContext('Flat')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> lines = bs.lines
         >>> len(lines)
-        113
+        35
         >>> lines[0].__class__.__name__
         'BabelLineInfo'
         """
-        if self._lines is None:
-            self._lines = self.context.textLines(self, w=self.w, h=self.h)
-
-        return self._lines
+        return self.getTextLines(self.w, self.h)
     lines = property(_get_lines)
+
+    def getTextLines(self, w=None, h=None):  
+        """
+
+        >>> from pagebot.toolbox.loremipsum import loremipsum
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('Flat')
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+        >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
+        >>> len(bs.textLines())
+        
+        """
+        if w == self.w and h == self.h:
+            if self._lines is None:
+                self._lines = self.context.getTextLines(self)
+            return self._lines
+        return self.context.getTextLines(self, w=w, h=h)
 
     def _get_topLineAscender(self):
         """Answers the largest ascender height in the first line.
@@ -533,7 +559,7 @@ class BabelString:
         topLineAscender_h = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = findFont(run.style.get('font', DEFAULT_FONT)) # Font or fontName
                 ascender_h = font['h'].maxY
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineAscender_h = max(topLineAscender_h, fontSize * ascender_h / font.info.unitsPerEm)
@@ -571,6 +597,8 @@ class BabelString:
         from the fonts, independent of if there are actually lower case in the
         first line.
 
+        """
+        """
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
@@ -598,6 +626,8 @@ class BabelString:
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
 
+        """
+        """
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
@@ -628,8 +658,10 @@ class BabelString:
         (negative number), not a distance, relative to the baseline of the last
         line.
 
+        """
+        """
         >>> from pagebot.contexts import getContext
-        >>> context = getContext
+        >>> context = getContext('DrawBot')
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.bottomLineDescender_p
         -21.2pt
@@ -658,7 +690,7 @@ class BabelString:
         rendered BabelString instance.
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext
+        >>> context = getContext('DrawBot')
         >>> style = dict(font='PageBot-Regular', fontSize=20)
         >>> bs = context.newString('ABCD', style)
         >>> bs.addMarker('M1', 'abcd')
@@ -685,6 +717,56 @@ class BabelString:
                 runs.append(run)
         return runs
 
+    def _getTextSizeFromLines(self, lines):
+        tw = th = 0
+        for lineInfo in lines:
+            tw = max(tw, lineInfo.w)
+            th += lineInfo.h
+        return tw, th
+
+    def getTextSize(self, w=None, h=None):
+        """Answers the width and height of the formatted string with an
+        optional given w or h.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.elements import *
+        >>> context = getContext('Flat')
+        >>> # Make the string, we can adapt the document/page size to it.
+        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(100))
+        >>> bs = context.newString('Hkpx', style)
+        >>> tw, th = context.textSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
+        >>> (tw, th) == bs.textSize
+        True
+        >>> m = 50
+        >>> doc = Document(w=tw+2*m, h=th+m, context=context)
+        >>> page = doc[1]
+        >>> tw, th, bs.fontSize, bs.ascender, bs.descender
+        (209.7pt, 100pt, 100pt, 74.8pt, -25.2pt)
+        >>> e = newText(bs, x=m, y=m, parent=page)
+        >>> e = newRect(x=m, y=m+bs.descender, w=tw, h=th, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m+bs.xHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> e = newLine(x=m, y=m+bs.capHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
+        >>> doc.export('_export/DrawBotContext-textSize.pdf')
+
+        >>> bs = context.newString('Hkpx', style)
+        >>> tw, th = bs.textSize # Answering point units. Same as context.textSize(bs)
+        >>> tw.rounded, th.rounded
+        (210pt, 100pt)
+        >>> bs.fontSize *= 0.5 # Same as bs.runs[0].style['fontSize'] *= 0.5 to scale by 50%
+        >>> tw, th = bs.textSize # Render to FormattedString for new size.
+        >>> tw.rounded, th.rounded
+        (105pt, 50pt)
+        >>>
+        """
+        if w is not None or h is not None:
+            # Want something different than defined requested bs.w or bs.h
+            if w != bs.w and h != bs.h: # Different indeed? Reflow in temporary lines.
+                return self.context.getTextSize(self, w, h) # See if context wants to do it.
+        self._twh = twh = self.context.getTextSize(self)
+        return twh
 
     def _get_textSize(self):
         """Answers the text size of self, rendered by the defined context.
@@ -692,13 +774,16 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.contexts import getContext
-        >>> context = getContext
+        >>> context = getContext('Flat')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style)
         >>> bs.textSize
         (250.9pt, 100pt)
+        >>> bs.context = getContext('DrawBot') # Reset to new context
+        >>> bs.textSize
+        (250.9pt, 100pt)
         """
-        return self.tw, self.th
+        return self.getTextSize() # Use default (self.w, self.h) parameters
     textSize = property(_get_textSize)
 
     def __getitem__(self, given):
@@ -710,7 +795,7 @@ class BabelString:
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
-        >>> context = getContext()
+        >>> context = getContext('DrawBot')
         >>> style1 = dict(fontSize=pt(12))
         >>> style2 = dict(fontSize=pt(18))
         >>> style3 = dict(fontSize=pt(24))
@@ -733,6 +818,9 @@ class BabelString:
         ($CDEFG$, [<BabelRun "CD">, <BabelRun "EFG">])
         >>> bs[-6:-2], bs[-6:-2].runs
         ($GHIJ$, [<BabelRun "GH">, <BabelRun "IJ">])
+        >>> bs.context = getContext('Flat') # Reset to other context
+        >>> bs[3], bs[3].runs
+        ($D$, [<BabelRun "D">])
         """
         if isinstance(given, slice):
             start = given.start or 0
