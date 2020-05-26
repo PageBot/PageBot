@@ -158,19 +158,19 @@ class AbstractContext:
 
     # Basic shapes.
 
-    def rect(self, x, y, w=None, h=None, e=None):
+    def rect(self, x, y, w=None, h=None):
         """Draw a rectangle at position `(x, y)`, with the optional given `w`
         width and `h` height. Otherwise the optional PageBot Element instance
         `e` can be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def oval(self, x, y, w=None, h=None, e=None):
+    def oval(self, x, y, w=None, h=None):
         """Draw an oval at position `(x, y)`, with the optional given `w` width
         and `h` height. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width and height."""
         raise NotImplementedError
 
-    def circle(self, x, y, r=None, e=None):
+    def circle(self, x, y, r=None):
         """Draw an circle, with middle point on position `(x, y)`, with the optional
         given `r` radius. Otherwise the optional PageBot Element instance `e` can
         be used by the context to extract width as @r."""
@@ -233,7 +233,7 @@ class AbstractContext:
         the example."""
         raise NotImplementedError
 
-    def line(self, p1=None, p2=None, e=None):
+    def line(self, p1=None, p2=None):
         """Draws a line between two given points `p1` and `p`. Use optional
         calling Element `e` for points and additional drawing settings of the
         line."""
@@ -326,7 +326,7 @@ class AbstractContext:
 
     cmykShadow = shadow
 
-    def linearGradient(self, gradient, origin, w, h, e=None):
+    def linearGradient(self, gradient, origin, w, h):
         """A linear Gradient `gradient` instance fill with:
 
         * `startPoint` as (x, y)
@@ -488,7 +488,7 @@ class AbstractContext:
     # Images
 
     def image(self, path, p, alpha=1, pageNumber=None,
-            w=None, h=None, scaleType=None, e=None):
+            w=None, h=None, scaleType=None):
         raise NotImplementedError
 
     def imageSize(self, path):
