@@ -949,7 +949,7 @@ class BaseContext(AbstractContext):
             h = XXXL
         baselines = {}
         if w is not None:
-            lines = self.textLines(bs.cs, w, h=h)
+            lines = self.getTextLines(bs, w, h=h)
         else:
             lines = bs.lines
         if lines:
@@ -961,13 +961,20 @@ class BaseContext(AbstractContext):
 
         return baselines
 
-    # Must be implemented by inheriting context class
-    # textLines(self, bs, w=None, h=None) 
+    def getTextSize(self, bs, w=None, h=None):
+        """Must be implemented by inheriting context class, answering
+        a list of BabelLineInfo instances."""
+        raise NotImplementedError
+
+    def getTextLines(self, bs, w=None, h=None):
+        """Must be implemented by inheriting context class, answering
+        a list of BabelLineInfo instances."""
+        raise NotImplementedError
 
     def fromBabelString(self, bs):
-        """Answers the unchanged Babelstring, which is native in a context
-        unless implemented otherwise."""
-        return bs
+        """Answers the native representation of self. Needs to be redefined
+        by the inheriting context class."""
+        raise NotImplementedError
 
     # String.
 

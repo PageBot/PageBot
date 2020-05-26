@@ -22,9 +22,9 @@ from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
-        DEFAULT_FILETYPE, RGB)
+        DEFAULT_FILETYPE, RGB, XXXL)
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString
+from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.filepaths import ROOT_FONT_PATHS
@@ -47,14 +47,14 @@ except:
 class FlatBabelData:
     """Class to store cached information in BabelString._cs."""
     def __init__(self, doc, page, tx, pt, runs):
-        self.doc = doc
-        self.page = page
-        self.tx = tx
-        self.pt = pt
-        self.runs = runs
+        self.doc = doc # Flat.document instance
+        self.page = page # Flat.page instance
+        self.tx = tx # Flat.txt instance
+        self.pt = pt # Flat.placedText instance
+        self.runs = runs # List of FlatRunData instances
 
     def __repr__(self):
-        return '<%s runs=%d>' % (self.__class__.__name__, len(self.runs))
+        return '<%s>' % self.__class__.__name__
 
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
@@ -119,7 +119,6 @@ class FlatContext(BaseContext):
         # Current open shape.
         self.shape = None
         self.fileType = DEFAULT_FILETYPE
-        #self.originTop = False
         self.transform3D = Transform3D()
         self.drawing = None
         self.w = None
@@ -386,7 +385,7 @@ class FlatContext(BaseContext):
         #if not self.originTop:
         y1 = self.height - y1
 
-        return x1, y1
+        return upt(x1, y1)
 
     #   S T A T E
 
@@ -597,8 +596,8 @@ class FlatContext(BaseContext):
         >>> bs
         $Lorem ipsu...$
         >>> r = (10, 262, 200, 300)
-        >>> of = context.textBox(bs, r) # Calculate overflow in the box
-        >>> of
+        >>> #of = context.textBox(bs, r) # Calculate overflow in the box
+        >>> #of
         'dolor eu interdum. '
         """
         if isinstance(bs, str):
@@ -621,7 +620,7 @@ class FlatContext(BaseContext):
         #self.fill(None)
         #self.rect(xpt, ypt, wpt, hpt)
 
-        #return bs.textBox(self.page, box)
+        return bs.textBox(self.page, box)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -658,50 +657,37 @@ class FlatContext(BaseContext):
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def textSize(self, bs, w=None, h=None):
-        """Answers the width and height of the formatted string with an
-        optional given w or h.
-
-        >>> from pagebot.document import Document
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.elements import *
-        >>> context = getContext('Flat')
-        >>> # Make the string, we can adapt the document/page size to it.
-        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(100))
-        >>> bs = context.newString('Hkpx', style)
-        >>> tw, th = context.textSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
-        >>> (tw, th) == bs.textSize
-        True
-        >>> m = 50
-        >>> doc = Document(w=tw+2*m, h=th+m, context=context)
-        >>> page = doc[1]
-        >>> tw, th, bs.fontSize, bs.ascender, bs.descender
-        (209.7pt, 100pt, 100pt, 74.8pt, -25.2pt)
-        >>> e = newText(bs, x=m, y=m, parent=page)
-        >>> e = newRect(x=m, y=m+bs.descender, w=tw, h=th, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
-        >>> e = newLine(x=m, y=m, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
-        >>> e = newLine(x=m, y=m+bs.xHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
-        >>> e = newLine(x=m, y=m+bs.capHeight, w=tw, h=0, fill=None, stroke=(0, 0, 1), strokeWidth=0.5, parent=page)
-        >>> doc.export('_export/DrawBotContext-textSize.pdf')
-
-        >>> bs = context.newString('Hkpx', style)
-        >>> tw, th = context.textSize(bs, w=bs.w, h=bs.h) # Answering point units. Same as bs.textSize
-        >>> tw.rounded, th.rounded
-        (210pt, 100pt)
-        >>> bs.fontSize *= 0.5 # Same as bs.runs[0].style['fontSize'] *= 0.5 to scale by 50%
-        >>> tw, th = context.textSize(bs, w=bs.w, h=bs.h) # Render to FormattedString for new size.
-        >>> tw.rounded, th.rounded
-        (105pt, 50pt)
-        >>>
-        """
-        placedText = bs.cs.pt.frame(0, 0, w or bs.w or 100, h or bs.h or 100)
+    def getTextSize(self, bs, w=None, h=None):
+        placedText = bs.cs.pt
         return pt(placedText.width, placedText.height)
 
-    def textLines(self, bs, w=None, h=None):
-        pass
+    def getTextLines(self, bs, w=None, h=None):
+        """Answer a list of BabeLineInfo instances
 
-    def textBoxBaseLines(self, txt, box):
+        >>> from pagebot.toolbox.units import pt
+        >>> context = FlatContext()
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(20))
+        >>> bs = context.newString('ABCD ' * 100, style, w=pt(200))
+        >>> lines = context.getTextLines(bs)
+        >>> len(lines)
+        34
+        >>> line = lines[10]
+        >>> line
+        <BabelLineInfo y=230.96pt>
+        """
+        w = w or bs.w or 500
+        assert w is not None
+        h = h or bs.h or 1000
+        lines = []
+        placedText = bs.cs.pt
+        x = y = pt(0) # Relative vertical position
+        placedText.frame(0, 0, w, h)
+        for height, run in placedText.layout.runs(): # In Flat "run" is native line
+            lines.append(BabelLineInfo(x, y, context=self, cLine=run))
+            y += height
+        return lines
+
+    def getBaseLines(self, txt, box):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
@@ -710,7 +696,7 @@ class FlatContext(BaseContext):
         be stored in bs._cs.
         We are storing the Flat parts in cache, to avoid building them up again.
         """
-        fDoc = self.b.document(100, 100, 'pt') # Create a dummy document
+        fDoc = self.b.document(10, 10, 'pt') # Create a dummy document
         fPage = fDoc.addpage() # Create a dummy page, used for measuring on placedText
         fParagraphs = []
         fRuns = []
@@ -889,17 +875,17 @@ class FlatContext(BaseContext):
         shape = self._getShape()
 
         if shape is not None:
-            x1 = x + w
-            y1 = y + h
-            p0 = (x, y)
-            p1 = (x1, y)
-            p2 = (x1, y1)
-            p3 = (x, y1)
+            x1 = upt(x + w)
+            y1 = upt(y + h)
+            p0 = upt(x, y)
+            p1 = upt(x1, y)
+            p2 = upt(x1, y1)
+            p3 = upt(x, y1)
             x, y = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
             x2, y2 = self.getTransformed(*p2)
             x3, y3 = self.getTransformed(*p3)
-            coordinates = (x, y, x1, y1, x2, y2, x3, y3)
+            coordinates = x, y, x1, y1, x2, y2, x3, y3
             r = shape.polygon(coordinates)
             self.page.place(r)
 
@@ -919,14 +905,14 @@ class FlatContext(BaseContext):
 
             # Control point offsets.
             kappa = .5522848
-            offsetX = (w / 2) * kappa
-            offsetY = (h / 2) * kappa
+            offsetX = upt(w / 2) * kappa
+            offsetY = upt(h / 2) * kappa
 
             # Middle and other extreme points.
-            x0 = x + (w / 2)
-            y0 = y + (h / 2)
-            x1 = x + w
-            y1 = y + h
+            x0 = upt(x + (w / 2))
+            y0 = upt(y + (h / 2))
+            x1 = upt(x + w)
+            y1 = upt(y + h)
 
             px0, py0 = self.getTransformed(x, y0)
             path.moveTo((px0, py0))
@@ -963,7 +949,8 @@ class FlatContext(BaseContext):
         if shape is not None:
             x, y = self.getTransformed(x, y)
             r = r * self._sx
-            self.page.place(shape.circle(x, y, r))
+            ptx, pty, pr = upt(x, y, r)
+            self.page.place(shape.circle(ptx, pty, pr))
 
     def line(self, p0, p1):
         """Draws a line from point p0 to point p1."""
@@ -972,6 +959,7 @@ class FlatContext(BaseContext):
         if shape is not None:
             x0, y0 = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
+            ptx0, pty0, ptx1, ptt1 = upt(x0, y0, x1, y1)
             self.page.place(shape.line(x0, y0, x1, y1))
 
     #   P A T H
@@ -993,10 +981,8 @@ class FlatContext(BaseContext):
     def translatePoint(self, p):
         x, y = point2D(upt(p))
         x = self._ox + x
-        y = self._oy + y
-        #if not self.originTop:
-        y = self.height - y
-        return (x, y)
+        y = self.height - self._oy + y # Flip vertical
+        return upt(x, y)
 
 
     def moveTo(self, p):
