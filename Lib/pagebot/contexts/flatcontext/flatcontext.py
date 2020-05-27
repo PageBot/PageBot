@@ -654,7 +654,8 @@ class FlatContext(BaseContext):
         th = 0
         placedText = bs.cs.pt
         if placedText.width != w or placedText.height != h:
-            # Make reflow on this new (w, h)
+            # Make reflow on this new (w, h). Otherwise use the layout.runs
+            # as already cached by placedText.
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
         
         for height, run in placedText.layout.runs():
@@ -725,6 +726,7 @@ class FlatContext(BaseContext):
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
             st.tracking(tracking)
             r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
+            # FIXME: We need to know the export file type here in advance...
             #try:
             #    st.color(self.b.rgba(r, g, b, a)) # Does not work for Flat PDF
             #except NotImplementedError:
@@ -973,7 +975,7 @@ class FlatContext(BaseContext):
             self.drawPath()
         """
 
-    def XXXcircle(self, x, y, r):
+    def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
 
         TODO: don't scale width and height but calculate points before
