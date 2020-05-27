@@ -544,7 +544,7 @@ class FlatContext(BaseContext):
         spans = []
         maxAscender = 0
         maxFontSize = 0
-
+        """
         for run in bs.runs:
             flatFont, font = self._getFlatFont(run.style.get('font'))
             fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
@@ -556,10 +556,12 @@ class FlatContext(BaseContext):
             spans.append(strike.span(run.s))
             maxAscender = max(maxAscender, ascender)
             maxFontSize = max(maxFontSize, fontSize)
-
-        paragraphs = [self.b.paragraph(spans)]
-        placedText = self.page.place(self.b.text(paragraphs))
-        placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
+        """
+        #paragraphs = [self.b.paragraph(spans)]
+        #placedText = self.page.place(self.b.text(paragraphs))
+        #placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
+        placedText = self.page.place(bs.cs.tx)
+        placedText.frame(x, y, bs.tw, bs.th)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.
@@ -873,7 +875,7 @@ class FlatContext(BaseContext):
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
-            return None
+            self._fill = blackColor
 
         shape = self.b.shape()
 
@@ -900,7 +902,7 @@ class FlatContext(BaseContext):
         self.page.place(r)
 
         """
-        # TODO Why not use Flat.rectangle?
+        # FIXED: Better to use Flat.rectangle
 
         if shape is not None:
             x1 = upt(x + w)
