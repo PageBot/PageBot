@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor, blackColor
-from pagebot.toolbox.units import pt, em, upt, point2D
+from pagebot.toolbox.units import pt, em, upt, point2D, units
 
 
 HAS_PIL = True
@@ -660,13 +660,16 @@ class FlatContext(BaseContext):
             # as already cached by placedText.
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
         
-        for height, run in placedText.layout.runs():
+        for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             rw = 0
             for style, s in run:
                 rw += style.width(s)
             tw = max(tw, rw)
-            th += height
-        return tw, th
+            if rIndex == 0:
+                th += style.ascender()
+            else:
+                th += height
+        return pt(tw, th)
 
     def getTextLines(self, bs, w=None, h=None):
         """Answer a list of BabeLineInfo instances
