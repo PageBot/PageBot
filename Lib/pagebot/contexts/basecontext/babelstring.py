@@ -763,7 +763,7 @@ class BabelString:
         """
         if w is not None or h is not None:
             # Want something different than defined requested bs.w or bs.h
-            if w != bs.w and h != bs.h: # Different indeed? Reflow in temporary lines.
+            if w != self.w or h != self.h: # Different indeed? Reflow in temporary lines.
                 return self.context.getTextSize(self, w, h) # See if context wants to do it.
         self._twh = twh = self.context.getTextSize(self)
         return twh

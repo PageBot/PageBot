@@ -3659,7 +3659,6 @@ class Element:
         # In case relative units, use this as base.
         base = dict(base=self.parentH, em=self.em)
         return units(self.css('h', 0), base=base)
-
     def _set_h(self, h):
         h = units(h)
         if self.proportional and self.h:
@@ -3669,7 +3668,6 @@ class Element:
         # Overwrite element local style from here, parent css becomes
         # inaccessable.
         self.style['h'] = h
-
     h = property(_get_h, _set_h)
 
         # Height, including margins

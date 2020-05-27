@@ -233,7 +233,7 @@ class FlatContext(BaseContext):
                     pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
                     p.svg(pagePath)
         elif self.fileType == FILETYPE_PDF:
-            self.drawing.pdf(path)
+            self.drawing.pdf(path) # Cannot render rgba.
         elif self.fileType == FILETYPE_GIF:
             msg = '[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1]
             print(msg)
@@ -602,25 +602,17 @@ class FlatContext(BaseContext):
         """
         if isinstance(bs, str):
             # Creates a new string with default styles.
-            style = {'fontSize': self._fontSize}
+            style = dict(self._font or DEFAULT_FONT, fontSize=self._fontSize or self.DEFAULT_FONT_SIZE)
             style = makeStyle(style=style)
-            bs = self.newString(bs, style=style)
-        #elif not isinstance(fs, FlatString):
-        #    raise PageBotFileFormatError('type is %s' % type(fs))
+            bs = self.newString(bs, style)
+        elif not isinstance(bs, BabelString):
+            raise PageBotFileFormatError('FlatContext.textBox:type is %s' % bs.__class__.__name__)
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
-
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
-        box = (xpt, ypt, wpt, hpt)
 
-        # Debugging.
-        #self.marker(xpt, ypt)
-        #self.stroke((1, 0, 0))
-        #self.fill(None)
-        #self.rect(xpt, ypt, wpt, hpt)
-
-        return bs.textBox(self.page, box)
+        return self.page.place(bs.cs.tx).frame(xpt, ypt, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -658,8 +650,20 @@ class FlatContext(BaseContext):
         return s
 
     def getTextSize(self, bs, w=None, h=None):
+        tw = 0
+        th = 0
         placedText = bs.cs.pt
-        return pt(placedText.width, placedText.height)
+        if placedText.width != w or placedText.height != h:
+            # Make reflow on this new (w, h)
+            placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
+        
+        for height, run in placedText.layout.runs():
+            rw = 0
+            for style, s in run:
+                rw += style.width(s)
+            tw = max(tw, rw)
+            th += height
+        return tw, th
 
     def getTextLines(self, bs, w=None, h=None):
         """Answer a list of BabeLineInfo instances
@@ -675,14 +679,13 @@ class FlatContext(BaseContext):
         >>> line
         <BabelLineInfo y=230.96pt>
         """
-        w = w or bs.w or 500
-        assert w is not None
-        h = h or bs.h or 1000
-        lines = []
         placedText = bs.cs.pt
+        lines = []
+        if placedText.width != w or placedText.height != h:
+            # Make reflow on this new (w, h)
+            placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
         x = y = pt(0) # Relative vertical position
-        placedText.frame(0, 0, w, h)
-        for height, run in placedText.layout.runs(): # In Flat "run" is native line
+        for height, run in placedText.layout.runs(): # In Flat "run" is native data for line
             lines.append(BabelLineInfo(x, y, context=self, cLine=run))
             y += height
         return lines
@@ -695,6 +698,18 @@ class FlatContext(BaseContext):
         and FlatRunData for each run in bs.runs. Then answer it, probably to
         be stored in bs._cs.
         We are storing the Flat parts in cache, to avoid building them up again.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext('Flat')
+        >>> style = dict(font='PageBot-Regular', fontSize=24)
+        >>> bs = context.newString('ABCD', style)
+        >>> fData = context.fromBabelString(bs)
+        >>> fData
+        <FlatBabelData>
+        >>> bs.cs # Invokes context.fromBabelString(bs)
+        <FlatBabelData>
+        >>> bs.cs.page.width == fData.page.width
+        True
         """
         fDoc = self.b.document(10, 10, 'pt') # Create a dummy document
         fPage = fDoc.addpage() # Create a dummy page, used for measuring on placedText
@@ -709,8 +724,11 @@ class FlatContext(BaseContext):
             tracking = em(bs.style.get('tracking', 0)).v
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
             st.tracking(tracking)
-            textFill = bs.style.get('textFill', blackColor)
-            st.color(rgb(*textFill.rgb))
+            r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
+            #try:
+            #    st.color(self.b.rgba(r, g, b, a)) # Does not work for Flat PDF
+            #except NotImplementedError:
+            st.color(self.b.rgb(r, g, b)) # Hmm, how to get Flat PDF tranparancy
             # Now we have a strike that represents the style of this run.
             pars = []
             for txt in run.s.split('\n'):
@@ -720,6 +738,7 @@ class FlatContext(BaseContext):
             fRuns.append(FlatRunData(st=st, pars=pars))
         tx = self.b.text(fParagraphs)
         pt = fPage.place(tx)
+        # Stored typically as BabelString.cs in FlatContext mode.
         return FlatBabelData(doc=fDoc, page=fPage, tx=tx, pt=pt, runs=fRuns)
 
     #   F O N T
@@ -872,7 +891,14 @@ class FlatContext(BaseContext):
         """Calculates rectangle points by combining (x, y) with width and
         height, then runs the points through the affine transform and passes
         the coordinates to a Flat polygon to be rendered."""
+
         shape = self._getShape()
+        x, y, w, h = upt(x, y, w, h)
+        r = shape.rectangle(x, self.page.height-y-h, w, h)
+        self.page.place(r)
+
+        """
+        # TODO Why not use Flat.rectangle?
 
         if shape is not None:
             x1 = upt(x + w)
@@ -888,16 +914,24 @@ class FlatContext(BaseContext):
             coordinates = x, y, x1, y1, x2, y2, x3, y3
             r = shape.polygon(coordinates)
             self.page.place(r)
-
+        """
     def oval(self, x, y, w, h):
         """Draws an oval in a rectangle, where (x, y) is the bottom left origin
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference.
+        """
+        shape = self._getShape()
+        x, y, w, h = upt(x, y, w, h)
+        r = shape.ellipse(x+w/2, self.page.height-y-h/2, w/2, h/2)
+        self.page.place(r)
 
+
+        """
+        Better to use Flat.ellipse for this.
         TODO: don't scale width / height but calculate points before
         transforming. Also convert to a path so we can rotate.
-        """
+        
         shape = self._getShape()
 
         if shape is not None:
@@ -937,8 +971,9 @@ class FlatContext(BaseContext):
             p = self.getTransformed(x, y0)
             path.curveTo(cp1, cp2, p)
             self.drawPath()
+        """
 
-    def circle(self, x, y, r):
+    def XXXcircle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
 
         TODO: don't scale width and height but calculate points before

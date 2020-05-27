@@ -18,6 +18,7 @@
 #
 import json
 import re
+import math
 import datetime
 from time import time
 from random import randint
@@ -27,6 +28,8 @@ import subprocess
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
+# Same as in constants, defined double, because of import sequence.
+XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
 
 # Generic number transforms
 
@@ -158,6 +161,8 @@ def asIntOrFloat(value):
     >>> asIntOrFloat(100.12)
     100.12
     """
+    if value ==  math.inf:
+        value = XXXL
     iValue = int(value)
     if iValue == value:
         return iValue

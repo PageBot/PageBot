@@ -77,7 +77,10 @@ class Oval(Element):
 class Circle(Oval):
     def __init__(self, r=None, x=None, y=None, w=None, h=None,
             xAlign=None, yAlign=None, **kwargs):
-        """Draw the oval in the current context canvas.
+        """Draw the circle in the current context canvas. 
+        Default alignment of the circle is on its middle point
+        (CENTER, MIDDLE). That makes it different from the Oval,
+        which aligns default on botton-left.
 
         >>> from pagebot.toolbox.units import pt
         >>> e = Circle(r=pt(30))
@@ -92,7 +95,15 @@ class Circle(Oval):
             x = ORIGIN[0]
         if y is None:
             y = ORIGIN[1]
-        Oval.__init__(self, x=x, y=y, w=w, h=h, xAlign=xAlign or CENTER, yAligh=yAlign or MIDDLE, **kwargs)
+        Oval.__init__(self, x=x, y=y, w=w, h=h, 
+            xAlign=xAlign or CENTER, yAligh=yAlign or MIDDLE, **kwargs)
+
+    def _get_h(self):
+        """Answers the height of the element (same as self.w)"""
+        return self.w        
+    def _set_h(self, r):
+        self.w = r
+    h = property(_get_h, _set_h)
 
 if __name__ == '__main__':
     import doctest
