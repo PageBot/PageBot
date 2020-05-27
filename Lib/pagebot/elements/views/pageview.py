@@ -1189,7 +1189,7 @@ class PageView(BaseView):
             if TOP in showCropMarks:
                 y0 = y + h + cmTop
                 y1 = y + h + cmTop + cmSize
-                context.line((x, y0), (x, y0))
+                context.line((x, y0), (x, y1))
                 context.line((x + w, y0), (x + w, y1))
 
             # Any fold lines to draw on the page?
