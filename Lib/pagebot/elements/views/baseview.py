@@ -31,7 +31,7 @@ class BaseView(Element):
     DEFAULT_CONTEXT_ID = 'Flat'
 
     # Default, redefined by inheriting classes that need another context.
-    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext') 
+    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext')
 
     def __init__(self, w=None, h=None, contect=None, parent=None, context=None,
             verbose=False, **kwargs):
@@ -50,10 +50,13 @@ class BaseView(Element):
         # building.
         self.verbose = verbose
 
-        # Check if the context is supported by this view type
+        # Check if the context is supported by this view type.
+        # FIXME: cyclic import of context, should go somewhere else.
+        '''
         if context is None:
             from pagebot.contexts import getContext
             context = getContext(self.DEFAULT_CONTEXT_ID)
+        '''
         if context is None or context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
             raise ValueError('Missing or unsupported context "%s" for view "%s"' % (context.__class__.__name__, self))
         self.context = context # Set the self._context property.

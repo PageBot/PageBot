@@ -18,7 +18,7 @@
 import os
 import sys
 
-from pagebot.elements import Element#, Mask
+from pagebot.elements.element import Element#, Mask
 from pagebot.constants import (ORIGIN, CACHE_EXTENSIONS, SCALE_TYPE_PROPORTIONAL,
     BITMAP_TYPES)
 from pagebot.toolbox.units import pointOffset, point2D, point3D, units, pt, upt

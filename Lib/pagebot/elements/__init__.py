@@ -125,24 +125,24 @@ def newPlacer(**kwargs):
     return Placer(**kwargs)
 
 def newColumn(**kwargs):
-    """Answer a new Column instance, offering a squential paste-board for
+    """Answers a new Column instance, offering a squential paste-board for
     elements."""
     return Column(**kwargs)
 
 def newText(bs='', **kwargs):
-    """Create a Text element. If w and h are not defined, then the Text is
-    and elastic rectangle, base on the size of the content.
-    If w is defined, thatn the Text element has regular “Text” behavior.
+    """Creates a Text element. If w and h are not defined, then the Text is and
+    elastic rectangle, base on the size of the content. If w is defined, then
+    the Text element has regular “Text” behavior.
     """
     return Text(bs, **kwargs)
 
 def newRect(**kwargs):
-    """Create a new Rect element. Note that points can also be defined in the
+    """Creates a new Rect element. Note that points can also be defined in the
     style. When omitted, a square is drawn."""
     return Rect(**kwargs)
 
 def newQuire(**kwargs):
-    """Create a new Quire element. When omitted, a square is drawn."""
+    """Creates a new Quire element. When omitted, a square is drawn."""
     return Quire(**kwargs)
 
 def newArtboard(**kwargs):
@@ -150,34 +150,34 @@ def newArtboard(**kwargs):
     return Artboard(**kwargs)
 
 def newGroup(**kwargs):
-    """Create a new Group element. Note that points can also be defined in the
+    """Creates a new Group element. Note that points can also be defined in the
     style. When omitted, a square is drawn."""
     return Group(**kwargs)
 
 def newOval(**kwargs):
-    """Create an Oval element. Note that points can also be defined in the
+    """Creates an Oval element. Note that points can also be defined in the
     style."""
     return Oval(**kwargs)
 
 def newCircle(**kwargs):
-    """Create a Circle element. Note that points can also be defined in the
+    """Creates a Circle element. Note that points can also be defined in the
     style."""
     return Circle(**kwargs)
 
 def newLine(**kwargs):
-    """Create a Line element."""
+    """Creates a Line element."""
     return Line(**kwargs)
 
 def newPolygon(points=None, **kwargs):
-    """Create a Polygon element."""
+    """Creates a Polygon element."""
     return Polygon(points=points, **kwargs)
 
 def newMask(points=None, **kwargs):
-    """Create a Mask element."""
+    """Creates a Mask element."""
     return Mask(points=points, **kwargs)
 
 def newRuler(**kwargs):
-    """Create a Ruler element."""
+    """Creates a Ruler element."""
     return Ruler(**kwargs)
 
 def newBezierPath(**kwargs):
@@ -190,16 +190,16 @@ def newPaths(paths=None, **kwargs):
     return Paths(paths, **kwargs)
 
 def newImage(path=None, **kwargs):
-    """Create Image element as position (x, y) and optional width, height (w,
+    """Creates Image element as position (x, y) and optional width, height (w,
     h) of which at least one of them should be defined. The path can be None,
     to be filled later. If the image is drawn with an empty or non-existent
-    file path, a missingImage cross-frame is shown. The optional imo attribute
+    file path, a missing Image cross-frame is shown. The optional imo attribute
     is an DrawBot-modelled ImageObject() with filters in place. The created
     Image element is answered as convenience to the caller."""
     return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):
-    """Answers a new Table instanec."""
+    """Answers a new Table instance."""
     return Table(rows=rows, cols=cols, **kwargs)
 
 def newGalley(**kwargs):

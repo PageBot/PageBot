@@ -33,8 +33,8 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class Text(Element):
-    """PageBot stores text by the internal BabelString format with full
-    control of the line positions
+    """PageBot stores text by the internal BabelString format with full control
+    of the line positions.
 
     NOTE: we now use the `Text` class instead of (DrawBot) textboxes. The
     problem with text boxes is that they position text from “above the ascender
