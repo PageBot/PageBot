@@ -25,7 +25,7 @@ class Oval(Element):
     #   G E N E R I C  C O N T E X T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
-        """Draw the oval in the current context canvas.
+        """Draws the oval in the current context canvas.
 
         >>> e = Oval(x=0, y=20, w=500, h=3)
         >>> e.xy
@@ -62,10 +62,9 @@ class Oval(Element):
         view.drawElementInfo(self, origin)
 
     def build_inds(self, view, origin, drawElements=True):
-        """It is better to have a separate InDesignContext build tree, since we need more
-        information down there than just drawing instructions.
-        This way the InDesignContext just gets the PageBot Element passed over, using
-        it's own API."""
+        """It is better to have a separate InDesignContext build tree, because
+        we need more information than just drawing instructions. We just pass
+        the PageBot Element to the InDesignContext, using it's own API."""
         context = view.context
         p = pointOffset(self.origin, origin)
         px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
@@ -77,10 +76,9 @@ class Oval(Element):
 class Circle(Oval):
     def __init__(self, r=None, x=None, y=None, w=None, h=None,
             xAlign=None, yAlign=None, **kwargs):
-        """Draw the circle in the current context canvas. 
-        Default alignment of the circle is on its middle point
-        (CENTER, MIDDLE). That makes it different from the Oval,
-        which aligns default on botton-left.
+        """Draws the circle in the current context canvas.  Default alignment
+        of the circle is on its middle point (CENTER, MIDDLE). That makes it
+        different from the Oval, which aligns default to bottom-left.
 
         >>> from pagebot.toolbox.units import pt
         >>> e = Circle(r=pt(30))
@@ -95,12 +93,12 @@ class Circle(Oval):
             x = ORIGIN[0]
         if y is None:
             y = ORIGIN[1]
-        Oval.__init__(self, x=x, y=y, w=w, h=h, 
+        Oval.__init__(self, x=x, y=y, w=w, h=h,
             xAlign=xAlign or CENTER, yAligh=yAlign or MIDDLE, **kwargs)
 
     def _get_h(self):
-        """Answers the height of the element (same as self.w)"""
-        return self.w        
+        """Answers the height of the element (same as self.w)."""
+        return self.w
     def _set_h(self, r):
         self.w = r
     h = property(_get_h, _set_h)

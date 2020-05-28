@@ -312,7 +312,13 @@ class SvgContext(BaseContext):
     def textOverflow(self, sOrBs, box, align=None):
         pass
 
-    def baselines(self, bs, box, align=None):
+    def getTextLines(self, bs, w=None, h=None):
+        pass
+
+    def getTextSize(self, bs, w=None, h=None):
+        pass
+
+    def fromBabelString(self, bs):
         pass
 
     def translate(self, dx, dy):

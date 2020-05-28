@@ -173,9 +173,9 @@ class BabelLineInfo:
         self.y = units(y)
         self.runs = [] # List of BabelRunInfo instances
         self.context = context # Just in case it is needed.
-        # Optional native "context line" 
+        # Optional native "context line"
         # (e.g. DrawBot-->CTLine instance. Flat-->)
-        self.cLine = cLine 
+        self.cLine = cLine
 
     def __repr__(self):
         return '<%s y=%s>' % (self.__class__.__name__, self.y)
@@ -439,10 +439,10 @@ class BabelString:
 
         if self._twh is None:
             self._twh = self.getTextSize() # Same as self.textSize
-        
+
         if self._twh is not None:
             return self._twh[1]
-        
+
         return None
     th = property(_get_th)
 
@@ -487,7 +487,7 @@ class BabelString:
         return self.getTextLines(self.w, self.h)
     lines = property(_get_lines)
 
-    def getTextLines(self, w=None, h=None):  
+    def getTextLines(self, w=None, h=None):
         """
 
         >>> from pagebot.toolbox.loremipsum import loremipsum
@@ -497,7 +497,7 @@ class BabelString:
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> len(bs.textLines())
-        
+
         """
         if w == self.w and h == self.h:
             if self._lines is None:

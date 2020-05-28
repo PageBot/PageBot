@@ -22,7 +22,7 @@ from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
-        DEFAULT_FILETYPE, RGB, XXXL)
+        DEFAULT_FILETYPE, RGB)
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
@@ -34,7 +34,7 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor, blackColor
-from pagebot.toolbox.units import pt, em, upt, point2D, units
+from pagebot.toolbox.units import pt, em, upt, point2D
 
 
 HAS_PIL = True
@@ -659,7 +659,7 @@ class FlatContext(BaseContext):
             # Make reflow on this new (w, h). Otherwise use the layout.runs
             # as already cached by placedText.
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
-        
+
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             rw = 0
             for style, s in run:
@@ -938,7 +938,7 @@ class FlatContext(BaseContext):
         Better to use Flat.ellipse for this.
         TODO: don't scale width / height but calculate points before
         transforming. Also convert to a path so we can rotate.
-        
+
         shape = self._getShape()
 
         if shape is not None:
