@@ -25,7 +25,7 @@ from pagebot.themes import DEFAULT_THEME_CLASS
 from pagebot.toolbox.transformer import (obj2StyleId, path2Url, json2Dict,
     dict2Json, asNormalizedJSON)
 from pagebot.toolbox.units import units, isUnit, point3D
-from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
+from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE)
 
 class Document:
@@ -190,6 +190,8 @@ class Document:
     def _get_context(self):
         if hasattr(self, 'view') and hasattr(self.view, 'context'):
             return self.view.context
+        else:
+            return None
 
     context = property(_get_context)
 
