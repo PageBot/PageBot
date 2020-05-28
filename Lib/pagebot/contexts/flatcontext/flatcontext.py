@@ -43,6 +43,7 @@ HAS_PIL = True
 try:
     from PIL import Image
 except:
+    print('FlatContext: Warning, missing PIL')
     HAS_PIL = False
 
 class FlatBabelData:
@@ -286,12 +287,33 @@ class FlatContext(BaseContext):
     def getDrawing(self):
         return self.drawing
 
-    def setSize(self, w=None, h=None):
-        assert w is not None and w > 0
-        assert h is not None and h > 0
+    def _getValidSize(self, w, h):
+        """Answer a valid size for FlatContext document and pages."""
+        if w is None or w < 0:
+            w = pt(1000) # Make default page size, similar to DrawBot. 
+        if h is None or h < 0:
+            h = pt(1000)
+        return units(w), units(h)
 
-        self.w = w
-        self.h = h
+    def setSize(self, w=None, h=None):
+        """Set the initial page size of the context, in case something is drawn before
+        a document or page is created.
+
+        >>> from pagebot.toolbox.units import mm, cm
+        >>> context = FlatContext()
+        >>> context.w, context.h
+        (None, None)
+        >>> context.setSize()
+        >>> context.w, context.h
+        (1000pt, 1000pt)
+        >>> context.setSize(100, 200)
+        >>> context.w, context.h
+        (100pt, 200pt)
+        >>> context.setSize(mm(100), cm(200))
+        >>> context.w, context.h
+        (100mm, 200cm)
+        """
+        self.w, self.h = self._getValidSize(w, h)
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.drawing, are ignored in Flat.
@@ -311,8 +333,7 @@ class FlatContext(BaseContext):
         >>> w = h = pt(100)
         >>> context.newPage(w, h)
         """
-        assert w is not None and w > 0
-        assert h is not None and h > 0
+        w, h = self._getValidSize(w, h)
 
         if not self.drawing:
             self.newDrawing(w=w, h=h)
@@ -364,7 +385,7 @@ class FlatContext(BaseContext):
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
         >>> p1
-        (10.0, 587.0)
+        (10.0, 587)
         >>> p1[0] == 4 + dx
         True
         >>> p1[1] == h - (dy + 5)
@@ -376,7 +397,7 @@ class FlatContext(BaseContext):
         >>> p2[1] == h - ((5 * 2) + dy)
         True
         >>> p2
-        (14.0, 582.0)
+        (14.0, 582)
         """
         z = 0
         p0 = (x, y, z)
@@ -832,6 +853,8 @@ class FlatContext(BaseContext):
         xpt, ypt = self.translatePoint(p)
         self.save()
 
+        doScale = w is not None or h is not None
+
         if HAS_PIL:
             # TODO: move to scaleImage.
             im = Image.open(path)
@@ -839,21 +862,22 @@ class FlatContext(BaseContext):
 
             # NOTE: using PIL for resizing, much faster than Flat.
             # TODO: cache result.
-            if not w is None and not h is None:
+            if doScale:
                 path = self.getResizedPathName(path, w, h)
                 if not exists(path):
                     im = im.resize((w, h))
                     im.save(path, 'jpeg')
+                doScale = False
         else:
-            # TODO: slow scale with Flat.
+            # TODO: slow scale without PIL.
+            print('FlatContext.image: Missing PIL, slow context scaling instead.')
             pass
 
         img = self.b.image.open(path)
-
-        #ypt = 842 - 180#h.pt
-        ypt -= h.pt
+        if doScale:
+            img.resize(width=w or 0, height=h or 0)
         placed = self.page.place(img)
-        placed.position(xpt, ypt)
+        placed.position(xpt, ypt-placed.height)
         self.restore()
 
         # Debugging.

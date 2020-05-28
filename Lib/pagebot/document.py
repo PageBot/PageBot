@@ -30,8 +30,10 @@ from pagebot.constants import (DEFAULT_DOC_WIDTH, DEFAULT_DOC_HEIGHT, TOP,
 
 class Document:
     """A Document is a container of pages, independent from any context.
-    Any predefined context is stored as view, not as document attribute.
+    The required context is stored as view.context, not as document attribute.
 
+    >>> from pagebot.contexts import getContext
+    >>> context = getContext('Flat')
     >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
     (50, 12, 61)
@@ -46,14 +48,13 @@ class Document:
     >>> page.w, page.h, page.pw, page.ph, page.pt, page.pr, page.pb, page.pl, page.title
     (300pt, 400pt, 260pt, 360pt, 20pt, 20pt, 20pt, 20pt, 'default')
 
-    >>> from pagebot.contexts import getContext
-    >>> context = getContext('Flat')
+    >>> context = getContext('Html') # MampView requires HtmlContext
     >>> pages = (Page(), Page(), Page())
     >>> doc = Document(name='TestDoc', w=300, h=400, pages=pages, autoPages=0, viewId='Mamp', context=context)
     >>> len(doc), sorted(doc.pages.keys()), len(doc.pages[1])
     (3, [1, 2, 3], 1)
     >>> doc.view.context
-    <FlatContext>
+    <HtmlContext>
     >>> doc.solve()
     Score: 0 Fails: 0
     >>> doc.build()
@@ -137,7 +138,7 @@ class Document:
         # Otherwise uses the result of default getContext. A context is an
         # instance of e.g. one of DrawBotContext, FlatContext or HtmlContext,
         # which contains a DrawBot, Flat and one of the HtmlBuilders
-        # respectively.
+        # respectively. If undefined, the view will pick the best default context.
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
         # Template is name or instance default template.
@@ -385,18 +386,20 @@ class Document:
 
     def makeRootStyle(self, **kwargs):
         """Creates a rootStyle, then set the arguments from keyword arguments,
-        if their entry name already exists. This is similar (but not identical)
-        to the makeStyle in Elements. There any value entry is copied, even if
-        it is not defined in the root style.
+        if their entry name already exists. This is similar to the makeStyle in Elements.
 
+        >>> from pagebot.constants import BOTTOM, TOP
         >>> doc = Document()
-        >>> page = doc[1] # Inheriting from doc
+        >>> page = doc[1] # Default inheriting from doc
         >>> doc.rootStyle['yAlign'], page.yAlign
         ('bottom', 'bottom')
-        >>> doc = Document()
+        >>> doc = Document(yAlign=TOP)
         >>> page = doc[1] # Inheriting from doc
-        >>> #doc.rootStyle['yAlign'], page.yAlign
-        #('top', 'top')
+        """
+
+        """
+        >>> doc.rootStyle['yAlign'], page.yAlign
+        ('top', 'top')
         >>> doc = Document(yAlign=BOTTOM)
         >>> page = doc[1] # Inheriting from doc, overwriting yAlign default.
         >>> #doc.rootStyle['yAlign'], page.yAlign
@@ -410,11 +413,6 @@ class Document:
         for name, v in kwargs.items():
             if name in rootStyle: # Only overwrite existing values.
                 rootStyle[name] = v
-        # Adjust the default vertical origin position from self.origin, if not already defined
-        # by **kwargs
-        if 'yAlign' not in kwargs:
-            yAlign = TOP
-            rootStyle['yAlign'] = yAlign
         return rootStyle
 
     def applyStyle(self, style):
@@ -960,9 +958,9 @@ class Document:
         >>> e1 = Element(parent=page, name='e1', sId=2345)
         >>> e2 = Element(parent=e1, name='e2', sId=3456)
         >>> doc.findBysId(3456)
-        <Element:e2 (0pt, 0pt, 100pt, 100pt)>
+        <Element "e2" w=100pt h=100pt>
         >>> doc.findBysId(2345)
-        <Element:e1 (0pt, 0pt, 100pt, 100pt) E(1)>
+        <Element "e1" e=1 w=100pt h=100pt>
         >>> doc.findBysId(1234)
         <Document "Untitled" Pages=1 Templates=1 Views=1>
         >>> doc.findBysId(7890)
@@ -1413,14 +1411,19 @@ class Document:
         is done, such as layout conditions and creating the right type of
         strings.
 
+        >>> from pagebot.contexts import getContext
         >>> from pagebot.elements.views import viewClasses
         >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)
+        >>> doc.view.context, doc.context # Identical
+        (<FlatContext>, <FlatContext>)
         >>> sorted(viewClasses.keys())
         ['Git', 'Mamp', 'Page', 'Site']
-        >>> view = doc.newView('Page', 'myView')
+        >>> view = doc.newView('Page', 'myView', context=doc.context)
         >>> view.w, view.h
         (300pt, 400pt)
         >>> view = doc.newView('Site')
+        >>> view.context, doc.view.context, doc.context
+        (<HtmlContext>, <HtmlContext>, <HtmlContext>)
         """
         if viewId is None:
             viewId = self.DEFAULT_VIEWID
@@ -1482,13 +1485,16 @@ class Document:
     def build(self, path=None, pageSelection=None, multiPage=True, **kwargs):
         """Builds the document, using the `document.view` for export.
 
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=1, padding=(30, 40, 50, 60))
+        >>> from pagebot.contexts import getContext
+        >>> flatContext = getContext('Flat')
+        >>> htmlContext = getContext('Html')
+        >>> doc = Document(name='TestDoc', w=300, h=400, context=flatContext)
         >>> doc.view # PageView is default.
         <PageView>
         >>> doc.build('/tmp/TestBuildDoc.pdf')
-        >>> view = doc.newView('Site')
+        >>> view = doc.newView('Site', context=htmlContext)
         >>> doc.view
-        <SiteView:Site (0pt, 0pt, 300pt, 400pt)>
+        <SiteView "Site" w=300pt h=400pt>
         """
         self.view.build(path, pageSelection=pageSelection, multiPage=multiPage, **kwargs)
 
