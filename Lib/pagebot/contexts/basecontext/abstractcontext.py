@@ -452,24 +452,26 @@ class AbstractContext:
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
 
+    def getTextSize(self, bs, w=None, h=None):
+        """Answers the width and height of a BabelString with an
+        optional given w or h.  Must be implemented by inheriting context
+        class, answering a list of BabelLineInfo instances."""
+        raise NotImplementedError
+
     def getTextLines(self, bs, w=None, h=None):
-        """Answer a list of BabelLineInfo instances, containing 
-        the native line description of the context. If the cached
-        bs._lines exists for the given `w` and `h`, then answer the
-        cached list. In case `w` is defined, then wrap the `bs` on 
-        this width. If `h` is defined, then crop the number of 
-        lines on that height.
-        """
+        """Answers a list of BabelLineInfo instances, containing the native line
+        description of the context. If the cached bs._lines exists for the
+        given `w` and `h`, then answer the cached list. In case `w` is defined,
+        then wrap the `bs` on this width. If `h` is defined, then crop the
+        number of lines on that height.  """
         raise NotImplementedError
 
     def getBaselines(self, bs, box, align=None):
-        """Answer a dictionary of BabelLineInfo instances, 
-        containing the native line descriptions of the context. 
-        If the cached `bs._baselines` exits for the given `w` and `h`,
-        then answer the cached list. In case `w` is defined, then
-        wrap the `bs` on this width. If `h` is defined, then crop
-        the lines on that height.
-        """
+        """Answers a dictionary of BabelLineInfo instances, containing the
+        native line descriptions of the context. If the cached `bs._baselines`
+        exits for the given `w` and `h`, then answer the cached list. In case
+        `w` is defined, then wrap the `bs` on this width. If `h` is defined,
+        then crop the lines on that height.  """
         raise NotImplementedError
 
     def fromBabelString(self, bs):
@@ -516,11 +518,6 @@ class AbstractContext:
         raise NotImplementedError
 
     # Helpers.
-
-    def getTextSize(self, bs, w=None, h=None, align=None):
-        """Answers the width and height of a BabelString with an
-        optional given w or h."""
-        raise NotImplementedError
 
     def installedFonts(self, patterns=None):
         raise NotImplementedError

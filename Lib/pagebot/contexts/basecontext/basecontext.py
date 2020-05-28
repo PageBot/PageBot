@@ -960,21 +960,6 @@ class BaseContext(AbstractContext):
 
         return baselines
 
-    def getTextSize(self, bs, w=None, h=None):
-        """Must be implemented by inheriting context class, answering
-        a list of BabelLineInfo instances."""
-        raise NotImplementedError
-
-    def getTextLines(self, bs, w=None, h=None):
-        """Must be implemented by inheriting context class, answering
-        a list of BabelLineInfo instances."""
-        raise NotImplementedError
-
-    def fromBabelString(self, bs):
-        """Answers the native representation of self. Needs to be redefined
-        by the inheriting context class."""
-        raise NotImplementedError
-
     # String.
 
     def newString(self, bs=None, style=None, w=None, h=None):
