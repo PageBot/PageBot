@@ -83,6 +83,12 @@ class HtmlContext(BaseContext):
 
     #   T E X T
 
+    def getTextLines(self, bs, w=None, h=None):
+        pass
+
+    def getTextSize(self, bs, w=None, h=None):
+        pass
+
     # Babelstring
 
     def fromBabelString(self, bs):
