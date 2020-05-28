@@ -5244,6 +5244,12 @@ class Element:
             for e in self.elements:
                 e.build_inds(view, p2D, **kwargs)
 
+    #   F L A T  S U P P O R T
+    
+    def prepare_flat(self, view):
+        for e in self.elements:
+            e.prepare_flat(view)
+
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
     # Sass syntax is not supported yet. It does not appear to be standard and

@@ -20,6 +20,11 @@ from pagebot.contexts.markup.htmlcontext import HtmlContext
 class HtmlView(BaseView):
     """Abstract class for HTML/CSS generating views."""
 
+    DEFAULT_CONTEXT_ID = 'Html'
+
+    # Default, redefined by inheriting classes that need another context.
+    SUPPORTED_CONTEXTS = ('HtmlContext',) 
+
     def _getContext(self):
         """Answers the default context for this type of view."""
         return HtmlContext()
