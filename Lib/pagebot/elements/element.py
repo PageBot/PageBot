@@ -5245,7 +5245,7 @@ class Element:
                 e.build_inds(view, p2D, **kwargs)
 
     #   F L A T  S U P P O R T
-    
+
     def prepare_flat(self, view):
         for e in self.elements:
             e.prepare_flat(view)

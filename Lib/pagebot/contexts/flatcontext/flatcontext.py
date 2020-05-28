@@ -290,7 +290,7 @@ class FlatContext(BaseContext):
     def _getValidSize(self, w, h):
         """Answer a valid size for FlatContext document and pages."""
         if w is None or w < 0:
-            w = pt(1000) # Make default page size, similar to DrawBot. 
+            w = pt(1000) # Make default page size, similar to DrawBot.
         if h is None or h < 0:
             h = pt(1000)
         return units(w), units(h)
@@ -687,7 +687,7 @@ class FlatContext(BaseContext):
             for style, s in run:
                 rw += style.width(s)
             tw = max(tw, rw)
-            if rIndex == 0:
+            if rIndex == 0 and style:
                 th += style.ascender()
             else:
                 th += height
@@ -869,9 +869,8 @@ class FlatContext(BaseContext):
                     im.save(path, 'jpeg')
                 doScale = False
         else:
-            # TODO: slow scale without PIL.
+            # TODO: slow Flat scale without PIL.
             print('FlatContext.image: Missing PIL, slow context scaling instead.')
-            pass
 
         img = self.b.image.open(path)
         if doScale:

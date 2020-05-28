@@ -33,7 +33,6 @@
 
 import os
 
-from pagebot.document import Document
 from pagebot.constants import FILETYPE_SKETCH, A4, DEFAULT_FONT
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
@@ -55,7 +54,6 @@ class SketchContext(BaseContext):
     '''
 
     W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
-    DOCUMENT_CLASS = Document
 
     def __init__(self, path=None):
         """Constructor of Sketch context.
