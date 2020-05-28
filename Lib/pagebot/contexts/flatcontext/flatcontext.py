@@ -27,6 +27,7 @@ from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
+from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.fonttoolbox.objects.font import findFont
