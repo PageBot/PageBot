@@ -1424,7 +1424,7 @@ class Document:
         >>> view.w, view.h
         (300pt, 400pt)
         >>> view = doc.newView('Site')
-        >>> view.context, doc.view.context, doc.context
+        >>> view.context, doc.view.context, doc.context # Identical
         (<HtmlContext>, <HtmlContext>, <HtmlContext>)
         """
         if viewId is None:
