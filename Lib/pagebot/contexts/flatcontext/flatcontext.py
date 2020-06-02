@@ -538,7 +538,10 @@ class FlatContext(BaseContext):
         >>> context.saveDrawing('_export/Flat-Text.pdf')
         """
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
-        xpt, ypt = self.translatePoint(p)
+        #xpt, ypt = self.translatePoint(p)
+        xpt, ypt = p
+        ypt = self.h - ypt
+        print(ypt)
         self._place(bs, xpt, ypt)
 
     def _getFlatFont(self, font):
@@ -583,7 +586,8 @@ class FlatContext(BaseContext):
         #placedText = self.page.place(self.b.text(paragraphs))
         #placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
         placedText = self.page.place(bs.cs.tx)
-        placedText.frame(x, y, bs.tw, bs.th)
+        placedText.frame(x, y - bs.th, bs.tw, bs.th * 2)
+        #placedText.frame(0, 90, 100, 100)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.

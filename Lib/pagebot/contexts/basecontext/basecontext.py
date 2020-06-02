@@ -249,6 +249,7 @@ class BaseContext(AbstractContext):
         """
         xpt, ypt, rpt = upt(x, y, r)
         self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points.
+        #self.b.oval(xpt, ypt, 2*rpt, 2*rpt) # Render units to points.
 
     def line(self, x1, y1, x2, y2):
         """Draw a line from `(x1, y1)` to `(x2, y2)`.
@@ -1084,20 +1085,20 @@ class BaseContext(AbstractContext):
 
     # Some drawing macros.
 
-    def marker(self, x, y):
+    def marker(self, x, y, r=1, fontSize=5):
         # TODO: move to elements.
         x = round(x)
         y = round(y)
         s = '(%s, %s)' % (x, y)
         red = (1, 0, 0)
-        style = dict(font='Roboto-Regular', fontSize=pt(5), textFill=red)
+        style = dict(font='Roboto-Regular', fontSize=pt(fontSize), textFill=red)
         bs = self.newString(s, style=style)
         oldStroke = self._stroke
         oldFill = self._fill
-        self.text(bs, (x, y))
+        self.text(bs, (x+1, y+1))
         self.fill(red)
         self.stroke(None)
-        self.circle(x, y, 1)
+        self.circle(x, y, r)
         self.fill(oldFill)
         self.stroke(oldStroke)
 
@@ -1355,7 +1356,6 @@ class BaseContext(AbstractContext):
         """Offers interactive global value manipulation. Requires access to a
         UI toolkit sush as Cocoa or QT. Can be ignored in most contexts except
         DrawBot for now.  """
-
 
 if __name__ == '__main__':
     import doctest
