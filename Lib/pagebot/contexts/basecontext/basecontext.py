@@ -873,9 +873,14 @@ class BaseContext(AbstractContext):
 
 
         if bs._w is None and bs._h is None:
-            self.text(bs, point2D(upt(p)))
+            x, y = p
+            p = (pt(x), pt(y))
+            self.text(bs, p)
         else:
-            x, y = point2D(upt(p))
+            x, y = p
+            x = pt(x)
+            y = pt(y)
+            # x, y = point2D(upt(p))
             box = (x, y, bs.w or DEFAULT_WIDTH, bs.h or 1000)
             self.textBox(bs, box)
 
