@@ -94,7 +94,7 @@ def checkDateTime(date):
     NULL value for that field."""
     if not date: # Check on None or empty string
         return None
-    if not isinstance(date, datetime):
+    if not isinstance(date, datetime.datetime):
         return datetime.datetime(date=date).date
     return date
 
@@ -191,7 +191,7 @@ def newdatetime(date):
     Check on the month and day boundaries."""
     if date is None:
         return None
-    if not isinstance(date, datetime):
+    if not isinstance(date, datetime.datetime):
         date = datetime.datetime(date=date)
     return date
 

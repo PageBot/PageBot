@@ -283,6 +283,7 @@ class BabelString:
         if self._context is not None:
             context = self._context()
         return context
+
     def _set_context(self, context):
         if context is not None:
             context = weakref.ref(context)
@@ -290,6 +291,7 @@ class BabelString:
         self.reset() # Clear cache of previous context
         for run in self.runs: # Reset the run context too.
             run.context = context
+
     context = property(_get_context, _set_context)
 
     def reset(self):

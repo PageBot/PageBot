@@ -565,6 +565,8 @@ class FlatContext(BaseContext):
         """Places the styled Flat text on a page, transform vertical
         position to position on baseline.
 
+        TODO: implement runs instead of native context string.
+
         """
         spans = []
         maxAscender = 0

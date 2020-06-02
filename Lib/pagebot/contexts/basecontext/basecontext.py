@@ -1089,9 +1089,9 @@ class BaseContext(AbstractContext):
         # TODO: move to elements.
         x = round(x)
         y = round(y)
-        s = '(%s, %s)' % (x, y)
         red = (1, 0, 0)
-        style = dict(font='Roboto-Regular', fontSize=pt(fontSize), textFill=red)
+        s = '(%s, %s)' % (x, y)
+        style = dict(font='PageBot-Regular', fontSize=pt(fontSize), textFill=red)
         bs = self.newString(s, style=style)
         oldStroke = self._stroke
         oldFill = self._fill
