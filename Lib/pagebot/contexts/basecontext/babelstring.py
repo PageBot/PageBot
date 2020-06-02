@@ -171,10 +171,10 @@ class BabelLineInfo:
         """Container for line info, after text wrapping by context."""
         self.x = units(x)
         self.y = units(y)
-        self.runs = [] # List of BabelRunInfo instances
+        self.runs = [] # List of BabelRunInfo instances.
         self.context = context # Just in case it is needed.
-        # Optional native "context line"
-        # (e.g. DrawBot-->CTLine instance. Flat-->)
+        # Optional native "context line" (e.g. DrawBot-->CTLine instance.
+        # Flat-->?).
         self.cLine = cLine
 
     def __repr__(self):
@@ -413,6 +413,7 @@ class BabelString:
             return self._twh[0]
 
         return None
+
     tw = property(_get_tw)
 
     def _get_th(self):
@@ -444,6 +445,7 @@ class BabelString:
             return self._twh[1]
 
         return None
+
     th = property(_get_th)
 
     def _get_cs(self):

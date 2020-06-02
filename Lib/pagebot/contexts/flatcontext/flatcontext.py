@@ -48,10 +48,10 @@ except:
 
 class FlatBabelData:
     """Class to store cached information in BabelString._cs."""
-    def __init__(self, doc, page, tx, pt, runs):
+    def __init__(self, doc, page, txt, pt, runs):
         self.doc = doc # Flat.document instance
         self.page = page # Flat.page instance
-        self.tx = tx # Flat.txt instance
+        self.txt = txt # Flat.txt instance
         self.pt = pt # Flat.placedText instance
         self.runs = runs # List of FlatRunData instances
 
@@ -60,9 +60,10 @@ class FlatBabelData:
 
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
+
     def __init__(self, st, pars):
-        self.st = st # Current strike for this run
-        self.pars = pars # Current list of paragraphs that share the same strike
+        self.st = st # Current strike for this run.
+        self.pars = pars # Current list of paragraphs that share the same strike.
 
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
@@ -84,7 +85,7 @@ class FlatContext(BaseContext):
 
         sp = st.span(string)
         par = st.paragraph(string)
-        tx = st.text(string)
+        txt = st.text(string)
 
     placed = page.place()
     outl = outlines(string)
@@ -101,7 +102,7 @@ class FlatContext(BaseContext):
 
     EXPORT_TYPES = (FILETYPE_PDF, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_JPG)
 
-    # Default is point document, should not be changed. Units render to points.
+    # Default is point document, currently untested for other units.
     UNITS = 'pt'
 
     def __init__(self):
@@ -541,7 +542,6 @@ class FlatContext(BaseContext):
         #xpt, ypt = self.translatePoint(p)
         xpt, ypt = p
         ypt = self.h - ypt
-        print(ypt)
         self._place(bs, xpt, ypt)
 
     def _getFlatFont(self, font):
@@ -569,6 +569,7 @@ class FlatContext(BaseContext):
         spans = []
         maxAscender = 0
         maxFontSize = 0
+
         """
         for run in bs.runs:
             flatFont, font = self._getFlatFont(run.style.get('font'))
@@ -581,13 +582,15 @@ class FlatContext(BaseContext):
             spans.append(strike.span(run.s))
             maxAscender = max(maxAscender, ascender)
             maxFontSize = max(maxFontSize, fontSize)
-        """
+
         #paragraphs = [self.b.paragraph(spans)]
         #placedText = self.page.place(self.b.text(paragraphs))
         #placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
-        placedText = self.page.place(bs.cs.tx)
-        placedText.frame(x, y - bs.th, bs.tw, bs.th * 2)
-        #placedText.frame(0, 90, 100, 100)
+        """
+
+        placedText = self.page.place(bs.cs.txt)
+        # TODO: add leading to height.
+        placedText.frame(x.pt, y.pt - bs.th.pt, bs.tw.pt, bs.th.pt)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.
@@ -640,7 +643,7 @@ class FlatContext(BaseContext):
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
-        return self.page.place(bs.cs.tx).frame(xpt, ypt, wpt, hpt)
+        return self.page.place(bs.cs.txt).frame(xpt, ypt, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -769,10 +772,10 @@ class FlatContext(BaseContext):
                 pars.append(par)
                 fParagraphs.append(par)
             fRuns.append(FlatRunData(st=st, pars=pars))
-        tx = self.b.text(fParagraphs)
-        pt = fPage.place(tx)
+        txt = self.b.text(fParagraphs)
+        pt = fPage.place(txt)
         # Stored typically as BabelString.cs in FlatContext mode.
-        return FlatBabelData(doc=fDoc, page=fPage, tx=tx, pt=pt, runs=fRuns)
+        return FlatBabelData(doc=fDoc, page=fPage, txt=txt, pt=pt, runs=fRuns)
 
     #   F O N T
 
