@@ -76,8 +76,16 @@ class Polygon(Element):
             points.append((point[0] + dx, point[1] + dy))
         self.points = points
 
+    '''
     def scale(self, sx, sy=None):
-        # FIXME: E0202: An attribute defined in pagebot.elements.element line 190 hides this method (method-hidden)
+        # FIXME: E0202: An attribute defined in pagebot.elements.element line
+        # 190 hides this method (method-hidden)
+
+
+        Maybe use:
+
+        def _set_scale(self, scale):
+
         """
         >>> pn = Polygon(x=33, y=44)
         >>> pn.rect(10, 10, 200, 360)
@@ -102,6 +110,7 @@ class Polygon(Element):
             points.append((px, py))
 
         self.points = points
+    '''
 
     def _get_box(self):
         """ Get the (x, y, w, h) box of all points.

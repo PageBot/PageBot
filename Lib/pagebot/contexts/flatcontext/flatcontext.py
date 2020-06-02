@@ -683,23 +683,30 @@ class FlatContext(BaseContext):
         return s
 
     def getTextSize(self, bs, w=None, h=None):
+        """Determines text size based on placed text value."""
         tw = 0
         th = 0
         placedText = bs.cs.pt
+
         if placedText.width != w or placedText.height != h:
             # Make reflow on this new (w, h). Otherwise use the layout.runs
             # as already cached by placedText.
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
 
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
+            style = None
             rw = 0
+
             for style, s in run:
                 rw += style.width(s)
+
             tw = max(tw, rw)
+
             if rIndex == 0 and style:
                 th += style.ascender()
             else:
                 th += height
+
         return pt(tw, th)
 
     def getTextLines(self, bs, w=None, h=None):

@@ -384,6 +384,7 @@ class SketchContext(BaseContext):
         """
         sketchPages = self.b.pages # Collect the list of SketchPage instance
         sortedArtboards = {} # First sort the artboard by y-->x pairs
+        pIndex = 0
 
         for pIndex, sketchPage in enumerate(sketchPages):
             artboards = sketchPage.layers
@@ -394,6 +395,7 @@ class SketchContext(BaseContext):
         for aIndex, (yx, artboard) in enumerate(sorted(sortedArtboards.items())):
             page.w = pt(artboard.frame.w)
             page.h = pt(artboard.frame.h)
+
             # For the first page, also set the document
             if pIndex == 0:
                 doc.w = page.w

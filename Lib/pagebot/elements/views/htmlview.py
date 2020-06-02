@@ -23,7 +23,7 @@ class HtmlView(BaseView):
     DEFAULT_CONTEXT_ID = 'Html'
 
     # Default, redefined by inheriting classes that need another context.
-    SUPPORTED_CONTEXTS = ('HtmlContext',) 
+    SUPPORTED_CONTEXTS = ('HtmlContext',)
 
     def _getContext(self):
         """Answers the default context for this type of view."""

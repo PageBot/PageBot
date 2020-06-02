@@ -488,8 +488,7 @@ class Text(Element):
         ('right', 'right', 'right', 'right')
         """
         if self._bs is None:
-            # W0106: Expression "self.css('xTextAlign') or self.css('xAlign', LEFT)" is assigned to nothing (expression-not-assigned)
-            self.css('xTextAlign') or self.css('xAlign', LEFT)
+            self.bs.xAlign = self.css('xTextAlign') or self.css('xAlign', LEFT)
         return self.bs.xAlign
 
     def _set_xTextAlign(self, xTextAlign):
