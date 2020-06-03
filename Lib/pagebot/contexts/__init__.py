@@ -55,10 +55,8 @@ def getContext(contextType=None):
     NOTE: the global DEFAULT_CONTEXT sets the last loaded context to default
     for caching purposes. Switching context type will reload it.
 
-    >>> getContext('Flat')
-    <FlatContext>
-    >>> getContext('DrawBot')
-    <DrawBotContext>
+    NOTE: See doctests/contexts-linux.txt and doctests/context-osx.txt for
+    # platform-specific testing of contexts.
     """
     global DEFAULT_CONTEXT, CONTEXT_TYPE
     if contextType is None:
