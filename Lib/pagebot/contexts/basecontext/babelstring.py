@@ -449,7 +449,7 @@ class BabelString:
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
         >>> bs.cs
         ABCD
-        >>> bs.cs.__class__.__name__ == 'FormattedString' or 'FlatBabelData'
+        >>> bs.cs.__class__.__name__ in ('FormattedString', 'FlatBabelData')
         True
         """
         if self._cs is None:
