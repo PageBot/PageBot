@@ -102,12 +102,12 @@ class BabelRun:
         hyphenation = style.get('hyphenation', False)
 
         # In case there is an error in these parameters, DrawBot ignors all.
-        #print('FS-style attributes:', run.s, fontPath,
         #    upt(fontSize), upt(leading, base=fontSize),
         #    textColor.rgba, align)
 
         # Create the style for this text run.
         font = findFont(style.get('font', DEFAULT_FONT))
+
         if font is None:
             fontPath = DEFAULT_FONT
         else:
@@ -494,7 +494,7 @@ class BabelString:
         """
         if w == self.w and h == self.h:
             if self._lines is None:
-                self._lines = self.context.getTextLines(self)
+                self._lines = self.context.getTextLines(self, w=w, h=h)
             return self._lines
         return self.context.getTextLines(self, w=w, h=h)
 

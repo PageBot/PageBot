@@ -159,7 +159,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot import getContext
         >>> context = getContext() # Get default Flat or DrawBot context
         >>> context.newPage(pt(100), pt(100))
-        >>> context.newPage(100, 100)
+       >>> context.newPage(100, 100)
         """
         if doc is not None:
             w = w or doc.w

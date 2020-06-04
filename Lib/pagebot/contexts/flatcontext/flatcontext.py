@@ -59,16 +59,8 @@ class FlatBabelData:
         self.runs = runs # List of FlatRunData instances
 
     def __repr__(self):
-        s = ''
-
-        # TODO: Write as list comprehension.
-        # TODO: add newlines.
-        for p in self.paragraphs:
-            spans = p.spans
-            for span in spans:
-                s += span.string
-
-        return s
+        spans = [span.string for p in self.paragraphs for span in p.spans]
+        return ' '.join(spans)
 
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
@@ -784,6 +776,7 @@ class FlatContext(BaseContext):
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
             st.tracking(tracking)
             r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
+
             # FIXME: We need to know the export file type here in advance...
             #try:
             #    st.color(self.b.rgba(r, g, b, a)) # Does not work for Flat PDF
