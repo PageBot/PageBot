@@ -1094,12 +1094,16 @@ class BaseContext(AbstractContext):
 
     # Some drawing macros.
 
-    def marker(self, x, y, r=1, fontSize=5):
+    def marker(self, x, y, r=1, fontSize=5, prefix=None):
         # TODO: move to elements.
         x = round(x)
         y = round(y)
         red = (1, 0, 0)
         s = '(%s, %s)' % (x, y)
+
+        if prefix:
+            s = '%s %s' % (prefix, s)
+
         style = dict(font='PageBot-Regular', fontSize=pt(fontSize), textFill=red)
         bs = self.newString(s, style=style)
         oldStroke = self._stroke

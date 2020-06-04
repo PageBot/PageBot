@@ -18,6 +18,7 @@ import math
 from sys import platform
 from os import listdir
 from os.path import exists
+import flat
 from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
@@ -48,15 +49,27 @@ except:
 
 class FlatBabelData:
     """Class to store cached information in BabelString._cs."""
-    def __init__(self, doc, page, txt, pt, runs):
+
+    def __init__(self, doc, page, paragraphs, runs):
         self.doc = doc # Flat.document instance
         self.page = page # Flat.page instance
-        self.txt = txt # Flat.txt instance
-        self.pt = pt # Flat.placedText instance
+        self.paragraphs = paragraphs
+        self.txt = flat.text(paragraphs)
+        self.pt = page.place(self.txt) # Flat.placedText instance
         self.runs = runs # List of FlatRunData instances
 
     def __repr__(self):
-        return '<%s>' % self.__class__.__name__
+        s = ''
+
+        # TODO: Write as list comprehension.
+        # TODO: add newlines.
+        for p in self.paragraphs:
+            spans = p.spans
+            for span in spans:
+                s += span.string
+
+        return s
+
 
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
@@ -739,9 +752,11 @@ class FlatContext(BaseContext):
 
     def fromBabelString(self, bs):
         """Convert the "public" data in BabelString to FlatStringData instance
-        and FlatRunData for each run in bs.runs. Then answer it, probably to
-        be stored in bs._cs.
-        We are storing the Flat parts in cache, to avoid building them up again.
+        and FlatRunData for each run in bs.runs. Then answer it, probably to be
+        stored in bs._cs.
+
+        We are storing the Flat parts in cache, to avoid building them up
+        again.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext('Flat')
@@ -759,6 +774,7 @@ class FlatContext(BaseContext):
         fPage = fDoc.addpage() # Create a dummy page, used for measuring on placedText
         fParagraphs = []
         fRuns = []
+
         for run in bs.runs:
             font = findFont(bs.style.get('font', DEFAULT_FONT))
             flatFont = self.b.font.open(font.path)
@@ -776,15 +792,18 @@ class FlatContext(BaseContext):
             st.color(self.b.rgb(r, g, b)) # Hmm, how to get Flat PDF tranparancy
             # Now we have a strike that represents the style of this run.
             pars = []
+
             for txt in run.s.split('\n'):
                 par = st.paragraph(txt)
                 pars.append(par)
                 fParagraphs.append(par)
+
             fRuns.append(FlatRunData(st=st, pars=pars))
-        txt = self.b.text(fParagraphs)
-        pt = fPage.place(txt)
+
+        #print(fParagraphs)
+        #pt = fPage.place(txt)
         # Stored typically as BabelString.cs in FlatContext mode.
-        return FlatBabelData(doc=fDoc, page=fPage, txt=txt, pt=pt, runs=fRuns)
+        return FlatBabelData(doc=fDoc, page=fPage, paragraphs=fParagraphs, runs=fRuns)
 
     #   F O N T
 
