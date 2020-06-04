@@ -43,7 +43,6 @@ class BaseContext(AbstractContext):
     """
     # Tells Typesetter that by default tags should not be included in output.
     useTags = False
-    STRING_CLASS = BabelString
     EXPORT_TYPES = None
 
     def __init__(self, name=None):
@@ -973,11 +972,10 @@ class BaseContext(AbstractContext):
     # String.
 
     def newString(self, bs=None, style=None, w=None, h=None):
-        """Creates a new BabelString instance of self.STRING_CLASS from
-        `bs` (converted to plain unicode string), using style as
-        typographic parameters or `e` as cascading style source.
-        Ignore and just answer `bs` if it is already a self.STRING_CLASS
-        instance and no style is forced. PageBot function.
+        """Creates a new BabelString instance from `bs` (converted to plain
+        unicode string), using style as typographic parameters or `e` as
+        cascading style source.  Ignore and just answer `bs` if it is already a
+        BabelString instance and no style is forced. PageBot function.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
@@ -990,12 +988,12 @@ class BaseContext(AbstractContext):
 
         if not bs:
             bs = ''
-        if not isinstance(bs, self.STRING_CLASS):
-            # Otherwise convert s into plain string, from whatever it is now.
+        if not isinstance(bs, BabelString):
+            # Otherwise convert bs into a BabelString, from whatever it is now.
             # Set the babelString.context as self.
-            bs = self.STRING_CLASS(bs, style=style, w=w, h=h, context=self)
+            bs = BabelString(bs, style=style, w=w, h=h, context=self)
 
-        assert isinstance(bs, self.STRING_CLASS)
+        assert isinstance(bs, BabelString)
         return bs
 
     def newBulletString(self, bullet, style=None):

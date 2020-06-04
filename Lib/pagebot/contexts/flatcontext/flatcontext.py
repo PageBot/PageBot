@@ -70,7 +70,6 @@ class FlatBabelData:
 
         return s
 
-
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
 
