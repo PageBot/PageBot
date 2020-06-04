@@ -952,13 +952,17 @@ class BaseContext(AbstractContext):
         """
         if h is None:
             h = XXXL
+
         baselines = {}
+
         if w is not None:
             lines = self.getTextLines(bs, w, h=h)
         else:
             lines = bs.lines
+
         if lines:
             y = lines[0].y
+
         for lineInfo in lines:
             if lineInfo.y - y > h:
                 break

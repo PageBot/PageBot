@@ -37,8 +37,8 @@ class BabelRun:
 
     def __init__(self, s, style=None):
         """Answers the storage for string + style in BabelString. Note that the
-        style values of sequential runs are *not* cascading. This is similar
-        to the behavior of the DrawBot FormattedString attributes.
+        style values of sequential runs are *not* cascading. This is similar to
+        the behavior of the DrawBot FormattedString attributes.
 
         >>> from pagebot.elements import *
         >>> BabelRun('ABCD', dict(font='PageBot-Regular'))
@@ -268,8 +268,6 @@ class BabelString:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs = BabelString('ABCD', context=context)
-        >>> bs.context
-        <DrawBotContext>
         >>> bs.cs # Context put FormattedString cache data there
         ABCD
         >>> bs.context = None # Delete context reference
@@ -468,6 +466,7 @@ class BabelString:
             if self.context is not None:
                 self._cs = self.context.fromBabelString(self)
         return self._cs
+
     cs = property(_get_cs)
 
     def _get_lines(self):
@@ -489,6 +488,7 @@ class BabelString:
         'BabelLineInfo'
         """
         return self.getTextLines(self.w, self.h)
+
     lines = property(_get_lines)
 
     def getTextLines(self, w=None, h=None):
@@ -501,7 +501,6 @@ class BabelString:
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> len(bs.textLines())
-
         """
         if w == self.w and h == self.h:
             if self._lines is None:
