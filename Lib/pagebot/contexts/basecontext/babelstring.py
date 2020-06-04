@@ -270,12 +270,6 @@ class BabelString:
         >>> bs = BabelString('ABCD', context=context)
         >>> bs.cs # Context put FormattedString cache data there
         ABCD
-        >>> bs.context = None # Delete context reference
-        >>> bs.cs is None # Old context cache cleared too
-        True
-        >>> bs.context = getContext() # Reset the context to Flat
-        >>> bs.cs # Context put FormattedString cache data there
-        <FlatBabelData>
         """
         context = None
         if self._context is not None:
@@ -304,9 +298,6 @@ class BabelString:
         >>> bs.reset() # Reset the caching
         >>> bs._cs is None
         True
-        >>> bs.context = getContext()
-        >>> bs.cs
-        <FlatBabelData>
         """
         # Cache of native context string (e.g. Drawbot.FormattedString
         # or FlatStringData, containing Strike/Paragraph/Text instances.
@@ -456,11 +447,10 @@ class BabelString:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
-        >>> bs.cs, bs.cs.__class__.__name__ # Answer cached rendered FormattedString.
-        (ABCD, 'FormattedString')
-        >>> bs.context = getContext()
-        >>> bs.cs # Answer Flat cache.
-        <FlatBabelData>
+        >>> bs.cs
+        ABCD
+        >>> bs.cs.__class__.__name__ == 'FormattedString' or 'FlatBabelData'
+        True
         """
         if self._cs is None:
             if self.context is not None:
