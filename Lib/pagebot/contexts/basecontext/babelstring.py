@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
-    DEFAULT_LEADING, LEFT, BASELINE)
+    DEFAULT_LEADING, LEFT, CENTER, RIGHT, BASELINE)
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt, em, upt
 from pagebot.toolbox.color import color
@@ -166,7 +166,11 @@ class BabelRun:
         return fsStyle, hyphenation
 
 class BabelLineInfo:
-
+    """BabelLineInfo is information decompiled from a native context text line run.
+    It resembles as close a possible to original source that generated the 
+    the text line/run, but it will never be the same. E.g. any OT-feature
+    glyph replacement cannot be reconstructed to the original string.
+    """
     def __init__(self, x, y, context, cLine=None):
         """Container for line info, after text wrapping by context."""
         self.x = units(x)
@@ -174,7 +178,7 @@ class BabelLineInfo:
         self.runs = [] # List of BabelRunInfo instances.
         self.context = context # Just in case it is needed.
         # Optional native "context line" (e.g. DrawBot-->CTLine instance.
-        # Flat-->?).
+        # Flat-->the result of placedText.layout.runs() looping).
         self.cLine = cLine
 
     def __repr__(self):
@@ -182,7 +186,11 @@ class BabelLineInfo:
 
 
 class BabelRunInfo:
-
+    """BabelRunInfo is information decompiled from a native context text line.
+    It resembles as close a possible to original source that generated the 
+    the text line/run, but it will never be the same. E.g. any OT-feature
+    glyph replacement cannot be reconstructed to the original string.
+    """
     def __init__(self, s, style, context, cRun=None):
         assert isinstance(s, str)
         self.s = s # Reconstructed string, may not be input for e.g. OT-features
@@ -387,12 +395,12 @@ class BabelString:
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
         >>> bs.w, bs.tw, bs.h, bs.th # Difference between given height and text height.
-        (250.9pt, 250.9pt, 500pt, 100pt)
+        (None, 250.9pt, 500pt, 100pt)
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
         >>> bs.w, bs.tw, bs.h, bs.th # Difference between given height and text height.
-        (250.9pt, 250.9pt, 500pt, 100pt)
+        (None, 250.9pt, 500pt, 100pt)
         """
         if self.context is None: # Required context to be defined.
             return None
@@ -404,7 +412,6 @@ class BabelString:
             return self._twh[0]
 
         return None
-
     tw = property(_get_tw)
 
     def _get_th(self):
@@ -418,13 +425,16 @@ class BabelString:
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
-        >>> bs.w, bs.tw, bs.h, bs.th # Not width defined, comes from bs.tw
-        (250.9pt, 250.9pt, 500pt, 100pt)
+        >>> bs.w, bs.tw, bs.h, bs.th # No width defined, comes from bs.tw
+        (None, 250.9pt, 500pt, 100pt)
+        >>> bs.w = 1000
+        >>> bs.w, bs.tw, bs.h, bs.th # Width defined, real with by bs.tw
+        (1000pt, 250.9pt, 500pt, 100pt)
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> style = dict(font='PageBot-Regular', fontSize=pt(10), leading=em(1))
         >>> bs = context.newString(loremipsum(), style, w=500)
         >>> bs.w, bs.tw, bs.h, bs.th # Difference between box with and text width
-        (500pt, 499.09pt, 500pt, 500pt)
+        (500pt, 500.69pt, None, 500pt)
         """
         if self.context is None: # Required context to be defined
             return None
@@ -436,8 +446,37 @@ class BabelString:
             return self._twh[1]
 
         return None
-
     th = property(_get_th)
+
+    def _get_xTextAlign(self):
+        """Answer the horizontal alignment of the first run style in self.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = context.newString('ABCD', dict(font='PageBot-Regular', fontSize=24, xTextAlign=CENTER))
+        >>> bs.xTextAlign
+        'center'
+        """
+        if self.runs:
+            return self.runs[0].style.get('xTextAlign')
+        return LEFT
+    xTextAlign = property(_get_xTextAlign)
+
+    def _get_yTextAlign(self):
+        """Answer the vertical alignment of the first run style in self.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = context.newString('ABCD', dict(font='PageBot-Regular', fontSize=24, yTextAlign=CENTER))
+        >>> bs.yTextAlign
+        'center'
+        """
+        if self.runs:
+            return self.runs[0].style.get('yTextAlign')
+        return BASELINE
+    yTextAlign = property(_get_yTextAlign)
+
+    #   C O N T E X T  C A C H I N G
 
     def _get_cs(self):
         """Answers the native formatted string of the context. If it does not
@@ -456,7 +495,6 @@ class BabelString:
             if self.context is not None:
                 self._cs = self.context.fromBabelString(self)
         return self._cs
-
     cs = property(_get_cs)
 
     def _get_lines(self):
@@ -473,12 +511,11 @@ class BabelString:
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
         >>> lines = bs.lines
         >>> len(lines)
-        35
+        113
         >>> lines[0].__class__.__name__
         'BabelLineInfo'
         """
         return self.getTextLines(self.w, self.h)
-
     lines = property(_get_lines)
 
     def getTextLines(self, w=None, h=None):
@@ -490,7 +527,8 @@ class BabelString:
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
-        >>> len(bs.textLines())
+        >>> len(bs.getTextLines())
+        113
         """
         if w == self.w and h == self.h:
             if self._lines is None:
@@ -558,6 +596,37 @@ class BabelString:
                 topLineAscender_h = max(topLineAscender_h, fontSize * ascender_h / font.info.unitsPerEm)
         return topLineAscender_h
     topLineAscender_h = property(_get_topLineAscender_h)
+
+    def _get_topLineDescender(self):
+        """Answers the largest descender height in the first line.
+
+        >>> from pagebot.toolbox.units import em
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
+        >>> bs = BabelString('ABCD', style, context=context)
+        >>> bs.topLineDescender
+        -25.2pt
+        >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
+        >>> bs.runs
+        [<BabelRun "ABCD">, <BabelRun "EFGH ">]
+        >>> bs.lines[0].runs
+        [<BabelRunInfo "ABCD">, <BabelRunInfo "EFGH">]
+        >>> bs.topLineDescender # First line descender height increased
+        -50.4pt
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        >>> bs.topLineDescender # First line descender height increased
+        -75.6pt
+        """
+        topLineDescender = 0
+        if self.lines:
+            for run in self.lines[0].runs:
+                font = findFont(run.style.get('font', DEFAULT_FONT))
+                fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
+                topLineDescender = min(topLineDescender, fontSize * font.info.typoDescender / font.info.unitsPerEm)
+        return topLineDescender
+    topLineDescender = property(_get_topLineDescender)
+
 
     def _get_topLineCapHeight(self):
         """Answers the largest capHeight in the first line. The height is
@@ -729,7 +798,7 @@ class BabelString:
         >>> # Make the string, we can adapt the document/page size to it.
         >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(100))
         >>> bs = context.newString('Hkpx', style)
-        >>> tw, th = context.textSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
+        >>> tw, th = context.getTextSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
         >>> (tw, th) == bs.textSize
         True
         >>> m = 50

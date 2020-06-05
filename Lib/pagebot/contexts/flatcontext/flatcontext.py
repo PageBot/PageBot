@@ -23,9 +23,9 @@ from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
-        DEFAULT_FILETYPE, RGB)
+        DEFAULT_FILETYPE, RGB, CENTER, RIGHT)
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo
+from pagebot.contexts.basecontext.babelstring import BabelString, BabelLineInfo, BabelRunInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.errors import PageBotFileFormatError
@@ -60,6 +60,7 @@ class FlatBabelData:
 
     def __repr__(self):
         spans = [span.string for p in self.paragraphs for span in p.spans]
+        # Show plain string accumulate string, compatible to DrawBotFormattedString
         return ' '.join(spans)
 
 class FlatRunData:
@@ -544,7 +545,7 @@ class FlatContext(BaseContext):
         """
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
-        xpt, ypt = p
+        xpt, ypt = pt(p) # Make sure to convert to points
         ypt = self.h - ypt
         self._place(bs, xpt, ypt)
 
@@ -568,6 +569,11 @@ class FlatContext(BaseContext):
     def _place(self, bs, x, y):
         """Places the styled Flat text on a page, transform vertical
         position to position on baseline.
+        Vertical alignment is supposed to be handled by the caller,
+        already calculated in the `y`.
+        Horizontal alignment is taken from the bs.xTextAlign value,
+        as answered by the style of the first run:
+        bs.runs[0].style.get('xTextAlign')
 
         TODO: implement runs instead of native context string.
 
@@ -593,9 +599,20 @@ class FlatContext(BaseContext):
         #placedText = self.page.place(self.b.text(paragraphs))
         #placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
         """
-
         placedText = self.page.place(bs.cs.txt)
-        # TODO: add leading to height.
+
+        # If the style of the first BabelString run, contains a xTextAlign
+        # for CENTER or RIGHT, the shift the x position accordingly.
+        xTextAlign = bs.xTextAlign
+        if xTextAlign == CENTER:
+            x -= bs.tw/2
+        elif xTextAlign == RIGHT:
+            x -= bs.tw
+
+        # Vertical alignment is supposed to be handled by the caller,
+        # already calculated in the `y`
+        y -= bs.topLineDescender
+
         placedText.frame(x.pt, y.pt - bs.th.pt, bs.tw.pt, bs.th.pt)
 
     def _asFlatColor(self, pbColor):
@@ -697,6 +714,7 @@ class FlatContext(BaseContext):
             # as already cached by placedText.
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
 
+        lastDescender = 0
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             style = None
             rw = 0
@@ -710,6 +728,9 @@ class FlatContext(BaseContext):
                 th += style.ascender()
             else:
                 th += height
+            lastDescender = style.descender()
+
+        th -= lastDescender # Descender is negative value
 
         return pt(tw, th)
 
@@ -733,12 +754,21 @@ class FlatContext(BaseContext):
             # Make reflow on this new (w, h)
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
         x = y = pt(0) # Relative vertical position
-        for height, run in placedText.layout.runs(): # In Flat "run" is native data for line
-            lines.append(BabelLineInfo(x, y, context=self, cLine=run))
-            y += height
+        for height, flatLine in placedText.layout.runs(): # In Flat "run" is native data for line
+            babelLineInfo = BabelLineInfo(x, y, context=self, cLine=flatLine)
+            lineHeight = pt(0)
+            for fst, s in flatLine:
+                font = findFont(fst.font.name.decode("utf-8"))
+                style = dict(font=font, fontSize=pt(fst.size), leading=pt(fst.leading),
+                    textFill=color(fst.color), tracking=pt(fst.tracking * fst.size))
+                babelRunInfo = BabelRunInfo(s, style, self, cRun=fst) # Cache the flatStyle, just in case.
+                babelLineInfo.runs.append(babelRunInfo)
+                lineHeight = max(lineHeight, height)
+            lines.append(babelLineInfo)
+            y += lineHeight
         return lines
 
-    def getBaseLines(self, txt, box):
+    def getBaseLines(self, bs, box):
         raise NotImplementedError
 
     def fromBabelString(self, bs):
@@ -754,11 +784,11 @@ class FlatContext(BaseContext):
         >>> style = dict(font='PageBot-Regular', fontSize=24)
         >>> bs = context.newString('ABCD', style)
         >>> fData = context.fromBabelString(bs)
-        >>> fData
-        <FlatBabelData>
-        >>> bs.cs # Invokes context.fromBabelString(bs)
-        <FlatBabelData>
-        >>> bs.cs.page.width == fData.page.width
+        >>> fData # Representation of BabelLineInfo, compatible to DrawBot.FormattedString
+        ABCD
+        >>> bs.cs # Invokes context.fromBabelString(bs) # Representation of BabelLineInfo
+        ABCD
+        >>> bs.cs.page.width == fData.page.width # Drill into the the Flat object.
         True
         """
         fDoc = self.b.document(10, 10, 'pt') # Create a dummy document
@@ -772,9 +802,9 @@ class FlatContext(BaseContext):
             fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
             leading = upt(bs.style.get('leading', em(1.2)), base=fontSize)
             # Keep as multiplication factor to fontSize for Flat.
-            tracking = em(bs.style.get('tracking', 0)).v
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
-            st.tracking(tracking)
+            tracking = em(bs.style.get('tracking', 0), base=fontSize).v
+            st.tracking(tracking/10) # Flat tracking if %, BabelString is 1/1000em
             r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
 
             # FIXME: We need to know the export file type here in advance...

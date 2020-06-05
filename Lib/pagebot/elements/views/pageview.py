@@ -86,8 +86,10 @@ class PageView(BaseView):
 
         >>> from pagebot.document import Document
         >>> from pagebot.constants import BusinessCard, A4, QUIRE_QUARTO
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
         >>> # Make 4 pages to be composed as a Quire of 2 spreads.
-        >>> doc = Document(size=A4, autoPages=4)
+        >>> doc = Document(size=A4, autoPages=4, context=context)
         >>> view = doc.view
         >>> q = view.newQuire(folds=QUIRE_QUARTO)
         >>> len(view.elements)
@@ -440,7 +442,7 @@ class PageView(BaseView):
             #self.context.stroke(registrationColor, 0.5)
             #self.context.line((x, y), (x + tw, y))
             cropmarkDistance = self.css('viewCropMarkDistance', pt(12))
-            self.context.drawString(bs, (x, y+cropmarkDistance, bs.tw, bs.th))
+            self.context.drawString(bs, (x, y+cropmarkDistance))
 
     def getNameString(self, e, path):
         """

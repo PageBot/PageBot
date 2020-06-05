@@ -408,13 +408,13 @@ class Text(Element):
         >>> tw.rounded, th.rounded
         (182pt, 100pt)
         """
-        if bs is None: # If defined, test with other string than inside.
+        if bs is None: # If defined, test with other string than contained self.bs.
             bs = self.bs
         if bs is None: # Still None? Don't know what to do.
             return 0, 0
         if w is None:
-            w = self.w
-        return self.context.textSize(bs.cs, w=self.w)
+            w = self.w # Can still be None
+        return self.context.textSize(bs, w=self.w) # Context gets full BabelString bs
 
     def getOverflow(self, w=None, h=None):
         """Figures out what the overflow of the text is, with the given (w, h)
@@ -617,7 +617,8 @@ class Text(Element):
 
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
-        >>> doc = Document(w=1000, h=1000)
+        >>> context = getContext()
+        >>> doc = Document(w=1000, h=1000, context=context)
         >>> page1 = doc[1]
         >>> page1
         <Page #1 default (1000pt, 1000pt)>
@@ -794,7 +795,8 @@ class Text(Element):
     def _applyHorizontalAlignment(self, x):
         """Horizontal alignment is done by the text itself. This is just for
         other elements, such as the frame."""
-        xAlign = self.xAlign
+        # Horizontal align defined in self.bs should be handled by the context.
+        xAlign = self.xAlign 
         if xAlign == CENTER:
             x -= self.w/2/self.scaleX
         elif xAlign == RIGHT:
@@ -804,7 +806,9 @@ class Text(Element):
     def _applyVerticalAlignment(self, y):
         """Adjust vertical alignments for the text, assuming that the default
         origin of drawing in on text baseline."""
-        yAlign = self.yAlign
+        # Vertical alignment if handled by the text element, where the type comes
+        # either from self.yAlign or self.bs.yTextAlign
+        yAlign = self.yAlign or self.bs.yTextAlign
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
 

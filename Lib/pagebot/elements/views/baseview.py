@@ -57,7 +57,9 @@ class BaseView(Element):
             from pagebot.contexts import getContext
             context = getContext(self.DEFAULT_CONTEXT_ID)
         '''
-        if context is None or context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
+        if context is None:
+            raise ValueError('Missing context for view "%s"' % self)
+        if context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
             raise ValueError('Missing or unsupported context "%s" for view "%s"' % (context.__class__.__name__, self))
         self.context = context # Set the self._context property.
 
