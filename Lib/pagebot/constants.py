@@ -72,6 +72,9 @@ A3Square = A3[0], A3[0] # Square of A3 (portrait, short side)
 A4Square = A4[0], A4[0] # Square of A4 (portrait, short side)
 A5Square = A5[0], A5[0] # Square of A5 (portrait, short side)
 
+TwoA0 = mm(1682, 2378)
+FourA0 = mm(1189, 1682)
+
 # Rounded to points pt(595, 842) to fit exact column measures.
 A4Rounded = pt(595, 842)
 
@@ -101,34 +104,105 @@ C8 = mm(57,  81)
 C9 = mm(40,  57)
 C10 = mm(28, 40)
 
-# Flat color type coding.
-RGB = 'rgb'
-RGBA = 'rgba'
-GRAY = 'gray'
-GA = 'ga'
-CMYK = 'cmyk'
-SPOT = 'spot'
-
-# NOTE: other Flat color features are:
-# thinned
-# overprint
+# Untrimmed paper formats
+RA0 = mm(860, 1220)
+RA1 = mm(610, 860)
+RA2 = mm(430, 610)
+RA3 = mm(305, 430)
+RA4 = mm(215, 305)
+SRA0 = mm(900, 1280)
+SRA1 = mm(640, 900)
+SRA2 = mm(450, 640)
+SRA3 = mm(320, 450)
+SRA4 = mm(225, 320)
 
 # American Sizes as non-rounded values
 HalfLetter = inch(8.5, 5.5)
 Letter = inch(8.5, 11)
 Legal = inch(8.5, 14)
 JuniorLegal = inch(5, 8)
-Tabloid = inch(11, 17)
+Ledger = inch(11, 17)
+
+ANSI_A = Letter
+ANSI_B = Tabloid = Ledger
+ANSI_C = inch(17, 22)
+ANSI_D = inch(22, 34)
+ANSI_E = inch(34, 44)
+
+Arch_A = inch(12, 9)
+Arch_B = inch(18, 12)
+Arch_C = inch(24, 18)
+Arch_D = inch(36, 24)
+Arch_E = inch(48, 36)
+
+# Japanese B- Series Variant (JIS)
+# The JIS had two series of paper sizes, A- and B-. 
+# The JIS A- Series is identical to the ISO A Series. 
+# The B- Series paper is 1.5 times that of the corresponding A- paper.
+# Both A- and B- series paper is widely available in Japan.
+Japanese_B0 = mm(1030, 1456)
+Japanese_B1 = mm(728, 1030)
+Japanese_B2 = mm(515, 728)
+Japanese_B3 = mm(364, 515)
+Japanese_B4 = mm(257, 364)
+Japanese_B5 = mm(182, 257)
+Japanese_B6 = mm(128, 182)
+Japanese_B7 = mm(91, 128)
+Japanese_B8 = mm(64, 91)
+Japanese_B9 = mm(45, 64)
+Japanese_10 = mm(32, 45)
 
 # Other rounded definintions compatible to DrawBot predefines
 # Current screen size. FIXME: not working yet.
 #Screen = getContext().screenSize()
-Ledger = pt(1224, 792)
 Statement = pt(396, 612)
-Executive = pt(540, 720)
+Executive = pt(540, 720) # inch(7.25, 10.5)
 Folio = pt(612, 936)
-Quarto = pt(610, 780)
+Quarto = pt(610, 780) # inch(8, 10)
 Size10x14 = pt(720, 1008)
+
+# Other named paper sizes
+Royal = inch(20, 25) # mm(156, 234)
+Demy = inch(17.5, 22.5) # mm(138, 216)
+DoubleDemy = inch(23.5, 35)
+QuadDemy = inch(35, 45)
+Statement = inch(5.5, 8.5)
+IndexCard1 = inch(5, 3)
+IndexCard2 = inch(6, 4)
+IndexCard = inch(8, 5)
+Crown = inch(15, 20)
+LargePost = inch(16.5, 22)
+Legal = inch(8.5, 14)
+GovernmentLetter = inch(8, 10.5)
+Medium = inch(18, 23)
+Elephant = inch(23, 28)
+PlayingCardLarge = B8
+PlayingCard = A8
+Albert = inch(4, 6)
+Duchess = inch(4.5, 6)
+Duke = inch(5.5, 7)
+FoolscapQuarto = inch(6.5, 8)
+FoolscapFolio = inch(8, 13)
+SmallPostOctavo = inch(4.5, 7)
+SmallPostQuarto = inch(7, 9)
+LargePostOctavo = inch(5, 8)
+LargePostQuarto = inch(8, 10)
+
+# Uncut writing paper sizes, Britisch imperial standards
+Pott = inch(12.5, 15)
+DoublePott = inch(15, 25)
+Foolscap = inch(13.25, 16.5) # Or inch(8, 13)?
+Monarch = Executive
+DoubleFoolscap = inch(16.5, 26.5)
+FoolscapAndThird = inch(13.25, 22)
+FoolscapAndHalf = inch(13.25, 24.75)
+PinchedPost = inch(14.5, 18.5)
+Post = inch(15.25, 19)
+DoublePost = inch(19, 30.5)
+LargePost = inch(16.5, 20.75)
+DoubleLargePost = inch(20.75, 33)
+Copy = inch(16.25, 20)
+Medium = inch(18, 20.5)
 
 # Hybrid sizes
 # International generic fit for stationary
@@ -150,6 +224,7 @@ USPostcardMax = inch(6, 4.25)
 USPostcardMin = inch(5, 3.5)
 
 # Business card, https://nl.wikipedia.org/wiki/Visitekaartje
+# http://designerstoolbox.com/designresources/paper/
 ISO216 = A8
 BusinessCard = ISOCreditCard = mm(85.60, 53.98)
 
@@ -372,9 +447,12 @@ QUIRE_2x2 = (2, 2) # is a Quire of 4 pages, e.g. to be cut as separate sheets
 QUIRE_8x4 = (8, 4) # is a Quire of 32 separate pages, e.g. to be cut as 32 business cards.
 QUIRE_LEPARELLO3 = (3, 1) # is a leparello of 3 connected pages.
 QUIRE_LEPARELLO4 = (4, 1) # is a leparello of 4 connected pages.
-QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2°, a Quire of 2 spreads
-QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4°
-QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages
+QUIRE_FOLIO = (QUIRE_SPREAD, 2) # 2°, a Quire of 2 spreads, 1 fold, 2 sheets, 4 pages (fo, f)
+QUIRE_QUARTO = (QUIRE_FOLIO, 2) # 4° 2 folds, 6 sheets, 12 pages (4to)
+#QUIRE_SEXTO = QUIRE_SIXMO 3 folds, 6 sheets, 12 pages (6to, 6mo)
+QUIRE_OCTAVO = (QUIRE_QUARTO, 2) # 8°, folding into 16 pages (8vo)
+#QUIRE_DUODECIMO = QUIRE_TWELVEMO 4 folds, 12 sheets, 24 pages (12mo)
+#QUIRE_SEXTODECIMO = SIXTEENMO 4 folds, 16 sheets, 32 pages (16mo)
 
 # Color bar parameter for view.showColorBars = set()
 # http://the-print-guide.blogspot.com/2010/07/color-bar.html
@@ -1161,6 +1239,20 @@ CSS_EASE_INOUTSINE = 'easeInOutSine'
 CSS_EASE_INOUTEXPO = 'easeInOutExpo'
 CSS_EASE_INOUTCIRC = 'easeInOutCirc'
 CSS_EASE_INOUTBACK= 'easeInOutBack'
+
+#   C O L O R
+
+# Flat color type coding.
+RGB = 'rgb'
+RGBA = 'rgba'
+GRAY = 'gray'
+GA = 'ga'
+CMYK = 'cmyk'
+SPOT = 'spot'
+
+# NOTE: other Flat color features are:
+# thinned
+# overprint
 
 # Note that any conversion between RAL (paint) and RGB can only be a
 # approximation. Material colors by definition have a different range of
