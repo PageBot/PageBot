@@ -28,7 +28,7 @@ from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
-    DEFAULT_LEADING, LEFT, CENTER, RIGHT, BASELINE)
+    DEFAULT_LEADING, LEFT, BASELINE) # , CENTER, RIGHT
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt, em, upt
 from pagebot.toolbox.color import color
@@ -167,7 +167,7 @@ class BabelRun:
 
 class BabelLineInfo:
     """BabelLineInfo is information decompiled from a native context text line run.
-    It resembles as close a possible to original source that generated the 
+    It resembles as close a possible to original source that generated the
     the text line/run, but it will never be the same. E.g. any OT-feature
     glyph replacement cannot be reconstructed to the original string.
     """
@@ -187,7 +187,7 @@ class BabelLineInfo:
 
 class BabelRunInfo:
     """BabelRunInfo is information decompiled from a native context text line.
-    It resembles as close a possible to original source that generated the 
+    It resembles as close a possible to original source that generated the
     the text line/run, but it will never be the same. E.g. any OT-feature
     glyph replacement cannot be reconstructed to the original string.
     """

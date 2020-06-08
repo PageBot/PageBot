@@ -366,8 +366,7 @@ class Text(Element):
         return e
 
     def append(self, bs, style=None):
-        """Appends to the current BabelString instance self.bs.
-        """
+        """Appends to the current BabelString instance self.bs."""
         if not isinstance(bs, BabelString):
             bs = BabelString(str(bs), style, context=self.context)
         if self.bs is None:
@@ -377,17 +376,17 @@ class Text(Element):
             self._textLines = None # Force new rendering on self.textLines call.
 
     def appendMarker(self, markerId, arg=None):
-        """Append a marker at the end of the last BabelString.runs[-1].
+        """Appends a marker at the end of the last BabelString.runs[-1].
         This can be used by page composers to see what the status of a certain
         text has become, after rendering textLines.
         """
         self.bs.appendMarker(markerId, arg)
 
     def getTextSize(self, bs=None, w=None):
-        """Figure out what the width and height of the text self.bs is, with or
-        given width or the styled width of this text box. If `fs` is defined as
-        external attribute, then the size of the string is answers, as if it
-        was already inside the text box.
+        """Figures out what the width and height of the text self.bs is, with
+        a given width or the styled width of this text box. If `fs` is defined
+        as external attribute, then the size of the string is answered, as if
+        it was already inside the text box.
 
 
         >>> from pagebot.toolbox.units import pt
@@ -611,9 +610,9 @@ class Text(Element):
     def overflow2Next(self, processed=None):
         """Try to fix if there is overflow. If there is overflow outside the
         page, then find the page.next with it's target element to continue,
-        until all text fits or the element has not nextElement defined.
-        Answer the page and result, as the page may have been altered.
-        Overflow is solved by element condition Overflow2Next().
+        until all text fits or the element has not nextElement defined. Answers
+        the page and result, as the page may have been altered.  Overflow is
+        solved by element condition Overflow2Next().
 
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
@@ -686,8 +685,8 @@ class Text(Element):
     #   B U I L D
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        """Draws the text on position (x, y). Draw background rectangle and /
-        or frame if fill and / or stroke are defined.
+        """Draws the text on position (x, y). Draws a background rectangle and
+        / or frame if fill and / or stroke are defined.
 
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
@@ -796,7 +795,7 @@ class Text(Element):
         """Horizontal alignment is done by the text itself. This is just for
         other elements, such as the frame."""
         # Horizontal align defined in self.bs should be handled by the context.
-        xAlign = self.xAlign 
+        xAlign = self.xAlign
         if xAlign == CENTER:
             x -= self.w/2/self.scaleX
         elif xAlign == RIGHT:
@@ -805,7 +804,7 @@ class Text(Element):
 
     def _applyVerticalAlignment(self, y):
         """Adjust vertical alignments for the text, assuming that the default
-        origin of drawing in on text baseline."""
+        origin of drawing is on text baseline."""
         # Vertical alignment if handled by the text element, where the type comes
         # either from self.yAlign or self.bs.yTextAlign
         yAlign = self.yAlign or self.bs.yTextAlign
@@ -861,9 +860,9 @@ class Text(Element):
     bottom = property(_get_bottom, _set_bottom)
 
     def _get_top(self):
-        """Bottom position of bounding box, not including margins.
-        This must be different from the regular Element top property,
-        as the default origin is at the baseline of the top text line.
+        """Bottom position of bounding box, not including margins. This has to
+        be different from the regular Element top property, because the default
+        origin is at the baseline of the top text line.
 
         >>> from pagebot.constants import A4, MIDDLE_CAP, TOP
         >>> from pagebot.elements import newLine
