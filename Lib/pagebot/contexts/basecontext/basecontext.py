@@ -94,11 +94,7 @@ class BaseContext(AbstractContext):
         not exist.
 
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
-        >>> context
-        <DrawBotContext>
-        >>> context.name
-        'DrawBotContext'
+        >>> context = getContext()
         >>> path = context.bezierpath
         >>> path is not None
         True
@@ -932,7 +928,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
         >>> bs.w
@@ -981,8 +977,8 @@ class BaseContext(AbstractContext):
         >>> from pagebot.contexts import getContext
         >>> context = getContext() # Get default Flat or DrawBot context
         >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
-        >>> bs, bs.__class__.__name__, bs.context.name in ('DrawBotContext', 'FlatContext')
-        ($ABCD$, 'BabelString', True)
+        >>> bs, bs.__class__.__name__
+        ($ABCD$, 'BabelString')
         """
         style = makeStyle(style=style)
 
