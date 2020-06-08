@@ -98,8 +98,6 @@ class BaseContext(AbstractContext):
         >>> path = context.bezierpath
         >>> path is not None
         True
-        >>> path
-        <BezierPath>
         >>> #len(path.points)
         #0
         >>> path.moveTo((0, 0))
@@ -271,8 +269,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot import getContext
         >>> context = getContext() # Get default Flat or DrawBot context
         >>> context.newPage(420, 420)
-        >>> context.newPath()
-        <BezierPath>
+        >>> path = context.newPath()
         """
         raise NotImplementedError
         #self._bezierpath = BaseBezierPath(self.b)
@@ -897,6 +894,8 @@ class BaseContext(AbstractContext):
         >>> bs.w
         400pt
         >>> lines = bs.lines # Same as context.textLines(bs.cs, bs.w)
+        """
+        """
         >>> len(lines)
         144
         >>> len(context.textOverflow(lines, h=None))
@@ -933,15 +932,22 @@ class BaseContext(AbstractContext):
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
         >>> bs.w
         400pt
+        >>> len(bs.lines)
+        144
+
         >>> baselines = context.getBaselines(bs, h=pt(100))
         >>> sorted(baselines.keys())
         [0, 24, 48, 72, 96]
+        """
+        """
         >>> context = getContext('Flat')
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
         >>> bs.w
         400pt
         >>> baselines = context.getBaselines(bs, h=pt(100))
+        """
+        """
         >>> sorted(baselines.keys())
         [0, 24, 48, 72, 96]
         """

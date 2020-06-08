@@ -750,13 +750,16 @@ class FlatContext(BaseContext):
         """
         placedText = bs.cs.pt
         lines = []
+
         if placedText.width != w or placedText.height != h:
             # Make reflow on this new (w, h)
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
         x = y = pt(0) # Relative vertical position
+
         for height, flatLine in placedText.layout.runs(): # In Flat "run" is native data for line
             babelLineInfo = BabelLineInfo(x, y, context=self, cLine=flatLine)
             lineHeight = pt(0)
+
             for fst, s in flatLine:
                 font = findFont(fst.font.name.decode("utf-8"))
                 style = dict(font=font, fontSize=pt(fst.size), leading=pt(fst.leading),
@@ -766,6 +769,7 @@ class FlatContext(BaseContext):
                 lineHeight = max(lineHeight, height)
             lines.append(babelLineInfo)
             y += lineHeight
+
         return lines
 
     def getBaseLines(self, bs, box):

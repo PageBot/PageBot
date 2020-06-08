@@ -518,6 +518,7 @@ class BabelString:
         'BabelLineInfo'
         """
         return self.getTextLines(self.w, self.h)
+
     lines = property(_get_lines)
 
     def getTextLines(self, w=None, h=None):
@@ -536,6 +537,7 @@ class BabelString:
             if self._lines is None:
                 self._lines = self.context.getTextLines(self, w=w, h=h)
             return self._lines
+
         return self.context.getTextLines(self, w=w, h=h)
 
     def _get_topLineAscender(self):
