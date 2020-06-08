@@ -136,8 +136,8 @@ Arch_D = inch(36, 24)
 Arch_E = inch(48, 36)
 
 # Japanese B- Series Variant (JIS)
-# The JIS had two series of paper sizes, A- and B-. 
-# The JIS A- Series is identical to the ISO A Series. 
+# The JIS had two series of paper sizes, A- and B-.
+# The JIS A- Series is identical to the ISO A Series.
 # The B- Series paper is 1.5 times that of the corresponding A- paper.
 # Both A- and B- series paper is widely available in Japan.
 Japanese_B0 = mm(1030, 1456)

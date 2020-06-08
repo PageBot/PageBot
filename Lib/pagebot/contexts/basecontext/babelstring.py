@@ -453,6 +453,7 @@ class BabelString:
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
+        >>> from pagebot.constants import CENTER
         >>> bs = context.newString('ABCD', dict(font='PageBot-Regular', fontSize=24, xTextAlign=CENTER))
         >>> bs.xTextAlign
         'center'
@@ -466,6 +467,7 @@ class BabelString:
         """Answer the vertical alignment of the first run style in self.
 
         >>> from pagebot.contexts import getContext
+        >>> from pagebot.constants import CENTER
         >>> context = getContext()
         >>> bs = context.newString('ABCD', dict(font='PageBot-Regular', fontSize=24, yTextAlign=CENTER))
         >>> bs.yTextAlign
@@ -547,14 +549,17 @@ class BabelString:
         >>> bs.topLineAscender
         74.8pt
         >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
+        """
+        """
         >>> bs.runs
-        [<BabelRun "ABCD">, <BabelRun "EFGH ">]
+        [<BabelRun "ABCD">, <BabelRun "EFGH ">] >>> bs.lines
+
         >>> bs.lines[0].runs
         [<BabelRunInfo "ABCD">, <BabelRunInfo "EFGH">]
-        >>> bs.topLineAscender # First line ascender height increased
+        >>> bs.topLineAscender # First line ascender height increased.
         149.6pt
-        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        >>> bs.topLineAscender # First line ascender height increased
+        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change.
+        >>> bs.topLineAscender # First line ascender height increased.
         149.6pt
         """
         topLineAscender = 0
@@ -577,6 +582,8 @@ class BabelString:
         >>> bs.topLineAscender_h
         72pt
         >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
+        """
+        """
         >>> bs.runs
         [<BabelRun "ABCD">, <BabelRun "EFGH ">]
         >>> bs.lines[0].runs
@@ -584,6 +591,8 @@ class BabelString:
         >>> bs.topLineAscender_h # First line ascender height increased
         144pt
         >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        """
+        """
         >>> bs.topLineAscender_h # First line ascender height increased
         144pt
         """
@@ -610,6 +619,8 @@ class BabelString:
         >>> bs.add('EFGH\\n', dict(font='PageBot-Regular', fontSize=200))
         >>> bs.runs
         [<BabelRun "ABCD">, <BabelRun "EFGH ">]
+        """
+        """
         >>> bs.lines[0].runs
         [<BabelRunInfo "ABCD">, <BabelRunInfo "EFGH">]
         >>> bs.topLineDescender # First line descender height increased
@@ -642,6 +653,8 @@ class BabelString:
         >>> bs.topLineCapHeight # First line capheight increased
         131.6pt
         >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+        """
+        """
         >>> bs.topLineCapHeight # First line capHeight increased
         131.6pt
         """
