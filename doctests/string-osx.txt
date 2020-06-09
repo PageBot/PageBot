@@ -11,3 +11,23 @@ Doctests for string functions on OSX.
 ABCD
 >>> bs.cs.__class__.__name__
 'FormattedString'
+>>> from pagebot.toolbox.loremipsum import loremipsum
+>>> from pagebot.toolbox.units import pt
+>>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+>>> bs = context.newString(loremipsum(), style, w=pt(400))
+>>> bs.style
+{'font': 'PageBot-Regular', 'fontSize': 24pt}
+>>> bs.w
+400pt
+>>> len(bs.lines)
+144
+>>> baselines = context.getBaselines(bs)
+>>> len(baselines)
+144
+>>> baselines = context.getBaselines(bs, h=pt(100))
+>>> keys = sorted(baselines.keys())
+>>> len(keys)
+5
+>>> keys
+[0, 24, 48, 72, 96]
+

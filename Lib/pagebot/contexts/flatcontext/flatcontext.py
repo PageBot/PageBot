@@ -765,6 +765,7 @@ class FlatContext(BaseContext):
         for height, flatLine in flatRuns:
             if y is None:
                 y = height
+
             babelLineInfo = BabelLineInfo(x, y, context=self, cLine=flatLine)
             lineHeight = height
 
@@ -779,9 +780,6 @@ class FlatContext(BaseContext):
             y += lineHeight
 
         return lines
-
-    def getBaseLines(self, bs, box):
-        raise NotImplementedError
 
     def fromBabelString(self, bs):
         """Convert the "public" data in BabelString to FlatStringData instance

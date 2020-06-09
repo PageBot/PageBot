@@ -1,7 +1,7 @@
 Doctests for string functions on Linux.
 
 >>> from pagebot import getContext
->>> context = getContext()
+>>> context = getContext('Flat')
 >>> context
 <FlatContext>
 >>> bs = context.newString('ABCD')
@@ -11,3 +11,23 @@ Doctests for string functions on Linux.
 ABCD
 >>> bs.cs.__class__.__name__
 'FlatBabelData'
+>>> from pagebot.toolbox.loremipsum import loremipsum
+>>> from pagebot.toolbox.units import pt
+>>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+>>> bs = context.newString(loremipsum(), style, w=pt(400))
+>>> bs.style
+{'font': 'PageBot-Regular', 'fontSize': 24pt}
+>>> bs.w
+400pt
+>>> len(bs.lines)
+143
+>>> baselines = context.getBaselines(bs)
+>>> len(baselines)
+143
+>>> baselines = context.getBaselines(bs, h=pt(100))
+>>> keys = sorted(baselines.keys())
+>>> len(keys)
+4
+>>> keys
+[0, 17.951999999999998, 46.751999999999995, 75.55199999999999]
+

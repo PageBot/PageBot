@@ -520,15 +520,7 @@ class BabelString:
 
     def getTextLines(self, w=None, h=None):
         """
-
-        >>> from pagebot.toolbox.loremipsum import loremipsum
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
-        >>> len(bs.getTextLines())
-        113
+        Also see doctests/string-*.txt.
         """
         if w == self.w and h == self.h:
             if self._lines is None:

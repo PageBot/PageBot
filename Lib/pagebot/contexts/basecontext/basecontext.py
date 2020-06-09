@@ -930,23 +930,13 @@ class BaseContext(AbstractContext):
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = context.newString(loremipsum(), style, w=pt(400))
+        >>> bs.style
+        {'font': 'PageBot-Regular', 'fontSize': 24pt}
         >>> bs.w
         400pt
         >>> len(bs.lines)
-        143
+        144
         >>> baselines = context.getBaselines(bs, h=pt(100))
-        >>> sorted(baselines.keys())
-        [0, 24, 48, 72, 96]
-        """
-        """
-        >>> context = getContext('Flat')
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = context.newString(loremipsum(), style, w=pt(400))
-        >>> bs.w
-        400pt
-        >>> baselines = context.getBaselines(bs, h=pt(100))
-        """
-        """
         >>> sorted(baselines.keys())
         [0, 24, 48, 72, 96]
         """
