@@ -1,0 +1,12 @@
+
+>>> from pagebot import getContext
+>>> context = getContext()
+>>> context
+<FlatContext>
+>>> bs = context.newString('ABCD')
+>>> bs.context
+<FlatContext>
+>>> bs.cs
+ABCD
+>>> bs.cs.__class__.__name__
+'FlatBabelData'

@@ -2,17 +2,17 @@ Doctests for context functions on OSX.
 
 >>> from pagebot import getContext
 >>> context = getContext()
->>> print(context)
+>>> context
 <DrawBotContext>
 >>> context = getContext('DrawBot')
->>> print(context)
+>>> context
 <DrawBotContext>
 >>> context = getContext('Flat')
->>> print(context)
+>>> context
 <FlatContext>
 >>> context = getContext('Html')
->>> print(context)
+>>> context
 <HtmlContext>
 >>> context = getContext('svg')
->>> print(context)
+>>> context
 <SvgContext>
