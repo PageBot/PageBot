@@ -59,14 +59,18 @@ def getContext(contextType=None):
     # platform-specific testing of contexts.
     """
     global DEFAULT_CONTEXT, CONTEXT_TYPE
+
     if contextType is None:
-        contextType = DEFAULT_CONTEXT_TYPE
+        if platform == 'darwin':
+            contextType = 'DrawBot'
+        else:
+            contextType = 'Flat'
 
     if CONTEXT_TYPE and contextType != CONTEXT_TYPE:
         # Switching contexts, so resetting the buffered global object.
         DEFAULT_CONTEXT = None
 
-    # FIXME: what about HTMLContext()
+
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
             if contextType == 'DrawBot' and hasDrawBot:# and DrawBotContext is not None:
