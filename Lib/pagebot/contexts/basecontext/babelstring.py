@@ -248,12 +248,7 @@ class BabelString:
         (8, 1)
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> context
-        <DrawBotContext>
         >>> bs = context.newString('ABCD')
-        >>> # Equivalent do BabelString('ABCD', context=context)
-        >>> #bs.context#.name #in ('DrawBotContext', 'FlatContext')
-        #True
         """
         # Context instance @context is used for text size rendering methods.
         self.runs = [] # List of BabelRun instances.
