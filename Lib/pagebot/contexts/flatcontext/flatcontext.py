@@ -625,7 +625,6 @@ class FlatContext(BaseContext):
         can be any 2D or 3D points tuple. Currently the z-axis is ignored. The
         FlatContext version of the BabelString should contain Flat.text.
 
-        FIXME: DEPRECATED
         TODO: make clipPath work.
         TODO: make align work.
         TODO: wrap placedText so we can derive length of text without overflow and
@@ -666,7 +665,10 @@ class FlatContext(BaseContext):
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
 
-        return self.page.place(bs.cs.txt).frame(xpt, ypt, wpt, hpt)
+        # FIXME: tracking causes width errors.
+        #print(wpt)
+        #print(bs.cs.txt)
+        return self.page.place(bs.cs.txt).frame(xpt, ypt - hpt, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -754,11 +756,17 @@ class FlatContext(BaseContext):
         if placedText.width != w or placedText.height != h:
             # Make reflow on this new (w, h)
             placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
-        x = y = pt(0) # Relative vertical position
+        x = pt(0) # Relative vertical position
+        y = None
 
-        for height, flatLine in placedText.layout.runs(): # In Flat "run" is native data for line
+        # In Flat "run" is native data for line.
+        flatRuns = placedText.layout.runs()
+
+        for height, flatLine in flatRuns:
+            if y is None:
+                y = height
             babelLineInfo = BabelLineInfo(x, y, context=self, cLine=flatLine)
-            lineHeight = pt(0)
+            lineHeight = height
 
             for fst, s in flatLine:
                 font = findFont(fst.font.name.decode("utf-8"))

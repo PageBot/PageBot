@@ -1,3 +1,4 @@
+Doctests for string functions on OSX.
 
 >>> from pagebot import getContext
 >>> context = getContext()

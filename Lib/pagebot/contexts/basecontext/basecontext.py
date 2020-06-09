@@ -933,8 +933,7 @@ class BaseContext(AbstractContext):
         >>> bs.w
         400pt
         >>> len(bs.lines)
-        144
-
+        143
         >>> baselines = context.getBaselines(bs, h=pt(100))
         >>> sorted(baselines.keys())
         [0, 24, 48, 72, 96]

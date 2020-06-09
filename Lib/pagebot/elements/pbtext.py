@@ -724,7 +724,7 @@ class Text(Element):
         True
         >>> doc.export('_export/Text-build2.pdf')
         """
-        context = self.context
+        #context = self.context
         p = pointOffset(self.origin, origin)
         tx, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -741,7 +741,7 @@ class Text(Element):
             # Forced width and/or height set, behave as a textbox.
             # Only if there is content
             if self.bs.lines:
-                frameY = py-self.h+self.bs.lines[0].y
+                frameY = py - self.h + self.bs.lines[0].y
                 # Draw optional background, frame or borders.
                 # Width is padded width of self.
                 self.buildFrame(view, (px, frameY, self.pw or self.bs.tw, self.bs.th))
@@ -752,11 +752,15 @@ class Text(Element):
                     view.drawPadding(self, (px, frameY))
 
                 # Draw text as box
-                context.drawText(self.bs, (tx, py-self.pt-self.h + self.bs.lines[0].y, self.w or self.bs.w, self.h or self.bs.h))
 
-        else: # No width or height defined.
-            # Draw as string using its own width (there may be embedded newlines)
-            frameY = py-self.bs.th+self.bs.topLineAscender
+                print(self.pt, self.h, self.bs.lines[0].y)
+                y = py - self.pt - self.h + self.bs.lines[0].y
+                context.drawText(self.bs, (tx, y, self.w or self.bs.w, self.h or self.bs.h))
+
+        else:
+            # No width or height defined; draws as string using its own width
+            # (there may be embedded newlines).
+            frameY = py - self.bs.th+self.bs.topLineAscender
             # Draw optional background, frame or borders.
             self.buildFrame(view, (px, frameY, self.bs.tw, self.h))
 
@@ -768,7 +772,7 @@ class Text(Element):
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the string if
             # it contains '\n' characters.
-            context.drawString(self.bs, (tx-self.pt, py))
+            context.drawString(self.bs, (tx - self.pt, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)

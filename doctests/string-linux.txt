@@ -1,3 +1,4 @@
+Doctests for string functions on Linux.
 
 >>> from pagebot import getContext
 >>> context = getContext()

@@ -4855,17 +4855,19 @@ class Element:
 
         # Horizontal
         xAlign = self.xAlign
+
         if xAlign == CENTER:
-            px -= self.w/2/self.scaleX
+            px -= self.w / 2 / self.scaleX
         elif xAlign == RIGHT:
-            px -= self.w/self.scaleX
+            px -= self.w / self.scaleX
 
         # Vertical
         yAlign = self.yAlign
+
         if yAlign == MIDDLE:
-            py -= self.h/2/self.scaleY
+            py -= self.h / 2 / self.scaleY
         elif yAlign == TOP:
-            py -= self.h/self.scaleY
+            py -= self.h / self.scaleY
 
         # Currently no alignment in z-axis implemented
         return px, py, pz
