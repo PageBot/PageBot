@@ -33,6 +33,9 @@
 #     For English hyphenation words:
 #     https://www.hyphenation24.com/?term=xxxx
 #
+#     English words with a fixed number (2-15) of characters
+#     https://www.bestwordlist.com/15letterwords.htm
+#
 
 import os
 import codecs
