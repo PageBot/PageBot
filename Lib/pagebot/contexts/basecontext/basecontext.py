@@ -924,21 +924,8 @@ class BaseContext(AbstractContext):
         """Answers the dictionary of baseline positions, relative
         to the firstline. If @h is defined, the clip on the height.
 
-        >>> from pagebot.toolbox.loremipsum import loremipsum
-        >>> from pagebot.toolbox.units import pt
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = context.newString(loremipsum(), style, w=pt(400))
-        >>> bs.style
-        {'font': 'PageBot-Regular', 'fontSize': 24pt}
-        >>> bs.w
-        400pt
-        >>> len(bs.lines)
-        144
-        >>> baselines = context.getBaselines(bs, h=pt(100))
-        >>> sorted(baselines.keys())
-        [0, 24, 48, 72, 96]
+
+        See also doctests/string*.txt.
         """
         if h is None:
             h = XXXL
