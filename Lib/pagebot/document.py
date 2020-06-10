@@ -16,6 +16,7 @@
 #
 import copy
 import codecs
+from pagebot import getContext
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
 from pagebot.elements.pbpage import Page, Template
@@ -34,11 +35,10 @@ class Document:
 
     >>> from pagebot.contexts import getContext
     >>> context = getContext('Flat')
-    >>> doc = Document(name='TestDoc', startPage=12, autoPages=50)
+    >>> doc = Document(name='TestDoc', startPage=12, autoPages=50, context=context)
     >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())
     (50, 12, 61)
-
-    >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60))
+    >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, padding=(30, 40, 50, 60), context=context)
     >>> doc.name, doc.w, doc.h, len(doc)
     ('TestDoc', 300pt, 400pt, 2)
     >>> doc.padding
@@ -139,6 +139,9 @@ class Document:
         # instance of e.g. one of DrawBotContext, FlatContext or HtmlContext,
         # which contains a DrawBot, Flat and one of the HtmlBuilders
         # respectively. If undefined, the view will pick the best default context.
+        if context is None:
+            context = getContext()
+
         self.newView(viewId or self.DEFAULT_VIEWID, context=context)
 
         # Template is name or instance default template.
@@ -1415,7 +1418,8 @@ class Document:
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.elements.views import viewClasses
-        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2)
+        >>> context = getContext('Flat')
+        >>> doc = Document(name='TestDoc', w=300, h=400, autoPages=2, context=context)
         >>> doc.view.context, doc.context # Identical
         (<FlatContext>, <FlatContext>)
         >>> sorted(viewClasses.keys())
@@ -1423,7 +1427,8 @@ class Document:
         >>> view = doc.newView('Page', 'myView', context=doc.context)
         >>> view.w, view.h
         (300pt, 400pt)
-        >>> view = doc.newView('Site')
+        >>> context = getContext('Html')
+        >>> view = doc.newView('Site', context=context)
         >>> view.context, doc.view.context, doc.context # Identical
         (<HtmlContext>, <HtmlContext>, <HtmlContext>)
         """
