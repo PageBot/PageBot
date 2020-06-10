@@ -526,14 +526,7 @@ class Image(Element):
     def gaussianBlur(self, radius=None):
         """Spreads source pixels by an amount specified by a Gaussian distribution.
 
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.filepaths import getResourcesPath
-        >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
-        >>> doc = Document(context=context) # Stored in doc.view.context
-        >>> path = getResourcesPath() + '/images/cookbot1.jpg'
-        >>> e = Image(path, parent=doc[1])
-        >>> e.gaussianBlur(12)
+        See also doctests/images-osx.txt.
         """
         if self.imo is None:
             self.imo = self.context.getImageObject(self.path)
