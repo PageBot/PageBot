@@ -1311,7 +1311,7 @@ class BaseContext(AbstractContext):
 
     def onBlack(self, p, path=None):
         """Should answers if the single point (x, y) is on black."""
-        raise NotImplementedError
+        pass
 
     # File export.
 

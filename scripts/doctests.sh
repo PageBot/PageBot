@@ -27,7 +27,6 @@ python3 $PWD/contexts/basecontext/bezierpath.py
 python3 $PWD/contexts/flatcontext/flatbuilder.py
 python3 $PWD/contexts/flatcontext/flatbezierpath.py
 python3 $PWD/contexts/flatcontext/flatcontext.py
-python3 $PWD/contexts/flatcontext/flatstring.py
 python3 $PWD/contexts/markup/htmlbuilder.py
 python3 $PWD/contexts/markup/htmlcontext.py
 python3 $PWD/contexts/markup/sitebuilder.py

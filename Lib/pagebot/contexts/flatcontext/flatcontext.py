@@ -531,10 +531,6 @@ class FlatContext(BaseContext):
 
         return path
 
-    def onBlack(self, p, path=None):
-        # TODO
-        pass
-
     def getFlattenedPath(self, path=None):
         # TODO
         pass
