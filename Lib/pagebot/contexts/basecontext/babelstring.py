@@ -431,8 +431,12 @@ class BabelString:
         >>> from pagebot.toolbox.loremipsum import loremipsum
         >>> style = dict(font='PageBot-Regular', fontSize=pt(10), leading=em(1))
         >>> bs = context.newString(loremipsum(), style, w=500)
-        >>> bs.w, bs.tw, bs.h, bs.th # Difference between box with and text width
-        (500pt, 500.69pt, None, 500pt)
+        >>> # box width and height.
+        >>> bs.w, bs.h
+        (500pt, None)
+        >>> # Text width and height.
+        >>> bs.tw, bs.th
+        (499.09pt, 500pt)
         """
         if self.context is None: # Required context to be defined
             return None
@@ -831,6 +835,7 @@ class BabelString:
             # Want something different than defined requested bs.w or bs.h
             if w != self.w or h != self.h: # Different indeed? Reflow in temporary lines.
                 return self.context.getTextSize(self, w, h) # See if context wants to do it.
+
         self._twh = twh = self.context.getTextSize(self)
         return twh
 

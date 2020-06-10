@@ -971,6 +971,7 @@ class BaseContext(AbstractContext):
             # Set the babelString.context as self.
             bs = BabelString(bs, style=style, w=w, h=h, context=self)
 
+
         assert isinstance(bs, BabelString)
         return bs
 
