@@ -415,6 +415,8 @@ class BabelString:
     def _get_th(self):
         """Answers the cached calculated context height.
 
+        See also doctexts/strings-*.txt.
+
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
         >>> bs = BabelString('ABCD') # No context, cannot render.
@@ -428,15 +430,6 @@ class BabelString:
         >>> bs.w = 1000
         >>> bs.w, bs.tw, bs.h, bs.th # Width defined, real with by bs.tw
         (1000pt, 250.9pt, 500pt, 100pt)
-        >>> from pagebot.toolbox.loremipsum import loremipsum
-        >>> style = dict(font='PageBot-Regular', fontSize=pt(10), leading=em(1))
-        >>> bs = context.newString(loremipsum(), style, w=500)
-        >>> # box width and height.
-        >>> bs.w, bs.h
-        (500pt, None)
-        >>> # Text width and height.
-        >>> bs.tw, bs.th
-        (499.09pt, 500pt)
         """
         if self.context is None: # Required context to be defined
             return None

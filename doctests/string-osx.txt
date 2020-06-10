@@ -17,8 +17,12 @@ ABCD
 >>> bs = context.newString(loremipsum(), style, w=pt(400))
 >>> bs.style
 {'font': 'PageBot-Regular', 'fontSize': 24pt}
->>> bs.w
-400pt
+>>> # Box width and height.
+>>> bs.w, bs.h
+(400pt, None)
+>>> # Text width and height.
+>>> bs.tw, bs.th
+(499.09pt, 500pt)
 >>> len(bs.lines)
 144
 >>> baselines = context.getBaselines(bs)
