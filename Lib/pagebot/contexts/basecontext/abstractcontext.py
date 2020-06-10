@@ -50,9 +50,9 @@ class AbstractContext:
     # Styles
 
     def setStyles(self, styles):
-        """Set the dictionary of style dictionaries. E.g. to be transformed
-        into paragraph styles in InDesignContext or to be used as styles
-        for context strings."""
+        """Sets the dictionary of style dictionaries. E.g. to be transformed
+        into paragraph styles in InDesignContext or to be used as styles for
+        context strings."""
         raise NotImplementedError
 
     # Magic variables.

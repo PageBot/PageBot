@@ -249,8 +249,24 @@ class FlatContext(BaseContext):
             msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
             raise NotImplementedError(msg)
 
+    # Styles
+
+    def setStyles(self, styles):
+        """Sets the dictionary of style dictionaries. E.g. to be transformed
+        into paragraph styles in InDesignContext or to be used as styles
+        for context strings."""
+        pass
+
+    # Magic variables.
+
+    def pageCount(self):
+        pass
+
+    # Public callbacks.
+
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
+        # TODO
 
         '''
         # If default _scaled directory does not exist, then create it.
