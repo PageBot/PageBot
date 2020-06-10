@@ -34,11 +34,11 @@ class Image(Element):
     >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
     >>> imagePath = getResourcesPath() + imageFilePath
-    >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
+    >>> from pagebot import getContext #pagebot.contexts.markup.htmlcontext import HtmlContext
     >>> from pagebot.constants import A4
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *
-    >>> context = HtmlContext()
+    >>> context = getContext()#HtmlContext()
     >>> doc = Document(size=A4, padding=30, context=context)
     >>> page = doc[1]
     >>> e = Image(imagePath, xy=pt(220, 330), w=512, parent=page, conditions=[Fit2Sides()])
