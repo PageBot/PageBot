@@ -30,7 +30,6 @@ python3 $PWD/contexts/flatcontext/flatcontext.py
 python3 $PWD/contexts/markup/htmlbuilder.py
 python3 $PWD/contexts/markup/htmlcontext.py
 python3 $PWD/contexts/markup/sitebuilder.py
-python3 $PWD/contexts/markup/htmlstring.py
 python3 $PWD/contexts/markup/svgbuilder.py
 python3 $PWD/contexts/markup/svgcontext.py
 python3 $PWD/contexts/markup/xmlbuilder.py

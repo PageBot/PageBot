@@ -255,7 +255,6 @@ class FlatContext(BaseContext):
         """Sets the dictionary of style dictionaries. E.g. to be transformed
         into paragraph styles in InDesignContext or to be used as styles
         for context strings."""
-        pass
 
     # Magic variables.
 
