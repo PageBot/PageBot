@@ -748,7 +748,7 @@ class FlatContext(BaseContext):
         34
         >>> line = lines[10]
         >>> line
-        <BabelLineInfo y=230.96pt>
+        <BabelLineInfo y=246pt>
         """
         placedText = bs.cs.pt
         lines = []
@@ -763,6 +763,7 @@ class FlatContext(BaseContext):
         flatRuns = placedText.layout.runs()
 
         for height, flatLine in flatRuns:
+            height = round(height)
             if y is None:
                 y = height
 
@@ -778,6 +779,7 @@ class FlatContext(BaseContext):
                 lineHeight = max(lineHeight, height)
             lines.append(babelLineInfo)
             y += lineHeight
+
 
         return lines
 
