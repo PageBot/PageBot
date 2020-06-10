@@ -1229,14 +1229,6 @@ class BaseContext(AbstractContext):
         """PageBot function."""
         raise NotImplementedError
 
-    def onBlack(self, p, path=None):
-        """Answers if the single point (x, y) is on black. For now this only
-        works in DrawBotContext."""
-        if path is None:
-            path = self.bezierpath
-        p = point2D(p)
-        return path._bezierpath.containsPoint_(p)
-
     def intersectGlyphWithCircle(self, glyph, m, r, spokes=16):
         mx, my = m
         lines = []
@@ -1315,6 +1307,10 @@ class BaseContext(AbstractContext):
         raise NotImplementedError
 
     def getFlattenedContours(self, path=None):
+        raise NotImplementedError
+
+    def onBlack(self, p, path=None):
+        """Should answers if the single point (x, y) is on black."""
         raise NotImplementedError
 
     # File export.

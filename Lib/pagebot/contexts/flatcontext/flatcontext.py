@@ -472,6 +472,8 @@ class FlatContext(BaseContext):
         #return self.b.listOpenTypeFeatures(fontName)
         return []
 
+    # Glyphs.
+
     def getGlyphPath(self, glyph, p=None, path=None):
         """Converts the cubic commands to a drawable path."""
         if path is None:
@@ -512,6 +514,18 @@ class FlatContext(BaseContext):
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
 
         return path
+
+    def onBlack(self, p, path=None):
+        # TODO
+        pass
+
+    def getFlattenedPath(self, path=None):
+        # TODO
+        pass
+
+    def getFlattenedContours(self, path=None):
+        # TODO
+        pass
 
     #   A N I M A T I O N
 
