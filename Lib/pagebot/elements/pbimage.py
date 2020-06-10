@@ -474,6 +474,7 @@ class Image(Element):
             # update the path and (self.iw, self.ih) accordingly.
 
             clipPath = self.clipPath
+
             if clipPath is not None:
                 clipPath.translate(origin[0], origin[1])
 

@@ -937,7 +937,7 @@ class FlatContext(BaseContext):
         return '%s-%sx%s.%s' % (pre, w, h, ext)
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None, e=None):
+            scaleType=None, clipPath=None):
         """Draws the image. If position is none, sets x and y to the origin. If
         w or h is defined, then scale the image to fit."""
         if p is None:

@@ -1007,7 +1007,8 @@ class BaseContext(AbstractContext):
     # Images.
 
     def image(self, path, p, alpha=1, pageNumber=None, w=None, h=None,
-            scaleType=None):
+            scaleType=None, clipPath=None):
+        # TODO: implement clipPath.
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w,
                 h=h, scaleType=scaleType)
 
