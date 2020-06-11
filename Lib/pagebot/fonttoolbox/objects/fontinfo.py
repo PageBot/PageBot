@@ -271,7 +271,7 @@ class FontInfo:
         (860, -140, True)
         >>> f = findFont('PageBot-Regular')
         >>> f.info.ascender, f.info.descender, f.info.ascender - f.info.descender == f.info.unitsPerEm
-        (748, -252, True)
+        (898, -302, False)
         """
         return self.ttFont["hhea"].ascent
 
