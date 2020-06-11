@@ -65,7 +65,7 @@ python3 $PWD/elements/pbrect.py
 python3 $PWD/elements/pbruler.py
 python3 $PWD/elements/pbtable.py
 python3 $PWD/elements/pbtext.py
-python3 $PWD/elements/pbtextbox.py
+# TODO: add more.
 python3 $PWD/elements/variablefonts/variablecircle.py
 python3 $PWD/elements/variablefonts/variablecube.py
 python3 $PWD/elements/variablefonts/variablecube2.py
