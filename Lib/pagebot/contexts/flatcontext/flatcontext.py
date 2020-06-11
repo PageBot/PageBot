@@ -730,7 +730,7 @@ class FlatContext(BaseContext):
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def getTextSize(self, bs, w=None, h=None):
+    def textSize(self, bs, w=None, h=None):
         """Determines text size based on placed text value."""
         tw = 0
         th = 0
