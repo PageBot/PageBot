@@ -168,8 +168,10 @@ class Polygon(Element):
         >>> context = getContext()
         >>> e = Polygon(context=context)
         >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
-        >>> e.getBezierPath((150, 150))
-        <BezierPath>
+        >>> bp = e.getBezierPath((150, 150))
+        >>> from fontTools.pens.basePen import BasePen
+        >>> isinstance(bp, BasePen)
+        True
         """
         if p is None:
             p = self.x, self.y
