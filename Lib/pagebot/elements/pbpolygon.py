@@ -44,7 +44,8 @@ class Polygon(Element):
         """Scale horizontal to w
         """
         if self.w:
-            self.scale(w/self.w, 1)
+            self._set_scale(w/self.w, 1)
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -53,7 +54,7 @@ class Polygon(Element):
         """Scale horizontal to w
         """
         if self.h:
-            self.scale(1, newH/self.h)
+            self._set_scale(1, newH/self.h)
     h = property(_get_h, _set_h)
 
     def translate(self, p):
@@ -76,16 +77,7 @@ class Polygon(Element):
             points.append((point[0] + dx, point[1] + dy))
         self.points = points
 
-    '''
-    def scale(self, sx, sy=None):
-        # FIXME: E0202: An attribute defined in pagebot.elements.element line
-        # 190 hides this method (method-hidden)
-
-
-        Maybe use:
-
-        def _set_scale(self, scale):
-
+    def _set_scale(self, sx, sy=None):
         """
         >>> pn = Polygon(x=33, y=44)
         >>> pn.rect(10, 10, 200, 360)
@@ -93,7 +85,7 @@ class Polygon(Element):
         (33pt, 33pt)
         >>> pn.box # Element position + point positions
         (43pt, 54pt, 200pt, 360pt)
-        >>> pn.scale(0.6)
+        >>> pn._set_scale(0.6)
         >>> pn.x, pn.left
         (33pt, 33pt)
         >>> pn.box
@@ -110,7 +102,6 @@ class Polygon(Element):
             points.append((px, py))
 
         self.points = points
-    '''
 
     def _get_box(self):
         """ Get the (x, y, w, h) box of all points.
