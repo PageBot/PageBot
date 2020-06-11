@@ -64,8 +64,11 @@ class Image(Element):
     Score: 2 Fails: 0
     >>> e.w = 48 # Make the element into a thumbnail, scale the image to it.
     >>> e._scaleImage(doc.view)
-    >>> e.size # New scaled proportions
-    (48pt, 64pt)
+    >>> w, h = e.size # New scaled proportions
+    >>> w
+    48pt
+    >>> round(h)
+    64pt
     """
 
     isImage = True
