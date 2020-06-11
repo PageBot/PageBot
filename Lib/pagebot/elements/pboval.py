@@ -94,7 +94,7 @@ class Circle(Oval):
         if y is None:
             y = ORIGIN[1]
         Oval.__init__(self, x=x, y=y, w=w, h=h,
-            xAlign=xAlign or CENTER, yAligh=yAlign or MIDDLE, **kwargs)
+            xAlign=xAlign or CENTER, yAlign=yAlign or MIDDLE, **kwargs)
 
     def _get_h(self):
         """Answers the height of the element (same as self.w)."""
