@@ -110,7 +110,7 @@ class SketchContext(BaseContext):
     def getTextLines(self, bs, w=None, h=None):
         pass
 
-    def getTextSize(self, bs, w=None, h=None):
+    def textSize(self, bs, w=None, h=None):
         pass
 
     def textOverflow(self, bsOrFs, box, align=LEFT):

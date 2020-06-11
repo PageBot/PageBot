@@ -452,7 +452,7 @@ class AbstractContext:
         NOTE: signature differs from DrawBot."""
         raise NotImplementedError
 
-    def getTextSize(self, bs, w=None, h=None):
+    def textSize(self, bs, w=None, h=None):
         """Answers the width and height of a BabelString with an
         optional given w or h.  Must be implemented by inheriting context
         class, answering a list of BabelLineInfo instances."""

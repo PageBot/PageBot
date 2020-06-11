@@ -799,7 +799,7 @@ class BabelString:
         >>> # Make the string, we can adapt the document/page size to it.
         >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(100))
         >>> bs = context.newString('Hkpx', style)
-        >>> tw, th = context.getTextSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
+        >>> tw, th = context.textSize(bs) # Same as bs.textSize, Show size of the text box, with baseline.
         >>> (tw, th) == bs.textSize
         True
         >>> m = 50
@@ -827,9 +827,9 @@ class BabelString:
         if w is not None or h is not None:
             # Want something different than defined requested bs.w or bs.h
             if w != self.w or h != self.h: # Different indeed? Reflow in temporary lines.
-                return self.context.getTextSize(self, w, h) # See if context wants to do it.
+                return self.context.textSize(self, w=w, h=h) # See if context wants to do it.
 
-        self._twh = twh = self.context.getTextSize(self)
+        self._twh = twh = self.context.textSize(self)
         return twh
 
     def _get_textSize(self):
