@@ -31,7 +31,8 @@ class BaseView(Element):
     DEFAULT_CONTEXT_ID = 'Flat'
 
     # Default, redefined by inheriting classes that need another context.
-    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext')
+    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext', 'HtmlContext')
+    #SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext')
 
     def __init__(self, w=None, h=None, contect=None, parent=None, context=None,
             verbose=False, **kwargs):

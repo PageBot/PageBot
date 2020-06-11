@@ -114,7 +114,8 @@ class Ruler(Element):
 
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
         >>> from pagebot.document import Document
-        >>> c = HtmlContext()
+        >>> from pagebot import getContext
+        >>> c = getContext('Html')
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -55,7 +56,7 @@ class Placer(Element):
     (0pt, 20pt)
     >>> e.css('fill')
     Color(r=0.5, g=0.5, b=0.5, a=0.5)
-    >>> e.size
+    >>> e.textSize
     (300pt, 3pt)
     """
     DEFAULT_FILL = color(0.5, 0.5, 0.5, 0.5)
@@ -75,7 +76,7 @@ class Placer(Element):
         context = self.context
         bs = context.newString(self.name, style=dict(fontSize=18,
             textFill=(1, 0, 0)))
-        tw, th = bs.size
+        tw, th = bs.textSize
         M = pt(8)
         context.fill(color(1, 1, 1, 0.6))
         context.rect(x + self.w/2 - tw/2 - M, y + self.h/2 - th/2 - M, tw + 2*M, th + 2*M)

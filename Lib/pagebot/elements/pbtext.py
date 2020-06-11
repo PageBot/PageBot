@@ -125,7 +125,7 @@ class Text(Element):
         >>> context = getContext('DrawBot')
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30, context=context)
         >>> page = doc[1]
-        >>> t = Text(parent=page, w=125)
+        >>> t = Text(parent=page, w=125, h=12)
         >>> # String converts to DrawBotString.
         >>> t.bs = 'ABCD'
         >>> t.bs
@@ -136,6 +136,8 @@ class Text(Element):
         if bs is None:
             bs = ''
         if isinstance(bs, str):
+            # FIXME: take font size if w or h are None?
+            #print(self.w, self.h)
             bs = BabelString(bs, self.style, w=self.w, h=self.h)
         assert isinstance(bs, BabelString)
         self._bs = bs

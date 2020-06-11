@@ -447,7 +447,9 @@ class Page(Element):
         Single page site, exporting to html source, with CSS inside.
         >>> import os
         >>> from pagebot.document import Document
-        >>> doc = Document(name='SinglePageSite', viewId='Site')
+        >>> from pagebot import getContext
+        >>> context = getContext('Html')
+        >>> doc = Document(name='SinglePageSite', viewId='Site', context=context)
         >>> page = doc[1]
         >>> page.title = 'Home'
         >>> page.cssCode = 'body {background-color:black}'
