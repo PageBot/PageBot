@@ -834,11 +834,15 @@ class FlatContext(BaseContext):
         fRuns = []
 
         for run in bs.runs:
-            font = findFont(bs.style.get('font', DEFAULT_FONT))
+            # FIXME: can be None, which gives an error when looking up font.path.
+            fontNameOrPath = bs.style.get('font', DEFAULT_FONT)
 
-            if isinstance(font, str) and exists(font):
-                flatFont = self.b.font.open(font)
+            if exists(fontNameOrPath):
+                flatFont = self.b.font.open(fontNameOrPath)
             else:
+                font = findFont(fontNameOrPath)
+                if font is None:
+                    font = findFont(DEFAULT_FONT)
                 flatFont = self.b.font.open(font.path)
 
             fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)

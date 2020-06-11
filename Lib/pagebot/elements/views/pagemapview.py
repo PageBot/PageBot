@@ -680,6 +680,8 @@ class PageMapView(BaseView):
         >>> from pagebot.style import getRootStyle
         >>> from pagebot.elements.views.pageview import PageView
         >>> style = getRootStyle() # Get default values
+        >>> #style['font'] = 'PageBot-Regular'
+        >>> #style = dict(font='PageBot-Regular', baselineGrid=1)
         >>> e = Element(style=style) # Works on generic elements as well as pages.
         >>> view = PageView(context=context, style=style)
         >>> view.showBaselineGrid = [BASE_LINE, BASE_INDEX_LEFT, BASE_Y_LEFT]
