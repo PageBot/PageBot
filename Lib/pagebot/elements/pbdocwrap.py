@@ -31,7 +31,7 @@ class DocWrap(Element):
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc1 = Document(name='Placed Document', w=300, h=400, context=context)
         >>> page = doc1[1]
         >>> e = Rect(parent=page, fill='red')

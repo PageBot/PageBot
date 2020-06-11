@@ -1148,7 +1148,7 @@ class Element:
         >>> from pagebot.conditions import *
         >>> from pagebot import getContext
         >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(w=500, h=500, context=context)
 
         """

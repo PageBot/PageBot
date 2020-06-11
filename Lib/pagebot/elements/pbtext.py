@@ -46,7 +46,7 @@ class Text(Element):
     similar output.
 
     >>> from pagebot.contexts import getContext
-    >>> context = getContext('DrawBot')
+    >>> context = getContext()
     >>> t = Text('ABCD', context=context)
     >>> t
     <Text $ABCD$>
@@ -122,7 +122,7 @@ class Text(Element):
 
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(w=300, h=400, autoPages=1, padding=30, context=context)
         >>> page = doc[1]
         >>> t = Text(parent=page, w=125, h=12)
@@ -150,7 +150,7 @@ class Text(Element):
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(w=300, h=400, autoPages=1, context=context)
         >>> page = doc[1]
         >>> t = Text('ABCD', parent=page, w=125) # Width forces “Text” behavior
@@ -180,7 +180,7 @@ class Text(Element):
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(w=300, h=400, autoPages=1, context=context)
         >>> page = doc[1]
         >>> style = dict(font='PageBot-Regular', fontSize=14)
@@ -301,7 +301,7 @@ class Text(Element):
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> style = dict(textFill=blackColor, textStroke=noColor)
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(context=context)
         >>> bs = context.newString('ABCD', style)
         >>> e = Text(bs, parent=doc[1])
@@ -355,7 +355,7 @@ class Text(Element):
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> style = dict(textFill=blackColor, textStroke=noColor)
         >>> bs = context.newString('Hello world', style)
         >>> t = Text(bs, name='Child', w=100)
@@ -394,7 +394,7 @@ class Text(Element):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(context=context)
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = BabelString('ABC', style)
@@ -475,7 +475,7 @@ class Text(Element):
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = context.newString('ABCD', dict(xTextAlign=CENTER))
         >>> bs.xAlign, bs.hasWidth
         ('center', False)
@@ -511,7 +511,7 @@ class Text(Element):
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = context.newString('ABCD', dict(xAlign=CENTER))
         >>> t = Text(bs)
         >>> bs.xAlign
@@ -547,7 +547,7 @@ class Text(Element):
 
         >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> bs = context.newString('ABCD') # No height defined.
         >>> bs.yAlign
         'baseline'
@@ -577,7 +577,7 @@ class Text(Element):
 
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(context=context)
         >>> e = Text('This is an English text', w=1000, h=1000, parent=doc[1])
         >>> e.spellCheck() # All words are default English, no wrong words answered
@@ -694,7 +694,7 @@ class Text(Element):
         >>> from pagebot.elements import *
         >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt, em
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> W, H = 500, 400
         >>> doc = Document(w=W, h=H, context=context)
         >>> page = doc[1]
@@ -847,7 +847,7 @@ class Text(Element):
         >>> from pagebot.document import Document
         >>> from pagebot.constants import BOTTOM
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(size=A4, context=context)
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
         >>> t = Text(bs, x=pt(100), y=pt(500), yAlign=BOTTOM, fill=0.8, parent=doc[1])
@@ -874,7 +874,7 @@ class Text(Element):
         >>> from pagebot.elements import newLine
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> doc = Document(size=A4, context=context)
         >>> page = doc[1]
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
