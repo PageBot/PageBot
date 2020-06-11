@@ -403,8 +403,6 @@ class Text(Element):
         $ABC$
         >>> t.bs == bs
         True
-        >>> t.context
-        <DrawBotContext>
         >>> tw, th = t.getTextSize(bs) # FIXME: Right value?
         >>> tw.rounded, th.rounded
         (182pt, 100pt)
