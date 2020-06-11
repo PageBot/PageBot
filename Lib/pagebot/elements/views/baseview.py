@@ -60,8 +60,8 @@ class BaseView(Element):
         '''
         if context is None:
             raise ValueError('Missing context for view "%s"' % self)
-        if context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
-            raise ValueError('Missing or unsupported context "%s" for view "%s"' % (context.__class__.__name__, self))
+        #if context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
+        #    raise ValueError('Missing or unsupported context "%s" for view "%s"' % (context.__class__.__name__, self))
         self.context = context # Set the self._context property.
 
         if context is not None:

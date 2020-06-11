@@ -53,7 +53,9 @@ class MampView(SiteView):
         >>> from pagebot.document import Document
         >>> siteName = 'TestDoc'
         >>> sitePath = '_export/' + siteName
-        >>> doc = Document(name=siteName, w=300, h=400, padding=(30, 40, 50, 60), viewId='Mamp')
+        >>> from pagebot import getContext
+        >>> context = getContext('Html')
+        >>> doc = Document(name=siteName, w=300, h=400, padding=(30, 40, 50, 60), viewId='Mamp', context=context)
         >>> view = doc.view
         """
         doInit = True
