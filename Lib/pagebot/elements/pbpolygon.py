@@ -165,7 +165,7 @@ class Polygon(Element):
         translated to optional position p
 
         >>> from pagebot.contexts import getContext
-        >>> context = getContext('DrawBot')
+        >>> context = getContext()
         >>> e = Polygon(context=context)
         >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
         >>> e.getBezierPath((150, 150))
