@@ -835,7 +835,12 @@ class FlatContext(BaseContext):
 
         for run in bs.runs:
             font = findFont(bs.style.get('font', DEFAULT_FONT))
-            flatFont = self.b.font.open(font.path)
+
+            if isinstance(font, str) and exists(font):
+                flatFont = self.b.font.open(font)
+            else:
+                flatFont = self.b.font.open(font.path)
+
             fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
             leading = upt(bs.style.get('leading', em(1.2)), base=fontSize)
             # Keep as multiplication factor to fontSize for Flat.
