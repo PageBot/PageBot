@@ -94,7 +94,7 @@ class SiteView(HtmlView):
         >>> doc = Document(name='TestDoc', viewId='Site', w=300, h=400, padding=(30, 40, 50, 60))
         >>> view = doc.view
         >>> view
-        <SiteView:Site (0pt, 0pt, 300pt, 400pt)>
+        <SiteView "Site" w=300pt h=400pt>
         >>> page = doc[1]
         >>> page.name = 'index' # Home page is index.
         >>> page.cssClass ='MyGeneratedPage'
