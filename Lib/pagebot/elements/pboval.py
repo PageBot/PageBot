@@ -85,7 +85,7 @@ class Circle(Oval):
         >>> e.xy, e.size
         ((0pt, 0pt), (60pt, 60pt))
         >>> e.box, e.top, e.right, e.bottom, e.left
-        ((0pt, 0pt, 60pt, 60pt), 0pt, 30pt, 0pt, -30pt)
+        ((0pt, 0pt, 60pt, 60pt), 30pt, 30pt, -30pt, -30pt)
         """
         if r is not None:
             w = h = 2*r
