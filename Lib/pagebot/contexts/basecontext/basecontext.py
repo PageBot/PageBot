@@ -1038,17 +1038,23 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
-        >>> from pagebot.toolbox.transformer import path2Dir
+        >>> from pagebot.filepaths import getResourcesPath
+        >>> #from pagebot.toolbox.transformer import path2Dir
         >>> context = getContext() # Get default Flat or DrawBot context
-        >>> doc = Document(w=123, h=345, context=context, autoPages=1)
-        >>> filePathPng = '_export/TestPngImageSize.png'
-        >>> filePathPdf = '_export/TestPdfImageSize.pdf'
-        >>> doc.export(filePathPng)
-        >>> doc.export(filePathPdf)
-        >>> context.imageSize(filePathPng)
-        (123pt, 345pt)
-        >>> context.imageSize(filePathPdf)
-        (123pt, 345pt)
+        >>> #doc = Document(w=123, h=345, context=context, autoPages=1)
+        >>> resourcesPath = getResourcesPath()
+        >>> path = resourcesPath + '/images/cookbot1.jpg'
+        >>> context.imageSize(path)
+        (1376pt, 1350pt)
+        >>> path = resourcesPath + '/images/cookbot1-173.27ptx170pt.jpg'
+        >>> context.imageSize(path)
+        (173pt, 170pt)
+        >>> path = resourcesPath + '/images/cookbot10-300ptx137.9pt.jpg'
+        >>> context.imageSize(path)
+        (300pt, 138pt)
+        >>> path = resourcesPath + '/templates/test.pdf'
+        >>> context.imageSize(path)
+        (400pt, 200pt)
         """
         extension = path2Extension(path)
         if extension == FILETYPE_PDF:

@@ -753,7 +753,7 @@ class Text(Element):
 
                 # Draw text as box
 
-                print(self.pt, self.h, self.bs.lines[0].y)
+                #print(self.pt, self.h, self.bs.lines[0].y)
                 y = py - self.pt - self.h + self.bs.lines[0].y
                 context.drawText(self.bs, (tx, y, self.w or self.bs.w, self.h or self.bs.h))
 
