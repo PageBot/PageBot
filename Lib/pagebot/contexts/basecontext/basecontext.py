@@ -1046,12 +1046,6 @@ class BaseContext(AbstractContext):
         >>> path = resourcesPath + '/images/cookbot1.jpg'
         >>> context.imageSize(path)
         (1376pt, 1350pt)
-        >>> path = resourcesPath + '/images/cookbot1-173.27ptx170pt.jpg'
-        >>> context.imageSize(path)
-        (173pt, 170pt)
-        >>> path = resourcesPath + '/images/cookbot10-300ptx137.9pt.jpg'
-        >>> context.imageSize(path)
-        (300pt, 138pt)
         >>> path = resourcesPath + '/templates/test.pdf'
         >>> context.imageSize(path)
         (400pt, 200pt)
