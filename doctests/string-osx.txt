@@ -22,7 +22,7 @@ ABCD
 (400pt, None)
 >>> # Text width and height.
 >>> bs.tw, bs.th
-(499.09pt, 500pt)
+(399.98pt, 3456pt)
 >>> len(bs.lines)
 144
 >>> baselines = context.getBaselines(bs)
