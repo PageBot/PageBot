@@ -36,10 +36,10 @@ class Newspaper(Publication):
         startPage=0, w=None, h=None, exportPaths=None,
         **kwargs)
 
-    >>> from pagebot.constants import Broadsheet, GRID_SQR, BASE_LINE
+    >>> from pagebot.constants import Newspaper_Broadsheet, GRID_SQR, BASE_LINE
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
-    >>> w, h = Broadsheet
+    >>> w, h = Newspaper_Broadsheet
     >>>
     >>> np = Newspaper(w=w, h=h, title=name, autoPages=1, template='MainPage')
     >>> view = np.view
