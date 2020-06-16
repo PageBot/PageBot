@@ -31,7 +31,7 @@ from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
 from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
-from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
@@ -835,12 +835,14 @@ class FlatContext(BaseContext):
 
         for run in bs.runs:
             # FIXME: can be None, which gives an error when looking up font.path.
-            fontNameOrPath = bs.style.get('font', DEFAULT_FONT)
+            f = bs.style.get('font', DEFAULT_FONT)
 
-            if exists(fontNameOrPath):
-                flatFont = self.b.font.open(fontNameOrPath)
+            if isinstance(f, Font):
+                flatFont = self.b.font.open(f.path)
+            elif exists(f):
+                flatFont = self.b.font.open(f)
             else:
-                font = findFont(fontNameOrPath)
+                font = findFont(f)
                 if font is None:
                     font = findFont(DEFAULT_FONT)
                 flatFont = self.b.font.open(font.path)
