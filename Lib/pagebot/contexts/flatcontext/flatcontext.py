@@ -943,12 +943,14 @@ class FlatContext(BaseContext):
         parts = path.split('.')
         pre = '.'.join(parts[:-1])
         ext = parts[-1]
-        return '%s-%sx%s.%s' % (pre, w, h, ext)
+        return '%s-%sx%s.%s' % (pre, w, h, ext), ext
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None, clipPath=None):
         """Draws the image. If position is none, sets x and y to the origin. If
         w or h is defined, then scale the image to fit."""
+
+        # TODO: check valid extensions.
         if p is None:
             p = 0, 0
 
@@ -958,26 +960,34 @@ class FlatContext(BaseContext):
 
         doScale = w is not None or h is not None
 
-        if HAS_PIL:
+        if HAS_PIL and doScale:
             # TODO: move to scaleImage.
             im = Image.open(path)
 
 
             # NOTE: using PIL for resizing, much faster than Flat.
             # TODO: cache result.
-            if doScale:
-                path = self.getResizedPathName(path, w, h)
-                if not exists(path):
-                    im = im.resize((w, h))
-                    im.save(path, 'jpeg')
-                doScale = False
+            path, ext = self.getResizedPathName(path, w, h)
+
+            # TODO: is this necessary?
+            if ext == 'jpg':
+                ext = 'jpeg'
+
+            if not exists(path):
+                im = im.resize((w, h))
+                im.save(path, ext)
+
+            # Now open the image in Flat.
+            img = self.b.image.open(path)
+
         else:
             # TODO: slow Flat scale without PIL.
             print('FlatContext.image: Missing PIL, slow context scaling instead.')
+            img = self.b.image.open(path)
 
-        img = self.b.image.open(path)
-        if doScale:
-            img.resize(width=w or 0, height=h or 0)
+            if doScale:
+                img.resize(width=w or 0, height=h or 0)
+
         placed = self.page.place(img)
         placed.position(xpt, ypt-placed.height)
         self.restore()
