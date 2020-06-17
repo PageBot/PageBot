@@ -83,6 +83,14 @@ class BabelRun:
             r += ' "%s"' % s.replace('\n',' ')
         return r + '>'
 
+    def getFont(self, style=None):
+        if not style:
+            style is sself.style
+        fontName = style.get('font', DEFAULT_FONT)
+        if fontName is None:
+            fontName = DEFAULT_FONT
+        return findFont(fontName)
+
     def getFSStyle(self):
         # D E P R E C A T E D
         # FIXME - Petr A BabelString should not know anything about contexts,
@@ -106,7 +114,7 @@ class BabelRun:
         #    textColor.rgba, align)
 
         # Create the style for this text run.
-        font = findFont(style.get('font', DEFAULT_FONT))
+        font = self.getFont()
 
         if font is None:
             fontPath = DEFAULT_FONT
@@ -553,7 +561,7 @@ class BabelString:
         topLineAscender = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineAscender = max(topLineAscender, fontSize * font.info.typoAscender / font.info.unitsPerEm)
         return topLineAscender
@@ -587,7 +595,7 @@ class BabelString:
         topLineAscender_h = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT)) # Font or fontName
+                font = self.getFont(run.style)
                 ascender_h = font['h'].maxY
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineAscender_h = max(topLineAscender_h, fontSize * ascender_h / font.info.unitsPerEm)
@@ -620,7 +628,7 @@ class BabelString:
         topLineDescender = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineDescender = min(topLineDescender, fontSize * font.info.typoDescender / font.info.unitsPerEm)
         return topLineDescender
@@ -649,7 +657,7 @@ class BabelString:
         topLineCapHeight = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineCapHeight = max(topLineCapHeight, fontSize * font.info.capHeight / font.info.unitsPerEm)
         return topLineCapHeight
@@ -677,7 +685,7 @@ class BabelString:
         topLineXHeight = 0
         if self.lines:
             for run in self.lines[0].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 topLineXHeight = max(topLineXHeight, fontSize * font.info.xHeight / font.info.unitsPerEm)
         return topLineXHeight
@@ -708,7 +716,7 @@ class BabelString:
         bottomLineDescender = 0
         if self.lines:
             for run in self.lines[-1].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 bottomLineDescender = min(bottomLineDescender, fontSize * font.info.typoDescender / font.info.unitsPerEm)
         return bottomLineDescender
@@ -738,7 +746,7 @@ class BabelString:
         bottomLineDescender_p = 0
         if self.lines:
             for run in self.lines[-1].runs:
-                font = findFont(run.style.get('font', DEFAULT_FONT))
+                font = self.getFont(run.style)
                 descender_p = font['p'].minY
                 fontSize = units(run.style.get('fontSize', DEFAULT_FONT_SIZE))
                 bottomLineDescender_p = min(bottomLineDescender_p, fontSize * descender_p / font.info.unitsPerEm)
@@ -1145,7 +1153,8 @@ class BabelString:
         >>> bs.font, isinstance(bs.font, Font) # Default font instance
         (<Font PageBot-Regular>, True)
         """
-        return findFont(self.style.get('font', DEFAULT_FONT))
+        return getFont()
+
     def _set_font(self, font):
         assert isinstance(font, (str, Font))
         self.style['font'] = font # Set the font in the current style

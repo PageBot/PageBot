@@ -839,12 +839,16 @@ class FlatContext(BaseContext):
 
             if isinstance(f, Font):
                 flatFont = self.b.font.open(f.path)
-            elif exists(f):
+            elif isinstance(f, str) and exists(f):
                 flatFont = self.b.font.open(f)
             else:
                 font = findFont(f)
+
                 if font is None:
+                    # Non-existing name, taking default font.
+                    # TODO: add to logger.
                     font = findFont(DEFAULT_FONT)
+
                 flatFont = self.b.font.open(font.path)
 
             fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
@@ -1061,6 +1065,7 @@ class FlatContext(BaseContext):
             r = shape.polygon(coordinates)
             self.page.place(r)
         """
+
     def oval(self, x, y, w, h):
         """Draws an oval in a rectangle, where (x, y) is the bottom left origin
         and (w, h) is the size. This default DrawBot behavior, different from
