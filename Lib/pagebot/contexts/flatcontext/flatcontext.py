@@ -35,7 +35,7 @@ from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
-from pagebot.toolbox.color import color, Color, noColor, blackColor
+from pagebot.toolbox.color import color, Color, noColor, blackColor, whiteColor
 from pagebot.toolbox.units import pt, em, upt, point2D, units
 
 
@@ -1017,7 +1017,7 @@ class FlatContext(BaseContext):
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
         if self._fill is noColor and self._stroke is noColor:
-            self._fill = blackColor
+            self._fill = whiteColor
 
         shape = self.b.shape()
 

@@ -863,7 +863,6 @@ class BaseContext(AbstractContext):
         if not isinstance(bs, BabelString):
             bs = self.asBabelString(bs)
 
-
         if bs._w is None and bs._h is None:
             x, y = p
             p = (pt(x), pt(y))
