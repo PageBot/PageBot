@@ -85,7 +85,7 @@ class BabelRun:
 
     def getFont(self, style=None):
         if not style:
-            style is sself.style
+            style = self.style
         fontName = style.get('font', DEFAULT_FONT)
         if fontName is None:
             fontName = DEFAULT_FONT
@@ -1153,13 +1153,21 @@ class BabelString:
         >>> bs.font, isinstance(bs.font, Font) # Default font instance
         (<Font PageBot-Regular>, True)
         """
-        return getFont()
+        return self.getFont()
 
     def _set_font(self, font):
         assert isinstance(font, (str, Font))
         self.style['font'] = font # Set the font in the current style
         self.reset() # Make sure context cache recalculates.
     font = property(_get_font, _set_font)
+
+    def getFont(self, style=None):
+        if not style:
+            style = self.style
+        fontName = style.get('font', DEFAULT_FONT)
+        if fontName is None:
+            fontName = DEFAULT_FONT
+        return findFont(fontName)
 
     def _get_fontSize(self):
         """Answers the fontSize that is defined in the current style.
