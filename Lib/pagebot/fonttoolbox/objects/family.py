@@ -88,9 +88,10 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
+
     for familyName in familyPaths:
         if pattern in familyName:
-            foundFmailyName = familyName
+            foundFamilyName = familyName
             break
     if foundFamilyName is None:
         foundFamilyName = defaultName
