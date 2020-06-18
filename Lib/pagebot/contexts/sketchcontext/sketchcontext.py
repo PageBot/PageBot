@@ -62,7 +62,7 @@ class SketchContext(BaseContext):
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
-        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> path = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> context = SketchContext(path) # Instead of context = getContext('Sketch')
         >>> # Context now interacts with the file.
         >>> # Create a PageBot Document instance, reading the Sketch file data as source.
@@ -76,7 +76,7 @@ class SketchContext(BaseContext):
         """
         >>> # FIXME: Try reading the PageBot elements library
         >>> import pagebot
-        >>> path = path2Dir(pagebot.__file__) + '/resources/sketchapp/PageBotElements.sketch'
+        >>> path = getResourcesPath() + '/sketch/PageBotElements.sketch'
         >>> context = SketchContext(path) # Instead of context = getContext('Sketch')
         >>> # Context now interacts with the file.
         >>> # Create a PageBot Document instance, reading the Sketch file data as source.
@@ -84,8 +84,10 @@ class SketchContext(BaseContext):
         >>> context.readDocument(doc)
         """
         super().__init__()
+
         if path is None:
             path = getResourcesPath() + '/sketch/Template.sketch'
+
         self.name = self.__class__.__name__
         # Keep open connector to the file data. If path is None, a default resource
         # file is opened.
@@ -184,7 +186,7 @@ class SketchContext(BaseContext):
         >>> context.b.sketchApi.filePath.split('/')[-1]
         'Template.sketch'
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> path = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> api = context.setPath(path)
         >>> api.filePath.split('/')[-1] # Listening to another file now.
         'TemplateSquare.sketch'
@@ -321,7 +323,7 @@ class SketchContext(BaseContext):
                 bs = self.asBabelString(layer.attributedString)
 
                 style = bs.runs[0].style
-                font = style.get('font')
+                font = bs.getFont(style=style)
                 fontSize = style.get('fontSize')
 
                 # We need to "guess the position of the baseline."
@@ -372,7 +374,7 @@ class SketchContext(BaseContext):
         >>> import pysketch
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
-        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateText.sketch'
+        >>> path = getResourcesPath() + '/sketch/TemplateText.sketch'
         >>> context = SketchContext(path=path) # Context now interacts with the default file.
         >>> # Create a PageBot Document instance, reading the current Sketch file data as source.
         >>> doc = Document(name='TestReadDocument')
@@ -380,7 +382,7 @@ class SketchContext(BaseContext):
         >>> page = doc[1]
         >>> e = page.elements[0]
         >>> e
-        <Text $Type & sty...$ x=137pt y=201.5pt w=518pt h=100pt>
+        <Text $Type & sty...$ x=137pt y=191.18pt w=518pt h=100pt>
         """
         sketchPages = self.b.pages # Collect the list of SketchPage instance
         sortedArtboards = {} # First sort the artboard by y-->x pairs
@@ -460,7 +462,7 @@ class SketchContext(BaseContext):
         >>> import pysketch
         >>> from pysketch.sketchappcompare import sketchCompare
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> readPath = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
+        >>> readPath = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> context = SketchContext(readPath) # Context now interacts with the reader file.
         >>> exportDir = path2Dir(pysketch.__file__) + '/_export/'
         >>> if not os.path.exists(exportDir):
@@ -512,7 +514,7 @@ class SketchContext(BaseContext):
         >>> import pysketch
         >>> from pysketch.sketchapi import SketchApi
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateText.sketch'
+        >>> path = getResourcesPath() + '/sketch/TemplateText.sketch'
         >>> context = SketchContext(path)
         >>> skTextBox = context.b.artboards[0].layers[0] # Find the Sketch text box
         >>> sas = skTextBox.attributedString # SketchText inside the box
@@ -526,9 +528,9 @@ class SketchContext(BaseContext):
         >>> bs # Represented by joining text strings of all runs
         $Type & sty...$
         >>> bs.runs[0].s, bs.runs[0].style['font'], bs.runs[0].style['fontSize']
-        ('Type ', <Font Proforma-Book>, 90)
+        ('Type ', <Font PageBot-Book>, 90)
         >>> bs.runs[1].s, bs.runs[1].style['font'], bs.runs[1].style['fontSize']
-        ('&', <Font Proforma-Book>, 200)
+        ('&', <Font PageBot-Book>, 200)
         """
 
         """
