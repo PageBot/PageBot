@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # From:
 # https://github.com/adobe-type-tools/kern-dump/blob/master/getKerningPairsFromOTF.py

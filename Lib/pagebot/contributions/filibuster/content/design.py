@@ -442,4 +442,4 @@ content = {
 
 
 if __name__ == "__main__":
-    print(content.keys())
+    keys = content.keys()

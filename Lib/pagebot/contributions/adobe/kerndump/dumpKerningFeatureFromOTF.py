@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # From:
 # https://github.com/adobe-type-tools/kern-dump/blob/master/dumpKernFeatureFromOTF.py
 #
@@ -6,7 +6,7 @@
 import os
 import sys
 import string
-from .getKerningPairsFromOTF import *
+from getKerningPairsFromOTF import *
 #reload(getKerningPairsFromOTF)
 
 __doc__ ='''\
