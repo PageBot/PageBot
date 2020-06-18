@@ -15,6 +15,7 @@
 #     filepaths.py
 #
 #
+import os
 import os.path
 from sys import platform
 
@@ -44,6 +45,18 @@ def getResourcesPath():
 
     # Check base in case of separate resources folder (Py2app).
     path = '%s/%s' % (BASE_PATH, 'resources')
+    return path
+
+def getExportPath():
+    if os.path.exists(ROOT_PATH):
+        path = '%s/%s' % (ROOT_PATH, '_export')
+    else:
+        # Check base in case of separate resources folder (Py2app).
+        path = '%s/%s' % (BASE_PATH, '_export')
+
+    if not os.path.exists(path):
+        os.mkdir(path)
+
     return path
 
 def getMampPath():
