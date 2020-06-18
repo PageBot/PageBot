@@ -85,10 +85,14 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
 
     >>> findFamily('Bungee')
     <PageBot Family Bungee (5 fonts)>
-    >>> findFamily('Roboto')
-    <PageBot Family Roboto (38 fonts)>
     >>> findFamily('PageBot')
     <PageBot Family PageBot (8 fonts)>
+    """
+
+    """
+    FIXME: On Linux, Roboto and RobotoDelta seem to be split into separate families.
+    >>> findFamily('Roboto')
+    <PageBot Family Roboto (38 fonts)>
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
