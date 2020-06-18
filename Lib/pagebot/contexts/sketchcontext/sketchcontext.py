@@ -36,7 +36,7 @@ import os
 from pagebot.constants import FILETYPE_SKETCH, A4, DEFAULT_FONT
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
-from pagebot.filepaths import getResourcesPath, getExportPath
+from pagebot.filepaths import getResourcesPath
 from pagebot.elements import *
 from pagebot.constants import *
 from pagebot.toolbox.color import color, noColor
@@ -464,7 +464,8 @@ class SketchContext(BaseContext):
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> readPath = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> context = SketchContext(readPath) # Context now interacts with the reader file.
-        >>> savePath = getExportPath + '/TemplateSquare.sketch'
+        >>> from pagebot.filepaths import getExportPath
+        >>> savePath = getExportPath() + '/TemplateSquare.sketch'
         >>> context.save(savePath)
         >>> sketchCompare(readPath, savePath)
         []
@@ -542,6 +543,7 @@ class SketchContext(BaseContext):
         >>> bs.runs[2].s = ' changed' # Change text of the run
         >>> sas2 = context.fromBabelString(bs) # New conversion
         >>> skTextBox.attributedString = sas2
+        >>> from pagebot.filepaths import getExportPath
         >>> context.save('%s/TemplateTextChanged.sketch' % getExportPath()) # Save as other document
         >>> bs2 = context.asBabelString(sas2) # Convert back to pbs
         >>> bs == bs2 # This should be identical, after bi-directional conversion.
