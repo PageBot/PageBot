@@ -34,7 +34,7 @@ setup(
     include_package_data=True,
     package_data={'': ['*.txt', '*.md', '*.ttf', '*.png', '*.pdf', '*.jpg',
         '*.designspace', '*.scss', '*.css', '*.js', '*.idml', '*.indd',
-        '*.html', '*.xml']},
+        '*.html', '*.xml', '*.sketch']},
     setup_requires=['fontTools'],
     license = 'MIT',
     classifiers = [
