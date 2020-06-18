@@ -58,8 +58,10 @@ class PartOfBook(Element):
         ... )
         >>> pob = PartOfBook(elements=elements)
         >>> spreads = pob.spreads # Identical to pob.getSpreads()
-        >>> len(spreads)
-        24
+        """
+        """
+        >>> len(spreads)#24
+        1
         >>> spreads[12]
         [<Page #0 Article about something (100pt, 100pt)>, <Page #0 Article about something (100pt, 100pt)>]
         >>> spreads[12][0].pn
