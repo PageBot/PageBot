@@ -33,6 +33,8 @@ python3 $PWD/contexts/markup/sitebuilder.py
 python3 $PWD/contexts/markup/svgbuilder.py
 python3 $PWD/contexts/markup/svgcontext.py
 python3 $PWD/contexts/markup/xmlbuilder.py
+python3 $PWD/contexts/sketchcontext/sketchcontext.py
+python3 $PWD/contexts/sketchcontext/sketchbuilder.py
 #TODO: add rest of contributions.
 #python3 $PWD/contributions/adobe/__init__.py
 #python3 $PWD/contributions/adobe/kerndump/__init__.py.py

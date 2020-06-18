@@ -62,7 +62,7 @@ class SketchBuilder(BaseBuilder):
         >>> from pagebot.toolbox.transformer import path2Dir
         >>> path = path2Dir(pysketch.__file__) + '/Resources/TemplateSquare.sketch'
         >>> b = SketchBuilder(path)
-        >>> b.page
+        >>> b.pages
         [<SketchPage name=Page 1>]
         """
         return self.sketchApi.getPages()
