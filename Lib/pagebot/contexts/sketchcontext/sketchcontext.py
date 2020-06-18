@@ -59,7 +59,6 @@ class SketchContext(BaseContext):
         """Constructor of Sketch context.
 
         >>> import pysketch
-        >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
         >>> path = getResourcesPath() + '/sketch/TemplateSquare.sketch'
@@ -185,7 +184,6 @@ class SketchContext(BaseContext):
         >>> context = SketchContext() # Context now interacts with the default Resource file.
         >>> context.b.sketchApi.filePath.split('/')[-1]
         'Template.sketch'
-        >>> from pagebot.toolbox.transformer import path2Dir
         >>> path = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> api = context.setPath(path)
         >>> api.filePath.split('/')[-1] # Listening to another file now.
@@ -372,7 +370,6 @@ class SketchContext(BaseContext):
         Sketch Artboards as PageBot pages.
 
         >>> import pysketch
-        >>> from pagebot.toolbox.transformer import path2Dir
         >>> from pagebot.document import Document
         >>> path = getResourcesPath() + '/sketch/TemplateText.sketch'
         >>> context = SketchContext(path=path) # Context now interacts with the default file.
@@ -461,7 +458,6 @@ class SketchContext(BaseContext):
         """Save the current builder data into Sketch file, indicated by path.
         >>> import pysketch
         >>> from pysketch.sketchappcompare import sketchCompare
-        >>> from pagebot.toolbox.transformer import path2Dir
         >>> readPath = getResourcesPath() + '/sketch/TemplateSquare.sketch'
         >>> context = SketchContext(readPath) # Context now interacts with the reader file.
         >>> from pagebot.filepaths import getExportPath
@@ -511,7 +507,6 @@ class SketchContext(BaseContext):
 
         >>> import pysketch
         >>> from pysketch.sketchapi import SketchApi
-        >>> from pagebot.toolbox.transformer import path2Dir
         >>> path = getResourcesPath() + '/sketch/TemplateText.sketch'
         >>> context = SketchContext(path)
         >>> skTextBox = context.b.artboards[0].layers[0] # Find the Sketch text box
