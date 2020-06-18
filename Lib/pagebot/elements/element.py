@@ -4993,6 +4993,7 @@ class Element:
         eFill = self.fill # Default is noColor
         eStroke = self.stroke #self.css('stroke', default=noColor)
         eGradient = self.gradient
+        #print(eFill)
 
         #if eStroke is not noColor or eFill is not noColor or eGradient:
         c.saveGraphicState()
@@ -5001,7 +5002,7 @@ class Element:
         if eGradient: # Gradient overwrites setting of fill.
             # TODO: Make bleed work here too.
             c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
-        elif eFill in (None, noColor):
+        elif eFill is None or eFill is noColor:
             c.fill(None)
         else:
             c.fill(eFill)

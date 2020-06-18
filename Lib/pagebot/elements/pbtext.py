@@ -726,7 +726,7 @@ class Text(Element):
         """
         #context = self.context
         p = pointOffset(self.origin, origin)
-        tx, _, _, = p = self._applyScale(view, p) # Text is already aligned
+        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         context = view.context # Get current context
@@ -755,7 +755,10 @@ class Text(Element):
 
                 #print(self.pt, self.h, self.bs.lines[0].y)
                 y = py - self.pt - self.h + self.bs.lines[0].y
-                context.drawText(self.bs, (tx, y, self.w or self.bs.w, self.h or self.bs.h))
+                w = self.w or self.bs.w
+                h = self.h or self.bs.h
+                #print('drawtext', x, y, w, h)
+                context.drawText(self.bs, (x, y, w, h))
 
         else:
             # No width or height defined; draws as string using its own width
@@ -772,7 +775,7 @@ class Text(Element):
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the string if
             # it contains '\n' characters.
-            context.drawString(self.bs, (tx - self.pt, py))
+            context.drawString(self.bs, (x - self.pt, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)

@@ -689,11 +689,11 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         assert r is not None
         xpt, ypt, wpt, hpt = upt(r)
-
+        y = self.h - (ypt + hpt)
         # FIXME: tracking causes width errors.
         #print(wpt)
         #print(bs.cs.txt)
-        return self.page.place(bs.cs.txt).frame(xpt, ypt - hpt, wpt, hpt)
+        return self.page.place(bs.cs.txt).frame(xpt, y, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -995,7 +995,7 @@ class FlatContext(BaseContext):
                 img.resize(width=w or 0, height=h or 0)
 
         placed = self.page.place(img)
-        placed.position(xpt, ypt-placed.height)
+        placed.frame(xpt, ypt - h, w, h)
         self.restore()
 
         # Debugging.
@@ -1020,8 +1020,8 @@ class FlatContext(BaseContext):
 
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
-        if self._fill is noColor and self._stroke is noColor:
-            self._fill = whiteColor
+        #if self._fill is noColor and self._stroke is noColor:
+        #    self._fill = whiteColor
 
         shape = self.b.shape()
 
@@ -1167,7 +1167,7 @@ class FlatContext(BaseContext):
     def translatePoint(self, p):
         x, y = point2D(upt(p))
         x = self._ox + x
-        y = self.height - self._oy + y # Flip vertical
+        y = self.height - (self._oy + y) # Flip vertical
         return upt(x, y)
 
 
