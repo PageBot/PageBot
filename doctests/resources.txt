@@ -1,5 +1,7 @@
 >>> from pagebot.filepaths import getResourcesPath
 >>> resourcesPath = getResourcesPath()
 >>> from os import listdir
->>> sorted(listdir(resourcesPath + '/sketch'))
-['Artboard.png', 'Base.sketch', 'Base_images', 'GraColumns.sketch', 'PageBotElements.sketch', 'Template.sketch', 'TemplateSquare.sketch', 'TemplateSquare_images', 'TemplateText.sketch', 'TemplateText_images', 'Template_images', '__init__.py', 'redRect.pdf', 'redRect.sketch']
+>>> files = sorted(listdir(resourcesPath))
+>>> files = [f for f in files if not '.' in f] 
+>>> files
+['color', 'images', 'languages', 'sketch', 'templates', 'testfonts', 'texts']
