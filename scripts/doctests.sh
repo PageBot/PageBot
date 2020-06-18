@@ -38,8 +38,8 @@ python3 $PWD/contexts/sketchcontext/sketchbuilder.py
 #TODO: add rest of contributions.
 #python3 $PWD/contributions/adobe/__init__.py
 #python3 $PWD/contributions/adobe/kerndump/__init__.py.py
-#python3 $PWD/contributions/adobe/kerndump/dumpKerningFeatureFromOTF.py.py
-#python3 $PWD/contributions/adobe/kerndump/getKerningPairsFromOTF.py.py.py
+#python3 $PWD/contributions/adobe/kerndump/dumpKerningFeatureFromOTF.py
+#python3 $PWD/contributions/adobe/kerndump/getKerningPairsFromOTF.py
 #python3 $PWD/contributions/filibuster/__init__.py
 python3 $PWD/contributions/filibuster/blurb.py
 python3 $PWD/contributions/filibuster/blurbwriter.py

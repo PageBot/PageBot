@@ -35,7 +35,7 @@ from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.style import makeStyle
-from pagebot.toolbox.color import color, Color, noColor, blackColor, whiteColor
+from pagebot.toolbox.color import color, Color, noColor, blackColor
 from pagebot.toolbox.units import pt, em, upt, point2D, units
 
 
