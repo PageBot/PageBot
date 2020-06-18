@@ -84,7 +84,11 @@ def findFamily(pattern, defaultName=None, useFontInfo=True, useFileName=True):
     """Answers the family that best matches the pattern.
 
     >>> findFamily('Bungee')
-
+    <PageBot Family Bungee (5 fonts)>
+    >>> findFamily('Roboto')
+    <PageBot Family Roboto (38 fonts)>
+    >>> findFamily('PageBot')
+    <PageBot Family PageBot (8 fonts)>
     """
     familyPaths = getFamilyPaths()
     foundFamilyName = None
