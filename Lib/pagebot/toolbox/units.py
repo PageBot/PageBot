@@ -1474,7 +1474,6 @@ class RelativeUnit(Unit):
         (2, 2)
         """
         return asIntOrFloat((self.base * self.v / self.BASE).rv)
-
     rv = property(_get_rv)
 
     def _get_ru(self):
@@ -1492,11 +1491,12 @@ class RelativeUnit(Unit):
         (20%, 20, 4.80", 4.8)
         """
         return self.base * self.v / self.BASE
-
     ru = property(_get_ru)
 
     def _get_pt(self):
-        """Answers the rendered value in pt.
+        """Answers the rendered value in pt. 
+        We cannot set relative units directly from the pt
+        property, except for px, which are then assumed to be equal.
 
         >>> u = fr(2, base=12)
         >>> u, u.pt
@@ -1507,7 +1507,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and casts it to points.
         return asIntOrFloat(pt(self.ru).rv)
-
     pt = property(_get_pt)
 
     def _get_mm(self):
@@ -1519,7 +1518,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and casts it to mm.
         return asIntOrFloat(mm(self.ru).rv)
-
     mm = property(_get_mm)
 
     def _get_p(self):
@@ -1534,7 +1532,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and factors it to mm
         return asIntOrFloat(p(self.ru).rv)
-
     p = property(_get_p)
 
     def _get_inch(self):
@@ -1549,7 +1546,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and factors it to mm.
         return asIntOrFloat(inch(self.ru).rv)
-
     inch = property(_get_inch)
 
     def _get_base(self):
@@ -1651,7 +1647,7 @@ def px(v, *args, **kwargs):
 class Px(RelativeUnit):
     """Answers the px (pixel) instance.
 
->>> # Direct creation of class instance, only for (int, float, Unit)
+    >>> # Direct creation of class instance, only for (int, float, Unit)
     >>> Px(12)
     12px
     >>> # Through creator function
@@ -1683,6 +1679,33 @@ class Px(RelativeUnit):
         """
         return self.rv
     px = property(_get_px)
+
+    def _get_pt(self):
+        """Answers the rendered value in pt. 
+        We cannot set relative units directly from the pt
+        property, except for px, which are then assumed to be equal.
+
+        >>> u = px(24, base=12)
+        >>> u, u.pt
+        (24px, 288)
+        >>> u = px(12)
+        >>> u.pt
+        12
+        >>> u.pt = 100
+        >>> u
+        100px
+        """
+        # Renders value and casts it to points.
+        return asIntOrFloat(pt(self.ru).rv)
+    def _set_pt(self, v):
+        """Setting the pixels directly, we assume them to be 1:1 pt.
+
+        >>> u = px(12)
+        >>> u.pt
+        12
+        """
+        self.v = upt(v)
+    pt = property(_get_pt, _set_pt)
 
 #   Fr
 
