@@ -565,13 +565,11 @@ class FlatContext(BaseContext):
         return self._flatFonts[font.path], font
 
     def _place(self, bs, x, y, w=None, h=None):
-        """Places the styled Flat text on a page, transform vertical
-        position to position on baseline.
-        Vertical alignment is supposed to be handled by the caller,
-        already calculated in the `y`.
-        Horizontal alignment is taken from the bs.xTextAlign value,
-        as answered by the style of the first run:
-        bs.runs[0].style.get('xTextAlign')
+        """Places the styled Flat text on a page, transform vertical position
+        to position on baseline. Vertical alignment should to be handled by the
+        caller, already calculated in the `y`. Horizontal alignment is taken
+        from the bs.xTextAlign value, as answered by the style of the first
+        run: bs.runs[0].style.get('xTextAlign')
 
         TODO: implement runs instead of native context string.
 
@@ -602,16 +600,21 @@ class FlatContext(BaseContext):
         # If the style of the first BabelString run, contains a xTextAlign
         # for CENTER or RIGHT, the shift the x position accordingly.
         xTextAlign = bs.xTextAlign
+
         if xTextAlign == CENTER:
             x -= bs.tw/2
         elif xTextAlign == RIGHT:
             x -= bs.tw
 
-        # Vertical alignment is supposed to be handled by the caller,
-        # already calculated in the `y`.
-        y -= bs.topLineDescender
+        # Vertical alignment is handled by the caller, already calculated in
+        # the `y`.
+        y -= bs.topLineDescender # FIXME: check, is this necessary?
 
-        placedText.frame(x.pt, y.pt - bs.th.pt, w or bs.tw.pt, h or bs.th.pt)
+        x = x.pt
+        y = y.pt
+        w = w or bs.tw.pt
+        h = h or bs.th.pt
+        placedText.frame(x, y - h, w, h)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.
