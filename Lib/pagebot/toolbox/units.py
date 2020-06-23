@@ -1494,7 +1494,7 @@ class RelativeUnit(Unit):
     ru = property(_get_ru)
 
     def _get_pt(self):
-        """Answers the rendered value in pt. 
+        """Answers the rendered value in pt.
         We cannot set relative units directly from the pt
         property, except for px, which are then assumed to be equal.
 
@@ -1645,7 +1645,7 @@ def px(v, *args, **kwargs):
     return u
 
 class Px(RelativeUnit):
-    """Answers the px (pixel) instance.
+    """Answers the `px` (pixel) instance.
 
     >>> # Direct creation of class instance, only for (int, float, Unit)
     >>> Px(12)
@@ -1681,9 +1681,9 @@ class Px(RelativeUnit):
     px = property(_get_px)
 
     def _get_pt(self):
-        """Answers the rendered value in pt. 
-        We cannot set relative units directly from the pt
-        property, except for px, which are then assumed to be equal.
+        """Answers the rendered value in `pt` (points). We cannot set relative
+        units directly from the `pt` property, except for `px` (pixels), which
+        are then assumed to be equal.
 
         >>> u = px(24, base=12)
         >>> u, u.pt
@@ -1697,6 +1697,7 @@ class Px(RelativeUnit):
         """
         # Renders value and casts it to points.
         return asIntOrFloat(pt(self.ru).rv)
+
     def _set_pt(self, v):
         """Setting the pixels directly, we assume them to be 1:1 pt.
 
@@ -1765,8 +1766,8 @@ class Fr(RelativeUnit):
 
     def _get_rv(self):
         """Answers the rendered value. For absolute inits u.v and u.rv are
-        identical. For relative units u.v answers the value and u.r answers
-        the value rendered by self.base self.base can be a unit or a number.
+        identical. For relative units u.v answers the value and u.r answers the
+        value rendered by self.base self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
         >>> u.v, u.rv, u.ru, u.mm
@@ -1911,8 +1912,8 @@ def em(v, *args, **kwargs):
     return u
 
 class Em(RelativeUnit):
-    """Em size is based on the current setting of the fontSize.
-    Used in CSS export.
+    """Em size is based on the current setting of the fontSize. Used in CSS
+    export.
 
     >>> units('10em')
     10em
@@ -2060,7 +2061,7 @@ class Perc(RelativeUnit):
     UNITC = '%'
 
     def byBase(self, base):
-        """Answer the rendered value with base instead of self._base)
+        """Answers the rendered value with base instead of self._base.
 
         >>> u = perc(28, base=300)
         >>> u.base
@@ -2258,7 +2259,7 @@ def units(v, maker=None, base=None, g=None, default=None):
 # Automatic angle conversion between degrees and radians.
 
 def asin(v):
-    """Answers a Radians instance, using math.asin(v)
+    """Answers a Radians instance, using math.asin(v).
 
     >>> a = degrees(0)
     >>> asin(a.sin)
@@ -2276,7 +2277,7 @@ def asin(v):
     return radians(math.asin(v)/math.pi)
 
 def acos(v):
-    """Answers a Radians instance, using math.acos(v)
+    """Answers a Radians instance, using math.acos(v).
 
     >>> a = degrees(0)
     >>> acos(a.cos)
@@ -2288,7 +2289,7 @@ def acos(v):
     return radians(math.asin(v)/math.pi)
 
 def atan(v):
-    """Answers a Radians instance, using math.atan(v)
+    """Answers a Radians instance, using math.atan(v).
 
     >>> a = degrees(0)
     >>> atan(a.tan)
@@ -2300,7 +2301,7 @@ def atan(v):
     return radians(math.atan(v)/math.pi)
 
 def atan2(v1, v2):
-    """Answers a Radians instance, using math.atan2(v1, v2)
+    """Answers a Radians instance, using math.atan2(v1, v2).
 
     >>> atan2(1, 1).degrees
     45
