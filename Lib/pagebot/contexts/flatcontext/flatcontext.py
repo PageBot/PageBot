@@ -837,7 +837,7 @@ class FlatContext(BaseContext):
 
         for run in bs.runs:
             # FIXME: can be None, which gives an error when looking up font.path.
-            f = bs.style.get('font', DEFAULT_FONT)
+            f = run.style.get('font', DEFAULT_FONT)
 
             if isinstance(f, Font):
                 flatFont = self.b.font.open(f.path)
@@ -853,13 +853,13 @@ class FlatContext(BaseContext):
 
                 flatFont = self.b.font.open(font.path)
 
-            fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
-            leading = upt(bs.style.get('leading', em(1.2)), base=fontSize)
+            fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
+            leading = upt(run.style.get('leading', em(1.2)), base=fontSize)
             # Keep as multiplication factor to fontSize for Flat.
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
-            tracking = em(bs.style.get('tracking', 0), base=fontSize).v
+            tracking = em(run.style.get('tracking', 0), base=fontSize).v
             st.tracking(tracking/10) # Flat tracking if %, BabelString is 1/1000em
-            r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
+            r, g, b = self._asFlatColor(color(run.style.get('textFill', blackColor)))
 
             # FIXME: We need to know the export file type here in advance...
             #try:
