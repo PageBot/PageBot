@@ -982,7 +982,12 @@ class FlatContext(BaseContext):
                 ext = 'jpeg'
 
             if not exists(path):
-                im = im.resize((w, h))
+                try:
+                    print('Resizing %s' % path)
+                    im = im.resize((w, h))
+                except OverflowError as e:
+                    print('%s: Caught an OverflowError:' % self.name, e)
+                    print('Image path is %s' % path)
                 im.save(path, ext)
 
             # Now open the image in Flat.
