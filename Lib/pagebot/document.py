@@ -547,9 +547,11 @@ class Document:
         """Answers the current em value (for use in relative units), as value
         of self.css('fontSize', DEFAULT_FONT_SIZE)."""
         return self.rootStyle.get('fontSize', DEFAULT_FONT_SIZE)
+
     def _set_em(self, em):
         """Store the em size (as fontSize) in the local style."""
         self.rootStyle['fontSize'] = em
+
     em = property(_get_em, _set_em)
 
     def _get_w(self): # Width
@@ -569,8 +571,10 @@ class Document:
         300pt
         """
         return units(self.rootStyle['w'])
+
     def _set_w(self, w):
         self.rootStyle['w'] = units(w) # Overwrite element local style from here, parent css becomes inaccessable.
+
     w = property(_get_w, _set_w)
 
     def _get_h(self): # Height
@@ -1022,6 +1026,7 @@ class Document:
         >>> page.size
         (80pt, 120pt)
         """
+
         if isinstance(template, str):
             template = self.templates.get(template)
 
@@ -1046,7 +1051,7 @@ class Document:
         # Don't set parent to self yet, as this will make the page create a #1.
         # Setting of page.parent is done by self.appendPage, for the right page
         # number.
-        page = self.PAGE_CLASS(w=w, h=h, name=name, **kwargs)
+        page = self.PAGE_CLASS(w=w, h=h, name=name, description='page', **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
         return page # Answer the new page for convenience of the caller.

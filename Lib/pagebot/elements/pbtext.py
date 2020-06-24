@@ -163,13 +163,21 @@ class Text(Element):
         if self._bs is None:
             return None
 
-        return (self.bs.w or self.bs.tw) + self.pl + self.pr
+        w = (self.bs.w or self.bs.tw) + self.pl + self.pr
+        return w
 
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
+                #print(w)
+                #print(type(w))
+                #print('points', w.pt)
+                #print(units(w))
+                #print(w - self.pl)
+                #w = units(w) - self.pl - self.pr # Correct for padding
                 w = units(w) - self.pl - self.pr # Correct for padding
+                #print(w)
             self.bs.w = w
 
     w = property(_get_w, _set_w)

@@ -428,6 +428,10 @@ class Unit:
         '20mm'
         >>> us(20, Mm) # Or can be real class (initial cap)
         '20mm'
+        >>> pt(2000) - pt(20)
+        1980pt
+        >>> pt(2000) - px(20)
+        1980pt
     """
     BASE = None # Default "base reference for relative units. Unused None for absolute units."
 
@@ -1477,9 +1481,9 @@ class RelativeUnit(Unit):
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered value of self, by units type of self.base.  For
-        absolute units the result of u.v and u.r is identical. For relative
-        units u.v answers the value and u.r answers the value rendered by
+        """Answers the rendered value of self, by units type of self.base. For
+        absolute units the results of u.v and u.ru are identical. For relative
+        units u.v answers the value and u.ru answers the value rendered by
         self.base. self.base can be another unit or a dictionary of base
         values.
 
@@ -1490,7 +1494,9 @@ class RelativeUnit(Unit):
         >>> u, u.v, u.ru, u.rv
         (20%, 20, 4.80", 4.8)
         """
+        print(self.base)
         return self.base * self.v / self.BASE
+
     ru = property(_get_ru)
 
     def _get_pt(self):
@@ -1549,7 +1555,8 @@ class RelativeUnit(Unit):
     inch = property(_get_inch)
 
     def _get_base(self):
-        """Optional base value as reference for relative units. Save as Unit instance.
+        """Optional base value as reference for relative units. Save as Unit
+        instance.
 
         >>> u = perc('10%', base=300)
         >>> u, u.base, u.ru, u.rv, u.v
@@ -1569,12 +1576,17 @@ class RelativeUnit(Unit):
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
         return self._base
+
     def _set_base(self, base):
+        #print(base)
         if isinstance(base, dict):
+            raise Exception
             assert self.BASE_KEY in base
         elif not isinstance(base, dict) and not isUnit(base):
             base = units(base)
+
         self._base = base
+
     base = property(_get_base, _set_base)
 
     def byBase(self, base):
@@ -1667,8 +1679,13 @@ class Px(RelativeUnit):
     >>> # Answer pt value, assuming here an 1:1 conversion
     >>> u.pt
     12
+    >>> u = units('1050px')
+    >>> u
+    1050px
+    >>> u.pt
+    1050
     """
-    PT_FACTOR = 1 # This may not always be 1:1 to points.
+    PT_FACTOR = 1.3333 # This may not always be 1:1 to points.
     UNIT = 'px'
 
     def _get_px(self):
@@ -1777,10 +1794,11 @@ class Fr(RelativeUnit):
         (4, 25, 25pt, 25)
         """
         return asIntOrFloat(self.base / self.v)
+
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered unit. For absolute inits u and u.ru are
+        """Answers the rendered unit. For absolute units u and u.ru are
         identical. For relative units u.rv answers the value and u.ru answers
         the value rendered by self.base self.base can be a unit or a number.
 
