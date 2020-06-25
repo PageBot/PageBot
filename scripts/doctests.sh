@@ -16,6 +16,7 @@ python3 $PWD/constants.py
 python3 $PWD/contexts/__init__.py
 python3 $PWD/contexts/basecontext/abstractcontext.py
 python3 $PWD/contexts/basecontext/babelstring.py
+python3 $PWD/contexts/basecontext/babelrun.py
 python3 $PWD/contexts/basecontext/basebeziercontour.py
 python3 $PWD/contexts/basecontext/basebezierpath.py
 python3 $PWD/contexts/basecontext/basebezierpoint.py
