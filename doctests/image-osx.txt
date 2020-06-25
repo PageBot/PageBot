@@ -1,4 +1,5 @@
-Tests ported DrawBot ImageObject.
+# vim: set filetype=python:
+# Tests ported DrawBot ImageObject.
 
 >>> from pagebot.contexts import getContext
 >>> from pagebot.filepaths import getResourcesPath

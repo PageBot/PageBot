@@ -40,6 +40,7 @@ class BabelRun:
         style values of sequential runs are *not* cascading. This is similar to
         the behavior of the DrawBot FormattedString attributes.
 
+
         >>> from pagebot.elements import *
         >>> BabelRun('ABCD', dict(font='PageBot-Regular'))
         <BabelRun "ABCD">
@@ -213,7 +214,9 @@ class BabelRunInfo:
 
 class BabelString:
     """BabelString is a generic string format, that stores a string or text as
-    a list of BabelRun instances.
+    a list of BabelRun instances. String behaviour can differ between various
+    output contexts and platforms. For platform-specific doctests, see
+    doctests/strings-*.txt in the repository root.
 
     NOTE:
     - The styles values of sequential runs are *not* cascading. This is
@@ -423,8 +426,6 @@ class BabelString:
 
     def _get_th(self):
         """Answers the cached calculated context height.
-
-        See also doctexts/strings-*.txt.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -641,26 +642,11 @@ class BabelString:
         derived from the fonts, independent of if there are actually capitals
         in the first line.
 
-        >>> from pagebot.contexts import getContext
-        >>> #context = getContext('Flat')
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.topLineCapHeight
-        65.8pt
-        >>> bs.add('EFGH\\n', dict(fontSize=200))
-        >>> len(bs.lines)
-        1
-        >>> # First line cap height increased.
-        >>> bs.topLineCapHeight
-        131.6pt
-        >>> # Adding a second line, does not influence the cap height.
-        >>> bs.add('IJKL', dict(fontSize=300))
-        >>> len(bs.lines)
-        2
-        >>> bs.topLineCapHeight
-        131.6pt
+
+
         """
         topLineCapHeight = 0
+
         if self.lines:
             for run in self.lines[0].runs:
                 font = self.getFont(run.style)
@@ -673,20 +659,6 @@ class BabelString:
         """Answers the largest xHeight in the first line. The height is derived
         from the fonts, independent of if there are actually lower case in the
         first line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.topLineXHeight
-        46.6pt
-        >>> bs.add('EFGH\\n', dict(fontSize=200))
-        >>> bs.topLineXHeight # First line xHeight increased
-        93.2pt
-        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        >>> bs.topLineXHeight # First line xHeight increased
-        93.2pt
         """
         topLineXHeight = 0
         if self.lines:
@@ -702,22 +674,6 @@ class BabelString:
         derived from the fonts, independent of if there are actually lower case
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.bottomLineDescender
-        -25.2pt
-        >>> bs.add('EFGH', dict(fontSize=1000))
-        >>> bs.bottomLineDescender # Last line descender increased
-        -252pt
-        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender # Last line descender increased
-        -12.6pt
-        >>> bs.lines[1]
-        <BabelLineInfo x=0pt y=135pt runs=1>
         """
         bottomLineDescender = 0
         if self.lines:
@@ -733,22 +689,7 @@ class BabelString:
         height is derived from the fonts, independent of if there are actually
         lower case in the first line. The value answered is a position
         (negative number), not a distance, relative to the baseline of the last
-        line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.bottomLineDescender_p
-        -21.2pt
-        >>> bs.add('EFGH', dict(fontSize=1000))
-        >>> bs.bottomLineDescender_p # Last line descender increased
-        -212pt
-        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender_p # Last line descender decreased
-        -10.6pt
-        """
+        line."""
         bottomLineDescender_p = 0
         if self.lines:
             for run in self.lines[-1].runs:

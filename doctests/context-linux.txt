@@ -1,4 +1,5 @@
-Doctests for context functions on OSX.
+# vim: set filetype=python:
+# Doctests for context functions on Linux.
 
 >>> from pagebot import getContext
 >>> context = getContext()
