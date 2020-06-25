@@ -1494,7 +1494,7 @@ class RelativeUnit(Unit):
         >>> u, u.v, u.ru, u.rv
         (20%, 20, 4.80", 4.8)
         """
-        print(self.base)
+        #print(self.base)
         return self.base * self.v / self.BASE
 
     ru = property(_get_ru)
