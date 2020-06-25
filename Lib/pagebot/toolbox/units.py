@@ -1578,7 +1578,6 @@ class RelativeUnit(Unit):
 
     def _set_base(self, base):
         if isinstance(base, dict):
-            raise Exception
             assert self.BASE_KEY in base
         elif not isinstance(base, dict) and not isUnit(base):
             base = units(base)

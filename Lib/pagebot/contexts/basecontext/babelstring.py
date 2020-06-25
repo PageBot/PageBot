@@ -642,17 +642,22 @@ class BabelString:
         in the first line.
 
         >>> from pagebot.contexts import getContext
+        >>> #context = getContext('Flat')
         >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
         >>> bs.topLineCapHeight
         65.8pt
         >>> bs.add('EFGH\\n', dict(fontSize=200))
-        >>> bs.topLineCapHeight # First line capheight increased
+        >>> len(bs.lines)
+        1
+        >>> # First line cap height increased.
+        >>> bs.topLineCapHeight
         131.6pt
-        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        """
-        """
-        >>> bs.topLineCapHeight # First line capHeight increased
+        >>> # Adding a second line, does not influence the cap height.
+        >>> bs.add('IJKL', dict(fontSize=300))
+        >>> len(bs.lines)
+        2
+        >>> bs.topLineCapHeight
         131.6pt
         """
         topLineCapHeight = 0
