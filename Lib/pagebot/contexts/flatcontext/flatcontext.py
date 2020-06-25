@@ -876,7 +876,6 @@ class FlatContext(BaseContext):
 
             fRuns.append(FlatRunData(st=st, pars=pars))
 
-        #print(fParagraphs)
         #pt = fPage.place(txt)
         # Stored typically as BabelString.cs in FlatContext mode.
         return FlatBabelData(doc=fDoc, page=fPage, paragraphs=fParagraphs, runs=fRuns)

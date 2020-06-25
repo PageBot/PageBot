@@ -5001,7 +5001,6 @@ class Element:
         eFill = self.fill # Default is noColor
         eStroke = self.stroke #self.css('stroke', default=noColor)
         eGradient = self.gradient
-        #print(eFill)
 
         #if eStroke is not noColor or eFill is not noColor or eGradient:
         c.saveGraphicState()

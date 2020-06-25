@@ -1494,7 +1494,6 @@ class RelativeUnit(Unit):
         >>> u, u.v, u.ru, u.rv
         (20%, 20, 4.80", 4.8)
         """
-        print(self.base)
         return self.base * self.v / self.BASE
 
     ru = property(_get_ru)
@@ -1578,7 +1577,6 @@ class RelativeUnit(Unit):
         return self._base
 
     def _set_base(self, base):
-        #print(base)
         if isinstance(base, dict):
             raise Exception
             assert self.BASE_KEY in base

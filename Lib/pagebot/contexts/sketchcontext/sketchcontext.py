@@ -560,7 +560,6 @@ class SketchContext(BaseContext):
             fontSize = fd.size
             tracking = em(attrs.attributes.kerning/fontSize) # Wrong Sketch name for tracking
 
-            #print('----', attrs)
             # attrs = SketchStringAttribute
             #   location
             #   length
@@ -574,16 +573,8 @@ class SketchContext(BaseContext):
             #           minimumLineHeight
             #           maximumLineHeight
             #           paragraphSpacing
-            #print('----', sas.string[attrs.location:attrs.location+attrs.length])
-            #print('fontSize:', fd.name, fd.size)
-            #print('minimumLineHeight:', attrs.attributes.paragraphStyle.minimumLineHeight)
-            #print('maximumLineHeight:', attrs.attributes.paragraphStyle.maximumLineHeight)
-            #print('paragraphSpacing:', attrs.attributes.paragraphStyle.paragraphSpacing)
-            #print('...')
 
-            #print('--d-d-d-', verticalAlignment)
             #paragraphStyle.maximumLineHeight)
-            #print('3-3-3-', paragraphStyle.alignment)
 
             paragraphStyle = attrs.attributes.paragraphStyle
             leading = em(paragraphStyle.maximumLineHeight/fontSize)
@@ -591,8 +582,6 @@ class SketchContext(BaseContext):
             #maxLeading = paragraphStyle.maximumLineHeight
             #paragraphSpacing = paragraphStyle.paragraphSpacing
 
-            #print('vvvvvv', font, fontSize, leading, paragraphStyle, tracking)
-            #print('xxxxxx', minLeading, maxLeading, paragraphSpacing)
             # Fill color of the this run.
             cc = attrs.attributes.MSAttributedStringColorAttribute
             textFill = color(r=cc.red, g=cc.green, b=cc.blue, a=cc.alpha)

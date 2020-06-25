@@ -177,7 +177,6 @@ class TypeListLine(Element):
             bs += c.newString('\n'+labelString, style=labelStyle)
 
         c.textBox(bs, (p[0], p[1], self.w, self.h))
-        #print(self, self.font)
 
 class TypeList(Group):
     """Shows a list of type styles in their style.

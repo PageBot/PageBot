@@ -761,7 +761,6 @@ class Typesetter:
                 for pattern, pythonCode in patterns:
                     mdText = mdText.replace(pattern, pythonCode)
 
-            #print(mdText)
             fileName = self.markDown2XmlFile(fileName, mdText) # Translate MarkDown to HTML and save in file.
 
         tree = ET.parse(fileName)

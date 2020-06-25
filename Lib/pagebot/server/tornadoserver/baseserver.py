@@ -166,10 +166,6 @@ class BasicRequestHandler(RequestHandler):
     def get(self, *args):
         """Figure out how or handle the request and where to get content from.
         """
-        #print('=====', self.request)
-        #print('+++++', self.path_args)
-        #print('-----', self.request.host)
-        #print('#####', self.path_kwargs)
         requestData = RequestData(self.request.uri) # Split path parts and arguments
         self.write('<h1>Hello, world</h1>')
         self.write('<h2>%s</h2>' % self.request.host)

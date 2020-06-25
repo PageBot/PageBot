@@ -348,7 +348,6 @@ class BabelString:
         width defined, so no wrapping is done and `self.tw` will just answer
         the natural width of the string."""
         self._w = units(w)
-        #print(self._w)
         self.reset() # Force context wrapping for self.tw to be recalculated.
 
     w = property(_get_w, _set_w)

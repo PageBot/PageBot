@@ -500,10 +500,8 @@ if __name__ == "__main__":
             unirngs = getUnicodeRangesByScriptTag(tag)
         except KeyError:
             pass
-            #print("*** not matched:", tag)
         else:
             matches += 1
-            #print(tag, unirngs)
         total += 1
     print("total number of script tags: %d" % total)
     print("found a unicode range match: %d" % matches)

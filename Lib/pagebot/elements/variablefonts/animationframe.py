@@ -109,7 +109,6 @@ class AnimationFrame(Rect):
         location = dict(wdth=phisin*wdthRange/2+wdthRange/2+wdthMin, wght=phisin*wghtRange/2+wghtRange/2+wghtMin)
         instance = self.f.getInstance(location)#instance.path
         style['font'] = instance.path
-        #print(self.frameIndex, style['font'])
         #style['fontSize'] = self.h/3
         bs = c.newString(self.sampleText, style=style)
         tw, th = bs.size

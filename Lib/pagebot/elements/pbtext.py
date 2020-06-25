@@ -137,7 +137,6 @@ class Text(Element):
             bs = ''
         if isinstance(bs, str):
             # FIXME: take font size if w or h are None?
-            #print(self.w, self.h)
             bs = BabelString(bs, self.style, w=self.w, h=self.h)
         assert isinstance(bs, BabelString)
         self._bs = bs
@@ -170,14 +169,7 @@ class Text(Element):
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
-                #print(w)
-                #print(type(w))
-                #print('points', w.pt)
-                #print(units(w))
-                #print(w - self.pl)
-                #w = units(w) - self.pl - self.pr # Correct for padding
                 w = units(w) - self.pl - self.pr # Correct for padding
-                #print(w)
             self.bs.w = w
 
     w = property(_get_w, _set_w)
@@ -763,11 +755,9 @@ class Text(Element):
 
                 # Draw text as box
 
-                #print(self.pt, self.h, self.bs.lines[0].y)
                 y = py - self.pt - self.h + self.bs.lines[0].y
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
-                #print('drawtext', x, y, w, h)
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
