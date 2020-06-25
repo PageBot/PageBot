@@ -459,7 +459,6 @@ class Unit:
         'Mm'
         """
         return self.__class__.__name__
-
     name = property(_get_name)
 
     def _get_rounded(self):
@@ -477,7 +476,6 @@ class Unit:
         u = copy(self)
         u.v = int(round(self.v))
         return u
-
     rounded = property(_get_rounded)
 
     def __repr__(self):
@@ -516,10 +514,8 @@ class Unit:
         72
         """
         return asIntOrFloat(self.rv * self.PT_FACTOR) # Factor to points
-
     def _set_pt(self, v):
         self.v = v / self.PT_FACTOR
-
     pt = property(_get_pt, _set_pt)
 
     def _get_px(self):
@@ -536,7 +532,6 @@ class Unit:
         2.8346472
         """
         return asIntOrFloat(px(self.pt).v)
-
     px = property(_get_px)
 
     def _get_inch(self):
@@ -549,7 +544,6 @@ class Unit:
         1
         """
         return asIntOrFloat(self.pt/Inch.PT_FACTOR)
-
     inch = property(_get_inch)
 
     def _get_p(self):
@@ -574,7 +568,6 @@ class Unit:
         5
         """
         return asIntOrFloat(self.pt/Cm.PT_FACTOR)
-
     cm = property(_get_cm)
 
     def _get_mm(self):
@@ -1221,10 +1214,8 @@ class Pt(Unit):
         12
         """
         return self.rv
-
     def _set_pt(self, v):
         self.v = v
-
     pt = property(_get_pt, _set_pt)
 
 #   P(ica)
@@ -1495,7 +1486,6 @@ class RelativeUnit(Unit):
         (20%, 20, 4.80", 4.8)
         """
         return self.base * self.v / self.BASE
-
     ru = property(_get_ru)
 
     def _get_pt(self):
@@ -1575,7 +1565,6 @@ class RelativeUnit(Unit):
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
         return self._base
-
     def _set_base(self, base):
         if isinstance(base, dict):
             assert self.BASE_KEY in base
@@ -1583,7 +1572,6 @@ class RelativeUnit(Unit):
             base = units(base)
 
         self._base = base
-
     base = property(_get_base, _set_base)
 
     def byBase(self, base):
@@ -1711,7 +1699,6 @@ class Px(RelativeUnit):
         """
         # Renders value and casts it to points.
         return asIntOrFloat(pt(self.ru).rv)
-
     def _set_pt(self, v):
         """Setting the pixels directly, we assume them to be 1:1 pt.
 
@@ -1791,7 +1778,6 @@ class Fr(RelativeUnit):
         (4, 25, 25pt, 25)
         """
         return asIntOrFloat(self.base / self.v)
-
     rv = property(_get_rv)
 
     def _get_ru(self):
@@ -1989,10 +1975,8 @@ class Em(RelativeUnit):
         """
         # Render and factor to points.
         return asIntOrFloat(pt(self.base * self.v).v)
-
     def _set_pt(self, v):
         self.v = v / self.base
-
     pt = property(_get_pt, _set_pt)
 
 #   Perc
@@ -2105,10 +2089,8 @@ class Perc(RelativeUnit):
         12
         """
         return asIntOrFloat(self.base.pt * self.v / self.BASE) # Render and factor to points
-
     def _set_pt(self, v):
         self.v = v / self.base.pt * self.BASE
-
     pt = property(_get_pt)
 
 UNIT_MAKERS = dict(px=px, pt=pt, mm=mm, inch=inch, p=p, pica=pica, em=em, fr=fr, col=col, perc=perc)
