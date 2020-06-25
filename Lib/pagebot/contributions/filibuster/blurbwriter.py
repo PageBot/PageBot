@@ -342,7 +342,7 @@ class BlurbWriter:
             formatcmds = []
             for i in cmd:
                 si = i.strip()
-                #print('si', si)
+
                 if not si:
                     continue
                 if 'article' in si:

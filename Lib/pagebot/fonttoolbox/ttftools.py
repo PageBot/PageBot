@@ -375,7 +375,6 @@ def getBestCmap(font, cmapPreferences=((3, 10), (3, 1), (0, 3))):
     for platformID, platEncID in cmapPreferences:
         cmapSubtable = cmapTable.getcmap(platformID, platEncID)
         if cmapSubtable is not None:
-            #print(platformID, platEncID)
             return cmapSubtable.cmap
     raise ValueError("None of the requested cmap subtables were found")
 
@@ -519,7 +518,6 @@ class FontSubsetter(TTFTraverser):
             table = self.font[tag]
 
         unhandledTables = self.traverseTables("subsetFont", glyphsToDelete)
-        #print("unhandledTables", unhandledTables)
         self.font.setGlyphOrder([glyphName for glyphName in self.font.getGlyphOrder() if glyphName not in glyphsToDelete])
         if hasattr(self.font, "_reverseGlyphOrderDict"):
             del self.font._reverseGlyphOrderDict  # FontTools bug: font.setGlyphOrder() should take care of that, but it doesn't
@@ -693,7 +691,6 @@ class FontMerger(TTFTraverser):
         if hasattr(self.font, "_reverseGlyphOrderDict"):
             del self.font._reverseGlyphOrderDict  # FontTools bug: font.setGlyphOrder() should take care of that, but it doesn't
 
-        #print(unhandledTables)
 
     def mergeFonts_hmtx(self, table, otherFont, glyphsToMerge):
         otherMetrics = otherFont[table.tableTag].metrics
@@ -770,7 +767,6 @@ class FontScaler(TTFTraverser):
             return int(round(value * scaleFactor))
 
         unhandledTables = self.traverseTables("scale", scaleFactor, scaleFunction)
-        #print(unhandledTables)
 
     def _scaleAttrs(self, obj, scaleFunction, attrsToScale):
         for attrName in attrsToScale:

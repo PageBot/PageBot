@@ -1,0 +1,81 @@
+# vim: set filetype=python:
+# Doctests for string functions on OSX.
+
+>>> from pagebot import getContext
+>>> context = getContext()
+>>> context
+<DrawBotContext>
+>>> bs = context.newString('ABCD')
+>>> bs.context
+<DrawBotContext>
+>>> bs.cs
+ABCD
+>>> bs.cs.__class__.__name__
+'FormattedString'
+>>> from pagebot.toolbox.loremipsum import loremipsum
+>>> from pagebot.toolbox.units import pt
+>>> style = dict(font='PageBot-Regular', fontSize=pt(24))
+>>> bs = context.newString(loremipsum(), style, w=pt(400))
+>>> bs.style
+{'font': 'PageBot-Regular', 'fontSize': 24pt}
+>>> # Box width and height.
+>>> bs.w, bs.h
+(400pt, None)
+>>> # Text width and height.
+>>> bs.tw, bs.th
+(399.98pt, 3456pt)
+>>> len(bs.lines)
+144
+>>> baselines = context.getBaselines(bs)
+>>> len(baselines)
+144
+>>> baselines = context.getBaselines(bs, h=pt(100))
+>>> keys = sorted(baselines.keys())
+>>> len(keys)
+5
+>>> keys
+[0, 24, 48, 72, 96]
+>>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+>>> bs.topLineCapHeight
+65.8pt
+>>> bs.add('EFGH\\n', dict(fontSize=200))
+>>> len(bs.lines)
+1
+>>> # First line cap height increased.
+>>> bs.topLineCapHeight
+131.6pt
+>>> # Adding a second line, does not influence the cap height.
+>>> bs.add('IJKL', dict(fontSize=300))
+>>> len(bs.lines)
+2
+>>> bs.topLineCapHeight
+131.6pt
+>>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+>>> bs.topLineXHeight
+46.6pt
+>>> bs.add('EFGH\\n', dict(fontSize=200))
+>>> bs.topLineXHeight # First line xHeight increased
+93.2pt
+>>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
+>>> bs.topLineXHeight # First line xHeight increased
+93.2pt
+>>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+>>> bs.bottomLineDescender
+-25.2pt
+>>> bs.add('EFGH', dict(fontSize=1000))
+>>> bs.bottomLineDescender # Last line descender increased
+-252pt
+>>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
+>>> bs.bottomLineDescender # Last line descender increased
+-12.6pt
+>>> bs.lines[1]
+<BabelLineInfo x=0pt y=135pt runs=1>
+>>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
+>>> bs.bottomLineDescender_p
+-21.2pt
+>>> bs.add('EFGH', dict(fontSize=1000))
+>>> bs.bottomLineDescender_p # Last line descender increased
+-212pt
+>>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
+>>> bs.bottomLineDescender_p # Last line descender decreased
+-10.6pt

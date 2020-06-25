@@ -461,7 +461,6 @@ table {
     def writeScss(self, path):
         """Write the collect set of SCSS variables to path."""
         try:
-            #print('Writing "%s"' % path)
             f = codecs.open(path, 'w', 'utf-8')
             for scssId, value in sorted(self._scssVariables.items()):
                 f.write('$%s: %s;\n' % (scssId, value))

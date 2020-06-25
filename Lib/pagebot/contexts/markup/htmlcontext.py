@@ -183,7 +183,6 @@ class HtmlContext(BaseContext):
                         im = Image.open(path)
                         im.thumbnail(upt(w, h), Image.ANTIALIAS)
                         im.save(cachedFilePath, exportExtension)
-                        #print('Scaling %s to (%d, %d)' % (path, w, h))
             except IOError:
                 print("Cannot create resize image '%s'" % path)
         return cachedFilePath

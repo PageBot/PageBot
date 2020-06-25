@@ -854,7 +854,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.document import Document
         >>> from pagebot.elements import *
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = BabelString('Hkpx'+chr(10)+'Hkpx', style, context=context)
         >>> context.drawString(bs, pt(100, 100))

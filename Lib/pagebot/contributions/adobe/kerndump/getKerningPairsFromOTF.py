@@ -62,7 +62,6 @@ class OTFKernReader:
         self.allRightClasses = {}
 
         if kGPOStableName not in self.font:
-            #print("The font has no %s table" % kGPOStableName)
             #self.goodbye()
             pass
 
@@ -92,7 +91,6 @@ class OTFKernReader:
 
     def findKerningLookups(self):
         if not self.uniqueKernLookupIndexList:
-            #print("The font has no %s feature." % kKernFeatureTag)
             #self.goodbye()
             return False
 

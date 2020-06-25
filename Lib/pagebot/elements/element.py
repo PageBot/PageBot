@@ -1554,8 +1554,8 @@ class Element:
         14pt
         """
         # In case relative units, use this as base for %
-        base = dict(base=self.parentH, em=self.em)
-        return units(self.css('baselineGrid'), base=base)
+        #base = dict(base=self.parentH, em=self.em)
+        return units(self.css('baselineGrid'))#, base=base)
 
     def _set_baselineGrid(self, baselineGrid):
         self.style['baselineGrid'] = units(baselineGrid)
@@ -1577,8 +1577,8 @@ class Element:
         15pt
         """
         # In case relative units, use this as base for %
-        base = dict(base=self.parentH, em=self.em)
-        return units(self.css('baselineGridStart'), base=base)
+        #base = dict(base=self.parentH, em=self.em)
+        return units(self.css('baselineGridStart'))#, base=base)
 
     def _set_baselineGridStart(self, baselineGridStart):
         self.style['baselineGridStart'] = units(baselineGridStart)
@@ -2331,8 +2331,8 @@ class Element:
         0.5fr
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('x', 0), base=base)
+        #base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('x', 0))#, base=base)
 
     def _set_x(self, x):
         """Convert to units, if x is not already a Unit instance."""
@@ -2357,8 +2357,8 @@ class Element:
         (40%, 200)
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('y', 0), base=base)
+        #base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('y', 0))#, base=base)
     def _set_y(self, y):
         """Convert to units, if y is not already a Unit instance."""
         self.style['y'] = units(y)
@@ -2388,8 +2388,8 @@ class Element:
         (40%, 200)
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('z', 0), base=base)
+        #base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('z', 0))#, base=base)
     def _set_z(self, z):
         """Convert to units, if z is not already a Unit instance."""
         self.style['z'] = units(z)
@@ -2503,8 +2503,8 @@ class Element:
         100mm
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('rx', 0), base=base)
+        #base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('rx', 0))#, base=base)
 
     def _set_rx(self, rx):
         """Convert to units, if rx is not already a Unit instance."""
@@ -2527,8 +2527,8 @@ class Element:
         100mm
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('ry', 0), base=base)
+        #base = dict(base=self.parentH, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('ry', 0))#, base=base)
 
     def _set_ry(self, ry):
         """Convert to units, if rx is not already a Unit instance."""
@@ -2551,8 +2551,8 @@ class Element:
         100mm
         """
         # Retrieve as Unit instance and adjust attributes to current settings.
-        base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
-        return units(self.style.get('rz', 0), base=base)
+        #base = dict(base=self.parentD, em=self.em) # In case relative units, use this as base.
+        return units(self.style.get('rz', 0))#, base=base)
 
     def _set_rz(self, rz):
         """Convert to units, if rx is not already a Unit instance."""
@@ -3343,8 +3343,8 @@ class Element:
         >>> e.bleed
         (5mm, 6pt, 6pt, 6pt)
         """
-        base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
-        return units(self.css('bleedTop', 0), base=base)
+        #base = dict(base=self.h, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedTop', 0))#, base=base)
     def _set_bleedTop(self, bleed):
         self.style['bleedTop'] = units(bleed, default=0)
     bleedTop = property(_get_bleedTop, _set_bleedTop)
@@ -3383,8 +3383,8 @@ class Element:
         >>> e.bleed
         (6pt, 6pt, 6pt, 5mm)
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
-        return units(self.css('bleedLeft', 0), base=base)
+        #base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedLeft', 0))#, base=base)
     def _set_bleedLeft(self, bleed):
         self.style['bleedLeft'] = units(bleed, default=0)
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
@@ -3402,8 +3402,8 @@ class Element:
         >>> e.bleed
         (21pt, 5mm, 21pt, 21pt)
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
-        return units(self.css('bleedRight', 0), base=base)
+        #base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('bleedRight', 0))#, base=base)
     def _set_bleedRight(self, bleed):
         self.style['bleedRight'] = units(bleed, default=0)
     bleedRight = property(_get_bleedRight, _set_bleedRight)
@@ -3605,14 +3605,18 @@ class Element:
         >>> child.w, child.w.pt
         (4.5em, 45)
         """
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
-        return units(self.css('w'), base=base)
+        #base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base.
+        return units(self.css('w'))#, base=base)
+
     def _set_w(self, w):
         w = units(w or DEFAULT_WIDTH)
+
         if self.proportional and self.w:
-            self.style['h'] = w * self.h.pt/self.w.pt
-            self.style['d'] = w * self.d.pt/self.w.pt
-        self.style['w'] = w # Overwrite element local style from here, parent css becomes inaccessable.
+            self.style['h'] = w * self.h.pt / self.w.pt
+            self.style['d'] = w * self.d.pt / self.w.pt
+
+        # Overwrites element local style from here, parent css becomes inaccessable.
+        self.style['w'] = w
 
     w = property(_get_w, _set_w)
 
@@ -3633,8 +3637,10 @@ class Element:
         199pt
         """
         return self.w + self.ml + self.mr # Add margins to width
+
     def _set_mw(self, w):
         self.w = max(0, w - self.ml - self.mr) # Should not become < 0
+
     mw = property(_get_mw, _set_mw)
 
     def _get_h(self):
@@ -3657,8 +3663,9 @@ class Element:
         (4.5em, 54)
         """
         # In case relative units, use this as base.
-        base = dict(base=self.parentH, em=self.em)
-        return units(self.css('h', 0), base=base)
+        #base = dict(base=self.parentH, em=self.em)
+        return units(self.css('h', 0))#, base=base)
+
     def _set_h(self, h):
         h = units(h)
         if self.proportional and self.h:
@@ -4140,10 +4147,10 @@ class Element:
         """
         # Copy from self.h --> self._get_h to avoid circular reference to self.h
         # in case _get_h is redefined by inheriting classes (such as Text)
-        base = dict(base=self.parentH, em=self.em)
-        h = units(self.css('h', 0), base=base)
-        base = dict(base=h, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pt', 0), base=base)
+        #base = dict(base=self.parentH, em=self.em)
+        h = units(self.css('h', 0))#, base=base)
+        #base = dict(base=h, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pt', 0))#, base=base)
     def _set_pt(self, pt):
         self.style['pt'] = units(pt or 0)  # Overwrite element local style from here, parent css becomes inaccessable.
     pt = property(_get_pt, _set_pt)
@@ -4175,10 +4182,10 @@ class Element:
         """
         # Copy from self.h --> self._get_h to avoid circular reference to self.h
         # in case _get_h is redefined by inheriting classes (such as Text)
-        base = dict(base=self.parentH, em=self.em)
-        h = units(self.css('h', 0), base=base)
-        base = dict(base=h, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pb', 0), base=base)
+        #base = dict(base=self.parentH, em=self.em)
+        h = units(self.css('h', 0))#, base=base)
+        #base = dict(base=h, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pb', 0))#, base=base)
     def _set_pb(self, pb):
         self.style['pb'] = units(pb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pb = property(_get_pb, _set_pb)
@@ -4202,8 +4209,8 @@ class Element:
         >>> e2.pl, e2.pl.pt
         (10%, 10)
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pl', 0), base=base)
+        #base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pl', 0))#, base=base)
     def _set_pl(self, pl):
         self.style['pl'] = units(pl or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pl = property(_get_pl, _set_pl)
@@ -4233,8 +4240,8 @@ class Element:
         >>> e.pr.pt # Get padding-right, cast to points
         50
         """
-        base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pr', 0), base=base)
+        #base = dict(base=self.w, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pr', 0))#, base=base)
     def _set_pr(self, pr):
         self.style['pr'] = units(pr or 0)
     pr = property(_get_pr, _set_pr)
@@ -4261,8 +4268,8 @@ class Element:
         >>> e2.pzf.pt # Padding-front, cast to point
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pzf', 0), base=base)
+        #base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pzf', 0))#, base=base)
     def _set_pzf(self, pzf): # padding z-axis front
         self.style['pzf'] = units(pzf or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzf = property(_get_pzf, _set_pzf)
@@ -4291,8 +4298,8 @@ class Element:
         >>> e2.pzb.pt
         50
         """
-        base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
-        return units(self.css('pzb', 0), base=base)
+        #base = dict(base=self.d, em=self.em) # In case relative units, use this as base.
+        return units(self.css('pzb', 0))#, base=base)
     def _set_pzb(self, pzb):
         self.style['pzb'] = units(pzb or 0) # Overwrite element local style from here, parent css becomes inaccessable.
     pzb = property(_get_pzb, _set_pzb)
@@ -4311,6 +4318,7 @@ class Element:
         320pt
         """
         return self.w - self.pl - self.pr
+
     pw = property(_get_pw)
 
     def _get_ph(self):
@@ -4993,7 +5001,6 @@ class Element:
         eFill = self.fill # Default is noColor
         eStroke = self.stroke #self.css('stroke', default=noColor)
         eGradient = self.gradient
-        #print(eFill)
 
         #if eStroke is not noColor or eFill is not noColor or eGradient:
         c.saveGraphicState()
@@ -7750,8 +7757,8 @@ class Element:
     def _get_viewMinInfoPadding(self):
         """Unit value. # Minimum padding needed to show meta info. Otherwise truncated
         to 0 and not showing meta info."""
-        base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
-        return units(self.style.get('viewMinInfoPadding', 0), base=base) # Not inherited
+        #base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
+        return units(self.style.get('viewMinInfoPadding', 0))#, base=base) # Not inherited
     def _set_viewMinInfoPadding(self, viewMinInfoPadding):
         self.style['viewMinInfoPadding'] = units(viewMinInfoPadding)
     viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)

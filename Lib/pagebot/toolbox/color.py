@@ -1172,7 +1172,7 @@ class Color:
         ('mistyrose', 'lavenderblush', 'lavenderblush')
         """
         if self._name is None:
-            self._name = rgb2Name(self.rgb)
+            return rgb2Name(self.rgb) # Don't cache or it will take over. Just answer
         return self._name
     name = property(_get_name)
 

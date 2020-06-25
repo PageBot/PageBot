@@ -132,7 +132,6 @@ class Cube(BaseFontShow):
                 # Calculate the location
                 location = self.getLocation(wght=-xzStep/2+1, wdth=1, opsz=opsz)
                 instance = getInstance(self.f, location)
-                #print(instance.location)
                 style = dict(font=instance.path, fontSize=fontSize, xTextAlign=CENTER)
                 bs = c.newString(self.label, style=style)
                 tw, th = bs.size

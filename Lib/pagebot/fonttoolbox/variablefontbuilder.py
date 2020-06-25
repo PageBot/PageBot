@@ -228,7 +228,6 @@ def generateInstance(variableFontPath, location, targetDirectory,
         # TODO Round to F2Dot14?
         loc = normalizeLocation(location, axes)
         # Location is normalized now
-        #print("Normalized location:", loc)
 
         gvar = varfont['gvar']
         glyf = varfont['glyf']
@@ -273,12 +272,10 @@ def generateInstance(variableFontPath, location, targetDirectory,
             for i, delta in deltas.items():
                 cvt[i] += int(round(delta))
 
-        #print("Removing variable tables")
         for tag in ('avar','cvar','fvar','gvar','HVAR','MVAR','VVAR','STAT'):
             if tag in varfont:
                 del varfont[tag]
 
-        #print("Saving instance font", outFile)
         varfont.save(outFile)
 
     # Answer the font name path.

@@ -519,7 +519,6 @@ class DesignSpace:
         """
         if not tag in self.axes: # Does not exist. Answer False flag to indicated that nothing happened.
             #assert tag in self.axes, KeyError('Axis with tag "%s" does not exist' % tag)
-            #print('[DesignSpace.removeAxis] Axis with tag "%s" does not exist' % tag)
             return False
         axis = self.axes[tag]
         for aIndex, _ in enumerate(self.axisList):

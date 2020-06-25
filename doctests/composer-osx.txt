@@ -1,3 +1,5 @@
+# vim: set filetype=python:
+
 >>> from pagebot.constants import A4
 >>> from pagebot.composer import Composer
 >>> from pagebot.document import Document

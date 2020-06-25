@@ -83,7 +83,6 @@ class PreVarFamily(Family):
         for source in ds.sources:
             fonts[source.path] = Font(source.path)
 
-        #print(fonts)
 
         Family.__init__(self, name=name, fonts=fonts)
         self._parametricAxisFonts = {} # Key is parametric axis name

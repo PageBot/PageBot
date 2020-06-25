@@ -547,33 +547,6 @@ class FlatContext(BaseContext):
 
     #   T E X T
 
-    def text(self, bs, p):
-        """Places the Babelstring instance at position p. The position can be
-        any 2D or 3D points tuple. Currently the z-axis is ignored. The
-        FlatContext version of the BabelString should contain Flat.text.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = FlatContext()
-        >>> style1 = dict(font='PageBot-Regular', fontSize=pt(100), textFill=(1, 0, 0))
-        >>> style2 = dict(font='PageBot-Bold', fontSize=pt(50), textFill=(0, 1, 0.5))
-        >>> bs = context.newString('ABCD', style=style1)
-        >>> bs.add('EFGH', style=style2)
-        >>> bs, bs.__class__.__name__
-        ($ABCDEFGH$, 'BabelString')
-
-        >>> context.newPage(1000, 1000)
-        >>> context.fill(None)
-        >>> context.stroke(0, 0.5)
-        >>> context.rect(10, 500, 20, 20)
-        >>> context.text(bs, (10, 500))
-        >>> context.saveDrawing('_export/Flat-Text.pdf')
-        """
-        assert self.page is not None, 'FlatContext.text: self.page is not set.'
-        #xpt, ypt = self.translatePoint(p)
-        xpt, ypt = pt(p) # Make sure to convert to points
-        ypt = self.h - ypt
-        self._place(bs, xpt, ypt)
-
     def _getFlatFont(self, font):
         """Answer the (cache) FlatFont that corresponds with font.
 
@@ -591,14 +564,12 @@ class FlatContext(BaseContext):
             self._flatFonts[font.path] = self.b.font.open(font.path)
         return self._flatFonts[font.path], font
 
-    def _place(self, bs, x, y):
-        """Places the styled Flat text on a page, transform vertical
-        position to position on baseline.
-        Vertical alignment is supposed to be handled by the caller,
-        already calculated in the `y`.
-        Horizontal alignment is taken from the bs.xTextAlign value,
-        as answered by the style of the first run:
-        bs.runs[0].style.get('xTextAlign')
+    def _place(self, bs, x, y, w=None, h=None):
+        """Places the styled Flat text on a page, transform vertical position
+        to position on baseline. Vertical alignment should to be handled by the
+        caller, already calculated in the `y`. Horizontal alignment is taken
+        from the bs.xTextAlign value, as answered by the style of the first
+        run: bs.runs[0].style.get('xTextAlign')
 
         TODO: implement runs instead of native context string.
 
@@ -629,21 +600,53 @@ class FlatContext(BaseContext):
         # If the style of the first BabelString run, contains a xTextAlign
         # for CENTER or RIGHT, the shift the x position accordingly.
         xTextAlign = bs.xTextAlign
+
         if xTextAlign == CENTER:
             x -= bs.tw/2
         elif xTextAlign == RIGHT:
             x -= bs.tw
 
-        # Vertical alignment is supposed to be handled by the caller,
-        # already calculated in the `y`
-        y -= bs.topLineDescender
+        # Vertical alignment is handled by the caller, already calculated in
+        # the `y`.
+        y -= bs.topLineDescender # FIXME: check, is this necessary?
 
-        placedText.frame(x.pt, y.pt - bs.th.pt, bs.tw.pt, bs.th.pt)
+        x = x.pt
+        y = y.pt
+        w = w or bs.tw.pt
+        h = h or bs.th.pt
+        placedText.frame(x, y - h, w, h)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.
         r, g, b = pbColor.rgb
         return r*256, g*256, b*256
+
+    def text(self, bs, p):
+        """Places the Babelstring instance at position p. The position can be
+        any 2D or 3D points tuple. Currently the z-axis is ignored. The
+        FlatContext version of the BabelString should contain Flat.text.
+
+        >>> from pagebot.toolbox.units import pt
+        >>> context = FlatContext()
+        >>> style1 = dict(font='PageBot-Regular', fontSize=pt(100), textFill=(1, 0, 0))
+        >>> style2 = dict(font='PageBot-Bold', fontSize=pt(50), textFill=(0, 1, 0.5))
+        >>> bs = context.newString('ABCD', style=style1)
+        >>> bs.add('EFGH', style=style2)
+        >>> bs, bs.__class__.__name__
+        ($ABCDEFGH$, 'BabelString')
+
+        >>> context.newPage(1000, 1000)
+        >>> context.fill(None)
+        >>> context.stroke(0, 0.5)
+        >>> context.rect(10, 500, 20, 20)
+        >>> context.text(bs, (10, 500))
+        >>> context.saveDrawing('_export/Flat-Text.pdf')
+        """
+        assert self.page is not None, 'FlatContext.text: self.page is not set.'
+        #xpt, ypt = self.translatePoint(p)
+        xpt, ypt = pt(p) # Make sure to convert to points
+        ypt = self.h - ypt
+        self._place(bs, xpt, ypt)
 
     def textBox(self, bs, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
@@ -678,6 +681,8 @@ class FlatContext(BaseContext):
         >>> #of
         'dolor eu interdum. '
         """
+
+        # TODO: check & move to separate function.
         if isinstance(bs, str):
             # Creates a new string with default styles.
             style = dict(self._font or DEFAULT_FONT, fontSize=self._fontSize or self.DEFAULT_FONT_SIZE)
@@ -688,12 +693,9 @@ class FlatContext(BaseContext):
 
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         assert r is not None
-        xpt, ypt, wpt, hpt = upt(r)
-        y = self.h - (ypt + hpt)
-        # FIXME: tracking causes width errors.
-        #print(wpt)
-        #print(bs.cs.txt)
-        return self.page.place(bs.cs.txt).frame(xpt, y, wpt, hpt)
+        xpt, ypt, wpt, hpt = pt(r)
+        ypt = self.h - ypt
+        self._place(bs, xpt, ypt, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
         """Answers the the box overflow as a new FlatString in the current
@@ -835,7 +837,7 @@ class FlatContext(BaseContext):
 
         for run in bs.runs:
             # FIXME: can be None, which gives an error when looking up font.path.
-            f = bs.style.get('font', DEFAULT_FONT)
+            f = run.style.get('font', DEFAULT_FONT)
 
             if isinstance(f, Font):
                 flatFont = self.b.font.open(f.path)
@@ -851,13 +853,13 @@ class FlatContext(BaseContext):
 
                 flatFont = self.b.font.open(font.path)
 
-            fontSize = bs.style.get('fontSize', DEFAULT_FONT_SIZE)
-            leading = upt(bs.style.get('leading', em(1.2)), base=fontSize)
+            fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
+            leading = upt(run.style.get('leading', em(1.2)), base=fontSize)
             # Keep as multiplication factor to fontSize for Flat.
             st = self.b.strike(flatFont).size(upt(fontSize), leading=leading)
-            tracking = em(bs.style.get('tracking', 0), base=fontSize).v
+            tracking = em(run.style.get('tracking', 0), base=fontSize).v
             st.tracking(tracking/10) # Flat tracking if %, BabelString is 1/1000em
-            r, g, b = self._asFlatColor(color(bs.style.get('textFill', blackColor)))
+            r, g, b = self._asFlatColor(color(run.style.get('textFill', blackColor)))
 
             # FIXME: We need to know the export file type here in advance...
             #try:
@@ -874,7 +876,6 @@ class FlatContext(BaseContext):
 
             fRuns.append(FlatRunData(st=st, pars=pars))
 
-        #print(fParagraphs)
         #pt = fPage.place(txt)
         # Stored typically as BabelString.cs in FlatContext mode.
         return FlatBabelData(doc=fDoc, page=fPage, paragraphs=fParagraphs, runs=fRuns)
@@ -980,7 +981,12 @@ class FlatContext(BaseContext):
                 ext = 'jpeg'
 
             if not exists(path):
-                im = im.resize((w, h))
+                try:
+                    print('Resizing %s' % path)
+                    im = im.resize((w, h))
+                except OverflowError as e:
+                    print('%s: Caught an OverflowError:' % self.name, e)
+                    print('Image path is %s' % path)
                 im.save(path, ext)
 
             # Now open the image in Flat.

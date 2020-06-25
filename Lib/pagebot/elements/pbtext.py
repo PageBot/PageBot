@@ -137,7 +137,6 @@ class Text(Element):
             bs = ''
         if isinstance(bs, str):
             # FIXME: take font size if w or h are None?
-            #print(self.w, self.h)
             bs = BabelString(bs, self.style, w=self.w, h=self.h)
         assert isinstance(bs, BabelString)
         self._bs = bs
@@ -163,7 +162,8 @@ class Text(Element):
         if self._bs is None:
             return None
 
-        return (self.bs.w or self.bs.tw) + self.pl + self.pr
+        w = (self.bs.w or self.bs.tw) + self.pl + self.pr
+        return w
 
     def _set_w(self, w):
         # If None, then self.w is elastic defined by self.bs height.
@@ -738,8 +738,10 @@ class Text(Element):
         view.drawElementFrame(self, p, **kwargs)
 
         if self.bs.hasWidth or self.bs.hasHeight:
-            # Forced width and/or height set, behave as a textbox.
-            # Only if there is content
+            '''
+            Forces set width and / or height, behave as a textbox.  Only if
+            there is content.
+            '''
             if self.bs.lines:
                 frameY = py - self.h + self.bs.lines[0].y
                 # Draw optional background, frame or borders.
@@ -753,16 +755,16 @@ class Text(Element):
 
                 # Draw text as box
 
-                #print(self.pt, self.h, self.bs.lines[0].y)
                 y = py - self.pt - self.h + self.bs.lines[0].y
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
-                #print('drawtext', x, y, w, h)
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
-            # No width or height defined; draws as string using its own width
-            # (there may be embedded newlines).
+            '''
+            No width or height defined; draws as string using its own width
+            (there may be embedded newlines).
+            '''
             frameY = py - self.bs.th+self.bs.topLineAscender
             # Draw optional background, frame or borders.
             self.buildFrame(view, (px, frameY, self.bs.tw, self.h))

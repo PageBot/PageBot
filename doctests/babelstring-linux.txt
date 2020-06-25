@@ -1,4 +1,5 @@
-Doctests for string functions on Linux.
+# vim: set filetype=python:
+# Doctests for string functions on Linux.
 
 >>> from pagebot import getContext
 >>> context = getContext('Flat')

@@ -180,7 +180,6 @@ class PartOfBook(Element):
         for page in self.pages:
             page.size = doc.size
             page.padding = doc.padding
-            #print('3223233223', page.pn)
             doc.appendPage(page) # Add the page to the document. Note that this will alter the e.parent
         for e in self.elements:
             e.compose(doc, publication) # Recursively call composition for all other parts.

@@ -71,7 +71,6 @@ def asFontPath(fontPath):
     """
     try:
         if not path2Extension(fontPath) in ('ttf', 'otf'):
-            #print('asFontPath: Unsupported font type:', fontPath)
             return None
 
         pathParts = fontPath.split('/')
@@ -342,7 +341,6 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
         path = targetDirectory + instanceFileName
 
     if cached and os.path.exists(path):
-        #print('Found in cache', path)
         instance = Font(path=path, name=name, location=location, opticalSize=opticalSize)
     else:
         ttFont = instantiateVariableFont(vf.ttFont, location) # Get instance from fontTools

@@ -1,3 +1,5 @@
+# vim: set filetype=python:
+
 >>> from pagebot.filepaths import getResourcesPath
 >>> resourcesPath = getResourcesPath()
 >>> from os import listdir

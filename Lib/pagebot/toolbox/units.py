@@ -428,6 +428,10 @@ class Unit:
         '20mm'
         >>> us(20, Mm) # Or can be real class (initial cap)
         '20mm'
+        >>> pt(2000) - pt(20)
+        1980pt
+        >>> pt(2000) - px(20)
+        1980pt
     """
     BASE = None # Default "base reference for relative units. Unused None for absolute units."
 
@@ -1474,13 +1478,12 @@ class RelativeUnit(Unit):
         (2, 2)
         """
         return asIntOrFloat((self.base * self.v / self.BASE).rv)
-
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered value of self, by units type of self.base.  For
-        absolute units the result of u.v and u.r is identical. For relative
-        units u.v answers the value and u.r answers the value rendered by
+        """Answers the rendered value of self, by units type of self.base. For
+        absolute units the results of u.v and u.ru are identical. For relative
+        units u.v answers the value and u.ru answers the value rendered by
         self.base. self.base can be another unit or a dictionary of base
         values.
 
@@ -1497,6 +1500,8 @@ class RelativeUnit(Unit):
 
     def _get_pt(self):
         """Answers the rendered value in pt.
+        We cannot set relative units directly from the pt
+        property, except for px, which are then assumed to be equal.
 
         >>> u = fr(2, base=12)
         >>> u, u.pt
@@ -1507,7 +1512,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and casts it to points.
         return asIntOrFloat(pt(self.ru).rv)
-
     pt = property(_get_pt)
 
     def _get_mm(self):
@@ -1519,7 +1523,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and casts it to mm.
         return asIntOrFloat(mm(self.ru).rv)
-
     mm = property(_get_mm)
 
     def _get_p(self):
@@ -1534,7 +1537,6 @@ class RelativeUnit(Unit):
         """
         # Renders value and factors it to mm
         return asIntOrFloat(p(self.ru).rv)
-
     p = property(_get_p)
 
     def _get_inch(self):
@@ -1549,11 +1551,11 @@ class RelativeUnit(Unit):
         """
         # Renders value and factors it to mm.
         return asIntOrFloat(inch(self.ru).rv)
-
     inch = property(_get_inch)
 
     def _get_base(self):
-        """Optional base value as reference for relative units. Save as Unit instance.
+        """Optional base value as reference for relative units. Save as Unit
+        instance.
 
         >>> u = perc('10%', base=300)
         >>> u, u.base, u.ru, u.rv, u.v
@@ -1573,12 +1575,15 @@ class RelativeUnit(Unit):
         if isinstance(self._base, dict):
             return self._base[self.BASE_KEY]
         return self._base
+
     def _set_base(self, base):
         if isinstance(base, dict):
             assert self.BASE_KEY in base
         elif not isinstance(base, dict) and not isUnit(base):
             base = units(base)
+
         self._base = base
+
     base = property(_get_base, _set_base)
 
     def byBase(self, base):
@@ -1649,9 +1654,9 @@ def px(v, *args, **kwargs):
     return u
 
 class Px(RelativeUnit):
-    """Answers the px (pixel) instance.
+    """Answers the `px` (pixel) instance.
 
->>> # Direct creation of class instance, only for (int, float, Unit)
+    >>> # Direct creation of class instance, only for (int, float, Unit)
     >>> Px(12)
     12px
     >>> # Through creator function
@@ -1671,8 +1676,13 @@ class Px(RelativeUnit):
     >>> # Answer pt value, assuming here an 1:1 conversion
     >>> u.pt
     12
+    >>> u = units('1050px')
+    >>> u
+    1050px
+    >>> u.pt
+    1050
     """
-    PT_FACTOR = 1 # This may not always be 1:1 to points.
+    PT_FACTOR = 1.3333 # This may not always be 1:1 to points.
     UNIT = 'px'
 
     def _get_px(self):
@@ -1683,6 +1693,34 @@ class Px(RelativeUnit):
         """
         return self.rv
     px = property(_get_px)
+
+    def _get_pt(self):
+        """Answers the rendered value in `pt` (points). We cannot set relative
+        units directly from the `pt` property, except for `px` (pixels), which
+        are then assumed to be equal.
+
+        >>> u = px(24, base=12)
+        >>> u, u.pt
+        (24px, 288)
+        >>> u = px(12)
+        >>> u.pt
+        12
+        >>> u.pt = 100
+        >>> u
+        100px
+        """
+        # Renders value and casts it to points.
+        return asIntOrFloat(pt(self.ru).rv)
+
+    def _set_pt(self, v):
+        """Setting the pixels directly, we assume them to be 1:1 pt.
+
+        >>> u = px(12)
+        >>> u.pt
+        12
+        """
+        self.v = upt(v)
+    pt = property(_get_pt, _set_pt)
 
 #   Fr
 
@@ -1742,8 +1780,8 @@ class Fr(RelativeUnit):
 
     def _get_rv(self):
         """Answers the rendered value. For absolute inits u.v and u.rv are
-        identical. For relative units u.v answers the value and u.r answers
-        the value rendered by self.base self.base can be a unit or a number.
+        identical. For relative units u.v answers the value and u.r answers the
+        value rendered by self.base self.base can be a unit or a number.
 
         >>> u = Fr(2, base=mm(10))
         >>> u.v, u.rv, u.ru, u.mm
@@ -1753,10 +1791,11 @@ class Fr(RelativeUnit):
         (4, 25, 25pt, 25)
         """
         return asIntOrFloat(self.base / self.v)
+
     rv = property(_get_rv)
 
     def _get_ru(self):
-        """Answers the rendered unit. For absolute inits u and u.ru are
+        """Answers the rendered unit. For absolute units u and u.ru are
         identical. For relative units u.rv answers the value and u.ru answers
         the value rendered by self.base self.base can be a unit or a number.
 
@@ -1888,8 +1927,8 @@ def em(v, *args, **kwargs):
     return u
 
 class Em(RelativeUnit):
-    """Em size is based on the current setting of the fontSize.
-    Used in CSS export.
+    """Em size is based on the current setting of the fontSize. Used in CSS
+    export.
 
     >>> units('10em')
     10em
@@ -2037,7 +2076,7 @@ class Perc(RelativeUnit):
     UNITC = '%'
 
     def byBase(self, base):
-        """Answer the rendered value with base instead of self._base)
+        """Answers the rendered value with base instead of self._base.
 
         >>> u = perc(28, base=300)
         >>> u.base
@@ -2235,7 +2274,7 @@ def units(v, maker=None, base=None, g=None, default=None):
 # Automatic angle conversion between degrees and radians.
 
 def asin(v):
-    """Answers a Radians instance, using math.asin(v)
+    """Answers a Radians instance, using math.asin(v).
 
     >>> a = degrees(0)
     >>> asin(a.sin)
@@ -2253,7 +2292,7 @@ def asin(v):
     return radians(math.asin(v)/math.pi)
 
 def acos(v):
-    """Answers a Radians instance, using math.acos(v)
+    """Answers a Radians instance, using math.acos(v).
 
     >>> a = degrees(0)
     >>> acos(a.cos)
@@ -2265,7 +2304,7 @@ def acos(v):
     return radians(math.asin(v)/math.pi)
 
 def atan(v):
-    """Answers a Radians instance, using math.atan(v)
+    """Answers a Radians instance, using math.atan(v).
 
     >>> a = degrees(0)
     >>> atan(a.tan)
@@ -2277,7 +2316,7 @@ def atan(v):
     return radians(math.atan(v)/math.pi)
 
 def atan2(v1, v2):
-    """Answers a Radians instance, using math.atan2(v1, v2)
+    """Answers a Radians instance, using math.atan2(v1, v2).
 
     >>> atan2(1, 1).degrees
     45

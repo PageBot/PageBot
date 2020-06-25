@@ -24,196 +24,31 @@
 #     calculate upon request and stored in the BabelString for later use.
 #     Changes to the runs will reset this cache.
 #
+
 from copy import copy, deepcopy
 import weakref
 
 from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
     DEFAULT_LEADING, LEFT, BASELINE) # , CENTER, RIGHT
+from pagebot.contexts.basecontext.babelrun import *
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.toolbox.units import units, pt, em, upt
 from pagebot.toolbox.color import color
 
-class BabelRun:
-
-    def __init__(self, s, style=None):
-        """Answers the storage for string + style in BabelString. Note that the
-        style values of sequential runs are *not* cascading. This is similar to
-        the behavior of the DrawBot FormattedString attributes.
-
-        >>> from pagebot.elements import *
-        >>> BabelRun('ABCD', dict(font='PageBot-Regular'))
-        <BabelRun "ABCD">
-        >>> BabelRun('ABCD'*10) # Abbreviated for string > 10 characters.
-        <BabelRun "ABCDABCDAB...">
-        >>> len(BabelRun('ABCD'*10))
-        40
-        """
-        assert isinstance(s, str)
-        self.s = s
-
-        if style is None:
-            style = {}
-        self.style = style
-        self._cr = None # Optional cache of native context run (e.g. CTRun or FlatRunData)
-
-    def __len__(self):
-        return len(self.s)
-
-    def __eq__(self, pbr):
-        """
-        >>> from pagebot.toolbox.units import pt
-        >>> br1 = BabelRun('ABCD')
-        >>> br2 = BabelRun('ABCD')
-        >>> br1 == br2, br1 is br2
-        (True, False)
-        >>> br2.style['fontSize'] = pt(12)
-        >>> br1 == br2
-        False
-        """
-        if not isinstance(pbr, self.__class__):
-            return False
-        return self.s == pbr.s and self.style == pbr.style
-
-    def __repr__(self):
-        r = '<%s' % self.__class__.__name__
-        if self.s:
-            s = self.s[:10]
-            if s != self.s:
-                s += '...'
-            r += ' "%s"' % s.replace('\n',' ')
-        return r + '>'
-
-    def getFont(self, style=None):
-        if not style:
-            style = self.style
-        fontName = style.get('font', DEFAULT_FONT)
-        if fontName is None:
-            fontName = DEFAULT_FONT
-        return findFont(fontName)
-
-    def getFSStyle(self):
-        # D E P R E C A T E D
-        # FIXME - Petr A BabelString should not know anything about contexts,
-        # except that it can exececute text, textBox, textSize and textLines.
-        # Styles in runs are not cascading. self.leading gives the last,
-        # because that is the attribute value if plain text gets appended.
-        # FIXME - Petr The question is if we need to convert to FlatString at all.
-        # Can't we just use the main data in Babelstring, until processing into
-        # lines or text?
-
-        # Instead of using e.g. bs.tracking, we need to process the styles
-        # of all runs, not just the last one.
-        style = self.style
-
-        # DrawBot-OSX, setting the hyphenation is global, before a
-        # FormattedString is created.
-        hyphenation = style.get('hyphenation', False)
-
-        # In case there is an error in these parameters, DrawBot ignors all.
-        #    upt(fontSize), upt(leading, base=fontSize),
-        #    textColor.rgba, align)
-
-        # Create the style for this text run.
-        font = self.getFont()
-
-        if font is None:
-            fontPath = DEFAULT_FONT
-        else:
-            fontPath = font.path
-        fontSize = style.get('fontSize', DEFAULT_FONT_SIZE)
-        leading = style.get('leading', em(1, base=fontSize)) # Vertical space adding to fontSize.
-
-        fsStyle = dict(
-            font=fontPath,
-            fontSize=upt(fontSize),
-            lineHeight=upt(leading, base=fontSize),
-            align=style.get('xTextAlign') or style.get('xAlign', LEFT),
-            tracking=upt(style.get('tracking', 0), base=fontSize),
-            strokeWidth=upt(style.get('strokeWidth')),
-            baselineShift=upt(style.get('baselineShift'), base=fontSize),
-            language=style.get('language', DEFAULT_LANGUAGE),
-            indent=upt(style.get('indent', 0), base=fontSize),
-            tailIndent=-abs(upt(style.get('tailIndent', 0), base=fontSize)), # DrawBot wants negative number)
-            firstLineIndent=upt(style.get('firstLineIndent', 0), base=fontSize),
-            underline={True:'single', False:None}.get(style.get('underline', False)),
-            # Increasing value moves text up, decreasing the leading.
-            paragraphTopSpacing=upt(style.get('paragraphTopSpacing', 0), base=fontSize),
-            paragraphBottomSpacing=upt(style.get('paragraphBottomSpacing', 0), base=fontSize),
-        )
-
-        if 'textFill' in style:
-            textFill = style['textFill']
-            if textFill is not None:
-                textFill = color(textFill)
-            if textFill.isCmyk:
-                fsStyle['cmykFill'] = textFill.cmyk
-            else:
-                fsStyle['fill'] = textFill.rgba
-
-        if 'textStroke' in style:
-            textStroke = style['textStroke']
-            if textStroke is not None:
-                textStroke = color(textStroke)
-            if textStroke.isCmyk:
-                fsStyle['cmykStroke'] = textStroke.cmyk
-            else:
-               fsStyle['stroke'] = textStroke.rgba
-
-        if 'openTypeFeatures' in style:
-            fsStyle['openTypeFeatures'] = style['openTypeFeatures']
-
-        if 'fontVariations' in style:
-            fsStyle['fontVariantions'] = style['fontVariations']
-
-        if 'tabs' in style:
-            tabs = [] # Render the tab values to points.
-            for tx, alignment in style.get('tabs', []):
-                tabs.append((upt(tx, base=fontSize), alignment))
-            fsStyle['tabs'] = tabs
-
-        return fsStyle, hyphenation
-
-class BabelLineInfo:
-    """BabelLineInfo is information decompiled from a native context text line run.
-    It resembles as close a possible to original source that generated the
-    the text line/run, but it will never be the same. E.g. any OT-feature
-    glyph replacement cannot be reconstructed to the original string.
-    """
-    def __init__(self, x, y, context, cLine=None):
-        """Container for line info, after text wrapping by context."""
-        self.x = units(x)
-        self.y = units(y)
-        self.runs = [] # List of BabelRunInfo instances.
-        self.context = context # Just in case it is needed.
-        # Optional native "context line" (e.g. DrawBot-->CTLine instance.
-        # Flat-->the result of placedText.layout.runs() looping).
-        self.cLine = cLine
-
-    def __repr__(self):
-        return '<%s y=%s>' % (self.__class__.__name__, self.y)
-
-
-class BabelRunInfo:
-    """BabelRunInfo is information decompiled from a native context text line.
-    It resembles as close a possible to original source that generated the
-    the text line/run, but it will never be the same. E.g. any OT-feature
-    glyph replacement cannot be reconstructed to the original string.
-    """
-    def __init__(self, s, style, context, cRun=None):
-        assert isinstance(s, str)
-        self.s = s # Reconstructed string, may not be input for e.g. OT-features
-        self.style = style # Reconstructed style of the run.
-        self.context = context # Just in case it is needed
-        # Optional native "context run"
-        # (e.g. DrawBot-->CTRun instance. Flat-->)
-        self.cRun = cRun
-
-    def __repr__(self):
-        return '<%s "%s">' % (self.__class__.__name__, self.s)
-
 class BabelString:
     """BabelString is a generic string format, that stores a string or text as
-    a list of BabelRun instances.
+    a list of BabelRun instances. String behaviour can differ between various
+    output contexts and platforms.
+
+    A BabelString should not know anything about contexts, except that it can
+    execute the text, textBox, textSize and textLines fuctions. Styles in runs
+    are not cascading.
+
+    ?? self.leading returns the value of the last run, because
+    that is the attribute value if plain text gets appended.
+
+    For platform-specific doctests, see
+    doctests/strings-*.txt in the repository root.
 
     NOTE:
     - The styles values of sequential runs are *not* cascading. This is
@@ -349,6 +184,7 @@ class BabelString:
         the natural width of the string."""
         self._w = units(w)
         self.reset() # Force context wrapping for self.tw to be recalculated.
+
     w = property(_get_w, _set_w)
 
     def _get_h(self):
@@ -422,8 +258,6 @@ class BabelString:
 
     def _get_th(self):
         """Answers the cached calculated context height.
-
-        See also doctexts/strings-*.txt.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -640,21 +474,11 @@ class BabelString:
         derived from the fonts, independent of if there are actually capitals
         in the first line.
 
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.topLineCapHeight
-        65.8pt
-        >>> bs.add('EFGH\\n', dict(fontSize=200))
-        >>> bs.topLineCapHeight # First line capheight increased
-        131.6pt
-        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        """
-        """
-        >>> bs.topLineCapHeight # First line capHeight increased
-        131.6pt
+
+
         """
         topLineCapHeight = 0
+
         if self.lines:
             for run in self.lines[0].runs:
                 font = self.getFont(run.style)
@@ -667,20 +491,6 @@ class BabelString:
         """Answers the largest xHeight in the first line. The height is derived
         from the fonts, independent of if there are actually lower case in the
         first line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.topLineXHeight
-        46.6pt
-        >>> bs.add('EFGH\\n', dict(fontSize=200))
-        >>> bs.topLineXHeight # First line xHeight increased
-        93.2pt
-        >>> bs.add('IJKL', dict(fontSize=300)) # Second line does not change
-        >>> bs.topLineXHeight # First line xHeight increased
-        93.2pt
         """
         topLineXHeight = 0
         if self.lines:
@@ -696,22 +506,6 @@ class BabelString:
         derived from the fonts, independent of if there are actually lower case
         in the first line. The value answered is a position (negative number),
         not a distance, relative to the baseline of the last line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.bottomLineDescender
-        -25.2pt
-        >>> bs.add('EFGH', dict(fontSize=1000))
-        >>> bs.bottomLineDescender # Last line descender increased
-        -252pt
-        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender # Last line descender increased
-        -12.6pt
-        >>> bs.lines[1]
-        <BabelLineInfo x=0pt y=135pt runs=1>
         """
         bottomLineDescender = 0
         if self.lines:
@@ -727,22 +521,7 @@ class BabelString:
         height is derived from the fonts, independent of if there are actually
         lower case in the first line. The value answered is a position
         (negative number), not a distance, relative to the baseline of the last
-        line.
-
-        """
-        """
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
-        >>> bs.bottomLineDescender_p
-        -21.2pt
-        >>> bs.add('EFGH', dict(fontSize=1000))
-        >>> bs.bottomLineDescender_p # Last line descender increased
-        -212pt
-        >>> bs.add('IJ\\nKL', dict(fontSize=50)) # New last line with small descender
-        >>> bs.bottomLineDescender_p # Last line descender decreased
-        -10.6pt
-        """
+        line."""
         bottomLineDescender_p = 0
         if self.lines:
             for run in self.lines[-1].runs:
