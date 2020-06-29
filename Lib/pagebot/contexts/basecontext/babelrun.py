@@ -14,13 +14,10 @@
 #
 #     babelrun.py
 
-from copy import copy, deepcopy
-import weakref
-
-from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE, DEFAULT_FONT,
-    DEFAULT_LEADING, LEFT, BASELINE) # , CENTER, RIGHT
-from pagebot.fonttoolbox.objects.font import findFont, Font
-from pagebot.toolbox.units import units, pt, em, upt
+from pagebot.constants import (DEFAULT_LANGUAGE, DEFAULT_FONT_SIZE,
+        DEFAULT_FONT, LEFT)
+from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.toolbox.units import units, em, upt
 from pagebot.toolbox.color import color
 
 class BabelRun:

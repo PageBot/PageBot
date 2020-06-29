@@ -35,3 +35,4 @@ ABCD
 4
 >>> keys
 [0, 18, 47, 76]
+>>> # TODO: add test font measures.
