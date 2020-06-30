@@ -176,10 +176,6 @@ class AbstractContext:
         be used by the context to extract width as @r."""
         raise NotImplementedError
 
-    def line(self, x1, y1, x2, y2):
-        """Draw a line from `(x1, y1)` to `(x2, y2)`"""
-        raise NotImplementedError
-
     # Paths.
 
     def newPath(self):

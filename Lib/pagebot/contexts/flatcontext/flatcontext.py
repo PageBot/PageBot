@@ -127,12 +127,13 @@ class FlatContext(BaseContext):
         # Current open shape.
         self.shape = None
         self.fileType = DEFAULT_FILETYPE
-        self.transform3D = Transform3D()
         self.drawing = None
-        self.w = None
-        self.h = None
         self._numberOfPages = 0
         self._flatFonts = {} # Caching of {font.path:flatFont}
+        self.setTransform3D()
+
+    def setTransform3D(self):
+        self.transform3D = Transform3D()
 
     #   Drawing.
 
@@ -157,22 +158,15 @@ class FlatContext(BaseContext):
             h = doc.h
         elif size is not None:
             w, h = size
-        elif w and h:
-            self.w = w
-            self.h = h
 
-        if w is None:
-            w = self.w
-        if h is None:
-            h = self.h
 
         # Dimensions not allowed to be None or Flat document won't render.
-        assert self.w is not None
-        assert self.h is not None
+        assert w is not None
+        assert h is not None
 
         # Converts units to point values. Stores width and height information
         # in Flat document.
-        wpt, hpt = upt(self.w, self.h)
+        wpt, hpt = upt(w, h)
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
         #self.drawing.size(wpt, hpt, units=self.UNITS)
         #self.drawing.pages = []
@@ -337,7 +331,9 @@ class FlatContext(BaseContext):
         >>> context.w, context.h
         (100mm, 200cm)
         """
-        self.w, self.h = self._getValidSize(w, h)
+        #self.w, self.h = self._getValidSize(w, h)
+        # TODO: see if Flat document can be resized, else we should probably
+        # create a new one.
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self.drawing, are ignored in Flat.
@@ -364,8 +360,6 @@ class FlatContext(BaseContext):
 
         assert self.drawing
 
-        self.w = w
-        self.h = h
         self._numberOfPages += 1
         self.drawing.addpage()
 
@@ -390,14 +384,14 @@ class FlatContext(BaseContext):
     page = property(_get_page)
 
     def _get_height(self):
-        return self.h
+        return self.drawing.height
     height = property(_get_height)
 
     def _get_width(self):
-        return self.w
+        return self.drawing.width
     width = property(_get_width)
 
-    def getTransformed(self, x, y):
+    def getTransformed(self, x, y, z=0):
         """
         >>> context = FlatContext()
         >>> w = 800
@@ -406,6 +400,9 @@ class FlatContext(BaseContext):
         >>> dy = 8
         >>> context.newPage(w, h)
         >>> x, y = 4, 5
+        >>> p1 = context.getTransformed(x, y)
+        >>> p1
+        4.0, 595
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
         >>> p1
@@ -423,7 +420,6 @@ class FlatContext(BaseContext):
         >>> p2
         (14.0, 582)
         """
-        z = 0
         p0 = (x, y, z)
         p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
@@ -646,8 +642,9 @@ class FlatContext(BaseContext):
         """
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
+        #x, y = self.getTransformed(x, y)
         xpt, ypt = pt(p) # Make sure to convert to points
-        ypt = self.h - ypt
+        ypt = self.height - ypt
         self._place(bs, xpt, ypt)
 
     def textBox(self, bs, r=None, clipPath=None, align=None):
@@ -696,7 +693,7 @@ class FlatContext(BaseContext):
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         assert r is not None
         xpt, ypt, wpt, hpt = pt(r)
-        ypt = self.h - ypt
+        ypt = self.height - ypt
         self._place(bs, xpt, ypt, wpt, hpt)
 
     def textOverflow(self, s, box, align=LEFT):
@@ -1048,15 +1045,12 @@ class FlatContext(BaseContext):
     def rect(self, x, y, w, h):
         """Calculates rectangle points by combining (x, y) with width and
         height, then runs the points through the affine transform and passes
-        the coordinates to a Flat polygon to be rendered."""
+        the coordinates to a Flat polygon to be rendered.
 
-        shape = self._getShape()
-        x, y, w, h = upt(x, y, w, h)
-        r = shape.rectangle(x, self.page.height-y-h, w, h)
-        self.page.place(r)
-
+        NOTE: We are not using Flat.ellipse, transform won't work. Instead, we
+        transform the points and then render as a polygon.
         """
-        # FIXED: Better to use Flat.rectangle
+        shape = self._getShape()
 
         if shape is not None:
             x1 = upt(x + w)
@@ -1072,26 +1066,18 @@ class FlatContext(BaseContext):
             coordinates = x, y, x1, y1, x2, y2, x3, y3
             r = shape.polygon(coordinates)
             self.page.place(r)
-        """
 
     def oval(self, x, y, w, h):
         """Draws an oval in a rectangle, where (x, y) is the bottom left origin
         and (w, h) is the size. This default DrawBot behavior, different from
         default Flat, where the (x, y) is the middle of the oval. Compensate
         for the difference.
+
+        NOTE: We are not using Flat.ellipse, transform won't work. Instead, we
+        make a new Bézier path and transform the points.
         """
         shape = self._getShape()
-        x, y, w, h = upt(x, y, w, h)
-        r = shape.ellipse(x+w/2, self.page.height-y-h/2, w/2, h/2)
-        self.page.place(r)
 
-
-        """
-        Better to use Flat.ellipse for this.
-        TODO: don't scale width / height but calculate points before
-        transforming. Also convert to a path so we can rotate.
-
-        shape = self._getShape()
 
         if shape is not None:
             path = self.newPath()
@@ -1130,7 +1116,6 @@ class FlatContext(BaseContext):
             p = self.getTransformed(x, y0)
             path.curveTo(cp1, cp2, p)
             self.drawPath()
-        """
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
@@ -1153,7 +1138,10 @@ class FlatContext(BaseContext):
         if shape is not None:
             x0, y0 = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
-            ptx0, pty0, ptx1, ptt1 = upt(x0, y0, x1, y1)
+            #x0, y0 = p0
+            #x1, y1 = p1
+            #ptx0, pty0, ptx1, ptt1 = upt(x0, y0, x1, y1)
+            print(x0, y0, x1, y1)
             self.page.place(shape.line(x0, y0, x1, y1))
 
     #   P A T H
