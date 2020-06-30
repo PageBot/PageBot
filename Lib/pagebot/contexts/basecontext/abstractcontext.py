@@ -229,7 +229,7 @@ class AbstractContext:
         the example."""
         raise NotImplementedError
 
-    def line(self, p1=None, p2=None):
+    def line(self, p1, p2):
         """Draws a line between two given points `p1` and `p`. Use optional
         calling Element `e` for points and additional drawing settings of the
         line."""

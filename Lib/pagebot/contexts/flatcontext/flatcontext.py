@@ -29,13 +29,11 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.babelrun import BabelLineInfo, BabelRunInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
-from pagebot.errors import PageBotFileFormatError
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.fonttoolbox.objects.font import findFont, Font
 from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
-from pagebot.style import makeStyle
 from pagebot.toolbox.color import color, Color, noColor, blackColor
 from pagebot.toolbox.units import pt, em, upt, point2D, units
 
@@ -1068,10 +1066,11 @@ class FlatContext(BaseContext):
             p1 = upt(x1, y)
             p2 = upt(x1, y1)
             p3 = upt(x, y1)
-            x, y = self.getTransformed(*p0)
-            x1, y1 = self.getTransformed(*p1)
-            x2, y2 = self.getTransformed(*p2)
-            x3, y3 = self.getTransformed(*p3)
+
+            x, y = self.getTransformed(p0[0], p0[1])
+            x1, y1 = self.getTransformed(p1[0], p1[1])
+            x2, y2 = self.getTransformed(p2[0], p2[1])
+            x3, y3 = self.getTransformed(p3[0], p3[1])
             coordinates = x, y, x1, y1, x2, y2, x3, y3
             r = shape.polygon(coordinates)
             self.page.place(r)
@@ -1097,6 +1096,7 @@ class FlatContext(BaseContext):
 
             x = upt(x)
             y = upt(y)
+
             # Middle and other extreme points.
             x0 = upt(x + (w / 2))
             y0 = upt(y + (h / 2))
@@ -1136,7 +1136,6 @@ class FlatContext(BaseContext):
         shape = self._getShape()
 
         if shape is not None:
-            print('circle')
             x, y = self.getTransformed(x, y)
             r = r * self._sx
             ptx, pty, pr = upt(x, y, r)
