@@ -427,10 +427,9 @@ class FlatContext(BaseContext):
         p0 = (x, y, z)
         p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
-
+        assert self.height
         #if not self.originTop:
         y1 = self.height - y1
-
         return upt(x1, y1)
 
     #   S T A T E
@@ -514,8 +513,6 @@ class FlatContext(BaseContext):
                 x, y = t
                 px0, py0 = self.getTransformed(px+x, py+y)
                 path.lineTo((px0, py0))
-            elif command == 'closePath':
-                path.closePath()
             elif command == 'curveTo':
                 p0, p1, p = t
                 x0, y0 = p0
@@ -525,6 +522,8 @@ class FlatContext(BaseContext):
                 x1, y1 = self.getTransformed(px + x1, py + y1)
                 x, y = self.getTransformed(px + x, py + y)
                 path.curveTo((x0, y0), (x1, y1), (x, y))
+            elif command == 'closePath':
+                path.closePath()
             elif command == 'component':
                 (x, y), componentGlyph = t
                 #if not self.originTop:

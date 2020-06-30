@@ -20,9 +20,9 @@ from math import radians, sin, cos
 import xml.etree.ElementTree as ET
 import PIL
 
-from pagebot.constants import (DISPLAY_BLOCK, DEFAULT_FRAME_DURATION,
-        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
-        FILETYPE_PDF, DEFAULT_FONT, XXXL)
+from pagebot.constants import (LEFT, RIGHT, CENTER, DISPLAY_BLOCK,
+        DEFAULT_FRAME_DURATION, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE,
+        DEFAULT_WIDTH, FILETYPE_SVG, FILETYPE_PDF, DEFAULT_FONT, XXXL)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.errors import PageBotFileFormatError
@@ -243,18 +243,6 @@ class BaseContext(AbstractContext):
         xpt, ypt, rpt = upt(x, y, r)
         self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points.
         #self.b.oval(xpt, ypt, 2*rpt, 2*rpt) # Render units to points.
-
-    def line(self, x1, y1, x2, y2):
-        """Draw a line from `(x1, y1)` to `(x2, y2)`.
-
-        >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
-        >>> context.newPage(420, 420)
-        >>> context.line(pt(100), pt(200), pt(200), pt(300))
-        >>> context.line(100, 200, 200, 300)
-        """
-        x1pt, y1pt, x2pt, y2pt = upt(x1, y1, x2, y2)
-        self.b.line(x1pt, y1pt, x2pt, y2pt) # Render units to points.
 
     # Path.
 
@@ -1221,9 +1209,31 @@ class BaseContext(AbstractContext):
 
     # Glyphs.
 
-    def drawGlyph(self, glyph, x=0, y=0, fontSize=None, fill=None, stroke=None):
-        assert self.height
+    def drawGlyph(self, glyph, x, y, fill=noColor, stroke=noColor,
+            strokeWidth=0, fontSize=None, xTextAlign=LEFT):
+        """Draw the font[glyphName] at the defined position with the defined
+        fontSize."""
+        font = glyph.font
+
+        if fontSize is None:
+            fontSize = font.info.unitsPerEm
+        s = fontSize / font.info.unitsPerEm
+
+        if xTextAlign == CENTER:
+            x -= (glyph.width or 0) / 2*s
+        elif xTextAlign == RIGHT:
+            x -= glyph.width*s
+
+        #self.save()
+        self.fill(fill)
+        self.stroke(stroke, w=strokeWidth)
+        self.translate(x, y)
+        self.scale(s)
         self.drawGlyphPath(glyph)
+        self.scale(1/s)
+        self.translate(-x, -y)
+        #self.restore()
+
 
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
