@@ -157,6 +157,9 @@ class FlatContext(BaseContext):
             h = doc.h
         elif size is not None:
             w, h = size
+        elif w and h:
+            self.w = w
+            self.h = h
 
         if w is None:
             w = self.w
@@ -164,12 +167,12 @@ class FlatContext(BaseContext):
             h = self.h
 
         # Dimensions not allowed to be None or Flat document won't render.
-        assert w is not None
-        assert h is not None
+        assert self.w is not None
+        assert self.h is not None
 
         # Converts units to point values. Stores width and height information
         # in Flat document.
-        wpt, hpt = upt(w, h)
+        wpt, hpt = upt(self.w, self.h)
         self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
         #self.drawing.size(wpt, hpt, units=self.UNITS)
         #self.drawing.pages = []

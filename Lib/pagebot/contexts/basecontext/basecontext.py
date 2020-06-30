@@ -1221,6 +1221,10 @@ class BaseContext(AbstractContext):
 
     # Glyphs.
 
+    def drawGlyph(self, glyph, x=0, y=0, fontSize=None, fill=None, stroke=None):
+        assert self.height
+        self.drawGlyphPath(glyph)
+
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
         path = self.getGlyphPath(glyph)
