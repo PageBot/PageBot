@@ -554,7 +554,7 @@ class BaseContext(AbstractContext):
 
     setFillColor = fill
 
-    def stroke(self, c, w=None):
+    def stroke(self, c, w=0.5):
         """Set the color for global or the color of the formatted string.
 
         >>> from pagebot.toolbox.color import color
