@@ -1138,10 +1138,6 @@ class FlatContext(BaseContext):
         if shape is not None:
             x0, y0 = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
-            #x0, y0 = p0
-            #x1, y1 = p1
-            #ptx0, pty0, ptx1, ptt1 = upt(x0, y0, x1, y1)
-            print(x0, y0, x1, y1)
             self.page.place(shape.line(x0, y0, x1, y1))
 
     #   P A T H
