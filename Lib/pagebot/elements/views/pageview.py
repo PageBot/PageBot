@@ -1216,8 +1216,6 @@ class PageView(BaseView):
         showColorBars = e.showColorBars or (e.isPage and self.showColorBars)
         if not showColorBars or self.pl < self.viewMinInfoPadding:
             return # Nothing to do.
-        context = self.context
-
         ox, oy = point2D(origin)
 
         # TODO: Add more types of color bars and switch from scaling PDF to
@@ -1226,9 +1224,12 @@ class PageView(BaseView):
             path = getResourcesPath() + '/' + ECI_GrayConL
 
             if COLORBAR_LEFT in showColorBars:
-                context.image(path, p=(ox-self.pl+pt(3), oy), h=e.h)
+                x = ox - self.pl + pt(3)
+                self.context.image(path, p=(x, oy), w=e.w, h=e.h)
+
             if COLORBAR_RIGHT in showColorBars: # TODO: Does not generate the right position?
-                context.image(path, p=(ox+e.w+self.pr*2/3, oy), h=e.h)
+                x = ox + e.w + self.pr * 2/3
+                self.context.image(path, p=(x, oy), w=e.w, h=e.h)
 
     #   D R A W B O T  S U P P O R T
 
