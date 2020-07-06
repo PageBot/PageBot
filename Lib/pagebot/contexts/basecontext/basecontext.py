@@ -1150,45 +1150,45 @@ class BaseContext(AbstractContext):
     def installedFonts(self, patterns=None):
         """Should Answer the list of all fonts (name or path) that are
         installed on the OS."""
-        raise NotImplementedError
+        self.b.installedFonts(patterns=patterns)
 
     def installFont(self, fontOrName):
         """Should install the font in the context. fontOrName can be a Font
         instance (in which case the path is used) or a full font path."""
-        raise NotImplementedError
+        self.b.installFont(fontOrName)
 
     def uninstallFont(self, fontOrName):
-        raise NotImplementedError
+        self.b.uninstallFont(fontOrName)
 
     def fontContainsCharacters(self, characters):
-        raise NotImplementedError
+        return self.b.fontContainsCharacters(characters)
 
     def fontContainsGlyph(self, glyphName):
-        raise NotImplementedError
+        return self.b.fontContainsGlyph(glyphName)
 
     def fontFilePath(self):
-        raise NotImplementedError
+        return self.b.fontFilePath()
 
     def listFontGlyphNames(self):
-        raise NotImplementedError
+        return self.b.listFontGlyphNames()
 
     def fontAscender(self):
-        raise NotImplementedError
+        return self.b.fontAscender()
 
     def fontDescender(self):
-        raise NotImplementedError
+        return self.b.fontDescender()
 
     def fontXHeight(self):
-        raise NotImplementedError
+        return self.b.fontXHeight()
 
     def fontCapHeight(self):
-        raise NotImplementedError
+        return self.b.fontCapHeight()
 
     def fontLeading(self):
-        raise NotImplementedError
+        return self.b.fontLeading()
 
     def fontLineHeight(self):
-        raise NotImplementedError
+        return self.b.fontLineHeight()
 
     #
 

@@ -278,10 +278,14 @@ class Text(Element):
     tailIndent = pr = property(_get_tailIndent, _set_tailIndent)
 
     def _get_baselines(self):
+
+        '''
         if self._baselines is None:
             #self.textLines # Initialize both self._textLines and self._baselines
             self._get_textLines()
         return self._baselines
+        '''
+        return self.context.getBaselines(self.bs)
 
     baselines = property(_get_baselines)
 

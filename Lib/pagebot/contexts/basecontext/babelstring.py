@@ -472,11 +472,7 @@ class BabelString:
     def _get_topLineCapHeight(self):
         """Answers the largest capHeight in the first line. The height is
         derived from the fonts, independent of if there are actually capitals
-        in the first line.
-
-
-
-        """
+        in the first line."""
         topLineCapHeight = 0
 
         if self.lines:
@@ -490,8 +486,7 @@ class BabelString:
     def _get_topLineXHeight(self):
         """Answers the largest xHeight in the first line. The height is derived
         from the fonts, independent of if there are actually lower case in the
-        first line.
-        """
+        first line."""
         topLineXHeight = 0
         if self.lines:
             for run in self.lines[0].runs:
@@ -505,8 +500,7 @@ class BabelString:
         """Answers the largest abs(descender) in the bottom line. The height is
         derived from the fonts, independent of if there are actually lower case
         in the first line. The value answered is a position (negative number),
-        not a distance, relative to the baseline of the last line.
-        """
+        not a distance, relative to the baseline of the last line."""
         bottomLineDescender = 0
         if self.lines:
             for run in self.lines[-1].runs:
@@ -622,8 +616,7 @@ class BabelString:
     def _get_textSize(self):
         """Answers the text size of self, rendered by the defined context.
         Raise an error if the context is not defined.
-
-        >>> from pagebot.toolbox.units import pt, em
+>>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
