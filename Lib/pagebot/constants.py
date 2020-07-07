@@ -2770,6 +2770,8 @@ CURVETO = 'curveto'
 CLOSEPATH = 'closepath'
 INSTRUCTIONS = (MOVETO, LINETO, CURVETO, CLOSEPATH)
 
+EXPORT = '_export'
+
 
 if __name__ == '__main__':
     import doctest

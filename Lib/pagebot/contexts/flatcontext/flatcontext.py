@@ -1243,7 +1243,7 @@ class FlatContext(BaseContext):
         assert isinstance(c, Color), (msg % str(c))
         self._fill = c
 
-    def stroke(self, c, w=None):
+    def stroke(self, c, w=0.5):
         """Set global stroke color or the color of the formatted string."""
         if c is None:
             c = noColor

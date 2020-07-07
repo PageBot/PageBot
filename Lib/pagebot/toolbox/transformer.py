@@ -689,6 +689,10 @@ def path2FontId(path):
         return name
     return None
 
+def path2FileName(path):
+    fileName = path.split('/')[-1]
+    return fileName.split('.')[-2]
+
 # ---------------------------------------------------------------------------------------------------------
 #    F O N T
 
