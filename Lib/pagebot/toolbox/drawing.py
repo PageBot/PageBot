@@ -17,7 +17,8 @@
 from math import sin, cos, atan2, radians, degrees
 from pagebot.toolbox.color import noColor
 
-def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False):
+def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False,
+        endMarker=False):
     """Draw curved arrow marker between the two points.
 
     TODO: Add drawing of real arrow-heads, rotated in the right direction.

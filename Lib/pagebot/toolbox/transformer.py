@@ -28,13 +28,15 @@ import subprocess
 WHITESPACE = ' \t\r\n'
 ROMAN_NUMERAL_VALUES = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
 
-# Same as in constants, defined double, because of import sequence.
-XXXL = 2**32 # Arbitrary large size that is not system dependent, such as sys.maxsize is.
+# Same as in constants, defined a second time, because of import sequence.
+# Arbitrary large size that is not system dependent, such as sys.maxsize is.
+XXXL = 2**32
 
 # Generic number transforms
 
 def asNumber(v):
-    """Answers v converted to a float or int. Answer 0 if the conversion raised an error.
+    """Answers v converted to a float or int. Answer 0 if the conversion raised
+    an error.
 
     >>> asNumber(1234)
     1234
@@ -90,7 +92,8 @@ def asFloatOrNone(value):
         return None
 
 def asIntOrNone(v):
-    """Answers v converted to int. Answer None if the conversion raised an error.
+    """Answers v converted to int. Answer None if the conversion raised an
+    error.
 
     >>> asIntOrNone(1234)
     1234
@@ -104,7 +107,8 @@ def asIntOrNone(v):
     return asIntOrDefault(v)
 
 def asIntOrDefault(v, default=None):
-    """Answers v converted to int. Answer None if the conversion raised an error.
+    """Answers v converted to int. Answer None if the conversion raised an
+    error.
 
     >>> asIntOrNone(1234)
     1234
@@ -236,11 +240,10 @@ def value2Tuple4(v):
     raise ValueError
 
 def asId(v, default=0):
-    """
-    The *asId* method transforms the *value* attribute either to an instance of @
-    int@ or to @None@, so it can be used as *id* field in a @Record@
-    instance. If the value cannot be converted, then the optional *default* (default value is @0
-    @) is answered.
+    """The *asId* method transforms the *value* attribute either to an instance
+    of @ int@ or to @None@, so it can be used as *id* field in a @Record@
+    instance. If the value cannot be converted, then the optional *default*
+    (default value is @0 @) is answered.
 
     >>> asId(123) == 123
     True
@@ -275,8 +278,8 @@ def asSet(value):
     return value
 
 def interpolate(a, b, v, doRound=False):
-    """Answers the interpolated value of factor v between a and b. If doRound is True (default is False), then
-    round the result before answering it."""
+    """Answers the interpolated value of factor v between a and b. If doRound
+    is True (default is False), then round the result before answering it."""
     i = a + (b-a) * v
     if doRound:
         i = int(round(i))
@@ -294,8 +297,9 @@ def stringList2StrippedList(strings):
     return l
 
 def filterValue2Int(s):
-    """Filter all numeric characters from the string and answer the resulting integer.
-    Answer 0 if no digits are found. If s is already a number, then answer it as rounded int."""
+    """Filter all numeric characters from the string and answer the resulting
+    integer.  Answer 0 if no digits are found. If s is already a number, then
+    answer it as rounded int."""
     if isinstance(s, (int, float)):
         return int(round(s))
     digits = '0'
@@ -318,19 +322,20 @@ def index2PointId(self, index):
     return '*Pid%d' % index
 
 def none2Empty(value):
-    # Answer an empty string if value is None, otherwise pass it through
-    # To make sure that 0 empty objects show as result.
+    """Answers an empty string if value is None, otherwise pass it through To
+    make sure that 0 empty objects show as result."""
     if value is None:
         return ''
     return value
 
 def asDict(value, isRoot=True):
     """Answers the value as dict as root. If the value itself is not a dict,
-    answer it as dict(value=value). For lower levels than root, answer
-    the plain value if is it a string or a number. Basic classed don't get
+    answer it as dict(value=value). For lower levels than root, answer the
+    plain value if is it a string or a number. Basic classed don't get
     translated when not called as root.
-    All other objects are called by value.asDict()
-    If the object cannot handle that method, then convert it to string."""
+
+    All other objects are called by value.asDict() If the object cannot handle
+    that method, then convert it to string."""
     d = {}
     if isinstance(value, dict):
         for key, v in value.items():
@@ -366,15 +371,13 @@ def value2Fixed(value):
     return value
 
 def float2Fixed(value):
-    """
-    The float2Fixed method translates a float into a 1/64 pixel unit-value.
-    """
+    """The float2Fixed method translates a float into a 1/64 pixel
+    unit-value."""
     return int(round(value * 64))
 
 def fixed2Float(value):
-    """
-    The fixed2Float method translates a fixed 1/64 pixel-unit value to float.
-    """
+    """The fixed2Float method translates a fixed 1/64 pixel-unit value to
+    float."""
     return float(value) / 64
 
 # ---------------------------------------------------------------------------------------------------------
@@ -420,8 +423,9 @@ def list2CommaString(l):
     return list2String(l, ',')
 
 def value2IdCommaString(value):
-    """Transform a list with numbers into a comma separated string. This can be used to convert a list of record ids
-    into a SQL compatible list of ids, without integers showing up as @1234L@."""
+    """Transform a list with numbers into a comma separated string. This can be
+    used to convert a list of record ids into a SQL compatible list of ids,
+    without integers showing up as @1234L@."""
     t = []
     if not isinstance(value, (set, list, tuple)):
         value = str(value).split(',')
@@ -472,9 +476,11 @@ def words2WordsKey(words):
 #    S T Y L E
 
 def obj2StyleId(s):
-    """Make sure s is styleId format, other recursively transform into string with space separators.
-    Parts can be CSS-like #id and .class identifiers.
-    Note that this may change in the future if more compatibility with CSS is necessary."""
+    """Make sure s is styleId format, other recursively transform into string
+    with space separators.  Parts can be CSS-like #id and .class identifiers.
+
+    Note that this may change in the future if more compatibility with CSS is
+    necessary."""
     styleId = []
     if isinstance(s, (list, tuple)):
         for sPart in s:
@@ -607,10 +613,10 @@ def path2Extension(path):
     return path.split('.')[-1].lower()
 
 def path2ScaledImagePath(path, w=None, h=None, index=None, extension=None, scaledPath=None):
-    """Answer the path where scaled images go to, also altering their name.
-    If extension is different from the path extension, then replace it.
-    If w, h, index or extension are set, then add them to the output name.
-    If basePath is None, then used the default ./scaled/ instead.
+    """Answer the path where scaled images go to, also altering their name. If
+    extension is different from the path extension, then replace it. If w, h,
+    index or extension are set, then add them to the output name. If basePath
+    is None, then used the default ./scaled/ instead.
 
     >>> path2ScaledImagePath('images/myImage.jpg')
     'scaled/myImage.jpg'

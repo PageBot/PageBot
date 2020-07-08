@@ -534,9 +534,14 @@ class PageView(BaseView):
                     context.curveTo((xb1, yb1), (xb2, yb2), (nx, ny)) #((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
                     context.drawPath()
 
-    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False, endMarker=False, fms=None, fmf=None,
-            fill=noColor, stroke=noColor, strokeWidth=None):
-        """Draw curved arrow marker between the two points."""
+    def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False,
+            endMarker=False, fms=None, fmf=None, fill=noColor, stroke=noColor,
+            strokeWidth=None):
+        """Draw curved arrow marker between the two points.
+
+        TODO: duplicate of pagebot.toolbox.drawing.drawArrow()?
+        TODO: move to context for reuse.
+        """
         context = self.context
 
         if fms is None:

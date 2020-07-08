@@ -18,9 +18,11 @@
 def x2cx(x, e):
     """Transform from *x* value to column *x* index value, using the
     *e.css('cw')* (column width) as column measure."""
-    gw = e.gw # Gutter
+    # Gutter
+    gw = e.gw
     cw = e.css('cw', 0)
-    if cw + gw: # Check on division by 0
+    # Check on division by 0
+    if cw + gw:
         return (x - e.parent.pl) / (cw + gw)
     return 0
 
@@ -36,10 +38,12 @@ def cx2x(cx, e):
 def y2cy(y, e):
     """Transform from *y* value to column *y* index value, using the
     *e.css('ch')* (column height) as column measure."""
-    gh = e.gh # Gutter
+    # Gutter
+    gh = e.gh
     ch = e.css('ch', 0)
     cy = 0
-    if ch + gh: # Check on division by 0
+    # Check on division by 0
+    if ch + gh:
         paddingY = e.pb
         cy = (y - paddingY) / (ch + gh)
     return cy
@@ -57,9 +61,11 @@ def cy2y(cy, e):
 def z2cz(z, e):
     """Transform from *z* value to column *z* index value, using the
     *e.css('cd')* (column depth) as column measure."""
-    cd = e.css('cd', 0) # Column width
+    # Column width
+    cd = e.css('cd', 0)
     cz = 0
-    if cd + e.gd: # Check on division by 0
+    # Check on division by 0
+    if cd + e.gd:
         cz = (z - e.parent.pzf) / (cd + e.gd)
     return cz
 
@@ -119,9 +125,11 @@ def w2cw(w, e):
     *e.css('cw')* (column width) as column measure."""
     gw = e.gw
     cw = e.css('cw', 0)
-    if cw + gw: # Test for division by 0
+    # Test for division by 0
+    if cw + gw:
         return (w + gw) / (cw + gw)
-    return 0 # Undefined, not info about column width and gutter or zero division
+    # Undefined, not info about column width and gutter or zero division
+    return 0
 
 def cw2w(cw, e):
     """Transform from *w* index value to *w* count value, using the
@@ -130,7 +138,8 @@ def cw2w(cw, e):
         w = 0
     else:
         gw = e.gw
-        w = cw * (e.css('cw', 0) + gw) - gw  # Overwrite style from here.
+        # Overwrite style from here.
+        w = cw * (e.css('cw', 0) + gw) - gw
     return w
 
 def h2ch(h, e):
@@ -138,9 +147,11 @@ def h2ch(h, e):
     *e.css('ch')* (column height) as column measure."""
     gh = e.gh
     ch = e.css('ch', 0)
-    if ch + gh: # Test for division by 0
+    # Test for division by 0
+    if ch + gh:
         return (h + gh) / (ch + gh)
-    return 0 # Undefined, no info about column height and gutter or zero division
+    # Undefined, no info about column height and gutter or zero division
+    return 0
 
 def ch2h(ch, e):
     """Transform from *h* index value to *w* count value, using the
@@ -149,16 +160,19 @@ def ch2h(ch, e):
         h = 0
     else:
         gh = e.gh
-        h = ch * (e.css('ch', 0) + gh) - gh  # Overwrite style from here.
+        # Overwrite style from here.
+        h = ch * (e.css('ch', 0) + gh) - gh
     return h
 
 def d2cd(d, e):
     """Transform from *d* value to column *cd* count value, using the
     *e.css('cd')* (column depth) as column measure."""
     cd = e.css('cd', 0)
-    if cd + e.gd: # Test for division by 0
+    # Test for division by 0
+    if cd + e.gd:
         return (d + e.gd) / (cd + e.gd)
-    return 0 # Undefined, no info about column depth and gutter or zero division
+    # Undefined, no info about column depth and gutter or zero division.
+    return 0
 
 def cd2d(cd, e):
     """Transform from *cd* index value to *d* count value, using the
@@ -166,7 +180,8 @@ def cd2d(cd, e):
     if cd is None:
         d = 0
     else:
-        d = cd * (e.css('cd', 0) + e.gd) - e.gd  # Overwrite style from here.
+        # Overwrite style from here.
+        d = cd * (e.css('cd', 0) + e.gd) - e.gd
     return d
 
 if __name__ == '__main__':
