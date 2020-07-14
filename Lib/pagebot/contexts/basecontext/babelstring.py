@@ -142,14 +142,15 @@ class BabelString:
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs = BabelString('ABCD', dict(fontSize=24), context=context)
-        >>> bs.cs is not None # Trigger rendering of the FormattedString
+        >>> # Triggers rendering of the FormattedString.
+        >>> bs.cs is not None
         True
-        >>> bs.reset() # Reset the caching
+        >>> bs.reset() # Reset the caching.
         >>> bs._cs is None
         True
         """
-        # Cache of native context string (e.g. Drawbot.FormattedString
-        # or FlatStringData, containing Strike/Paragraph/Text instances.
+        # Storage of native context string (e.g. Drawbot.FormattedString or
+        # FlatStringData, containing Strike/Paragraph/Text instances).
         self._cs = None
         self._lines = None # Cache of calculated meta info after line wrapping.
         self._twh = None # Cache of calculated text width (self.tw, self.th)
@@ -226,7 +227,7 @@ class BabelString:
     hasHeight = property(_get_hasHeight)
 
     def _get_tw(self):
-        """Answers the cached calculated context width.
+        """Answers the cached calculated width within a certain context.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -257,7 +258,8 @@ class BabelString:
     tw = property(_get_tw)
 
     def _get_th(self):
-        """Answers the cached calculated context height.
+        """Answers the cached calculated string height within a certain
+        context.
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
@@ -606,9 +608,10 @@ class BabelString:
         >>>
         """
         if w is not None or h is not None:
-            # Want something different than defined requested bs.w or bs.h
-            if w != self.w or h != self.h: # Different indeed? Reflow in temporary lines.
-                return self.context.textSize(self, w=w, h=h) # See if context wants to do it.
+            # Want something different than defined requested bs.w or bs.h.
+            if w != self.w or h != self.h:
+                # Different indeed? Reflow in temporary lines.
+                return self.context.textSize(self, w=w, h=h)
 
         self._twh = twh = self.context.textSize(self)
         return twh

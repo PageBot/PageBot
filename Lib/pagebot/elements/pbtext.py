@@ -194,7 +194,8 @@ class Text(Element):
         """
         if self._bs is None:
             return None
-        return (self.bs.h or self.bs.th) + self.pt + self.pb # Correct for padding
+        h = (self.bs.h or self.bs.th) + self.pt + self.pb # Correct for padding
+        return h
 
     def _set_h(self, h):
         # If None, then self.h is elastic defined by self.bs height.

@@ -745,28 +745,29 @@ class FlatContext(BaseContext):
         placedText = bs.cs.pt
 
         if placedText.width != w or placedText.height != h:
-            # Make reflow on this new (w, h). Otherwise use the layout.runs
-            # as already cached by placedText.
-            placedText.frame(0, 0, w or bs.w or math.inf, h or bs.h or math.inf)
+            # Make reflow on this new (w, h). Otherwise use the layout.runs as
+            # already cached by placedText.
+            w = w or bs.w or math.inf
+            h = h or bs.h or math.inf
+            placedText.frame(0, 0, w, h)
 
         lastDescender = 0
+
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             style = None
             rw = 0
 
             for style, s in run:
                 rw += style.width(s)
-
             tw = max(tw, rw)
-
             if rIndex == 0 and style:
                 th += style.ascender()
             else:
                 th += height
             lastDescender = style.descender()
 
-        th -= lastDescender # Descender is negative value
-
+        # NOTE: Descender is a negative value.
+        th -= lastDescender
         return pt(tw, th)
 
     def getTextLines(self, bs, w=None, h=None):
